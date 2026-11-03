@@ -117,9 +117,8 @@ for (const def of PISTAS) {
     return l;
   };
 }
-// los karts de pisos distintos no chocan en el cruce
-const chocanKartsSinPuente = chocanKarts;
-chocanKarts = (a, b) => { const P = PISTA; if (P && P.puente && cercaPuente(P, a) && cercaPuente(P, b) && capaDe(P, a) !== capaDe(P, b)) return; chocanKartsSinPuente(a, b); };
+// los karts de pisos distintos no chocan en el cruce (chocanKarts, en kart.js, lo pregunta)
+function enPisosDistintos(a, b) { const P = PISTA; return !!(P && P.puente && cercaPuente(P, a) && cercaPuente(P, b) && capaDe(P, a) !== capaDe(P, b)); }
 // antes de pintar: el suelo del piso del jugador. Lo que está en el otro piso se pinta (o no) según desde dónde se mire
 let CAPA_VISTA = 'abajo';
 function puenteAntesDePintar(P, yo) {

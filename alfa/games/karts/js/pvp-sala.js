@@ -35,31 +35,28 @@ function pvpAplicaLook(o) {
   if (!k || k.plaza != null || !look) return;
   k.fig = figuraLook(k.piloto.id, look); k.humoCos = humoLook(look);
 }
-const colorHumoSinRed = colorHumo;
-colorHumo = k => {
-  const h = k.humoCos; if (!h) return colorHumoSinRed(k);
+// el humo del derrape de un rival: el que lleva puesto (lo pregunta colorHumo, en cosmeticos.js)
+function colorHumoDeRival(k) {
+  const h = k.humoCos;
   if (h.c === 'arcoiris') return ['#ff5c8a', '#ffcb3d', '#5ef27a', '#22e3ff', '#c35cff'][Math.floor(RELOJ * 12) % 5];
   return Math.random() < 0.5 ? h.c[0] : h.c[1];
-};
+}
 // las fotos de los karts tuneados de los rivales se hacen en la pantalla de carga, como las del tuyo
-const encolaJugadorSinRed = encolaJugador;
-encolaJugador = () => {
-  encolaJugadorSinRed();
+function encolaFotosDeRivales() {
   if (!KPVP.activo) return;
   for (const j of KPVP.jugadores) {
     if (j.orden === KPVP.orden || !KPVP.looks[j.orden] || !PILOTO[j.piloto]) continue;
     const f = figuraLook(j.piloto, KPVP.looks[j.orden]); if (f !== figuraDe(j.piloto)) for (let n = 0; n <= 13; n++) COLA_FOTOS.push([f, n]);
   }
-};
-const pvpPreparaKartsSinLook = pvpPreparaKarts;
-pvpPreparaKarts = C => {
-  pvpPreparaKartsSinLook(C);
+}
+// al preparar la carrera: cada rival se viste con lo suyo (pvpPreparaKarts, en pvp.js, lo llama al final)
+function pvpVisteRivales() {
   for (const [o, k] of Object.entries(KPVP.remotos)) {
     if (k.plaza != null) continue;
     pvpAplicaLook(+o);
     if (KPVP.salidos && KPVP.salidos[o]) { KPVP.listos[o] = true; k.ido = true; }      // en la copa: quien se fue en otra carrera ya no vuelve
   }
-};
+}
 
 // ---------- los mensajes rápidos ----------
 const nombreOrden = o => { const j = ((KPVP.info && KPVP.info.jugadores) || KPVP.jugadores || []).find(x => x.orden === o); return j ? (j.yo ? tr('TÚ') : String(j.nombre || '')) : '?'; };

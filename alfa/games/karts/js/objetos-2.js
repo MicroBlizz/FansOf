@@ -185,12 +185,10 @@ function pasoObjetos2(C, dt) {
 }
 
 // ---------- lo que se ve: el bot que da vueltas y el martillazo (la burbuja, el lag, el influencer y el tren: efectos-objetos.js) ----------
-const pintaKartSinExtras = pintaKart;
-pintaKart = (k, sx, sy, e) => {
-  pintaKartSinExtras(k, sx, sy, e);
+function pintaExtrasDelKart(k, sx, sy, e) {
   if (k.tBot > 0) { const a = RELOJ * 4 + k.idx; figCosa('botmini').pinta(lx, Math.round(sx + Math.cos(a) * 11 * e), Math.round(sy - (2 + Math.abs(Math.sin(a * 2))) * e), e * 0.8, BASE_COSA, a); }
   if (k.tMartillo > 0) figCosa('martillo').pinta(lx, Math.round(sx), Math.round(sy - (k.z + 18) * e), e * 1.2, BASE_COSA, (0.45 - k.tMartillo) * 14);
-};
+}
 
 // ---------- el spam en tu pantalla (encima del marcador) ----------
 const VENTANAS_SPAM = [['¡OFERTA!', 'Solo hoy: aire.'], ['ACTUALIZA YA', '48 GB. Ahora no.'], ['1 MENSAJE NUEVO', 'Es publicidad.'], ['¡HAS GANADO!', 'Haz clic. O no.']];

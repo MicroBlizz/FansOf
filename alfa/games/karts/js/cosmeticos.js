@@ -67,10 +67,12 @@ function encolaJugador() {
   const f = figuraJugador(JUGABLES[PANT.piloto].id);
   if (f !== figuraDe(JUGABLES[PANT.piloto].id)) for (let n = 0; n <= 13; n++) COLA_FOTOS.unshift([f, n]);
   if (CAL === 2) for (const n of [-4, -5, -6]) COLA_FOTOS.unshift([f, n]);      // en HD, las grandes del tuyo (siempre lo tienes delante)
+  encolaFotosDeRivales();
 }
 
 // ---------- el humo del derrape (sin chispas todavía: las azules y naranjas no cambian, que avisan del miniturbo) ----------
 function colorHumo(k) {
+  if (k.humoCos) return colorHumoDeRival(k);
   const h = k.esJugador ? llevaCos('humo') : null;
   if (!h) return '#e8e4da';
   if (h.c === 'arcoiris') return ['#ff5c8a', '#ffcb3d', '#5ef27a', '#22e3ff', '#c35cff'][Math.floor(RELOJ * 12) % 5];

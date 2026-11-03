@@ -1,8 +1,8 @@
 {
- "build": 890,
- "hash": "ff15c1e",
- "fecha": "2026-11-03T21:31:16Z",
- "mensaje": "Pets f16, revisión 3: muñeco por plantilla (base por edad, en T) y modo esqueleto en el visor",
+ "build": 891,
+ "hash": "2e1bae9",
+ "fecha": "2026-11-03T21:37:34Z",
+ "mensaje": "Karts: primer trozo del dominio con tests, sin parches encadenados, smoke-test propio y guardia de menús ampliada",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

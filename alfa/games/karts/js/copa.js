@@ -169,7 +169,7 @@ function copaFin() { COPA.activa = false; }
 function copaSuma() {
   if (COPA.sumada === COPA.n) return;          // una vez por carrera
   COPA.sumada = COPA.n; COPA.ultimos = {};
-  for (const r of CARRERA.resultado) { const p = PUNTOS_COPA[r.puesto - 1] || 0, id = r.piloto.id; COPA.puntos[id] = (COPA.puntos[id] || 0) + p; COPA.ultimos[id] = p; }
+  for (const r of CARRERA.resultado) { const p = KD.carrera.puntosDeCopa(r.puesto, PUNTOS_COPA), id = r.piloto.id; COPA.puntos[id] = (COPA.puntos[id] || 0) + p; COPA.ultimos[id] = p; }
 }
 function clasificacionCopa() {
   return CARRERA.resultado.map(r => ({ r, pts: COPA.puntos[r.piloto.id] || 0, mas: COPA.ultimos[r.piloto.id] || 0 })).sort((a, b) => b.pts - a.pts || a.r.puesto - b.r.puesto);

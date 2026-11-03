@@ -16,14 +16,7 @@ const OBJETOS = {
 const LISTA_OBJETOS = Object.keys(OBJETOS);
 // lo que pesa cada objeto en la ruleta según el puesto: [1º y 2º, 3º a 5º, 6º a 8º]
 const REPARTO = { hotfix: [30, 24, 12], parche: [34, 16, 6], nerf: [24, 26, 16], botin: [12, 16, 12], pase: [0, 10, 24], mantenimiento: [2, 12, 22], cola: [0, 2, 12] };
-function sorteaObjeto(puesto) {
-  const col = puesto <= 2 ? 0 : puesto <= 5 ? 1 : 2;
-  const vale = () => true;      // online también salen todos (los nuevos van por la red: pvp-objetos.js)
-  let total = 0; for (const id of LISTA_OBJETOS) if (vale(id)) total += REPARTO[id][col];
-  let r = Math.random() * total;
-  for (const id of LISTA_OBJETOS) { if (!vale(id)) continue; r -= REPARTO[id][col]; if (r < 0) return id; }
-  return 'hotfix';
-}
+function sorteaObjeto(puesto) { return KD.carrera.sorteaObjeto(puesto, LISTA_OBJETOS, REPARTO, Math.random()); }      // online también salen todos (los nuevos van por la red: pvp-objetos.js)
 function cogeRegalo(k) {
   if (k.objeto || k.tRuleta > 0) return;
   k.tRuleta = 1.25;
@@ -44,6 +37,11 @@ const USO_OBJETO = {
   nerf: lanzaNerf, parche: lanzaParche, botin: abreBotin, mantenimiento: usaMantenimiento, cola: usaCola,
 };
 function usaObjeto(k, C) {
+  const antes = k.objeto, usos = k.usos;
+  usaObjetoBase(k, C);
+  misionUsaObjeto(k, C, antes, usos);
+}
+function usaObjetoBase(k, C) {
   if (!k.objeto || k.tRuleta > 0 || k.estado !== 'normal' || k.fin) return;
   const id = k.objeto, yo = k.esJugador, quien = tr(k.piloto.nombre);
   if (--k.usos <= 0) k.objeto = null;

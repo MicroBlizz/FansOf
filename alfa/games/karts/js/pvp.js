@@ -59,6 +59,7 @@ function pvpEmpezar(info, red) {
 // la carrera ha terminado (o se ha salido): se cierra el canal; el servidor ya tiene el resultado
 // (en una copa online el canal sigue abierto hasta la última carrera, y en los resultados para los mensajes rápidos: lo cierra pvpCierraCanal al salir)
 function pvpTermina() {
+  pvpApuntaSalidos();
   KPVP.pendChecked = false;
   KPVP.activo = false; KPVP.remotos = {};
   if (!CARRERA || !CARRERA.pvp || KPVP.rendido) pvpCierraCanal();
@@ -96,6 +97,7 @@ function pvpPreparaKarts(C) {
   });
   // los karts de la máquina van después de los humanos; quién los mueve se decide cada paso (pvpActualizaAnfitrion)
   KPVP.ias.forEach((a, j) => { const i = riv.length + j, k = C.karts[i]; k.plaza = a.plaza; a.kart = k; a.indice = i; a.nivel = k.ia ? k.ia.nivel : 0.92; });
+  pvpVisteRivales();
 }
 // el anfitrión: el humano de menor número de sala que siga conectado (antes de salir basta con que no se haya ido; en carrera, que haya dado noticias hace poco)
 function pvpAnfitrion(C) {

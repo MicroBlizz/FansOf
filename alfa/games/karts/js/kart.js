@@ -125,6 +125,7 @@ function chocaMuro(k, qx, qy) {
 }
 // dos karts que se tocan se separan y se empujan (el que pesa más, empuja más)
 function chocanKarts(a, b) {
+  if (enPisosDistintos(a, b)) return;
   const dx = b.x - a.x, dy = b.y - a.y, R = AJ.radio * (a.tam + b.tam), d2 = dx * dx + dy * dy;
   if (d2 > R * R || d2 < 1e-6 || a.z > 5 || b.z > 5 || a.estado === 'cae' || b.estado === 'cae') return;
   const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, ma = a.masa * a.tam, mb = b.masa * b.tam, pen = R - d;

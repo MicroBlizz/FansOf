@@ -112,7 +112,7 @@ function recogeRegalos(C, dt) {
 }
 // los puestos, de más a menos adelantado (los que ya han llegado, por orden de llegada)
 function actualizaPuestos(C) {
-  C.orden.sort((a, b) => (a.puestoFinal || 99) - (b.puestoFinal || 99) || b.avance - a.avance);
+  C.orden.sort(KD.carrera.comparaPuestos);
   C.orden.forEach((k, i) => { k.puesto = i + 1; });
 }
 // si el kart ha empezado una vuelta nueva: mejor vuelta, avisos del jugador y llegada a meta
@@ -187,7 +187,7 @@ function llegaJugador() {
 // la clasificación final: los que han llegado, por orden de llegada; el resto, según iban
 function terminaCarrera() {
   const C = CARRERA;
-  C.orden.sort((a, b) => (a.puestoFinal || 99) - (b.puestoFinal || 99) || (a.ido ? 1 : 0) - (b.ido ? 1 : 0) || b.avance - a.avance);
+  C.orden.sort(KD.carrera.comparaFinal);
   C.resultado = C.orden.map((k, i) => ({ piloto: k.piloto, nombre: k.nombre, ido: !!k.ido, puesto: i + 1, tiempo: k.fin || 0, jugador: k.esJugador, monedas: k.monedas, mejor: k.mejorVuelta }));
   C.estado = 'resultado';
   if (C.pvp) pvpTermina();

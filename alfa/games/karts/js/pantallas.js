@@ -168,7 +168,7 @@ const FRASES_PUESTO = [
   'Microblizz lo llama «éxito de participación».', 'Microblizz lo llama «éxito de participación».', 'Microblizz lo llama «éxito de participación».', 'Microblizz lo llama «éxito de participación».',
   'Último. La culpa es del lag, claro.',
 ];
-function abreResultados() { if (COPA.activa && !CARRERA.pvp) copaSuma(); cierraCrono(); premiosCarrera(); ve('resultado'); PANT.foco = 0; }
+function abreResultados() { pvpAlAbrirResultados(); if (COPA.activa && !CARRERA.pvp) copaSuma(); cierraCrono(); premiosCarrera(); ve('resultado'); PANT.foco = 0; }
 // repetir la carrera de la copa desde la salida (gratis): se quitan los puntos que acaba de dar
 function repiteDeCopa() { for (const id in COPA.ultimos) COPA.puntos[id] -= COPA.ultimos[id]; COPA.ultimos = {}; COPA.sumada = -1; empiezaCarga(); }
 function tituloDeResultado(C, R, yo) { return tr(yo.puesto === 1 ? '¡HAS GANADO!' : yo.puesto <= 3 && (!C.pvp || R.length >= 3) ? '¡PODIO!' : 'RESULTADOS'); }

@@ -5,7 +5,7 @@
 
 const KECO = {
   oroPuesto: [60, 45, 35, 25, 20, 15, 10, 5], oroMoneda: 4, multNivel: [1, 1.5, 2], vipOro: 1.5,      // oro por puesto, por moneda recogida, por nivel y con VIP
-  oroCopa: [300, 200, 100], oroCrono: 25,
+  oroCopa: [300, 200, 100], oroCrono: 25, oroDemas: 5, xpDemas: 25,      // oroDemas y xpDemas: lo que paga un puesto que no está en la tabla
   xpPuesto: [70, 60, 50, 45, 40, 35, 30, 25], xpCrono: 35, xpPvp: 60, xpNivel: 100,                  // XP del pase: por puesto, contrarreloj, PvP y lo que cuesta cada nivel
   premium: 100,                                                                                       // el pase premium, en gemas
   obsequio: { oro: 150, gemas: 10, xp: 40 },                                                          // la caja del CEO al ganar online (siempre lo mismo: no es una caja de botín)
@@ -62,7 +62,7 @@ const KPASE = [
 for (const [i, n] of KPASE.entries()) for (const r of [n.g, n.p]) if (r.cos) COS[r.cos].nivel = i + 1;
 // cómo se consigue lo que aún no tienes (ya traducido)
 const comoCos = c => c.nivel ? trf('Pase de temporada: nivel %1.', c.nivel) : c.de === 'vip' ? tr('Viene con la Licencia VIP.') : tr(c.como || '');
-const nivelPase = () => Math.min(KPASE.length, Math.floor(SAVE.xp / KECO.xpNivel));
+const nivelPase = () => KD.premios.nivelDePase(SAVE.xp, KECO.xpNivel, KPASE.length);
 
 // ---------- tener, llevar y comprar ----------
 const tieneCos = id => { const c = COS[id]; return !!c && (c.de === 'gratis' || !!SAVE.tengo[id] || (c.de === 'vip' && SAVE.vip)); };
@@ -115,13 +115,6 @@ function compraPremium() {
 const diasTemporada = () => Math.max(0, Math.ceil((new Date(KTEMP.fin + 'T23:59:59') - Date.now()) / 864e5));
 
 // ---------- al acabar una carrera (contra la máquina, contrarreloj o PvP): oro, XP y premios del nivel ----------
-// lo que paga una carrera: oro y experiencia según el puesto, las monedas recogidas, el modo y el nivel (sin tocar la partida)
-function pagoDeCarrera(yo, modo, dif, vip) {
-  const mult = modo.crono ? 1 : KECO.multNivel[dif] * (vip ? KECO.vipOro : 1);
-  const base = modo.crono ? KECO.oroCrono : KECO.oroPuesto[yo.puesto - 1] || 5;
-  const xp = modo.crono ? KECO.xpCrono : modo.pvp ? KECO.xpPvp : KECO.xpPuesto[yo.puesto - 1] || 25;
-  return { oro: Math.round((base + yo.monedas * KECO.oroMoneda) * mult), xp };
-}
 // quedar 1.º en una pista abre su espejo (si no lo tenías ya por ganar en CEO)
 function abreEspejoDePista(C, dif) {
   if (!SAVE.espejo[C.def.id] && !SAVE.logros.espejo && dif < 2) { SAVE.espejo[C.def.id] = 1; avisaPremio('¡ESPEJO DESBLOQUEADO!', [{ ico: 'cos', txt: trf('%1: ya puedes correrla del revés. Elige ESPEJO al escoger pista.', tr(C.def.nombre)) }], '#22e3ff'); }
@@ -139,7 +132,7 @@ function premiosCarrera() {
   const C = CARRERA; if (!C.resultado || C.premiada) return; C.premiada = true;
   const yo = C.resultado.find(r => r.jugador); if (!yo) return;
   const dif = C.pvp ? 1 : nivelDif();
-  const { oro, xp } = pagoDeCarrera(yo, C, dif, SAVE.vip);
+  const { oro, xp } = KD.premios.pagoDeCarrera(yo, C, dif, SAVE.vip, KECO);
   SAVE.oro += oro; C.gana = { oro, xp };
   darXp(xp);
   if (!C.pvp && !C.crono && !TUTO.activo && yo.puesto === 1) premiosDeVictoria(C, dif);
@@ -148,13 +141,11 @@ function premiosCarrera() {
 // al ver el podio de una copa: oro según el puesto y, en nivel CEO, los premios ejecutivos
 function premioCopa(m, puesto) {
   const dif = nivelDif();
-  if (puesto <= 3) { const o = Math.round(KECO.oroCopa[puesto - 1] * KECO.multNivel[dif] * (SAVE.vip ? KECO.vipOro : 1)); SAVE.oro += o; avisaPremio(trf('COPA: %1', puestoTxt(puesto)), [{ ico: 'oro', txt: '+' + o + ' ' + tr('ORO') }]); }
+  const o = KD.premios.oroDeCopa(puesto, dif, SAVE.vip, KECO);
+  if (o) { SAVE.oro += o; avisaPremio(trf('COPA: %1', puestoTxt(puesto)), [{ ico: 'oro', txt: '+' + o + ' ' + tr('ORO') }]); }
   if (puesto === 1 && dif === 2) {
     SAVE.copasCeo[m] = 1;
-    const n = Object.keys(SAVE.copasCeo).length;
-    if (n >= 1) daCos('kart-silla', 'PREMIO EJECUTIVO');
-    if (n >= 2) daCos('skin-ceo-bunny', 'PREMIO EJECUTIVO');
-    if (n >= 4) { daCos('ruedas-oro', 'PREMIO EJECUTIVO'); daCos('humo-oro', 'PREMIO EJECUTIVO'); }
+    for (const id of KD.premios.premiosEjecutivos(Object.keys(SAVE.copasCeo).length)) daCos(id, 'PREMIO EJECUTIVO');
   }
   guardaPartida();
 }

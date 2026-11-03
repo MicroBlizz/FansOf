@@ -145,7 +145,7 @@ function pantallaCarrera(dt) {
     escribeB(lx, tr('PAUSA'), PW / 2, 32, '#ffcb3d', '#1c1028', 'centro', 2);
     boton('SEGUIR', 70, 54, 100, () => { PANT.pausa = false; });
     if (C.pvp) mini(lx, tr('LA CARRERA SIGUE'), PW / 2, 77, '#ff5c8a', '#1c1028', 'centro'); else boton('EMPEZAR DE NUEVO', 70, 73, 100, () => empiezaCarga());
-    if (C.pvp) boton(AJUSTES.mudo ? 'SONIDO: NO' : 'SONIDO: SÍ', 70, 92, 100, cambiaSonido);      // en PvP la carrera no se para: no se sale a Opciones
+    if (C.pvp) boton('SONIDO', 70, 92, 100, abreSonido);      // en PvP la carrera no se para: no se sale a Opciones
     else boton('OPCIONES', 70, 92, 100, () => { ve('opciones'); PANT.vuelve = 'carrera'; });
     boton(C.pvp ? (PANT.seguro ? '¿SEGURO? PIERDES PUNTOS' : 'RENDIRSE') : 'SALIR', 70, 111, 100, () => { if (C.pvp && !C.jugador.fin && !PANT.seguro) { PANT.seguro = true; return; } PANT.seguro = false; copaFin(); if (C.pvp) pvpRendirse(); musica('menu'); ve(C.pvp ? 'pvp' : 'titulo'); }, 14, '#ff5c8a');
     PANT.atras = () => { PANT.pausa = false; PANT.seguro = false; };
@@ -234,8 +234,7 @@ function pantallaOpciones() {
   const A = 8, B = 128, w = 116, w2 = 104;      // dos columnas: la de la izquierda, algo más ancha (lleva los textos largos)
   boton(IDIOMA_K === 'es' ? 'IDIOMA: ESPAÑOL' : 'LANGUAGE: ENGLISH', A, 24, w, () => ponIdioma(IDIOMA_K === 'es' ? 'en' : 'es'));
   boton(trf('NIVEL: %1', tr(dificultad().nombre)), B, 24, w2, () => { AJUSTES.dificultad = (AJUSTES.dificultad + 1) % 3; guardaAjustes(); });
-  boton(AJUSTES.mudo ? 'SONIDO: NO' : 'SONIDO: SÍ', A, 41, w, cambiaSonido);
-  boton(AJUSTES.sinMusica ? 'MÚSICA: NO' : 'MÚSICA: SÍ', B, 41, w2, cambiaMusica);
+  boton('SONIDO Y MÚSICA', A, 41, w + w2 - 4, abreSonido);
   boton(AJUSTES.autoGas === 'si' ? 'ACELERA SOLO: SÍ' : AJUSTES.autoGas === 'no' ? 'ACELERA SOLO: NO' : 'ACELERA SOLO: AUTO', A, 58, w, () => {
     AJUSTES.autoGas = AJUSTES.autoGas === 'auto' ? 'si' : AJUSTES.autoGas === 'si' ? 'no' : 'auto'; guardaAjustes(); ENT.autoGas = AJUSTES.autoGas === 'si' || (AJUSTES.autoGas === 'auto' && ENT.tactil);
   });

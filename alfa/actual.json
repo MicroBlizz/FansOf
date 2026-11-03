@@ -1,8 +1,8 @@
 {
- "build": 880,
- "hash": "fbb1754",
- "fecha": "2026-11-03T19:30:27Z",
- "mensaje": "Pets f16 paso 2: el muñeco se ajusta a la silueta del dibujo, zona por zona",
+ "build": 881,
+ "hash": "3e3a8c5",
+ "fecha": "2026-11-03T19:36:20Z",
+ "mensaje": "Karts: barras de Efectos y Música de core (OPCIONES.sonido + VOLUMEN), con su prueba",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",
@@ -11,7 +11,7 @@
   "decks": "0.2.22",
   "island": "0.3.5",
   "jump": "0.3.17",
-  "karts": "0.7.16",
+  "karts": "0.7.17",
   "nova": "0.3.41",
   "pets": "0.2.0",
   "ratkov": "0.2.30",

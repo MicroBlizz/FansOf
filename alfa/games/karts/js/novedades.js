@@ -3,6 +3,7 @@
 'use strict';
 const NEWS = [
   { v: '0.7.16', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor."], joke: ["Microblizz ha ordenado la salida y Phony ha adelantado a la cola entera."] },
+  { v: '0.7.17', real: ["<b>VOLUMEN POR SEPARADO</b>: en Opciones (y en la pausa del PvP) hay una barra para los efectos y otra para la música, las mismas que el resto de juegos."], joke: ["Microblizz ha bajado la música para oír a los rivales y Phony ha subido el motor para que no le oigan."] },
   { v: '0.7.15', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha dejado los anuncios en el garaje y Phony los ha puesto en el alerón por si acaso."] },
   { v: '0.7.14', real: ["<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando."], joke: ["Microblizz ha renombrado una pieza del motor y Phony ha jurado que no era él quien la llamaba CAJA."] },
   { v: '0.7.13', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos."], joke: ["Phony quería aparcar el kart con la garra. Microblizz le ha quitado los mandos."] },

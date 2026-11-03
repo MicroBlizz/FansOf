@@ -27,8 +27,8 @@ PT.maniqui = (() => {
         { hueso: 'cola', forma: 'palo', base: [205, 525], punta: [85, 365], grueso: 0.06, z: -0.08, curva: 0.25, panza: 1.6 },
       ],
       mechones: [   // los bigotitos de pelo de las mejillas, de dentro de la cabeza a su punta
-        { base: [175, 296], punta: [104, 328], grueso: 0.06 },
-        { base: [470, 288], punta: [538, 316], grueso: 0.06 },
+        { base: [190, 296], punta: [80, 336], grueso: 0.085 }, { base: [200, 330], punta: [112, 368], grueso: 0.06 },
+        { base: [455, 288], punta: [562, 326], grueso: 0.085 }, { base: [445, 322], punta: [530, 360], grueso: 0.06 },
       ],
     },
     'animales:bunny': {

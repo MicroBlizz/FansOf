@@ -1,8 +1,8 @@
 {
- "build": 902,
- "hash": "635be74",
- "fecha": "2026-11-03T23:51:06Z",
- "mensaje": "Versiones y notas del despliegue: boom 0.4.3, cooking 0.2.4, crush 0.1.41, decks 0.2.23, jump 0.3.18, pets 0.2.1, ratkov 0.2.31, rouflage 0.2.65, rumble 0.9.160, survivors 0.1.73, tacticas 0.1.57, taxi 0.2.3, td 0.13.89",
+ "build": 903,
+ "hash": "fad72e9",
+ "fecha": "2026-11-03T23:52:07Z",
+ "mensaje": "Air 0.2.0: la fase aérea desde la cabina y la de tierra isométrica de vuelo libre, como el original",
  "juegos": {
   "boom": "0.4.3",
   "cooking": "0.2.4",

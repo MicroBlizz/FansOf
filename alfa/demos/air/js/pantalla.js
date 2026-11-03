@@ -1,6 +1,6 @@
-// Fans of Air · Pantalla de juego: textos con la letra de píxeles, el HUD (retrato y escudo, objetivo de la fase, puntos, misiles o
-// bombas y la vida del jefe), los mandos táctiles (palanca donde pones el dedo y dos botones) y el aviso de girar el móvil.
-// Los menús (título, hangar y final) están en menu.js; las vistas del aire y de la tierra en vista-aire.js y vista-tierra.js.
+// Fans of Air · Pantalla de juego: textos con la letra de píxeles, el HUD de la fase de tierra (retrato y escudo, objetivos, puntos,
+// bombas y la brújula hacia el objetivo), los mandos táctiles (palanca donde pones el dedo y dos botones) y el aviso de girar el
+// móvil. En el aire el HUD es el panel de la cabina (cabina.js). Los menús están en menu.js; las vistas en vista-aire.js y vista-tierra.js.
 'use strict';
 var AIR = globalThis.AIR || (globalThis.AIR = {});
 (function (A) {
@@ -12,7 +12,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   function texto(g, t, x, y, tam, color, alin) {
     t = String(t).replace(/[ÁÉÍÓÚ]/g, (c) => SIN_TILDE[c]);
     g.font = F(tam); g.textAlign = alin || 'center'; g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
-    g.lineWidth = Math.max(4, tam / 3); g.strokeStyle = '#111'; g.strokeText(t, x, y);
+    g.lineWidth = Math.max(4, tam / 4.5); g.strokeStyle = '#111'; g.strokeText(t, x, y);
     g.fillStyle = color; g.fillText(t, x, y);
   }
   UI.texto = texto;
@@ -46,46 +46,57 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   function objetivo(g, e) {
     const AJ = e.aj;
     g.fillStyle = 'rgba(10,12,30,.7)'; g.fillRect(440, 10, 400, 54);
-    if (e.fase === 'aire' && e.aire.jefe) {
-      texto(g, tr('¡SURVIVALBOT!'), 640, 32, 12, '#ff5a3a');
-      barra(g, 470, 42, 340, 12, e.aire.jefe.vida / AJ.aire.jefe.vida, '#ff5a3a');
-    } else if (e.fase === 'aire' || e.fase === 'transicion') {
-      texto(g, tr('DESPEJA EL CIELO'), 640, 32, 11, '#ffe14a');
-      texto(g, tr('Derribos') + ' ' + Math.min(e.derribos, AJ.aire.derribos) + '/' + AJ.aire.derribos, 640, 54, 10, '#fff');
-    } else {
-      const torre = e.tierra.objetivos.find((o) => o.tipo === 'torre');
-      texto(g, tr('DESTRUYE LA TORRE DEL CEO'), 640, 32, 11, '#ffe14a');
-      if (torre && e.tierra.parado) barra(g, 470, 42, 340, 12, torre.vida / AJ.tierra.objetivos.torre.vida, '#ff5a3a');
-      else texto(g, tr('Objetivos') + ' ' + e.destruidos + '/' + AJ.tierra.mapa.length, 640, 54, 10, '#fff');
-    }
+    texto(g, tr('ARRASA LA BASE DE MICROBLIZZ'), 640, 32, 11, '#ffe14a');
+    texto(g, tr('Objetivos') + ' ' + e.destruidos + '/' + AJ.tierra.mapa.length, 640, 54, 10, '#fff');
   }
 
-  // Misiles (en el aire) o bombas (en tierra) que quedan, debajo del escudo; y la RABIA si hay combo.
+  // La brújula: una flecha hacia el objetivo primario más cercano, con su nombre y a cuánto está (como la del original).
+  const NOMBRE = { oficina: 'OFICINA', servidor: 'SERVIDOR', torre: 'TORRE DEL CEO' };
+  function brujula(g, e) {
+    const t = e.tierra, j = t.jugador, ob = A.tierra.objetivo(t, e.aj), cx = 52, cy = 176, R = 34;
+    g.fillStyle = '#111'; g.beginPath(); g.arc(cx, cy, R + 4, 0, 7); g.fill();
+    g.fillStyle = '#06200f'; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.fill();
+    g.strokeStyle = 'rgba(95,224,95,.4)'; g.lineWidth = 1; g.beginPath(); g.arc(cx, cy, R * 0.6, 0, 7); g.stroke();
+    if (!ob) { texto(g, tr('¡BASE ARRASADA!'), 96, 182, 9, '#5fe05f', 'left'); return; }
+    const ang = Math.atan2(ob.y - j.y, ob.x - j.x), d = Math.round(Math.hypot(ob.x - j.x, ob.y - j.y) / 10);
+    g.save(); g.translate(cx, cy); g.rotate(ang);
+    g.fillStyle = '#ffe14a'; g.strokeStyle = '#111'; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(R - 6, 0); g.lineTo(-12, -14); g.lineTo(-4, 0); g.lineTo(-12, 14); g.closePath(); g.fill(); g.stroke();
+    g.restore();
+    texto(g, tr('OBJETIVO') + ': ' + tr(NOMBRE[ob.tipo] || ob.tipo), 96, 170, 9, '#ffe14a', 'left');
+    texto(g, d + ' m', 96, 192, 9, '#fff', 'left');
+  }
+
   function municion(g, e) {
-    const enAire = e.fase !== 'tierra', n = enAire ? e.misiles : e.bombas, max = enAire ? e.caza.misiles : e.caza.bombas, y = 104;
-    texto(g, tr(enAire ? 'MISILES' : 'BOMBAS'), 92, y, 9, '#ccc', 'left');
+    const n = e.bombas, max = e.caza.bombas, y = 104;
+    texto(g, tr('BOMBAS'), 92, y, 9, '#ccc', 'left');
     for (let i = 0; i < max; i++) {
       const x = 190 + i * 18;
-      g.fillStyle = i < n ? (enAire ? '#9fe0ff' : '#ffe14a') : '#333'; g.strokeStyle = '#111'; g.lineWidth = 2;
-      g.beginPath();
-      if (enAire) { g.moveTo(x, y - 14); g.lineTo(x + 6, y + 2); g.lineTo(x - 6, y + 2); g.closePath(); }
-      else g.arc(x, y - 5, 7, 0, 7);
-      g.fill(); g.stroke();
+      g.fillStyle = i < n ? '#ffe14a' : '#333'; g.strokeStyle = '#111'; g.lineWidth = 2;
+      g.beginPath(); g.arc(x, y - 5, 7, 0, 7); g.fill(); g.stroke();
     }
     if (e.combo > 1) texto(g, tr('RABIA') + ' x' + e.combo, 92, y + 24, 9, '#ff8a2a', 'left');
   }
 
+  // El HUD de la fase de tierra; en el aire lo dibuja todo la cabina (cabina.js).
   UI.hud = function (g, e, img) {
+    if (e.fase !== 'tierra') return;
     escudo(g, e, img);
     objetivo(g, e);
     texto(g, tr('PUNTOS'), 1264, 30, 10, '#ccc', 'right');
     texto(g, String(e.puntos).padStart(6, '0'), 1264, 56, 14, '#ffe14a', 'right');
     municion(g, e);
+    brujula(g, e);
   };
 
   // Mandos táctiles: la palanca aparece donde apoyas el dedo (lado izquierdo); los botones, abajo a la derecha.
   UI.mandos = function (g, joy, e, tactil) {
-    if (!tactil) { texto(g, tr('Flechas o WASD mover · ESPACIO ametralladora · M o X misil / bomba'), 640, 712, 8, '#9aa4c8'); return; }
+    if (!tactil) {   // con teclado, las teclas en el hueco de los botones
+      const enAire = e.fase !== 'tierra', x = 1140, y0 = enAire ? 560 : 600;
+      texto(g, tr('FLECHAS / WASD'), x, y0, 8, '#9aa4c8'); texto(g, tr('ESPACIO: FUEGO'), x, y0 + 26, 8, '#9aa4c8');
+      texto(g, tr(enAire ? 'M: MISIL' : 'M: BOMBA'), x, y0 + 52, 8, '#9aa4c8');
+      return;
+    }
     if (joy.activo) {
       g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 3; g.beginPath(); g.arc(joy.ox, joy.oy, 70, 0, 7); g.stroke();
       g.fillStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.arc(joy.ox + joy.dx * 55, joy.oy + joy.dy * 55, 26, 0, 7); g.fill();

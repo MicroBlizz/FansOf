@@ -69,7 +69,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Air: sin vibración', err); } }
 
   // ---------- eventos del dominio -> efectos ----------
-  const enAire = (ev) => V.aire.pantalla(est.e, ev);
+  const enAire = (ev) => V.aire.pantalla(est.e, ev), enTierra = (ev) => V.tierra.pantalla(est.e, ev);
   const EFECTOS = {
     disparo: () => sonar('ametralladora', 0.25),
     misil: () => sonar('misil'),
@@ -79,17 +79,17 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     impacto: (ev) => { const p = enAire(ev); FX.chispas(p.x, p.y, p.s + 0.4); sonar('impacto', 0.3); },
     derribo: (ev) => { const p = enAire(ev); FX.explosion(p.x, p.y, 1 + p.s * 1.5); FX.temblor = 6; sonar('explosion', 0.6); if (ev.combo > 1) FX.cartel(tr('RABIA') + ' x' + ev.combo, '#ff8a2a', 0.7); },
     explosion: (ev) => { const p = enAire(ev); FX.explosion(p.x, p.y, (ev.grande ? 1.6 : 1) + p.s * 1.5, 22); FX.temblor = 8; sonar('explosion'); },
-    golpe: () => { FX.temblor = 14; est.flash = est.t; vibrar(40); sonar('impacto'); },
+    golpe: (ev) => { FX.temblor = 14; est.flash = est.t; vibrar(40); sonar('impacto'); if (est.e.fase === 'tierra') { const p = enTierra(ev); FX.chispas(p.x, p.y, 1.2, '#ff5a3a'); } },
     dano: (ev) => { if (ev.motivo === 'choque') { FX.temblor = 18; est.flash = est.t; vibrar(70); } },
     jefe: () => { FX.cartel(tr('¡SURVIVALBOT!'), '#ff5a3a', 2.2, tr('El robot de los despidos')); sonar('alarma'); },
     jefeDerribado: (ev) => { const p = enAire(ev); for (let i = 0; i < 4; i++) setTimeout(() => FX.explosion(p.x + (Math.random() - 0.5) * 120, p.y + (Math.random() - 0.5) * 80, 2.5, 28), i * 160); FX.temblor = 26; vibrar(120); sonar('explosion'); },
-    despejado: () => { FX.cartel(tr('¡CIELO DESPEJADO!'), '#5fe05f', 2.6, tr('Rumbo a la base de Microblizz')); sonar('fanfarria'); },
-    faseTierra: () => { FX.cartel(tr('ATAQUE A TIERRA'), '#ffe14a', 2.2, tr('Bombardea la Torre del CEO')); },
+    despejado: () => { FX.cartel(tr('¡LOS TENEMOS!'), '#5fe05f', 2.6, tr('Piloto automático: rumbo a la base de Microblizz')); sonar('fanfarria'); },
+    faseTierra: () => { V.tierra.reiniciar(); FX.cartel(tr('ATAQUE A TIERRA'), '#ffe14a', 2.4, tr('Sigue la flecha y arrasa la base')); },
     bomba: () => sonar('bomba'),
-    estallido: (ev) => { FX.explosion(ev.x, ev.y, ev.radio / 60, 26); FX.temblor = 12; vibrar(30); sonar('explosion'); },
-    impactoSuelo: (ev) => { FX.chispas(ev.x, ev.y, 1); sonar('impacto', 0.25); },
-    destruido: (ev) => { FX.explosion(ev.x, ev.y, ev.final ? 3 : 1.6, ev.final ? 40 : 18); FX.temblor = ev.final ? 30 : 8; sonar('explosion', 0.7); if (ev.final) FX.cartel(tr('¡LA TORRE HA CAÍDO!'), '#5fe05f', 2.2); },
-    torre: () => { FX.cartel(tr('¡LA TORRE DEL CEO!'), '#ff5a3a', 2, tr('Esquiva sus facturas y bombardéala')); sonar('alarma'); },
+    estallido: (ev) => { const p = enTierra(ev); FX.explosion(p.x, p.y, ev.radio / 60, 26); FX.temblor = 12; vibrar(30); sonar('explosion'); },
+    impactoSuelo: (ev) => { const p = enTierra(ev); FX.chispas(p.x, p.y, 1); sonar('impacto', 0.25); },
+    destruido: (ev) => { const p = enTierra(ev); FX.explosion(p.x, p.y, ev.final ? 3 : 1.6, ev.final ? 40 : 18); FX.temblor = ev.final ? 30 : 8; sonar('explosion', 0.7); if (ev.final) FX.cartel(tr('¡LA TORRE HA CAÍDO!'), '#5fe05f', 2.2); else if (ev.primario) FX.cartel(tr('¡OBJETIVO DESTRUIDO!'), '#5fe05f', 1.2); },
+    baseArrasada: () => { FX.cartel(tr('¡BASE ARRASADA!'), '#5fe05f', 2.2, tr('Misión cumplida: vuelta a La Madriguera')); },
     fin: (ev) => { est.record = ev.puntos > est.mejor; if (est.record) est.mejor = ev.puntos; guardar(); sonar(ev.como === 'cumplida' ? 'fanfarria' : 'error'); },
   };
 
@@ -159,7 +159,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   function empezar() {
     est.e = A.nuevaMision(A.AJ, { caza: est.sel.caza });
     Object.assign(est, { modo: 'juego', record: false, fuego: false, especial: false, acum: 0 });
-    FX.limpiar(); V.aire.golpes = {}; V.tierra.golpes = {};
+    FX.limpiar(); V.aire.golpes = {}; V.tierra.reiniciar();
     guardar(); sonar('toque');
     FX.cartel(tr('DESPEJA EL CIELO'), '#ffe14a', 2, tr('Derriba a la patrulla de Microblizz'));
   }
@@ -169,7 +169,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     A.paso(e, dt, orden(), Math.random);
     for (const ev of e.eventos) {
       if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev);
-      V.aire.evento(ev); V.tierra.evento(ev);
+      V.aire.evento(ev); V.tierra.evento(ev); A.cabina.evento(ev);
     }
     if (e.fin && e.finT > 0.9 && est.modo === 'juego') est.modo = 'final';
   }
@@ -198,15 +198,15 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     if (innerHeight > innerWidth * 1.1) { UI.girar(G); requestAnimationFrame(fotograma); return; }
     FX.paso(dt);
     if (est.modo === 'juego') { avanzar(dt); pintarMision(dt); }
-    else if (est.modo === 'final') { pintarMision(dt); UI.final(G, est.e, est.t, est.record); }
+    else if (est.modo === 'final') { UI.final(G, est.e, est.t, est.record, V.img); }
     else if (est.modo === 'hangar') UI.hangar(G, A.AJ, est.sel, V.img, est.t, est.mejor);
     else UI.titulo(G, est.t, V.img);
     requestAnimationFrame(fotograma);
   }
 
   function imagenes() {
-    const n = ['cielo', 'mapa', 'hangar', 'dron-becario', 'bombardero-caja', 'jefe-survivalbot'];
-    for (const c of A.AJ.cazas) n.push('caza-' + c.id, 'cenital-' + c.id, 'hangar-' + c.id, 'r-' + c.id);
+    const n = ['cielo', 'hangar', 'arbol', 'matorral', 'dron-becario', 'bombardero-caja', 'jefe-survivalbot'];
+    for (const c of A.AJ.cazas) n.push('cenital-' + c.id, 'hangar-' + c.id, 'r-' + c.id);
     for (const o of Object.keys(A.AJ.tierra.objetivos)) n.push('suelo-' + o);
     return n;
   }
@@ -214,7 +214,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     for (const n of nombres) {
       const im = new Image();
       im.onload = () => { V.img[n] = im; };
-      im.src = 'img/' + n + (/^(cielo|mapa|hangar)$/.test(n) ? '.jpg' : '.png');
+      im.src = 'img/' + n + (/^(cielo|hangar)$/.test(n) ? '.jpg' : '.png');
     }
   };
 

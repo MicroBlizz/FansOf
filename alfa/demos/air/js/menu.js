@@ -67,16 +67,19 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     return null;
   };
 
-  UI.final = function (g, e, t, record) {
+  UI.final = function (g, e, t, record, img) {
     const bien = e.fin === 'cumplida', AJ = e.aj;
-    g.fillStyle = 'rgba(10,12,30,.82)'; g.fillRect(0, 0, 1280, 720);
-    texto(g, tr(bien ? '¡MISIÓN CUMPLIDA!' : 'MISIÓN FALLIDA'), 640, 150, 40, bien ? '#5fe05f' : '#ff5a3a');
-    texto(g, tr(bien ? 'La Torre del CEO ha caído. Microblizz «replanteará su estrategia».' : 'Los becarios lo celebran con café. Vuelve a intentarlo.'), 640, 200, 10, '#fff');
-    const filas = [[tr('Derribos'), e.derribos], [tr('Objetivos destruidos'), e.destruidos + '/' + AJ.tierra.mapa.length],
+    if (img.hangar) g.drawImage(img.hangar, 0, 0, 1280, 720); else { g.fillStyle = '#2a1e12'; g.fillRect(0, 0, 1280, 720); }
+    g.fillStyle = 'rgba(10,12,30,.72)'; g.fillRect(0, 0, 1280, 720);
+    texto(g, tr(bien ? '¡MISIÓN CUMPLIDA!' : 'MISIÓN FALLIDA'), 640, 130, 40, bien ? '#5fe05f' : '#ff5a3a');
+    texto(g, tr(bien ? 'La base de Microblizz ha caído. El CEO «replanteará su estrategia».' : 'Los becarios lo celebran con café. Vuelve a intentarlo.'), 640, 180, 10, '#fff');
+    const primarios = AJ.tierra.mapa.filter((o) => AJ.tierra.objetivos[o.tipo].primario).length;
+    const filas = [[tr('Aviones derribados'), e.derribos], [tr('Objetivos bombardeados'), e.destruidos + '/' + AJ.tierra.mapa.length],
+      [tr('Objetivos primarios'), Math.min(primarios, e.tierra ? primarios - e.tierra.objetivos.filter((o) => AJ.tierra.objetivos[o.tipo].primario).length : 0) + '/' + primarios],
       [tr('Puntería'), Math.round((e.disparos ? e.aciertos / e.disparos : 0) * 100) + '%'], [tr('Bonus de escudo y puntería'), e.bonus || 0]];
-    filas.forEach(([n, v], k) => { texto(g, n, 560, 290 + k * 40, 12, '#ccc', 'right'); texto(g, v, 720, 290 + k * 40, 12, '#fff', 'left'); });
-    texto(g, tr('PUNTOS'), 560, 470, 16, '#ffe14a', 'right'); texto(g, e.puntos, 720, 470, 16, '#ffe14a', 'left');
-    if (record) texto(g, tr('¡NUEVO RÉCORD!'), 640, 530, 16, Math.floor(t * 4) % 2 ? '#fff' : '#ff8a2a');
-    if (e.finT > 1.2 && Math.floor(t * 2) % 2) texto(g, tr('Toca para volver al hangar'), 640, 620, 13, '#fff');
+    filas.forEach(([n, v], k) => { texto(g, n, 560, 270 + k * 40, 12, '#ccc', 'right'); texto(g, v, 720, 270 + k * 40, 12, '#fff', 'left'); });
+    texto(g, tr('PUNTOS'), 560, 490, 16, '#ffe14a', 'right'); texto(g, e.puntos, 720, 490, 16, '#ffe14a', 'left');
+    if (record) texto(g, tr('¡NUEVO RÉCORD!'), 640, 550, 16, Math.floor(t * 4) % 2 ? '#fff' : '#ff8a2a');
+    if (e.finT > 1.2 && Math.floor(t * 2) % 2) texto(g, tr('Toca para volver al hangar'), 640, 630, 13, '#fff');
   };
 })(AIR);

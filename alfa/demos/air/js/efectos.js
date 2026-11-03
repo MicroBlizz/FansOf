@@ -61,7 +61,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   FX.dibujarCarteles = function (g, texto) {
     for (const c of FX.carteles) {
       const queda = c.dura - c.t, k = c.t < 0.15 ? c.t / 0.15 : queda < 0.3 ? queda / 0.3 : 1;
-      g.save(); g.translate(640, 250); g.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k); g.globalAlpha = k;
+      g.save(); g.translate(640, 120); g.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k); g.globalAlpha = k;
       texto(g, c.texto, 0, 0, 34, c.color);
       if (c.sub) texto(g, c.sub, 0, 44, 13, '#fff');
       g.restore();

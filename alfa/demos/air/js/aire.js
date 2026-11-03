@@ -5,17 +5,16 @@
 'use strict';
 var AIR = globalThis.AIR || (globalThis.AIR = {});
 (function (A) {
-  const F = 420, ALTURA = 230, S500 = F / (F + 500);   // distancia focal del falso 3D (a z se ve a escala F / (F + z)) y
-  const AIRE = A.aire = {};                              // cuánto más abajo se ve lo que está a tu altura que lo lejano
+  const F = 420;   // distancia focal del falso 3D: lo que está a z se ve a escala F / (F + z)
+  const AIRE = A.aire = {};
 
-  // Mundo -> pantalla (respecto al punto de fuga): el mundo se desplaza al revés que el caza, como en las recreativas, y lo que
-  // está cerca (z pequeña) se ve más abajo, como si la cámara fuera detrás y por encima del caza.
+  // Mundo -> pantalla desde la cabina (como el original): la cámara es el caza, así que todo se ve respecto a su posición;
+  // el morro apunta al centro de la vista y ahí van las balas y la retícula.
   AIRE.proyectar = function (j, p) {
     const s = F / (F + Math.max(0, p.z));
-    return { sx: (p.x - j.x * 0.7) * s, sy: (p.y - j.y * 0.7) * s + ALTURA * (s - S500), s };
+    return { sx: (p.x - j.x) * s, sy: (p.y - j.y) * s, s };
   };
-  // Dónde se cruzan las balas a media distancia (z = 500): ahí va la retícula.
-  AIRE.reticula = (j) => ({ x: j.x * 0.3 * S500, y: j.y * 0.3 * S500 });
+  AIRE.reticula = () => ({ x: 0, y: 0 });
 
   AIRE.nueva = function () {
     return { jugador: { x: 0, y: 0, vx: 0, vy: 0, roll: 0 }, enemigos: [], balas: [], misiles: [], tiros: [],
@@ -52,7 +51,8 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     const j = a.jugador, B = e.aj.aire.bala;
     a.fuegoT -= dt;
     if (o.fuego && a.fuegoT <= 0) {
-      a.balas.push({ x: j.x, y: j.y, z: 10 });
+      a.lado = -(a.lado || 1);
+      a.balas.push({ x: j.x, y: j.y, z: 10, lado: a.lado });
       a.fuegoT = B.cada / (1 + e.caza.rabia * e.combo); e.disparos++;
       e.eventos.push({ tipo: 'disparo' });
     }
@@ -65,7 +65,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     if (e.misiles <= 0) { e.eventos.push({ tipo: 'sinMisiles' }); return; }
     const j = a.jugador, f = a.fijando, objetivo = f.fijado ? f.id : null;
     e.misiles--;
-    a.misiles.push({ x: j.x, y: j.y, z: 20, objetivo });
+    a.misiles.push({ x: j.x, y: j.y, z: 20, objetivo, lado: e.misiles % 2 ? 1 : -1 });
     e.eventos.push({ tipo: 'misil', fijado: objetivo !== null });
   }
 

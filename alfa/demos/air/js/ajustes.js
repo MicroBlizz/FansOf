@@ -32,13 +32,13 @@ AIR.AJ = Object.freeze({
     },
     jefe: { vida: 40, vel: 220, radio: 90, puntos: 2000, dispara: 0.9, rafaga: 3, z: 520, puntosGolpe: 20, tiro: 'carta' },
   },
-  // Fase 2, la tierra (vista cenital): el mapa baja a `scroll` píxeles por segundo; el jugador vuela libre por la pantalla
+  // Fase 2, la tierra (vista isométrica como el original): un mapa grande por el que el caza vuela libre sin pararse (es un
+  // reactor), virando hacia donde empujas la palanca; la flecha del HUD señala el objetivo primario más cercano
   tierra: {
-    ancho: 1280, alto: 720, scroll: 150, velBase: 380, radioJugador: 26,
-    bala: { vel: 900, cada: 0.12, dano: 1, radio: 10 },
-    bomba: { cae: 0.65, radio: 95, dano: 4, delante: 170 },   // tarda `cae` segundos en estallar, `delante` px por delante del caza
-    tiro: { vel: 300, radio: 12, dano: 8 },
-    choque: { dano: 15 },
+    ancho: 3200, alto: 2400, vel: 240, giro: 3.0, radioJugador: 26, margen: 60,
+    bala: { vel: 900, cada: 0.12, dano: 1, radio: 14, alcance: 650 },
+    bomba: { cae: 0.6, radio: 95, dano: 4, delante: 150 },    // tarda `cae` segundos en estallar, cae `delante` px por delante del caza
+    tiro: { vel: 300, radio: 12, dano: 8, alcance: 620, recorrido: 900 },   // las defensas disparan si estás a menos de `alcance`
     objetivos: {
       oficina:  { vida: 3, radio: 70, puntos: 300, dispara: 0, mueve: 0, primario: true },
       servidor: { vida: 2, radio: 60, puntos: 400, dispara: 0, mueve: 0, primario: true },
@@ -46,14 +46,15 @@ AIR.AJ = Object.freeze({
       tanque:   { vida: 2, radio: 40, puntos: 250, dispara: 2.4, mueve: 70, primario: false },
       torre:    { vida: 12, radio: 110, puntos: 5000, dispara: 1.1, mueve: 0, primario: true, final: true },
     },
-    // el mapa de la misión: y = a cuántos píxeles de avance está cada cosa (la torre al final para el jefe de la fase)
+    // las zonas de asfalto de la base (la vista las pinta grises) y dónde está cada cosa; los tanques patrullan por su zona
+    bases: [{ x: 300, y: 300, w: 700, h: 500 }, { x: 1900, y: 200, w: 900, h: 600 }, { x: 400, y: 1500, w: 800, h: 600 }, { x: 1800, y: 1400, w: 1100, h: 800 }],
     mapa: [
-      { tipo: 'torreta', x: 300, y: 500 }, { tipo: 'oficina', x: 900, y: 650 }, { tipo: 'tanque', x: 640, y: 900 },
-      { tipo: 'servidor', x: 260, y: 1150 }, { tipo: 'torreta', x: 1000, y: 1250 }, { tipo: 'oficina', x: 560, y: 1500 },
-      { tipo: 'tanque', x: 200, y: 1750 }, { tipo: 'torreta', x: 700, y: 1900 }, { tipo: 'servidor', x: 1020, y: 2050 },
-      { tipo: 'oficina', x: 380, y: 2300 }, { tipo: 'torreta', x: 880, y: 2450 }, { tipo: 'tanque', x: 640, y: 2650 },
-      { tipo: 'torre', x: 640, y: 3100 },
+      { tipo: 'oficina', x: 520, y: 620 }, { tipo: 'torreta', x: 380, y: 760 }, { tipo: 'tanque', x: 820, y: 400 },
+      { tipo: 'servidor', x: 2200, y: 420 }, { tipo: 'torreta', x: 2650, y: 300 }, { tipo: 'oficina', x: 2500, y: 650 }, { tipo: 'tanque', x: 2000, y: 700 },
+      { tipo: 'oficina', x: 700, y: 1750 }, { tipo: 'torreta', x: 1050, y: 1600 }, { tipo: 'servidor', x: 520, y: 1950 },
+      { tipo: 'torre', x: 2350, y: 1800 }, { tipo: 'torreta', x: 1950, y: 1550 }, { tipo: 'torreta', x: 2750, y: 2050 }, { tipo: 'tanque', x: 2300, y: 2150 }, { tipo: 'servidor', x: 2700, y: 1500 },
     ],
+    inicio: { x: 1100, y: 2250, rumbo: -Math.PI / 2 },   // donde empieza el caza (abajo, mirando arriba, con la base de la izquierda cerca)
   },
   puntos: { escudoRestante: 10, precision: 1500 },   // bonus final: por punto de escudo y por acertar
 });

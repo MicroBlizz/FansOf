@@ -1,8 +1,8 @@
 {
- "build": 860,
- "hash": "7268ac7",
- "fecha": "2026-11-03T00:19:47Z",
- "mensaje": "Rouflage: cargaDatosMapa, rayoMapa, talentosAvanza y talDronAvanza partidos; 24 tests escritos antes",
+ "build": 861,
+ "hash": "544462c",
+ "fecha": "2026-11-03T00:23:17Z",
+ "mensaje": "Pets: criaturas por piezas sin miedo (juntas con contorno, movilidad mínima, cara neutra del molde) e investigación de animación 2D",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

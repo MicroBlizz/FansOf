@@ -32,13 +32,14 @@ PT.figuras = (() => {
     const imgs = montaje.map(m => carga(carpeta(id, etapa) + m.archivo));
     return imgs.every(Boolean) ? imgs : null;
   }
-  // la cara viva encima de la cabeza: la boca y sobre ella los ojos del molde, en el marco medido en el dibujo
-  function pintaCara(ctx, id, etapa, c, que) {
+  // la cara viva encima de la cabeza: la boca y sobre ella los ojos del molde, en el marco medido en el dibujo. Siempre la neutra del
+  // molde: las personalidades (la cara de loco de CrazyBunny…) quedan aparcadas en las criaturas por piezas
+  function pintaCara(ctx, etapa, c, que) {
     const [mx, my, d] = c.marco;
     ctx.save();
     ctx.transform(...c.matriz);
     for (const zona of ['boca', 'ojos']) {
-      const p = PT.caras.pieza(id, etapa, zona, que[zona]) || PT.caras.pieza(id, etapa, zona, 'base'), img = p && carga(p.ruta);
+      const p = PT.caras.delMolde(etapa, zona, que[zona]) || PT.caras.delMolde(etapa, zona, 'base'), img = p && carga(p.ruta);
       if (img) ctx.drawImage(img, mx + p.c[0] * d, my + p.c[1] * d, p.c[2] * d, p.c[3] * d);
     }
     ctx.restore();
@@ -49,15 +50,15 @@ PT.figuras = (() => {
     const m = tiene(id, etapa) && mapa(id, etapa), g = PT.gestos.giros(gesto, t), mont = m && PT.figura.montar(m, g.ok ? g.valor : {});
     const imgs = mont && mont.ok && imagenes(id, etapa, mont.valor);
     if (!imgs) return false;
-    const { arriba, pies } = PT.figura.alto(m), k = PETS.figura.alto * lado / (pies - arriba), resp = Math.sin(t * 3) * 0.02;
+    const { arriba, pies } = PT.figura.alto(m), k = PETS.figura.alto * lado / (pies - arriba), resp = Math.sin(t * 2.4) * 0.008;   // respira: apenas sube y baja, sin aplastarse
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x, suelo, lado * 0.24, lado * 0.045, 0, 0, 7); ctx.fill();
-    ctx.translate(x, suelo); ctx.scale(k * (1 + resp), k * (1 - resp)); ctx.translate(-0.5, -pies);
+    ctx.translate(x, suelo); ctx.scale(k, k * (1 + resp)); ctx.translate(-0.5, -pies);
     mont.valor.forEach((p, i) => {
       ctx.save(); ctx.transform(...p.matriz); ctx.drawImage(imgs[i], ...p.caja); ctx.restore();
     });
     const c = PT.figura.cara(m, mont.valor);
-    if (c) pintaCara(ctx, id, etapa, c, PT.caras.eleccion(animador(id).cara(t, { cara: e.cara, dormida: e.dormida, triste: e.triste }), e));
+    if (c) pintaCara(ctx, etapa, c, PT.caras.eleccion(animador(id).cara(t, { cara: e.cara, dormida: e.dormida, triste: e.triste }), e));
     ctx.restore();
     return true;
   }

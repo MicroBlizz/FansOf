@@ -1,8 +1,8 @@
 {
- "build": 878,
- "hash": "473a799",
- "fecha": "2026-11-03T19:19:52Z",
- "mensaje": "Pets f16 paso 1: el muñeco 3D completo (una malla con piel, huesos y pesos) por código en Blender, en el visor 3D",
+ "build": 879,
+ "hash": "8040977",
+ "fecha": "2026-11-03T19:24:22Z",
+ "mensaje": "Tácticas: estilo de las filas de volumen de core con sus colores",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

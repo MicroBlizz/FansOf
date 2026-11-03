@@ -6,7 +6,7 @@
 // del maniquí (PT.maniqui3d.comun).
 'use strict';
 PT.muneco3d = (() => {
-  const CONTORNO = { color: '#2b1a14', grosor: 0.007 };   // el grosor, en unidades del mundo (la criatura mide algo más de 1)
+  const CONTORNO = { color: '#2b1a14', grosor: 0.011 };   // el grosor, en unidades del mundo (la criatura mide algo más de 1)
   const MONTAJES = {};
   const archivo = (id, edad) => `img/criaturas/${id.replace(':', '-')}/${edad}/muneco.glb`;
 

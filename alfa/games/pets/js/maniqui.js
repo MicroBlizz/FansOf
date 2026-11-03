@@ -7,7 +7,8 @@ PT.maniqui = (() => {
   // padre de cada hueso; el resto de piezas (corona, nudo) van en el hueso que digan
   const PADRE = { cadera: null, cuerpo: 'cadera', cabeza: 'cuerpo', 'oreja-1': 'cabeza', oreja1: 'cabeza', 'brazo-1': 'cuerpo', brazo1: 'cuerpo',
     'pierna-1': 'cadera', pierna1: 'cadera', cola: 'cadera' };
-  // cada pieza: hueso, forma ('bola' con centro c y radios r; 'palo' de la base a la punta, colgando o hacia arriba) y su color
+  // cada pieza: hueso, forma ('bola' con centro c y radios r; 'palo' de la base a la punta, colgando o hacia arriba) y su color; los adornos
+  // dicen qué son (adorno: 'corona', 'nudo'), para que el muñeco 3D completo les dé su forma
   const MEDIDAS = {
     'animales:huron': {
       dibujo: 'img/criaturas/animales-huron-nino-base.webp', k: 500, cx: 322, suelo: 590, cadera: 540, cuello: 410, color: '#9a6a40',
@@ -18,7 +19,7 @@ PT.maniqui = (() => {
         { hueso: 'cabeza', forma: 'bola', c: [322, 262], r: [0.425, 0.315, 0.3], z: 0.03, cara: true },
         { hueso: 'oreja-1', forma: 'bola', c: [180, 143], r: [0.115, 0.115, 0.06], z: -0.05 },
         { hueso: 'oreja1', forma: 'bola', c: [453, 133], r: [0.115, 0.115, 0.06], z: -0.05 },
-        { hueso: 'cabeza', forma: 'bola', c: [515, 230], r: [0.09, 0.07, 0.03], color: '#d0343c' },   // el nudo de la cinta
+        { hueso: 'cabeza', forma: 'bola', c: [515, 230], r: [0.09, 0.07, 0.03], color: '#d0343c', adorno: 'nudo' },   // el nudo de la cinta
         { hueso: 'brazo-1', forma: 'palo', base: [222, 425], punta: [180, 482], grueso: 0.05, z: 0.06 },
         { hueso: 'brazo1', forma: 'palo', base: [412, 415], punta: [477, 462], grueso: 0.05, z: 0.06 },
         { hueso: 'pierna-1', forma: 'bola', c: [240, 560], r: [0.075, 0.06, 0.07], z: 0.04 },
@@ -33,7 +34,7 @@ PT.maniqui = (() => {
       piezas: [
         { hueso: 'cuerpo', forma: 'bola', c: [317, 495], r: [0.25, 0.16, 0.19] },
         { hueso: 'cabeza', forma: 'bola', c: [318, 300], r: [0.425, 0.3, 0.3], z: 0.03, cara: true },
-        { hueso: 'cabeza', forma: 'bola', c: [306, 125], r: [0.12, 0.085, 0.05], color: '#ffe14a' },   // la corona
+        { hueso: 'cabeza', forma: 'bola', c: [306, 125], r: [0.12, 0.085, 0.05], color: '#ffe14a', adorno: 'corona' },   // la corona
         { hueso: 'oreja-1', forma: 'palo', base: [197, 175], punta: [167, 47], grueso: 0.075, z: -0.04, hueca: true },
         { hueso: 'oreja1', forma: 'palo', base: [405, 175], punta: [460, 47], grueso: 0.075, z: -0.04, hueca: true },
         { hueso: 'brazo-1', forma: 'palo', base: [200, 425], punta: [160, 462], grueso: 0.05, z: 0.06 },
@@ -65,7 +66,7 @@ PT.maniqui = (() => {
   // cada pieza lista para montar: en qué hueso va, su forma, su centro en el mundo y, si es un palo, su largo y su giro
   function piezas(m) {
     return m.piezas.map((p, i) => {
-      const base = { id: i + 1, hueso: p.hueso, forma: p.forma, color: p.color || m.color, cara: !!p.cara, hueca: !!p.hueca };
+      const base = { id: i + 1, hueso: p.hueso, forma: p.forma, color: p.color || m.color, cara: !!p.cara, hueca: !!p.hueca, adorno: p.adorno || null };
       if (p.forma === 'palo') { const q = palo(m, p.base, p.punta); return { ...base, pos: [...q.base, p.z || 0], largo: q.largo, giro: q.giro, grueso: p.grueso }; }
       return { ...base, pos: [...aMundo(m, p.c), p.z || 0], r: p.r };
     });

@@ -16,6 +16,7 @@ IDIOMA.add({
   "Privacidad y condiciones": "Privacy and terms",
   "VER LOS JUEGOS": "SEE THE GAMES",
   "Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.": "Microblizz has bought your favourite games to shut them down. Pick how to stop them.",
+  "Fans Of es una serie de juegos de humor gratis para el navegador y el móvil: estrategia, cartas, carreras y escondite contra Microblizz, la empresa que lo ha comprado todo.": "Fans Of is a series of free comedy games for your browser and phone: strategy, cards, racing and hide-and-seek against Microblizz, the company that bought everything.",
   "Cada juego es independiente: tiene su propia partida guardada y su propia versión.": "Each game is independent: it has its own save and its own version.",
   "LO COMÚN": "COMMON",
   "Privacidad": "Privacy",

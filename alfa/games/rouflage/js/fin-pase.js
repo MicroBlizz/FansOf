@@ -73,42 +73,50 @@ function finTramo() {
 }
 
 /* ---------- el bucle: las fases (espera, llena, fiesta, vacía, fin) y el dibujo ---------- */
-function finPaseFotograma(now) {
-  const F = FINP;
-  if (E('p-fin').hidden || !E('fin-pase') || E('fin-pase').hidden) { F.raf = 0; return; }
-  const dt = Math.min(0.05, (now - F.ultimo) / 1000); F.ultimo = now; F.t += dt;
-  // si el servidor contesta otra cosa, la meta cambia: se sigue hasta ahí (y si es menos, se pone directamente)
+// si el servidor contesta otra cosa, la meta cambia: se sigue hasta ahí (y si es menos, se pone directamente)
+function finPaseMeta(F) {
   const meta = finXpMeta();
-  if (meta !== F.meta) {
-    F.meta = meta; E('fp-xp').textContent = '+' + Math.max(0, meta - F.r.eco.xpA) + ' XP';
-    if (meta < F.v) { F.v = meta; F.nivel = finNivelDe(meta); F.seg = null; finPaseCuenta(); }
-    if (F.fase === 'fin') F.fase = 'llena';
-  }
+  if (meta === F.meta) return;
+  F.meta = meta; E('fp-xp').textContent = '+' + Math.max(0, meta - F.r.eco.xpA) + ' XP';
+  if (meta < F.v) { F.v = meta; F.nivel = finNivelDe(meta); F.seg = null; finPaseCuenta(); }
+  if (F.fase === 'fin') F.fase = 'llena';
+}
+// la fase de llenado: un tramo de la barra cada vez, y al acabarlo se sube de nivel si toca
+function finPaseLlena(F, dt) {
+  if (!F.seg) F.seg = finTramo();
+  if (!F.seg) { F.fase = 'fin'; return; }
+  const S = F.seg; S.t += dt; const k = Math.min(1, S.t / S.dur), e = 1 - Math.pow(1 - k, 3);
+  F.v = S.de + (S.a - S.de) * e; finPaseCuenta();
+  if (k < 1) return;
+  F.v = S.a; F.seg = null;
+  if (F.nivel < ECO.niveles && F.v >= F.nivel * ECO.xpNivel) finSubeNivel();
+}
+// cada fase tiene su paso: espera → llena → (fiesta → vacia → llena…) → fin
+function finPaseFase(F, dt) {
   if (F.fase === 'espera') { F.espera -= dt; if (F.espera <= 0) F.fase = 'llena'; }
-  else if (F.fase === 'llena') {
-    if (!F.seg) F.seg = finTramo();
-    if (!F.seg) F.fase = 'fin';
-    else {
-      const S = F.seg; S.t += dt; const k = Math.min(1, S.t / S.dur), e = 1 - Math.pow(1 - k, 3);
-      F.v = S.de + (S.a - S.de) * e; finPaseCuenta();
-      if (k >= 1) {
-        F.v = S.a; F.seg = null;
-        if (F.nivel < ECO.niveles && F.v >= F.nivel * ECO.xpNivel) finSubeNivel();
-      }
-    }
-  } else if (F.fase === 'fiesta') { F.fiesta -= dt; if (F.fiesta <= 0) { F.fase = 'vacia'; F.vacia = 0.4; } }
+  else if (F.fase === 'llena') finPaseLlena(F, dt);
+  else if (F.fase === 'fiesta') { F.fiesta -= dt; if (F.fiesta <= 0) { F.fase = 'vacia'; F.vacia = 0.4; } }
   else if (F.fase === 'vacia') {
     F.vacia -= dt;
     if (F.vacia <= 0) { F.nivel = Math.min(ECO.niveles, F.nivel + 1); F.burbujas = []; F.fase = 'llena'; finPaseCuenta(); }
   }
-  // las Gotas, contando hacia arriba a la vez que se llena
+}
+// las Gotas, contando hacia arriba a la vez que se llena
+function finPaseGotas(F, dt) {
   const g = F.r.eco.gotas;
-  if (g && F.fase !== 'espera' && F.gotasV < g) {
-    F.gotasV = Math.min(g, F.gotasV + Math.max(dt * g / 1.1, dt * 12));
-    E('fp-gotas').textContent = '+' + Math.floor(F.gotasV);
-    F.gotaT -= dt; if (F.gotaT <= 0 || F.gotasV >= g) { F.gotaT = 0.12; play('gota'); }
-    if (F.gotasV >= g) E('fp-gotas').parentNode.classList.add('lleno');
-  }
+  if (!(g && F.fase !== 'espera' && F.gotasV < g)) return;
+  F.gotasV = Math.min(g, F.gotasV + Math.max(dt * g / 1.1, dt * 12));
+  E('fp-gotas').textContent = '+' + Math.floor(F.gotasV);
+  F.gotaT -= dt; if (F.gotaT <= 0 || F.gotasV >= g) { F.gotaT = 0.12; play('gota'); }
+  if (F.gotasV >= g) E('fp-gotas').parentNode.classList.add('lleno');
+}
+function finPaseFotograma(now) {
+  const F = FINP;
+  if (E('p-fin').hidden || !E('fin-pase') || E('fin-pase').hidden) { F.raf = 0; return; }
+  const dt = Math.min(0.05, (now - F.ultimo) / 1000); F.ultimo = now; F.t += dt;
+  finPaseMeta(F);
+  finPaseFase(F, dt);
+  finPaseGotas(F, dt);
   finPaseDibuja(dt);
   F.raf = requestAnimationFrame(finPaseFotograma);
 }

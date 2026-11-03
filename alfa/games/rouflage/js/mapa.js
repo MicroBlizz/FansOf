@@ -204,10 +204,14 @@ function rayoMueble(x, y, dx, dy, max) {
   }
   return mejor;
 }
+// lo que falta para cruzar la primera línea de casilla (p: posición, c: casilla, d: dirección)
+const rayoPrimerCruce = (p, c, d) => (d ? (d > 0 ? (c + 1) * CEL - p : p - c * CEL) / Math.abs(d) : Infinity);
+// ¿cierra el paso en esta casilla libre la puerta, una barrera o un portazo?
+const rayoCierraCelda = (i, j) => (PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) || (BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) || portazoCelda(i, j);
 function rayoMapa(x, y, dx, dy, max) {
   let i = Math.floor(x / CEL), j = Math.floor(y / CEL);
   const si = dx > 0 ? 1 : -1, sj = dy > 0 ? 1 : -1, tdx = dx ? Math.abs(CEL / dx) : Infinity, tdy = dy ? Math.abs(CEL / dy) : Infinity;
-  let tx = dx ? (dx > 0 ? (i + 1) * CEL - x : x - i * CEL) / Math.abs(dx) : Infinity, ty = dy ? (dy > 0 ? (j + 1) * CEL - y : y - j * CEL) / Math.abs(dy) : Infinity;
+  let tx = rayoPrimerCruce(x, i, dx), ty = rayoPrimerCruce(y, j, dy);
   RAYO.cara = false;
   for (;;) {
     let t;
@@ -215,9 +219,7 @@ function rayoMapa(x, y, dx, dy, max) {
     if (t >= max) return max;
     const g = i < 0 || j < 0 || i >= MW || j >= MH ? VACIO : GRID[j * MW + i];
     if (g !== SUELO) { RAYO.cara = g === CARA; return t; }
-    if (PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) return t;
-    if (BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) return t;
-    if (portazoCelda(i, j)) return t;
+    if (rayoCierraCelda(i, j)) return t;
   }
 }
 function seVen(ax, ay, bx, by) {

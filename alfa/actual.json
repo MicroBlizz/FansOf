@@ -1,8 +1,8 @@
 {
- "build": 859,
- "hash": "00880a6",
- "fecha": "2026-11-03T00:08:39Z",
- "mensaje": "Rouflage: disparaJugador (26) partido en disparoAlcanza, disparoRozaAlQueCorre y disparoFalla; 9 tests escritos antes",
+ "build": 860,
+ "hash": "7268ac7",
+ "fecha": "2026-11-03T00:19:47Z",
+ "mensaje": "Rouflage: cargaDatosMapa, rayoMapa, talentosAvanza y talDronAvanza partidos; 24 tests escritos antes",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

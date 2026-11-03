@@ -39,9 +39,16 @@ function dibujaPortada() {
    OPCIONES de este juego (la música del menú, la versión e instalar son comunes: core/js/sistema/opciones.js)
    ========================================================= */
 const optOn = k => SAVE[k] !== false;   // números de daño, temblor y chat vienen activados
+// las barras Efectos y Música son de core (OPCIONES.sonido); subir los efectos con el sonido silenciado lo reactiva
+function pintaSonido() {
+  $('#opt-sonido').replaceChildren(OPCIONES.sonido({
+    efectos: [() => (SAVE.vol == null ? 1 : SAVE.vol), v => { SAVE.vol = v; if (v > 0 && SAVE.muted) { SAVE.muted = false; soundBtns(); } applyVolume(); saveGame(); }],
+    musica: [() => (SAVE.mus == null ? 0.5 : SAVE.mus), v => { SAVE.mus = v; applyVolume(); saveGame(); }],
+  }));
+}
 function openOptions() {
   show('scr-options'); updateWallets();
-  $('#opt-vol').value = Math.round((SAVE.vol == null ? 1 : SAVE.vol) * 100); $('#opt-mus').value = Math.round((SAVE.mus == null ? 0.5 : SAVE.mus) * 100);
+  pintaSonido();
   optButtons(); $('#save-code').value = '';
 }
 function optButtons() {
@@ -51,9 +58,6 @@ function optButtons() {
 }
 $('#btn-opts').onclick = () => { play('select'); openOptions(); };
 $('#btn-bib').onclick = () => { play('select'); updateWallets(); openBib(); };
-$('#opt-vol').oninput = e => { SAVE.vol = e.target.value / 100; if (SAVE.vol > 0 && SAVE.muted) { SAVE.muted = false; soundBtns(); } applyVolume(); saveGame(); };
-$('#opt-vol').onchange = () => play('select');
-$('#opt-mus').oninput = e => { SAVE.mus = e.target.value / 100; applyVolume(); saveGame(); };
 $('#btn-nums').onclick = () => { SAVE.nums = !optOn('nums'); saveGame(); play('select'); optButtons(); };
 $('#btn-shake').onclick = () => { SAVE.shake = !optOn('shake'); saveGame(); play('select'); optButtons(); };
 $('#btn-chat').onclick = () => { SAVE.chat = !optOn('chat'); saveGame(); play('select'); optButtons(); };

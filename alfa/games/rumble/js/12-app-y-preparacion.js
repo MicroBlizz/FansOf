@@ -5,7 +5,10 @@ $('#btn-play').addEventListener('click', startGame);
 $('#btn-camp').addEventListener('click', () => { play('select'); openCamp(); });
 $('#btn-quick').addEventListener('click', () => { play('select'); openPrep('quick'); });
 $('#btn-bossmode').addEventListener('click', () => { play('select'); openPrep('boss'); });
-$('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); $('#opt-vol').value = SAVE.vol == null ? 100 : SAVE.vol; $('#opt-mus').value = SAVE.mus == null ? 50 : SAVE.mus; botonPruebas($('#btn-test')); $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
+// las barras Efectos y Música son de core (OPCIONES.sonido); aquí SAVE.vol y SAVE.mus van de 0 a 100
+const barraSonido = (campo, defecto) => [() => (SAVE[campo] == null ? defecto : SAVE[campo]) / 100, v => { SAVE[campo] = Math.round(v * 100); applyVolume(); saveGame(); }];
+const pintaSonido = () => $('#opt-sonido').replaceChildren(OPCIONES.sonido({ efectos: barraSonido('vol', 100), musica: barraSonido('mus', 50) }));
+$('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); pintaSonido(); botonPruebas($('#btn-test')); $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
 $('#btn-share').addEventListener('click', () => { shareResult(); stat('share', 1); });
 $('#btn-share-close').addEventListener('click', () => { $('#scr-share').hidden = true; });
 // v0.9.17 probó un modo claro y uno pixel art; Daniel los descartó en la v0.9.18: el juego va siempre oscuro y sin pixelar
@@ -34,8 +37,6 @@ $('#btn-next').addEventListener('click', () => { const nx = nextLevel(G.level); 
 $('#btn-menu').addEventListener('click', toMenu);
 $('#btn-bib').addEventListener('click', () => { play('select'); updateWallets(); openBib(); });   // v0.9.31: la Biblioteca
 /* opciones */
-$('#opt-vol').addEventListener('input', e => { SAVE.vol = +e.target.value; applyVolume(); saveGame(); });
-$('#opt-mus').addEventListener('input', e => { SAVE.mus = +e.target.value; applyVolume(); saveGame(); });
 // v0.9.38: el modo pruebas es común (core/js/sistema/pruebas.js); aquí, lo de este juego: todas las facciones y las 3 campañas (Normal, Difícil y Mítica) con 3 estrellas
 hook('pruebas', () => {
   SAVE.unlocked = FACTION_ORDER.slice();

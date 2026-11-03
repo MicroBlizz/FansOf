@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
-<script src="../../core/js/nucleo.js?v=0.13.88-a875.6f45e33"></script>
+<script src="../../core/js/nucleo.js?v=0.13.88-a876.f425f32"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', 'css/td.css', '../../core/css/menus.css', '../../core/css/biblioteca.css')</script>
 </head>
 <body>
@@ -122,8 +122,7 @@
     <section id="scr-options" class="screen top" hidden>
       <div class="scr-head"><button class="icon-btn back" data-back="scr-title" aria-label="Volver"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 class="h2 ol">OPCIONES</h2><div class="wallet" data-wallet></div></div>
       <div class="opt-list">
-        <label class="opt-row"><span>Volumen</span><input type="range" id="opt-vol" min="0" max="100" step="5"></label>
-        <label class="opt-row"><span><b>Música</b><br>Al mínimo, se quita.</span><input type="range" id="opt-mus" min="0" max="100" step="5"></label>
+        <div id="opt-sonido" style="display:contents"></div>   <!-- las barras Efectos y Música (OPCIONES.sonido de core), las pone openOptions -->
         <div class="opt-row"><span><b>Música del menú</b><br>La canción que suena en la pantalla principal.</span><button class="btn-ghost ol" id="btn-menumus">ESPERA</button></div>
         <div class="opt-row"><span><b>Idioma / Language</b><br>Automático: el del navegador. Al cambiarlo se recarga la página.</span><span class="idioma-fl" id="idioma-banderas"></span></div>
         <div class="opt-row"><span><b>Números de daño</b><br>Si los quitas, solo verás bajar las barras de vida.</span><button class="btn-ghost ol" id="btn-nums">SÍ</button></div>

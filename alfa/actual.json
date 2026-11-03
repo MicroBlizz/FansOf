@@ -1,8 +1,8 @@
 {
- "build": 870,
- "hash": "ef618bf",
- "fecha": "2026-11-03T15:19:21Z",
- "mensaje": "Pets: visor 3D del maniquí, galería de recursos con marcas y fases, índice de fases",
+ "build": 871,
+ "hash": "cd074e3",
+ "fecha": "2026-11-03T17:51:47Z",
+ "mensaje": "Pop: volumen de efectos y música por separado con OPCIONES.volumen de core",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

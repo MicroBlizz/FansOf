@@ -2,7 +2,7 @@
 // los corazones, las monedas, los huecos comprados y el récord de estrellas de cada nivel.
 // El camino a medias se guarda en `run` (ppGuardaCamino en partida.js) y los tutoriales de Lola ya vistos en `tuto`.
 'use strict';
-const PP_NUEVA = () => ({ v: 1, record: 0, victorias: 0, partidas: 0, vistos: {}, estrellas: 0, muted: false, ayuda: false, tuto: {}, run: null, pixel: false,
+const PP_NUEVA = () => ({ v: 1, record: 0, victorias: 0, partidas: 0, vistos: {}, estrellas: 0, vol: 1, mus: 0.5, ayuda: false, tuto: {}, run: null, pixel: false,
   vidas: 5, vidaT: 0, monedas: 0, huecos: 0, huecosV: 2, mejor: {}, cofres: 0, dentro: false,
   perlas: 0, anuncioDia: '', anunciosHoy: 0,                                                    // fase 3: la moneda de pago y los anuncios del día (js/tienda.js)
   duelo: { gan: 0, per: 0, fallo: 0.45, dia: '', hoy: 0 },                                    // el duelo contra el CEO (js/duelo.js)
@@ -16,11 +16,11 @@ const SAVE = (() => {
   // 02-11-2026: el equipo pasa de 4 huecos de serie a 3. Quien ya jugaba antes se queda con el 4.º gratis (Daniel): un hueco comprado más
   if (s.huecosV === undefined) { s.huecos = (s.huecos || 0) + 1; s.huecosV = 2; }
   for (const k in n) if (s[k] === undefined) s[k] = n[k];
-  return s;
+  return PP_VOL.migra(s);
 })();
 function ppGuarda() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: se juega igual */ } if (typeof CUENTA !== 'undefined') CUENTA.cambio(); }
 // lo que pide el motor de sonido de core
-function sonidoApagado() { return !!SAVE.muted; }
-function volGeneral() { return SAVE.muted ? 0 : 1; }
-function volMusica() { return SAVE.muted ? 0 : 0.15; }
+function sonidoApagado() { return PP_VOL.apagado(SAVE); }
+function volGeneral() { return PP_VOL.general(SAVE); }
+function volMusica() { return PP_VOL.musica(SAVE); }
 function musicUpdate() { /* la música la elige ppMusica (js/sonidos.js) */ }

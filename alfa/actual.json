@@ -1,8 +1,8 @@
 {
- "build": 895,
- "hash": "78c1e14",
- "fecha": "2026-11-03T22:34:17Z",
- "mensaje": "Galería de Pets: la revisión 5 de la f16 (cola, 250b01f)",
+ "build": 896,
+ "hash": "e4efe64",
+ "fecha": "2026-11-03T22:39:28Z",
+ "mensaje": "Air: primer prototipo de Fans of Air (0.1.0), combate aéreo en dos fases",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

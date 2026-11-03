@@ -1,8 +1,8 @@
 {
- "build": 874,
- "hash": "52837bd",
- "fecha": "2026-11-03T18:26:11Z",
- "mensaje": "Volumen de efectos y música por separado en Boom, Cooking, Swipe, Asalto, Merge y Vikings; VOLUMEN pasa a core",
+ "build": 875,
+ "hash": "6f45e33",
+ "fecha": "2026-11-03T18:50:25Z",
+ "mensaje": "gestion: métricas de negocio, parte común y pestaña de Rouflage (SQL 109 sin aplicar)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

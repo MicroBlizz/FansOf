@@ -35,9 +35,7 @@ function nvNovedadesPendientes() { try { return NEWS.length && localStorage.getI
 function nvOpciones() {
   const c = nvVentana(tr('OPCIONES')), l = nvEl('opt-list');
   const fila = (titulo, texto, ctrl) => { const f = nvEl('opt-row'), s = nvEl('', undefined, 'span'); s.appendChild(nvEl('', titulo, 'b')); if (texto) { s.appendChild(document.createElement('br')); s.appendChild(document.createTextNode(texto)); } f.appendChild(s); if (ctrl) f.appendChild(ctrl); l.appendChild(f); return f; };
-  const barra = clave => { const r = document.createElement('input'); r.type = 'range'; r.min = 0; r.max = 100; r.value = Math.round(NV_SON[clave] * 100); r.oninput = () => { NV_SON[clave] = r.value / 100; nvSonGuarda(); }; return r; };
-  fila(tr('Música'), '', barra('mus'));
-  fila(tr('Efectos'), '', barra('vol'));
+  l.appendChild(OPCIONES.sonido({ efectos: [() => NV_SON.vol, v => { NV_SON.vol = v; nvSonGuarda(); }], musica: [() => NV_SON.mus, v => { NV_SON.mus = v; nvSonGuarda(); }] }));   // las barras Efectos y Música de core
   const mudo = nvEl('btn-ghost ol', '', 'button'), pintaMudo = () => { mudo.textContent = NV_SON.mudo ? tr('APAGADO') : tr('ENCENDIDO'); };
   mudo.onclick = () => { NV_SON.mudo = !NV_SON.mudo; nvSonGuarda(); pintaMudo(); }; pintaMudo();
   fila(tr('Sonido'), '', mudo);

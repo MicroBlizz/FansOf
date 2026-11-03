@@ -1,8 +1,8 @@
 {
- "build": 876,
- "hash": "f425f32",
- "fecha": "2026-11-03T19:09:39Z",
- "mensaje": "Rumble, TD y Survivors: barras de Efectos y Música de core (OPCIONES.sonido)",
+ "build": 877,
+ "hash": "86f380c",
+ "fecha": "2026-11-03T19:19:03Z",
+ "mensaje": "Tácticas, Nova y Decks: barras de Efectos y Música de core (OPCIONES.sonido)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

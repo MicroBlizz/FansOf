@@ -241,15 +241,14 @@ function comprobarDiario() {
    ========================================================= */
 function ajustesHtml() {
   const a = SAVE.ajustes;
-  return `<label class="ajuste" for="o-vol">Volumen <input type="range" id="o-vol" min="0" max="100" value="${a.vol}"></label>
-    <label class="ajuste" for="o-mus">Música <input type="range" id="o-mus" min="0" max="100" value="${a.mus}"></label>
+  return `<div id="o-sonido" class="opt-list"></div>
     <div class="ajuste">Combate <span class="seg" id="o-modo"><button aria-pressed="${a.espera}" data-v="1">Espera</button><button aria-pressed="${!a.espera}" data-v="0">Activo</button></span></div>
     <div class="ajuste">Velocidad <span class="seg" id="o-vel">${[1, 1.5, 2].map(v => `<button aria-pressed="${a.vel === v}" data-v="${v}">x${fmtV(v)}</button>`).join('')}</span></div>
     <p class="aviso-pago">Espera: el tiempo se para mientras eliges. Activo: los enemigos siguen atacando.</p>`;
 }
 function montarAjustes() {
-  $('#o-vol').oninput = e => { SAVE.ajustes.vol = +e.target.value; applyVolume(); guardar(); };
-  $('#o-mus').oninput = e => { SAVE.ajustes.mus = +e.target.value; applyVolume(); guardar(); };
+  const barra = campo => [() => SAVE.ajustes[campo] / 100, v => { SAVE.ajustes[campo] = Math.round(v * 100); applyVolume(); guardar(); }];   // las barras Efectos y Música son de core
+  $('#o-sonido').append(OPCIONES.sonido({ efectos: barra('vol'), musica: barra('mus') }));
   $('#o-modo').onclick = e => { const b = e.target.closest('button'); if (!b) return; SAVE.ajustes.espera = b.dataset.v === '1'; guardar(); for (const x of $('#o-modo').children) x.setAttribute('aria-pressed', x === b); };
   $('#o-vel').onclick = e => { const b = e.target.closest('button'); if (!b) return; SAVE.ajustes.vel = +b.dataset.v; guardar(); for (const x of $('#o-vel').children) x.setAttribute('aria-pressed', x === b); };
 }

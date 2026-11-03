@@ -115,25 +115,34 @@ function compraPremium() {
 const diasTemporada = () => Math.max(0, Math.ceil((new Date(KTEMP.fin + 'T23:59:59') - Date.now()) / 864e5));
 
 // ---------- al acabar una carrera (contra la máquina, contrarreloj o PvP): oro, XP y premios del nivel ----------
+// lo que paga una carrera: oro y experiencia según el puesto, las monedas recogidas, el modo y el nivel (sin tocar la partida)
+function pagoDeCarrera(yo, modo, dif, vip) {
+  const mult = modo.crono ? 1 : KECO.multNivel[dif] * (vip ? KECO.vipOro : 1);
+  const base = modo.crono ? KECO.oroCrono : KECO.oroPuesto[yo.puesto - 1] || 5;
+  const xp = modo.crono ? KECO.xpCrono : modo.pvp ? KECO.xpPvp : KECO.xpPuesto[yo.puesto - 1] || 25;
+  return { oro: Math.round((base + yo.monedas * KECO.oroMoneda) * mult), xp };
+}
+// quedar 1.º en una pista abre su espejo (si no lo tenías ya por ganar en CEO)
+function abreEspejoDePista(C, dif) {
+  if (!SAVE.espejo[C.def.id] && !SAVE.logros.espejo && dif < 2) { SAVE.espejo[C.def.id] = 1; avisaPremio('¡ESPEJO DESBLOQUEADO!', [{ ico: 'cos', txt: trf('%1: ya puedes correrla del revés. Elige ESPEJO al escoger pista.', tr(C.def.nombre)) }], '#22e3ff'); }
+  SAVE.espejo[C.def.id] = 1;
+}
+// los premios de ganar en cada nivel (no en el tutorial, ni en la contrarreloj, ni en el PvP)
+function premiosDeVictoria(C, dif) {
+  abreEspejoDePista(C, dif);
+  if (dif === 1) daCos('titulo-empleado');
+  if (dif !== 2) return;
+  daCos('titulo-ceo', '¡ERES CEO!');
+  if (!SAVE.logros.espejo) { SAVE.logros.espejo = 1; avisaPremio('¡MODO ESPEJO!', [{ ico: 'cos', txt: tr('Sede invertida: todas las pistas, del revés. Elígelo al escoger pista.') }], '#22e3ff'); }
+}
 function premiosCarrera() {
   const C = CARRERA; if (!C.resultado || C.premiada) return; C.premiada = true;
   const yo = C.resultado.find(r => r.jugador); if (!yo) return;
-  const dif = C.pvp ? 1 : nivelDif(), mult = C.crono ? 1 : KECO.multNivel[dif] * (SAVE.vip ? KECO.vipOro : 1);
-  const oro = Math.round(((C.crono ? KECO.oroCrono : KECO.oroPuesto[yo.puesto - 1] || 5) + yo.monedas * KECO.oroMoneda) * mult);
-  const xp = C.crono ? KECO.xpCrono : C.pvp ? KECO.xpPvp : KECO.xpPuesto[yo.puesto - 1] || 25;
+  const dif = C.pvp ? 1 : nivelDif();
+  const { oro, xp } = pagoDeCarrera(yo, C, dif, SAVE.vip);
   SAVE.oro += oro; C.gana = { oro, xp };
   darXp(xp);
-  // los premios de ganar en cada nivel (no en el tutorial, ni en la contrarreloj, ni en el PvP)
-  if (!C.pvp && !C.crono && !TUTO.activo && yo.puesto === 1) {
-    // quedar 1.º en una pista abre su espejo (si no lo tenías ya por ganar en CEO)
-    if (!SAVE.espejo[C.def.id] && !SAVE.logros.espejo && dif < 2) { SAVE.espejo[C.def.id] = 1; avisaPremio('¡ESPEJO DESBLOQUEADO!', [{ ico: 'cos', txt: trf('%1: ya puedes correrla del revés. Elige ESPEJO al escoger pista.', tr(C.def.nombre)) }], '#22e3ff'); }
-    SAVE.espejo[C.def.id] = 1;
-    if (dif === 1) daCos('titulo-empleado');
-    if (dif === 2) {
-      daCos('titulo-ceo', '¡ERES CEO!');
-      if (!SAVE.logros.espejo) { SAVE.logros.espejo = 1; avisaPremio('¡MODO ESPEJO!', [{ ico: 'cos', txt: tr('Sede invertida: todas las pistas, del revés. Elígelo al escoger pista.') }], '#22e3ff'); }
-    }
-  }
+  if (!C.pvp && !C.crono && !TUTO.activo && yo.puesto === 1) premiosDeVictoria(C, dif);
   guardaPartida();
 }
 // al ver el podio de una copa: oro según el puesto y, en nivel CEO, los premios ejecutivos

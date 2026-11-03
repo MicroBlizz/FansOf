@@ -263,14 +263,23 @@ function mueveKart(k, dt) {
 }
 
 // ---------- las chispas del derrape, el fuego del turbo y el polvo de la moqueta (solo cerca de la cámara) ----------
+function colorDeDerrape(k) { return k.nivel === 2 ? (Math.random() < 0.5 ? '#ff8a1f' : '#ffe14d') : k.nivel === 1 ? (Math.random() < 0.5 ? '#22e3ff' : '#e8fbff') : colorHumo(k); }
+function humoDeDerrape(k, ca, sa, rx, ry) {
+  if (!(k.derrape && Math.random() < 0.7)) return;
+  const col = colorDeDerrape(k);
+  chispa(rx, ry, 0.5, -ca * 20 + azar(-18, 18), -sa * 20 + azar(-18, 18), azar(20, 60), k.nivel ? 0.32 : 0.22, col, k.nivel ? 1.5 : 1.2, 200);
+}
+function chispasDeTurbo(k, ca, sa) {
+  if (Math.random() < 0.8) chispa(k.x - ca * 6, k.y - sa * 6, 2.6, -ca * 50 + azar(-12, 12), -sa * 50 + azar(-12, 12), azar(0, 30), 0.25, Math.random() < 0.5 ? '#ff8a1f' : '#ffe14d', 2.4, 60);
+}
+function polvoDelSuelo(k, sup, rx, ry) {
+  if ((sup === S_LENTO || sup === S_BARRO) && Math.abs(k.v) > 25 && Math.random() < 0.5) chispa(rx, ry, 0.5, azar(-14, 14), azar(-14, 14), azar(20, 45), 0.4, PISTA.def.polvo || '#c9c2b0', 2, 90);
+}
 function humos(k, sup, turbo) {
   const dx = k.x - CAM.x, dy = k.y - CAM.y;
   if (dx * dx + dy * dy > 62500 || k.z > 1) return;
   const ca = Math.cos(k.ang), sa = Math.sin(k.ang), lado = Math.random() < 0.5 ? -3.6 : 3.6, rx = k.x - ca * 5 - sa * lado, ry = k.y - sa * 5 + ca * lado;
-  if (k.derrape && Math.random() < 0.7) {
-    const col = k.nivel === 2 ? (Math.random() < 0.5 ? '#ff8a1f' : '#ffe14d') : k.nivel === 1 ? (Math.random() < 0.5 ? '#22e3ff' : '#e8fbff') : colorHumo(k);
-    chispa(rx, ry, 0.5, -ca * 20 + azar(-18, 18), -sa * 20 + azar(-18, 18), azar(20, 60), k.nivel ? 0.32 : 0.22, col, k.nivel ? 1.5 : 1.2, 200);
-  }
-  if (turbo && Math.random() < 0.8) chispa(k.x - ca * 6, k.y - sa * 6, 2.6, -ca * 50 + azar(-12, 12), -sa * 50 + azar(-12, 12), azar(0, 30), 0.25, Math.random() < 0.5 ? '#ff8a1f' : '#ffe14d', 2.4, 60);
-  if ((sup === S_LENTO || sup === S_BARRO) && Math.abs(k.v) > 25 && Math.random() < 0.5) chispa(rx, ry, 0.5, azar(-14, 14), azar(-14, 14), azar(20, 45), 0.4, PISTA.def.polvo || '#c9c2b0', 2, 90);
+  humoDeDerrape(k, ca, sa, rx, ry);
+  if (turbo) chispasDeTurbo(k, ca, sa);
+  polvoDelSuelo(k, sup, rx, ry);
 }

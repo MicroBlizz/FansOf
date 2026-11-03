@@ -14,63 +14,75 @@ let DPR_TOPE = 3, MEDIDA = { n: 0, t: 0 };      // el cuarto de vuelta que pone 
 const PASO = 1 / 60;
 const BOT = [];      // los botones para el dedo: { id, x, y, w, h, txt } en píxeles de la pantalla tal como se pinta
 
+// los bordes que tapa el móvil (la muesca, la barra de abajo): arriba, derecha, abajo, izquierda
+function bordesSeguros() {
+  const cs = getComputedStyle(document.getElementById('seguro'));
+  return [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].map(v => (parseFloat(v) || 0) * DPR);
+}
+// «Jugar en: horizontal» con el móvil de pie (o «vertical» con el móvil tumbado): se pinta girado y el móvil se coge del otro modo
+function giroDePantalla(dedos) {
+  const dePie = cv.height > cv.width * 1.1, tumbado = cv.width > cv.height * 1.1;
+  return !dedos ? 0 : AJUSTES.pantalla === 'horizontal' && dePie ? 90 : AJUSTES.pantalla === 'vertical' && tumbado ? (anguloSistema() === 270 ? 90 : 270) : 0;
+}
+function giraBordes(m) { return GIRADA === 90 ? [m[1], m[2], m[3], m[0]] : GIRADA === 270 ? [m[3], m[0], m[1], m[2]] : m; }
+// el juego, lo más grande que quepa; con un número entero de píxeles por punto si así no se pierde mucho sitio
+function escalaDelJuego(W, H, vertical, dedos) {
+  const e = Math.min(W / PW, (vertical && dedos ? H * 0.6 : H) / PH), entero = Math.floor(e);
+  return entero >= 1 && entero / e > 0.86 ? entero : e;
+}
 function ajusta() {
   DPR = Math.min(DPR_TOPE, window.devicePixelRatio || 1);
   const w = Math.max(160, window.innerWidth), h = Math.max(160, window.innerHeight);
   cv.width = Math.round(w * DPR); cv.height = Math.round(h * DPR); cv.style.width = w + 'px'; cv.style.height = h + 'px';
-  // los bordes que tapa el móvil (la muesca, la barra de abajo): arriba, derecha, abajo, izquierda
-  const cs = getComputedStyle(document.getElementById('seguro'));
-  let m = [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].map(v => (parseFloat(v) || 0) * DPR);
-  // «Jugar en: horizontal» con el móvil de pie (o «vertical» con el móvil tumbado): se pinta girado y el móvil se coge del otro modo
-  const dePie = cv.height > cv.width * 1.1, tumbado = cv.width > cv.height * 1.1, dedos = ENT.tactil;
-  GIRADA = !dedos ? 0 : AJUSTES.pantalla === 'horizontal' && dePie ? 90 : AJUSTES.pantalla === 'vertical' && tumbado ? (anguloSistema() === 270 ? 90 : 270) : 0;
-  if (GIRADA === 90) m = [m[1], m[2], m[3], m[0]]; else if (GIRADA === 270) m = [m[3], m[0], m[1], m[2]];
+  const dedos = ENT.tactil;
+  GIRADA = giroDePantalla(dedos);
+  const m = giraBordes(bordesSeguros());
   LW = GIRADA ? cv.height : cv.width; LH = GIRADA ? cv.width : cv.height;
   const W = LW - m[1] - m[3], H = LH - m[0] - m[2], vertical = H > W * 1.1, enCarrera = PANT.id === 'carrera' || PANT.id === 'carga';
-  // el juego, lo más grande que quepa; con un número entero de píxeles por punto si así no se pierde mucho sitio
-  let e = Math.min(W / PW, (vertical && dedos ? H * 0.6 : H) / PH);
-  const entero = Math.floor(e);
-  if (entero >= 1 && entero / e > 0.86) e = entero;
+  const e = escalaDelJuego(W, H, vertical, dedos);
   ESC = e;
   OX = Math.round(m[3] + (W - PW * e) / 2);
   // de pie y en carrera, el juego va arriba para dejar los pulgares abajo; en los menús, centrado
   OY = Math.round(m[0] + (vertical && dedos && enCarrera ? Math.min((H - PH * e) / 2, H * 0.12) : (H - PH * e) / 2));
   BOT.length = 0; HM = 0;
   if (!dedos) return;
-  if (vertical) {
-    // de pie: los botones, debajo del juego, en la zona de los pulgares
-    const oy = Math.round(m[0] + Math.min((H - PH * e) / 2, H * 0.12)), y0 = oy + PH * e, alto = LH - m[2] - y0, u = Math.min(W * 0.25, alto * 0.36), sep = u * 0.12;
-    const yB = Math.min(y0 + alto * 0.58, LH - m[2] - u * 1.15), x0 = m[3] + W * 0.035, x1 = m[3] + W * 0.965;
-    BOT.push({ id: 'izq', x: x0, y: yB, w: u, h: u, txt: '<' }, { id: 'der', x: x0 + u + sep, y: yB, w: u, h: u, txt: '>' });
-    BOT.push({ id: 'derrapa', x: x1 - u * 1.25, y: yB - u * 0.1, w: u * 1.25, h: u * 1.1, txt: 'DERRAPE' });
-    BOT.push({ id: 'usa', x: x1 - u * 1.25, y: yB - u * 0.1 - sep - u * 0.75, w: u * 1.25, h: u * 0.75, txt: 'OBJETO' });
-    BOT.push({ id: 'freno', x: x0, y: yB - sep - u * 0.6, w: u * 2 + sep, h: u * 0.6, txt: 'FRENO' });
-  } else {
-    // tumbado: a los lados del juego; si no caben, pisan un poco sus esquinas de abajo (y el marcador se aparta: HM)
-    const hueco = OX - m[3], x0 = m[3] + W * 0.008, x1 = m[3] + W * 0.992;
-    const u = Math.max(H * 0.2, Math.min(H * 0.3, (hueco + PW * e * 0.08 - W * 0.008) / 2.12)), sep = u * 0.12, yB = m[0] + H * 0.96 - u;
-    BOT.push({ id: 'izq', x: x0, y: yB, w: u, h: u, txt: '<' }, { id: 'der', x: x0 + u + sep, y: yB, w: u, h: u, txt: '>' });
-    BOT.push({ id: 'derrapa', x: x1 - u * 1.3, y: yB - u * 0.1, w: u * 1.3, h: u * 1.1, txt: 'DERRAPE' });
-    BOT.push({ id: 'usa', x: x1 - u * 1.3, y: yB - u * 0.1 - sep - u * 0.8, w: u * 1.3, h: u * 0.8, txt: 'OBJETO' });
-    BOT.push({ id: 'freno', x: x0, y: yB - sep - u * 0.55, w: u * 2 + sep, h: u * 0.55, txt: 'FRENO' });
-    HM = limita(Math.ceil((x0 + u * 2 + sep - OX) / e) + 2, 0, 44);
-  }
+  if (vertical) botonesDePie(m, W, H, e); else botonesTumbado(m, W, H, e);
   for (const b of BOT) { b.x = Math.round(b.x); b.y = Math.round(b.y); b.w = Math.round(b.w); b.h = Math.round(b.h); }
+}
+// de pie: los botones, debajo del juego, en la zona de los pulgares
+function botonesDePie(m, W, H, e) {
+  const oy = Math.round(m[0] + Math.min((H - PH * e) / 2, H * 0.12)), y0 = oy + PH * e, alto = LH - m[2] - y0, u = Math.min(W * 0.25, alto * 0.36), sep = u * 0.12;
+  const yB = Math.min(y0 + alto * 0.58, LH - m[2] - u * 1.15), x0 = m[3] + W * 0.035, x1 = m[3] + W * 0.965;
+  BOT.push({ id: 'izq', x: x0, y: yB, w: u, h: u, txt: '<' }, { id: 'der', x: x0 + u + sep, y: yB, w: u, h: u, txt: '>' });
+  BOT.push({ id: 'derrapa', x: x1 - u * 1.25, y: yB - u * 0.1, w: u * 1.25, h: u * 1.1, txt: 'DERRAPE' });
+  BOT.push({ id: 'usa', x: x1 - u * 1.25, y: yB - u * 0.1 - sep - u * 0.75, w: u * 1.25, h: u * 0.75, txt: 'OBJETO' });
+  BOT.push({ id: 'freno', x: x0, y: yB - sep - u * 0.6, w: u * 2 + sep, h: u * 0.6, txt: 'FRENO' });
+}
+// tumbado: a los lados del juego; si no caben, pisan un poco sus esquinas de abajo (y el marcador se aparta: HM)
+function botonesTumbado(m, W, H, e) {
+  const hueco = OX - m[3], x0 = m[3] + W * 0.008, x1 = m[3] + W * 0.992;
+  const u = Math.max(H * 0.2, Math.min(H * 0.3, (hueco + PW * e * 0.08 - W * 0.008) / 2.12)), sep = u * 0.12, yB = m[0] + H * 0.96 - u;
+  BOT.push({ id: 'izq', x: x0, y: yB, w: u, h: u, txt: '<' }, { id: 'der', x: x0 + u + sep, y: yB, w: u, h: u, txt: '>' });
+  BOT.push({ id: 'derrapa', x: x1 - u * 1.3, y: yB - u * 0.1, w: u * 1.3, h: u * 1.1, txt: 'DERRAPE' });
+  BOT.push({ id: 'usa', x: x1 - u * 1.3, y: yB - u * 0.1 - sep - u * 0.8, w: u * 1.3, h: u * 0.8, txt: 'OBJETO' });
+  BOT.push({ id: 'freno', x: x0, y: yB - sep - u * 0.55, w: u * 2 + sep, h: u * 0.55, txt: 'FRENO' });
+  HM = limita(Math.ceil((x0 + u * 2 + sep - OX) / e) + 2, 0, 44);
+}
+function botonApretado(b) { for (const v of DEDOS.values()) if (v === b.id) return true; return false; }
+function pintaUnBoton(b, g) {
+  const ap = botonApretado(b);
+  mc.fillStyle = '#1c1028'; mc.globalAlpha = 0.55; mc.fillRect(b.x + g, b.y, b.w - 2 * g, b.h); mc.fillRect(b.x, b.y + g, b.w, b.h - 2 * g);
+  mc.fillStyle = ap ? '#ffcb3d' : b.id === 'derrapa' ? '#ff8a1f' : b.id === 'usa' ? '#7c3aed' : '#4a2f72'; mc.globalAlpha = ap ? 0.85 : 0.5;
+  mc.fillRect(b.x + g, b.y + g, b.w - 2 * g, b.h - 2 * g);
+  mc.globalAlpha = 0.95;
+  const flecha = b.txt.length === 1, es = Math.max(1, Math.floor(flecha ? b.h / 16 : Math.min(b.h / 16, b.w / (anchoTexto(tr(b.txt)) + 8))));
+  escribeB(mc, tr(b.txt), Math.round(b.x + b.w / 2), Math.round(b.y + b.h / 2 - 3.5 * es), ap ? '#1c1028' : '#ffffff', ap ? '#fff3a0' : '#1c1028', 'centro', es);
+  mc.globalAlpha = 1;
 }
 function pintaBotones() {
   if (!ENT.tactil || PANT.id !== 'carrera' || PANT.pausa) return;
   const g = Math.max(2, Math.round(ESC * 0.75)), conGiro = inclLista();
-  for (const b of BOT) {
-    if (conGiro && (b.id === 'izq' || b.id === 'der')) continue;      // con el giroscopio no hacen falta las flechas
-    let ap = false; for (const v of DEDOS.values()) if (v === b.id) ap = true;
-    mc.fillStyle = '#1c1028'; mc.globalAlpha = 0.55; mc.fillRect(b.x + g, b.y, b.w - 2 * g, b.h); mc.fillRect(b.x, b.y + g, b.w, b.h - 2 * g);
-    mc.fillStyle = ap ? '#ffcb3d' : b.id === 'derrapa' ? '#ff8a1f' : b.id === 'usa' ? '#7c3aed' : '#4a2f72'; mc.globalAlpha = ap ? 0.85 : 0.5;
-    mc.fillRect(b.x + g, b.y + g, b.w - 2 * g, b.h - 2 * g);
-    mc.globalAlpha = 0.95;
-    const flecha = b.txt.length === 1, es = Math.max(1, Math.floor(flecha ? b.h / 16 : Math.min(b.h / 16, b.w / (anchoTexto(tr(b.txt)) + 8))));
-    escribeB(mc, tr(b.txt), Math.round(b.x + b.w / 2), Math.round(b.y + b.h / 2 - 3.5 * es), ap ? '#1c1028' : '#ffffff', ap ? '#fff3a0' : '#1c1028', 'centro', es);
-    mc.globalAlpha = 1;
-  }
+  for (const b of BOT) if (!(conGiro && (b.id === 'izq' || b.id === 'der'))) pintaUnBoton(b, g);      // con el giroscopio no hacen falta las flechas
 }
 
 // ---------- las fotos de los karts: se van haciendo en los ratos libres (menús), una foto cada vez para que el menú no dé tirones,
@@ -100,29 +112,28 @@ function precalienta(P) {
   for (const id of LISTA_OBJETOS) iconoDe(OBJETOS[id].fig);
 }
 
-function fotograma(ahora) {
-  const dt = Math.min(0.1, (ahora - ULTIMO) / 1000 || 0); ULTIMO = ahora; RELOJ += dt;
-  if (PANT.id === 'carrera' && !PANT.pausa && (DPR_TOPE > 1 || CAL === 2) && dt > 0) {
-    MEDIDA.n++; MEDIDA.t += dt;
-    if (MEDIDA.n >= 90) {
-      if (MEDIDA.t / MEDIDA.n > 1 / 50) {
-        if (CAL === 2) { ponCalidad(1); comenta('Tu móvil iba justo: imagen clásica por esta vez. La HD está en Opciones.'); }
-        else if (DPR > 1) { DPR_TOPE = Math.max(1, Math.floor(DPR) - 1); ajusta(); }
-      }
-      MEDIDA.n = 0; MEDIDA.t = 0;
-    }
+// vigila que la carrera vaya a 50 fotogramas por segundo; si no, baja la resolución (o la calidad HD)
+function vigilaRendimiento(dt) {
+  if (!(PANT.id === 'carrera' && !PANT.pausa && (DPR_TOPE > 1 || CAL === 2) && dt > 0)) return;
+  MEDIDA.n++; MEDIDA.t += dt;
+  if (MEDIDA.n < 90) return;
+  if (MEDIDA.t / MEDIDA.n > 1 / 50) {
+    if (CAL === 2) { ponCalidad(1); comenta('Tu móvil iba justo: imagen clásica por esta vez. La HD está en Opciones.'); }
+    else if (DPR > 1) { DPR_TOPE = Math.max(1, Math.floor(DPR) - 1); ajusta(); }
   }
-  mando(); inclVigila();
+  MEDIDA.n = 0; MEDIDA.t = 0;
+}
+// la lógica del fotograma: pasos fijos de la carrera, o las fotos de los karts en los menús
+function avanzaLogica(dt) {
   if (PANT.id === 'carrera' && (!PANT.pausa || CARRERA.pvp)) {     // en PvP la pausa no para la carrera (el rival sigue)
     ACUM += dt;
     let n = 0;
     while (ACUM >= PASO) { pasoCarrera(PASO); ACUM -= PASO; if (++n >= 5) { ACUM = 0; break; } }
     if ((COLA_FOTOS.length || FOTO_EN_CURSO) && dt < 1 / 40) haceFotos(2);      // las fotos grandes de la HD que se vayan pidiendo, poco a poco
   } else { PULSOS.salta = false; PULSOS.usa = false; if (PANT.id !== 'carga') haceFotos(5); }
-  pintaPantalla(dt);
-  vigilaMusica();
-  motorSuena(CARRERA.jugador, PANT.id === 'carrera' && (!PANT.pausa || !!CARRERA.pvp));
-  // a la pantalla de verdad (girada un cuarto de vuelta si toca)
+}
+// a la pantalla de verdad (girada un cuarto de vuelta si toca)
+function volcadoAPantalla() {
   if (GIRADA === 90) mc.setTransform(0, 1, -1, 0, cv.width, 0); else if (GIRADA === 270) mc.setTransform(0, -1, 1, 0, 0, cv.height); else mc.setTransform(1, 0, 0, 1, 0, 0);
   mc.fillStyle = '#150b21'; mc.fillRect(0, 0, LW, LH);
   const w = Math.round(PW * ESC), h = Math.round(PH * ESC), g = Math.max(2, Math.round(ESC));
@@ -132,6 +143,16 @@ function fotograma(ahora) {
   mc.drawImage(LU, OX, OY, w, h);
   pintaBotones();
   giraCapa();      // las pantallas en HTML giran con el juego (capa-girada.js)
+}
+function fotograma(ahora) {
+  const dt = Math.min(0.1, (ahora - ULTIMO) / 1000 || 0); ULTIMO = ahora; RELOJ += dt;
+  vigilaRendimiento(dt);
+  mando(); inclVigila();
+  avanzaLogica(dt);
+  pintaPantalla(dt);
+  vigilaMusica();
+  motorSuena(CARRERA.jugador, PANT.id === 'carrera' && (!PANT.pausa || !!CARRERA.pvp));
+  volcadoAPantalla();
   requestAnimationFrame(fotograma);
 }
 

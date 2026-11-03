@@ -1,8 +1,8 @@
 {
- "build": 887,
- "hash": "e37a269",
- "fecha": "2026-11-03T20:47:48Z",
- "mensaje": "Karts: partir las funciones más complejas bajo la guardia (33 pistas iguales) y quitar los parches encadenados de golpea y pvpRecibir",
+ "build": 888,
+ "hash": "1568563",
+ "fecha": "2026-11-03T20:58:55Z",
+ "mensaje": "Karts: marcador, bucle, diseño táctil, mandos, resultados, opciones y economía en funciones pequeñas; guardias nuevas de menús y de diseño táctil",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

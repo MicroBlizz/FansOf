@@ -23,18 +23,26 @@ function boton(txt, x, y, w, accion, h = 14, color = '#ffcb3d', directa = null) 
   escribe(lx, tr(txt), x + (w >> 1), y + ((h - 7) >> 1), foco ? '#1c1028' : '#ffffff', foco ? null : '#1c1028', 'centro');
 }
 // después de pintar: ¿se ha tocado algún botón o se ha pulsado una tecla de menú?
+// un toque: pulsa el botón que haya debajo
+function toqueEnBotones(n) {
+  const { x, y } = UI.toque;
+  for (let i = 0; i < n; i++) {
+    const a = PANT.rects[i * 4], b = PANT.rects[i * 4 + 1];
+    if (x >= a - 1 && x < a + PANT.rects[i * 4 + 2] + 1 && y >= b - 1 && y < b + PANT.rects[i * 4 + 3] + 1) { PANT.foco = i; play('select'); PANT.acciones[i](); return; }
+  }
+}
+// una tecla de menú: mueve el foco, acepta o vuelve
+function teclaEnBotones(n) {
+  const t = UI.tecla;
+  if (t === 'izq' || t === 'arr') { PANT.foco = (PANT.foco - 1 + n) % n; play('tick'); }
+  else if (t === 'der' || t === 'aba') { PANT.foco = (PANT.foco + 1) % n; play('tick'); }
+  else if (t === 'ok') { const i = Math.min(PANT.foco, n - 1); play('select'); (PANT.directas[i] || PANT.acciones[i])(); }
+  else if (t === 'atras' && PANT.atras) { play('tick'); PANT.atras(); }
+}
 function atiendeBotones() {
   const n = PANT.acciones.length;
-  if (UI.toque) {
-    const { x, y } = UI.toque;
-    for (let i = 0; i < n; i++) { const a = PANT.rects[i * 4], b = PANT.rects[i * 4 + 1]; if (x >= a - 1 && x < a + PANT.rects[i * 4 + 2] + 1 && y >= b - 1 && y < b + PANT.rects[i * 4 + 3] + 1) { PANT.foco = i; play('select'); PANT.acciones[i](); break; } }
-  } else if (UI.tecla && n) {
-    const t = UI.tecla;
-    if (t === 'izq' || t === 'arr') { PANT.foco = (PANT.foco - 1 + n) % n; play('tick'); }
-    else if (t === 'der' || t === 'aba') { PANT.foco = (PANT.foco + 1) % n; play('tick'); }
-    else if (t === 'ok') { const i = Math.min(PANT.foco, n - 1); play('select'); (PANT.directas[i] || PANT.acciones[i])(); }
-    else if (t === 'atras' && PANT.atras) { play('tick'); PANT.atras(); }
-  }
+  if (UI.toque) toqueEnBotones(n);
+  else if (UI.tecla && n) teclaEnBotones(n);
   UI.toque = null; UI.tecla = null;
 }
 function velo(a = 0.55) { lx.fillStyle = 'rgba(20,10,34,' + a + ')'; lx.fillRect(0, 0, PW, PH); }
@@ -163,39 +171,45 @@ const FRASES_PUESTO = [
 function abreResultados() { if (COPA.activa && !CARRERA.pvp) copaSuma(); cierraCrono(); premiosCarrera(); ve('resultado'); PANT.foco = 0; }
 // repetir la carrera de la copa desde la salida (gratis): se quitan los puntos que acaba de dar
 function repiteDeCopa() { for (const id in COPA.ultimos) COPA.puntos[id] -= COPA.ultimos[id]; COPA.ultimos = {}; COPA.sumada = -1; empiezaCarga(); }
-function pantallaResultado() {
-  const C = CARRERA, R = C.resultado, yo = R.find(r => r.jugador), gana = R[0];
-  if (C.crono) { pantallaCrono(); return; }
-  paseo(20, 34); velo(0.66);
-  escribeB(lx, tr(yo.puesto === 1 ? '¡HAS GANADO!' : yo.puesto <= 3 && (!C.pvp || R.length >= 3) ? '¡PODIO!' : 'RESULTADOS'), PW / 2, 4, '#ffcb3d', '#1c1028', 'centro', 2);
-  marco(4, 22, 134, 96);
-  R.forEach((r, i) => {
-    const y = 27 + i * 11;
-    if (r.jugador) { lx.fillStyle = '#4a2f72'; lx.fillRect(6, y - 2, 130, 11); if (SAVE.vip) { lx.strokeStyle = '#ffcb3d'; lx.strokeRect(6.5, y - 1.5, 129, 10); } }
-    escribe(lx, puestoTxt(r.puesto), 9, y, COLOR_PUESTO[i], '#1c1028');
-    lx.fillStyle = r.piloto.color; lx.fillRect(31, y + 1, 4, 5);
-    escribe(lx, r.nombre || tr(r.piloto.nombre), 38, y, r.jugador ? '#ffffff' : '#d8d2ea', '#1c1028');
-    mini(lx, r.ido ? tr('SE FUE') : r.tiempo ? tiempoTxt(r.tiempo) : '--:--', 134, y + 1, r.jugador ? '#ffe9a8' : '#bdb6d6', null, 'der');
-  });
-  marco(142, 22, 94, 96);
-  figuraDe(gana.piloto.id).pinta(lx, 189, 68, BASE_KART * 0.774, BASE_KART, RELOJ * 1.4);
-  escribeLineas(lx, '«' + tr(gana.piloto.gana) + '»', 189, 74, 88, '#ffe9a8', null, 'centro', 9);
-  const nl = escribeLineas(lx, tr(C.pvp ? FRASES_PUESTO[yo.puesto === 1 ? 0 : yo.puesto === R.length ? 7 : yo.puesto <= 3 ? 1 : 3] : FRASES_PUESTO[yo.puesto - 1]), PW / 2, 120, 232, '#ffffff', '#1c1028', 'centro', 9);
-  const com = Math.max(0, yo.monedas - 1);
-  if (C.pvp) pvpResultadoExtra();
-  if (C.gana) mini(lx, trf('+%1 ORO · +%2 XP DE PASE', C.gana.oro, C.gana.xp) + (C.pvp ? '' : ' · ' + trf('COMISIÓN DE MICROBLIZZ: %1', com)), PW / 2, nl < 2 ? 133 : 137, '#bdb6d6', '#1c1028', 'centro');
-  if (C.pvp) {
-    pvpBotonesResultado();      // otra carrera, la copa online o salir (pvp-copa.js)
-  } else if (COPA.activa) {
+function tituloDeResultado(C, R, yo) { return tr(yo.puesto === 1 ? '¡HAS GANADO!' : yo.puesto <= 3 && (!C.pvp || R.length >= 3) ? '¡PODIO!' : 'RESULTADOS'); }
+function filaDeResultado(r, i) {
+  const y = 27 + i * 11;
+  if (r.jugador) { lx.fillStyle = '#4a2f72'; lx.fillRect(6, y - 2, 130, 11); if (SAVE.vip) { lx.strokeStyle = '#ffcb3d'; lx.strokeRect(6.5, y - 1.5, 129, 10); } }
+  escribe(lx, puestoTxt(r.puesto), 9, y, COLOR_PUESTO[i], '#1c1028');
+  lx.fillStyle = r.piloto.color; lx.fillRect(31, y + 1, 4, 5);
+  escribe(lx, r.nombre || tr(r.piloto.nombre), 38, y, r.jugador ? '#ffffff' : '#d8d2ea', '#1c1028');
+  mini(lx, r.ido ? tr('SE FUE') : r.tiempo ? tiempoTxt(r.tiempo) : '--:--', 134, y + 1, r.jugador ? '#ffe9a8' : '#bdb6d6', null, 'der');
+}
+// la frase de debajo según el puesto (en PvP: ganar, último, podio u otro)
+function fraseDeResultado(C, R, yo) { return FRASES_PUESTO[C.pvp ? (yo.puesto === 1 ? 0 : yo.puesto === R.length ? 7 : yo.puesto <= 3 ? 1 : 3) : yo.puesto - 1]; }
+function botonesDeResultado(C, yo) {
+  if (C.pvp) { pvpBotonesResultado(); return; }      // otra carrera, la copa online o salir (pvp-copa.js)
+  if (COPA.activa) {
     boton('ABANDONAR', 4, 144, 72, () => { copaFin(); musica('menu'); ve('mundo'); }, 13, '#ff5c8a');
     boton('REINTENTAR', 80, 144, 72, repiteDeCopa, 13, '#22e3ff');
     boton('CLASIFICACIÓN', 156, 144, 80, () => { musica('menu'); ve('copa'); }, 13, '#5ef27a');
     if (PANT.foco === 0 && yo.puesto > 3 && PANT.t < 0.05) PANT.foco = 1;
-  } else {
-    boton(yo.puesto > 3 ? 'REINTENTAR' : 'OTRA VEZ', 4, 144, 74, () => empiezaCarga(), 13, yo.puesto > 3 ? '#22e3ff' : '#ffcb3d');
-    boton('OTRA PISTA', 83, 144, 74, () => { musica('menu'); ve(TUTO.activo ? 'mundo' : 'pista'); }, 13);
-    boton('MENÚ', 162, 144, 74, () => { musica('menu'); ve('titulo'); }, 13);
+    return;
   }
+  boton(yo.puesto > 3 ? 'REINTENTAR' : 'OTRA VEZ', 4, 144, 74, () => empiezaCarga(), 13, yo.puesto > 3 ? '#22e3ff' : '#ffcb3d');
+  boton('OTRA PISTA', 83, 144, 74, () => { musica('menu'); ve(TUTO.activo ? 'mundo' : 'pista'); }, 13);
+  boton('MENÚ', 162, 144, 74, () => { musica('menu'); ve('titulo'); }, 13);
+}
+function pantallaResultado() {
+  const C = CARRERA, R = C.resultado, yo = R.find(r => r.jugador), gana = R[0];
+  if (C.crono) { pantallaCrono(); return; }
+  paseo(20, 34); velo(0.66);
+  escribeB(lx, tituloDeResultado(C, R, yo), PW / 2, 4, '#ffcb3d', '#1c1028', 'centro', 2);
+  marco(4, 22, 134, 96);
+  R.forEach(filaDeResultado);
+  marco(142, 22, 94, 96);
+  figuraDe(gana.piloto.id).pinta(lx, 189, 68, BASE_KART * 0.774, BASE_KART, RELOJ * 1.4);
+  escribeLineas(lx, '«' + tr(gana.piloto.gana) + '»', 189, 74, 88, '#ffe9a8', null, 'centro', 9);
+  const nl = escribeLineas(lx, tr(fraseDeResultado(C, R, yo)), PW / 2, 120, 232, '#ffffff', '#1c1028', 'centro', 9);
+  const com = Math.max(0, yo.monedas - 1);
+  if (C.pvp) pvpResultadoExtra();
+  if (C.gana) mini(lx, trf('+%1 ORO · +%2 XP DE PASE', C.gana.oro, C.gana.xp) + (C.pvp ? '' : ' · ' + trf('COMISIÓN DE MICROBLIZZ: %1', com)), PW / 2, nl < 2 ? 133 : 137, '#bdb6d6', '#1c1028', 'centro');
+  botonesDeResultado(C, yo);
   PANT.atras = null;
 }
 
@@ -226,6 +240,13 @@ function cambiaCalidad() {
   AJUSTES.calidad = AJUSTES.calidad === 'clasica' ? 'hd' : 'clasica'; guardaAjustes(); ponCalidad(AJUSTES.calidad === 'clasica' ? 1 : 2);
   PANT.nota = CAL === 2 ? 'Imagen HD: el doble de puntos. Gasta más batería; si tu móvil no puede, vuelve sola a la clásica.' : 'Imagen clásica: como una consola portátil de 2001. Gasta mucho menos.';
 }
+function cambiaNivel() { AJUSTES.dificultad = (AJUSTES.dificultad + 1) % 3; guardaAjustes(); }
+function cambiaAutoGas() {
+  AJUSTES.autoGas = AJUSTES.autoGas === 'auto' ? 'si' : AJUSTES.autoGas === 'si' ? 'no' : 'auto'; guardaAjustes(); ENT.autoGas = AJUSTES.autoGas === 'si' || (AJUSTES.autoGas === 'auto' && ENT.tactil);
+}
+function textoAutoGas() { return AJUSTES.autoGas === 'si' ? 'ACELERA SOLO: SÍ' : AJUSTES.autoGas === 'no' ? 'ACELERA SOLO: NO' : 'ACELERA SOLO: AUTO'; }
+function textoGiroscopio() { return !AJUSTES.giro ? 'GIROSCOPIO: NO' : INCL.estado === 'si' ? 'GIROSCOPIO: SÍ' : INCL.estado === 'pide' || INCL.estado === 'no' ? 'GIROSCOPIO: …' : 'GIROSCOPIO: NO VA'; }
+function textoJugarEn() { return trf('JUGAR EN: %1', tr(AJUSTES.pantalla === 'horizontal' ? 'HORIZONTAL' : AJUSTES.pantalla === 'vertical' ? 'VERTICAL' : 'AUTO')); }
 function pantallaOpciones() {
   paseo(18, 34); velo(0.66); marco(4, 4, 232, 152);
   escribeB(lx, tr('OPCIONES'), 10, 9, '#ffcb3d', '#1c1028');
@@ -233,15 +254,13 @@ function pantallaOpciones() {
   if (CUENTA.activa) boton(CUENTA.invitado ? 'CUENTA: GUARDAR' : 'CUENTA', 74, 6, 94, abreCuenta, 13);   // la cuenta de la serie (js/cuenta.js)
   const A = 8, B = 128, w = 116, w2 = 104;      // dos columnas: la de la izquierda, algo más ancha (lleva los textos largos)
   boton(IDIOMA_K === 'es' ? 'IDIOMA: ESPAÑOL' : 'LANGUAGE: ENGLISH', A, 24, w, () => ponIdioma(IDIOMA_K === 'es' ? 'en' : 'es'));
-  boton(trf('NIVEL: %1', tr(dificultad().nombre)), B, 24, w2, () => { AJUSTES.dificultad = (AJUSTES.dificultad + 1) % 3; guardaAjustes(); });
+  boton(trf('NIVEL: %1', tr(dificultad().nombre)), B, 24, w2, cambiaNivel);
   boton('SONIDO Y MÚSICA', A, 41, w + w2 - 4, abreSonido);
-  boton(AJUSTES.autoGas === 'si' ? 'ACELERA SOLO: SÍ' : AJUSTES.autoGas === 'no' ? 'ACELERA SOLO: NO' : 'ACELERA SOLO: AUTO', A, 58, w, () => {
-    AJUSTES.autoGas = AJUSTES.autoGas === 'auto' ? 'si' : AJUSTES.autoGas === 'si' ? 'no' : 'auto'; guardaAjustes(); ENT.autoGas = AJUSTES.autoGas === 'si' || (AJUSTES.autoGas === 'auto' && ENT.tactil);
-  });
-  boton(!AJUSTES.giro ? 'GIROSCOPIO: NO' : INCL.estado === 'si' ? 'GIROSCOPIO: SÍ' : INCL.estado === 'pide' || INCL.estado === 'no' ? 'GIROSCOPIO: …' : 'GIROSCOPIO: NO VA', B, 58, w2, NADA, 14, '#ffcb3d', cambiaGiro);
+  boton(textoAutoGas(), A, 58, w, cambiaAutoGas);
+  boton(textoGiroscopio(), B, 58, w2, NADA, 14, '#ffcb3d', cambiaGiro);
   boton('PANTALLA COMPLETA', A, 75, w, NADA, 14, '#ffcb3d', pantallaCompleta);
   boton(INSTALAR.yaInstalada() ? 'YA INSTALADO' : 'INSTALAR', B, 75, w2, NADA, 14, '#ffcb3d', instalaJuego);
-  boton(trf('JUGAR EN: %1', tr(AJUSTES.pantalla === 'horizontal' ? 'HORIZONTAL' : AJUSTES.pantalla === 'vertical' ? 'VERTICAL' : 'AUTO')), A, 92, w, cambiaPantalla);
+  boton(textoJugarEn(), A, 92, w, cambiaPantalla);
   boton(envoltorio() === 'gashapon' ? 'OBJETOS: GASHAPON' : 'OBJETOS: REGALOS', B, 92, w2, cambiaEnvoltorio);
   boton(AJUSTES.calidad === 'clasica' ? 'IMAGEN: CLÁSICA' : 'IMAGEN: HD', A, 109, w, cambiaCalidad);
   // la nota de abajo: lo último que haya que explicar (cómo instalar, qué pasa con el giroscopio…)
@@ -270,31 +289,19 @@ function pantallaAyuda() {
   PANT.atras = () => ve('titulo');
 }
 
+// qué dibuja cada pantalla (id → función; con flecha, porque algunas se cargan después de este archivo)
+const PINTA_PANTALLA = { carrera: dt => pantallaCarrera(dt), titulo: () => pantallaTitulo(), piloto: () => pantallaPiloto(), mundo: () => pantallaMundo(),
+  pista: () => pantallaPista(), copa: () => pantallaCopa(), podio: () => pantallaPodio(), carga: () => pantallaCarga(), resultado: () => pantallaResultado(),
+  opciones: () => pantallaOpciones(), ayuda: () => pantallaAyuda(), pvp: () => pantallaPvp(), 'pvp-busca': dt => pantallaPvpSala(dt), 'pvp-amigos': () => pantallaPvpAmigos(),
+  'pvp-copa': () => pantallaPvpCopa(), 'pvp-clasif': dt => pantallaPvpClasif(dt), tienda: () => pantallaTienda(), pase: () => pantallaPase() };
 function pintaPantalla(dt) {
   energiaVista();
   modoUI();
   htmlKartsVista();      // la tienda y el pase en grande se quitan al salir de ellos (tienda-karts.js)
-  pvpSalaVista(dt);
-  menuVista();        // el menú principal se quita al salir del título (menu-principal.js)      // la sala de espera, la de amigos y los mensajes rápidos (pvp-sala.js)
+  pvpSalaVista(dt);      // la sala de espera, la de amigos y los mensajes rápidos (pvp-sala.js)
+  menuVista();        // el menú principal se quita al salir del título (menu-principal.js)
   PANT.acciones.length = 0; PANT.rects.length = 0; PANT.directas.length = 0; PANT.t += dt;
-  if (PANT.id === 'carrera') pantallaCarrera(dt);
-  else if (PANT.id === 'titulo') pantallaTitulo();
-  else if (PANT.id === 'piloto') pantallaPiloto();
-  else if (PANT.id === 'mundo') pantallaMundo();
-  else if (PANT.id === 'pista') pantallaPista();
-  else if (PANT.id === 'copa') pantallaCopa();
-  else if (PANT.id === 'podio') pantallaPodio();
-  else if (PANT.id === 'carga') pantallaCarga();
-  else if (PANT.id === 'resultado') pantallaResultado();
-  else if (PANT.id === 'opciones') pantallaOpciones();
-  else if (PANT.id === 'ayuda') pantallaAyuda();
-  else if (PANT.id === 'pvp') pantallaPvp();
-  else if (PANT.id === 'pvp-busca') pantallaPvpSala(dt);
-  else if (PANT.id === 'pvp-amigos') pantallaPvpAmigos();
-  else if (PANT.id === 'pvp-copa') pantallaPvpCopa();
-  else if (PANT.id === 'pvp-clasif') pantallaPvpClasif(dt);
-  else if (PANT.id === 'tienda') pantallaTienda();
-  else if (PANT.id === 'pase') pantallaPase();
+  const pinta = PINTA_PANTALLA[PANT.id]; if (pinta) pinta(dt);
   if (PANT.id !== 'carrera' && PANT.id !== 'carga') pintaPremios();      // ¡DESBLOQUEADO!, nivel del pase… (economia.js)
   atiendeBotones();
 }

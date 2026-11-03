@@ -66,17 +66,18 @@ function cartelesPor(P, l, lista) { for (const [t, u, d, f, c] of lista) cartelE
 // ---------- atajos ----------
 // un camino recto de la vía en u1 a la vía en u2 por fuera de la pista. tipo 'atajo': terreno malo (frena sin turbo), se pinta con
 // tema.atajo (o con lo de los márgenes); tipo 'puente': estrecho, por encima del vacío, se corre normal (tema.puente).
+function pintaPuntoDeAtajo(P, a, dx, dy, L, x, y, ancho, puente, pinta) {
+  const t = limita(((x + 0.5 - a.x) * dx + (y + 0.5 - a.y) * dy) / (L * L), 0, 1), ex = x + 0.5 - a.x - dx * t, ey = y + 0.5 - a.y - dy * t, d = Math.hypot(ex, ey), k = y * TM + x, s = P.sup[k];
+  if (d > ancho / 2 || s === S_PISTA || s === S_TURBO || s === S_RAMPA || s === S_CHARCO || s === S_BARRO || s === S_HIELO || s === S_CORRIENTE) return;
+  if (puente && d > ancho / 2 - 2.2) { P.tex[k] = u32('#4a2a18'); P.sup[k] = S_PUENTE; return; }     // el canto del puente
+  P.sup[k] = puente ? S_PUENTE : S_ATAJO; P.tex[k] = pinta(x, y, d, t * L, 0, null);
+}
 function atajoEn(P, u1, u2, ancho = 26, tipo = 'atajo') {
   const a = enVia(P, P.f(u1)), b = enVia(P, P.f(u2)), T = P.def.tema, puente = tipo === 'puente';
   const pinta = puente ? (T.puente || (() => u32('#8b5530'))) : (T.atajo || T.lento), dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1;
   const x0 = Math.max(0, Math.floor(Math.min(a.x, b.x) - ancho)), x1 = Math.min(TM - 1, Math.ceil(Math.max(a.x, b.x) + ancho));
   const y0 = Math.max(0, Math.floor(Math.min(a.y, b.y) - ancho)), y1 = Math.min(TM - 1, Math.ceil(Math.max(a.y, b.y) + ancho));
-  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
-    const t = limita(((x + 0.5 - a.x) * dx + (y + 0.5 - a.y) * dy) / (L * L), 0, 1), ex = x + 0.5 - a.x - dx * t, ey = y + 0.5 - a.y - dy * t, d = Math.hypot(ex, ey), k = y * TM + x, s = P.sup[k];
-    if (d > ancho / 2 || s === S_PISTA || s === S_TURBO || s === S_RAMPA || s === S_CHARCO || s === S_BARRO || s === S_HIELO || s === S_CORRIENTE) continue;
-    if (puente && d > ancho / 2 - 2.2) { P.tex[k] = u32('#4a2a18'); P.sup[k] = S_PUENTE; continue; }     // el canto del puente
-    P.sup[k] = puente ? S_PUENTE : S_ATAJO; P.tex[k] = pinta(x, y, d, t * L, 0, null);
-  }
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) pintaPuntoDeAtajo(P, a, dx, dy, L, x, y, ancho, puente, pinta);
   (P.atajos || (P.atajos = [])).push({ a, b, ancho });
 }
 // un adorno o un cartel no se planta en mitad de un atajo

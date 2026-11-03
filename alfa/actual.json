@@ -1,8 +1,8 @@
 {
- "build": 861,
- "hash": "544462c",
- "fecha": "2026-11-03T00:23:17Z",
- "mensaje": "Pets: criaturas por piezas sin miedo (juntas con contorno, movilidad mínima, cara neutra del molde) e investigación de animación 2D",
+ "build": 862,
+ "hash": "e356e16",
+ "fecha": "2026-11-03T00:30:47Z",
+ "mensaje": "Rouflage: chatAvanza, guiaPaso y pvpPintaBusca partidos; 27 tests escritos antes",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

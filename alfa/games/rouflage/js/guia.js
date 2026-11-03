@@ -102,37 +102,49 @@ function guiaBusca() {
   const h = guiaHechas(), n = titJugadas();
   return GUIAS.find(g => !h.includes(g.id) && n >= g.desde && (!g.si || g.si()) && visible(g.pasos[0].en)) || null;
 }
+const guiaOculta = () => { GUIA.caja.hidden = GUIA.foco.hidden = true; };
+// ¿espera la guía? (en PvP, con la carga, un bocadillo o un reto; o con una ventana encima: comprar, empezar un lienzo, reportar)
+function guiaEspera() {
+  if ((J.pvp && J.fase !== 'sala') || !E('carga').hidden || (typeof bocadilloActivo === 'function' && bocadilloActivo()) || (typeof RETO !== 'undefined' && RETO.activo)) return true;
+  return ['ar-compra', 'obra-elige', 'esc-rep'].some(id => visible(id));
+}
 function guiaPaso(dt) {
   if (!GUIA.caja) return;
-  const ocultar = () => { GUIA.caja.hidden = GUIA.foco.hidden = true; };
-  if ((J.pvp && J.fase !== 'sala') || !E('carga').hidden || (typeof bocadilloActivo === 'function' && bocadilloActivo()) || (typeof RETO !== 'undefined' && RETO.activo)) { ocultar(); return; }
-  if (['ar-compra', 'obra-elige', 'esc-rep'].some(id => visible(id))) { ocultar(); return; }      // con una ventana encima (comprar, empezar un lienzo, reportar), la guía espera
-  if (!GUIA.g) { GUIA.g = guiaBusca(); GUIA.i = 0; GUIA.t = 0; if (!GUIA.g) { ocultar(); return; } }
+  if (guiaEspera()) { guiaOculta(); return; }
+  if (!GUIA.g) { GUIA.g = guiaBusca(); GUIA.i = 0; GUIA.t = 0; if (!GUIA.g) { guiaOculta(); return; } }
   const p = GUIA.g.pasos[GUIA.i];
   if (p.hecho && p.hecho()) { play('select'); guiaSigue(); return; }      // primero si ya está hecho (al tocar el botón se cambia de pantalla)
-  if (!visible(p.en)) {
-    // te has ido a otra pantalla: al volver al título, la guía empieza otra vez (o la siguiente que toque)
-    if ((visible('p-titulo') && GUIA.i > 0) || GUIA.i === 0) { GUIA.g = null; }      // (sin empezar: se suelta, y así otra pantalla puede tener la suya, como CONSTRUIR)
-    ocultar(); return;
-  }
+  if (!visible(p.en)) { guiaPantallaAjena(); return; }
   GUIA.t += dt;
   if (p.seg && GUIA.t > p.seg) { guiaSigue(); return; }
   const el = p.a ? document.querySelector(p.a) : null;
-  if (p.a && !(el && el.offsetParent)) { ocultar(); return; }
+  if (p.a && !(el && el.offsetParent)) { guiaOculta(); return; }
+  guiaPintaTexto(p);
+  GUIA.caja.hidden = false;
+  if (el) guiaJuntoA(el); else guiaAlCentro();
+}
+// te has ido a otra pantalla: al volver al título, la guía empieza otra vez (o la siguiente que toque)
+function guiaPantallaAjena() {
+  if ((visible('p-titulo') && GUIA.i > 0) || GUIA.i === 0) { GUIA.g = null; }      // (sin empezar: se suelta, y así otra pantalla puede tener la suya, como CONSTRUIR)
+  guiaOculta();
+}
+function guiaPintaTexto(p) {
   const txt = tr(p.t) + `<small><span>${tr('{n} de {t}', { n: GUIA.i + 1, t: GUIA.g.pasos.length })}</span>` + (p.seg ? `<i>${tr('VALE')}</i>` : '') + `<u class="salta">${tr('Saltar')}</u></small>`;
   if (GUIA.txt !== txt) { GUIA.txt = txt; GUIA.caja.innerHTML = txt; }
-  GUIA.caja.hidden = false;
-  const vw = innerWidth, vh = innerHeight, r = GUIA.caja.getBoundingClientRect();
-  if (el) {
-    const b = el.getBoundingClientRect();
-    Object.assign(GUIA.foco.style, { left: (b.x - 6) + 'px', top: (b.y - 6) + 'px', width: (b.width + 12) + 'px', height: (b.height + 12) + 'px' }); GUIA.foco.hidden = false;
-    const x = limita(b.x + b.width / 2 - r.width / 2, 10, vw - r.width - 10), arriba = b.y - r.height - 26 > 8;
-    GUIA.caja.style.left = x + 'px'; GUIA.caja.style.top = limita(arriba ? b.y - r.height - 26 : b.y + b.height + 26, 8, vh - r.height - 8) + 'px';      // nunca fuera de la pantalla
-    GUIA.caja.classList.toggle('abajo', !arriba); GUIA.caja.classList.remove('centro'); GUIA.caja.style.setProperty('--flecha', limita(b.x + b.width / 2 - x, 22, r.width - 22) + 'px');
-  } else {
-    GUIA.foco.hidden = true; GUIA.caja.classList.remove('abajo'); GUIA.caja.classList.add('centro');
-    GUIA.caja.style.left = (vw - r.width) / 2 + 'px'; GUIA.caja.style.top = vh * 0.24 + 'px';
-  }
+}
+// el foco alrededor del elemento y la caja encima (o debajo si no cabe), con la flecha hacia él y siempre dentro de la pantalla
+function guiaJuntoA(el) {
+  const vw = innerWidth, vh = innerHeight, r = GUIA.caja.getBoundingClientRect(), b = el.getBoundingClientRect();
+  Object.assign(GUIA.foco.style, { left: (b.x - 6) + 'px', top: (b.y - 6) + 'px', width: (b.width + 12) + 'px', height: (b.height + 12) + 'px' }); GUIA.foco.hidden = false;
+  const x = limita(b.x + b.width / 2 - r.width / 2, 10, vw - r.width - 10), arriba = b.y - r.height - 26 > 8;
+  GUIA.caja.style.left = x + 'px'; GUIA.caja.style.top = limita(arriba ? b.y - r.height - 26 : b.y + b.height + 26, 8, vh - r.height - 8) + 'px';      // nunca fuera de la pantalla
+  GUIA.caja.classList.toggle('abajo', !arriba); GUIA.caja.classList.remove('centro'); GUIA.caja.style.setProperty('--flecha', limita(b.x + b.width / 2 - x, 22, r.width - 22) + 'px');
+}
+// un paso sin elemento: la caja en el centro, sin foco
+function guiaAlCentro() {
+  const r = GUIA.caja.getBoundingClientRect();
+  GUIA.foco.hidden = true; GUIA.caja.classList.remove('abajo'); GUIA.caja.classList.add('centro');
+  GUIA.caja.style.left = (innerWidth - r.width) / 2 + 'px'; GUIA.caja.style.top = innerHeight * 0.24 + 'px';
 }
 function guiaSigue() { GUIA.i++; GUIA.t = 0; if (!GUIA.g || GUIA.i >= GUIA.g.pasos.length) guiaFin(false); }
 

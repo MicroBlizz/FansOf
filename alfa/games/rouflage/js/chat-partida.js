@@ -134,28 +134,40 @@ function chatColocaFeed() {
 function chatAvanza(dt) {
   if (!J.yo) { if (CHAT.btn && !CHAT.btn.hidden) { CHAT.btn.hidden = true; chatAbre(false); } CHAT.yo = null; return; }
   chatPrepara();
-  if (CHAT.yo !== J.yo) {      // partida nueva: se olvida lo de la anterior
-    CHAT.yo = J.yo; CHAT.nuevos = 0; CHAT.espera = 0; CHAT.dichos.length = 0; CHAT.marcas.length = 0; CHAT.feed.textContent = ''; CHAT.canal = '';
-    if (typeof chatBotsEmpieza === 'function') chatBotsEmpieza();
-  }
+  if (CHAT.yo !== J.yo) chatPartidaNueva();
   const ver = chatPuede();
   if (CHAT.btn.hidden === ver) { CHAT.btn.hidden = !ver; if (!ver) chatAbre(false); }
+  chatRepintaSiCambia();
+  if (ver) chatBotonVivo();
+  if ((CHAT.tFeed -= dt) <= 0) { CHAT.tFeed = 0.2; chatColocaFeed(); }
+  chatCaduca();
+  if ((!J.pvp || RFP.soyHost) && typeof chatBotsAvanza === 'function') chatBotsAvanza(dt);      // contra bots, o el anfitrión por los bots del PvP
+}
+// si cambia el canal se repinta el botón (y el panel abierto); si cambia lo que muestra el panel abierto, el panel
+function chatRepintaSiCambia() {
   const canal = chatCanalDe(J.yo);
   if (canal !== CHAT.canal) { CHAT.canal = canal; chatPintaBoton(); if (CHAT.abierto) chatPintaPanel(); }
   if (CHAT.abierto && CHAT.panelDe !== chatPanelClave()) chatPintaPanel();
-  if (ver) {
-    CHAT.btn.classList.toggle('cargando', RELOJ < CHAT.espera);
-    if (!CHAT.consejoVisto && !(typeof bocadilloActivo === 'function' && bocadilloActivo()) && !J.pausa) {
-      CHAT.consejoVisto = true;
-      chatConsejo(CHAT.btn, matchMedia('(hover: hover) and (pointer: fine)').matches ? tr('Avisa a tu bando con una frase rápida (tecla T). Solo lo ven los tuyos.') : tr('Avisa a tu bando con una frase rápida. Solo lo ven los tuyos.'), 'chat-consejo');
-    }
-    chatConsejoColoca();
+}
+// partida nueva: se olvida lo de la anterior
+function chatPartidaNueva() {
+  CHAT.yo = J.yo; CHAT.nuevos = 0; CHAT.espera = 0; CHAT.dichos.length = 0; CHAT.marcas.length = 0; CHAT.feed.textContent = ''; CHAT.canal = '';
+  if (typeof chatBotsEmpieza === 'function') chatBotsEmpieza();
+}
+// el botón a la vista: cargando mientras dura la espera, y el consejo la primera vez
+function chatBotonVivo() {
+  CHAT.btn.classList.toggle('cargando', RELOJ < CHAT.espera);
+  if (!CHAT.consejoVisto && !(typeof bocadilloActivo === 'function' && bocadilloActivo()) && !J.pausa) {
+    CHAT.consejoVisto = true;
+    chatConsejo(CHAT.btn, matchMedia('(hover: hover) and (pointer: fine)').matches ? tr('Avisa a tu bando con una frase rápida (tecla T). Solo lo ven los tuyos.') : tr('Avisa a tu bando con una frase rápida. Solo lo ven los tuyos.'), 'chat-consejo');
   }
-  if ((CHAT.tFeed -= dt) <= 0) { CHAT.tFeed = 0.2; chatColocaFeed(); }
+  chatConsejoColoca();
+}
+// los dichos y las marcas que ya han durado lo suyo se van; fuera de la caza no quedan marcas
+function chatCaduca() {
   while (CHAT.dichos.length && RELOJ - CHAT.dichos[0].t > CHAT.durDicho) CHAT.dichos.shift();
   while (CHAT.marcas.length && RELOJ - CHAT.marcas[0].t > CHAT.durMarca) CHAT.marcas.shift();
   if (J.fase !== 'caza' && CHAT.marcas.length) CHAT.marcas.length = 0;
-  if ((!J.pvp || RFP.soyHost) && typeof chatBotsAvanza === 'function') chatBotsAvanza(dt);      // contra bots, o el anfitrión por los bots del PvP
 }
 
 // ---------- en el mapa (dibujo.js, encima de la oscuridad): las marcas y los bocadillos, siempre del mismo tamaño en pantalla ----------

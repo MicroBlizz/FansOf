@@ -1,8 +1,8 @@
 {
- "build": 858,
- "hash": "216481c",
- "fecha": "2026-11-02T23:58:43Z",
- "mensaje": "Rouflage: estadoSospecha (25) partido en sospechaAcerca y sospechaFalsaAlarma; tests del bot cazador en verde",
+ "build": 859,
+ "hash": "00880a6",
+ "fecha": "2026-11-03T00:08:39Z",
+ "mensaje": "Rouflage: disparaJugador (26) partido en disparoAlcanza, disparoRozaAlQueCorre y disparoFalla; 9 tests escritos antes",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

@@ -129,25 +129,35 @@ function disparaJugador(x, y, margen) {
   if (J.fase === 'prep') { practicaDispara(x, y, margen); return; }      // en la sala de espera: las prácticas
   const yo = J.yo; if (J.fase !== 'caza' || !yo || yo.clase !== 'cazador' || yo.balas <= 0) return;
   if (yo.enfria > 0) { play('deny'); return; }
-  const ox = yo.x, oy = yo.y - 6;
-  if (lejos(ox, oy, x, y) > REGLAS.alcance) { pista(tr('Demasiado lejos: acércate más'), 1.6); play('deny'); return; }
-  // se dispara al suelo: si has tocado una pared de frente, cuenta el suelo que tiene al pie
-  let sy = y; while (celdaEn(x, sy) === CARA) sy += CEL;
-  if (celdaEn(x, sy) !== SUELO || !seVen(ox, oy, x, Math.min(sy, Math.max(y, Math.floor(sy / CEL) * CEL + 3)))) { pista(tr('Ahí no llegas: hay un muro en medio'), 1.6); play('deny'); return; }
-  yo.dir = Math.atan2(y - oy, x - ox); yo.mira = Math.cos(yo.dir) >= 0 ? 1 : -1; yo.tApunta = 0.7;
+  if (!disparoAlcanza(yo, x, y)) return;
+  yo.dir = Math.atan2(y - (yo.y - 6), x - yo.x); yo.mira = Math.cos(yo.dir) >= 0 ? 1 : -1; yo.tApunta = 0.7;
   fxDisparo(yo, x, y);
   if (J.pvp) { rfpDispara(x, y, margen); return; }      // por internet decide el anfitrión: el resultado llega en rfpAplicaTiro
   const k = J.camaleones.find(k => k !== yo.cuerpo && !k.fuera && !invisible(k) && dentroDeAlubia(k, x, y, margen));      // (en Ida y vuelta, tu cuerpo no cuenta)
   if (k) { despide(k, yo); yo.balas = Math.min(REGLAS.balas, yo.balas + 1); yo.enfria = REGLAS.enfria * 0.7; return; }
   fxMancha(x, y);
-  // a quien va corriendo se le puede disparar sin gastar carta
-  if (J.camaleones.some(k => !k.fuera && !invisible(k) && k.hielo < 0.85 && (k.moviendo || k.movido > 0) && lejos(k.x, k.y - 24, x, y) < 60)) { yo.enfria = REGLAS.enfria * 0.7; play('gun'); return; }
+  if (disparoRozaAlQueCorre(x, y)) { yo.enfria = REGLAS.enfria * 0.7; play('gun'); return; }      // a quien va corriendo se le puede disparar sin gastar carta
+  disparoFalla(yo, x, y, margen);
+}
+// ¿llega el tiro? Si no, lo dice (lejos o muro en medio) y no se dispara
+function disparoAlcanza(yo, x, y) {
+  const ox = yo.x, oy = yo.y - 6;
+  if (lejos(ox, oy, x, y) > REGLAS.alcance) { pista(tr('Demasiado lejos: acércate más'), 1.6); play('deny'); return false; }
+  // se dispara al suelo: si has tocado una pared de frente, cuenta el suelo que tiene al pie
+  let sy = y; while (celdaEn(x, sy) === CARA) sy += CEL;
+  if (celdaEn(x, sy) !== SUELO || !seVen(ox, oy, x, Math.min(sy, Math.max(y, Math.floor(sy / CEL) * CEL + 3)))) { pista(tr('Ahí no llegas: hay un muro en medio'), 1.6); play('deny'); return false; }
+  return true;
+}
+// ¿hay alguien corriendo pegado al tiro fallido?
+function disparoRozaAlQueCorre(x, y) {
+  return J.camaleones.some(k => !k.fuera && !invisible(k) && k.hielo < 0.85 && (k.moviendo || k.movido > 0) && lejos(k.x, k.y - 24, x, y) < 60);
+}
+// el tiro no da a nadie: cuesta una carta, ciega un rato y avisa de qué se ha despedido (o de que no había nadie)
+function disparoFalla(yo, x, y, margen) {
   yo.balas--; yo.ciego = REGLAS.ciego; yo.enfria = REGLAS.enfriaFallo; J.cuenta.fallos++; CAM.tiembla = 0.18; play('salpica'); play('deny');
   const m = MUEBLES.find(m => m.T.senuelo && x > m.dib.x0 + 8 && x < m.dib.x0 + m.dib.w - 8 && y > m.dib.y0 && y < m.y + 2);
   const sd = talSenueloEn(x, y, margen); if (sd) { talSenueloRompe(sd.id, yo); return; }      // un señuelo pintado (talentos)
-  if (m) { J.cuenta.senuelos++; avisa(tr('Has despedido a {b}. Despido improcedente.').replace('{b}', tr(NOMBRE_SENUELO[m.t])), 'malo'); }
-  else {
-    avisa(tr('Ahí no había nadie. Despido improcedente: pierdes una carta.'), 'malo');
-    if (J.camaleones.some(k => k !== yo.cuerpo && !k.fuera && !invisible(k) && lejos(k.x, k.y - 20, x, y) < 90)) avisa(tr('Caliente: hay alguien muy cerca de ahí'), 'aviso');   // una pista para no seguir a ciegas
-  }
+  if (m) { J.cuenta.senuelos++; avisa(tr('Has despedido a {b}. Despido improcedente.').replace('{b}', tr(NOMBRE_SENUELO[m.t])), 'malo'); return; }
+  avisa(tr('Ahí no había nadie. Despido improcedente: pierdes una carta.'), 'malo');
+  if (J.camaleones.some(k => k !== yo.cuerpo && !k.fuera && !invisible(k) && lejos(k.x, k.y - 20, x, y) < 90)) avisa(tr('Caliente: hay alguien muy cerca de ahí'), 'aviso');   // una pista para no seguir a ciegas
 }

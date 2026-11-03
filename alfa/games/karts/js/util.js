@@ -11,6 +11,8 @@ const entre = (a, b, t) => a + (b - a) * t;
 const suave = t => t * t * (3 - 2 * t);
 // de un ángulo a otro por el camino corto (resultado entre -π y π)
 function difAng(a, b) { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; else if (d < -Math.PI) d += TAU; return d; }
+// una diferencia de casillas de vía en una pista de N casillas que da la vuelta: siempre entre -N/2 y N/2
+const difVia = (d, N) => (d < -N / 2 ? d + N : d > N / 2 ? d - N : d);
 const acerca = (v, meta, paso) => (v < meta ? Math.min(meta, v + paso) : Math.max(meta, v - paso));
 
 // azar con semilla (para que cada pista salga siempre igual) y un «ruido» fijo por casilla

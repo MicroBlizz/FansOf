@@ -76,23 +76,14 @@ function pvpOyeChat(m) {
 }
 const charlaReciente = s => KPVP.charla.filter(c => RELOJ - c.t < s);
 
-// lo que llega por el canal antes de lo de la carrera: lo que lleva cada uno, los mensajes, la copa y lo de otras carreras de la copa (se tira)
-const pvpRecibirSinSala = pvpRecibir;
-pvpRecibir = m => {
-  if (!m || m.de == null || m.de === KPVP.orden) return;
-  if (m.t === 'look') { KPVP.looks[m.de] = { lleva: m.lleva || {}, titulo: m.titulo || null }; pvpAplicaLook(m.de); if (m.pide) pvpMandaLook(); return; }
-  if (m.t === 'chat') { pvpOyeChat(m); return; }
-  if (m.t === 'sigue') { pvpCopaSigue(m.i); return; }
-  if (m.t === 'rendir' && !KPVP.activo) { if (KPVP.salidos) KPVP.salidos[m.de] = true; return; }
-  if (m.cr != null && m.cr !== (KPVP.carrera || 0)) return;
-  pvpRecibirSinSala(m);
-};
-const pvpEmpezarSinSala = pvpEmpezar;
-pvpEmpezar = (info, red) => {
-  KPVP.semilla = info.semilla | 0; KPVP.privada = !!info.privada; KPVP.salidos = {};
-  pvpEmpezarSinSala(info, red);
-  if (info.privada) misionSuma('amigos');
-};
+// lo que llega por el canal antes de lo de la carrera: lo que lleva cada uno, los mensajes y la copa. Devuelve true si el mensaje era suyo
+function pvpMensajeDeSala(m) {
+  if (m.t === 'look') { KPVP.looks[m.de] = { lleva: m.lleva || {}, titulo: m.titulo || null }; pvpAplicaLook(m.de); if (m.pide) pvpMandaLook(); return true; }
+  if (m.t === 'chat') { pvpOyeChat(m); return true; }
+  if (m.t === 'sigue') { pvpCopaSigue(m.i); return true; }
+  if (m.t === 'rendir' && !KPVP.activo) { if (KPVP.salidos) KPVP.salidos[m.de] = true; return true; }
+  return false;
+}
 
 // ---------- la sala de espera ----------
 // las tres pistas a votar (salen de la semilla: todos ven las mismas)

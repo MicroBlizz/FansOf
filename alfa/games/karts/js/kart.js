@@ -85,7 +85,13 @@ function pierdeMonedas(k, n) {
   for (let i = 0; i < n * 3; i++) chispa(k.x, k.y, 4, azar(-40, 40), azar(-40, 40), azar(50, 110), 0.7, i % 3 ? '#ffcb3d' : '#fff3a0', 2.2, 260);
 }
 // le han dado: 'trompo' (Parche), 'nerf' (trompo corto y encoge), 'parado' (mantenimiento) o 'cola' (casi parado un rato)
+// un golpe a un kart: quién lo decide (el navegador que mueve ese kart en el PvP; el escudo del Reembolso y el Bot, objetos-2.js) y, si cuenta, qué le hace. Dice si ha dado.
 function golpea(k, tipo, autor) {
+  if (CARRERA && CARRERA.pvp && k.remoto) { if (!k.fin && !k.ido) pvpGolpeaRemoto(k, tipo, autor); return false; }      // cualquier golpe a un kart que mueve otro navegador se le manda a él
+  if (frenaGolpe(k, tipo)) return false;
+  return aplicaGolpe(k, tipo, autor);
+}
+function aplicaGolpe(k, tipo, autor) {
   if (k.tInmune > 0 || k.estado === 'cae' || k.fin) return false;
   k.derrape = 0; k.nivel = 0; k.tTurbo = 0;
   if (tipo === 'trompo' || tipo === 'nerf') {
@@ -136,102 +142,121 @@ function chocanKarts(a, b) {
 }
 
 // ---------- un paso de un kart (dt = 1/60 s) ----------
-function mueveKart(k, dt) {
-  const P = PISTA, c = k.c;
-  if (k.tInmune > 0) k.tInmune -= dt;
-  if (k.tNerf > 0) k.tNerf -= dt;
-  if (k.tCola > 0) k.tCola -= dt;
-  if (k.tDron > 0) k.tDron -= dt;
-  if (k.tTurbo > 0) k.tTurbo -= dt;
-  if (k.tResbala > 0) k.tResbala -= dt;
-  if (k.tChoque > 0) k.tChoque -= dt;
-  if (k.estado === 'cae') {      // cayendo al vacío: se hace pequeño y, al acabar, el dron lo devuelve
-    k.tEstado -= dt; k.z -= 34 * dt; k.tam = Math.max(0.15, k.tam - dt); k.v *= 0.93;
-    k.x += Math.cos(k.dir) * k.v * dt; k.y += Math.sin(k.dir) * k.v * dt; k.angVis += dt * 7;
-    if (k.tEstado <= 0) rescata(k);
-    return;
-  }
-  k.tam = acerca(k.tam, k.tNerf > 0 ? 0.62 : 1, dt * 2.5);
-  const enSuelo = k.z <= 0, sup = enSuelo ? supEn(P, k.x, k.y) : S_PISTA;
-  k.suelo = sup;
-  if (enSuelo && sup === S_VACIO) { cae(k); return; }
-  let puede = true;
-  if (k.estado !== 'normal') {
-    puede = false; k.tEstado -= dt;
-    if (k.estado === 'trompo') k.vueltaTrompo += dt * 13;
-    if (k.tEstado <= 0) { k.estado = 'normal'; k.vueltaTrompo = 0; }
-  }
-  // --- cuánto puede correr según lo que pisa ---
-  const turbo = k.tTurbo > 0;
-  let vmax = k.vmax * (1 + AJ.moneda * k.monedas), agarre = 9.5;
-  if (k.ia) vmax *= k.ia.factor;
-  if (k.tNerf > 0) vmax *= 0.74;
-  if (k.tCola > 0) vmax *= 0.4;
-  if (sup === S_LENTO) vmax *= turbo ? 0.82 : AJ.lento;
-  else if (sup === S_BARRO) { vmax *= turbo ? 0.78 : AJ.barro; agarre = 5; }
-  else if (sup === S_CHARCO) { if (k.tResbala <= 0 && k.v > 35 && k.tInmune <= 0) { k.tResbala = 0.7; k.giroRes = Math.random() < 0.5 ? -1 : 1; k.derrape = 0; suena(k, 'resbala'); } }
-  else if (sup === S_ATAJO) vmax *= turbo ? 0.96 : 0.6;                                // el atajo es terreno malo: sin turbo no compensa tanto
-  else if (sup === S_HIELO) agarre = turbo ? 2.4 : 1.5;                                 // en el hielo el kart va adonde quiere él
-  else if (sup === S_CORRIENTE) empujaCorriente(k, P, dt);
-  else if (sup === S_TURBO) { if (k.tTurbo < 0.6) daTurbo(k, 0.95, AJ.turbo, true); }
-  else if (sup === S_RAMPA && k.v > 12) { k.vz = AJ.rampa; k.z = 0.01; k.botado = false; k.v = Math.max(k.v, 108); k.tTurbo = Math.max(k.tTurbo, 0.5); k.fTurbo = 1.2; suena(k, 'jump'); }   // la rampa lanza: el salto siempre llega al otro lado
-  if (turbo) vmax *= k.fTurbo;
-  if (k.tResbala > 0) { agarre = 1.2; k.ang += k.giroRes * 1.5 * dt; }
-  const F = P.def.fisica;      // cada pista se conduce distinta: hielo, agua, asfalto mojado, viento… (pista-ambiente.js)
-  if (F) { agarre *= F.agarre || 1; vmax *= F.vel || 1; if (F.viento && enSuelo) soplaViento(k, P, F.viento, dt); }
-  // --- el volante ---
+const TEMPORIZADORES = ['tInmune', 'tNerf', 'tCola', 'tDron', 'tTurbo', 'tResbala', 'tChoque'];
+const bajaTemporizadores = (k, dt) => { for (const t of TEMPORIZADORES) if (k[t] > 0) k[t] -= dt; };
+// cayendo al vacío: se hace pequeño y, al acabar, el dron lo devuelve
+function pasoCayendo(k, dt) {
+  k.tEstado -= dt; k.z -= 34 * dt; k.tam = Math.max(0.15, k.tam - dt); k.v *= 0.93;
+  k.x += Math.cos(k.dir) * k.v * dt; k.y += Math.sin(k.dir) * k.v * dt; k.angVis += dt * 7;
+  if (k.tEstado <= 0) rescata(k);
+}
+// en trompo o parado no se conduce hasta que se pasa; dice si se puede conducir
+function puedeConducir(k, dt) {
+  if (k.estado === 'normal') return true;
+  k.tEstado -= dt;
+  if (k.estado === 'trompo') k.vueltaTrompo += dt * 13;
+  if (k.tEstado <= 0) { k.estado = 'normal'; k.vueltaTrompo = 0; }
+  return false;
+}
+// lo que hace cada suelo con la marcha: T = { vmax, agarre } se modifica; turbo = si llevaba turbo al empezar el paso
+const EFECTO_SUELO = new Map([
+  [S_LENTO, (k, T, turbo) => { T.vmax *= turbo ? 0.82 : AJ.lento; }],
+  [S_BARRO, (k, T, turbo) => { T.vmax *= turbo ? 0.78 : AJ.barro; T.agarre = 5; }],
+  [S_CHARCO, k => { if (k.tResbala <= 0 && k.v > 35 && k.tInmune <= 0) { k.tResbala = 0.7; k.giroRes = Math.random() < 0.5 ? -1 : 1; k.derrape = 0; suena(k, 'resbala'); } }],
+  [S_ATAJO, (k, T, turbo) => { T.vmax *= turbo ? 0.96 : 0.6; }],                         // el atajo es terreno malo: sin turbo no compensa tanto
+  [S_HIELO, (k, T, turbo) => { T.agarre = turbo ? 2.4 : 1.5; }],                         // en el hielo el kart va adonde quiere él
+  [S_CORRIENTE, (k, T, turbo, dt) => empujaCorriente(k, PISTA, dt)],
+  [S_TURBO, k => { if (k.tTurbo < 0.6) daTurbo(k, 0.95, AJ.turbo, true); }],
+  [S_RAMPA, k => { if (k.v > 12) { k.vz = AJ.rampa; k.z = 0.01; k.botado = false; k.v = Math.max(k.v, 108); k.tTurbo = Math.max(k.tTurbo, 0.5); k.fTurbo = 1.2; suena(k, 'jump'); } }],
+]);
+// cuánto puede correr (vmax) y cuánto agarra según lo que pisa, el turbo, los golpes y la física de la pista
+function limitesDeMarcha(k, sup, turbo, enSuelo, dt) {
+  const T = { vmax: k.vmax * (1 + AJ.moneda * k.monedas), agarre: 9.5 };
+  if (k.ia) T.vmax *= k.ia.factor;
+  if (k.tNerf > 0) T.vmax *= 0.74;
+  if (k.tCola > 0) T.vmax *= 0.4;
+  const efecto = EFECTO_SUELO.get(sup);
+  if (efecto) efecto(k, T, turbo, dt);
+  if (turbo) T.vmax *= k.fTurbo;
+  if (k.tResbala > 0) { T.agarre = 1.2; k.ang += k.giroRes * 1.5 * dt; }
+  const F = PISTA.def.fisica;      // cada pista se conduce distinto: hielo, agua, asfalto mojado, viento… (pista-ambiente.js)
+  if (F) { T.agarre *= F.agarre || 1; T.vmax *= F.vel || 1; if (F.viento && enSuelo) soplaViento(k, PISTA, F.viento, dt); }
+  return T;
+}
+// el volante y el bote; devuelve cuánto gira (w)
+function giraVolante(k, c, enSuelo, puede, dt) {
   k.giro = acerca(k.giro, puede ? c.giro : 0, dt * 6.5);
   let w = k.giroMax * (1 - 0.3 * Math.min(1, Math.abs(k.v) / k.vmax)) * Math.min(1, Math.abs(k.v) / 20);
   if (!enSuelo) w *= 0.55;
   if (puede && c.salta && enSuelo) { k.vz = AJ.bote; k.z = 0.01; k.botado = true; suena(k, 'bote'); }
-  if (k.derrape) {
-    // derrapando gira solo hacia ese lado; el volante cierra o abre la curva. Cuanto más se cierra, antes carga el miniturbo.
-    const s = k.derrape, mando = k.giro * s;
-    k.ang += s * w * (0.72 + 0.6 * mando) * dt;
-    agarre = Math.min(agarre, 2.7);
-    k.tDerrape += dt * (0.6 + 0.7 * Math.max(0, mando));
-    const nv = k.tDerrape > AJ.miniturbo[1] ? 2 : k.tDerrape > AJ.miniturbo[0] ? 1 : 0;
-    if (nv > k.nivel) { k.nivel = nv; suena(k, 'chispa', nv); }
-    if (!c.derrapa || k.v < 36 || !puede) {
-      if (!c.derrapa && k.nivel > 0 && puede) { daTurbo(k, k.nivel === 2 ? 1.05 : 0.6, 1.3, false); suena(k, 'miniturbo'); }
-      k.derrape = 0; k.nivel = 0;
-    }
-  } else k.ang += k.giro * w * dt * (k.v < 0 ? -1 : 1);
-  if (enSuelo) k.dir += difAng(k.dir, k.ang) * Math.min(1, agarre * dt);
-  // --- acelerar y frenar ---
+  return w;
+}
+// derrapando gira solo hacia ese lado; el volante cierra o abre la curva. Cuanto más se cierra, antes carga el miniturbo.
+function derrapaKart(k, c, w, T, puede, dt) {
+  const s = k.derrape, mando = k.giro * s;
+  k.ang += s * w * (0.72 + 0.6 * mando) * dt;
+  T.agarre = Math.min(T.agarre, 2.7);
+  k.tDerrape += dt * (0.6 + 0.7 * Math.max(0, mando));
+  const nv = k.tDerrape > AJ.miniturbo[1] ? 2 : k.tDerrape > AJ.miniturbo[0] ? 1 : 0;
+  if (nv > k.nivel) { k.nivel = nv; suena(k, 'chispa', nv); }
+  if (!c.derrapa || k.v < 36 || !puede) {
+    if (!c.derrapa && k.nivel > 0 && puede) { daTurbo(k, k.nivel === 2 ? 1.05 : 0.6, 1.3, false); suena(k, 'miniturbo'); }
+    k.derrape = 0; k.nivel = 0;
+  }
+}
+// acelerar y frenar
+function aceleraKart(k, c, vmax, turbo, enSuelo, sup, dt) {
   if (k.estado === 'parado') k.v = acerca(k.v, 0, 320 * dt);
   else if (k.estado === 'trompo') k.v = Math.max(Math.min(k.v, 14), k.v - 150 * dt);
   else if (c.freno && enSuelo) k.v = k.v > 0 ? Math.max(0, k.v - AJ.freno * dt) : Math.max(-AJ.atras, k.v - 70 * dt);
   else if (c.gas) { if (k.v < vmax) k.v = Math.min(vmax, k.v + (turbo ? AJ.turboAcel : k.acel * (1.08 - 0.8 * Math.max(0, k.v) / vmax)) * dt); }
   else k.v = acerca(k.v, 0, AJ.roce * dt);
   if (k.v > vmax && enSuelo) k.v = Math.max(vmax, k.v - (sup === S_LENTO || sup === S_BARRO ? 200 : 60) * dt);      // en el aire no se frena: el salto llega siempre
-  // --- avanzar; los muros se miran con el morro (o con la cola, marcha atrás) ---
+}
+// avanzar; los muros se miran con el morro (o con la cola, marcha atrás)
+function avanzaKart(k, dt) {
   const cd = Math.cos(k.dir), sd = Math.sin(k.dir), nx = k.x + cd * k.v * dt, ny = k.y + sd * k.v * dt, s = k.v >= 0 ? 3.6 : -3.6;
-  if (ES_MURO(supEn(P, nx + cd * s, ny + sd * s)) || ES_MURO(supEn(P, nx, ny))) chocaMuro(k, nx + cd * s, ny + sd * s);
+  if (ES_MURO(supEn(PISTA, nx + cd * s, ny + sd * s)) || ES_MURO(supEn(PISTA, nx, ny))) chocaMuro(k, nx + cd * s, ny + sd * s);
   else { k.x = nx; k.y = ny; }
-  // los adornos de fuera de la pista son sólidos
-  for (const o of P.cosas) {
-    if (!o.r) continue;
-    const dx = k.x - o.x, dy = k.y - o.y, R = o.r + AJ.radio * 0.8;
-    if (dx > R || dx < -R || dy > R || dy < -R) continue;
-    const d2 = dx * dx + dy * dy;
-    if (d2 >= R * R || d2 < 1e-6) continue;
-    if (o.muerde) { if (golpea(k, 'trompo', null)) suena(k, 'golpe'); continue; }      // tiburones, bichos, coches…: no se apartan, te dan
-    const d = Math.sqrt(d2), ux = dx / d, uy = dy / d, vn = Math.cos(k.dir) * k.v * ux + Math.sin(k.dir) * k.v * uy;
-    k.x = o.x + ux * R; k.y = o.y + uy * R;
-    if (vn < -12) { k.v *= 0.55; k.derrape = 0; k.nivel = 0; suena(k, 'choque'); }
-  }
-  // --- el bote, el salto de las rampas y la caída del dron ---
-  if (k.z > 0) {
-    k.vz -= AJ.gravedad * (k.botado ? 1 : P.def.fisica && P.def.fisica.gravedad || 1) * dt; k.z += k.vz * dt;      // bajo el agua se cae más despacio
-    if (k.z <= 0) {
-      k.z = 0; k.vz = 0;
-      if (k.botado) {   // al caer de un bote con el botón apretado y el volante girado, empieza el derrape
-        k.botado = false;
-        if (puede && c.derrapa && Math.abs(c.giro) > 0.25 && k.v > 42 && !k.derrape) { k.derrape = c.giro > 0 ? 1 : -1; k.tDerrape = 0; k.nivel = 0; }
-      } else suena(k, 'aterriza');
-    }
-  }
+}
+// un adorno de fuera de la pista es sólido: si el kart lo toca, lo aparta o le da
+function chocaAdorno(k, o) {
+  const dx = k.x - o.x, dy = k.y - o.y, R = o.r + AJ.radio * 0.8;
+  if (dx > R || dx < -R || dy > R || dy < -R) return;
+  const d2 = dx * dx + dy * dy;
+  if (d2 >= R * R || d2 < 1e-6) return;
+  if (o.muerde) { if (golpea(k, 'trompo', null)) suena(k, 'golpe'); return; }      // tiburones, bichos, coches…: no se apartan, te dan
+  const d = Math.sqrt(d2), ux = dx / d, uy = dy / d, vn = Math.cos(k.dir) * k.v * ux + Math.sin(k.dir) * k.v * uy;
+  k.x = o.x + ux * R; k.y = o.y + uy * R;
+  if (vn < -12) { k.v *= 0.55; k.derrape = 0; k.nivel = 0; suena(k, 'choque'); }
+}
+// el bote, el salto de las rampas y la caída del dron
+function pasoVertical(k, c, puede, dt) {
+  if (k.z <= 0) return;
+  const F = PISTA.def.fisica;
+  k.vz -= AJ.gravedad * (k.botado ? 1 : F && F.gravedad || 1) * dt; k.z += k.vz * dt;      // bajo el agua se cae más despacio
+  if (k.z > 0) return;
+  k.z = 0; k.vz = 0;
+  if (!k.botado) { suena(k, 'aterriza'); return; }
+  k.botado = false;      // al caer de un bote con el botón apretado y el volante girado, empieza el derrape
+  if (puede && c.derrapa && Math.abs(c.giro) > 0.25 && k.v > 42 && !k.derrape) { k.derrape = c.giro > 0 ? 1 : -1; k.tDerrape = 0; k.nivel = 0; }
+}
+function mueveKart(k, dt) {
+  const c = k.c;
+  bajaTemporizadores(k, dt);
+  if (k.estado === 'cae') { pasoCayendo(k, dt); return; }
+  k.tam = acerca(k.tam, k.tNerf > 0 ? 0.62 : 1, dt * 2.5);
+  const enSuelo = k.z <= 0, sup = enSuelo ? supEn(PISTA, k.x, k.y) : S_PISTA;
+  k.suelo = sup;
+  if (enSuelo && sup === S_VACIO) { cae(k); return; }
+  const puede = puedeConducir(k, dt), turbo = k.tTurbo > 0;
+  const T = limitesDeMarcha(k, sup, turbo, enSuelo, dt), w = giraVolante(k, c, enSuelo, puede, dt);
+  if (k.derrape) derrapaKart(k, c, w, T, puede, dt); else k.ang += k.giro * w * dt * (k.v < 0 ? -1 : 1);
+  if (enSuelo) k.dir += difAng(k.dir, k.ang) * Math.min(1, T.agarre * dt);
+  aceleraKart(k, c, T.vmax, turbo, enSuelo, sup, dt);
+  avanzaKart(k, dt);
+  for (const o of PISTA.cosas) if (o.r) chocaAdorno(k, o);
+  pasoVertical(k, c, puede, dt);
   k.angVis = k.ang + k.derrape * 0.42 + k.vueltaTrompo + (k.tResbala > 0 ? Math.sin(k.tResbala * 22) * 0.35 : 0);
   sigueVia(k);
   humos(k, sup, turbo);

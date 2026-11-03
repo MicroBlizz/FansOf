@@ -46,6 +46,7 @@ function pvpCanalSala(sala, red) {
 function pvpCierraCanal() { if (KPVP.canal) { KPVP.canal.cerrar(); KPVP.canal = null; KPVP.canalSala = null; } }
 // la sala arranca: se abre el canal y se carga la carrera en la pista que dijo el servidor
 function pvpEmpezar(info, red) {
+  KPVP.semilla = info.semilla | 0; KPVP.privada = !!info.privada; KPVP.salidos = {};
   Object.assign(KPVP, { activo: true, sala: info.sala, orden: info.orden, jugadores: (info.jugadores || []).slice(), pista: info.pista, red, remotos: {}, listoYo: false, listos: {}, salida: false, tEnvio: 0, tEspera: 0, n: 0, cerrado: false, resultado: null, redEstado: '' });
   if (info.copa && !KPVP.copa) KPVP.copa = { pistas: pvpPistasCopa(info.pista), puntos: {}, ultimos: {}, i: 0 };
   pvpReparte(info);
@@ -53,6 +54,7 @@ function pvpEmpezar(info, red) {
   const ip = PISTAS.findIndex(p => p.id === info.pista);
   PANT.pista = ip >= 0 ? ip : 0;
   PANT.encontrado = 2.2;     // la pantalla de buscar enseña a los rivales un momento y luego carga
+  if (info.privada) misionSuma('amigos');
 }
 // la carrera ha terminado (o se ha salido): se cierra el canal; el servidor ya tiene el resultado
 // (en una copa online el canal sigue abierto hasta la última carrera, y en los resultados para los mensajes rápidos: lo cierra pvpCierraCanal al salir)
@@ -159,43 +161,61 @@ function pvpEnvia(C, dt, cuenta) {
 const pvpManda = m => { if (KPVP.canal) KPVP.canal.enviar(Object.assign({ de: KPVP.orden }, m)); };
 
 // ---------- lo que llega ----------
+// lo que llega por el canal: lo de la sala (pvp-sala.js) y las carreras de otras copas se atienden antes; después, cada tipo de mensaje de la carrera por su función
 function pvpRecibir(m) {
-  if (!m || m.de === KPVP.orden || m.de == null || !KPVP.activo) return;
-  const C = CARRERA, k = KPVP.remotos[m.de];
-  if (k && k.rendido) return;      // quien se ha rendido ya no vuelve: un aviso suyo que llegue tarde no lo resucita
-  if (m.t === 'e') {
-    if (m.l) KPVP.listos[m.de] = true;
-    if (m.ya && !KPVP.salida && m.de === 0 && C.estado === 'cuenta') pvpArranca(C);
-    if (!k || (m.n || 0) < (k.remoto.n || 0)) return;        // uno viejo que llegó tarde (o de alguien que no está en la parrilla)
-    pvpAplica(k, m, m.de);
-  } else if (m.t === 'ia') {
-    // la máquina que mueve el anfitrión (si el anfitrión soy yo, la mía manda)
-    if (pvpSoyAnfitrion(C)) return;
-    for (const e of m.ks || []) { const kk = KPVP.remotos[e.p]; if (kk && kk.plaza != null) pvpAplica(kk, Object.assign({ n: m.n }, e), m.de); }
-  } else if (m.t === 'obj') {
-    // un rival lanza algo: aparece aquí también, con él de autor
-    if (!k) return;
-    if (m.tipo === 'nerf') { C.sueltos.push({ tipo: 'nerf', x: m.x, y: m.y, idx: m.idx, lat: m.lat, vel: m.vel, autor: k, vida: 4.5, alto: 3, fase: 0 }); comenta(trf('%1 ha lanzado un Nerf.', k.nombre)); }
-    else if (m.tipo === 'parche') C.sueltos.push({ tipo: 'parche', x: m.x, y: m.y, idx: m.idx, lat: m.lat, autor: k, vida: 45, armado: 0.35, alto: 0, fase: Math.random() * 6 });
-  } else if (m.t === 'golpe') {
-    // un rival te aplica el Mantenimiento o la Cola (si no estás inmune); 'a' dice a quién va
-    // si el golpe va a un kart de la máquina que muevo yo, lo decide mi juego y avisa al autor
-    const ai = k && C.karts.find(x => x.plaza === m.a && !x.remoto && x.ia);
-    if (ai) { if (golpea(ai, m.tipo, k)) pvpManda({ t: 'dado', tipo: m.tipo, a: m.de, p: ai.piloto.id }); return; }
-    if (!k || m.a !== KPVP.orden) return;
-    const yo = C.jugador, quien = m.q && PILOTO[m.q] ? tr(PILOTO[m.q].nombre) : k.nombre;
-    if (m.tipo === 'parado' && golpea(yo, 'parado', k)) { aviso('MANTENIMIENTO', 'Volvemos enseguida™', '#ff8a1f'); comenta(trf('%1 ha puesto los servidores en mantenimiento.', quien)); pvpManda({ t: 'dado', tipo: 'parado', a: m.de }); }
-    else if (m.tipo === 'cola' && golpea(yo, 'cola', k)) { aviso('EN COLA', 'Posición en la cola: 9.999', '#22e3ff'); comenta(trf('%1 te ha metido en la cola de inicio de sesión.', quien)); pvpManda({ t: 'dado', tipo: 'cola', a: m.de }); }
-  } else if (m.t === 'dado') {
-    // le has dado tú a alguien: el aviso de siempre
-    if (!k || m.a !== KPVP.orden) return;
-    const nom = m.p && PILOTO[m.p] ? tr(PILOTO[m.p].nombre) : k.nombre;
-    if (m.tipo === 'nerf') { aviso('¡NERF!', trf('%1 corre un 26 % menos.', nom), '#5ef27a'); play('laugh'); }
-    else if (m.tipo === 'parche') { aviso('¡PARCHE!', trf('%1 se ha roto.', nom), '#5ef27a'); play('laugh'); }
-    else if (m.tipo === 'cola') { aviso('¡A LA COLA!', trf('%1: posición 9.999', nom), '#22e3ff'); play('hack'); }
-  } else if (m.t === 'rendir') {
-    if (k) { k.rendido = true; pvpSeVa(k, '%1 se ha rendido.'); }
-  }
+  if (!m || m.de == null || m.de === KPVP.orden) return;
+  if (pvpMensajeDeSala(m)) return;
+  if (m.cr != null && m.cr !== (KPVP.carrera || 0)) return;
+  if (!KPVP.activo) return;
+  const atiende = MENSAJE_DE_CARRERA[m.t];
+  if (atiende) atiende(m, KPVP.remotos[m.de], CARRERA);
+}
+const MENSAJE_DE_CARRERA = { e: pvpMsgEstado, ia: pvpMsgMaquina, obj: pvpMsgObjeto, golpe: pvpMsgGolpe, dado: pvpMsgDado, rendir: pvpMsgRendir };
+// quien se ha rendido ya no vuelve: un aviso suyo que llegue tarde no lo resucita
+const pvpRendido = k => !!(k && k.rendido);
+function pvpMsgEstado(m, k, C) {
+  if (pvpRendido(k)) return;
+  if (m.l) KPVP.listos[m.de] = true;
+  if (m.ya && !KPVP.salida && m.de === 0 && C.estado === 'cuenta') pvpArranca(C);
+  if (!k || (m.n || 0) < (k.remoto.n || 0)) return;        // uno viejo que llegó tarde (o de alguien que no está en la parrilla)
+  pvpAplica(k, m, m.de);
+}
+// la máquina que mueve el anfitrión (si el anfitrión soy yo, la mía manda)
+function pvpMsgMaquina(m, k, C) {
+  if (pvpRendido(k) || pvpSoyAnfitrion(C)) return;
+  for (const e of m.ks || []) { const kk = KPVP.remotos[e.p]; if (kk && kk.plaza != null) pvpAplica(kk, Object.assign({ n: m.n }, e), m.de); }
+}
+// un rival lanza algo: aparece aquí también, con él de autor
+function pvpMsgObjeto(m, k, C) {
+  if (pvpObjetoNuevo(m, k, C)) return;
+  if (pvpRendido(k) || !k) return;
+  if (m.tipo === 'nerf') { C.sueltos.push({ tipo: 'nerf', x: m.x, y: m.y, idx: m.idx, lat: m.lat, vel: m.vel, autor: k, vida: 4.5, alto: 3, fase: 0 }); comenta(trf('%1 ha lanzado un Nerf.', k.nombre)); }
+  else if (m.tipo === 'parche') C.sueltos.push({ tipo: 'parche', x: m.x, y: m.y, idx: m.idx, lat: m.lat, autor: k, vida: 45, armado: 0.35, alto: 0, fase: Math.random() * 6 });
+}
+// un rival te aplica el Mantenimiento o la Cola (si no estás inmune); 'a' dice a quién va. Si va a un kart de la máquina que muevo yo, lo decide mi juego y avisa al autor
+function pvpMsgGolpe(m, k, C) {
+  if (pvpGolpeNuevo(m, k)) return;
+  if (pvpRendido(k)) return;
+  const ai = k && C.karts.find(x => x.plaza === m.a && !x.remoto && x.ia);
+  if (ai) { if (golpea(ai, m.tipo, k)) pvpManda({ t: 'dado', tipo: m.tipo, a: m.de, p: ai.piloto.id }); return; }
+  if (!k || m.a !== KPVP.orden) return;
+  const yo = C.jugador, quien = m.q && PILOTO[m.q] ? tr(PILOTO[m.q].nombre) : k.nombre;
+  if (m.tipo === 'parado' && golpea(yo, 'parado', k)) { aviso('MANTENIMIENTO', 'Volvemos enseguida™', '#ff8a1f'); comenta(trf('%1 ha puesto los servidores en mantenimiento.', quien)); pvpManda({ t: 'dado', tipo: 'parado', a: m.de }); }
+  else if (m.tipo === 'cola' && golpea(yo, 'cola', k)) { aviso('EN COLA', 'Posición en la cola: 9.999', '#22e3ff'); comenta(trf('%1 te ha metido en la cola de inicio de sesión.', quien)); pvpManda({ t: 'dado', tipo: 'cola', a: m.de }); }
+}
+// le has dado tú a alguien: el aviso de siempre
+function pvpMsgDado(m, k) {
+  if (pvpDadoNuevo(m, k)) return;
+  if (m.a === KPVP.orden) misionSuma('tocado');
+  if (pvpRendido(k) || !k || m.a !== KPVP.orden) return;
+  const nom = m.p && PILOTO[m.p] ? tr(PILOTO[m.p].nombre) : k.nombre;
+  if (m.tipo === 'nerf') { aviso('¡NERF!', trf('%1 corre un 26 % menos.', nom), '#5ef27a'); play('laugh'); }
+  else if (m.tipo === 'parche') { aviso('¡PARCHE!', trf('%1 se ha roto.', nom), '#5ef27a'); play('laugh'); }
+  else if (m.tipo === 'cola') { aviso('¡A LA COLA!', trf('%1: posición 9.999', nom), '#22e3ff'); play('hack'); }
+}
+function pvpMsgRendir(m, k) {
+  if (pvpRendido(k)) return;
+  if (k) { k.rendido = true; pvpSeVa(k, '%1 se ha rendido.'); }
 }
 // un aviso del estado de un kart que no es mío (un humano, o uno de la máquina que mueve el anfitrión)
 function pvpAplica(k, m, de) {

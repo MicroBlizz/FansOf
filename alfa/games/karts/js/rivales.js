@@ -34,36 +34,47 @@ function creaIA(k, nivel, i) {
   nivel = d.nivel * (1 - (1 - nivel) * d.abanico);
   k.ia = { nivel, factor: nivel, carril: (i % 2 ? 0.2 : -0.2), carrilMeta: (i % 2 ? 0.2 : -0.2), tCarril: 1 + Math.random() * 2, tUsa: 0, tSalida: 0.08 + Math.random() * 0.4, torpe: 0 };
 }
-function piensa(k, dt, C) {
-  const P = PISTA, ia = k.ia, c = k.c, N = P.N, i0 = Math.floor(k.idx);
-  c.salta = false; c.derrapa = false; c.usa = false;
-  if (C.estado !== 'corre' && C.estado !== 'meta') { c.gas = false; c.freno = false; c.giro = 0; return; }
-  if (ia.tSalida > 0) { ia.tSalida -= dt; c.gas = false; c.giro = 0; return; }
-  // el carril: cambia cada pocos segundos; si hay un kart justo delante, se aparta hacia el lado con más sitio
+// el carril: cambia cada pocos segundos; si hay un kart justo delante, se aparta hacia el lado con más sitio
+function eligeCarril(k, dt, C) {
+  const P = PISTA, ia = k.ia, N = P.N, i0 = Math.floor(k.idx);
   ia.tCarril -= dt;
   if (ia.tCarril <= 0) { ia.tCarril = 1.6 + Math.random() * 3; ia.carrilMeta = (Math.random() - 0.5) * 0.58; }
   for (const o of C.karts) {
     if (o === k) continue;
-    let d = o.idx - k.idx; if (d < -N / 2) d += N; else if (d > N / 2) d -= N;
+    const d = difVia(o.idx - k.idx, N);
     if (d > 0.3 && d < 4.5 && Math.abs(o.lat - k.lat) < 9 && o.v < k.v + 6) { ia.carrilMeta = limita(k.lat / P.via[i0].ancho + (o.lat > k.lat ? -0.3 : 0.3), -0.34, 0.34); ia.tCarril = 1.2; }
   }
   // los Parches del suelo también se esquivan (si los ve a tiempo)
   for (const o of C.sueltos) {
     if (o.tipo !== 'parche') continue;
-    let d = o.idx - k.idx; if (d < -N / 2) d += N; else if (d > N / 2) d -= N;
+    const d = difVia(o.idx - k.idx, N);
     if (d > 0 && d < 7 && Math.abs(o.lat - k.lat) < 8) { ia.carrilMeta = limita((o.lat + (o.lat > k.lat ? -17 : 17)) / P.via[i0].ancho, -0.36, 0.36); ia.tCarril = 1; }
   }
   ia.carril = acerca(ia.carril, ia.carrilMeta, dt * 0.45);
-  // a dónde apunta: un punto de la vía por delante (más lejos cuanto más corre), en su carril
-  const lejos = 3 + Math.abs(k.v) / 24, j = (i0 + Math.round(lejos)) % N, v = P.via[j];
+}
+// a dónde apunta: un punto de la vía por delante (más lejos cuanto más corre), en su carril. Devuelve el error de ángulo
+function apuntaAlCarril(k) {
+  const P = PISTA, ia = k.ia, N = P.N, lejos = 3 + Math.abs(k.v) / 24, v = P.via[(Math.floor(k.idx) + Math.round(lejos)) % N];
   const tx = v.x - v.ty * ia.carril * v.ancho, ty = v.y + v.tx * ia.carril * v.ancho;
   const err = difAng(k.ang, Math.atan2(ty - k.y, tx - k.x));
-  c.giro = limita(err * 2.8, -1, 1);
-  // la curva más cerrada que viene: no entrar más rápido de lo que el kart puede girar
+  k.c.giro = limita(err * 2.8, -1, 1);
+  return err;
+}
+// la curva más cerrada que viene: no entrar más rápido de lo que el kart puede girar
+function aceleraEnRectas(k, err) {
+  const P = PISTA, ia = k.ia, c = k.c, N = P.N, i0 = Math.floor(k.idx);
   let curva = 0; for (let d = 1; d <= 10; d++) { const q = P.curvaS[(i0 + d) % N]; if (q > curva) curva = q; }
   const vCurva = curva > 0.003 ? (k.giroMax * 0.7 * 0.97) / curva : 999;
   const tope = Math.max(40, vCurva * Math.min(1, ia.factor + 0.03));      // en los niveles fáciles también entran más despacio a las curvas
   c.gas = k.v < tope; c.freno = k.v > tope + 16 && k.z <= 0;
-  if (Math.abs(err) > 1.3 && k.v > 30) { c.gas = false; }       // muy cruzado (después de un golpe): levanta el pie para enderezarse
+  if (Math.abs(err) > 1.3 && k.v > 30) c.gas = false;       // muy cruzado (después de un golpe): levanta el pie para enderezarse
+}
+function piensa(k, dt, C) {
+  const ia = k.ia, c = k.c;
+  c.salta = false; c.derrapa = false; c.usa = false;
+  if (C.estado !== 'corre' && C.estado !== 'meta') { c.gas = false; c.freno = false; c.giro = 0; return; }
+  if (ia.tSalida > 0) { ia.tSalida -= dt; c.gas = false; c.giro = 0; return; }
+  eligeCarril(k, dt, C);
+  aceleraEnRectas(k, apuntaAlCarril(k));
   iaUsa(k, dt, C);
 }

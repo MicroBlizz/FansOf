@@ -58,13 +58,8 @@ function enTramo(def, clave, f, base) {
 }
 
 let PISTA = null;   // la pista en juego
-// Construye la pista `def`. Devuelve { def, via, largo, campoD, campoI, sup, tex, mips, mini, ... }
-function creaPista(def) {
-  const t0 = performance.now();
-  INV_P = null;
-  // def.invertida: la pista se corre al revés (los mismos puntos, del último al primero). Todo lo que la pista coloca (adornos,
-  // turbos, tramos…) sigue escrito en el sentido de siempre y sale en el mismo sitio del mapa: enVia lo da la vuelta mientras se coloca.
-  const inv = !!def.invertida;
+// la vía de la pista: posición, dirección, ancho, márgenes (lo que hay de hierba a cada lado antes del borde) y qué borde hay a cada lado. Devuelve { via, largo, N, fU }
+function trazaVia(def, inv, conBarandilla) {
   const { pts, largo, fp } = curvaCerrada(inv ? [def.puntos[0], ...def.puntos.slice(1).reverse()] : def.puntos, PASO_VIA), N = pts.length;
   const fpU = inv ? curvaCerrada(def.puntos, PASO_VIA).fp : fp;
   // de «punto de control + trozo hasta el siguiente» (3.5 = a medio camino entre el punto 3 y el 4) a fracción de la vuelta
@@ -75,8 +70,6 @@ function creaPista(def) {
     const c = {}; for (const k in t) c[k.replace('Izq', '\0').replace('Der', 'Izq').replace('\0', 'Der')] = t[k];
     c.de = (2 - t.a) % 1; c.a = (2 - t.de) % 1; return c;
   }) };
-  const conBarandilla = def.borde === 'vacio' && dificultad().barandilla;      // en el nivel fácil, las pistas sin borde llevan barandilla
-  // la vía: posición, dirección, ancho, márgenes (lo que hay de hierba a cada lado antes del borde) y qué borde hay a cada lado
   const via = pts.map((p, i) => {
     const a = pts[(i + N - 1) % N], b = pts[(i + 1) % N], l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, f = i / N;
     const mg = enTramo(TD, 'margen', f, def.margen === undefined ? 44 : def.margen), bd = conBarandilla ? 'muro' : enTramo(TD, 'borde', f, def.borde || 'muro');
@@ -87,7 +80,10 @@ function creaPista(def) {
     };
   });
   for (let i = 0; i < N; i++) { const v = via[i], w = via[(i + 1) % N]; v.ang = Math.atan2(v.ty, v.tx); v.curva = difAng(v.ang, Math.atan2(w.ty, w.tx)) / PASO_VIA; }
-  // ---------- el campo: distancia a la vía y trozo más cercano ----------
+  return { via, largo, N, fU };
+}
+// el campo: para cada punto del mapa, la distancia (al cuadrado) a la vía y el trozo de vía más cercano
+function calculaCampo(via, N) {
   const campoD = new Float32Array(TM2).fill(1e9), campoI = new Uint16Array(TM2);
   for (let i = 0; i < N; i++) {
     const a = via[i], b = via[(i + 1) % N], R = a.ancho / 2 + Math.max(a.mi, a.md) + 22;
@@ -99,35 +95,55 @@ function creaPista(def) {
       if (d < campoD[k]) { campoD[k] = d; campoI[k] = i; }
     }
   }
-  // ---------- qué se pisa y de qué color, punto a punto ----------
-  const sup = new Uint8Array(TM2).fill(S_FUERA), tex = new Uint32Array(TM2), T = def.tema;
-  const alVacio = def.borde === 'vacio' && !conBarandilla;      // pistas en el aire: lo de lejos también es vacío (por si llegas por un puente)
-  const P = { def, via, largo, N, campoD, campoI, sup, tex, f: fU, monedas: [], regalos: [], corrientes: [] };
+  return { campoD, campoI };
+}
+// qué se pisa a m del borde de la pista (negativo = dentro), con mg de hierba y el borde bd
+function superficieDe(m, mg, bd, T, alVacio) {
+  if (m < 0) return S_PISTA;
+  if (m < (T.bordillo === 0 ? 0 : 5) && mg > 0) return S_BORDILLO;
+  if (m < mg) return S_LENTO;
+  if (bd === 'vacio') return S_VACIO;
+  if (m < mg + 7) return S_MURO;
+  return alVacio ? S_VACIO : S_FUERA;
+}
+const TEXTURA_DE = { [S_PISTA]: 'pista', [S_BORDILLO]: 'bordillo', [S_LENTO]: 'lento', [S_MURO]: 'muro', [S_VACIO]: 'vacio', [S_FUERA]: 'fuera' };
+// qué se pisa y de qué color, punto a punto
+function pintaTexturaDelSuelo(P, T, alVacio) {
+  const { via, campoD, campoI, sup, tex } = P;
   for (let y = 0; y < TM; y++) for (let x = 0; x < TM; x++) {
     const k = y * TM + x, d2 = campoD[k];
     if (d2 > 1e8) { tex[k] = T.fuera(x, y, 999, 0, 0, null); if (alVacio) sup[k] = S_VACIO; continue; }
     const i = campoI[k], v = via[i], d = Math.sqrt(d2), m = d - v.ancho / 2;          // m: lo que falta para el borde de la pista (negativo = dentro)
     const lado = (x + 0.5 - v.x) * v.ty - (y + 0.5 - v.y) * v.tx > 0 ? -1 : 1;        // -1 = a la izquierda de la marcha, 1 = a la derecha
-    const mg = lado < 0 ? v.mi : v.md, bd = lado < 0 ? v.bi : v.bdr;
-    let s;
-    if (m < 0) s = S_PISTA;
-    else if (m < (T.bordillo === 0 ? 0 : 5) && mg > 0) s = S_BORDILLO;
-    else if (m < mg) s = S_LENTO;
-    else if (bd === 'vacio') s = S_VACIO;
-    else if (m < mg + 7) s = S_MURO;
-    else s = alVacio ? S_VACIO : S_FUERA;
+    const mg = lado < 0 ? v.mi : v.md, bd = lado < 0 ? v.bi : v.bdr, s = superficieDe(m, mg, bd, T, alVacio);
     sup[k] = s;
-    tex[k] = s === S_PISTA ? T.pista(x, y, m, i, lado, v) : s === S_BORDILLO ? T.bordillo(x, y, m, i, lado, v) : s === S_LENTO ? T.lento(x, y, m, i, lado, v)
-      : s === S_MURO ? T.muro(x, y, m - mg, i, lado, v) : s === S_VACIO ? T.vacio(x, y, m - mg, i, lado, v) : T.fuera(x, y, m - mg, i, lado, v);
+    tex[k] = T[TEXTURA_DE[s]](x, y, s <= S_LENTO ? m : m - mg, i, lado, v);
   }
-  // ---------- adornos y zonas especiales de cada pista (turbos, charcos, atajos, rayas…), la salida y la parrilla ----------
+}
+// Construye la pista `def`. Devuelve { def, via, largo, campoD, campoI, sup, tex, mips, mini, ... }
+function creaPista(def) {
+  const t0 = performance.now();
+  INV_P = null;
+  // def.invertida: la pista se corre al revés (los mismos puntos, del último al primero). Todo lo que la pista coloca (adornos,
+  // turbos, tramos…) sigue escrito en el sentido de siempre y sale en el mismo sitio del mapa: enVia lo da la vuelta mientras se coloca.
+  const inv = !!def.invertida;
+  const conBarandilla = def.borde === 'vacio' && dificultad().barandilla;      // en el nivel fácil, las pistas sin borde llevan barandilla
+  const { via, largo, N, fU } = trazaVia(def, inv, conBarandilla), { campoD, campoI } = calculaCampo(via, N);
+  const sup = new Uint8Array(TM2).fill(S_FUERA), tex = new Uint32Array(TM2);
+  const alVacio = def.borde === 'vacio' && !conBarandilla;      // pistas en el aire: lo de lejos también es vacío (por si llegas por un puente)
+  const P = { def, via, largo, N, campoD, campoI, sup, tex, f: fU, monedas: [], regalos: [], corrientes: [] };
+  pintaTexturaDelSuelo(P, def.tema, alVacio);
+  return acabaPista(P, def, inv, t0);
+}
+// adornos y zonas especiales de cada pista (turbos, charcos, atajos, rayas…), la salida y la parrilla, las versiones a la mitad, el mapa pequeño y el cielo
+function acabaPista(P, def, inv, t0) {
   INV_P = inv ? P : null;
   if (def.pinta) def.pinta(P);
   for (const a of def.atajos || []) atajoEn(P, ...a);
   INV_P = null;
   pintaSalida(P);
-  // ---------- versiones a la mitad y a la cuarta parte (para lo lejano, que si no parpadea) ----------
-  P.mips = [tex, mitad(tex, TM), null]; P.mips[2] = mitad(P.mips[1], TM / 2);
+  // versiones a la mitad y a la cuarta parte (para lo lejano, que si no parpadea)
+  P.mips = [P.tex, mitad(P.tex, TM), null]; P.mips[2] = mitad(P.mips[1], TM / 2);
   P.mini = miniMapa(P);
   INV_P = inv ? P : null;
   try { P.cosas = def.cosas ? def.cosas(P) : []; } finally { INV_P = null; }

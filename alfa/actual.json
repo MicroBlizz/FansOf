@@ -1,8 +1,8 @@
 {
- "build": 886,
- "hash": "e974e17",
- "fecha": "2026-11-03T20:25:52Z",
- "mensaje": "Pets f16, revisión 2: brazos y piernas como miembros con patita, bigotitos del hurón y pompón de CrazyBunny",
+ "build": 887,
+ "hash": "e37a269",
+ "fecha": "2026-11-03T20:47:48Z",
+ "mensaje": "Karts: partir las funciones más complejas bajo la guardia (33 pistas iguales) y quitar los parches encadenados de golpea y pvpRecibir",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

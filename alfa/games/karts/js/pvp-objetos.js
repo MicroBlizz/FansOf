@@ -12,13 +12,6 @@ function pvpKartDe(id) {
   return C.karts.find(x => x.plaza === id) || KPVP.remotos[id] || null;
 }
 
-// cualquier golpe a un kart que mueve otro navegador se le manda a él (el martillo y lo que venga)
-const golpeaSinRed = golpea;
-golpea = (k, tipo, autor) => {
-  if (CARRERA && CARRERA.pvp && k.remoto) { if (!k.fin && !k.ido) pvpGolpeaRemoto(k, tipo, autor); return false; }
-  return golpeaSinRed(k, tipo, autor);
-};
-
 // lanzas Bellotas o la MechaVaca: los demás las ven salir
 function pvpLanzaNuevo(o, k) {
   if (!KPVP.activo || k.remoto) return;
@@ -27,39 +20,44 @@ function pvpLanzaNuevo(o, k) {
   else if (o.tipo === 'vacaSuelo') pvpManda({ t: 'obj', de, tipo: 'vaca', a: pvpIdKart(o.objetivo) });
 }
 
-// lo que llega de los objetos nuevos (el resto sigue a pvp.js)
-const pvpRecibirSinNuevos = pvpRecibir;
-pvpRecibir = m => {
-  if (!m || m.de == null || m.de === KPVP.orden || !KPVP.activo) return pvpRecibirSinNuevos(m);
-  const C = CARRERA, k = KPVP.remotos[m.de];
-  if (m.t === 'obj' && (m.tipo === 'bellota' || m.tipo === 'vaca')) {
-    if (!k || k.rendido) return;
-    if (m.tipo === 'bellota') C.sueltos.push({ tipo: 'bellota', x: m.x, y: m.y, idx: m.idx, lat: m.lat, dlat: m.dlat, vel: m.vel, autor: k, vida: 3.2, alto: 2, fase: m.fase || 0, mueve: mueveBellota });
-    else {
-      const obj = pvpKartDe(m.a); if (!obj) return;
-      C.sueltos.push({ tipo: 'vacaSuelo', x: obj.x, y: obj.y, objetivo: obj, t: 1.6, z: 90, autor: k, vida: 2.4, alto: 0, fase: 0, mueve: mueveVaca, pinta: pintaVacaCae });
-      play('horn');
-      if (obj.esJugador) { aviso('¡MECHAVACA!', 'Mira arriba. No, más arriba.', '#ff8fc8'); comenta(trf('%1 ha llamado a la MechaVaca. Va a por ti.', k.nombre)); }
-    }
-    return;
-  }
-  if (m.t === 'golpe' && GOLPES_NUEVOS.includes(m.tipo)) { if (k && !k.rendido) pvpGolpeNuevo(m, k); return; }
-  if (m.t === 'dado' && GOLPES_NUEVOS.includes(m.tipo)) {
-    if (!k || m.a !== KPVP.orden) return;
-    const nom = m.p && PILOTO[m.p] ? tr(PILOTO[m.p].nombre) : k.nombre;
-    misionSuma('tocado');
-    if (m.tipo === 'trompo') { aviso('¡BANEADO!', trf('%1 fuera de la partida (un ratito).', nom), '#5ef27a'); play('laugh'); }
-    else if (m.tipo === 'spam') aviso('¡SPAM!', trf('%1 está enterrado en ventanas.', nom), '#3a7de0');
-    else if (m.tipo === 'lag') aviso('LAG', trf('A %1 le va a tirones.', nom), '#5ef27a');
-    else if (m.tipo === 'micro') { aviso('¡COBRADO!', trf('%1 ha pagado sin rechistar.', nom), '#5ef27a'); }
-    return;
-  }
-  if (m.t === 'dado' && m.a === KPVP.orden) misionSuma('tocado');
-  pvpRecibirSinNuevos(m);
+// lo que llega de los objetos nuevos: cada uno devuelve true si el mensaje era de un objeto nuevo (y lo atiende); si no, sigue la función de pvp.js
+function pvpObjetoNuevo(m, k, C) {
+  if (m.tipo !== 'bellota' && m.tipo !== 'vaca') return false;
+  if (!k || k.rendido) return true;
+  if (m.tipo === 'bellota') C.sueltos.push({ tipo: 'bellota', x: m.x, y: m.y, idx: m.idx, lat: m.lat, dlat: m.dlat, vel: m.vel, autor: k, vida: 3.2, alto: 2, fase: m.fase || 0, mueve: mueveBellota });
+  else pvpLlegaVaca(m, k, C);
+  return true;
+}
+function pvpLlegaVaca(m, k, C) {
+  const obj = pvpKartDe(m.a); if (!obj) return;
+  C.sueltos.push({ tipo: 'vacaSuelo', x: obj.x, y: obj.y, objetivo: obj, t: 1.6, z: 90, autor: k, vida: 2.4, alto: 0, fase: 0, mueve: mueveVaca, pinta: pintaVacaCae });
+  play('horn');
+  if (obj.esJugador) { aviso('¡MECHAVACA!', 'Mira arriba. No, más arriba.', '#ff8fc8'); comenta(trf('%1 ha llamado a la MechaVaca. Va a por ti.', k.nombre)); }
+}
+// un golpe de los objetos nuevos que va a uno de mis karts
+function pvpGolpeNuevo(m, k) {
+  if (!GOLPES_NUEVOS.includes(m.tipo)) return false;
+  if (k && !k.rendido) pvpAplicaGolpeNuevo(m, k);
+  return true;
+}
+// el aviso de que has dado con un objeto nuevo
+const AVISO_DADO_NUEVO = {
+  trompo: nom => { aviso('¡BANEADO!', trf('%1 fuera de la partida (un ratito).', nom), '#5ef27a'); play('laugh'); },
+  spam: nom => aviso('¡SPAM!', trf('%1 está enterrado en ventanas.', nom), '#3a7de0'),
+  lag: nom => aviso('LAG', trf('A %1 le va a tirones.', nom), '#5ef27a'),
+  micro: nom => aviso('¡COBRADO!', trf('%1 ha pagado sin rechistar.', nom), '#5ef27a'),
 };
+function pvpDadoNuevo(m, k) {
+  if (!GOLPES_NUEVOS.includes(m.tipo)) return false;
+  if (!k || m.a !== KPVP.orden) return true;
+  const nom = m.p && PILOTO[m.p] ? tr(PILOTO[m.p].nombre) : k.nombre;
+  misionSuma('tocado');
+  AVISO_DADO_NUEVO[m.tipo](nom);
+  return true;
+}
 
 // un golpe nuevo que va a uno de mis karts (el mío o uno de la máquina que muevo)
-function pvpGolpeNuevo(m, autor) {
+function pvpAplicaGolpeNuevo(m, autor) {
   const C = CARRERA, v = m.a === KPVP.orden ? C.jugador : C.karts.find(x => x.plaza === m.a && !x.remoto && x.ia);
   if (!v || v.fin) return;
   const quien = m.q && PILOTO[m.q] ? tr(PILOTO[m.q].nombre) : autor.nombre, yo = v.esJugador;

@@ -1,8 +1,8 @@
 {
- "build": 862,
- "hash": "e356e16",
- "fecha": "2026-11-03T00:30:47Z",
- "mensaje": "Rouflage: chatAvanza, guiaPaso y pvpPintaBusca partidos; 27 tests escritos antes",
+ "build": 863,
+ "hash": "8d76441",
+ "fecha": "2026-11-03T00:33:39Z",
+ "mensaje": "Nova 0.3.41: láser y flak térmico según la pirámide; partidas del bot en hilos y en Yoshi",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.17",
   "karts": "0.7.16",
-  "nova": "0.3.40",
+  "nova": "0.3.41",
   "pets": "0.2.0",
   "ratkov": "0.2.30",
   "rouflage": "0.2.64",

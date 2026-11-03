@@ -43,10 +43,12 @@ NV.Golpe = (() => {
     return d;
   }
 
-  // Térmica: acumula calor (el doble con Haz enfocado, más con el láser, menos si está Interferido); a 100 explota y vuelve a 0
+  // Térmica: acumula calor (el doble con Haz enfocado, más con el láser, menos con cada perdigón del flak, más si está Interferido);
+  // a 100 explota y vuelve a 0
+  const CALOR_PORTADOR = { laser: K => K.laser.acumula, flak: K => K.metrallaIncendiaria.perdigon };
   function calienta(e, w, A, fuera) {
-    const K = A.combos;
-    e.calor += 14 * (w.fusion && w.fusion.id === 'hazEnfocado' ? 2 : 1) * (w.portador === 'laser' ? K.laser.acumula : 1) * (e.est.interferido > 0 ? K.sobrecargaLenta.calor : 1);
+    const K = A.combos, porPortador = CALOR_PORTADOR[w.portador] ? CALOR_PORTADOR[w.portador](K) : 1;
+    e.calor += 14 * (w.fusion && w.fusion.id === 'hazEnfocado' ? 2 : 1) * porPortador * (e.est.interferido > 0 ? K.sobrecargaLenta.calor : 1);
     if (e.calor < 100) return;
     e.calor = 0; fuera.explosion = { radio: 70, dano: 50 * A.tamanos[w.tam] };
     fuera.avisos.push(aviso(e, '¡Sobrecarga!', '#ff4b4b', 1, 20, 1));

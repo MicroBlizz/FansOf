@@ -1,8 +1,8 @@
 {
- "build": 869,
- "hash": "4dc6ee5",
- "fecha": "2026-11-03T14:47:07Z",
- "mensaje": "Pets: maniquí 3D con el dibujo original proyectado, en la escena DEV",
+ "build": 870,
+ "hash": "ef618bf",
+ "fecha": "2026-11-03T15:19:21Z",
+ "mensaje": "Pets: visor 3D del maniquí, galería de recursos con marcas y fases, índice de fases",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

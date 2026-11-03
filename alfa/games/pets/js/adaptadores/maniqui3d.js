@@ -8,7 +8,8 @@ PT.maniqui3d = (() => {
   const LADO = 640, MARGEN = 160, RES = 768;   // el dibujo es de 640; se encuadra con 160 de margen por cada lado
   const LINEA = [44, 26, 22];
   let T = null, render = null, cargando = null;
-  const MONTAJES = {};   // id → montaje listo (o 'montando')
+  const MONTAJES = {};   // id → montaje listo (o 'montando' / 'roto')
+  const MONTANDO = {};   // id → la promesa de su montaje
 
   const tres = () => cargando || (cargando = import(new URL('js/three.min.js', document.baseURI).href).catch(e => { cargando = null; throw e; }).then(m => {
     T = m; render = new T.WebGLRenderer({ canvas: document.createElement('canvas'), antialias: true, alpha: true, preserveDrawingBuffer: true });
@@ -108,7 +109,8 @@ PT.maniqui3d = (() => {
     const { raiz, J, piezas } = esqueleto(m, gradiente);
     raiz.updateMatrixWorld(true);
     const cara = await ojos(med, pixeles(await carga(med.dibujo)));
-    proyecta(med, piezas, cara.rgba, mapaIds(med, raiz, piezas));
+    const ids = mapaIds(med, raiz, piezas);
+    proyecta(med, piezas, cara.rgba, ids);
     const cabeza = piezas.find(p => p.userData.cara);
     const capa = new T.Mesh(cabeza.geometry, new T.MeshToonMaterial({ map: cara.abiertos, gradientMap: gradiente, transparent: true, depthWrite: false }));
     capa.scale.setScalar(1.004); cabeza.add(capa);
@@ -121,7 +123,7 @@ PT.maniqui3d = (() => {
     // las mallas de cada hueso: al respirar se estiran ellas, no el hueso (así no deforman a los hijos, como los brazos)
     const mallas = {}; for (const p of piezas) (mallas[p.userData.hueso] = mallas[p.userData.hueso] || []).push(p);
     const brazo = piezas.find(p => p.userData.hueso === 'brazo1'), largoMano = brazo ? brazo.userData.largo : 0;
-    MONTAJES[id] = { med, escena, cam, raiz, J, reposo, mallas, largoMano, capa, cara, cabeza, boca, objetos: PT.maniqui3dObjetos.crea(T, cosaCon(gradiente), med.estampado) };
+    MONTAJES[id] = { med, escena, cam, raiz, J, reposo, mallas, largoMano, capa, cara, cabeza, boca, piezas, ids, objetos: PT.maniqui3dObjetos.crea(T, cosaCon(gradiente), med.estampado) };
   }
   // la pose sobre los huesos: cada uno vuelve a su reposo y se le suma lo que diga la pose
   function aplica(mo, pose) {
@@ -137,14 +139,32 @@ PT.maniqui3d = (() => {
     const brazo = mo.J.brazo1, mano = brazo ? brazo.localToWorld(new T.Vector3(0, -mo.largoMano, 0)) : new T.Vector3();
     PT.maniqui3dObjetos.coloca(T, mo.objetos, mo.escena, pose, mo.cabeza.localToWorld(mo.boca.clone()), mano);
   }
+  // monta la criatura una sola vez aunque la pidan a la vez el juego y el visor. Si falla (red, archivo que no está), lo dice por la
+  // consola y vuelve a probar a los 10 s
+  function asegura(id) {
+    if (!MONTANDO[id]) {
+      MONTAJES[id] = 'montando';
+      MONTANDO[id] = monta(id).catch(e => {
+        MONTAJES[id] = 'roto'; console.warn('Pets · maniquí 3D sin montar:', id, e.message);
+        setTimeout(() => { delete MONTAJES[id]; delete MONTANDO[id]; }, 10000); throw e;
+      });
+    }
+    return MONTANDO[id];
+  }
+  // para el visor de desarrollo (herramientas/pets/visor-3d.html): el montaje de una criatura, para mirarlo con su propia cámara.
+  // pose(nombre, t) lo pone en esa pose y dice si existe; ids es qué pieza se ve en cada píxel del dibujo (de arriba abajo)
+  async function montaje(id) {
+    if (!PT.maniqui.tiene(id)) throw new Error('sin maniquí: ' + id);
+    await asegura(id);
+    const mo = MONTAJES[id];
+    return { T, render, escena: mo.escena, piezas: mo.piezas, capa: mo.capa, ids: mo.ids, lado: LADO,
+      pose: (nombre, t) => { const p = PT.maniquiPoses.de(nombre, t); if (p.ok) aplica(mo, p.valor); return p.ok; } };
+  }
   // pinta el maniquí de la criatura id en la pose nombre, con su dibujo de 640 centrado en (x, y) a lado píxeles (como arte.js: el maniquí
   // en reposo cae justo encima del dibujo). Devuelve false si no hay maniquí para esa criatura o aún se está montando
   function pinta(ctx, id, x, y, lado, t, nombre) {
     if (!PT.maniqui.tiene(id)) return false;
-    if (!MONTAJES[id]) {   // si falla (red, archivo que no está), lo dice por la consola y vuelve a probar a los 10 s
-      MONTAJES[id] = 'montando';
-      monta(id).catch(e => { MONTAJES[id] = 'roto'; console.warn('Pets · maniquí 3D sin montar:', id, e.message); setTimeout(() => { delete MONTAJES[id]; }, 10000); });
-    }
+    if (!MONTAJES[id]) asegura(id).catch(() => {});
     const mo = MONTAJES[id], pose = PT.maniquiPoses.de(nombre, t);
     if (typeof mo === 'string' || !pose.ok) return false;
     aplica(mo, pose.valor); render.render(mo.escena, mo.cam);
@@ -152,5 +172,5 @@ PT.maniqui3d = (() => {
     ctx.drawImage(render.domElement, x - borde, y - borde, 2 * borde, 2 * borde);
     return true;
   }
-  return { pinta, listo: id => typeof MONTAJES[id] === 'object' };
+  return { pinta, montaje, listo: id => typeof MONTAJES[id] === 'object' };
 })();

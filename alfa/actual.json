@@ -1,8 +1,8 @@
 {
- "build": 866,
- "hash": "924e6ed",
- "fecha": "2026-11-03T01:25:47Z",
- "mensaje": "Rouflage: pintaLuces, diarioPinta, pintaMarcaEnte, pintaCara y galeriaPinta partidos; guardia del comparador para la galería",
+ "build": 867,
+ "hash": "851ee38",
+ "fecha": "2026-11-03T01:36:19Z",
+ "mensaje": "Rouflage: talentosPinta, arPintaInfo, chorros del jefe y escBandeja partidos; guardia de los efectos de talentos y 8 tests",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

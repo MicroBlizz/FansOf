@@ -31,16 +31,22 @@ function escModo(m, sinSonido) {
 }
 function escBandeja() {
   const sala = escenarioSala(), fila = E('esc-pestanas'); fila.innerHTML = '';
-  for (const [id, nombre, icono] of ESC_PESTANAS) {
-    if (id === 'obra' && escBase(sala.id) !== 'lienzo') continue;
-    const b = document.createElement('button'); b.type = 'button'; b.id = 'esc-pest-' + id; b.className = 'esc-pest' + (MIESC.modo !== 'pasear' && MIESC.tab === id ? ' activa' : '');
-    b.innerHTML = '<i></i><b></b><small></small>'; ponIcono(b.children[0], icono); b.children[1].textContent = tr(nombre);
-    if (id === 'pegar') b.children[2].textContent = (sala.peg || []).length + '/' + ESC_PEG.MAX;
-    else if (id !== 'pintar' && id !== 'obra') { const l = escCosasDe(id); b.children[2].textContent = l.filter(x => arTiene(x.cat, x.it)).length + '/' + l.length; } else b.children[2].remove();
-    b.onclick = () => { if (id === 'pintar' || id === 'obra' || id === 'pegar') { if (MIESC.modo !== id) escModo(id); return; } MIESC.tab = id; play('select'); if (MIESC.modo !== 'decorar') escModo('decorar', true); else escBandeja(); };
-    fila.appendChild(b);
-  }
+  for (const [id, nombre, icono] of ESC_PESTANAS) escPestana(sala, fila, id, nombre, icono);
   if (MIESC.modo !== 'decorar') return;
+  escTira(sala);
+}
+// una pestaña de la bandeja: lo que lleva puesto o conseguido de ese tipo
+function escPestana(sala, fila, id, nombre, icono) {
+  if (id === 'obra' && escBase(sala.id) !== 'lienzo') return;
+  const b = document.createElement('button'); b.type = 'button'; b.id = 'esc-pest-' + id; b.className = 'esc-pest' + (MIESC.modo !== 'pasear' && MIESC.tab === id ? ' activa' : '');
+  b.innerHTML = '<i></i><b></b><small></small>'; ponIcono(b.children[0], icono); b.children[1].textContent = tr(nombre);
+  if (id === 'pegar') b.children[2].textContent = (sala.peg || []).length + '/' + ESC_PEG.MAX;
+  else if (id !== 'pintar' && id !== 'obra') { const l = escCosasDe(id); b.children[2].textContent = l.filter(x => arTiene(x.cat, x.it)).length + '/' + l.length; } else b.children[2].remove();
+  b.onclick = () => { if (id === 'pintar' || id === 'obra' || id === 'pegar') { if (MIESC.modo !== id) escModo(id); return; } MIESC.tab = id; play('select'); if (MIESC.modo !== 'decorar') escModo('decorar', true); else escBandeja(); };
+  fila.appendChild(b);
+}
+// la tira de cartas de lo que se puede poner (la primera, MIS ESCENARIOS), con la cuenta, la pista y CONSEGUIR MÁS al final
+function escTira(sala) {
   const lista = escCosasDe(MIESC.tab), tira = E('esc-tira'), viejo = tira.scrollLeft; tira.innerHTML = '';
   if (MIESC.tab === 'escenarios') escHuecoCarta(tira);      // la primera: MIS ESCENARIOS (escenario-huecos.js)
   lista.sort((a, b) => (arTiene(b.cat, b.it) ? 1 : 0) - (arTiene(a.cat, a.it) ? 1 : 0));
@@ -48,25 +54,27 @@ function escBandeja() {
   E('esc-cuenta').textContent = MIESC.tab === 'escenarios' ? tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr(arItem('escenarios', escBase(sala.id)).n)
     : tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr('{n} de {t} puestos', { n: sala.muebles.length, t: SALA.MAX_MUEBLES });
   E('esc-pista').textContent = MIESC.tab === 'escenarios' ? tr('Toca uno para cambiar el estilo y la forma del mapa') : tr('Toca una tarjeta: sale donde miras');
-  for (const { cat, it } of lista) {
-    const tuyo = arTiene(cat, it);
-    const marcado = cat === 'escenarios' ? escBase(sala.id) === it.id : false;
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-carta r-' + it.r + (tuyo ? '' : ' bloq') + (marcado ? ' activa' : '');
-    const k = arLienzo(64, 64); arPinta(k, (c, w) => it.x(c, w)); b.appendChild(k);
-    const s = document.createElement('small'); s.textContent = tr(it.n); b.appendChild(s);
-    const r = document.createElement('i'); r.className = 'esc-rar'; r.textContent = tr(RAREZA_AR[it.r]); b.appendChild(r);
-    const cuenta = cat === 'muebles' && tuyo ? muebleCuentaTexto(sala, it.id) : '', agotado = cat === 'muebles' && tuyo && muebleQuedan(sala, it.id) <= 0;      // unidades (muebles-unidades.js)
-    if (cuenta) { const n = document.createElement('em'); n.textContent = cuenta; b.appendChild(n); }
-    if (agotado) b.classList.add('agotada');
-    if (!tuyo) { const cd = arLienzo(22, 22, 'ar-candado'); arPinta(cd, (c, w) => ARD.ICONOS.candado(c, w)); b.appendChild(cd); }
-    b.addEventListener('pointerdown', e => { if (cat === 'muebles' && tuyo && !agotado) MIESC.arrastra = { it, x: e.clientX, y: e.clientY, ya: false, b, toque: e.pointerType !== 'mouse' }; });
-    b.onclick = () => { if (MIESC.arrastrado) { MIESC.arrastrado = false; return; } escTocaCosa(cat, it, tuyo); };
-    tira.appendChild(b);
-  }
+  for (const cosa of lista) escCartaCosa(sala, tira, cosa);
   const mas = document.createElement('button'); mas.type = 'button'; mas.className = 'esc-carta mas';
   mas.innerHTML = '<i></i><small></small>'; ponIcono(mas.firstChild, 'bolsa'); mas.lastChild.textContent = tr('CONSEGUIR MÁS');
   mas.onclick = () => { play('select'); escGuarda(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(MIESC.tab === 'escenarios' ? 'escenarios' : 'muebles', 'escenario'); };
   tira.appendChild(mas); tira.scrollLeft = viejo;
+}
+// la carta de un mueble o un escenario: dibujo, nombre, rareza, unidades y candado si no es tuyo
+function escCartaCosa(sala, tira, { cat, it }) {
+  const tuyo = arTiene(cat, it);
+  const marcado = cat === 'escenarios' ? escBase(sala.id) === it.id : false;
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-carta r-' + it.r + (tuyo ? '' : ' bloq') + (marcado ? ' activa' : '');
+  const k = arLienzo(64, 64); arPinta(k, (c, w) => it.x(c, w)); b.appendChild(k);
+  const s = document.createElement('small'); s.textContent = tr(it.n); b.appendChild(s);
+  const r = document.createElement('i'); r.className = 'esc-rar'; r.textContent = tr(RAREZA_AR[it.r]); b.appendChild(r);
+  const cuenta = cat === 'muebles' && tuyo ? muebleCuentaTexto(sala, it.id) : '', agotado = cat === 'muebles' && tuyo && muebleQuedan(sala, it.id) <= 0;      // unidades (muebles-unidades.js)
+  if (cuenta) { const n = document.createElement('em'); n.textContent = cuenta; b.appendChild(n); }
+  if (agotado) b.classList.add('agotada');
+  if (!tuyo) { const cd = arLienzo(22, 22, 'ar-candado'); arPinta(cd, (c, w) => ARD.ICONOS.candado(c, w)); b.appendChild(cd); }
+  b.addEventListener('pointerdown', e => { if (cat === 'muebles' && tuyo && !agotado) MIESC.arrastra = { it, x: e.clientX, y: e.clientY, ya: false, b, toque: e.pointerType !== 'mouse' }; });
+  b.onclick = () => { if (MIESC.arrastrado) { MIESC.arrastrado = false; return; } escTocaCosa(cat, it, tuyo); };
+  tira.appendChild(b);
 }
 function escTocaCosa(cat, it, tuyo) {
   if (!tuyo) { play('tick'); escAviso(tr('Aún no es tuyo') + ' · ' + tr(it.n) + ': ' + arTextoDe(it)); return; }

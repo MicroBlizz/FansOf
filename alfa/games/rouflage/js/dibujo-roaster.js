@@ -163,27 +163,31 @@ EVENTOS.turbo = {
   chorros(est, a, m, dt) {
     if (a && a.fase === 'sopla' && chorroSalto(a.p, a.t)) {
       const chs = chorrosRoaster(m, a.p.tipo), q = [1, 0.6, 0.3][graficosAdornos()] || 0.3;
-      for (const ch of chs) {
-        for (const e of J.entes) {
-          if (!eventoLeToca(e)) continue;
-          const d = enChorro(ch, e.x, e.y); if (d < 0 || !seVen(ch.x, ch.y, e.x, e.y - 10)) continue;
-          if (e.congelado || (e === J.yo && TALLER.abierto)) { if (e === J.yo) e.tiembla = Math.max(e.tiembla, 0.3); continue; }      // congelado: solo tiembla (no rompe su escondite)
-          this.empuja(est, e, ch, d);
-        }
-        for (const k of MASC.lista) { const d = enChorro(ch, k.x, k.y); if (d >= 0) this.empuja(est, k, ch, d); }      // las mascotas, cada pantalla las suyas
-        // las partículas (solo se ven: cada navegador las suyas)
-        for (let n = 0; n < 2; n++) if (est.parts.length < 150 && Math.random() < dt * 32 * q) {
-          const k = Math.random(), lado = (Math.random() - 0.5) * ch.ancho * 1.4, v = rand(380, 560);
-          const p = { x: ch.x + ch.dy * lado, y: ch.y - 8 + ch.dx * lado * 0.6, vx: ch.dx * v + ch.dy * rand(-60, 60), vy: ch.dy * v + ch.dx * rand(-40, 40), t: 0 };
-          if (k < 0.5) Object.assign(p, { k: 'raya', dur: rand(0.3, 0.5) });
-          else if (k < 0.72) Object.assign(p, { k: 'vaho', dur: rand(0.45, 0.7), r: rand(4, 7) });
-          else Object.assign(p, { k: 'papel', dur: rand(0.7, 1.1), rot: rand(0, TAU), vr: rand(-14, 14), col: pick(['#fff6ea', '#fff6ea', '#f2c230', '#c98a3b', '#9fd6e8']),
-            x: ch.x + ch.dx * rand(10, 90) + ch.dy * lado, y: ch.y + ch.dy * rand(10, 90) + ch.dx * lado * 0.6, vx: p.vx * 0.8, vy: p.vy * 0.8 - 40 });
-          est.parts.push(p);
-        }
-      }
+      for (const ch of chs) { this.empujaEnChorro(est, ch); this.echaAire(est, ch, dt, q); }
     } else if (a && a.fase === 'aviso' && Math.random() < dt * 14) {      // el aviso: un poco de vaho que se escapa por donde va a soplar
       for (const ch of chorrosRoaster(m, a.p.tipo)) est.parts.push({ k: 'vaho', x: ch.x + rand(-6, 6), y: ch.y - 8 + rand(-6, 6), vx: ch.dx * rand(30, 70), vy: ch.dy * rand(30, 70) - 10, t: 0, dur: rand(0.5, 0.8), r: rand(3, 5) });
+    }
+  },
+  // quien pilla el chorro (y las mascotas) sale empujado; los congelados solo tiemblan
+  empujaEnChorro(est, ch) {
+    for (const e of J.entes) {
+      if (!eventoLeToca(e)) continue;
+      const d = enChorro(ch, e.x, e.y); if (d < 0 || !seVen(ch.x, ch.y, e.x, e.y - 10)) continue;
+      if (e.congelado || (e === J.yo && TALLER.abierto)) { if (e === J.yo) e.tiembla = Math.max(e.tiembla, 0.3); continue; }      // congelado: solo tiembla (no rompe su escondite)
+      this.empuja(est, e, ch, d);
+    }
+    for (const k of MASC.lista) { const d = enChorro(ch, k.x, k.y); if (d >= 0) this.empuja(est, k, ch, d); }      // las mascotas, cada pantalla las suyas
+  },
+  // las partículas (solo se ven: cada navegador las suyas)
+  echaAire(est, ch, dt, q) {
+    for (let n = 0; n < 2; n++) if (est.parts.length < 150 && Math.random() < dt * 32 * q) {
+      const k = Math.random(), lado = (Math.random() - 0.5) * ch.ancho * 1.4, v = rand(380, 560);
+      const p = { x: ch.x + ch.dy * lado, y: ch.y - 8 + ch.dx * lado * 0.6, vx: ch.dx * v + ch.dy * rand(-60, 60), vy: ch.dy * v + ch.dx * rand(-40, 40), t: 0 };
+      if (k < 0.5) Object.assign(p, { k: 'raya', dur: rand(0.3, 0.5) });
+      else if (k < 0.72) Object.assign(p, { k: 'vaho', dur: rand(0.45, 0.7), r: rand(4, 7) });
+      else Object.assign(p, { k: 'papel', dur: rand(0.7, 1.1), rot: rand(0, TAU), vr: rand(-14, 14), col: pick(['#fff6ea', '#fff6ea', '#f2c230', '#c98a3b', '#9fd6e8']),
+        x: ch.x + ch.dx * rand(10, 90) + ch.dy * lado, y: ch.y + ch.dy * rand(10, 90) + ch.dx * lado * 0.6, vx: p.vx * 0.8, vy: p.vy * 0.8 - 40 });
+      est.parts.push(p);
     }
   },
   siguenEmpujes(est, dt) {

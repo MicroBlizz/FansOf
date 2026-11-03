@@ -230,14 +230,20 @@ function dibujaFondo(c, capas, x0, y0, vw, vh) {
 function dibujaJunta(c, capas, x0, y0, vw, vh) {
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
-  for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && !idaOculto(e) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
+  for (const e of J.entes) if (dibujaEntra(e, x0, y0, vw, vh)) cosas.push(e);
   talentosCosas(cosas, x0, y0, vw, vh);      // los señuelos pintados (talentos-efectos.js)
   for (const m of MASC.lista) if (m.x > x0 - 40 && m.x < x0 + vw + 40 && m.y > y0 - 10 && m.y < y0 + vh + 40) cosas.push(m);      // las mascotas del armario (mascotas.js)
   for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
+  dibujaJuntaPuertas(cosas);
+  return cosas;
+}
+// ¿cae este personaje en el encuadre (con margen)? Sin los que llevan fuera más de 3 s ni los ocultos de «Ida y vuelta»
+const dibujaEntra = (e, x0, y0, vw, vh) => !(e.fuera && e.tFuera > 3) && !idaOculto(e) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90;
+// la puerta del mapa, las barreras de Mi escenario y los portazos de los fantasmas: se ordenan con los demás por su borde de abajo
+function dibujaJuntaPuertas(cosas) {
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
   if (BARRERAS.length && PUERTA.abierta < 1 && J.fase !== 'sala') for (const b of BARRERAS) cosas.push({ y: b.y + b.h, puerta: true, barrera: b });      // Mi escenario (barreras.js)
   for (const z of FPZ.lista) if (z.k === 'portazo') cosas.push({ y: z.p.y + z.p.h, puerta: true, portazo: z });      // el portazo de un fantasma (fantasma-efectos.js)
-  return cosas;
 }
 // el orden de pintado: de atrás adelante, con los congelados como «parte del suelo»
 function dibujaOrden(cosas) {

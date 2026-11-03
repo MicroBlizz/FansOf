@@ -194,25 +194,34 @@ function salaVivaPintaUI(i, soyAnf) {
   E('sv-invitar').textContent = tr('INVITAR');
   E('sv-opciones').querySelector('span').textContent = tr('CONFIGURAR PARTIDA');
   E('sv-opciones').setAttribute('aria-label', tr('CONFIGURAR PARTIDA')); E('sv-chat').setAttribute('aria-label', tr('Chat')); E('sv-atras').setAttribute('aria-label', tr('Salir de la sala')); E('sv-cerrar').setAttribute('aria-label', tr('Cerrar'));
-  // lo que se va a jugar, en pequeño: el modo, el mapa y con o sin talentos
-  const d = soyAnf ? MODO_ELEGIDO : (i.modo || {}), etq = [], m = MODOS[d.m] ? d.m : 'normal';
+  const html = svEtiquetas(soyAnf ? MODO_ELEGIDO : (i.modo || {}), soyAnf);
+  svBotonPapel();
+  const caja = E('sv-etq'); if (caja.innerHTML !== html) caja.innerHTML = html;
+  svBotonEmpezar(i, soyAnf);
+}
+// lo que se va a jugar, en pequeño: el modo, el mapa y con o sin talentos
+function svEtiquetas(d, soyAnf) {
+  const etq = [], m = MODOS[d.m] ? d.m : 'normal';
   etq.push(['', tr(MODOS[m].nombre)]);
   const mapa = typeof mapaDeSala === 'function' && mapaDeSala(d), def = mapa && MAPAS[mapa];
   if (def) etq.push(['', mapa === MAPA_ESC.id ? tr(soyAnf ? 'MI ESCENARIO' : 'ESTE ESCENARIO') : tr(def.nombre)]);
   etq.push([ajusteSala(d.a, 't') === 1 ? 'tal' : '', ajusteSala(d.a, 't') === 1 ? tr('CON TALENTOS') : tr('CLÁSICO')]);
-  // el botón de cambiar de papel: dice a cuál pasas
+  return etq.map(([c, t]) => `<span class="sv-e ${c}">${esc(t)}</span>`).join('');
+}
+// el botón de cambiar de papel: dice a cuál pasas
+function svBotonPapel() {
   const caz = !!(J.yo && J.yo.clase === 'cazador'), bp = E('sv-papel');
   if (bp.dataset.caz !== String(caz)) { bp.dataset.caz = String(caz); bp.classList.toggle('caz', !caz); ponIcono(bp.querySelector('i'), caz ? 'pincel' : 'diana'); }
   bp.querySelector('b').textContent = caz ? tr('SER CAMALEÓN') : tr('SER CAZADOR');
   bp.classList.toggle('lleno', !caz && J.cazadores.length >= SV_MAX_CAZ);      // ya hay bastantes cazadores
-  const html = etq.map(([c, t]) => `<span class="sv-e ${c}">${esc(t)}</span>`).join('');
-  const caja = E('sv-etq'); if (caja.innerHTML !== html) caja.innerHTML = html;
-  // EMPEZAR: el anfitrión lo pulsa; los demás ven a quién esperan
-  const b = E('sv-empezar'), faltan = Math.max(0, (salaCuantos(i.modo, (i.jugadores || []).length).total) - (i.jugadores || []).length);
+}
+// EMPEZAR: el anfitrión lo pulsa; los demás ven a quién esperan
+function svBotonEmpezar(i, soyAnf) {
+  const jugadores = i.jugadores || [], b = E('sv-empezar'), faltan = Math.max(0, salaCuantos(i.modo, jugadores.length).total - jugadores.length);
   b.classList.toggle('espera', !soyAnf); b.disabled = !soyAnf;
   const solo = soyAnf && (i.n || 0) < 2; b.classList.toggle('largo', solo);
   b.querySelector('b').textContent = soyAnf ? (solo ? tr('RELLENAR CON BOTS') : tr('EMPEZAR')) : tr('ESPERANDO');      // como siempre: solo, se juega ya con la máquina
-  const anf = (i.jugadores || []).find(j => j.orden === i.anfitrion);
+  const anf = jugadores.find(j => j.orden === i.anfitrion);
   b.querySelector('small').textContent = soyAnf ? (faltan ? tr('El resto, bots: {n}', { n: faltan }) : '') : tr('Lo empieza {n}', { n: anf ? anf.nombre : '' });
 }
 // los nombres encima de cada colado de la sala (el del anfitrión, en amarillo): lo llama el dibujo (dibujo.js) tras los personajes

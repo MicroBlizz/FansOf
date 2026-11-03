@@ -1,8 +1,8 @@
 {
- "build": 864,
- "hash": "aedf722",
- "fecha": "2026-11-03T00:51:40Z",
- "mensaje": "Pets: el párpado enfadado del muñeco ya no se cruza en un ojo y la taza se inclina al beber (revisión de código)",
+ "build": 865,
+ "hash": "1ae1862",
+ "fecha": "2026-11-03T01:03:31Z",
+ "mensaje": "Rouflage: salaVivaPintaUI, fpPuertaCerca, fotoHaz y dibujaJunta partidos; 26 tests escritos antes",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

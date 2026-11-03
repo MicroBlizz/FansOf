@@ -1,6 +1,9 @@
 // Fans of Cooking · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.4
+  "<b>VOLUMEN POR SEPARADO</b>: en Opciones hay una barra para los efectos y otra para la música, las mismas que el resto de juegos.": "<b>SEPARATE VOLUMES</b>: Options now has one bar for effects and another for music, the same as the other games.",
+  "Microblizz ha bajado la música de la cocina y Phony ha subido la freidora.": "Microblizz turned the kitchen music down and Phony turned the fryer up.",
   // 0.2.3
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
   "Microblizz ha apuntado los pedidos en una cola y Phony se ha colado con una tarta.": "Microblizz noted the orders in a queue and Phony cut in with a cake.",

@@ -1,6 +1,9 @@
 // Fans Of Pets · Inglés: los textos de este juego (los nombres de las criaturas y de las facciones están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.1
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems gain separate effects and music volumes, and internal testing keeps improving.",
+  "Microblizz ha bajado la música y Phony ha subido los bostezos.": "Microblizz turned the music down and Phony turned the yawns up.",
   // 0.2.0
   "<b>EL MONIGOTE POR PIEZAS</b>: la criatura se dibuja en piezas (cara, orejas, cola, corona), con cara viva, y ahora come, se ducha y duerme en su cama.": "<b>THE PIECE-BY-PIECE PET</b>: the creature is drawn in pieces (face, ears, tail, crown), with a living face, and now it eats, showers and sleeps in its bed.",
   "Microblizz ha despiezado al monigote y Phony ha vuelto a montarlo con una oreja de sobra.": "Microblizz took the pet apart and Phony put it back together with a spare ear.",

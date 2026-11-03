@@ -1,6 +1,9 @@
 // Fans of Boom · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.4.3
+  "<b>VOLUMEN POR SEPARADO</b>: en Opciones hay una barra para los efectos y otra para la música, las mismas que el resto de juegos.": "<b>SEPARATE VOLUMES</b>: Options now has one bar for effects and another for music, the same as the other games.",
+  "Microblizz ha bajado la música del cráter y Phony ha subido las explosiones.": "Microblizz turned the crater music down and Phony turned the explosions up.",
   // 0.4.2
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
   "Microblizz ha puesto el cráter en cola de espera y Phony ya está haciendo sitio.": "Microblizz has put the crater on a waiting list and Phony is already making room.",

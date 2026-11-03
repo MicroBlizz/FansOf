@@ -1,8 +1,8 @@
 {
- "build": 863,
- "hash": "8d76441",
- "fecha": "2026-11-03T00:33:39Z",
- "mensaje": "Nova 0.3.41: láser y flak térmico según la pirámide; partidas del bot en hilos y en Yoshi",
+ "build": 864,
+ "hash": "aedf722",
+ "fecha": "2026-11-03T00:51:40Z",
+ "mensaje": "Pets: el párpado enfadado del muñeco ya no se cruza en un ojo y la taza se inclina al beber (revisión de código)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

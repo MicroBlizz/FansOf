@@ -56,27 +56,35 @@ function pvpDadoNuevo(m, k) {
   return true;
 }
 
+// qué le hace a la víctima cada golpe nuevo; devuelve true si le ha dado (entonces se avisa al autor). yo = la víctima es mi kart
+const GOLPE_NUEVO = {
+  trompo(v, yo, quien, autor) {
+    if (paraBot(v) || !golpea(v, 'trompo', autor)) return false;
+    for (let i = 0; i < 12; i++) chispa(v.x, v.y, 8, azar(-50, 50), azar(-50, 50), azar(40, 90), 0.5, i & 1 ? '#e63946' : '#ffffff', 2);
+    if (yo) { aviso('¡BANEADO!', 'Motivo: comportamiento sospechoso.', '#e63946'); comenta(trf('%1 te ha baneado. Puedes apelar en 30 días hábiles.', quien)); }
+    return true;
+  },
+  spam(v, yo, quien) {
+    if (yo) { SPAM.t = SPAM.dur; play('deny'); comenta(trf('%1 te ha suscrito a 40 boletines.', quien)); }
+    else { v.tResbala = 0.9; v.giroRes = Math.random() < 0.5 ? -1 : 1; }
+    return true;
+  },
+  lag(v, yo) {
+    if (v.tInmune > 0) return false;
+    v.lag = { n: 3, t: 0.15 }; if (yo) aviso('LAG', 'Ping: 999 ms.', '#ff3348');
+    return true;
+  },
+  micro(v, yo, quien) {
+    const n = Math.min(3, v.monedas || 0);
+    if (!n) return false;
+    v.monedas -= n; if (yo) aviso('MICROTRANSACCIÓN', trf('%1 te ha cobrado %2 monedas.', quien, n), '#ffcb3d');
+    return true;
+  },
+};
 // un golpe nuevo que va a uno de mis karts (el mío o uno de la máquina que muevo)
 function pvpAplicaGolpeNuevo(m, autor) {
   const C = CARRERA, v = m.a === KPVP.orden ? C.jugador : C.karts.find(x => x.plaza === m.a && !x.remoto && x.ia);
   if (!v || v.fin) return;
-  const quien = m.q && PILOTO[m.q] ? tr(PILOTO[m.q].nombre) : autor.nombre, yo = v.esJugador;
-  let dado = false;
-  if (m.tipo === 'trompo') {
-    if (!paraBot(v) && golpea(v, 'trompo', autor)) {
-      dado = true;
-      for (let i = 0; i < 12; i++) chispa(v.x, v.y, 8, azar(-50, 50), azar(-50, 50), azar(40, 90), 0.5, i & 1 ? '#e63946' : '#ffffff', 2);
-      if (yo) { aviso('¡BANEADO!', 'Motivo: comportamiento sospechoso.', '#e63946'); comenta(trf('%1 te ha baneado. Puedes apelar en 30 días hábiles.', quien)); }
-    }
-  } else if (m.tipo === 'spam') {
-    dado = true;
-    if (yo) { SPAM.t = SPAM.dur; play('deny'); comenta(trf('%1 te ha suscrito a 40 boletines.', quien)); }
-    else { v.tResbala = 0.9; v.giroRes = Math.random() < 0.5 ? -1 : 1; }
-  } else if (m.tipo === 'lag') {
-    if (!(v.tInmune > 0)) { dado = true; v.lag = { n: 3, t: 0.15 }; if (yo) aviso('LAG', 'Ping: 999 ms.', '#ff3348'); }
-  } else if (m.tipo === 'micro') {
-    const n = Math.min(3, v.monedas || 0);
-    if (n) { dado = true; v.monedas -= n; if (yo) aviso('MICROTRANSACCIÓN', trf('%1 te ha cobrado %2 monedas.', quien, n), '#ffcb3d'); }
-  }
-  if (dado) pvpManda({ t: 'dado', tipo: m.tipo, a: m.de, p: yo ? undefined : v.piloto.id });
+  const quien = m.q && PILOTO[m.q] ? tr(PILOTO[m.q].nombre) : autor.nombre, yo = v.esJugador, aplica = GOLPE_NUEVO[m.tipo];
+  if (aplica && aplica(v, yo, quien, autor)) pvpManda({ t: 'dado', tipo: m.tipo, a: m.de, p: yo ? undefined : v.piloto.id });
 }

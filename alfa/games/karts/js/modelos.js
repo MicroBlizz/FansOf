@@ -24,54 +24,59 @@ function cortaEsf(p, ox, oy, oz, dx, dy, dz) {
   NLX = (ox + t * dx) / (a * a); NLY = (oy + t * dy) / (b * b); NLZ = (oz + t * dz) / (c * c);
   return t;
 }
+// el tramo de un rayo dentro de la losa de un eje de la caja: deja en LOSA_A y LOSA_B dónde entra y sale y en LOSA_S el signo de la cara de entrada.
+// Devuelve 1 si el rayo cruza la losa, 0 si va paralelo dentro de ella y -1 si va paralelo y fuera
+let LOSA_A = 0, LOSA_B = 0, LOSA_S = 1;
+function losaDeEje(r, o, d) {
+  if (d <= 1e-9 && d >= -1e-9) return o > r || o < -r ? -1 : 0;
+  LOSA_A = (-r - o) / d; LOSA_B = (r - o) / d; LOSA_S = -1;
+  if (LOSA_A > LOSA_B) { const x = LOSA_A; LOSA_A = LOSA_B; LOSA_B = x; LOSA_S = 1; }
+  return 1;
+}
 function cortaCaja(p, ox, oy, oz, dx, dy, dz) {
-  let t0 = -1e9, t1 = 1e9, eje = 0, signo = 1, a, b, s;
-  const rx = p.r[0], ry = p.r[1], rz = p.r[2];
-  if (dx > 1e-9 || dx < -1e-9) {
-    a = (-rx - ox) / dx; b = (rx - ox) / dx; s = -1;
-    if (a > b) { const x = a; a = b; b = x; s = 1; }
-    t0 = a; signo = s; t1 = b;
-  } else if (ox > rx || ox < -rx) return -1;
-  if (dy > 1e-9 || dy < -1e-9) {
-    a = (-ry - oy) / dy; b = (ry - oy) / dy; s = -1;
-    if (a > b) { const x = a; a = b; b = x; s = 1; }
-    if (a > t0) { t0 = a; eje = 1; signo = s; }
-    if (b < t1) t1 = b;
+  const o = [ox, oy, oz], d = [dx, dy, dz];
+  let t0 = -1e9, t1 = 1e9, eje = 0, signo = 1;
+  for (let e = 0; e < 3; e++) {
+    const cruza = losaDeEje(p.r[e], o[e], d[e]);
+    if (cruza < 0) return -1;
+    if (!cruza) continue;
+    if (e === 0) { t0 = LOSA_A; signo = LOSA_S; t1 = LOSA_B; continue; }
+    if (LOSA_A > t0) { t0 = LOSA_A; eje = e; signo = LOSA_S; }
+    if (LOSA_B < t1) t1 = LOSA_B;
     if (t0 > t1) return -1;
-  } else if (oy > ry || oy < -ry) return -1;
-  if (dz > 1e-9 || dz < -1e-9) {
-    a = (-rz - oz) / dz; b = (rz - oz) / dz; s = -1;
-    if (a > b) { const x = a; a = b; b = x; s = 1; }
-    if (a > t0) { t0 = a; eje = 2; signo = s; }
-    if (b < t1) t1 = b;
-    if (t0 > t1) return -1;
-  } else if (oz > rz || oz < -rz) return -1;
+  }
   NLX = eje === 0 ? signo : 0; NLY = eje === 1 ? signo : 0; NLZ = eje === 2 ? signo : 0;
   return t0;
 }
+// el mejor corte de un rayo con un cono: t, y la normal en CONO_N
+let CONO_T = 1e9; const CONO_N = [0, 0, 0];
+function ponCorteCono(t, nx, ny, nz) { CONO_T = t; CONO_N[0] = nx; CONO_N[1] = ny; CONO_N[2] = nz; }
+function cortaLadoCono(ox, oy, oz, dx, dy, dz, h, rm, k) {
+  const ro = rm + k * oz, A = dx * dx + dy * dy - k * k * dz * dz, B = ox * dx + oy * dy - k * dz * ro, C = ox * ox + oy * oy - ro * ro;
+  if (A <= 1e-9 && A >= -1e-9) return;
+  const D = B * B - A * C;
+  if (D < 0) return;
+  const q = Math.sqrt(D);
+  for (const t of [(-B - q) / A, (-B + q) / A]) {
+    const z = oz + t * dz, rz = rm + k * z;
+    if (t < CONO_T && z >= -h && z <= h && rz >= 0) ponCorteCono(t, ox + t * dx, oy + t * dy, -k * rz);
+  }
+}
+function cortaTapasCono(ox, oy, oz, dx, dy, dz, h, rm, k) {
+  if (dz <= 1e-9 && dz >= -1e-9) return;
+  let t = (h - oz) / dz, x = ox + t * dx, y = oy + t * dy, rz = rm + k * h;
+  if (t < CONO_T && x * x + y * y <= rz * rz) ponCorteCono(t, 0, 0, 1);
+  t = (-h - oz) / dz; x = ox + t * dx; y = oy + t * dy; rz = rm - k * h;
+  if (t < CONO_T && x * x + y * y <= rz * rz) ponCorteCono(t, 0, 0, -1);
+}
 function cortaCono(p, ox, oy, oz, dx, dy, dz) {
   const h = p.r[2], rm = (p.r[0] + p.r[1]) / 2, k = (p.r[1] - p.r[0]) / (2 * h);
-  let mejor = 1e9, nx = 0, ny = 0, nz = 0;
-  const ro = rm + k * oz, A = dx * dx + dy * dy - k * k * dz * dz, B = ox * dx + oy * dy - k * dz * ro, C = ox * ox + oy * oy - ro * ro;
-  if (A > 1e-9 || A < -1e-9) {
-    const D = B * B - A * C;
-    if (D >= 0) {
-      const q = Math.sqrt(D);
-      let t = (-B - q) / A, z = oz + t * dz, rz = rm + k * z;
-      if (z >= -h && z <= h && rz >= 0) { mejor = t; nx = ox + t * dx; ny = oy + t * dy; nz = -k * rz; }
-      t = (-B + q) / A; z = oz + t * dz; rz = rm + k * z;
-      if (t < mejor && z >= -h && z <= h && rz >= 0) { mejor = t; nx = ox + t * dx; ny = oy + t * dy; nz = -k * rz; }
-    }
-  }
-  if (dz > 1e-9 || dz < -1e-9) {
-    let t = (h - oz) / dz, x = ox + t * dx, y = oy + t * dy, rz = rm + k * h;
-    if (t < mejor && x * x + y * y <= rz * rz) { mejor = t; nx = 0; ny = 0; nz = 1; }
-    t = (-h - oz) / dz; x = ox + t * dx; y = oy + t * dy; rz = rm - k * h;
-    if (t < mejor && x * x + y * y <= rz * rz) { mejor = t; nx = 0; ny = 0; nz = -1; }
-  }
-  if (mejor > 1e8) return -1;
-  NLX = nx; NLY = ny; NLZ = nz;
-  return mejor;
+  ponCorteCono(1e9, 0, 0, 0);
+  cortaLadoCono(ox, oy, oz, dx, dy, dz, h, rm, k);
+  cortaTapasCono(ox, oy, oz, dx, dy, dz, h, rm, k);
+  if (CONO_T > 1e8) return -1;
+  NLX = CONO_N[0]; NLY = CONO_N[1]; NLZ = CONO_N[2];
+  return CONO_T;
 }
 const CORTA = { esf: cortaEsf, caja: cortaCaja, cono: cortaCono };
 

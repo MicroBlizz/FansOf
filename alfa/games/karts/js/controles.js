@@ -20,16 +20,20 @@ function juntaMandos() {
   ENT.izq = TEC.izq || DEDO.izq || MAN.izq; ENT.der = TEC.der || DEDO.der || MAN.der;
   ENT.gas = TEC.gas || MAN.gas; ENT.freno = TEC.freno || DEDO.freno || MAN.freno; ENT.derrapa = TEC.derrapa || DEDO.derrapa || MAN.derrapa; ENT.ejeX = MAN.eje;
 }
+// una tecla de juego: usar objeto y pausa son pulsos; las demás se quedan apretadas hasta soltarlas
+function teclaDeJuego(t) {
+  if (t === 'usa') PULSOS.usa = true; else if (t === 'pausa') PULSOS.pausa = true;
+  else { if (t === 'derrapa' && !TEC.derrapa) PULSOS.salta = true; TEC[t] = true; juntaMandos(); }
+}
 function alPulsarTecla(e) {
   if (e.target && e.target.tagName === 'INPUT') { if (e.code === 'Escape') UI.tecla = 'atras'; return; }      // escribiendo (el código de la sala): las teclas son del cuadro
-  if (e.repeat) { if (TECLAS[e.code] || TECLAS_MENU[e.code]) e.preventDefault(); return; }
   const t = TECLAS[e.code], m = TECLAS_MENU[e.code];
   if (t || m) e.preventDefault();
+  if (e.repeat) return;
   if (m) UI.tecla = m;
   if (!t) return;
   if (ENT.tactil) { ENT.tactil = false; ENT.autoGas = AJUSTES.autoGas === 'si'; ajusta(); }
-  if (t === 'usa') PULSOS.usa = true; else if (t === 'pausa') PULSOS.pausa = true;
-  else { if (t === 'derrapa' && !TEC.derrapa) PULSOS.salta = true; TEC[t] = true; juntaMandos(); }
+  teclaDeJuego(t);
 }
 window.addEventListener('keydown', alPulsarTecla);
 window.addEventListener('keyup', e => { const t = TECLAS[e.code]; if (t && t in TEC) { TEC[t] = false; juntaMandos(); } });
@@ -99,11 +103,18 @@ function sinMando() {
   juntaMandos();
 }
 // en los menús: cruceta o palanca para moverse (también arriba y abajo) y B para volver; solo cuenta al apretar, no al mantener
+const ORDEN_MENU_MANDO = ['izq', 'der', 'arr', 'aba', 'atras'];
 function mandoEnMenus(g, b, x) {
-  const y = g.axes[1] || 0, izq = MAN.izq || x < -0.6, der = MAN.der || x > 0.6, arr = b(12) || y < -0.6, aba = b(13) || y > 0.6, atras = b(1) && (PANT.id !== 'carrera' || PANT.pausa);
-  if (izq && !MAN.izqAntes) UI.tecla = 'izq'; if (der && !MAN.derAntes) UI.tecla = 'der';
-  if (arr && !MAN.arrAntes) UI.tecla = 'arr'; if (aba && !MAN.abaAntes) UI.tecla = 'aba'; if (atras && !MAN.atrasAntes) UI.tecla = 'atras';
-  MAN.izqAntes = izq; MAN.derAntes = der; MAN.arrAntes = arr; MAN.abaAntes = aba; MAN.atrasAntes = atras;
+  const y = g.axes[1] || 0;
+  const ahora = { izq: MAN.izq || x < -0.6, der: MAN.der || x > 0.6, arr: b(12) || y < -0.6, aba: b(13) || y > 0.6, atras: b(1) && (PANT.id !== 'carrera' || PANT.pausa) };
+  for (const t of ORDEN_MENU_MANDO) { if (ahora[t] && !MAN[t + 'Antes']) UI.tecla = t; MAN[t + 'Antes'] = ahora[t]; }
+}
+// lo que se acaba de apretar (no lo que sigue apretado)
+function pulsosDeMando(d, u, p, ok) {
+  if (d && !MAN.derrapa) PULSOS.salta = true;
+  if (u && !MAN.usa) PULSOS.usa = true;
+  if (p && !MAN.pausa) PULSOS.pausa = true;
+  if (ok && !MAN.ok) UI.tecla = 'ok';
 }
 function mando() {
   const g = navigator.getGamepads ? [...navigator.getGamepads()].find(Boolean) : null;
@@ -111,10 +122,7 @@ function mando() {
   const b = i => !!(g.buttons[i] && g.buttons[i].pressed), x = g.axes[0] || 0;
   MAN.eje = Math.abs(x) > 0.25 ? x : 0; MAN.izq = b(14); MAN.der = b(15); MAN.gas = b(0); MAN.freno = b(6) || b(13);
   const d = b(1) || b(5) || b(7), u = b(2) || b(3) || b(4), p = b(9), ok = b(0);
-  if (d && !MAN.derrapa) PULSOS.salta = true;
-  if (u && !MAN.usa) PULSOS.usa = true;
-  if (p && !MAN.pausa) PULSOS.pausa = true;
-  if (ok && !MAN.ok) UI.tecla = 'ok';
+  pulsosDeMando(d, u, p, ok);
   mandoEnMenus(g, b, x);
   MAN.derrapa = d; MAN.usa = u; MAN.pausa = p; MAN.ok = ok;
   juntaMandos();

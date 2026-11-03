@@ -18,11 +18,14 @@ const FRASES_CARRERA = [
   'Lola vende café en la meta. Es lo único que funciona aquí.',
 ];
 
-function nuevaCarrera(def, idPiloto) {
-  const C = CARRERA;
-  // la pista se construye una vez; si se repite la misma, solo se reponen las monedas y los regalos
+// la pista se construye una vez; si se repite la misma, solo se reponen las monedas y los regalos
+function preparaPista(def) {
   if (!PISTA || PISTA.def !== def || PISTA.idioma !== IDIOMA_K || PISTA.dif !== nivelDif()) { PISTA = creaPista(def); PISTA.idioma = IDIOMA_K; PISTA.dif = nivelDif(); preparaIA(PISTA); }
   else { for (const m of PISTA.monedas) m.t = 0; for (const c of PISTA.regalos) c.t = 0; }
+}
+function nuevaCarrera(def, idPiloto) {
+  const C = CARRERA;
+  preparaPista(def);
   const P = PISTA, N = P.N, pvp = typeof KPVP !== 'undefined' && KPVP.activo;    // en PvP corren los humanos (los mueve la red), tú y la máquina en los huecos hasta 8
   const otros = PILOTOS.filter(p => p.id !== idPiloto && p.id !== 'ceo' && p.id !== 'survivalbot').sort(() => Math.random() - 0.5);
   const crono = !pvp && !COPA.activa && def.mundo !== 0 && PANT.modo === 'crono';     // contrarreloj: tú solo (crono.js)
@@ -149,10 +152,14 @@ function pasoDelJugador(C, dt) {
   if (C.estado === 'corre') pasoCorriendo(C, yo, dt);
   else if (C.estado === 'meta') { C.tMeta += dt; if (C.tMeta > 3.4) terminaCarrera(); }
 }
+// lo que cruza la pista (vagonetas, cangrejos, bichos…) y lo que cae del cielo (rocas, témpanos, balones…)
+function muevePistaViva(P, C) {
+  if (P.moviles) for (const c of P.moviles) mueveMovil(c, C.reloj);
+  if (P.caidas) for (const c of P.caidas) mueveCaida(c, C);
+}
 function pasoCarrera(dt) {
   const C = CARRERA, P = PISTA;
-  if (P.moviles) for (const c of P.moviles) mueveMovil(c, C.reloj);      // lo que cruza la pista (vagonetas, cangrejos, bichos…)
-  if (P.caidas) for (const c of P.caidas) mueveCaida(c, C);              // lo que cae del cielo (rocas, témpanos, balones…)
+  muevePistaViva(P, C);
   if (TUTO.activo) tutoMira(C, dt);
   if (C.estado === 'cuenta') { if (!pasoCuenta(C, dt)) return; } else C.reloj += dt;
   if (C.pvp) pvpActualizaAnfitrion(C);      // quién mueve la máquina en el PvP

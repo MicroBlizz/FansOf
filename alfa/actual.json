@@ -1,8 +1,8 @@
 {
- "build": 888,
- "hash": "1568563",
- "fecha": "2026-11-03T20:58:55Z",
- "mensaje": "Karts: marcador, bucle, diseño táctil, mandos, resultados, opciones y economía en funciones pequeñas; guardias nuevas de menús y de diseño táctil",
+ "build": 889,
+ "hash": "07e9589",
+ "fecha": "2026-11-03T21:12:28Z",
+ "mensaje": "Karts: ninguna función por encima de 15; guardia de menús ampliada (tienda, fichas, sala, pistas, contrarreloj) y docs al día",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

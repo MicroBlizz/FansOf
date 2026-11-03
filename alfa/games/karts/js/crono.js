@@ -78,6 +78,14 @@ function cierraCrono() {
   }
   if (t && dev && t < dev.t) daCos('titulo-fantasma', '¡FANTASMA SUPERADO!');
 }
+function mensajeDeCrono(R) {
+  return !R.t ? 'Microblizz ha cerrado los servidores antes de que llegaras.' : R.record && R.previo ? '¡NUEVO RÉCORD! Microblizz lo pondrá en un anuncio sin pedirte permiso.' : R.record ? 'Primer récord. Ya tienes fantasma propio.' : 'Sin récord. El fantasma te ha visto llorar.';
+}
+function tiemposDeCrono(R) {
+  (R.vueltas || []).slice(0, 3).forEach((v, i) => mini(lx, trf('VUELTA %1', i + 1) + ': ' + tiempoTxt(v), 24 + i * 72, 58, '#bdb6d6'));
+  const filas = [[tr('TU RÉCORD'), R.record ? tiempoTxt(R.t) : R.previo ? tiempoTxt(R.previo) : '--:--', R.record ? '#5ef27a' : '#ffffff'], [tr('FANTASMA DEL DESARROLLADOR'), R.dev ? tiempoTxt(R.dev) : '--:--', '#22e3ff']];
+  filas.forEach(([n, v, c], i) => { mini(lx, n, 14, 72 + i * 11, '#bdb6d6'); escribe(lx, v, 226, 71 + i * 11, c, '#1c1028', 'der'); });
+}
 function pantallaCrono() {
   const C = CARRERA, R = C.crono_ || {}, d = C.def;
   paseo(20, 34); velo(0.66);
@@ -85,11 +93,8 @@ function pantallaCrono() {
   marco(4, 22, 232, 96);
   escribe(lx, tr(d.nombre), PW / 2, 27, '#ffcb3d', '#1c1028', 'centro');
   escribeB(lx, R.t ? tiempoTxt(R.t) : tr('SIN TIEMPO'), PW / 2, 38, '#ffffff', '#1c1028', 'centro', 2);
-  (R.vueltas || []).slice(0, 3).forEach((v, i) => mini(lx, trf('VUELTA %1', i + 1) + ': ' + tiempoTxt(v), 24 + i * 72, 58, '#bdb6d6'));
-  const filas = [[tr('TU RÉCORD'), R.record ? tiempoTxt(R.t) : R.previo ? tiempoTxt(R.previo) : '--:--', R.record ? '#5ef27a' : '#ffffff'], [tr('FANTASMA DEL DESARROLLADOR'), R.dev ? tiempoTxt(R.dev) : '--:--', '#22e3ff']];
-  filas.forEach(([n, v, c], i) => { mini(lx, n, 14, 72 + i * 11, '#bdb6d6'); escribe(lx, v, 226, 71 + i * 11, c, '#1c1028', 'der'); });
-  const msg = !R.t ? 'Microblizz ha cerrado los servidores antes de que llegaras.' : R.record && R.previo ? '¡NUEVO RÉCORD! Microblizz lo pondrá en un anuncio sin pedirte permiso.' : R.record ? 'Primer récord. Ya tienes fantasma propio.' : 'Sin récord. El fantasma te ha visto llorar.';
-  escribeLineas(lx, tr(msg), PW / 2, 96, 220, R.record ? '#5ef27a' : '#ffe9a8', null, 'centro', 9);
+  tiemposDeCrono(R);
+  escribeLineas(lx, tr(mensajeDeCrono(R)), PW / 2, 96, 220, R.record ? '#5ef27a' : '#ffe9a8', null, 'centro', 9);
   if (R.t && R.dev && R.t < R.dev) mini(lx, tr('¡HAS GANADO AL DESARROLLADOR!'), PW / 2, 121, '#22e3ff', '#1c1028', 'centro');
   if (C.gana) mini(lx, trf('+%1 ORO · +%2 XP DE PASE', C.gana.oro, C.gana.xp), PW / 2, 132, '#ffe9a8', '#1c1028', 'centro');
   boton('OTRA VEZ', 4, 144, 74, () => empiezaCarga(), 13, '#22e3ff');

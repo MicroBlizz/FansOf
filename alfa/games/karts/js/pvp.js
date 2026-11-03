@@ -217,22 +217,30 @@ function pvpMsgRendir(m, k) {
   if (pvpRendido(k)) return;
   if (k) { k.rendido = true; pvpSeVa(k, '%1 se ha rendido.'); }
 }
+// ¿vale este aviso de estado? (no, si es uno viejo que llegó tarde o un salto imposible de la máquina)
+function pvpAvisoValido(k, m, de) {
+  const r = k.remoto, ia = k.plaza != null;
+  if (ia && r.host !== de) { r.host = de; r.n = 0; }       // otro anfitrión: su cuenta de avisos empieza de cero
+  if ((m.n || 0) < (r.n || 0)) return false;
+  // la máquina no puede dar saltos imposibles (un anfitrión que haga cosas raras solo estropea la carrera de la máquina, no da puntos)
+  return !(ia && r.visto && RELOJ - r.ultimoRx < 1 && Math.hypot(m.x - r.x, m.y - r.y) > 150);
+}
+// ha cruzado la meta (lo dice él): se apunta su llegada
+function pvpLlegadaRemota(k, m) {
+  const C = CARRERA;
+  k.fin = m.fin; k.puestoFinal = ++C.llegados;
+  if (!C.jugador.fin) aviso(trf('%1 HA LLEGADO', k.nombre || tr(k.piloto.nombre)), trf('Ha quedado %1', puestoTxt(k.puestoFinal)), '#ff5c8a');
+}
 // un aviso del estado de un kart que no es mío (un humano, o uno de la máquina que mueve el anfitrión)
 function pvpAplica(k, m, de) {
-  const C = CARRERA, r = k.remoto, ia = k.plaza != null;
-  if (ia && r.host !== de) { r.host = de; r.n = 0; }       // otro anfitrión: su cuenta de avisos empieza de cero
-  if ((m.n || 0) < (r.n || 0)) return;                    // uno viejo que llegó tarde
-  // la máquina no puede dar saltos imposibles (un anfitrión que haga cosas raras solo estropea la carrera de la máquina, no da puntos)
-  if (ia && r.visto && RELOJ - r.ultimoRx < 1 && Math.hypot(m.x - r.x, m.y - r.y) > 150) return;
+  const r = k.remoto;
+  if (!pvpAvisoValido(k, m, de)) return;
   r.ultimoRx = RELOJ;
   if (k.ido && !k.fin) { k.ido = false; comenta(trf('%1 ha vuelto.', k.nombre)); }
   Object.assign(r, { n: m.n, x: m.x, y: m.y, ang: m.a, dir: m.d, angVis: m.av, v: m.v, z: m.z, t: 0, estado: m.e, tam: m.tm, derrape: m.dr, nivel: m.nv, turbo: !!m.tb, inmune: !!m.ib, dron: !!m.dn, cola: !!m.co });
   k.monedas = m.mo; k.objeto = m.ob || null; k.vuelta = Math.max(k.vuelta, m.vu || 0);
   if (!r.visto) { r.visto = true; k.x = m.x; k.y = m.y; k.ang = k.dir = k.angVis = m.a; }
-  if (m.fin && !k.fin) {
-    k.fin = m.fin; k.puestoFinal = ++C.llegados;
-    if (!C.jugador.fin) { aviso(trf('%1 HA LLEGADO', k.nombre || tr(k.piloto.nombre)), trf('Ha quedado %1', puestoTxt(k.puestoFinal)), '#ff5c8a'); }
-  }
+  if (m.fin && !k.fin) pvpLlegadaRemota(k, m);
 }
 // te han dado con algo de un rival (lo decide tu juego): se le cuenta para que vea el aviso
 function pvpMeHanDado(tipo, autor) { if (KPVP.activo && autor && autor.remoto) pvpManda({ t: 'dado', tipo, a: autor.remoto.orden }); }

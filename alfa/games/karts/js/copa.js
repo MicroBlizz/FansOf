@@ -93,14 +93,13 @@ function pintaVista(d, X, Y) {
   for (let y = 0; y < 46; y++) { const f = (y + y0) * CIELO_W; for (let x = 0; x < 232; x++) { const b = v.B[f + ((x + oB) & 1023)]; px[y * 232 + x] = b || v.A[f + ((x + oA) & 1023)]; } }
   v.x.putImageData(v.img, 0, 0); lx.drawImage(v.c, X, Y);
 }
-function pantallaPista() {
-  const m = MUNDOS[PANT.mundo] || MUNDOS[0], ps = pistasDe(PANT.mundo), d = PISTAS[PANT.pista];
-  if (PANT.modo === 'espejo' && !espejoAbierto(d)) PANT.modo = 'normal';      // el espejo se abre pista a pista
-  lx.fillStyle = m.oscuro; lx.fillRect(0, 0, PW, PH);
+// con teclado o mando: a los lados se cambia de pista; arriba y abajo se pasa por los botones de abajo (volver, nivel, copa, a correr)
+function teclasDePista(ps, d) {
   if (UI.tecla === 'izq' || UI.tecla === 'der') { const j = (ps.indexOf(d) + (UI.tecla === 'der' ? 1 : ps.length - 1)) % ps.length; PANT.pista = PISTAS.indexOf(ps[j]); play('tick'); UI.tecla = null; }
-  // con teclado o mando: a los lados se cambia de pista; arriba y abajo se pasa por los botones de abajo (volver, nivel, copa, a correr)
   if (UI.tecla === 'arr' || UI.tecla === 'aba') { const n0 = ps.length; PANT.foco = n0 + ((Math.max(0, PANT.foco - n0) + (UI.tecla === 'aba' ? 1 : 4)) % 5); play('tick'); UI.tecla = null; }
-  // arriba: el mundo y el paisaje de la pista, moviéndose
+}
+// arriba: el mundo y el paisaje de la pista, moviéndose
+function cabeceraDePista(m, d) {
   marco(2, 2, 236, 60, '#1c1028', '#1c1028', m.color);
   pintaVista(d, 4, 14);
   lx.fillStyle = m.color; lx.fillRect(4, 4, 232, 10);
@@ -109,23 +108,34 @@ function pantallaPista() {
   lx.fillStyle = 'rgba(20,10,34,0.55)'; lx.fillRect(4, 46, 232, 14);
   escribeB(lx, tr(d.nombre), 8, 49, '#ffcb3d', '#1c1028');
   for (let s = 0; s < 3; s++) { lx.fillStyle = '#1c1028'; lx.fillRect(206 + s * 9, 50, 8, 8); lx.fillStyle = s < d.dificultad ? '#ff5c8a' : '#3a2a52'; lx.fillRect(207 + s * 9, 51, 6, 6); }
-  // las cuatro pistas del mundo
-  ps.forEach((p, i) => {
-    const sel = p === d, x = 4 + i * 58, sube = sel ? Math.round(1.5 + Math.sin(RELOJ * 5) * 1.5) : 0, y = 66 - sube;
-    marco(x, y, 56, 52, sel ? '#4a2f72' : '#2a1840', '#1c1028', sel ? '#ffcb3d' : p.premium ? '#c9841a' : '#5b3a86');
-    lx.fillStyle = p.color; lx.fillRect(x + 3, y + 3, 50, 28);
-    const mm = miniDePista(p); if (mm) lx.drawImage(mm, x + 14, y + 3, 28, 28);
-    lineasMini(tr(p.nombre), 52).slice(0, 2).forEach((l, j) => mini(lx, l, x + 28, y + 34 + j * 7, sel ? '#ffffff' : '#bdb6d6', '#1c1028', 'centro'));
-    PANT.acciones.push(() => { if (PANT.pista === PISTAS.indexOf(p)) empiezaCarga(); else { PANT.pista = PISTAS.indexOf(p); play('tick'); } }); PANT.rects.push(x, y, 56, 52); PANT.directas.push(null);
-  });
-  // el modo (carrera, contrarreloj o espejo: crono.js) y el lema de la pista al lado
+}
+// una de las pistas del mundo (se pulsa para elegirla, y otra vez para correrla)
+function casillaDePista(p, i, d) {
+  const sel = p === d, x = 4 + i * 58, sube = sel ? Math.round(1.5 + Math.sin(RELOJ * 5) * 1.5) : 0, y = 66 - sube;
+  marco(x, y, 56, 52, sel ? '#4a2f72' : '#2a1840', '#1c1028', sel ? '#ffcb3d' : p.premium ? '#c9841a' : '#5b3a86');
+  lx.fillStyle = p.color; lx.fillRect(x + 3, y + 3, 50, 28);
+  const mm = miniDePista(p); if (mm) lx.drawImage(mm, x + 14, y + 3, 28, 28);
+  lineasMini(tr(p.nombre), 52).slice(0, 2).forEach((l, j) => mini(lx, l, x + 28, y + 34 + j * 7, sel ? '#ffffff' : '#bdb6d6', '#1c1028', 'centro'));
+  PANT.acciones.push(() => { if (PANT.pista === PISTAS.indexOf(p)) empiezaCarga(); else { PANT.pista = PISTAS.indexOf(p); play('tick'); } }); PANT.rects.push(x, y, 56, 52); PANT.directas.push(null);
+}
+// el lema de la pista al lado del modo, y el récord (o lo que falta para abrir el espejo)
+function lemaYRecord(d) {
   const lema = lineasMini(tr(d.lema), 144);
   lema.slice(0, 3).forEach((l, j) => mini(lx, l, 162, 122 + j * 7 - (lema.length > 2 ? 3 : 0), '#ffe9a8', '#1c1028', 'centro'));
   if (PANT.modo === 'crono' && SAVE.crono[claveCrono(d)]) mini(lx, tr('RÉCORD') + ' ' + tiempoTxt(SAVE.crono[claveCrono(d)]), 44, 136, '#22e3ff', '#1c1028', 'centro');
   else if (!espejoAbierto(d)) mini(lx, tr('ESPEJO: QUEDA 1.º'), 44, 136, '#8a7aa8', null, 'centro');
+}
+function pantallaPista() {
+  const m = MUNDOS[PANT.mundo] || MUNDOS[0], ps = pistasDe(PANT.mundo), d = PISTAS[PANT.pista];
+  if (PANT.modo === 'espejo' && !espejoAbierto(d)) PANT.modo = 'normal';      // el espejo se abre pista a pista
+  lx.fillStyle = m.oscuro; lx.fillRect(0, 0, PW, PH);
+  teclasDePista(ps, d);
+  cabeceraDePista(m, d);
+  ps.forEach((p, i) => casillaDePista(p, i, d));
+  lemaYRecord(d);
   const n0 = PANT.acciones.length;
   boton('VOLVER', 4, 143, 40, () => ve('mundo'));
-  boton(trf('NIVEL: %1', tr(dificultad().nombre)), 47, 143, 76, () => { AJUSTES.dificultad = (AJUSTES.dificultad + 1) % 3; guardaAjustes(); }, 14, '#22e3ff');
+  boton(trf('NIVEL: %1', tr(dificultad().nombre)), 47, 143, 76, cambiaNivel, 14, '#22e3ff');
   boton('COPA', 126, 143, 44, () => copaEmpieza(PANT.mundo, d.premium), 14, '#5ef27a');
   boton('¡A CORRER!', 173, 143, 63, () => { COPA.activa = false; empiezaCarga(); });
   boton(NOMBRE_MODO[PANT.modo], 4, 121, 80, cambiaModo, 13, PANT.modo === 'crono' ? '#22e3ff' : PANT.modo === 'espejo' ? '#c35cff' : '#ffcb3d');

@@ -218,17 +218,20 @@ function pintaSalida(P) {
 }
 
 // el mapa pequeño del marcador: la pista en claro con borde oscuro (un punto por cada `esc` unidades)
-function miniMapa(P) {
-  const L = 44, esc = TM / L, [c, x] = lienzo(L, L), img = x.createImageData(L, L), px = new Uint32Array(img.data.buffer), hay = new Uint8Array(L * L);
+function marcaViaEnMini(P, hay, L, esc) {
   for (const v of P.via) for (let q = -1; q <= 1; q++) {
     const mx = Math.floor((v.x - v.ty * q * v.ancho * 0.3) / esc), my = Math.floor((v.y + v.tx * q * v.ancho * 0.3) / esc);
     if (mx >= 0 && my >= 0 && mx < L && my < L) hay[my * L + mx] = 1;
   }
+}
+function tocaVia(hay, L, xx, y, k) { return (xx > 0 && hay[k - 1]) || (xx < L - 1 && hay[k + 1]) || (y > 0 && hay[k - L]) || (y < L - 1 && hay[k + L]); }
+function miniMapa(P) {
+  const L = 44, esc = TM / L, [c, x] = lienzo(L, L), img = x.createImageData(L, L), px = new Uint32Array(img.data.buffer), hay = new Uint8Array(L * L);
+  marcaViaEnMini(P, hay, L, esc);
   const claro = u32('#f4f4f8'), borde = u32('#1c1028');
   for (let y = 0; y < L; y++) for (let xx = 0; xx < L; xx++) {
     const k = y * L + xx;
-    if (hay[k]) px[k] = claro;
-    else if ((xx > 0 && hay[k - 1]) || (xx < L - 1 && hay[k + 1]) || (y > 0 && hay[k - L]) || (y < L - 1 && hay[k + L])) px[k] = borde;
+    if (hay[k]) px[k] = claro; else if (tocaVia(hay, L, xx, y, k)) px[k] = borde;
   }
   x.putImageData(img, 0, 0);
   return { c, L, esc };

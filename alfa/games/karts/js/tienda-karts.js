@@ -22,12 +22,16 @@ const paraQuien = c => c.solo ? trf('SOLO %1', tr(PILOTO[c.solo].nombre).toUpper
 const origen = c => (c.de === 'ceo' ? 'ceo' : c.de === 'pase' ? 'pase' : c.de === 'vip' ? 'vip' : '');
 
 // ---------- una tarjeta ----------
+const CINTA_DE_ORIGEN = { ceo: ['ceo', 'PREMIO CEO'], pase: ['pase', 'PASE'], vip: ['vip', 'VIP'] };
+function cintaDeTarjeta(tengo, puesto, o) { return puesto ? ['puesto', 'LO LLEVAS'] : tengo ? ['tuyo', 'ES TUYO'] : CINTA_DE_ORIGEN[o] || null; }
+function pieDeTarjeta(c, tengo, puesto) {
+  if (tengo) return el('span.kt-btn' + (puesto ? '.hecho' : '.verde'), {}, tr(puesto ? 'PUESTO' : 'PONÉRMELO'));
+  if (c.de === 'tienda') return el('span.kt-btn' + (c.gemas ? '.gema' : ''), {}, img(fotoIcono(c.gemas ? 'gema' : 'oro')), String(c.oro || c.gemas));
+  return el('span.kt-btn.gris', {}, tr('CÓMO SE CONSIGUE'));
+}
 function tarjetaCos(c) {
   const tengo = tieneCos(c.id), puesto = tengo && SAVE.lleva[c.tipo] === c.id, o = origen(c);
-  const cinta = puesto ? ['puesto', 'LO LLEVAS'] : tengo ? ['tuyo', 'ES TUYO'] : o === 'ceo' ? ['ceo', 'PREMIO CEO'] : o === 'pase' ? ['pase', 'PASE'] : o === 'vip' ? ['vip', 'VIP'] : null;
-  const pie = tengo ? el('span.kt-btn' + (puesto ? '.hecho' : '.verde'), {}, tr(puesto ? 'PUESTO' : 'PONÉRMELO'))
-    : c.de === 'tienda' ? el('span.kt-btn' + (c.gemas ? '.gema' : ''), {}, img(fotoIcono(c.gemas ? 'gema' : 'oro')), String(c.oro || c.gemas))
-      : el('span.kt-btn.gris', {}, tr('CÓMO SE CONSIGUE'));
+  const cinta = cintaDeTarjeta(tengo, puesto, o), pie = pieDeTarjeta(c, tengo, puesto);
   return el('button.kt-card' + (o ? '.r-' + o : ''), { 'data-k': 1, on: () => abreFicha(c.id) },
     cinta ? el('span.kt-ribbon.' + cinta[0], {}, tr(cinta[1])) : null,
     el('div.kt-foto', {}, img(fotoCos(c, JUGABLES[TK.pil].id))),
@@ -82,22 +86,35 @@ function pintaTiendaHtml() {
 // ---------- la ficha de un cosmético ----------
 function abreFicha(id) { TK.ficha = id; TK.aviso = ''; const c = COS[id]; if (c.solo) TK.pil = JUGABLES.findIndex(p => p.id === c.solo); pintaFicha(); }
 function cierraFicha() { TK.ficha = null; if (TK.modal) { TK.modal.remove(); TK.modal = null; } if (PANT.id === 'tienda') pintaTiendaHtml(); else if (PANT.id === 'pase') pintaPaseHtml(); }
+// el botón de la ficha: ponerlo o quitarlo si es tuyo, comprarlo si está en la tienda, o entender cómo se consigue
+function accionDeFicha(c, tengo, puesto) {
+  if (tengo) return el('button.kt-btn' + (puesto ? '.rojo' : '.verde'), { 'data-k': 1, on: () => { ponCos(c.id); if (PANT.id === 'tienda') pintaTiendaHtml(); pintaFicha(); } }, tr(puesto ? 'QUITÁRMELO' : 'PONÉRMELO'));
+  if (c.de === 'tienda') return el('button.kt-btn' + (c.gemas ? '.gema' : ''), { 'data-k': 1, on: () => compraDesdeFicha(c) }, tr('COMPRAR'), img(fotoIcono(c.gemas ? 'gema' : 'oro')), String(c.oro || c.gemas));
+  return el('button.kt-btn.gris', { 'data-k': 1, on: cierraFicha }, tr('ENTENDIDO'));
+}
+function compraDesdeFicha(c) {
+  const r = compraCos(c.id); TK.aviso = r === true ? '' : tr(r || '');
+  if (r !== true) play('deny'); else if (PANT.id === 'tienda') pintaTiendaHtml();
+  pintaFicha();
+}
+function datosDeFicha(c, tengo, puesto) {
+  const precio = () => (c.oro ? c.oro + ' ' + tr('ORO') : c.gemas + ' ' + tr('GEMAS'));
+  const [titulo, valor] = tengo ? ['ES TUYO', tr(puesto ? 'Lo llevas puesto.' : 'Póntelo cuando quieras.')] : c.de === 'tienda' ? ['PRECIO', precio()] : ['CÓMO SE CONSIGUE', comoCos(c)];
+  return [['QUÉ ES', tr(QUE_ES[c.tipo])], ['PARA QUIÉN', paraQuien(c)], [titulo, valor], ['¿CORRE MÁS?', tr('No. Solo se ve: online, todos iguales.')]];
+}
+function selectorDePilotos(c) {
+  return c.tipo !== 'titulo' && !c.solo ? el('div.kt-pilotos', {}, JUGABLES.map((p, i) => el('button.kt-pil', { 'data-k': 1, 'aria-pressed': String(i === TK.pil), 'aria-label': tr(p.nombre), on: () => { TK.pil = i; PANT.piloto = i; pintaFicha(); } }, img(fotoPiloto(p.id))))) : null;
+}
 function pintaFicha() {
   const c = COS[TK.ficha]; if (!c) return;
   const tengo = tieneCos(c.id), puesto = tengo && SAVE.lleva[c.tipo] === c.id, pil = JUGABLES[TK.pil];
   if (TK.modal) TK.modal.remove();
   TK.lienzo = lienzo(160, 110);
-  const vale = sirveA(c, pil.id);
-  let accion;
-  if (tengo) accion = el('button.kt-btn' + (puesto ? '.rojo' : '.verde'), { 'data-k': 1, on: () => { ponCos(c.id); if (PANT.id === 'tienda') pintaTiendaHtml(); pintaFicha(); } }, tr(puesto ? 'QUITÁRMELO' : 'PONÉRMELO'));
-  else if (c.de === 'tienda') accion = el('button.kt-btn' + (c.gemas ? '.gema' : ''), { 'data-k': 1, on: () => { const r = compraCos(c.id); TK.aviso = r === true ? '' : tr(r || ''); if (r !== true) play('deny'); else if (PANT.id === 'tienda') pintaTiendaHtml(); pintaFicha(); } }, tr('COMPRAR'), img(fotoIcono(c.gemas ? 'gema' : 'oro')), String(c.oro || c.gemas));
-  else accion = el('button.kt-btn.gris', { 'data-k': 1, on: cierraFicha }, tr('ENTENDIDO'));
-  const datos = [['QUÉ ES', tr(QUE_ES[c.tipo])], ['PARA QUIÉN', paraQuien(c)], [tengo ? 'ES TUYO' : c.de === 'tienda' ? 'PRECIO' : 'CÓMO SE CONSIGUE', tengo ? tr(puesto ? 'Lo llevas puesto.' : 'Póntelo cuando quieras.') : c.de === 'tienda' ? (c.oro ? c.oro + ' ' + tr('ORO') : c.gemas + ' ' + tr('GEMAS')) : comoCos(c)], ['¿CORRE MÁS?', tr('No. Solo se ve: online, todos iguales.')]];
+  const vale = sirveA(c, pil.id), accion = accionDeFicha(c, tengo, puesto), datos = datosDeFicha(c, tengo, puesto);
   TK.modal = el('section.kt-modal', { role: 'dialog', on: e => { if (e.target === TK.modal) cierraFicha(); } }, el('div.kt-ficha', {},
     el('h3.kt-d.ol', {}, tr(c.nombre)),
     el('div.kt-lado', {},      // con el móvil tumbado, la vista a la izquierda y los datos a la derecha
-      el('div.kt-col', {}, el('div.kt-vista', {}, TK.lienzo[0]),
-        c.tipo !== 'titulo' && !c.solo ? el('div.kt-pilotos', {}, JUGABLES.map((p, i) => el('button.kt-pil', { 'data-k': 1, 'aria-pressed': String(i === TK.pil), 'aria-label': tr(p.nombre), on: () => { TK.pil = i; PANT.piloto = i; pintaFicha(); } }, img(fotoPiloto(p.id))))) : null,
+      el('div.kt-col', {}, el('div.kt-vista', {}, TK.lienzo[0]), selectorDePilotos(c),
         !vale ? el('div.kt-aviso', {}, trf('Solo lo puede llevar %1.', tr(PILOTO[c.solo].nombre))) : null),
       el('div.kt-col', {}, el('div.kt-datos', {}, datos.map(([k, v]) => el('div.kt-dato', {}, el('b', {}, tr(k)), el('span', {}, v)))),
         TK.aviso ? el('div.kt-aviso', {}, TK.aviso) : null,

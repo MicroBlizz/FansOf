@@ -1,8 +1,8 @@
 {
- "build": 889,
- "hash": "07e9589",
- "fecha": "2026-11-03T21:12:28Z",
- "mensaje": "Karts: ninguna función por encima de 15; guardia de menús ampliada (tienda, fichas, sala, pistas, contrarreloj) y docs al día",
+ "build": 890,
+ "hash": "ff15c1e",
+ "fecha": "2026-11-03T21:31:16Z",
+ "mensaje": "Pets f16, revisión 3: muñeco por plantilla (base por edad, en T) y modo esqueleto en el visor",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

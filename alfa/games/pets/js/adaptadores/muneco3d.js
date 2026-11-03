@@ -41,27 +41,35 @@ PT.muneco3d = (() => {
     return { T, render, escena, raiz, mallas, huesos: Object.fromEntries(huesos.map(h => [h.name, h])), reposo: reposos(T, raiz, huesos) };
   }
   // un giro de la pose (ejes del mundo, como el maniquí) en el eje del hueso: reposo · (mundo⁻¹ · giro · mundo)
-  function gira(T, h, rp, q) {
-    const giro = new T.Quaternion().setFromEuler(new T.Euler(q.x || 0, q.y || 0, q.z || 0));
+  function gira(T, h, rp, q, caida = 0) {
+    const giro = new T.Quaternion().setFromEuler(new T.Euler(q.x || 0, q.y || 0, q.z || 0)).multiply(new T.Quaternion().setFromEuler(new T.Euler(0, 0, caida)));
     h.quaternion.copy(rp.q).multiply(rp.inversa.clone().multiply(giro).multiply(rp.mundo));
     h.position.copy(rp.p).add(new T.Vector3(q.px || 0, q.py || 0, q.pz || 0).applyQuaternion(rp.madreInv));
     // estirar (sy) sin cambiar el volumen; las hijas lo deshacen, para que la cabeza no se estire al respirar (se multiplica: da igual el orden)
     const sy = q.sy || 1, k = Math.sqrt(sy); h.scale.multiply(new T.Vector3(1 / k, sy, 1 / k));
     for (const hija of h.children) if (hija.isBone) hija.scale.multiply(new T.Vector3(k, 1 / sy, k));
   }
-  function aplica(mo, pose) {
+  // el muñeco está hecho con los brazos en T (la piel se deforma mejor); las poses los quieren colgando, así que antes de cada pose bajan CAIDA
+  const CAIDA = { brazo1: -0.95, 'brazo-1': 0.95 };
+  function aplica(mo, pose, enT = false) {
     const { T } = mo;
     for (const [n, h] of Object.entries(mo.huesos)) h.scale.copy(mo.reposo[n].s);
-    for (const [n, h] of Object.entries(mo.huesos)) gira(T, h, mo.reposo[n], pose.huesos[n] || {});
+    for (const [n, h] of Object.entries(mo.huesos)) gira(T, h, mo.reposo[n], pose.huesos[n] || {}, enT ? 0 : CAIDA[n] || 0);
     mo.raiz.position.y = pose.sentado;
   }
-  // el mismo montaje que PT.maniqui3d.montaje; edad: la carpeta del muñeco (por ahora solo hay de niña)
+  // el mismo montaje que PT.maniqui3d.montaje; edad: la carpeta del muñeco (bebe, nino, adolescente o adulto)
   async function montaje(id, edad = 'nino') {
     const clave = id + '/' + edad;
     MONTAJES[clave] = MONTAJES[clave] || monta(id, edad).catch(e => { delete MONTAJES[clave]; throw e; });
     const mo = await MONTAJES[clave];
     return { T: mo.T, render: mo.render, escena: mo.escena, piezas: mo.mallas, capa: new mo.T.Group(), ids: null, lado: 1024,
-      pose: (nombre, t) => { const p = PT.maniquiPoses.de(nombre, t); if (p.ok) aplica(mo, p.valor); return p.ok; } };
+      pose: (nombre, t) => {   // «en-t»: tal como está hecho, sin pose y con los brazos en T
+        if (nombre === EN_T) { aplica(mo, { huesos: {}, sentado: 0 }, true); return true; }
+        const p = PT.maniquiPoses.de(nombre, t); if (p.ok) aplica(mo, p.valor); return p.ok;
+      },
+      // para probar el esqueleto (visor): los huesos y una pose hecha a mano, { hueso: { x, y, z } } en radianes, con los brazos en T o bajados
+      huesos: mo.huesos, aMano: (giros, enT = false) => aplica(mo, { huesos: giros, sentado: 0 }, enT) };
   }
-  return { montaje };
+  const EN_T = 'en-t';
+  return { montaje, EN_T };
 })();

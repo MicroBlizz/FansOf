@@ -172,5 +172,7 @@ PT.maniqui3d = (() => {
     ctx.drawImage(render.domElement, x - borde, y - borde, 2 * borde, 2 * borde);
     return true;
   }
-  return { pinta, montaje, listo: id => typeof MONTAJES[id] === 'object' };
+  // lo común con el inflado (adaptadores/inflado3d.js): three.js, el renderizador, el sombreado de dibujo y las tres luces
+  const comun = async () => { await tres(); return { T, render, tonos, luces }; };
+  return { pinta, montaje, comun, listo: id => typeof MONTAJES[id] === 'object' };
 })();

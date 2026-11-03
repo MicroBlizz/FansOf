@@ -1,8 +1,8 @@
 {
- "build": 871,
- "hash": "cd074e3",
- "fecha": "2026-11-03T17:51:47Z",
- "mensaje": "Pop: volumen de efectos y música por separado con OPCIONES.volumen de core",
+ "build": 872,
+ "hash": "49d002a",
+ "fecha": "2026-11-03T18:10:14Z",
+ "mensaje": "Pets f15: cada pieza del despiece inflada en 3D con su textura, en el visor 3D",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

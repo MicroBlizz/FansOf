@@ -1,8 +1,8 @@
 {
- "build": 892,
- "hash": "d677450",
- "fecha": "2026-11-03T21:44:53Z",
- "mensaje": "Nova: todos los mutantes del dominio cazados salvo 15 equivalentes (529 de 544)",
+ "build": 893,
+ "hash": "b172976",
+ "fecha": "2026-11-03T22:27:30Z",
+ "mensaje": "Galería de Pets: la revisión 3 de la f16 apunta a la base sin huesos de partes (961a3a3)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

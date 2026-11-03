@@ -8,7 +8,7 @@ PT.maniqui = (() => {
   const PADRE = { cadera: null, cuerpo: 'cadera', cabeza: 'cuerpo', 'oreja-1': 'cabeza', oreja1: 'cabeza', 'brazo-1': 'cuerpo', brazo1: 'cuerpo',
     'pierna-1': 'cadera', pierna1: 'cadera', cola: 'cadera' };
   // cada pieza: hueso, forma ('bola' con centro c y radios r; 'palo' de la base a la punta, colgando o hacia arriba) y su color; los adornos
-  // dicen qué son (adorno: 'corona', 'nudo'), para que el muñeco 3D completo les dé su forma, y una cola puede ser un pompón
+  // dicen qué son (adorno: 'corona', 'nudo'), para que el muñeco 3D completo les dé su forma, y una cola puede ser un pompón o un palo curvo con panza (curva, panza)
   const MEDIDAS = {
     'animales:huron': {
       dibujo: 'img/criaturas/animales-huron-nino-base.webp', k: 500, cx: 322, suelo: 590, cadera: 540, cuello: 410, color: '#9a6a40',
@@ -24,7 +24,7 @@ PT.maniqui = (() => {
         { hueso: 'brazo1', forma: 'palo', base: [412, 415], punta: [477, 462], grueso: 0.05, z: 0.06 },
         { hueso: 'pierna-1', forma: 'bola', c: [240, 560], r: [0.075, 0.06, 0.07], z: 0.04 },
         { hueso: 'pierna1', forma: 'bola', c: [383, 560], r: [0.075, 0.06, 0.07], z: 0.04 },
-        { hueso: 'cola', forma: 'palo', base: [205, 525], punta: [85, 365], grueso: 0.06, z: -0.08 },
+        { hueso: 'cola', forma: 'palo', base: [205, 525], punta: [85, 365], grueso: 0.06, z: -0.08, curva: 0.25, panza: 1.6 },
       ],
       mechones: [   // los bigotitos de pelo de las mejillas, de dentro de la cabeza a su punta
         { base: [175, 296], punta: [104, 328], grueso: 0.06 },
@@ -71,7 +71,7 @@ PT.maniqui = (() => {
   function piezas(m) {
     return m.piezas.map((p, i) => {
       const base = { id: i + 1, hueso: p.hueso, forma: p.forma, color: p.color || m.color, cara: !!p.cara, hueca: !!p.hueca, adorno: p.adorno || null,
-        pompon: !!p.pompon };
+        pompon: !!p.pompon, ...(p.curva || p.panza ? { curva: p.curva || 0, panza: p.panza || 1 } : {}) };
       if (p.forma === 'palo') { const q = palo(m, p.base, p.punta); return { ...base, pos: [...q.base, p.z || 0], largo: q.largo, giro: q.giro, grueso: p.grueso }; }
       return { ...base, pos: [...aMundo(m, p.c), p.z || 0], r: p.r };
     });

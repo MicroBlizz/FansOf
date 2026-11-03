@@ -1,8 +1,8 @@
 {
- "build": 891,
- "hash": "2e1bae9",
- "fecha": "2026-11-03T21:37:34Z",
- "mensaje": "Karts: primer trozo del dominio con tests, sin parches encadenados, smoke-test propio y guardia de menús ampliada",
+ "build": 892,
+ "hash": "d677450",
+ "fecha": "2026-11-03T21:44:53Z",
+ "mensaje": "Nova: todos los mutantes del dominio cazados salvo 15 equivalentes (529 de 544)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

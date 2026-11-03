@@ -62,6 +62,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     Object.assign(b, { x: aj.largo / 2, y: aj.ancho / 2, z: 0, vx: 0, vy: 0, vz: 0, tiro: null, dueno: saca.id, libre: 0, paseDe: -1 });
     saca.x = b.x - sentido(eq) * 1.2; saca.y = b.y;
     e.calma = 1.5;   // tras el saque, unos instantes sin barridas ni empujones de la máquina
+    e.eventos.push({ tipo: 'saque', eq });   // el pitido del árbitro
   };
 
   S.equipoConBalon = (e) => (e.balon.dueno < 0 ? -1 : e.jugadores[e.balon.dueno].eq);

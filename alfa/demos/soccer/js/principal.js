@@ -35,37 +35,43 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   // ---------- sonido (el altavoz de la serie: ver sonido.js) ----------
   const sonar = S.sonido.nota;
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Soccer: sin vibración', err); } }
-  const golpe = (paron, temblor, ms) => { est.paron = Math.max(est.paron, paron); V.temblor = Math.max(V.temblor, temblor); vibrar(ms); };
+  // El peso de cada golpe sale de la tabla `golpes` de ajustes.js: parón, sacudida y vibración (esta, a veces solo si es de tu equipo).
+  const golpe = (tipo, esMio) => {
+    const g = S.AJ.golpes[tipo];
+    est.paron = Math.max(est.paron, g.paron); V.temblor = Math.max(V.temblor, g.temblor);
+    if (!g.soloMio || esMio) vibrar(g.vibra);
+  };
 
   // ---------- eventos del dominio -> efectos ----------
   const mio = (ev, e) => ev.quien !== undefined && e.jugadores[ev.quien].eq === 0;
   const EFECTOS = {
-    tiro: () => { sonar(160, 0.15, 'triangle', 0.5); V.temblor = 6; },
-    super: (ev, e) => { FX.cortar(e.aj.equipos[ev.eq]); sonar(120, 0.8, 'sawtooth', 6); vibrar(60); },
-    chilena: () => sonar(700, 0.12, 'square', 0.6),
-    pase: () => sonar(520, 0.06, 'square'),
-    barrida: () => sonar(90, 0.2, 'sawtooth', 0.6),
-    empujon: () => sonar(140, 0.12, 'square', 0.7),
-    derribo: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#ffe14a', 14); golpe(0.06, 10, 25); sonar(70, 0.25, 'square', 0.5); },
-    atropello: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#fff', 12); golpe(0.05, 8, 20); },
-    ko: (ev, e) => { const j = e.jugadores[ev.quien]; UI.avisar(tr('¡KO!'), '#ff5a5a', 0.9); FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe(0.14, 20, 80); sonar(55, 0.5, 'sawtooth', 0.4); },
+    tiro: (ev, e) => { play('chute', ev.aereo ? 0.4 : 0.7); golpe('tiro', mio(ev, e)); },
+    super: (ev, e) => { FX.cortar(e.aj.equipos[ev.eq]); play('supertiro'); golpe('super'); },
+    chilena: () => { play('chute', 0.9); sonar(700, 0.12, 'square', 0.6); },
+    pase: () => play('pase'),
+    barrida: (ev, e) => { play('barrida'); golpe('barrida', mio(ev, e)); },
+    empujon: (ev, e) => { play('empujon'); golpe('empujon', mio(ev, e)); },
+    derribo: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#ffe14a', 14); golpe('derribo'); play('derribo'); },
+    atropello: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#fff', 12); golpe('atropello'); play('derribo'); },
+    ko: (ev, e) => { const j = e.jugadores[ev.quien]; UI.avisar(tr('¡KO!'), '#ff5a5a', 0.9); FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe('ko'); play('ko'); },
     vuelve: () => sonar(880, 0.08, 'triangle'),
     cargado: (ev, e) => { if (mio(ev, e)) { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ffe14a', 18); sonar(990, 0.15, 'square', 1.5); vibrar(20); } },
     cargando: () => sonar(300, 0.5, 'square', 1.2),
     salto: (ev) => { FX.estallido(ev.x, ev.y, 1, '#18d2e6', 8); sonar(1200, 0.04, 'square'); },
     parada: (ev) => { sonar(330, 0.12, 'triangle', 1.5); if (ev.clase === 'super') UI.avisar(tr('¡PARADÓN!'), '#5fe05f', 1); },
-    'portero-ko': (ev, e) => { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe(0.12, 22, 70); },
+    'portero-ko': (ev, e) => { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe('portero-ko'); play('ko'); },
     rebote: () => sonar(220, 0.05, 'triangle'),
     orden: (ev) => { V.globos[ev.quien] = { texto: ev.ok ? tr('¡Voy!') : tr('¡No puedo!'), ok: ev.ok, desde: est.t }; },
     clima: (ev) => { UI.avisar(tr(FX.avisoClima[ev.clima]), '#9fe0ff', 1.4); sonar(200, 0.6, 'sawtooth', 0.6); },
     oro: () => { UI.avisar(tr('¡GOL DE ORO!'), '#ffcf3a', 2); sonar(660, 0.4, 'square', 1.5); },
-    descanso: () => { est.modo = 'descanso'; sonar(392, 0.4, 'triangle'); },
+    descanso: () => { est.modo = 'descanso'; play('descanso'); },
+    saque: () => play('silbato'),
     gol: (ev, e) => {
-      golpe(0.1, 26, 120); FX.estallido(e.balon.x, e.balon.y, 2, e.aj.equipos[ev.eq].color, 60); FX.estallido(e.balon.x, e.balon.y, 3, '#fff', 30);
+      golpe('gol'); FX.estallido(e.balon.x, e.balon.y, 2, e.aj.equipos[ev.eq].color, 60); FX.estallido(e.balon.x, e.balon.y, 3, '#fff', 30);
       UI.avisar(tr('¡GOL!'), e.aj.equipos[ev.eq].color, 1.2); est.repetirEn = 1.2;
-      [523, 659, 784, 1046].forEach((f, i) => sonar(f, 0.18, 'square', 0, i * 0.11));
+      play('red'); play('gol');
     },
-    fin: (ev, e) => { est.modo = 'final'; est.repetirEn = 0; sonar(392, 0.6, 'triangle', 0.5); terminarCopa(e); },
+    fin: (ev, e) => { est.modo = 'final'; est.repetirEn = 0; play('final'); terminarCopa(e); },
   };
 
   function terminarCopa(e) {
@@ -107,7 +113,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   function tocarFuera(p) {
     if (est.modo === 'titulo') { est.modo = 'menu'; sonar(520, 0.06); return; }
-    if (est.modo === 'descanso') { S.reanudar(est.e); est.modo = 'juego'; sonar(660, 0.1); return; }
+    if (est.modo === 'descanso') { S.reanudar(est.e); est.modo = 'juego'; play('silbato'); return; }
     if (est.modo === 'final') { est.modo = 'menu'; return; }
     if (est.modo !== 'menu') return;
     const t = UI.tocarMenu(p, S.AJ, est.sel);
@@ -168,7 +174,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     Object.assign(est, { modo: 'juego', controlado: est.e.jugadores.find((j) => j.eq === 0 && j.puesto === 'delantero').id, copaRes: null, repetirEn: 0 });
     V.cam = 50; UI.cartel = null; FX.fotos = []; FX.repe = null; FX.corte = null;
     if (!est.tutorialHecho) S.tutorial.empezar();
-    guardar(); sonar(660, 0.1);
+    guardar(); play('silbato');
   }
 
   function simular(dt) {

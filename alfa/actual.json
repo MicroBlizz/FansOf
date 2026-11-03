@@ -1,8 +1,8 @@
 {
- "build": 899,
- "hash": "3a52b4c",
- "fecha": "2026-11-03T23:34:41Z",
- "mensaje": "Soccer A1: el sonido va por el altavoz de la serie, con volumen de cuatro niveles (altavoz dibujado y tecla M)",
+ "build": 900,
+ "hash": "60bf66f",
+ "fecha": "2026-11-03T23:39:43Z",
+ "mensaje": "Soccer B1: peso de cada golpe en una tabla de ajustes (parón, sacudida y vibración, de empujón a gol) con su test de orden",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

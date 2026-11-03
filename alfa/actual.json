@@ -1,8 +1,8 @@
 {
- "build": 873,
- "hash": "591c282",
- "fecha": "2026-11-03T18:14:58Z",
- "mensaje": "Core: OPCIONES.sonido (Efectos y Música) y Pop la usa (ADR 037 aceptado)",
+ "build": 874,
+ "hash": "52837bd",
+ "fecha": "2026-11-03T18:26:11Z",
+ "mensaje": "Volumen de efectos y música por separado en Boom, Cooking, Swipe, Asalto, Merge y Vikings; VOLUMEN pasa a core",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

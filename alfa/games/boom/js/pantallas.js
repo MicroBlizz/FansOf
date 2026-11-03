@@ -107,7 +107,7 @@ const PANT = (() => {
   function opciones(volver) {
     const filas = OPCIONES.lista({
       filas: [
-        OPCIONES.interruptor(tr('Sonido'), '', () => !SAVE.muted, v => { SAVE.muted = !v; applyVolume(); bmGuarda(); }),
+        OPCIONES.sonido({ efectos: [() => SAVE.vol, v => { SAVE.vol = v; applyVolume(); bmGuarda(); }], musica: [() => SAVE.mus, v => { SAVE.mus = v; applyVolume(); bmGuarda(); }] }),
         OPCIONES.interruptor(tr('Control'), tr('Botones: ángulo y potencia a mano. Tirachinas: arrastra hacia atrás desde cualquier punto y suelta.'), () => SAVE.control === 'tirachinas', v => { SAVE.control = v ? 'tirachinas' : 'botones'; bmGuarda(); }, ['TIRACHINAS', 'BOTONES']),
         'idioma', 'cuenta', OPCIONES.novedades(() => novedades(() => opciones(volver))), 'instalar',
       ],

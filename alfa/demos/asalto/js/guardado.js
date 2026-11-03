@@ -3,7 +3,8 @@
 // vistos. La partida en curso NO se guarda: cada bajada a la mazmorra empieza de cero.
 'use strict';
 const AS_NUEVA = () => ({ v: 2, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {},
-  stats: { oroTotal: 0, enemigos: 0, jefes: 0, maxEquipo: 0, maxClase: {}, zonas: [] }, consejos: {}, muted: false, musica: true });
+  stats: { oroTotal: 0, enemigos: 0, jefes: 0, maxEquipo: 0, maxClase: {}, zonas: [] }, consejos: {}, vol: 1, mus: 0.5 });
+const AS_VOL = VOLUMEN.crear({ musicaBase: 0.3 });   // la mezcla del juego: lo que suena la música con la barra a la mitad, por dos
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = AS_NUEVA();
@@ -11,14 +12,14 @@ const SAVE = (() => {
   if (s.gemas && !s.plumas) s.plumas = s.gemas;   // la partida de la versión anterior llamaba gemas a las plumas
   for (const k in n) if (s[k] === undefined || s[k] === null) s[k] = n[k];
   for (const k in n.stats) if (s.stats[k] === undefined) s.stats[k] = n.stats[k];
-  return s;
+  return AS_VOL.migra(s);
 })();
 function asGuarda() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: se juega igual */ } if (typeof CUENTA !== 'undefined') CUENTA.cambio(); }
 function asBorraTodo() { const n = AS_NUEVA(); for (const k of Object.keys(SAVE)) delete SAVE[k]; Object.assign(SAVE, n); asGuarda(); }
 // lo que pide el motor de sonido de core
-function sonidoApagado() { return !!SAVE.muted; }
-function volGeneral() { return SAVE.muted ? 0 : 1; }
-function volMusica() { return SAVE.musica === false ? 0 : 0.15; }
+function sonidoApagado() { return AS_VOL.apagado(SAVE); }
+function volGeneral() { return AS_VOL.general(SAVE); }
+function volMusica() { return AS_VOL.musica(SAVE); }
 function musicUpdate() { /* la música la elige asMusica (js/sonidos.js) */ }
 
 /* ---------- el equipo: objetos, estadísticas y plumas ---------- */

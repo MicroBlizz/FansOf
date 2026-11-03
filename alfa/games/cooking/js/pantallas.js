@@ -143,8 +143,7 @@ const PANT = (() => {
   function opciones(volver) {
     const filas = OPCIONES.lista({
       filas: [
-        OPCIONES.interruptor(tr('Sonido'), '', () => !SAVE.muted, v => { SAVE.muted = !v; applyVolume(); ckGuarda(); }),
-        OPCIONES.interruptor(tr('Música'), '', () => SAVE.musica !== false, v => { SAVE.musica = v; applyVolume(); ckGuarda(); }),
+        OPCIONES.sonido({ efectos: [() => SAVE.vol, v => { SAVE.vol = v; applyVolume(); ckGuarda(); }], musica: [() => SAVE.mus, v => { SAVE.mus = v; applyVolume(); ckGuarda(); }] }),
         'idioma', 'cuenta', OPCIONES.novedades(() => novedades(() => opciones(volver))), 'instalar',
       ],
       versionTexto: tr('Fans of Cooking · versión ' + VERSION), alCerrar: () => { if (volver) volver(); else { $('#ck-modal').hidden = true; prepFoco('#ck-jugar'); } },

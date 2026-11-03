@@ -1,13 +1,14 @@
 // Fans of Cooking · GUARDADO: lo que se recuerda en este navegador: estrellas y mejor puntuación por nivel, cocineros elegidos, modo, sonido.
 // Con cuenta, core la sube a la nube (CUENTA.cambio). Los volúmenes que pide el motor de sonido de core están abajo.
 'use strict';
-const CK_NUEVA = () => ({ v: 1, muted: false, musica: true, niveles: {}, cocineros: ['bunny', 'skeleton'], modo: 'ia', nombres: ['', ''], visto: false });
+const CK_NUEVA = () => ({ v: 1, vol: 1, mus: 0.5, niveles: {}, cocineros: ['bunny', 'skeleton'], modo: 'ia', nombres: ['', ''], visto: false });
+const CK_VOL = VOLUMEN.crear({ musicaBase: 1.0 });   // la mezcla del juego: lo que suena la música con la barra a la mitad, por dos
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = CK_NUEVA();
   if (!s || typeof s !== 'object') return n;
   for (const k in n) if (s[k] === undefined) s[k] = n[k];
-  return s;
+  return CK_VOL.migra(s);
 })();
 function ckGuarda() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: se juega igual */ } if (typeof CUENTA !== 'undefined') CUENTA.cambio(); }
 // estrellas de un nivel, del rango entero y de toda la campaña
@@ -25,7 +26,7 @@ function apuntaResultado(id, puntos, estrellas) {
   const r = SAVE.niveles[id] || { e: 0, p: 0 }; const nuevo = estrellas > r.e; r.e = Math.max(r.e, estrellas); r.p = Math.max(r.p, puntos); SAVE.niveles[id] = r; ckGuarda(); return nuevo;
 }
 // lo que pide el motor de sonido de core
-function sonidoApagado() { return !!SAVE.muted; }
-function volGeneral() { return SAVE.muted ? 0 : 1; }
-function volMusica() { return SAVE.musica === false ? 0 : 0.5; }
+function sonidoApagado() { return CK_VOL.apagado(SAVE); }
+function volGeneral() { return CK_VOL.general(SAVE); }
+function volMusica() { return CK_VOL.musica(SAVE); }
 function musicUpdate() { /* la música la pone cada pantalla con musicSet */ }

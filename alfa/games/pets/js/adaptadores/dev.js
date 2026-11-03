@@ -57,7 +57,9 @@ PT.dev = (() => {
     // la criatura POR PIEZAS (figuras.js), solo las ya despiezadas (de niña: CrazyBunny y el hurón); en las demás sale su dibujo de siempre
     ['fig:quieto', 'PIEZAS: quieta'], ['fig:mirar', 'PIEZAS: mirar'], ['fig:saludo', 'PIEZAS: saludo'], ['fig:orejas', 'PIEZAS: orejas'], ['fig:baile', 'PIEZAS: baile'],
     // el MUÑECO kawaii por código (munecos.js): las criaturas con piel (CrazyBunny y el hurón); las demás, lisas del color de su facción
-    ['mun:quieto', 'MUÑECO: quieta'], ['mun:mirar', 'MUÑECO: mirar'], ['mun:saludo', 'MUÑECO: saludo'], ['mun:contento', 'MUÑECO: contenta'], ['mun:triste', 'MUÑECO: triste'], ['mun:enfado', 'MUÑECO: enfadada'], ['mun:sorpresa', 'MUÑECO: sorpresa'], ['mun:sueno', 'MUÑECO: con sueño'], ['mun:comer', 'MUÑECO: comer'], ['mun:beber', 'MUÑECO: beber'], ['mun:banar', 'MUÑECO: ducha'], ['mun:dientes', 'MUÑECO: dientes'], ['mun:cara', 'MUÑECO: lavarse la cara'], ['mun:bano', 'MUÑECO: baño'], ['mun:dormir', 'MUÑECO: dormir en el puff'], ['mun:tablet', 'MUÑECO: tableta']];
+    ['mun:quieto', 'MUÑECO: quieta'], ['mun:mirar', 'MUÑECO: mirar'], ['mun:saludo', 'MUÑECO: saludo'], ['mun:contento', 'MUÑECO: contenta'], ['mun:triste', 'MUÑECO: triste'], ['mun:enfado', 'MUÑECO: enfadada'], ['mun:sorpresa', 'MUÑECO: sorpresa'], ['mun:sueno', 'MUÑECO: con sueño'], ['mun:comer', 'MUÑECO: comer'], ['mun:beber', 'MUÑECO: beber'], ['mun:banar', 'MUÑECO: ducha'], ['mun:dientes', 'MUÑECO: dientes'], ['mun:cara', 'MUÑECO: lavarse la cara'], ['mun:bano', 'MUÑECO: baño'], ['mun:dormir', 'MUÑECO: dormir en el puff'], ['mun:tablet', 'MUÑECO: tableta'],
+    // el MANIQUÍ 3D con el dibujo proyectado (maniqui3d.js): de momento CrazyBunny y el hurón; las demás siguen con su dibujo
+    ['3d:quieto', 'MANIQUÍ 3D: quieta'], ['3d:saludo', 'MANIQUÍ 3D: saludo'], ['3d:mirar', 'MANIQUÍ 3D: mirar'], ['3d:comer', 'MANIQUÍ 3D: comer'], ['3d:dormir', 'MANIQUÍ 3D: dormir en la cesta']];
   const CUIDADOS = ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano'];
   function abreEscena() {
     ui.escena = { id: PT.arte.ids()[0], etapa: 'bebe', anim: 'base' };
@@ -92,6 +94,9 @@ PT.dev = (() => {
     const e = { rama, dormida: s.anim === 'dormir', triste: s.anim === 'triste', sonolienta: s.anim === 'sonolienta', anim: '', at: 0,
       cara: ['parpadeo', 'bostezo', 'masca', 'cachorrito'].includes(s.anim) ? s.anim : '' };
     if (CUIDADOS.includes(s.anim)) { e.anim = s.anim; e.at = t - (t % dura); }   // en bucle: cada vez que acaba, otra
+    // el maniquí 3D (de momento solo con el dibujo de niña, sea cual sea la etapa): donde lo pondría arte.js, con los pies en el suelo
+    const rn = PETS.tamano.nino, lado = rn * PETS.arte.lienzo;
+    if (s.anim.startsWith('3d:') && PT.maniqui3d.pinta(ctx, s.id, 270, 440 + rn - lado * (PETS.arte.pies - 0.5), lado, t, s.anim.slice(3))) return;
     if (s.anim.startsWith('mun:') && PT.munecos.pinta(ctx, s.id, 270, 440 + r, r * PETS.arte.lienzo, t, s.anim.slice(4))) return;
     if (s.anim.startsWith('fig:') && PT.figuras.pinta(ctx, s.id, etapa, 270, 440 + r, r * PETS.arte.lienzo, t, s.anim.slice(4), e)) return;
     if (!PT.arte.tiene(s.id, etapa) || !PT.arte.criatura(ctx, s.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(PT.criaturas.busca(s.id).fac), t, e);

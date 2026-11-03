@@ -1,8 +1,8 @@
 {
- "build": 883,
- "hash": "81c9830",
- "fecha": "2026-11-03T19:40:40Z",
- "mensaje": "presencia: anotado en APLICADAS que falta la limpieza (delete) por pegar en el editor SQL",
+ "build": 884,
+ "hash": "8dc7d80",
+ "fecha": "2026-11-03T19:47:37Z",
+ "mensaje": "Nova: mutantes cazados en combos, habilidad, guion, cosméticos y flota; en-raiz.js partido",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

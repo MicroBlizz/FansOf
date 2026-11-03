@@ -11,26 +11,27 @@ NV.Golpe = (() => {
 
   // Lo que cambia el daño antes de tocar el escudo: Brecha, Ablandado, Interferido, resistencia del casco y Cazador del lanzador.
   // `seAleja`: si el enemigo huye de tu nave (lo calcula quien llama, porque necesita la posición de la nave).
-  function multiplicaDano(d, e, w, K, seAleja) {
-    const carga = w.carga, est = e.est;
-    if (carga === 'cinetica' && est.brecha > 0) d *= 1.5;
+  // El daño según los estados del enemigo (brecha, calor e interferencia) y luego según el arma (resistencia y Cazador), en ese orden
+  function porEstados(d, e, carga, K) {
+    if (carga === 'cinetica' && e.est.brecha > 0) d *= 1.5;
     if ((carga === 'cinetica' || carga === 'explosiva') && e.calor > 0) d *= 1 + Math.min(K.ablandado.max, K.ablandado.porCalor * e.calor);
-    if (est.interferido > 0 && carga !== 'em') d *= 1 + K.interferencia.defensa;
-    if (e.resiste === carga) d *= 0.5;
+    if (e.est.interferido > 0 && carga !== 'em') d *= 1 + K.interferencia.defensa;
+    return d;
+  }
+  function porArma(d, e, w, K, seAleja) {
+    if (e.resiste === w.carga) d *= 0.5;
     if (w.portador === 'lanzador' && seAleja) d *= K.cazador.mult;
     return d;
   }
+  function multiplicaDano(d, e, w, K, seAleja) { return porArma(porEstados(d, e, w.carga, K), e, w, K, seAleja); }
 
   // Qué reacción provocan el estado que ya tiene el enemigo y la carga que le llega (null si ninguna)
-  function eligeReaccion(est, carga, reacciones) {
-    for (const r of reacciones) {
-      if (!(est[r.a] > 0) && !(r.a === 'marcado' && est.marcado > 0)) continue;
-      const ok = r.b === 'cualquiera' || r.b === carga || (r.id === 'impactoLimpio' && carga === 'cinetica') || (r.id === 'fundido' && carga === 'termica');
-      if (!ok || (r.a === 'marcado' && carga !== 'explosiva')) continue;
-      return r;
-    }
-    return null;
+  // La reacción que salta: la primera cuyo estado lleva el enemigo y cuya carga encaja (la marca solo la hace saltar la explosiva)
+  function cargaVale(r, carga) {
+    return r.b === 'cualquiera' || r.b === carga || (r.id === 'impactoLimpio' && carga === 'cinetica') || (r.id === 'fundido' && carga === 'termica');
   }
+  const encaja = (r, est, carga) => est[r.a] > 0 && cargaVale(r, carga) && (r.a !== 'marcado' || carga === 'explosiva');
+  function eligeReaccion(est, carga, reacciones) { return reacciones.find(r => encaja(r, est, carga)) || null; }
 
   // El escudo absorbe y la energía lo tumba; devuelve el daño que pasa al casco (antes de multCasco)
   function absorbeEscudo(e, d, w, c, A) {

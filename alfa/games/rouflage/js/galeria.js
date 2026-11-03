@@ -83,30 +83,37 @@ function galeriaPinta() {
   const caja = E('fin-galeria'); if (!caja) return;
   caja.hidden = !galeriaActiva(); if (caja.hidden) return;
   const r = galeriaRecuento(), yo = J.yo, puedo = !GALERIA.cerrada && yo && !GALERIA.votos.has(galId(yo));
-  const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  if (!caja.dataset.lista) {
-    caja.dataset.lista = '1';
-    caja.innerHTML = `<h3 class="ol">${tr('GALERÍA DE DISFRACES')}</h3><p class="gal-sub" id="gal-sub"></p><div class="gal-rejilla">`
-      + GALERIA.candidatos.map(e => `<div class="gal-ficha" data-id="${galId(e)}"><canvas width="120" height="120"></canvas><span class="gal-nom">${esc(e.jugador ? tr('Tú') : e.nombre)}<small>${e.fuera ? tr('Despedido') : e.camo + ' %'}</small></span>
-        <span class="gal-votos"><b class="mejor"></b><b class="peor"></b></span><span class="gal-botones"><button type="button" class="boton peq" data-v="mejor">${tr('MEJOR')}</button><button type="button" class="boton peq gris" data-v="peor">${tr('PEOR')}</button></span></div>`).join('')
-      + `</div><p class="gal-frase" id="gal-frase" hidden></p>`;
-    for (const e of GALERIA.candidatos) galeriaPedestal(caja.querySelector(`.gal-ficha[data-id="${galId(e)}"] canvas`), e);
-    caja.querySelectorAll('.gal-ficha button').forEach(b => { b.onclick = () => galeriaToca(Number(b.closest('.gal-ficha').dataset.id), b.dataset.v); });
-  }
-  for (const f of caja.querySelectorAll('.gal-ficha')) {
-    const id = Number(f.dataset.id), v = r.get(id) || { mejor: 0, peor: 0 }, e = galEnte(id);
-    f.querySelector('.mejor').textContent = v.mejor ? '+' + v.mejor : ''; f.querySelector('.peor').textContent = v.peor ? '-' + v.peor : '';
-    f.classList.toggle('mio-mejor', GALERIA.mio.mejor === id); f.classList.toggle('mio-peor', GALERIA.mio.peor === id);
-    f.classList.toggle('gana', GALERIA.cerrada && GALERIA.mejor === e); f.classList.toggle('pierde', GALERIA.cerrada && GALERIA.peor === e);
-    f.querySelector('.gal-botones').hidden = !puedo || (yo && (galId(yo) === id || (yo.cuerpo && galId(yo.cuerpo) === id)));
-    for (const b of f.querySelectorAll('button')) b.classList.toggle('puesto', GALERIA.pre && GALERIA.pre[b.dataset.v] === id);
-  }
-  const sub = E('gal-sub');
-  if (GALERIA.cerrada) sub.textContent = GALERIA.mejor ? tr('Mejor camuflaje: {a} (+{n} puntos)', { a: GALERIA.mejor.jugador ? tr('Tú') : GALERIA.mejor.nombre, n: GALERIA.premio }) : '';
-  else if (puedo) sub.innerHTML = `${esc(tr('Vota el mejor y el peor camuflaje'))} · <span id="gal-plazo">${Math.max(0, Math.ceil(GALERIA.plazo - GALERIA.t))} s</span>`;
-  else sub.innerHTML = `${esc(tr('Esperando los demás votos'))} · <span id="gal-plazo">${Math.max(0, Math.ceil(GALERIA.plazo - GALERIA.t))} s</span>`;
+  if (!caja.dataset.lista) { caja.dataset.lista = '1'; galeriaCreaFichas(caja); }
+  for (const f of caja.querySelectorAll('.gal-ficha')) galeriaPintaFicha(f, r, yo, puedo);
+  galeriaPintaSub(puedo);
   const fr = E('gal-frase'); fr.hidden = !(GALERIA.cerrada && GALERIA.peor);
   if (!fr.hidden) fr.textContent = tr('Peor camuflaje: {a}.', { a: GALERIA.peor.jugador ? tr('Tú') : GALERIA.peor.nombre }) + ' ' + tr(GALERIA.frase);
+}
+const galEsc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// las fichas de cada candidato, con su pedestal dibujado y sus botones
+function galeriaCreaFichas(caja) {
+  caja.innerHTML = `<h3 class="ol">${tr('GALERÍA DE DISFRACES')}</h3><p class="gal-sub" id="gal-sub"></p><div class="gal-rejilla">`
+    + GALERIA.candidatos.map(e => `<div class="gal-ficha" data-id="${galId(e)}"><canvas width="120" height="120"></canvas><span class="gal-nom">${galEsc(e.jugador ? tr('Tú') : e.nombre)}<small>${e.fuera ? tr('Despedido') : e.camo + ' %'}</small></span>
+        <span class="gal-votos"><b class="mejor"></b><b class="peor"></b></span><span class="gal-botones"><button type="button" class="boton peq" data-v="mejor">${tr('MEJOR')}</button><button type="button" class="boton peq gris" data-v="peor">${tr('PEOR')}</button></span></div>`).join('')
+    + `</div><p class="gal-frase" id="gal-frase" hidden></p>`;
+  for (const e of GALERIA.candidatos) galeriaPedestal(caja.querySelector(`.gal-ficha[data-id="${galId(e)}"] canvas`), e);
+  caja.querySelectorAll('.gal-ficha button').forEach(b => { b.onclick = () => galeriaToca(Number(b.closest('.gal-ficha').dataset.id), b.dataset.v); });
+}
+// los votos de una ficha, si es la mía y si ganó o perdió; y los botones, solo si puedo votar y no es la mía
+function galeriaPintaFicha(f, r, yo, puedo) {
+  const id = Number(f.dataset.id), v = r.get(id) || { mejor: 0, peor: 0 }, e = galEnte(id);
+  f.querySelector('.mejor').textContent = v.mejor ? '+' + v.mejor : ''; f.querySelector('.peor').textContent = v.peor ? '-' + v.peor : '';
+  f.classList.toggle('mio-mejor', GALERIA.mio.mejor === id); f.classList.toggle('mio-peor', GALERIA.mio.peor === id);
+  f.classList.toggle('gana', GALERIA.cerrada && GALERIA.mejor === e); f.classList.toggle('pierde', GALERIA.cerrada && GALERIA.peor === e);
+  f.querySelector('.gal-botones').hidden = !puedo || (yo && (galId(yo) === id || (yo.cuerpo && galId(yo.cuerpo) === id)));
+  for (const b of f.querySelectorAll('button')) b.classList.toggle('puesto', GALERIA.pre && GALERIA.pre[b.dataset.v] === id);
+}
+// la frase de debajo del título: el mejor camuflaje, o lo que falta para votar
+function galeriaPintaSub(puedo) {
+  const sub = E('gal-sub');
+  if (GALERIA.cerrada) sub.textContent = GALERIA.mejor ? tr('Mejor camuflaje: {a} (+{n} puntos)', { a: GALERIA.mejor.jugador ? tr('Tú') : GALERIA.mejor.nombre, n: GALERIA.premio }) : '';
+  else if (puedo) sub.innerHTML = `${galEsc(tr('Vota el mejor y el peor camuflaje'))} · <span id="gal-plazo">${Math.max(0, Math.ceil(GALERIA.plazo - GALERIA.t))} s</span>`;
+  else sub.innerHTML = `${galEsc(tr('Esperando los demás votos'))} · <span id="gal-plazo">${Math.max(0, Math.ceil(GALERIA.plazo - GALERIA.t))} s</span>`;
 }
 // tocas MEJOR en uno y PEOR en otro: cuando están los dos, se vota
 function galeriaToca(id, v) {

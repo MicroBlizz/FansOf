@@ -84,23 +84,30 @@ function pintaSigno(c, x, y, s, color, t) {
 // el nombre, las cartas y las marcas de cada personaje
 function pintaMarcaEnte(c, t, e, yo) {
   if (e.fuera && e.tFuera > 2.6 || idaOculto(e)) return;
-  if (e.clase === 'cazador') {
-    if (J.fase !== 'prep' && !e.jugador && J.fase !== 'titulo') {   // las cartas de despido que le quedan a cada becario
-      for (let k = 0; k < REGLAS.balas; k++) {   // la misma cartita de despido que en el panel del cazador: sobre oscuro con su raya roja, gris si ya se gastó
-        const bx = e.x - 20 + k * 8, by = e.y - 78, viva = k < e.balas;
-        c.fillStyle = OL; c.fillRect(bx, by, 7, 10); c.fillStyle = viva ? '#fff6ea' : '#5a5f7a'; c.fillRect(bx + 1, by + 1, 5, 8);
-        if (viva) { c.fillStyle = '#ff4b5c'; c.fillRect(bx + 1, by + 4, 5, 2); }
-      }
-    }
-    if (J.fase !== 'titulo') rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 92, 10, e.jugador ? '#ffcb3d' : '#9fd0ff', OL, LETRA_UI);   // el cazador siempre enseña su nombre, a todos
-    if (e.marca) pintaSigno(c, e.x, e.y - 106, e.marca, e.marca === '!' ? '#ff4b5c' : '#e8731a', t);
-  } else if (!e.fuera && e.hielo < 0.4 && J.fase !== 'titulo' && !(e === yo && TALLER.abierto) && !invisible(e)) {
-    c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
-    if (e.jugador && e.aguante < 0.999) {      // tu aguante: una barrita bajo los pies, amarilla; roja mientras estás agotado
-      c.fillStyle = OL; c.fillRect(e.x - 16, e.y + 5, 32, 6); c.fillStyle = e.cansado ? '#ff4b5c' : '#ffcb3d'; c.fillRect(e.x - 15, e.y + 6, 30 * e.aguante, 4);
-    }
-    c.globalAlpha = 1;
+  if (e.clase === 'cazador') pintaMarcaCazador(c, t, e);
+  else if (!e.fuera && e.hielo < 0.4 && J.fase !== 'titulo' && !(e === yo && TALLER.abierto) && !invisible(e)) pintaMarcaCamaleon(c, e);
+}
+// el becario: las cartas que le quedan, su nombre (siempre, a todos) y su signo
+function pintaMarcaCazador(c, t, e) {
+  if (J.fase !== 'prep' && !e.jugador && J.fase !== 'titulo') pintaCartasBecario(c, e);
+  if (J.fase !== 'titulo') rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 92, 10, e.jugador ? '#ffcb3d' : '#9fd0ff', OL, LETRA_UI);   // el cazador siempre enseña su nombre, a todos
+  if (e.marca) pintaSigno(c, e.x, e.y - 106, e.marca, e.marca === '!' ? '#ff4b5c' : '#e8731a', t);
+}
+// las cartas de despido que le quedan a cada becario
+function pintaCartasBecario(c, e) {
+  for (let k = 0; k < REGLAS.balas; k++) {   // la misma cartita de despido que en el panel del cazador: sobre oscuro con su raya roja, gris si ya se gastó
+    const bx = e.x - 20 + k * 8, by = e.y - 78, viva = k < e.balas;
+    c.fillStyle = OL; c.fillRect(bx, by, 7, 10); c.fillStyle = viva ? '#fff6ea' : '#5a5f7a'; c.fillRect(bx + 1, by + 1, 5, 8);
+    if (viva) { c.fillStyle = '#ff4b5c'; c.fillRect(bx + 1, by + 4, 5, 2); }
   }
+}
+// el colado: su nombre (más tenue según se congela) y, si eres tú, la barrita de aguante
+function pintaMarcaCamaleon(c, e) {
+  c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
+  if (e.jugador && e.aguante < 0.999) {      // tu aguante: una barrita bajo los pies, amarilla; roja mientras estás agotado
+    c.fillStyle = OL; c.fillRect(e.x - 16, e.y + 5, 32, 6); c.fillStyle = e.cansado ? '#ff4b5c' : '#ffcb3d'; c.fillRect(e.x - 15, e.y + 6, 30 * e.aguante, 4);
+  }
+  c.globalAlpha = 1;
 }
 // «TOCA AQUÍ» hasta el primer disparo del cazador
 function pintaTocaAqui(c, t, yo) {

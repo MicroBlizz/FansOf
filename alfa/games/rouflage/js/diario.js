@@ -141,11 +141,21 @@ function pintaGotas(c, w) {
   c.restore();
 }
 function diarioPinta() {
-  const s = diarioEstado(), sem = Math.floor(s.dia / 7), puede = diarioPuede(), hoyI = puede ? s.dia : s.dia - 1, caja = E('diario-dias');
+  const s = diarioEstado(), sem = Math.floor(s.dia / 7), puede = diarioPuede();
   E('diario-semana').textContent = tr('Semana {n} de {t}', { n: sem + 1, t: DIARIO.semanas });
   E('diario-gotas').textContent = String(SAVE.gotas);
   const mes = fechaHoy().slice(0, 7), delMes = s.mes === mes ? s.delMes : 0;
   E('diario-mes').textContent = s.hito === mes ? tr('Premio de 20 días: ¡conseguido este mes!') : tr('Días recogidos este mes: {n} de 20 (premio especial)', { n: delMes });
+  diarioPintaDias(s, sem, puede);
+  const bt = E('b-diario-recoger'); bt.disabled = !puede; bt.textContent = puede ? tr('¡RECOGER!') : tr('VUELVE MAÑANA');
+  diarioPintaRacha(s, puede);
+  diarioPintaPremios(s);
+  const usado = s.escudo === semanaDe(diaHoy());
+  E('diario-escudo').textContent = usado ? tr('Escudo gastado esta semana: el lunes tienes otro.') : tr('Tienes 1 escudo esta semana: si un día no entras, salva tu racha solo.');
+}
+// los siete días de la semana: cobrado, hoy o por llegar, con su premio dibujado
+function diarioPintaDias(s, sem, puede) {
+  const hoyI = puede ? s.dia : s.dia - 1, caja = E('diario-dias');
   caja.innerHTML = '';
   for (let d = 0; d < 7; d++) {
     const i = sem * 7 + d, p = diarioPremio(i), cel = document.createElement('div');
@@ -158,20 +168,22 @@ function diarioPinta() {
     const b = document.createElement('b'); b.textContent = cosa ? tr(cosa.it.n) + (p.cosas.length > 1 ? ' +' + (p.cosas.length - 1) : '') : String(p.gotas); cel.appendChild(b);
     caja.appendChild(cel);
   }
-  const bt = E('b-diario-recoger'); bt.disabled = !puede; bt.textContent = puede ? tr('¡RECOGER!') : tr('VUELVE MAÑANA');
-  // la racha: cuántos días, lo que da hoy (o mañana) y sus premios
+}
+// la racha: cuántos días, lo que da hoy (o mañana) y el bote que se llena
+function diarioPintaRacha(s, puede) {
   const rh = rachaHoy(), r = rh.r, ex = puede ? rachaExtra(r) : rachaExtra(r + 1);
   E('diario-racha-t').textContent = r >= 2 || !puede ? tr('RACHA DE {n}', { n: r }) : tr('EMPIEZA TU RACHA');
   E('diario-racha-s').textContent = puede ? (ex ? tr('+{n} gotas extra al recoger hoy', { n: ex }) : tr('Recoge cada día para que crezca')) : tr('Mañana: +{n} gotas extra', { n: ex });
   arPinta(E('diario-racha-dib'), (c, w, h) => pintaBote(c, w, h, Math.min(1, r / 30)));
+}
+// los premios de la racha, marcados los ya conseguidos
+function diarioPintaPremios(s) {
   const pr = E('diario-premios'); pr.innerHTML = '';
   for (const [n, cat, id] of RACHA.hitos) {
     const it = arItem(cat, id); if (!it) continue;
     const f = document.createElement('div'); f.className = 'diario-premio' + ((s.racha || 0) >= n ? ' hecho' : '');
     f.innerHTML = '<span></span><b></b>'; f.children[0].textContent = tr('{n} días', { n }); f.children[1].textContent = tr(it.n); pr.appendChild(f);
   }
-  const usado = s.escudo === semanaDe(diaHoy());
-  E('diario-escudo').textContent = usado ? tr('Escudo gastado esta semana: el lunes tienes otro.') : tr('Tienes 1 escudo esta semana: si un día no entras, salva tu racha solo.');
 }
 // el bote de pintura de la racha: se llena según los días (lleno a los 30), con su chorrete por fuera
 function pintaBote(c, w, h, lleno) {

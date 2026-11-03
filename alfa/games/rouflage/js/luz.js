@@ -31,34 +31,39 @@ function pintaLuces(c) {
   g.setTransform(CAM.esc / 2, 0, 0, CAM.esc / 2, CAM.ox / 2, CAM.oy / 2);
   g.globalCompositeOperation = 'destination-out';
   const haces = [];
-  for (const e of J.cazadores) {
-    if (!conLuz(e)) continue;
-    const largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1) * eventoVisibilidad(), x = e.x, y = e.y - 6, pts = abanico(e, []);
-    const gr = g.createRadialGradient(x, y, 8, x, y, largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.72, 'rgba(0,0,0,0.94)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = gr;
-    g.globalAlpha = REGLAS.luzPaso; const tras = abanico(e, [], true);      // primero la luz que atraviesa mesas, conos y estanterías a medias: sombras suaves en vez de duras
-    g.beginPath(); g.moveTo(tras[0], tras[1]); for (let k = 2; k < tras.length; k += 2) g.lineTo(tras[k], tras[k + 1]); g.closePath(); g.fill(); g.globalAlpha = 1;
-    g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
-    const rc = REGLAS.luzCerca + 16, gc = g.createRadialGradient(x, y, 6, x, y, rc); gc.addColorStop(0, 'rgba(0,0,0,0.92)'); gc.addColorStop(0.6, 'rgba(0,0,0,0.7)'); gc.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = gc; g.beginPath(); g.arc(x, y, rc, 0, TAU); g.fill();
-    haces.push(e.ropa && e.ropa.linterna ? { pts, col: e.ropa.linterna.color, borde: e.ropa.linterna.borde } : pts);      // la linterna del armario: su tono y su borde
-  }
-  for (const f of eventoFocos()) {      // los focos del mapa (faros, una ventana encendida…)
-    const pts = abanicoFoco(f, []), gr = g.createRadialGradient(f.x, f.y, 8, f.x, f.y, f.largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.75, 'rgba(0,0,0,0.9)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = gr; g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
-    haces.push(pts);
-  }
+  for (const e of J.cazadores) if (conLuz(e)) haces.push(luzCazador(g, e));
+  for (const f of eventoFocos()) haces.push(luzFoco(g, f));      // los focos del mapa (faros, una ventana encendida…)
   c.setTransform(1, 0, 0, 1, 0, 0); c.imageSmoothingEnabled = true; c.drawImage(LZ.cv, 0, 0, cv.width, cv.height);
   // un velo cálido dentro de cada haz
   ponMundo(c);
-  for (const hz of haces) {
-    const pts = hz.pts || hz, traza = () => { c.beginPath(); c.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) c.lineTo(pts[k], pts[k + 1]); c.closePath(); };
-    c.fillStyle = hz.col ? hz.col.replace(/,[^,]*\)$/, `,${0.1 * J.oscuro})`) : `rgba(255,236,170,${0.075 * J.oscuro})`; traza(); c.fill();
-    if (hz.borde) {
-      c.save(); c.globalAlpha = 0.75 * J.oscuro; c.strokeStyle = hz.col.replace(/,[^,]*\)$/, ',1)'); c.lineWidth = 2.4; c.lineJoin = 'round';
-      if (hz.borde === 'puntos') c.setLineDash([3, 6]);
-      traza(); c.stroke(); c.restore();
-      if (hz.borde === 'estrellas') for (let k = 1; k < 4; k++) { const i = 2 * Math.floor(pts.length / 4) - (k % 2) * 2, a = k / 4; c.save(); c.globalAlpha = 0.8 * J.oscuro; c.translate(pts[0] + (pts[i] - pts[0]) * a, pts[1] + (pts[i + 1] - pts[1]) * a); c.rotate(RELOJ * 1.5 + k); c.fillStyle = '#ffcb3d'; c.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? 2.2 : 5.5, g = j * Math.PI / 5; c.lineTo(Math.cos(g) * r, Math.sin(g) * r); } c.closePath(); c.fill(); c.restore(); }
-    }
+  for (const hz of haces) luzVelo(c, hz);
+}
+// el haz de un becario: la luz que atraviesa lo flojo, el cono, el círculo de cerca; devuelve su polígono (con el tono y el borde de la linterna del armario, si lleva)
+function luzCazador(g, e) {
+  const largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1) * eventoVisibilidad(), x = e.x, y = e.y - 6, pts = abanico(e, []);
+  const gr = g.createRadialGradient(x, y, 8, x, y, largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.72, 'rgba(0,0,0,0.94)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr;
+  g.globalAlpha = REGLAS.luzPaso; const tras = abanico(e, [], true);      // primero la luz que atraviesa mesas, conos y estanterías a medias: sombras suaves en vez de duras
+  g.beginPath(); g.moveTo(tras[0], tras[1]); for (let k = 2; k < tras.length; k += 2) g.lineTo(tras[k], tras[k + 1]); g.closePath(); g.fill(); g.globalAlpha = 1;
+  g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
+  const rc = REGLAS.luzCerca + 16, gc = g.createRadialGradient(x, y, 6, x, y, rc); gc.addColorStop(0, 'rgba(0,0,0,0.92)'); gc.addColorStop(0.6, 'rgba(0,0,0,0.7)'); gc.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gc; g.beginPath(); g.arc(x, y, rc, 0, TAU); g.fill();
+  return (e.ropa && e.ropa.linterna ? { pts, col: e.ropa.linterna.color, borde: e.ropa.linterna.borde } : pts);      // la linterna del armario: su tono y su borde;
+}
+// un foco del mapa (faros, una ventana encendida…): devuelve su polígono
+function luzFoco(g, f) {
+  const pts = abanicoFoco(f, []), gr = g.createRadialGradient(f.x, f.y, 8, f.x, f.y, f.largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.75, 'rgba(0,0,0,0.9)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr; g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
+  return pts;
+}
+// el velo cálido de un haz (y el borde de la linterna, si lleva)
+function luzVelo(c, hz) {
+  const pts = hz.pts || hz, traza = () => { c.beginPath(); c.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) c.lineTo(pts[k], pts[k + 1]); c.closePath(); };
+  c.fillStyle = hz.col ? hz.col.replace(/,[^,]*\)$/, `,${0.1 * J.oscuro})`) : `rgba(255,236,170,${0.075 * J.oscuro})`; traza(); c.fill();
+  if (hz.borde) {
+    c.save(); c.globalAlpha = 0.75 * J.oscuro; c.strokeStyle = hz.col.replace(/,[^,]*\)$/, ',1)'); c.lineWidth = 2.4; c.lineJoin = 'round';
+    if (hz.borde === 'puntos') c.setLineDash([3, 6]);
+    traza(); c.stroke(); c.restore();
+    if (hz.borde === 'estrellas') for (let k = 1; k < 4; k++) { const i = 2 * Math.floor(pts.length / 4) - (k % 2) * 2, a = k / 4; c.save(); c.globalAlpha = 0.8 * J.oscuro; c.translate(pts[0] + (pts[i] - pts[0]) * a, pts[1] + (pts[i + 1] - pts[1]) * a); c.rotate(RELOJ * 1.5 + k); c.fillStyle = '#ffcb3d'; c.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? 2.2 : 5.5, g = j * Math.PI / 5; c.lineTo(Math.cos(g) * r, Math.sin(g) * r); } c.closePath(); c.fill(); c.restore(); }
   }
 }

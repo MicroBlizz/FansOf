@@ -255,27 +255,36 @@ function trozosPiel(e) {
 function pintaCara(c, e, t, p) {
   const x = CABEZA.x + 2 + p.cabeza * 1.5 + limita(e.ojoX || 0, -1.6, 1.6) * 0.5, y = CABEZA.y + limita(e.ojoY || 0, -1.2, 1.2) * 0.4;
   const parp = (t * 0.9 + (e.semilla || 0)) % 3.4 < 0.12;
-  if (e.fuera || (e.clase === 'cazador' && e.ciego > 0)) {
-    for (const s of [-1, 1]) { raya(c, [x + s * 4.4 - 1.8, y - 2.3, x + s * 4.4 + 1.8, y + 1.3], OL, 1.8); raya(c, [x + s * 4.4 + 1.8, y - 2.3, x + s * 4.4 - 1.8, y + 1.3], OL, 1.8); }
-  } else if (e.ropa && e.ropa.ojos) e.ropa.ojos(c, x, y);   // unos ojos del armario (habitacion.js)
-  else {
-    for (const s of [-1, 1]) {
-      if (parp) { raya(c, [x + s * 4.4 - 1.8, y - 0.5, x + s * 4.4 + 1.8, y - 0.5], OL, 1.6); continue; }
-      if (s < 0 && e.tipo === 'bunny') {
-        c.beginPath(); for (let q = 0; q < 3.4 * Math.PI; q += 0.3) { const r = 0.24 * q; c.lineTo(x - 4.4 + Math.cos(q + t * 3) * r, y - 0.5 + Math.sin(q + t * 3) * r); }
-        c.strokeStyle = '#8a2bff'; c.lineWidth = 1.3; c.stroke(); continue;
-      }
-      const rr = e.susto ? 0.65 : 1;
-      c.beginPath(); c.ellipse(x + s * 4.4, y - 0.5, 1.9 * rr, 2.5 * rr, 0, 0, TAU); c.fillStyle = OL; c.fill();
-      if (!e.susto) punto(c, x + s * 4.4 + 0.7, y - 1.5, 0.7, '#ffffff');
-    }
-    if (e.clase === 'cazador' && e.alerta > 0.5) { raya(c, [x - 6.5, y - 5.2, x - 2.6, y - 3.8], OL, 1.5); raya(c, [x + 6.5, y - 5.2, x + 2.6, y - 3.8], OL, 1.5); }
-  }
+  if (e.fuera || (e.clase === 'cazador' && e.ciego > 0)) pintaOjosX(c, x, y);
+  else if (e.ropa && e.ropa.ojos) e.ropa.ojos(c, x, y);   // unos ojos del armario (habitacion.js)
+  else pintaOjos(c, e, t, x, y, parp);
   for (const s of [-1, 1]) { c.beginPath(); c.ellipse(x + s * 7.2, y + 3.4, 2, 1.2, 0, 0, TAU); c.fillStyle = 'rgba(255,120,150,0.45)'; c.fill(); }
+  pintaBoca(c, e, x, y);
+}
+// la boca: una del armario, o la de siempre (redonda si hay susto o está fuera)
+function pintaBoca(c, e, x, y) {
   if (e.ropa && e.ropa.boca && !e.susto && !e.fuera) { e.ropa.boca(c, x, y); return; }   // una boca del armario
   c.beginPath();
   if (e.susto || e.fuera) c.ellipse(x, y + 4.2, 1.4, 1.7, 0, 0, TAU); else c.arc(x, y + 2.6, 2.5, 0.25, Math.PI - 0.25);
   c.lineWidth = 1.3; c.strokeStyle = OL; c.lineCap = 'round'; c.stroke();
+}
+// los ojos en X de quien está fuera (o el becario cegado)
+function pintaOjosX(c, x, y) {
+  for (const s of [-1, 1]) { raya(c, [x + s * 4.4 - 1.8, y - 2.3, x + s * 4.4 + 1.8, y + 1.3], OL, 1.8); raya(c, [x + s * 4.4 + 1.8, y - 2.3, x + s * 4.4 - 1.8, y + 1.3], OL, 1.8); }
+}
+// los ojos de siempre: abiertos (con susto, más pequeños), parpadeando, la espiral del conejo y las cejas del becario alerta
+function pintaOjos(c, e, t, x, y, parp) {
+  for (const s of [-1, 1]) {
+    if (parp) { raya(c, [x + s * 4.4 - 1.8, y - 0.5, x + s * 4.4 + 1.8, y - 0.5], OL, 1.6); continue; }
+    if (s < 0 && e.tipo === 'bunny') {
+      c.beginPath(); for (let q = 0; q < 3.4 * Math.PI; q += 0.3) { const r = 0.24 * q; c.lineTo(x - 4.4 + Math.cos(q + t * 3) * r, y - 0.5 + Math.sin(q + t * 3) * r); }
+      c.strokeStyle = '#8a2bff'; c.lineWidth = 1.3; c.stroke(); continue;
+    }
+    const rr = e.susto ? 0.65 : 1;
+    c.beginPath(); c.ellipse(x + s * 4.4, y - 0.5, 1.9 * rr, 2.5 * rr, 0, 0, TAU); c.fillStyle = OL; c.fill();
+    if (!e.susto) punto(c, x + s * 4.4 + 0.7, y - 1.5, 0.7, '#ffffff');
+  }
+  if (e.clase === 'cazador' && e.alerta > 0.5) { raya(c, [x - 6.5, y - 5.2, x - 2.6, y - 3.8], OL, 1.5); raya(c, [x + 6.5, y - 5.2, x + 2.6, y - 3.8], OL, 1.5); }
 }
 
 // dibuja un personaje en el mundo. `t` es el reloj; `velo` < 1 lo deja medio transparente (el calco del taller)

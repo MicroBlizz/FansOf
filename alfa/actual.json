@@ -1,8 +1,8 @@
 {
- "build": 865,
- "hash": "1ae1862",
- "fecha": "2026-11-03T01:03:31Z",
- "mensaje": "Rouflage: salaVivaPintaUI, fpPuertaCerca, fotoHaz y dibujaJunta partidos; 26 tests escritos antes",
+ "build": 866,
+ "hash": "924e6ed",
+ "fecha": "2026-11-03T01:25:47Z",
+ "mensaje": "Rouflage: pintaLuces, diarioPinta, pintaMarcaEnte, pintaCara y galeriaPinta partidos; guardia del comparador para la galería",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

@@ -1,8 +1,8 @@
 {
- "build": 909,
- "hash": "1a87698",
- "fecha": "2026-11-04T00:48:47Z",
- "mensaje": "Versiones y notas del despliegue: boom 0.4.4, cooking 0.2.5, crush 0.1.42, decks 0.2.24, jump 0.3.19, karts 0.7.18, nova 0.3.42, pets 0.2.2, ratkov 0.2.32, rouflage 0.2.66, rumble 0.9.161, survivors 0.1.74, tacticas 0.1.58, taxi 0.2.4, td 0.13.90",
+ "build": 910,
+ "hash": "a82820d",
+ "fecha": "2026-11-04T00:52:08Z",
+ "mensaje": "Pets f16: la cabeza del hurón toma su forma por medidas (mofletes) en vez de mechones",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

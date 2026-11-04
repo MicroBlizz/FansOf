@@ -1,8 +1,8 @@
 {
- "build": 918,
- "hash": "57b2628",
- "fecha": "2026-11-04T15:47:44Z",
- "mensaje": "Karts: física al dominio, tanda 1 (acelerar, volante, derrape, salto) con puertos y tests (ADR 048)",
+ "build": 919,
+ "hash": "bb069c8",
+ "fecha": "2026-11-04T16:29:04Z",
+ "mensaje": "Pets: ojos kawaii en el muñeco del hurón",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

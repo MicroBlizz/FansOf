@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.42
+  "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
+  "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked for its best side.",
   // 0.1.41
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems gain separate effects and music volumes, and internal testing keeps improving.",
   "Microblizz ha bajado la música y Phony sigue oyendo caramelos.": "Microblizz turned the music down and Phony still hears sweets.",

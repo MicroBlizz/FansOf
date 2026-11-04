@@ -6,9 +6,9 @@ const AJUSTES = {
 };
 var AIR = globalThis.AIR || (globalThis.AIR = {});
 AIR.AJ = Object.freeze({
-  // Los cazas: vel = lo rápido que se mueve por la pantalla; escudo = vida; fijar = segundos con la retícula encima para fijar un
-  // misil; sigilo = cuánto les cuesta apuntarte a los enemigos (menos = disparan menos); radioBomba = tamaño de sus explosiones;
-  // rabia = cuánto acelera la ametralladora cada derribo seguido (solo CrazyBunny)
+  // Los cazas: vel = velocidad de crucero y lo rápido que maniobra (1 = normal); escudo = vida; fijar = segundos con la retícula
+  // encima para fijar un misil; sigilo = cuánto les cuesta apuntarte a los enemigos (menos = disparan menos); radioBomba = tamaño
+  // de sus explosiones; rabia = cuánto acelera la ametralladora cada derribo seguido (solo CrazyBunny)
   cazas: [
     { id: 'bunny', nombre: 'Zanahoria Uno', piloto: 'CrazyBunny', color: '#ff8a2a', vel: 1.0, escudo: 100, misiles: 6, bombas: 8,
       fijar: 0.6, sigilo: 1, radioBomba: 1, rabia: 0.18, texto: 'Equilibrado. RABIA: cada derribo seguido dispara más rápido.' },
@@ -17,20 +17,27 @@ AIR.AJ = Object.freeze({
     { id: 'castor', nombre: 'Castor Bombardero', piloto: 'BoomBeaver', color: '#a86a32', vel: 0.8, escudo: 150, misiles: 4, bombas: 12,
       fijar: 0.4, sigilo: 1.2, radioBomba: 1.5, rabia: 0, texto: 'Blindado y lento, con más bombas y explosiones más grandes.' },
   ],
-  // Fase 1, el aire (falso 3D): el jugador se mueve en x (-300..300) e y (-180..180); los enemigos vienen desde z lejano hasta 0
+  // Combustible de toda la misión, en segundos de vuelo; si se acaba, misión fallida. Los bidones de los enemigos lo recargan
+  combustible: { max: 210, aviso: 35 },
+  // Fase 1, el aire: vuelo de verdad en 3D (metros). x este, y altura, z norte. El caza va siempre hacia delante; la palanca a los
+  // lados lo alabea (inclinado, vira solo) y arriba o abajo lo cabecea; puede dar la vuelta entera y volar boca abajo
   aire: {
-    limites: { x: 300, y: 180 }, velBase: 420, zLejos: 1300, zCerca: 0,
-    bala: { vel: 1100, cada: 0.11, alcance: 1400, dano: 1, radio: 48, radioZ: 50 },
-    misil: { vel: 650, dano: 5, radio: 60, radioZ: 50, giro: 900 },
-    tiro: { vel: 700, radio: 46, dano: 10 },           // disparos enemigos (gotas de café, cajas, cartas de despido)
-    choque: { radio: 60, dano: 20 },                   // un enemigo que pasa pegado al jugador
-    derribos: 12,                                      // derribos para que salga el jefe
-    oleada: { maximo: 5, cada: 1.1 },                  // enemigos a la vez y segundos entre apariciones
+    vuelo: { vel: 120, velMin: 65, velMax: 210, alabeo: 2.4, cabeceo: 1.15, viraje: 0.95, nivelar: 1.4, gravedad: 28,
+      altInicio: 700, altMax: 2400, altAviso: 220, perdida: 0.9, aviso: 1.6 },   // perdida: lo que cae el morro (rad/s) arriba del todo o lento
+    bala: { vel: 700, cada: 0.1, vida: 1.3, dano: 1, radio: 4 },
+    misil: { vel: 360, giro: 2.6, vida: 5, dano: 5, radio: 8, cono: 0.13, alcance: 1800 },   // cono: lo centrado que tiene que estar para fijarlo
+    tiro: { vel: 300, radio: 16, dano: 10, vida: 6 },   // disparos enemigos (gotas de café, cajas, cartas de despido), apuntan adonde vas a estar
+    choque: { radio: 22, dano: 20 },                     // un enemigo que te pasa pegado
+    derribos: 6,                                         // derribos de la misión para que salga el jefe (en el original, de 3 a 9)
+    oleada: { maximo: 2, cada: 3.5, cerca: 1300, lejos: 2200 },   // enemigos a la vez, segundos entre apariciones y a qué distancia salen
     enemigos: {
-      becario: { vida: 1, vel: 260, radio: 34, puntos: 100, dispara: 2.6, zMinTiro: 350, balanceo: 90, tiro: 'cafe' },
-      caja:    { vida: 3, vel: 170, radio: 60, puntos: 300, dispara: 2.0, zMinTiro: 400, balanceo: 40, tiro: 'caja' },
+      becario: { vida: 1, vel: 95, giro: 0.9, radio: 14, puntos: 100, dispara: 2.6, cono: 0.35, alcanceTiro: 1100, tiro: 'cafe', premio: 0.6 },
+      caja:    { vida: 3, vel: 75, giro: 0.6, radio: 22, puntos: 300, dispara: 2.0, cono: 0.45, alcanceTiro: 1200, tiro: 'caja', premio: 1 },
     },
-    jefe: { vida: 40, vel: 220, radio: 90, puntos: 2000, dispara: 0.9, rafaga: 3, z: 520, puntosGolpe: 20, tiro: 'carta' },
+    jefe: { vida: 30, vel: 85, giro: 0.75, radio: 34, puntos: 2000, dispara: 1.1, rafaga: 3, puntosGolpe: 20, tiro: 'carta', cono: 0.5, alcanceTiro: 1300, premio: 0 },
+    // los premios que sueltan los enemigos derribados: caen en paracaídas y, si pasas cerca, vienen solos hacia ti
+    premios: { tipos: [['misiles', 3], ['bombas', 3], ['reparacion', 2], ['combustible', 2]], cae: 12, iman: 380, coger: 40, vida: 25,
+      misiles: 2, bombas: 3, bombasExtra: 6, reparacion: 25, combustible: 45 },
   },
   // Fase 2, la tierra (vista isométrica como el original): un mapa grande por el que el caza vuela libre sin pararse (es un
   // reactor), virando hacia donde empujas la palanca; la flecha del HUD señala el objetivo primario más cercano

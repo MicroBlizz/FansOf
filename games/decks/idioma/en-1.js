@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.24
+  "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
+  "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked for its best side.",
   // 0.2.23
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems gain separate effects and music volumes, and internal testing keeps improving.",
   "Microblizz ha bajado el volumen de la baraja y Phony ha pedido una carta de silencio.": "Microblizz turned the deck's volume down and Phony asked for a silence card.",

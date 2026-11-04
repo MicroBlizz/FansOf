@@ -85,6 +85,9 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     objetivo(g, e);
     texto(g, tr('PUNTOS'), 1264, 30, 10, '#ccc', 'right');
     texto(g, String(e.puntos).padStart(6, '0'), 1264, 56, 14, '#ffe14a', 'right');
+    const C = e.aj.combustible, poco = e.combustible < C.aviso && Math.floor(performance.now() / 250) % 2;
+    texto(g, tr('COMB'), 1056, 92, 9, '#ccc', 'right');
+    barra(g, 1064, 82, 200, 12, e.combustible / C.max, poco ? '#ff5a3a' : '#ff8a2a');
     municion(g, e);
     brujula(g, e);
   };
@@ -97,20 +100,37 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
       texto(g, tr(enAire ? 'M: MISIL' : 'M: BOMBA'), x, y0 + 52, 8, '#9aa4c8');
       return;
     }
-    if (joy.activo) {
-      g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 3; g.beginPath(); g.arc(joy.ox, joy.oy, 70, 0, 7); g.stroke();
-      g.fillStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.arc(joy.ox + joy.dx * 55, joy.oy + joy.dy * 55, 26, 0, 7); g.fill();
-    }
+    if (joy.activo) palanca(g, joy);
     const B = UI.botones, enAire = e.fase !== 'tierra';
-    boton(g, B.fuego, '#ff5a3a', tr('FUEGO'));
-    boton(g, B.especial, '#3a8cff', tr(enAire ? 'MISIL' : 'BOMBA'));
+    boton(g, B.fuego, '#ff5a3a', tr('FUEGO'), A.vista.img['boton-fuego']);
+    boton(g, B.especial, '#3a8cff', tr(enAire ? 'MISIL' : 'BOMBA'), A.vista.img['boton-misil']);
   };
 
-  function boton(g, b, color, etiqueta) {
-    g.globalAlpha = b.pulsado != null ? 0.95 : 0.7;
-    g.fillStyle = color; g.strokeStyle = '#111'; g.lineWidth = 5;
-    g.beginPath(); g.arc(b.x, b.y, b.r, 0, 7); g.fill(); g.stroke();
+  // La palanca: una base metálica donde pusiste el dedo y el pomo que sigue al dedo, con su sombra y el gatillo.
+  function palanca(g, joy) {
+    const x = joy.ox + joy.dx * 50, y = joy.oy + joy.dy * 50;
+    g.globalAlpha = 0.55;   // la base, medio transparente para no tapar la cabina
+    g.fillStyle = '#1c1f27'; g.strokeStyle = '#8a92a6'; g.lineWidth = 4; g.beginPath(); g.arc(joy.ox, joy.oy, 72, 0, 7); g.fill(); g.stroke();
+    g.strokeStyle = '#4a5263'; g.lineWidth = 2; g.beginPath(); g.arc(joy.ox, joy.oy, 46, 0, 7); g.stroke();
+    g.fillStyle = '#c9ced8'; for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2 + Math.PI / 4; g.beginPath(); g.arc(joy.ox + Math.cos(a) * 60, joy.oy + Math.sin(a) * 60, 4, 0, 7); g.fill(); }
     g.globalAlpha = 1;
+    g.fillStyle = 'rgba(0,0,0,.35)'; g.beginPath(); g.ellipse(x + 6, y + 8, 28, 22, 0, 0, 7); g.fill();
+    const pomo = g.createRadialGradient(x - 8, y - 10, 4, x, y, 30); pomo.addColorStop(0, '#6a7080'); pomo.addColorStop(1, '#1c1f27');
+    g.fillStyle = pomo; g.strokeStyle = '#0d0f14'; g.lineWidth = 3; g.beginPath(); g.arc(x, y, 28, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = '#ff5a3a'; g.beginPath(); g.arc(x, y - 6, 7, 0, 7); g.fill();   // el gatillo
+  }
+
+  // Un botón de recreativa (dibujo de Yoshi) que se hunde al pulsarlo; si no ha cargado, uno redondo por código.
+  function boton(g, b, color, etiqueta, img) {
+    const pulsado = b.pulsado != null, k = pulsado ? 0.92 : 1, r = b.r * k;
+    g.fillStyle = 'rgba(0,0,0,.35)'; g.beginPath(); g.arc(b.x + 5, b.y + 7, b.r, 0, 7); g.fill();
+    if (img) { g.globalAlpha = pulsado ? 1 : 0.9; g.drawImage(img, b.x - r * 1.18, b.y - r * 1.18, r * 2.36, r * 2.36); g.globalAlpha = 1; }
+    else {
+      const cara = g.createRadialGradient(b.x - r * 0.3, b.y - r * 0.35, r * 0.1, b.x, b.y, r);
+      cara.addColorStop(0, '#fff'); cara.addColorStop(0.25, color); cara.addColorStop(1, '#111');
+      g.fillStyle = '#2a2e38'; g.beginPath(); g.arc(b.x, b.y, r + 8, 0, 7); g.fill();
+      g.fillStyle = cara; g.strokeStyle = '#111'; g.lineWidth = 4; g.beginPath(); g.arc(b.x, b.y, r, 0, 7); g.fill(); g.stroke();
+    }
     texto(g, etiqueta, b.x, b.y + 5, b.r > 60 ? 13 : 10, '#fff');
   }
 

@@ -1,6 +1,7 @@
 // Fans Of Decks · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.2.24', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },
   { v: '0.2.23', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando."], joke: ["Microblizz ha bajado el volumen de la baraja y Phony ha pedido una carta de silencio."] },
   { v: '0.2.22', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor."], joke: ["Microblizz ha puesto las cartas en fila y Phony ha pedido turno para barajar."] },
   { v: '0.2.21', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha guardado los anuncios bajo llave y Phony ha pedido una carta de patrocinio."] },

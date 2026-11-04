@@ -1,6 +1,9 @@
 // Fans of Cooking · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.5
+  "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
+  "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked for its best side.",
   // 0.2.4
   "<b>VOLUMEN POR SEPARADO</b>: en Opciones hay una barra para los efectos y otra para la música, las mismas que el resto de juegos.": "<b>SEPARATE VOLUMES</b>: Options now has one bar for effects and another for music, the same as the other games.",
   "Microblizz ha bajado la música de la cocina y Phony ha subido la freidora.": "Microblizz turned the kitchen music down and Phony turned the fryer up.",

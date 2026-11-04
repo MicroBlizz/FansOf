@@ -1,70 +1,103 @@
-// Fans of Air · Vista del aire desde la cabina, como el original: no se ve tu caza; el horizonte se inclina al alabear y sube o
-// baja al cabecear, la cuadrícula del suelo corre hacia ti, nubes que pasan, y los enemigos, sus disparos, tus balas (trazadoras
-// desde los cañones) y tus misiles en falso 3D (ordenados de lejos a cerca y escalados con proyectar() del dominio). La retícula
-// fija en el centro de la vista marca adonde apunta el morro. El panel de instrumentos de abajo lo dibuja cabina.js.
+// Fans of Air · Vista del aire desde la cabina, con el vuelo de verdad de vuelo.js: el cielo y el mar se parten por el horizonte
+// donde toque según cómo vaya el caza (inclinado, cabeceando o boca abajo), a juego como en el original; la espuma de las olas y
+// las nubes están en el mundo (se ven la altura y la velocidad), y enemigos, disparos, balas,
+// misiles y premios se dibujan en perspectiva de lejos a cerca. Flechas en el borde para lo que queda fuera de la vista, y la
+// retícula fija en el centro. El panel de instrumentos de abajo lo dibuja cabina.js.
 'use strict';
 var AIR = globalThis.AIR || (globalThis.AIR = {});
 (function (A) {
   const V = A.vista = A.vista || { img: {}, W: 1280, H: 720 };
   const VA = V.aire = { nubes: [], golpes: {} };
-  const C = { x: 640, y: 245 }, ALTO_VISTA = 490;   // centro de la vista (adonde apunta el morro); debajo va el panel de la cabina
+  const C = { x: 640, y: 245 }, ALTO_VISTA = 490, F = 700;   // centro de la vista (adonde apunta el morro) y distancia focal en píxeles
   const SPRITE = { becario: 'dron-becario', caja: 'bombardero-caja', jefe: 'jefe-survivalbot' };
-  const ANCHO = { becario: 220, caja: 420, jefe: 520 };   // ancho en pantalla a escala 1 (pegado a ti)
+  const ANCHO = { becario: 30, caja: 50, jefe: 80 };   // ancho en metros de cada enemigo (algo exagerado, para que se vean)
   const COLOR = { becario: '#3a6cff', caja: '#e2b324', jefe: '#8a8a9a' };
-  const TIRO = { cafe: '#6b3a1e', caja: '#e2b324', carta: '#ff7ac8', suelo: '#ff5a3a' };
-  const CANON = [[-250, 300], [250, 300]], ALAS = [[-170, 250], [170, 250]];   // de dónde salen balas y misiles (respecto al centro)
+  const TIRO = { cafe: '#6b3a1e', caja: '#e2b324', carta: '#ff7ac8' };
+  const PREMIO = { misiles: '#9fe0ff', bombas: '#ffe14a', reparacion: '#5fe05f', combustible: '#ff8a2a' };
+  const OLA = 160, ALCANCE = 3600;   // tamaño del trozo de mar con su ola y hasta dónde se dibujan
 
-  const giro = (j) => j.roll * 1.2;                                          // alabeo del horizonte (radianes)
-  const horizonte = (j, picado) => C.y - j.y * 0.8 - picado * 230;          // al subir el horizonte baja; al picar, sube
-
-  // Mundo -> pantalla: lo que proyecta el dominio, girado con el alabeo alrededor del centro de la vista.
+  // Un punto del mundo en la pantalla (o null si queda detrás del piloto).
   function P(j, p) {
-    const q = A.aire.proyectar(j, p), r = giro(j), c = Math.cos(r), s = Math.sin(r);
-    return { x: C.x + q.sx * c - q.sy * s, y: C.y + q.sx * s + q.sy * c, s: q.s };
+    const c = A.vuelo.camara(j, p);
+    if (c.z < 2) return null;
+    const s = F / c.z;
+    return { x: C.x + c.x * s, y: C.y - c.y * s, s, c };
   }
-
-  for (let i = 0; i < 9; i++) VA.nubes.push({ x: (Math.random() - 0.5) * 1600, y: -160 + Math.random() * 220, z: Math.random() * 1300, r: 30 + Math.random() * 50 });
+  VA.pantalla = (e, p) => P(e.aire.jugador, p) || { x: -9999, y: -9999, s: 0 };
 
   VA.evento = function (ev) { if (ev.tipo === 'impacto' && ev.id !== undefined) VA.golpes[ev.id] = performance.now(); };
 
-  function fondo(g, j, t, picado) {
-    const img = V.img.cielo;
+  // ---------- cielo, suelo y horizonte ----------
+  // El horizonte en pantalla: el punto más cercano al centro y el giro (0 = derecho, π = boca abajo).
+  function horizonte(j) {
+    const a = j.r.y, b = j.u.y, n = a * a + b * b;
+    if (n < 1e-4) return null;   // mirando recto arriba o abajo: no se ve el horizonte
+    return { x: C.x - j.f.y * a / n * F, y: C.y + j.f.y * b / n * F, giro: Math.atan2(a, b) };
+  }
+
+  // El cielo y el mar, a juego como en el original: el cielo azul se aclara hacia el horizonte, donde una franja de calima lo
+  // junta con el mar, que se oscurece al acercarse. Todo gira con el caza (boca abajo, el mar queda arriba).
+  function fondo(g, j) {
+    const h = horizonte(j);
     g.save(); g.beginPath(); g.rect(0, 0, 1280, ALTO_VISTA); g.clip();
-    g.translate(C.x, C.y); g.rotate(giro(j)); g.translate(0, horizonte(j, picado) - C.y);   // (0,0) = el punto del horizonte
-    const suelo = g.createLinearGradient(0, 0, 0, 420); suelo.addColorStop(0, '#7d8a74'); suelo.addColorStop(1, '#2f4a2a');
-    g.fillStyle = suelo; g.fillRect(-2000, 0, 4000, 1600);
-    const cielo = g.createLinearGradient(0, -700, 0, 0); cielo.addColorStop(0, '#2a62c8'); cielo.addColorStop(1, '#ff9a5a');
-    g.fillStyle = cielo; g.fillRect(-2000, -1600, 4000, 1600);
-    if (img) {   // la ciudad de Microblizz, apoyada en el horizonte y repetida en espejo a los lados
-      const k = 0.75, w = img.width * k, hh = img.height * k;
-      g.drawImage(img, -w / 2, -hh, w, hh);
-      g.save(); g.scale(-1, 1); g.drawImage(img, w / 2, -hh, w, hh); g.drawImage(img, -w * 1.5, -hh, w, hh); g.restore();
-    }
-    rejilla(g, t);
+    if (!h) { g.fillStyle = j.f.y > 0 ? '#3a7be0' : '#082a5c'; g.fillRect(0, 0, 1280, ALTO_VISTA); g.restore(); return; }
+    g.translate(h.x, h.y); g.rotate(h.giro);
+    const cielo = g.createLinearGradient(0, -900, 0, 0);
+    cielo.addColorStop(0, '#3a7be0'); cielo.addColorStop(0.6, '#6aa8ee'); cielo.addColorStop(0.92, '#a9d6f7'); cielo.addColorStop(1, '#e4f4ff');
+    g.fillStyle = cielo; g.fillRect(-3000, -3000, 6000, 3000);
+    const mar = g.createLinearGradient(0, 0, 0, 800);
+    mar.addColorStop(0, '#bfe3f5'); mar.addColorStop(0.04, '#3b8fc8'); mar.addColorStop(0.35, '#165a9e'); mar.addColorStop(1, '#082a5c');
+    g.fillStyle = mar; g.fillRect(-3000, 0, 6000, 3000);
+    g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(-3000, -3, 6000, 5);   // la línea del horizonte, con brillo
     g.restore();
   }
 
-  // Cuadrícula del suelo en perspectiva que corre hacia ti: la referencia de velocidad y altura que al original le faltaba.
-  function rejilla(g, t) {
-    g.strokeStyle = 'rgba(255,255,255,.16)'; g.lineWidth = 1.5;
-    for (let k = -8; k <= 8; k++) { g.beginPath(); g.moveTo(0, 0); g.lineTo(k * 320, 1000); g.stroke(); }
-    const off = (t * 1.6) % 1;
-    for (let i = 0; i < 9; i++) { const z = (i + off) / 9, y = 1000 * z * z; g.beginPath(); g.moveTo(-2000, y); g.lineTo(2000, y); g.stroke(); }
-  }
-
-  function nubes(g, j, dt) {
-    for (const n of VA.nubes) {
-      n.z -= 420 * dt;
-      if (n.z < -50) { n.z = 1300; n.x = (Math.random() - 0.5) * 1600; n.y = -160 + Math.random() * 220; }
-      const p = P(j, n);
-      if (p.y > ALTO_VISTA + 60) continue;
-      g.fillStyle = 'rgba(255,255,255,' + (0.28 * Math.min(1, p.s * 2)) + ')';
-      g.beginPath(); g.ellipse(p.x, p.y, n.r * p.s * 2.2, n.r * p.s * 0.8, 0, 0, 7); g.fill();
+  // Las olas: espuma repartida por el mar (siempre en el mismo sitio de cada trozo, con una semilla), que pasa por debajo del
+  // caza: así se ven la velocidad y la altura (más cerca del agua, más grandes y más rápidas).
+  function semilla(i, k) { let h = (i * 73856093) ^ (k * 19349663); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+  function olas(g, j, t) {
+    const n = Math.ceil(ALCANCE / OLA), i0 = Math.floor(j.pos.x / OLA), k0 = Math.floor(j.pos.z / OLA), h = horizonte(j), giro = h ? h.giro : 0;
+    g.save(); g.beginPath(); g.rect(0, 0, 1280, ALTO_VISTA); g.clip();
+    for (let i = i0 - n; i <= i0 + n; i++) for (let k = k0 - n; k <= k0 + n; k++) {
+      const r = semilla(i, k);
+      if (r > 0.55) continue;
+      const vaiven = Math.sin(t * 1.5 + r * 20) * 6;
+      const c = A.vuelo.camara(j, { x: i * OLA + semilla(k, i) * OLA, y: 0, z: k * OLA + r * OLA + vaiven });
+      if (c.z < 8 || c.z > ALCANCE) continue;
+      const s = F / c.z, x = C.x + c.x * s, y = C.y - c.y * s, w = (10 + r * 18) * s;
+      if (x < -60 || x > 1340 || y < -40 || y > ALTO_VISTA + 40 || w < 0.8) continue;
+      g.fillStyle = 'rgba(255,255,255,' + Math.min(0.75, 0.25 + s * 0.4) + ')';
+      g.beginPath(); g.ellipse(x, y, w, Math.max(0.6, w * 0.18), giro, 0, 7); g.fill();
     }
+    g.restore();
   }
 
-  function enemigo(g, j, en, t) {
-    const p = P(j, en), img = V.img[SPRITE[en.tipo]], w = ANCHO[en.tipo] * p.s, tocado = performance.now() - (VA.golpes[en.id] || 0) < 90;
+  // ---------- nubes de verdad: bolas blancas agrupadas, en el mundo, alrededor del caza ----------
+  function nubes(j) {
+    if (!VA.nubes.length) for (let i = 0; i < 14; i++) VA.nubes.push(nuevaNube(j, 1000 + Math.random() * 2300));
+    for (let i = 0; i < VA.nubes.length; i++) if (A.v3.dist(VA.nubes[i], j.pos) > 3400) VA.nubes[i] = nuevaNube(j, 2800);
+  }
+  function nuevaNube(j, d) {
+    const ang = A.vuelo.rumbo(j) + (Math.random() - 0.5) * 2.4, r = 40 + Math.random() * 60, bolas = [];
+    for (let b = 0; b < 6; b++) bolas.push({ dx: (b - 2.5) * r * 0.55 + (Math.random() - 0.5) * r * 0.3, dy: Math.random() * r * 0.35 + (b === 2 || b === 3 ? r * 0.3 : 0), r: r * (0.45 + Math.random() * 0.35) });
+    return { x: j.pos.x + Math.sin(ang) * d, y: 450 + Math.random() * 1500, z: j.pos.z + Math.cos(ang) * d, bolas };
+  }
+  function nube(g, j, n, p) {
+    const h = horizonte(j), giro = h ? h.giro : 0, c = Math.cos(giro), s = Math.sin(giro), k = p.s;
+    g.save(); g.globalAlpha = Math.min(0.95, 0.35 + k * 2);
+    for (const capa of [['#c9dbee', 0.12], ['#ffffff', 0]]) {   // sombra azulada debajo y blanco encima
+      g.fillStyle = capa[0];
+      for (const b of n.bolas) {
+        const dx = b.dx * k, dy = (-b.dy + capa[1] * b.r * 2) * k;
+        g.beginPath(); g.arc(p.x + dx * c - dy * s, p.y + dx * s + dy * c, b.r * k, 0, 7); g.fill();
+      }
+    }
+    g.restore();
+  }
+
+  // ---------- lo que vuela ----------
+  function enemigo(g, en, p, t) {
+    const img = V.img[SPRITE[en.tipo]], w = Math.max(6, ANCHO[en.tipo] * p.s), tocado = performance.now() - (VA.golpes[en.id] || 0) < 90;
     if (img) {
       const h = w * img.height / img.width;
       g.save(); g.translate(p.x, p.y);
@@ -75,32 +108,76 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
       g.fillStyle = tocado ? '#fff' : COLOR[en.tipo]; g.strokeStyle = '#111'; g.lineWidth = 3;
       g.beginPath(); g.moveTo(p.x, p.y - w * 0.25); g.lineTo(p.x + w / 2, p.y + w * 0.2); g.lineTo(p.x - w / 2, p.y + w * 0.2); g.closePath(); g.fill(); g.stroke();
     }
-    if (en.tipo === 'jefe') { g.fillStyle = 'rgba(255,90,58,' + (0.5 + 0.5 * Math.sin(t * 12)) + ')'; g.beginPath(); g.arc(p.x, p.y - w * 0.1, 6 + w * 0.02, 0, 7); g.fill(); }
+    if (en.tipo === 'jefe') { g.fillStyle = 'rgba(255,90,58,' + (0.5 + 0.5 * Math.sin(t * 12)) + ')'; g.beginPath(); g.arc(p.x, p.y - w * 0.1, 4 + w * 0.03, 0, 7); g.fill(); }
   }
 
-  function tiro(g, j, s, t) {
-    const p = P(j, s), r = 16 * p.s + 3;
+  function tiro(g, s, p, t) {
+    const r = Math.max(3, 2.5 * p.s);
     g.fillStyle = TIRO[s.clase] || '#fff'; g.strokeStyle = '#111'; g.lineWidth = 2;
     g.save(); g.translate(p.x, p.y);
     if (s.clase === 'caja') { g.rotate(t * 6); g.fillRect(-r, -r, 2 * r, 2 * r); g.strokeRect(-r, -r, 2 * r, 2 * r); }
-    else if (s.clase === 'carta') { g.fillRect(-r * 1.3, -r * 0.9, 2.6 * r, 1.8 * r); g.strokeRect(-r * 1.3, -r * 0.9, 2.6 * r, 1.8 * r); }
+    else if (s.clase === 'carta') { g.fillStyle = '#fff'; g.fillRect(-r * 1.3, -r * 0.9, 2.6 * r, 1.8 * r); g.strokeRect(-r * 1.3, -r * 0.9, 2.6 * r, 1.8 * r); g.fillStyle = '#ff7ac8'; g.fillRect(-r * 0.8, -r * 0.4, 1.6 * r, 0.3 * r); }
     else { g.beginPath(); g.arc(0, 0, r, 0, 7); g.fill(); g.stroke(); }
     g.restore();
   }
 
-  // Trazadora: sale del cañón (abajo, a un lado) y va cerrándose hacia el centro según se aleja.
-  function bala(g, b) {
-    const c = CANON[b.lado > 0 ? 1 : 0], s1 = A.aire.proyectar({ x: 0, y: 0 }, { x: 0, y: 0, z: b.z }).s, s2 = A.aire.proyectar({ x: 0, y: 0 }, { x: 0, y: 0, z: b.z + 70 }).s;
-    g.strokeStyle = '#ffe14a'; g.lineWidth = Math.max(2, 7 * s1); g.lineCap = 'round';
-    g.beginPath(); g.moveTo(C.x + c[0] * s1, C.y + c[1] * s1); g.lineTo(C.x + c[0] * s2, C.y + c[1] * s2); g.stroke();
+  function bala(g, j, b) {
+    const p = P(j, b.pos), q = P(j, A.v3.resta(b.pos, A.v3.escala(b.v, 0.025)));
+    if (!p || !q) return;
+    g.strokeStyle = '#ffe14a'; g.lineWidth = Math.max(2, Math.min(8, 0.6 * p.s)); g.lineCap = 'round';
+    g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke();
   }
 
-  function misil(g, j, m) {
-    const p = P(j, m), a = ALAS[m.lado > 0 ? 1 : 0], x = p.x + a[0] * p.s, y = p.y + a[1] * p.s;
-    if (Math.random() < 0.7) A.efectos.humo(x, y + 4, p.s + 0.3);
+  function misil(g, m, p) {
+    if (Math.random() < 0.7) A.efectos.humo(p.x, p.y, Math.min(2, p.s * 0.4 + 0.3));
+    const r = Math.max(3, Math.min(10, p.s * 0.8));
     g.fillStyle = '#fff'; g.strokeStyle = '#111'; g.lineWidth = 2;
-    g.beginPath(); g.arc(x, y, 8 * p.s + 3, 0, 7); g.fill(); g.stroke();
-    g.fillStyle = '#ff8a2a'; g.beginPath(); g.arc(x, y + 10 * p.s + 4, 5 * p.s + 2, 0, 7); g.fill();
+    g.beginPath(); g.arc(p.x, p.y, r, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = '#ff8a2a'; g.beginPath(); g.arc(p.x, p.y + r, r * 0.6, 0, 7); g.fill();
+  }
+
+  // Un premio: caja de su color colgando de un paracaídas.
+  function premio(g, pr, p, t) {
+    const w = Math.max(10, Math.min(70, 6 * p.s)), y = p.y + Math.sin(t * 3 + pr.id) * 2;
+    g.strokeStyle = '#111'; g.lineWidth = 2;
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(p.x, y - w * 1.1, w * 0.9, Math.PI, 0); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = '#ff5a3a'; g.beginPath(); g.arc(p.x, y - w * 1.1, w * 0.9, Math.PI * 1.33, Math.PI * 1.66); g.lineTo(p.x, y - w * 1.1); g.closePath(); g.fill();
+    g.beginPath(); g.moveTo(p.x - w * 0.9, y - w * 1.1); g.lineTo(p.x - w * 0.4, y - w * 0.4); g.moveTo(p.x + w * 0.9, y - w * 1.1); g.lineTo(p.x + w * 0.4, y - w * 0.4); g.stroke();
+    g.fillStyle = PREMIO[pr.tipo]; g.fillRect(p.x - w / 2, y - w / 2, w, w); g.strokeRect(p.x - w / 2, y - w / 2, w, w);
+    if (w > 22) A.ui.texto(g, tr(ETIQUETA[pr.tipo]), p.x, y + w / 2 + 14, 8, PREMIO[pr.tipo]);
+  }
+  const ETIQUETA = { misiles: 'MISILES', bombas: 'BOMBAS', reparacion: 'REPARAR', combustible: 'COMBUSTIBLE' };
+
+  // Lo que queda fuera de la vista se señala con una flecha en el borde (rojo los enemigos, de su color los premios).
+  function flecha(g, c, color) {
+    const ang = Math.atan2(-c.y, c.x), rx = 590, ry = 205, x = C.x + Math.cos(ang) * rx, y = C.y + Math.sin(ang) * ry;
+    g.save(); g.translate(x, y); g.rotate(ang);
+    g.fillStyle = color; g.strokeStyle = '#111'; g.lineWidth = 3;
+    g.beginPath(); g.moveTo(18, 0); g.lineTo(-10, -13); g.lineTo(-4, 0); g.lineTo(-10, 13); g.closePath(); g.fill(); g.stroke();
+    g.restore();
+  }
+  const fuera = (p) => !p || p.x < 30 || p.x > 1250 || p.y < 20 || p.y > ALTO_VISTA - 20;
+
+  // Todo lo del mundo se pinta de lejos a cerca para que lo cercano tape a lo lejano.
+  function mundo(g, e, t) {
+    const a = e.aire, j = a.jugador, cola = [], flechas = [];
+    const mete = (obj, pinta, colorFlecha) => {
+      const p = P(j, obj.pos || obj);
+      if (colorFlecha && fuera(p)) flechas.push([A.vuelo.camara(j, obj.pos || obj), colorFlecha]);
+      if (p) cola.push({ z: p.c.z, pinta: () => pinta(p) });
+    };
+    for (const n of VA.nubes) mete(n, (p) => nube(g, j, n, p));
+    for (const en of a.enemigos) mete(en, (p) => enemigo(g, en, p, t), '#ff5a3a');
+    if (a.jefe) mete(a.jefe, (p) => enemigo(g, a.jefe, p, t), '#ff3a8a');
+    for (const s of a.tiros) mete(s, (p) => tiro(g, s, p, t));
+    for (const pr of a.premios) mete(pr, (p) => premio(g, pr, p, t), PREMIO[pr.tipo]);
+    for (const m of a.misiles) mete(m, (p) => misil(g, m, p));
+    cola.sort((p, q) => q.z - p.z);
+    g.save(); g.beginPath(); g.rect(0, 0, 1280, ALTO_VISTA); g.clip();
+    for (const c of cola) c.pinta();
+    for (const b of a.balas) bala(g, j, b);
+    for (const [c, color] of flechas) flecha(g, c, color);
+    g.restore();
   }
 
   // La retícula: cuatro esquinas fijas en el centro, el progreso del fijado y el recuadro sobre el blanco fijado.
@@ -115,37 +192,23 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     if (f.id !== null && !f.fijado) { g.strokeStyle = '#ffe14a'; g.lineWidth = 4; g.beginPath(); g.arc(x, y, 30, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, f.t / e.caza.fijar)); g.stroke(); }
     A.ui.texto(g, tr('MISIL') + ' x' + e.misiles, x, y + L + 22, 8, f.fijado ? '#ff5a3a' : '#ccc');
     if (!f.fijado) return;
-    const en = (a.jefe && a.jefe.id === f.id) ? a.jefe : a.enemigos.find((q) => q.id === f.id);
-    if (!en) return;
-    const p = P(a.jugador, en), w = Math.max(40, ANCHO[en.tipo] * p.s * 0.6);
+    const en = (a.jefe && a.jefe.id === f.id) ? a.jefe : a.enemigos.find((q) => q.id === f.id), p = en && P(a.jugador, en.pos);
+    if (!p) return;
+    const w = Math.max(40, ANCHO[en.tipo] * p.s * 0.8);
     g.strokeStyle = '#ff5a3a'; g.lineWidth = 3; g.strokeRect(p.x - w / 2, p.y - w / 2, w, w);
     A.ui.texto(g, tr('FIJADO'), p.x, p.y - w / 2 - 10, 10, '#ff5a3a');
   }
 
-  // Todo lo del mundo se pinta de lejos a cerca para que lo cercano tape a lo lejano.
-  function mundo(g, e, t) {
-    const a = e.aire, j = a.jugador, cola = [];
-    for (const en of a.enemigos) cola.push({ z: en.z, pinta: () => enemigo(g, j, en, t) });
-    if (a.jefe) cola.push({ z: a.jefe.z, pinta: () => enemigo(g, j, a.jefe, t) });
-    for (const s of a.tiros) cola.push({ z: s.z, pinta: () => tiro(g, j, s, t) });
-    for (const b of a.balas) cola.push({ z: b.z, pinta: () => bala(g, b) });
-    for (const m of a.misiles) cola.push({ z: m.z, pinta: () => misil(g, j, m) });
-    cola.sort((p, q) => q.z - p.z);
-    g.save(); g.beginPath(); g.rect(0, 0, 1280, ALTO_VISTA); g.clip();
-    for (const c of cola) c.pinta();
-    g.restore();
-  }
-
   VA.dibujar = function (g, e, dt, t) {
-    const picado = e.fase === 'transicion' ? 1 - e.transicionT / 2.6 : 0;
-    fondo(g, e.aire.jugador, t, picado);
-    nubes(g, e.aire.jugador, dt);
-    if (e.fase === 'aire') mundo(g, e, t);
+    const j = e.aire.jugador;
+    nubes(j);
+    fondo(g, j);
+    olas(g, j, t);
+    mundo(g, e, t);
     A.efectos.dibujar(g);
     if (e.fase === 'aire' && !e.fin) reticula(g, e, t);
     A.cabina.dibujar(g, e, t);
   };
 
-  // Dónde se ve un punto del mundo del aire (para los efectos, que van en pantalla).
-  VA.pantalla = (e, p) => P(e.aire.jugador, p);
+  VA.reiniciar = function () { VA.nubes = []; VA.golpes = {}; };
 })(AIR);

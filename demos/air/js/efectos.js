@@ -30,7 +30,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     FX.particulas.push({ x, y, vx: (Math.random() - 0.5) * 30, vy: (Math.random() - 0.5) * 30 + 20, vida: 0.6, t: 0, r: 4 * escala, color: color || 'rgba(220,220,230,.6)', gravedad: 0, crece: 1 });
   };
 
-  FX.cartel = function (texto, color, dura, sub) { FX.carteles.push({ texto, color, dura, t: 0, sub: sub || null }); };
+  FX.cartel = function (texto, color, dura, sub) { FX.carteles = [{ texto, color, dura, t: 0, sub: sub || null }]; };   // uno cada vez: el nuevo sustituye al anterior
 
   FX.limpiar = function () { FX.particulas = []; FX.anillos = []; FX.carteles = []; FX.temblor = 0; };
 

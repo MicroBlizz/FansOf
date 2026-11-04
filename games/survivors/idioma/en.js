@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.74
+  "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
+  "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked for its best side.",
   // 0.1.73
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems gain separate effects and music volumes, and internal testing keeps improving.",
   "Microblizz ha bajado la megafonía y Phony ha seguido susurrando sopa.": "Microblizz turned the loudspeakers down and Phony kept whispering soup.",

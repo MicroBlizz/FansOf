@@ -8,13 +8,18 @@ NV.Arma = (() => {
     const dot = (vx * dx + vy * dy) / Math.sqrt(d2 || 1);
     return Math.acos(Math.max(-1, Math.min(1, dot))) <= arco;
   }
-  // Cuántas balas salen: la Railgun gemela, dos; el flak, 6 (10 con la Batería) más las de su variante; el lanzador, 1 más las de su variante
-  function balas(portador, id, varN) {
-    if (id === 'railgunGemela') return 2;
-    if (portador === 'flak') return (id === 'bateriaFlak' ? 10 : 6) + varN;
+  // Cuántas balas salen: las que diga la fusión (`balas`: la Railgun gemela, 2; la Batería de flak, 10) o las del portador (flak 6,
+  // lo demás 1); el flak y el lanzador suman además las de su variante
+  function balas(portador, fusion, varN) {
+    const propias = fusion && fusion.balas;
+    if (portador === 'flak') return (propias || 6) + varN;
+    if (propias) return propias;
     if (portador === 'lanzador') return 1 + varN;
     return 1;
   }
+  // Cuánto se aparta de lado la bala i de n (0 = sale del centro): solo las fusiones con `separacion` (la Railgun gemela) disparan en
+  // paralelo; las demás balas múltiples se abren en abanico
+  function ladoParalelo(fusion, i, n, kf) { return fusion && fusion.separacion && n > 1 ? (i - (n - 1) / 2) * fusion.separacion * kf : 0; }
   // Velocidad de la bala: las balas también corren más cuanto mayor es la nave
   function velocidad(portador, kf) { return (portador === 'railgun' ? 900 : portador === 'flak' ? 430 : 270) * Math.pow(kf, 0.9); }
   function radio(portador, kf, tamBala) { return (portador === 'railgun' ? 4 : portador === 'flak' ? 3 : 4.5) * kf * tamBala; }
@@ -33,5 +38,5 @@ NV.Arma = (() => {
     const a = va + Math.max(-3.5 * dt, Math.min(3.5 * dt, d)), v = Math.hypot(b.vx, b.vy);
     b.vx = Math.cos(a) * v; b.vy = Math.sin(a) * v;
   }
-  return { guia, enArco, balas, velocidad, radio, vida, perfora };
+  return { guia, enArco, balas, ladoParalelo, velocidad, radio, vida, perfora };
 })();

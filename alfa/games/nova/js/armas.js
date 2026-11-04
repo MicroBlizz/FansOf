@@ -99,14 +99,15 @@ function nvDispara(S, w, p, obj) {
   const c = NOVA_ARMAS.cargas[w.carga], dano = nvDanoArma(w) * nvRasgoMult(S, w, obj);
   nvSnd({ laser: 'nvLaser', railgun: 'nvRail', flak: 'nvFlak', lanzador: 'nvMisil' }[w.portador] || 'nvLaser', S);
   if (w.portador === 'laser') return nvDisparaLaser(S, w, obj, dano, c.color);
-  const kf = nvFactor(S.nave.rango), A = NV.Arma, n = A.balas(w.portador, w.fusion ? w.fusion.id : '', nvVar(w).n);
+  const kf = nvFactor(S.nave.rango), A = NV.Arma, n = A.balas(w.portador, w.fusion, nvVar(w).n);
   const base = { x: w.x, y: w.y, w, carga: w.carga, color: c.color, forma: c.forma, dano, golpeados: [] };
   S.fx.push({ t: 0.14, x: w.x, y: w.y, r: 8 * nvZ(S), color: c.color, tipo: 'flash' });   // fogonazo
   for (let i = 0; i < n; i++) {
     let a = Math.atan2(obj.y - w.y, obj.x - w.x);
-    if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1) a += (i - (n - 1) / 2) * 0.12;
+    const lado = A.ladoParalelo(w.fusion, i, n, kf);   // la Railgun gemela: balas en paralelo, no en abanico (así las dos llegan al blanco)
+    if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1 && !lado) a += (i - (n - 1) / 2) * 0.12;
     const v = A.velocidad(w.portador, kf);
-    S.proy.push(Object.assign({}, base, {
+    S.proy.push(Object.assign({}, base, { x: w.x - Math.sin(a) * lado, y: w.y + Math.cos(a) * lado,
       vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: A.radio(w.portador, kf, NV_BALA_TAM[w.tam]),
       vida: A.vida(w.portador, p.alcance, kf, NV_RANGO_TAM[w.tam], v), perf: A.perfora(w.portador, nvVar(w).perf),
       guia: w.portador === 'lanzador' ? obj : null, golpeados: []
@@ -114,11 +115,10 @@ function nvDispara(S, w, p, obj) {
   }
   nvRasgoDespues(S, w, obj);
 }
-// El láser es un haz instantáneo contra el objetivo (el Haz enfocado, +20 % y doble calor)
+// El láser es un haz instantáneo contra el objetivo (el Haz enfocado: su +20 % va en nvDanoArma y su doble calor en NV.Golpe)
 function nvDisparaLaser(S, w, obj, dano, color) {
-  const enfocado = w.fusion && w.fusion.id === 'hazEnfocado';
   w.rayo = 0.09; w.rx = obj.x; w.ry = obj.y;
-  nvGolpe(S, obj, dano * (enfocado ? 1.2 : 1), w, obj.x, obj.y, enfocado ? 2 : 1);
+  nvGolpe(S, obj, dano, w, obj.x, obj.y);
   nvRasgoImpacto(S, w, dano, obj, obj.x, obj.y); nvRasgoDespues(S, w, obj);
   S.fx.push({ t: 0.16, x: w.x, y: w.y, r: 9 * nvZ(S), color, tipo: 'flash' });
 }
@@ -179,7 +179,7 @@ function nvDronGolpea(S, w, d, ctx) {
   d.cd = ctx.cad;
   nvGolpe(S, e, ctx.dano, w, d.x, d.y, 1);
   nvRasgoImpacto(S, w, ctx.dano, e, d.x, d.y);
-  if (w.fusion && w.fusion.id === 'dronesKamikaze') nvExplosion(S, d.x, d.y, 45, ctx.dano * 0.8, w, e);
+  if (w.fusion && w.fusion.explosion) nvExplosion(S, d.x, d.y, w.fusion.explosion.radio, ctx.dano * w.fusion.explosion.dano, w, e);   // Drones kamikaze
 }
 
 // ---------- proyectiles ----------
@@ -228,7 +228,7 @@ function nvExplosion(S, x, y, radio, dano, w, salvo, sinEstado) {
 // ---------- el golpe: escudo, estados, reacciones ----------
 // Las reglas (qué multiplica, qué absorbe el escudo, qué estado deja cada carga) están en dominio/golpe.js (NV.Golpe); aquí se junta todo,
 // se llama a las explosiones y a las reacciones y se dibuja (chispas, números, sonido).
-// mult: multiplicador extra (haz enfocado); sinReaccion: los golpes de área no encadenan reacciones.
+// mult: multiplicador extra del golpe (hoy no lo usa ningún arma: el premio de las fusiones va en nvDanoArma); sinReaccion: los golpes de área no encadenan reacciones.
 function nvChispas(S, x, y, color) {
   const z = nvZ(S);
   for (let i = 0; i < 4; i++) { const a = Math.random() * 6.283, v = (60 + Math.random() * 140) * z; S.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.35, color, s: 3 * z }); }   // chispas de impacto

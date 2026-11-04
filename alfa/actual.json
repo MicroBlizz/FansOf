@@ -1,8 +1,8 @@
 {
- "build": 913,
- "hash": "b33bdd3",
- "fecha": "2026-11-04T13:18:10Z",
- "mensaje": "Core: la hora del juego se puede poner a mano en desarrollo y en la alfa (ADR 047)",
+ "build": 914,
+ "hash": "0bcbaf0",
+ "fecha": "2026-11-04T13:21:14Z",
+ "mensaje": "Core HORA: la hora a mano no se pierde si se pide la hora antes de que core diga si es desarrollo",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

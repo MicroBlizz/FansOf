@@ -25,8 +25,9 @@ const HORA = (() => {
   }
   function suelta() { manual = null; leida = true; guarda(null); }
   // la primera vez que se pide la hora: la de ?hora= o la que se puso en esta pestaña (solo donde se puede)
+  // (si core aún no ha dicho si es desarrollo, no se da por leída: se vuelve a mirar en la siguiente)
   function lee() {
-    if (leida) return;
+    if (leida || typeof NUCLEO === 'undefined' || !('desarrollo' in NUCLEO)) return;
     leida = true;
     if (!sePuede() || typeof location === 'undefined') return;
     const q = new URLSearchParams(location.search).get('hora');

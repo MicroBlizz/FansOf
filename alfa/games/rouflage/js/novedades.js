@@ -4,6 +4,7 @@
 // archivos que no carga nadie. Al pasar de ~25 KB, se mueven las del final a un archivo de antiguas nuevo (ninguno por encima de 25 KB).
 'use strict';
 const NEWS = [
+  { v: '0.2.66', real: ["<b>LOGO NUEVO EN LA WEB</b>: el favicon y la imagen que sale al compartir Rouflage llevan ya su logo nuevo."], joke: ["Microblizz ha pulido el logo nuevo de Rouflage y Phony se ha camuflado en la esquina del favicon."] },
   { v: '0.2.65', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando."], joke: ["Microblizz ha separado la música de los efectos y Phony se ha camuflado entre las dos barras."] },
   { v: '0.2.64', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor. <b>PREMIO DIARIO SIN BLOQUEO</b>: recoger el premio diario ya no se queda esperando si no hay red; se da al momento y el cobro se manda al volver."], joke: ["Microblizz ha mandado el premio por la cola y Phony se ha camuflado en ella."] },
   { v: '0.2.63', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha guardado los anuncios tras una cortina y Phony se ha camuflado entre ellos."] },

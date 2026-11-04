@@ -1,6 +1,7 @@
 // Fans of Cooking · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.5', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },
   { v: '0.2.4', real: ["<b>VOLUMEN POR SEPARADO</b>: en Opciones hay una barra para los efectos y otra para la música, las mismas que el resto de juegos."], joke: ["Microblizz ha bajado la música de la cocina y Phony ha subido la freidora."] },
   { v: '0.2.3', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor."], joke: ["Microblizz ha apuntado los pedidos en una cola y Phony se ha colado con una tarta."] },
   { v: '0.2.2', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha puesto un anuncio en la nevera y Phony ha jurado que solo anunciaba queso."] },

@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.66
+  "<b>LOGO NUEVO EN LA WEB</b>: el favicon y la imagen que sale al compartir Rouflage llevan ya su logo nuevo.": "<b>NEW LOGO ON THE WEB</b>: the favicon and the image shown when sharing Rouflage now carry its new logo.",
+  "Microblizz ha pulido el logo nuevo de Rouflage y Phony se ha camuflado en la esquina del favicon.": "Microblizz polished Rouflage's new logo and Phony camouflaged himself in the corner of the favicon.",
   // 0.2.65
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems gain separate effects and music volumes, and internal testing keeps improving.",
   "Microblizz ha separado la música de los efectos y Phony se ha camuflado entre las dos barras.": "Microblizz split music from effects and Phony camouflaged himself between the two bars.",

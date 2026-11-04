@@ -1,8 +1,8 @@
 {
- "build": 915,
- "hash": "3a6d82d",
- "fecha": "2026-11-04T15:09:29Z",
- "mensaje": "Pets f16: la cinta como pieza 3D aparte, antifaz más definido y brazos más largos en el muñeco del hurón",
+ "build": 916,
+ "hash": "a71003c",
+ "fecha": "2026-11-04T15:20:46Z",
+ "mensaje": "Pets: antifaz redondeado con reborde cerrado y moflete en diagonal en el muñeco del hurón",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

@@ -143,6 +143,7 @@ function nvPreview(cv, casco, rango) {
 // Antes de la misión: nave, capitán y un oficial (tres pasos en el mismo panel).
 function nvMenu() {
   nvParar();
+  const P = nvPreparacion(); if (P) return nvMenuPrepara(P);   // en campaña: nave y líder de tu facción, solo el oficial (preparacion-ui.js)
   const cont = document.getElementById('nv-paneles'); cont.textContent = '';
   const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE TU NAVE')));
   for (const id of Object.keys(NOVA_PIEZAS.cascos)) {

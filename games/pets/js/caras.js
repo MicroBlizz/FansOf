@@ -39,6 +39,10 @@ PT.caras = (() => {
   function pieza(id, etapa, zona, nombre) {
     const ep = etapaDe(etapa), propia = nombre !== 'dormida' && PROPIAS[id] && PROPIAS[id][ep] && PROPIAS[id][ep][zona] && PROPIAS[id][ep][zona][nombre];
     if (propia) return { ruta: `img/caras/${id.replace(':', '-')}-${ep}-${zona}-${nombre}.webp`, c: propia };
+    return delMolde(etapa, zona, nombre);
+  }
+  // la pieza del molde de esa etapa, sin las propias de ninguna criatura (la cara neutra): { ruta, c } o null
+  function delMolde(etapa, zona, nombre) {
     const m = moldeDe(etapa), n = nombre === 'dormida' ? 'base' : nombre, del = MOLDE[m][zona][n];
     return del ? { ruta: `img/caras/${m}-${zona}-${n}.webp`, c: del } : null;
   }
@@ -50,5 +54,5 @@ PT.caras = (() => {
       boca: cara === 'bostezo' ? 'bostezo' : cara === 'masca' ? 'masca' : triste ? 'triste' : e.dormida ? 'dormida' : 'base',
     };
   }
-  return { pieza, eleccion, moldeDe, etapaDe };
+  return { pieza, delMolde, eleccion, moldeDe, etapaDe };
 })();

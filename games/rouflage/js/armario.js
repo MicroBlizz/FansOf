@@ -139,8 +139,7 @@ function arAnimaExtra(cat, it) {
   ARMARIO.raf = requestAnimationFrame(paso);
 }
 function arPintaInfo() {
-  const cat = arCat(ARMARIO.cat), a = armarioEstado(), sel = ARMARIO.sel;
-  const it = sel === 'nada' ? null : sel || (cat.conjuntos ? cat.items.find(arConjuntoPuesto) || null : arMira(cat) ? (cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : cat.album ? cat.items[0] : null) : arItem(cat.id, a.puesto[cat.id]));
+  const cat = arCat(ARMARIO.cat), a = armarioEstado(), it = arItemMirado(cat, a, ARMARIO.sel);
   const nom = E('ar-nombre'), de = E('ar-de'), est = E('ar-estado');
   E('ar-nota').textContent = tr(cat.nombre) + (cat.nota ? ' · ' + tr(cat.nota) : '');
   if (!it) {
@@ -149,11 +148,22 @@ function arPintaInfo() {
   }
   nom.textContent = tr(it.n); nom.className = 'r-' + it.r;
   de.textContent = tr(RAREZA_AR[it.r]) + ' · ' + arTextoDe(it);
-  const tuyo = arTiene(cat.id, it), puesto = arMira(cat) ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
+  const tuyo = arTiene(cat.id, it), puesto = arEstaPuesto(cat, a, it);
   est.className = 'ar-estado ' + (puesto ? 'puesto' : tuyo ? 'tuyo' : 'bloq');
   est.textContent = arMira(cat) ? (puesto ? tr('EN TU SALA') : tuyo ? tr('ES TUYO') : tr('AÚN NO ES TUYO')) : puesto ? tr('PUESTO') : tuyo ? tr('ES TUYO') : tr('TE LO ESTÁS PROBANDO');
   arPintaCompra(cat, it);      // el botón COMPRAR y lo que tienes (economia.js)
 }
+// lo que se enseña en la ficha: lo elegido, o lo que llevas puesto (en un conjunto, el que lleves entero; en las salas y álbumes, lo que se mira)
+function arItemMirado(cat, a, sel) {
+  if (sel === 'nada') return null;
+  if (sel) return sel;
+  if (cat.conjuntos) return cat.items.find(arConjuntoPuesto) || null;
+  if (!arMira(cat)) return arItem(cat.id, a.puesto[cat.id]);
+  if (cat.id === 'escenarios') return arItem('escenarios', escenarioActual());
+  return cat.album ? cat.items[0] : null;
+}
+// ¿lo lleva puesto? (en las salas, el escenario actual; en conjuntos, el conjunto entero)
+const arEstaPuesto = (cat, a, it) => (arMira(cat) ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id);
 function arPintaRejilla() {
   const cat = arCat(ARMARIO.cat), a = armarioEstado(), rej = E('ar-rejilla'); rej.innerHTML = '';
   const casilla = (it, tuyo, puesto, alTocar, dibuja, nombre, rar) => {

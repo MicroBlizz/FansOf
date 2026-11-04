@@ -1,86 +1,67 @@
-// Fans of Shelter · EL MAPA: el refugio y su bosque, escrito a mano casilla a casilla (CAS píxeles cada una). Qué hay en cada casilla,
-// por dónde se pasa, picar y talar, el bloque que se empuja, el interruptor que abre la puerta y el cofre de la zona secreta.
-// Pintarlo está en js/suelo.js.
+// Fans of Shelter · EL MAPA: el claro del refugio y su bosque, en vertical para el móvil, escrito a mano casilla a casilla (CAS píxeles cada
+// una). Qué hay en cada casilla, por dónde se pasa, picar y talar, el bloque que se empuja, el interruptor que abre la puerta del claro
+// secreto y su cofre. Pintarlo (suelo con Wang tiles y las cosas encima) está en js/suelo.js.
 'use strict';
 
-const CAS = 24;   // tamaño de una casilla en píxeles
-// # cara de acantilado (sólida; la hierba de arriba es una meseta) · n e w bordes de meseta (norte, este, oeste; sólidos) · s escalera (se sube por ella)
-// . hierba · ~ agua · _ tierra del refugio · T árbol · R roca · I mena de hierro · B bloque · S interruptor · D puerta
-// M mesa de trabajo · H hoguera · C cofre · P donde empieza CrazyBunny
+const CAS = 32;   // tamaño de una casilla en píxeles (las losas de suelo de img/wang_*.png miden esto)
+// # bosque de pinos (sólido) · . hierba · _ tierra del claro · ~ agua (sólida) · T árbol · R roca · I mena de hierro
+// B bloque · S interruptor · D puerta del claro secreto · C cofre · M mesa de trabajo · H hoguera · X el refugio (x: sus lados, sólidos)
+// P donde empieza CrazyBunny
 const MAPA_TXT = [
-  '####################################',
-  '#..T..T..R..e.........T....TT...TT.#',
-  '#.T....T....e......T......T.......T#',
-  '#...T..I....e..~~~.........R..I....#',
-  '#..R...T....e~~~~~~.......T........#',
-  '#.T.T.......e~~~~~~~~.T..........T.#',
-  '#..S.....B..e.~~~~~~......####D#####',
-  '######ss####...~~~.......#....I...R#',
-  '######ss####..____.......#.R...I..##',
-  '#...........__________...#.........#',
-  '#..T.......___M____H__...#...C.....#',
-  '#.T.......____________...#.........#',
-  '#.....R...____P_______...#.I...R...#',
-  '#..T.......__________....#.........#',
-  '#............______......###########',
-  '#.T....R..........T...T............#',
-  '#....T..................wnnnssnnnnn#',
-  '#...........T......R....w.I....R...#',
-  '#..T...I...........T....w....I.....#',
-  '#.......T....T..........w.R.....I..#',
-  '#..R.........R......I...w....R.....#',
-  '#T.....T............T...w..I.....R.#',
-  '#.....R..........T......w......I...#',
-  '####################################',
+  '###############',
+  '#..T..R..#..C.#',
+  '#.~~~....#....#',
+  '#~~~~~.T.#.I..#',
+  '#.~~~....###D##',
+  '#..I...T......#',
+  '#.T.....S...B.#',
+  '#.....R.......#',
+  '#..T.........T#',
+  '#....______...#',
+  '#...________..#',
+  '#..__xXx_M___.#',
+  '#..__________.#',
+  '#..___H__P___.#',
+  '#...________..#',
+  '#.T..______.R.#',
+  '#.......T.....#',
+  '#..R.......I..#',
+  '#.T...T.......#',
+  '#......R...T..#',
+  '#..I.......~~.#',
+  '#...T....~~~~.#',
+  '#.R.....T.~~..#',
+  '#....T.....R..#',
+  '#.T......I....#',
+  '###############',
 ];
 
 // MAPA.t[j][i]: la letra de la casilla ahora mismo (cambia al talar, picar, empujar o abrir)
-const MAPA = { w: 0, h: 0, t: [], golpes: {}, puertaAbierta: false, cofreAbierto: false, inicio: { x: 0, y: 0 }, mesa: null, hoguera: null, construido: [] };
-
-// alrededor del mapa dibujado a mano hay un anillo de bosque espeso (ARO casillas), siempre igual, para que haya terreno hacia todos los lados
-const ARO = 9;
-let MAPA_BASE = null;   // el mapa entero (el de arriba más el aro), listo
-const hayEscena = () => typeof ESCENA !== 'undefined' && !!IMG.escena;   // el escenario pintado por Yoshi (js/escena.js + img/escena.png)
-function construyeMapa() {
-  if (MAPA_BASE) return MAPA_BASE;
-  if (hayEscena()) { MAPA_BASE = ESCENA.slice(); return MAPA_BASE; }
-  const w0 = MAPA_TXT[0].length, h0 = MAPA_TXT.length, w = w0 + ARO * 2 - 2, h = h0 + ARO * 2 - 2, filas = [];
-  for (let j = 0; j < h; j++) {
-    let f = '';
-    for (let i = 0; i < w; i++) {
-      const i0 = i - ARO + 1, j0 = j - ARO + 1;
-      if (i0 >= 1 && i0 < w0 - 1 && j0 >= 1 && j0 < h0 - 1) { f += MAPA_TXT[j0][i0]; continue; }
-      if (i === 0 || j === 0 || i === w - 1 || j === h - 1) { f += '#'; continue; }
-      const r = hash2(i, j, 11), borde = Math.min(i, j, w - 1 - i, h - 1 - j);   // más espeso cuanto más fuera
-      f += r < 0.22 + (borde < 3 ? 0.3 : 0) ? 'T' : r < 0.3 ? 'R' : r < 0.34 ? 'I' : '.';
-    }
-    filas.push(f);
-  }
-  MAPA_BASE = filas;
-  return filas;
-}
+const MAPA = { w: 0, h: 0, t: [], golpes: {}, puertaAbierta: false, cofreAbierto: false, inicio: { x: 0, y: 0 }, mesa: null, hoguera: null, refugio: null, construido: [] };
 
 function mapaNuevo() {
-  const base = construyeMapa();
-  MAPA.h = base.length; MAPA.w = base[0].length;
-  MAPA.t = base.map(f => f.split(''));
-  MAPA.refugio = null;
+  MAPA.h = MAPA_TXT.length; MAPA.w = MAPA_TXT[0].length;
+  MAPA.t = MAPA_TXT.map(f => f.split(''));
   MAPA.golpes = {}; MAPA.puertaAbierta = false; MAPA.cofreAbierto = false; MAPA.construido = []; MAPA.bajoBloque = '.'; MAPA.tiembla = null;
   for (let j = 0; j < MAPA.h; j++) for (let i = 0; i < MAPA.w; i++) {
     const c = MAPA.t[j][i];
     if (c === 'P') { MAPA.inicio = { x: (i + 0.5) * CAS, y: (j + 0.9) * CAS }; MAPA.t[j][i] = '_'; }
     if (c === 'M') MAPA.mesa = { i, j };
-    if (c === 'X') { MAPA.refugio = { i, j }; MAPA.t[j][i] = '#'; }   // X: el edificio del refugio (sólido; se pinta encima de la tienda de la escena)
+    if (c === 'X') MAPA.refugio = { i, j };
     if (c === 'H') MAPA.hoguera = { i, j };
   }
 }
+
+// el terreno del suelo de cada casilla (para las losas): 'tierra' bajo lo del claro, 'agua' en el lago, 'hierba' en el resto
+const TIERRA = new Set(['_', 'M', 'H', 'X', 'x', 'P']);
+const terreno = (i, j) => { const c = MAPA_TXT[j] && MAPA_TXT[j][i]; return c === '~' ? 'agua' : TIERRA.has(c) ? 'tierra' : 'hierba'; };
 
 const casilla = (i, j) => (j < 0 || j >= MAPA.h || i < 0 || i >= MAPA.w) ? '#' : MAPA.t[j][i];
 // ¿se puede andar por esta casilla? (la puerta abierta y el interruptor, sí; una trampa construida también)
 function pasable(i, j) {
   const c = casilla(i, j);
   if (c === 'D') return MAPA.puertaAbierta;
-  if (c !== '.' && c !== '_' && c !== 'S' && c !== 't' && c !== 's') return false;   // t = tocón · s = escalera
+  if (c !== '.' && c !== '_' && c !== 'S' && c !== 't') return false;   // t = tocón
   for (const o of MAPA.construido) if (o.tipo === 'torreta' && o.i === i && o.j === j) return false;   // las torretas estorban; las trampas no
   return true;
 }
@@ -129,8 +110,8 @@ function rebrota(prob) {
     const c = MAPA.t[j][i], k = i + ',' + j;
     if (Math.random() > prob) continue;
     if (c === 't') MAPA.t[j][i] = 'T';
-    else if (c === '.' && MAPA_BASE[j][i] === 'R' && Math.random() < 0.5) MAPA.t[j][i] = 'R';
-    else if (c === '.' && MAPA_BASE[j][i] === 'I') MAPA.t[j][i] = 'I';
+    else if (c === '.' && MAPA_TXT[j][i] === 'R' && Math.random() < 0.5) MAPA.t[j][i] = 'R';
+    else if (c === '.' && MAPA_TXT[j][i] === 'I') MAPA.t[j][i] = 'I';
     delete MAPA.golpes[k];
   }
 }

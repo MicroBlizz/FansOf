@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /alfa/
+Disallow: /gestion/
+
+Sitemap: https://fansof.games/sitemap.xml

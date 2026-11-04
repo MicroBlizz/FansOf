@@ -5,9 +5,10 @@
 'use strict';
 
 // SAVE (la canción del menú, que el motor mira al acabar las cortas) y AJUSTES están en js/ajustes.js
-const sonidoApagado = () => AJUSTES.mudo;
-const volGeneral = () => (AJUSTES.mudo ? 0 : 0.55);
-const volMusica = () => (AJUSTES.sinMusica ? 0 : 0.25);
+// lo que pide el motor de sonido: las barras de core (KVOL, js/ajustes.js) por la mezcla de Karts (efectos a 0,55 con la barra al tope)
+const sonidoApagado = () => KVOL.apagado(AJUSTES);
+const volGeneral = () => 0.55 * KVOL.general(AJUSTES);
+const volMusica = () => KVOL.musica(AJUSTES);
 // rand y pick (que el motor de sonido usa) vienen de core/js/sistema/utiles.js
 
 Object.assign(SFX, {
@@ -40,8 +41,6 @@ function vigilaMusica() {
   if (!AC || !M.bus || (M.trk && M.trk.once)) return;
   if (M.name !== MUSICA) musicSet(MUSICA);
 }
-function cambiaSonido() { AJUSTES.mudo = !AJUSTES.mudo; guardaAjustes(); applyVolume(); if (!AJUSTES.mudo) { audioInit(); play('select'); } }
-function cambiaMusica() { AJUSTES.sinMusica = !AJUSTES.sinMusica; guardaAjustes(); applyVolume(); play('select'); }
 
 // ---------- el motor del kart: un zumbido que sube con la velocidad (y un silbido de neumático al derrapar) ----------
 const MOTOR = { o1: null, o2: null, f: null, g: null, r: null, rg: null };

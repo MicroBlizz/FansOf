@@ -151,13 +151,19 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil, y al ganar el difícil, su pesadilla.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
+// las dos barras de volumen de core (OPCIONES.sonido): efectos y música por separado, en Opciones y en la pausa
+function ppFilasSonido() {
+  const l = document.createElement('div'); l.className = 'opt-list';
+  const par = campo => [() => SAVE[campo], v => { SAVE[campo] = v; ppGuarda(); applyVolume(); }];
+  l.append(OPCIONES.sonido({ efectos: par('vol'), musica: par('mus') }));
+  return l;
+}
 /* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ---------- */
 function ppOpciones() {
   const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
   col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-verde', ppAyuda));
-  const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
-  col.appendChild(son);
+  col.appendChild(ppFilasSonido());
   const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
   col.appendChild(vib);
   if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-rosa', ppConfirmaDeNuevo));
@@ -187,8 +193,7 @@ function ppPausa() {
   if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Si sales ahora pierdes un corazón.')}</p>`);
   if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
-  const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
-  col.appendChild(son);
+  col.appendChild(ppFilasSonido());
 }
 function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
 /* ---------- el tutorial de Lola ----------

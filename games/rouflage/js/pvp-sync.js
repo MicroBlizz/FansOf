@@ -41,18 +41,18 @@ function rfpConfinaBecario() {
   if (!yo || !z || yo.clase !== 'cazador' || (J.fase !== 'prep' && J.fase !== 'cuenta')) return;
   yo.x = limita(yo.x, z.px + 12, z.px + z.pw - 12); yo.y = limita(yo.y, z.py + 22, z.py + z.ph - 6);
 }
-function rfpEnvia(dt) {
-  const yo = J.yo; if (!yo || J.fase === 'fin' || RFP.vuelta) return;
+// lo mío: dónde estoy y qué hago (quieto o congelado, un latido por segundo basta; al moverte, hasta envioHz, menos si la sala está llena de humanos)
+function rfpEnviaYo(yo, dt) {
   if (!yo.congelado && yo.listo) { yo.listo = false; RFP.listos.delete(RFP.yo); }      // si rompes el hielo ya no estás listo
   RFP.tEnvio -= dt;
-  if (RFP.tEnvio <= 0) {
-    // quieto o congelado, un latido por segundo basta (los demás no ven nada cambiar); al moverte, hasta envioHz (menos si la sala está llena de humanos)
-    const nh = RFP.slots.filter(s => s.humano).length, quieto = yo.congelado || (!yo.moviendo && Math.abs(yo.vx) < 1 && Math.abs(yo.vy) < 1);
-    const hz = quieto ? RFP_AJ.quietoHz : Math.min(RFP_AJ.envioHz, Math.max(4, RFP_AJ.avisosSala / Math.max(1, nh)));
-    RFP.tEnvio = 1 / hz;
-    rfpManda({ t: 'e', x: r1(yo.x), y: r1(yo.y), m: yo.moviendo ? 1 : 0, c: yo.congelado ? 1 : 0, mi: yo.mira, di: Math.round(yo.dir * 100) / 100, ci: yo.ciego > 0 ? 1 : 0, f: yo.fuera ? 1 : 0, iv: Math.ceil(yo.invis) });
-  }
-  if (!RFP.soyHost) return;
+  if (RFP.tEnvio > 0) return;
+  const nh = RFP.slots.filter(s => s.humano).length, quieto = yo.congelado || (!yo.moviendo && Math.abs(yo.vx) < 1 && Math.abs(yo.vy) < 1);
+  const hz = quieto ? RFP_AJ.quietoHz : Math.min(RFP_AJ.envioHz, Math.max(4, RFP_AJ.avisosSala / Math.max(1, nh)));
+  RFP.tEnvio = 1 / hz;
+  rfpManda({ t: 'e', x: r1(yo.x), y: r1(yo.y), m: yo.moviendo ? 1 : 0, c: yo.congelado ? 1 : 0, mi: yo.mira, di: Math.round(yo.dir * 100) / 100, ci: yo.ciego > 0 ? 1 : 0, f: yo.fuera ? 1 : 0, iv: Math.ceil(yo.invis) });
+}
+// lo del anfitrión: dónde están los bots, quién ha caído, las balas y el reloj
+function rfpEnviaIA(dt) {
   RFP.tIA -= dt;
   if (RFP.tIA > 0) return;
   // si ningún bot se mueve (todos congelados o quietos), el aviso del anfitrión puede ir mucho más lento: solo lleva el reloj
@@ -66,6 +66,11 @@ function rfpEnvia(dt) {
     ks.push([e.slot, r1(e.x), r1(e.y), e.moviendo ? 1 : 0, e.mira, Math.round(e.dir * 100) / 100, e.congelado ? 1 : 0, Math.max(0, MARCAS.indexOf(e.marca)), e.alerta >= 1 ? 1 : 0, e.ciego > 0 ? 1 : 0, Math.ceil(e.invis || 0)]);
   }
   rfpManda({ t: 'a', f: J.fase, r: Math.round(J.reloj * 10) / 10, ks, fu, ba, cg: modoEs('contagio') ? contagiados() : undefined, sb: silbatoSlot(), bt: boteEstado() });
+}
+function rfpEnvia(dt) {
+  const yo = J.yo; if (!yo || J.fase === 'fin' || RFP.vuelta) return;
+  rfpEnviaYo(yo, dt);
+  if (RFP.soyHost) rfpEnviaIA(dt);
 }
 
 // ---------- lo que llega ----------

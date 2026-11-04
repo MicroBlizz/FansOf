@@ -18,7 +18,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   // ---------- guardado (solo comodidad: si falla, se empieza con lo de siempre) ----------
   function guardar() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ eleccion: est.sel, copa: est.progreso, tutorial: est.tutorialHecho })); }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ eleccion: est.sel, copa: est.progreso, tutorial: est.tutorialHecho, volumen: S.sonido.nivel })); }
     catch (err) { console.warn('Soccer: no se guarda', err); }
   }
   function leer() {
@@ -27,54 +27,51 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       if (s && ids.includes(s.equipo) && ids.includes(s.rival) && S.AJ.campos[s.campo] && S.AJ.alineaciones[s.alineacion || 'equilibrada']) est.sel = Object.assign(est.sel, s, { estrategia: Object.assign(est.sel.estrategia, s.estrategia) });
       if (d.copa) est.progreso = d.copa;
       est.tutorialHecho = !!d.tutorial;
+      S.sonido.poner(d.volumen);
     } catch (err) { console.warn('Soccer: no se lee lo guardado', err); }
   }
   const progreso = () => est.progreso[est.sel.equipo] || 0;
 
-  // ---------- sonido (sintetizado, sin archivos) ----------
-  let AC = null;
-  function sonar(f, dura, tipo, sube) {
-    try {
-      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
-      const o = AC.createOscillator(), v = AC.createGain(), t = AC.currentTime;
-      o.type = tipo || 'square'; o.frequency.setValueAtTime(f, t);
-      if (sube) o.frequency.exponentialRampToValueAtTime(f * sube, t + dura);
-      v.gain.setValueAtTime(0.12, t); v.gain.exponentialRampToValueAtTime(0.001, t + dura);
-      o.connect(v).connect(AC.destination); o.start(t); o.stop(t + dura);
-    } catch (err) { console.warn('Soccer: sin sonido', err); }
-  }
+  // ---------- sonido (el altavoz de la serie: ver sonido.js) ----------
+  const sonar = S.sonido.nota;
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Soccer: sin vibración', err); } }
-  const golpe = (paron, temblor, ms) => { est.paron = Math.max(est.paron, paron); V.temblor = Math.max(V.temblor, temblor); vibrar(ms); };
+  // El peso de cada golpe sale de la tabla `golpes` de ajustes.js: parón, sacudida y vibración (esta, a veces solo si es de tu equipo).
+  const golpe = (tipo, esMio) => {
+    const g = S.AJ.golpes[tipo];
+    est.paron = Math.max(est.paron, g.paron); V.temblor = Math.max(V.temblor, g.temblor);
+    if (!g.soloMio || esMio) vibrar(g.vibra);
+  };
 
   // ---------- eventos del dominio -> efectos ----------
   const mio = (ev, e) => ev.quien !== undefined && e.jugadores[ev.quien].eq === 0;
   const EFECTOS = {
-    tiro: () => { sonar(160, 0.15, 'triangle', 0.5); V.temblor = 6; },
-    super: (ev, e) => { FX.cortar(e.aj.equipos[ev.eq]); sonar(120, 0.8, 'sawtooth', 6); vibrar(60); },
-    chilena: () => sonar(700, 0.12, 'square', 0.6),
-    pase: () => sonar(520, 0.06, 'square'),
-    barrida: () => sonar(90, 0.2, 'sawtooth', 0.6),
-    empujon: () => sonar(140, 0.12, 'square', 0.7),
-    derribo: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#ffe14a', 14); golpe(0.06, 10, 25); sonar(70, 0.25, 'square', 0.5); },
-    atropello: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#fff', 12); golpe(0.05, 8, 20); },
-    ko: (ev, e) => { const j = e.jugadores[ev.quien]; UI.avisar(tr('¡KO!'), '#ff5a5a', 0.9); FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe(0.14, 20, 80); sonar(55, 0.5, 'sawtooth', 0.4); },
+    tiro: (ev, e) => { play('chute', ev.aereo ? 0.4 : 0.7); golpe('tiro', mio(ev, e)); },
+    super: (ev, e) => { FX.cortar(e.aj.equipos[ev.eq]); S.supertiro.chutar(e, ev); play('supertiro'); golpe('super'); },
+    chilena: () => { play('chute', 0.9); sonar(700, 0.12, 'square', 0.6); },
+    pase: () => play('pase'),
+    barrida: (ev, e) => { play('barrida'); golpe('barrida', mio(ev, e)); },
+    empujon: (ev, e) => { play('empujon'); golpe('empujon', mio(ev, e)); },
+    derribo: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#ffe14a', 14); golpe('derribo'); play('derribo'); },
+    atropello: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#fff', 12); golpe('atropello'); play('derribo'); },
+    ko: (ev, e) => { const j = e.jugadores[ev.quien]; UI.avisar(tr('¡KO!'), '#ff5a5a', 0.9); FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe('ko'); play('ko'); },
     vuelve: () => sonar(880, 0.08, 'triangle'),
     cargado: (ev, e) => { if (mio(ev, e)) { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ffe14a', 18); sonar(990, 0.15, 'square', 1.5); vibrar(20); } },
     cargando: () => sonar(300, 0.5, 'square', 1.2),
     salto: (ev) => { FX.estallido(ev.x, ev.y, 1, '#18d2e6', 8); sonar(1200, 0.04, 'square'); },
     parada: (ev) => { sonar(330, 0.12, 'triangle', 1.5); if (ev.clase === 'super') UI.avisar(tr('¡PARADÓN!'), '#5fe05f', 1); },
-    'portero-ko': (ev, e) => { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe(0.12, 22, 70); },
+    'portero-ko': (ev, e) => { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe('portero-ko'); play('ko'); },
     rebote: () => sonar(220, 0.05, 'triangle'),
     orden: (ev) => { V.globos[ev.quien] = { texto: ev.ok ? tr('¡Voy!') : tr('¡No puedo!'), ok: ev.ok, desde: est.t }; },
     clima: (ev) => { UI.avisar(tr(FX.avisoClima[ev.clima]), '#9fe0ff', 1.4); sonar(200, 0.6, 'sawtooth', 0.6); },
     oro: () => { UI.avisar(tr('¡GOL DE ORO!'), '#ffcf3a', 2); sonar(660, 0.4, 'square', 1.5); },
-    descanso: () => { est.modo = 'descanso'; sonar(392, 0.4, 'triangle'); },
+    descanso: () => { est.modo = 'descanso'; play('descanso'); },
+    saque: () => play('silbato'),
     gol: (ev, e) => {
-      golpe(0.1, 26, 120); FX.estallido(e.balon.x, e.balon.y, 2, e.aj.equipos[ev.eq].color, 60); FX.estallido(e.balon.x, e.balon.y, 3, '#fff', 30);
+      golpe('gol'); FX.estallido(e.balon.x, e.balon.y, 2, e.aj.equipos[ev.eq].color, 60); FX.estallido(e.balon.x, e.balon.y, 3, '#fff', 30);
       UI.avisar(tr('¡GOL!'), e.aj.equipos[ev.eq].color, 1.2); est.repetirEn = 1.2;
-      [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => sonar(f, 0.18, 'square'), i * 110));
+      play('red'); play('gol');
     },
-    fin: (ev, e) => { est.modo = 'final'; est.repetirEn = 0; sonar(392, 0.6, 'triangle', 0.5); terminarCopa(e); },
+    fin: (ev, e) => { est.modo = 'final'; est.repetirEn = 0; play('final'); terminarCopa(e); },
   };
 
   function terminarCopa(e) {
@@ -90,9 +87,14 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function aLogico(ev) { const r = CV.getBoundingClientRect(); return { x: (ev.clientX - r.left) * V.W / r.width, y: (ev.clientY - r.top) * V.H / r.height }; }
   const dentro = (p, b) => Math.hypot(p.x - b.x, p.y - b.y) < b.r + 18;
 
+  // El altavoz: cada toque (o la tecla M) baja un nivel el volumen y del silencio vuelve al alto.
+  const conMarcador = () => est.modo === 'juego' || est.modo === 'repeticion' || est.modo === 'final';
+  function cambiarVolumen() { S.sonido.siguiente(); sonar(660, 0.08, 'triangle'); guardar(); }
+
   function abajo(ev) {
     ev.preventDefault();
     const p = aLogico(ev);
+    if (dentro(p, UI.zonaAltavoz(conMarcador()))) { cambiarVolumen(); return; }
     if (est.modo !== 'juego') { tocarFuera(p); return; }
     const B = UI.botones;
     if (dentro(p, B.tiro)) { est.boton = 'rojo'; B.tiro.pulsado = ev.pointerId; return; }
@@ -111,7 +113,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   function tocarFuera(p) {
     if (est.modo === 'titulo') { est.modo = 'menu'; sonar(520, 0.06); return; }
-    if (est.modo === 'descanso') { S.reanudar(est.e); est.modo = 'juego'; sonar(660, 0.1); return; }
+    if (est.modo === 'descanso') { S.reanudar(est.e); est.modo = 'juego'; play('silbato'); return; }
     if (est.modo === 'final') { est.modo = 'menu'; return; }
     if (est.modo !== 'menu') return;
     const t = UI.tocarMenu(p, S.AJ, est.sel);
@@ -132,6 +134,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const k = ev.key.toLowerCase();
     teclas[k] = baja;
     if (!baja) return;
+    if (k === 'm') { cambiarVolumen(); return; }
     if (est.modo !== 'juego') { if (k === ' ' || k === 'enter') { if (est.modo === 'menu') empezar(); else tocarFuera({ x: -1, y: -1 }); } return; }
     if (k === 'x' || k === 'j') est.boton = 'azul';
     if (k === 'c' || k === 'k' || k === ' ') est.boton = 'rojo';
@@ -169,9 +172,9 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       alineaciones: [s.alineacion, nivelRival > 0.6 ? 'ofensiva' : nivelRival < 0.4 ? 'defensiva' : 'equilibrada'] });
     est.e.estrategia[1].presionan = S.AJ.equipos.find((q) => q.id === r.equipo).nivel > 0.5;
     Object.assign(est, { modo: 'juego', controlado: est.e.jugadores.find((j) => j.eq === 0 && j.puesto === 'delantero').id, copaRes: null, repetirEn: 0 });
-    V.cam = 50; UI.cartel = null; FX.fotos = []; FX.repe = null; FX.corte = null;
+    V.cam = 50; UI.cartel = null; FX.fotos = []; FX.repe = null; FX.corte = null; S.supertiro.limpiar();
     if (!est.tutorialHecho) S.tutorial.empezar();
-    guardar(); sonar(660, 0.1);
+    guardar(); play('silbato');
   }
 
   function simular(dt) {
@@ -238,11 +241,12 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       else if (est.modo === 'menu') UI.menu(G, S.AJ, est.sel, V.img, est.t, progreso());
       else { UI.marcador(G, est.e); UI.final(G, est.e, est.t, est.copaRes); }
     }
+    UI.altavoz(G, S.sonido.nivel, UI.zonaAltavoz(conMarcador()));
     requestAnimationFrame(fotograma);
   }
 
   function imagenes() {
-    const n = ['fondo', 'fondo-parking', 'fondo-servidores', 'r-bunny', 'r-ceo', 'r-necro', 'r-marine', 'r-presidente'];
+    const n = ['fondo', 'fondo-parking', 'fondo-servidores', 'wang-atico', 'wang-parking', 'wang-servidores', 'r-bunny', 'r-ceo', 'r-necro', 'r-marine', 'r-presidente'];
     for (const q of S.AJ.equipos) { n.push('d-' + q.id); for (const d of q.jugadores) if (!n.includes(d[0])) n.push(d[0]); n.push(q.jugadores[0][0] + '-coge', q.jugadores[0][0] + '-estira'); }
     return n;
   }

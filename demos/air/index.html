@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<title>Fans of Air</title>
+<meta name="description" content="Fans of Air: combate aéreo arcade en dos fases. Despeja el cielo de becarios voladores en falso 3D y bombardea la Torre del CEO en vista cenital con los cazas de los Animales Locos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.2.0"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<style>
+/* Fans of Air: un solo canvas apaisado (1280x720 lógicos) centrado en la pantalla. */
+html, body { height: 100%; margin: 0; background: #0b1020; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#juego { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: block; touch-action: none; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffe14a; font: 12px/1 'Press Start 2P', monospace; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<canvas id="juego" aria-label="Fans of Air"></canvas>
+<div id="carga">…</div>
+<div id="toast"></div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Air guarda en el navegador el caza elegido y el récord
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: ['js/mision.js', 'js/aire.js', 'js/tierra.js', 'js/efectos.js', 'js/pantalla.js', 'js/cabina.js', 'js/vista-aire.js', 'js/vista-tierra.js', 'js/menu.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

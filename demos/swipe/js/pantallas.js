@@ -120,8 +120,7 @@ function swAbreOpciones(desdePausa) {
   const t = swModal(`<h2>${tr('Opciones')}</h2><div id="sw-opc-lista"></div>`, 'sw-ancha');
   const { lista, version, cerrar } = OPCIONES.lista({
     filas: [
-      OPCIONES.interruptor(tr('Sonido'), tr('Efectos y música.'), () => !SAVE.muted, v => { SAVE.muted = !v; swGuarda(); applyVolume(); }),
-      OPCIONES.interruptor(tr('Música'), tr('La canción de fondo.'), () => SAVE.musica !== false, v => { SAVE.musica = v; swGuarda(); applyVolume(); }),
+      OPCIONES.sonido({ efectos: [() => SAVE.vol, v => { SAVE.vol = v; applyVolume(); swGuarda(); }], musica: [() => SAVE.mus, v => { SAVE.mus = v; applyVolume(); swGuarda(); }] }),
       'idioma', 'cuenta',
     ],
     versionTexto: 'Fans of Swipe · v' + VERSION,

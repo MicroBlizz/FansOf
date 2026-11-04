@@ -7,8 +7,7 @@ function dcOpciones() {
   const v = dcVentana(tr('OPCIONES')), O = OPCIONES;   // el componente de core (core/js/sistema/opciones-comunes.js): las mismas filas que en el resto de juegos
   const { lista, version, cerrar } = O.lista({
     filas: [
-      O.volumen(tr('Música'), () => DC_SON.mus, x => { DC_SON.mus = x; dcSonGuarda(); }),
-      O.volumen(tr('Efectos'), () => DC_SON.vol, x => { DC_SON.vol = x; dcSonGuarda(); }),
+      O.sonido({ efectos: [() => DC_SON.vol, x => { DC_SON.vol = x; dcSonGuarda(); }], musica: [() => DC_SON.mus, x => { DC_SON.mus = x; dcSonGuarda(); }] }),
       O.interruptor(tr('Sonido'), '', () => !DC_SON.mudo, x => { DC_SON.mudo = !x; dcSonGuarda(); }),
       'idioma', 'cuenta', O.novedades(dcNovedades),
     ],

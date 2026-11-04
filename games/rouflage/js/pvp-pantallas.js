@@ -59,24 +59,37 @@ function pvpPintaBusca() {
   if (!i) { E('busca-titulo').textContent = tr('BUSCANDO PARTIDA'); E('busca-sub').textContent = ''; lista.innerHTML = ''; return; }
   const jug = i.jugadores || [], jugando = i.estado !== 'espera', mio = jug.find(j => j.yo), priv = !!i.privada, soyAnf = priv && !!mio && mio.orden === i.anfitrion;
   E('busca-titulo').textContent = jugando ? tr('¡EMPIEZA LA PARTIDA!') : tr('SALA: {n} DE {max}', { n: i.n, max: i.max });
-  E('busca-sub').textContent = jugando ? (mio && mio.rol === 'cazador' ? tr('Te toca de CAZADOR') : tr('Te toca de CAMALEÓN'))
-    : priv ? (soyAnf ? (i.n >= 2 ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.')) : tr('Esperando a que el anfitrión empiece.'))
-    : i.modo ? tr('Empieza en {t} s. Si no hay gente suficiente, la máquina rellena con bots.', { t: i.faltan || 0 })
-    : i.faltan != null ? tr('Empieza en {t} s, o en cuanto se llene', { t: i.faltan }) : tr('Esperando a otro jugador. Mientras estás solo, el reloj no corre.');
+  E('busca-sub').textContent = pvpBuscaSub(i, mio, priv, soyAnf);
   // la sala con amigos: el código grande para compartir y el botón EMPEZAR del anfitrión
   salaEspPaso(i, soyAnf);      // con amigos: la sala de espera es el escenario del anfitrión (sala-escenario.js)
   salaVivaPaso(i, soyAnf);      // …y se juega dentro de él a pantalla completa (sala-viva.js)
-  E('busca-codigo').hidden = !priv || jugando; E('busca-codigo-n').textContent = i.codigo || '----';
-  const be = E('b-busca-empezar'); be.hidden = !soyAnf || jugando; be.textContent = i.n < 2 ? tr('RELLENAR CON BOTS') : tr('EMPEZAR');      // solo en la sala: la máquina rellena el resto y se juega ya
-  const err = E('busca-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
-  const hueco = Math.max(0, (priv && !jugando ? salaCuantos(i.modo, jug.length).total : i.max || 10) - jug.length);      // con amigos, los que eligió el anfitrión
-  lista.innerHTML = jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${priv && j.orden === i.anfitrion ? `<em>${tr('ANFITRIÓN')}</em>` : ''}${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
-    + (hueco ? `<li class="maquina"><i class="esp"></i><span>${tr('+ {n} de la máquina', { n: hueco })}</span></li>` : '');
+  pvpBuscaControles(i, soyAnf);
+  lista.innerHTML = pvpBuscaLista(i, jug, priv, jugando);
   E('b-busca-cancelar').hidden = jugando;
   E('busca-modo').classList.toggle('publica', !priv);
   pvpPintaModo(priv ? !jugando : !!i.modo, soyAnf);      // en la pública se ve el modo que ha tocado (sin tocarlo) y, al arrancar, todo lo que se juega
   pvpPintaVoto(!priv && !!i.modo && !jugando && i.votos);
   talPintaSala();      // las habilidades que llevas (talentos-pantalla.js)
+}
+// la frase de debajo del título: el rol que te toca, lo que espera el anfitrión o el invitado, o la cuenta atrás de la pública
+function pvpBuscaSub(i, mio, priv, soyAnf) {
+  if (i.estado !== 'espera') return mio && mio.rol === 'cazador' ? tr('Te toca de CAZADOR') : tr('Te toca de CAMALEÓN');
+  if (priv) return soyAnf ? (i.n >= 2 ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.')) : tr('Esperando a que el anfitrión empiece.');
+  if (i.modo) return tr('Empieza en {t} s. Si no hay gente suficiente, la máquina rellena con bots.', { t: i.faltan || 0 });
+  return i.faltan != null ? tr('Empieza en {t} s, o en cuanto se llene', { t: i.faltan }) : tr('Esperando a otro jugador. Mientras estás solo, el reloj no corre.');
+}
+// el código para compartir, el botón EMPEZAR del anfitrión (solo en la sala) y el error de la red
+function pvpBuscaControles(i, soyAnf) {
+  const priv = !!i.privada, jugando = i.estado !== 'espera';
+  E('busca-codigo').hidden = !priv || jugando; E('busca-codigo-n').textContent = i.codigo || '----';
+  const be = E('b-busca-empezar'); be.hidden = !soyAnf || jugando; be.textContent = i.n < 2 ? tr('RELLENAR CON BOTS') : tr('EMPEZAR');      // solo en la sala: la máquina rellena el resto y se juega ya
+  const err = E('busca-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
+}
+// quién hay en la sala (con su rol y el anfitrión) y los huecos que rellena la máquina
+function pvpBuscaLista(i, jug, priv, jugando) {
+  const hueco = Math.max(0, (priv && !jugando ? salaCuantos(i.modo, jug.length).total : i.max || 10) - jug.length);      // con amigos, los que eligió el anfitrión
+  return jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${priv && j.orden === i.anfitrion ? `<em>${tr('ANFITRIÓN')}</em>` : ''}${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
+    + (hueco ? `<li class="maquina"><i class="esp"></i><span>${tr('+ {n} de la máquina', { n: hueco })}</span></li>` : '');
 }
 // la votación de la sala pública: EMPEZAR YA o +60 S. Gana el botón con más de la mitad de los votos; con empate se vota otra vez; tras ganar +60 S, 30 s sin votar
 function pvpPintaVoto(ver) {

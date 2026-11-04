@@ -14,29 +14,25 @@ const pvpSoyAnfitrionCopa = () => KPVP.orden === Math.min(...KPVP.jugadores.filt
 const pvpCopaFin = () => !!KPVP.copa && KPVP.carrera >= KPVP.copa.pistas.length - 1 && !KPVP.activo;
 
 // al acabar cada carrera online: las misiones y, en la copa, sus puntos
-const abreResultadosSinRed = abreResultados;
-abreResultados = () => {
+function pvpAlAbrirResultados() {
   const C = CARRERA;
-  if (C.pvp) {
-    const yo = C.orden.indexOf(C.jugador) + 1;
-    misionSuma('carreras'); if (yo === 1) misionSuma('gana'); if (yo <= 3) misionSuma('podio');
-    if (KPVP.copa) pvpCopaSuma(C);
-  }
-  abreResultadosSinRed();
-};
+  if (!C.pvp) return;
+  const yo = C.orden.indexOf(C.jugador) + 1;
+  misionSuma('carreras'); if (yo === 1) misionSuma('gana'); if (yo <= 3) misionSuma('podio');
+  if (KPVP.copa) pvpCopaSuma(C);
+}
 function pvpCopaSuma(C) {
   const Q = KPVP.copa; if (Q.sumada === KPVP.carrera) return;
   Q.sumada = KPVP.carrera; Q.ultimos = {}; Q.tSig = 0; Q.nombres = Q.nombres || {};
   C.orden.forEach((k, i) => {
     const id = pvpIdKart(k); if (id == null) return;
-    const p = PUNTOS_COPA[i] || 0;
+    const p = KD.carrera.puntosDeCopa(i + 1, PUNTOS_COPA);
     Q.puntos[id] = (Q.puntos[id] || 0) + p; Q.ultimos[id] = p;
     Q.nombres[id] = { nombre: k.esJugador ? null : k.nombre || tr(k.piloto.nombre), piloto: k.piloto.id, yo: k.esJugador };
   });
 }
 // quien se va en plena copa (o se queda sin red) ya no cuenta para elegir anfitrión
-const pvpTerminaSinCopa = pvpTermina;
-pvpTermina = () => { if (KPVP.salidos) for (const k of pvpRivales()) if (k.ido) KPVP.salidos[k.remoto.orden] = true; pvpTerminaSinCopa(); };
+function pvpApuntaSalidos() { if (KPVP.salidos) for (const k of pvpRivales()) if (k.ido) KPVP.salidos[k.remoto.orden] = true; }
 
 // ---------- pasar a la siguiente ----------
 function pvpCopaSiguiente() {

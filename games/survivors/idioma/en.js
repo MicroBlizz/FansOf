@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.73
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems gain separate effects and music volumes, and internal testing keeps improving.",
+  "Microblizz ha bajado la megafonía y Phony ha seguido susurrando sopa.": "Microblizz turned the loudspeakers down and Phony kept whispering soup.",
   // 0.1.72
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
   "Microblizz ha repartido la sopa por turnos y Phony ha repetido.": "Microblizz served the soup in turns and Phony had seconds.",

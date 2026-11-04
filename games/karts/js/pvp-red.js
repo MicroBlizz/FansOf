@@ -125,21 +125,29 @@ const KRED = (() => {
         if (m.t === 'busco') vistos.set(m.id, { piloto: m.piloto, t: Date.now(), voto: m.voto, copa: m.copa, prem: !!m.prem });
         else if (m.t === 'par' && m.ids.includes(id)) empieza(m);
       };
+      // quién hay (los que llevan más de 3 s callados se quitan) y cuántos votos tiene cada pista
+      const resumen = () => {
+        for (const [k, v] of vistos) if (k !== id && Date.now() - v.t > 3000) vistos.delete(k);
+        const ids = [...vistos.keys()].sort(), votos = {};
+        for (const x of ids) { const v = vistos.get(x).voto; if (v) votos[v] = (votos[v] || 0) + 1; }
+        return { ids, n: ids.length, votos };
+      };
+      const anuncia = ({ ids, n, votos }) => aviso({ sala: 'pruebas' + (codigo || ''), estado: 'espera', n, max: 8, orden: ids.indexOf(id), semilla: 777, codigo, privada: !!codigo, anfitrion: 0, votos, premium: ids.some(x => vistos.get(x).prem), faltan: codigo ? null : n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null,
+        jugadores: ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), piloto: vistos.get(x).piloto, yo: x === id, voto: vistos.get(x).voto })) });
+      // el de id más bajo reparte la sala: la pista más votada (o una al azar) y la semilla
+      const reparte = ({ ids, votos }) => {
+        const masVotada = Object.entries(votos).sort((a, b) => b[1] - a[1])[0];
+        const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, 8), pilotos: ids.slice(0, 8).map(x => vistos.get(x).piloto), pista: masVotada ? masVotada[0] : (q => q[(Math.random() * q.length) | 0].id)(PISTAS.filter(p => p.mundo > 0 && !p.premium)), semilla: (Math.random() * 2147483647) | 0, copa: !!local.arranque, codigo };
+        bc.postMessage(m); empieza(m);
+      };
       const paso = () => {
         if (!activo) return;
         vistos.get(id).voto = local.voto; vistos.get(id).prem = !!local.premium; vistos.get(id).t = Date.now();
         bc.postMessage({ t: 'busco', id, piloto, voto: local.voto, prem: !!local.premium });
-        for (const [k, v] of vistos) if (k !== id && Date.now() - v.t > 3000) vistos.delete(k);
-        const ids = [...vistos.keys()].sort(), n = ids.length, votos = {};
-        for (const x of ids) { const v = vistos.get(x).voto; if (v) votos[v] = (votos[v] || 0) + 1; }
-        aviso({ sala: 'pruebas' + (codigo || ''), estado: 'espera', n, max: 8, orden: ids.indexOf(id), semilla: 777, codigo, privada: !!codigo, anfitrion: 0, votos, premium: ids.some(x => vistos.get(x).prem), faltan: codigo ? null : n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null,
-          jugadores: ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), piloto: vistos.get(x).piloto, yo: x === id, voto: vistos.get(x).voto })) });
-        const toca = codigo ? local.arranque != null : n >= 8 || (n >= 2 && Date.now() - t0 > local.espera * 1000);
-        if (ids[0] === id && toca) {
-          const masVotada = Object.entries(votos).sort((a, b) => b[1] - a[1])[0];
-          const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, 8), pilotos: ids.slice(0, 8).map(x => vistos.get(x).piloto), pista: masVotada ? masVotada[0] : (q => q[(Math.random() * q.length) | 0].id)(PISTAS.filter(p => p.mundo > 0 && !p.premium)), semilla: (Math.random() * 2147483647) | 0, copa: !!local.arranque, codigo };
-          bc.postMessage(m); empieza(m);
-        }
+        const r = resumen();
+        anuncia(r);
+        const toca = codigo ? local.arranque != null : r.n >= 8 || (r.n >= 2 && Date.now() - t0 > local.espera * 1000);
+        if (r.ids[0] === id && toca) reparte(r);
       };
       paso(); tic = setInterval(paso, 800);
       return { cancelar: para };

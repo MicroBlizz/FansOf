@@ -128,8 +128,7 @@ function asVentanaFin(gano) {
 function asOpciones(caja, alCerrar) {
   const { lista, version, cerrar } = OPCIONES.lista({
     filas: [
-      OPCIONES.interruptor(tr('Sonido'), tr('Efectos y música.'), () => !SAVE.muted, v => { SAVE.muted = !v; asGuarda(); applyVolume(); }),
-      OPCIONES.interruptor(tr('Música'), tr('La canción de fondo.'), () => SAVE.musica !== false, v => { SAVE.musica = v; asGuarda(); applyVolume(); }),
+      OPCIONES.sonido({ efectos: [() => SAVE.vol, v => { SAVE.vol = v; applyVolume(); asGuarda(); }], musica: [() => SAVE.mus, v => { SAVE.mus = v; applyVolume(); asGuarda(); }] }),
       'idioma', 'cuenta',
     ],
     versionTexto: 'Fans of Asalto · v' + VERSION,

@@ -1,0 +1,155 @@
+{
+ "criatura": "animales-bunny",
+ "edad": "nino",
+ "capas": [
+  "oreja-izq",
+  "oreja-der",
+  "cola",
+  "pierna-izq",
+  "pierna-der",
+  "tronco",
+  "brazo-izq",
+  "brazo-der",
+  "cabeza"
+ ],
+ "piezas": {
+  "oreja-izq": {
+   "archivo": "oreja-izq.webp",
+   "caja": [
+    0.3174,
+    0.0059,
+    0.1201,
+    0.1865
+   ],
+   "pivote": [
+    0.3916,
+    0.1598
+   ],
+   "madre": "cabeza"
+  },
+  "oreja-der": {
+   "archivo": "oreja-der.webp",
+   "caja": [
+    0.5791,
+    0.0127,
+    0.1377,
+    0.2354
+   ],
+   "pivote": [
+    0.6232,
+    0.1951
+   ],
+   "madre": "cabeza"
+  },
+  "cola": {
+   "archivo": "cola.webp",
+   "caja": [
+    0.6641,
+    0.8008,
+    0.165,
+    0.1465
+   ],
+   "pivote": [
+    0.7012,
+    0.845
+   ],
+   "madre": "tronco"
+  },
+  "pierna-izq": {
+   "archivo": "pierna-izq.webp",
+   "caja": [
+    0.3633,
+    0.8867,
+    0.1152,
+    0.084
+   ],
+   "pivote": [
+    0.4174,
+    0.8988
+   ],
+   "madre": "tronco"
+  },
+  "pierna-der": {
+   "archivo": "pierna-der.webp",
+   "caja": [
+    0.5566,
+    0.8809,
+    0.1182,
+    0.0898
+   ],
+   "pivote": [
+    0.6157,
+    0.8961
+   ],
+   "madre": "tronco"
+  },
+  "tronco": {
+   "archivo": "tronco.webp",
+   "caja": [
+    0.2949,
+    0.6719,
+    0.4346,
+    0.2471
+   ],
+   "pivote": [
+    0.5042,
+    0.7945
+   ],
+   "madre": null
+  },
+  "brazo-izq": {
+   "archivo": "brazo-izq.webp",
+   "caja": [
+    0.2285,
+    0.6504,
+    0.1367,
+    0.1357
+   ],
+   "pivote": [
+    0.3573,
+    0.6811
+   ],
+   "madre": "tronco"
+  },
+  "brazo-der": {
+   "archivo": "brazo-der.webp",
+   "caja": [
+    0.6182,
+    0.6543,
+    0.1641,
+    0.1328
+   ],
+   "pivote": [
+    0.6262,
+    0.6853
+   ],
+   "madre": "tronco"
+  },
+  "cabeza": {
+   "archivo": "cabeza.webp",
+   "caja": [
+    0.1641,
+    0.1094,
+    0.6455,
+    0.5791
+   ],
+   "pivote": [
+    0.4913,
+    0.6809
+   ],
+   "madre": "tronco"
+  }
+ },
+ "medidas": {
+  "cuello": 0.6836,
+  "cadera": 0.916
+ },
+ "cara": {
+  "pieza": "cabeza",
+  "marco": [
+   0.4969,
+   0.4406,
+   0.2607
+  ]
+ }
+}

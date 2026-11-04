@@ -15,20 +15,26 @@ function fotoHaz(yo) {
     c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = COLOR_MURO; c.fillRect(0, 0, FOTO.px, FOTO.px);
     c.drawImage(MAPA.fondo, x0 * ESC_FONDO, y0 * ESC_FONDO, L * ESC_FONDO, L * ESC_FONDO, 0, 0, FOTO.px, FOTO.px);
     c.setTransform(k, 0, 0, k, -x0 * k, -y0 * k);
-    const cosas = [];
-    for (const m of MAPA.porY) if (m.dib.x0 < x0 + L && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + L + 60 && m.dib.y0 + m.dib.h > y0) cosas.push(m);
-    for (const e of J.camaleones) if (!e.fuera && !(e.invis > 0) && e.x > x0 - 40 && e.x < x0 + L + 40 && e.y > y0 - 10 && e.y < y0 + L + 80) cosas.push(e);
-    cosas.sort((a, b) => a.y - b.y);
     const t = J.t || 0;
-    for (const q of cosas) { if (q.T) c.drawImage(q.dibujo.cv, q.dib.x0, q.dib.y0, q.dib.w, q.dib.h); else { pintaAlubia(c, q, t); c.globalAlpha = 1; } }
+    for (const q of fotoCosasCerca(x0, y0, L)) { if (q.T) c.drawImage(q.dibujo.cv, q.dib.x0, q.dib.y0, q.dib.w, q.dib.h); else { pintaAlubia(c, q, t); c.globalAlpha = 1; } }
     FOTO.camo = yo.camo || 0;
-    // lo que hace falta para el reto compartido (reto.js): el sitio, la postura y la pintura de este momento
-    let png = ''; try { png = yo.piel.toDataURL('image/png'); png = png.slice(png.indexOf(',') + 1); } catch (_) { png = ''; }
-    FOTO.reto = png && !MAPA_ACT.esc ? {      // (en un escenario de Mi escenario no hay reto: los demás no tienen ese mapa)
-       mapa: MAPA.id, x: Math.round(yo.x), y: Math.round(yo.y), postura: yo.postura || 'firmes', animal: yo.tipo, camo: Math.round(yo.camo || 0), piel: png } : null;
+    FOTO.reto = fotoReto(yo);
     if (typeof RETO !== 'undefined') RETO.creando = null;
     fotoOlvida();
   } catch (err) { console.warn('[foto]', err); FOTO.cv = null; }
+}
+// los muebles y los personajes que caen en el encuadre, de atrás adelante
+function fotoCosasCerca(x0, y0, L) {
+  const cosas = [];
+  for (const m of MAPA.porY) if (m.dib.x0 < x0 + L && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + L + 60 && m.dib.y0 + m.dib.h > y0) cosas.push(m);
+  for (const e of J.camaleones) if (!e.fuera && !(e.invis > 0) && e.x > x0 - 40 && e.x < x0 + L + 40 && e.y > y0 - 10 && e.y < y0 + L + 80) cosas.push(e);
+  return cosas.sort((a, b) => a.y - b.y);
+}
+// lo que hace falta para el reto compartido (reto.js): el sitio, la postura y la pintura de este momento
+function fotoReto(yo) {
+  let png = ''; try { png = yo.piel.toDataURL('image/png'); png = png.slice(png.indexOf(',') + 1); } catch (_) { png = ''; }
+  return png && !MAPA_ACT.esc ? {      // (en un escenario de Mi escenario no hay reto: los demás no tienen ese mapa)
+    mapa: MAPA.id, x: Math.round(yo.x), y: Math.round(yo.y), postura: yo.postura || 'firmes', animal: yo.tipo, camo: Math.round(yo.camo || 0), piel: png } : null;
 }
 const fotoHay = () => !!FOTO.cv && J.modo === 'camaleon';
 

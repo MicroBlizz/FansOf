@@ -5,18 +5,19 @@
 const VK_NUEVA = () => {
   const s = { v: 1, oro: 20, inv: { zanahoria: 3, pan: 1, espada: 0, escudo: 0 }, nivel: 1, xp: 0, fans: {}, colas: {},
     asalto: 0, planta: 0, mision: 0, hechos: { zanahoria: 0, pan: 0, comer: 0, equipar: 0, espada: 0, escudo: 0 },
-    muted: false, musica: true, ayuda: false };
+    vol: 1, mus: 0.5, ayuda: false };
   for (const id of VK_ORDEN_FANS) s.fans[id] = { nivel: 1, xp: 0, vida: VK_FANS[id].vida, arma: 0, escudo: 0 };
   for (const id in VK_EDIFICIOS) if (VK_EDIFICIOS[id].recetas) s.colas[id] = [];
   return s;
 };
+const VK_VOL = VOLUMEN.crear({ musicaBase: 0.28 });   // la mezcla del juego: lo que suena la música con la barra a la mitad, por dos
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = VK_NUEVA();
   if (!s || typeof s !== 'object' || s.v !== 1) return n;
   for (const k in n) if (s[k] === undefined || s[k] === null) s[k] = n[k];
   for (const k of ['inv', 'hechos', 'colas', 'fans']) for (const j in n[k]) if (s[k][j] === undefined) s[k][j] = n[k][j];
-  return s;
+  return VK_VOL.migra(s);
 })();
 let VK_GUARDA_T = 0;
 function vkGuarda() {
@@ -29,9 +30,9 @@ addEventListener('pagehide', vkGuarda);
 document.addEventListener('visibilitychange', () => { if (document.hidden) vkGuarda(); });
 
 // lo que pide el motor de sonido de core
-function sonidoApagado() { return !!SAVE.muted; }
-function volGeneral() { return SAVE.muted ? 0 : 1; }
-function volMusica() { return SAVE.musica === false ? 0 : 0.14; }
+function sonidoApagado() { return VK_VOL.apagado(SAVE); }
+function volGeneral() { return VK_VOL.general(SAVE); }
+function volMusica() { return VK_VOL.musica(SAVE); }
 function musicUpdate() { /* la música la elige vkMusica (js/sonidos.js) */ }
 
 /* ---------- los fans: sus números con el nivel y el equipo ---------- */

@@ -1,4 +1,4 @@
-// Fans of Soccer · Ajustes: medidas del campo, velocidades, tiempos, vida, súper tiros, los cinco equipos y los tres campos.
+// Fans of Soccer · Ajustes: medidas del campo, velocidades, tiempos, vida, peso de los golpes, súper tiros, los cinco equipos y los tres campos.
 'use strict';
 const AJUSTES = {
   id: 'soccer',                  // para core: la partida en la nube lleva este nombre
@@ -18,6 +18,21 @@ SOCCER.AJ = Object.freeze({
   coger: 2.0,                       // distancia para hacerse con el balón
   remate: { alcance: 2.4, zMin: 1.1, zMax: 3.6 },   // chilena o volea: balón en el aire cerca
   gravedad: 30, roce: 0.985,
+  // Peso de cada golpe en pantalla (B1 de la hoja de ruta): parón en segundos, sacudida de la cámara y vibración del móvil en ms.
+  // De menos a más: empujón < barrida < atropello < derribo < súper tiro < portero KO < KO < gol (lo comprueba tests/soccer/golpes.test.mjs).
+  // soloMio: solo vibra si lo hace tu equipo (para que el móvil no tiemble con cada barrida de la máquina). El súper tiro no lleva
+  // parón porque ya tiene su corte a cámara lenta.
+  golpes: {
+    tiro:         { paron: 0,    temblor: 5,  vibra: 12, soloMio: true },
+    empujon:      { paron: 0,    temblor: 3,  vibra: 8,  soloMio: true },
+    barrida:      { paron: 0,    temblor: 4,  vibra: 10, soloMio: true },
+    atropello:    { paron: 0.04, temblor: 7,  vibra: 18 },
+    derribo:      { paron: 0.06, temblor: 10, vibra: 25 },
+    super:        { paron: 0,    temblor: 13, vibra: 60 },
+    'portero-ko': { paron: 0.12, temblor: 20, vibra: 70 },
+    ko:           { paron: 0.14, temblor: 24, vibra: 85 },
+    gol:          { paron: 0.16, temblor: 28, vibra: 120 },
+  },
   energia: { porSegundo: 0.5, barrida: 4, empujon: 3, pase: 2, max: 100 },
   supersPorParte: 2,
   ia: { distTiro: 26, presion: 4.5, alcanceBarrida: 2.6, intentos: [1.2, 3] },   // intentos de barrida por segundo de la máquina (nivel 0 y 1)

@@ -243,3 +243,7 @@ h1, h2, h3 { font-family: var(--f-disp); font-weight: 400; margin: 0; letter-spa
 .op .cuantos { flex: none; margin-left: auto; font-family: var(--f-disp); font-size: 20px; color: var(--dorado); }
 .menu .btn-texto { justify-self: start; font-size: 15px; }
 .menu .ayuda { padding: 4px 8px; font-size: 14px; }
+/* las barras Efectos y Música son de core (OPCIONES.sonido): sus filas `.opt-row` con los colores de Tácticas */
+#o-sonido { display: flex; flex-direction: column; gap: 8px; }
+.opt-row { display: flex; gap: 12px; align-items: center; justify-content: space-between; border: 3px solid var(--ol); border-radius: 14px; background: var(--panel); padding: 8px 12px; text-align: left; font-weight: 700; }
+.opt-row input[type=range] { width: 150px; accent-color: var(--naranja); }

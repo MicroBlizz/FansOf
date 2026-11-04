@@ -131,12 +131,10 @@ function talentosAvanza(dt) {
   if (J.fase === 'titulo') return;
   for (const e of J.entes) {
     if (!e.hab) continue;
-    e.habEspera = Math.max(0, (e.habEspera || 0) - dt); e.uv = Math.max(0, (e.uv || 0) - dt); e.cafe = Math.max(0, (e.cafe || 0) - dt); e.gato = Math.max(0, (e.gato || 0) - dt); e.marcaDron = Math.max(0, (e.marcaDron || 0) - dt);
-    if (e.cafe > 0 && e.moviendo && Math.random() < dt * 9) TALP.fx.push({ k: 'vapor', x: e.x - e.mira * 10 + rand(-4, 4), y: e.y - 18 + rand(-6, 6), t: 0, dur: 0.6 });
-    if (e.gato > 0 && e.moviendo && (e.tHuella = (e.tHuella || 0) - dt) <= 0) { e.tHuella = 0.32; TALP.fx.push({ k: 'huella', x: e.x + (e.anda % 2 > 1 ? 5 : -5), y: e.y - 2, a: Math.atan2(e.vy, e.vx), t: 0, dur: 1.2 }); }
+    talTemporizadores(e, dt); talRastroDeBecario(e, dt);
     if (J.fase === 'caza' && e.bot && !e.remoto && !e.fuera) talBotPiensa(e, dt);
   }
-  for (let i = TALP.pend.length - 1; i >= 0; i--) { const p = TALP.pend[i]; p.t -= dt; if (p.t <= 0) { TALP.pend.splice(i, 1); p.f(); } }
+  talAvanzaTareas(dt);
   for (const dr of TALP.drones) talDronAvanza(dr, dt);
   TALP.drones = TALP.drones.filter(d => d.fase !== 'fin');
   for (const f of TALP.fx) f.t += dt;
@@ -144,25 +142,44 @@ function talentosAvanza(dt) {
   for (const s of TALP.senuelos) { s.t += dt; if (s.rota) s.rota += dt; }
   TALP.senuelos = TALP.senuelos.filter(s => !s.rota || s.rota < 1);
 }
+// lo que cuenta hacia atrás en cada becario con habilidad
+function talTemporizadores(e, dt) {
+  e.habEspera = Math.max(0, (e.habEspera || 0) - dt); e.uv = Math.max(0, (e.uv || 0) - dt); e.cafe = Math.max(0, (e.cafe || 0) - dt); e.gato = Math.max(0, (e.gato || 0) - dt); e.marcaDron = Math.max(0, (e.marcaDron || 0) - dt);
+}
+// el vapor del café y las huellas del gato, solo andando
+function talRastroDeBecario(e, dt) {
+  if (e.cafe > 0 && e.moviendo && Math.random() < dt * 9) TALP.fx.push({ k: 'vapor', x: e.x - e.mira * 10 + rand(-4, 4), y: e.y - 18 + rand(-6, 6), t: 0, dur: 0.6 });
+  if (e.gato > 0 && e.moviendo && (e.tHuella = (e.tHuella || 0) - dt) <= 0) { e.tHuella = 0.32; TALP.fx.push({ k: 'huella', x: e.x + (e.anda % 2 > 1 ? 5 : -5), y: e.y - 2, a: Math.atan2(e.vy, e.vx), t: 0, dur: 1.2 }); }
+}
+// las tareas que esperaban su momento: se hacen al llegar a cero y se quitan
+function talAvanzaTareas(dt) {
+  for (let i = TALP.pend.length - 1; i >= 0; i--) { const p = TALP.pend[i]; p.t -= dt; if (p.t <= 0) { TALP.pend.splice(i, 1); p.f(); } }
+}
 // el dron: vuela (3,6 s) hasta encima del colado, barre (1,1 s) y lo marca. Si el colado se vuelve invisible mientras vuela o barre: señal perdida
 function talDronAvanza(dr, dt) {
-  const k = dr.obj, T = TALENTOS; dr.t += dt;
+  const k = dr.obj; dr.t += dt;
   if ((dr.zumbido -= dt) <= 0 && dr.fase !== 'fin') { dr.zumbido = 0.22; suenaEn('dron', dr.x, dr.y, dr.fase === 'perdida' ? 0.5 : 1); }
   if ((dr.fase === 'vuela' || dr.fase === 'barre') && (k.fuera || invisible(k))) { talDronPierde(dr); if (J.pvp && !k.remoto && (k.jugador || RFP.soyHost)) rfpManda({ t: 'tl', h: 'dronx', s: dr.dueno.slot, o: k.slot }); return; }
-  if (dr.fase === 'vuela') {
-    const p = Math.min(1, dr.t / T.dronVuela), e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-    dr.x = dr.x0 + (k.x - dr.x0) * e; dr.y = dr.y0 + (k.y - 30 - dr.y0) * e; dr.alto = Math.sin(p * Math.PI) * 60 + 34 * Math.min(1, p * 4);
-    if (p >= 1) { dr.fase = 'barre'; dr.t = 0; play('dronBip'); }
-  } else if (dr.fase === 'barre') {
-    dr.x = k.x + Math.sin(dr.t * 5) * 6; dr.y = k.y - 30; dr.alto = 34;
-    if (dr.t >= T.dronBarre) talDronMarca(dr);
-  } else if (dr.fase === 'marca') {
-    dr.x = k.x + Math.sin(dr.t * 2) * 10; dr.y = k.y - 30; dr.alto = 50 + Math.sin(dr.t * 3) * 3;
-    if (dr.t >= habDef('dron').dura || k.fuera) { dr.fase = 'vuelve'; dr.t = 0; dr.x0 = dr.x; dr.y0 = dr.y; }
-  } else if (dr.fase === 'vuelve' || dr.fase === 'perdida') {
-    dr.alto += dt * (dr.fase === 'perdida' ? -30 : 90); dr.y -= dt * 60; if (dr.fase === 'perdida') dr.x += Math.sin(dr.t * 23) * 2;
-    if (dr.t > 1.4) dr.fase = 'fin';
-  }
+  if (Object.hasOwn(TAL_DRON_FASE, dr.fase)) TAL_DRON_FASE[dr.fase](dr, k, dt);
+}
+// qué hace el dron en cada fase de su vuelo
+const TAL_DRON_FASE = { vuela: talDronVuela, barre: talDronBarre, marca: talDronMarcado, vuelve: talDronVuelve, perdida: talDronVuelve };
+function talDronVuela(dr, k) {
+  const p = Math.min(1, dr.t / TALENTOS.dronVuela), e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  dr.x = dr.x0 + (k.x - dr.x0) * e; dr.y = dr.y0 + (k.y - 30 - dr.y0) * e; dr.alto = Math.sin(p * Math.PI) * 60 + 34 * Math.min(1, p * 4);
+  if (p >= 1) { dr.fase = 'barre'; dr.t = 0; play('dronBip'); }
+}
+function talDronBarre(dr, k) {
+  dr.x = k.x + Math.sin(dr.t * 5) * 6; dr.y = k.y - 30; dr.alto = 34;
+  if (dr.t >= TALENTOS.dronBarre) talDronMarca(dr);
+}
+function talDronMarcado(dr, k) {
+  dr.x = k.x + Math.sin(dr.t * 2) * 10; dr.y = k.y - 30; dr.alto = 50 + Math.sin(dr.t * 3) * 3;
+  if (dr.t >= habDef('dron').dura || k.fuera) { dr.fase = 'vuelve'; dr.t = 0; dr.x0 = dr.x; dr.y0 = dr.y; }
+}
+function talDronVuelve(dr, k, dt) {
+  dr.alto += dt * (dr.fase === 'perdida' ? -30 : 90); dr.y -= dt * 60; if (dr.fase === 'perdida') dr.x += Math.sin(dr.t * 23) * 2;
+  if (dr.t > 1.4) dr.fase = 'fin';
 }
 function talDronPierde(dr) {
   dr.fase = 'perdida'; dr.t = 0; play('senal');

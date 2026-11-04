@@ -4,6 +4,7 @@
 //   OPCIONES.lista({ filas: [...], versionTexto, claseVersion, alCerrar, cerrarTexto })  →  { lista, version, cerrar }   la lista entera, en orden, para colocarla en la ventana del juego
 //   OPCIONES.fila(titulo, texto, control)                 una fila «.opt-row» con un título, una explicación (opcional) y su control (un botón, una barra…)
 //   OPCIONES.volumen(titulo, leer, guardar, [texto])      barra 0-100; leer() y guardar(v) trabajan con 0 a 1
+//   OPCIONES.sonido({ efectos: [leer, guardar], musica: [leer, guardar] })   las dos barras seguidas, Efectos y Música, cada una con su valor de 0 a 1 (ADR 037)
 //   OPCIONES.interruptor(titulo, texto, leer, guardar, [[si, no]])   botón ENCENDIDO / APAGADO (o los dos textos que se pasen)
 //   OPCIONES.idioma()  OPCIONES.cuenta()  OPCIONES.novedades(abre, [texto])  OPCIONES.instalar()  OPCIONES.versionTexto(texto, [clase])
 // En `filas` de lista() va cada fila ya hecha (con OPCIONES.xxx) o un texto: 'idioma', 'cuenta', 'instalar'. Las filas propias del juego se hacen con OPCIONES.fila().
@@ -22,6 +23,12 @@ const OPCIONES = (() => {
     const r = document.createElement('input'); r.type = 'range'; r.min = 0; r.max = 100; r.value = Math.round(leer() * 100);
     r.oninput = () => guardar(r.value / 100); r.onchange = () => { if (typeof play === 'function') play('select'); };
     return fila(titulo, texto || '', r);
+  }
+  // Efectos y Música por separado: dos barras de volumen con sus títulos ya traducidos. Cada juego pasa, para cada una, [leer, guardar]
+  function sonido(o) {
+    const par = document.createDocumentFragment();
+    par.append(volumen(t('Efectos'), o.efectos[0], o.efectos[1]), volumen(t('Música'), o.musica[0], o.musica[1]));
+    return par;
   }
   function interruptor(titulo, texto, leer, guardar, etiquetas) {
     const [si, no] = etiquetas || ['ENCENDIDO', 'APAGADO'], b = el('button', 'btn-ghost ol'), pinta = () => { b.textContent = t(leer() ? si : no); };
@@ -45,5 +52,5 @@ const OPCIONES = (() => {
     let cerrar = null; if (o.alCerrar) { cerrar = el('button', 'btn-big ol', t(o.cerrarTexto || 'CERRAR')); cerrar.onclick = () => { if (typeof play === 'function') play('select'); o.alCerrar(); }; }
     return { lista: l, version, cerrar };
   }
-  return { fila, volumen, interruptor, idioma, cuenta, novedades, instalar, versionTexto, lista };
+  return { fila, volumen, sonido, interruptor, idioma, cuenta, novedades, instalar, versionTexto, lista };
 })();

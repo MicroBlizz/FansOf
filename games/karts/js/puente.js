@@ -49,33 +49,36 @@ function alturaPuente(P, f) {
 }
 
 // ---------- el suelo del cruce, en sus dos versiones ----------
+const sombraDePuente = c => { const r = (c & 255) * 0.62, g = ((c >> 8) & 255) * 0.62, b = ((c >> 16) & 255) * 0.62; return ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; };
+// lo más cerca de cada tramo: la distancia al centro de la pista y el índice de la vía
+function cercaDeTramo(P, x, y, lista) { let m = 1e9, mi = 0; for (const i of lista) { const v = P.via[i], d = (v.x - x) ** 2 + (v.y - y) ** 2; if (d < m) { m = d; mi = i; } } return [Math.sqrt(m), mi]; }
+// arriba: el tablero (tablas cruzadas a la marcha) con barandilla roja y blanca a los lados
+function colorDelTablero(x, y, va, ia, ma, C) {
+  const a = (x + 0.5 - va.x) * va.tx + (y + 0.5 - va.y) * va.ty + ia * PASO_VIA;
+  return ma > -3 ? ((Math.floor(a / 3) & 1) ? C.rojo : C.blanco) : (Math.floor(a) % 4 === 0 ? C.junta : (Math.floor(a / 4) & 1) ? C.tabla1 : C.tabla2);
+}
+function pintaPuntoDePuente(P, B, o, x, y, R, IA, IB, C) {
+  const T = P.def.tema, t = P.tex[y * TM + x];
+  B.orig[o] = t; B.arriba[o] = t; B.abajo[o] = t;
+  if (Math.hypot(x - B.c.x, y - B.c.y) > R) return;
+  const [da, ia] = cercaDeTramo(P, x + 0.5, y + 0.5, IA), [db, ib] = cercaDeTramo(P, x + 0.5, y + 0.5, IB), va = P.via[ia], vb = P.via[ib], ma = da - va.ancho / 2, mb = db - vb.ancho / 2;
+  if (ma < 0 && db < vb.ancho / 2 + 12) B.arriba[o] = colorDelTablero(x, y, va, ia, ma, C);
+  // abajo: la pista de abajo sigue entera (en la sombra del puente) y lo de arriba no se ve
+  if (mb < 0) { const p = T.pista(x, y, mb, ib, 1, vb); B.abajo[o] = da < va.ancho / 2 + 8 ? sombraDePuente(p) : p; }
+  else if (ma < 0 && mb < 7) B.abajo[o] = sombraDePuente(T.muro ? T.muro(x, y, mb, ib, 1, vb) : t);
+}
 function preparaPuente(P) {
   const def = P.def.puente; if (!def) return;
   const B = P.puente = { fa0: P.f(def.arriba[0]), fa1: P.f(def.arriba[1]), fb0: P.f(def.abajo[0]), fb1: P.f(def.abajo[1]), alto: def.alto || 12, radio: def.radio || 70, capa: null };
   B.c = enVia(P, P.f(def.centro)); B.fc = P.f(def.centro);
-  const T = P.def.tema, R = B.radio + 10, x0 = Math.max(0, Math.floor(B.c.x - R)), y0 = Math.max(0, Math.floor(B.c.y - R)), x1 = Math.min(TM - 1, Math.ceil(B.c.x + R)), y1 = Math.min(TM - 1, Math.ceil(B.c.y + R));
+  const R = B.radio + 10, x0 = Math.max(0, Math.floor(B.c.x - R)), y0 = Math.max(0, Math.floor(B.c.y - R)), x1 = Math.min(TM - 1, Math.ceil(B.c.x + R)), y1 = Math.min(TM - 1, Math.ceil(B.c.y + R));
   B.caja = { x0, y0, x1, y1 };
   const n = (x1 - x0 + 1) * (y1 - y0 + 1); B.orig = new Uint32Array(n); B.arriba = new Uint32Array(n); B.abajo = new Uint32Array(n);
-  // lo más cerca de cada tramo: índice de la vía y distancia al centro de la pista
   const tramo = (fa, fb) => P.via.map((v, i) => i).filter(i => enTramoF(i / P.N, fa, fb));
   const IA = tramo(B.fa0, B.fa1), IB = tramo(B.fb0, B.fb1);
-  const cerca = (x, y, lista) => { let m = 1e9, mi = 0; for (const i of lista) { const v = P.via[i], d = (v.x - x) ** 2 + (v.y - y) ** 2; if (d < m) { m = d; mi = i; } } return [Math.sqrt(m), mi]; };
-  const [tabla1, tabla2, junta, rojo, blanco] = C32('#c98a4b', '#b47a40', '#7a4a24', '#e63946', '#f4f4f8');
-  const sombra = c => { const r = (c & 255) * 0.62, g = ((c >> 8) & 255) * 0.62, b = ((c >> 16) & 255) * 0.62; return ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; };
+  const [tabla1, tabla2, junta, rojo, blanco] = C32('#c98a4b', '#b47a40', '#7a4a24', '#e63946', '#f4f4f8'), C = { tabla1, tabla2, junta, rojo, blanco };
   let o = 0;
-  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++, o++) {
-    const k = y * TM + x, t = P.tex[k]; B.orig[o] = t; B.arriba[o] = t; B.abajo[o] = t;
-    if (Math.hypot(x - B.c.x, y - B.c.y) > R) continue;
-    const [da, ia] = cerca(x + 0.5, y + 0.5, IA), [db, ib] = cerca(x + 0.5, y + 0.5, IB), va = P.via[ia], vb = P.via[ib], ma = da - va.ancho / 2, mb = db - vb.ancho / 2;
-    // arriba: el tablero (tablas cruzadas a la marcha) con barandilla roja y blanca a los lados
-    if (ma < 0 && db < vb.ancho / 2 + 12) {
-      const a = (x + 0.5 - va.x) * va.tx + (y + 0.5 - va.y) * va.ty + ia * PASO_VIA;
-      B.arriba[o] = ma > -3 ? ((Math.floor(a / 3) & 1) ? rojo : blanco) : (Math.floor(a) % 4 === 0 ? junta : (Math.floor(a / 4) & 1) ? tabla1 : tabla2);
-    }
-    // abajo: la pista de abajo sigue entera (en la sombra del puente) y lo de arriba no se ve
-    if (mb < 0) { const p = T.pista(x, y, mb, ib, 1, vb); B.abajo[o] = da < va.ancho / 2 + 8 ? sombra(p) : p; }
-    else if (ma < 0 && mb < 7) B.abajo[o] = sombra(T.muro ? T.muro(x, y, mb, ib, 1, vb) : t);
-  }
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++, o++) pintaPuntoDePuente(P, B, o, x, y, R, IA, IB, C);
   B.capa = null; ponCapaPuente(P, 'abajo');
 }
 // poner en el mapa el suelo del piso del jugador (y rehacer las copias pequeñas de esa zona)
@@ -114,9 +117,8 @@ for (const def of PISTAS) {
     return l;
   };
 }
-// los karts de pisos distintos no chocan en el cruce
-const chocanKartsSinPuente = chocanKarts;
-chocanKarts = (a, b) => { const P = PISTA; if (P && P.puente && cercaPuente(P, a) && cercaPuente(P, b) && capaDe(P, a) !== capaDe(P, b)) return; chocanKartsSinPuente(a, b); };
+// los karts de pisos distintos no chocan en el cruce (chocanKarts, en kart.js, lo pregunta)
+function enPisosDistintos(a, b) { const P = PISTA; return !!(P && P.puente && cercaPuente(P, a) && cercaPuente(P, b) && capaDe(P, a) !== capaDe(P, b)); }
 // antes de pintar: el suelo del piso del jugador. Lo que está en el otro piso se pinta (o no) según desde dónde se mire
 let CAPA_VISTA = 'abajo';
 function puenteAntesDePintar(P, yo) {

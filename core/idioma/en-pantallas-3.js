@@ -116,6 +116,7 @@ IDIOMA.add({
   "Modo pruebas": "Test mode",
   "Máquina": "Machine",
   "Música": "Music",
+  "Efectos": "Sound effects",
   "Música del menú": "Menu music",
   "NOVEDADES": "NEWS",
   "Números de daño": "Damage numbers",

@@ -95,12 +95,14 @@ const NUCLEO = (() => {
     'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú
     'js/sistema/idioma-banderas.js', // el selector de idioma de Opciones
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
+    'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
+    'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
     'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
@@ -126,12 +128,14 @@ const NUCLEO = (() => {
     'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
+    'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
+    'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
     'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())

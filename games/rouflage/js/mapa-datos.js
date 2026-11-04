@@ -42,8 +42,11 @@ function cargaDatosMapa(id) {
   SALIDA_CAMALEONES = d.salidaCamaleones; SALIDA_CAZADORES = d.salidaCazadores;
   BARRERAS = (d.barreras || []).map(b => ({ ...b }));
   Object.assign(PUERTA, { estilo: 'barrera' }, d.puerta, { cerrada: true, abierta: 0 });
-
-  // la rejilla: qué hay en cada casilla y de qué zona es
+  mapaRejilla();
+  mapaTramosDeCara();
+}
+// la rejilla: qué hay en cada casilla y de qué zona es, con la pared de frente encima de cada suelo
+function mapaRejilla() {
   GRID = new Uint8Array(MW * MH); ZONA_DE = new Int16Array(MW * MH).fill(-1);      // (Int16: un escenario dibujado por el jugador puede tener más de 127 trozos)
   ZONAS.forEach((z, i) => { for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) { GRID[y * MW + x] = SUELO; ZONA_DE[y * MW + x] = i; } });
   // encima de cada suelo que acaba por arriba, la pared de frente (hasta 3 casillas de muro)
@@ -51,7 +54,9 @@ function cargaDatosMapa(id) {
     if (GRID[y * MW + x] !== SUELO || GRID[(y - 1) * MW + x] === SUELO) continue;
     for (let k = 1; k <= ALTO_CARA && y - k >= 0; k++) { const j = (y - k) * MW + x; if (GRID[j] !== VACIO) break; GRID[j] = CARA; ZONA_DE[j] = ZONA_DE[y * MW + x]; }
   }
-  // las paredes de frente, agrupadas en tramos seguidos de la misma zona y altura: { zona, x0, x1, y0, y1 } en píxeles
+}
+// las paredes de frente, agrupadas en tramos seguidos de la misma zona y altura: { zona, x0, x1, y0, y1 } en píxeles
+function mapaTramosDeCara() {
   CARAS = [];
   let tramo = null;
   for (let y = 1; y < MH; y++) {

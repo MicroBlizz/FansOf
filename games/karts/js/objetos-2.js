@@ -136,57 +136,59 @@ const OBJETOS_2 = {
 for (const [id, o] of Object.entries(OBJETOS_2)) { OBJETOS[id] = Object.assign({ nuevo: true }, o); REPARTO[id] = o.reparto; LISTA_OBJETOS.push(id); }
 
 // ---------- el escudo del reembolso y el bot (antes de que un golpe cuente) ----------
-const golpeaSinEscudo = golpea;
-golpea = (k, tipo, autor) => {
-  if (k.tInmune > 0 || k.estado === 'cae' || k.fin) return false;
+// dice si el escudo del Reembolso o el Bot paran el golpe
+function frenaGolpe(k, tipo) {
+  if (k.tInmune > 0 || k.estado === 'cae' || k.fin) return true;
   if (k.escudo > 0) {
     k.escudo = 0; k.monedas = Math.min(AJ.maxMonedas, k.monedas + 1);
     for (let i = 0; i < 12; i++) chispa(k.x, k.y, 5, azar(-40, 40), azar(-40, 40), azar(30, 70), 0.5, i & 1 ? '#5ef27a' : '#ffffff', 2);
     if (k.esJugador) aviso('¡REEMBOLSADO!', 'Ese golpe no cuenta. Y te devolvemos una moneda.', '#5ef27a');
-    suena(k, 'premio'); k.tInmune = 0.8; return false;
+    suena(k, 'premio'); k.tInmune = 0.8; return true;
   }
-  if (tipo === 'nerf' && paraBot(k)) return false;
-  return golpeaSinEscudo(k, tipo, autor);
-};
+  return tipo === 'nerf' && paraBot(k);
+}
 
 // ---------- cada paso de la carrera: los efectos que duran ----------
+// el tren: chispas de colores mientras dura y, al acabar, la máquina recupera el mando
+function pasoTren(k, dt) {
+  k.tTren -= dt;
+  if (Math.random() < 0.7) chispa(k.x - Math.cos(k.ang) * 7, k.y - Math.sin(k.ang) * 7, 6, azar(-14, 14), azar(-14, 14), azar(20, 50), 0.5, Math.random() < 0.5 ? '#ff3df0' : '#ffe14d', 2.6, 30);
+  if (k.tTren <= 0 && k.trenLleva) { k.trenLleva = false; if (!k.fin && !PANT.auto) k.ia = null; }
+}
+// el lag: cada 0,4 s el kart salta unos pasos hacia atrás
+function pasoLag(k, dt) {
+  k.lag.t -= dt;
+  if (k.lag.t > 0) return;
+  const nx = k.x - Math.cos(k.dir) * 9, ny = k.y - Math.sin(k.dir) * 9, s = supEn(PISTA, nx, ny);
+  if (!ES_MURO(s) && s !== S_VACIO) { k.x = nx; k.y = ny; }
+  for (let i = 0; i < 5; i++) chispa(k.x, k.y, 6, azar(-20, 20), azar(-20, 20), azar(10, 30), 0.3, i & 1 ? '#ff3348' : '#22e3ff', 2.2, 20);
+  k.lag.n--; k.lag.t = 0.4; if (k.lag.n <= 0) k.lag = null;
+}
+// el imán: las monedas cercanas se las lleva
+function pasoIman(k, dt) {
+  k.tIman -= dt;
+  for (const m of PISTA.monedas) if (m.t <= 0 && Math.hypot(m.x - k.x, m.y - k.y) < 48) {
+    m.t = 9; if (k.monedas < AJ.maxMonedas) k.monedas++; suena(k, 'moneda');
+    for (let i = 0; i < 4; i++) chispa(m.x, m.y, 4, (k.x - m.x) * 2, (k.y - m.y) * 2, azar(20, 40), 0.35, '#ffcb3d', 2);
+  }
+}
 function pasoObjetos2(C, dt) {
   if (SPAM.t > 0) SPAM.t -= dt;
   for (const k of C.karts) {
     if (k.escudo > 0) k.escudo -= dt;
     if (k.tBot > 0) k.tBot -= dt;
     if (k.tMartillo > 0) k.tMartillo -= dt;
-    if (k.tTren > 0) {
-      k.tTren -= dt;
-      if (Math.random() < 0.7) chispa(k.x - Math.cos(k.ang) * 7, k.y - Math.sin(k.ang) * 7, 6, azar(-14, 14), azar(-14, 14), azar(20, 50), 0.5, Math.random() < 0.5 ? '#ff3df0' : '#ffe14d', 2.6, 30);
-      if (k.tTren <= 0 && k.trenLleva) { k.trenLleva = false; if (!k.fin && !PANT.auto) k.ia = null; }
-    }
-    if (k.lag) {
-      k.lag.t -= dt;
-      if (k.lag.t <= 0) {
-        const nx = k.x - Math.cos(k.dir) * 9, ny = k.y - Math.sin(k.dir) * 9, s = supEn(PISTA, nx, ny);
-        if (!ES_MURO(s) && s !== S_VACIO) { k.x = nx; k.y = ny; }
-        for (let i = 0; i < 5; i++) chispa(k.x, k.y, 6, azar(-20, 20), azar(-20, 20), azar(10, 30), 0.3, i & 1 ? '#ff3348' : '#22e3ff', 2.2, 20);
-        k.lag.n--; k.lag.t = 0.4; if (k.lag.n <= 0) k.lag = null;
-      }
-    }
-    if (k.tIman > 0) {
-      k.tIman -= dt;
-      for (const m of PISTA.monedas) if (m.t <= 0 && Math.hypot(m.x - k.x, m.y - k.y) < 48) {
-        m.t = 9; if (k.monedas < AJ.maxMonedas) k.monedas++; suena(k, 'moneda');
-        for (let i = 0; i < 4; i++) chispa(m.x, m.y, 4, (k.x - m.x) * 2, (k.y - m.y) * 2, azar(20, 40), 0.35, '#ffcb3d', 2);
-      }
-    }
+    if (k.tTren > 0) pasoTren(k, dt);
+    if (k.lag) pasoLag(k, dt);
+    if (k.tIman > 0) pasoIman(k, dt);
   }
 }
 
 // ---------- lo que se ve: el bot que da vueltas y el martillazo (la burbuja, el lag, el influencer y el tren: efectos-objetos.js) ----------
-const pintaKartSinExtras = pintaKart;
-pintaKart = (k, sx, sy, e) => {
-  pintaKartSinExtras(k, sx, sy, e);
+function pintaExtrasDelKart(k, sx, sy, e) {
   if (k.tBot > 0) { const a = RELOJ * 4 + k.idx; figCosa('botmini').pinta(lx, Math.round(sx + Math.cos(a) * 11 * e), Math.round(sy - (2 + Math.abs(Math.sin(a * 2))) * e), e * 0.8, BASE_COSA, a); }
   if (k.tMartillo > 0) figCosa('martillo').pinta(lx, Math.round(sx), Math.round(sy - (k.z + 18) * e), e * 1.2, BASE_COSA, (0.45 - k.tMartillo) * 14);
-};
+}
 
 // ---------- el spam en tu pantalla (encima del marcador) ----------
 const VENTANAS_SPAM = [['¡OFERTA!', 'Solo hoy: aire.'], ['ACTUALIZA YA', '48 GB. Ahora no.'], ['1 MENSAJE NUEVO', 'Es publicidad.'], ['¡HAS GANADO!', 'Haz clic. O no.']];

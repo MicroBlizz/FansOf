@@ -84,23 +84,30 @@ function pintaSigno(c, x, y, s, color, t) {
 // el nombre, las cartas y las marcas de cada personaje
 function pintaMarcaEnte(c, t, e, yo) {
   if (e.fuera && e.tFuera > 2.6 || idaOculto(e)) return;
-  if (e.clase === 'cazador') {
-    if (J.fase !== 'prep' && !e.jugador && J.fase !== 'titulo') {   // las cartas de despido que le quedan a cada becario
-      for (let k = 0; k < REGLAS.balas; k++) {   // la misma cartita de despido que en el panel del cazador: sobre oscuro con su raya roja, gris si ya se gastó
-        const bx = e.x - 20 + k * 8, by = e.y - 78, viva = k < e.balas;
-        c.fillStyle = OL; c.fillRect(bx, by, 7, 10); c.fillStyle = viva ? '#fff6ea' : '#5a5f7a'; c.fillRect(bx + 1, by + 1, 5, 8);
-        if (viva) { c.fillStyle = '#ff4b5c'; c.fillRect(bx + 1, by + 4, 5, 2); }
-      }
-    }
-    if (J.fase !== 'titulo') rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 92, 10, e.jugador ? '#ffcb3d' : '#9fd0ff', OL, LETRA_UI);   // el cazador siempre enseña su nombre, a todos
-    if (e.marca) pintaSigno(c, e.x, e.y - 106, e.marca, e.marca === '!' ? '#ff4b5c' : '#e8731a', t);
-  } else if (!e.fuera && e.hielo < 0.4 && J.fase !== 'titulo' && !(e === yo && TALLER.abierto) && !invisible(e)) {
-    c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
-    if (e.jugador && e.aguante < 0.999) {      // tu aguante: una barrita bajo los pies, amarilla; roja mientras estás agotado
-      c.fillStyle = OL; c.fillRect(e.x - 16, e.y + 5, 32, 6); c.fillStyle = e.cansado ? '#ff4b5c' : '#ffcb3d'; c.fillRect(e.x - 15, e.y + 6, 30 * e.aguante, 4);
-    }
-    c.globalAlpha = 1;
+  if (e.clase === 'cazador') pintaMarcaCazador(c, t, e);
+  else if (!e.fuera && e.hielo < 0.4 && J.fase !== 'titulo' && !(e === yo && TALLER.abierto) && !invisible(e)) pintaMarcaCamaleon(c, e);
+}
+// el becario: las cartas que le quedan, su nombre (siempre, a todos) y su signo
+function pintaMarcaCazador(c, t, e) {
+  if (J.fase !== 'prep' && !e.jugador && J.fase !== 'titulo') pintaCartasBecario(c, e);
+  if (J.fase !== 'titulo') rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 92, 10, e.jugador ? '#ffcb3d' : '#9fd0ff', OL, LETRA_UI);   // el cazador siempre enseña su nombre, a todos
+  if (e.marca) pintaSigno(c, e.x, e.y - 106, e.marca, e.marca === '!' ? '#ff4b5c' : '#e8731a', t);
+}
+// las cartas de despido que le quedan a cada becario
+function pintaCartasBecario(c, e) {
+  for (let k = 0; k < REGLAS.balas; k++) {   // la misma cartita de despido que en el panel del cazador: sobre oscuro con su raya roja, gris si ya se gastó
+    const bx = e.x - 20 + k * 8, by = e.y - 78, viva = k < e.balas;
+    c.fillStyle = OL; c.fillRect(bx, by, 7, 10); c.fillStyle = viva ? '#fff6ea' : '#5a5f7a'; c.fillRect(bx + 1, by + 1, 5, 8);
+    if (viva) { c.fillStyle = '#ff4b5c'; c.fillRect(bx + 1, by + 4, 5, 2); }
   }
+}
+// el colado: su nombre (más tenue según se congela) y, si eres tú, la barrita de aguante
+function pintaMarcaCamaleon(c, e) {
+  c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
+  if (e.jugador && e.aguante < 0.999) {      // tu aguante: una barrita bajo los pies, amarilla; roja mientras estás agotado
+    c.fillStyle = OL; c.fillRect(e.x - 16, e.y + 5, 32, 6); c.fillStyle = e.cansado ? '#ff4b5c' : '#ffcb3d'; c.fillRect(e.x - 15, e.y + 6, 30 * e.aguante, 4);
+  }
+  c.globalAlpha = 1;
 }
 // «TOCA AQUÍ» hasta el primer disparo del cazador
 function pintaTocaAqui(c, t, yo) {
@@ -230,14 +237,20 @@ function dibujaFondo(c, capas, x0, y0, vw, vh) {
 function dibujaJunta(c, capas, x0, y0, vw, vh) {
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
-  for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && !idaOculto(e) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
+  for (const e of J.entes) if (dibujaEntra(e, x0, y0, vw, vh)) cosas.push(e);
   talentosCosas(cosas, x0, y0, vw, vh);      // los señuelos pintados (talentos-efectos.js)
   for (const m of MASC.lista) if (m.x > x0 - 40 && m.x < x0 + vw + 40 && m.y > y0 - 10 && m.y < y0 + vh + 40) cosas.push(m);      // las mascotas del armario (mascotas.js)
   for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
+  dibujaJuntaPuertas(cosas);
+  return cosas;
+}
+// ¿cae este personaje en el encuadre (con margen)? Sin los que llevan fuera más de 3 s ni los ocultos de «Ida y vuelta»
+const dibujaEntra = (e, x0, y0, vw, vh) => !(e.fuera && e.tFuera > 3) && !idaOculto(e) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90;
+// la puerta del mapa, las barreras de Mi escenario y los portazos de los fantasmas: se ordenan con los demás por su borde de abajo
+function dibujaJuntaPuertas(cosas) {
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
   if (BARRERAS.length && PUERTA.abierta < 1 && J.fase !== 'sala') for (const b of BARRERAS) cosas.push({ y: b.y + b.h, puerta: true, barrera: b });      // Mi escenario (barreras.js)
   for (const z of FPZ.lista) if (z.k === 'portazo') cosas.push({ y: z.p.y + z.p.h, puerta: true, portazo: z });      // el portazo de un fantasma (fantasma-efectos.js)
-  return cosas;
 }
 // el orden de pintado: de atrás adelante, con los congelados como «parte del suelo»
 function dibujaOrden(cosas) {

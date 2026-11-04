@@ -24,54 +24,59 @@ function cortaEsf(p, ox, oy, oz, dx, dy, dz) {
   NLX = (ox + t * dx) / (a * a); NLY = (oy + t * dy) / (b * b); NLZ = (oz + t * dz) / (c * c);
   return t;
 }
+// el tramo de un rayo dentro de la losa de un eje de la caja: deja en LOSA_A y LOSA_B dónde entra y sale y en LOSA_S el signo de la cara de entrada.
+// Devuelve 1 si el rayo cruza la losa, 0 si va paralelo dentro de ella y -1 si va paralelo y fuera
+let LOSA_A = 0, LOSA_B = 0, LOSA_S = 1;
+function losaDeEje(r, o, d) {
+  if (d <= 1e-9 && d >= -1e-9) return o > r || o < -r ? -1 : 0;
+  LOSA_A = (-r - o) / d; LOSA_B = (r - o) / d; LOSA_S = -1;
+  if (LOSA_A > LOSA_B) { const x = LOSA_A; LOSA_A = LOSA_B; LOSA_B = x; LOSA_S = 1; }
+  return 1;
+}
 function cortaCaja(p, ox, oy, oz, dx, dy, dz) {
-  let t0 = -1e9, t1 = 1e9, eje = 0, signo = 1, a, b, s;
-  const rx = p.r[0], ry = p.r[1], rz = p.r[2];
-  if (dx > 1e-9 || dx < -1e-9) {
-    a = (-rx - ox) / dx; b = (rx - ox) / dx; s = -1;
-    if (a > b) { const x = a; a = b; b = x; s = 1; }
-    t0 = a; signo = s; t1 = b;
-  } else if (ox > rx || ox < -rx) return -1;
-  if (dy > 1e-9 || dy < -1e-9) {
-    a = (-ry - oy) / dy; b = (ry - oy) / dy; s = -1;
-    if (a > b) { const x = a; a = b; b = x; s = 1; }
-    if (a > t0) { t0 = a; eje = 1; signo = s; }
-    if (b < t1) t1 = b;
+  const o = [ox, oy, oz], d = [dx, dy, dz];
+  let t0 = -1e9, t1 = 1e9, eje = 0, signo = 1;
+  for (let e = 0; e < 3; e++) {
+    const cruza = losaDeEje(p.r[e], o[e], d[e]);
+    if (cruza < 0) return -1;
+    if (!cruza) continue;
+    if (e === 0) { t0 = LOSA_A; signo = LOSA_S; t1 = LOSA_B; continue; }
+    if (LOSA_A > t0) { t0 = LOSA_A; eje = e; signo = LOSA_S; }
+    if (LOSA_B < t1) t1 = LOSA_B;
     if (t0 > t1) return -1;
-  } else if (oy > ry || oy < -ry) return -1;
-  if (dz > 1e-9 || dz < -1e-9) {
-    a = (-rz - oz) / dz; b = (rz - oz) / dz; s = -1;
-    if (a > b) { const x = a; a = b; b = x; s = 1; }
-    if (a > t0) { t0 = a; eje = 2; signo = s; }
-    if (b < t1) t1 = b;
-    if (t0 > t1) return -1;
-  } else if (oz > rz || oz < -rz) return -1;
+  }
   NLX = eje === 0 ? signo : 0; NLY = eje === 1 ? signo : 0; NLZ = eje === 2 ? signo : 0;
   return t0;
 }
+// el mejor corte de un rayo con un cono: t, y la normal en CONO_N
+let CONO_T = 1e9; const CONO_N = [0, 0, 0];
+function ponCorteCono(t, nx, ny, nz) { CONO_T = t; CONO_N[0] = nx; CONO_N[1] = ny; CONO_N[2] = nz; }
+function cortaLadoCono(ox, oy, oz, dx, dy, dz, h, rm, k) {
+  const ro = rm + k * oz, A = dx * dx + dy * dy - k * k * dz * dz, B = ox * dx + oy * dy - k * dz * ro, C = ox * ox + oy * oy - ro * ro;
+  if (A <= 1e-9 && A >= -1e-9) return;
+  const D = B * B - A * C;
+  if (D < 0) return;
+  const q = Math.sqrt(D);
+  for (const t of [(-B - q) / A, (-B + q) / A]) {
+    const z = oz + t * dz, rz = rm + k * z;
+    if (t < CONO_T && z >= -h && z <= h && rz >= 0) ponCorteCono(t, ox + t * dx, oy + t * dy, -k * rz);
+  }
+}
+function cortaTapasCono(ox, oy, oz, dx, dy, dz, h, rm, k) {
+  if (dz <= 1e-9 && dz >= -1e-9) return;
+  let t = (h - oz) / dz, x = ox + t * dx, y = oy + t * dy, rz = rm + k * h;
+  if (t < CONO_T && x * x + y * y <= rz * rz) ponCorteCono(t, 0, 0, 1);
+  t = (-h - oz) / dz; x = ox + t * dx; y = oy + t * dy; rz = rm - k * h;
+  if (t < CONO_T && x * x + y * y <= rz * rz) ponCorteCono(t, 0, 0, -1);
+}
 function cortaCono(p, ox, oy, oz, dx, dy, dz) {
   const h = p.r[2], rm = (p.r[0] + p.r[1]) / 2, k = (p.r[1] - p.r[0]) / (2 * h);
-  let mejor = 1e9, nx = 0, ny = 0, nz = 0;
-  const ro = rm + k * oz, A = dx * dx + dy * dy - k * k * dz * dz, B = ox * dx + oy * dy - k * dz * ro, C = ox * ox + oy * oy - ro * ro;
-  if (A > 1e-9 || A < -1e-9) {
-    const D = B * B - A * C;
-    if (D >= 0) {
-      const q = Math.sqrt(D);
-      let t = (-B - q) / A, z = oz + t * dz, rz = rm + k * z;
-      if (z >= -h && z <= h && rz >= 0) { mejor = t; nx = ox + t * dx; ny = oy + t * dy; nz = -k * rz; }
-      t = (-B + q) / A; z = oz + t * dz; rz = rm + k * z;
-      if (t < mejor && z >= -h && z <= h && rz >= 0) { mejor = t; nx = ox + t * dx; ny = oy + t * dy; nz = -k * rz; }
-    }
-  }
-  if (dz > 1e-9 || dz < -1e-9) {
-    let t = (h - oz) / dz, x = ox + t * dx, y = oy + t * dy, rz = rm + k * h;
-    if (t < mejor && x * x + y * y <= rz * rz) { mejor = t; nx = 0; ny = 0; nz = 1; }
-    t = (-h - oz) / dz; x = ox + t * dx; y = oy + t * dy; rz = rm - k * h;
-    if (t < mejor && x * x + y * y <= rz * rz) { mejor = t; nx = 0; ny = 0; nz = -1; }
-  }
-  if (mejor > 1e8) return -1;
-  NLX = nx; NLY = ny; NLZ = nz;
-  return mejor;
+  ponCorteCono(1e9, 0, 0, 0);
+  cortaLadoCono(ox, oy, oz, dx, dy, dz, h, rm, k);
+  cortaTapasCono(ox, oy, oz, dx, dy, dz, h, rm, k);
+  if (CONO_T > 1e8) return -1;
+  NLX = CONO_N[0]; NLY = CONO_N[1]; NLZ = CONO_N[2];
+  return CONO_T;
 }
 const CORTA = { esf: cortaEsf, caja: cortaCaja, cono: cortaCono };
 
@@ -98,88 +103,115 @@ let FOTO_Z = new Float32Array(0), FOTO_ID = new Int16Array(0), FOTO_PARTE = new 
 // La foto: o = { w, h, ax, ay (dónde cae el punto [0,0,0] del modelo), esc (píxeles por unidad), giro (0 = visto por detrás, en radianes),
 // incl (cuánto se mira desde arriba, en radianes), muestras (2 = cada píxel se decide con 4 puntos), contorno, lineas }
 // Devuelve los colores (un número por píxel; 0 = transparente).
-function fotoModelo(mod, o) {
-  const n = o.muestras || 2, W = o.w * n, H = o.h * n, esc = o.esc * n, ax = o.ax * n, ay = o.ay * n, K = 400;
-  const sr = Math.sin(o.giro), cr = Math.cos(o.giro), sp = Math.sin(o.incl), cp = Math.cos(o.incl);
-  const V = [sr * cp, cr * cp, -sp], Rr = [cr, -sr, 0], U = [sr * sp, cr * sp, cp];
+// los ejes de la cámara, el tamaño de la foto (con las muestras) y los buffers de profundidad, color y parte
+function preparaFoto(o, n) {
+  const W = o.w * n, H = o.h * n, sr = Math.sin(o.giro), cr = Math.cos(o.giro), sp = Math.sin(o.incl), cp = Math.cos(o.incl);
   if (FOTO_Z.length < W * H) { FOTO_Z = new Float32Array(W * H); FOTO_ID = new Int16Array(W * H); FOTO_PARTE = new Int16Array(W * H); }
-  const zb = FOTO_Z, id = FOTO_ID, pa = FOTO_PARTE;
-  zb.fill(1e9, 0, W * H); id.fill(-1, 0, W * H);
-  for (const p of mod.lista) {
-    const R = p.R, c = p.c;
-    // la cámara, vista desde la pieza (cada vector pasado a las coordenadas de la pieza)
-    const d0 = V[0] * R[0] + V[1] * R[3] + V[2] * R[6], d1 = V[0] * R[1] + V[1] * R[4] + V[2] * R[7], d2 = V[0] * R[2] + V[1] * R[5] + V[2] * R[8];
-    const r0 = Rr[0] * R[0] + Rr[1] * R[3], r1 = Rr[0] * R[1] + Rr[1] * R[4], r2 = Rr[0] * R[2] + Rr[1] * R[5];
-    const u0 = U[0] * R[0] + U[1] * R[3] + U[2] * R[6], u1 = U[0] * R[1] + U[1] * R[4] + U[2] * R[7], u2 = U[0] * R[2] + U[1] * R[5] + U[2] * R[8];
-    // el trozo de foto que ocupa: su centro y lo que se extiende a lo ancho y a lo alto
-    const px = c[0] * Rr[0] + c[1] * Rr[1], py = c[0] * U[0] + c[1] * U[1] + c[2] * U[2];
-    const ea = p.e[0], eb = p.e[1], ec = p.e[2];
-    const mw = p.t === 'esf' ? Math.sqrt(ea * ea * r0 * r0 + eb * eb * r1 * r1 + ec * ec * r2 * r2) : ea * Math.abs(r0) + eb * Math.abs(r1) + ec * Math.abs(r2);
-    const mh = p.t === 'esf' ? Math.sqrt(ea * ea * u0 * u0 + eb * eb * u1 * u1 + ec * ec * u2 * u2) : ea * Math.abs(u0) + eb * Math.abs(u1) + ec * Math.abs(u2);
-    const i0 = Math.max(0, Math.floor(ax + (px - mw) * esc)), i1 = Math.min(W - 1, Math.ceil(ax + (px + mw) * esc));
-    const j0 = Math.max(0, Math.floor(ay - (py + mh) * esc)), j1 = Math.min(H - 1, Math.ceil(ay - (py - mh) * esc));
-    if (i0 > i1 || j0 > j1) continue;
-    const cl0 = c[0] * R[0] + c[1] * R[3] + c[2] * R[6], cl1 = c[0] * R[1] + c[1] * R[4] + c[2] * R[7], cl2 = c[0] * R[2] + c[1] * R[5] + c[2] * R[8];
-    const bx = -d0 * K - cl0, by = -d1 * K - cl1, bz = -d2 * K - cl2;
-    const plano = mod.plano[p.mi], brillo = mod.brillo[p.mi], corta = p.corta, base = p.mi * 4, parte = p.parte, uLuz = p.liso ? 0.72 : 0.6, uSombra = p.liso ? -0.2 : 0.1;
-    // la luz, pasada también a las coordenadas de la pieza (así cada punto solo necesita una cuenta)
-    const lmx = Rr[0] * LUZ_FOTO[0] + U[0] * LUZ_FOTO[1] - V[0] * LUZ_FOTO[2], lmy = Rr[1] * LUZ_FOTO[0] + U[1] * LUZ_FOTO[1] - V[1] * LUZ_FOTO[2], lmz = U[2] * LUZ_FOTO[1] - V[2] * LUZ_FOTO[2];
-    const l0 = lmx * R[0] + lmy * R[3] + lmz * R[6], l1 = lmx * R[1] + lmy * R[4] + lmz * R[7], l2 = lmx * R[2] + lmy * R[5] + lmz * R[8];
-    for (let j = j0; j <= j1; j++) {
-      const Y = (ay - (j + 0.5)) / esc, fx = bx + u0 * Y, fy = by + u1 * Y, fz = bz + u2 * Y;
-      for (let i = i0; i <= i1; i++) {
-        const X = (i + 0.5 - ax) / esc;
-        const t = corta(p, fx + r0 * X, fy + r1 * X, fz + r2 * X, d0, d1, d2);
-        const k = j * W + i;
-        if (t < 0 || t >= zb[k]) continue;
-        zb[k] = t;
-        let tono = 1;
-        if (!plano) {
-          const luz = (NLX * l0 + NLY * l1 + NLZ * l2) / (Math.sqrt(NLX * NLX + NLY * NLY + NLZ * NLZ) || 1);
-          tono = luz > uLuz ? (brillo && luz > 0.9 ? 3 : 2) : luz > uSombra ? 1 : 0;
-        }
-        id[k] = base + tono; pa[k] = parte;
-      }
+  FOTO_Z.fill(1e9, 0, W * H); FOTO_ID.fill(-1, 0, W * H);
+  return { W, H, esc: o.esc * n, ax: o.ax * n, ay: o.ay * n, K: 400, V: [sr * cp, cr * cp, -sp], Rr: [cr, -sr, 0], U: [sr * sp, cr * sp, cp], zb: FOTO_Z, id: FOTO_ID, pa: FOTO_PARTE };
+}
+// dónde cae una pieza en la foto: la cámara y los ejes vistos desde la pieza, y el trozo de foto que ocupa (null si cae fuera)
+function proyectaPieza(p, G) {
+  const { V, Rr, U, esc, ax, ay, W, H } = G, R = p.R, c = p.c;
+  const d0 = V[0] * R[0] + V[1] * R[3] + V[2] * R[6], d1 = V[0] * R[1] + V[1] * R[4] + V[2] * R[7], d2 = V[0] * R[2] + V[1] * R[5] + V[2] * R[8];
+  const r0 = Rr[0] * R[0] + Rr[1] * R[3], r1 = Rr[0] * R[1] + Rr[1] * R[4], r2 = Rr[0] * R[2] + Rr[1] * R[5];
+  const u0 = U[0] * R[0] + U[1] * R[3] + U[2] * R[6], u1 = U[0] * R[1] + U[1] * R[4] + U[2] * R[7], u2 = U[0] * R[2] + U[1] * R[5] + U[2] * R[8];
+  // el trozo de foto que ocupa: su centro y lo que se extiende a lo ancho y a lo alto
+  const px = c[0] * Rr[0] + c[1] * Rr[1], py = c[0] * U[0] + c[1] * U[1] + c[2] * U[2];
+  const ea = p.e[0], eb = p.e[1], ec = p.e[2];
+  const mw = p.t === 'esf' ? Math.sqrt(ea * ea * r0 * r0 + eb * eb * r1 * r1 + ec * ec * r2 * r2) : ea * Math.abs(r0) + eb * Math.abs(r1) + ec * Math.abs(r2);
+  const mh = p.t === 'esf' ? Math.sqrt(ea * ea * u0 * u0 + eb * eb * u1 * u1 + ec * ec * u2 * u2) : ea * Math.abs(u0) + eb * Math.abs(u1) + ec * Math.abs(u2);
+  const i0 = Math.max(0, Math.floor(ax + (px - mw) * esc)), i1 = Math.min(W - 1, Math.ceil(ax + (px + mw) * esc));
+  const j0 = Math.max(0, Math.floor(ay - (py + mh) * esc)), j1 = Math.min(H - 1, Math.ceil(ay - (py - mh) * esc));
+  return i0 > i1 || j0 > j1 ? null : { R, c, d0, d1, d2, r0, r1, r2, u0, u1, u2, i0, i1, j0, j1 };
+}
+// el tono (0 sombra, 1 medio, 2 luz, 3 brillo) según lo que mira la superficie a la luz
+function tonoDe(l0, l1, l2, plano, brillo, uLuz, uSombra) {
+  if (plano) return 1;
+  const luz = (NLX * l0 + NLY * l1 + NLZ * l2) / (Math.sqrt(NLX * NLX + NLY * NLY + NLZ * NLZ) || 1);
+  return luz > uLuz ? (brillo && luz > 0.9 ? 3 : 2) : luz > uSombra ? 1 : 0;
+}
+// pinta una pieza en los buffers: para cada punto de su trozo de foto, si la toca y queda más cerca que lo que había, se queda con su color y su parte
+function rellenaPieza(mod, p, G, Q) {
+  const { V, Rr, U, esc, ax, ay, W, K, zb, id, pa } = G, { R, c, d0, d1, d2, r0, r1, r2, u0, u1, u2, i0, i1, j0, j1 } = Q;
+  const cl0 = c[0] * R[0] + c[1] * R[3] + c[2] * R[6], cl1 = c[0] * R[1] + c[1] * R[4] + c[2] * R[7], cl2 = c[0] * R[2] + c[1] * R[5] + c[2] * R[8];
+  const bx = -d0 * K - cl0, by = -d1 * K - cl1, bz = -d2 * K - cl2;
+  const plano = mod.plano[p.mi], brillo = mod.brillo[p.mi], corta = p.corta, base = p.mi * 4, parte = p.parte, uLuz = p.liso ? 0.72 : 0.6, uSombra = p.liso ? -0.2 : 0.1;
+  // la luz, pasada también a las coordenadas de la pieza (así cada punto solo necesita una cuenta)
+  const lmx = Rr[0] * LUZ_FOTO[0] + U[0] * LUZ_FOTO[1] - V[0] * LUZ_FOTO[2], lmy = Rr[1] * LUZ_FOTO[0] + U[1] * LUZ_FOTO[1] - V[1] * LUZ_FOTO[2], lmz = U[2] * LUZ_FOTO[1] - V[2] * LUZ_FOTO[2];
+  const l0 = lmx * R[0] + lmy * R[3] + lmz * R[6], l1 = lmx * R[1] + lmy * R[4] + lmz * R[7], l2 = lmx * R[2] + lmy * R[5] + lmz * R[8];
+  for (let j = j0; j <= j1; j++) {
+    const Y = (ay - (j + 0.5)) / esc, fx = bx + u0 * Y, fy = by + u1 * Y, fz = bz + u2 * Y;
+    for (let i = i0; i <= i1; i++) {
+      const X = (i + 0.5 - ax) / esc;
+      const t = corta(p, fx + r0 * X, fy + r1 * X, fz + r2 * X, d0, d1, d2);
+      const k = j * W + i;
+      if (t < 0 || t >= zb[k]) continue;
+      zb[k] = t;
+      id[k] = base + tonoDe(l0, l1, l2, plano, brillo, uLuz, uSombra); pa[k] = parte;
     }
   }
-  // de las muestras a los píxeles: se queda el color que más se repite si al menos la mitad de la casilla está tapada
+}
+// los votos de las n×n muestras de una casilla: cuántas están llenas y cuántos colores distintos hay (votos y cuenta se rellenan)
+function votaCasilla(G, i, j, n, votos, cuenta) {
+  let llenos = 0, distintos = 0;
+  for (let b = 0; b < n; b++) for (let a = 0; a < n; a++) {
+    const v = G.id[(j * n + b) * G.W + i * n + a];
+    if (v < 0) continue;
+    llenos++;
+    let q = 0; while (q < distintos && votos[q] !== v) q++;
+    if (q === distintos) { votos[q] = v; cuenta[q] = 0; distintos++; }
+    cuenta[q]++;
+  }
+  return { llenos, distintos };
+}
+// de las muestras a los píxeles: se queda el color que más se repite si al menos la mitad de la casilla está tapada
+function bajaAPixeles(G, o, n) {
   const w = o.w, h = o.h, col = new Int16Array(w * h).fill(-1), prof = new Float32Array(w * h), parte = new Int16Array(w * h);
   const minimo = n === 1 ? 1 : n === 2 ? 2 : 4, votos = new Int16Array(n * n), cuenta = new Uint8Array(n * n);
   for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
-    let llenos = 0, distintos = 0;
-    for (let b = 0; b < n; b++) for (let a = 0; a < n; a++) {
-      const k = (j * n + b) * W + i * n + a, v = id[k];
-      if (v < 0) continue;
-      llenos++;
-      let q = 0; while (q < distintos && votos[q] !== v) q++;
-      if (q === distintos) { votos[q] = v; cuenta[q] = 0; distintos++; }
-      cuenta[q]++;
-    }
+    const { llenos, distintos } = votaCasilla(G, i, j, n, votos, cuenta);
     if (llenos < minimo) continue;
     let m = 0; for (let q = 1; q < distintos; q++) if (cuenta[q] > cuenta[m]) m = q;
     const v = votos[m]; let z = 1e9, pt = 0;
-    for (let b = 0; b < n; b++) for (let a = 0; a < n; a++) { const k = (j * n + b) * W + i * n + a; if (id[k] === v && zb[k] < z) { z = zb[k]; pt = pa[k]; } }
+    for (let b = 0; b < n; b++) for (let a = 0; a < n; a++) { const k = (j * n + b) * G.W + i * n + a; if (G.id[k] === v && G.zb[k] < z) { z = G.zb[k]; pt = G.pa[k]; } }
     col[j * w + i] = v; prof[j * w + i] = z; parte[j * w + i] = pt;
   }
-  // líneas entre piezas: donde una pieza tapa a otra que queda bastante más lejos, el borde de la de detrás se oscurece
-  const sal = new Uint32Array(w * h), umbral = o.lineas === undefined ? 2.2 : o.lineas;
-  for (let k = 0; k < w * h; k++) if (col[k] >= 0) sal[k] = mod.paleta[col[k] >> 2][col[k] & 3];
-  if (umbral > 0) {
-    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
-      const k = j * w + i; if (col[k] < 0) continue;
-      const z = prof[k] - umbral, pt = parte[k];
-      if ((i > 0 && col[k - 1] >= 0 && parte[k - 1] !== pt && prof[k - 1] < z) || (i < w - 1 && col[k + 1] >= 0 && parte[k + 1] !== pt && prof[k + 1] < z)
-        || (j > 0 && col[k - w] >= 0 && parte[k - w] !== pt && prof[k - w] < z) || (j < h - 1 && col[k + w] >= 0 && parte[k + w] !== pt && prof[k + w] < z)) sal[k] = mod.paleta[col[k] >> 2][(col[k] & 3) === 0 ? 4 : 0];
-    }
+  return { w, h, col, prof, parte };
+}
+// líneas entre piezas: donde una pieza tapa a otra que queda bastante más lejos, el borde de la de detrás se oscurece
+function dibujaLineas(sal, mod, X, umbral) {
+  const { w, h, col, prof, parte } = X;
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+    const k = j * w + i; if (col[k] < 0) continue;
+    const z = prof[k] - umbral, pt = parte[k], tapa = q => col[q] >= 0 && parte[q] !== pt && prof[q] < z;
+    if ((i > 0 && tapa(k - 1)) || (i < w - 1 && tapa(k + 1)) || (j > 0 && tapa(k - w)) || (j < h - 1 && tapa(k + w))) sal[k] = mod.paleta[col[k] >> 2][(col[k] & 3) === 0 ? 4 : 0];
   }
-  // contorno: un píxel oscuro (con algo del color de la pieza) alrededor de la silueta
-  if (o.contorno !== false) {
-    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
-      const k = j * w + i; if (col[k] >= 0) continue;
-      const q = i > 0 && col[k - 1] >= 0 ? k - 1 : i < w - 1 && col[k + 1] >= 0 ? k + 1 : j > 0 && col[k - w] >= 0 ? k - w : j < h - 1 && col[k + w] >= 0 ? k + w : -1;
-      if (q >= 0) sal[k] = mod.paleta[col[q] >> 2][4];
-    }
+}
+// el vecino (izquierda, derecha, arriba, abajo, por ese orden) que tiene color, o -1
+function vecinoLleno(col, i, j, w, h) {
+  const k = j * w + i;
+  if (i > 0 && col[k - 1] >= 0) return k - 1;
+  if (i < w - 1 && col[k + 1] >= 0) return k + 1;
+  if (j > 0 && col[k - w] >= 0) return k - w;
+  return j < h - 1 && col[k + w] >= 0 ? k + w : -1;
+}
+// contorno: un píxel oscuro (con algo del color de la pieza) alrededor de la silueta
+function dibujaContorno(sal, mod, X) {
+  const { w, h, col } = X;
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+    if (col[j * w + i] >= 0) continue;
+    const q = vecinoLleno(col, i, j, w, h);
+    if (q >= 0) sal[j * w + i] = mod.paleta[col[q] >> 2][4];
   }
+}
+function fotoModelo(mod, o) {
+  const n = o.muestras || 2, G = preparaFoto(o, n);
+  for (const p of mod.lista) { const Q = proyectaPieza(p, G); if (Q) rellenaPieza(mod, p, G, Q); }
+  const X = bajaAPixeles(G, o, n), sal = new Uint32Array(X.w * X.h), umbral = o.lineas === undefined ? 2.2 : o.lineas;
+  for (let k = 0; k < X.w * X.h; k++) if (X.col[k] >= 0) sal[k] = mod.paleta[X.col[k] >> 2][X.col[k] & 3];
+  if (umbral > 0) dibujaLineas(sal, mod, X, umbral);
+  if (o.contorno !== false) dibujaContorno(sal, mod, X);
   return sal;
 }
 

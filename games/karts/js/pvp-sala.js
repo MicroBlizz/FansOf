@@ -35,31 +35,28 @@ function pvpAplicaLook(o) {
   if (!k || k.plaza != null || !look) return;
   k.fig = figuraLook(k.piloto.id, look); k.humoCos = humoLook(look);
 }
-const colorHumoSinRed = colorHumo;
-colorHumo = k => {
-  const h = k.humoCos; if (!h) return colorHumoSinRed(k);
+// el humo del derrape de un rival: el que lleva puesto (lo pregunta colorHumo, en cosmeticos.js)
+function colorHumoDeRival(k) {
+  const h = k.humoCos;
   if (h.c === 'arcoiris') return ['#ff5c8a', '#ffcb3d', '#5ef27a', '#22e3ff', '#c35cff'][Math.floor(RELOJ * 12) % 5];
   return Math.random() < 0.5 ? h.c[0] : h.c[1];
-};
+}
 // las fotos de los karts tuneados de los rivales se hacen en la pantalla de carga, como las del tuyo
-const encolaJugadorSinRed = encolaJugador;
-encolaJugador = () => {
-  encolaJugadorSinRed();
+function encolaFotosDeRivales() {
   if (!KPVP.activo) return;
   for (const j of KPVP.jugadores) {
     if (j.orden === KPVP.orden || !KPVP.looks[j.orden] || !PILOTO[j.piloto]) continue;
     const f = figuraLook(j.piloto, KPVP.looks[j.orden]); if (f !== figuraDe(j.piloto)) for (let n = 0; n <= 13; n++) COLA_FOTOS.push([f, n]);
   }
-};
-const pvpPreparaKartsSinLook = pvpPreparaKarts;
-pvpPreparaKarts = C => {
-  pvpPreparaKartsSinLook(C);
+}
+// al preparar la carrera: cada rival se viste con lo suyo (pvpPreparaKarts, en pvp.js, lo llama al final)
+function pvpVisteRivales() {
   for (const [o, k] of Object.entries(KPVP.remotos)) {
     if (k.plaza != null) continue;
     pvpAplicaLook(+o);
     if (KPVP.salidos && KPVP.salidos[o]) { KPVP.listos[o] = true; k.ido = true; }      // en la copa: quien se fue en otra carrera ya no vuelve
   }
-};
+}
 
 // ---------- los mensajes rápidos ----------
 const nombreOrden = o => { const j = ((KPVP.info && KPVP.info.jugadores) || KPVP.jugadores || []).find(x => x.orden === o); return j ? (j.yo ? tr('TÚ') : String(j.nombre || '')) : '?'; };
@@ -76,23 +73,14 @@ function pvpOyeChat(m) {
 }
 const charlaReciente = s => KPVP.charla.filter(c => RELOJ - c.t < s);
 
-// lo que llega por el canal antes de lo de la carrera: lo que lleva cada uno, los mensajes, la copa y lo de otras carreras de la copa (se tira)
-const pvpRecibirSinSala = pvpRecibir;
-pvpRecibir = m => {
-  if (!m || m.de == null || m.de === KPVP.orden) return;
-  if (m.t === 'look') { KPVP.looks[m.de] = { lleva: m.lleva || {}, titulo: m.titulo || null }; pvpAplicaLook(m.de); if (m.pide) pvpMandaLook(); return; }
-  if (m.t === 'chat') { pvpOyeChat(m); return; }
-  if (m.t === 'sigue') { pvpCopaSigue(m.i); return; }
-  if (m.t === 'rendir' && !KPVP.activo) { if (KPVP.salidos) KPVP.salidos[m.de] = true; return; }
-  if (m.cr != null && m.cr !== (KPVP.carrera || 0)) return;
-  pvpRecibirSinSala(m);
-};
-const pvpEmpezarSinSala = pvpEmpezar;
-pvpEmpezar = (info, red) => {
-  KPVP.semilla = info.semilla | 0; KPVP.privada = !!info.privada; KPVP.salidos = {};
-  pvpEmpezarSinSala(info, red);
-  if (info.privada) misionSuma('amigos');
-};
+// lo que llega por el canal antes de lo de la carrera: lo que lleva cada uno, los mensajes y la copa. Devuelve true si el mensaje era suyo
+function pvpMensajeDeSala(m) {
+  if (m.t === 'look') { KPVP.looks[m.de] = { lleva: m.lleva || {}, titulo: m.titulo || null }; pvpAplicaLook(m.de); if (m.pide) pvpMandaLook(); return true; }
+  if (m.t === 'chat') { pvpOyeChat(m); return true; }
+  if (m.t === 'sigue') { pvpCopaSigue(m.i); return true; }
+  if (m.t === 'rendir' && !KPVP.activo) { if (KPVP.salidos) KPVP.salidos[m.de] = true; return true; }
+  return false;
+}
 
 // ---------- la sala de espera ----------
 // las tres pistas a votar (salen de la semilla: todos ven las mismas)
@@ -124,51 +112,71 @@ function compartirSala(codigo) {
   if (navigator.share) { navigator.share({ title: 'Fans of Karts', text: txt, url }).catch(() => { /* cancelado */ }); return; }
   try { navigator.clipboard.writeText(txt + ' ' + url).then(() => { SALA.aviso = tr('Enlace copiado: pégaselo a tus amigos.'); }); } catch (_) { SALA.aviso = url; }
 }
+// la frase de estado de la sala de espera
+function estadoDeSala(arranca, info, priv, soyAnf) {
+  if (arranca) return tr('¡A CORRER!') + ' · ' + tr(PISTAS[PANT.pista].nombre);
+  if (!info) return tr('BUSCANDO CARRERA') + '…';
+  if (priv) return soyAnf ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Esperando a que el anfitrión empiece.');
+  if (info.faltan != null) return info.faltan > 0 ? trf('Empieza en %1 s (o al llenarse)', info.faltan) : tr('Arrancando…');
+  return tr('Esperando a otro jugador…');
+}
+// una plaza de la sala: quién es, su título y lo último que ha dicho
+function plazaHtml(j, info, priv, dicho) {
+  if (!j) return el('div.kt-plaza.vacia', {}, el('span', {}, tr('MÁQUINA')));
+  const look = j.yo ? miLook() : KPVP.looks[j.orden], tit = look && look.titulo && COS[look.titulo];
+  return el('div.kt-plaza' + (j.yo ? '.yo' : ''), {},
+    dicho[j.orden] != null ? el('div.kt-bocadillo', {}, tr(FRASES_RAPIDAS[dicho[j.orden]])) : null,
+    img(j.yo ? fotoPiloto(j.piloto) : fotoLook(j.piloto, look)),
+    el('b', {}, j.yo ? tr('TÚ') : String(j.nombre || '').slice(0, 12)),
+    tit ? el('small', {}, tr(tit.nombre)) : null,
+    priv && j.orden === info.anfitrion ? el('i', {}, tr('ANFITRIÓN')) : null);
+}
+function votoHtml(id, mio, votos) {
+  const d = PISTAS.find(p => p.id === id), mapa = fotoMapa(d);
+  return el('button.kt-voto' + (mio === id ? '.mio' : '') + (d.premium ? '.premium' : ''), { 'data-k': 1, on: () => votaPista(id), style: '--mundo:' + (d.premium ? '#ffcb3d' : MUNDOS[d.mundo - 1].color) },
+    mapa ? img(mapa) : null, el('b', {}, tr(d.nombre)), el('small', {}, tr(d.premium ? 'EDICIÓN PREMIUM' : MUNDOS[d.mundo - 1].nombre)), el('span.ol', {}, trf('VOTOS: %1', votos[id] || 0)));
+}
+// lo que sale cuando ya hay sala: frases rápidas y votación de la pista
+function chatYVotosHtml(info, lista) {
+  const votos = info.votos || {}, mio = (lista.find(j => j.yo) || {}).voto || SALA.voto;
+  return [
+    el('div.kt-rapidas', {}, FRASES_RAPIDAS.map((f, i) => el('button.kt-btn.gris', { 'data-k': 1, on: () => pvpEnviaChat(i) }, tr(f)))),
+    el('div.kt-h3.ol', {}, tr('VOTA LA PISTA')),
+    el('div.kt-votos', {}, pvpOpcionesPista(info).map(id => votoHtml(id, mio, votos))),
+    info.premium ? el('p.kt-nota.premium', {}, tr(SAVE.premium ? 'Tienes el pase premium: toda la sala puede votar una pista de la Edición Premium.' : 'Alguien de la sala tiene el pase premium: hoy podéis votar una pista de la Edición Premium.')) : null,
+    el('p.kt-nota', {}, tr('Gana la más votada. Si nadie vota, elige el servidor.'))];
+}
+function codigoDeSalaHtml(info) {
+  return el('div.kt-codigo', {}, el('span', {}, tr('CÓDIGO DE LA SALA')), el('b.kt-d.ol', {}, info.codigo || '----'),
+    el('button.kt-btn', { 'data-k': 1, on: () => compartirSala(info.codigo) }, tr('COMPARTIR')));
+}
+function botonesDelAnfitrionHtml() {
+  return el('div.kt-anfitrion', {},
+    el('button.kt-btn' + (SALA.copa ? '.verde' : '.gris'), { 'data-k': 1, on: () => { SALA.copa = !SALA.copa; } }, tr(SALA.copa ? 'COPA DE 4 CARRERAS' : 'UNA CARRERA')),
+    el('button.kt-btn.oro', { 'data-k': 1, on: empiezaSala }, tr('EMPEZAR')));
+}
+function notaDeBusqueda(info, arranca) {
+  if (info || arranca) return null;
+  return el('p.kt-nota', {}, tr(KPVP.tBusca > 40 ? 'Microblizz asegura que hay «millones de jugadores activos».' : 'Buscando a otros jugadores. Como mucho un minuto y salimos.'));
+}
+function cabeceraDeSala(priv, info) {
+  return el('header.kt-head', {}, el('button.kt-back', { 'data-k': 1, on: pvpCancelar }, tr('SALIR')),
+    el('h2.kt-d.ol', {}, tr(priv ? 'SALA CON AMIGOS' : 'CARRERA ONLINE')), el('div.kt-cuantos.kt-d.ol', {}, (info ? info.n : 1) + '/8'));
+}
 function pintaSalaHtml(arranca) {
   if (!SALA.caja) { SALA.caja = el('section.kt-scr', { id: 'kt-sala' }); document.body.appendChild(SALA.caja); }
   const info = KPVP.info, lista = info ? info.jugadores || [] : [{ orden: 0, nombre: '', piloto: JUGABLES[PANT.piloto].id, yo: true }];
   const priv = !!(info && info.privada), soyAnf = priv && info.anfitrion === info.orden, dicho = {};
   for (const c of charlaReciente(5)) dicho[c.de] = c.f;
-  let estado;
-  if (arranca) estado = tr('¡A CORRER!') + ' · ' + tr(PISTAS[PANT.pista].nombre);
-  else if (!info) estado = tr('BUSCANDO CARRERA') + '…';
-  else if (priv) estado = soyAnf ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Esperando a que el anfitrión empiece.');
-  else if (info.faltan != null) estado = info.faltan > 0 ? trf('Empieza en %1 s (o al llenarse)', info.faltan) : tr('Arrancando…');
-  else estado = tr('Esperando a otro jugador…');
-  const plaza = i => {
-    const j = lista[i];
-    if (!j) return el('div.kt-plaza.vacia', {}, el('span', {}, tr('MÁQUINA')));
-    const look = j.yo ? miLook() : KPVP.looks[j.orden], tit = look && look.titulo && COS[look.titulo];
-    return el('div.kt-plaza' + (j.yo ? '.yo' : ''), {},
-      dicho[j.orden] != null ? el('div.kt-bocadillo', {}, tr(FRASES_RAPIDAS[dicho[j.orden]])) : null,
-      img(j.yo ? fotoPiloto(j.piloto) : fotoLook(j.piloto, look)),
-      el('b', {}, j.yo ? tr('TÚ') : String(j.nombre || '').slice(0, 12)),
-      tit ? el('small', {}, tr(tit.nombre)) : null,
-      priv && j.orden === info.anfitrion ? el('i', {}, tr('ANFITRIÓN')) : null);
-  };
-  const votos = (info && info.votos) || {}, mio = (lista.find(j => j.yo) || {}).voto || SALA.voto;
   const w = el('div.kt-wrap', { style: 'max-width:720px' },
-    priv ? el('div.kt-codigo', {}, el('span', {}, tr('CÓDIGO DE LA SALA')), el('b.kt-d.ol', {}, info.codigo || '----'),
-      el('button.kt-btn', { 'data-k': 1, on: () => compartirSala(info.codigo) }, tr('COMPARTIR'))) : null,
-    el('div.kt-estado.kt-d.ol' + (arranca ? '.ya' : ''), {}, estado),
-    !info && !arranca ? el('p.kt-nota', {}, tr(KPVP.tBusca > 40 ? 'Microblizz asegura que hay «millones de jugadores activos».' : 'Buscando a otros jugadores. Como mucho un minuto y salimos.')) : null,
-    soyAnf && !arranca ? el('div.kt-anfitrion', {},
-      el('button.kt-btn' + (SALA.copa ? '.verde' : '.gris'), { 'data-k': 1, on: () => { SALA.copa = !SALA.copa; } }, tr(SALA.copa ? 'COPA DE 4 CARRERAS' : 'UNA CARRERA')),
-      el('button.kt-btn.oro', { 'data-k': 1, on: empiezaSala }, tr('EMPEZAR'))) : null,
+    priv ? codigoDeSalaHtml(info) : null,
+    el('div.kt-estado.kt-d.ol' + (arranca ? '.ya' : ''), {}, estadoDeSala(arranca, info, priv, soyAnf)),
+    notaDeBusqueda(info, arranca),
+    soyAnf && !arranca ? botonesDelAnfitrionHtml() : null,
     SALA.aviso ? el('div.kt-aviso', { style: 'text-align:center;margin-top:6px' }, SALA.aviso) : null,
-    el('div.kt-plazas', {}, [0, 1, 2, 3, 4, 5, 6, 7].map(plaza)),
-    info && !arranca ? [
-      el('div.kt-rapidas', {}, FRASES_RAPIDAS.map((f, i) => el('button.kt-btn.gris', { 'data-k': 1, on: () => pvpEnviaChat(i) }, tr(f)))),
-      el('div.kt-h3.ol', {}, tr('VOTA LA PISTA')),
-      el('div.kt-votos', {}, pvpOpcionesPista(info).map(id => {
-        const d = PISTAS.find(p => p.id === id), mapa = fotoMapa(d);
-        return el('button.kt-voto' + (mio === id ? '.mio' : '') + (d.premium ? '.premium' : ''), { 'data-k': 1, on: () => votaPista(id), style: '--mundo:' + (d.premium ? '#ffcb3d' : MUNDOS[d.mundo - 1].color) },
-          mapa ? img(mapa) : null, el('b', {}, tr(d.nombre)), el('small', {}, tr(d.premium ? 'EDICIÓN PREMIUM' : MUNDOS[d.mundo - 1].nombre)), el('span.ol', {}, trf('VOTOS: %1', votos[id] || 0)));
-      })),
-      info.premium ? el('p.kt-nota.premium', {}, tr(SAVE.premium ? 'Tienes el pase premium: toda la sala puede votar una pista de la Edición Premium.' : 'Alguien de la sala tiene el pase premium: hoy podéis votar una pista de la Edición Premium.')) : null,
-      el('p.kt-nota', {}, tr('Gana la más votada. Si nadie vota, elige el servidor.'))] : null);
-  SALA.caja.replaceChildren(el('header.kt-head', {}, el('button.kt-back', { 'data-k': 1, on: pvpCancelar }, tr('SALIR')),
-    el('h2.kt-d.ol', {}, tr(priv ? 'SALA CON AMIGOS' : 'CARRERA ONLINE')), el('div.kt-cuantos.kt-d.ol', {}, (info ? info.n : 1) + '/8')), el('main.kt-body', {}, w));
+    el('div.kt-plazas', {}, [0, 1, 2, 3, 4, 5, 6, 7].map(i => plazaHtml(lista[i], info, priv, dicho))),
+    info && !arranca ? chatYVotosHtml(info, lista) : null);
+  SALA.caja.replaceChildren(cabeceraDeSala(priv, info), el('main.kt-body', {}, w));
   SALA.caja.hidden = false; NAV.raiz = null;
 }
 function pantallaPvpSala(dt) {

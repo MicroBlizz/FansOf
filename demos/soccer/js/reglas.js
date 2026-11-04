@@ -136,7 +136,8 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const base = e.balon.dueno === j.id ? aj.vel.conBalon : j.puesto === 'portero' ? aj.vel.portero : aj.vel.jugador;
     const v = base * (orden && orden.velocidad ? orden.velocidad : 1), k = m > 1 ? 1 / m : 1;
     j.vx = mx * k * v; j.vy = my * k * v;
-    if (Math.abs(mx) > 0.15) j.mira = Math.sign(mx);
+    if (j.puesto === 'portero') j.mira = sentido(j.eq);   // el portero siempre de cara al campo, con la portería a la espalda
+    else if (Math.abs(mx) > 0.15) j.mira = Math.sign(mx);
   }
 
   // Carrerilla: metros con el balón sin que te toquen; al llegar a los del equipo, el siguiente tiro es súper.

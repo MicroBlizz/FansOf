@@ -114,6 +114,7 @@ IDIOMA.add({
   "Campaña": "Campaign",
   "Acción": "Action",
   "Arcade": "Arcade",
+  "Aviones": "Planes",
   "Deportes": "Sports",
   "Hordas": "Hordes",
   "Aventura": "Adventure",

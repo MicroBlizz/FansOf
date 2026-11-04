@@ -97,27 +97,40 @@ function talentosPinta(c, t) {
   for (const f of TALP.fx) {
     const p = f.t / f.dur, e = f.e;
     c.save();
-    if (f.k === 'contador' && e) {      // el contador de mano sobre la cabeza, con el número (solo lo ve quien lo usa)
-      const sube = Math.min(1, p * 6), y = e.y - 58 - sube * 8, s = 1.35 * (0.6 + 0.4 * Math.min(1, p * 5) + (p < 0.2 ? Math.sin(p * 30) * 0.08 : 0));
-      c.globalAlpha = Math.min(1, (1 - p) * 4); c.translate(e.x + 34, y); c.scale(s, s);
-      c.beginPath(); c.arc(0, 0, 17, 0, TAU); c.fillStyle = OL; c.fill(); c.beginPath(); c.arc(0, -1.5, 15, 0, TAU); c.fillStyle = '#9fb3d6'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke();
-      c.beginPath(); c.roundRect(-11, -9, 22, 14, 3); c.fillStyle = '#20283c'; c.fill();
-      c.fillStyle = '#7ee04a'; c.font = '400 13px ' + LETRA_GORDA; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(f.n >= 0 ? String(Math.min(f.n, Math.floor(p * 14))).padStart(2, '0') : '??', 0, -1.5);
-      c.beginPath(); c.roundRect(6, -22, 8, 7, 2); c.fillStyle = '#ff4b5c'; c.fill(); c.lineWidth = 2.4; c.strokeStyle = OL; c.stroke();
-    } else if (f.k === 'silbato' && e) {      // el pitido: aros amarillos y «¡PRIII!»
-      for (let i = 0; i < 3; i++) { const q = Math.max(0, Math.min(1, p * 1.6 - i * 0.22)); if (!q || q >= 1) continue; c.globalAlpha = 1 - q; c.beginPath(); c.arc(e.x, e.y - 40, 20 + q * 140, 0, TAU); c.lineWidth = 5 * (1 - q) + 1; c.strokeStyle = '#ffcb3d'; c.stroke(); }
-      c.globalAlpha = Math.min(1, (1 - p) * 3); rotulo(c, tr('¡PRIII!'), e.x, e.y - 86 - p * 14, 18, '#ffcb3d', OL);
-    } else if (f.k === 'cafe' && e) { c.globalAlpha = 1 - p; rotulo(c, tr('¡CAFÉ!'), e.x, e.y - 80 - p * 20, 15, '#ffd9a8', OL); }
-    else if (f.k === 'vapor') { c.globalAlpha = (1 - p) * 0.7; c.fillStyle = '#fff6ea'; c.beginPath(); c.arc(f.x, f.y - p * 14, 3 + p * 6, 0, TAU); c.fill(); }
-    else if (f.k === 'huella') {      // huellas de gato que se borran
-      c.globalAlpha = Math.min(1, (1 - p) * 1.6) * 0.8; c.translate(f.x, f.y); c.rotate(f.a + Math.PI / 2); c.scale(1.7, 1.7); c.shadowColor = 'rgba(32,16,44,.8)'; c.shadowOffsetY = 1; c.fillStyle = '#ffb3d1';
-      c.beginPath(); c.ellipse(0, 2, 3.4, 2.8, 0, 0, TAU); c.fill(); for (const [x, y] of [[-3.6, -2.5], [-1.2, -4.4], [1.2, -4.4], [3.6, -2.5]]) { c.beginPath(); c.arc(x, y, 1.2, 0, TAU); c.fill(); }
-    } else if (f.k === 'poof') {      // la nube de pintura del cambiazo y del señuelo
-      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, d = 10 + p * 30; c.globalAlpha = (1 - p) * 0.85; c.fillStyle = ['#fff6ea', '#e2b8ff', '#bdeeff'][i % 3]; c.beginPath(); c.arc(f.x + Math.cos(a) * d, f.y - 26 + Math.sin(a) * d * 0.7, 9 * (1 - p * 0.5), 0, TAU); c.fill(); }
-    } else if (f.k === 'cambiazo') {      // un arco de chispas de un sitio al otro
-      c.globalAlpha = 1 - p; c.strokeStyle = '#ffcb3d'; c.lineWidth = 3; c.setLineDash([6, 6]); c.lineDashOffset = -f.t * 60;
-      const mx = (f.x1 + f.x2) / 2, my = Math.min(f.y1, f.y2) - 80; c.beginPath(); c.moveTo(f.x1, f.y1 - 30); c.quadraticCurveTo(mx, my, f.x2, f.y2 - 30); c.stroke();
-    }
+    if (Object.hasOwn(TAL_FX, f.k) && (e || !TAL_FX_CON_ENTE.has(f.k))) TAL_FX[f.k](c, f, p, e);
     c.restore();
   }
+}
+// los efectos sueltos de los talentos: cada uno se pinta con su progreso p (0 a 1); los tres primeros cuelgan de un personaje (e) y sin él no se pintan
+const TAL_FX_CON_ENTE = new Set(['contador', 'silbato', 'cafe']);
+const TAL_FX = { contador: talFxContador, silbato: talFxSilbato, cafe: talFxCafe, vapor: talFxVapor, huella: talFxHuella, poof: talFxPoof, cambiazo: talFxCambiazo };
+// el contador de mano sobre la cabeza, con el número (solo lo ve quien lo usa)
+function talFxContador(c, f, p, e) {
+  const sube = Math.min(1, p * 6), y = e.y - 58 - sube * 8, s = 1.35 * (0.6 + 0.4 * Math.min(1, p * 5) + (p < 0.2 ? Math.sin(p * 30) * 0.08 : 0));
+  c.globalAlpha = Math.min(1, (1 - p) * 4); c.translate(e.x + 34, y); c.scale(s, s);
+  c.beginPath(); c.arc(0, 0, 17, 0, TAU); c.fillStyle = OL; c.fill(); c.beginPath(); c.arc(0, -1.5, 15, 0, TAU); c.fillStyle = '#9fb3d6'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke();
+  c.beginPath(); c.roundRect(-11, -9, 22, 14, 3); c.fillStyle = '#20283c'; c.fill();
+  c.fillStyle = '#7ee04a'; c.font = '400 13px ' + LETRA_GORDA; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(f.n >= 0 ? String(Math.min(f.n, Math.floor(p * 14))).padStart(2, '0') : '??', 0, -1.5);
+  c.beginPath(); c.roundRect(6, -22, 8, 7, 2); c.fillStyle = '#ff4b5c'; c.fill(); c.lineWidth = 2.4; c.strokeStyle = OL; c.stroke();
+}
+// el pitido: aros amarillos y «¡PRIII!»
+function talFxSilbato(c, f, p, e) {
+  for (let i = 0; i < 3; i++) { const q = Math.max(0, Math.min(1, p * 1.6 - i * 0.22)); if (!q || q >= 1) continue; c.globalAlpha = 1 - q; c.beginPath(); c.arc(e.x, e.y - 40, 20 + q * 140, 0, TAU); c.lineWidth = 5 * (1 - q) + 1; c.strokeStyle = '#ffcb3d'; c.stroke(); }
+  c.globalAlpha = Math.min(1, (1 - p) * 3); rotulo(c, tr('¡PRIII!'), e.x, e.y - 86 - p * 14, 18, '#ffcb3d', OL);
+}
+function talFxCafe(c, f, p, e) { c.globalAlpha = 1 - p; rotulo(c, tr('¡CAFÉ!'), e.x, e.y - 80 - p * 20, 15, '#ffd9a8', OL); }
+function talFxVapor(c, f, p) { c.globalAlpha = (1 - p) * 0.7; c.fillStyle = '#fff6ea'; c.beginPath(); c.arc(f.x, f.y - p * 14, 3 + p * 6, 0, TAU); c.fill(); }
+// huellas de gato que se borran
+function talFxHuella(c, f, p) {
+  c.globalAlpha = Math.min(1, (1 - p) * 1.6) * 0.8; c.translate(f.x, f.y); c.rotate(f.a + Math.PI / 2); c.scale(1.7, 1.7); c.shadowColor = 'rgba(32,16,44,.8)'; c.shadowOffsetY = 1; c.fillStyle = '#ffb3d1';
+  c.beginPath(); c.ellipse(0, 2, 3.4, 2.8, 0, 0, TAU); c.fill(); for (const [x, y] of [[-3.6, -2.5], [-1.2, -4.4], [1.2, -4.4], [3.6, -2.5]]) { c.beginPath(); c.arc(x, y, 1.2, 0, TAU); c.fill(); }
+}
+// la nube de pintura del cambiazo y del señuelo
+function talFxPoof(c, f, p) {
+  for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, d = 10 + p * 30; c.globalAlpha = (1 - p) * 0.85; c.fillStyle = ['#fff6ea', '#e2b8ff', '#bdeeff'][i % 3]; c.beginPath(); c.arc(f.x + Math.cos(a) * d, f.y - 26 + Math.sin(a) * d * 0.7, 9 * (1 - p * 0.5), 0, TAU); c.fill(); }
+}
+// un arco de chispas de un sitio al otro
+function talFxCambiazo(c, f, p) {
+  c.globalAlpha = 1 - p; c.strokeStyle = '#ffcb3d'; c.lineWidth = 3; c.setLineDash([6, 6]); c.lineDashOffset = -f.t * 60;
+  const mx = (f.x1 + f.x2) / 2, my = Math.min(f.y1, f.y2) - 80; c.beginPath(); c.moveTo(f.x1, f.y1 - 30); c.quadraticCurveTo(mx, my, f.x2, f.y2 - 30); c.stroke();
 }

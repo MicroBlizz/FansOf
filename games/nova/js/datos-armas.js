@@ -8,9 +8,9 @@ const NOVA_ARMAS = {
  "portadores": {
   "railgun": { "nombre": "Railgun", "dano": 62, "cadencia": 0.72, "proyectiles": 1, "acierto": 1.0, "alcance": 560, "arco": 3, "objetivos": 1.5, "admite": ["cinetica", "energia", "explosiva"], "fuerte": "Un objetivo, largo alcance", "debil": "Grupos" },
   "flak": { "nombre": "Flak", "dano": 14, "cadencia": 1.7, "proyectiles": 6, "acierto": 0.5, "alcance": 230, "arco": 50, "objetivos": 2.5, "admite": ["cinetica", "termica", "explosiva"], "fuerte": "Grupos, corto alcance", "debil": "Blindaje" },
-  "laser": { "nombre": "Láser", "dano": 14, "cadencia": 2.4, "proyectiles": 1, "acierto": 0.8, "alcance": 320, "arco": 2, "objetivos": 1.0, "admite": ["energia", "termica", "em"], "fuerte": "Precisión, acumula estados", "debil": "Recarga lenta al saturar" },
-  "lanzador": { "nombre": "Lanzador", "dano": 40, "cadencia": 1.0, "proyectiles": 1, "acierto": 0.8, "alcance": 640, "arco": 20, "objetivos": 1.0, "admite": ["explosiva", "termica", "em", "cinetica"], "fuerte": "Lo que huye, alcance", "debil": "Interceptables" },
-  "drones": { "nombre": "Drones", "dano": 12, "cadencia": 1.8, "proyectiles": 3, "acierto": 1.0, "alcance": 220, "arco": 360, "objetivos": 1.0, "admite": ["cinetica", "energia", "em", "explosiva"], "fuerte": "Cobertura 360°, defensa", "debil": "Daño bajo por unidad" }
+  "laser": { "nombre": "Láser", "dano": 18, "cadencia": 2.4, "proyectiles": 1, "acierto": 0.8, "alcance": 320, "arco": 2, "objetivos": 1.0, "admite": ["energia", "termica", "em"], "fuerte": "Precisión, acumula estados", "debil": "Recarga lenta al saturar" },
+  "lanzador": { "nombre": "Lanzador", "dano": 62, "cadencia": 1.0, "proyectiles": 1, "acierto": 0.8, "alcance": 640, "arco": 20, "objetivos": 1.0, "admite": ["explosiva", "termica", "em", "cinetica"], "fuerte": "Lo que huye, alcance", "debil": "Interceptables" },
+  "drones": { "nombre": "Drones", "dano": 12, "cadencia": 3, "proyectiles": 4, "acierto": 1.0, "alcance": 320, "arco": 360, "objetivos": 1.0, "admite": ["cinetica", "energia", "em", "explosiva"], "fuerte": "Cobertura 360°, defensa", "debil": "Daño bajo por unidad" }
  },
  "cargas": {
   "cinetica": { "nombre": "Cinética", "contra": "Casco", "estado": "brecha", "multDano": 1.0, "multGrupo": 1.0, "multCasco": 1.0, "multEscudo": 0.6, "forma": "cuadrado", "color": "#ff9a3c", "especialidad": "Daño físico al casco; rebota en el escudo (×0,6)" },
@@ -45,7 +45,7 @@ const NOVA_ARMAS = {
   "laser": { "nombre": "Láser", "cargas": ["termica", "em"], "acumula": 1.5, "efecto": "El láser acumula calor y sistemas ×1,5" },
   "cazador": { "nombre": "Cazador", "portador": "lanzador", "mult": 1.2, "efecto": "El lanzador hace +20 % de daño a lo que se aleja de tu nave" },
   "perforaescudos": { "nombre": "Perforaescudos", "portador": "railgun", "cargas": ["cinetica"], "pasa": 0.5, "efecto": "La railgun cinética mete la mitad del daño en el casco aunque haya escudo" },
-  "metrallaIncendiaria": { "nombre": "Metralla incendiaria", "portador": "flak", "cargas": ["termica"], "radio": 40, "calor": 7, "efecto": "Cada perdigón térmico del flak calienta también a los enemigos de al lado" },
+  "metrallaIncendiaria": { "nombre": "Metralla incendiaria", "portador": "flak", "cargas": ["termica"], "radio": 40, "calor": 2, "perdigon": 0.5, "efecto": "Cada perdigón térmico del flak calienta la mitad, pero calienta también a los enemigos de al lado" },
   "dronParasito": { "nombre": "Dron parásito", "portador": "drones", "cargas": ["em"], "duracion": 1, "efecto": "Un dron EM pegado a su presa la mantiene Interferida" }
  },
  "modificadores": {

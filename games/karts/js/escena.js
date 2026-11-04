@@ -30,7 +30,14 @@ function pintaSuelto(o, sx, sy, e) {   // un Nerf volando o un Parche en el suel
   if (e > 0.5) pintaSombra(sx, sy, 5 * e);
   figCosa(o.tipo).pinta(lx, Math.round(sx), Math.round(sy - (o.alto || 0) * e), e, BASE_COSA, RELOJ * (o.tipo === 'nerf' ? 9 : 2.4) + o.fase);
 }
+// un kart con todo lo suyo, en este orden: el lag, el kart, el bot y el martillo (objetos-2.js), y el tren, el imán y el escudo (efectos-objetos.js)
 function pintaKart(k, sx, sy, e) {
+  pintaLagDelKart(k, sx, sy, e);
+  pintaKartBase(k, sx, sy, e);
+  pintaExtrasDelKart(k, sx, sy, e);
+  pintaEfectosEncima(k, sx, sy, e);
+}
+function pintaKartBase(k, sx, sy, e) {
   if (k.tInmune > 0 && k.estado === 'normal' && ((RELOJ * 15) & 1)) return;             // parpadea mientras no se le puede dar
   const ee = e * k.tam, alza = alzaPuente(k);
   if (alza === null) return;      // va por debajo del puente y lo miras desde arriba

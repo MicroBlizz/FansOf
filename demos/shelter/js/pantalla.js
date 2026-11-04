@@ -37,7 +37,7 @@ function marcoMadera(ctx, x, y, w, h) {
 
 function enfoca() {
   CAM.w = PAN.W; CAM.h = PAN.H;
-  const tx = clamp(J.x - PAN.W / 2, 0, MAPA.w * CAS - PAN.W), ty = clamp(J.y - 12 - PAN.H / 2, 0, MAPA.h * CAS - PAN.H);
+  const tx = clamp(J.x - PAN.W / 2, 0, MAPA.w * CAS - PAN.W), ty = clamp(J.y - 18 - PAN.H / 2, 0, MAPA.h * CAS - PAN.H);
   CAM.x += (tx - CAM.x) * 0.15; CAM.y += (ty - CAM.y) * 0.15;
   if (Math.abs(tx - CAM.x) < 0.3) CAM.x = tx; if (Math.abs(ty - CAM.y) < 0.3) CAM.y = ty;
 }
@@ -66,11 +66,11 @@ function pintaTodo(ctx) {
     ctx.fillStyle = 'rgb(' + Math.round(255 - 170 * o) + ',' + Math.round(255 - 150 * o) + ',' + Math.round(255 - 50 * o) + ')';
     ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
-    halo(ctx, J.x - cam.x, J.y - 12 - cam.y, 56, o * 0.35);
-    if (MAPA.hoguera) halo(ctx, (MAPA.hoguera.i + 0.5) * CAS - cam.x, (MAPA.hoguera.j + 0.4) * CAS - cam.y, 44 + Math.round(Math.sin(t * 9)) * 2, o * 0.5, true);
+    halo(ctx, J.x - cam.x, J.y - 18 - cam.y, 74, o * 0.35);
+    if (MAPA.hoguera) halo(ctx, (MAPA.hoguera.i + 0.5) * CAS - cam.x, (MAPA.hoguera.j + 0.4) * CAS - cam.y, 60 + Math.round(Math.sin(t * 9)) * 2, o * 0.5, true);
     for (const p of PROY) if (p.tipo === 'fuego') halo(ctx, p.x - cam.x, p.y - cam.y, 14, o * 0.4, true);
-    if (J.arma.fuego) for (let k = 0; k < J.arma.zanahorias; k++) { const a = ARMAS.ang + k * Math.PI * 2 / J.arma.zanahorias, r = radioZanahoria(); halo(ctx, J.x + Math.cos(a) * r - cam.x, J.y - 12 + Math.sin(a) * r * 0.75 - cam.y, 22, o * 0.35, true); }
-    for (let k = 0; k < J.arma.orbes; k++) { const a = -ARMAS.ang * 1.4 + k * Math.PI * 2 / J.arma.orbes; haloColor(ctx, J.x + Math.cos(a) * 45 - cam.x, J.y - 12 + Math.sin(a) * 45 * 0.75 - cam.y, 16, o * 0.3, [40, 120, 160]); }
+    if (J.arma.fuego) for (let k = 0; k < J.arma.zanahorias; k++) { const a = ARMAS.ang + k * Math.PI * 2 / J.arma.zanahorias, r = radioZanahoria(); halo(ctx, J.x + Math.cos(a) * r - cam.x, J.y - 18 + Math.sin(a) * r * 0.75 - cam.y, 28, o * 0.35, true); }
+    for (let k = 0; k < J.arma.orbes; k++) { const a = -ARMAS.ang * 1.4 + k * Math.PI * 2 / J.arma.orbes; haloColor(ctx, J.x + Math.cos(a) * 60 - cam.x, J.y - 18 + Math.sin(a) * 60 * 0.75 - cam.y, 20, o * 0.3, [40, 120, 160]); }
     for (const b of MAPA.construido) if (b.tipo === 'torreta') haloColor(ctx, (b.i + 0.5) * CAS - cam.x, (b.j + 0.4) * CAS - cam.y, 18, o * 0.25, [120, 70, 20]);
     ctx.globalCompositeOperation = 'source-over';
   }
@@ -126,22 +126,17 @@ function pintaAvisos(ctx, W, H) {
 /* ---------- PORTADA Y FIN ---------- */
 function pintaPortada(ctx, W, H) {
   const t = PAN.t;
-  // un claro del bosque de noche, con el refugio
-  if (hayEscena()) { const im = IMG.escena; ctx.drawImage(im, Math.max(0, Math.round(im.width * 0.3 - W / 2)), Math.max(0, Math.round(im.height * 0.62 - H / 2)), W, H, 0, 0, W, H); }
-  else {
-    for (let j = 0; j < Math.ceil(H / CAS) + 1; j++) for (let i = 0; i < Math.ceil(W / CAS) + 1; i++) ctx.drawImage(losaHierba(Math.floor(hash2(i, j, 3) * 8)), i * CAS, j * CAS);
-    for (let i = -1; i < Math.ceil(W / CAS) + 1; i++) { if (hash2(i, 99, 5) < 0.7) pintaSpr(ctx, 'arbol', i * CAS + 4, H - 44 + Math.round(hash2(i, 7, 2) * 8)); if (hash2(i, 98, 5) < 0.6) pintaSpr(ctx, 'arbol', i * CAS - 8, 30 + Math.round(hash2(i, 8, 2) * 10)); }
-  }
-  pintaSpr(ctx, 'hoguera_' + (Math.floor(t * 6) % 2), W * 0.72, H * 0.6);
+  // un claro del bosque de noche: el suelo del mapa (alrededor del refugio) y pinos arriba y abajo
+  const oi = 1, oj = 8;
+  for (let j = 0; j < Math.ceil(H / CAS) + 1; j++) for (let i = 0; i < Math.ceil(W / CAS) + 1; i++) ctx.drawImage(losaSuelo(oi + i, oj + j), i * CAS, j * CAS);
+  for (let i = -1; i < Math.ceil(W / CAS) + 1; i++) { pintaSpr(ctx, 'pino', i * CAS + 16, 40 + Math.round(hash2(i, 8, 2) * 10), { ancla: 'pies' }); pintaSpr(ctx, 'pino', i * CAS + 4, H + 20 - Math.round(hash2(i, 7, 2) * 12), { ancla: 'pies' }); }
+  pintaSpr(ctx, 'hoguera_0', W * 0.72, H * 0.6 + 26, { ancla: 'pies' });
   ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgb(110,120,215)'; ctx.fillRect(0, 0, W, H);
   ctx.globalCompositeOperation = 'lighter'; halo(ctx, W * 0.72 + 12, H * 0.6 + 10, 40 + Math.round(Math.sin(t * 9)) * 2, 0.5, true); ctx.globalCompositeOperation = 'source-over';
   // el conejo grande en medio con la zanahoria, y murciélagos rondando
   const cx = W / 2, cy = H * 0.52;
-  ctx.save(); ctx.translate(cx, cy); ctx.scale(2, 2); ctx.translate(-cx, -cy);
-  ctx.globalAlpha = 0.3; caja(ctx, cx - 9, cy + 8, 18, 3, PALETA.K); ctx.globalAlpha = 1;
-  pintaSpr(ctx, 'bunny_abajo_' + (Math.floor(t * 2) % 2), cx, cy + 10, { ancla: 'pies' });
-  ctx.save(); ctx.translate(cx + 10, cy - 2); ctx.rotate(0.8 + Math.sin(t * 3) * 0.1); ctx.drawImage(spr('zanahoria'), -4, -5); ctx.drawImage(spr('zanahoria_hojas'), -9, -6); ctx.restore();
-  ctx.restore();
+  ctx.globalAlpha = 0.3; caja(ctx, cx - 14, cy + 38, 28, 5, PALETA.K); ctx.globalAlpha = 1;
+  pintaSpr(ctx, 'bunny_abajo', cx, cy + 40 + (Math.floor(t * 2) % 2 ? -1 : 0), { ancla: 'pies' });
   for (let k = 0; k < 3; k++) {
     const a = t * 1.2 + k * 2.1, x = cx + Math.cos(a) * (W * 0.4), y = cy - 30 + Math.sin(a * 1.3) * 22;
     pintaSpr(ctx, 'murci_' + (Math.floor(t * 8 + k) % 2), x, y, { ancla: 'centro', espejo: Math.sin(a) > 0 });

@@ -204,10 +204,14 @@ function rayoMueble(x, y, dx, dy, max) {
   }
   return mejor;
 }
+// lo que falta para cruzar la primera línea de casilla (p: posición, c: casilla, d: dirección)
+const rayoPrimerCruce = (p, c, d) => (d ? (d > 0 ? (c + 1) * CEL - p : p - c * CEL) / Math.abs(d) : Infinity);
+// ¿cierra el paso en esta casilla libre la puerta, una barrera o un portazo?
+const rayoCierraCelda = (i, j) => (PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) || (BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) || portazoCelda(i, j);
 function rayoMapa(x, y, dx, dy, max) {
   let i = Math.floor(x / CEL), j = Math.floor(y / CEL);
   const si = dx > 0 ? 1 : -1, sj = dy > 0 ? 1 : -1, tdx = dx ? Math.abs(CEL / dx) : Infinity, tdy = dy ? Math.abs(CEL / dy) : Infinity;
-  let tx = dx ? (dx > 0 ? (i + 1) * CEL - x : x - i * CEL) / Math.abs(dx) : Infinity, ty = dy ? (dy > 0 ? (j + 1) * CEL - y : y - j * CEL) / Math.abs(dy) : Infinity;
+  let tx = rayoPrimerCruce(x, i, dx), ty = rayoPrimerCruce(y, j, dy);
   RAYO.cara = false;
   for (;;) {
     let t;
@@ -215,9 +219,7 @@ function rayoMapa(x, y, dx, dy, max) {
     if (t >= max) return max;
     const g = i < 0 || j < 0 || i >= MW || j >= MH ? VACIO : GRID[j * MW + i];
     if (g !== SUELO) { RAYO.cara = g === CARA; return t; }
-    if (PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) return t;
-    if (BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) return t;
-    if (portazoCelda(i, j)) return t;
+    if (rayoCierraCelda(i, j)) return t;
   }
 }
 function seVen(ax, ay, bx, by) {
@@ -243,9 +245,8 @@ function pasoLibre(ax, ay, bx, by) {
   return true;
 }
 let _g = new Float32Array(0), _de = new Int32Array(0), _visto = new Uint8Array(0);   // (al tamaño del mapa: los hace cargaMapa)
-function buscaCamino(ax, ay, bx, by) {
-  const a = casillaCerca(ax, ay), b = casillaCerca(bx, by); if (!a || !b) return null;
-  const ini = a[1] * MW + a[0], fin = b[1] * MW + b[0];
+// A* de casilla `ini` a casilla `b`: deja en _g el coste y en _de de dónde se llegó a cada casilla
+function caminoAEstrella(ini, fin, b) {
   _g.fill(Infinity); _visto.fill(0); _g[ini] = 0; _de[ini] = -1;
   const abiertos = [ini], f = new Map([[ini, 0]]);
   while (abiertos.length) {
@@ -253,20 +254,28 @@ function buscaCamino(ax, ay, bx, by) {
     const n = abiertos[mi]; abiertos[mi] = abiertos[abiertos.length - 1]; abiertos.pop();
     if (n === fin) break;
     if (_visto[n]) continue; _visto[n] = 1;
-    const i = n % MW, j = (n / MW) | 0;
-    for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
-      if (!di && !dj) continue;
-      const ni = i + di, nj = j + dj; if (!celdaLibre(ni, nj)) continue;
-      if (di && dj && (!celdaLibre(i + di, j) || !celdaLibre(i, j + dj))) continue;   // sin cortar esquinas
-      const m = nj * MW + ni, g = _g[n] + (di && dj ? 14 : 10) + MAPA.coste[m];
-      if (g < _g[m]) { _g[m] = g; _de[m] = n; f.set(m, g + 10 * Math.max(Math.abs(ni - b[0]), Math.abs(nj - b[1]))); abiertos.push(m); }
-    }
+    caminoVecinas(n, b, f, abiertos);
   }
-  if (_g[fin] === Infinity) return null;
+}
+// las ocho casillas de al lado de `n` (sin cortar esquinas): se apunta la que sale ganando
+function caminoVecinas(n, b, f, abiertos) {
+  const i = n % MW, j = (n / MW) | 0;
+  for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
+    if (!di && !dj) continue;
+    const ni = i + di, nj = j + dj; if (!celdaLibre(ni, nj)) continue;
+    if (di && dj && (!celdaLibre(i + di, j) || !celdaLibre(i, j + dj))) continue;   // sin cortar esquinas
+    const m = nj * MW + ni, g = _g[n] + (di && dj ? 14 : 10) + MAPA.coste[m];
+    if (g < _g[m]) { _g[m] = g; _de[m] = n; f.set(m, g + 10 * Math.max(Math.abs(ni - b[0]), Math.abs(nj - b[1]))); abiertos.push(m); }
+  }
+}
+// los puntos (en píxeles) desde el inicio hasta `fin`, y al final el destino pedido
+function caminoPuntos(fin, bx, by) {
   const pts = [[bx, by]];
   for (let n = fin; n !== -1; n = _de[n]) pts.push([(n % MW) * CEL + 10, ((n / MW) | 0) * CEL + 14]);
-  pts.reverse();
-  // se quitan los puntos de en medio cuando se puede ir recto
+  return pts.reverse();
+}
+// se quitan los puntos de en medio cuando se puede ir recto
+function caminoAlisa(pts, ax, ay) {
   const camino = []; let desde = [ax, ay], k = 0;
   while (k < pts.length) {
     let lejosK = k;
@@ -274,6 +283,13 @@ function buscaCamino(ax, ay, bx, by) {
     camino.push(pts[lejosK]); desde = pts[lejosK]; k = lejosK + 1;
   }
   return camino;
+}
+function buscaCamino(ax, ay, bx, by) {
+  const a = casillaCerca(ax, ay), b = casillaCerca(bx, by); if (!a || !b) return null;
+  const ini = a[1] * MW + a[0], fin = b[1] * MW + b[0];
+  caminoAEstrella(ini, fin, b);
+  if (_g[fin] === Infinity) return null;
+  return caminoAlisa(caminoPuntos(fin, bx, by), ax, ay);
 }
 
 /* ---------- sitios ---------- */

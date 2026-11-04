@@ -75,16 +75,17 @@ function pintaTren(k, sx, sy, e) {
   lx.globalAlpha = 1;
 }
 
-const pintaKartSinEfectos = pintaKart;
-pintaKart = (k, sx, sy, e) => {
-  if (k.lag && k.estado !== 'cae') pintaLag(k, sx, sy, e);
-  pintaKartSinEfectos(k, sx, sy, e);
+// antes del kart: el lag (el kart se ve a trompicones)
+function pintaLagDelKart(k, sx, sy, e) { if (k.lag && k.estado !== 'cae') pintaLag(k, sx, sy, e); }
+function pintaImanDelKart(k, sx, sy, e) {
+  const bote = Math.sin(RELOJ * 5) * 1.5;
+  figCosa('influencer').pinta(lx, Math.round(sx), Math.round(sy - (k.z + 21 + bote) * e), e * 0.32, BASE_COSA, RELOJ * 2);
+  if ((RELOJ * 8) % 1 < 0.5) { lx.fillStyle = '#ff8fc8'; const s = Math.max(1, Math.round(e)); lx.fillRect(Math.round(sx + 7 * e), Math.round(sy - (k.z + 26 + bote) * e), s, s); lx.fillRect(Math.round(sx - 8 * e), Math.round(sy - (k.z + 20 + bote) * e), s, s); }
+}
+// encima del kart: el tren, el imán del influencer y la burbuja del escudo (nada si va por debajo de un puente)
+function pintaEfectosEncima(k, sx, sy, e) {
   if (alzaPuente(k) === null) return;      // escondido bajo un puente
   if (k.tTren > 0) pintaTren(k, sx, sy, e);
-  if (k.tIman > 0) {
-    const bote = Math.sin(RELOJ * 5) * 1.5;
-    figCosa('influencer').pinta(lx, Math.round(sx), Math.round(sy - (k.z + 21 + bote) * e), e * 0.32, BASE_COSA, RELOJ * 2);
-    if ((RELOJ * 8) % 1 < 0.5) { lx.fillStyle = '#ff8fc8'; const s = Math.max(1, Math.round(e)); lx.fillRect(Math.round(sx + 7 * e), Math.round(sy - (k.z + 26 + bote) * e), s, s); lx.fillRect(Math.round(sx - 8 * e), Math.round(sy - (k.z + 20 + bote) * e), s, s); }
-  }
+  if (k.tIman > 0) pintaImanDelKart(k, sx, sy, e);
   if (k.escudo > 0 && (k.escudo > 2 || (RELOJ * 8) % 1 < 0.6)) pintaBurbuja(sx, sy - (k.z + 7 * k.tam) * e, 10 * e * k.tam, RELOJ + k.idx * 0.1, k.escudo <= 2);
-};
+}

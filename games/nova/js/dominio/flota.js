@@ -46,18 +46,23 @@ NV.Flota = (() => {
 
   // Poner una nave a trabajar (o quitarla con trabajo = null) en un sector de tipo `tipo`. Lo que llevaba se recoge antes:
   // devuelve lo recogido, o null si no se puede (nave sin reclutar, trabajo bloqueado o ya trabajan todas las que caben).
+  // ¿Puede la nave `n` pasar a `trabajo`? Quitarla siempre; un trabajo, si existe, no está bloqueado y cabe (o ya trabajaba)
+  function cabe(fl, n, trabajo, F) {
+    if (!trabajo) return true;
+    const T = F.trabajos[trabajo];
+    if (!T || T.bloqueado) return false;
+    return !!n.trabajo || trabajando(fl).length < maxNaves(fl, F);
+  }
   function asigna(fl, id, trabajo, sector, tipo, ahora, F) {
-    if (trabajo && (!F.trabajos[trabajo] || F.trabajos[trabajo].bloqueado)) return null;
     const n = fl.naves[id];
-    if (!n) return null;   // primero hay que reclutarla
-    if (trabajo && !n.trabajo && trabajando(fl).length >= maxNaves(fl, F)) return null;
+    if (!n || !cabe(fl, n, trabajo, F)) return null;   // sin reclutar, trabajo que no vale o no caben más
     const antes = n.trabajo ? recogeNave(fl, n, ahora, F) : {};
     Object.assign(n, { trabajo: trabajo || null, sector: trabajo ? sector : null, tipo: trabajo ? tipo : null, desde: ahora });
     return antes;
   }
   function recogeNave(fl, n, ahora, F) {
-    const T = F.trabajos[n.trabajo], x = Math.floor(horas(n, ahora, topeHoras(fl, F)) * ritmo(n, fl, F));
-    return T && T.produce && x > 0 ? { [T.produce]: x } : {};
+    const x = Math.floor(horas(n, ahora, topeHoras(fl, F)) * ritmo(n, fl, F)), produce = x > 0 && F.trabajos[n.trabajo].produce;   // x > 0: el trabajo existe
+    return produce ? { [produce]: x } : {};
   }
 
   // Mejoras de la flota: lo que cuesta la siguiente (null si ya está al máximo) y comprarla con la aleación de la campaña `c`

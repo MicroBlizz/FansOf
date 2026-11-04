@@ -33,24 +33,40 @@ function fpZonaPon(k, x, y, puerta) {
 }
 // EL PORTAZO: el hueco de muro más cercano a (x, y) que se puede cerrar: una fila (o columna) de 2 a 6 casillas de suelo con muro a los dos
 // lados y paso libre por delante y por detrás. Sin nadie dentro (ni muebles). Devuelve { x, y, w, h, hor } en el mundo, o null si no hay ninguno cerca
+const fpSuelo = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && GRID[j * MW + i] === SUELO;
 function fpPuertaCerca(x, y) {
-  const S = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && GRID[j * MW + i] === SUELO, R = Math.ceil(FPZ.portazo.busca / CEL);
-  const ci = Math.floor(x / CEL), cj = Math.floor(y / CEL), cand = [];
+  const R = Math.ceil(FPZ.portazo.busca / CEL), ci = Math.floor(x / CEL), cj = Math.floor(y / CEL), cand = [];
   for (let j = cj - R; j <= cj + R; j++) for (let i = ci - R; i <= ci + R; i++) {
-    if (!S(i, j)) continue;
-    // hueco en un muro horizontal (se cruza de arriba abajo): el tramo de suelo de la fila j, cerrado por muro a izquierda y derecha
-    if (!S(i - 1, j)) { let i1 = i; while (i1 - i < 7 && S(i1 + 1, j)) i1++; const w = i1 - i + 1;
-      if (w >= 2 && w <= 6 && !S(i1 + 1, j) && S(i, j - 1) && S(i, j + 1) && S(i1, j - 1) && S(i1, j + 1) && !S(i - 1, j + 1) && !S(i1 + 1, j + 1)) cand.push({ x: i * CEL, y: j * CEL, w: w * CEL, h: CEL, hor: true }); }
-    // hueco en un muro vertical (se cruza de lado a lado)
-    if (!S(i, j - 1)) { let j1 = j; while (j1 - j < 7 && S(i, j1 + 1)) j1++; const h = j1 - j + 1;
-      if (h >= 2 && h <= 6 && !S(i, j1 + 1) && S(i - 1, j) && S(i + 1, j) && S(i - 1, j1) && S(i + 1, j1) && !S(i + 1, j - 1) && !S(i + 1, j1 + 1)) cand.push({ x: i * CEL, y: j * CEL, w: CEL, h: h * CEL, hor: false }); }
+    if (!fpSuelo(i, j)) continue;
+    const h = fpHuecoHorizontal(i, j), v = fpHuecoVertical(i, j);
+    if (h) cand.push(h);
+    if (v) cand.push(v);
   }
-  const libre = q => !(PUERTA.cerrada && q.x < PUERTA.x + PUERTA.w && q.x + q.w > PUERTA.x && q.y < PUERTA.y + PUERTA.h && q.y + q.h > PUERTA.y)
+  cand.sort((a, b) => lejos(x, y, a.x + a.w / 2, a.y + a.h / 2) - lejos(x, y, b.x + b.w / 2, b.y + b.h / 2));
+  return cand.find(q => lejos(x, y, q.x + q.w / 2, q.y + q.h / 2) <= FPZ.portazo.busca && fpPortazoLibre(q)) || null;
+}
+// hueco en un muro horizontal (se cruza de arriba abajo): el tramo de suelo de la fila j, cerrado por muro a izquierda y derecha
+function fpHuecoHorizontal(i, j) {
+  const S = fpSuelo; if (S(i - 1, j)) return null;
+  let i1 = i; while (i1 - i < 7 && S(i1 + 1, j)) i1++;
+  const w = i1 - i + 1;
+  if (w >= 2 && w <= 6 && !S(i1 + 1, j) && S(i, j - 1) && S(i, j + 1) && S(i1, j - 1) && S(i1, j + 1) && !S(i - 1, j + 1) && !S(i1 + 1, j + 1)) return { x: i * CEL, y: j * CEL, w: w * CEL, h: CEL, hor: true };
+  return null;
+}
+// hueco en un muro vertical (se cruza de lado a lado)
+function fpHuecoVertical(i, j) {
+  const S = fpSuelo; if (S(i, j - 1)) return null;
+  let j1 = j; while (j1 - j < 7 && S(i, j1 + 1)) j1++;
+  const h = j1 - j + 1;
+  if (h >= 2 && h <= 6 && !S(i, j1 + 1) && S(i - 1, j) && S(i + 1, j) && S(i - 1, j1) && S(i + 1, j1) && !S(i + 1, j - 1) && !S(i + 1, j1 + 1)) return { x: i * CEL, y: j * CEL, w: CEL, h: h * CEL, hor: false };
+  return null;
+}
+// ¿está libre el hueco? Ni la puerta del mapa cerrada, ni gente, ni muebles, ni otro portazo
+function fpPortazoLibre(q) {
+  return !(PUERTA.cerrada && q.x < PUERTA.x + PUERTA.w && q.x + q.w > PUERTA.x && q.y < PUERTA.y + PUERTA.h && q.y + q.h > PUERTA.y)
     && !J.entes.some(e => !e.fuera && e.x + MEDIO_PIE > q.x - 4 && e.x - MEDIO_PIE < q.x + q.w + 4 && e.y > q.y - 4 && e.y - FONDO_PIE < q.y + q.h + 4)
     && !MUEBLES.some(m => m.pisa && q.x < m.pisa.x1 && q.x + q.w > m.pisa.x0 && q.y < m.pisa.y1 && q.y + q.h > m.pisa.y0)
     && !FPZ.lista.some(z => z.k === 'portazo' && z.p.x === q.x && z.p.y === q.y);
-  cand.sort((a, b) => lejos(x, y, a.x + a.w / 2, a.y + a.h / 2) - lejos(x, y, b.x + b.w / 2, b.y + b.h / 2));
-  return cand.find(q => lejos(x, y, q.x + q.w / 2, q.y + q.h / 2) <= FPZ.portazo.busca && libre(q)) || null;
 }
 // ¿hay una puerta cerrada de un portazo en esa caja (mapa.js: chocaCaja) o en esa casilla (celdaLibre, rayoMapa)?
 const portazoCaja = (x0, y0, x1, y1) => FPZ.lista.length > 0 && FPZ.lista.some(z => z.k === 'portazo' && x0 < z.p.x + z.p.w && x1 > z.p.x && y0 < z.p.y + z.p.h && y1 > z.p.y);

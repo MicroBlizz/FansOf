@@ -37,7 +37,7 @@ IDIOMA.add({
   "Perforaescudos": "Shield piercer",
   "La railgun cinética mete la mitad del daño en el casco aunque haya escudo": "The kinetic railgun puts half its damage into the hull even through a shield",
   "Metralla incendiaria": "Incendiary shrapnel",
-  "Cada perdigón térmico del flak calienta también a los enemigos de al lado": "Each thermal flak pellet also heats the enemies next to it",
+  "Cada perdigón térmico del flak calienta la mitad, pero calienta también a los enemigos de al lado": "Each thermal flak pellet heats half as much, but also heats nearby enemies",
   "Dron parásito": "Parasite drone",
   "Un dron EM pegado a su presa la mantiene Interferida": "An EM drone stuck to its prey keeps it Jammed",
   "No dispara ni maniobra bien 2 s (jefes y capitanes, 1 s); lo causa acumular golpes de EM": "Cannot fire or steer well for 2 s (bosses and captains, 1 s); caused by piling up EM hits",

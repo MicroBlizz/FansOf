@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.65
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ganan un volumen de efectos y otro de música por separado, y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems gain separate effects and music volumes, and internal testing keeps improving.",
+  "Microblizz ha separado la música de los efectos y Phony se ha camuflado entre las dos barras.": "Microblizz split music from effects and Phony camouflaged himself between the two bars.",
   // 0.2.64
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor. <b>PREMIO DIARIO SIN BLOQUEO</b>: recoger el premio diario ya no se queda esperando si no hay red; se da al momento y el cobro se manda al volver.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server. <b>DAILY PRIZE WITHOUT BLOCKING</b>: collecting the daily prize no longer waits when there is no network; it is given at once and the claim is sent when it comes back.",
   "Microblizz ha mandado el premio por la cola y Phony se ha camuflado en ella.": "Microblizz sent the prize through the queue and Phony camouflaged himself in it.",

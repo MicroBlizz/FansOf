@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.17
+  "<b>VOLUMEN POR SEPARADO</b>: en Opciones (y en la pausa del PvP) hay una barra para los efectos y otra para la música, las mismas que el resto de juegos.": "<b>SEPARATE VOLUME</b>: Options (and the PvP pause screen) now have one slider for effects and another for music, the same as the other games.",
+  "Microblizz ha bajado la música para oír a los rivales y Phony ha subido el motor para que no le oigan.": "Microblizz turned the music down to hear the rivals and Phony turned the engine up so they could not hear him.",
   // 0.7.16
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
   "Microblizz ha ordenado la salida y Phony ha adelantado a la cola entera.": "Microblizz tidied the starting grid and Phony overtook the whole queue.",

@@ -57,8 +57,7 @@ function vkAbreOpciones() {
     <div class="vk-fila"><button class="vk-btn vk-azul" id="vk-ayuda" type="button">${tr('CÓMO SE JUEGA')}</button></div>`);
   const { lista, version, cerrar } = OPCIONES.lista({
     filas: [
-      OPCIONES.interruptor(tr('Sonido'), tr('Efectos y música.'), () => !SAVE.muted, v => { SAVE.muted = !v; vkGuarda(); applyVolume(); }),
-      OPCIONES.interruptor(tr('Música'), tr('La canción de fondo.'), () => SAVE.musica !== false, v => { SAVE.musica = v; vkGuarda(); applyVolume(); }),
+      OPCIONES.sonido({ efectos: [() => SAVE.vol, v => { SAVE.vol = v; applyVolume(); vkGuarda(); }], musica: [() => SAVE.mus, v => { SAVE.mus = v; applyVolume(); vkGuarda(); }] }),
       'idioma', 'cuenta',
     ],
     versionTexto: 'Fans of Vikings · v' + VERSION,

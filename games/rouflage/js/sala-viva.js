@@ -58,6 +58,22 @@ function salaVivaMapa(datos, inicial) {
   if (inicial) return;
   for (const e of J.entes) { const [x, y] = sitioLibreCerca(e.x, e.y); e.x = x; e.y = y; }
 }
+// una persona de la lista en su plaza; devuelve true si es un remoto que acaba de llegar
+function salaVivaEntra(j) {
+  const s = j.orden | 0; if (s < 0 || s > 40) return false;
+  while (RFP.slots.length <= s) RFP.slots.push({ s: RFP.slots.length, humano: false, vacio: true });      // huecos: plazas de gente que ya se fue
+  const nombre = j.nombre || ('Fan#' + (s + 1)), viejo = RFP.slots[s];
+  if (viejo && viejo.humano && viejo.nombre === nombre && viejo.yo === !!j.yo) return false;
+  if (viejo && viejo.humano) salaVivaQuita(viejo);      // en esa plaza hay ahora otra persona (en la red de pruebas los números se reparten de nuevo)
+  const tipo = NOMBRES[j.animal] ? j.animal : 'bunny', sl = { s, humano: true, clase: 'camaleon', tipo, nombre, mana: 0, yo: !!j.yo, ropaFiada: 'ropa' in j, ropaSrv: j.ropa };
+  RFP.slots[s] = sl; delete RFP.ido[s];
+  if (sl.yo && J.yo) { sl.ente = J.yo; J.yo.slot = s; RFP.yo = s; return false; }      // yo sigo siendo yo, aunque cambie de plaza
+  const [x, y] = sitioLibreCerca(...SALIDA_CAMALEONES[s % SALIDA_CAMALEONES.length]);      // cada plaza en su sitio del corro
+  const e = nuevoEnte('camaleon', tipo, sl.nombre, x, y); e.slot = s; e.humano = true; sl.ente = e;
+  if (sl.yo) { e.jugador = true; J.yo = e; RFP.yo = s; J.cuenta = e.pts; vistePartida(e, ropaPartida()); return false; }
+  e.remoto = true; RFP.rx[s] = RELOJ; if (sl.ropaFiada) { vistePartida(e, sl.ropaSrv || {}); sl.ropaOk = true; }
+  return true;
+}
 // quién hay: los nuevos entran (cada uno en su plaza, la de su número de sala) y los que se van desaparecen
 function salaVivaGente(i) {
   const jug = (i.jugadores || []).slice().sort((a, b) => a.orden - b.orden), txt = jug.map(j => j.orden + ':' + j.nombre).join('|');
@@ -67,20 +83,7 @@ function salaVivaGente(i) {
   for (const sl of RFP.slots) if (sl && sl.humano && !vivos.has(sl.s)) salaVivaQuita(sl);
   if (J.yo && !jug.some(j => j.yo)) return;      // (no debería pasar: la lista siempre me trae a mí)
   let nuevo = false;
-  for (const j of jug) {
-    const s = j.orden | 0; if (s < 0 || s > 40) continue;
-    while (RFP.slots.length <= s) RFP.slots.push({ s: RFP.slots.length, humano: false, vacio: true });      // huecos: plazas de gente que ya se fue
-    const nombre = j.nombre || ('Fan#' + (s + 1)), viejo = RFP.slots[s];
-    if (viejo && viejo.humano && viejo.nombre === nombre && viejo.yo === !!j.yo) continue;
-    if (viejo && viejo.humano) salaVivaQuita(viejo);      // en esa plaza hay ahora otra persona (en la red de pruebas los números se reparten de nuevo)
-    const tipo = NOMBRES[j.animal] ? j.animal : 'bunny', sl = { s, humano: true, clase: 'camaleon', tipo, nombre, mana: 0, yo: !!j.yo, ropaFiada: 'ropa' in j, ropaSrv: j.ropa };
-    RFP.slots[s] = sl; delete RFP.ido[s];
-    if (sl.yo && J.yo) { sl.ente = J.yo; J.yo.slot = s; RFP.yo = s; continue; }      // yo sigo siendo yo, aunque cambie de plaza
-    const [x, y] = sitioLibreCerca(...SALIDA_CAMALEONES[s % SALIDA_CAMALEONES.length]);      // cada plaza en su sitio del corro
-    const e = nuevoEnte('camaleon', tipo, sl.nombre, x, y); e.slot = s; e.humano = true; sl.ente = e;
-    if (sl.yo) { e.jugador = true; J.yo = e; RFP.yo = s; J.cuenta = e.pts; vistePartida(e, ropaPartida()); }
-    else { e.remoto = true; RFP.rx[s] = RELOJ; nuevo = true; if (sl.ropaFiada) { vistePartida(e, sl.ropaSrv || {}); sl.ropaOk = true; } }
-  }
+  for (const j of jug) if (salaVivaEntra(j)) nuevo = true;
   // al que llega le cuento lo mío: la ropa y la habilidad, y mi piel si estoy congelado
   if (nuevo && J.yo && J.fase === 'sala') { PIDE_ROPA.n = 0; rfpMandaRopa(true); if (J.yo.congelado) rfpMandaPiel(J.yo); }
 }
@@ -191,25 +194,34 @@ function salaVivaPintaUI(i, soyAnf) {
   E('sv-invitar').textContent = tr('INVITAR');
   E('sv-opciones').querySelector('span').textContent = tr('CONFIGURAR PARTIDA');
   E('sv-opciones').setAttribute('aria-label', tr('CONFIGURAR PARTIDA')); E('sv-chat').setAttribute('aria-label', tr('Chat')); E('sv-atras').setAttribute('aria-label', tr('Salir de la sala')); E('sv-cerrar').setAttribute('aria-label', tr('Cerrar'));
-  // lo que se va a jugar, en pequeño: el modo, el mapa y con o sin talentos
-  const d = soyAnf ? MODO_ELEGIDO : (i.modo || {}), etq = [], m = MODOS[d.m] ? d.m : 'normal';
+  const html = svEtiquetas(soyAnf ? MODO_ELEGIDO : (i.modo || {}), soyAnf);
+  svBotonPapel();
+  const caja = E('sv-etq'); if (caja.innerHTML !== html) caja.innerHTML = html;
+  svBotonEmpezar(i, soyAnf);
+}
+// lo que se va a jugar, en pequeño: el modo, el mapa y con o sin talentos
+function svEtiquetas(d, soyAnf) {
+  const etq = [], m = MODOS[d.m] ? d.m : 'normal';
   etq.push(['', tr(MODOS[m].nombre)]);
   const mapa = typeof mapaDeSala === 'function' && mapaDeSala(d), def = mapa && MAPAS[mapa];
   if (def) etq.push(['', mapa === MAPA_ESC.id ? tr(soyAnf ? 'MI ESCENARIO' : 'ESTE ESCENARIO') : tr(def.nombre)]);
   etq.push([ajusteSala(d.a, 't') === 1 ? 'tal' : '', ajusteSala(d.a, 't') === 1 ? tr('CON TALENTOS') : tr('CLÁSICO')]);
-  // el botón de cambiar de papel: dice a cuál pasas
+  return etq.map(([c, t]) => `<span class="sv-e ${c}">${esc(t)}</span>`).join('');
+}
+// el botón de cambiar de papel: dice a cuál pasas
+function svBotonPapel() {
   const caz = !!(J.yo && J.yo.clase === 'cazador'), bp = E('sv-papel');
   if (bp.dataset.caz !== String(caz)) { bp.dataset.caz = String(caz); bp.classList.toggle('caz', !caz); ponIcono(bp.querySelector('i'), caz ? 'pincel' : 'diana'); }
   bp.querySelector('b').textContent = caz ? tr('SER CAMALEÓN') : tr('SER CAZADOR');
   bp.classList.toggle('lleno', !caz && J.cazadores.length >= SV_MAX_CAZ);      // ya hay bastantes cazadores
-  const html = etq.map(([c, t]) => `<span class="sv-e ${c}">${esc(t)}</span>`).join('');
-  const caja = E('sv-etq'); if (caja.innerHTML !== html) caja.innerHTML = html;
-  // EMPEZAR: el anfitrión lo pulsa; los demás ven a quién esperan
-  const b = E('sv-empezar'), faltan = Math.max(0, (salaCuantos(i.modo, (i.jugadores || []).length).total) - (i.jugadores || []).length);
+}
+// EMPEZAR: el anfitrión lo pulsa; los demás ven a quién esperan
+function svBotonEmpezar(i, soyAnf) {
+  const jugadores = i.jugadores || [], b = E('sv-empezar'), faltan = Math.max(0, salaCuantos(i.modo, jugadores.length).total - jugadores.length);
   b.classList.toggle('espera', !soyAnf); b.disabled = !soyAnf;
   const solo = soyAnf && (i.n || 0) < 2; b.classList.toggle('largo', solo);
   b.querySelector('b').textContent = soyAnf ? (solo ? tr('RELLENAR CON BOTS') : tr('EMPEZAR')) : tr('ESPERANDO');      // como siempre: solo, se juega ya con la máquina
-  const anf = (i.jugadores || []).find(j => j.orden === i.anfitrion);
+  const anf = jugadores.find(j => j.orden === i.anfitrion);
   b.querySelector('small').textContent = soyAnf ? (faltan ? tr('El resto, bots: {n}', { n: faltan }) : '') : tr('Lo empieza {n}', { n: anf ? anf.nombre : '' });
 }
 // los nombres encima de cada colado de la sala (el del anfitrión, en amarillo): lo llama el dibujo (dibujo.js) tras los personajes

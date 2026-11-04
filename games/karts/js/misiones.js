@@ -37,13 +37,10 @@ function misionSuma(id, cuanto = 1) {
   }
   guardaPartida();
 }
-// usar un objeto en una carrera online cuenta para la misión
-const usaObjetoSinMision = usaObjeto;
-usaObjeto = (k, C) => {
-  const antes = k.objeto, usos = k.usos;
-  usaObjetoSinMision(k, C);
+// usar un objeto en una carrera online cuenta para la misión (usaObjeto, en objetos.js, lo llama con lo que había antes de usarlo)
+function misionUsaObjeto(k, C, antes, usos) {
   if (C.pvp && k.esJugador && antes && (k.objeto !== antes || k.usos !== usos)) misionSuma('objetos');
-};
+}
 // para el pase: las tres de hoy
 function misionesHtml() {
   const M = misionesHoy();

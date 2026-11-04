@@ -212,9 +212,8 @@ function escVaA(x, y, alArmario) {
   MIESC.camino = c && c.length ? c : null; MIESC.alArmario = !!(alArmario && MIESC.camino); MIESC.cam.sigue = true;
   if (!MIESC.camino && alArmario) escAbreArmario();
 }
-function escAnda(dt) {
-  const yo = MIESC.yo; if (!yo) return false;
-  const sala = escenarioSala(), M = escMundo(sala.id), K = MIESC.teclas;
+// hacia dónde quiere ir: las teclas y la palanca (solo al pasear) o el siguiente punto del camino; [0, 0] si está quieto
+function escAndaRumbo(yo, K) {
   let vx = 0, vy = 0;
   if (MIESC.modo === 'pasear') {
     if (K.has('ArrowLeft') || K.has('a')) vx--; if (K.has('ArrowRight') || K.has('d')) vx++; if (K.has('ArrowUp') || K.has('w')) vy--; if (K.has('ArrowDown') || K.has('s')) vy++;
@@ -226,8 +225,16 @@ function escAnda(dt) {
     if (d < 5) { MIESC.camino.shift(); if (!MIESC.camino.length) { MIESC.camino = null; if (MIESC.alArmario) { MIESC.alArmario = false; escAbreArmario(); } } }
     else { vx = dx / d; vy = dy / d; }
   }
+  return [vx, vy];
+}
+// al acercarse al armario sale el aviso (y el botón se enciende); al alejarse, se apaga
+function escAndaArmario(yo, M) {
   const a = M.armario, cerca = lejos(yo.x, yo.y, a.x, a.y) < 80;
-  if (cerca !== MIESC.cerca) { MIESC.cerca = cerca; E('b-esc-armario').classList.toggle('cerca', cerca); if (cerca && MIESC.modo === 'pasear') escAviso(tr('Toca el armario para cambiarte de ropa')); MIESC.sucio = true; }
+  if (cerca === MIESC.cerca) return;
+  MIESC.cerca = cerca; E('b-esc-armario').classList.toggle('cerca', cerca); if (cerca && MIESC.modo === 'pasear') escAviso(tr('Toca el armario para cambiarte de ropa')); MIESC.sucio = true;
+}
+// un paso hacia (vx, vy): si choca, desliza por un eje; devuelve false si no se mueve
+function escAndaPaso(yo, sala, M, vx, vy, dt) {
   const l = Math.hypot(vx, vy);
   if (!l) { if (yo.anda > 0) { yo.anda = Math.max(0, yo.anda - dt * 6); return true; } return false; }
   const v = 170 * dt / l, nx = yo.x + vx * v, ny = yo.y + vy * v;
@@ -235,6 +242,13 @@ function escAnda(dt) {
   if (Math.abs(vx) > 0.2) yo.dir = vx > 0 ? 1 : -1;
   yo.anda = Math.min(1, yo.anda + dt * 6); yo.paso = (yo.paso || 0) + dt * 11;
   return true;
+}
+function escAnda(dt) {
+  const yo = MIESC.yo; if (!yo) return false;
+  const sala = escenarioSala(), M = escMundo(sala.id);
+  const [vx, vy] = escAndaRumbo(yo, MIESC.teclas);
+  escAndaArmario(yo, M);
+  return escAndaPaso(yo, sala, M, vx, vy, dt);
 }
 // escPintaYo (la galleta, con el cuerpo de la partida): escenario-palanca.js
 

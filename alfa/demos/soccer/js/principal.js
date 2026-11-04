@@ -46,7 +46,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   const mio = (ev, e) => ev.quien !== undefined && e.jugadores[ev.quien].eq === 0;
   const EFECTOS = {
     tiro: (ev, e) => { play('chute', ev.aereo ? 0.4 : 0.7); golpe('tiro', mio(ev, e)); },
-    super: (ev, e) => { FX.cortar(e.aj.equipos[ev.eq]); play('supertiro'); golpe('super'); },
+    super: (ev, e) => { FX.cortar(e.aj.equipos[ev.eq]); S.supertiro.chutar(e, ev); play('supertiro'); golpe('super'); },
     chilena: () => { play('chute', 0.9); sonar(700, 0.12, 'square', 0.6); },
     pase: () => play('pase'),
     barrida: (ev, e) => { play('barrida'); golpe('barrida', mio(ev, e)); },
@@ -172,7 +172,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       alineaciones: [s.alineacion, nivelRival > 0.6 ? 'ofensiva' : nivelRival < 0.4 ? 'defensiva' : 'equilibrada'] });
     est.e.estrategia[1].presionan = S.AJ.equipos.find((q) => q.id === r.equipo).nivel > 0.5;
     Object.assign(est, { modo: 'juego', controlado: est.e.jugadores.find((j) => j.eq === 0 && j.puesto === 'delantero').id, copaRes: null, repetirEn: 0 });
-    V.cam = 50; UI.cartel = null; FX.fotos = []; FX.repe = null; FX.corte = null;
+    V.cam = 50; UI.cartel = null; FX.fotos = []; FX.repe = null; FX.corte = null; S.supertiro.limpiar();
     if (!est.tutorialHecho) S.tutorial.empezar();
     guardar(); play('silbato');
   }

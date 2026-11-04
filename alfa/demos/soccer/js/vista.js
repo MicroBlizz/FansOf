@@ -194,7 +194,8 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     g.fillStyle = `rgba(0,0,0,${0.38 - lejos * 0.2})`; g.beginPath(); g.ellipse(q0.x, q0.y, r * (1.15 - lejos * 0.45), r * (0.42 - lejos * 0.16), 0, 0, 7); g.fill();
     estela(g, q, tr ? COLOR_TIRO[tr.tipo] || COLOR_TIRO.normal : null);
     if (tr && tr.tipo === 'factura') for (const k of [-1, 1]) { const f = P(b.x, b.y + k * (1.6 + Math.sin(t * 18) * 0.8), b.z); pelota(g, f.x, f.y, r, 0.75, -giro); }
-    if (tr && tr.tipo === 'fantasma') { g.save(); g.shadowColor = '#7dff6a'; g.shadowBlur = 25; pelota(g, q.x, q.y, r * 1.2, 0.6, giro); g.restore(); }
+    if (tr && tr.tipo === 'fantasma') { g.save(); g.shadowColor = '#7dff6a'; g.shadowBlur = 25; pelota(g, q.x, q.y, r * 1.35, 0.6, giro); g.restore(); }
+    else if (tr && tr.tipo !== 'normal') { g.save(); g.shadowColor = S.supertiro.color(tr.tipo); g.shadowBlur = 30 + Math.sin(t * 30) * 10; pelota(g, q.x, q.y, r * 1.35, 1, giro); g.restore(); }   // súper: más grande y brillando
     else pelota(g, q.x, q.y, r, 1, giro);
     if (tr && tr.cargo > 0) cargando(g, q, tr.cargo / 0.55);
   }
@@ -242,7 +243,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     g.save();
     g.translate(CENTRO[0], CENTRO[1]); g.scale(z, z); g.translate(-f.x, -f.y);
     g.translate((Math.random() - 0.5) * V.temblor, (Math.random() - 0.5) * V.temblor);
-    cielo(g, e.aj); cesped(g, e, { arriba: f.y - 470 / z, abajo: f.y + 330 / z });
+    cielo(g, e.aj); cesped(g, e, { arriba: f.y - 470 / z, abajo: f.y + 330 / z }); S.supertiro.suelo(g);
     if (extra && extra.flecha) V.flechaPase(g, e, controlado, extra.flecha[0], extra.flecha[1]);
     porteria(g, e.aj, 0, 'fondo'); porteria(g, e.aj, e.aj.largo, 'fondo');
     const cosas = e.jugadores.map((j) => ({ y: j.y, f: () => jugador(g, e, j, t, j.id === controlado) }));
@@ -250,7 +251,9 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     cosas.sort((a, b) => a.y - b.y).forEach((c) => c.f());
     porteria(g, e.aj, 0, 'frente'); porteria(g, e.aj, e.aj.largo, 'frente');
     S.efectos.chispas(g, dt);
+    S.supertiro.aire(g, e, dt, t);
     g.restore();
+    S.supertiro.pantalla(g, e, dt);
     S.efectos.clima(g, e, t);
   };
 })(SOCCER);

@@ -7,12 +7,8 @@
 
 // ---------- a quién le toca ----------
 // el que va delante más cerca (como mucho a `max` unidades)
-function delanteDe(k, C, max) {
-  let mejor = null, d0 = max / PASO_VIA;
-  for (const o of C.karts) { if (o === k || o.fin || o.estado === 'cae') continue; const d = o.avance - k.avance; if (d > 0 && d < d0) { d0 = d; mejor = o; } }
-  return mejor;
-}
-const cercaDe = (k, C, max) => C.karts.filter(o => o !== k && !o.fin && Math.hypot(o.x - k.x, o.y - k.y) < max);
+const delanteDe = (k, C, max) => KD.objetos.delanteDe(k, C.karts, max, PASO_VIA);
+const cercaDe = (k, C, max) => KD.objetos.cercaDe(k, C.karts, max);
 const nombreDe = k => k.nombre || tr(k.piloto.nombre);
 // el bot de emparejamiento se come lo que venga (proyectiles y martillazos)
 function paraBot(k) {
@@ -57,7 +53,7 @@ function mueveBellota(o, C, dt) {
   }
 }
 function usaVaca(k, C, yo, quien) {
-  const obj = C.orden[0] === k ? C.orden[1] : C.orden[0];
+  const obj = KD.objetos.rivalDelPuesto(C.orden, k);
   if (!obj) return;
   const o = { tipo: 'vacaSuelo', x: obj.x, y: obj.y, objetivo: obj, t: 1.6, z: 90, autor: k, vida: 2.4, alto: 0, fase: 0, mueve: mueveVaca, pinta: pintaVacaCae };
   C.sueltos.push(o); if (C.pvp) pvpLanzaNuevo(o, k);
@@ -116,9 +112,9 @@ function usaMicro(k, C, yo, quien) {
 }
 
 // ---------- cuándo los usa la máquina ----------
-const iaDelante = max => (k, C) => { const o = delanteDe(k, C, max); return !!o && Math.abs(o.lat - k.lat) < 30; };
-const iaVarios = (n, max) => (k, C) => C.karts.filter(o => o !== k && !o.fin && o.avance > k.avance && (o.avance - k.avance) * PASO_VIA < max).length >= n;
-const iaRecta = k => PISTA.curvaS[(Math.floor(k.idx) + 6) % PISTA.N] < 0.006;
+const iaDelante = max => (k, C) => KD.objetos.iaDelante(delanteDe(k, C, max), k);
+const iaVarios = (n, max) => (k, C) => KD.objetos.iaVarios(k, C.karts, n, max, PASO_VIA);
+const iaRecta = k => KD.objetos.iaEnRecta(PISTA.curvaS[(Math.floor(k.idx) + 6) % PISTA.N]);
 
 // ---------- la lista (se añade a la ruleta) ----------
 const OBJETOS_2 = {
@@ -167,7 +163,7 @@ function pasoLag(k, dt) {
 // el imán: las monedas cercanas se las lleva
 function pasoIman(k, dt) {
   k.tIman -= dt;
-  for (const m of PISTA.monedas) if (m.t <= 0 && Math.hypot(m.x - k.x, m.y - k.y) < 48) {
+  for (const m of KD.objetos.monedasAlAlcance(k, PISTA.monedas, 48)) {
     m.t = 9; if (k.monedas < AJ.maxMonedas) k.monedas++; suena(k, 'moneda');
     for (let i = 0; i < 4; i++) chispa(m.x, m.y, 4, (k.x - m.x) * 2, (k.y - m.y) * 2, azar(20, 40), 0.35, '#ffcb3d', 2);
   }

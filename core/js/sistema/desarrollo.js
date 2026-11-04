@@ -43,6 +43,16 @@
         boton('Copiar', () => copiar(caja.value))));
       c.append(caja);
     } },
+    { titulo: 'Hora del juego', pinta(c) {   // ADR 047: la hora puesta a mano (HORA.pon) dura lo que la pestaña; se recarga para que el juego la tome
+      if (typeof HORA === 'undefined') { c.append(el('p', { textContent: 'Este juego no carga la hora de core.' })); return; }
+      const texto = () => new Date(HORA.ahora()).toLocaleString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      const recarga = () => { const u = new URL(location.href); u.searchParams.delete('hora'); location.replace(u.toString()); };
+      const hora = el('input', { type: 'time', value: '10:00' }), dias = el('input', { type: 'number', value: '0', min: '0', max: '365', style: 'width:4em' });
+      c.append(el('p', { textContent: (HORA.manual ? 'Puesta a mano: ' : 'Real: ') + texto(), style: HORA.manual ? 'color:#ff8a3d;font-weight:700' : '' }));
+      c.append(el('div', { className: 'fila' }, hora, el('span', { textContent: '+ días' }), dias,
+        boton('Poner esta hora', () => { if (HORA.pon(hora.value, +dias.value || 0)) recarga(); else aviso('No es una hora válida'); }),
+        boton('Hora real', () => { HORA.suelta(); recarga(); })));
+    } },
     { titulo: 'Partida', pinta(c) {
       const caja = el('textarea', { rows: 4, placeholder: 'La partida, en JSON. Pega aquí una para cargarla.' });
       c.append(el('div', { className: 'fila' },

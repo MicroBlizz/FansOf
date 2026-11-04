@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.162
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ya saben la hora del juego (se puede poner a mano en las pruebas) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems now know the game's time (it can be set by hand in testing) and internal testing keeps improving.",
+  "Microblizz ha puesto un reloj en la arena y Phony ha vendido relojes que adelantan.": "Microblizz put a clock in the arena and Phony sold clocks that run fast.",
   // 0.9.161
   "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
   "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked for its best side.",

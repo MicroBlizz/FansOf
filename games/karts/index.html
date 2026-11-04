@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#150b21">
-<title>Fans of Karts</title>
-<meta name="description" content="Fans of Karts (juego): carreras de karts en pixel art de consola portátil con los líderes de Fans of Rumble. Tres pistas, seis pilotos, objetos con mala idea y Microblizz, que ha comprado la carrera.">
+<title>Fans of Karts · Carreras de karts en pixel art gratis</title>
+<meta name="description" content="Carreras de karts en pixel art: elige a uno de seis líderes y corre 16 pistas en 4 mundos hasta la Torre del CEO. Gratis en el navegador.">
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<script src="../../core/js/nucleo.js?v=0.7.18"></script>
+<script src="../../core/js/nucleo.js?v=0.7.19"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', 'css/tienda.css', 'css/pvp.css')</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <style>
@@ -28,6 +28,22 @@ body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none
 /* el caos primordial (energía del PvP): arriba a la derecha, en el menú principal y las pantallas del PvP */
 #fok-energia { position: fixed; top: calc(6px + env(safe-area-inset-top)); right: calc(6px + env(safe-area-inset-right)); z-index: 30; display: flex; gap: 6px; align-items: center; font: 700 12px/1.2 var(--font-ui); color: var(--ink, #fff); }
 </style>
+<link rel="canonical" href="https://fansof.games/games/karts/">
+<meta name="robots" content="index,follow">
+<meta property="og:site_name" content="Fans Of">
+<meta property="og:locale" content="es_ES">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fansof.games/games/karts/">
+<meta property="og:title" content="Fans of Karts · Carreras de karts en pixel art gratis">
+<meta property="og:description" content="Carreras de karts en pixel art: elige a uno de seis líderes y corre 16 pistas en 4 mundos hasta la Torre del CEO. Gratis en el navegador.">
+<meta property="og:image" content="https://fansof.games/core/img/og-fansof.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fans of Karts · Carreras de karts en pixel art gratis">
+<meta name="twitter:description" content="Carreras de karts en pixel art: elige a uno de seis líderes y corre 16 pistas en 4 mundos hasta la Torre del CEO. Gratis en el navegador.">
+<meta name="twitter:image" content="https://fansof.games/core/img/og-fansof.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Fans of Karts","description":"Carreras de karts en pixel art: elige a uno de seis líderes y corre 16 pistas en 4 mundos hasta la Torre del CEO. Gratis en el navegador.","url":"https://fansof.games/games/karts/","image":"https://fansof.games/core/img/og-fansof.png","genre":["Carreras","Pixel art","Humor"],"inLanguage":"es","gamePlatform":"Web browser","applicationCategory":"Game","isAccessibleForFree":true,"publisher":{"@type":"Organization","name":"Fans Of Games","alternateName":["MicroBlizz","FansOfGames","FansOf"],"url":"https://fansof.games/","sameAs":["https://x.com/Fans_Of_","https://discord.gg/PztHQhm9c"]}}</script>
 </head>
 <body>
 <canvas id="cv" aria-label="Fans of Karts"></canvas>
@@ -92,6 +108,9 @@ NUCLEO.juego({
     'js/dominio/dominio.js',
     'js/dominio/premios.js',
     'js/dominio/carrera.js',
+    'js/dominio/fisica.js',
+    'js/dominio/marcha.js',
+    'js/dominio/objetos.js',
     'js/kart.js',
     'js/bichos.js',
     'js/puente.js',

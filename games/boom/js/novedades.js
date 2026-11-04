@@ -1,6 +1,7 @@
 // Fans of Boom · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.4.5', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes ya saben la hora del juego (se puede poner a mano en las pruebas) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha puesto un reloj en el cráter y Phony lo ha adelantado para llegar antes a la explosión."] },
   { v: '0.4.4', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },
   { v: '0.4.3', real: ["<b>VOLUMEN POR SEPARADO</b>: en Opciones hay una barra para los efectos y otra para la música, las mismas que el resto de juegos."], joke: ["Microblizz ha bajado la música del cráter y Phony ha subido las explosiones."] },
   { v: '0.4.2', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor."], joke: ["Microblizz ha puesto el cráter en cola de espera y Phony ya está haciendo sitio."] },

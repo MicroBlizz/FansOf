@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.19', real: ["<b>YA SE PUEDE JUGAR</b>: Fans Of Karts sale de Próximamente. La física, los suelos y los objetos se han repasado por dentro, con las 33 pistas comprobadas una a una para que se conduzca igual que en las pruebas."], joke: ["Microblizz ha quitado el cartel de «Próximamente» y Phony ya ha salido a toda velocidad antes de que se seque la pintura."] },
   { v: '0.7.18', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },
   { v: '0.7.16', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor."], joke: ["Microblizz ha ordenado la salida y Phony ha adelantado a la cola entera."] },
   { v: '0.7.17', real: ["<b>VOLUMEN POR SEPARADO</b>: en Opciones (y en la pausa del PvP) hay una barra para los efectos y otra para la música, las mismas que el resto de juegos."], joke: ["Microblizz ha bajado la música para oír a los rivales y Phony ha subido el motor para que no le oigan."] },

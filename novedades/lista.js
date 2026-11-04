@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-11-04',
+    fecha: '4 de noviembre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Ya se puede jugar en la web: 16 pistas, copa, PvP de hasta 8 y salas con amigos, con la física revisada pieza a pieza.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-11-01',
     fecha: '1 de noviembre de 2026',
     nuevos: [

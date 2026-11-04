@@ -2,6 +2,8 @@
 'use strict';
 IDIOMA.add({
   // 0.7.18
+  "<b>YA SE PUEDE JUGAR</b>: Fans Of Karts sale de Próximamente. La física, los suelos y los objetos se han repasado por dentro, con las 33 pistas comprobadas una a una para que se conduzca igual que en las pruebas.": "<b>NOW PLAYABLE</b>: Fans Of Karts leaves Coming soon. The physics, the ground types and the items have been reviewed inside, with all 33 tracks checked one by one so it drives just like in testing.",
+  "Microblizz ha quitado el cartel de «Próximamente» y Phony ya ha salido a toda velocidad antes de que se seque la pintura.": "Microblizz has taken down the \"Coming soon\" sign and Phony has already left at full speed before the paint dries.",
   "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
   "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked for its best side.",
   // 0.7.17

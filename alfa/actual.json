@@ -1,8 +1,8 @@
 {
- "build": 917,
- "hash": "e5d7fe1",
- "fecha": "2026-11-04T15:43:51Z",
- "mensaje": "Pets: reborde del antifaz pegado a la máscara, sin hueco ni cuernito",
+ "build": 918,
+ "hash": "57b2628",
+ "fecha": "2026-11-04T15:47:44Z",
+ "mensaje": "Karts: física al dominio, tanda 1 (acelerar, volante, derrape, salto) con puertos y tests (ADR 048)",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

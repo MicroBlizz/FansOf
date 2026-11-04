@@ -1,6 +1,9 @@
 // Fans Of Pets · Inglés: los textos de este juego (los nombres de las criaturas y de las facciones están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.3
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ya saben la hora del juego (se puede poner a mano en las pruebas) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems now know the game's time (it can be set by hand in testing) and internal testing keeps improving.",
+  "Microblizz ha acortado al muñeco un 40 % y Phony jura que ya era así.": "Microblizz made the doll 40% shorter and Phony swears it was always like that.",
   // 0.2.2
   "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
   "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked for its best side.",

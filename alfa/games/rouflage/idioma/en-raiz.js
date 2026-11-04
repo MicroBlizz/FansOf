@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.67
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes ya saben la hora del juego (se puede poner a mano en las pruebas) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems now know the game's time (it can be set by hand in testing) and internal testing keeps improving.",
+  "Microblizz ha puesto un reloj en el escondite y Phony se ha camuflado entre las agujas.": "Microblizz put a clock in the hideout and Phony camouflaged himself among the hands.",
   // 0.2.66
   "<b>LOGO NUEVO EN LA WEB</b>: el favicon y la imagen que sale al compartir Rouflage llevan ya su logo nuevo.": "<b>NEW LOGO ON THE WEB</b>: the favicon and the image shown when sharing Rouflage now carry its new logo.",
   "Microblizz ha pulido el logo nuevo de Rouflage y Phony se ha camuflado en la esquina del favicon.": "Microblizz polished Rouflage's new logo and Phony camouflaged himself in the corner of the favicon.",

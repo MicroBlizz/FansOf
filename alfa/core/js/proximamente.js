@@ -4,7 +4,7 @@
 // Va aparte y sin depender de nada porque lo cargan la portada, nucleo.js (los juegos) y las demos que no usan nucleo.js. Los textos llevan su inglés aquí mismo.
 'use strict';
 window.PROXIMAMENTE = (() => {
-  const ABIERTOS = ['rouflage'];
+  const ABIERTOS = ['rouflage', 'karts'];
   const alfa = /\/alfa\//.test(location.pathname);
   const desarrollo = (() => {   // la misma regla que NUCLEO.desarrollo (core/js/nucleo.js)
     try {

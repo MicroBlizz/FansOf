@@ -1,8 +1,8 @@
 {
- "build": 928,
- "hash": "df18fcc",
- "fecha": "2026-11-04T21:32:11Z",
- "mensaje": "Karts: el logo deja ver el fondo también en el hueco entre la N y la S",
+ "build": 929,
+ "hash": "3982ca0",
+ "fecha": "2026-11-04T21:36:58Z",
+ "mensaje": "Karts: icono nuevo (CrazyBunny más mono, pista verde, título KARTS tras las orejas)",
  "juegos": {
   "boom": "0.4.5",
   "cooking": "0.2.6",

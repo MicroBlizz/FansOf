@@ -98,7 +98,7 @@ function hiereJugador(n, dx, dy) {
   if (J.bloqueando && (dx * J.mx + dy * J.my) < 0.2) { SONIDO.sarten(); chispas(J.x + J.mx * 14, J.y - 18 + J.my * 10, PALETA.Y, 10, 60); PAN.pausa = 0.06; return 'bloqueado'; }
   J.vida -= n; J.invul = CIFRAS.invulnerableSeg; J.herido = 0.3; tiembla(0.9); SONIDO.herido(); PAN.pausa = 0.08;
   mueve(J, dx * 14, dy * 14, J_ANCHO, J_ALTO);
-  if (J.vida <= 0) JORNADA.derrota();
+  if (J.vida <= 0) { if (JORNADA.fase === 'arena') caidaArena(); else JORNADA.derrota(); }
   return true;
 }
 function recoge() {

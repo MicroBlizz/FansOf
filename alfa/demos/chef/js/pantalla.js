@@ -33,6 +33,8 @@ function pintaTodo(ctx) {
     pintaMarcador(ctx, W, H);
     pintaMandos(ctx, W, H);
     if (f === 'subiendo') { const a = clamp(JORNADA.subeT < 0 ? (JORNADA.subeT + 1.2) / 1.2 : JORNADA.subeT / 1.2, 0, 1); ctx.fillStyle = 'rgba(0,0,0,' + a.toFixed(2) + ')'; ctx.fillRect(0, 0, W, H); if (JORNADA.subeT >= 0) letra(ctx, tr('Subiendo a la cantina...'), W / 2, H / 2, PALETA.Y, 'center'); }
+  } else if (f === 'arena') {
+    pintaArena(ctx, W, H);
   } else if (f === 'servicio') {
     pintaCantina(ctx, W, H);
   } else {

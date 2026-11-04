@@ -1,8 +1,8 @@
 {
- "build": 926,
- "hash": "9e32611",
- "fecha": "2026-11-04T21:30:07Z",
- "mensaje": "Karts: el logo de la imagen de compartir deja ver el fondo en los huecos de las letras",
+ "build": 927,
+ "hash": "bc2fe67",
+ "fecha": "2026-11-04T21:31:25Z",
+ "mensaje": "Fans of Chef 0.4.0: la arena isométrica (caza y cocina a la vez en una sola pantalla pintada por Yoshi), con la cocina de la cantina partida en piezas reutilizables",
  "juegos": {
   "boom": "0.4.5",
   "cooking": "0.2.6",

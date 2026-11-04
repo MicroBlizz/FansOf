@@ -56,12 +56,12 @@ function procesaToques() {
       if (q.x !== undefined && dentroDe(q, PAN.btnMus)) { SAVE.musica = SAVE.musica ? 0 : 1; guarda(); applyVolume(); SONIDO.boton(); continue; }
       if (q.x !== undefined && dentroDe(q, PAN.btnFx)) { SAVE.efectos = SAVE.efectos ? 0 : 1; guarda(); SONIDO.boton(); continue; }
       if (q.x !== undefined && dentroDe(q, PAN.btnCtrl)) { SAVE.control = modoControl() === 'tocar' ? 'palanca' : 'tocar'; guarda(); SONIDO.boton(); continue; }
-      if (q.x !== undefined || q.tecla === 'accion') { ENTRADA.tactil = q.x !== undefined && esMovil(); empiezaJornada(); }
+      if (q.x !== undefined || q.tecla === 'accion') { ENTRADA.tactil = q.x !== undefined && esMovil(); empiezaArena(); }
       continue;
     }
     const t = VENTANA.tipo; if (!t) continue;
     if (t === 'manana') { if (q.tecla === 'accion' || (q.x !== undefined && dentroDe(q, VENTANA.boton))) bajaAlSotano(); continue; }
-    if (t === 'cierre') { if (q.tecla === 'accion' || (q.x !== undefined && dentroDe(q, VENTANA.boton))) { SONIDO.oro(); empiezaJornada(); } continue; }
+    if (t === 'cierre') { if (q.tecla === 'accion' || (q.x !== undefined && dentroDe(q, VENTANA.boton))) { SONIDO.oro(); empiezaArena(); } continue; }
   }
   ENTRADA.toques.length = 0;
 }

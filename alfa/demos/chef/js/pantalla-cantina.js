@@ -54,7 +54,7 @@ function pintaCantina(ctx, W, H) {
   pintaMarcadorCantina(ctx, W, H);
   pintaMandos(ctx, W, H);
 }
-function pintaMarcadorCantina(ctx, W, H) {
+function pintaMarcadorCantina(ctx, W, H, restante = CIFRAS.servicioSeg - CANTINA.t) {
   // las comandas, arriba a la izquierda: receta, iconos de lo que lleva y la barra de paciencia
   const n = CANTINA.comandas.length, ancho = Math.min(W - 64, 124);
   marcoMadera(ctx, 2, 2, ancho, 14 + Math.max(1, n) * 20);
@@ -69,7 +69,7 @@ function pintaMarcadorCantina(ctx, W, H) {
   });
   // arriba a la derecha: reloj, puntos y combo
   marcoMadera(ctx, W - 58, 2, 56, 36);
-  const seg = Math.max(0, Math.ceil(CIFRAS.servicioSeg - CANTINA.t)), m = Math.floor(seg / 60), s = ('0' + seg % 60).slice(-2);
+  const seg = Math.max(0, Math.ceil(restante)), m = Math.floor(seg / 60), s = ('0' + seg % 60).slice(-2);
   letra(ctx, m + ':' + s, W - 30, 13, seg <= 10 && Math.floor(PAN.t * 4) % 2 ? PALETA.R : PALETA.Y, 'center', 8, false);
   letra(ctx, String(CANTINA.puntos), W - 30, 24, PALETA.W, 'center', 8, false);
   letra(ctx, 'x' + CANTINA.combo, W - 30, 34, CANTINA.combo > 1 ? PALETA.G : PALETA.s, 'center', 7, false);

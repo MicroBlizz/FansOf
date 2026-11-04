@@ -17,7 +17,7 @@ PT.muneco3d = (() => {
     const c = malla.clone(); c.material = m; c.userData = { contorno: true };
     return c;
   }
-  function pinta(T, gradiente, malla, i) {
+  function viste(T, gradiente, malla, i) {
     const viejo = malla.material, color = viejo.color ? '#' + viejo.color.getHexString() : '#ffffff';
     malla.material = new T.MeshToonMaterial({ color, map: viejo.map || null, gradientMap: gradiente });
     malla.userData = { id: i + 1, hueso: malla.parent && malla.parent.isBone ? malla.parent.name : malla.name, color };
@@ -36,7 +36,7 @@ PT.muneco3d = (() => {
     const { T, render, tonos, luces } = await PT.maniqui3d.comun(), gradiente = tonos();
     const gltf = await new T.GLTFLoader().loadAsync(archivo(id, edad)), raiz = gltf.scene, mallas = [], huesos = [];
     raiz.traverse(o => { if (o.isMesh) mallas.push(o); if (o.isBone) huesos.push(o); });
-    mallas.forEach((m, i) => { pinta(T, gradiente, m, i); m.parent.add(contorno(T, m)); });
+    mallas.forEach((m, i) => { viste(T, gradiente, m, i); m.parent.add(contorno(T, m)); });
     const escena = new T.Scene(); escena.add(raiz); luces(escena);
     return { T, render, escena, raiz, mallas, huesos: Object.fromEntries(huesos.map(h => [h.name, h])), reposo: reposos(T, raiz, huesos) };
   }
@@ -71,5 +71,26 @@ PT.muneco3d = (() => {
       huesos: mo.huesos, aMano: (giros, enT = false) => aplica(mo, { huesos: giros, sentado: 0 }, enT) };
   }
   const EN_T = 'en-t';
-  return { montaje, EN_T };
+  // PINTAR EN EL LIENZO DEL JUEGO (como PT.maniqui3d.pinta): el muñeco de la criatura id y de su edad, en la pose nombre, con el encuadre de su dibujo de
+  // 640 (los pies donde los tenía) centrado en (x, y) a lado píxeles, con un margen por si el muñeco sobresale. Devuelve false mientras carga (o si
+  // no hay muñeco de esa criatura y edad) y quien llama pinta lo de siempre
+  const LISTOS = {}, ENCUADRE = 1.15, LADO_RENDER = 640;
+  function pinta(ctx, id, x, y, lado, t, nombre, edad = 'nino') {
+    const clave = id + '/' + edad;
+    if (!(clave in LISTOS)) { LISTOS[clave] = null; montaje(id, edad).then(() => monta_listo(clave, id, edad), e => { console.warn('Pets · muñeco 3D sin montar:', clave, e.message); }); }
+    const mo = LISTOS[clave], pose = PT.maniquiPoses.de(nombre, t);
+    if (!mo || !pose.ok) return false;
+    aplica(mo, pose.valor);
+    mo.render.setSize(LADO_RENDER, LADO_RENDER, false); mo.render.render(mo.escena, mo.camara);
+    const borde = lado * ENCUADRE / 2;
+    ctx.drawImage(mo.render.domElement, x - borde, y - borde, 2 * borde, 2 * borde);
+    return true;
+  }
+  // con el montaje ya hecho (la promesa de MONTAJES), le pone su cámara: la del dibujo de 640 de la criatura, un poco más grande
+  async function monta_listo(clave, id, edad) {
+    const mo = await MONTAJES[clave], med = PT.maniqui.de(id).valor.medidas, k = med.k, T = mo.T, m = (ENCUADRE - 1) / 2 * 640;
+    mo.camara = new T.OrthographicCamera(-(med.cx + m) / k, (640 - med.cx + m) / k, (med.suelo + m) / k, -(640 - med.suelo + m) / k, 0.01, 100);
+    mo.camara.position.set(0, 0, 10); LISTOS[clave] = mo;
+  }
+  return { montaje, pinta, EN_T };
 })();

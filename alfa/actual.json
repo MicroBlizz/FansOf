@@ -1,8 +1,8 @@
 {
- "build": 914,
- "hash": "0bcbaf0",
- "fecha": "2026-11-04T13:21:14Z",
- "mensaje": "Core HORA: la hora a mano no se pierde si se pide la hora antes de que core diga si es desarrollo",
+ "build": 915,
+ "hash": "3a6d82d",
+ "fecha": "2026-11-04T15:09:29Z",
+ "mensaje": "Pets f16: la cinta como pieza 3D aparte, antifaz más definido y brazos más largos en el muñeco del hurón",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

@@ -1,8 +1,8 @@
 {
- "build": 912,
- "hash": "9da6ca9",
- "fecha": "2026-11-04T01:06:09Z",
- "mensaje": "Nova 0.3.43: ninguna fusión rinde menos que su arma suelta, con un test que lo vigila",
+ "build": 913,
+ "hash": "b33bdd3",
+ "fecha": "2026-11-04T13:18:10Z",
+ "mensaje": "Core: la hora del juego se puede poner a mano en desarrollo y en la alfa (ADR 047)",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

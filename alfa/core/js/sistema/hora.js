@@ -1,10 +1,39 @@
-// Fans Of · HORA DEL SERVIDOR: la hora de Supabase (servidor/108-hora-servidor.sql) para los temporizadores que no deben fiarse del
+// Fans Of · HORA DEL JUEGO: la hora de Supabase (servidor/108-hora-servidor.sql) para los temporizadores que no deben fiarse del
 // reloj del aparato (la flota de Nova, por ejemplo). HORA.sincroniza() pregunta una vez y guarda la diferencia con el reloj de aquí;
-// HORA.ahora() da la hora corregida. Sin cuenta o sin red se usa el reloj del aparato y HORA.delServidor dice false. Guía: docs/guia/core/hora.md.
+// HORA.ahora() da la hora corregida. Sin cuenta o sin red se usa el reloj del aparato y HORA.delServidor dice false.
+// En desarrollo y en la alfa (donde hay panel DEV; nunca en la release) se puede PONER LA HORA A MANO (ADR 047): HORA.pon('7:00', dias) o
+// ?hora=7:00 en la dirección; sigue corriendo desde ahí, dura lo que la pestaña y HORA.suelta() vuelve a la real. Guía: docs/guia/core/hora.md.
 'use strict';
 const HORA = (() => {
-  let desfase = 0, delServidor = false, pidiendo = null;
-  const ahora = () => Date.now() + desfase;
+  const CLAVE = 'fansof-hora-manual', MINUTO = 60000, DIA = 24 * 60 * MINUTO;
+  let desfase = 0, delServidor = false, pidiendo = null, manual = null, leida = false;
+  const sePuede = () => typeof NUCLEO !== 'undefined' && !!(NUCLEO.desarrollo || NUCLEO.alfa);
+  const guarda = v => { try { if (v === null) sessionStorage.removeItem(CLAVE); else sessionStorage.setItem(CLAVE, String(v)); } catch (e) { /* sin guardar: dura hasta recargar */ } };
+  // «7:00» (o «7») y los días que se adelanta → cuánto hay que sumar al reloj del aparato; null si no es una hora
+  function desfaseDe(texto, dias, ahora) {
+    const m = /^(\d{1,2})(?::(\d{2}))?$/.exec(String(texto).trim());
+    if (!m || +m[1] > 23 || +(m[2] || 0) > 59) return null;
+    const d = new Date(ahora); d.setHours(+m[1], +(m[2] || 0), 0, 0);
+    return d.getTime() + (dias || 0) * DIA - ahora;
+  }
+  function pon(texto, dias = 0) {
+    if (!sePuede()) return false;
+    const v = desfaseDe(texto, dias, Date.now());
+    if (v === null) return false;
+    manual = v; leida = true; guarda(v);
+    return true;
+  }
+  function suelta() { manual = null; leida = true; guarda(null); }
+  // la primera vez que se pide la hora: la de ?hora= o la que se puso en esta pestaña (solo donde se puede)
+  function lee() {
+    if (leida) return;
+    leida = true;
+    if (!sePuede() || typeof location === 'undefined') return;
+    const q = new URLSearchParams(location.search).get('hora');
+    if (q !== null && pon(q)) return;
+    try { const v = sessionStorage.getItem(CLAVE); if (v !== null && Number.isFinite(+v)) manual = +v; } catch (e) { /* sin guardar */ }
+  }
+  const ahora = () => { lee(); return Date.now() + (manual !== null ? manual : desfase); };
   function sincroniza() {
     if (delServidor) return Promise.resolve(true);
     if (pidiendo) return pidiendo;
@@ -17,6 +46,6 @@ const HORA = (() => {
     }).catch(() => false).finally(() => { pidiendo = null; });
     return pidiendo;
   }
-  return { ahora, sincroniza, get delServidor() { return delServidor; } };
+  return { ahora, sincroniza, pon, suelta, get delServidor() { return delServidor; }, get manual() { lee(); return manual !== null; } };
 })();
 if (typeof module !== 'undefined') module.exports = HORA;

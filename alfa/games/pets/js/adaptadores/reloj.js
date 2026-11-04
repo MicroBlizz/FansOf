@@ -1,9 +1,9 @@
-// Fans Of Pets · adaptador · RELOJ: la hora del juego es la del aparato más lo que se haya adelantado con DEV (el desfase se guarda con la
-// partida). El minuto del día sale de la hora local del aparato: el horario de vida es «su» mañana y «su» noche. El plan pide la hora del
-// servidor; llegará con el progreso en la nube.
+// Fans Of Pets · adaptador · RELOJ: la hora del juego es la de core (HORA.ahora: la del aparato, o la puesta a mano en desarrollo, ADR 047)
+// más lo que se haya adelantado con DEV (el desfase se guarda con la partida). El minuto del día sale de la hora local del aparato: el horario
+// de vida es «su» mañana y «su» noche. El plan pide la hora del servidor; llegará con el progreso en la nube.
 'use strict';
-PT.creaReloj = almacen => ({
-  ahora: () => Date.now() + (almacen.leeExtra('desfase') || 0),
+PT.creaReloj = (almacen, hora = () => HORA.ahora()) => ({
+  ahora: () => hora() + (almacen.leeExtra('desfase') || 0),
   minutoDelDia(t) {
     const d = new Date(t);
     return d.getHours() * 60 + d.getMinutes();

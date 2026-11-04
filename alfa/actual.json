@@ -1,8 +1,8 @@
 {
- "build": 929,
- "hash": "3982ca0",
- "fecha": "2026-11-04T21:36:58Z",
- "mensaje": "Karts: icono nuevo (CrazyBunny más mono, pista verde, título KARTS tras las orejas)",
+ "build": 930,
+ "hash": "e5f41f4",
+ "fecha": "2026-11-04T21:39:36Z",
+ "mensaje": "Karts: logo con KARTS a cuadros de bandera regulares (dibujado por código) en la imagen de compartir",
  "juegos": {
   "boom": "0.4.5",
   "cooking": "0.2.6",

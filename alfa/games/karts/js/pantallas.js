@@ -67,7 +67,7 @@ function paseo(vel = 26, alto = 30) {
 function pantallaTitulo() {
   paseo();
   lx.fillStyle = 'rgba(20,10,34,0.35)'; lx.fillRect(0, 0, PW, PH);
-  pintaLogo(PW / 2, 6);      // el logo ondeando (logo.js)
+  pintaLogo(PW / 2, 7);      // el logo ondeando (logo.js)
   escribeB(lx, tr('Microblizz ha comprado la carrera. Gánasela.'), PW / 2, 77, '#ffffff', '#1c1028', 'centro');
   menuPrincipal();      // los botones, en HTML con el estilo de Fans of Rumble (menu-principal.js)
   mini(lx, 'V' + VERSION, 4, 152, '#bdb6d6', '#1c1028');

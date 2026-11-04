@@ -1,8 +1,8 @@
 {
- "build": 931,
- "hash": "365a91c",
- "fecha": "2026-11-04T22:35:57Z",
- "mensaje": "Karts: el logo ondeando como una bandera en la pantalla de título (logo.js), con su baseline de menús regrabada",
+ "build": 932,
+ "hash": "5dacc3a",
+ "fecha": "2026-11-04T22:43:24Z",
+ "mensaje": "Karts: en el título FANS OF más pequeño y quieto; solo KARTS ondea",
  "juegos": {
   "boom": "0.4.5",
   "cooking": "0.2.6",

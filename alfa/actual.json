@@ -1,8 +1,8 @@
 {
- "build": 924,
- "hash": "3398f72",
- "fecha": "2026-11-04T20:18:15Z",
- "mensaje": "Goose: el smoke-test ya no depende del azar (tableros y dados con semilla fija, esperas por condición)",
+ "build": 925,
+ "hash": "5cc725a",
+ "fecha": "2026-11-04T20:36:47Z",
+ "mensaje": "Karts: logo nuevo (FANS OF naranja, KARTS a cuadros de meta), imagen de compartir 1200x630 y favicon propios",
  "juegos": {
   "boom": "0.4.5",
   "cooking": "0.2.6",

@@ -5,14 +5,14 @@
 var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 (function (S) {
   const W = 1280, H = 720, ESC = 14;
-  const ZOOM = 1.7, CENTRO = [640, 430];   // cámara cercana, como el clásico: lo que se sigue queda en CENTRO
+  const ZOOM = 2.0, CENTRO = [640, 430];   // cámara cercana, como el clásico: lo que se sigue queda en CENTRO
   const V = S.vista = { cam: 50, off: 0, zoom: 1, zoomObj: 1, foco: { x: 50, y: 30 }, tf: { fx: 640, fy: 430, z: 1 }, estela: [], temblor: 0, img: {}, W, H, vidaVista: {}, globos: {}, ahora: 0 };
 
   V.cargar = function (nombres) {
     for (const n of nombres) {
       const im = new Image();
       im.onload = () => { V.img[n] = im; };
-      im.src = 'img/' + n + (/^(fondo|d-)/.test(n) ? '.jpg' : '.png');
+      im.src = 'img/' + n + (/^(fondo|d-|wang-)/.test(n) ? '.jpg' : '.png');
     }
   };
 
@@ -49,19 +49,10 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     poli(g, brillo, 'rgba(140,90,255,.25)');
   }
 
-  function cesped(g, e) {
-    const aj = e.aj, c = aj.campo, m = aj.ancho / 2;
-    poli(g, [[-14, -6 - V.off], [aj.largo + 14, -6 - V.off], [aj.largo + 14, 72 - V.off], [-14, 72 - V.off]], c.suelo);
-    for (let k = 0; k < 10; k++) poli(g, [[k * 10, 0], [k * 10 + 10, 0], [k * 10 + 10, aj.ancho], [k * 10, aj.ancho]], c.franjas[k % 2]);
+  // El suelo (césped, franjas y líneas) lo pone suelo.js; aquí van encima los charcos, que salen durante el partido.
+  function cesped(g, e, vis) {
+    S.suelo.dibujar(g, e, vis);
     for (const ch of S._.charcos(e)) charco(g, ch);
-    g.strokeStyle = c.lineas; g.lineWidth = 3;
-    linea(g, [[0, 0], [aj.largo, 0], [aj.largo, aj.ancho], [0, aj.ancho]], true);
-    linea(g, [[aj.largo / 2, 0], [aj.largo / 2, aj.ancho]]);
-    const r = Math.min(9, aj.ancho / 4), circ = [];
-    for (let a = 0; a <= 32; a++) circ.push([aj.largo / 2 + Math.cos(a / 16 * Math.PI) * r, m + Math.sin(a / 16 * Math.PI) * r]);
-    linea(g, circ);
-    const A = aj.area, ag = Math.min(A.medio, m - 2);
-    for (const x0 of [0, aj.largo]) { const d = x0 ? -1 : 1; linea(g, [[x0, m - ag], [x0 + d * A.largo, m - ag], [x0 + d * A.largo, m + ag], [x0, m + ag]]); linea(g, [[x0, m - 11], [x0 + d * 6, m - 11], [x0 + d * 6, m + 11], [x0, m + 11]]); }
   }
 
   function porteria(g, aj, x0, parte) {
@@ -159,13 +150,29 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   }
 
   // ---------- balón y súper tiros ----------
+  const RADIO = 0.95;   // radio del balón en metros (más grande que uno de verdad, para que se lea bien)
   const COLOR_TIRO = { normal: ['rgba(255,255,255,', 6], zanahoria: ['rgba(255,140,30,', 16], carga: ['rgba(60,120,255,', 16],
     fantasma: ['rgba(150,80,230,', 18], teletransporte: ['rgba(30,220,240,', 12], factura: ['rgba(240,190,40,', 16] };
 
-  function pelota(g, x, y, r, alfa) {
-    g.globalAlpha = alfa; g.fillStyle = '#fff'; g.strokeStyle = '#111'; g.lineWidth = 2;
-    g.beginPath(); g.arc(x, y - r, r, 0, 7); g.fill(); g.stroke();
-    g.fillStyle = '#222'; g.beginPath(); g.arc(x + r * 0.2, y - r * 1.1, r * 0.35, 0, 7); g.fill(); g.globalAlpha = 1;
+  // Pentágono negro del balón, de radio `r`, girado `a`.
+  function pentagono(g, x, y, r, a) {
+    g.beginPath();
+    for (let k = 0; k < 5; k++) { const b = a + k * Math.PI * 2 / 5; k ? g.lineTo(x + Math.cos(b) * r, y + Math.sin(b) * r) : g.moveTo(x + Math.cos(b) * r, y + Math.sin(b) * r); }
+    g.closePath(); g.fill();
+  }
+  // El balón: blanco con pentágonos que giran al rodar (`giro`), contorno grueso como los personajes y un brillo.
+  function pelota(g, x, y, r, alfa, giro) {
+    const cx = x, cy = y - r, a = giro || 0;
+    g.save(); g.globalAlpha = alfa;
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fill();
+    g.save(); g.clip(); g.fillStyle = '#1b1b22';
+    pentagono(g, cx + Math.cos(a) * r * 0.18, cy + Math.sin(a) * r * 0.18, r * 0.36, a);
+    for (let k = 0; k < 5; k++) { const b = a + Math.PI / 5 + k * Math.PI * 2 / 5; pentagono(g, cx + Math.cos(b) * r * 0.95, cy + Math.sin(b) * r * 0.95, r * 0.3, b); }
+    g.fillStyle = 'rgba(0,0,0,.18)'; g.beginPath(); g.arc(cx + r * 0.25, cy + r * 0.25, r * 0.95, 0, 7); g.fill();   // sombreado abajo a la derecha
+    g.restore();
+    g.fillStyle = 'rgba(255,255,255,.85)'; g.beginPath(); g.ellipse(cx - r * 0.38, cy - r * 0.42, r * 0.22, r * 0.13, -0.6, 0, 7); g.fill();
+    g.lineWidth = Math.max(2, r * 0.16); g.strokeStyle = '#111'; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke();
+    g.restore();
   }
 
   function estela(g, q, c) {
@@ -182,12 +189,13 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function balon(g, e, t) {
     const b = e.balon;
     if (b.dueno >= 0 && e.jugadores[b.dueno].puesto === 'portero' && V.img[e.jugadores[b.dueno].sprite + '-coge']) return;   // lo tiene en las manos
-    const q = P(b.x, b.y, b.z), q0 = P(b.x, b.y, 0), r = 0.55 * ESC * q.s, tr = b.tiro;
-    g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(q0.x, q0.y, r * 1.1, r * 0.4, 0, 0, 7); g.fill();
+    const q = P(b.x, b.y, b.z), q0 = P(b.x, b.y, 0), r = RADIO * ESC * q.s, tr = b.tiro, giro = (b.x + b.y) / RADIO;
+    const lejos = Math.min(1, (b.z || 0) / 8);   // la sombra se encoge y aclara cuando el balón sube
+    g.fillStyle = `rgba(0,0,0,${0.38 - lejos * 0.2})`; g.beginPath(); g.ellipse(q0.x, q0.y, r * (1.15 - lejos * 0.45), r * (0.42 - lejos * 0.16), 0, 0, 7); g.fill();
     estela(g, q, tr ? COLOR_TIRO[tr.tipo] || COLOR_TIRO.normal : null);
-    if (tr && tr.tipo === 'factura') for (const k of [-1, 1]) { const f = P(b.x, b.y + k * (1.6 + Math.sin(t * 18) * 0.8), b.z); pelota(g, f.x, f.y, r, 0.75); }
-    if (tr && tr.tipo === 'fantasma') { g.save(); g.shadowColor = '#7dff6a'; g.shadowBlur = 25; pelota(g, q.x, q.y, r * 1.2, 0.6); g.restore(); }
-    else pelota(g, q.x, q.y, r, 1);
+    if (tr && tr.tipo === 'factura') for (const k of [-1, 1]) { const f = P(b.x, b.y + k * (1.6 + Math.sin(t * 18) * 0.8), b.z); pelota(g, f.x, f.y, r, 0.75, -giro); }
+    if (tr && tr.tipo === 'fantasma') { g.save(); g.shadowColor = '#7dff6a'; g.shadowBlur = 25; pelota(g, q.x, q.y, r * 1.2, 0.6, giro); g.restore(); }
+    else pelota(g, q.x, q.y, r, 1, giro);
     if (tr && tr.cargo > 0) cargando(g, q, tr.cargo / 0.55);
   }
 
@@ -234,7 +242,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     g.save();
     g.translate(CENTRO[0], CENTRO[1]); g.scale(z, z); g.translate(-f.x, -f.y);
     g.translate((Math.random() - 0.5) * V.temblor, (Math.random() - 0.5) * V.temblor);
-    cielo(g, e.aj); cesped(g, e);
+    cielo(g, e.aj); cesped(g, e, { arriba: f.y - 470 / z, abajo: f.y + 330 / z });
     if (extra && extra.flecha) V.flechaPase(g, e, controlado, extra.flecha[0], extra.flecha[1]);
     porteria(g, e.aj, 0, 'fondo'); porteria(g, e.aj, e.aj.largo, 'fondo');
     const cosas = e.jugadores.map((j) => ({ y: j.y, f: () => jugador(g, e, j, t, j.id === controlado) }));

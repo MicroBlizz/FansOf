@@ -246,7 +246,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   }
 
   function imagenes() {
-    const n = ['fondo', 'fondo-parking', 'fondo-servidores', 'r-bunny', 'r-ceo', 'r-necro', 'r-marine', 'r-presidente'];
+    const n = ['fondo', 'fondo-parking', 'fondo-servidores', 'wang-atico', 'wang-parking', 'wang-servidores', 'r-bunny', 'r-ceo', 'r-necro', 'r-marine', 'r-presidente'];
     for (const q of S.AJ.equipos) { n.push('d-' + q.id); for (const d of q.jugadores) if (!n.includes(d[0])) n.push(d[0]); n.push(q.jugadores[0][0] + '-coge', q.jugadores[0][0] + '-estira'); }
     return n;
   }

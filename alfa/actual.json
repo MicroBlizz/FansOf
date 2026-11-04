@@ -1,8 +1,8 @@
 {
- "build": 903,
- "hash": "fad72e9",
- "fecha": "2026-11-03T23:52:07Z",
- "mensaje": "Air 0.2.0: la fase aérea desde la cabina y la de tierra isométrica de vuelo libre, como el original",
+ "build": 904,
+ "hash": "5638d52",
+ "fecha": "2026-11-04T00:20:52Z",
+ "mensaje": "Soccer: campo entero en perspectiva por tiras (suelo.js) preparado para baldosas Wang de Yoshi; portero de cara al campo, cámara a zoom 2 y balón grande",
  "juegos": {
   "boom": "0.4.3",
   "cooking": "0.2.4",

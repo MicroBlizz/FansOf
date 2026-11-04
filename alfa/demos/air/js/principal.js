@@ -5,7 +5,7 @@
 var AIR = globalThis.AIR || (globalThis.AIR = {});
 (function (A) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), V = A.vista, UI = A.ui, FX = A.efectos, PASO = 1 / 60;
-  const est = { modo: 'titulo', e: null, t: 0, acum: 0, ultimo: 0, fuego: false, especial: false, sel: { caza: 'bunny' }, mejor: 0, record: false, tactil: false, flash: -9 };
+  const est = { modo: 'titulo', e: null, t: 0, acum: 0, ultimo: 0, fuego: false, especial: false, sel: { caza: 'bunny', normal: false }, mejor: 0, record: false, tactil: false, flash: -9 };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   A._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -17,7 +17,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
 
   // ---------- guardado (solo comodidad: si falla, se empieza con lo de siempre) ----------
   function guardar() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ caza: est.sel.caza, mejor: est.mejor })); }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ caza: est.sel.caza, normal: est.sel.normal, mejor: est.mejor })); }
     catch (err) { console.warn('Air: no se guarda', err); }
   }
   function leer() {
@@ -25,6 +25,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
       const d = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
       if (A.AJ.cazas.some((c) => c.id === d.caza)) est.sel.caza = d.caza;
       est.mejor = Number(d.mejor) || 0;
+      est.sel.normal = !!d.normal;
     } catch (err) { console.warn('Air: no se lee lo guardado', err); }
   }
 
@@ -69,20 +70,28 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Air: sin vibración', err); } }
 
   // ---------- eventos del dominio -> efectos ----------
-  const enAire = (ev) => V.aire.pantalla(est.e, ev), enTierra = (ev) => V.tierra.pantalla(est.e, ev);
+  const escala = (p) => Math.max(0.3, Math.min(3, p.s * 0.15));   // tamaño de un efecto según lo cerca que pase (p.s = píxeles por metro)
+  const enAire = (ev) => V.aire.pantalla(est.e, ev.pos), enTierra = (ev) => V.tierra.pantalla(est.e, ev);
   const EFECTOS = {
     disparo: () => sonar('ametralladora', 0.25),
     misil: () => sonar('misil'),
-    fijado: () => { sonar('fijado'); FX.cartel(tr('¡FIJADO!'), '#ff5a3a', 0.6); },
-    sinMisiles: () => { sonar('error'); FX.cartel(tr('SIN MISILES'), '#ff5a3a', 0.8); },
+    fijado: () => sonar('fijado'),   // el FIJADO ya sale en la retícula y en la cabina
+    sinMisiles: () => sonar('error'),   // el aviso sale en la cabina
     sinBombas: () => { sonar('error'); FX.cartel(tr('SIN BOMBAS'), '#ff5a3a', 0.8); },
-    impacto: (ev) => { const p = enAire(ev); FX.chispas(p.x, p.y, p.s + 0.4); sonar('impacto', 0.3); },
-    derribo: (ev) => { const p = enAire(ev); FX.explosion(p.x, p.y, 1 + p.s * 1.5); FX.temblor = 6; sonar('explosion', 0.6); if (ev.combo > 1) FX.cartel(tr('RABIA') + ' x' + ev.combo, '#ff8a2a', 0.7); },
-    explosion: (ev) => { const p = enAire(ev); FX.explosion(p.x, p.y, (ev.grande ? 1.6 : 1) + p.s * 1.5, 22); FX.temblor = 8; sonar('explosion'); },
+    impacto: (ev) => { const p = enAire(ev); FX.chispas(p.x, p.y, escala(p)); sonar('impacto', 0.3); },
+    derribo: (ev) => { const p = enAire(ev); FX.explosion(p.x, p.y, escala(p) * 1.4); FX.temblor = 6; sonar('explosion', 0.6); if (ev.combo > 1) FX.cartel(tr('RABIA') + ' x' + ev.combo, '#ff8a2a', 0.7); },
+    explosion: (ev) => { const p = enAire(ev); FX.explosion(p.x, p.y, escala(p) * (ev.grande ? 1.8 : 1.2), 22); FX.temblor = 8; sonar('explosion'); },
     golpe: (ev) => { FX.temblor = 14; est.flash = est.t; vibrar(40); sonar('impacto'); if (est.e.fase === 'tierra') { const p = enTierra(ev); FX.chispas(p.x, p.y, 1.2, '#ff5a3a'); } },
     dano: (ev) => { if (ev.motivo === 'choque') { FX.temblor = 18; est.flash = est.t; vibrar(70); } },
     jefe: () => { FX.cartel(tr('¡SURVIVALBOT!'), '#ff5a3a', 2.2, tr('El robot de los despidos')); sonar('alarma'); },
-    jefeDerribado: (ev) => { const p = enAire(ev); for (let i = 0; i < 4; i++) setTimeout(() => FX.explosion(p.x + (Math.random() - 0.5) * 120, p.y + (Math.random() - 0.5) * 80, 2.5, 28), i * 160); FX.temblor = 26; vibrar(120); sonar('explosion'); },
+    alturaMax: () => sonar('alarma'),
+    alturaBaja: () => sonar('alarma'),
+    perdida: () => sonar('alarma'),
+    combustibleBajo: () => sonar('alarma'),
+    estrellado: () => { FX.explosion(640, 300, 4, 50); FX.temblor = 34; est.flash = est.t; vibrar(200); sonar('explosion'); },
+    premioSuelto: () => sintetiza(880, 0.1, 'triangle', 1.3),
+    premio: () => { [660, 880, 1100].forEach((f, i) => setTimeout(() => sintetiza(f, 0.08, 'square'), i * 70)); vibrar(20); },
+    jefeDerribado: (ev) => { const p = enAire(ev); for (let i = 0; i < 4; i++) setTimeout(() => FX.explosion(p.x + (Math.random() - 0.5) * 120, p.y + (Math.random() - 0.5) * 80, Math.max(1.5, escala(p) * 2), 28), i * 160); FX.temblor = 26; vibrar(120); sonar('explosion'); },
     despejado: () => { FX.cartel(tr('¡LOS TENEMOS!'), '#5fe05f', 2.6, tr('Piloto automático: rumbo a la base de Microblizz')); sonar('fanfarria'); },
     faseTierra: () => { V.tierra.reiniciar(); FX.cartel(tr('ATAQUE A TIERRA'), '#ffe14a', 2.4, tr('Sigue la flecha y arrasa la base')); },
     bomba: () => sonar('bomba'),
@@ -126,7 +135,8 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     const t = UI.tocarHangar(p, A.AJ);
     if (!t) return;
     if (t.jugar) { empezar(); return; }
-    est.sel.caza = t.caza; sonar('toque'); guardar();
+    if (t.palanca) est.sel.normal = !est.sel.normal; else est.sel.caza = t.caza;
+    sonar('toque'); guardar();
   }
 
   const ESPECIAL = { m: true, x: true }, IZQ = { arrowleft: true, a: true }, DER = { arrowright: true, d: true };
@@ -147,9 +157,10 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     else if (baja) teclaMenu(k);
   }
 
+  // En el aire, la palanca hacia ti (abajo) sube el morro, como en un avión; con la opción «normal» del hangar, al revés.
   function orden() {
-    const T = (a, b) => (teclas[a] || teclas[b] ? 1 : 0);
-    const mx = joy.dx + T('arrowright', 'd') - T('arrowleft', 'a'), my = joy.dy + T('arrowdown', 's') - T('arrowup', 'w');
+    const T = (a, b) => (teclas[a] || teclas[b] ? 1 : 0), invierte = est.e && est.e.fase !== 'tierra' && est.sel.normal ? -1 : 1;
+    const mx = joy.dx + T('arrowright', 'd') - T('arrowleft', 'a'), my = (joy.dy + T('arrowdown', 's') - T('arrowup', 'w')) * invierte;
     const especial = est.especial || !!est.pulso;
     est.pulso = false;
     return { mx: Math.max(-1, Math.min(1, mx)), my: Math.max(-1, Math.min(1, my)), fuego: est.fuego, especial };
@@ -159,7 +170,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   function empezar() {
     est.e = A.nuevaMision(A.AJ, { caza: est.sel.caza });
     Object.assign(est, { modo: 'juego', record: false, fuego: false, especial: false, acum: 0 });
-    FX.limpiar(); V.aire.golpes = {}; V.tierra.reiniciar();
+    FX.limpiar(); V.aire.reiniciar(); V.tierra.reiniciar(); A.cabina.reiniciar();
     guardar(); sonar('toque');
     FX.cartel(tr('DESPEJA EL CIELO'), '#ffe14a', 2, tr('Derriba a la patrulla de Microblizz'));
   }
@@ -205,7 +216,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   }
 
   function imagenes() {
-    const n = ['cielo', 'hangar', 'arbol', 'matorral', 'dron-becario', 'bombardero-caja', 'jefe-survivalbot'];
+    const n = ['cielo', 'hangar', 'panel-cabina', 'boton-fuego', 'boton-misil', 'arbol', 'matorral', 'dron-becario', 'bombardero-caja', 'jefe-survivalbot'];
     for (const c of A.AJ.cazas) n.push('cenital-' + c.id, 'hangar-' + c.id, 'r-' + c.id);
     for (const o of Object.keys(A.AJ.tierra.objetivos)) n.push('suelo-' + o);
     return n;
@@ -214,7 +225,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     for (const n of nombres) {
       const im = new Image();
       im.onload = () => { V.img[n] = im; };
-      im.src = 'img/' + n + (/^(cielo|hangar)$/.test(n) ? '.jpg' : '.png');
+      im.src = 'img/' + n + (/^(cielo|hangar|panel-cabina)$/.test(n) ? '.jpg' : '.png');
     }
   };
 

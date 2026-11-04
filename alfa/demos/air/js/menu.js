@@ -1,11 +1,11 @@
 // Fans of Air · Menús: la pantalla de título, el hangar de La Madriguera (tres tarjetas de caza con su piloto, sus barras y su
-// habilidad, y el botón DESPEGAR) y la pantalla de misión cumplida o fallida con el resumen. Qué zona se toca lo dice tocarHangar().
+// habilidad, el botón DESPEGAR y el de la PALANCA) y la pantalla de misión cumplida o fallida con el resumen. Qué zona se toca lo dice tocarHangar().
 'use strict';
 var AIR = globalThis.AIR || (globalThis.AIR = {});
 (function (A) {
   const UI = A.ui, texto = UI.texto;
   const TARJETA = (i) => ({ x: 70 + i * 390, y: 112, w: 360, h: 440 });
-  const DESPEGAR = { x: 640, y: 628, w: 340, h: 64 };
+  const DESPEGAR = { x: 640, y: 628, w: 340, h: 64 }, PALANCA = { x: 70, y: 600, w: 300, h: 56 };
 
   UI.titulo = function (g, t, img) {
     if (img.cielo) g.drawImage(img.cielo, -128, -40, 1536, 800); else { g.fillStyle = '#1b2a6e'; g.fillRect(0, 0, 1280, 720); }
@@ -55,11 +55,13 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     g.fillStyle = brilla ? '#ff9a3a' : '#ff8a2a'; g.strokeStyle = '#111'; g.lineWidth = 5;
     g.fillRect(b.x - b.w / 2, b.y - b.h / 2, b.w, b.h); g.strokeRect(b.x - b.w / 2, b.y - b.h / 2, b.w, b.h);
     texto(g, tr('DESPEGAR'), b.x, b.y + 8, 20, '#fff');
-    texto(g, tr('Esquiva moviéndote · Mantén la retícula sobre un enemigo para fijarlo · Luego, bombardea la base'), 640, 700, 8, '#ccc');
+    texto(g, tr('Inclina para virar y tira para subir · Mantén al enemigo en la retícula para fijarlo · Recoge los premios'), 640, 700, 8, '#ccc');
+    palanca(g, sel);
   };
 
   UI.tocarHangar = function (p, AJ) {
     const dentro = (z) => p.x >= z.x && p.x <= z.x + z.w && p.y >= z.y && p.y <= z.y + z.h;
+    if (dentro(PALANCA)) return { palanca: true };
     const i = AJ.cazas.findIndex((c, k) => dentro(TARJETA(k)));
     if (i >= 0) return { caza: AJ.cazas[i].id };
     const b = DESPEGAR;
@@ -67,12 +69,24 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     return null;
   };
 
+  // El botón de la palanca: «AVIÓN» (hacia ti sube el morro, como el original) o «NORMAL» (hacia arriba sube).
+  function palanca(g, sel) {
+    const z = PALANCA;
+    g.fillStyle = sel.normal ? '#3a6cff' : '#2d9a46'; g.strokeStyle = '#111'; g.lineWidth = 4;
+    g.fillRect(z.x, z.y, z.w, z.h); g.strokeRect(z.x, z.y, z.w, z.h);
+    texto(g, tr('PALANCA') + ': ' + tr(sel.normal ? 'NORMAL' : 'AVIÓN'), z.x + z.w / 2, z.y + 25, 11, '#fff');
+    texto(g, tr(sel.normal ? 'Arriba sube el morro' : 'Hacia ti sube el morro'), z.x + z.w / 2, z.y + 45, 7, '#fff');
+  }
+
+  const POR_QUE = { derribado: 'Los becarios lo celebran con café. Vuelve a intentarlo.', estrellado: '¡Te has estrellado! Vigila la altura y tira de la palanca a tiempo.',
+    combustible: 'Sin combustible. Los enemigos derribados sueltan bidones: recógelos.' };
+
   UI.final = function (g, e, t, record, img) {
     const bien = e.fin === 'cumplida', AJ = e.aj;
     if (img.hangar) g.drawImage(img.hangar, 0, 0, 1280, 720); else { g.fillStyle = '#2a1e12'; g.fillRect(0, 0, 1280, 720); }
     g.fillStyle = 'rgba(10,12,30,.72)'; g.fillRect(0, 0, 1280, 720);
     texto(g, tr(bien ? '¡MISIÓN CUMPLIDA!' : 'MISIÓN FALLIDA'), 640, 130, 40, bien ? '#5fe05f' : '#ff5a3a');
-    texto(g, tr(bien ? 'La base de Microblizz ha caído. El CEO «replanteará su estrategia».' : 'Los becarios lo celebran con café. Vuelve a intentarlo.'), 640, 180, 10, '#fff');
+    texto(g, tr(bien ? 'La base de Microblizz ha caído. El CEO «replanteará su estrategia».' : (POR_QUE[e.finMotivo] || POR_QUE.derribado)), 640, 180, 10, '#fff');
     const primarios = AJ.tierra.mapa.filter((o) => AJ.tierra.objetivos[o.tipo].primario).length;
     const filas = [[tr('Aviones derribados'), e.derribos], [tr('Objetivos bombardeados'), e.destruidos + '/' + AJ.tierra.mapa.length],
       [tr('Objetivos primarios'), Math.min(primarios, e.tierra ? primarios - e.tierra.objetivos.filter((o) => AJ.tierra.objetivos[o.tipo].primario).length : 0) + '/' + primarios],

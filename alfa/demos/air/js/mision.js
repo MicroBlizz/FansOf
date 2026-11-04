@@ -1,5 +1,5 @@
 // Fans of Air · Misión (dominio, sin DOM ni reloj ni azar propio): el estado de una misión en dos fases (aire y tierra), el escudo,
-// los puntos, el combo de RABIA, la transición entre fases y el final (cumplida o fallida). Las reglas de cada fase están en
+// el combustible, los puntos, el combo de RABIA, la transición (piloto automático) y el final (cumplida o fallida, y por qué). Las reglas de cada fase están en
 // aire.js y tierra.js; principal.js llama a paso() 60 veces por segundo y convierte e.eventos en efectos y sonidos.
 'use strict';
 var AIR = globalThis.AIR || (globalThis.AIR = {});
@@ -9,7 +9,7 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
   A.nuevaMision = function (AJ, { caza = 'bunny' } = {}) {
     const c = AJ.cazas.find((q) => q.id === caza) || AJ.cazas[0];
     return {
-      aj: AJ, caza: c, fase: 'aire', t: 0, escudo: c.escudo, misiles: c.misiles, bombas: c.bombas, puntos: 0,
+      aj: AJ, caza: c, fase: 'aire', t: 0, escudo: c.escudo, misiles: c.misiles, bombas: c.bombas, puntos: 0, combustible: AJ.combustible.max, finMotivo: null,
       derribos: 0, destruidos: 0, disparos: 0, aciertos: 0, combo: 0, comboT: 0, fin: null, finT: 0, transicionT: 0, eventos: [],
       ids: 1, aire: A.aire.nueva(AJ, c), tierra: null,
     };
@@ -25,11 +25,21 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
     else if (e.fase === 'transicion') transicion(e, dt);
     else A.tierra.paso(e, dt, o, rnd);
     combo(e, dt);
-    if (e.escudo <= 0) { e.escudo = 0; A.terminar(e, 'fallida'); }
+    gastar(e, dt);
+    if (e.escudo <= 0) { e.escudo = 0; A.terminar(e, 'fallida', 'derribado'); }
     return e;
   };
 
+  // El combustible baja con cada segundo de vuelo; avisa cuando queda poco y, si se acaba, la misión falla.
+  function gastar(e, dt) {
+    const C = e.aj.combustible, antes = e.combustible;
+    e.combustible = Math.max(0, e.combustible - dt);
+    if (antes > C.aviso && e.combustible <= C.aviso) e.eventos.push({ tipo: 'combustibleBajo' });
+    if (e.combustible <= 0) A.terminar(e, 'fallida', 'combustible');
+  }
+
   function transicion(e, dt) {
+    A.aire.autopiloto(e, dt);
     e.transicionT -= dt;
     if (e.transicionT > 0) return;
     e.fase = 'tierra';
@@ -62,13 +72,14 @@ var AIR = globalThis.AIR || (globalThis.AIR = {});
 
   A.sumar = function (e, puntos) { e.puntos += puntos; };
 
-  A.terminar = function (e, como) {
+  A.terminar = function (e, como, motivo) {
     if (e.fin) return;
+    e.finMotivo = motivo || null;
     const P = e.aj.puntos, precision = e.disparos ? e.aciertos / e.disparos : 0;
     const bonus = como === 'cumplida' ? Math.round(e.escudo * P.escudoRestante + precision * P.precision) : 0;
     e.puntos += bonus;
     e.fin = como; e.finT = 0; e.bonus = bonus; e.precision = precision;
-    e.eventos.push({ tipo: 'fin', como, puntos: e.puntos, bonus });
+    e.eventos.push({ tipo: 'fin', como, motivo: e.finMotivo, puntos: e.puntos, bonus });
   };
 
   A.util = {

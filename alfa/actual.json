@@ -1,8 +1,8 @@
 {
- "build": 920,
- "hash": "df97861",
- "fecha": "2026-11-04T16:36:50Z",
- "mensaje": "Karts: física al dominio, tandas 2 y 3 (marcha según suelo y reglas de los objetos) con tests y mutantes (ADR 048)",
+ "build": 921,
+ "hash": "d911ffc",
+ "fecha": "2026-11-04T18:49:44Z",
+ "mensaje": "Pets: cuerpos del muñeco un 40 % más bajos (BAJITO)",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

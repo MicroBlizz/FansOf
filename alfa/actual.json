@@ -1,8 +1,8 @@
 {
- "build": 919,
- "hash": "bb069c8",
- "fecha": "2026-11-04T16:29:04Z",
- "mensaje": "Pets: ojos kawaii en el muñeco del hurón",
+ "build": 920,
+ "hash": "df97861",
+ "fecha": "2026-11-04T16:36:50Z",
+ "mensaje": "Karts: física al dominio, tandas 2 y 3 (marcha según suelo y reglas de los objetos) con tests y mutantes (ADR 048)",
  "juegos": {
   "boom": "0.4.4",
   "cooking": "0.2.5",

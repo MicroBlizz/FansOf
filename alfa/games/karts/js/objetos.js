@@ -61,11 +61,11 @@ function lanzaParche(k, C, yo) {
 }
 // la caja de botín: casi siempre un spray gris, a veces un Hotfix y rara vez un Pase de batalla de 3 turbos
 function abreBotin(k, C, yo) {
-  const r = Math.random();
-  if (r < 0.55) {     // lo de siempre
+  const premio = KD.objetos.premioDelBotin(Math.random());
+  if (premio === 'comun') {     // lo de siempre
     for (let i = 0; i < 14; i++) chispa(k.x - Math.cos(k.ang) * 6, k.y - Math.sin(k.ang) * 6, 3, azar(-26, 26), azar(-26, 26), azar(10, 50), 0.8, i % 2 ? '#9aa0ad' : '#c3c8d2', 3, 40);
     if (yo) { aviso('SPRAY GRIS COMÚN', 'Otra vez.', '#9aa0ad'); comenta('Caja de botín: probabilidad de algo bueno, «variable».'); play('sad'); }
-  } else if (r < 0.85) { daTurbo(k, 1.15, 1.36, true); if (yo) aviso('¡HOTFIX!', 'Poco común.', '#5ef27a'); }
+  } else if (premio === 'hotfix') { daTurbo(k, 1.15, 1.36, true); if (yo) aviso('¡HOTFIX!', 'Poco común.', '#5ef27a'); }
   else { k.objeto = 'pase'; k.usos = 3; if (yo) { aviso('¡LEGENDARIO!', 'Pase de batalla: 3 turbos.', '#ff8a1f'); play('levelup'); } }
 }
 function usaMantenimiento(k, C, yo, quien) {
@@ -74,7 +74,7 @@ function usaMantenimiento(k, C, yo, quien) {
   if (yo) { aviso('MANTENIMIENTO', n ? 'Los de delante, parados.' : 'No había nadie delante.', '#ff8a1f'); play('horn'); }
 }
 function usaCola(k, C, yo, quien) {
-  const orden = C.orden, obj = orden[0] === k ? orden[1] : orden[0];
+  const obj = KD.objetos.rivalDelPuesto(C.orden, k);
   if (obj && obj.remoto) pvpGolpeaRemoto(obj, 'cola', k);      // el rival del PvP decide si le da (según su inmunidad) y avisa
   else if (obj && golpea(obj, 'cola', k)) {
     if (obj.esJugador) { aviso('EN COLA', 'Posición en la cola: 9.999', '#22e3ff'); comenta(trf('%1 te ha metido en la cola de inicio de sesión.', quien)); }
@@ -83,17 +83,6 @@ function usaCola(k, C, yo, quien) {
 }
 
 // ---------- lo que anda suelto por la pista ----------
-// el kart que tiene delante un Nerf (el más cercano a menos de 9 casillas, sin contar a su autor ni a los que caen)
-function objetivoDelNerf(o, C) {
-  const N = PISTA.N;
-  let obj = null, cerca = 9;
-  for (const k of C.karts) {
-    if (k === o.autor || k.estado === 'cae') continue;
-    const d = difVia(k.idx - (((o.idx % N) + N) % N), N);
-    if (d > -0.6 && d < cerca) { cerca = d; obj = k; }
-  }
-  return obj;
-}
 // el Nerf le ha dado a k: avisos según quién lo sufre y quién lo lanzó
 function nerfDa(o, C, k) {
   if (!golpea(k, 'nerf', o.autor)) return;
@@ -105,7 +94,7 @@ function nerfDa(o, C, k) {
 function pasoNerf(o, C, dt) {
   const P = PISTA, N = P.N;
   o.idx += (o.vel * dt) / PASO_VIA;
-  const obj = objetivoDelNerf(o, C);
+  const obj = KD.objetos.objetivoDelNerf(o, C.karts, N, difVia);
   if (obj) o.lat = acerca(o.lat, obj.lat, 46 * dt);
   const i = ((Math.floor(o.idx) % N) + N) % N, t = o.idx - Math.floor(o.idx), a = P.via[i], b = P.via[(i + 1) % N];
   o.lat = limita(o.lat, -a.ancho / 2 + 3, a.ancho / 2 - 3);
@@ -138,12 +127,12 @@ function mueveSueltos(C, dt) {
 
 // ---------- cuándo usa su objeto un rival ----------
 // ¿hay algún kart que cumpla cond(d, o) con d = su distancia de vía (positiva si va delante)?
-const hayKartA = (k, C, cond) => C.karts.some(o => o !== k && cond(difVia(o.idx - k.idx, PISTA.N), o));
+const hayKartA = (k, C, cond) => KD.objetos.hayKartA(k, C.karts, cond, difVia, PISTA.N);
 // cuándo conviene usar cada objeto (los nuevos traen su propia regla en objetos-2.js)
 const IA_USA = {
-  nerf: (k, C) => hayKartA(k, C, (d, o) => d > 1 && d < 16 && Math.abs(o.lat - k.lat) < 30),      // solo si tiene a alguien delante y cerca
-  parche: (k, C) => { const pisan = hayKartA(k, C, d => -d > 1 && -d < 9), suerte = Math.random() < 0.004; return pisan || suerte; },      // si le pisan los talones (el azar se gasta siempre)
-  hotfix: k => PISTA.curvaS[(Math.floor(k.idx) + 6) % PISTA.N] < 0.006 && k.suelo !== S_LENTO,      // los turbos, en recta
+  nerf: (k, C) => hayKartA(k, C, (d, o) => KD.objetos.iaNerf(d, o, k)),      // solo si tiene a alguien delante y cerca
+  parche: (k, C) => { const pisan = hayKartA(k, C, d => KD.objetos.iaParche(d)), suerte = Math.random() < 0.004; return pisan || suerte; },      // si le pisan los talones (el azar se gasta siempre)
+  hotfix: k => KD.objetos.iaEnRecta(PISTA.curvaS[(Math.floor(k.idx) + 6) % PISTA.N]) && k.suelo !== S_LENTO,      // los turbos, en recta
 };
 IA_USA.pase = IA_USA.hotfix;
 function iaUsa(k, dt, C) {

@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.44', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil."] },
   { v: '0.3.43', real: ["<b>FUSIONES QUE YA NO PIERDEN</b>: ninguna fusión rinde menos que el arma suelta. La Railgun gemela dispara sus dos balas en paralelo (antes se abrían y de lejos fallaban las dos), el Haz enfocado pega lo que dice (+20 % y el doble de calor: sin querer contaba su premio tres veces), el Flak incandescente calienta más con cada perdigón y los Drones kamikaze estallan con menos fuerza."], joke: ["Microblizz ha descubierto que la Railgun gemela disparaba bizca. Phony jura que era a propósito, para cubrir más cielo."] },
   { v: '0.3.42', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },
   { v: '0.3.41', real: ["<b>LÁSER Y FLAK TÉRMICO EQUILIBRADOS</b>: el láser pega más (18 en vez de 14). El flak térmico sigue limpiando enjambres, pero ya no derrite a los blindados: cada perdigón calienta la mitad y la Metralla incendiaria calienta menos a los de al lado."], joke: ["Microblizz ha bajado el termostato del flak. Phony se queja de que ya no puede calentar la cena en la torreta."] },

@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.20
+  "<b>LOGO NUEVO</b>: KARTS ondea como una bandera de meta en la pantalla de título, y el icono, el favicon y la imagen que sale al compartir el juego llevan el logo nuevo.": "<b>NEW LOGO</b>: KARTS waves like a finish flag on the title screen, and the icon, the favicon and the image shown when sharing the game carry the new logo.",
+  "Microblizz ha planchado la bandera a cuadros y Phony ha firmado en la meta con un conejo.": "Microblizz ironed the chequered flag and Phony signed at the finish line with a bunny.",
   // 0.7.18
   "<b>YA SE PUEDE JUGAR</b>: Fans Of Karts sale de Próximamente. La física, los suelos y los objetos se han repasado por dentro, con las 33 pistas comprobadas una a una para que se conduzca igual que en las pruebas.": "<b>NOW PLAYABLE</b>: Fans Of Karts leaves Coming soon. The physics, the ground types and the items have been reviewed inside, with all 33 tracks checked one by one so it drives just like in testing.",
   "Microblizz ha quitado el cartel de «Próximamente» y Phony ya ha salido a toda velocidad antes de que se seque la pintura.": "Microblizz has taken down the \"Coming soon\" sign and Phony has already left at full speed before the paint dries.",

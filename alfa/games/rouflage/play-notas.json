@@ -94,5 +94,11 @@
     "fr-FR": "NOUVEAU LOGO SUR LE WEB : le favicon et l'image affichée lors du partage de Rouflage portent désormais son nouveau logo.",
     "de-DE": "NEUES LOGO IM WEB: Favicon und das Bild beim Teilen von Rouflage zeigen jetzt das neue Logo.",
     "it-IT": "NUOVO LOGO SUL WEB: la favicon e l'immagine mostrata condividendo Rouflage ora hanno il nuovo logo."
+  },
+  "0.2.68": {
+    "pt-BR": "MELHORIAS POR DENTRO: o site fica melhor ao ser compartilhado e os testes internos continuam melhorando.",
+    "fr-FR": "AMÉLIORATIONS INTERNES : le site s'affiche mieux quand il est partagé et les tests internes continuent de s'améliorer.",
+    "de-DE": "VERBESSERUNGEN IM HINTERGRUND: Die Website sieht beim Teilen besser aus und die internen Tests werden weiter besser.",
+    "it-IT": "MIGLIORIE INTERNE: il sito si vede meglio quando viene condiviso e i test interni continuano a migliorare."
   }
 }

@@ -18,7 +18,7 @@ function abreMejoras() {
 
 // la caja de la ventana, centrada
 function cajaVentana(W, H, alto) {
-  const w = Math.min(W - 8, 180), x = Math.round((W - w) / 2), y = Math.round(Math.max(26, (H - alto) / 2));
+  const w = Math.min(W - 8, 240), x = Math.round((W - w) / 2), y = Math.round(Math.max(26, (H - alto) / 2));
   VENTANA.caja = { x, y, w, h: alto };
   return VENTANA.caja;
 }
@@ -34,10 +34,10 @@ function pintaVentana(ctx, W, H) {
     RS.forEach((r, k) => {
       const y = c.y + 18 + k * FILA_CRAFT, sel = k === VENTANA.sel, tope = r.nivel() >= r.max(), puede = tieneRecursos(r.cuesta) && !tope;
       if (sel) caja(ctx, c.x + 3, y, c.w - 6, FILA_CRAFT - 1, PALETA.b);
-      const costes = Object.keys(r.cuesta), anchoCoste = costes.length * 21;
+      const costes = Object.keys(r.cuesta), anchoUno = k2 => 15 + 8 * String(r.cuesta[k2]).length, anchoCoste = costes.reduce((a, k2) => a + anchoUno(k2), 0);
       letraCabe(ctx, r.nombreTr ? r.nombreTr() : tr(r.nombre), c.x + 5, y + 10, c.w - anchoCoste - 10, tope ? PALETA.s : puede ? (r.id === 'refugio' ? PALETA.Y : PALETA.W) : PALETA.t);
       let x = c.x + c.w - 4 - anchoCoste;
-      for (const k2 of costes) { pintaSpr(ctx, 'ico_' + k2, x, y + 2); letra(ctx, String(r.cuesta[k2]), x + 11, y + 10, (J.inv[k2] || 0) >= r.cuesta[k2] ? PALETA.W : PALETA.R, 'left', 8, false); x += 21; }
+      for (const k2 of costes) { pintaSpr(ctx, 'ico_' + k2, x, y + 2); letra(ctx, String(r.cuesta[k2]), x + 11, y + 10, (J.inv[k2] || 0) >= r.cuesta[k2] ? PALETA.W : PALETA.R, 'left', 8, false); x += anchoUno(k2); }
     });
     const r = RS[Math.min(VENTANA.sel, RS.length - 1)], y = c.y + c.h - 18;
     const extra = r.max() < 99 ? ' ' + r.nivel() + '/' + r.max() : '';

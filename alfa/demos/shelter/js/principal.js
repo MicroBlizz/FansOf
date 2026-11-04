@@ -10,7 +10,7 @@ function ajusta() {
   const dpr = Math.min(3, window.devicePixelRatio || 1), r = document.getElementById('caja').getBoundingClientRect();
   const pw = Math.floor(r.width * dpr), ph = Math.floor(r.height * dpr);
   PW = pw; PH = ph;
-  K_BASE = Math.max(1, Math.floor(Math.min(pw, ph) / 150));
+  K_BASE = Math.max(1, Math.floor(Math.min(pw, ph) / 260));   // unas 8 casillas de ancho en el móvil
   K_ESCALA = K_BASE;
   CV.width = pw; CV.height = ph;
   CV.style.width = (pw / dpr) + 'px'; CV.style.height = (ph / dpr) + 'px';

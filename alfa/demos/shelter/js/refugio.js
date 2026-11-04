@@ -1,6 +1,6 @@
 // Fans of Shelter · EL REFUGIO: la madriguera de CrazyBunny se construye con lo que picas y talas de día, y lo construido se queda
 // para siempre (SAVE.refugio), aunque te pillen de noche. Cinco niveles: tienda, cabaña, casa de piedra, casa con empalizada y fortín.
-// Cada nivel da algo permanente (corazones, planos de la mesa, despensa de salida, una zanahoria más, daño) y cambia el edificio de la escena.
+// Cada nivel da algo permanente (corazones, planos de la mesa, despensa de salida, una zanahoria más, daño) y cambia el edificio del claro.
 'use strict';
 
 const REFUGIO = [
@@ -43,8 +43,8 @@ function construyeRefugio() {
   aviso(n === 5 ? tr('¡Refugio terminado!') : tr('¡Refugio: {n}!', { n: tr(sig.nombre) }), 3, PALETA.Y);
   return true;
 }
-// el edificio sobre la tienda pintada de la escena (img/refugio_<nivel>.png, con los pies en la casilla de MAPA.refugio)
+// el edificio del refugio (img/refugio_<nivel>.png, de la tienda al fortín), con los pies en la casilla de MAPA.refugio
 function pintaRefugio(ctx, cam) {
-  const n = nivelRefugio(); if (n < 2 || !MAPA.refugio || !hayImagen('refugio_' + n)) return;
+  const n = nivelRefugio(); if (!MAPA.refugio) return;
   pintaSpr(ctx, 'refugio_' + n, (MAPA.refugio.i + 0.5) * CAS - cam.x, (MAPA.refugio.j + 1) * CAS - cam.y, { ancla: 'pies' });
 }

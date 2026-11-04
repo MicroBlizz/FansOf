@@ -3,8 +3,8 @@
 'use strict';
 
 const J = {};   // el jugador (se rellena en jugadorNuevo)
-const J_ANCHO = 14, J_ALTO = 10;   // la caja de los pies, para chocar
-const VEL_BASE = 84;
+const J_ANCHO = 18, J_ALTO = 12;   // la caja de los pies, para chocar
+const VEL_BASE = 112;
 
 function jugadorNuevo() {
   Object.assign(J, {
@@ -23,7 +23,7 @@ function tocaSuelo(px, py) {
   const wx = CAM.x + px, wy = CAM.y + py, i = Math.floor(wx / CAS), j = Math.floor(wy / CAS), c = casilla(i, j);
   const accion = !!(RECURSO[c] || c === 'B' || c === 'M' || c === 'H' || (c === 'C' && !MAPA.cofreAbierto));
   if (!accion && !pasable(i, j)) return;
-  J.destino = { x: accion ? (i + 0.5) * CAS : wx, y: accion ? (j + 0.5) * CAS + 6 : wy, i, j, accion, c };
+  J.destino = { x: accion ? (i + 0.5) * CAS : wx, y: accion ? (j + 0.5) * CAS + 8 : wy, i, j, accion, c };
   chispas(wx, wy, PALETA.W, 4, 20);
 }
 // hacia dónde ir solo (como si fuera la palanca): llega al punto, o se para al chocar con la casilla tocada
@@ -51,7 +51,7 @@ function avanzaJugador(dt) {
   // el esquive de noche: un salto rápido en la dirección que mira, sin recibir daño
   if (J.esquiva > 0) {
     J.esquiva -= dt;
-    const v = 250 * dt, [nx, ny] = mueveChocando(J.x - J_ANCHO / 2, J.y - J_ALTO, J_ANCHO, J_ALTO, J.mira.x * v, J.mira.y * v);
+    const v = 330 * dt, [nx, ny] = mueveChocando(J.x - J_ANCHO / 2, J.y - J_ALTO, J_ANCHO, J_ALTO, J.mira.x * v, J.mira.y * v);
     J.x = nx + J_ANCHO / 2; J.y = ny + J_ALTO;
     return;
   }
@@ -115,9 +115,9 @@ function accionJugador() {
 function hiereJugador(n, dx, dy) {
   if (J.inmune > 0 || J.esquiva > 0) return;
   J.vida -= n; J.inmune = 1.0; SONIDO.herido(); tiembla(0.8);
-  chispas(J.x, J.y - 14, PALETA.R, 8, 60);
+  chispas(J.x, J.y - 20, PALETA.R, 8, 70);
   const d = Math.hypot(dx, dy) || 1;
-  const [nx, ny] = mueveChocando(J.x - J_ANCHO / 2, J.y - J_ALTO, J_ANCHO, J_ALTO, dx / d * 12, dy / d * 12);
+  const [nx, ny] = mueveChocando(J.x - J_ANCHO / 2, J.y - J_ALTO, J_ANCHO, J_ALTO, dx / d * 16, dy / d * 16);
   J.x = nx + J_ANCHO / 2; J.y = ny + J_ALTO;
   if (J.vida <= 0) { J.vida = 0; muereJugador(); }
 }
@@ -134,18 +134,8 @@ function pintaJugador(ctx, cam, silueta) {
   if (J.mira.y > 0) s = 'bunny_abajo_' + f; else if (J.mira.y < 0) s = 'bunny_arriba_' + f; else { s = 'bunny_lado_' + f; espejo = J.mira.x < 0; }
   const x = J.x - cam.x, y = J.y - cam.y;
   // la sombra
-  ctx.globalAlpha = 0.25; caja(ctx, x - 8, y - 2, 16, 3, PALETA.K); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.25; caja(ctx, x - 11, y - 3, 22, 4, PALETA.K); ctx.globalAlpha = 1;
   // de día lleva la zanahoria en la mano (de noche gira sola: la pinta armas.js)
-  if (NOCHE.fase !== 'noche' && !hayImagen('bunny_abajo')) pintaZanahoriaMano(ctx, x, y);
   const bote = J.andando && f === 1 && !IMG[s] ? -1 : 0;   // sin fotograma propio, el paso 1 es un botecito
   pintaSpr(ctx, s, x, y + bote, { ancla: 'pies', espejo, blanco: !!silueta });
-}
-function pintaZanahoriaMano(ctx, x, y) {
-  const g = J.golpe > 0 ? 1 - J.golpe / 0.25 : 0, s = J.arma.fuego ? 'zanahoria_fuego' : 'zanahoria', z = spr(s), h = spr('zanahoria_hojas');
-  ctx.save();
-  if (J.mira.y > 0) { ctx.translate(x + 9, y - 12); ctx.rotate(0.9 + g * 1.4); }
-  else if (J.mira.y < 0) { ctx.translate(x - 9, y - 20); ctx.rotate(-0.9 - g * 1.4); }
-  else { ctx.translate(x + J.mira.x * 9, y - 12); ctx.rotate(J.mira.x > 0 ? -0.7 + g * 1.5 : Math.PI + 0.7 - g * 1.5); }
-  ctx.drawImage(z, -Math.round(z.width * 0.15), -Math.round(z.height / 2)); if (!hayImagen('zanahoria')) ctx.drawImage(h, -9, -6);
-  ctx.restore();
 }

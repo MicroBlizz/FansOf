@@ -1,8 +1,8 @@
 {
- "build": 904,
- "hash": "5638d52",
- "fecha": "2026-11-04T00:20:52Z",
- "mensaje": "Soccer: campo entero en perspectiva por tiras (suelo.js) preparado para baldosas Wang de Yoshi; portero de cara al campo, cámara a zoom 2 y balón grande",
+ "build": 905,
+ "hash": "563eedd",
+ "fecha": "2026-11-04T00:22:50Z",
+ "mensaje": "Shelter: lo visual rehecho entero desde el boceto de Daniel: sprites de hojas por temas (sin quitarles colores ni abrirles agujeros), suelo con Wang tiles (hierba, tierra y agua, con transiciones por esquinas), mapa nuevo en vertical y cámara a 8 casillas; fuera el dibujo por código y la escena pintada (ADR 046)",
  "juegos": {
   "boom": "0.4.3",
   "cooking": "0.2.4",

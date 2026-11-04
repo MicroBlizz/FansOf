@@ -106,6 +106,9 @@ IDIOMA.add({
  "Toca el montacargas: ": "Tap the lift: ",
  "ATACAR: ": "ATTACK: ",
  "+1 ": "+1 ",
+ "¡Caza y cocina a la vez!": "Hunt and cook at the same time!",
+ "Caza: {bicho}": "Hunt: {bicho}",
+ "¡Te han cocinado! Pierdes la mitad de la despensa": "You got cooked! You lose half the pantry",
  // ingredientes, bichos, recetas y clientes (datos.js)
  "Tomate explosivo": "Exploding tomato",
  "Cebolla monstruosa": "Monstrous onion",

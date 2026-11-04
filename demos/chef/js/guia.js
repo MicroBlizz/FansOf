@@ -51,6 +51,7 @@ function pasoCantina() {
   // qué ingrediente falta en el fuego para esta receta
   const enFuego = fuegos.find(f => f.estado === 'llena') || null, ya = enFuego ? cuenta(enFuego.contenido) : {};
   const falta = Object.keys(R.lleva).find(k => (ya[k] || 0) < R.lleva[k]);
+  if (falta && !m && !(JORNADA.despensa[falta] > 0) && JORNADA.fase === 'arena') { const b = Object.keys(BICHOS).find(t => BICHOS[t].suelta === falta); return { e: null, txt: tr('Caza: {bicho}', { bicho: tr(BICHOS[b].nombre) }) }; }
   if (falta && !m) return { e: est('caja_' + falta), txt: tr('Coge: {que}', { que: tr(INGREDIENTES[falta].nombre) }) };
   return null;
 }
@@ -58,7 +59,7 @@ function avanzaGuia(dt) {
   GUIA.t += dt;
   if (JORNADA.fase === 'caza' && J.anduvo > 30) GUIA.evento('anda');
   if (JORNADA.fase === 'caza') { const o = objetivoCaza(); GUIA.objetivo = o; }
-  else if (JORNADA.fase === 'servicio') { const p = ayudaCantina() ? pasoCantina() : null; GUIA.objetivo = p && p.e ? { x: (p.e.r[0] + p.e.r[2]) / 2, y: p.e.r[1], txt: '' } : null; GUIA.texto = p ? p.txt : ''; }
+  else if (JORNADA.fase === 'servicio' || JORNADA.fase === 'arena') { const p = ayudaCantina() ? pasoCantina() : null; GUIA.objetivo = p && p.e ? { x: (p.e.r[0] + p.e.r[2]) / 2, y: p.e.r[1], txt: '' } : null; GUIA.texto = p ? p.txt : ''; }
 }
 // la flecha: rebota encima del objetivo si se ve, o en el borde de la pantalla apuntando hacia él
 function pintaFlecha(ctx, cam, W, H, o) {
@@ -81,8 +82,8 @@ function pintaSalidas(ctx, cam) {
 // el cartel del tutorial / del paso siguiente, arriba en el centro, debajo del marcador
 function pintaGuia(ctx, cam, W, H) {
   if (JORNADA.fase === 'caza') { pintaSalidas(ctx, cam); if (GUIA.objetivo) pintaFlecha(ctx, cam, W, H, GUIA.objetivo); }
-  if (JORNADA.fase === 'servicio' && GUIA.objetivo) pintaFlecha(ctx, cam, W, H, GUIA.objetivo);
-  const p = JORNADA.fase === 'caza' ? PASOS_CAZA[GUIA.paso] : null, txt = p ? p.txt() : (JORNADA.fase === 'servicio' ? GUIA.texto : '');
+  if ((JORNADA.fase === 'servicio' || JORNADA.fase === 'arena') && GUIA.objetivo) pintaFlecha(ctx, cam, W, H, GUIA.objetivo);
+  const p = JORNADA.fase === 'caza' ? PASOS_CAZA[GUIA.paso] : null, txt = p ? p.txt() : (JORNADA.fase === 'servicio' || JORNADA.fase === 'arena' ? GUIA.texto : '');
   if (!txt) return;
   const w = Math.min(W - 12, 230), x = (W - w) / 2, y = Math.max(64, Math.round(H * 0.16));
   ctx.globalAlpha = 0.92; marcoMadera(ctx, x, y, w, 18); ctx.globalAlpha = 1;

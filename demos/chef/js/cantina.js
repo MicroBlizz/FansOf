@@ -29,9 +29,10 @@ function recetasPosibles() {
   const d = despensaLibre();
   return Object.keys(RECETAS).filter(r => Object.keys(RECETAS[r].lleva).every(k => (d[k] || 0) >= RECETAS[r].lleva[k]));
 }
-function nuevaComanda() {
+// `todas`: en la arena se pide cualquier receta (lo que falte se caza en la misma pantalla); en la cantina, solo lo que permite la despensa
+function nuevaComanda(todas) {
   if (CANTINA.comandas.length >= CIFRAS.comandasMax) return false;
-  const pos = recetasPosibles(); if (!pos.length) return false;
+  const pos = todas ? Object.keys(RECETAS) : recetasPosibles(); if (!pos.length) return false;
   const receta = pick(pos), dur = lleva(receta) >= 3 ? CIFRAS.comandaSeg[1] : CIFRAS.comandaSeg[0];
   CANTINA.comandas.push({ receta, t: dur, dur, quien: pick(CLIENTES), n: ++CANTINA.enJuego });
   SONIDO.campana(); return true;
@@ -40,7 +41,7 @@ function nuevaComanda() {
 // el punto del suelo más cercano a una estación (adonde va el cocinero en modo tocar) y la distancia de los pies a ella
 function puntoJunto(e) {
   const cx = (e.r[0] + e.r[2]) / 2, cy = (e.r[1] + e.r[3]) / 2; let mejor = null, md = 1e9;
-  for (let y = e.r[1] - 40; y <= e.r[3] + 40; y += 2) for (let x = e.r[0] - 40; x <= e.r[2] + 40; x += 2) {
+  for (let y = e.r[1] - 60; y <= e.r[3] + 60; y += 2) for (let x = e.r[0] - 60; x <= e.r[2] + 60; x += 2) {
     if (!pisable(x, y) || !pisable(x - 8, y) || !pisable(x + 8, y) || !pisable(x, y - 10)) continue;
     const d = Math.hypot(x - cx, y - cy); if (d < md) { md = d; mejor = [x, y]; }
   }
@@ -51,7 +52,7 @@ const distEstacion = e => { const px = J.x, py = J.y - 6; return Math.hypot(Math
 // --- la estación que tiene delante: la más cercana al punto al que mira, si está a mano ---
 function estacionCerca() {
   const px = J.x + J.mx * 14, py = J.y - 6 + J.my * 12;
-  let mejor = null, md = 26;
+  let mejor = null, md = (MAPA.sala.alcance || 30) - 4;
   for (const e of CANTINA.estaciones) {
     const dx = Math.max(e.r[0] - px, 0, px - e.r[2]), dy = Math.max(e.r[1] - py, 0, py - e.r[3]), d = Math.hypot(dx, dy);
     if (d < md) { md = d; mejor = e; }
@@ -109,30 +110,31 @@ function sirve(c) {
   CANTINA.comandas.splice(CANTINA.comandas.indexOf(c), 1); J.mano = null;
   SONIDO.servido(); numero(J.x, J.y - 70, '+' + total, PALETA.Y); if (mult > 1) avisoCantina(tr('¡Combo x{n}!', { n: mult }), PALETA.G);
   chispas(J.x, J.y - 40, PALETA.Y, 10, 60);
-  if (CANTINA.comandas.length < 2) nuevaComanda();
+  if (CANTINA.comandas.length < 2) nuevaComanda(JORNADA.fase === 'arena');
 }
 
-function avanzaServicio(dt) {
-  CANTINA.t += dt;
-  if (CANTINA.aviso) { CANTINA.aviso.t -= dt; if (CANTINA.aviso.t <= 0) CANTINA.aviso = null; }
-  // modo tocar: tocar una estación es ir hasta ella y usarla al llegar; tocar el suelo, ir allí
-  if (ENTRADA.toqueMundo) {
-    const q = ENTRADA.toqueMundo, est = CANTINA.estaciones.find(e => q.x >= e.r[0] - 6 && q.x <= e.r[2] + 6 && q.y >= e.r[1] - 10 && q.y <= e.r[3] + 6);
-    if (est) { const p = puntoJunto(est); CANTINA.objetivo = est; ENTRADA.destino = p ? { x: p[0], y: p[1] } : null; if (!p) CANTINA.objetivo = null; }
-    else { CANTINA.objetivo = null; ENTRADA.destino = { x: q.x, y: q.y }; }
-    J.atasco = 0;
-  }
-  avanzaJugador(dt);
+// --- piezas del servicio, compartidas con la arena (arena.js) ---
+// modo tocar: tocar una estación es ir hasta ella y usarla al llegar. Devuelve true si el toque era una estación (y lo consume).
+function toqueEstacion() {
+  const q = ENTRADA.toqueMundo; if (!q) return false;
+  const est = CANTINA.estaciones.find(e => q.x >= e.r[0] - 6 && q.x <= e.r[2] + 6 && q.y >= e.r[1] - 10 && q.y <= e.r[3] + 6);
+  if (!est) return false;
+  const p = puntoJunto(est); CANTINA.objetivo = p ? est : null; ENTRADA.destino = p ? { x: p[0], y: p[1] } : null;
+  J.atasco = 0; J.presa = null; ENTRADA.toqueMundo = null;
+  return true;
+}
+// usar la estación de delante (botón A o al llegar en modo tocar) y cortar en la tabla (botón B o tocarla). Devuelve si usó algo.
+function usaEstaciones(dt) {
   let accion = !!ENTRADA.ataquePulsa, usa = null;
   const obj = CANTINA.objetivo;
-  if (obj && !ENTRADA.destino && distEstacion(obj) < 30) {
+  if (obj && !ENTRADA.destino && distEstacion(obj) < (MAPA.sala.alcance || 30)) {
     mira((obj.r[0] + obj.r[2]) / 2 - J.x, (obj.r[1] + obj.r[3]) / 2 - (J.y - 6));
     usa = obj;
     if (!(obj.tipo === 'tabla' && obj.item && !obj.item.cortado && !J.mano)) { accion = true; CANTINA.objetivo = null; }   // en la tabla se queda cortando
   } else if (obj && !ENTRADA.destino) CANTINA.objetivo = null;
   CANTINA.cerca = usa || estacionCerca();
-  // botón A: la acción de la estación; botón B mantenido en la tabla (o tocarla, en modo tocar): cortar
-  if (accion) { const a = accionDe(CANTINA.cerca); if (a && a.hace) a.hace(); else if (a && a.no) { avisoCantina(a.txt, PALETA.R); SONIDO.no(); } }
+  let usado = false;
+  if (accion) { const a = accionDe(CANTINA.cerca); if (a && a.hace) { a.hace(); usado = true; } else if (a && a.no) { avisoCantina(a.txt, PALETA.R); SONIDO.no(); usado = true; } }
   const e = CANTINA.cerca;
   const corta = ENTRADA.bloqueo || (usa && usa.tipo === 'tabla');
   if (corta && e && e.tipo === 'tabla' && e.item && !e.item.cortado && !J.mano) {
@@ -140,22 +142,41 @@ function avanzaServicio(dt) {
     if (e.item.progreso >= 1) { e.item.cortado = true; e.item.progreso = 1; SONIDO.cuchillo(); if (CANTINA.objetivo === e) CANTINA.objetivo = null; chispas(e.r[0] + 20, e.r[1], INGREDIENTES[e.item.que].luz, 6, 40); }
     else if (Math.floor(e.item.progreso * 8) !== Math.floor((e.item.progreso - dt / CIFRAS.cortarSeg) * 8)) SONIDO.golpeEnemigo();
   } else CANTINA.cortando = Math.max(0, CANTINA.cortando - dt);
-  // los fuegos trabajan solos
+  return usado;
+}
+// los fuegos trabajan solos: se cocinan y, si nadie los vacía, se queman
+function avanzaFuegos(dt) {
   for (const f of CANTINA.estaciones) {
     if (f.tipo !== 'fuego') continue;
     if (f.estado === 'cocinando') { f.tt += dt; if (f.tt >= CIFRAS.cocinarSeg) { f.estado = 'hecha'; f.tt = 0; SONIDO.campana(); } }
     else if (f.estado === 'hecha') { f.tt += dt; const q = f.tt / CIFRAS.quemarSeg; if (q >= 1) { f.estado = 'quemada'; f.tt = 0; SONIDO.explota(); avisoCantina(tr('¡Se ha quemado!'), PALETA.R); } else if (Math.floor(q * 4) !== Math.floor((q - dt / CIFRAS.quemarSeg) * 4)) SONIDO.aviso(); }
   }
-  // las comandas
+}
+// las comandas: caducan (restan puntos y rompen el combo) y llegan nuevas cada cierto tiempo
+function avanzaComandas(dt, todas) {
+  if (CANTINA.aviso) { CANTINA.aviso.t -= dt; if (CANTINA.aviso.t <= 0) CANTINA.aviso = null; }
   for (const c of CANTINA.comandas) c.t -= dt;
   const caducadas = CANTINA.comandas.filter(c => c.t <= 0);
   for (const c of caducadas) { CANTINA.comandas.splice(CANTINA.comandas.indexOf(c), 1); CANTINA.caducadas++; CANTINA.puntos = Math.max(0, CANTINA.puntos - CIFRAS.caducaPuntos); CANTINA.combo = 1; SONIDO.no(); avisoCantina(tr('{quien} se va sin comer (−{n})', { quien: tr(c.quien), n: CIFRAS.caducaPuntos }), PALETA.R); }
   CANTINA.proxima -= dt;
-  if (CANTINA.proxima <= 0) { nuevaComanda(); CANTINA.proxima = CIFRAS.comandaCada; }
-  // se acaba: por tiempo, o cuando no queda nada que pedir ni que cocinar
-  const r = CIFRAS.servicioSeg - CANTINA.t;
+  if (CANTINA.proxima <= 0) { nuevaComanda(todas); CANTINA.proxima = CIFRAS.comandaCada; }
+}
+// los avisos de los últimos 30 y 10 segundos de un reloj
+function avisaReloj(r, dt) {
   if (r <= 30.5 && r + dt > 30.5) { aviso(tr('¡30 segundos!'), 1.5, PALETA.Y); SONIDO.aviso(); }
   if (r <= 10.5 && r + dt > 10.5) { aviso(tr('¡10 segundos!'), 1.5, PALETA.R); SONIDO.aviso(); }
+}
+
+function avanzaServicio(dt) {
+  CANTINA.t += dt;
+  if (!toqueEstacion() && ENTRADA.toqueMundo) { CANTINA.objetivo = null; ENTRADA.destino = { x: ENTRADA.toqueMundo.x, y: ENTRADA.toqueMundo.y }; J.atasco = 0; }
+  avanzaJugador(dt);
+  usaEstaciones(dt);
+  avanzaFuegos(dt);
+  avanzaComandas(dt, false);
+  // se acaba: por tiempo, o cuando no queda nada que pedir ni que cocinar
+  const r = CIFRAS.servicioSeg - CANTINA.t;
+  avisaReloj(r, dt);
   const nadaQueHacer = !CANTINA.comandas.length && !recetasPosibles().length;
   if (nadaQueHacer) CANTINA.fin += dt; else CANTINA.fin = 0;
   if (r <= 0 || CANTINA.fin > 2.5) { JORNADA.oroDia = CANTINA.puntos; cierraJornada(); }

@@ -26,6 +26,7 @@ function fotograma(ahora) {
   else if (f === 'caza') { avanzaJugador(dt); avanzaEnemigos(dt); avanzaJornada(dt); avanzaEfectos(dt); avanzaGuia(dt); }
   else if (f === 'subiendo') { avanzaJornada(dt); avanzaEfectos(dt); }
   else if (f === 'servicio') { avanzaServicio(dt); avanzaEfectos(dt); avanzaGuia(dt); }
+  else if (f === 'arena') { avanzaArena(dt); avanzaEfectos(dt); avanzaGuia(dt); }
   else FX.avisos.length = 0;
   vigilaMusica();
   G.setTransform(K_ESCALA, 0, 0, K_ESCALA, 0, 0);

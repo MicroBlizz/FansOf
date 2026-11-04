@@ -1,8 +1,8 @@
 {
- "build": 930,
- "hash": "e5f41f4",
- "fecha": "2026-11-04T21:39:36Z",
- "mensaje": "Karts: logo con KARTS a cuadros de bandera regulares (dibujado por código) en la imagen de compartir",
+ "build": 931,
+ "hash": "365a91c",
+ "fecha": "2026-11-04T22:35:57Z",
+ "mensaje": "Karts: el logo ondeando como una bandera en la pantalla de título (logo.js), con su baseline de menús regrabada",
  "juegos": {
   "boom": "0.4.5",
   "cooking": "0.2.6",

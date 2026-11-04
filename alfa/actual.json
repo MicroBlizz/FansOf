@@ -1,8 +1,8 @@
 {
- "build": 923,
- "hash": "2714d41",
- "fecha": "2026-11-04T19:01:47Z",
- "mensaje": "Versiones y notas del despliegue: boom 0.4.5, cooking 0.2.6, crush 0.1.43, decks 0.2.25, jump 0.3.20, pets 0.2.3, ratkov 0.2.33, rouflage 0.2.67, rumble 0.9.162, survivors 0.1.75, tacticas 0.1.59, taxi 0.2.5, td 0.13.91",
+ "build": 924,
+ "hash": "3398f72",
+ "fecha": "2026-11-04T20:18:15Z",
+ "mensaje": "Goose: el smoke-test ya no depende del azar (tableros y dados con semilla fija, esperas por condición)",
  "juegos": {
   "boom": "0.4.5",
   "cooking": "0.2.6",

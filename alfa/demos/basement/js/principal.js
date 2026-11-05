@@ -6,7 +6,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
   const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
-    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false }, nuevos: [] };
+    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null }, nuevos: [] };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -44,6 +44,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     reabierto: (ev) => FX.numero(ev.x, ev.y - 20, tr('¡REABIERTO!'), '#e8413a', 14),
     duplicado: (ev) => FX.numero(ev.x, ev.y - 20, tr('¡DUPLICADO!'), '#e8413a', 14),
     explosion: (ev) => { FX.chispas(ev.x, ev.y, 26, ev.arma === 'sello' ? '#e5322d' : '#ffffff', 160); FX.temblor = Math.max(FX.temblor, 6); if (ev.arma === 'sello') FX.numero(ev.x, ev.y - 14, tr('¡APROBADO!'), '#e5322d', 16); },
+    mueble: (ev) => { FX.chispas(ev.x, ev.y, 18, '#c8d2e0', 140); FX.temblor = Math.max(FX.temblor, 4); basSuena('baja'); },
+    material: (ev) => { FX.numero(ev.x, ev.y - 12, '+1', COLOR_MATERIAL[ev.material], 13); basSuena('recoge'); },
     cafeArma: (ev) => FX.numero(ev.x, ev.y - 12, '+' + tr('CAFÉ'), '#ff8a2a', 12),
     apagon: () => { FX.cartel(tr('¡APAGÓN!'), '#8ac4ff', 1); basSuena('cafeBajo'); },
     eventoPlanta: (ev) => { const E = EVENTO[ev.evento]; FX.cartel(tr(E[0]), E[1], 2, tr(E[2])); basSuena('zona'); },
@@ -51,6 +53,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     final: () => { FX.cartel(tr('¡SERVIDOR ARREGLADO!'), '#4fc25a', 3, tr('Microblizz vuelve a funcionar')); FX.confeti(est.e.jugador.x, est.e.jugador.y); FX.confeti(est.e.jugador.x, est.e.jugador.y - 60); vibrar(300); TU.lanza('final', est.t); },
     fin: (ev) => { if (ev.como === 'ascensor') FX.confeti(est.e.jugador.x, est.e.jugador.y); else { FX.cartel(tr('¡DESMAYADO!'), '#e5322d', 1.5); vibrar(150); } },
   };
+  const COLOR_MATERIAL = { tornillo: '#c8d2e0', cable: '#e5322d', chip: '#5fe05f', disco: '#ffd23a' };
   const EVENTO = {
     apagon: ['¡APAGÓN EN LA PLANTA!', '#8ac4ff', 'Solo ves lo que tienes cerca'],
     cafe: ['¡MÁQUINA DE CAFÉ!', '#ff8a2a', 'Tazas gratis en esta planta'],
@@ -109,6 +112,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     arma: (b) => { if (aplica(B.ponerArma(B.AJ, SAVE.progreso, b.id), 'boton')) est.mesa.armeria = false; },
     armeria: () => { est.mesa.armeria = true; basSuena('boton'); },
     cerrarArmeria: () => { est.mesa.armeria = false; basSuena('boton'); },
+    taller: (b) => { est.mesa.taller = b.receta; basSuena('boton'); },
+    usarTaller: () => { if (aplica(B.usarTaller(B.AJ, SAVE.progreso, est.mesa.taller), 'jefeVencido')) FX.confeti(W / 2, est.H * 0.4); },
+    cerrarTaller: () => { est.mesa.taller = null; basSuena('boton'); },
     mesa: () => alaMesa(),
     pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); TU.lanza(b.id, est.t); },
     curso: (b) => { est.mesa.sel = b.id; basSuena('boton'); },
@@ -138,7 +144,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function teclaMenu() {
     if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
     else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
-    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria) bajar();
+    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria && !est.mesa.taller) bajar();
   }
 
   function orden() {

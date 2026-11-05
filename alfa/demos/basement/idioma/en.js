@@ -292,4 +292,19 @@ IDIOMA.add({
   // 0.5.1
   'Jefe: {n}': 'Boss: {n}',
   'BAJAR AQUÍ': 'DIVE HERE',
+  // 0.6.0: el taller
+  'TALLER': 'WORKSHOP',
+  'Tornillos': 'Screws',
+  'Cables': 'Cables',
+  'Chips': 'Chips',
+  'Discos de oro': 'Gold disks',
+  'Materiales': 'Materials',
+  'ARMAS: fabrica o sube de nivel': 'WEAPONS: craft or level up',
+  'EQUIPO: fabrica la pieza que te falte': 'GEAR: craft the piece you are missing',
+  'Ya está al nivel máximo': 'Already at max level',
+  'Ya la tienes': 'You already have it',
+  'MEJORAR': 'UPGRADE',
+  'FABRICAR': 'CRAFT',
+  'Este es el taller. Al bajar, rompe taquillas, fotocopiadoras y máquinas de café: sueltan tornillos, cables y chips.': 'This is the workshop. On the way down, smash lockers, photocopiers and coffee machines: they drop screws, cables and chips.',
+  'Aquí los cambias por el arma o la pieza que quieras, sin azar, o subes de nivel tus armas. Ojo: si te desmayas, se pierden con la caja.': 'Here you trade them for the weapon or piece you want, no luck involved, or level up your weapons. Careful: if you pass out, you lose them with the box.',
 });

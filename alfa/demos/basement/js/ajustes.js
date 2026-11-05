@@ -42,6 +42,24 @@ BAS.AJ = Object.freeze({
     cafe: { valor: 0, peso: 0 },
     paquete: { valor: 0, peso: 0 },        // paquete de mensajería: no ocupa sitio, pero solo cuenta si subes a salvo
     paqueteJefe: { valor: 0, peso: 0 },
+    tornillo: { valor: 0, peso: 0 }, cable: { valor: 0, peso: 0 }, chip: { valor: 0, peso: 0 }, disco: { valor: 0, peso: 0 },   // materiales
+  },
+  // Los materiales del taller, de común a legendario. Salen de los muebles que rompes al bajar (y de los jefes) y van a la caja
+  // sin ocupar sitio: si te desmayas, se pierden con ella.
+  materiales: ['tornillo', 'cable', 'chip', 'disco'],
+  // Los muebles: en cada planta, con probabilidad `prob`, hay uno pegado a una pared. Tu arma les dispara solo si no hay bichos
+  // cerca. Al romperse sueltan materiales: cuántos de cada uno [mínimo, máximo] y desde qué planta (los mejores, más abajo).
+  muebles: {
+    prob: 0.6,
+    tipos: { taquilla: { vida: 30, radio: 20 }, fotocopiadora: { vida: 45, radio: 24 }, maquina: { vida: 38, radio: 22 }, rack: { vida: 55, radio: 22, desde: 15 } },
+    suelta: { tornillo: { desde: 0, n: [2, 4] }, cable: { desde: 5, n: [1, 2] }, chip: { desde: 10, n: [0, 2] }, disco: { desde: 15, n: [0, 1], prob: 0.25 } },
+    jefe: { chip: 3, disco: 1 },   // lo que suelta además cada jefe vencido
+  },
+  // El taller de tu mesa: fabricar el arma o la pieza de equipo que quieras (sin azar) y subir de nivel las armas. Coste por rareza;
+  // mejorar cuesta `mejora` × el de fabricar × el nivel al que tienes el arma.
+  taller: {
+    fabricar: { comun: { tornillo: 25, cable: 4 }, raro: { tornillo: 40, cable: 12, chip: 2 }, epico: { tornillo: 60, cable: 25, chip: 8 }, legendario: { tornillo: 90, cable: 40, chip: 18, disco: 3 } },
+    mejora: 0.4,
   },
   probCafe: 0.07, iman: 50, recoge: 22, avisoLlena: 1.5,
   // La campaña: cinco departamentos de cinco plantas y, al vencer al CEO, el Código Legacy de 2004, que no tiene fondo.

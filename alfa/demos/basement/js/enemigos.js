@@ -43,7 +43,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const AJ = e.aj, G = AJ.generar;
     while (e.generadoHasta < e.jugador.y + G.delante) {
       const y = e.generadoHasta, planta = B.plantaDe(AJ, y);
-      if (y % AJ.altoPlanta < G.tramo) { B.becarios.alGenerar(e, planta, rnd); B.campana.alGenerar(e, planta, rnd); }   // planta nueva
+      if (y % AJ.altoPlanta < G.tramo) { B.becarios.alGenerar(e, planta, rnd); B.campana.alGenerar(e, planta, rnd); B.muebles.alGenerar(e, planta, rnd); }   // planta nueva
       if (!e.jefe && e.enemigos.length < G.maxActivos) tramo(e, planta, y, rnd);
       e.generadoHasta += G.tramo;
     }

@@ -6,7 +6,7 @@
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const UI = B.ui, C = UI.C, T = UI.texto;
-  const PESTANAS = [{ id: 'formacion', nombre: 'FORMACIÓN' }, { id: 'equipo', nombre: 'EQUIPO' }, { id: 'paquetes', nombre: 'PAQUETES' }, { id: 'catalogo', nombre: 'CATÁLOGO' }];
+  const PESTANAS = [{ id: 'formacion', nombre: 'FORMACIÓN' }, { id: 'equipo', nombre: 'EQUIPO' }, { id: 'paquetes', nombre: 'PAQUETES' }, { id: 'catalogo', nombre: 'CATÁLOGO' }, { id: 'taller', nombre: 'TALLER' }];
   const COLUMNA = { bienestar: ['naranja', 'r-taza'], logistica: ['azul', 'r-iman'], productividad: ['rojo', 'r-grapadora'] };
   const POSIT = { hecho: ['#9ee38a', '#c8f5b8', '#5fae5a'], disponible: ['#ffd23a', '#fff3a0', '#c8901a'], bloqueado: ['#d9c8a4', '#e8dcc0', '#b8a47c'] };
 
@@ -41,10 +41,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
 
   function pestanas(g, W, m, botones) {
-    const w = (W - 24 - 18) / 4;
+    const w = (W - 24 - 6 * (PESTANAS.length - 1)) / PESTANAS.length;
     PESTANAS.forEach((q, i) => {
       const b = { x: 12 + i * (w + 6), y: 136, w, h: 58, accion: 'pestana', id: q.id };
-      UI.boton(g, b, m.pestana === q.id ? 'naranja' : 'azul', tr(q.nombre), 20);
+      UI.boton(g, b, m.pestana === q.id ? 'naranja' : 'azul', '', 0);
+      UI.textoCabe(g, tr(q.nombre), b.x + w / 2, b.y + 27, 19, w - 10, '#ffffff', 'center', 4);
       botones.push(b);
     });
   }
@@ -108,10 +109,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return botones;
   }
 
-  const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), catalogo: (...a) => UI.pestanaCatalogo(...a) };
+  const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), catalogo: (...a) => UI.pestanaCatalogo(...a), taller: (...a) => UI.pestanaTaller(...a) };
 
   // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo), dep (eligiendo departamento: el id del marcado), ascenso (la ventana),
-  //       armeria (eligiendo arma) }
+  //       armeria (eligiendo arma), taller (la receta abierta en el taller) }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
     if (m.dep) return UI.departamentos(g, W, H, AJ, p, m.dep);
@@ -128,6 +129,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     botones.push(bajar);
     if (m.ascenso) return UI.ascenso(g, W, H, AJ, p);
     if (m.armeria) return UI.armeria(g, W, H, AJ, p);
+    if (m.taller) return UI.fichaTaller(g, W, H, AJ, p, m.taller);
     if (!m.sel) return botones;
     g.fillStyle = 'rgba(10,5,20,0.8)'; g.fillRect(0, 0, W, H);
     return fichaCurso(g, W, H, AJ, p, m.sel);

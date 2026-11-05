@@ -19,6 +19,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     critico: ['descargabot', 1.7, 'hue-rotate(-120deg) saturate(2.2)'],
     grapadora: ['r-grapadora', 2], clips: ['lanzaclips', 4], taladro: ['taladro', 4], extintor: ['extintor', 4], raton: ['raton', 4],
   };
+  // los muebles que se rompen y los materiales del taller (0.6.0)
+  Object.assign(V.DIBUJO, { taquilla: ['taquilla', 4.5], fotocopiadora: ['fotocopiadora', 4.5], maquina: ['maquina', 4.5], rack: ['rack', 4.5],
+    tornillo: ['tornillo', 2.6], cable: ['cable', 2.6], chip: ['chip', 2.4], disco: ['disco', 2.4] });
   // las armas de la 0.5.0: su icono es el mismo dibujo que llevan en la mano (aspecto-capas.js)
   for (const id of ['cinta', 'perforadora', 'abrecartas', 'boli', 'impresora', 'trituradora', 'router', 'laser', 'sello', 'proyector', 'taza', 'industrial']) V.DIBUJO[id] = ['arma-' + id, 3];
   // pinta lo que sea: si hay dibujo de Yoshi (img/), ese; si no, el propio en píxel (sprites.js)
@@ -87,6 +90,14 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     for (const o of e.objetos) V.pintaCosa(g, o.tipo, V.sx(o.x), V.sy(o.y) + Math.sin(e.t * 4 + o.id) * 3);
   }
 
+  function muebles(g, e) {
+    for (const m of e.muebles) {
+      const x = V.sx(m.x), y = V.sy(m.y);
+      V.pintaCosa(g, m.tipo, x, y, { blanco: m.golpeT > 0.06 });
+      if (m.vida < m.vidaMax) UI.barra(g, x - 30, y - m.radio * K - 18, 60, 10, m.vida / m.vidaMax, '#c8d2e0');
+    }
+  }
+
   function enemigos(g, e) {
     for (const en of e.enemigos) {
       const x = V.sx(en.x), y = V.sy(en.y) + Math.sin(e.t * 5 + en.id) * 2;
@@ -151,7 +162,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     for (let n = ini; n * AJ.altoPlanta < fin; n++) planta(g, AJ, n, W);
     paredes(g, AJ, W, H);
     V.barrera(g, e, W);
-    objetos(g, e); V.becarios(g, e); enemigos(g, e); V.jefe(g, e);
+    muebles(g, e); objetos(g, e); V.becarios(g, e); enemigos(g, e); V.jefe(g, e);
     balas(g, e); V.proyectiles(g, e); V.ayudantes(g, e); jugador(g, e, aspecto); ascensor(g, e, H);
     g.save(); g.scale(K, K); g.translate(0, -V.camY);
     B.efectos.dibujarMundo(g, (gg, t, x, y, tam, color) => T(gg, t, x, y, tam * 0.75, color, 'center', 2));

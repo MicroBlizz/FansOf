@@ -63,6 +63,18 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       '..BBBBBB..', '..BBBBBB..', '..BBBBBB..', '..BBBBBB..', '...BBBB...', '....KK....', '.BBBBBBBB.', '.BBBBBBBB.', '....KK....', '....KK....', '.KKKKKKKK.', '.K..KK..K.'] },
     fotocopiadora: { pal: { S: '#d0d8e4', K: '#2b3445', W: '#ffffff', G: '#5fe05f', D: '#8a97ab' }, filas: [
       'SSSSSSSSSSSSSS', 'SKKKKKKKKKKKKS', 'SSSSSSSSSSSSSS', 'SSWWWWWWWWWWSS', 'SSSSSSSSSSSSSS', 'SSSSSSSSGGSSSS', 'SSSSSSSSSSSSSS', 'SDDDDDDDDDDDDS', 'SDDDDDDDDDDDDS', 'SSSSSSSSSSSSSS'] },
+    // ---- 0.6.0: los muebles que se rompen y los materiales del taller ----
+    taquilla: { pal: { G: '#7a8aa0', g: '#5a6a80', K: '#2b3445', Y: '#ffd23a' }, filas: [
+      'GGGGGGGGGGGG', 'GgggggGgggggG'.slice(0, 12), 'GgKKKgGgKKKg', 'GggggggGgggg'.slice(0, 12), 'GgggYgGgggYg', 'GggggggGgggg'.slice(0, 12), 'GgggggGggggg',
+      'GgggggGggggg', 'GgKKKgGgKKKg', 'GgggggGggggg', 'GgggggGggggg', 'GGGGGGGGGGGG', 'K.KK....KK.K'] },
+    maquina: { pal: { R: '#e5322d', r: '#a8201c', W: '#ffffff', K: '#2b2b35', C: '#6b3a1e', Y: '#ffd23a' }, filas: [
+      'RRRRRRRRRRR', 'RWWWWWWWWWR', 'RWCCCCCCCWR', 'RWWWWWWWWWR', 'RRRRRRRRRRR', 'RKKKKKRYRYR', 'RK...KRRRRR', 'RK.W.KRYRYR', 'RKKKKKRRRRR', 'rrrrrrrrrrr', 'r.r.....r.r'] },
+    rack: { pal: { K: '#22242c', S: '#4a4f5f', G: '#5fe05f', R: '#ff3b2d', B: '#3b8de0' }, filas: [
+      'KKKKKKKKKK', 'KSSSSSSSSK', 'KSGSBSSSSK', 'KSSSSSSSSK', 'KSRSGSSSSK', 'KSSSSSSSSK', 'KSGSGSSSSK', 'KSSSSSSSSK', 'KSBSRSSSSK', 'KSSSSSSSSK', 'KSGSSSSSSK', 'KSSSSSSSSK', 'KKKKKKKKKK', 'K.K....K.K'] },
+    tornillo: { pal: { S: '#c8d2e0', s: '#8a96aa' }, filas: ['.SSSS.', 'SSssSS', '.SSSS.', '..Ss..', '..sS..', '..Ss..', '..sS..', '...s..'] },
+    cable: { pal: { R: '#e5322d', Y: '#ffd23a', K: '#2b2b35' }, filas: ['KK......', 'KKRR....', '...RR...', '....RR..', '...RR...', '..RR....', '...RRYY.', '.....YYK'] },
+    chip: { pal: { G: '#2f7d4f', g: '#8fe07a', S: '#c8d2e0', K: '#1a1a1a' }, filas: ['.S.S.S.S.', 'GGGGGGGGG', 'GKKKKKKKG', 'SKgKgKgKS', 'GKKKKKKKG', 'SKgKgKgKS', 'GKKKKKKKG', 'GGGGGGGGG', '.S.S.S.S.'] },
+    disco: { pal: { Y: '#ffd23a', y: '#c8901a', W: '#fff3a0', K: '#2b2b35' }, filas: ['..YYYYY..', '.YYWWYYY.', 'YYWYYYYYY', 'YYYYKYYYY', 'YYYKKKYYY', 'YYYYKYYYY', 'YYYYYYYyY', '.YYYYYyy.', '..yyyyy..'] },
     // ---- 0.4.0: las armas que no tienen dibujo de Yoshi ----
     lanzaclips: { pal: { S: '#c8d2e0' }, filas: [
       '..SSSSS..', '.S.....S.', '.S.SSS.S.', '.S.S.S.S.', '.S.S.S.S.', '.S.S.S.S.', '.S.S...S.', '.S.SSSSS.', '.S.......'] },

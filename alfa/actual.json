@@ -1,8 +1,8 @@
 {
- "build": 971,
- "hash": "0462773",
- "fecha": "2026-11-05T15:23:51Z",
- "mensaje": "Splash: sin flag, sale siempre al abrir; SQL 114 quita la fila splash-fog (ADR 051)",
+ "build": 972,
+ "hash": "d44a722",
+ "fecha": "2026-11-05T15:26:28Z",
+ "mensaje": "Rouflage: arCompra ya no cobra Gotas lo de la tienda (ADR 052) y la barra de pintura deja de repintar sin parar",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

@@ -2,6 +2,8 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
+  "Phony quería saltarse la pantalla de inicio. Microblizz le ha recordado que el logo también ficha.": "Phony wanted to skip the start screen. Microblizz reminded him the logo clocks in too.",
   // 0.2.34
   "<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games.": "<b>START SCREEN</b>: when you open the game, you'll see the studio logo, Fans Of Games.",
   "Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él.": "Microblizz asked for its logo to be bigger on the start screen. Phony asked to be on it himself.",

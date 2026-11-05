@@ -1,6 +1,8 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
+  "Microblizz ha revisado las tripas del juego y ha encontrado a Phony echándose la siesta dentro.": "Microblizz checked the game's insides and found Phony napping in there.",
   // 0.1.60
   "<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games.": "<b>START SCREEN</b>: when you open the game, you'll see the studio logo, Fans Of Games.",
   "Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él.": "Microblizz asked for its logo to be bigger on the start screen. Phony asked to be on it himself.",

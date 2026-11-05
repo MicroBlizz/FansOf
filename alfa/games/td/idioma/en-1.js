@@ -1,6 +1,8 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
+  "Phony quería saltarse la pantalla de inicio. Microblizz le ha recordado que el logo también ficha.": "Phony wanted to skip the start screen. Microblizz reminded him the logo clocks in too.",
   // 0.13.92
   "<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games.": "<b>NEW LOOK</b>: the game has a new icon with its initials and, when you open it, the start screen shows the studio logo, Fans Of Games.",
   "Microblizz ha intentado registrar las iniciales del juego a su nombre. Phony ya ha pedido unas para él.": "Microblizz tried to trademark the game's initials in its own name. Phony has already asked for some of his own.",

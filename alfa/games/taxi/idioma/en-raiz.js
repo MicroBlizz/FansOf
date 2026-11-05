@@ -2,6 +2,8 @@
 // js/novedades.js (la tarjeta de la librería está en biblioteca/en.js).
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
+  "Microblizz ha puesto su logo en la puerta de entrada. Phony ha puesto un felpudo con el suyo.": "Microblizz put its logo on the front door. Phony put down a doormat with his.",
   // 0.2.6
   "<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games.": "<b>NEW LOOK</b>: the game has a new icon with its initials and, when you open it, the start screen shows the studio logo, Fans Of Games.",
   "Microblizz ha intentado registrar las iniciales del juego a su nombre. Phony ya ha pedido unas para él.": "Microblizz tried to trademark the game's initials in its own name. Phony has already asked for some of his own.",

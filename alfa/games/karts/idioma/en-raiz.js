@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
+  "Microblizz ha revisado las tripas del juego y ha encontrado a Phony echándose la siesta dentro.": "Microblizz checked the game's insides and found Phony napping in there.",
   // 0.7.20
   "<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games.": "<b>START SCREEN</b>: when you open the game, you'll see the studio logo, Fans Of Games.",
   "<b>ICONO RETOCADO</b>: el icono del juego se ve entero, sin cortes ni zoom.": "<b>ICON TOUCH-UP</b>: the game icon now shows in full, with no cropping or zoom.",

@@ -1,9 +1,10 @@
 /* Fans of Rouflage · LAS BARRAS DE DESPLAZAMIENTO (Daniel, 5-11-2026): cada lista lleva su barra propia, una brocha que pinta, dibujada por
-   barras-pintura.js en un lienzo pegado a su borde. Aquí se esconde la barra del navegador en esas listas (clase rf-barra), se coloca el
+   barras-pintura.js en un lienzo pegado a su borde, en un hueco propio (no tapa nada) y que se puede agarrar. Aquí se esconde la barra del navegador en esas listas (clase rf-barra), se coloca el
    lienzo y se dibuja la flecha que parpadea mientras no hayas movido una lista que tiene más. */
 .rf-barra { scrollbar-width: none; }
 .rf-barra::-webkit-scrollbar { display: none; }
-.rf-barra-lienzo { position: absolute; z-index: 6; pointer-events: none; }
+.rf-barra-lienzo { position: absolute; z-index: 6; touch-action: none; cursor: grab; }      /* se agarra: arrastrar la brocha mueve la lista */
+.rf-barra-lienzo:active { cursor: grabbing; }
 .rf-barra-lienzo[hidden], .rf-barra-flecha[hidden] { display: none; }
 /* la flecha: un chevrón grueso con el contorno del juego, que baja y sube parpadeando (en las listas de lado, hacia la derecha) */
 .rf-barra-flecha { position: absolute; z-index: 6; width: 28px; height: 28px; pointer-events: none; animation: rf-flecha 1s ease-in-out infinite; }

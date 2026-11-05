@@ -9,7 +9,7 @@ const BARRAS = (() => {
   const OL = '#0b0f1c', ANCHO = 14, ALTO = 34, RADIO = 150;      // px: grosor de la barra, largo de la brocha, pintura que dura a su lado
   const ARCO = [[255, 75, 92], [255, 154, 61], [255, 210, 61], [126, 224, 74], [57, 213, 232], [74, 125, 255]];
   // las listas que llevan barra (las que tenían barra visible); las de la partida y las que la escondían a propósito, no
-  const LISTAS = '.pantalla, .pantalla.con-barra > .caja, .ar-pestanas, .ar-rejilla, .pase-lista, .tienda-lista, .tn-cats, .cs-lista, .fc-lista, .ar-compra, .esc-tira, .esc-herr, .esc-colores, .mis-lista, .obra-elige-caja, .sala, .clasif, #retratos, .tal-lista, .amg-lista, .tem-tabla';
+  const LISTAS = '.pantalla.con-barra > .caja, .ar-pestanas, .ar-rejilla, .pase-lista, .tienda-lista, .tn-cats, .cs-lista, .fc-lista, .ar-compra, .esc-tira, .esc-herr, .esc-colores, .mis-lista, .obra-elige-caja, .sala, .clasif, #retratos, .tal-lista, .amg-lista, .tem-tabla';
 
   // un borde irregular que no cambia al repintar: suma de ondas (la semilla separa un borde del otro)
   const ruido = (t, s) => Math.sin(t * 0.06 + s) * 0.55 + Math.sin(t * 0.16 + s * 2.3) * 0.35 + Math.sin(t * 0.37 + s * 4.1) * 0.2;
@@ -64,8 +64,28 @@ const BARRAS = (() => {
     const flecha = document.createElement('i'); flecha.className = 'rf-barra-flecha'; flecha.setAttribute('aria-hidden', 'true');
     el.append(lienzo, flecha);
     const est = { el, lienzo, flecha, r: null, pos: el.scrollTop, adelante: true, movido: false, raf: 0, v: true };
+    reservaHueco(el, sentido(el));
+    agarra(est);
     LISTA.set(el, est); VIVAS.add(est);
     return est;
+  }
+  // la barra tiene su propio hueco (como la del navegador): no tapa las tarjetas
+  function reservaHueco(el, s) {
+    const cs = getComputedStyle(el);
+    if (s === 'v') el.style.paddingRight = (parseFloat(cs.paddingRight) + ANCHO) + 'px';
+    else el.style.paddingBottom = (parseFloat(cs.paddingBottom) + ANCHO) + 'px';
+  }
+  // la brocha se arrastra con el dedo o el ratón, y tocar la tira lleva la lista a ese punto
+  function agarra(est) {
+    const { lienzo, el } = est;
+    const lleva = e => {
+      const r = lienzo.getBoundingClientRect(), v = est.v, pista = v ? r.height : r.width, a = v ? e.clientY - r.top : e.clientX - r.left;
+      const f = Math.min(1, Math.max(0, (a - ALTO / 2) / Math.max(1, pista - ALTO)));
+      if (v) el.scrollTop = f * (el.scrollHeight - el.clientHeight); else el.scrollLeft = f * (el.scrollWidth - el.clientWidth);
+    };
+    lienzo.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); lienzo.setPointerCapture(e.pointerId); lleva(e); });
+    lienzo.addEventListener('pointermove', e => { if (lienzo.hasPointerCapture(e.pointerId)) { e.stopPropagation(); lleva(e); } });
+    lienzo.addEventListener('click', e => e.stopPropagation());
   }
   // vertical si se baja; horizontal si solo se mueve de lado
   const sentido = el => el.scrollHeight > el.clientHeight + 2 ? 'v' : el.scrollWidth > el.clientWidth + 2 ? 'h' : null;
@@ -81,7 +101,7 @@ const BARRAS = (() => {
     const { centro, punta } = posBrocha(total, pista, pos, pista, est.adelante), ahora = performance.now(), meneo = est.movido ? 0 : Math.sin(ahora / 160) * 3;
     if (!est.t0) est.t0 = ahora;
     est.r = amplia(recorta(est.r, centro - RADIO, centro + RADIO), Math.min(centro, punta), Math.max(centro, punta));
-    const c = lienzo.getContext('2d'), k = lienzo.width / ANCHO;
+    const c = lienzo.getContext('2d'), k = (v ? lienzo.width : lienzo.height) / ANCHO;      // la escala de la pantalla (en horizontal, el lado corto es el alto)
     c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, lienzo.width, lienzo.height);
     c.setTransform(v ? k : 0, v ? 0 : k, v ? 0 : k, v ? k : 0, 0, 0);      // en horizontal se dibuja igual, girado
     if (est.movido) pintaRastro(c, est.r, centro, pista);

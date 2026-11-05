@@ -14,7 +14,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Basement: pruebas', pinta(caja) {
   boton(d, '+10000 monedas', (p) => { p.monedas += 10000; });
   boton(d, '+5 paquetes de cada', (p) => { p.paquetes.normal += 5; p.paquetes.jefe += 5; });
   d = fila();
-  boton(d, 'Toda la formación', (p) => { p.cursos = BAS.AJ.formacion.map((c) => c.id); });
+  boton(d, 'Toda la formación', (p) => { const vistos = new Set(); p.cursos = BAS.AJ.formacion.filter((c) => !c.grupo || (!vistos.has(c.grupo) && vistos.add(c.grupo))).map((c) => c.id); });
   boton(d, 'Todo el equipo y mascotas', (p) => {
     for (const h of Object.keys(BAS.AJ.equipo)) { for (const r of BAS.AJ.rarezas) p.equipo.tiene[h + ':' + r] = true; p.equipo.puesto[h] = 'legendario'; }
     for (const m of Object.keys(BAS.AJ.mascotas)) p.mascotas[m] = BAS.AJ.nivelMascota.max;

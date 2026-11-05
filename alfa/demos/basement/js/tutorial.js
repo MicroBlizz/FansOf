@@ -17,7 +17,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     jefe: ['¡Cuidado, un jefe! La cinta de PRECAUCIÓN no te deja bajar hasta vencerlo. Esquiva lo que te lance. Si vas mal de café, siempre puedes llamar al ascensor.'],
     mesa: [
       'Esta es tu mesa. Con las monedas de la caja te formas: cada curso del tablero te hace más fuerte.',
-      'Los cursos se compran de arriba abajo en cada columna. Toca un pósit para ver qué da.',
+      'Es un árbol de talentos: cada uno pide alguno de la fila de encima. En las filas de borde naranja eliges uno de dos, y si te arrepientes puedes REINICIAR.',
     ],
     equipo: ['Aquí te pones el equipo y eliges mascota. Todo sale de los paquetes: toca el de la rareza que quieras ponerte.'],
     ventaja: ['Al empezar y en cada departamento nuevo eliges una ventaja. Solo vale para esta bajada, así que piensa qué te hace falta.'],

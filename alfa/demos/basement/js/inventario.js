@@ -1,5 +1,5 @@
-// Fans of Basement · Formación, equipo, mascotas y paquetes (dominio, sin DOM ni azar propio): comprar cursos del tablero
-// Kanban en orden, ponerse una pieza de equipo o una mascota de las que tienes, comprar paquetes de mensajería y abrirlos.
+// Fans of Basement · Formación, equipo, mascotas y paquetes (dominio, sin DOM ni azar propio): comprar talentos del árbol de
+// la formación (y reiniciarlo), ponerse una pieza de equipo o una mascota de las que tienes, comprar paquetes de mensajería y abrirlos.
 // Abrir un paquete tira el azar que se le pasa con las probabilidades de ajustes.js (las que se enseñan en la tienda):
 // primero la rareza y después si es mascota, arma o equipo. Una pieza repetida se cambia por monedas; una mascota o un arma
 // repetida sube de nivel. Y el ascenso tras arreglar el servidor.
@@ -8,24 +8,44 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   // ---------- formación ----------
   const curso = (AJ, id) => AJ.formacion.find((c) => c.id === id);
-  // Un curso se puede comprar si el anterior de su columna ya está (el primero de cada columna, siempre).
+  B.costeCurso = (AJ, c) => (c.coste != null ? c.coste : AJ.costeFila[c.fila - 1]);
+  // ¿Lo deja fuera un talento de su mismo grupo (las filas clave: eliges uno de dos)?
+  B.cursoExcluido = (AJ, cursos, c) => !!c.grupo && AJ.formacion.some((q) => q.grupo === c.grupo && q.id !== c.id && cursos.includes(q.id));
+  // Un talento se puede comprar si tienes alguno de la fila de encima de su rama (los de la fila 1, siempre) y no lo excluye otro.
   B.cursoAbierto = function (AJ, cursos, id) {
     const c = curso(AJ, id);
-    if (!c) return false;
-    const col = AJ.formacion.filter((q) => q.col === c.col), i = col.indexOf(c);
-    return i === 0 || cursos.includes(col[i - 1].id);
+    if (!c || B.cursoExcluido(AJ, cursos, c)) return false;
+    return c.fila === 1 || AJ.formacion.some((q) => q.col === c.col && q.fila === c.fila - 1 && cursos.includes(q.id));
   };
-  // 'hecho' | 'disponible' | 'bloqueado'
-  B.estadoCurso = (AJ, p, id) => (p.cursos.includes(id) ? 'hecho' : B.cursoAbierto(AJ, p.cursos, id) ? 'disponible' : 'bloqueado');
+  // 'hecho' | 'disponible' | 'excluido' (elegiste el otro de su grupo) | 'bloqueado'
+  B.estadoCurso = function (AJ, p, id) {
+    if (p.cursos.includes(id)) return 'hecho';
+    const c = curso(AJ, id);
+    if (c && B.cursoExcluido(AJ, p.cursos, c)) return 'excluido';
+    return B.cursoAbierto(AJ, p.cursos, id) ? 'disponible' : 'bloqueado';
+  };
 
   B.comprarCurso = function (AJ, p, id) {
     const c = curso(AJ, id);
     if (!c) return B.error('cursoDesconocido', { id });
     if (p.cursos.includes(id)) return B.error('yaHecho', { id });
+    if (B.cursoExcluido(AJ, p.cursos, c)) return B.error('excluido', { id });
     if (!B.cursoAbierto(AJ, p.cursos, id)) return B.error('bloqueado', { id });
-    if (p.monedas < c.coste) return B.error('faltanMonedas', { id, coste: c.coste, faltan: c.coste - p.monedas });
+    const coste = B.costeCurso(AJ, c);
+    if (p.monedas < coste) return B.error('faltanMonedas', { id, coste, faltan: coste - p.monedas });
     const q = B.copiaProgreso(p);
-    q.monedas -= c.coste; q.cursos.push(id);
+    q.monedas -= coste; q.cursos.push(id);
+    return B.ok(q);
+  };
+
+  // Deshacer el árbol: te devuelve todo lo gastado menos lo que cuesta reiniciar.
+  B.gastadoEnFormacion = (AJ, p) => p.cursos.reduce((s, id) => s + B.costeCurso(AJ, curso(AJ, id)), 0);
+  B.reiniciarFormacion = function (AJ, p) {
+    if (!p.cursos.length) return B.error('nadaQueReiniciar');
+    const devuelve = B.gastadoEnFormacion(AJ, p);
+    if (p.monedas + devuelve < AJ.reinicio) return B.error('faltanMonedas', { coste: AJ.reinicio });
+    const q = B.copiaProgreso(p);
+    q.monedas += devuelve - AJ.reinicio; q.cursos = [];
     return B.ok(q);
   };
 

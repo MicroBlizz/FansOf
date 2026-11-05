@@ -49,7 +49,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function disparaJugador(e, rnd) {
     const j = e.jugador, a = e.stats.arma || {}, en = A.objetivo(e, null, null, e.stats.alcance * (a.alcance || 1));
     if (!en) return false;
-    const ang = Math.atan2(en.y - j.y, en.x - j.x), K = e.aj.critico, critico = rnd() < K.prob, dano = e.stats.dano * (critico ? K.mult : 1);
+    const ang = Math.atan2(en.y - j.y, en.x - j.x), K = e.aj.critico, critico = rnd() < K.prob + (e.stats.critico || 0), dano = e.stats.dano * (critico ? K.mult : 1);
     if (a.directo) explota(e, { x: en.x, y: en.y, area: a.area, dano, critico }, rnd, a.id);
     else {
       const lista = A.angulos(a, ang, (a.balas || 1) * e.stats.multi);

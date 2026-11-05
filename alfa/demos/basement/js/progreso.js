@@ -31,7 +31,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.bajadas = entero(datos.bajadas, 0, 1e9);
     p.jefes = entero(datos.jefes, 0, 1e6);
     p.vencidos = Array.isArray(datos.vencidos) ? [...new Set(datos.vencidos.map((n) => entero(n, 0, 9999)))].filter((n) => B.jefes.dePlanta(AJ, n)) : [];
-    p.cursos = Array.isArray(datos.cursos) ? leeCursos(AJ, datos.cursos) : desdeNiveles(AJ, datos.niveles);
+    p.cursos = Array.isArray(datos.cursos) ? leeCursos(AJ, datos.cursos) : [];
+    p.monedas += devolucionCursos(AJ, datos, p.cursos);
     leeEquipo(AJ, p, datos.equipo);
     leeMascotas(AJ, p, datos);
     for (const t of Object.keys(AJ.paquetes)) p.paquetes[t] = entero(esObjeto(datos.paquetes) ? datos.paquetes[t] : 0, 0, 999);
@@ -49,23 +50,18 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return p;
   };
 
-  // Solo los cursos que existen y en orden válido (cada uno con el anterior de su columna ya comprado).
+  // Solo los talentos que existen y en orden válido (fila a fila, con el de encima y sin dos del mismo grupo).
   function leeCursos(AJ, lista) {
     const quedan = new Set(lista), cursos = [];
-    for (const c of AJ.formacion) if (quedan.has(c.id) && B.cursoAbierto(AJ, cursos, c.id)) cursos.push(c.id);
+    for (const c of [...AJ.formacion].sort((a, b) => a.fila - b.fila)) if (quedan.has(c.id) && B.cursoAbierto(AJ, cursos, c.id)) cursos.push(c.id);
     return cursos;
+  }
+  // Lo que se devuelve de una partida vieja: los cursos que traía y ya no valen (a su precio de antes) y las mejoras de la 0.1.0.
+  function devolucionCursos(AJ, datos, validos) {
+    if (!Array.isArray(datos.cursos)) return esObjeto(datos.niveles) ? Object.values(datos.niveles).reduce((s, n) => s + entero(n, 0, 99) * 100, 0) : 0;
+    return datos.cursos.filter((id) => !validos.includes(id)).reduce((s, id) => s + (AJ.cursosAntiguos[id] || 0), 0);
   }
 
-  // Las partidas de la 0.1.0 tenían tres mejoras con nivel: cada nivel pasa a ser un curso de su columna.
-  function desdeNiveles(AJ, niveles) {
-    if (!esObjeto(niveles)) return [];
-    const col = { cafe: 'bienestar', caja: 'logistica', dano: 'productividad' }, cursos = [];
-    for (const k of Object.keys(col)) {
-      const n = entero(niveles[k], 0, 99);
-      AJ.formacion.filter((c) => c.col === col[k]).slice(0, n).forEach((c) => cursos.push(c.id));
-    }
-    return cursos;
-  }
 
   function leeEquipo(AJ, p, eq) {
     if (!esObjeto(eq)) return;
@@ -173,6 +169,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       mascota: B.mascotaDe(AJ, p),
       habilidad: B.habilidadDe(AJ, p),
       redes: AJ.captura.redes + v('redes'),
+      critico: v('critico'),
       acreditaciones: Object.freeze([...p.acreditaciones]),
     });
   };

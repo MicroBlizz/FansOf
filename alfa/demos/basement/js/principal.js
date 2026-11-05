@@ -145,6 +145,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); TU.lanza(b.id, est.t); },
     curso: (b) => { est.mesa.sel = b.id; basSuena('boton'); },
     cerrar: () => { est.mesa.sel = null; },
+    reiniciarFormacion: () => { if (aplica(B.reiniciarFormacion(B.AJ, SAVE.progreso))) est.mesa.sel = null; },
     comprarCurso: (b) => { if (aplica(B.comprarCurso(B.AJ, SAVE.progreso, b.id))) est.mesa.sel = null; },
     equipar: (b) => aplica(B.equipar(B.AJ, SAVE.progreso, b.hueco, b.rareza), 'boton'),
     mascota: (b) => aplica(B.ponerMascota(B.AJ, SAVE.progreso, b.id), 'boton'),

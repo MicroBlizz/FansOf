@@ -1,6 +1,6 @@
 // Fans of Basement · Tu mesa (solo pantalla), al estilo de Fans of Swipe: la cabecera de madera con las monedas y el récord, las
-// tres pestañas (FORMACIÓN, EQUIPO y PAQUETES) y el botón BAJAR. Aquí está la pestaña de formación: un tablero Kanban con tres
-// columnas de pósits (los cursos) y, al tocar uno, su ficha de pergamino con lo que da y el botón de comprar. Las pestañas de
+// pestañas y el botón BAJAR. Aquí está la pestaña de formación: un árbol de talentos con tres ramas de 7 filas (en las filas
+// clave se elige uno de dos) y, al tocar uno, su ficha de pergamino con lo que da y el botón de comprar; y el reinicio del árbol. Las pestañas de
 // equipo y paquetes están en mesa-equipo.js y el resultado de la bajada en resultado.js. Las reglas, en inventario.js.
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
@@ -17,8 +17,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     crunch: 'La CRUNCH ZONE gasta un {n} % menos', valor: 'El botín vale un {n} % más', taza: 'Las tazas rellenan {n} más de café',
     multi: '+{n} grapa por disparo', vel: '+{n} % de velocidad', freno: 'Las reuniones te frenan un {n} % menos',
     blindaje: 'Los golpes quitan un {n} % menos', rebote: 'Tus disparos rebotan {n} vez más',
+    critico: '+{n} % de golpes críticos', redes: '+{n} red de captura',
   };
-  const PORCIENTO = { dano: 1, cadencia: 1, gasto: 1, crunch: 1, valor: 1, vel: 1, freno: 1, blindaje: 1 };
+  const PORCIENTO = { dano: 1, cadencia: 1, gasto: 1, crunch: 1, valor: 1, vel: 1, freno: 1, blindaje: 1, critico: 1 };
   UI.describe = (ef) => Object.keys(ef).map((k) => tr(FRASE[k], { n: PORCIENTO[k] ? Math.round(ef[k] * 100) : ef[k] }));
 
   UI.zonaMesa = (H) => ({ y0: 206, y1: H - 140 });
@@ -55,63 +56,86 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     });
   }
 
-  // ---------- pestaña FORMACIÓN: el tablero Kanban ----------
-  function posit(g, AJ, p, c, b) {
-    const estado = B.estadoCurso(AJ, p, c.id), [base, luz, sombra] = POSIT[estado];
+  // ---------- pestaña FORMACIÓN: el árbol de talentos ----------
+  const ESTADO = { hecho: POSIT.hecho, disponible: POSIT.disponible, bloqueado: POSIT.bloqueado, excluido: ['#5a5048', '#6a6058', '#3a3430'] };
+  function nodo(g, AJ, p, c, b) {
+    const estado = B.estadoCurso(AJ, p, c.id), [base, luz, sombra] = ESTADO[estado], coste = B.costeCurso(AJ, c);
     UI.panel(g, b.x, b.y, b.w, b.h, base, luz, sombra, 3);
-    const grande = b.h >= 62;
-    UI.lineas(g, tr(c.nombre), b.x + 10, b.y + (grande ? 18 : b.h / 2), 14, b.w - 20, estado === 'bloqueado' ? '#8a7a5a' : C.cafe, 'left', 0, 15);
-    if (!grande) return;
-    const y = b.y + b.h - 16;
-    if (estado === 'hecho') { T(g, tr('HECHO'), b.x + b.w - 10, y, 15, '#2e6a2a', 'right', 0); return; }
-    if (estado === 'bloqueado') { candado(g, b.x + b.w - 20, y); return; }
-    UI.moneda(g, b.x + 20, y, 1.5);
-    T(g, String(c.coste), b.x + 36, y + 1, 18, p.monedas >= c.coste ? C.cafe : C.rojo, 'left', 0);
+    if (c.grupo && estado !== 'hecho') { g.strokeStyle = C.naranja; g.lineWidth = 3; g.strokeRect(b.x + 2, b.y + 2, b.w - 4, b.h - 4); }   // fila clave
+    const apagado = estado === 'bloqueado' || estado === 'excluido';
+    UI.lineas(g, tr(c.nombre), b.x + b.w / 2, b.y + 15, 12, b.w - 10, apagado ? '#8a7a68' : C.cafe, 'center', 0, 13);
+    const y = b.y + b.h - 12;
+    if (estado === 'hecho') T(g, tr('HECHO'), b.x + b.w / 2, y, 13, '#2e6a2a', 'center', 0);
+    else if (estado === 'excluido') T(g, '—', b.x + b.w / 2, y, 14, '#8a7a68', 'center', 0);
+    else if (estado === 'bloqueado') candado(g, b.x + b.w / 2, y);
+    else { UI.moneda(g, b.x + b.w / 2 - 18, y, 1.2); T(g, String(coste), b.x + b.w / 2 - 6, y + 1, 15, p.monedas >= coste ? C.cafe : C.rojo, 'left', 0); }
   }
   function candado(g, x, y) {
     g.fillStyle = '#8a7a5a'; g.fillRect(x - 8, y - 4, 16, 12);
     g.strokeStyle = '#8a7a5a'; g.lineWidth = 3; g.beginPath(); g.arc(x, y - 4, 5, Math.PI, 0); g.stroke();
   }
 
-  function formacion(g, W, H, AJ, p, botones) {
-    const { y0, y1 } = UI.zonaMesa(H), cw = (W - 24 - 16) / 3, top = y0 + 58;
-    const ch = Math.max(40, Math.floor((y1 - top) / 7) - 6);
-    AJ.columnas.forEach((col, i) => {
-      const x = 12 + i * (cw + 8), [color, icono] = COLUMNA[col];
-      UI.boton(g, { x, y: y0, w: cw, h: 48 }, color, '', 0);
-      UI.dibuja(g, icono, x + 24, y0 + 23, 1);
-      UI.textoCabe(g, tr(AJ.nombreColumna[col]), x + cw / 2 + 14, y0 + 23, 16, cw - 52, '#ffffff');
-      AJ.formacion.filter((c) => c.col === col).forEach((c, k) => {
-        const b = { x, y: top + k * (ch + 6), w: cw, h: ch, accion: 'curso', id: c.id };
-        posit(g, AJ, p, c, b);
-        botones.push(b);
+  // una rama: su cabecera y sus 7 filas (en las de dos, uno al lado del otro; en las clave, con «o» entre los dos)
+  function rama(g, AJ, p, col, x, cw, y0, top, ch, botones) {
+    const [color, icono] = COLUMNA[col];
+    UI.boton(g, { x, y: y0, w: cw, h: 48 }, color, '', 0);
+    UI.dibuja(g, icono, x + 24, y0 + 23, 1);
+    UI.textoCabe(g, tr(AJ.nombreColumna[col]), x + cw / 2 + 14, y0 + 23, 16, cw - 52, '#ffffff');
+    g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(x + cw / 2 - 2, top, 4, 7 * (ch + 6) - 6);   // el tronco
+    for (let f = 1; f <= 7; f++) {
+      const fila = AJ.formacion.filter((c) => c.col === col && c.fila === f), y = top + (f - 1) * (ch + 6), w = fila.length > 1 ? (cw - 14) / 2 : cw;
+      fila.forEach((c, k) => {
+        const b = { x: x + k * (w + 14), y, w, h: ch, accion: 'curso', id: c.id };
+        nodo(g, AJ, p, c, b); botones.push(b);
       });
-    });
+      if (fila.length > 1 && fila[0].grupo) T(g, tr('o'), x + cw / 2, y + ch / 2, 16, C.oro, 'center', 3);
+    }
   }
 
-  // La ficha de un curso: nombre, columna, lo que da y el botón de comprar.
+  function formacion(g, W, H, AJ, p, botones) {
+    const { y0, y1 } = UI.zonaMesa(H), cw = (W - 24 - 16) / 3, top = y0 + 58, ch = Math.max(44, Math.floor((y1 - 46 - top) / 7) - 6);
+    AJ.columnas.forEach((col, i) => rama(g, AJ, p, col, 12 + i * (cw + 8), cw, y0, top, ch, botones));
+    const gastado = B.gastadoEnFormacion(AJ, p), b = { x: W - 200, y: y1 - 40, w: 188, h: 38, accion: 'curso', id: 'reiniciar' };
+    UI.franja(g, tr('Filas clave (borde naranja): eliges una de dos'), 12 + (W - 236) / 2, y1 - 20, 13, W - 236);
+    UI.boton(g, b, gastado ? 'azul' : 'apagado', tr('REINICIAR'), 18);
+    if (gastado) botones.push(b);
+  }
+
+  // La ficha de un talento: rama, nombre, lo que da y el botón de comprar (o por qué no se puede).
+  const POR_QUE = { hecho: 'YA LO TIENES', bloqueado: 'Antes, uno de la fila de arriba', excluido: 'Elegiste el otro de esta fila' };
   function fichaCurso(g, W, H, AJ, p, id) {
-    const c = AJ.formacion.find((q) => q.id === id), estado = B.estadoCurso(AJ, p, id), x = 30, w = W - 60, y = H / 2 - 190;
+    if (id === 'reiniciar') return fichaReinicio(g, W, H, AJ, p);
+    const c = AJ.formacion.find((q) => q.id === id), estado = B.estadoCurso(AJ, p, id), coste = B.costeCurso(AJ, c), x = 30, w = W - 60, y = H / 2 - 190;
     const botones = [];
     UI.pergamino(g, x, y, w, 380);
     const [color, icono] = COLUMNA[c.col];
     UI.dibuja(g, icono, W / 2, y + 56, 2.5);
-    T(g, tr(AJ.nombreColumna[c.col]), W / 2, y + 102, 18, UI.C[color] || C.naranja, 'center', 3);
+    T(g, tr(AJ.nombreColumna[c.col]) + ' · ' + tr('Fila {n}', { n: c.fila }) + (c.grupo ? ' · ' + tr('ELIGE UNO') : ''), W / 2, y + 102, 18, UI.C[color] || C.naranja, 'center', 3);
     UI.lineas(g, tr(c.nombre), W / 2, y + 140, 30, w - 50, C.oro, 'center', 5, 34);
-    UI.describe(c.ef).forEach((f, i) => T(g, f, W / 2, y + 210 + i * 30, 22, '#2e6a2a', 'center', 0));
+    UI.describe(c.ef).forEach((f, i) => T(g, f, W / 2, y + 205 + i * 28, 21, '#2e6a2a', 'center', 0));
     const comprar = { x: x + 26, y: y + 278, w: w / 2 - 36, h: 74, accion: 'comprarCurso', id };
     const cerrar = { x: W / 2 + 10, y: y + 278, w: w / 2 - 36, h: 74, accion: 'cerrar' };
     if (estado === 'disponible') {
-      UI.boton(g, comprar, p.monedas >= c.coste ? 'verde' : 'apagado', '', 0);
+      UI.boton(g, comprar, p.monedas >= coste ? 'verde' : 'apagado', '', 0);
       UI.moneda(g, comprar.x + 36, comprar.y + 36, 2.5);
-      T(g, String(c.coste), comprar.x + comprar.w / 2 + 18, comprar.y + 36, 30, '#ffffff', 'center', 5);
+      T(g, String(coste), comprar.x + comprar.w / 2 + 18, comprar.y + 36, 30, '#ffffff', 'center', 5);
       botones.push(comprar);
-    } else {
-      UI.lineas(g, estado === 'hecho' ? tr('YA LO TIENES') : tr('Antes, el curso de arriba'), comprar.x + comprar.w / 2, comprar.y + 30, 20, comprar.w, estado === 'hecho' ? '#2e6a2a' : C.rojo, 'center', 0);
-    }
+    } else UI.lineas(g, tr(POR_QUE[estado]), comprar.x + comprar.w / 2, comprar.y + 30, 20, comprar.w, estado === 'hecho' ? '#2e6a2a' : C.rojo, 'center', 0);
     UI.boton(g, cerrar, 'azul', tr('CERRAR'), 28);
     botones.push(cerrar, { x: 0, y: 0, w: W, h: H, accion: 'cerrar' });   // tocar fuera también cierra (va el último)
     return botones;
+  }
+
+  // Reiniciar el árbol: te devuelve lo gastado menos lo que cuesta.
+  function fichaReinicio(g, W, H, AJ, p) {
+    const x = 30, w = W - 60, y = H / 2 - 170, devuelve = B.gastadoEnFormacion(AJ, p);
+    UI.pergamino(g, x, y, w, 340);
+    UI.titulo(g, tr('REINICIAR'), W / 2, y + 56, 40);
+    UI.lineas(g, tr('Deshaces todo el árbol y recuperas {d} monedas, menos {c} por reiniciar. Así puedes probar otras combinaciones.', { d: devuelve, c: AJ.reinicio }), W / 2, y + 120, 20, w - 60, C.cafe, 'center', 0, 25);
+    const si = { x: x + 26, y: y + 238, w: w / 2 - 36, h: 74, accion: 'reiniciarFormacion' }, no = { x: W / 2 + 10, y: y + 238, w: w / 2 - 36, h: 74, accion: 'cerrar' };
+    UI.boton(g, si, 'naranja', tr('REINICIAR'), 24);
+    UI.boton(g, no, 'azul', tr('CERRAR'), 28);
+    return [si, no, { x: 0, y: 0, w: W, h: H, accion: 'cerrar' }];
   }
 
   const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), catalogo: (...a) => UI.pestanaCatalogo(...a), taller: (...a) => UI.pestanaTaller(...a) };

@@ -1,6 +1,7 @@
 // Fans of Crush · Novedades: el registro de versiones (desplegar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.1.45', real: ["<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games."], joke: ["Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él."] },
   { v: '0.1.44', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil."] },
   { v: '0.1.43', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes ya saben la hora del juego (se puede poner a mano en las pruebas) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha dado cuerda al reloj de los caramelos y Phony lo ha adelantado para merendar antes."] },
   { v: '0.1.42', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },

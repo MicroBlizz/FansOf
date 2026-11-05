@@ -2,6 +2,8 @@
 'use strict';
 IDIOMA.add({
   // 0.2.7
+  "<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games.": "<b>NEW LOOK</b>: the game has a new icon with its initials and, when you open it, the start screen shows the studio logo, Fans Of Games.",
+  "Microblizz ha intentado registrar las iniciales del juego a su nombre. Phony ya ha pedido unas para él.": "Microblizz tried to trademark the game's initials in its own name. Phony has already asked for some of his own.",
   "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
   "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked to show its best side.",
   // 0.2.6

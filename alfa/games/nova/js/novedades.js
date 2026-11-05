@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.48', real: ["<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games."], joke: ["Microblizz ha intentado registrar las iniciales del juego a su nombre. Phony ya ha pedido unas para él."] },
   { v: '0.3.47', real: ["<b>TRES FACCIONES MÁS EQUILIBRADAS</b>: la Secuela de Pop y el Rayo de Zeus de Héroes pegan más, y la Segadora de almas de No muertos cura la mitad que antes. Las tres estaban muy lejos de las demás."], joke: ["Microblizz ha repartido el daño entre las facciones. Los No muertos han protestado, pero tarde: ya estaban muertos."] },
   { v: '0.3.46', real: ["<b>LA TIRADA YA NO SE CUELGA</b>: la habilidad de Memes a veces no encontraba qué habilidad le había tocado y la partida se paraba. Ahora siempre sale una de las cuatro, y cada una con la misma suerte."], joke: ["Microblizz ha descubierto que el dado de los Memes se tiraba nueve veces por tirada. Phony dice que así era más emocionante."] },
   { v: '0.3.45', real: ["<b>EL CRUCERO YA AGUANTA</b>: el Pulso de hackeo, el arma con la que sale el crucero de Ciber, pega el doble. Era de las más flojas contra naves sin escudo, y por eso el crucero caía casi siempre en los primeros minutos."], joke: ["Microblizz ha descubierto que el Pulso de hackeo solo hackeaba escudos. Phony ha probado a hackear el casco con la contraseña 1234 y ha funcionado."] },

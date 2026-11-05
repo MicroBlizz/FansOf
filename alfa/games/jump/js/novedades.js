@@ -2,6 +2,7 @@
 // lo lee para su tarjeta de la Biblioteca; el juego no lo carga.
 'use strict';
 const NEWS = [
+  { v: '0.3.22', real: ["<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games."], joke: ["Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él."] },
   { v: '0.3.21', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil."] },
   { v: '0.3.20', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes ya saben la hora del juego (se puede poner a mano en las pruebas) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha puesto un reloj junto al río y Phony ha saltado una hora."] },
   { v: '0.3.19', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },

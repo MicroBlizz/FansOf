@@ -2,6 +2,9 @@
 'use strict';
 IDIOMA.add({
   // 0.7.20
+  "<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games.": "<b>START SCREEN</b>: when you open the game, you'll see the studio logo, Fans Of Games.",
+  "<b>ICONO RETOCADO</b>: el icono del juego se ve entero, sin cortes ni zoom.": "<b>ICON TOUCH-UP</b>: the game icon now shows in full, with no cropping or zoom.",
+  "Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él.": "Microblizz asked for its logo to be bigger on the start screen. Phony asked to be on it himself.",
   "<b>LOGO NUEVO</b>: KARTS ondea como una bandera de meta en la pantalla de título, y el icono, el favicon y la imagen que sale al compartir el juego llevan el logo nuevo.": "<b>NEW LOGO</b>: KARTS waves like a finish flag on the title screen, and the icon, the favicon and the image shown when sharing the game carry the new logo.",
   "Microblizz ha planchado la bandera a cuadros y Phony ha firmado en la meta con un conejo.": "Microblizz ironed the chequered flag and Phony signed at the finish line with a bunny.",
   // 0.7.18

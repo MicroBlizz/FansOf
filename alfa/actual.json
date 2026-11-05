@@ -1,8 +1,8 @@
 {
- "build": 937,
- "hash": "9971a0b",
- "fecha": "2026-11-05T10:17:20Z",
- "mensaje": "Tienda de gemas (ADR 050): cosméticos y escaparate semanal a precio fijo y sin azar, tras el flag tienda-gemas",
+ "build": 938,
+ "hash": "a748dac",
+ "fecha": "2026-11-05T10:26:20Z",
+ "mensaje": "Rumble v2: sin los pies dibujados del original bajo los personajes animados; herramienta para arreglar las uniones del camino",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

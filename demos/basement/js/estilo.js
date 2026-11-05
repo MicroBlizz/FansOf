@@ -31,6 +31,15 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     while (n > tam * 0.55 && g.measureText(t).width > ancho) { n -= 0.5; fuente(g, n); }
     UI.texto(g, t, x, y, n, color, alin, borde);
   };
+  // un nombre que tiene que leerse bien: si no cabe ni un poco más pequeño, va en dos líneas (nunca se aplasta)
+  UI.nombre = function (g, t, x, y, tam, ancho, color, alin, borde) {
+    const b = borde == null ? 3 : borde;
+    let n = tam; fuente(g, n);
+    while (n > tam * 0.85 && g.measureText(t).width > ancho) { n -= 0.5; fuente(g, n); }
+    if (g.measureText(t).width <= ancho) { UI.texto(g, t, x, y, n, color, alin, b); return 1; }
+    const m = Math.round(tam * 0.8);
+    return UI.lineas(g, t, x, y - m * 0.55, m, ancho, color, alin, b, m * 1.1);
+  };
   // parte un texto en líneas que quepan en `ancho` y las pinta; devuelve cuántas líneas
   UI.lineas = function (g, t, x, y, tam, ancho, color, alin, borde, interlinea) {
     fuente(g, tam);

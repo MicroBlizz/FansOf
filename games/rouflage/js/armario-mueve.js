@@ -28,7 +28,7 @@ function arMuevePrepara() {
   });
 }
 const arMueveEscala = k => k.height / 92;
-const arMueveBorde = k => Math.max(0, k.width / 2 / arMueveEscala(k) - 28);      // que no se salga por los lados (ni la linterna del becario)
+const arMueveBorde = k => Math.max(0, k.width / 2 / arMueveEscala(k) - (ARMUEVE.mascota ? 40 : 28));      // que no se salga por los lados (ni la linterna del becario, ni la mascota que la sigue)
 
 function arMueveTextos() {
   const f = ARMUEVE.botones; if (!f) return;
@@ -76,10 +76,10 @@ function arMuevePaso(ahora) {
   arPinta(k, (c, w, h) => {
     const esc = arMueveEscala(k);
     c.translate(w / 2, h * 0.885); c.scale(esc, esc);
-    if (ARMUEVE.mascota && ARD.MASCOTAS && ARD.MASCOTAS[ARMUEVE.mascota]) {      // su mascota, detrás de ella
-      c.save(); c.translate(e.x - e.mira * 22, 0); c.scale(e.mira, 1); ARD.MASCOTAS[ARMUEVE.mascota](c, { t, mov: e.moviendo ? 1 : 0, susto: false, sem: 0 }); c.restore();
-    }
     pintaAlubia(c, e, t);
+    if (ARMUEVE.mascota && ARD.MASCOTAS && ARD.MASCOTAS[ARMUEVE.mascota]) {      // su mascota la sigue, delante de ella y por detrás de su paso (que no la tape)
+      c.save(); c.translate(e.x - e.mira * 26, 0); c.scale(e.mira, 1); ARD.MASCOTAS[ARMUEVE.mascota](c, { t, mov: e.moviendo ? 1 : 0, susto: false, sem: 0, contento: !e.moviendo }); c.restore();
+    }
   });
   ARMUEVE.raf = requestAnimationFrame(arMuevePaso);
 }

@@ -112,6 +112,19 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.ventajas.push(id);
     e.eleccion = null;
     e.eventos.push({ tipo: 'ventaja', id });
+    combos(e);
     return B.ok(id);
   };
+
+  // El combo que formaría esta ventaja con las que ya tienes (o null).
+  CA.comboCon = (e, id) => e.aj.combos.find((c) => c.de.includes(id) && c.de.every((x) => x === id || e.ventajas.includes(x)) && !e.combos.includes(c.id)) || null;
+  // Si ya tienes las dos ventajas de un combo, se juntan: sus efectos se suman.
+  function combos(e) {
+    for (const c of e.aj.combos) {
+      if (e.combos.includes(c.id) || !c.de.every((x) => e.ventajas.includes(x))) continue;
+      for (const k of Object.keys(c.ef)) APLICA[k](e, c.ef[k]);
+      e.combos.push(c.id);
+      e.eventos.push({ tipo: 'combo', id: c.id, nombre: c.nombre });
+    }
+  }
 })(BAS);

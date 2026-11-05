@@ -90,7 +90,7 @@ function abreMisiones() {
 function preparaMisiones() {
   if (!PANTALLAS.includes('p-misiones')) PANTALLAS.push('p-misiones');
   E('b-misiones').onclick = abreMisiones;
-  const pon = p => () => { MIS_UI.pest = p; play('select'); misionesPinta(); E('mis-lista').scrollTop = 0; };
+  const pon = p => () => { MIS_UI.pest = p; play('select'); misionesPinta(); E('mis-lista').scrollTop = 0; PINTURA.barre(E('mis-lista'), 'azul'); };
   E('b-mis-hoy').onclick = pon('hoy'); E('b-mis-semana').onclick = pon('semana'); E('b-mis-logros').onclick = pon('logros');
   E('b-mis-volver').onclick = () => { play('select'); irTitulo(); };
   misionBoton();

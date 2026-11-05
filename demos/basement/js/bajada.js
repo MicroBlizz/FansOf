@@ -16,12 +16,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       aj: AJ, stats: { ...stats }, t: 0, eventos: [], ids: 1, rango: o.rango || 0, conVentajas: !!o.ventajas,
       jugador: { x: AJ.ancho / 2, y, vx: 0, vy: 0, invulT: 0, frenoT: 0, mira: 1 },
       cafe: stats.cafeMax, cafeMax: stats.cafeMax, cafeBajoAvisado: false,
-      caja: { peso: 0, cap: stats.caja, valor: 0, cuenta: 0, paquetes: { normal: 0, jefe: 0 } }, avisoLlenaT: 0,
-      enemigos: [], balas: [], objetos: [], proyectiles: [], becarios: [], ayudantes: [], armaT: 0,
+      caja: { peso: 0, cap: stats.caja, valor: 0, cuenta: 0, paquetes: { normal: 0, jefe: 0 }, materiales: {} }, avisoLlenaT: 0,
+      enemigos: [], muebles: [], balas: [], objetos: [], proyectiles: [], becarios: [], ayudantes: [], armaT: 0,
       generadoHasta: y + AJ.generar.zonaSegura, jefe: null, jefesVistos: {}, jefesVencidos: 0, jefesNuevos: [], vencidos: [...(o.vencidos || [])],
       rescatados: 0, eventosPlanta: {}, ventajas: [], eleccion: null, apagon: false, apagonT: AJ.trucos.apagon.cada * 0.5,
       bajasPorTipo: {}, final: false, inicio, planta: inicio, plantaMax: inicio, zona: B.zonaDe(AJ, inicio), bajas: 0,
-      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false,
+      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false, combos: [], mueblesRotos: 0, habilidadUsos: 0,
+      habilidad: stats.habilidad || null, habilidadT: stats.habilidad ? AJ.habilidades[stats.habilidad].recarga * 0.5 : 0, congeladoT: 0,
     };
     if (stats.mascota) B.arma.nuevoAyudante(e, 'mascota', stats.mascota);
     return e;
@@ -30,7 +31,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   B.plantaDe = (AJ, y) => Math.max(0, Math.floor(y / AJ.altoPlanta));
   B.zonaDe = (AJ, planta) => { let z = AJ.zonas[0]; for (const q of AJ.zonas) if (planta >= q.desde) z = q; return z; };
 
-  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor (pulsación) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
+  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor y habilidad (pulsaciones) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
   B.paso = function (e, dt, orden, rnd) {
     e.eventos = [];
     if (e.fin) { e.finT += dt; return e; }
@@ -39,9 +40,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.t += dt;
     const o = orden || { mx: 0, my: 0, ascensor: false };
     mover(e, dt, o);
+    B.habilidad.paso(e, dt, o, rnd);
     plantas(e, rnd);
     B.campana.paso(e, dt);
     B.enemigos.paso(e, dt, rnd);
+    B.muebles.paso(e, dt);
     B.jefes.paso(e, dt, rnd);
     B.becarios.paso(e);
     B.arma.paso(e, dt, rnd);
@@ -101,6 +104,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     paquete(e, ob) { e.caja.paquetes.normal++; e.eventos.push({ tipo: 'paquete', x: ob.x, y: ob.y, paquete: 'normal' }); },
     paqueteJefe(e, ob) { e.caja.paquetes.jefe++; e.eventos.push({ tipo: 'paquete', x: ob.x, y: ob.y, paquete: 'jefe' }); },
   };
+  // los materiales del taller tampoco ocupan sitio
+  for (const t of ['tornillo', 'cable', 'chip', 'disco']) ESPECIAL[t] = (e, ob) => { e.caja.materiales[t] = (e.caja.materiales[t] || 0) + 1; e.eventos.push({ tipo: 'material', material: t, x: ob.x, y: ob.y }); };
 
   function recoger(e, i, ob, cabe) {
     if (ESPECIAL[ob.tipo]) { ESPECIAL[ob.tipo](e, ob); e.objetos.splice(i, 1); return; }
@@ -160,8 +165,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.resultado = Object.freeze({
       como, planta: e.plantaMax, inicio: e.inicio, bajas: e.bajas, objetos: e.caja.cuenta, valorCaja: e.caja.valor, propinas,
       monedas: salvo ? e.caja.valor + propinas : 0, rescatados: e.rescatados, jefes: e.jefesVencidos,
-      paquetes: salvo ? { ...e.caja.paquetes } : { normal: 0, jefe: 0 }, jefesNuevos: salvo ? [...e.jefesNuevos] : [],
+      paquetes: salvo ? { ...e.caja.paquetes } : { normal: 0, jefe: 0 }, materiales: salvo ? { ...e.caja.materiales } : {}, jefesNuevos: salvo ? [...e.jefesNuevos] : [],
       bajasPorTipo: { ...e.bajasPorTipo }, final: e.final, segundos: Math.round(e.t),
+      muebles: e.mueblesRotos, habilidades: e.habilidadUsos, combos: e.combos.length,
     });
     e.eventos.push({ tipo: 'fin', como, resultado: e.resultado });
   };

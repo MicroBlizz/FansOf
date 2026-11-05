@@ -95,6 +95,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (!jf) return;
     const d = e.aj.jefes[jf.id];
     jf.golpeT = Math.max(0, jf.golpeT - dt);
+    if (B.habilidad.congelados(e)) return;
     mover(e, jf, d, dt);
     escudo(jf, d, dt);
     atacar(e, jf, d, dt);
@@ -121,6 +122,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const primera = !e.vencidos.includes(jf.planta);
     if (primera) e.jefesNuevos.push(jf.planta);
     B.enemigos.soltar(e, primera ? 'paqueteJefe' : 'paquete', jf.x, jf.y - 26);
+    B.muebles.botinJefe(e, jf.x, jf.y);
     e.eventos.push({ tipo: 'jefeVencido', id: jf.id, x: jf.x, y: jf.y, nombre: e.aj.jefes[jf.id].nombre });
     if (jf.planta === e.aj.final && !e.final) { e.final = true; e.eventos.push({ tipo: 'final' }); }   // el CEO: servidor arreglado
   }

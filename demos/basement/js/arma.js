@@ -18,9 +18,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const mira = (b, id) => { if (menos && menos.includes(id)) return; const d = (b.x - px) ** 2 + (b.y - py) ** 2; if (d < md) { md = d; mejor = b; } };
     for (const en of e.enemigos) mira(en, en.id);
     if (e.jefe) mira(e.jefe, 'jefe');
+    if (!mejor) for (const m of e.muebles) mira(m, 'm' + m.id);   // los muebles, solo si no hay nadie más a tiro
     return mejor;
   };
-  const idDe = (e, b) => (b === e.jefe ? 'jefe' : b.id);
+  const esMueble = (e, b) => e.muebles.includes(b);
+  const idDe = (e, b) => (b === e.jefe ? 'jefe' : esMueble(e, b) ? 'm' + b.id : b.id);
 
   A.nuevoAyudante = function (e, tipo, datos, desde) {
     const j = e.jugador, sitio = SITIOS[e.ayudantes.length % SITIOS.length], o = desde || { x: j.x + sitio.x, y: j.y + sitio.y };
@@ -72,12 +74,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (a.cafeT <= 0) { a.cafeT = a.cafeCada; B.enemigos.soltar(e, 'cafe', a.x, a.y + 10); e.eventos.push({ tipo: 'dronCafe', x: a.x, y: a.y }); }
   }
 
-  const herir = (e, blanco, dano, rnd) => (blanco === e.jefe ? B.jefes.herir(e, dano) : B.enemigos.herir(e, blanco, dano, rnd));
+  const herir = (e, blanco, dano, rnd) => (blanco === e.jefe ? B.jefes.herir(e, dano) : esMueble(e, blanco) ? B.muebles.herir(e, blanco, dano, rnd) : B.enemigos.herir(e, blanco, dano, rnd));
 
   // El extintor y el sello: daña a todo lo que esté en su área.
   function explota(e, b, rnd, arma) {
-    const r2 = b.area * b.area, dentro = e.enemigos.filter((en) => (en.x - b.x) ** 2 + (en.y - b.y) ** 2 <= r2);
-    for (const en of dentro) B.enemigos.herir(e, en, b.dano, rnd);
+    const r2 = b.area * b.area, cerca = (q) => (q.x - b.x) ** 2 + (q.y - b.y) ** 2 <= r2;
+    for (const en of e.enemigos.filter(cerca)) B.enemigos.herir(e, en, b.dano, rnd);
+    for (const m of e.muebles.filter(cerca)) B.muebles.herir(e, m, b.dano, rnd);
     if (e.jefe && (e.jefe.x - b.x) ** 2 + (e.jefe.y - b.y) ** 2 <= (b.area + e.jefe.radio) ** 2) B.jefes.herir(e, b.dano);
     e.eventos.push({ tipo: 'explosion', x: b.x, y: b.y, radio: b.area, arma: arma || b.arma });
   }
@@ -101,8 +104,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function golpe(e, b, blanco, rnd) {
     if (b.area) { explota(e, b, rnd); return true; }
     b.tocados.push(idDe(e, blanco));
-    const muerto = herir(e, blanco, b.dano, rnd);
-    if (blanco !== e.jefe) deja(e, b, blanco, muerto);
+    const bicho = blanco !== e.jefe && !esMueble(e, blanco), muerto = herir(e, blanco, b.dano, rnd);
+    if (bicho) deja(e, b, blanco, muerto);
     if (b.rebotes > 0 && rebota(e, b)) return false;
     b.atraviesa--;
     return b.atraviesa <= 0;
@@ -111,7 +114,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function blancoEn(e, b) {
     const r = e.aj.arma.radioBala, jf = e.jefe;
     if (jf && !b.tocados.includes('jefe') && (jf.x - b.x) ** 2 + (jf.y - b.y) ** 2 <= (jf.radio + r) ** 2) return jf;
-    return e.enemigos.find((en) => !b.tocados.includes(en.id) && (en.x - b.x) ** 2 + (en.y - b.y) ** 2 <= (en.radio + r) ** 2) || null;
+    const toca = (q, id) => !b.tocados.includes(id) && (q.x - b.x) ** 2 + (q.y - b.y) ** 2 <= (q.radio + r) ** 2;
+    return e.enemigos.find((en) => toca(en, en.id)) || e.muebles.find((m) => toca(m, 'm' + m.id)) || null;
   }
 
   A.paso = function (e, dt, rnd) {

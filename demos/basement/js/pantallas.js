@@ -7,6 +7,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   const UI = B.ui, C = UI.C, T = UI.texto;
 
   UI.botonAscensor = (W, H) => ({ x: W / 2 - 120, y: H - 104, w: 240, h: 80 });
+  UI.botonHabilidad = (W, H) => ({ x: 14, y: H - 100, w: 112, h: 72 });
 
   function cafe(g, e) {
     const f = e.cafe / e.cafeMax, bajo = f < 0.25 && Math.floor(e.t * 4) % 2;
@@ -36,13 +37,23 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     T(g, tr('subir con la caja'), b.x + b.w / 2, b.y + b.h + 2, 13, C.crema, 'center', 3);
   }
 
+  // la habilidad: su nombre corto y, mientras se recarga, apagada con la barra de lo que falta
+  function habilidad(g, e, W, H) {
+    if (!e.habilidad) return;
+    const b = UI.botonHabilidad(W, H), d = e.aj.habilidades[e.habilidad], lista = e.habilidadT <= 0;
+    UI.boton(g, b, lista ? 'azul' : 'apagado', '', 0);
+    UI.textoCabe(g, tr(d.corto), b.x + b.w / 2, b.y + b.h / 2 - (lista ? 0 : 8), 20, b.w - 14, '#ffffff', 'center', 4);
+    if (!lista) UI.barra(g, b.x + 12, b.y + b.h - 24, b.w - 24, 12, 1 - e.habilidadT / d.recarga, C.azul);
+  }
+
   UI.marcador = function (g, e, W, H) {
     UI.panel(g, -6, -6, W + 12, 96, C.madera, '#c2432e', '#5a1714', 5);
     cafe(g, e); planta(g, e, W); caja(g, e, W);
     let y = 112;
     if (e.zona.crunch) { UI.boton(g, { x: W / 2 - 80, y: 92, w: 160, h: 32 }, 'rojo', tr('CRUNCH ZONE'), 16); y = 146; }
     B.vista.barraJefe(g, e, W, y);
-    if (!e.fin) ascensor(g, e, W, H);
+    if (!e.fin) { ascensor(g, e, W, H); habilidad(g, e, W, H); }
+    if (e.congeladoT > 0) { g.fillStyle = 'rgba(140,200,255,0.16)'; g.fillRect(0, 96, W, H - 96); }
   };
 
   UI.palanca = function (g, joy) {

@@ -43,7 +43,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const AJ = e.aj, G = AJ.generar;
     while (e.generadoHasta < e.jugador.y + G.delante) {
       const y = e.generadoHasta, planta = B.plantaDe(AJ, y);
-      if (y % AJ.altoPlanta < G.tramo) { B.becarios.alGenerar(e, planta, rnd); B.campana.alGenerar(e, planta, rnd); }   // planta nueva
+      if (y % AJ.altoPlanta < G.tramo) { B.becarios.alGenerar(e, planta, rnd); B.campana.alGenerar(e, planta, rnd); B.muebles.alGenerar(e, planta, rnd); }   // planta nueva
       if (!e.jefe && e.enemigos.length < G.maxActivos) tramo(e, planta, y, rnd);
       e.generadoHasta += G.tramo;
     }
@@ -99,10 +99,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       const en = e.enemigos[i], d = AJ.enemigos[en.tipo];
       if (en.y < j.y - AJ.generar.detras) { e.enemigos.splice(i, 1); continue; }
       const cerca = d.persigue > 0 && (j.x - en.x) ** 2 + (j.y - en.y) ** 2 < d.persigue * d.persigue;
+      en.golpeT = Math.max(0, en.golpeT - dt);
+      if (B.habilidad.congelados(e)) continue;   // la Reunión de emergencia: nadie se mueve ni hace daño
       en.lentoT = Math.max(0, (en.lentoT || 0) - dt);
       MOVER[en.tipo](e, en, d, dt, cerca, en.lentoT > 0 ? v * en.lento : v);
       paredes(AJ, en);
-      en.golpeT = Math.max(0, en.golpeT - dt);
       tocar(e, en, d);
     }
   };

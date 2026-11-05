@@ -116,17 +116,27 @@ function arPintaPestanas() {
   for (const cat of CATALOGO_AR) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'ar-pest' + (cat.id === ARMARIO.cat ? ' activa' : '');
     b.textContent = tr(cat.corto);
-    b.onclick = () => { play('select'); ARMARIO.cat = cat.id; ARMARIO.prueba = null; ARMARIO.sel = null; arPintaPestanas(); arPintaTodo(); };
+    b.onclick = () => { play('select'); ARMARIO.cat = cat.id; ARMARIO.prueba = null; ARMARIO.sel = null; arPintaPestanas(); arPintaTodo(); PINTURA.barre(E('ar-rejilla'), 'naranja'); };      // el brochazo que barre la rejilla (pintura-menus.js)
     fila.appendChild(b);
   }
   const act = fila.querySelector('.activa'); if (act && act.scrollIntoView) act.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 function arPintaVista() {
   const cat = arCat(ARMARIO.cat), pr = ARMARIO.prueba;
-  if (!arMueveVista(cat, pr)) arPinta(E('ar-vista'), (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92 }, ropaDe(cat.cuerpo ? pr : null))));
+  cancelAnimationFrame(ARMARIO.rafVista || 0); ARMARIO.rafVista = 0;      // la vista animada de MASCOTAS para antes de que la galleta en movimiento tome el lienzo
+  if (!arMueveVista(cat, pr)) arAnimaVista(cat, pr);
   // lo que no se lleva en el cuerpo (humo, silbido, fantasma…): en grande, lo puesto o lo que te estás probando
   const ex = E('ar-extra'); ex.hidden = !!cat.cuerpo; E('ar-vista').hidden = !cat.cuerpo;
   if (!cat.cuerpo) { const it = pr ? pr.it : arMira(cat) ? (ARMARIO.sel && ARMARIO.sel !== 'nada' ? ARMARIO.sel : cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : cat.album ? cat.items[0] : null) : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); arAnimaExtra(cat, it); }
+}
+// la galleta quieta con su ropa; en MASCOTAS (Daniel, 5-11-2026: «el colado tapa la mascota»), la galleta se aparta a un lado y la mascota
+// va al otro, grande y viva (se repinta cada fotograma mientras se ve); en el resto, un solo dibujo con la mascota delante, a sus pies
+function arAnimaVista(cat, pr) {
+  const k = E('ar-vista'), ropa = ropaDe(cat.cuerpo ? pr : null), aparte = cat.id === 'mascotas' && !!ropa.mascota;
+  const pinta = t => arPinta(k, (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92, mascotaAparte: aparte, t }, ropa)));
+  if (!aparte) { pinta(0.6); return; }
+  const paso = ahora => { if (E('p-armario').hidden || k.hidden || arCat(ARMARIO.cat) !== cat || ARMARIO.prueba !== pr) { ARMARIO.rafVista = 0; return; } pinta(ahora / 1000); ARMARIO.rafVista = requestAnimationFrame(paso); };
+  ARMARIO.rafVista = requestAnimationFrame(paso);
 }
 // los fantasmas y las mascotas se ven en grande moviéndose (respiran, parpadean, ondean…), no quietos como en su casilla
 function arAnimaExtra(cat, it) {

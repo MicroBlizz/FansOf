@@ -21,7 +21,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       generadoHasta: y + AJ.generar.zonaSegura, jefe: null, jefesVistos: {}, jefesVencidos: 0, jefesNuevos: [], vencidos: [...(o.vencidos || [])],
       rescatados: 0, eventosPlanta: {}, ventajas: [], eleccion: null, apagon: false, apagonT: AJ.trucos.apagon.cada * 0.5,
       bajasPorTipo: {}, final: false, inicio, planta: inicio, plantaMax: inicio, zona: B.zonaDe(AJ, inicio), bajas: 0,
-      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false,
+      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false, combos: [],
+      habilidad: stats.habilidad || null, habilidadT: stats.habilidad ? AJ.habilidades[stats.habilidad].recarga * 0.5 : 0, congeladoT: 0,
     };
     if (stats.mascota) B.arma.nuevoAyudante(e, 'mascota', stats.mascota);
     return e;
@@ -30,7 +31,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   B.plantaDe = (AJ, y) => Math.max(0, Math.floor(y / AJ.altoPlanta));
   B.zonaDe = (AJ, planta) => { let z = AJ.zonas[0]; for (const q of AJ.zonas) if (planta >= q.desde) z = q; return z; };
 
-  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor (pulsación) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
+  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor y habilidad (pulsaciones) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
   B.paso = function (e, dt, orden, rnd) {
     e.eventos = [];
     if (e.fin) { e.finT += dt; return e; }
@@ -39,6 +40,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.t += dt;
     const o = orden || { mx: 0, my: 0, ascensor: false };
     mover(e, dt, o);
+    B.habilidad.paso(e, dt, o, rnd);
     plantas(e, rnd);
     B.campana.paso(e, dt);
     B.enemigos.paso(e, dt, rnd);

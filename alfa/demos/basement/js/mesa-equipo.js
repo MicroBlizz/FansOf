@@ -21,19 +21,22 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     else T(g, '?', b.x + b.w / 2, b.y + b.h / 2, 24, '#6a5670', 'center', 0);
   }
   const LADO = 46, PASO = 52, ZONA = 4 * PASO + 12;   // los cuadros de rareza y lo que ocupan a la derecha
+  const arriba = (y, h) => Math.round(y + h * 0.42 - LADO / 2);   // dónde empiezan los cuadros en una fila de alto h
   const cuadros = (x, y, w) => [0, 1, 2, 3].map((i) => ({ x: x + w - ZONA + 6 + i * PASO, y, w: LADO, h: LADO }));
   // el título pequeño, el nombre (en una o dos líneas, sin aplastarse) y la descripción debajo de todo, a lo ancho
+  // (en filas bajas todo se aprieta en proporción; «Nada puesto» y lo apagado van sin contorno)
   function textos(g, x, y, w, h, titulo, nombre, color, desc) {
-    T(g, titulo, x + 22, y + 22, 16, C.gris, 'left', 0);
-    UI.nombre(g, nombre, x + 22, y + 52, 21, w - ZONA - 30, color, 'left');
-    if (desc) UI.textoCabe(g, desc, x + 22, y + h - 18, 15, w - 44, '#2e6a2a', 'left', 0);
+    const k = Math.min(1, h / 120), apagado = color === '#8a7a5a';
+    T(g, titulo, x + 22, y + h * 0.2, 15, C.gris, 'left', 0);
+    UI.nombre(g, nombre, x + 22, y + h * 0.48, Math.round(21 * Math.max(0.85, k)), w - ZONA - 30, color, 'left', apagado ? 0 : 3);
+    if (desc) UI.textoCabe(g, desc, x + 22, y + h * 0.8, 14, w - 44, '#2e6a2a', 'left', 0);
   }
 
   function filaHueco(g, AJ, p, hueco, x, y, w, h, botones) {
     const puesta = p.equipo.puesto[hueco], pieza = puesta ? AJ.equipo[hueco][puesta] : null;
     UI.pergamino(g, x, y, w, h);
     textos(g, x, y, w, h, tr(HUECO[hueco]), pieza ? tr(pieza.nombre) : tr('Nada puesto'), pieza ? AJ.colorRareza[puesta] : '#8a7a5a', pieza ? UI.describe(pieza.ef).join(' · ') : '');
-    cuadros(x, y + 18, w).forEach((b, i) => {
+    cuadros(x, arriba(y, h), w).forEach((b, i) => {
       const r = AJ.rarezas[i], tiene = p.equipo.tiene[hueco + ':' + r];
       cuadro(g, b, tiene ? AJ.colorRareza[r] : null, tiene ? (cx, cy) => pintaHueco(g, hueco, cx, cy, 0.8) : null, puesta === r);
       if (tiene) botones.push({ ...b, accion: 'equipar', hueco, rareza: r });
@@ -45,7 +48,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const id = p.mascota, m = B.mascotaDe(AJ, p);
     textos(g, x, y, w, h, tr('MASCOTA'), m ? tr(AJ.mascotas[id].nombre) + ' · ' + tr('Nv') + ' ' + m.nivel : tr('Ninguna todavía'), m ? AJ.colorRareza[AJ.mascotas[id].rareza] : '#8a7a5a',
       m ? tr('Dispara sola: {n} de daño', { n: m.dano }) + (m.cafeCada ? ' · ' + tr('trae café') : '') : '');
-    cuadros(x, y + 18, w).forEach((b, i) => {
+    cuadros(x, arriba(y, h), w).forEach((b, i) => {
       const k = Object.keys(AJ.mascotas)[i], nivel = p.mascotas[k];
       cuadro(g, b, nivel ? AJ.colorRareza[AJ.mascotas[k].rareza] : null, nivel ? (cx, cy) => V().pintaCosa(g, k, cx, cy, null, k === 'dron' ? 0.9 : 0.8) : null, id === k);
       if (!nivel) return;
@@ -57,19 +60,33 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // El arma: la puesta, con su dibujo, su nivel y lo que hace, cuántas tienes y el botón de CAMBIAR (abre la armería).
   function filaArma(g, AJ, p, x, y, w, h, botones) {
     const a = B.armaDe(AJ, p), color = a.rareza ? AJ.colorRareza[a.rareza] : C.cafe, ids = Object.keys(AJ.armas);
-    const tienes = ids.filter((id) => !AJ.armas[id].rareza || p.armas[id] > 0).length, b = { x: x + w - ZONA + 6, y: y + 18, w: ZONA - 18, h: LADO, accion: 'armeria' };
+    const tienes = ids.filter((id) => !AJ.armas[id].rareza || p.armas[id] > 0).length, b = { x: x + w - ZONA + 6, y: arriba(y, h), w: ZONA - 18, h: LADO, accion: 'armeria' };
     UI.pergamino(g, x, y, w, h);
     textos(g, x, y, w, h, tr('ARMA') + ' · ' + tr('{a} de {b}', { a: tienes, b: ids.length }), tr(a.nombre) + (a.rareza ? ' · ' + tr('Nv') + ' ' + a.nivel : ''), color, UI.queHaceArma(a.id));
     UI.boton(g, b, 'azul', tr('CAMBIAR'), 22);
     botones.push(b);
   }
 
+  // La habilidad: la que llevas, qué hace y su recarga; los cuadros, las tres (las cerradas, con el jefe que las abre).
+  const QUE_HABILIDAD = { congelar: 'Los bichos y el jefe se quedan quietos {n} s', ctrlz: 'Recupera el {n} % del café', despido: 'Daño enorme a todo lo que tengas cerca' };
+  function filaHabilidad(g, AJ, p, x, y, w, h, botones) {
+    const id = B.habilidadDe(AJ, p), d = AJ.habilidades[id], abiertas = B.habilidadesAbiertas(AJ, p);
+    UI.pergamino(g, x, y, w, h);
+    textos(g, x, y, w, h, tr('HABILIDAD') + ' · ' + tr('recarga {n} s', { n: d.recarga }), tr(d.nombre), C.azul, tr(QUE_HABILIDAD[id], { n: d.dura || Math.round((d.cafe || 0) * 100) }));
+    cuadros(x, arriba(y, h), w).slice(0, 3).forEach((b, i) => {
+      const k = Object.keys(AJ.habilidades)[i], abierta = abiertas.includes(k);
+      cuadro(g, b, abierta ? C.azul : null, abierta ? (cx, cy) => UI.textoCabe(g, tr(AJ.habilidades[k].corto), cx, cy, 13, b.w - 6, '#ffffff', 'center', 3) : null, id === k);
+      if (abierta) botones.push({ ...b, accion: 'habilidad', id: k });
+    });
+  }
+
   UI.pestanaEquipo = function (g, W, H, AJ, p, botones) {
-    const { y0, y1 } = UI.zonaMesa(H), h = Math.min(150, Math.floor((y1 - y0) / 5) - 8);
+    const { y0, y1 } = UI.zonaMesa(H), h = Math.min(150, Math.floor((y1 - y0) / 6) - 8);
     let y = y0;
     filaArma(g, AJ, p, 12, y, W - 24, h, botones); y += h + 8;
     for (const hueco of Object.keys(AJ.equipo)) { filaHueco(g, AJ, p, hueco, 12, y, W - 24, h, botones); y += h + 8; }
-    filaMascotas(g, AJ, p, 12, y, W - 24, h, botones);
+    filaMascotas(g, AJ, p, 12, y, W - 24, h, botones); y += h + 8;
+    filaHabilidad(g, AJ, p, 12, y, W - 24, h, botones);
   };
 
   // ---------- PAQUETES ----------

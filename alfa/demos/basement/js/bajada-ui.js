@@ -21,6 +21,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       B.vista.pinta(g, ICONO[k][0], b.x + 80, y + h / 2, ICONO[k][1]);
       UI.textoCabe(g, tr(v.nombre), b.x + 160, y + h * 0.36, 30, b.w - 190, C.oro, 'left', 5);
       UI.lineas(g, UI.describe(v.ef).join(' · '), b.x + 160, y + h * 0.66, 20, b.w - 190, C.cafe, 'left', 0, 24);
+      const combo = B.campana.comboCon(e, id);
+      if (combo) UI.franja(g, tr('COMBO: {n}', { n: tr(combo.nombre) }), b.x + b.w / 2, y + h - 4, 16, b.w - 40);
       g.restore();
       botones.push(b);
     });

@@ -27,6 +27,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       'Ahora puedes ASCENDER en tu mesa: empiezas la campaña otra vez con un cargo mejor. O bajar al Código Legacy de 2004, que no tiene fondo. Nadie sabe qué hay abajo del todo.',
     ],
     catalogo: ['Este es el catálogo de bichos. Cada bicho nuevo que tumbas paga una vez; los raros pagan mucho. Complétalo y te llevas tres paquetes del jefe.'],
+    habilidad: [
+      'Abajo a la izquierda tienes tu habilidad especial: la Reunión de emergencia deja quietos a todos unos segundos.',
+      'Úsala cuando te rodeen y espera a que se recargue. Al vencer jefes abrirás más, y en EQUIPO eliges cuál llevas.',
+    ],
     taller: [
       'Este es el taller. Al bajar, rompe taquillas, fotocopiadoras y máquinas de café: sueltan tornillos, cables y chips.',
       'Aquí los cambias por el arma o la pieza que quieras, sin azar, o subes de nivel tus armas. Ojo: si te desmayas, se pierden con la caja.',

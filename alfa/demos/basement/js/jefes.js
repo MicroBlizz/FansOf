@@ -95,6 +95,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (!jf) return;
     const d = e.aj.jefes[jf.id];
     jf.golpeT = Math.max(0, jf.golpeT - dt);
+    if (B.habilidad.congelados(e)) return;
     mover(e, jf, d, dt);
     escudo(jf, d, dt);
     atacar(e, jf, d, dt);

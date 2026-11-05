@@ -1,8 +1,8 @@
 {
- "build": 1000,
- "hash": "00e4a55",
- "fecha": "2026-11-05T20:07:37Z",
- "mensaje": "Basement 0.6.0: muebles que se rompen, materiales y taller",
+ "build": 1001,
+ "hash": "8ea06cb",
+ "fecha": "2026-11-05T20:13:12Z",
+ "mensaje": "Basement 0.6.0: habilidad especial con recarga y combos de ventajas",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

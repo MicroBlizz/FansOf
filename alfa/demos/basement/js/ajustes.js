@@ -168,6 +168,22 @@ BAS.AJ = Object.freeze({
     { id: 'rebote', nombre: 'Grapas saltarinas', ef: { rebote: 1 } },
     { id: 'llamada', nombre: 'Enchufe en mantenimiento', ef: { espera: 1 } },
   ],
+  // Los combos: si en la misma bajada tienes las dos ventajas de `de`, se juntan en una mejor (sus efectos se suman a los de las dos).
+  combos: [
+    { id: 'cafetera', nombre: 'Cafetera humana', de: ['cafeinado', 'termo'], ef: { cafe: 30, gasto: 0.15 } },
+    { id: 'crunch', nombre: 'Crunch infinito', de: ['furia', 'turbo'], ef: { dano: 0.2, cadencia: 0.15 } },
+    { id: 'aspiradora', nombre: 'Aspiradora de oficina', de: ['iman', 'mochila'], ef: { iman: 60, caja: 8 } },
+    { id: 'bonus', nombre: 'Bonus por objetivos', de: ['avaricia', 'rebote'], ef: { valor: 0.25, rebote: 1 } },
+    { id: 'despacho', nombre: 'Despacho blindado', de: ['blindaje', 'llamada'], ef: { blindaje: 0.2, espera: 1 } },
+  ],
+  // Las habilidades: un botón en la bajada con su recarga (segundos). Se elige cuál llevas en EQUIPO; abre = la planta del jefe que
+  // hay que haber vencido para tenerla. congelar: los bichos y el jefe se quedan quietos `dura` s; ctrlz: recupera esa parte del
+  // café máximo; despido: daña (× tu daño) a todo lo que esté a `alcance` de ti.
+  habilidades: {
+    congelar: { nombre: 'Reunión de emergencia', corto: 'CONGELAR', recarga: 22, dura: 3, abre: null },
+    ctrlz: { nombre: 'Ctrl+Z', corto: 'CTRL+Z', recarga: 32, cafe: 0.4, abre: 9 },
+    despido: { nombre: 'Despido masivo', corto: 'DESPIDO', recarga: 26, dano: 8, alcance: 260, abre: 14 },
+  },
   // El ascenso: al arreglar el servidor (vencer al CEO) puedes ascender. Empiezas otra vez la campaña (los jefes vuelven a dar
   // su paquete) con lo que tenías y un cargo más: más daño y botín para siempre, pero bichos y jefes más duros.
   rangos: ['Becario', 'Junior', 'Senior', 'Jefe de equipo', 'Director', 'Vicepresidente', 'CEO'],

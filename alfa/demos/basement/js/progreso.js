@@ -13,7 +13,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.progresoNuevo = () => ({
     monedas: 0, record: 0, bajadas: 0, cursos: [], equipo: { tiene: {}, puesto: {} }, mascotas: {}, mascota: null,
-    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {},
+    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar',
   });
 
   // Copia profunda (el progreso se trata como inmutable: cada regla devuelve uno nuevo).
@@ -39,6 +39,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     leeCatalogo(AJ, p, datos.catalogo);
     p.rango = entero(datos.rango, 0, AJ.rangos.length - 1);
     p.final = datos.final === true;
+    if (AJ.habilidades[datos.habilidad]) p.habilidad = datos.habilidad;
     for (const t of AJ.materiales) if (esObjeto(datos.materiales) && datos.materiales[t] > 0) p.materiales[t] = entero(datos.materiales[t], 0, 1e7);
     return p;
   };
@@ -162,6 +163,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       vel: 1 + v('vel'),
       freno: Math.min(1, v('freno')),
       mascota: B.mascotaDe(AJ, p),
+      habilidad: B.habilidadDe(AJ, p),
     });
   };
 

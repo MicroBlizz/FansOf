@@ -94,12 +94,14 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function aplicaVentaja(id) { if (B.elegirVentaja(est.e, id).ok) for (const ev of est.e.eventos) if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev); }
   // BAJAR: si hay más de un departamento abierto, se elige dónde; si no, a Marketing.
   function bajar() {
-    if (B.departamentos(B.AJ, SAVE.progreso).filter((d) => d.abierto).length < 2) { empezar(0); return; }
-    est.mesa.dep = true; basSuena('boton'); TU.lanza('departamento', est.t);
+    const abiertos = B.departamentos(B.AJ, SAVE.progreso).filter((d) => d.abierto);
+    if (abiertos.length < 2) { empezar(0); return; }
+    est.mesa.dep = abiertos[abiertos.length - 1].id;   // marcado el más hondo; tocar otro lo cambia y BAJAR AQUÍ confirma basSuena('boton'); TU.lanza('departamento', est.t);
   }
   const ACCIONES = {
     bajar: () => bajar(),
-    departamento: (b) => { const r = B.inicioDe(B.AJ, SAVE.progreso, b.id); if (r.ok) { est.mesa.dep = false; empezar(r.valor); } },
+    departamento: (b) => { est.mesa.dep = b.id; basSuena('boton'); },
+    bajarAqui: () => { const r = B.inicioDe(B.AJ, SAVE.progreso, est.mesa.dep); if (r.ok) { est.mesa.dep = false; empezar(r.valor); } },
     cerrarDep: () => { est.mesa.dep = false; basSuena('boton'); },
     ascender: () => { est.mesa.ascenso = true; basSuena('boton'); },
     cerrarAscenso: () => { est.mesa.ascenso = false; basSuena('boton'); },

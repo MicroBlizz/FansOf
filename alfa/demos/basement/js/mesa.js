@@ -26,8 +26,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // La cabecera: el título, las monedas, tu cargo y el récord; tras arreglar el servidor, el botón de ASCENDER.
   function cabecera(g, W, AJ, p, botones) {
     UI.panel(g, -6, -6, W + 12, 126, C.madera, '#c2432e', '#5a1714', 5);
-    UI.titulo(g, tr('TU MESA'), W / 2, 36, 40);
-    UI.becario(g, AJ, B.aspectoDe(AJ, p), W / 2, 88, 1.05);   // tu becario, con lo que llevas puesto
+    UI.titulo(g, tr('TU MESA'), W / 2, 30, 36);
+    UI.becario(g, AJ, B.aspectoDe(AJ, p), W / 2, 98, 0.9);   // tu becario, con lo que llevas puesto (debajo del título, sin taparlo)
     UI.moneda(g, 34, 92, 3);
     T(g, String(p.monedas), 60, 93, 28, C.oro, 'left', 5);
     T(g, tr(AJ.rangos[p.rango]), W - 24, 30, 18, C.naranja, 'right', 3);
@@ -110,11 +110,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), catalogo: (...a) => UI.pestanaCatalogo(...a) };
 
-  // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo), dep (eligiendo departamento), ascenso (la ventana),
+  // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo), dep (eligiendo departamento: el id del marcado), ascenso (la ventana),
   //       armeria (eligiendo arma) }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
-    if (m.dep) return UI.departamentos(g, W, H, AJ, p);
+    if (m.dep) return UI.departamentos(g, W, H, AJ, p, m.dep);
     UI.fondoMenu(g, W, H, 'fondo-oficinas');
     g.fillStyle = 'rgba(10,5,20,0.45)'; g.fillRect(0, 0, W, H);
     const botones = [];

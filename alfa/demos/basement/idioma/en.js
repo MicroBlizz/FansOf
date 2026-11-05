@@ -289,4 +289,7 @@ IDIOMA.add({
   'CAMBIAR': 'CHANGE',
   '{a} de {b}': '{a} of {b}',
   '¡APROBADO!': 'APPROVED!',
+  // 0.5.1
+  'Jefe: {n}': 'Boss: {n}',
+  'BAJAR AQUÍ': 'DIVE HERE',
 });

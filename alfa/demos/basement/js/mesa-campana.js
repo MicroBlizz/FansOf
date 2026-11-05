@@ -17,16 +17,19 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return tr('Vence a: {n}', { n: tr(AJ.jefes[jefe.id].nombre) });
   }
 
-  function filaDep(g, AJ, p, z, d, b) {
-    UI.panel(g, b.x, b.y, b.w, b.h, '#1a0f1f', null, null, 4);
+  function filaDep(g, AJ, p, z, d, b, marcado) {
+    if (marcado) { g.fillStyle = '#ffffff'; g.fillRect(b.x - 6, b.y - 6, b.w + 12, b.h + 12); }
+    UI.panel(g, b.x, b.y, b.w, b.h, marcado ? '#3a2410' : '#1a0f1f', null, null, 4);
     UI.fondo(g, z.img, b.x + 6, b.y + 6, 110, b.h - 12, d.abierto ? 0.1 : 0.6, z.filtro);
     UI.textoCabe(g, tr(z.nombre).toUpperCase(), b.x + 134, b.y + b.h * 0.32, 26, b.w - 150, d.abierto ? C.oro : '#8a7a68', 'left', 5);
     const plantas = z.sinFin ? tr('Desde la planta -{n}', { n: z.desde }) : tr('Plantas -{a} a -{b}', { a: z.desde, b: z.desde + 4 });
-    T(g, plantas + ' · ' + tr(TRUCO[z.truco]), b.x + 134, b.y + b.h * 0.62, 16, C.crema, 'left', 3);
+    UI.textoCabe(g, plantas + ' · ' + tr(TRUCO[z.truco]), b.x + 134, b.y + b.h * 0.62, 16, b.w - 150, C.crema, 'left', 3);
     if (!d.abierto) T(g, cerrado(AJ, z), b.x + 134, b.y + b.h * 0.84, 15, C.rojo, 'left', 3);
+    else if (!z.sinFin) UI.textoCabe(g, tr('Jefe: {n}', { n: tr(AJ.jefes[B.jefes.dePlanta(AJ, z.desde + 4).id].nombre) }), b.x + 134, b.y + b.h * 0.84, 15, b.w - 150, '#ff9a8e', 'left', 3);
   }
 
-  UI.departamentos = function (g, W, H, AJ, p) {
+  // sel = el departamento marcado: tocar uno lo marca y BAJAR AQUÍ confirma
+  UI.departamentos = function (g, W, H, AJ, p, sel) {
     UI.fondoMenu(g, W, H, 'fondo-vestibulo');
     g.fillStyle = 'rgba(10,5,20,0.75)'; g.fillRect(0, 0, W, H);
     UI.titulo(g, tr('¿DÓNDE BAJAS?'), W / 2, 60, 46);
@@ -34,12 +37,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const deps = B.departamentos(AJ, p), h = Math.min(130, Math.floor((H - 320) / deps.length) - 10), botones = [];
     deps.forEach((d, i) => {
       const z = AJ.zonas.find((q) => q.id === d.id), b = { x: 20, y: 156 + i * (h + 10), w: W - 40, h, accion: 'departamento', id: d.id };
-      filaDep(g, AJ, p, z, d, b);
+      filaDep(g, AJ, p, z, d, b, d.id === sel);
       if (d.abierto) botones.push(b);
     });
-    const cerrar = { x: W / 2 - 120, y: H - 110, w: 240, h: 76, accion: 'cerrarDep' };
-    UI.boton(g, cerrar, 'azul', tr('VOLVER'), 32);
-    return [...botones, cerrar];
+    const bajar = { x: W / 2 + 8, y: H - 110, w: W / 2 - 28, h: 80, accion: 'bajarAqui' }, cerrar = { x: 20, y: H - 104, w: W / 2 - 40, h: 70, accion: 'cerrarDep' };
+    UI.boton(g, bajar, sel ? 'naranja' : 'apagado', tr('BAJAR AQUÍ'), 32);
+    UI.boton(g, cerrar, 'azul', tr('VOLVER'), 28);
+    return [...botones, ...(sel ? [bajar] : []), cerrar];
   };
 
   // ---------- el ascenso ----------

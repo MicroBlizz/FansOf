@@ -1,8 +1,8 @@
 {
- "build": 947,
- "hash": "e1ec46e",
- "fecha": "2026-11-05T11:27:39Z",
- "mensaje": "Tienda: las pestañas nuevas (Cosméticos, Escaparate…) van en su propia fila y ya no se cortan",
+ "build": 948,
+ "hash": "5e42a3e",
+ "fecha": "2026-11-05T11:38:14Z",
+ "mensaje": "Splash FOG: el logo pasa a ser el icono elegido por Pepins (imagen con rebote)",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

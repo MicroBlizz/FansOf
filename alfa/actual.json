@@ -1,8 +1,8 @@
 {
- "build": 994,
- "hash": "3aa063f",
- "fecha": "2026-11-05T18:56:57Z",
- "mensaje": "Rouflage: últimas 10 mascotas vivas: zombi, murciélago, cupido, fantasma, dron, serpiente, bichito, nanobot, recreativa y calavera",
+ "build": 995,
+ "hash": "b50312b",
+ "fecha": "2026-11-05T19:01:57Z",
+ "mensaje": "Rouflage: borra los dibujos viejos de las mascotas",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

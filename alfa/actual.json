@@ -1,8 +1,8 @@
 {
- "build": 936,
- "hash": "0ca58ce",
- "fecha": "2026-11-05T10:02:58Z",
- "mensaje": "Pets: trufa más grande y boca de lado en el hocico del hurón",
+ "build": 937,
+ "hash": "9971a0b",
+ "fecha": "2026-11-05T10:17:20Z",
+ "mensaje": "Tienda de gemas (ADR 050): cosméticos y escaparate semanal a precio fijo y sin azar, tras el flag tienda-gemas",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

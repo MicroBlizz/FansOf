@@ -14,7 +14,7 @@ const AJUSTES = {
     tutorial: { vez: { tickets: 5 }, unica: true, fijo: { tickets: 3 } },
     'carta-repetida': { vez: { gold: 500 }, dia: { gold: 20000 } },
   },
-  servidor: { gachapon: true, economia: true },
+  servidor: { gachapon: true, economia: true, tienda: true },   // tienda: la tienda de gemas cobra en el servidor (comprar_fijo, servidor/112; ADR 050)
   // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro; nunca al revés).
   // 1 gema «vale» 10 de oro (los packs de antes valían 100 gemas o 1000 de oro por 0,99 €): la tirada pasa de 50 gemas a 500 de oro. La fila `monedas` de flags lo ajusta sin publicar.
   monedas: { ratio: 15, cambio: 40, pasePct: { pase: 29, pasepvp: 100 } },   // la tirada cuesta 750 de oro; cambiar oro por gemas, 40 de oro por gema; pasePct: qué % de lo convertido (oro y tiradas de la pista de pago) se da en gemas, para que la pista devuelva justo el precio del pase (487 de 500; el PvP da 264 de 300 al 100 %). La fila `monedas` de flags lo afina sin publicar   // lo que ya hace el servidor cuando hay cuenta (PLAN-CUENTAS.md, fase 2): el gashapón de habilidades y equipo

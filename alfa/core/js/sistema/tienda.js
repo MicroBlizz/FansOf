@@ -1,8 +1,30 @@
 // Fans Of · TIENDA (de prueba: no se cobra nada). El regalo diario, los packs de oro y de gemas de SHOP y la oferta de broma.
 // Un juego puede enganchar 'tienda' para añadir sus propias ofertas a la fila del regalo (#gift-row) cuando se pinta.
+// Un sistema puede añadir pestañas propias con TIENDA_SECCIONES.registra(id, { nombre, activa, pinta(caja) }) (la tienda de gemas, core/js/sistema/tienda-fija.js).
 'use strict';
 const eur = v => v.toLocaleString('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: Number.isInteger(v) ? 0 : 2 });
 let shopTab = 'gold', jokeT = 0;
+// las pestañas que añaden otros sistemas: salen solo mientras activa() diga que sí, detrás de Oro y Gemas, en el orden en que se registran
+const TIENDA_SECCIONES = (() => {
+  const lista = new Map();
+  const tr = t => (typeof IDIOMA !== 'undefined' && IDIOMA.tr ? IDIOMA.tr(t) : t);
+  function asegura() {
+    const t = document.querySelector('#scr-shop .tabs'); if (!t) return;
+    for (const [id, S] of lista) {
+      let b = t.querySelector(`[data-st="${id}"]`); const on = !!S.activa();
+      if (on && !b) {
+        b = document.createElement('button'); b.className = 'tab ol'; b.dataset.st = id; b.setAttribute('aria-pressed', 'false'); b.textContent = tr(S.nombre);
+        b.addEventListener('click', () => { shopTab = id; play('select'); buildShop(); }); t.appendChild(b);
+      } else if (!on && b) { b.remove(); if (shopTab === id) shopTab = 'gold'; }
+    }
+  }
+  return {
+    registra(id, S) { lista.set(id, S); },
+    asegura,
+    // pinta la pestaña si es de un sistema; devuelve true si lo era
+    pinta(id, caja) { const S = lista.get(id); if (!S || !S.activa()) return false; S.pinta(caja); return true; },
+  };
+})();
 const PILE = (n, gem) => { // dibujo de un montón de monedas o gemas, más alto cuanto más grande el pack
   let o = ''; const k = Math.min(6, n), POS = [[30, 38], [17, 38], [43, 38], [23.5, 28], [36.5, 28], [30, 18]];
   for (let i = 0; i < k; i++) { const [x, y] = POS[i];
@@ -13,6 +35,7 @@ function bonusPct(list, p) { const base = list[0].amt / list[0].eur, r = p.amt /
 function giftReady() { return SAVE.giftDay !== todayStr(); }
 function jokeClock() { const now = new Date(), end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); const s = Math.floor((end - now) / 1000); return [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60].map(v => String(v).padStart(2, '0')).join(':'); }
 function buildShop() {
+  TIENDA_SECCIONES.asegura();
   if (typeof ENERGIA !== 'undefined') { ENERGIA.aseguraTab(); if (!ENERGIA.estado) ENERGIA.cargar(); }   // si aún no se había preguntado, se pregunta ahora y la pestaña sale al llegar la respuesta
   for (const b of document.querySelectorAll('[data-st]')) b.setAttribute('aria-pressed', String(b.dataset.st === shopTab));
   const nota = document.querySelector('#scr-shop .shop-note'); if (nota && MONEDAS.activo()) nota.innerHTML = '<b>Tienda de Microblizz</b> · Las gemas solo se compran con dinero real y nunca entran en el azar. El oro solo se gana jugando.';
@@ -23,7 +46,8 @@ function buildShop() {
     SAVE.giftDay = todayStr(); ECO.ganar('regalo-diario', g); missionEvent('gift', 1); saveGame(); play('crown'); updateWallets(); buildShop(); toast(`+${g.gold} de oro y +${g.gems} gemas`);
   };
   fire('tienda');
-  if (shopTab === 'caos') { const l = $('#shop-list'); clearInterval(jokeT); ENERGIA.seccion(l); return; }   // la sección del caos primordial es común a todos los juegos (core/js/sistema/energia.js)
+  if (shopTab === 'caos') { const l = $('#shop-list'); clearInterval(jokeT); ENERGIA.seccion(l); return; }
+  if (TIENDA_SECCIONES.pinta(shopTab, $('#shop-list'))) { clearInterval(jokeT); return; }   // la sección del caos primordial es común a todos los juegos (core/js/sistema/energia.js)
   const L = SHOP[shopTab], gem = shopTab === 'gems', dos = MONEDAS.activo();   // dos: las dos monedas (PLAN-MONEDAS.md): el oro no se vende, las gemas solo con dinero real (o con mucho oro)
   let h = '';
   if (!gem) { const J = SHOP.joke; h += `<div class="pack joke"><span class="joke-flag">¡OFERTA!</span><div class="pk-ic">${PILE(6)}</div><div><div class="pk-name ol">${J.name}</div><div class="pk-amt ol">${COIN_SVG}${fmt(J.amt)}</div><div class="pk-note">¡Oferta irrepetible! (se repite cada día) · Termina en <span class="countdown" id="joke-clock">${jokeClock()}</span></div></div><button class="btn-price ol" id="btn-joke"><small>${eur(J.was)}</small>${eur(J.eur)}</button></div>`; }

@@ -17,6 +17,10 @@ Object.assign(RETOS, {
       paytowin:    { name: 'Pay to Win', rar: 'epic' },
       leyenda:     { name: 'Leyenda del sofá', rar: 'legendary' },
       trofeo:      { name: 'Trofeo de plástico', rar: 'legendary' },
+      // noviembre de 2026: los de la tienda de gemas (js/ajustes-tienda.js). arte: los colores del marco (como MARCO_ARTE de core/js/armario.js)
+      diafana:     { name: 'Oficina diáfana', rar: 'rare', de: 'En la tienda de gemas', arte: { a: '#d9dde6', b: '#6b7385', fa: '#3e2363', fb: '#1f1233' } },
+      vistas:      { name: 'Despacho con vistas', rar: 'epic', de: 'En la tienda de gemas', arte: { a: '#a9dcff', b: '#1d5fc9', fa: '#4a9be0', fb: '#173d8f', brillo: '#8fd0ff' } },
+      phony:       { name: 'Nube de Phony', rar: 'epic', de: 'En la tienda de gemas', arte: { a: '#f3a6ff', b: '#7b22ff', fa: '#5a1a8f', fb: '#26143c', brillo: '#d43cff' } },
     },
     titulos: {
       becario:     { name: 'Becario sin sueldo', rar: 'basic', serie: true },
@@ -58,6 +62,11 @@ Object.assign(RETOS, {
       sinergias:   { t: 'Sinergias', rar: 'common' },
       primera:     { t: 'Era mi primera partida, lo juro', rar: 'epic' },
       skill:       { t: 'Skill issue (tuyo)', rar: 'epic' },
+      // noviembre de 2026: el pack «Reunión que pudo ser un correo» de la tienda de gemas (js/ajustes-tienda.js)
+      offline:     { t: 'Lo hablamos offline', rar: 'epic', de: 'En la tienda de gemas' },
+      calendario:  { t: 'Te mando un calendario', rar: 'epic', de: 'En la tienda de gemas' },
+      alinear:     { t: 'Tenemos que alinearnos', rar: 'epic', de: 'En la tienda de gemas' },
+      kpi:         { t: 'Eso no está en mis KPI', rar: 'epic', de: 'En la tienda de gemas' },
     },
     emotes: {
       risa:     { name: 'Me parto', k: 'bunny', rar: 'basic', serie: true },

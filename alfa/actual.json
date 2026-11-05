@@ -1,8 +1,8 @@
 {
- "build": 1012,
- "hash": "be3632f",
- "fecha": "2026-11-05T21:32:41Z",
- "mensaje": "Basement 0.10.0: tres jefes secretos con condiciones especiales",
+ "build": 1013,
+ "hash": "582e49d",
+ "fecha": "2026-11-05T21:36:42Z",
+ "mensaje": "Basement 0.11.0: pase de temporada (fila gratis)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

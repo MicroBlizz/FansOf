@@ -15,6 +15,11 @@ function basClaveSemana() {
   const [a, m, d] = basDiaEspana().split('-').map(Number), f = new Date(Date.UTC(a, m - 1, d)), atras = (f.getUTCDay() + 6) % 7;
   return 's-' + new Date(Date.UTC(a, m - 1, d - atras)).toISOString().slice(0, 10);
 }
+// la temporada del pase: bloques de 4 semanas desde el lunes 2 de noviembre de 2026 ('t-' y el lunes en que empieza)
+function basClaveTemporada() {
+  const [a, m, d] = basDiaEspana().split('-').map(Number), hoy = Date.UTC(a, m - 1, d), base = Date.UTC(2026, 10, 2), dia = 86400000;
+  return 't-' + new Date(base + Math.floor((hoy - base) / (28 * dia)) * 28 * dia).toISOString().slice(0, 10);
+}
 const basClaveDe = (tab) => (tab === 'hoy' ? basClaveDia() : tab === 'semana' ? basClaveSemana() : null);
 
 // ---------- Legacy ----------

@@ -13,13 +13,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.progresoNuevo = () => ({
     monedas: 0, record: 0, bajadas: 0, cursos: [], equipo: { tiene: {}, puesto: {} }, mascotas: {}, mascota: null,
-    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {}, acreditaciones: [], premiados: [],
+    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {}, acreditaciones: [], premiados: [], pase: null,
   });
 
   // Copia profunda (el progreso se trata como inmutable: cada regla devuelve uno nuevo).
   B.copiaProgreso = (p) => ({
     ...p, cursos: [...p.cursos], equipo: { tiene: { ...p.equipo.tiene }, puesto: { ...p.equipo.puesto } },
-    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales }, terrario: { ...p.terrario }, acreditaciones: [...p.acreditaciones], premiados: [...p.premiados],
+    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales }, terrario: { ...p.terrario }, acreditaciones: [...p.acreditaciones], premiados: [...p.premiados], pase: p.pase ? { ...p.pase, cobrados: [...p.pase.cobrados] } : null,
   });
 
   // Lee lo guardado (formatos for-basement-v1 y v2). Lo que falte o no valga vuelve a su valor de partida.
@@ -40,6 +40,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.rango = entero(datos.rango, 0, AJ.rangos.length - 1);
     p.final = datos.final === true;
     if (AJ.habilidades[datos.habilidad]) p.habilidad = datos.habilidad;
+    p.pase = esObjeto(datos.pase) && typeof datos.pase.clave === 'string' ? { clave: datos.pase.clave, xp: entero(datos.pase.xp, 0, 1e7),
+      cobrados: Array.isArray(datos.pase.cobrados) ? [...new Set(datos.pase.cobrados.map((n) => entero(n, 0, 999)))].filter((n) => n >= 1) : [] } : null;
     p.premiados = Array.isArray(datos.premiados) ? datos.premiados.filter((c) => typeof c === 'string' && /^[ds]-\d{4}-\d{2}-\d{2}$/.test(c)).slice(-30) : [];
     p.acreditaciones = Array.isArray(datos.acreditaciones) ? [...new Set(datos.acreditaciones)].filter((z) => AJ.presion.coste[z] != null) : [];
     for (const id of Object.keys(AJ.enemigos)) if (esObjeto(datos.terrario) && datos.terrario[id] > 0) p.terrario[id] = entero(datos.terrario[id], 0, 1e6);

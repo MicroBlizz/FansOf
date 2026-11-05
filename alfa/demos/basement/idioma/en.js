@@ -456,4 +456,12 @@ IDIOMA.add({
   'Premio enorme en la caja': 'Huge reward in the box',
   'Vence a un jefe secreto': 'Beat a secret boss',
   'Vence a 3 jefes secretos': 'Beat 3 secret bosses',
+  // 0.11.0: pase de temporada
+  'PASE': 'PASS',
+  'PAQ.': 'PKG.',
+  'MAT.': 'MAT.',
+  'Nivel {n} de {m}': 'Level {n} of {m}',
+  'Juega bajadas para subir': 'Play dives to level up',
+  'Toca un premio en verde para cobrarlo. La temporada dura 4 semanas.': 'Tap a green reward to claim it. The season lasts 4 weeks.',
+  '¡PASE COMPLETO!': 'PASS COMPLETE!',
 });

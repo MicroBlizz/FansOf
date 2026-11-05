@@ -135,6 +135,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     pestanaRetos: (b) => { est.mesa.retos = b.id; basSuena('boton'); if (b.id === 'ranking') basCargaRanking(); },
     tabRanking: (b) => { BAS_RANKING.tab = b.id; basSuena('boton'); if (!BAS_RANKING.datos[b.id]) basCargaRanking(b.id); },
     reintentarRanking: () => basCargaRanking(),
+    cobrarPase: (b) => { if (aplica(B.cobrarPase(B.AJ, SAVE.progreso, basClaveTemporada(), b.nivel), 'compra')) FX.confeti(W / 2, est.H * 0.3); },
     cobrarReto: (b) => { if (BAS_RETOS.cobrar(b.p, b.id)) { basSuena('compra'); FX.confeti(W / 2, est.H * 0.3); } },
     despacho: () => { est.mesa.despacho = true; basSuena('boton'); },
     cerrarDespacho: () => { est.mesa.despacho = false; basSuena('boton'); },
@@ -208,7 +209,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function terminar(e) {
     est.record = e.resultado.planta > SAVE.progreso.record;
     est.nuevos = B.catalogoNuevos(B.AJ, SAVE.progreso, e.resultado);
-    SAVE.progreso = B.cobrar(SAVE.progreso, e.resultado, B.AJ);
+    SAVE.progreso = B.sumarXp(B.AJ, B.cobrar(SAVE.progreso, e.resultado, B.AJ), basClaveTemporada(), e.resultado);   // y la XP del pase
     const md = est.modoBajada;
     if (md) {   // desafío o evento: su premio (la primera vez) y su ranking
       const r = B.premioModo(B.AJ, SAVE.progreso, md.tipo, md.clave, e.resultado);

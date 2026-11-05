@@ -71,6 +71,15 @@ BAS.AJ = Object.freeze({
     { id: 'crunch', nombre: 'Semana de crunch', txt: 'Pegas fuerte y rápido, pero el café vuela', mods: { dano: 1.5, cadencia: 0.8, gasto: 1.5 } },
     { id: 'auditoria', nombre: 'Auditoría trimestral', txt: 'El botín vale más, pero el ascensor tarda más', mods: { valor: 1.6, espera: 2 } },
   ],
+  // El pase de temporada (pase.js): cada temporada dura 4 semanas (la clave la pone el adaptador) y tiene `niveles` niveles de `xp`
+  // cada uno. La XP sale de cada bajada (por planta, por bicho, por captura y por jefe; a salvo, ×salvo). Cada nivel da su premio
+  // (fila gratis): monedas, materiales o paquetes, según `premios` (se repite en ciclo; los niveles de `grandes` dan el paquete del jefe).
+  pase: {
+    niveles: 30, xp: 300, salvo: 1.5,
+    porBajada: { planta: 10, baja: 1, captura: 20, jefe: 50 },
+    premios: [{ monedas: 150 }, { materiales: { tornillo: 25, cable: 6 } }, { monedas: 200 }, { materiales: { cable: 10, chip: 3 } }, { paquetes: { normal: 1 } }],
+    grandes: { 15: { paquetes: { jefe: 1 } }, 30: { paquetes: { jefe: 2 }, materiales: { disco: 3 } } },
+  },
   // La presión (como en Well Diver): cada departamento pide su acreditación, que se compra en «¿DÓNDE BAJAS?». Sin ella puedes
   // bajar, pero allí te mueves más lento (vel) y el café se gasta más (cafe). Marketing no pide nada.
   presion: { vel: 0.75, cafe: 1.8, coste: { soporte: 40, qa: 90, servidores: 180, direccion: 350, legacy: 700 } },

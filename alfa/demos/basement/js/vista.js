@@ -19,6 +19,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     critico: ['descargabot', 1.7, 'hue-rotate(-120deg) saturate(2.2)'],
     grapadora: ['r-grapadora', 2], clips: ['lanzaclips', 4], taladro: ['taladro', 4], extintor: ['extintor', 4], raton: ['raton', 4],
   };
+  // las armas de la 0.5.0: su icono es el mismo dibujo que llevan en la mano (aspecto-capas.js)
+  for (const id of ['cinta', 'perforadora', 'abrecartas', 'boli', 'impresora', 'trituradora', 'router', 'laser', 'sello', 'proyector', 'taza', 'industrial']) V.DIBUJO[id] = ['arma-' + id, 3];
   // pinta lo que sea: si hay dibujo de Yoshi (img/), ese; si no, el propio en píxel (sprites.js)
   V.pinta = function (g, n, x, y, esc, opc) {
     const o = opc || {};
@@ -100,7 +102,20 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     taladro(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-12, -4, 24, 8); g.fillStyle = '#ff8a2a'; g.fillRect(-10, -2, 20, 4); g.fillStyle = '#ffd84a'; g.fillRect(4, -2, 6, 4); },
     extintor(g) { g.fillStyle = 'rgba(255,255,255,0.9)'; g.beginPath(); g.arc(0, 0, 11, 0, 7); g.fill(); g.fillStyle = '#c8d2e0'; g.beginPath(); g.arc(-4, -3, 5, 0, 7); g.fill(); },
     raton(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-7, -7, 14, 14); g.fillStyle = '#3a8ee6'; g.fillRect(-5, -5, 10, 10); },
+    cinta(g) { caja(g, 18, 8, '#e8d9a8'); },
+    perforadora(g) { g.fillStyle = '#1a0f1f'; g.beginPath(); g.arc(0, 0, 5, 0, 7); g.fill(); g.fillStyle = '#ffffff'; g.beginPath(); g.arc(0, 0, 3, 0, 7); g.fill(); },
+    abrecartas(g) { caja(g, 26, 6, '#e0e6ee'); },
+    boli(g) { caja(g, 12, 5, '#3b5bdb'); },
+    impresora(g) { caja(g, 14, 18, '#ffffff'); g.fillStyle = '#9fb0c8'; g.fillRect(-4, -5, 8, 2); g.fillRect(-4, 0, 8, 2); },
+    trituradora(g) { for (const dy of [-5, 0, 5]) { g.fillStyle = '#1a0f1f'; g.fillRect(-9, dy - 2, 18, 4); g.fillStyle = '#ffffff'; g.fillRect(-7, dy - 1, 14, 2); } },
+    router(g) { g.strokeStyle = '#5fe05f'; g.lineWidth = 4; g.beginPath(); g.arc(-6, 0, 10, -0.9, 0.9); g.stroke(); },
+    laser(g) { g.fillStyle = 'rgba(255,59,45,0.45)'; g.fillRect(-26, -4, 52, 8); g.fillStyle = '#ff3b2d'; g.fillRect(-24, -2, 48, 4); },
+    proyector(g) { g.fillStyle = 'rgba(255,243,160,0.75)'; g.beginPath(); g.arc(0, 0, 10, 0, 7); g.fill(); },
+    taza(g) { g.fillStyle = '#1a0f1f'; g.beginPath(); g.arc(0, 0, 8, 0, 7); g.fill(); g.fillStyle = '#8a4a22'; g.beginPath(); g.arc(0, 0, 6, 0, 7); g.fill(); },
+    industrial(g) { caja(g, 22, 10, '#5a6070'); g.fillStyle = '#ffd23a'; g.fillRect(-7, -1, 14, 2); },
   };
+  // una bala rectangular de w×h con contorno oscuro
+  function caja(g, w, h, color) { g.fillStyle = '#1a0f1f'; g.fillRect(-w / 2, -h / 2, w, h); g.fillStyle = color; g.fillRect(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4); }
   function balas(g, e) {
     for (const b of e.balas) {
       g.save(); g.translate(V.sx(b.x), V.sy(b.y)); g.rotate(Math.atan2(b.vy, b.vx));
@@ -109,11 +124,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
   }
 
-  function jugador(g, e) {
+  // el becario con lo que lleva puesto (aspecto.js)
+  function jugador(g, e, aspecto) {
     const j = e.jugador;
     if (j.invulT > 0 && Math.floor(j.invulT * 14) % 2) return;
     const x = V.sx(j.x), y = V.sy(j.y);
-    V.pintaCosa(g, 'jugador', x, y + Math.sin(e.t * 6) * 2);   // sin voltear: la taza no cambia de mano
+    UI.becario(g, e.aj, aspecto, x, y + Math.sin(e.t * 6) * 2, V.DIBUJO.jugador[1]);   // sin voltear: nada cambia de mano
     if (j.frenoT > 0) { g.fillStyle = 'rgba(232,65,58,0.35)'; g.beginPath(); g.arc(x, y, 40, 0, Math.PI * 2); g.fill(); }
   }
 
@@ -128,7 +144,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     T(g, tr('ASCENSOR'), x, y - 48, 11, '#ffffff', 'center', 3);
   }
 
-  V.dibujar = function (g, e, W, H) {
+  V.dibujar = function (g, e, W, H, aspecto) {
     const AJ = e.aj, ini = Math.max(0, Math.floor(V.camY / AJ.altoPlanta)), fin = V.camY + H / K;
     g.fillStyle = '#120a1c'; g.fillRect(0, 0, W, H);
     recepcion(g, W);
@@ -136,7 +152,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     paredes(g, AJ, W, H);
     V.barrera(g, e, W);
     objetos(g, e); V.becarios(g, e); enemigos(g, e); V.jefe(g, e);
-    balas(g, e); V.proyectiles(g, e); V.ayudantes(g, e); jugador(g, e); ascensor(g, e, H);
+    balas(g, e); V.proyectiles(g, e); V.ayudantes(g, e); jugador(g, e, aspecto); ascensor(g, e, H);
     g.save(); g.scale(K, K); g.translate(0, -V.camY);
     B.efectos.dibujarMundo(g, (gg, t, x, y, tam, color) => T(gg, t, x, y, tam * 0.75, color, 'center', 2));
     g.restore();

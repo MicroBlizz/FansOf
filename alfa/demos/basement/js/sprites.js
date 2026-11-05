@@ -97,6 +97,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function vecino(lleno, x, y) { return lleno(x - 1, y) || lleno(x + 1, y) || lleno(x, y - 1) || lleno(x, y + 1); }
 
   const CACHE = {};
+  // Añade un dibujo más (lo usan las capas del aspecto del becario, aspecto.js). Si ya existe, no lo cambia.
+  B.registraDibujo = function (nombre, d) { if (!DIBUJOS[nombre]) DIBUJOS[nombre] = d; };
   // El lienzo de un dibujo (y su versión toda blanca, para el destello al recibir un golpe).
   B.sprite = function (nombre, blanco) {
     const k = nombre + (blanco ? ':b' : '');

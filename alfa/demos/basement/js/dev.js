@@ -1,6 +1,6 @@
 // Fans of Basement · utilidades del panel DEV. El panel DEV de core (core/js/sistema/desarrollo.js) solo existe en la alfa y en
 // localhost, nunca en la web publicada: lo que se toca aquí es solo para probar (monedas y paquetes de prueba, abrir toda la
-// formación o todo el equipo, y empezar de cero).
+// formación o todo el equipo, abrir departamentos, todas las armas, cambiar de cargo para ver el aspecto y empezar de cero).
 'use strict';
 const UTILIDADES_JUEGO = [{ titulo: 'Fans of Basement: pruebas', pinta(caja) {
   const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#ffe14a' });
@@ -24,6 +24,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Basement: pruebas', pinta(caja) {
   boton(d, 'Abrir todos los departamentos', (p) => { p.vencidos = [4, 9, 14, 19, 24]; });
   boton(d, 'Servidor arreglado (final)', (p) => { p.final = true; if (!p.vencidos.includes(24)) p.vencidos.push(24); });
   boton(d, 'Todas las armas', (p) => { for (const a of Object.keys(BAS.AJ.armas)) if (BAS.AJ.armas[a].rareza) p.armas[a] = BAS.AJ.nivelArma.max; });
+  boton(d, 'Cargo +1 (aspecto)', (p) => { p.rango = (p.rango + 1) % BAS.AJ.rangos.length; });
   boton(d, 'Empezar de cero', (p) => Object.assign(p, BAS.progresoNuevo()));
   pinta();
 } }];

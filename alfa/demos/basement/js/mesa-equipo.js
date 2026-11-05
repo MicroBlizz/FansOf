@@ -11,6 +11,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   const RAREZA = { comun: 'COMÚN', raro: 'RARO', epico: 'ÉPICO', legendario: 'LEGENDARIO' };
   UI.nombreRareza = (r) => tr(RAREZA[r]);
   const pintaHueco = (g, h, x, y, k) => V().pinta(g, DIBUJO_HUECO[h][0], x, y, DIBUJO_HUECO[h][1] * (k || 1));
+  UI.cuadroRareza = cuadro;
 
   // un cuadro de rareza: del color de la rareza si la tienes (con su dibujo), oscuro con «?» si no; el puesto, con marco blanco
   function cuadro(g, b, color, pinta, marcado) {
@@ -49,19 +50,16 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     });
   }
 
-  // El arma: la puesta, con su nivel y lo que hace; los cuadros, la grapadora y las cuatro que salen de los paquetes.
-  const QUE_HACE = { grapadora: 'Una grapa al más cercano', clips: 'Tres clips en abanico', taladro: 'Atraviesa a varios bichos', extintor: 'Explota y daña alrededor', raton: 'Rebota de bicho en bicho' };
+  // El arma: la puesta, con su dibujo, su nivel y lo que hace, cuántas tienes y el botón de CAMBIAR (abre la armería).
   function filaArma(g, AJ, p, x, y, w, h, botones) {
-    const a = B.armaDe(AJ, p), color = a.rareza ? AJ.colorRareza[a.rareza] : C.cafe;
+    const a = B.armaDe(AJ, p), color = a.rareza ? AJ.colorRareza[a.rareza] : C.cafe, ids = Object.keys(AJ.armas);
+    const tienes = ids.filter((id) => !AJ.armas[id].rareza || p.armas[id] > 0).length, b = { x: x + w - 168, y: y + 26, w: 150, h: 56, accion: 'armeria' };
     UI.pergamino(g, x, y, w, h);
-    T(g, tr('ARMA'), x + 26, y + 32, 18, C.gris, 'left', 0);
-    UI.textoCabe(g, tr(a.nombre) + (a.rareza ? ' · ' + tr('Nv') + ' ' + a.nivel : ''), x + 26, y + 62, 22, w - 5 * 56 - 40, color, 'left', a.rareza ? 4 : 0);
-    UI.textoCabe(g, tr(QUE_HACE[a.id]), x + 26, y + h - 30, 16, w - 52, '#2e6a2a', 'left', 0);
-    Object.keys(AJ.armas).forEach((id, i) => {
-      const d = AJ.armas[id], tiene = !d.rareza || p.armas[id] > 0, b = { x: x + w - 5 * 56 - 6 + i * 56, y: y + 26, w: 48, h: 48 };
-      cuadro(g, b, tiene ? (d.rareza ? AJ.colorRareza[d.rareza] : C.perg2) : null, tiene ? (cx, cy) => V().pintaCosa(g, id, cx, cy, null, 0.7) : null, a.id === id);
-      if (tiene) botones.push({ ...b, accion: 'arma', id });
-    });
+    T(g, tr('ARMA') + ' · ' + tr('{a} de {b}', { a: tienes, b: ids.length }), x + 26, y + 32, 18, C.gris, 'left', 0);
+    UI.textoCabe(g, tr(a.nombre) + (a.rareza ? ' · ' + tr('Nv') + ' ' + a.nivel : ''), x + 26, y + 62, 22, w - 220, color, 'left', a.rareza ? 4 : 0);
+    UI.textoCabe(g, UI.queHaceArma(a.id), x + 26, y + h - 30, 16, w - 52, '#2e6a2a', 'left', 0);
+    UI.boton(g, b, 'azul', tr('CAMBIAR'), 22);
+    botones.push(b);
   }
 
   UI.pestanaEquipo = function (g, W, H, AJ, p, botones) {

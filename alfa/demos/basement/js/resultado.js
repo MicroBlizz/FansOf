@@ -16,12 +16,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return f;
   }
 
-  // nuevos = los bichos que esta bajada añade al catálogo (con lo que pagan)
-  UI.resultado = function (g, W, H, t, r, record, nuevos) {
+  // nuevos = los bichos que esta bajada añade al catálogo (con lo que pagan); aspecto = cómo iba vestido tu becario
+  UI.resultado = function (g, W, H, t, r, record, nuevos, aspecto) {
     const salvo = r.como === 'ascensor', lista = filas(r, salvo), alto = 70 + lista.length * 46, y0 = H * 0.27;
     UI.fondoMenu(g, W, H, salvo ? 'fondo-vestibulo' : 'fondo-servidores');
     UI.titulo(g, salvo ? tr('¡A SALVO!') : tr('¡DESMAYADO!'), W / 2, H * 0.1, 64);
-    UI.dibuja(g, 'becario', W / 2, H * 0.1 + 96, 1.5, { alfa: salvo ? 1 : 0.6 });
+    UI.becario(g, B.AJ, aspecto, W / 2, H * 0.1 + 96, 1.5, { alfa: salvo ? 1 : 0.6 });
     UI.franja(g, salvo ? tr('El ascensor te ha subido con la caja') : tr('Sin café no hay quien trabaje: pierdes la caja'), W / 2, y0 - 34, 17, 500);
     UI.pergamino(g, 30, y0, W - 60, alto);
     lista.forEach(([a, b, color], i) => {

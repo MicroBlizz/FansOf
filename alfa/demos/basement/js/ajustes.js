@@ -113,13 +113,28 @@ BAS.AJ = Object.freeze({
   nivelMascota: { max: 5, dano: 0.2 },
   // Las armas: la grapadora la tienes siempre; las otras salen de los paquetes (una por rareza) y repetidas suben de nivel.
   // dano y cadencia multiplican los de la grapadora; balas/abanico = varias a la vez; atraviesa = a cuántos pasa; area = explota;
-  // rebotes = salta a otro bicho cercano.
+  // rebotes = salta a otro bicho cercano; alcance = multiplica el alcance (dispara solo si está así de cerca); lento = frena al
+  // bicho tocado (factor y segundos); rafaga = balas una detrás de otra (cada `entre` s); circulo = en todas direcciones;
+  // directo = el golpe cae en el sitio del blanco al momento; cafe = café que te devuelve cada bicho que tumba.
+  // Del paquete sale una al azar entre las de la rareza que toca.
   armas: {
     grapadora: { nombre: 'Grapadora', rareza: null, dano: 1, cadencia: 1 },
     clips: { nombre: 'Lanzaclips', rareza: 'comun', dano: 0.55, cadencia: 1, balas: 3, abanico: 0.28 },
+    cinta: { nombre: 'Cinta adhesiva', rareza: 'comun', dano: 0.7, cadencia: 1.1, lento: [0.45, 1.8] },
+    perforadora: { nombre: 'Perforadora', rareza: 'comun', dano: 0.35, cadencia: 1.1, balas: 5, abanico: 0.75, vel: 0.85 },
+    abrecartas: { nombre: 'Abrecartas', rareza: 'comun', dano: 0.8, cadencia: 1.15, vel: 1.4, atraviesa: 4 },
+    boli: { nombre: 'Bolígrafo de clic', rareza: 'comun', dano: 0.36, cadencia: 0.38 },
     taladro: { nombre: 'Taladro', rareza: 'raro', dano: 1.2, cadencia: 1.35, atraviesa: 3 },
+    impresora: { nombre: 'Impresora', rareza: 'raro', dano: 0.6, cadencia: 1.5, rafaga: 4, entre: 0.07 },
+    trituradora: { nombre: 'Trituradora', rareza: 'raro', dano: 0.75, cadencia: 1.4, balas: 6, abanico: 1.1, alcance: 0.6, vel: 0.8 },
+    router: { nombre: 'Router wifi', rareza: 'raro', dano: 0.55, cadencia: 1.3, balas: 8, circulo: true, vel: 0.7 },
     extintor: { nombre: 'Extintor', rareza: 'epico', dano: 1.4, cadencia: 1.6, vel: 0.55, area: 55 },
+    laser: { nombre: 'Puntero láser', rareza: 'epico', dano: 0.42, cadencia: 0.3, vel: 2.6, atraviesa: 2 },
+    sello: { nombre: 'Sello de APROBADO', rareza: 'epico', dano: 3.2, cadencia: 3, directo: true, area: 70 },
+    proyector: { nombre: 'Proyector', rareza: 'epico', dano: 0.6, cadencia: 1.2, balas: 3, abanico: 0.5, lento: [0.5, 1.2], alcance: 0.85 },
     raton: { nombre: 'Ratón inalámbrico', rareza: 'legendario', dano: 1, cadencia: 0.9, rebotes: 3 },
+    taza: { nombre: 'Taza lanzacafé', rareza: 'legendario', dano: 1.1, cadencia: 0.8, atraviesa: 2, cafe: 1.5 },
+    industrial: { nombre: 'Grapadora industrial', rareza: 'legendario', dano: 1.7, cadencia: 1.15, atraviesa: 2, rebotes: 2 },
   },
   nivelArma: { max: 5, dano: 0.15 },
   // Las ventajas que se eligen (1 de 3) al entrar en cada zona: solo valen para esa bajada.
@@ -139,6 +154,8 @@ BAS.AJ = Object.freeze({
   // su paquete) con lo que tenías y un cargo más: más daño y botín para siempre, pero bichos y jefes más duros.
   rangos: ['Becario', 'Junior', 'Senior', 'Jefe de equipo', 'Director', 'Vicepresidente', 'CEO'],
   porRango: { dano: 0.1, valor: 0.15, vida: 0.4 },
+  // El aspecto del becario: con cuántos cursos hechos de una columna se nota (primer y segundo dibujo).
+  aspecto: { formacion: [4, 7] },
   // La formación (tablero Kanban): tres columnas de cursos que se compran en orden, de arriba abajo.
   // Efectos: cafe/caja/alcance/iman/taza = se suman; dano/vel/valor = % más; cadencia/gasto/crunch = % menos; espera = segundos menos;
   // multi = una grapa más por disparo; freno = cuánto menos te frenan las reuniones (1 = nada).

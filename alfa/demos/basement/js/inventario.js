@@ -91,7 +91,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const q = B.copiaProgreso(p);
     q.paquetes[tipo] -= 1;
     const rareza = sortea(P.rarezas, rnd()), x = rnd() * 100;
-    const premio = x < P.mascota ? daMascota(AJ, q, rareza) : (x < P.mascota + (P.arma || 0) && daArma(AJ, q, rareza)) || daEquipo(AJ, q, rareza, rnd());
+    const premio = x < P.mascota ? daMascota(AJ, q, rareza) : (x < P.mascota + (P.arma || 0) && daArma(AJ, q, rareza, rnd())) || daEquipo(AJ, q, rareza, rnd());
     return B.ok({ progreso: q, premio: Object.freeze(premio) });
   };
 
@@ -104,9 +104,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return { tipo: 'equipo', hueco, rareza, nuevo: true, monedas: 0 };
   }
 
-  // Un arma de esa rareza (o null si no hay ninguna): nueva, te la pones si llevabas la grapadora; repetida, sube de nivel.
-  function daArma(AJ, q, rareza) {
-    const id = Object.keys(AJ.armas).find((a) => AJ.armas[a].rareza === rareza);
+  // Un arma de esa rareza, al azar entre las que hay (o null si no hay ninguna): nueva, te la pones si llevabas la grapadora;
+  // repetida, sube de nivel.
+  function daArma(AJ, q, rareza, r) {
+    const de = Object.keys(AJ.armas).filter((a) => AJ.armas[a].rareza === rareza), id = de[Math.min(de.length - 1, Math.floor(r * de.length))];
     if (!id) return null;
     const nivel = q.armas[id] || 0;
     if (nivel >= AJ.nivelArma.max) { q.monedas += AJ.repetido[rareza]; return { tipo: 'arma', id, rareza, nuevo: false, nivel, monedas: AJ.repetido[rareza] }; }

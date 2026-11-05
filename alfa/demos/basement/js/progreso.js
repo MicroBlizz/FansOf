@@ -169,6 +169,17 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return Object.freeze({ ...d, id, nivel, dano: d.dano * (1 + AJ.nivelArma.dano * (nivel - 1)) });
   };
 
+  // Cómo se ve tu becario: el cargo, el arma puesta, la rareza de cada pieza de equipo y, por cada columna de la formación, cuánto
+  // se nota (0 = nada, 1 y 2 = primer y segundo dibujo, según los cursos hechos y AJ.aspecto.formacion).
+  B.aspectoDe = function (AJ, p) {
+    const formacion = {};
+    for (const col of AJ.columnas) {
+      const hechos = AJ.formacion.filter((c) => c.col === col && p.cursos.includes(c.id)).length;
+      formacion[col] = AJ.aspecto.formacion.filter((n) => hechos >= n).length;
+    }
+    return Object.freeze({ rango: p.rango, arma: B.armaDe(AJ, p).id, equipo: Object.freeze({ ...p.equipo.puesto }), formacion: Object.freeze(formacion) });
+  };
+
   // La mascota puesta, con el daño de su nivel (o null).
   B.mascotaDe = function (AJ, p) {
     const id = p.mascota, nivel = p.mascotas[id];

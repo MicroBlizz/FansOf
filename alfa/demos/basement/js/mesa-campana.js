@@ -45,14 +45,17 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // ---------- el ascenso ----------
   UI.ascenso = function (g, W, H, AJ, p) {
     g.fillStyle = 'rgba(10,5,20,0.85)'; g.fillRect(0, 0, W, H);
-    const x = 26, w = W - 52, y = H / 2 - 260, R = AJ.porRango;
-    UI.pergamino(g, x, y, w, 520);
+    const x = 26, w = W - 52, y = H / 2 - 320, R = AJ.porRango, a = B.aspectoDe(AJ, p);
+    UI.pergamino(g, x, y, w, 640);
     UI.titulo(g, tr('ASCENSO'), W / 2, y + 60, 48);
     T(g, tr(AJ.rangos[p.rango]) + '  >  ' + tr(AJ.rangos[p.rango + 1] || AJ.rangos[p.rango]), W / 2, y + 120, 26, C.naranja, 'center', 4);
+    UI.becario(g, AJ, a, W / 2 - 110, y + 200, 1.6, { alfa: 0.7 });   // así vas y así irás
+    UI.becario(g, AJ, { ...a, rango: Math.min(AJ.rangos.length - 1, p.rango + 1) }, W / 2 + 110, y + 200, 1.6);
+    T(g, '>', W / 2, y + 200, 44, C.naranja, 'center', 4);
     const lineas = [tr('Has arreglado el servidor. Microblizz te asciende.'), tr('+{d} % de daño y +{v} % de botín para siempre', { d: R.dano * 100, v: R.valor * 100 }),
       tr('Los bichos y los jefes serán más duros'), tr('La campaña empieza otra vez: los jefes vuelven a dar su paquete'), tr('Te quedas con todo lo demás')];
-    lineas.forEach((l, i) => UI.lineas(g, l, W / 2, y + 170 + i * 52, 19, w - 60, i ? C.cafe : '#2e6a2a', 'center', 0, 22));
-    const si = { x: x + 26, y: y + 420, w: w / 2 - 36, h: 74, accion: 'confirmarAscenso' }, no = { x: W / 2 + 10, y: y + 420, w: w / 2 - 36, h: 74, accion: 'cerrarAscenso' };
+    lineas.forEach((l, i) => UI.lineas(g, l, W / 2, y + 290 + i * 52, 19, w - 60, i ? C.cafe : '#2e6a2a', 'center', 0, 22));
+    const si = { x: x + 26, y: y + 540, w: w / 2 - 36, h: 74, accion: 'confirmarAscenso' }, no = { x: W / 2 + 10, y: y + 540, w: w / 2 - 36, h: 74, accion: 'cerrarAscenso' };
     UI.boton(g, si, 'oro', tr('ASCENDER'), 28);
     UI.boton(g, no, 'azul', tr('AHORA NO'), 26);
     return [si, no];

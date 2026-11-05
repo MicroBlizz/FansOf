@@ -6,7 +6,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
   const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
-    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false }, nuevos: [] };
+    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false }, nuevos: [] };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -43,7 +43,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     ventaja: () => basSuena('compra'),
     reabierto: (ev) => FX.numero(ev.x, ev.y - 20, tr('¡REABIERTO!'), '#e8413a', 14),
     duplicado: (ev) => FX.numero(ev.x, ev.y - 20, tr('¡DUPLICADO!'), '#e8413a', 14),
-    explosion: (ev) => { FX.chispas(ev.x, ev.y, 26, '#ffffff', 160); FX.temblor = Math.max(FX.temblor, 6); },
+    explosion: (ev) => { FX.chispas(ev.x, ev.y, 26, ev.arma === 'sello' ? '#e5322d' : '#ffffff', 160); FX.temblor = Math.max(FX.temblor, 6); if (ev.arma === 'sello') FX.numero(ev.x, ev.y - 14, tr('¡APROBADO!'), '#e5322d', 16); },
+    cafeArma: (ev) => FX.numero(ev.x, ev.y - 12, '+' + tr('CAFÉ'), '#ff8a2a', 12),
     apagon: () => { FX.cartel(tr('¡APAGÓN!'), '#8ac4ff', 1); basSuena('cafeBajo'); },
     eventoPlanta: (ev) => { const E = EVENTO[ev.evento]; FX.cartel(tr(E[0]), E[1], 2, tr(E[2])); basSuena('zona'); },
     auditoriaAscensor: () => { FX.cartel(tr('¡AUDITORÍA!'), '#e8413a', 1.2, tr('El ascensor no para en esta planta')); basSuena('no'); },
@@ -103,7 +104,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     ascender: () => { est.mesa.ascenso = true; basSuena('boton'); },
     cerrarAscenso: () => { est.mesa.ascenso = false; basSuena('boton'); },
     confirmarAscenso: () => { if (aplica(B.ascender(B.AJ, SAVE.progreso), 'jefeVencido')) { est.mesa.ascenso = false; FX.confeti(W / 2, est.H * 0.3); } },
-    arma: (b) => aplica(B.ponerArma(B.AJ, SAVE.progreso, b.id), 'boton'),
+    arma: (b) => { if (aplica(B.ponerArma(B.AJ, SAVE.progreso, b.id), 'boton')) est.mesa.armeria = false; },
+    armeria: () => { est.mesa.armeria = true; basSuena('boton'); },
+    cerrarArmeria: () => { est.mesa.armeria = false; basSuena('boton'); },
     mesa: () => alaMesa(),
     pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); TU.lanza(b.id, est.t); },
     curso: (b) => { est.mesa.sel = b.id; basSuena('boton'); },
@@ -133,7 +136,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function teclaMenu() {
     if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
     else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
-    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso) bajar();
+    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria) bajar();
   }
 
   function orden() {
@@ -148,6 +151,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function empezar(inicio) {
     const p = SAVE.progreso;
     est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, p), { vencidos: p.vencidos, inicio: inicio || 0, rango: p.rango, ventajas: true });
+    est.aspecto = B.aspectoDe(B.AJ, p);
     Object.assign(est, { modo: 'bajada', acum: 0, record: false, pulsoAscensor: false });
     FX.limpiar(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
     FX.cartel(tr('¡A BAJAR!'), '#ffd23a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
@@ -177,7 +181,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     B.vista.camara(e, est.H, dt);
     G.save();
     if (FX.temblor > 0) G.translate((Math.random() - 0.5) * FX.temblor, (Math.random() - 0.5) * FX.temblor);
-    B.vista.dibujar(G, e, W, est.H);
+    B.vista.dibujar(G, e, W, est.H, est.aspecto);
     G.restore();
     UI.apagon(G, W, est.H, e);
     UI.marcador(G, e, W, est.H);
@@ -208,7 +212,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     G.imageSmoothingEnabled = false;
     FX.paso(dt);
     if (est.modo === 'bajada') { est.botones = []; pintarBajada(dt); }
-    else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record, est.nuevos);
+    else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record, est.nuevos, est.aspecto);
     else if (est.modo === 'mesa') pintarMesa();
     else est.botones = UI.portada(G, W, est.H, est.t);
     if (TU.habla()) est.botones = TU.dibuja(G, W, est.H, est.t);

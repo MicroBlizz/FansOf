@@ -1,8 +1,8 @@
 {
- "build": 959,
- "hash": "24e221d",
- "fecha": "2026-11-05T13:37:54Z",
- "mensaje": "Rumble v2: campos pintados de las demás facciones y plazas de Phony e IAhorro (se bajan cuando hacen falta); bases elegidas de 12 personajes",
+ "build": 960,
+ "hash": "95d7ff2",
+ "fecha": "2026-11-05T14:10:16Z",
+ "mensaje": "Iconos propios de estilo Fo+iniciales para 13 juegos (FoR, FoTD, FoN, FoP, FoT, FoB, FoC, FoD, FoS, FoTA…)",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

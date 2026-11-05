@@ -1,8 +1,8 @@
 {
- "build": 1004,
- "hash": "6170919",
- "fecha": "2026-11-05T20:22:17Z",
- "mensaje": "Basement 0.7.0: ranking del Legacy en línea (SQL 115 aplicado)",
+ "build": 1005,
+ "hash": "c9854e3",
+ "fecha": "2026-11-05T20:25:55Z",
+ "mensaje": "Rouflage 0.2.71: menús pintados a brocha, conejo nuevo y mascotas pequeñas (con su nota)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",
@@ -15,7 +15,7 @@
   "nova": "0.3.50",
   "pets": "0.2.6",
   "ratkov": "0.2.36",
-  "rouflage": "0.2.70",
+  "rouflage": "0.2.71",
   "rumble": "0.9.165",
   "skate": "0.1.27",
   "survivors": "0.1.78",

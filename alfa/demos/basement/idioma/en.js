@@ -357,4 +357,15 @@ IDIOMA.add({
   'HOY': 'TODAY',
   'ESTA SEMANA': 'THIS WEEK',
   'COBRAR': 'CLAIM',
+  // 0.7.0: ranking del Legacy
+  'RANKING': 'RANKING',
+  'Planta': 'Floor',
+  'Tu mejor planta del Legacy: -{n}': 'Your deepest Legacy floor: -{n}',
+  'Llega al Código Legacy (planta -25) para entrar': 'Reach the Legacy Code (floor -25) to get in',
+  'El ranking necesita conexión': 'The ranking needs a connection',
+  'No se ha podido cargar': 'Could not load',
+  'REINTENTAR': 'RETRY',
+  'Cargando…': 'Loading…',
+  'Todavía no hay nadie: ¡sé el primero!': 'Nobody yet: be the first!',
+  '{n} becarios en el ranking': '{n} interns in the ranking',
 });

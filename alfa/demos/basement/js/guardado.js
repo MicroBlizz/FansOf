@@ -2,7 +2,7 @@
 // clave SAVE_KEY (de js/ajustes.js). Al guardar avisa a la cuenta para que suba la partida a la nube. Si el navegador no deja
 // guardar, se juega igual con lo de fábrica. La validación de lo leído está en el dominio (progreso.js: progresoDesde).
 'use strict';
-const SAVE = { musica: 1, efectos: 1, progreso: null, tuto: {}, retos: null };
+const SAVE = { musica: 1, efectos: 1, progreso: null, tuto: {}, retos: null, marca: null };
 
 function basCarga() {
   let d = {};
@@ -12,10 +12,11 @@ function basCarga() {
   SAVE.progreso = BAS.progresoDesde(BAS.AJ, d.progreso);
   SAVE.tuto = d.tuto && typeof d.tuto === 'object' ? { ...d.tuto } : {};   // lo que Lola ya te ha contado (js/tutorial.js)
   SAVE.retos = d.retos && typeof d.retos === 'object' ? d.retos : null;   // misiones y logros (RETOSL, js/retos.js)
+  SAVE.marca = d.marca && d.marca.planta > 0 ? { ...d.marca } : null;   // tu mejor planta del Legacy y si ya está subida (js/ranking.js)
 }
 
 function basGuarda() {
-  const datos = { musica: SAVE.musica, efectos: SAVE.efectos, progreso: BAS.progresoAGuardar(SAVE.progreso), tuto: SAVE.tuto, retos: SAVE.retos };
+  const datos = { musica: SAVE.musica, efectos: SAVE.efectos, progreso: BAS.progresoAGuardar(SAVE.progreso), tuto: SAVE.tuto, retos: SAVE.retos, marca: SAVE.marca };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(datos)); } catch (e) { console.warn('Basement: no se guarda', e); }
   if (typeof CUENTA !== 'undefined' && CUENTA.cambio) try { CUENTA.cambio(); } catch (e) { console.warn('Basement: sin cuenta', e); }
 }

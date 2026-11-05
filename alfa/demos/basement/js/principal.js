@@ -119,7 +119,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     taller: (b) => { est.mesa.taller = b.receta; basSuena('boton'); },
     usarTaller: () => { if (aplica(B.usarTaller(B.AJ, SAVE.progreso, est.mesa.taller), 'jefeVencido')) { FX.confeti(W / 2, est.H * 0.4); BAS_RETOS.evento('taller', 1); } },
     retos: () => { est.mesa.retos = 'misiones'; basSuena('boton'); },
-    pestanaRetos: (b) => { est.mesa.retos = b.id; basSuena('boton'); },
+    pestanaRetos: (b) => { est.mesa.retos = b.id; basSuena('boton'); if (b.id === 'ranking') basCargaRanking(); },
+    reintentarRanking: () => basCargaRanking(),
     cobrarReto: (b) => { if (BAS_RETOS.cobrar(b.p, b.id)) { basSuena('compra'); FX.confeti(W / 2, est.H * 0.3); } },
     cerrarRetos: () => { est.mesa.retos = null; basSuena('boton'); },
     cerrarTaller: () => { est.mesa.taller = null; basSuena('boton'); },
@@ -188,6 +189,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     SAVE.progreso = B.cobrar(SAVE.progreso, e.resultado, B.AJ);
     basGuarda();
     basRetosBajada(e.resultado);
+    basRankingBajada(e.resultado);
     Object.assign(est, { modo: 'resultado', resultadoT: 0 });
     Object.assign(joy, { activo: false, id: -1, dx: 0, dy: 0 });
   }

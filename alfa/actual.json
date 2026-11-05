@@ -1,8 +1,8 @@
 {
- "build": 1003,
- "hash": "86f2c9d",
- "fecha": "2026-11-05T20:17:32Z",
- "mensaje": "Basement 0.7.0: misiones diarias y semanales y logros con el sistema de core",
+ "build": 1004,
+ "hash": "6170919",
+ "fecha": "2026-11-05T20:22:17Z",
+ "mensaje": "Basement 0.7.0: ranking del Legacy en línea (SQL 115 aplicado)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

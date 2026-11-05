@@ -44,19 +44,42 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     lista.forEach((m, i) => reto(g, 20, y + i * (h + 6), W - 40, h, m, 'l', botones));
   }
 
-  // pestana = 'misiones' | 'logros'
+  // ---------- RANKING del Legacy (ranking.js) ----------
+  function filaRanking(g, f, x, y, w, h) {
+    UI.panel(g, x, y, w, h, f.yo ? C.naranja : '#2a1830', null, null, 3);
+    T(g, '#' + f.puesto, x + 14, y + h / 2, 18, f.yo ? '#ffffff' : C.oro, 'left', 3);
+    UI.textoCabe(g, f.nombre, x + 74, y + h / 2, 18, w - 200, '#ffffff', 'left', 3);
+    T(g, tr('Planta') + ' -' + f.planta, x + w - 14, y + h / 2, 18, '#ffffff', 'right', 3);
+  }
+  UI.ranking = function (g, W, y, alto, botones) {
+    const R = BAS_RANKING, d = R.datos, mia = SAVE.marca ? SAVE.marca.planta : 0;
+    UI.franja(g, mia ? tr('Tu mejor planta del Legacy: -{n}', { n: mia }) : tr('Llega al Código Legacy (planta -25) para entrar'), W / 2, y + 12, 16, W - 40);
+    const msg = (t, c) => UI.lineas(g, t, W / 2, y + 90, 20, W - 80, c || C.crema, 'center', 3);
+    if (!basHayRanking()) return msg(tr('El ranking necesita conexión'));
+    if (R.error) { msg(tr('No se ha podido cargar'), C.rojo); const b = { x: W / 2 - 100, y: y + 130, w: 200, h: 56, accion: 'reintentarRanking' }; UI.boton(g, b, 'azul', tr('REINTENTAR'), 22); botones.push(b); return; }
+    if (!d) return msg(tr('Cargando…'));
+    if (!d.lista.length) return msg(tr('Todavía no hay nadie: ¡sé el primero!'));
+    const h = Math.min(46, Math.floor((alto - 100) / 12) - 4), n = Math.min(d.lista.length, Math.floor((alto - 100) / (h + 4)));
+    d.lista.slice(0, n).forEach((f, i) => filaRanking(g, f, 20, y + 36 + i * (h + 4), W - 40, h));
+    if (d.yo && d.yo.puesto > n) filaRanking(g, d.yo, 20, y + 46 + n * (h + 4), W - 40, h);
+    T(g, tr('{n} becarios en el ranking', { n: d.total }), W / 2, y + alto - 14, 15, C.crema, 'center', 3);
+  };
+
+  // pestana = 'misiones' | 'logros' | 'ranking'
   UI.retos = function (g, W, H, pestana) {
     UI.fondoMenu(g, W, H, 'fondo-oficinas');
     g.fillStyle = 'rgba(10,5,20,0.75)'; g.fillRect(0, 0, W, H);
     UI.titulo(g, tr('MISIONES'), W / 2, 50, 42);
-    const botones = [], tabs = [['misiones', 'MISIONES', BAS_RETOS.listos('d') + BAS_RETOS.listos('s')], ['logros', 'LOGROS', BAS_RETOS.listos('l')]];
+    const botones = [], tabs = [['misiones', 'MISIONES', BAS_RETOS.listos('d') + BAS_RETOS.listos('s')], ['logros', 'LOGROS', BAS_RETOS.listos('l')], ['ranking', 'RANKING', 0]];
+    const tw = (W - 40 - 16) / 3;
     tabs.forEach(([id, txt, n], i) => {
-      const b = { x: 20 + i * (W / 2 - 14), y: 92, w: W / 2 - 34, h: 54, accion: 'pestanaRetos', id };
-      UI.boton(g, b, pestana === id ? 'naranja' : 'azul', tr(txt) + (n ? ' (' + n + ')' : ''), 22);
+      const b = { x: 20 + i * (tw + 8), y: 92, w: tw, h: 54, accion: 'pestanaRetos', id };
+      UI.boton(g, b, pestana === id ? 'naranja' : 'azul', '', 0);
+      UI.textoCabe(g, tr(txt) + (n ? ' (' + n + ')' : ''), b.x + tw / 2, b.y + 26, 20, tw - 12, '#ffffff', 'center', 4);
       botones.push(b);
     });
     const y = 166, alto = H - 120 - y;
-    if (pestana === 'logros') logros(g, W, y, alto, botones); else misiones(g, W, y, alto, botones);
+    if (pestana === 'logros') logros(g, W, y, alto, botones); else if (pestana === 'ranking') UI.ranking(g, W, y, alto, botones); else misiones(g, W, y, alto, botones);
     const cerrar = { x: W / 2 - 120, y: H - 104, w: 240, h: 76, accion: 'cerrarRetos' };
     UI.boton(g, cerrar, 'azul', tr('VOLVER'), 30);
     return [...botones, cerrar];

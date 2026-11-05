@@ -1,8 +1,8 @@
 {
- "build": 972,
- "hash": "d44a722",
- "fecha": "2026-11-05T15:26:28Z",
- "mensaje": "Rouflage: arCompra ya no cobra Gotas lo de la tienda (ADR 052) y la barra de pintura deja de repintar sin parar",
+ "build": 973,
+ "hash": "fec8daa",
+ "fecha": "2026-11-05T15:38:19Z",
+ "mensaje": "Pets: quitar los dientes del hocico, la boca es la del dibujo",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

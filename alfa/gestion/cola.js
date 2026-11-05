@@ -78,7 +78,7 @@
       return { t, resta, apagado: !!c && c.encendido === false, acum: resta === null ? null : acum[t.carril] };
     });
   }
-  const estado = f => f.apagado ? [f.t.enCurso ? 'pausada' : 'retenida', 'si'] : f.t.enCurso ? ['en curso', ''] : ['en cola', 'esp'];
+  const estado = f => f.apagado ? [pausa === true && f.t.carril === COLA_CONTROL.CARRIL ? 'en pausa' : f.t.enCurso ? 'pausada' : 'retenida', 'si'] : f.t.enCurso ? ['en curso', ''] : ['en cola', 'esp'];
   const eta = (f, ahora) => f.acum === null ? 'sin media' : f.apagado ? '+' + fmt(f.acum) + ' al encender' : 'en ' + fmt(f.acum) + ' · ' + hora(ahora + f.acum * 1000);
   function vistaA(F, ahora) {
     if (!F.length) return '<div class="vacio"><b>La cola está vacía</b>No hay trabajos en curso ni esperando.</div>';
@@ -91,7 +91,7 @@
     return snap.carriles.map(c => {
       const js = F.filter(f => f.t.carril === c.id), tot = js.reduce((a, f) => a + (f.resta || 0), 0), off = c.encendido === false;
       const bloques = js.length ? js.map(f => `<div class="cl-b${f.t.enCurso && !off ? ' run' : ''}" style="flex:${Math.max(1, f.resta || 1)} 1 ${f.t.enCurso ? 70 : 52}px" title="${esc(f.t.nombre)}">${esc(f.t.nombre)}<small>${f.resta === null ? '—' : fmt(f.resta)}</small></div>`).join('') : '<div class="cl-b"><small>libre</small></div>';
-      return `<section class="cl-lane"><div class="cab"><b>${esc(c.etiqueta)}</b><span class="estado ${off ? 'si' : ''}">${off ? 'apagado · reloj detenido' : 'encendido'}</span><span class="meta">${fmt(tot)} de trabajo</span></div>
+      return `<section class="cl-lane"><div class="cab"><b>${esc(c.etiqueta)}</b><span class="estado ${off ? 'si' : ''}">${off ? (pausa === true && c.id === COLA_CONTROL.CARRIL ? 'en pausa' : 'apagado') + ' · reloj detenido' : 'encendido'}</span><span class="meta">${fmt(tot)} de trabajo</span></div>
         <div class="cl-strip${off ? ' off' : ''}">${bloques}</div><div class="meta">${off ? 'al encender → +' + fmt(tot) : 'ahora → termina ' + hora(ahora + tot * 1000)}</div></section>`;
     }).join('');
   }

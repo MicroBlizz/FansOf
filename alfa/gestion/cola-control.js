@@ -5,6 +5,7 @@
 const COLA_CONTROL = (() => {
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO;
   const VARIABLE = 'PAUSA_RUNNERS_GENERAR_RECURSO';   // misma que RUNNER_PAUSA_VARIABLE de docker-compose.yml
+  const CARRIL = 'yoshi-generar-recurso';   // el carril (etiqueta del runner) que afecta la pausa
   const MAX_FALLIDAS = 30, DIAS = 7;
   const FALLO = new Set(['failure', 'timed_out', 'startup_failure']);
 
@@ -69,5 +70,5 @@ const COLA_CONTROL = (() => {
     return `<section class="caja cl-control"><h3>Ejecuciones fallidas (${e.fallidas.length})</h3>${lista}`
       + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
-  return { VARIABLE, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, htmlPausa, htmlFallidas };
+  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, htmlPausa, htmlFallidas };
 })();

@@ -1,8 +1,8 @@
 {
- "build": 975,
- "hash": "43f7de0",
- "fecha": "2026-11-05T16:08:36Z",
- "mensaje": "Alfa: solo se sube el último main; relanzar una alfa vieja ya no hace volver atrás la alfa",
+ "build": 976,
+ "hash": "756d674",
+ "fecha": "2026-11-05T16:12:00Z",
+ "mensaje": "Cola: los trabajos del carril de generar recursos dicen «en pausa» mientras está pausado",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

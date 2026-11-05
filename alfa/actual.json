@@ -1,8 +1,8 @@
 {
- "build": 962,
- "hash": "a7b6a49",
- "fecha": "2026-11-05T14:37:20Z",
- "mensaje": "Release: versión nueva de los 15 juegos activos con su nota (pantalla de inicio FoG, iconos nuevos, tienda nueva de Rouflage, hocico del hurón, icono de Karts)",
+ "build": 963,
+ "hash": "95e698e",
+ "fecha": "2026-11-05T14:48:42Z",
+ "mensaje": "Rouflage: barra de desplazamiento propia en lienzo (fluida en el móvil), rastro de 150 px y flecha que avisa de que la lista se mueve",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

@@ -74,7 +74,9 @@ function abreEscenario(conMueble) {
 function cierraEscenario() { if (SEL_ESC.s) escSelSuelta(); if (MIESC.yo) escGuarda(); if (typeof escPublica === 'function') escPublica();      // tus amigos lo verán así (visita.js)
   MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; play('select'); irTitulo(); }
 const escenarioAbierto = () => MIESC.abierto;
-function escAbreArmario() { if (!MIESC.abierto) return; play('select'); escGuarda(); if (typeof escPublica === 'function') escPublica(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(null, 'escenario'); }
+// salir de Mi escenario hacia otro menú (armario, tienda…): se guarda, se publica para los amigos y se para su bucle
+function escDeja() { escGuarda(); if (typeof escPublica === 'function') escPublica(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; }
+function escAbreArmario() { if (!MIESC.abierto) return; play('select'); escDeja(); abreArmario(null, 'escenario'); }
 function escBucle(ahora) {
   if (!MIESC.abierto) return;
   const dt = Math.min(0.05, (ahora - MIESC.ult) / 1000 || 0); MIESC.ult = ahora; MIESC.t += dt;

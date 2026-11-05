@@ -9,7 +9,7 @@ IDIOMA.add({
   "Muebles, escenarios y cosas de los mapas con la máquina de gancho. Solo con Gotas.": "Móveis, cenários e coisas dos mapas na máquina de garra. Só com Gotas.",
   "La máquina CASA es una máquina de gancho con muebles, escenarios y cosas de los mapas, y es más barata. Un mueble repetido es una unidad más para poner en tu escenario; un escenario repetido te devuelve Gotas.": "A máquina CASA é uma máquina de garra com móveis, cenários e coisas dos mapas, e é mais barata. Um móvel repetido é mais uma unidade para colocar no seu cenário; um cenário repetido te devolve Gotas.",
   "+1 UNIDAD · TIENES {n}": "+1 UNIDADE · VOCÊ TEM {n}",
-  "COMPRAR OTRA · tienes {n}": "COMPRAR OUTRA · você tem {n}",
+  "OTRA EN LA TIENDA · tienes {n}": "OUTRA NA LOJA · você tem {n}",
   "{n}: ya tienes {u}": "{n}: agora você tem {u}",
   "NO TE QUEDAN MÁS": "NÃO TE RESTA NENHUM",
   "Ya has puesto todas tus unidades de {n}. Consigue más en la máquina CASA del gachapón o cómpralas en el armario.": "Você já colocou todas as suas unidades de {n}. Consiga mais na máquina CASA do gachapon ou compre no armário.",

@@ -212,4 +212,16 @@ IDIOMA.add({
   // economía (23-10-2026)
   "Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.": "Guarantees: a Rare or better every {r} capsules, an Epic every {e} and a Legendary every {l}. You're at {a}, {b} and {c} since the last one.",
   "Con PREMIUM consigues además {n} cosas y {a} Acciones: con las del pase gratis, el siguiente te sale a mitad de precio.": "With PREMIUM you also get {n} items and {a} Shares: with the free track's, the next pass is half price.",
+  // la tienda con pestañas (5-11-2026, ADR 052)
+  "DESTACADO": "FEATURED",
+  "OBJETOS": "ITEMS",
+  "CAMBIAR GOTAS": "SWAP DROPS",
+  "COMPRAR ACCIONES": "BUY SHARES",
+  "Se paga con Acciones": "Paid with Shares",
+  "{a} Acciones · en la tienda": "{a} Shares · in the shop",
+  "VER EN LA TIENDA": "SEE IN THE SHOP",
+  "Conjunto del Rumble: cabeza, espalda, cara y papel": "Rumble outfit: head, back, face and paper",
+  "DESTACADO DE LA SEMANA": "FEATURED THIS WEEK",
+  "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "You need {n} more Shares for “{c}”. Swap Drops for them or get them here, and you'll go back to the purchase.",
+  "ESTE TE LLEGA": "THIS ONE COVERS IT",
 });

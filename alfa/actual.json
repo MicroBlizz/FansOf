@@ -1,8 +1,8 @@
 {
- "build": 948,
- "hash": "5e42a3e",
- "fecha": "2026-11-05T11:38:14Z",
- "mensaje": "Splash FOG: el logo pasa a ser el icono elegido por Pepins (imagen con rebote)",
+ "build": 949,
+ "hash": "68dc6c8",
+ "fecha": "2026-11-05T11:40:09Z",
+ "mensaje": "Rouflage: la tienda vende todo lo de pago del armario, con pestañas, y lo de la tienda se paga solo con Acciones (ADR 052)",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

@@ -212,4 +212,16 @@ IDIOMA.add({
   // economía (23-10-2026)
   "Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.": "Garantien: eine Seltene oder besser alle {r} Kapseln, eine Epische alle {e} und eine Legendäre alle {l}. Du bist bei {a}, {b} und {c} seit der letzten.",
   "Con PREMIUM consigues además {n} cosas y {a} Acciones: con las del pase gratis, el siguiente te sale a mitad de precio.": "Mit PREMIUM bekommst du außerdem {n} Sachen und {a} Aktien: zusammen mit denen des Gratis-Passes kostet dich der nächste nur die Hälfte.",
+  // la tienda con pestañas (5-11-2026, ADR 052)
+  "DESTACADO": "HIGHLIGHTS",
+  "OBJETOS": "ARTIKEL",
+  "CAMBIAR GOTAS": "TROPFEN TAUSCHEN",
+  "COMPRAR ACCIONES": "AKTIEN KAUFEN",
+  "Se paga con Acciones": "Wird mit Aktien bezahlt",
+  "{a} Acciones · en la tienda": "{a} Aktien · im Shop",
+  "VER EN LA TIENDA": "IM SHOP ANSEHEN",
+  "Conjunto del Rumble: cabeza, espalda, cara y papel": "Rumble-Outfit: Kopf, Rücken, Gesicht und Papier",
+  "DESTACADO DE LA SEMANA": "HIGHLIGHT DER WOCHE",
+  "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "Dir fehlen {n} Aktien für „{c}“. Tausche Tropfen dagegen oder hol sie dir hier, dann geht es zurück zum Kauf.",
+  "ESTE TE LLEGA": "DAS REICHT",
 });

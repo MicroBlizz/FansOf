@@ -1,7 +1,9 @@
 // Fans of Rouflage · ARMARIO (confirmar la compra): la ventana que sale al pulsar COMPRAR. Enseña la pieza en grande sobre su peana, con su
-// rareza, y dos botones para elegir cómo pagar: PAGAR CON GOTAS y PAGAR CON ACCIONES, cada uno con su precio y apagado si no te llega. Debajo
-// del de Acciones, en pequeño, lo que son en euros (lo piden las autoridades europeas de consumo: el dinero real, antes de pagar). Nada se
-// cobra hasta CONFIRMAR; CANCELAR, tocar fuera o Escape la cierran. Si no te llega ninguna, el botón de abajo lleva a la TIENDA.
+// rareza (lo que se lleva en el cuerpo, puesto en tu galleta: es el PROBAR de la tienda), y cómo pagar: lo de la TIENDA solo con Acciones y
+// lo de Gotas (escenarios y muebles) con Gotas o con Acciones, a elegir (RF.Escaparate.monedas, ADR 052). Debajo de las Acciones, en
+// pequeño, lo que son en euros (lo piden las autoridades europeas de consumo: el dinero real, antes de pagar). Nada se cobra hasta
+// CONFIRMAR; CANCELAR, tocar fuera o Escape la cierran. Si no te llega, CAMBIAR GOTAS y COMPRAR ACCIONES llevan a la pestaña ACCIONES de la
+// tienda, y al tenerlas se vuelve a abrir esta ventana (tiendaSigueCompra, tienda.js).
 // La compra la hace arCompra(cat, it, moneda) (economia.js, o el servidor: servidor-economia.js). Los precios, arPrecio. Estilo: estilo-compra.css.
 'use strict';
 
@@ -18,6 +20,7 @@ function arCompraCaja() {
       <p class="ac-pregunta ol" id="ac-pregunta"></p>
       <div class="ac-pagos" role="radiogroup" id="ac-pagos"></div>
       <p class="ac-nota" id="ac-nota"></p>
+      <div class="ac-falta" id="ac-falta" hidden><button type="button" class="boton" id="b-ac-cambiar"></button><button type="button" class="boton" id="b-ac-acciones"></button></div>
       <div class="ac-botones"><button type="button" class="boton gris" id="b-ac-cancelar"></button><button type="button" class="boton verde" id="b-ac-confirmar"></button></div>
     </div>
   </div>`;
@@ -33,12 +36,12 @@ function arPideCompra(cat, it) {
   ecoEstado();
   REPORTE.suceso('compra', { donde: 'armario', cat: cat.id, item: it.id });
   const v = arCompraCaja();
-  Object.assign(AR_COMPRA, { cat, it, ocupado: false, moneda: SAVE.gotas >= pr.gotas ? 'gotas' : SAVE.acciones >= pr.acciones ? 'acciones' : null });      // de entrada, lo ganado jugando
+  Object.assign(AR_COMPRA, { cat, it, ocupado: false, moneda: RF.Escaparate.monedas(it).find(m => SAVE[m] >= pr[m]) || null });      // de entrada, lo ganado jugando
   v.dataset.rar = it.r;
   E('ac-rareza').textContent = tr(RAREZA_AR[it.r]).toUpperCase();
   E('ac-nombre').textContent = tr(it.n);
   E('ac-cat').textContent = tr(cat.corto);
-  E('ac-pregunta').textContent = tr('¿Cómo quieres pagar?');
+  E('ac-pregunta').textContent = RF.Escaparate.monedas(it).length > 1 ? tr('¿Cómo quieres pagar?') : tr('Se paga con Acciones');
   E('ac-nota').textContent = pr.gacha ? tr('También sale en el gachapón. Elegirla tú, sin azar, cuesta un poco más.') : '';
   E('ac-nota').hidden = !pr.gacha;
   E('b-ac-cancelar').textContent = tr('CANCELAR');
@@ -67,13 +70,28 @@ function arCompraPinta() {
     b.onclick = () => { if (b.disabled) return; play('tick'); AR_COMPRA.moneda = moneda; arCompraPinta(); };
     caja.appendChild(b);
   };
-  pago('gotas', pintaGotas, tr('PAGAR CON GOTAS'), pr.gotas, SAVE.gotas, '');
+  const monedas = RF.Escaparate.monedas(it);
+  caja.classList.toggle('una', monedas.length === 1);
+  if (monedas.includes('gotas')) pago('gotas', pintaGotas, tr('PAGAR CON GOTAS'), pr.gotas, SAVE.gotas, '');
   pago('acciones', pintaAcciones, tr('PAGAR CON ACCIONES'), pr.acciones, SAVE.acciones, tr('≈ {e} € en dinero real', { e: arEuros(pr.acciones) }));
-  const ok = E('b-ac-confirmar'), ninguna = SAVE.gotas < pr.gotas && SAVE.acciones < pr.acciones;
-  ok.classList.toggle('tienda', ninguna);
-  ok.textContent = ninguna ? tr('IR A LA TIENDA') : AR_COMPRA.ocupado ? tr('COMPRANDO…') : tr('CONFIRMAR');
-  ok.disabled = AR_COMPRA.ocupado || (!ninguna && !AR_COMPRA.moneda);
-  ok.onclick = ninguna ? () => { arCompraCierra(true); abreTienda('armario'); } : arCompraConfirma;
+  const ok = E('b-ac-confirmar'), ninguna = !monedas.some(m => SAVE[m] >= pr[m]);
+  ok.textContent = AR_COMPRA.ocupado ? tr('COMPRANDO…') : tr('CONFIRMAR');
+  ok.disabled = AR_COMPRA.ocupado || !AR_COMPRA.moneda;
+  ok.hidden = ninguna; ok.onclick = arCompraConfirma;
+  arCompraPintaFalta(ninguna);
+}
+// si no te llega: dos botones que llevan a la pestaña ACCIONES de la tienda (al cambio de Gotas o a los paquetes con euros)
+function arCompraPintaFalta(ninguna) {
+  const fila = E('ac-falta'); fila.hidden = !ninguna; if (!ninguna) return;
+  E('b-ac-cambiar').textContent = tr('CAMBIAR GOTAS'); E('b-ac-cambiar').onclick = () => arCompraAlaTienda('tienda-gotas');
+  E('b-ac-acciones').textContent = tr('COMPRAR ACCIONES'); E('b-ac-acciones').onclick = () => arCompraAlaTienda('tienda-acciones');
+}
+function arCompraAlaTienda(seccion) {
+  const pendiente = { cat: AR_COMPRA.cat, it: AR_COMPRA.it };
+  arCompraCierra(true);
+  if (!E('p-tienda').hidden) { play('select'); TIENDA.pendiente = pendiente; TIENDA.pestana = 'acc'; tiendaPinta(); }
+  else { const desde = typeof MIESC !== 'undefined' && MIESC.abierto ? 'escenario' : 'titulo'; if (desde === 'escenario') escDeja(); abreTienda(desde, { pestana: 'acc', pendiente }); }
+  const s = E(seccion); if (seccion === 'tienda-gotas') E('tienda-lista').scrollTop = 0; else if (s && s.previousElementSibling) s.previousElementSibling.scrollIntoView({ block: 'start' });      // el cambio va arriba, con el aviso de lo que falta
 }
 async function arCompraConfirma() {
   const { cat, it, moneda } = AR_COMPRA; if (!moneda || AR_COMPRA.ocupado) return;
@@ -95,6 +113,7 @@ function arCompraTecla(e) { if (e.key === 'Escape') { e.preventDefault(); e.stop
 function arCompraAnima() {
   cancelAnimationFrame(AR_COMPRA.raf); AR_COMPRA.raf = 0;
   const { cat, it } = AR_COMPRA, k = E('ac-pieza');
+  if (cat.cuerpo || cat.conjuntos) { arPinta(k, (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92 }, ropaDe({ cat: cat.id, it })))); return; }      // puesta en tu galleta
   arPinta(k, (c, w) => it.x(c, w));
   if (!['fantasma', 'mascotas'].includes(cat.id)) return;
   const paso = ahora => { if (E('ar-compra').hidden) { AR_COMPRA.raf = 0; return; } arPinta(k, (c, w) => it.x(c, w, ahora / 1000)); AR_COMPRA.raf = requestAnimationFrame(paso); };

@@ -124,13 +124,24 @@
   <div class="caja tienda-caja">
     <h2 class="ol" data-tr>TIENDA</h2>
     <div class="cartera" id="tienda-cartera"></div>
-    <div class="tienda-lista">
-      <button type="button" class="tienda-gacha" id="b-gacha"><b class="ol" data-tr>GACHAPÓN</b><span data-tr>Cápsulas con piezas del armario. Tiradas gratis cada día.</span><i class="tienda-gacha-aviso" id="tienda-gacha-aviso" hidden></i></button>
-      <div class="tienda-hoy" id="tienda-hoy" hidden><h3 class="ol" data-tr>OFERTAS DE HOY</h3><small id="tienda-hoy-t"></small><div id="tienda-hoy-lista"></div></div>
-      <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
-      <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>
-      <h3 class="ol" data-tr>ACCIONES CON GOTAS</h3><div id="tienda-gotas"></div>
-      <div id="tienda-caos"><h3 class="ol" data-tr>CAOS PRIMORDIAL</h3><button type="button" class="boton" id="b-tienda-caos" data-tr>Caos primordial ilimitado</button></div>
+    <div class="tn-pestanas" role="tablist" data-tr-aria aria-label="Tienda"><button type="button" class="tn-pes ol" id="b-tn-dest" role="tab" data-tr>DESTACADO</button><button type="button" class="tn-pes ol" id="b-tn-obj" role="tab" data-tr>OBJETOS</button><button type="button" class="tn-pes ol" id="b-tn-acc" role="tab" data-tr>ACCIONES</button></div>
+    <div class="tienda-lista" id="tienda-lista">
+      <div class="tn-hoja" id="tn-dest" role="tabpanel">
+        <button type="button" class="tienda-gacha" id="b-gacha"><b class="ol" data-tr>GACHAPÓN</b><span data-tr>Cápsulas con piezas del armario. Tiradas gratis cada día.</span><i class="tienda-gacha-aviso" id="tienda-gacha-aviso" hidden></i></button>
+        <div class="tn-destacado" id="tienda-destacado" hidden></div>
+        <div class="tienda-hoy" id="tienda-hoy" hidden><h3 class="ol" data-tr>OFERTAS DE HOY</h3><small id="tienda-hoy-t"></small><div id="tienda-hoy-lista"></div></div>
+        <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
+      </div>
+      <div class="tn-hoja" id="tn-obj" role="tabpanel" hidden>
+        <div class="tn-cats" id="tienda-cats"></div>
+        <div class="tn-rejilla" id="tienda-rejilla"></div>
+      </div>
+      <div class="tn-hoja" id="tn-acc" role="tabpanel" hidden>
+        <p class="tn-pendiente" id="tienda-pendiente" hidden></p>
+        <h3 class="ol" data-tr>ACCIONES CON GOTAS</h3><div id="tienda-gotas"></div>
+        <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>
+        <div id="tienda-caos"><h3 class="ol" data-tr>CAOS PRIMORDIAL</h3><button type="button" class="boton" id="b-tienda-caos" data-tr>Caos primordial ilimitado</button></div>
+      </div>
     </div>
     <button type="button" class="boton peq" id="b-tienda-volver" data-tr>Volver</button>
   </div>

@@ -276,9 +276,3 @@
 .tit-pvp-caos:empty { display: none; }
 .tit-pvp-caos #rf-energia { position: static; z-index: auto; }
 .tit-pvp-caja:has(.tit-pvp-caos:not(:empty)) .boton.tit-pvp { padding-right: 100px; }
-/* las ofertas de hoy: la etiqueta del descuento en la esquina y el precio de siempre tachado encima del rebajado */
-.tn-tarjeta.hoy { position: relative; }
-.tn-rebaja { position: absolute; top: 4px; left: 4px; z-index: 1; transform: rotate(-6deg); padding: 1px 6px 0; border-radius: 7px; background: #ffcb3d; color: var(--outline); border: 2px solid var(--outline); font: 900 12px/1.3 var(--font-ui); font-style: normal; letter-spacing: 0; }
-.tn-dos .boton.tn-con-antes { flex-direction: column; gap: 0; line-height: 1; }
-.tn-antes { font: 800 12px/1.1 var(--font-ui); color: #fff6ea; text-shadow: none; -webkit-text-stroke: 0; paint-order: normal; text-decoration: line-through 1.5px #3a0d0d; }
-.tn-ahora { display: inline-flex; gap: 4px; align-items: center; }

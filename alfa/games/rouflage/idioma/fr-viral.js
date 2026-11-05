@@ -212,4 +212,16 @@ IDIOMA.add({
   // economía (23-10-2026)
   "Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.": "Garanties : une Rare ou mieux toutes les {r} capsules, une Épique toutes les {e} et une Légendaire toutes les {l}. Tu en es à {a}, {b} et {c} depuis la dernière.",
   "Con PREMIUM consigues además {n} cosas y {a} Acciones: con las del pase gratis, el siguiente te sale a mitad de precio.": "Avec PREMIUM tu obtiens en plus {n} objets et {a} Actions : avec celles du pass gratuit, le suivant te revient à moitié prix.",
+  // la tienda con pestañas (5-11-2026, ADR 052)
+  "DESTACADO": "À LA UNE",
+  "OBJETOS": "OBJETS",
+  "CAMBIAR GOTAS": "ÉCHANGER GOUTTES",
+  "COMPRAR ACCIONES": "ACHETER DES ACTIONS",
+  "Se paga con Acciones": "Se paie en Actions",
+  "{a} Acciones · en la tienda": "{a} Actions · en boutique",
+  "VER EN LA TIENDA": "VOIR EN BOUTIQUE",
+  "Conjunto del Rumble: cabeza, espalda, cara y papel": "Tenue du Rumble : tête, dos, visage et papier",
+  "DESTACADO DE LA SEMANA": "À LA UNE CETTE SEMAINE",
+  "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "Il te manque {n} Actions pour « {c} ». Échange-les contre des Gouttes ou obtiens-les ici, et tu reviendras à l'achat.",
+  "ESTE TE LLEGA": "CELUI-CI SUFFIT",
 });

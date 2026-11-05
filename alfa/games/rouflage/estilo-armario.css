@@ -37,7 +37,7 @@
 .ar-estado.tuyo { background: var(--hielo); color: var(--outline) !important; }
 .ar-estado.bloq { background: var(--gold); color: var(--outline) !important; }
 
-.ar-pestanas { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
+.ar-pestanas { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 6px; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
 .ar-pest { flex: 0 0 auto; font-family: var(--font-display); font-size: 15px; color: var(--ink-dim); background: var(--tray); border: 3px solid var(--outline); border-radius: 12px; padding: 6px 12px 3px; cursor: pointer; }
 .ar-pest.activa { background: var(--gold); color: var(--outline); box-shadow: 0 3px 0 var(--outline); }
 .ar-nota { font-size: 13px; color: var(--ink-dim); text-align: left; margin: 0; }

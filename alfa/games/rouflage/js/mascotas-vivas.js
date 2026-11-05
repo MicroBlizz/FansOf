@@ -29,7 +29,11 @@ const MASCOTAS_VIVAS = (() => {
     c.closePath();
   }
   const ovalo = (c, x, y, rx, ry, rot = 0) => { c.moveTo(x + Math.cos(rot) * rx, y + Math.sin(rot) * rx); c.ellipse(x, y, rx, ry, rot, 0, T); c.closePath(); };
-  const tri = (c, ...p) => { c.moveTo(p[0], p[1]); c.lineTo(p[2], p[3]); c.lineTo(p[4], p[5]); c.closePath(); };
+  // un triángulo siempre en el mismo sentido de giro que las demás piezas: si va al revés, al juntarse con otra pieza abre un agujero
+  const tri = (c, ...p) => {
+    if ((p[2] - p[0]) * (p[5] - p[1]) - (p[3] - p[1]) * (p[4] - p[0]) < 0) p = [p[0], p[1], p[4], p[5], p[2], p[3]];
+    c.moveTo(p[0], p[1]); c.lineTo(p[2], p[3]); c.lineTo(p[4], p[5]); c.closePath();
+  };
   // una cadena (cola, tentáculo): trozos que se estrechan, cada uno con su ángulo
   function cadena(c, x, y, angs, largo, r0, r1) {
     let px = x, py = y;
@@ -70,7 +74,7 @@ const MASCOTAS_VIVAS = (() => {
     if (parpadea(o)) { c.beginPath(); c.moveTo(x - r, y); c.quadraticCurveTo(x, y + r * 0.8, x + r, y); c.lineWidth = 1; c.strokeStyle = OL; c.lineCap = 'round'; c.stroke(); return; }
     mancha(c, cc => ovalo(cc, x + mx, y, r * 0.78, r), OL); mancha(c, cc => ovalo(cc, x + mx + r * 0.28, y - r * 0.38, r * 0.3, r * 0.3), '#fff');
   }
-  const colorete = (c, x, y) => mancha(c, cc => ovalo(cc, x, y, 1.6, 0.95), 'rgba(255,110,150,.5)');
+  const colorete = (c, x, y) => mancha(c, cc => ovalo(cc, x, y, 1.6, 0.95), 'rgba(255,120,165,.85)');      // rosa casi opaco: se ve también sobre verdes y grises
   const sonrisa = (c, x, y, w = 1.3) => { c.beginPath(); c.arc(x, y - 0.6, w, 0.4, Math.PI - 0.4); c.lineWidth = 0.9; c.strokeStyle = OL; c.lineCap = 'round'; c.stroke(); };
   // la boca según el gesto: feliz, abierta con lengüita; susto, una «o»; duerme, una rayita; serio, recta; si no, la sonrisa
   function boca(c, x, y, o, w = 1.2) {

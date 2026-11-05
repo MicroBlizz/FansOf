@@ -1,8 +1,8 @@
 {
- "build": 991,
- "hash": "88b9a23",
- "fecha": "2026-11-05T18:43:56Z",
- "mensaje": "Rouflage: tanda 2 de mascotas vivas: castor, vaca, suricato, kaiju y pollito",
+ "build": 992,
+ "hash": "5edc9bc",
+ "fecha": "2026-11-05T18:50:23Z",
+ "mensaje": "Rouflage: kaiju mascota arreglado: púas por fuera de la espalda, bracitos hacia delante y colorete rosa",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

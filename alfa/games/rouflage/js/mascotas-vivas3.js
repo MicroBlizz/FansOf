@@ -30,8 +30,8 @@
   function bipedo(c, o, s) {
     const dt = dtDe(o), P = postura(o, s, dt), m = o.m;
     const cola = s.cola ? puntosCadena(P.cadX - 2, P.cadY + 1, Array.from({ length: s.cola.trozos }, (_, i) => P.colaA + muelle(m, 'cola' + (i + 1), Math.sin(o.t * 2.4 - i * 0.8) * 0.15 * (i + 1) * 0.5, dt, 60, 7) - i * (s.cola.curva || 0)), s.cola.largo) : null;
-    const hombro = [P.pechoX + 0.6, P.pechoY + 2];
-    const brazos = [0, 1].map(i => { const a = Math.PI / 2 + 0.35 + P.brazoR[i]; return [...hombro, hombro[0] + Math.cos(a) * (s.brazo || 4), hombro[1] + Math.sin(a) * (s.brazo || 4)]; });
+    const hombro = [P.pechoX + 0.6 + (s.hombroX || 0), P.pechoY + 2];
+    const brazos = [0, 1].map(i => { const a = (s.brazoAng ?? Math.PI / 2 + 0.35) + P.brazoR[i]; return [...hombro, hombro[0] + Math.cos(a) * (s.brazo || 4), hombro[1] + Math.sin(a) * (s.brazo || 4)]; });
     const piernas = [0, 1].map(i => pataAnda(P.F + i * Math.PI, P.cor, P.cadX + (i ? 1.4 : -1.4), P.cadY + 1, (s.piernas || 5) + P.bote - P.baja + 1, Math.max(P.duerme, P.sienta)));
     const traza = cc => {
       capsula(cc, P.cadX, P.cadY, P.pechoX, P.pechoY, s.anchoCadera || 4.4, s.anchoPecho || 3.6);
@@ -69,13 +69,13 @@
     // KAIJU: el lagartito monstruo de la serie: verde, púas en el lomo, cola gorda. Ruge (abre la boca, tiembla y salen ondas) y pisa
     // (pisotón que levanta polvo)
     kaiju: {
-      color: '#34d399', panza: '#bbf7d0', piernas: 4.6, tronco: 7.5, anchoCadera: 5, anchoPecho: 4, rCabeza: 4.8, brazo: 3, grosorBrazo: 1.3, grosorPierna: 2,
+      color: '#34d399', panza: '#bbf7d0', piernas: 4.6, tronco: 7.5, anchoCadera: 5, anchoPecho: 4, rCabeza: 4.8, brazo: 3.4, grosorBrazo: 1.3, grosorPierna: 2, brazoAng: 0.5, hombroX: 2.4,
       cola: { trozos: 4, largo: 2.6, r0: 3, r1: 1.2, curva: -0.08 }, colaBase: 2.7, cuelloX: 0.8,
       extra: (c, P, cola) => {      // púas: por la espalda y la cola
-        const pts = [[P.cadX - 1.6, P.cadY - 3.4], [P.pechoX - 2.6, (P.cadY + P.pechoY) / 2 - 1.6], [P.pechoX - 2, P.pechoY - 0.6], ...(cola ? cola.slice(1, 3).map(([x, y]) => [x, y - 2.2]) : [])];
-        for (const [x, y] of pts) tri(c, x - 1.6, y + 1.2, x + 1.6, y + 1.2, x - 0.6, y - 2.4);
+        const pts = puasKaiju(P, cola);
+        for (const [x, y, a] of pts) { c.save(); c.translate(x, y); c.rotate(a); tri(c, -1.7, 1.4, 1.7, 1.4, 0, -2.6); c.restore(); }
       },
-      manchas: (c, P, cola) => { const pts = [[P.cadX - 1.6, P.cadY - 3.4], [P.pechoX - 2.6, (P.cadY + P.pechoY) / 2 - 1.6], [P.pechoX - 2, P.pechoY - 0.6], ...(cola ? cola.slice(1, 3).map(([x, y]) => [x, y - 2.2]) : [])]; for (const [x, y] of pts) mancha(c, k => tri(k, x - 1, y + 1.2, x + 1, y + 1.2, x - 0.4, y - 1.4), '#f472b6'); },
+      manchas: (c, P, cola) => { const pts = puasKaiju(P, cola); for (const [x, y, a] of pts) { c.save(); c.translate(x, y); c.rotate(a); mancha(c, k => tri(k, -1, 1.4, 1, 1.4, 0, -1.6), '#f472b6'); c.restore(); } },
       pose: (o, P) => {
         if (o.acc === 'ruge') { const a = env(o.k, 0.15); P.inclina = -0.25 * a; P.brazos = -1.2 * a; P.cabExtra = -1 * a; P.ladeo = -0.3 * a + Math.sin(o.t * 40) * 0.05 * a; }
         if (o.acc === 'pisa') { const q = o.k; P.alto = q < 0.5 ? Math.sin(q / 0.5 * Math.PI / 2) * 3 : Math.max(0, 3 - (q - 0.5) / 0.08 * 3); }
@@ -101,6 +101,12 @@
     },
   };
   const gestoFeliz = o => MV_KIT.gesto(o) === 'feliz';
+  // las púas del kaiju: tres en el borde de la espalda, por fuera del tronco y apuntando hacia atrás y arriba: [x, y, giro]
+  function puasKaiju(P, cola) {
+    const ang = Math.atan2(P.pechoY - P.cadY, P.pechoX - P.cadX), nx = Math.cos(ang - Math.PI / 2), ny = Math.sin(ang - Math.PI / 2), giro = ang - 0.35;
+    const lomo = [0.15, 0.5, 0.85].map(f => [P.cadX + (P.pechoX - P.cadX) * f + nx * 4.2, P.cadY + (P.pechoY - P.cadY) * f + ny * 4.2, giro]);
+    return lomo;
+  }
 
   for (const [id, s] of Object.entries(ESPECIES)) MASCOTAS_VIVAS[id] = (c, o) => bipedo(c, o, s);
   Object.assign(MASCOTAS_VIVAS_ACC, {

@@ -78,4 +78,19 @@ function tnBotonPrecio(cat, it, icono) {
 
 function preparaTiendaPestanas() {
   for (const [id, boton] of TN_PESTANAS) E(boton).onclick = () => tiendaPestana(id);
+  tnDeslizaLado(E('tienda-cats'));
+}
+// la fila de categorías se desliza de lado: con el dedo (touch-action pan-x, estilo-tienda.css), con la rueda del ratón y arrastrando con el ratón
+function tnDeslizaLado(fila) {
+  fila.addEventListener('wheel', e => { if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; e.preventDefault(); fila.scrollLeft += e.deltaY; }, { passive: false });
+  const arr = { x: 0, izq: 0, movido: false, id: null };
+  fila.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; Object.assign(arr, { x: e.clientX, izq: fila.scrollLeft, movido: false, id: e.pointerId }); });
+  fila.addEventListener('pointermove', e => {
+    if (arr.id !== e.pointerId) return;
+    const dx = e.clientX - arr.x; if (Math.abs(dx) > 5) arr.movido = true;
+    if (arr.movido) fila.scrollLeft = arr.izq - dx;
+  });
+  const suelta = () => { arr.id = null; };
+  fila.addEventListener('pointerup', suelta); fila.addEventListener('pointerleave', suelta);
+  fila.addEventListener('click', e => { if (arr.movido) { e.stopPropagation(); e.preventDefault(); arr.movido = false; } }, true);      // arrastrar no elige categoría
 }

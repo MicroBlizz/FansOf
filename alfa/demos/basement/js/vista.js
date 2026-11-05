@@ -101,7 +101,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function enemigos(g, e) {
     for (const en of e.enemigos) {
       const x = V.sx(en.x), y = V.sy(en.y) + Math.sin(e.t * 5 + en.id) * 2;
-      V.pintaCosa(g, en.tipo, x, y, { blanco: en.golpeT > 0.06 });   // sin voltear: lo que llevan en la mano no cambia de mano
+      V.pintaCosa(g, en.tipo, x, y, { blanco: en.golpeT > 0.06 }, 1 + en.golpeT * 1.6);   // sin voltear; al recibir, se hinchan un instante
       if (en.tipo === 'reunion' && en.vida < en.vidaMax) UI.barra(g, x - 36, y - en.radio * K - 22, 72, 14, en.vida / en.vidaMax, UI.C.rojo);
     }
   }

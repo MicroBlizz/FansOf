@@ -55,6 +55,9 @@ function basMp3(n) {
 function basSuena(n) { try { if (!basMp3(n) && BAS_SONIDO[n]) BAS_SONIDO[n](); } catch (e) { console.warn('Basement: sin sonido', e); } }
 
 let basFinSonado = null;
+// la canción de cada zona y de cada jefe (de las de la serie, core/js/serie/canciones.js)
+const ZONA_MUSICA = { marketing: 'pop', soporte: 'streamers', qa: 'gamer', servidores: 'ciber', direccion: 'heroes', legacy: 'olvidados' };
+const JEFE_MUSICA = { producto: 'boss1', rrhh: 'boss2', lanzamiento: 'boss3', accionistas: 'boss4', ceo: 'boss7' };
 // modo = 'portada' | 'mesa' | 'bajada' | 'resultado'; e = la bajada en curso (si hay)
 function basMusica(modo, e) {
   if (typeof AC === 'undefined' || !AC || !M.bus) return;
@@ -63,7 +66,7 @@ function basMusica(modo, e) {
     return;
   }
   if (M.trk && M.trk.once) return;
-  const quiero = modo !== 'bajada' ? 'menu' : e.jefe ? 'boss' : e.zona.crunch ? 'boss0' : 'ciber';
+  const quiero = modo !== 'bajada' ? 'menu' : e.jefe ? JEFE_MUSICA[e.jefe.id] || 'boss' : ZONA_MUSICA[e.zona.id] || 'ciber';
   if (M.name !== quiero) musicSet(quiero);
   M.tmT = 1;
 }

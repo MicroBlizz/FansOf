@@ -32,11 +32,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   // Una bala: lo que haga al chocar depende de su arma (atraviesa, area, rebotes, lento, cafe). `retraso` = espera pegada al
   // jugador antes de salir (las ráfagas).
-  function bala(e, x, y, ang, dano, quien, arma, retraso) {
+  function bala(e, x, y, ang, dano, quien, arma, retraso, critico) {
     const W = e.aj.arma, a = arma || {}, vel = W.velBala * (a.vel || 1);
     e.balas.push({ x, y, vx: Math.cos(ang) * vel, vy: Math.sin(ang) * vel, vida: W.vidaBala / (a.vel || 1), dano, quien, arma: a.id || 'grapadora',
       atraviesa: a.atraviesa || 1, area: a.area || 0, rebotes: (a.rebotes || 0) + (quien === 'jugador' ? e.stats.rebote || 0 : 0), tocados: [],
-      lento: a.lento || null, cafe: a.cafe || 0, retraso: retraso || 0 });
+      lento: a.lento || null, cafe: a.cafe || 0, retraso: retraso || 0, critico: !!critico });
   }
 
   // Hacia dónde sale cada una de las n balas: en abanico hacia el blanco o, el router, repartidas en círculo.
@@ -49,11 +49,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function disparaJugador(e, rnd) {
     const j = e.jugador, a = e.stats.arma || {}, en = A.objetivo(e, null, null, e.stats.alcance * (a.alcance || 1));
     if (!en) return false;
-    const ang = Math.atan2(en.y - j.y, en.x - j.x);
-    if (a.directo) explota(e, { x: en.x, y: en.y, area: a.area, dano: e.stats.dano }, rnd, a.id);
+    const ang = Math.atan2(en.y - j.y, en.x - j.x), K = e.aj.critico, critico = rnd() < K.prob, dano = e.stats.dano * (critico ? K.mult : 1);
+    if (a.directo) explota(e, { x: en.x, y: en.y, area: a.area, dano, critico }, rnd, a.id);
     else {
       const lista = A.angulos(a, ang, (a.balas || 1) * e.stats.multi);
-      for (let k = 0; k < (a.rafaga || 1); k++) for (const g of lista) bala(e, j.x, j.y, g, e.stats.dano, 'jugador', a, k * (a.entre || 0));
+      for (let k = 0; k < (a.rafaga || 1); k++) for (const g of lista) bala(e, j.x, j.y, g, dano, 'jugador', a, k * (a.entre || 0), critico);
     }
     j.mira = en.x >= j.x ? 1 : -1;
     e.eventos.push({ tipo: 'disparo', x: j.x, y: j.y, ang, arma: a.id || 'grapadora' });
@@ -74,14 +74,14 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (a.cafeT <= 0) { a.cafeT = a.cafeCada; B.enemigos.soltar(e, 'cafe', a.x, a.y + 10); e.eventos.push({ tipo: 'dronCafe', x: a.x, y: a.y }); }
   }
 
-  const herir = (e, blanco, dano, rnd) => (blanco === e.jefe ? B.jefes.herir(e, dano) : esMueble(e, blanco) ? B.muebles.herir(e, blanco, dano, rnd) : B.enemigos.herir(e, blanco, dano, rnd));
+  const herir = (e, blanco, dano, rnd, critico) => (blanco === e.jefe ? B.jefes.herir(e, dano, critico) : esMueble(e, blanco) ? B.muebles.herir(e, blanco, dano, rnd, critico) : B.enemigos.herir(e, blanco, dano, rnd, critico));
 
   // El extintor y el sello: daña a todo lo que esté en su área.
   function explota(e, b, rnd, arma) {
     const r2 = b.area * b.area, cerca = (q) => (q.x - b.x) ** 2 + (q.y - b.y) ** 2 <= r2;
-    for (const en of e.enemigos.filter(cerca)) B.enemigos.herir(e, en, b.dano, rnd);
-    for (const m of e.muebles.filter(cerca)) B.muebles.herir(e, m, b.dano, rnd);
-    if (e.jefe && (e.jefe.x - b.x) ** 2 + (e.jefe.y - b.y) ** 2 <= (b.area + e.jefe.radio) ** 2) B.jefes.herir(e, b.dano);
+    for (const en of e.enemigos.filter(cerca)) B.enemigos.herir(e, en, b.dano, rnd, b.critico);
+    for (const m of e.muebles.filter(cerca)) B.muebles.herir(e, m, b.dano, rnd, b.critico);
+    if (e.jefe && (e.jefe.x - b.x) ** 2 + (e.jefe.y - b.y) ** 2 <= (b.area + e.jefe.radio) ** 2) B.jefes.herir(e, b.dano, b.critico);
     e.eventos.push({ tipo: 'explosion', x: b.x, y: b.y, radio: b.area, arma: arma || b.arma });
   }
 
@@ -104,7 +104,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function golpe(e, b, blanco, rnd) {
     if (b.area) { explota(e, b, rnd); return true; }
     b.tocados.push(idDe(e, blanco));
-    const bicho = blanco !== e.jefe && !esMueble(e, blanco), muerto = herir(e, blanco, b.dano, rnd);
+    const bicho = blanco !== e.jefe && !esMueble(e, blanco), muerto = herir(e, blanco, b.dano, rnd, b.critico);
     if (bicho) deja(e, b, blanco, muerto);
     if (b.rebotes > 0 && rebota(e, b)) return false;
     b.atraviesa--;

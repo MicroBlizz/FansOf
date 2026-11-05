@@ -38,6 +38,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     diapositiva(g) { UI.panel(g, -13, -10, 26, 20, '#ffffff', null, null, 2); g.fillStyle = UI.C.rojo; g.fillRect(-10, -7, 20, 5); },
     sello(g) { g.fillStyle = '#1a0f1f'; g.beginPath(); g.arc(0, 0, 13, 0, 7); g.fill(); g.fillStyle = UI.C.rojo; g.beginPath(); g.arc(0, 0, 10, 0, 7); g.fill(); g.fillStyle = '#ffffff'; g.fillRect(-6, -2, 12, 4); },
     moneda(g) { UI.dibuja(g, 'i-oro', 0, 0, 2); },
+    escombro(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-13, -11, 26, 22); g.fillStyle = '#8a7a68'; g.fillRect(-10, -8, 20, 16); g.fillStyle = '#b8a48a'; g.fillRect(-10, -8, 8, 6); },
   };
   V.proyectiles = function (g, e) {
     for (const p of e.proyectiles) { g.save(); g.translate(V.sx(p.x), V.sy(p.y)); g.rotate(p.tipo === 'moneda' ? 0 : e.t * 4); PROY[p.tipo](g); g.restore(); }

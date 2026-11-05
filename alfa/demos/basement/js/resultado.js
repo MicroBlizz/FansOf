@@ -14,6 +14,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (paq) f.push([tr('Paquetes'), '+' + paq, '#c8901a']);
     const mat = Object.values(r.materiales || {}).reduce((s, n) => s + n, 0);
     if (mat) f.push([tr('Materiales'), '+' + mat, '#5a6478']);
+    if (B.sensacion.mejorRacha >= 5) f.push([tr('Mejor racha'), 'x' + B.sensacion.mejorRacha]);
     f.push([tr('Monedas'), '+' + r.monedas, salvo ? '#c8901a' : C.rojo]);
     return f;
   }

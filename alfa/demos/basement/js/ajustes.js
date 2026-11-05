@@ -18,6 +18,8 @@ BAS.AJ = Object.freeze({
   caja: { base: 15 },
   // El arma dispara sola al enemigo más cercano dentro del alcance (base: la formación y el equipo lo mejoran).
   arma: { dano: 10, cadencia: 0.3, alcance: 150, velBala: 560, vidaBala: 0.45, radioBala: 3 },
+  // Golpe crítico: con esta probabilidad, todo un disparo hace `mult` veces el daño (y se ve en grande).
+  critico: { prob: 0.12, mult: 2 },
   // Llamar al ascensor de emergencia: tarda `espera` segundos en llegar y te sube con lo que lleves.
   ascensor: { espera: 3 },
   // Enemigos: desde = primera planta en la que salen; peso = lo a menudo que salen; botin = qué sueltan.
@@ -92,8 +94,12 @@ BAS.AJ = Object.freeze({
     rrhh: { nombre: 'SurvivalBot de Recursos Humanos', vida: 420, radio: 46, vel: 50, golpe: 6, cada: 2.2, bala: { vel: 130, dano: 5, radio: 8 }, abanico: 3 },
     lanzamiento: { nombre: 'ServidorBot del Lanzamiento', vida: 560, radio: 46, vel: 40, golpe: 7, cada: 3.0, invoca: 2 },
     accionistas: { nombre: 'El Presidente del Consejo', vida: 750, radio: 50, vel: 45, golpe: 6, cada: 2.6, bala: { vel: 110, dano: 5, radio: 7 }, anillo: 8 },
-    ceo: { nombre: 'El CEO', vida: 1100, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2 },
+    ceo: { nombre: 'El CEO', vida: 1100, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2, anillo: 10, fases: [0.66, 0.33] },
     premio: { tazas: 3 },
+    // Las fases: al bajar la vida de cada umbral el jefe se enfada (ataca y se mueve más deprisa). El CEO tiene tres.
+    fases: [0.5], furia: { cada: 0.7, vel: 1.3 },
+    // El derrumbe: al vencer al CEO el edificio se viene abajo; el ascensor viene solo (tarda `espera` s) y caen escombros cada `cada` s.
+    derrumbe: { espera: 6, cada: 0.35, vel: 260, dano: 4, radio: 9 },
   },
   // Becarios atrapados: en cada planta (desde la 1) puede haber uno; al tocarlo te sigue y dispara solo durante la bajada.
   // Si subes a salvo, cada uno te da una propina (sube un 12 % por planta).

@@ -20,7 +20,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // ---------- eventos del dominio -> efectos y sonidos ----------
   const EFECTOS = {
     disparo: () => basSuena('disparo'),
-    impacto: (ev) => { FX.numero(ev.x, ev.y - 10, Math.round(ev.dano), '#ffffff', 12); FX.chispas(ev.x, ev.y, 4, '#ffe14a', 70); basSuena('impacto'); },
+    impacto: (ev) => { if (ev.critico) { FX.numero(ev.x, ev.y - 16, Math.round(ev.dano) + '!', '#ffd23a', 20); FX.chispas(ev.x, ev.y, 10, '#ffd23a', 140); } else FX.numero(ev.x, ev.y - 10, Math.round(ev.dano), '#ffffff', 12); FX.chispas(ev.x, ev.y, 4, '#ffe14a', 70); basSuena('impacto'); },
     baja: (ev) => { FX.chispas(ev.x, ev.y, 14, ev.enemigo === 'bug' ? '#3fa34d' : '#ffffff', 110); FX.temblor = Math.max(FX.temblor, 3); basSuena('baja'); },
     divide: (ev) => { FX.numero(ev.x, ev.y - 18, 'RE: RE:', '#e5322d', 12); basSuena('divide'); },
     recoge: (ev) => { FX.numero(ev.x, ev.y - 12, '+' + ev.valor, '#ffe14a', 14); basSuena('recoge'); },
@@ -32,7 +32,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     zona: (ev) => { FX.cartel(tr(ev.zona.nombre).toUpperCase(), '#ffe14a', 2, ev.zona.crunch ? tr('CRUNCH ZONE: el café se gasta más rápido') : ''); basSuena('zona'); },
     cafeBajo: () => { FX.cartel(tr('¡QUEDA POCO CAFÉ!'), '#e5322d', 1.6, tr('Sube antes de desmayarte')); basSuena('cafeBajo'); },
     ascensorLlamado: () => { FX.cartel(tr('ASCENSOR EN CAMINO'), '#5fe05f', 1.4, tr('Aguanta unos segundos')); basSuena('ascensorLlamado'); },
-    jefe: (ev) => { TU.lanza('jefe', est.t); FX.cartel(tr(ev.nombre).toUpperCase(), '#e5322d', 2.2, tr('No podrás bajar hasta vencerlo')); FX.temblor = 14; vibrar(80); basSuena('jefe'); },
+    jefe: () => { FX.temblor = 14; vibrar(80); basSuena('jefe'); },   // la entrada de película la pinta sensacion.js; Lola explica después
+    fase: (ev) => { FX.cartel(tr('¡FASE {n}!', { n: ev.fase }), '#e5322d', 1.2, tr('Se ha enfadado')); FX.chispas(ev.x, ev.y, 30, '#e5322d', 220); FX.temblor = 12; vibrar(60); basSuena('jefe'); },
     jefeVencido: (ev) => { FX.confeti(ev.x, ev.y); FX.chispas(ev.x, ev.y, 40, '#ffe14a', 200); FX.temblor = 20; FX.cartel(tr('¡JEFE VENCIDO!'), '#5fe05f', 2, tr('Recoge el paquete')); vibrar(120); basSuena('jefeVencido'); },
     ataqueJefe: () => basSuena('ataqueJefe'),
     bloqueado: (ev) => { FX.numero(ev.x, ev.y - 30, tr('¡ESCUDO!'), '#3b8de0', 12); basSuena('no'); },
@@ -52,7 +53,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     apagon: () => { FX.cartel(tr('¡APAGÓN!'), '#8ac4ff', 1); basSuena('cafeBajo'); },
     eventoPlanta: (ev) => { const E = EVENTO[ev.evento]; FX.cartel(tr(E[0]), E[1], 2, tr(E[2])); basSuena('zona'); },
     auditoriaAscensor: () => { FX.cartel(tr('¡AUDITORÍA!'), '#e8413a', 1.2, tr('El ascensor no para en esta planta')); basSuena('no'); },
-    final: () => { FX.cartel(tr('¡SERVIDOR ARREGLADO!'), '#4fc25a', 3, tr('Microblizz vuelve a funcionar')); FX.confeti(est.e.jugador.x, est.e.jugador.y); FX.confeti(est.e.jugador.x, est.e.jugador.y - 60); vibrar(300); TU.lanza('final', est.t); },
+    final: () => { FX.cartel(tr('¡SERVIDOR ARREGLADO!'), '#4fc25a', 1.6, tr('Microblizz vuelve a funcionar')); FX.cartel(tr('¡EL EDIFICIO SE DERRUMBA!'), '#e5322d', 3, tr('Aguanta hasta que llegue el ascensor')); FX.confeti(est.e.jugador.x, est.e.jugador.y); FX.confeti(est.e.jugador.x, est.e.jugador.y - 60); vibrar(300); TU.lanza('final', est.t); },
     fin: (ev) => { if (ev.como === 'ascensor') FX.confeti(est.e.jugador.x, est.e.jugador.y); else { FX.cartel(tr('¡DESMAYADO!'), '#e5322d', 1.5); vibrar(150); } },
   };
   const COLOR_MATERIAL = { tornillo: '#c8d2e0', cable: '#e5322d', chip: '#5fe05f', disco: '#ffd23a' };
@@ -62,6 +63,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     auditoria: ['¡AUDITORÍA!', '#ffd23a', 'Botín doble, pero el ascensor no para aquí'],
     paquete: ['¡PAQUETE PERDIDO!', '#ffd23a', 'Lo vigilan unas reuniones'],
   };
+  // los carteles de racha (10, 25, 50 y 100 bajas seguidas)
+  function racha(r) { if (!r) return; const j = est.e.jugador; FX.numero(j.x, j.y - 50, tr('¡RACHA x{n}!', { n: r.n }) + ' ' + tr(r.n >= 50 ? '¡Imparable!' : '¡Sigue así!'), r.n >= 50 ? '#ff8a2a' : '#ffd23a', 18); FX.confeti(j.x, j.y - 30); basSuena('jefeVencido'); vibrar(40); }
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Basement: sin vibración', err); } }
 
   // ---------- entrada ----------
@@ -171,7 +174,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, p), { vencidos: p.vencidos, inicio: inicio || 0, rango: p.rango, ventajas: true });
     est.aspecto = B.aspectoDe(B.AJ, p);
     Object.assign(est, { modo: 'bajada', acum: 0, record: false, pulsoAscensor: false, pulsoHabilidad: false });
-    FX.limpiar(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
+    FX.limpiar(); B.sensacion.reinicia(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
     FX.cartel(tr('¡A BAJAR!'), '#ffd23a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
     TU.lanza('bajada', est.t);
   }
@@ -179,7 +182,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function simular(dt) {
     const e = est.e;
     B.paso(e, dt, orden(), Math.random);
-    for (const ev of e.eventos) if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev);
+    for (const ev of e.eventos) { if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev); racha(B.sensacion.alEvento(ev)); }
     if (e.becarios.some((b) => Math.abs(b.y - e.jugador.y) < 260)) TU.lanza('becario', est.t);
     if (e.fin && e.finT > 1.1 && est.modo === 'bajada') terminar(e);
   }
@@ -196,8 +199,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   function pintarBajada(dt) {
     const e = est.e;
-    if (!TU.habla() && e.habilidad && e.t > 4) TU.lanza('habilidad', est.t);   // tras el primer guion, el botón especial
-    est.acum = TU.habla() ? 0 : est.acum + dt;   // mientras habla Lola, la bajada espera
+    if (!TU.habla() && e.habilidad && e.t > 4) TU.lanza('habilidad', est.t);
+    if (!TU.habla() && e.jefe && !B.sensacion.enIntro()) TU.lanza('jefe', est.t);   // tras la entrada de película
+    if (e.derrumbe && !e.fin) FX.temblor = Math.max(FX.temblor, 4);   // tras el primer guion, el botón especial
+    est.acum = TU.habla() ? 0 : est.acum + dt * B.sensacion.velocidad(dt);   // mientras habla Lola, la bajada espera; la pausa y la cámara lenta, sensacion.js
     while (est.acum >= PASO && est.modo === 'bajada') { simular(PASO); est.acum -= PASO; }
     B.vista.camara(e, est.H, dt);
     G.save();
@@ -206,6 +211,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     G.restore();
     UI.apagon(G, W, est.H, e);
     UI.marcador(G, e, W, est.H);
+    B.sensacion.dibuja(G, W, est.H);
     FX.dibujarCarteles(G, UI.texto, W, est.H);
     UI.palanca(G, joy);
     if (e.eleccion) est.botones = UI.eleccion(G, W, est.H, e, est.t - (est.eleccionT || (est.eleccionT = est.t)));

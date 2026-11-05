@@ -406,4 +406,12 @@ IDIOMA.add({
   'Captura bichos con la RED': 'Catch bugs with the NET',
   'TERRARIO': 'TERRARIUM',
   'CATÁLOGO COMPLETO': 'CATALOG COMPLETE',
+  // 0.9.0: presión
+  'ACREDITADO': 'ACCREDITED',
+  'ACREDITAR': 'ACCREDIT',
+  'Sin acreditación, la presión te frena y gasta más café': 'Without accreditation, pressure slows you and burns more coffee',
+  '¡PRESIÓN! Sin acreditación: más lento y más café': 'PRESSURE! No accreditation: slower and more coffee',
+  'PRESIÓN': 'PRESSURE',
+  'Aquí eliges dónde bajas. Cada departamento, salvo Marketing, pide su acreditación.': 'Here you choose where to dive. Every department except Marketing requires its accreditation.',
+  'Sin ella puedes bajar, pero la presión te frena y el café se gasta mucho más. Cómprala con el botón naranja de su fila.': 'Without it you can still dive, but the pressure slows you down and burns a lot more coffee. Buy it with the orange button on its row.',
 });

@@ -57,6 +57,9 @@ BAS.AJ = Object.freeze({
     suelta: { tornillo: { desde: 0, n: [2, 4] }, cable: { desde: 5, n: [1, 2] }, chip: { desde: 10, n: [0, 2] }, disco: { desde: 15, n: [0, 1], prob: 0.25 } },
     jefe: { chip: 3, disco: 1 },   // lo que suelta además cada jefe vencido
   },
+  // La presión (como en Well Diver): cada departamento pide su acreditación, que se compra en «¿DÓNDE BAJAS?». Sin ella puedes
+  // bajar, pero allí te mueves más lento (vel) y el café se gasta más (cafe). Marketing no pide nada.
+  presion: { vel: 0.75, cafe: 1.8, coste: { soporte: 40, qa: 90, servidores: 180, direccion: 350, legacy: 700 } },
   // La captura: redes de cables que lanzas con su botón al bicho más cercano a `alcance`. Si le queda `umbral` de vida o menos,
   // queda atrapado (no los jefes): vale `valor` monedas (× lo que vale el botín de su planta) si subes a salvo y va al terrario
   // de tu despacho. Si está demasiado entero, se escapa y la red se pierde.
@@ -100,10 +103,10 @@ BAS.AJ = Object.freeze({
     rrhh: { nombre: 'SurvivalBot de Recursos Humanos', vida: 420, radio: 46, vel: 50, golpe: 6, cada: 2.2, bala: { vel: 130, dano: 5, radio: 8 }, abanico: 3 },
     lanzamiento: { nombre: 'ServidorBot del Lanzamiento', vida: 560, radio: 46, vel: 40, golpe: 7, cada: 3.0, invoca: 2 },
     accionistas: { nombre: 'El Presidente del Consejo', vida: 750, radio: 50, vel: 45, golpe: 6, cada: 2.6, bala: { vel: 110, dano: 5, radio: 7 }, anillo: 8 },
-    ceo: { nombre: 'El CEO', vida: 1100, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2, anillo: 10, fases: [0.66, 0.33] },
+    ceo: { nombre: 'El CEO', vida: 850, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2, anillo: 10, fases: [0.66, 0.33] },
     premio: { tazas: 3 },
     // Las fases: al bajar la vida de cada umbral el jefe se enfada (ataca y se mueve más deprisa). El CEO tiene tres.
-    fases: [0.5], furia: { cada: 0.7, vel: 1.3 },
+    fases: [0.5], furia: { cada: 0.85, vel: 1.15 },
     // El derrumbe: al vencer al CEO el edificio se viene abajo; el ascensor viene solo (tarda `espera` s) y caen escombros cada `cada` s.
     derrumbe: { espera: 6, cada: 0.35, vel: 260, dano: 4, radio: 9 },
   },
@@ -146,22 +149,22 @@ BAS.AJ = Object.freeze({
   // rebotes = salta a otro bicho cercano; alcance = multiplica el alcance (dispara solo si está así de cerca); lento = frena al
   // bicho tocado (factor y segundos); rafaga = balas una detrás de otra (cada `entre` s); circulo = en todas direcciones;
   // directo = el golpe cae en el sitio del blanco al momento; cafe = café que te devuelve cada bicho que tumba.
-  // Del paquete sale una al azar entre las de la rareza que toca.
+  // Del paquete sale una al azar entre las de la rareza que toca; te la pones sola si es más fuerte que la tuya (B.poderArma).
   armas: {
     grapadora: { nombre: 'Grapadora', rareza: null, dano: 1, cadencia: 1 },
     clips: { nombre: 'Lanzaclips', rareza: 'comun', dano: 0.55, cadencia: 1, balas: 3, abanico: 0.28 },
-    cinta: { nombre: 'Cinta adhesiva', rareza: 'comun', dano: 0.7, cadencia: 1.1, lento: [0.45, 1.8] },
-    perforadora: { nombre: 'Perforadora', rareza: 'comun', dano: 0.35, cadencia: 1.1, balas: 5, abanico: 0.75, vel: 0.85 },
+    cinta: { nombre: 'Cinta adhesiva', rareza: 'comun', dano: 0.9, cadencia: 1.1, lento: [0.45, 1.8] },
+    perforadora: { nombre: 'Perforadora', rareza: 'comun', dano: 0.5, cadencia: 1.1, balas: 5, abanico: 0.75, vel: 0.85 },
     abrecartas: { nombre: 'Abrecartas', rareza: 'comun', dano: 0.8, cadencia: 1.15, vel: 1.4, atraviesa: 4 },
-    boli: { nombre: 'Bolígrafo de clic', rareza: 'comun', dano: 0.36, cadencia: 0.38 },
+    boli: { nombre: 'Bolígrafo de clic', rareza: 'comun', dano: 0.4, cadencia: 0.38 },
     taladro: { nombre: 'Taladro', rareza: 'raro', dano: 1.2, cadencia: 1.35, atraviesa: 3 },
     impresora: { nombre: 'Impresora', rareza: 'raro', dano: 0.6, cadencia: 1.5, rafaga: 4, entre: 0.07 },
     trituradora: { nombre: 'Trituradora', rareza: 'raro', dano: 0.75, cadencia: 1.4, balas: 6, abanico: 1.1, alcance: 0.6, vel: 0.8 },
-    router: { nombre: 'Router wifi', rareza: 'raro', dano: 0.55, cadencia: 1.3, balas: 8, circulo: true, vel: 0.7 },
+    router: { nombre: 'Router wifi', rareza: 'raro', dano: 0.9, cadencia: 1.1, balas: 8, circulo: true, vel: 0.7 },
     extintor: { nombre: 'Extintor', rareza: 'epico', dano: 1.4, cadencia: 1.6, vel: 0.55, area: 55 },
     laser: { nombre: 'Puntero láser', rareza: 'epico', dano: 0.42, cadencia: 0.3, vel: 2.6, atraviesa: 2 },
     sello: { nombre: 'Sello de APROBADO', rareza: 'epico', dano: 3.2, cadencia: 3, directo: true, area: 70 },
-    proyector: { nombre: 'Proyector', rareza: 'epico', dano: 0.6, cadencia: 1.2, balas: 3, abanico: 0.5, lento: [0.5, 1.2], alcance: 0.85 },
+    proyector: { nombre: 'Proyector', rareza: 'epico', dano: 0.7, cadencia: 1.2, balas: 3, abanico: 0.5, lento: [0.5, 1.2], alcance: 0.85 },
     raton: { nombre: 'Ratón inalámbrico', rareza: 'legendario', dano: 1, cadencia: 0.9, rebotes: 3 },
     taza: { nombre: 'Taza lanzacafé', rareza: 'legendario', dano: 1.1, cadencia: 0.8, atraviesa: 2, cafe: 1.5 },
     industrial: { nombre: 'Grapadora industrial', rareza: 'legendario', dano: 1.7, cadencia: 1.15, atraviesa: 2, rebotes: 2 },

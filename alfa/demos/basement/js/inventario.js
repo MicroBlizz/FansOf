@@ -111,8 +111,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (!id) return null;
     const nivel = q.armas[id] || 0;
     if (nivel >= AJ.nivelArma.max) { q.monedas += AJ.repetido[rareza]; return { tipo: 'arma', id, rareza, nuevo: false, nivel, monedas: AJ.repetido[rareza] }; }
+    const mejor = nivel === 0 && B.armaMejor(AJ, q, id, 1);
     q.armas[id] = nivel + 1;
-    if (q.arma === 'grapadora' && nivel === 0) q.arma = id;
+    if (mejor) q.arma = id;   // nueva y mejor que la que llevas: te la pones
     return { tipo: 'arma', id, rareza, nuevo: nivel === 0, nivel: nivel + 1, monedas: 0 };
   }
 

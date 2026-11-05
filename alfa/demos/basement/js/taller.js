@@ -39,8 +39,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const q = B.copiaProgreso(p);
     for (const [t, n] of Object.entries(rec.valor.coste)) q.materiales[t] -= n;
     if (r.tipo === 'arma') {
+      const mejor = !p.armas[r.id] && B.armaMejor(AJ, q, r.id, 1);
       q.armas[r.id] = (q.armas[r.id] || 0) + 1;
-      if (q.arma === 'grapadora') q.arma = r.id;
+      if (mejor) q.arma = r.id;   // nueva y mejor que la que llevas: te la pones
     } else {
       q.equipo.tiene[r.hueco + ':' + r.rareza] = true;
       const puesta = q.equipo.puesto[r.hueco];

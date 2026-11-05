@@ -52,11 +52,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     rrhh(e, jf, d) { const a = angAl(e, jf); for (let i = 0; i < d.abanico; i++) disparar(e, jf, a + (i - (d.abanico - 1) / 2) * 0.32, d.bala, 'sello'); },
     lanzamiento(e, jf, d) { for (let i = 0; i < d.invoca; i++) B.enemigos.crear(e, 'bug', jf.x + (i ? 30 : -30), jf.y - 10).dir = i ? 1 : -1; },
     // el CEO alterna: un abanico de sellos y, al siguiente ataque, dos bugs
-    // el CEO: alterna sellos y bugs; en la fase 2 añade el anillo de monedas; en la 3, sellos y anillo a la vez
+    // el CEO: alterna sellos y bugs; en la fase 2 añade el anillo de monedas; en la 3 deja los bugs y alterna sellos y anillo
     ceo(e, jf, d) {
-      jf.turno = ((jf.turno || 0) + 1) % (jf.fase > 1 ? 3 : 2);
-      if (jf.fase >= 3) { ATAQUE.rrhh(e, jf, d); ATAQUE.accionistas(e, jf, d); return; }
-      [ATAQUE.rrhh, ATAQUE.lanzamiento, ATAQUE.accionistas][jf.turno](e, jf, d);
+      const lista = jf.fase >= 3 ? [ATAQUE.rrhh, ATAQUE.accionistas] : jf.fase === 2 ? [ATAQUE.rrhh, ATAQUE.lanzamiento, ATAQUE.accionistas] : [ATAQUE.rrhh, ATAQUE.lanzamiento];
+      jf.turno = ((jf.turno || 0) + 1) % lista.length;
+      lista[jf.turno](e, jf, d);
     },
     accionistas(e, jf, d) { const a0 = e.t; for (let i = 0; i < d.anillo; i++) disparar(e, jf, a0 + i * Math.PI * 2 / d.anillo, d.bala, 'moneda'); },
   };

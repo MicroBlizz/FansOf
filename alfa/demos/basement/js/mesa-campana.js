@@ -21,11 +21,23 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (marcado) { g.fillStyle = '#ffffff'; g.fillRect(b.x - 6, b.y - 6, b.w + 12, b.h + 12); }
     UI.panel(g, b.x, b.y, b.w, b.h, marcado ? '#3a2410' : '#1a0f1f', null, null, 4);
     UI.fondo(g, z.img, b.x + 6, b.y + 6, 110, b.h - 12, d.abierto ? 0.1 : 0.6, z.filtro);
-    UI.textoCabe(g, tr(z.nombre).toUpperCase(), b.x + 134, b.y + b.h * 0.32, 26, b.w - 150, d.abierto ? C.oro : '#8a7a68', 'left', 5);
+    UI.textoCabe(g, tr(z.nombre).toUpperCase(), b.x + 134, b.y + b.h * 0.32, 26, b.w - (AJ.presion.coste[z.id] != null ? 290 : 150), d.abierto ? C.oro : '#8a7a68', 'left', 5);
     const plantas = z.sinFin ? tr('Desde la planta -{n}', { n: z.desde }) : tr('Plantas -{a} a -{b}', { a: z.desde, b: z.desde + 4 });
     UI.textoCabe(g, plantas + ' · ' + tr(TRUCO[z.truco]), b.x + 134, b.y + b.h * 0.62, 16, b.w - 150, C.crema, 'left', 3);
     if (!d.abierto) T(g, cerrado(AJ, z), b.x + 134, b.y + b.h * 0.84, 15, C.rojo, 'left', 3);
     else if (!z.sinFin) UI.textoCabe(g, tr('Jefe: {n}', { n: tr(AJ.jefes[B.jefes.dePlanta(AJ, z.desde + 4).id].nombre) }), b.x + 134, b.y + b.h * 0.84, 15, b.w - 150, '#ff9a8e', 'left', 3);
+  }
+
+  // La acreditación de la zona (presion.js), arriba a la derecha de su fila: hecha, o el botón para comprarla.
+  function acreditacion(g, AJ, p, z, b, botones) {
+    const coste = AJ.presion.coste[z.id];
+    if (coste == null) return;
+    const c = { x: b.x + b.w - 148, y: b.y + 8, w: 140, h: 38, accion: 'acreditar', id: z.id };
+    if (p.acreditaciones.includes(z.id)) { UI.panel(g, c.x, c.y, c.w, c.h, C.verde, null, null, 3); UI.textoCabe(g, tr('ACREDITADO'), c.x + c.w / 2, c.y + 19, 16, c.w - 10, '#ffffff', 'center', 3); return; }
+    UI.boton(g, c, p.monedas >= coste ? 'naranja' : 'apagado', '', 0);
+    UI.moneda(g, c.x + 20, c.y + 19, 1.4);
+    UI.textoCabe(g, tr('ACREDITAR') + ' ' + coste, c.x + c.w / 2 + 12, c.y + 19, 15, c.w - 40, '#ffffff', 'center', 3);
+    if (p.monedas >= coste) botones.push(c);
   }
 
   // sel = el departamento marcado: tocar uno lo marca y BAJAR AQUÍ confirma
@@ -33,11 +45,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     UI.fondoMenu(g, W, H, 'fondo-vestibulo');
     g.fillStyle = 'rgba(10,5,20,0.75)'; g.fillRect(0, 0, W, H);
     UI.titulo(g, tr('¿DÓNDE BAJAS?'), W / 2, 60, 46);
-    UI.franja(g, tr('El ascensor te deja en el departamento que elijas'), W / 2, 116, 17);
+    UI.franja(g, tr('Sin acreditación, la presión te frena y gasta más café'), W / 2, 116, 16, W - 30);
     const deps = B.departamentos(AJ, p), h = Math.min(130, Math.floor((H - 320) / deps.length) - 10), botones = [];
     deps.forEach((d, i) => {
       const z = AJ.zonas.find((q) => q.id === d.id), b = { x: 20, y: 156 + i * (h + 10), w: W - 40, h, accion: 'departamento', id: d.id };
       filaDep(g, AJ, p, z, d, b, d.id === sel);
+      acreditacion(g, AJ, p, z, b, botones);   // va antes que la fila: si tocas el botón, compras
       if (d.abierto) botones.push(b);
     });
     const bajar = { x: W / 2 + 8, y: H - 110, w: W / 2 - 28, h: 80, accion: 'bajarAqui' }, cerrar = { x: 20, y: H - 104, w: W / 2 - 40, h: 70, accion: 'cerrarDep' };

@@ -21,6 +21,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     ],
     equipo: ['Aquí te pones el equipo y eliges mascota. Todo sale de los paquetes: toca el de la rareza que quieras ponerte.'],
     ventaja: ['Al empezar y en cada departamento nuevo eliges una ventaja. Solo vale para esta bajada, así que piensa qué te hace falta.'],
+    presion: [
+      'Aquí eliges dónde bajas. Cada departamento, salvo Marketing, pide su acreditación.',
+      'Sin ella puedes bajar, pero la presión te frena y el café se gasta mucho más. Cómprala con el botón naranja de su fila.',
+    ],
     departamento: ['¡Ya puedes saltarte departamentos! El ascensor te deja en cualquiera cuyo jefe de antes hayas vencido. Abajo pagan más, pero pegan más fuerte.'],
     final: [
       '¡Lo has conseguido! El servidor vuelve a funcionar y Microblizz ni se ha enterado de que estuvo caído.',

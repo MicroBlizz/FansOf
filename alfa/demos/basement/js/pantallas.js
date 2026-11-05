@@ -59,6 +59,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     cafe(g, e); planta(g, e, W); caja(g, e, W);
     let y = 112;
     if (e.zona.crunch) { UI.boton(g, { x: W / 2 - 80, y: 92, w: 160, h: 32 }, 'rojo', tr('CRUNCH ZONE'), 16); y = 146; }
+    if (B.bajoPresion(e.aj, e.zona.id, e.stats)) { UI.boton(g, { x: 14, y: 92, w: 120, h: 32 }, 'rojo', tr('PRESIÓN'), 16); y = Math.max(y, 146); }
     B.vista.barraJefe(g, e, W, y);
     if (!e.fin) { ascensor(g, e, W, H); habilidad(g, e, W, H); red(g, e, W, H); }
     if (e.congeladoT > 0) { g.fillStyle = 'rgba(140,200,255,0.16)'; g.fillRect(0, 96, W, H - 96); }

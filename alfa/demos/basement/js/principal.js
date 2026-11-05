@@ -29,7 +29,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     frenado: () => { FX.cartel(tr('¡REUNIÓN!'), '#e5322d', 1, tr('Te ha frenado')); basSuena('frenado'); },
     cajaLlena: () => { FX.cartel(tr('¡CAJA LLENA!'), '#ffe14a', 1.4, tr('Llama al ascensor')); basSuena('cajaLlena'); },
     planta: (ev) => { if (ev.planta % 5) basSuena('planta'); },
-    zona: (ev) => { FX.cartel(tr(ev.zona.nombre).toUpperCase(), '#ffe14a', 2, ev.zona.crunch ? tr('CRUNCH ZONE: el café se gasta más rápido') : ''); basSuena('zona'); },
+    zona: (ev) => { FX.cartel(tr(ev.zona.nombre).toUpperCase(), ev.presion ? '#e5322d' : '#ffe14a', 2, ev.presion ? tr('¡PRESIÓN! Sin acreditación: más lento y más café') : ev.zona.crunch ? tr('CRUNCH ZONE: el café se gasta más rápido') : ''); basSuena('zona'); },
     cafeBajo: () => { FX.cartel(tr('¡QUEDA POCO CAFÉ!'), '#e5322d', 1.6, tr('Sube antes de desmayarte')); basSuena('cafeBajo'); },
     ascensorLlamado: () => { FX.cartel(tr('ASCENSOR EN CAMINO'), '#5fe05f', 1.4, tr('Aguanta unos segundos')); basSuena('ascensorLlamado'); },
     jefe: () => { FX.temblor = 14; vibrar(80); basSuena('jefe'); },   // la entrada de película la pinta sensacion.js; Lola explica después
@@ -105,15 +105,17 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     basSuena('tiembla');
   }
   function aplicaVentaja(id) { if (B.elegirVentaja(est.e, id).ok) for (const ev of est.e.eventos) if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev); }
-  // BAJAR: si hay más de un departamento abierto, se elige dónde; si no, a Marketing.
+  // BAJAR: siempre se pasa por «¿DÓNDE BAJAS?» (el departamento y las acreditaciones).
   function bajar() {
     const abiertos = B.departamentos(B.AJ, SAVE.progreso).filter((d) => d.abierto);
-    if (abiertos.length < 2) { empezar(0); return; }
-    est.mesa.dep = abiertos[abiertos.length - 1].id;   // marcado el más hondo; tocar otro lo cambia y BAJAR AQUÍ confirma basSuena('boton'); TU.lanza('departamento', est.t);
+    est.mesa.dep = abiertos[abiertos.length - 1].id;   // marcado el más hondo; tocar otro lo cambia y BAJAR AQUÍ confirma
+    basSuena('boton');
+    if (!TU.lanza('presion', est.t) && abiertos.length > 1) TU.lanza('departamento', est.t);   // aquí también se compran las acreditaciones
   }
   const ACCIONES = {
     bajar: () => bajar(),
     departamento: (b) => { est.mesa.dep = b.id; basSuena('boton'); },
+    acreditar: (b) => aplica(B.comprarAcreditacion(B.AJ, SAVE.progreso, b.id)),
     bajarAqui: () => { const r = B.inicioDe(B.AJ, SAVE.progreso, est.mesa.dep); if (r.ok) { est.mesa.dep = false; empezar(r.valor); } },
     cerrarDep: () => { est.mesa.dep = false; basSuena('boton'); },
     ascender: () => { est.mesa.ascenso = true; basSuena('boton'); },

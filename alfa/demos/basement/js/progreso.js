@@ -13,13 +13,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.progresoNuevo = () => ({
     monedas: 0, record: 0, bajadas: 0, cursos: [], equipo: { tiene: {}, puesto: {} }, mascotas: {}, mascota: null,
-    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {},
+    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {}, acreditaciones: [],
   });
 
   // Copia profunda (el progreso se trata como inmutable: cada regla devuelve uno nuevo).
   B.copiaProgreso = (p) => ({
     ...p, cursos: [...p.cursos], equipo: { tiene: { ...p.equipo.tiene }, puesto: { ...p.equipo.puesto } },
-    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales }, terrario: { ...p.terrario },
+    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales }, terrario: { ...p.terrario }, acreditaciones: [...p.acreditaciones],
   });
 
   // Lee lo guardado (formatos for-basement-v1 y v2). Lo que falte o no valga vuelve a su valor de partida.
@@ -40,6 +40,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.rango = entero(datos.rango, 0, AJ.rangos.length - 1);
     p.final = datos.final === true;
     if (AJ.habilidades[datos.habilidad]) p.habilidad = datos.habilidad;
+    p.acreditaciones = Array.isArray(datos.acreditaciones) ? [...new Set(datos.acreditaciones)].filter((z) => AJ.presion.coste[z] != null) : [];
     for (const id of Object.keys(AJ.enemigos)) if (esObjeto(datos.terrario) && datos.terrario[id] > 0) p.terrario[id] = entero(datos.terrario[id], 0, 1e6);
     for (const t of AJ.materiales) if (esObjeto(datos.materiales) && datos.materiales[t] > 0) p.materiales[t] = entero(datos.materiales[t], 0, 1e7);
     return p;
@@ -167,6 +168,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       mascota: B.mascotaDe(AJ, p),
       habilidad: B.habilidadDe(AJ, p),
       redes: AJ.captura.redes + v('redes'),
+      acreditaciones: Object.freeze([...p.acreditaciones]),
     });
   };
 
@@ -186,6 +188,16 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
     return Object.freeze({ rango: p.rango, arma: B.armaDe(AJ, p).id, equipo: Object.freeze({ ...p.equipo.puesto }), formacion: Object.freeze(formacion) });
   };
+
+  // Lo fuerte que es un arma contra un solo bicho (daño por segundo relativo, con su nivel): para ponerte sola un arma nueva solo
+  // si es mejor que la que llevas. Las de abanico cuentan como mucho dos balas al blanco; las de círculo, una; las de área, algo más.
+  B.poderArma = function (AJ, id, nivel) {
+    const d = AJ.armas[id], n = nivel || 1, dano = d.dano * (1 + AJ.nivelArma.dano * (n - 1));
+    const balas = d.circulo ? 1 : Math.min(2, d.balas || 1), extra = (d.area ? 1.3 : 1) * (1 + 0.25 * ((d.atraviesa || 1) - 1 + (d.rebotes || 0)));
+    return dano * balas * (d.rafaga || 1) * extra / d.cadencia;
+  };
+  // ¿Es mejor el arma `id` (a ese nivel) que la que llevas?
+  B.armaMejor = (AJ, p, id, nivel) => B.poderArma(AJ, id, nivel) > B.poderArma(AJ, B.armaDe(AJ, p).id, B.armaDe(AJ, p).nivel);
 
   // La mascota puesta, con el daño de su nivel (o null).
   B.mascotaDe = function (AJ, p) {

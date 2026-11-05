@@ -61,7 +61,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function mover(e, dt, o) {
     const AJ = e.aj, j = e.jugador, J = AJ.jugador;
     const m = Math.hypot(o.mx, o.my), k = m > 1 ? 1 / m : 1;
-    const vel = J.vel * e.stats.vel * (j.frenoT > 0 ? frenoDe(e) : 1);
+    const vel = J.vel * e.stats.vel * (j.frenoT > 0 ? frenoDe(e) : 1) * B.presionDe(AJ, e.zona.id, e.stats, 'vel');
     j.vx = o.mx * k * vel;
     j.vy = m > 0.05 ? o.my * k * vel : J.deriva;
     if (Math.abs(j.vx) > 1) j.mira = j.vx > 0 ? 1 : -1;
@@ -80,7 +80,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.plantaMax = p;
     const z = B.zonaDe(e.aj, p);
     if (z !== e.zona) {
-      e.zona = z; e.eventos.push({ tipo: 'zona', zona: z });
+      e.zona = z; e.eventos.push({ tipo: 'zona', zona: z, presion: B.bajoPresion(e.aj, z.id, e.stats) });
       if (e.conVentajas) B.campana.ofrece(e, rnd);
     } else e.eventos.push({ tipo: 'planta', planta: p });
     B.campana.alEntrar(e, p);
@@ -122,7 +122,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // El café que se gasta por segundo en una planta (stats: lo que lo rebajan la formación y las ventajas; sin stats, lo de base).
   B.gastoCafe = function (AJ, planta, stats) {
     const s = stats || { gasto: 1, crunch: 1 }, crunch = B.zonaDe(AJ, planta).crunch ? 1 + (AJ.cafe.crunch - 1) * s.crunch : 1;
-    return AJ.cafe.gasto * B.difDe(AJ, planta, 0).gasto * crunch * s.gasto;
+    return AJ.cafe.gasto * B.difDe(AJ, planta, 0).gasto * crunch * s.gasto * B.presionDe(AJ, B.zonaDe(AJ, planta).id, stats, 'cafe');
   };
 
   function cafe(e, dt) {

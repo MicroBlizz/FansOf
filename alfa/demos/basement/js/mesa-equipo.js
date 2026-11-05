@@ -49,9 +49,25 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     });
   }
 
+  // El arma: la puesta, con su nivel y lo que hace; los cuadros, la grapadora y las cuatro que salen de los paquetes.
+  const QUE_HACE = { grapadora: 'Una grapa al más cercano', clips: 'Tres clips en abanico', taladro: 'Atraviesa a varios bichos', extintor: 'Explota y daña alrededor', raton: 'Rebota de bicho en bicho' };
+  function filaArma(g, AJ, p, x, y, w, h, botones) {
+    const a = B.armaDe(AJ, p), color = a.rareza ? AJ.colorRareza[a.rareza] : C.cafe;
+    UI.pergamino(g, x, y, w, h);
+    T(g, tr('ARMA'), x + 26, y + 32, 18, C.gris, 'left', 0);
+    UI.textoCabe(g, tr(a.nombre) + (a.rareza ? ' · ' + tr('Nv') + ' ' + a.nivel : ''), x + 26, y + 62, 22, w - 5 * 56 - 40, color, 'left', a.rareza ? 4 : 0);
+    UI.textoCabe(g, tr(QUE_HACE[a.id]), x + 26, y + h - 30, 16, w - 52, '#2e6a2a', 'left', 0);
+    Object.keys(AJ.armas).forEach((id, i) => {
+      const d = AJ.armas[id], tiene = !d.rareza || p.armas[id] > 0, b = { x: x + w - 5 * 56 - 6 + i * 56, y: y + 26, w: 48, h: 48 };
+      cuadro(g, b, tiene ? (d.rareza ? AJ.colorRareza[d.rareza] : C.perg2) : null, tiene ? (cx, cy) => V().pintaCosa(g, id, cx, cy, null, 0.7) : null, a.id === id);
+      if (tiene) botones.push({ ...b, accion: 'arma', id });
+    });
+  }
+
   UI.pestanaEquipo = function (g, W, H, AJ, p, botones) {
-    const { y0, y1 } = UI.zonaMesa(H), h = Math.min(150, Math.floor((y1 - y0) / 4) - 8);
+    const { y0, y1 } = UI.zonaMesa(H), h = Math.min(150, Math.floor((y1 - y0) / 5) - 8);
     let y = y0;
+    filaArma(g, AJ, p, 12, y, W - 24, h, botones); y += h + 8;
     for (const hueco of Object.keys(AJ.equipo)) { filaHueco(g, AJ, p, hueco, 12, y, W - 24, h, botones); y += h + 8; }
     filaMascotas(g, AJ, p, 12, y, W - 24, h, botones);
   };
@@ -63,7 +79,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       UI.panel(g, x + i * ancho, y - 18, ancho - 6, 36, AJ.colorRareza[r], null, null, 3);
       UI.textoCabe(g, UI.nombreRareza(r) + ' ' + P.rarezas[r] + '%', x + i * ancho + (ancho - 6) / 2, y, 15, ancho - 14, '#ffffff', 'center', 3);
     });
-    T(g, tr('Mascota {m} % · Equipo {e} %', { m: P.mascota, e: 100 - P.mascota }), x, y + 36, 17, C.cafe, 'left', 0);
+    T(g, tr('Mascota {m} % · Arma {a} % · Equipo {e} %', { m: P.mascota, a: P.arma || 0, e: 100 - P.mascota - (P.arma || 0) }), x, y + 36, 17, C.cafe, 'left', 0);
   }
 
   function tarjetaPaquete(g, AJ, p, tipo, x, y, w, h, botones) {
@@ -94,7 +110,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   };
 
   // ---------- abrir un paquete ----------
-  const NOMBRE_PREMIO = (AJ, pr) => (pr.tipo === 'equipo' ? AJ.equipo[pr.hueco][pr.rareza].nombre : AJ.mascotas[pr.id].nombre);
+  const NOMBRE_PREMIO = (AJ, pr) => (pr.tipo === 'equipo' ? AJ.equipo[pr.hueco][pr.rareza].nombre : pr.tipo === 'arma' ? AJ.armas[pr.id].nombre : AJ.mascotas[pr.id].nombre);
   UI.REVELA = 0.9;
 
   function rayos(g, x, y, color, t) {
@@ -105,7 +121,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   function lineaPremio(pr) {
     if (!pr.nuevo) return tr('Repetido: +{n} monedas', { n: pr.monedas });
-    if (pr.tipo === 'mascota' && pr.nivel > 1) return tr('¡Sube a nivel {n}!', { n: pr.nivel });
+    if (pr.tipo !== 'equipo' && pr.nivel > 1) return tr('¡Sube a nivel {n}!', { n: pr.nivel });
     return tr('¡NUEVO!');
   }
 
@@ -120,7 +136,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
     const color = AJ.colorRareza[pr.rareza];
     rayos(g, cx, cy, color, t);
-    if (pr.tipo === 'equipo') pintaHueco(g, pr.hueco, cx, cy, 2.5); else V().pintaCosa(g, pr.id, cx, cy, null, 2.5);
+    if (pr.tipo === 'equipo') pintaHueco(g, pr.hueco, cx, cy, 2.5); else V().pintaCosa(g, pr.id, cx, cy, null, pr.tipo === 'arma' ? 3 : 2.5);
     UI.titulo(g, UI.nombreRareza(pr.rareza), cx, cy + 160, 50);
     UI.lineas(g, tr(NOMBRE_PREMIO(AJ, pr)), cx, cy + 222, 30, W - 60, '#ffffff', 'center', 5, 34);
     T(g, lineaPremio(pr), cx, cy + 300, 26, pr.nuevo ? C.oro : '#ffffff', 'center', 5);

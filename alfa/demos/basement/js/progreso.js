@@ -13,13 +13,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.progresoNuevo = () => ({
     monedas: 0, record: 0, bajadas: 0, cursos: [], equipo: { tiene: {}, puesto: {} }, mascotas: {}, mascota: null,
-    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [],
+    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false,
   });
 
   // Copia profunda (el progreso se trata como inmutable: cada regla devuelve uno nuevo).
   B.copiaProgreso = (p) => ({
     ...p, cursos: [...p.cursos], equipo: { tiene: { ...p.equipo.tiene }, puesto: { ...p.equipo.puesto } },
-    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos],
+    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo },
   });
 
   // Lee lo guardado (formatos for-basement-v1 y v2). Lo que falte o no valga vuelve a su valor de partida.
@@ -35,6 +35,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     leeEquipo(AJ, p, datos.equipo);
     leeMascotas(AJ, p, datos);
     for (const t of Object.keys(AJ.paquetes)) p.paquetes[t] = entero(esObjeto(datos.paquetes) ? datos.paquetes[t] : 0, 0, 999);
+    leeArmas(AJ, p, datos);
+    leeCatalogo(AJ, p, datos.catalogo);
+    p.rango = entero(datos.rango, 0, AJ.rangos.length - 1);
+    p.final = datos.final === true;
     return p;
   };
 
@@ -75,20 +79,57 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.mascota = p.mascotas[d.mascota] ? d.mascota : null;
   }
 
+  function leeArmas(AJ, p, d) {
+    if (esObjeto(d.armas)) for (const id of Object.keys(AJ.armas)) {
+      const n = entero(d.armas[id], 0, AJ.nivelArma.max);
+      if (n > 0 && AJ.armas[id].rareza) p.armas[id] = n;
+    }
+    p.arma = p.armas[d.arma] ? d.arma : 'grapadora';
+  }
+  function leeCatalogo(AJ, p, c) {
+    if (!esObjeto(c)) return;
+    for (const x of B.entradasCatalogo(AJ)) { const n = entero(c[x.id], 0, 1e9); if (n > 0) p.catalogo[x.id] = n; }
+  }
+
+  // Las entradas del catálogo de bichos: los enemigos y los jefes, con su clase (normal, raro o jefe) para el premio.
+  B.entradasCatalogo = (AJ) => [
+    ...Object.keys(AJ.enemigos).map((id) => ({ id, clase: AJ.enemigos[id].raro ? 'raro' : 'normal' })),
+    ...AJ.jefes.orden.map((id) => ({ id, clase: 'jefe' })),
+  ];
+  // Los bichos que una bajada añade por primera vez al catálogo, y lo que dan.
+  B.catalogoNuevos = function (AJ, p, r) {
+    const bajas = (r && r.bajasPorTipo) || {};
+    return B.entradasCatalogo(AJ).filter((x) => bajas[x.id] && !p.catalogo[x.id]).map((x) => ({ ...x, monedas: AJ.catalogo.premio[x.clase] }));
+  };
+  B.catalogoCompleto = (AJ, p) => B.entradasCatalogo(AJ).every((x) => p.catalogo[x.id] > 0);
+
   B.progresoAGuardar = (p) => ({ formato: 'for-basement-v2', ...B.copiaProgreso(p) });
 
   // Al terminar una bajada: se cobran las monedas, los paquetes que traías y los jefes vencidos, y se apuntan el récord y las
-// plantas cuyo jefe ya has vencido (la próxima vez ese jefe suelta un paquete normal, no el del jefe).
-  B.cobrar = function (p, resultado) {
+  // plantas cuyo jefe ya has vencido (la próxima vez ese jefe suelta un paquete normal, no el del jefe).
+  B.cobrar = function (p, resultado, aj) {
     const r = resultado || {}, q = B.copiaProgreso(p), paq = r.paquetes || {};
     q.monedas += Math.max(0, Math.floor(r.monedas || 0));
     q.record = Math.max(q.record, r.planta || 0);
     q.bajadas += 1;
     q.jefes += Math.max(0, r.jefes || 0);
     sumaPaquetes(q, paq);
-    for (const n of r.jefesNuevos || []) if (!q.vencidos.includes(n)) q.vencidos.push(n);
-    return q;
+    apuntaJefes(q, r);
+    return apuntaCatalogo(aj || B.AJ, q, r);
   };
+  // Las plantas cuyo jefe has vencido (a salvo) y, si cayó el CEO, el servidor arreglado.
+  function apuntaJefes(q, r) {
+    for (const n of r.jefesNuevos || []) if (!q.vencidos.includes(n)) q.vencidos.push(n);
+    if (r.final) q.final = true;
+  }
+  // El catálogo: suma las bajas, paga los bichos nuevos y, la primera vez que se completa, los paquetes del jefe.
+  function apuntaCatalogo(AJ, q, r) {
+    const antes = B.catalogoCompleto(AJ, q);
+    for (const x of B.catalogoNuevos(AJ, q, r)) q.monedas += x.monedas;
+    for (const [id, n] of Object.entries((r && r.bajasPorTipo) || {})) if (n > 0) q.catalogo[id] = (q.catalogo[id] || 0) + n;
+    if (!antes && B.catalogoCompleto(AJ, q)) q.paquetes.jefe += AJ.catalogo.completo;
+    return q;
+  }
   function sumaPaquetes(q, paq) { for (const t of Object.keys(q.paquetes)) q.paquetes[t] += Math.max(0, paq[t] || 0); }
 
   // ---------- estadísticas de la bajada: la base de ajustes + los efectos de los cursos y del equipo puesto ----------
@@ -101,24 +142,31 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   };
 
   B.statsDe = function (AJ, p) {
-    const e = B.efectosDe(AJ, p), v = (k) => e[k] || 0, menos = (k, tope) => 1 - Math.min(tope, v(k));
+    const e = B.efectosDe(AJ, p), v = (k) => e[k] || 0, menos = (k, tope) => 1 - Math.min(tope, v(k)), a = B.armaDe(AJ, p), R = AJ.porRango;
     return Object.freeze({
       cafeMax: AJ.cafe.base + v('cafe'),
       caja: AJ.caja.base + v('caja'),
-      dano: Math.round(AJ.arma.dano * (1 + v('dano')) * 10) / 10,
-      cadencia: AJ.arma.cadencia * menos('cadencia', 0.6),
+      dano: Math.round(AJ.arma.dano * (1 + v('dano') + R.dano * p.rango) * a.dano * 10) / 10,
+      cadencia: AJ.arma.cadencia * menos('cadencia', 0.6) * a.cadencia,
+      arma: a,
       alcance: AJ.arma.alcance + v('alcance'),
       multi: 1 + v('multi'),
       iman: AJ.iman + v('iman'),
       espera: Math.max(1, AJ.ascensor.espera - v('espera')),
       gasto: menos('gasto', 0.6),
       crunch: menos('crunch', 1),
-      valor: 1 + v('valor'),
+      valor: 1 + v('valor') + R.valor * p.rango,
       taza: AJ.cafe.taza + v('taza'),
       vel: 1 + v('vel'),
       freno: Math.min(1, v('freno')),
       mascota: B.mascotaDe(AJ, p),
     });
+  };
+
+  // El arma puesta, con el daño de su nivel (la grapadora no sube de nivel).
+  B.armaDe = function (AJ, p) {
+    const id = p.armas[p.arma] > 0 ? p.arma : 'grapadora', nivel = p.armas[id] || 1, d = AJ.armas[id];
+    return Object.freeze({ ...d, id, nivel, dano: d.dano * (1 + AJ.nivelArma.dano * (nivel - 1)) });
   };
 
   // La mascota puesta, con el daño de su nivel (o null).

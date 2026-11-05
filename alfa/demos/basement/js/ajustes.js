@@ -13,7 +13,7 @@ BAS.AJ = Object.freeze({
   // El jugador: vel = velocidad con el dedo; deriva = lo que baja solo sin tocar; invul = segundos sin recibir daño tras un golpe.
   jugador: { radio: 15, vel: 125, deriva: 22, invul: 0.8 },
   // El café es el oxígeno: base + lo que den la formación y el equipo. Se gasta cada segundo (más cuanto más abajo) y los golpes lo quitan.
-  cafe: { base: 60, gasto: 1, gastoPorPlanta: 0.05, crunch: 1.3, taza: 14 },
+  cafe: { base: 60, gasto: 1, crunch: 1.3, taza: 14 },
   // La caja del despedido: cuánto peso de botín cabe (base + formación y equipo).
   caja: { base: 15 },
   // El arma dispara sola al enemigo más cercano dentro del alcance (base: la formación y el equipo lo mejoran).
@@ -26,8 +26,13 @@ BAS.AJ = Object.freeze({
     correo: { vida: 26, radio: 17, vel: 30, persigue: 210, golpe: 3, desde: 2, peso: 6, botin: 'postit', divide: 'miniCorreo', puntos: 2 },
     miniCorreo: { vida: 9, radio: 11, vel: 55, persigue: 210, golpe: 2, desde: 99, peso: 0, botin: null, puntos: 1 },
     reunion: { vida: 70, radio: 26, vel: 18, persigue: 0, golpe: 2, desde: 4, peso: 3, botin: 'taza', frena: 0.45, frenaT: 1.6, puntos: 4 },
+    // los raros (catálogo): salen poco; raro = probabilidad por tramo; solo = la única zona donde salen
+    dorado: { vida: 30, radio: 17, vel: 75, persigue: 0, huye: 170, golpe: 0, desde: 3, peso: 0, raro: 0.012, botin: 'codigo', botinX: 10, puntos: 10 },
+    spam: { vida: 22, radio: 17, vel: 95, persigue: 260, golpe: 3, desde: 5, peso: 0, raro: 0.035, solo: 'soporte', botin: 'paquete', puntos: 5 },
+    critico: { vida: 220, radio: 28, vel: 30, persigue: 120, golpe: 8, desde: 10, peso: 0, raro: 0.035, solo: 'qa', botin: 'taza', botinX: 3, puntos: 8 },
   },
-  vidaPorPlanta: 0.12,              // cada planta los enemigos tienen un 12 % más de vida
+  // el catálogo de bichos: monedas la primera vez que tumbas cada uno; completo, 3 paquetes del jefe
+  catalogo: { premio: { normal: 20, raro: 150, jefe: 100 }, completo: 3 },
   generar: { tramo: 40, delante: 620, detras: 560, base: 0.3, porPlanta: 0.02, max: 0.9, maxActivos: 45, zonaSegura: 180 },
   // El botín: valor en monedas (sube un 12 % por planta) y peso en la caja. La taza de café no ocupa sitio: rellena el café.
   objetos: {
@@ -38,22 +43,38 @@ BAS.AJ = Object.freeze({
     paquete: { valor: 0, peso: 0 },        // paquete de mensajería: no ocupa sitio, pero solo cuenta si subes a salvo
     paqueteJefe: { valor: 0, peso: 0 },
   },
-  valorPorPlanta: 0.12, probCafe: 0.07, iman: 50, recoge: 22, avisoLlena: 1.5,
-  // Las zonas de la oficina, de arriba abajo. crunch = el café se gasta más deprisa.
+  probCafe: 0.07, iman: 50, recoge: 22, avisoLlena: 1.5,
+  // La campaña: cinco departamentos de cinco plantas y, al vencer al CEO, el Código Legacy de 2004, que no tiene fondo.
+  // dif = lo duros que son los enemigos y los jefes (vida), lo que quitan sus golpes, lo que se gasta el café y lo que vale el botín (pared suave: cada
+  // departamento se puede pasar con lo que da el anterior); dentro de la zona sube un poco por planta (porPlanta) y en el Legacy
+  // sigue subiendo sin parar (sinFin). crunch = el café se gasta más deprisa. truco = lo que hace distinta a la zona (campana.js).
   zonas: [
-    { desde: 0, id: 'marketing', nombre: 'Marketing', img: 'fondo-estudios', fondo: '#f2c46b', pared: '#c98f3d', crunch: false },
-    { desde: 5, id: 'soporte', nombre: 'Soporte', img: 'fondo-oficinas', fondo: '#7fc4d8', pared: '#3f7f99', crunch: false },
-    { desde: 10, id: 'qa', nombre: 'QA', img: 'fondo-lan', fondo: '#e88a6a', pared: '#a64b35', crunch: true },
-    { desde: 15, id: 'servidores', nombre: 'Sala de Servidores', img: 'fondo-servidores', fondo: '#4f6f8f', pared: '#26384c', crunch: true },
+    { desde: 0, id: 'marketing', nombre: 'Marketing', img: 'fondo-estudios', pared: '#c98f3d', crunch: false, truco: null, dif: { vida: 1, gasto: 1, valor: 1, golpe: 1 } },
+    { desde: 5, id: 'soporte', nombre: 'Soporte', img: 'fondo-oficinas', pared: '#3f7f99', crunch: false, truco: 'tickets', dif: { vida: 1.7, gasto: 1.15, valor: 1.6, golpe: 1.3 } },
+    { desde: 10, id: 'qa', nombre: 'QA', img: 'fondo-lan', pared: '#a64b35', crunch: true, truco: 'bugs', dif: { vida: 2.8, gasto: 1.25, valor: 2.5, golpe: 1.6 } },
+    { desde: 15, id: 'servidores', nombre: 'Sala de Servidores', img: 'fondo-servidores', pared: '#26384c', crunch: true, truco: 'apagon', dif: { vida: 4.4, gasto: 1.35, valor: 3.8, golpe: 2 } },
+    { desde: 20, id: 'direccion', nombre: 'Dirección', img: 'fondo-sede', pared: '#8a6a1a', crunch: true, truco: 'urgente', dif: { vida: 6.5, gasto: 1.45, valor: 5.5, golpe: 2.4 } },
+    { desde: 25, id: 'legacy', nombre: 'Código Legacy de 2004', img: 'fondo-servidores', filtro: 'sepia(0.9) hue-rotate(60deg)', pared: '#3a4a2a', crunch: true, truco: 'todo',
+      dif: { vida: 9, gasto: 1.55, valor: 8, golpe: 2.8 }, sinFin: { vida: 0.08, gasto: 0.012, valor: 0.1, golpe: 0.02 } },
   ],
+  difPorPlanta: { vida: 0.05, gasto: 0.02, valor: 0.05, golpe: 0.02 },
+  final: 24,                        // la planta del CEO: al vencerlo, el servidor queda arreglado
+  // Los trucos de cada zona. tickets: los correos que caes a veces se reabren; bugs: los bugs a veces se duplican al caer;
+  // apagon: cada `cada` segundos se va la luz `dura` segundos (solo ves alrededor tuyo); urgente: todos los bichos van más rápido.
+  trucos: { tickets: { prob: 0.35 }, bugs: { prob: 0.35 }, apagon: { cada: 11, dura: 3.5, radio: 95 }, urgente: { vel: 1.3 } },
+  // Eventos de planta: al entrar en una planta (desde la 2, nunca en la de un jefe) a veces pasa algo. apagon: se va la luz en esa
+  // planta; cafe: una máquina de café con varias tazas; auditoria: el botín de esa planta vale el doble pero el ascensor no llega
+  // mientras estés en ella; paquete: un paquete de mensajería guardado por reuniones.
+  eventosPlanta: { prob: 0.3, desde: 2, tipos: { apagon: 3, cafe: 3, auditoria: 2, paquete: 2 }, tazas: 3, valorAuditoria: 2, guardias: 3 },
   // Jefes: uno en la última planta de cada zona (4, 9, 14 y 19) y luego cada 5 plantas, en este orden. Mientras vive, una cinta
   // de PRECAUCIÓN cierra el paso a la planta de abajo. cada = segundos entre ataques; escudo = segundos de escudo cada `escudoCada`.
   jefes: {
-    orden: ['producto', 'rrhh', 'lanzamiento', 'accionistas'], primera: 4, cada: 5, vidaPorPlanta: 0, vidaPorVuelta: 0.8,
+    orden: ['producto', 'rrhh', 'lanzamiento', 'accionistas', 'ceo'], primera: 4, cada: 5, vidaPorVuelta: 0.8, vidaPorRango: 0.6,
     producto: { nombre: 'La Directora de Producto', vida: 260, radio: 44, vel: 55, golpe: 5, cada: 1.8, bala: { vel: 140, dano: 4, radio: 7 }, escudoCada: 5, escudo: 1.2 },
     rrhh: { nombre: 'SurvivalBot de Recursos Humanos', vida: 420, radio: 46, vel: 50, golpe: 6, cada: 2.2, bala: { vel: 130, dano: 5, radio: 8 }, abanico: 3 },
     lanzamiento: { nombre: 'ServidorBot del Lanzamiento', vida: 560, radio: 46, vel: 40, golpe: 7, cada: 3.0, invoca: 2 },
     accionistas: { nombre: 'El Presidente del Consejo', vida: 750, radio: 50, vel: 45, golpe: 6, cada: 2.6, bala: { vel: 110, dano: 5, radio: 7 }, anillo: 8 },
+    ceo: { nombre: 'El CEO', vida: 1100, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2 },
     premio: { tazas: 3 },
   },
   // Becarios atrapados: en cada planta (desde la 1) puede haber uno; al tocarlo te sigue y dispara solo durante la bajada.
@@ -64,10 +85,10 @@ BAS.AJ = Object.freeze({
   // Las rarezas, de peor a mejor, con su color.
   rarezas: ['comun', 'raro', 'epico', 'legendario'],
   colorRareza: { comun: '#5fe05f', raro: '#3b8de0', epico: '#ff8a2a', legendario: '#ffe14a' },
-  // Los paquetes: probabilidades (en %) de cada rareza y de que salga mascota en vez de equipo. Se enseñan siempre al comprar.
+  // Los paquetes: probabilidades (en %) de cada rareza y de que salga mascota o arma en vez de equipo. Se enseñan siempre al comprar.
   paquetes: {
-    normal: { nombre: 'Paquete de mensajería', coste: 120, rarezas: { comun: 60, raro: 28, epico: 10, legendario: 2 }, mascota: 25 },
-    jefe: { nombre: 'Paquete del jefe', coste: null, rarezas: { comun: 0, raro: 50, epico: 38, legendario: 12 }, mascota: 35 },
+    normal: { nombre: 'Paquete de mensajería', coste: 120, rarezas: { comun: 60, raro: 28, epico: 10, legendario: 2 }, mascota: 20, arma: 15 },
+    jefe: { nombre: 'Paquete del jefe', coste: null, rarezas: { comun: 0, raro: 50, epico: 38, legendario: 12 }, mascota: 30, arma: 25 },
   },
   repetido: { comun: 10, raro: 25, epico: 60, legendario: 150 },   // monedas por una pieza de equipo repetida
   // El equipo: tres huecos y cuatro piezas por hueco, una por rareza. Los efectos se suman a los de la formación.
@@ -90,6 +111,34 @@ BAS.AJ = Object.freeze({
     dron: { nombre: 'Dron de pizza', rareza: 'legendario', dano: 18, cadencia: 0.7, alcance: 190, cafeCada: 20 },
   },
   nivelMascota: { max: 5, dano: 0.2 },
+  // Las armas: la grapadora la tienes siempre; las otras salen de los paquetes (una por rareza) y repetidas suben de nivel.
+  // dano y cadencia multiplican los de la grapadora; balas/abanico = varias a la vez; atraviesa = a cuántos pasa; area = explota;
+  // rebotes = salta a otro bicho cercano.
+  armas: {
+    grapadora: { nombre: 'Grapadora', rareza: null, dano: 1, cadencia: 1 },
+    clips: { nombre: 'Lanzaclips', rareza: 'comun', dano: 0.55, cadencia: 1, balas: 3, abanico: 0.28 },
+    taladro: { nombre: 'Taladro', rareza: 'raro', dano: 1.2, cadencia: 1.35, atraviesa: 3 },
+    extintor: { nombre: 'Extintor', rareza: 'epico', dano: 1.4, cadencia: 1.6, vel: 0.55, area: 55 },
+    raton: { nombre: 'Ratón inalámbrico', rareza: 'legendario', dano: 1, cadencia: 0.9, rebotes: 3 },
+  },
+  nivelArma: { max: 5, dano: 0.15 },
+  // Las ventajas que se eligen (1 de 3) al entrar en cada zona: solo valen para esa bajada.
+  ventajas: [
+    { id: 'cafeinado', nombre: 'Cafeinado', ef: { cafe: 25 } },
+    { id: 'furia', nombre: 'Furia de lunes', ef: { dano: 0.25 } },
+    { id: 'turbo', nombre: 'Dedos rápidos', ef: { cadencia: 0.2 } },
+    { id: 'iman', nombre: 'Imán de bolsillo', ef: { iman: 40 } },
+    { id: 'mochila', nombre: 'Bolsa extra', ef: { caja: 8 } },
+    { id: 'blindaje', nombre: 'Chaleco de RR. HH.', ef: { blindaje: 0.3 } },
+    { id: 'avaricia', nombre: 'Avaricia', ef: { valor: 0.25 } },
+    { id: 'termo', nombre: 'Termo', ef: { gasto: 0.2 } },
+    { id: 'rebote', nombre: 'Grapas saltarinas', ef: { rebote: 1 } },
+    { id: 'llamada', nombre: 'Enchufe en mantenimiento', ef: { espera: 1 } },
+  ],
+  // El ascenso: al arreglar el servidor (vencer al CEO) puedes ascender. Empiezas otra vez la campaña (los jefes vuelven a dar
+  // su paquete) con lo que tenías y un cargo más: más daño y botín para siempre, pero bichos y jefes más duros.
+  rangos: ['Becario', 'Junior', 'Senior', 'Jefe de equipo', 'Director', 'Vicepresidente', 'CEO'],
+  porRango: { dano: 0.1, valor: 0.15, vida: 0.4 },
   // La formación (tablero Kanban): tres columnas de cursos que se compran en orden, de arriba abajo.
   // Efectos: cafe/caja/alcance/iman/taza = se suman; dano/vel/valor = % más; cadencia/gasto/crunch = % menos; espera = segundos menos;
   // multi = una grapa más por disparo; freno = cuánto menos te frenan las reuniones (1 = nada).

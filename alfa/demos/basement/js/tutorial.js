@@ -20,7 +20,14 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       'Los cursos se compran de arriba abajo en cada columna. Toca un pósit para ver qué da.',
     ],
     equipo: ['Aquí te pones el equipo y eliges mascota. Todo sale de los paquetes: toca el de la rareza que quieras ponerte.'],
-    paquetes: ['Los paquetes dan equipo o mascotas. Las probabilidades están siempre a la vista. El del jefe es mejor: lo da cada jefe la primera vez que lo vences.'],
+    ventaja: ['Al empezar y en cada departamento nuevo eliges una ventaja. Solo vale para esta bajada, así que piensa qué te hace falta.'],
+    departamento: ['¡Ya puedes saltarte departamentos! El ascensor te deja en cualquiera cuyo jefe de antes hayas vencido. Abajo pagan más, pero pegan más fuerte.'],
+    final: [
+      '¡Lo has conseguido! El servidor vuelve a funcionar y Microblizz ni se ha enterado de que estuvo caído.',
+      'Ahora puedes ASCENDER en tu mesa: empiezas la campaña otra vez con un cargo mejor. O bajar al Código Legacy de 2004, que no tiene fondo. Nadie sabe qué hay abajo del todo.',
+    ],
+    catalogo: ['Este es el catálogo de bichos. Cada bicho nuevo que tumbas paga una vez; los raros pagan mucho. Complétalo y te llevas tres paquetes del jefe.'],
+    paquetes: ['Los paquetes dan equipo, armas o mascotas. Las probabilidades están siempre a la vista. El del jefe es mejor: lo da cada jefe la primera vez que lo vences.'],
   };
   const TU = B.tuto = { activo: null };
 

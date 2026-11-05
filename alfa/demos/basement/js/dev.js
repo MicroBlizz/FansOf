@@ -20,6 +20,10 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Basement: pruebas', pinta(caja) {
     for (const m of Object.keys(BAS.AJ.mascotas)) p.mascotas[m] = BAS.AJ.nivelMascota.max;
     p.mascota = 'dron';
   });
+  d = fila();
+  boton(d, 'Abrir todos los departamentos', (p) => { p.vencidos = [4, 9, 14, 19, 24]; });
+  boton(d, 'Servidor arreglado (final)', (p) => { p.final = true; if (!p.vencidos.includes(24)) p.vencidos.push(24); });
+  boton(d, 'Todas las armas', (p) => { for (const a of Object.keys(BAS.AJ.armas)) if (BAS.AJ.armas[a].rareza) p.armas[a] = BAS.AJ.nivelArma.max; });
   boton(d, 'Empezar de cero', (p) => Object.assign(p, BAS.progresoNuevo()));
   pinta();
 } }];

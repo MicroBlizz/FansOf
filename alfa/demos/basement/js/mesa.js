@@ -6,7 +6,7 @@
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const UI = B.ui, C = UI.C, T = UI.texto;
-  const PESTANAS = [{ id: 'formacion', nombre: 'FORMACIÓN' }, { id: 'equipo', nombre: 'EQUIPO' }, { id: 'paquetes', nombre: 'PAQUETES' }];
+  const PESTANAS = [{ id: 'formacion', nombre: 'FORMACIÓN' }, { id: 'equipo', nombre: 'EQUIPO' }, { id: 'paquetes', nombre: 'PAQUETES' }, { id: 'catalogo', nombre: 'CATÁLOGO' }];
   const COLUMNA = { bienestar: ['naranja', 'r-taza'], logistica: ['azul', 'r-iman'], productividad: ['rojo', 'r-grapadora'] };
   const POSIT = { hecho: ['#9ee38a', '#c8f5b8', '#5fae5a'], disponible: ['#ffd23a', '#fff3a0', '#c8901a'], bloqueado: ['#d9c8a4', '#e8dcc0', '#b8a47c'] };
 
@@ -16,25 +16,34 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     alcance: '+{n} de alcance', iman: '+{n} de imán para el botín', espera: 'El ascensor llega {n} s antes', gasto: 'Gastas un {n} % menos de café',
     crunch: 'La CRUNCH ZONE gasta un {n} % menos', valor: 'El botín vale un {n} % más', taza: 'Las tazas rellenan {n} más de café',
     multi: '+{n} grapa por disparo', vel: '+{n} % de velocidad', freno: 'Las reuniones te frenan un {n} % menos',
+    blindaje: 'Los golpes quitan un {n} % menos', rebote: 'Tus disparos rebotan {n} vez más',
   };
-  const PORCIENTO = { dano: 1, cadencia: 1, gasto: 1, crunch: 1, valor: 1, vel: 1, freno: 1 };
+  const PORCIENTO = { dano: 1, cadencia: 1, gasto: 1, crunch: 1, valor: 1, vel: 1, freno: 1, blindaje: 1 };
   UI.describe = (ef) => Object.keys(ef).map((k) => tr(FRASE[k], { n: PORCIENTO[k] ? Math.round(ef[k] * 100) : ef[k] }));
 
   UI.zonaMesa = (H) => ({ y0: 206, y1: H - 140 });
 
-  function cabecera(g, W, p) {
+  // La cabecera: el título, las monedas, tu cargo y el récord; tras arreglar el servidor, el botón de ASCENDER.
+  function cabecera(g, W, AJ, p, botones) {
     UI.panel(g, -6, -6, W + 12, 126, C.madera, '#c2432e', '#5a1714', 5);
-    UI.titulo(g, tr('TU MESA'), W / 2, 40, 44);
-    UI.moneda(g, 40, 92, 3);
-    T(g, String(p.monedas), 68, 93, 30, C.oro, 'left', 5);
+    UI.titulo(g, tr('TU MESA'), W / 2, 36, 40);
+    UI.moneda(g, 34, 92, 3);
+    T(g, String(p.monedas), 60, 93, 28, C.oro, 'left', 5);
+    T(g, tr(AJ.rangos[p.rango]), W - 24, 30, 18, C.naranja, 'right', 3);
+    if (p.final && p.rango < AJ.rangos.length - 1) {
+      const b = { x: W - 186, y: 66, w: 172, h: 50, accion: 'ascender' };
+      UI.boton(g, b, 'oro', tr('ASCENDER'), 22);
+      botones.push(b);
+      return;
+    }
     T(g, p.record ? tr('Récord: planta') + ' -' + p.record : tr('Primera bajada'), W - 24, 93, 18, C.crema, 'right', 3);
   }
 
   function pestanas(g, W, m, botones) {
-    const w = (W - 24 - 16) / 3;
+    const w = (W - 24 - 18) / 4;
     PESTANAS.forEach((q, i) => {
-      const b = { x: 12 + i * (w + 8), y: 136, w, h: 58, accion: 'pestana', id: q.id };
-      UI.boton(g, b, m.pestana === q.id ? 'naranja' : 'azul', tr(q.nombre), 24);
+      const b = { x: 12 + i * (w + 6), y: 136, w, h: 58, accion: 'pestana', id: q.id };
+      UI.boton(g, b, m.pestana === q.id ? 'naranja' : 'azul', tr(q.nombre), 20);
       botones.push(b);
     });
   }
@@ -98,15 +107,16 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return botones;
   }
 
-  const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a) };
+  const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), catalogo: (...a) => UI.pestanaCatalogo(...a) };
 
-  // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo) }
+  // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo), dep (eligiendo departamento), ascenso (la ventana) }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
+    if (m.dep) return UI.departamentos(g, W, H, AJ, p);
     UI.fondoMenu(g, W, H, 'fondo-oficinas');
     g.fillStyle = 'rgba(10,5,20,0.45)'; g.fillRect(0, 0, W, H);
     const botones = [];
-    cabecera(g, W, p);
+    cabecera(g, W, AJ, p, botones);
     pestanas(g, W, m, botones);
     CONTENIDO[m.pestana](g, W, H, AJ, p, botones);
     const bajar = { x: W / 2 - 150, y: H - 122, w: 300, h: 100, accion: 'bajar' }, k = 1 + 0.03 * Math.round(Math.sin(t * 5.6));
@@ -114,6 +124,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     UI.boton(g, bajar, 'naranja', tr('BAJAR'), 52);
     g.restore();
     botones.push(bajar);
+    if (m.ascenso) return UI.ascenso(g, W, H, AJ, p);
     if (!m.sel) return botones;
     g.fillStyle = 'rgba(10,5,20,0.8)'; g.fillRect(0, 0, W, H);
     return fichaCurso(g, W, H, AJ, p, m.sel);

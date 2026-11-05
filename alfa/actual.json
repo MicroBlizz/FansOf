@@ -1,8 +1,8 @@
 {
- "build": 985,
- "hash": "b12a830",
- "fecha": "2026-11-05T18:16:01Z",
- "mensaje": "Rouflage: la pintura rápida llega con una brocha gigante arcoíris animada (tres pasadas, salpicaduras, goteo) y su sonido provisional",
+ "build": 986,
+ "hash": "d50823b",
+ "fecha": "2026-11-05T18:18:12Z",
+ "mensaje": "Basement 0.4.0: campaña con final, ascenso y Código Legacy sin fondo",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

@@ -1,7 +1,8 @@
 // Fans of Basement · Jefes (dominio): uno en la última planta de cada zona y después cada 5 plantas. Al llegar a su planta sale
 // por debajo de ti y una cinta de PRECAUCIÓN cierra el paso hasta que cae. Cada uno ataca a su manera: el Jefe de Producto
 // dispara diapositivas y se tapa con un escudo de PowerPoint, Recursos Humanos lanza sellos de DESPEDIDO en abanico, el Bug de
-// Lanzamiento invoca bugs y el Consejo de Accionistas suelta un anillo de monedas. Al caer suelta tazas y un paquete: el del jefe
+// Lanzamiento invoca bugs, el Consejo de Accionistas suelta un anillo de monedas y el CEO (el último, en Dirección) alterna
+// sellos y bugs: al vencerlo, el servidor queda arreglado. Al caer suelta tazas y un paquete: el del jefe
 // la primera vez que lo vences en esa planta; uno normal si ya lo habías vencido.
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
@@ -18,8 +19,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   function crear(e, planta, cual) {
     const AJ = e.aj, d = AJ.jefes[cual.id], suelo = (planta + 1) * AJ.altoPlanta;
-    const vida = Math.round(d.vida * (1 + AJ.jefes.vidaPorPlanta * planta) * (1 + AJ.jefes.vidaPorVuelta * cual.vuelta));
-    e.jefe = { id: cual.id, planta, suelo, x: AJ.ancho / 2, y: Math.min(suelo - 70, e.jugador.y + 160), vida, vidaMax: vida, radio: d.radio,
+    const dif = B.difDe(AJ, planta, 0), vida = Math.round(d.vida * dif.vida * (1 + AJ.jefes.vidaPorVuelta * cual.vuelta) * (1 + AJ.jefes.vidaPorRango * e.rango));
+    e.jefe = { id: cual.id, planta, suelo, golpe: dif.golpe, x: AJ.ancho / 2, y: Math.min(suelo - 70, e.jugador.y + 160), vida, vidaMax: vida, radio: d.radio,
       dir: 1, ataqueT: 1.5, escudoT: 0, escudoCadaT: d.escudoCada || 0, golpeT: 0 };
     e.jefesVistos[planta] = true;
     e.eventos.push({ tipo: 'jefe', id: cual.id, nombre: d.nombre });
@@ -42,7 +43,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
 
   function disparar(e, jf, ang, b, tipo) {
-    e.proyectiles.push({ x: jf.x, y: jf.y, vx: Math.cos(ang) * b.vel, vy: Math.sin(ang) * b.vel, dano: b.dano, radio: b.radio, tipo, vida: 4 });
+    e.proyectiles.push({ x: jf.x, y: jf.y, vx: Math.cos(ang) * b.vel, vy: Math.sin(ang) * b.vel, dano: b.dano * jf.golpe, radio: b.radio, tipo, vida: 4 });
   }
   const angAl = (e, jf) => Math.atan2(e.jugador.y - jf.y, e.jugador.x - jf.x);
 
@@ -50,6 +51,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     producto(e, jf, d) { disparar(e, jf, angAl(e, jf), d.bala, 'diapositiva'); },
     rrhh(e, jf, d) { const a = angAl(e, jf); for (let i = 0; i < d.abanico; i++) disparar(e, jf, a + (i - (d.abanico - 1) / 2) * 0.32, d.bala, 'sello'); },
     lanzamiento(e, jf, d) { for (let i = 0; i < d.invoca; i++) B.enemigos.crear(e, 'bug', jf.x + (i ? 30 : -30), jf.y - 10).dir = i ? 1 : -1; },
+    // el CEO alterna: un abanico de sellos y, al siguiente ataque, dos bugs
+    ceo(e, jf, d) { jf.turno = !jf.turno; if (jf.turno) ATAQUE.rrhh(e, jf, d); else ATAQUE.lanzamiento(e, jf, d); },
     accionistas(e, jf, d) { const a0 = e.t; for (let i = 0; i < d.anillo; i++) disparar(e, jf, a0 + i * Math.PI * 2 / d.anillo, d.bala, 'moneda'); },
   };
 
@@ -70,7 +73,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   function tocar(e, jf, d) {
     const j = e.jugador, r = jf.radio + e.aj.jugador.radio;
-    if ((j.x - jf.x) ** 2 + (j.y - jf.y) ** 2 <= r * r) B.herirJugador(e, d.golpe, 'jefe');
+    if ((j.x - jf.x) ** 2 + (j.y - jf.y) ** 2 <= r * r) B.herirJugador(e, d.golpe * jf.golpe, 'jefe');
   }
 
   // Los proyectiles de los jefes: vuelan en línea recta y, si te dan, quitan café.
@@ -113,10 +116,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const P = e.aj.jefes.premio;
     e.jefe = null;
     e.jefesVencidos++; e.bajas++;
+    e.bajasPorTipo[jf.id] = (e.bajasPorTipo[jf.id] || 0) + 1;
     for (let i = 0; i < P.tazas; i++) B.enemigos.soltar(e, 'taza', jf.x + (i - 1) * 24, jf.y);
     const primera = !e.vencidos.includes(jf.planta);
     if (primera) e.jefesNuevos.push(jf.planta);
     B.enemigos.soltar(e, primera ? 'paqueteJefe' : 'paquete', jf.x, jf.y - 26);
     e.eventos.push({ tipo: 'jefeVencido', id: jf.id, x: jf.x, y: jf.y, nombre: e.aj.jefes[jf.id].nombre });
+    if (jf.planta === e.aj.final && !e.final) { e.final = true; e.eventos.push({ tipo: 'final' }); }   // el CEO: servidor arreglado
   }
 })(BAS);

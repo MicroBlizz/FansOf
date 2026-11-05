@@ -6,7 +6,7 @@
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const UI = B.ui, V = B.vista, T = UI.texto;
-  const JEFE = { producto: ['ladirectora', 2.5], rrhh: ['survivalbot', 2.5], lanzamiento: ['servidorbot', 2.5], accionistas: ['presidente', 2.2] };
+  const JEFE = { producto: ['ladirectora', 2.5], rrhh: ['survivalbot', 2.5], lanzamiento: ['servidorbot', 2.5], accionistas: ['presidente', 2.2], ceo: ['ceo', 2.4] };
   const VERDE = 'hue-rotate(-90deg) saturate(1.2)';   // los becarios atrapados y rescatados: el becario de Swipe, en verde
 
   V.jefe = function (g, e) {

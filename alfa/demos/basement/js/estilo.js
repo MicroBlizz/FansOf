@@ -93,7 +93,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   const IMG = UI.IMG = {};
   UI.LISTA_IMG = ['becario', 'descargabot', 'plusbot', 'ladirectora', 'survivalbot', 'servidorbot', 'presidente', 'cajabotin', 'r-taza', 'r-post',
     'r-grapadora', 'r-silla', 'r-auriculares', 'r-tarjeta', 'r-iman', 'i-oro', 'ev-lola', 'soportebot', 'fondo-vestibulo', 'fondo-estudios',
-    'fondo-oficinas', 'fondo-lan', 'fondo-servidores', 'fondo-sede', 'i-flecha'];
+    'fondo-oficinas', 'fondo-lan', 'fondo-servidores', 'fondo-sede', 'i-flecha', 'ceo'];
   UI.cargaImagenes = () => Promise.all(UI.LISTA_IMG.map((n) => new Promise((ok) => {
     const im = new Image();
     im.onload = () => { IMG[n] = im; ok(); };
@@ -115,13 +115,15 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return true;
   };
   // un fondo vertical (135×240) que llena el rectángulo, recortado y centrado
-  UI.fondo = function (g, n, x, y, w, h, oscuro) {
+  UI.fondo = function (g, n, x, y, w, h, oscuro, filtro) {
     const im = IMG[n];
     g.fillStyle = '#120a1c'; g.fillRect(x, y, w, h);
     if (!im) return;
     const s = Math.ceil(Math.max(w / im.width, h / im.height));
     g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); g.imageSmoothingEnabled = false;
+    if (filtro) g.filter = filtro;
     g.drawImage(im, Math.round(x + (w - im.width * s) / 2), Math.round(y + (h - im.height * s) / 2), im.width * s, im.height * s);
+    g.filter = 'none';
     if (oscuro) { g.fillStyle = 'rgba(10,5,20,' + oscuro + ')'; g.fillRect(x, y, w, h); }
     g.restore();
   };

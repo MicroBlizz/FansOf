@@ -63,6 +63,15 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       '..BBBBBB..', '..BBBBBB..', '..BBBBBB..', '..BBBBBB..', '...BBBB...', '....KK....', '.BBBBBBBB.', '.BBBBBBBB.', '....KK....', '....KK....', '.KKKKKKKK.', '.K..KK..K.'] },
     fotocopiadora: { pal: { S: '#d0d8e4', K: '#2b3445', W: '#ffffff', G: '#5fe05f', D: '#8a97ab' }, filas: [
       'SSSSSSSSSSSSSS', 'SKKKKKKKKKKKKS', 'SSSSSSSSSSSSSS', 'SSWWWWWWWWWWSS', 'SSSSSSSSSSSSSS', 'SSSSSSSSGGSSSS', 'SSSSSSSSSSSSSS', 'SDDDDDDDDDDDDS', 'SDDDDDDDDDDDDS', 'SSSSSSSSSSSSSS'] },
+    // ---- 0.4.0: las armas que no tienen dibujo de Yoshi ----
+    lanzaclips: { pal: { S: '#c8d2e0' }, filas: [
+      '..SSSSS..', '.S.....S.', '.S.SSS.S.', '.S.S.S.S.', '.S.S.S.S.', '.S.S.S.S.', '.S.S...S.', '.S.SSSSS.', '.S.......'] },
+    taladro: { pal: { K: '#2b2b35', O: '#ff8a2a', S: '#c8d2e0' }, filas: [
+      '...KKKKKK...', '..KOOOOOOKSS', '..KOOOOOOKSS', '...KKOOKK...', '....KOOK....', '....KOOK....', '....KKKK....'] },
+    extintor: { pal: { K: '#2b2b35', R: '#e8413a', W: '#ffffff' }, filas: [
+      '..KK..', '.KKKK.', '..KK.K', '.RRRR.', 'RRRRRR', 'RWWWRR', 'RWWWRR', 'RRRRRR', 'RRRRRR', 'RRRRRR', 'RRRRRR', '.RRRR.'] },
+    raton: { pal: { B: '#3a8ee6', K: '#1a1a1a' }, filas: [
+      '..BBBB..', '.BBKBBB.', 'BBBKBBBB', 'BBBKBBBB', 'BBBBBBBB', 'BBBBBBBB', 'BBBBBBBB', 'BBBBBBBB', '.BBBBBB.', '..BBBB..'] },
     taza_hud: { pal: { W: '#ffffff', C: '#6b3a1e', s: '#ffffff' }, filas: [
       '.s..s....', '..s..s...', 'WWWWWWW..', 'WCCCCCWWW', 'WWWWWWW.W', 'WWWWWWW.W', 'WWWWWWWWW', 'WWWWWWW..', '.WWWWW...'] },
   };

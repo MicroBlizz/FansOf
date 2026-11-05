@@ -15,6 +15,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     jugador: ['becario', 1.5], bug: ['descargabot', 1.1], correo: ['plusbot', 1.1], miniCorreo: ['plusbot', 0.65], reunion: ['reunion', 5],
     codigo: ['r-tarjeta', 2], postit: ['r-post', 1.6], taza: ['r-taza', 2], cafe: ['cafe', 4], paquete: ['paquete', 4], paqueteJefe: ['cajabotin', 0.8],
     pato: ['pato', 4], gato: ['gato', 4], roomba: ['roomba', 4], dron: ['soportebot', 0.8],
+    dorado: ['descargabot', 1.1, 'sepia(1) saturate(5) brightness(1.15)'], spam: ['plusbot', 1.1, 'hue-rotate(150deg) saturate(1.6)'],
+    critico: ['descargabot', 1.7, 'hue-rotate(-120deg) saturate(2.2)'],
+    grapadora: ['r-grapadora', 2], clips: ['lanzaclips', 4], taladro: ['taladro', 4], extintor: ['extintor', 4], raton: ['raton', 4],
   };
   // pinta lo que sea: si hay dibujo de Yoshi (img/), ese; si no, el propio en píxel (sprites.js)
   V.pinta = function (g, n, x, y, esc, opc) {
@@ -23,7 +26,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     B.dibujaSprite(g, n, x, y, esc, o);
     return true;
   };
-  V.pintaCosa = (g, tipo, x, y, opc, extraEsc) => { const d = V.DIBUJO[tipo]; V.pinta(g, d[0], x, y, d[1] * (extraEsc || 1), opc); };
+  V.pintaCosa = (g, tipo, x, y, opc, extraEsc) => { const d = V.DIBUJO[tipo]; V.pinta(g, d[0], x, y, d[1] * (extraEsc || 1), d[2] ? { ...opc, filtro: (opc && opc.blanco) ? undefined : d[2] } : opc); };
 
   const LEMAS = ['SINERGIA', 'EL CRUNCH ES PASIÓN', '¿LO HAS REINICIADO?', 'MONETIZA TUS SUEÑOS', 'NO ES UN BUG, ES UNA FEATURE',
     'REUNIÓN A LAS 8:00', 'SOMOS UNA FAMILIA', 'PIENSA EN EL ACCIONISTA'];
@@ -38,7 +41,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // ---------- el hueco del ascensor ----------
   function planta(g, AJ, n, W) {
     const z = B.zonaDe(AJ, n), y = V.sy(n * AJ.altoPlanta), h = AJ.altoPlanta * K;
-    UI.fondo(g, z.img, 0, y, W, h, 0.32);
+    UI.fondo(g, z.img, 0, y, W, h, 0.32, z.filtro);
     if (z.crunch && Math.floor(performance.now() / 600) % 2) { g.fillStyle = 'rgba(232,65,58,0.10)'; g.fillRect(0, y, W, h); }
     if (hash(n) > 0.3) cartel(g, n, y);
     forjado(g, W, y, n, z);
@@ -90,11 +93,18 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
   }
 
+  const BALA = {
+    grapadora(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-8, -3, 16, 6); g.fillStyle = '#e8eef7'; g.fillRect(-6, -1, 12, 3); },
+    ayudante(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-8, -3, 16, 6); g.fillStyle = '#ffd84a'; g.fillRect(-6, -1, 12, 3); },
+    clips(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-6, -4, 12, 8); g.fillStyle = '#c8d2e0'; g.fillRect(-4, -2, 8, 4); },
+    taladro(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-12, -4, 24, 8); g.fillStyle = '#ff8a2a'; g.fillRect(-10, -2, 20, 4); g.fillStyle = '#ffd84a'; g.fillRect(4, -2, 6, 4); },
+    extintor(g) { g.fillStyle = 'rgba(255,255,255,0.9)'; g.beginPath(); g.arc(0, 0, 11, 0, 7); g.fill(); g.fillStyle = '#c8d2e0'; g.beginPath(); g.arc(-4, -3, 5, 0, 7); g.fill(); },
+    raton(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-7, -7, 14, 14); g.fillStyle = '#3a8ee6'; g.fillRect(-5, -5, 10, 10); },
+  };
   function balas(g, e) {
     for (const b of e.balas) {
       g.save(); g.translate(V.sx(b.x), V.sy(b.y)); g.rotate(Math.atan2(b.vy, b.vx));
-      g.fillStyle = '#1a0f1f'; g.fillRect(-8, -3, 16, 6);
-      g.fillStyle = b.quien === 'jugador' ? '#e8eef7' : '#ffd84a'; g.fillRect(-6, -1, 12, 3);
+      BALA[b.quien === 'jugador' ? b.arma : 'ayudante'](g);
       g.restore();
     }
   }

@@ -6,7 +6,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
   const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
-    mesa: { pestana: 'formacion', sel: null, apertura: null } };
+    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false }, nuevos: [] };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -39,7 +39,22 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     rescate: (ev) => { FX.confeti(ev.x, ev.y); FX.cartel(tr('¡BECARIO RESCATADO!'), '#5fe05f', 1.4, ev.ayuda ? tr('Ahora dispara contigo') : tr('Te dará propina')); basSuena('rescate'); },
     paquete: (ev) => { FX.numero(ev.x, ev.y - 14, '+' + tr('PAQUETE'), '#ffe14a', 16); FX.confeti(ev.x, ev.y); basSuena('compra'); },
     dronCafe: (ev) => FX.numero(ev.x, ev.y - 14, tr('¡PIZZA Y CAFÉ!'), '#ff8a2a', 12),
+    eleccion: () => { TU.lanza('ventaja', est.t); basSuena('zona'); },
+    ventaja: () => basSuena('compra'),
+    reabierto: (ev) => FX.numero(ev.x, ev.y - 20, tr('¡REABIERTO!'), '#e8413a', 14),
+    duplicado: (ev) => FX.numero(ev.x, ev.y - 20, tr('¡DUPLICADO!'), '#e8413a', 14),
+    explosion: (ev) => { FX.chispas(ev.x, ev.y, 26, '#ffffff', 160); FX.temblor = Math.max(FX.temblor, 6); },
+    apagon: () => { FX.cartel(tr('¡APAGÓN!'), '#8ac4ff', 1); basSuena('cafeBajo'); },
+    eventoPlanta: (ev) => { const E = EVENTO[ev.evento]; FX.cartel(tr(E[0]), E[1], 2, tr(E[2])); basSuena('zona'); },
+    auditoriaAscensor: () => { FX.cartel(tr('¡AUDITORÍA!'), '#e8413a', 1.2, tr('El ascensor no para en esta planta')); basSuena('no'); },
+    final: () => { FX.cartel(tr('¡SERVIDOR ARREGLADO!'), '#4fc25a', 3, tr('Microblizz vuelve a funcionar')); FX.confeti(est.e.jugador.x, est.e.jugador.y); FX.confeti(est.e.jugador.x, est.e.jugador.y - 60); vibrar(300); TU.lanza('final', est.t); },
     fin: (ev) => { if (ev.como === 'ascensor') FX.confeti(est.e.jugador.x, est.e.jugador.y); else { FX.cartel(tr('¡DESMAYADO!'), '#e5322d', 1.5); vibrar(150); } },
+  };
+  const EVENTO = {
+    apagon: ['¡APAGÓN EN LA PLANTA!', '#8ac4ff', 'Solo ves lo que tienes cerca'],
+    cafe: ['¡MÁQUINA DE CAFÉ!', '#ff8a2a', 'Tazas gratis en esta planta'],
+    auditoria: ['¡AUDITORÍA!', '#ffd23a', 'Botín doble, pero el ascensor no para aquí'],
+    paquete: ['¡PAQUETE PERDIDO!', '#ffd23a', 'Lo vigilan unas reuniones'],
   };
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Basement: sin vibración', err); } }
 
@@ -51,6 +66,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const p = aLogico(ev);
     if (TU.habla()) { TU.toca(est.t); return; }   // mientras habla Lola, cada toque pasa al siguiente bocadillo
     if (est.modo !== 'bajada') { tocarFuera(p); return; }
+    if (est.e.eleccion) { const b = est.botones.find((q) => UI.dentro(p, q)); if (b) aplicaVentaja(b.id); return; }
     if (!est.e.fin && UI.dentro(p, UI.botonAscensor(W, est.H))) { est.pulsoAscensor = true; return; }
     if (!joy.activo) Object.assign(joy, { activo: true, id: ev.pointerId, ox: p.x, oy: p.y, dx: 0, dy: 0 });
   }
@@ -74,8 +90,20 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     est.mesa.apertura = { tipo, premio: r.valor.premio, t0: est.t, revelado: false };
     basSuena('tiembla');
   }
+  function aplicaVentaja(id) { if (B.elegirVentaja(est.e, id).ok) for (const ev of est.e.eventos) if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev); }
+  // BAJAR: si hay más de un departamento abierto, se elige dónde; si no, a Marketing.
+  function bajar() {
+    if (B.departamentos(B.AJ, SAVE.progreso).filter((d) => d.abierto).length < 2) { empezar(0); return; }
+    est.mesa.dep = true; basSuena('boton'); TU.lanza('departamento', est.t);
+  }
   const ACCIONES = {
-    bajar: () => empezar(),
+    bajar: () => bajar(),
+    departamento: (b) => { const r = B.inicioDe(B.AJ, SAVE.progreso, b.id); if (r.ok) { est.mesa.dep = false; empezar(r.valor); } },
+    cerrarDep: () => { est.mesa.dep = false; basSuena('boton'); },
+    ascender: () => { est.mesa.ascenso = true; basSuena('boton'); },
+    cerrarAscenso: () => { est.mesa.ascenso = false; basSuena('boton'); },
+    confirmarAscenso: () => { if (aplica(B.ascender(B.AJ, SAVE.progreso), 'jefeVencido')) { est.mesa.ascenso = false; FX.confeti(W / 2, est.H * 0.3); } },
+    arma: (b) => aplica(B.ponerArma(B.AJ, SAVE.progreso, b.id), 'boton'),
     mesa: () => alaMesa(),
     pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); TU.lanza(b.id, est.t); },
     curso: (b) => { est.mesa.sel = b.id; basSuena('boton'); },
@@ -105,7 +133,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function teclaMenu() {
     if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
     else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
-    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura) empezar();
+    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso) bajar();
   }
 
   function orden() {
@@ -117,8 +145,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
 
   // ---------- bajada ----------
-  function empezar() {
-    est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, SAVE.progreso), SAVE.progreso.vencidos);
+  function empezar(inicio) {
+    const p = SAVE.progreso;
+    est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, p), { vencidos: p.vencidos, inicio: inicio || 0, rango: p.rango, ventajas: true });
     Object.assign(est, { modo: 'bajada', acum: 0, record: false, pulsoAscensor: false });
     FX.limpiar(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
     FX.cartel(tr('¡A BAJAR!'), '#ffd23a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
@@ -134,7 +163,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
   function terminar(e) {
     est.record = e.resultado.planta > SAVE.progreso.record;
-    SAVE.progreso = B.cobrar(SAVE.progreso, e.resultado);
+    est.nuevos = B.catalogoNuevos(B.AJ, SAVE.progreso, e.resultado);
+    SAVE.progreso = B.cobrar(SAVE.progreso, e.resultado, B.AJ);
     basGuarda();
     Object.assign(est, { modo: 'resultado', resultadoT: 0 });
     Object.assign(joy, { activo: false, id: -1, dx: 0, dy: 0 });
@@ -149,9 +179,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (FX.temblor > 0) G.translate((Math.random() - 0.5) * FX.temblor, (Math.random() - 0.5) * FX.temblor);
     B.vista.dibujar(G, e, W, est.H);
     G.restore();
+    UI.apagon(G, W, est.H, e);
     UI.marcador(G, e, W, est.H);
     FX.dibujarCarteles(G, UI.texto, W, est.H);
     UI.palanca(G, joy);
+    if (e.eleccion) est.botones = UI.eleccion(G, W, est.H, e, est.t - (est.eleccionT || (est.eleccionT = est.t)));
+    else est.eleccionT = 0;
   }
 
   // La mesa; al abrir un paquete, cuando se revela el premio, confeti y fanfarria (más cuanto más raro).
@@ -175,7 +208,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     G.imageSmoothingEnabled = false;
     FX.paso(dt);
     if (est.modo === 'bajada') { est.botones = []; pintarBajada(dt); }
-    else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record);
+    else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record, est.nuevos);
     else if (est.modo === 'mesa') pintarMesa();
     else est.botones = UI.portada(G, W, est.H, est.t);
     if (TU.habla()) est.botones = TU.dibuja(G, W, est.H, est.t);

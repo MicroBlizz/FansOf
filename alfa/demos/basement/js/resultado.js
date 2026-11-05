@@ -16,7 +16,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return f;
   }
 
-  UI.resultado = function (g, W, H, t, r, record) {
+  // nuevos = los bichos que esta bajada añade al catálogo (con lo que pagan)
+  UI.resultado = function (g, W, H, t, r, record, nuevos) {
     const salvo = r.como === 'ascensor', lista = filas(r, salvo), alto = 70 + lista.length * 46, y0 = H * 0.27;
     UI.fondoMenu(g, W, H, salvo ? 'fondo-vestibulo' : 'fondo-servidores');
     UI.titulo(g, salvo ? tr('¡A SALVO!') : tr('¡DESMAYADO!'), W / 2, H * 0.1, 64);
@@ -28,7 +29,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       T(g, a, 60, y, 22, C.cafe, 'left', 0);
       T(g, b, W - 60, y, 28, color || C.cafe, 'right', 0);
     });
-    if (record && Math.floor(t * 3) % 2) UI.titulo(g, tr('¡NUEVO RÉCORD!'), W / 2, y0 + alto + 44, 36);
+    let y = y0 + alto + 44;
+    if (r.final) { UI.titulo(g, tr('¡SERVIDOR ARREGLADO!'), W / 2, y, 36); y += 50; }
+    else if (record && Math.floor(t * 3) % 2) { UI.titulo(g, tr('¡NUEVO RÉCORD!'), W / 2, y, 36); y += 50; }
+    if (nuevos && nuevos.length) UI.franja(g, tr('Nuevo en el catálogo: {n}', { n: nuevos.map((x) => UI.nombreBicho(B.AJ, x.id)).join(', ') }) + ' · +' + nuevos.reduce((s, x) => s + x.monedas, 0), W / 2, y, 16, W - 30);
     const b = { x: W / 2 - 150, y: H - 130, w: 300, h: 90, accion: 'mesa' };
     UI.boton(g, b, 'naranja', tr('A MI MESA'), 40);
     return [b];

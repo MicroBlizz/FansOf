@@ -1,8 +1,8 @@
 {
- "build": 989,
- "hash": "d804d60",
- "fecha": "2026-11-05T18:39:03Z",
- "mensaje": "Rouflage: tanda 1 de mascotas vivas: conejo, zorro, ardilla, mapache y hurón (una silueta, sin uniones)",
+ "build": 990,
+ "hash": "3dec891",
+ "fecha": "2026-11-05T18:40:11Z",
+ "mensaje": "Rouflage: el zorro mascota sin calcetines negros (eran dos cuadrados fijos que no seguían a las patas)",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

@@ -99,7 +99,7 @@
     zorro: {
       color: '#e8702a', panza: '#fff4e6', morro: '#fff4e6', hocico: 2.4, orejas: 'punta', picoOreja: 5.2, dentroOreja: '#3b2318', largo: 11,
       colaTrozos: 4, colaR0: 2.4, colaR1: 3, colaLargo: 2.8, colaBase: -2.5, colaOnda: 0.16, bigotes: true,
-      manchas: (c, P, cola) => { const [x, y] = cola[cola.length - 1]; mancha(c, k => ovalo(k, x, y, 3.4, 3.4), '#fff4e6'); for (const p of [P.cadX + 1.2, P.homX + 1.2]) mancha(c, k => k.rect(p - 2.4, -3, 4.8, 3.2), '#3b2318'); },
+      manchas: (c, P, cola) => { const [x, y] = cola[cola.length - 1]; mancha(c, k => ovalo(k, x, y, 3.4, 3.4), '#fff4e6'); },
       pose: (o, P) => {
         if (o.acc === 'salta') { const q = o.k; P.alto = Math.sin(Math.min(1, q / 0.7) * Math.PI) * 10 * (q < 0.7 ? 1 : 0); P.ladeo = q < 0.35 ? -0.5 : q < 0.7 ? 0.9 : 0.6 * (1 - (q - 0.7) / 0.3); P.agacha = q > 0.7 ? 2 : 0; P.cabExtra = q > 0.7 ? 3 : 0; }
       },

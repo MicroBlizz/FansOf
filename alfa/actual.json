@@ -1,8 +1,8 @@
 {
- "build": 939,
- "hash": "f1e1583",
- "fecha": "2026-11-05T10:32:29Z",
- "mensaje": "Nova 0.3.45: el Pulso de hackeo (arma de salida del crucero) pega el doble",
+ "build": 941,
+ "hash": "85c51c8",
+ "fecha": "2026-11-05T10:33:30Z",
+ "mensaje": "Rumble v2: uniones de los caminos del centro sin la junta redonda (repintadas por Yoshi)",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

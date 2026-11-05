@@ -199,7 +199,7 @@ IDIOMA.add({
   "Acabaste en la liga {l}. Tu premio:": "Du bist in der Liga {l} gelandet. Dein Preis:",
   "¡Premio de temporada cobrado!": "Saisonpreis abgeholt!",
   "Cambian en {h} h {m} min": "Wechseln in {h} Std {m} Min",
-  "−30 % solo hoy": "−30 % nur heute",
+  "solo hoy": "nur heute",
   "ESTA SEMANA": "DIESE WOCHE",
   "AL ACABAR": "AM ENDE",
   "PREMIO DE LIGA": "LIGAPREIS",

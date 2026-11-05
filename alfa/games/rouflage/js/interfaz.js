@@ -12,6 +12,8 @@ function ponIconos() { for (const el of document.querySelectorAll('i[data-icono]
 
 /* ---------- avisos, cartel y pista ---------- */
 function avisa(texto, tipo = 'aviso') {
+  // en los menús (tienda, armario, pase…) el marcador está escondido y su caja de avisos con él: va al aviso común de la serie (toast, core)
+  if (E('hud').hidden) { toast(texto, tipo === 'bueno'); return; }
   const caja = E('avisos'), p = document.createElement('p'); p.className = tipo; p.textContent = texto; caja.appendChild(p);
   // en el móvil en vertical: como mucho dos a la vez, duran menos y salen justo debajo del marcador (y de la tira de retratos), nunca encima
   const movil = matchMedia('(orientation: portrait) and (max-width: 600px)').matches;

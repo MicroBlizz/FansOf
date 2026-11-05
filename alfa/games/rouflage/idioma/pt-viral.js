@@ -199,7 +199,7 @@ IDIOMA.add({
   "Acabaste en la liga {l}. Tu premio:": "Você terminou na liga {l}. Seu prêmio:",
   "¡Premio de temporada cobrado!": "Prêmio de temporada resgatado!",
   "Cambian en {h} h {m} min": "Mudam em {h} h {m} min",
-  "−30 % solo hoy": "−30 % só hoje",
+  "solo hoy": "só hoje",
   "ESTA SEMANA": "ESTA SEMANA",
   "AL ACABAR": "NO FINAL",
   "PREMIO DE LIGA": "PRÊMIO DE LIGA",

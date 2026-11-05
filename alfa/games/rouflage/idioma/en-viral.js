@@ -199,7 +199,7 @@ IDIOMA.add({
   "Acabaste en la liga {l}. Tu premio:": "You finished in the {l} league. Your reward:",
   "¡Premio de temporada cobrado!": "Season reward claimed!",
   "Cambian en {h} h {m} min": "They change in {h} h {m} min",
-  "−30 % solo hoy": "−30% today only",
+  "solo hoy": "today only",
   "ESTA SEMANA": "THIS WEEK",
   "AL ACABAR": "AT THE END",
   "PREMIO DE LIGA": "LEAGUE REWARD",

@@ -1,8 +1,8 @@
 {
- "build": 938,
- "hash": "a748dac",
- "fecha": "2026-11-05T10:26:20Z",
- "mensaje": "Rumble v2: sin los pies dibujados del original bajo los personajes animados; herramienta para arreglar las uniones del camino",
+ "build": 939,
+ "hash": "f1e1583",
+ "fecha": "2026-11-05T10:32:29Z",
+ "mensaje": "Nova 0.3.45: el Pulso de hackeo (arma de salida del crucero) pega el doble",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.21",
   "karts": "0.7.20",
-  "nova": "0.3.44",
+  "nova": "0.3.45",
   "pets": "0.2.4",
   "ratkov": "0.2.34",
   "rouflage": "0.2.68",

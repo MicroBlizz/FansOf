@@ -4,7 +4,7 @@
 // no le hacen caso. En el PvP solo viaja el aspecto (la ropa `mascota`, con el aviso `rp` de siempre): cada pantalla mueve las mascotas
 // a su manera, así que no hay nada que sincronizar. Hay una por personaje con mascota puesta; se crea y se quita sola al cambiarse de ropa.
 'use strict';
-const MASC = { lista: [], sigue: 30, vel: 185, velPaseo: 112, velSalida: 165, velHuida: 232, miedo: 175, salida: 3.5, tele: 340, esc: 1.5 };
+const MASC = { escViva: 2, lista: [], sigue: 34, vel: 185, velPaseo: 112, velSalida: 165, velHuida: 232, miedo: 175, salida: 3.5, tele: 340, esc: 1.5 };
 
 function nuevaMascota(e) { return { mascota: e.ropa.mascota, dueno: e, x: e.x - 20 * e.mira, y: e.y, ordenY: e.y, dir: e.mira || 1, t: Math.random() * 10, mov: false, susto: 0, ang: rand(0, TAU), tAng: 0, atasco: 0, suelta: 0, sem: Math.random() * 9, acc: '', tAcc: 0, espera: rand(2, 4), polvo: [], tPolvo: 0 }; }
 
@@ -108,8 +108,8 @@ function pintaMascotaViva(c, m) {
   c.save(); c.translate(m.x + tiembla, m.y);
   for (const p of m.polvo) { const q = p.t / 0.45; c.globalAlpha = 0.45 * (1 - q); ARD.shape(c, ARD.el(p.x - m.x - m.dir * q * 4, -2 - q * 5, 2.4 + q * 3.4, 1.8 + q * 2.4), '#e8e1d4', 0); }
   c.globalAlpha = 1;
-  ARD.shape(c, ARD.el(0, 1, 11.5, 3.4), 'rgba(20,10,40,.3)', 0);
-  c.scale(m.dir * MASC.esc, MASC.esc);
+  ARD.shape(c, ARD.el(0, 1, 15, 4.4), 'rgba(20,10,40,.3)', 0);      // las vivas son más grandes (MASC.escViva)
+  c.scale(m.dir * MASC.escViva, MASC.escViva);
   const k = m.acc ? m.tAcc / ((MASCOTAS_VIVAS_ACC[m.mascota] || {})[m.acc] || 1) : 0;
   try { MASCOTAS_VIVAS[m.mascota](c, { t: m.t, mov: m.mov ? 1 : 0, susto: m.susto > 0, acc: m.acc, k, m, mira, contento: cerca && !m.susto }); } catch (err) { console.warn('[mascota]', err); }
   c.restore();

@@ -34,7 +34,25 @@ const BAS_SONIDO = {
   rescate: () => [523, 784, 1046].forEach((f, i) => tone(f, f, 0.1, 'triangle', basV(0.07), i * 0.08)),
   tiembla: () => { for (let i = 0; i < 6; i++) noise(0.05, basV(0.06), 900, 'bandpass', i * 0.13); },
 };
-function basSuena(n) { try { if (BAS_SONIDO[n]) BAS_SONIDO[n](); } catch (e) { console.warn('Basement: sin sonido', e); } }
+// Los efectos de Yoshi que usa Fans of Swipe (snd/, copiados de Swipe) para lo que más se oye; lo demás, sintetizado.
+const BAS_MP3 = { recoge: 'moneda', impacto: 'golpe', golpe: 'dano', baja: 'muerte', compra: 'cofre', jefeVencido: 'reliquia', bloqueado: 'escudo' };
+const BAS_AUDIO = {}, BAS_ULTIMO = {};
+function basCargaSonidos() {
+  for (const f of new Set(Object.values(BAS_MP3))) {
+    const a = new Audio(); a.preload = 'auto';
+    a.addEventListener('canplaythrough', () => { BAS_AUDIO[f] = a; }, { once: true });
+    a.addEventListener('error', () => { BAS_AUDIO[f] = null; });
+    a.src = 'snd/' + f + '.mp3';
+  }
+}
+function basMp3(n) {
+  const a = BAS_AUDIO[BAS_MP3[n]], ahora = performance.now();
+  if (!a || !SAVE.efectos || ahora - (BAS_ULTIMO[n] || 0) < 70) return !!a;
+  BAS_ULTIMO[n] = ahora;
+  const c = a.cloneNode(); c.volume = 0.45; c.play().catch(() => {});
+  return true;
+}
+function basSuena(n) { try { if (!basMp3(n) && BAS_SONIDO[n]) BAS_SONIDO[n](); } catch (e) { console.warn('Basement: sin sonido', e); } }
 
 let basFinSonado = null;
 // modo = 'portada' | 'mesa' | 'bajada' | 'resultado'; e = la bajada en curso (si hay)

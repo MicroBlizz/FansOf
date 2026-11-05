@@ -11,7 +11,7 @@ BAS.AJ = Object.freeze({
   // El pozo: 360 de ancho (el ancho de la pantalla), paredes a los lados y una planta cada `altoPlanta` unidades hacia abajo.
   ancho: 360, pared: 18, altoPlanta: 380, inicio: 60,
   // El jugador: vel = velocidad con el dedo; deriva = lo que baja solo sin tocar; invul = segundos sin recibir daño tras un golpe.
-  jugador: { radio: 13, vel: 125, deriva: 22, invul: 0.8 },
+  jugador: { radio: 15, vel: 125, deriva: 22, invul: 0.8 },
   // El café es el oxígeno: base + lo que den la formación y el equipo. Se gasta cada segundo (más cuanto más abajo) y los golpes lo quitan.
   cafe: { base: 60, gasto: 1, gastoPorPlanta: 0.05, crunch: 1.3, taza: 14 },
   // La caja del despedido: cuánto peso de botín cabe (base + formación y equipo).
@@ -22,10 +22,10 @@ BAS.AJ = Object.freeze({
   ascensor: { espera: 3 },
   // Enemigos: desde = primera planta en la que salen; peso = lo a menudo que salen; botin = qué sueltan.
   enemigos: {
-    bug: { vida: 20, radio: 12, vel: 40, persigue: 95, golpe: 4, desde: 0, peso: 10, botin: 'codigo', puntos: 1 },
-    correo: { vida: 26, radio: 14, vel: 30, persigue: 210, golpe: 3, desde: 2, peso: 6, botin: 'postit', divide: 'miniCorreo', puntos: 2 },
-    miniCorreo: { vida: 9, radio: 9, vel: 55, persigue: 210, golpe: 2, desde: 99, peso: 0, botin: null, puntos: 1 },
-    reunion: { vida: 70, radio: 24, vel: 18, persigue: 0, golpe: 2, desde: 4, peso: 3, botin: 'taza', frena: 0.45, frenaT: 1.6, puntos: 4 },
+    bug: { vida: 20, radio: 17, vel: 40, persigue: 95, golpe: 4, desde: 0, peso: 10, botin: 'codigo', puntos: 1 },
+    correo: { vida: 26, radio: 17, vel: 30, persigue: 210, golpe: 3, desde: 2, peso: 6, botin: 'postit', divide: 'miniCorreo', puntos: 2 },
+    miniCorreo: { vida: 9, radio: 11, vel: 55, persigue: 210, golpe: 2, desde: 99, peso: 0, botin: null, puntos: 1 },
+    reunion: { vida: 70, radio: 26, vel: 18, persigue: 0, golpe: 2, desde: 4, peso: 3, botin: 'taza', frena: 0.45, frenaT: 1.6, puntos: 4 },
   },
   vidaPorPlanta: 0.12,              // cada planta los enemigos tienen un 12 % más de vida
   generar: { tramo: 40, delante: 620, detras: 560, base: 0.3, porPlanta: 0.02, max: 0.9, maxActivos: 45, zonaSegura: 180 },
@@ -38,22 +38,22 @@ BAS.AJ = Object.freeze({
     paquete: { valor: 0, peso: 0 },        // paquete de mensajería: no ocupa sitio, pero solo cuenta si subes a salvo
     paqueteJefe: { valor: 0, peso: 0 },
   },
-  valorPorPlanta: 0.12, probCafe: 0.07, iman: 50, recoge: 18, avisoLlena: 1.5,
+  valorPorPlanta: 0.12, probCafe: 0.07, iman: 50, recoge: 22, avisoLlena: 1.5,
   // Las zonas de la oficina, de arriba abajo. crunch = el café se gasta más deprisa.
   zonas: [
-    { desde: 0, id: 'marketing', nombre: 'Marketing', fondo: '#f2c46b', pared: '#c98f3d', crunch: false },
-    { desde: 5, id: 'soporte', nombre: 'Soporte', fondo: '#7fc4d8', pared: '#3f7f99', crunch: false },
-    { desde: 10, id: 'qa', nombre: 'QA', fondo: '#e88a6a', pared: '#a64b35', crunch: true },
-    { desde: 15, id: 'servidores', nombre: 'Sala de Servidores', fondo: '#4f6f8f', pared: '#26384c', crunch: true },
+    { desde: 0, id: 'marketing', nombre: 'Marketing', img: 'fondo-estudios', fondo: '#f2c46b', pared: '#c98f3d', crunch: false },
+    { desde: 5, id: 'soporte', nombre: 'Soporte', img: 'fondo-oficinas', fondo: '#7fc4d8', pared: '#3f7f99', crunch: false },
+    { desde: 10, id: 'qa', nombre: 'QA', img: 'fondo-lan', fondo: '#e88a6a', pared: '#a64b35', crunch: true },
+    { desde: 15, id: 'servidores', nombre: 'Sala de Servidores', img: 'fondo-servidores', fondo: '#4f6f8f', pared: '#26384c', crunch: true },
   ],
   // Jefes: uno en la última planta de cada zona (4, 9, 14 y 19) y luego cada 5 plantas, en este orden. Mientras vive, una cinta
   // de PRECAUCIÓN cierra el paso a la planta de abajo. cada = segundos entre ataques; escudo = segundos de escudo cada `escudoCada`.
   jefes: {
     orden: ['producto', 'rrhh', 'lanzamiento', 'accionistas'], primera: 4, cada: 5, vidaPorPlanta: 0, vidaPorVuelta: 0.8,
-    producto: { nombre: 'Jefe de Producto', vida: 260, radio: 30, vel: 55, golpe: 5, cada: 1.8, bala: { vel: 140, dano: 4, radio: 7 }, escudoCada: 5, escudo: 1.2 },
-    rrhh: { nombre: 'Recursos Humanos', vida: 420, radio: 30, vel: 50, golpe: 6, cada: 2.2, bala: { vel: 130, dano: 5, radio: 8 }, abanico: 3 },
-    lanzamiento: { nombre: 'El Bug de Lanzamiento', vida: 560, radio: 36, vel: 40, golpe: 7, cada: 3.0, invoca: 2 },
-    accionistas: { nombre: 'Consejo de Accionistas', vida: 750, radio: 34, vel: 45, golpe: 6, cada: 2.6, bala: { vel: 110, dano: 5, radio: 7 }, anillo: 8 },
+    producto: { nombre: 'La Directora de Producto', vida: 260, radio: 44, vel: 55, golpe: 5, cada: 1.8, bala: { vel: 140, dano: 4, radio: 7 }, escudoCada: 5, escudo: 1.2 },
+    rrhh: { nombre: 'SurvivalBot de Recursos Humanos', vida: 420, radio: 46, vel: 50, golpe: 6, cada: 2.2, bala: { vel: 130, dano: 5, radio: 8 }, abanico: 3 },
+    lanzamiento: { nombre: 'ServidorBot del Lanzamiento', vida: 560, radio: 46, vel: 40, golpe: 7, cada: 3.0, invoca: 2 },
+    accionistas: { nombre: 'El Presidente del Consejo', vida: 750, radio: 50, vel: 45, golpe: 6, cada: 2.6, bala: { vel: 110, dano: 5, radio: 7 }, anillo: 8 },
     premio: { tazas: 3 },
   },
   // Becarios atrapados: en cada planta (desde la 1) puede haber uno; al tocarlo te sigue y dispara solo durante la bajada.

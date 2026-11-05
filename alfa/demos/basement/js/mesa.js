@@ -1,14 +1,14 @@
-// Fans of Basement · Tu mesa (solo pantalla): la cabecera con las monedas y el récord, las tres pestañas (FORMACIÓN, EQUIPO y
-// PAQUETES) y el botón BAJAR. Aquí está la pestaña de formación: un tablero Kanban con tres columnas de pósits (los cursos), y
-// al tocar uno, su ficha con lo que da y el botón de comprar. Las pestañas de equipo y paquetes están en mesa-equipo.js y el
-// resultado de la bajada en resultado.js. Las reglas (qué se puede comprar) están en inventario.js.
+// Fans of Basement · Tu mesa (solo pantalla), al estilo de Fans of Swipe: la cabecera de madera con las monedas y el récord, las
+// tres pestañas (FORMACIÓN, EQUIPO y PAQUETES) y el botón BAJAR. Aquí está la pestaña de formación: un tablero Kanban con tres
+// columnas de pósits (los cursos) y, al tocar uno, su ficha de pergamino con lo que da y el botón de comprar. Las pestañas de
+// equipo y paquetes están en mesa-equipo.js y el resultado de la bajada en resultado.js. Las reglas, en inventario.js.
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const UI = B.ui, C = UI.C, T = UI.texto;
   const PESTANAS = [{ id: 'formacion', nombre: 'FORMACIÓN' }, { id: 'equipo', nombre: 'EQUIPO' }, { id: 'paquetes', nombre: 'PAQUETES' }];
-  const COLOR_COL = { bienestar: '#ff8a2a', logistica: '#3b8de0', productividad: '#e5322d' };
-  const POSIT = { hecho: '#8fe07a', disponible: '#ffe14a', bloqueado: '#efe3c6' };
+  const COLUMNA = { bienestar: ['naranja', 'r-taza'], logistica: ['azul', 'r-iman'], productividad: ['rojo', 'r-grapadora'] };
+  const POSIT = { hecho: ['#9ee38a', '#c8f5b8', '#5fae5a'], disponible: ['#ffd23a', '#fff3a0', '#c8901a'], bloqueado: ['#d9c8a4', '#e8dcc0', '#b8a47c'] };
 
   // Lo que hace un efecto, en una frase por cada cosa que da.
   const FRASE = {
@@ -20,72 +20,53 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   const PORCIENTO = { dano: 1, cadencia: 1, gasto: 1, crunch: 1, valor: 1, vel: 1, freno: 1 };
   UI.describe = (ef) => Object.keys(ef).map((k) => tr(FRASE[k], { n: PORCIENTO[k] ? Math.round(ef[k] * 100) : ef[k] }));
 
-  // Parte un texto en líneas que quepan en `ancho` (como mucho `max` líneas, bajando la letra si hace falta).
-  UI.lineas = function (g, t, x, y, tam, ancho, color, alin, max) {
-    let n = tam, filas;
-    do { g.font = '800 ' + n + 'px ' + "'Baloo 2', sans-serif"; filas = parte(g, t, ancho); n--; } while (filas.length > (max || 2) && n > 7);
-    filas.forEach((f, i) => T(g, f, x, y + i * (n + 3), n + 1, color, alin, false, false));
-    return filas.length * (n + 3);
-  };
-  function parte(g, t, ancho) {
-    const filas = [];
-    let linea = '';
-    for (const p of t.split(' ')) {
-      const prueba = linea ? linea + ' ' + p : p;
-      if (g.measureText(prueba).width > ancho && linea) { filas.push(linea); linea = p; } else linea = prueba;
-    }
-    if (linea) filas.push(linea);
-    return filas;
-  }
-
-  UI.zonaMesa = (H) => ({ y0: 164, y1: H - 100 });
+  UI.zonaMesa = (H) => ({ y0: 206, y1: H - 140 });
 
   function cabecera(g, W, p) {
-    T(g, tr('TU MESA'), W / 2, 34, 30, C.amarillo, 'center', true);
-    UI.moneda(g, W / 2 - 50, 72, 14);
-    T(g, String(p.monedas), W / 2 - 28, 74, 24, '#ffffff', 'left', true);
-    T(g, p.record ? tr('Récord: planta') + ' -' + p.record : tr('El servidor se ha caído. Baja a arreglarlo.'), W / 2, 100, 12, '#ffffff');
+    UI.panel(g, -6, -6, W + 12, 126, C.madera, '#c2432e', '#5a1714', 5);
+    UI.titulo(g, tr('TU MESA'), W / 2, 40, 44);
+    UI.moneda(g, 40, 92, 3);
+    T(g, String(p.monedas), 68, 93, 30, C.oro, 'left', 5);
+    T(g, p.record ? tr('Récord: planta') + ' -' + p.record : tr('Primera bajada'), W - 24, 93, 18, C.crema, 'right', 3);
   }
 
   function pestanas(g, W, m, botones) {
-    const w = (W - 24 - 12) / 3;
+    const w = (W - 24 - 16) / 3;
     PESTANAS.forEach((q, i) => {
-      const b = { x: 12 + i * (w + 6), y: 116, w, h: 36, accion: 'pestana', id: q.id }, activa = m.pestana === q.id;
-      UI.caja(g, b.x, b.y, b.w, b.h, activa ? C.naranja : '#2f5fa8', 10);
-      UI.textoCabe(g, tr(q.nombre), b.x + w / 2, b.y + 20, 15, w - 10, '#ffffff', 'center', true);
+      const b = { x: 12 + i * (w + 8), y: 136, w, h: 58, accion: 'pestana', id: q.id };
+      UI.boton(g, b, m.pestana === q.id ? 'naranja' : 'azul', tr(q.nombre), 24);
       botones.push(b);
     });
   }
 
   // ---------- pestaña FORMACIÓN: el tablero Kanban ----------
   function posit(g, AJ, p, c, b) {
-    const estado = B.estadoCurso(AJ, p, c.id);
-    g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(b.x + 3, b.y + 3, b.w, b.h);
-    g.fillStyle = POSIT[estado]; g.fillRect(b.x, b.y, b.w, b.h);
-    g.fillStyle = 'rgba(0,0,0,0.08)'; g.fillRect(b.x, b.y, b.w, 5);
-    const grande = b.h >= 44;
-    UI.lineas(g, tr(c.nombre), b.x + 5, b.y + (grande ? 13 : b.h / 2), 11, b.w - 10, estado === 'bloqueado' ? '#9a8a6a' : C.tinta, 'left', grande ? 2 : 1);
+    const estado = B.estadoCurso(AJ, p, c.id), [base, luz, sombra] = POSIT[estado];
+    UI.panel(g, b.x, b.y, b.w, b.h, base, luz, sombra, 3);
+    const grande = b.h >= 62;
+    UI.lineas(g, tr(c.nombre), b.x + 10, b.y + (grande ? 18 : b.h / 2), 14, b.w - 20, estado === 'bloqueado' ? '#8a7a5a' : C.cafe, 'left', 0, 15);
     if (!grande) return;
-    const y = b.y + b.h - 10;
-    if (estado === 'hecho') { T(g, tr('HECHO'), b.x + b.w - 6, y, 11, '#2a6b3a', 'right', true, false); return; }
-    if (estado === 'bloqueado') { candado(g, b.x + b.w - 14, y - 2); return; }
-    UI.moneda(g, b.x + 12, y, 7);
-    T(g, String(c.coste), b.x + 23, y + 1, 12, p.monedas >= c.coste ? C.tinta : C.rojo, 'left', true, false);
+    const y = b.y + b.h - 16;
+    if (estado === 'hecho') { T(g, tr('HECHO'), b.x + b.w - 10, y, 15, '#2e6a2a', 'right', 0); return; }
+    if (estado === 'bloqueado') { candado(g, b.x + b.w - 20, y); return; }
+    UI.moneda(g, b.x + 20, y, 1.5);
+    T(g, String(c.coste), b.x + 36, y + 1, 18, p.monedas >= c.coste ? C.cafe : C.rojo, 'left', 0);
   }
   function candado(g, x, y) {
-    g.fillStyle = '#9a8a6a'; g.fillRect(x - 6, y - 3, 12, 9);
-    g.strokeStyle = '#9a8a6a'; g.lineWidth = 2; g.beginPath(); g.arc(x, y - 3, 4, Math.PI, 0); g.stroke();
+    g.fillStyle = '#8a7a5a'; g.fillRect(x - 8, y - 4, 16, 12);
+    g.strokeStyle = '#8a7a5a'; g.lineWidth = 3; g.beginPath(); g.arc(x, y - 4, 5, Math.PI, 0); g.stroke();
   }
 
   function formacion(g, W, H, AJ, p, botones) {
-    const { y0, y1 } = UI.zonaMesa(H), cw = (W - 24 - 12) / 3, top = y0 + 26;
-    const ch = Math.max(26, Math.floor((y1 - top) / 7) - 5);
+    const { y0, y1 } = UI.zonaMesa(H), cw = (W - 24 - 16) / 3, top = y0 + 58;
+    const ch = Math.max(40, Math.floor((y1 - top) / 7) - 6);
     AJ.columnas.forEach((col, i) => {
-      const x = 12 + i * (cw + 6);
-      UI.caja(g, x, y0, cw, 20, COLOR_COL[col], 6);
-      UI.textoCabe(g, tr(AJ.nombreColumna[col]), x + cw / 2, y0 + 11, 11, cw - 8, '#ffffff', 'center', true, false);
+      const x = 12 + i * (cw + 8), [color, icono] = COLUMNA[col];
+      UI.boton(g, { x, y: y0, w: cw, h: 48 }, color, '', 0);
+      UI.dibuja(g, icono, x + 24, y0 + 23, 1);
+      UI.textoCabe(g, tr(AJ.nombreColumna[col]), x + cw / 2 + 14, y0 + 23, 16, cw - 52, '#ffffff');
       AJ.formacion.filter((c) => c.col === col).forEach((c, k) => {
-        const b = { x: x + 2, y: top + k * (ch + 5), w: cw - 4, h: ch, accion: 'curso', id: c.id };
+        const b = { x, y: top + k * (ch + 6), w: cw, h: ch, accion: 'curso', id: c.id };
         posit(g, AJ, p, c, b);
         botones.push(b);
       });
@@ -94,25 +75,26 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   // La ficha de un curso: nombre, columna, lo que da y el botón de comprar.
   function fichaCurso(g, W, H, AJ, p, id) {
-    const c = AJ.formacion.find((q) => q.id === id), estado = B.estadoCurso(AJ, p, id), x = 24, w = W - 48, y = H / 2 - 140;
+    const c = AJ.formacion.find((q) => q.id === id), estado = B.estadoCurso(AJ, p, id), x = 30, w = W - 60, y = H / 2 - 190;
     const botones = [];
-    UI.caja(g, x, y, w, 260, C.crema, 16);
-    T(g, tr(AJ.nombreColumna[c.col]), W / 2, y + 22, 12, COLOR_COL[c.col], 'center', true, false);
-    UI.lineas(g, tr(c.nombre), W / 2, y + 48, 20, w - 30, C.tinta, 'center', 2);
-    UI.describe(c.ef).forEach((f, i) => T(g, f, W / 2, y + 102 + i * 22, 15, '#2a6b3a', 'center', false, false));
-    const comprar = { x: x + 20, y: y + 180, w: w / 2 - 30, h: 58, accion: 'comprarCurso', id };
-    const cerrar = { x: W / 2 + 10, y: y + 180, w: w / 2 - 30, h: 58, accion: 'cerrar' };
+    UI.pergamino(g, x, y, w, 380);
+    const [color, icono] = COLUMNA[c.col];
+    UI.dibuja(g, icono, W / 2, y + 56, 2.5);
+    T(g, tr(AJ.nombreColumna[c.col]), W / 2, y + 102, 18, UI.C[color] || C.naranja, 'center', 3);
+    UI.lineas(g, tr(c.nombre), W / 2, y + 140, 30, w - 50, C.oro, 'center', 5, 34);
+    UI.describe(c.ef).forEach((f, i) => T(g, f, W / 2, y + 210 + i * 30, 22, '#2e6a2a', 'center', 0));
+    const comprar = { x: x + 26, y: y + 278, w: w / 2 - 36, h: 74, accion: 'comprarCurso', id };
+    const cerrar = { x: W / 2 + 10, y: y + 278, w: w / 2 - 36, h: 74, accion: 'cerrar' };
     if (estado === 'disponible') {
-      UI.caja(g, comprar.x, comprar.y, comprar.w, comprar.h, p.monedas >= c.coste ? C.verde : C.marron, 12);
-      UI.moneda(g, comprar.x + 22, comprar.y + 29, 10);
-      T(g, String(c.coste), comprar.x + comprar.w / 2 + 12, comprar.y + 31, 20, '#ffffff', 'center', true);
+      UI.boton(g, comprar, p.monedas >= c.coste ? 'verde' : 'apagado', '', 0);
+      UI.moneda(g, comprar.x + 36, comprar.y + 36, 2.5);
+      T(g, String(c.coste), comprar.x + comprar.w / 2 + 18, comprar.y + 36, 30, '#ffffff', 'center', 5);
       botones.push(comprar);
     } else {
-      T(g, estado === 'hecho' ? tr('YA LO TIENES') : tr('Antes, el curso de arriba'), comprar.x + comprar.w / 2, comprar.y + 29, 13, estado === 'hecho' ? '#2a6b3a' : C.rojo, 'center', true, false);
+      UI.lineas(g, estado === 'hecho' ? tr('YA LO TIENES') : tr('Antes, el curso de arriba'), comprar.x + comprar.w / 2, comprar.y + 30, 20, comprar.w, estado === 'hecho' ? '#2e6a2a' : C.rojo, 'center', 0);
     }
-    UI.caja(g, cerrar.x, cerrar.y, cerrar.w, cerrar.h, '#2f5fa8', 12);
-    T(g, tr('CERRAR'), cerrar.x + cerrar.w / 2, cerrar.y + 31, 18, '#ffffff', 'center', true);
-    botones.push(cerrar, { x: 0, y: 0, w: W, h: H, accion: 'cerrar' });
+    UI.boton(g, cerrar, 'azul', tr('CERRAR'), 28);
+    botones.push(cerrar, { x: 0, y: 0, w: W, h: H, accion: 'cerrar' });   // tocar fuera también cierra (va el último)
     return botones;
   }
 
@@ -120,18 +102,20 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo) }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
-    UI.fondo(g, W, H, t * 0.3);
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
+    UI.fondoMenu(g, W, H, 'fondo-oficinas');
+    g.fillStyle = 'rgba(10,5,20,0.45)'; g.fillRect(0, 0, W, H);
     const botones = [];
     cabecera(g, W, p);
     pestanas(g, W, m, botones);
     CONTENIDO[m.pestana](g, W, H, AJ, p, botones);
-    const bajar = { x: W / 2 - 110, y: H - 86, w: 220, h: 66, accion: 'bajar' };
-    UI.caja(g, bajar.x, bajar.y, bajar.w, bajar.h, C.naranja, 16);
-    T(g, tr('BAJAR'), W / 2, bajar.y + 36, 34, '#ffffff', 'center', true);
+    const bajar = { x: W / 2 - 150, y: H - 122, w: 300, h: 100, accion: 'bajar' }, k = 1 + 0.03 * Math.round(Math.sin(t * 5.6));
+    g.save(); g.translate(W / 2, bajar.y + 50); g.scale(k, k); g.translate(-W / 2, -(bajar.y + 50));
+    UI.boton(g, bajar, 'naranja', tr('BAJAR'), 52);
+    g.restore();
     botones.push(bajar);
     if (!m.sel) return botones;
-    g.fillStyle = 'rgba(10,14,30,0.7)'; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(10,5,20,0.8)'; g.fillRect(0, 0, W, H);
     return fichaCurso(g, W, H, AJ, p, m.sel);
   };
 })(BAS);

@@ -1,69 +1,70 @@
-// Fans of Basement · Vista de los jefes, los becarios y los ayudantes (solo pantalla): el jefe con su destello al recibir golpes y
-// su escudo de PowerPoint, la cinta de PRECAUCIÓN que cierra el paso, los proyectiles (diapositivas, sellos de DESPEDIDO y
-// monedas), los becarios atrapados en su fotocopiadora o su reunión pidiendo socorro, y la mascota y los becarios que te siguen.
+// Fans of Basement · Vista de los jefes, los becarios y los ayudantes (solo pantalla): el jefe (la Directora de Producto,
+// SurvivalBot, ServidorBot o el Presidente, dibujos de Yoshi de Swipe) con su destello al recibir golpes y su escudo de PowerPoint,
+// la cinta de PRECAUCIÓN que cierra el paso, los proyectiles (diapositivas, sellos de DESPEDIDO y monedas), los becarios atrapados
+// en su fotocopiadora o su reunión pidiendo socorro, y la mascota y los becarios que te siguen. Y la barra de vida del jefe.
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
-  const V = B.vista, PXJ = 5;
+  const UI = B.ui, V = B.vista, T = UI.texto;
+  const JEFE = { producto: ['ladirectora', 2.5], rrhh: ['survivalbot', 2.5], lanzamiento: ['servidorbot', 2.5], accionistas: ['presidente', 2.2] };
+  const VERDE = 'hue-rotate(-90deg) saturate(1.2)';   // los becarios atrapados y rescatados: el becario de Swipe, en verde
 
   V.jefe = function (g, e) {
     const jf = e.jefe;
     if (!jf) return;
-    const bote = Math.sin(e.t * 3) * 3;
-    B.dibujaSprite(g, 'jefe_' + jf.id, jf.x, jf.y + bote, PXJ, { blanco: jf.golpeT > 0.08 });   // sin voltear: el sello no cambia de mano
+    const x = V.sx(jf.x), y = V.sy(jf.y) + Math.sin(e.t * 3) * 4, d = JEFE[jf.id];
+    V.pinta(g, d[0], x, y, d[1], { blanco: jf.golpeT > 0.08 });   // sin voltear
     if (jf.escudoT <= 0) return;
-    g.save(); g.globalAlpha = 0.75; g.translate(jf.x, jf.y + bote);
-    g.fillStyle = '#161616'; g.fillRect(-52, -40, 104, 74);
-    g.fillStyle = '#ffffff'; g.fillRect(-49, -37, 98, 68);
-    g.fillStyle = '#e5322d'; g.fillRect(-49, -37, 98, 12);
-    g.fillStyle = '#3b8de0'; g.fillRect(-38, -14, 18, 34); g.fillRect(-14, -2, 18, 22); g.fillRect(10, 8, 18, 12);
+    g.save(); g.globalAlpha = 0.85; g.translate(x, y);
+    UI.panel(g, -84, -62, 168, 118, '#ffffff', '#ffffff', '#d8dee8', 4);
+    g.fillStyle = UI.C.rojo; g.fillRect(-78, -56, 156, 18);
+    g.fillStyle = UI.C.azul; g.fillRect(-58, -18, 26, 58); g.fillRect(-20, 2, 26, 38); g.fillRect(18, 18, 26, 22);
     g.restore();
   };
 
-  // La cinta amarilla y negra en el suelo de la planta del jefe, mientras vive.
-  V.barrera = function (g, e, texto) {
+  // la cinta amarilla y negra en el suelo de la planta del jefe, mientras vive
+  V.barrera = function (g, e, W) {
     const jf = e.jefe;
     if (!jf) return;
-    const y = jf.suelo - 8, W = e.aj.ancho;
-    g.fillStyle = '#161616'; g.fillRect(0, y - 2, W, 16);
-    for (let x = -24 + ((e.t * 40) % 24); x < W; x += 24) {
-      g.fillStyle = '#ffe14a'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 12, y); g.lineTo(x + 24, y + 12); g.lineTo(x + 12, y + 12); g.fill();
+    const y = V.sy(jf.suelo) - 14;
+    g.fillStyle = '#1a0f1f'; g.fillRect(0, y - 3, W, 26);
+    for (let x = -36 + ((e.t * 60) % 36); x < W; x += 36) {
+      g.fillStyle = '#ffd23a'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 18, y); g.lineTo(x + 36, y + 20); g.lineTo(x + 18, y + 20); g.fill();
     }
-    texto(g, tr('PRECAUCIÓN'), W / 2, y + 6, 11, '#ffffff', 'center', true);
+    UI.franja(g, tr('PRECAUCIÓN'), W / 2, y + 10, 14, 220);
   };
 
   const PROY = {
-    diapositiva(g) { g.fillStyle = '#161616'; g.fillRect(-9, -7, 18, 14); g.fillStyle = '#ffffff'; g.fillRect(-7, -5, 14, 10); g.fillStyle = '#e5322d'; g.fillRect(-7, -5, 14, 3); },
-    sello(g) { g.fillStyle = '#161616'; g.beginPath(); g.arc(0, 0, 9, 0, 7); g.fill(); g.fillStyle = '#e5322d'; g.beginPath(); g.arc(0, 0, 7, 0, 7); g.fill(); g.fillStyle = '#ffffff'; g.fillRect(-4, -1, 8, 2); },
-    moneda(g) { g.fillStyle = '#161616'; g.beginPath(); g.arc(0, 0, 8, 0, 7); g.fill(); g.fillStyle = '#ffe14a'; g.beginPath(); g.arc(0, 0, 6, 0, 7); g.fill(); },
+    diapositiva(g) { UI.panel(g, -13, -10, 26, 20, '#ffffff', null, null, 2); g.fillStyle = UI.C.rojo; g.fillRect(-10, -7, 20, 5); },
+    sello(g) { g.fillStyle = '#1a0f1f'; g.beginPath(); g.arc(0, 0, 13, 0, 7); g.fill(); g.fillStyle = UI.C.rojo; g.beginPath(); g.arc(0, 0, 10, 0, 7); g.fill(); g.fillStyle = '#ffffff'; g.fillRect(-6, -2, 12, 4); },
+    moneda(g) { UI.dibuja(g, 'i-oro', 0, 0, 2); },
   };
   V.proyectiles = function (g, e) {
-    for (const p of e.proyectiles) { g.save(); g.translate(Math.round(p.x), Math.round(p.y)); g.rotate(e.t * 4); PROY[p.tipo](g); g.restore(); }
+    for (const p of e.proyectiles) { g.save(); g.translate(V.sx(p.x), V.sy(p.y)); g.rotate(p.tipo === 'moneda' ? 0 : e.t * 4); PROY[p.tipo](g); g.restore(); }
   };
 
-  V.becarios = function (g, e, texto) {
+  V.becarios = function (g, e) {
     for (const b of e.becarios) {
-      const tiembla = Math.sin(e.t * 20 + b.id) * 1.5;
-      B.dibujaSprite(g, 'becario', b.x + tiembla, b.y - 10, 3);
-      B.dibujaSprite(g, b.trampa === 'fotocopiadora' ? 'fotocopiadora' : 'reunion', b.x, b.y + 14, 3);
-      if (Math.floor(e.t * 3 + b.id) % 2) texto(g, tr('¡SOCORRO!'), b.x, b.y - 42, 12, '#ffe14a', 'center', true);
+      const x = V.sx(b.x), y = V.sy(b.y), tiembla = Math.sin(e.t * 20 + b.id) * 2;
+      V.pinta(g, 'becario', x + tiembla, y - 22, 1.2, { filtro: VERDE });
+      V.pinta(g, b.trampa === 'fotocopiadora' ? 'fotocopiadora' : 'reunion', x, y + 30, 5);
+      if (Math.floor(e.t * 3 + b.id) % 2) T(g, tr('¡SOCORRO!'), x, y - 90, 18, '#ffd84a', 'center', 4);
     }
   };
 
   V.ayudantes = function (g, e) {
     for (const a of e.ayudantes) {
-      const bote = Math.sin(e.t * 5 + a.off.x) * 2;
-      B.dibujaSprite(g, a.tipo === 'becario' ? 'becario' : a.id, a.x, a.y + bote, a.tipo === 'becario' ? 2 : 3, { izq: e.jugador.x < a.x });
+      const x = V.sx(a.x), y = V.sy(a.y) + Math.sin(e.t * 5 + a.off.x) * 3;
+      if (a.tipo === 'becario') V.pinta(g, 'becario', x, y, 0.9, { filtro: VERDE });
+      else V.pintaCosa(g, a.id, x, y);
     }
   };
 
-  // La barra de vida del jefe, arriba en el marcador.
-  V.barraJefe = function (g, e, W, texto) {
+  // la barra de vida del jefe, arriba en el marcador
+  V.barraJefe = function (g, e, W, y) {
     const jf = e.jefe;
     if (!jf) return;
-    const x = 30, y = 96, w = W - 60;
-    texto(g, tr(e.aj.jefes[jf.id].nombre).toUpperCase(), W / 2, y - 2, 14, '#ffffff', 'center', true);
-    g.fillStyle = '#161616'; g.fillRect(x - 3, y + 8, w + 6, 14);
-    g.fillStyle = jf.escudoT > 0 ? '#3b8de0' : '#e5322d'; g.fillRect(x, y + 11, w * Math.max(0, jf.vida / jf.vidaMax), 8);
+    UI.textoCabe(g, tr(e.aj.jefes[jf.id].nombre).toUpperCase(), W / 2, y, 20, W - 60, '#ffffff');
+    UI.barra(g, 30, y + 16, W - 60, 22, jf.vida / jf.vidaMax, jf.escudoT > 0 ? UI.C.azul : UI.C.rojo);
   };
 })(BAS);

@@ -1,8 +1,8 @@
 {
- "build": 979,
- "hash": "23e0f33",
- "fecha": "2026-11-05T16:42:39Z",
- "mensaje": "Rouflage: la barra-brocha se puede arrastrar, tiene su propio hueco y la de lado vuelve a verse",
+ "build": 980,
+ "hash": "4ac0e7a",
+ "fecha": "2026-11-05T16:48:44Z",
+ "mensaje": "Basement 0.3.0: aspecto de Fans of Swipe (dibujos, letra, botones y sonidos) y tutorial con Lola",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

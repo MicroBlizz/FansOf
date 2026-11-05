@@ -61,11 +61,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   };
 
   FX.dibujarCarteles = function (g, texto, W, H) {
+    const UI = B.ui;
     for (const c of FX.carteles) {
       const entra = Math.min(1, c.t / 0.15), sale = Math.min(1, (c.dura - c.t) / 0.3), k = 0.7 + 0.3 * entra;
-      g.save(); g.globalAlpha = Math.max(0, sale); g.translate(W / 2, H * 0.33); g.scale(k, k);
-      texto(g, c.texto, 0, 0, 30, c.color, 'center', true);
-      if (c.sub) texto(g, c.sub, 0, 28, 14, '#ffffff');
+      g.save(); g.globalAlpha = Math.max(0, sale); g.translate(W / 2, H * 0.3); g.scale(k, k);
+      UI.textoCabe(g, c.texto, 0, 0, 46, W - 40, c.color, 'center', 7);
+      if (c.sub) UI.franja(g, c.sub, 0, 54, 18, W - 40);
       g.restore();
     }
   };

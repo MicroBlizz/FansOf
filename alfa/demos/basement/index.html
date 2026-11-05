@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#2a3250">
+<meta name="theme-color" content="#120a1c">
 <title>Fans of Basement</title>
 <meta name="description" content="Fans of Basement: el servidor de Microblizz se ha caído. Baja por el hueco del ascensor planta a planta, la grapadora dispara sola, no te quedes sin café y sube con la caja llena de botín.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script src="../../core/js/nucleo.js?v=0.2.0-a979.23e0f33"></script>
+<script src="../../core/js/nucleo.js?v=0.3.0-a980.4ac0e7a"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
 <style>
-/* Fans of Basement: un solo canvas vertical (360 de ancho lógico) centrado en la pantalla. */
-html, body { height: 100%; margin: 0; background: #2a3250; overflow: hidden; overscroll-behavior: none; }
+/* Fans of Basement: un solo canvas vertical (540 de ancho lógico, como Fans of Swipe) centrado en la pantalla. */
+html, body { height: 100%; margin: 0; background: #120a1c; overflow: hidden; overscroll-behavior: none; }
 body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
 #juego { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: block; touch-action: none; image-rendering: pixelated; }
-#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffe14a; font: 800 18px/1 'Baloo 2', sans-serif; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffd23a; font: 28px/1 'Jersey 10', monospace; }
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -33,8 +33,8 @@ NUCLEO.juego({
   despues: [
     '../../core/js/serie/canciones.js',
     'js/progreso.js', 'js/inventario.js', 'js/bajada.js', 'js/enemigos.js', 'js/jefes.js', 'js/becarios.js', 'js/arma.js',
-    'js/guardado.js', 'js/sonido.js', 'js/sprites.js', 'js/efectos.js', 'js/vista.js', 'js/vista-jefes.js', 'js/pantallas.js',
-    'js/mesa.js', 'js/mesa-equipo.js', 'js/resultado.js', 'js/dev.js', 'js/principal.js'],
+    'js/guardado.js', 'js/sonido.js', 'js/estilo.js', 'js/sprites.js', 'js/efectos.js', 'js/vista.js', 'js/vista-jefes.js', 'js/pantallas.js',
+    'js/mesa.js', 'js/mesa-equipo.js', 'js/resultado.js', 'js/tutorial.js', 'js/dev.js', 'js/principal.js'],
 });
 </script>
 </body>

@@ -1,17 +1,17 @@
-// Fans of Basement · Principal (composición): arranca el lienzo vertical, lee el dedo (palanca donde lo pones, como en Well Diver)
-// y el teclado, mueve la bajada a 60 pasos por segundo, convierte los eventos del dominio en efectos y sonidos, y pasa entre
+// Fans of Basement · Principal (composición): arranca el lienzo vertical (540 de ancho, como Swipe), carga la letra y los dibujos,
+// lee el dedo (palanca donde lo pones, como en Well Diver; mientras habla Lola, cada toque pasa su bocadillo) y el teclado, mueve la bajada a 60 pasos por segundo, convierte los eventos del dominio en efectos y sonidos, y pasa entre
 // pantallas: portada, tu mesa, la bajada y el resultado. Es el único archivo que conoce todas las piezas.
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
-  const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.AJ.ancho, FX = B.efectos, UI = B.ui;
-  const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 640, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
+  const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
+  const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
     mesa: { pestana: 'formacion', sel: null, apertura: null } };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
   function ajusta() {
-    est.H = Math.max(560, Math.min(820, Math.round(W * innerHeight / innerWidth)));
+    est.H = Math.max(860, Math.min(1200, Math.round(W * innerHeight / innerWidth)));
     const dpr = Math.min(2, window.devicePixelRatio || 1), k = Math.min(innerWidth / W, innerHeight / est.H);
     CV.style.width = Math.floor(W * k) + 'px'; CV.style.height = Math.floor(est.H * k) + 'px';
     CV.width = Math.floor(W * k * dpr); CV.height = Math.floor(est.H * k * dpr);
@@ -32,7 +32,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     zona: (ev) => { FX.cartel(tr(ev.zona.nombre).toUpperCase(), '#ffe14a', 2, ev.zona.crunch ? tr('CRUNCH ZONE: el café se gasta más rápido') : ''); basSuena('zona'); },
     cafeBajo: () => { FX.cartel(tr('¡QUEDA POCO CAFÉ!'), '#e5322d', 1.6, tr('Sube antes de desmayarte')); basSuena('cafeBajo'); },
     ascensorLlamado: () => { FX.cartel(tr('ASCENSOR EN CAMINO'), '#5fe05f', 1.4, tr('Aguanta unos segundos')); basSuena('ascensorLlamado'); },
-    jefe: (ev) => { FX.cartel(tr(ev.nombre).toUpperCase(), '#e5322d', 2.2, tr('No podrás bajar hasta vencerlo')); FX.temblor = 14; vibrar(80); basSuena('jefe'); },
+    jefe: (ev) => { TU.lanza('jefe', est.t); FX.cartel(tr(ev.nombre).toUpperCase(), '#e5322d', 2.2, tr('No podrás bajar hasta vencerlo')); FX.temblor = 14; vibrar(80); basSuena('jefe'); },
     jefeVencido: (ev) => { FX.confeti(ev.x, ev.y); FX.chispas(ev.x, ev.y, 40, '#ffe14a', 200); FX.temblor = 20; FX.cartel(tr('¡JEFE VENCIDO!'), '#5fe05f', 2, tr('Recoge el paquete')); vibrar(120); basSuena('jefeVencido'); },
     ataqueJefe: () => basSuena('ataqueJefe'),
     bloqueado: (ev) => { FX.numero(ev.x, ev.y - 30, tr('¡ESCUDO!'), '#3b8de0', 12); basSuena('no'); },
@@ -49,13 +49,14 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function abajo(ev) {
     ev.preventDefault();
     const p = aLogico(ev);
+    if (TU.habla()) { TU.toca(est.t); return; }   // mientras habla Lola, cada toque pasa al siguiente bocadillo
     if (est.modo !== 'bajada') { tocarFuera(p); return; }
     if (!est.e.fin && UI.dentro(p, UI.botonAscensor(W, est.H))) { est.pulsoAscensor = true; return; }
     if (!joy.activo) Object.assign(joy, { activo: true, id: ev.pointerId, ox: p.x, oy: p.y, dx: 0, dy: 0 });
   }
   function mueve(ev) {
     if (!joy.activo || ev.pointerId !== joy.id) return;
-    const p = aLogico(ev), dx = (p.x - joy.ox) / 40, dy = (p.y - joy.oy) / 40, m = Math.hypot(dx, dy);
+    const p = aLogico(ev), dx = (p.x - joy.ox) / 56, dy = (p.y - joy.oy) / 56, m = Math.hypot(dx, dy);
     joy.dx = m > 1 ? dx / m : dx; joy.dy = m > 1 ? dy / m : dy;
   }
   function arriba(ev) { if (ev.pointerId === joy.id) Object.assign(joy, { activo: false, id: -1, dx: 0, dy: 0 }); }
@@ -75,8 +76,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
   const ACCIONES = {
     bajar: () => empezar(),
-    mesa: () => { est.modo = 'mesa'; basSuena('boton'); },
-    pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); },
+    mesa: () => alaMesa(),
+    pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); TU.lanza(b.id, est.t); },
     curso: (b) => { est.mesa.sel = b.id; basSuena('boton'); },
     cerrar: () => { est.mesa.sel = null; },
     comprarCurso: (b) => { if (aplica(B.comprarCurso(B.AJ, SAVE.progreso, b.id))) est.mesa.sel = null; },
@@ -86,8 +87,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     abrirPaquete: (b) => abrirPaquete(b.id),
     cerrarApertura: () => { est.mesa.apertura = null; basSuena('boton'); },
   };
+  function alaMesa() { est.modo = 'mesa'; basSuena('boton'); TU.lanza('mesa', est.t); }
   function tocarFuera(p) {
-    if (est.modo === 'portada') { est.modo = 'mesa'; basSuena('boton'); return; }
+    if (est.modo === 'portada') { alaMesa(); return; }
     if (est.modo === 'resultado' && est.resultadoT < 0.8) return;
     const b = est.botones.find((q) => UI.dentro(p, q));
     if (b && ACCIONES[b.accion]) ACCIONES[b.accion](b);
@@ -119,13 +121,15 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, SAVE.progreso), SAVE.progreso.vencidos);
     Object.assign(est, { modo: 'bajada', acum: 0, record: false, pulsoAscensor: false });
     FX.limpiar(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
-    FX.cartel(tr('¡A BAJAR!'), '#ffe14a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
+    FX.cartel(tr('¡A BAJAR!'), '#ffd23a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
+    TU.lanza('bajada', est.t);
   }
 
   function simular(dt) {
     const e = est.e;
     B.paso(e, dt, orden(), Math.random);
     for (const ev of e.eventos) if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev);
+    if (e.becarios.some((b) => Math.abs(b.y - e.jugador.y) < 260)) TU.lanza('becario', est.t);
     if (e.fin && e.finT > 1.1 && est.modo === 'bajada') terminar(e);
   }
   function terminar(e) {
@@ -138,12 +142,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   function pintarBajada(dt) {
     const e = est.e;
-    est.acum += dt;
+    est.acum = TU.habla() ? 0 : est.acum + dt;   // mientras habla Lola, la bajada espera
     while (est.acum >= PASO && est.modo === 'bajada') { simular(PASO); est.acum -= PASO; }
     B.vista.camara(e, est.H, dt);
     G.save();
     if (FX.temblor > 0) G.translate((Math.random() - 0.5) * FX.temblor, (Math.random() - 0.5) * FX.temblor);
-    B.vista.dibujar(G, e, W, est.H, UI.texto);
+    B.vista.dibujar(G, e, W, est.H);
     G.restore();
     UI.marcador(G, e, W, est.H);
     FX.dibujarCarteles(G, UI.texto, W, est.H);
@@ -174,14 +178,15 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record);
     else if (est.modo === 'mesa') pintarMesa();
     else est.botones = UI.portada(G, W, est.H, est.t);
+    if (TU.habla()) est.botones = TU.dibuja(G, W, est.H, est.t);
     basMusica(est.modo, est.e);
     requestAnimationFrame(fotograma);
   }
 
   async function arranca() {
-    basCarga(); ajusta();
-    try { await Promise.race([Promise.all([document.fonts.load("40px 'Luckiest Guy'"), document.fonts.load("800 16px 'Baloo 2'")]), new Promise((r) => setTimeout(r, 2000))]); }
-    catch (err) { console.warn('Basement: sin letra propia', err); }
+    basCarga(); ajusta(); basCargaSonidos();
+    try { await Promise.race([Promise.all([document.fonts.load('40px "Jersey 10"'), UI.cargaImagenes()]), new Promise((r) => setTimeout(r, 4000))]); }
+    catch (err) { console.warn('Basement: sin letra o dibujos', err); }
     document.getElementById('carga').hidden = true;
     CV.addEventListener('pointerdown', abajo); CV.addEventListener('pointermove', mueve);
     addEventListener('pointerup', arriba); addEventListener('pointercancel', arriba);

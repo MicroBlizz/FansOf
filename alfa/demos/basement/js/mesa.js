@@ -31,7 +31,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     UI.becario(g, AJ, B.aspectoDe(AJ, p), W / 2, 98, 0.9);   // tu becario, con lo que llevas puesto (debajo del título, sin taparlo)
     UI.moneda(g, 34, 92, 3);
     T(g, String(p.monedas), 60, 93, 28, C.oro, 'left', 5);
-    T(g, tr(AJ.rangos[p.rango]), W - 24, 30, 18, C.naranja, 'right', 3);
+    const despacho = { x: W - 162, y: 10, w: 150, h: 44, accion: 'despacho' };   // tu despacho, con tu cargo debajo
+    UI.boton(g, despacho, 'azul', '', 0);
+    UI.textoCabe(g, tr('DESPACHO'), despacho.x + 75, despacho.y + 22, 19, 136, '#ffffff', 'center', 4);
+    botones.push(despacho);
+    T(g, tr(AJ.rangos[p.rango]), W - 24, 70, 15, C.naranja, 'right', 3);
     if (p.final && p.rango < AJ.rangos.length - 1) {
       const b = { x: W - 186, y: 66, w: 172, h: 50, accion: 'ascender' };
       UI.boton(g, b, 'oro', tr('ASCENDER'), 22);
@@ -114,11 +118,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo), dep (eligiendo departamento: el id del marcado), ascenso (la ventana),
   //       armeria (eligiendo arma), taller (la receta abierta en el taller),
-  //       retos (la ventana de misiones: 'misiones' | 'logros') }
+  //       retos (la ventana de misiones: 'misiones' | 'logros' | 'ranking'), despacho (viendo tu despacho) }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
     if (m.dep) return UI.departamentos(g, W, H, AJ, p, m.dep);
     if (m.retos) return UI.retos(g, W, H, m.retos);
+    if (m.despacho) return UI.despacho(g, W, H, t, AJ, p);
     UI.fondoMenu(g, W, H, 'fondo-oficinas');
     g.fillStyle = 'rgba(10,5,20,0.45)'; g.fillRect(0, 0, W, H);
     const botones = [];

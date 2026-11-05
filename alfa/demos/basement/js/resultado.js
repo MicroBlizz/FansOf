@@ -12,6 +12,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (r.jefes) f.push([tr('Jefes vencidos'), String(r.jefes)]);
     const paq = (r.paquetes.normal || 0) + (r.paquetes.jefe || 0);
     if (paq) f.push([tr('Paquetes'), '+' + paq, '#c8901a']);
+    const cap = Object.values(r.capturas || {}).reduce((s, n) => s + n, 0);
+    if (cap) f.push([tr('Capturados'), String(cap), '#2e8a3a']);
     const mat = Object.values(r.materiales || {}).reduce((s, n) => s + n, 0);
     if (mat) f.push([tr('Materiales'), '+' + mat, '#5a6478']);
     if (B.sensacion.mejorRacha >= 5) f.push([tr('Mejor racha'), 'x' + B.sensacion.mejorRacha]);

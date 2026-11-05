@@ -13,13 +13,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.progresoNuevo = () => ({
     monedas: 0, record: 0, bajadas: 0, cursos: [], equipo: { tiene: {}, puesto: {} }, mascotas: {}, mascota: null,
-    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar',
+    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {},
   });
 
   // Copia profunda (el progreso se trata como inmutable: cada regla devuelve uno nuevo).
   B.copiaProgreso = (p) => ({
     ...p, cursos: [...p.cursos], equipo: { tiene: { ...p.equipo.tiene }, puesto: { ...p.equipo.puesto } },
-    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales },
+    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales }, terrario: { ...p.terrario },
   });
 
   // Lee lo guardado (formatos for-basement-v1 y v2). Lo que falte o no valga vuelve a su valor de partida.
@@ -40,6 +40,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.rango = entero(datos.rango, 0, AJ.rangos.length - 1);
     p.final = datos.final === true;
     if (AJ.habilidades[datos.habilidad]) p.habilidad = datos.habilidad;
+    for (const id of Object.keys(AJ.enemigos)) if (esObjeto(datos.terrario) && datos.terrario[id] > 0) p.terrario[id] = entero(datos.terrario[id], 0, 1e6);
     for (const t of AJ.materiales) if (esObjeto(datos.materiales) && datos.materiales[t] > 0) p.materiales[t] = entero(datos.materiales[t], 0, 1e7);
     return p;
   };
@@ -117,6 +118,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     q.jefes += Math.max(0, r.jefes || 0);
     sumaPaquetes(q, paq);
     for (const [t, n] of Object.entries(r.materiales || {})) if (n > 0) q.materiales[t] = (q.materiales[t] || 0) + Math.floor(n);
+    for (const [t, n] of Object.entries(r.capturas || {})) if (n > 0) q.terrario[t] = (q.terrario[t] || 0) + Math.floor(n);
     apuntaJefes(q, r);
     return apuntaCatalogo(aj || B.AJ, q, r);
   };
@@ -164,6 +166,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       freno: Math.min(1, v('freno')),
       mascota: B.mascotaDe(AJ, p),
       habilidad: B.habilidadDe(AJ, p),
+      redes: AJ.captura.redes + v('redes'),
     });
   };
 

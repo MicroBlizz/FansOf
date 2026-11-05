@@ -16,7 +16,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       aj: AJ, stats: { ...stats }, t: 0, eventos: [], ids: 1, rango: o.rango || 0, conVentajas: !!o.ventajas,
       jugador: { x: AJ.ancho / 2, y, vx: 0, vy: 0, invulT: 0, frenoT: 0, mira: 1 },
       cafe: stats.cafeMax, cafeMax: stats.cafeMax, cafeBajoAvisado: false,
-      caja: { peso: 0, cap: stats.caja, valor: 0, cuenta: 0, paquetes: { normal: 0, jefe: 0 }, materiales: {} }, avisoLlenaT: 0,
+      caja: { peso: 0, cap: stats.caja, valor: 0, cuenta: 0, paquetes: { normal: 0, jefe: 0 }, materiales: {} }, avisoLlenaT: 0, capturas: {}, capturasValor: 0, redes: stats.redes || 0,
       enemigos: [], muebles: [], balas: [], objetos: [], proyectiles: [], becarios: [], ayudantes: [], armaT: 0,
       generadoHasta: y + AJ.generar.zonaSegura, jefe: null, jefesVistos: {}, jefesVencidos: 0, jefesNuevos: [], vencidos: [...(o.vencidos || [])],
       rescatados: 0, eventosPlanta: {}, ventajas: [], eleccion: null, apagon: false, apagonT: AJ.trucos.apagon.cada * 0.5,
@@ -31,7 +31,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   B.plantaDe = (AJ, y) => Math.max(0, Math.floor(y / AJ.altoPlanta));
   B.zonaDe = (AJ, planta) => { let z = AJ.zonas[0]; for (const q of AJ.zonas) if (planta >= q.desde) z = q; return z; };
 
-  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor y habilidad (pulsaciones) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
+  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor, habilidad y red (pulsaciones) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
   B.paso = function (e, dt, orden, rnd) {
     e.eventos = [];
     if (e.fin) { e.finT += dt; return e; }
@@ -41,6 +41,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const o = orden || { mx: 0, my: 0, ascensor: false };
     mover(e, dt, o);
     B.habilidad.paso(e, dt, o, rnd);
+    B.captura.paso(e, o);
     plantas(e, rnd);
     B.campana.paso(e, dt);
     B.enemigos.paso(e, dt, rnd);
@@ -164,10 +165,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const salvo = como === 'ascensor', propinas = salvo ? B.propinas(e) : 0;
     e.resultado = Object.freeze({
       como, planta: e.plantaMax, inicio: e.inicio, bajas: e.bajas, objetos: e.caja.cuenta, valorCaja: e.caja.valor, propinas,
-      monedas: salvo ? e.caja.valor + propinas : 0, rescatados: e.rescatados, jefes: e.jefesVencidos,
+      monedas: salvo ? e.caja.valor + propinas + e.capturasValor : 0, rescatados: e.rescatados, jefes: e.jefesVencidos,
       paquetes: salvo ? { ...e.caja.paquetes } : { normal: 0, jefe: 0 }, materiales: salvo ? { ...e.caja.materiales } : {}, jefesNuevos: salvo ? [...e.jefesNuevos] : [],
       bajasPorTipo: { ...e.bajasPorTipo }, final: e.final, segundos: Math.round(e.t),
-      muebles: e.mueblesRotos, habilidades: e.habilidadUsos, combos: e.combos.length,
+      muebles: e.mueblesRotos, habilidades: e.habilidadUsos, combos: e.combos.length, capturas: salvo ? { ...e.capturas } : {},
     });
     e.eventos.push({ tipo: 'fin', como, resultado: e.resultado });
   };

@@ -6,7 +6,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
   const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
-    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null, retos: null }, nuevos: [] };
+    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null, retos: null, despacho: false }, nuevos: [] };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -49,6 +49,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     material: (ev) => { FX.numero(ev.x, ev.y - 12, '+1', COLOR_MATERIAL[ev.material], 13); basSuena('recoge'); },
     habilidad: (ev) => { const d = B.AJ.habilidades[ev.id]; FX.cartel(tr(d.nombre).toUpperCase(), '#8ac4ff', 1.2); FX.temblor = Math.max(FX.temblor, ev.id === 'despido' ? 14 : 4); FX.chispas(ev.x, ev.y, 30, ev.id === 'despido' ? '#e5322d' : '#8ac4ff', ev.id === 'despido' ? 320 : 160); basSuena('jefe'); vibrar(60); },
     combo: (ev) => { FX.cartel(tr('¡COMBO!'), '#ffd23a', 1.6, tr(ev.nombre)); basSuena('jefeVencido'); },
+    captura: (ev) => { FX.numero(ev.x, ev.y - 20, tr('¡ATRAPADO!') + ' +' + ev.valor, '#5fe05f', 18); FX.confeti(ev.x, ev.y); basSuena('rescate'); vibrar(40); },
+    escapa: (ev) => { FX.numero(ev.x, ev.y - 20, tr('¡SE ESCAPA! Debilítalo antes'), '#e5322d', 14); basSuena('no'); },
+    sinBlanco: () => basSuena('no'),
     cafeArma: (ev) => FX.numero(ev.x, ev.y - 12, '+' + tr('CAFÉ'), '#ff8a2a', 12),
     apagon: () => { FX.cartel(tr('¡APAGÓN!'), '#8ac4ff', 1); basSuena('cafeBajo'); },
     eventoPlanta: (ev) => { const E = EVENTO[ev.evento]; FX.cartel(tr(E[0]), E[1], 2, tr(E[2])); basSuena('zona'); },
@@ -78,6 +81,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (est.e.eleccion) { const b = est.botones.find((q) => UI.dentro(p, q)); if (b) aplicaVentaja(b.id); return; }
     if (!est.e.fin && UI.dentro(p, UI.botonAscensor(W, est.H))) { est.pulsoAscensor = true; return; }
     if (!est.e.fin && est.e.habilidad && UI.dentro(p, UI.botonHabilidad(W, est.H))) { est.pulsoHabilidad = true; return; }
+    if (!est.e.fin && UI.dentro(p, UI.botonRed(W, est.H))) { est.pulsoRed = true; return; }
     if (!joy.activo) Object.assign(joy, { activo: true, id: ev.pointerId, ox: p.x, oy: p.y, dx: 0, dy: 0 });
   }
   function mueve(ev) {
@@ -125,6 +129,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     pestanaRetos: (b) => { est.mesa.retos = b.id; basSuena('boton'); if (b.id === 'ranking') basCargaRanking(); },
     reintentarRanking: () => basCargaRanking(),
     cobrarReto: (b) => { if (BAS_RETOS.cobrar(b.p, b.id)) { basSuena('compra'); FX.confeti(W / 2, est.H * 0.3); } },
+    despacho: () => { est.mesa.despacho = true; basSuena('boton'); },
+    cerrarDespacho: () => { est.mesa.despacho = false; basSuena('boton'); },
     cerrarRetos: () => { est.mesa.retos = null; basSuena('boton'); },
     cerrarTaller: () => { est.mesa.taller = null; basSuena('boton'); },
     mesa: () => alaMesa(),
@@ -152,20 +158,21 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (!baja) return;
     if (est.modo === 'bajada' && (k === ' ' || k === 'e')) { est.pulsoAscensor = true; ev.preventDefault(); }
     else if (est.modo === 'bajada' && k === 'q') est.pulsoHabilidad = true;
+    else if (est.modo === 'bajada' && k === 'r') est.pulsoRed = true;
     else if (est.modo !== 'bajada' && (k === ' ' || k === 'enter')) teclaMenu();
   }
   function teclaMenu() {
     if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
     else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
-    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria && !est.mesa.taller && !est.mesa.retos) bajar();
+    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria && !est.mesa.taller && !est.mesa.retos && !est.mesa.despacho) bajar();
   }
 
   function orden() {
     const T = (a, b) => (teclas[a] || teclas[b] ? 1 : 0);
     const mx = joy.dx + T('arrowright', 'd') - T('arrowleft', 'a'), my = joy.dy + T('arrowdown', 's') - T('arrowup', 'w');
-    const ascensor = est.pulsoAscensor, habilidad = est.pulsoHabilidad;
-    est.pulsoAscensor = false; est.pulsoHabilidad = false;
-    return { mx: Math.max(-1, Math.min(1, mx)), my: Math.max(-1, Math.min(1, my)), ascensor, habilidad };
+    const ascensor = est.pulsoAscensor, habilidad = est.pulsoHabilidad, red = est.pulsoRed;
+    est.pulsoAscensor = false; est.pulsoHabilidad = false; est.pulsoRed = false;
+    return { mx: Math.max(-1, Math.min(1, mx)), my: Math.max(-1, Math.min(1, my)), ascensor, habilidad, red };
   }
 
   // ---------- bajada ----------
@@ -200,6 +207,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function pintarBajada(dt) {
     const e = est.e;
     if (!TU.habla() && e.habilidad && e.t > 4) TU.lanza('habilidad', est.t);
+    if (!TU.habla() && e.redes > 0 && e.enemigos.some((en) => B.captura.puede(e, en))) TU.lanza('red', est.t);   // el primer bicho débil
     if (!TU.habla() && e.jefe && !B.sensacion.enIntro()) TU.lanza('jefe', est.t);   // tras la entrada de película
     if (e.derrumbe && !e.fin) FX.temblor = Math.max(FX.temblor, 4);   // tras el primer guion, el botón especial
     est.acum = TU.habla() ? 0 : est.acum + dt * B.sensacion.velocidad(dt);   // mientras habla Lola, la bajada espera; la pausa y la cámara lenta, sensacion.js

@@ -57,6 +57,12 @@ BAS.AJ = Object.freeze({
     suelta: { tornillo: { desde: 0, n: [2, 4] }, cable: { desde: 5, n: [1, 2] }, chip: { desde: 10, n: [0, 2] }, disco: { desde: 15, n: [0, 1], prob: 0.25 } },
     jefe: { chip: 3, disco: 1 },   // lo que suelta además cada jefe vencido
   },
+  // La captura: redes de cables que lanzas con su botón al bicho más cercano a `alcance`. Si le queda `umbral` de vida o menos,
+  // queda atrapado (no los jefes): vale `valor` monedas (× lo que vale el botín de su planta) si subes a salvo y va al terrario
+  // de tu despacho. Si está demasiado entero, se escapa y la red se pierde.
+  captura: { redes: 3, umbral: 0.45, alcance: 170, valor: { normal: 20, raro: 150 } },
+  // El despacho: qué sala tienes según tu cargo (índice de AJ.rangos desde el que se abre cada una).
+  despacho: { salas: [['cubiculo', 0], ['oficina', 2], ['despacho', 4], ['planta', 6]] },
   // El taller de tu mesa: fabricar el arma o la pieza de equipo que quieras (sin azar) y subir de nivel las armas. Coste por rareza;
   // mejorar cuesta `mejora` × el de fabricar × el nivel al que tienes el arma.
   taller: {

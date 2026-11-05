@@ -7,7 +7,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   const UI = B.ui, C = UI.C, T = UI.texto, V = () => B.vista;
   const TRUCO = { null: 'Para empezar', tickets: 'Los tickets se reabren', bugs: 'Los bugs se duplican', apagon: 'Apagones', urgente: 'Todo es urgente', todo: 'Un poco de todo, y sin fondo' };
   const NOMBRE = { bug: 'Bug de descarga', correo: 'Correo urgente', miniCorreo: 'RE: RE:', reunion: 'Reunión', dorado: 'Descarga dorada', spam: 'Spam', critico: 'Bug crítico' };
-  const JEFE = { producto: ['ladirectora', 0.9], rrhh: ['survivalbot', 0.9], lanzamiento: ['servidorbot', 0.9], accionistas: ['presidente', 0.8], ceo: ['ceo', 0.8] };
+  const JEFE = { producto: ['ladirectora', 0.9], rrhh: ['survivalbot', 0.9], lanzamiento: ['servidorbot', 0.9], accionistas: ['presidente', 0.8], ceo: ['ceo', 0.8],
+    becario2004: ['becario', 1.2], fantasma: ['servidorbot', 0.9], impresora: ['fotocopiadora', 4] };
   UI.nombreBicho = (AJ, id) => tr(AJ.jefes[id] ? AJ.jefes[id].nombre : NOMBRE[id]);
 
   // ---------- ¿dónde bajas? ----------
@@ -90,13 +91,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   // ---------- pestaña CATÁLOGO ----------
   function celda(g, AJ, p, x, b) {
-    const n = p.catalogo[x.id] || 0, borde = x.clase === 'raro' ? C.azul : x.clase === 'jefe' ? C.rojo : '#6b4424';
+    const n = p.catalogo[x.id] || 0, borde = x.clase === 'raro' ? C.azul : x.clase === 'jefe' ? C.rojo : x.clase === 'secreto' ? C.oro : '#6b4424';
     UI.panel(g, b.x, b.y, b.w, b.h, borde, null, null, 4);
     UI.panel(g, b.x + 6, b.y + 6, b.w - 12, b.h - 12, n ? C.perg : '#3a2e48', null, null, 3);
     const opc = n ? null : { filtro: 'brightness(0)', alfa: 0.55 }, cy = b.y + b.h * 0.42;
     if (JEFE[x.id]) V().pinta(g, JEFE[x.id][0], b.x + b.w / 2, cy, JEFE[x.id][1], opc); else V().pintaCosa(g, x.id, b.x + b.w / 2, cy, opc, 0.8);
     UI.textoCabe(g, n ? UI.nombreBicho(AJ, x.id) : '???', b.x + b.w / 2, b.y + b.h - 34, 15, b.w - 16, n ? C.cafe : '#8a7a68', 'center', 0);
-    T(g, n ? 'x' + n : tr(x.clase === 'raro' ? 'RARO' : x.clase === 'jefe' ? 'JEFE' : ''), b.x + b.w / 2, b.y + b.h - 15, 14, n ? '#8a5a24' : '#8a7a68', 'center', 0);
+    T(g, n ? 'x' + n : tr(x.clase === 'raro' ? 'RARO' : x.clase === 'jefe' ? 'JEFE' : x.clase === 'secreto' ? 'SECRETO' : ''), b.x + b.w / 2, b.y + b.h - 15, 14, n ? '#8a5a24' : '#8a7a68', 'center', 0);
   }
 
   UI.pestanaCatalogo = function (g, W, H, AJ, p) {

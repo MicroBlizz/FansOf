@@ -6,14 +6,15 @@
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const UI = B.ui, V = B.vista, T = UI.texto;
-  const JEFE = { producto: ['ladirectora', 2.5], rrhh: ['survivalbot', 2.5], lanzamiento: ['servidorbot', 2.5], accionistas: ['presidente', 2.2], ceo: ['ceo', 2.4] };
+  const JEFE = { producto: ['ladirectora', 2.5], rrhh: ['survivalbot', 2.5], lanzamiento: ['servidorbot', 2.5], accionistas: ['presidente', 2.2], ceo: ['ceo', 2.4],
+    becario2004: ['becario', 2.2, 'sepia(1) saturate(1.6) brightness(0.9)'], fantasma: ['servidorbot', 2.5, 'grayscale(1) brightness(1.6) opacity(0.75)'], impresora: ['fotocopiadora', 9, 'hue-rotate(-40deg) saturate(3)'] };
   const VERDE = 'hue-rotate(-90deg) saturate(1.2)';   // los becarios atrapados y rescatados: el becario de Swipe, en verde
 
   V.jefe = function (g, e) {
     const jf = e.jefe;
     if (!jf) return;
     const x = V.sx(jf.x), y = V.sy(jf.y) + Math.sin(e.t * 3) * 4, d = JEFE[jf.id];
-    V.pinta(g, d[0], x, y, d[1], { blanco: jf.golpeT > 0.08 });   // sin voltear
+    V.pinta(g, d[0], x, y, d[1], { blanco: jf.golpeT > 0.08, filtro: jf.golpeT > 0.08 ? undefined : d[2] });   // sin voltear; los secretos, con su filtro
     if (jf.escudoT <= 0) return;
     g.save(); g.globalAlpha = 0.85; g.translate(x, y);
     UI.panel(g, -84, -62, 168, 118, '#ffffff', '#ffffff', '#d8dee8', 4);

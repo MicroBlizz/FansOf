@@ -13,6 +13,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     rrhh: ['Despide antes de preguntar', 'Sus sellos de DESPEDIDO van en abanico: busca el hueco.'],
     lanzamiento: ['Sale hoy, funcione o no', 'Invoca bugs sin parar. Limpia los pequeños y no te quedes quieto.'],
     accionistas: ['Solo le importa el dividendo', 'Lanza anillos de monedas. Muévete entre ellas.'],
+    becario2004: ['Lleva atrapado aquí desde 2004', '¡Es el becario que se perdió en el Legacy! Lanza disquetes en abanico. Derrótalo y te dará un premio enorme.'],
+    fantasma: ['Solo sale cuando se va la luz', 'El Fantasma del Servidor. Sus anillos atraviesan la oscuridad: no pierdas de vista el centro.'],
+    impresora: ['Atascada desde el último lanzamiento', '¡La Impresora Poseída! Escupe folios y bugs. Rompiste demasiados muebles y vino a vengarse.'],
     ceo: ['El que tiró el servidor', 'Tiene tres fases y cada vez se enfada más. Cuando caiga, ¡aguanta hasta el ascensor!'],
   };
   const PAUSA = { baja: 0.035, grande: 0.07, golpe: 0.06 }, RACHA = { dura: 1.6, avisos: [10, 25, 50, 100] };

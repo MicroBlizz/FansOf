@@ -33,6 +33,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     cafeBajo: () => { FX.cartel(tr('¡QUEDA POCO CAFÉ!'), '#e5322d', 1.6, tr('Sube antes de desmayarte')); basSuena('cafeBajo'); },
     ascensorLlamado: () => { FX.cartel(tr('ASCENSOR EN CAMINO'), '#5fe05f', 1.4, tr('Aguanta unos segundos')); basSuena('ascensorLlamado'); },
     jefe: () => { FX.temblor = 14; vibrar(80); basSuena('jefe'); },   // la entrada de película la pinta sensacion.js; Lola explica después
+    jefeSecreto: (ev) => { FX.cartel(tr('¡JEFE SECRETO!'), '#ffd23a', 2.4, tr('Premio enorme en la caja')); FX.confeti(ev.x, ev.y); FX.confeti(ev.x, ev.y - 40); basSuena('jefeVencido'); },
     fase: (ev) => { FX.cartel(tr('¡FASE {n}!', { n: ev.fase }), '#e5322d', 1.2, tr('Se ha enfadado')); FX.chispas(ev.x, ev.y, 30, '#e5322d', 220); FX.temblor = 12; vibrar(60); basSuena('jefe'); },
     jefeVencido: (ev) => { FX.confeti(ev.x, ev.y); FX.chispas(ev.x, ev.y, 40, '#ffe14a', 200); FX.temblor = 20; FX.cartel(tr('¡JEFE VENCIDO!'), '#5fe05f', 2, tr('Recoge el paquete')); vibrar(120); basSuena('jefeVencido'); },
     ataqueJefe: () => basSuena('ataqueJefe'),

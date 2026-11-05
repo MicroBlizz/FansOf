@@ -28,9 +28,22 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   function aparecer(e) {
     const AJ = e.aj, p = e.planta, cual = J.dePlanta(AJ, p);
-    if (!cual || e.jefesVistos[p] || e.jugador.y < p * AJ.altoPlanta + 140) return;
-    crear(e, p, cual);
+    if (e.jefesVistos[p] || e.jefe || e.jugador.y < p * AJ.altoPlanta + 140) return;
+    if (cual) { crear(e, p, cual); return; }
+    const sec = J.secretoAqui(e, p);
+    if (sec) { e.secretosVistos.push(sec); crear(e, p, { id: sec, vuelta: 0 }); }
   }
+
+  // El jefe secreto que sale en esta planta (o null): el de su zona, si se cumple su condición y no ha salido ya en esta bajada.
+  J.secretoAqui = function (e, planta) {
+    const AJ = e.aj, zona = B.zonaDe(AJ, planta).id;
+    return J.secretos(AJ).find((id) => {
+      const c = AJ.jefes[id].secreto;
+      return c.zona === zona && !e.secretosVistos.includes(id) && (!c.rescatados || e.rescatados >= c.rescatados)
+        && (!c.muebles || e.mueblesRotos >= c.muebles) && (!c.apagon || e.apagon);
+    }) || null;
+  };
+  J.secretos = (AJ) => Object.keys(AJ.jefes).filter((id) => AJ.jefes[id] && AJ.jefes[id].secreto);
 
   function mover(e, jf, d, dt) {
     const AJ = e.aj, min = AJ.pared + jf.radio, max = AJ.ancho - AJ.pared - jf.radio;
@@ -49,6 +62,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   const ATAQUE = {
     producto(e, jf, d) { disparar(e, jf, angAl(e, jf), d.bala, 'diapositiva'); },
+    // los secretos usan los ataques de otros jefes (patron); la impresora alterna bugs y folios
+    impresora(e, jf, d) { jf.turno = !jf.turno; if (jf.turno) ATAQUE.lanzamiento(e, jf, d); else ATAQUE.producto(e, jf, d); },
     rrhh(e, jf, d) { const a = angAl(e, jf); for (let i = 0; i < d.abanico; i++) disparar(e, jf, a + (i - (d.abanico - 1) / 2) * 0.32, d.bala, 'sello'); },
     lanzamiento(e, jf, d) { for (let i = 0; i < d.invoca; i++) B.enemigos.crear(e, 'bug', jf.x + (i ? 30 : -30), jf.y - 10).dir = i ? 1 : -1; },
     // el CEO alterna: un abanico de sellos y, al siguiente ataque, dos bugs
@@ -72,7 +87,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     jf.ataqueT -= dt;
     if (jf.ataqueT > 0) return;
     jf.ataqueT = d.cada * furia(e.aj, jf, 'cada');
-    ATAQUE[jf.id](e, jf, d);
+    ATAQUE[d.patron || jf.id](e, jf, d);
     e.eventos.push({ tipo: 'ataqueJefe', id: jf.id, x: jf.x, y: jf.y });
   }
 
@@ -139,15 +154,28 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.proyectiles.push({ x: j.x + (rnd() - 0.5) * 220, y: j.y - 330, vx: 0, vy: D.vel, dano: D.dano * B.difDe(e.aj, e.planta, 0).golpe, radio: D.radio, tipo: 'escombro', vida: 3 });
   }
 
+  // El premio de un jefe secreto: paquetes del jefe, discos de oro y monedas (todo a la caja: solo cuenta si subes a salvo).
+  function premioSecreto(e, jf) {
+    const S = e.aj.jefes.secretoPremio;
+    for (let i = 0; i < S.paquetes; i++) B.enemigos.soltar(e, 'paqueteJefe', jf.x + (i - 0.5) * 30, jf.y + 30);
+    for (let i = 0; i < S.discos; i++) B.enemigos.soltar(e, 'disco', jf.x + (i - 1) * 16, jf.y + 50);
+    e.caja.valor += S.monedas;
+    e.secretosVencidos = (e.secretosVencidos || 0) + 1;
+    e.eventos.push({ tipo: 'jefeSecreto', id: jf.id, nombre: e.aj.jefes[jf.id].nombre, x: jf.x, y: jf.y });
+  }
+
   function morir(e, jf) {
-    const P = e.aj.jefes.premio;
+    const P = e.aj.jefes.premio, d = e.aj.jefes[jf.id];
     e.jefe = null;
     e.jefesVencidos++; e.bajas++;
     e.bajasPorTipo[jf.id] = (e.bajasPorTipo[jf.id] || 0) + 1;
     for (let i = 0; i < P.tazas; i++) B.enemigos.soltar(e, 'taza', jf.x + (i - 1) * 24, jf.y);
-    const primera = !e.vencidos.includes(jf.planta);
-    if (primera) e.jefesNuevos.push(jf.planta);
-    B.enemigos.soltar(e, primera ? 'paqueteJefe' : 'paquete', jf.x, jf.y - 26);
+    if (d.secreto) premioSecreto(e, jf);   // los secretos no abren departamentos: dan su propio premio
+    else {
+      const primera = !e.vencidos.includes(jf.planta);
+      if (primera) e.jefesNuevos.push(jf.planta);
+      B.enemigos.soltar(e, primera ? 'paqueteJefe' : 'paquete', jf.x, jf.y - 26);
+    }
     B.muebles.botinJefe(e, jf.x, jf.y);
     e.eventos.push({ tipo: 'jefeVencido', id: jf.id, x: jf.x, y: jf.y, nombre: e.aj.jefes[jf.id].nombre });
     if (jf.planta === e.aj.final && !e.final) {   // el CEO: servidor arreglado, y el edificio se viene abajo

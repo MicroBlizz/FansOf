@@ -32,6 +32,8 @@ const RETOS_BAS = {
     { id: 'l-j10', txt: 'Vence a 10 jefes', goal: 10, ev: 'jefes', r: 200 },
     { id: 'l-taller', txt: 'Fabrica 5 cosas en el taller', goal: 5, ev: 'taller', r: 150 },
     { id: 'l-r20', txt: 'Rescata 20 becarios', goal: 20, ev: 'rescatados', r: 150 },
+    { id: 'l-secreto', txt: 'Vence a un jefe secreto', goal: 1, ev: 'secretos', r: 300 },
+    { id: 'l-secretos', txt: 'Vence a 3 jefes secretos', goal: 3, ev: 'secretos', r: 800 },
   ],
 };
 // Las firmas que pide el sistema común: dónde se guarda (SAVE.retos) y en qué se paga (monedas del progreso).
@@ -46,7 +48,7 @@ function basRetosBajada(r) {
   const R = BAS_RETOS, n = (v) => Math.max(0, Math.floor(v || 0));
   R.evento('bajada', 1);
   if (r.como === 'ascensor') R.evento('salvo', 1);
-  for (const [ev, v] of [['bajas', r.bajas], ['jefes', r.jefes], ['rescatados', r.rescatados], ['muebles', r.muebles], ['habilidad', r.habilidades], ['combo', r.combos],
+  for (const [ev, v] of [['bajas', r.bajas], ['jefes', r.jefes], ['rescatados', r.rescatados], ['muebles', r.muebles], ['habilidad', r.habilidades], ['combo', r.combos], ['secretos', r.secretos],
     ['materiales', Object.values(r.materiales || {}).reduce((s, x) => s + x, 0)], ['final', r.final ? 1 : 0]]) R.evento(ev, n(v));
   R.maximo('profundidad', n(r.planta));
 }

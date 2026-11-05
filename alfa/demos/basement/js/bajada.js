@@ -21,7 +21,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       generadoHasta: y + AJ.generar.zonaSegura, jefe: null, jefesVistos: {}, jefesVencidos: 0, jefesNuevos: [], vencidos: [...(o.vencidos || [])],
       rescatados: 0, eventosPlanta: {}, ventajas: [], eleccion: null, apagon: false, apagonT: AJ.trucos.apagon.cada * 0.5,
       bajasPorTipo: {}, final: false, inicio, planta: inicio, plantaMax: inicio, zona: B.zonaDe(AJ, inicio), bajas: 0,
-      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false, combos: [], mueblesRotos: 0, habilidadUsos: 0,
+      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false, combos: [], mueblesRotos: 0, habilidadUsos: 0, secretosVistos: [],
       habilidad: stats.habilidad || null, habilidadT: stats.habilidad ? AJ.habilidades[stats.habilidad].recarga * 0.5 : 0, congeladoT: 0,
     };
     if (stats.mascota) B.arma.nuevoAyudante(e, 'mascota', stats.mascota);
@@ -168,7 +168,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       monedas: salvo ? e.caja.valor + propinas + e.capturasValor : 0, rescatados: e.rescatados, jefes: e.jefesVencidos,
       paquetes: salvo ? { ...e.caja.paquetes } : { normal: 0, jefe: 0 }, materiales: salvo ? { ...e.caja.materiales } : {}, jefesNuevos: salvo ? [...e.jefesNuevos] : [],
       bajasPorTipo: { ...e.bajasPorTipo }, final: e.final, segundos: Math.round(e.t),
-      muebles: e.mueblesRotos, habilidades: e.habilidadUsos, combos: e.combos.length, capturas: salvo ? { ...e.capturas } : {},
+      muebles: e.mueblesRotos, habilidades: e.habilidadUsos, combos: e.combos.length, capturas: salvo ? { ...e.capturas } : {}, secretos: e.secretosVencidos || 0,
     });
     e.eventos.push({ tipo: 'fin', como, resultado: e.resultado });
   };

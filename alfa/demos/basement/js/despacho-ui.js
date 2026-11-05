@@ -13,7 +13,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     despacho: ['#8a5a34', '#5e3a1e', '#2c1e16', 'Despacho con ventanal'],
     planta: ['#2b2b35', '#1a1a20', '#120e0a', 'La planta del CEO'],
   };
-  const JEFE = { producto: 'ladirectora', rrhh: 'survivalbot', lanzamiento: 'servidorbot', accionistas: 'presidente', ceo: 'ceo' };
+  const JEFE = { producto: 'ladirectora', rrhh: 'survivalbot', lanzamiento: 'servidorbot', accionistas: 'presidente', ceo: 'ceo', becario2004: 'becario', fantasma: 'servidorbot', impresora: 'r-tarjeta' };
+  const ORO = 'sepia(1) saturate(5) brightness(1.15)';   // las estatuillas doradas de los jefes secretos
   const hash = (n) => ((n * 2654435761) >>> 0) % 1000 / 1000;
 
   // el ventanal: cielo y edificios (de día en el despacho, de noche con luces en la planta del CEO)
@@ -89,6 +90,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     UI.panel(g, W / 2 - 130, ys - 30, 260, 50, '#6b4424', '#8a5a34', '#3a2414', 4);
     if (d.formacion.bienestar) V().pinta(g, 'r-taza', W / 2 + 90, ys - 44, 1.4);
     if (d.mascota) V().pintaCosa(g, d.mascota, W / 2 - 170, ys - 10, null, 0.7);
+    d.secretos.forEach((id, i) => UI.dibuja(g, JEFE[id], W / 2 - 100 + i * 36, ys - 50, id === 'becario2004' ? 0.5 : 0.28, { filtro: ORO }));   // estatuillas de oro en la mesa
     if (d.catalogoCompleto) { UI.panel(g, 30, ys - 330, 110, 80, C.oro, '#fff3a0', '#c8901a', 4); UI.lineas(g, tr('CATÁLOGO COMPLETO'), 85, ys - 302, 14, 96, C.cafe, 'center', 0, 16); }
   }
 

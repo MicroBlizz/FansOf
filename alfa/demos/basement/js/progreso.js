@@ -100,13 +100,15 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   B.entradasCatalogo = (AJ) => [
     ...Object.keys(AJ.enemigos).map((id) => ({ id, clase: AJ.enemigos[id].raro ? 'raro' : 'normal' })),
     ...AJ.jefes.orden.map((id) => ({ id, clase: 'jefe' })),
+    ...B.jefes.secretos(AJ).map((id) => ({ id, clase: 'secreto' })),
   ];
   // Los bichos que una bajada añade por primera vez al catálogo, y lo que dan.
   B.catalogoNuevos = function (AJ, p, r) {
     const bajas = (r && r.bajasPorTipo) || {};
     return B.entradasCatalogo(AJ).filter((x) => bajas[x.id] && !p.catalogo[x.id]).map((x) => ({ ...x, monedas: AJ.catalogo.premio[x.clase] }));
   };
-  B.catalogoCompleto = (AJ, p) => B.entradasCatalogo(AJ).every((x) => p.catalogo[x.id] > 0);
+  // completo = todos menos los secretos (esos son un extra)
+  B.catalogoCompleto = (AJ, p) => B.entradasCatalogo(AJ).every((x) => x.clase === 'secreto' || p.catalogo[x.id] > 0);
 
   B.progresoAGuardar = (p) => ({ formato: 'for-basement-v2', ...B.copiaProgreso(p) });
 

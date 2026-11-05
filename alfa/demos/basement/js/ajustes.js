@@ -34,7 +34,7 @@ BAS.AJ = Object.freeze({
     critico: { vida: 220, radio: 28, vel: 30, persigue: 120, golpe: 8, desde: 10, peso: 0, raro: 0.035, solo: 'qa', botin: 'taza', botinX: 3, puntos: 8 },
   },
   // el catálogo de bichos: monedas la primera vez que tumbas cada uno; completo, 3 paquetes del jefe
-  catalogo: { premio: { normal: 20, raro: 150, jefe: 100 }, completo: 3 },
+  catalogo: { premio: { normal: 20, raro: 150, jefe: 100, secreto: 300 }, completo: 3 },
   generar: { tramo: 40, delante: 620, detras: 560, base: 0.3, porPlanta: 0.02, max: 0.9, maxActivos: 45, zonaSegura: 180 },
   // El botín: valor en monedas (sube un 12 % por planta) y peso en la caja. La taza de café no ocupa sitio: rellena el café.
   objetos: {
@@ -118,6 +118,13 @@ BAS.AJ = Object.freeze({
     lanzamiento: { nombre: 'ServidorBot del Lanzamiento', vida: 560, radio: 46, vel: 40, golpe: 7, cada: 3.0, invoca: 2 },
     accionistas: { nombre: 'El Presidente del Consejo', vida: 750, radio: 50, vel: 45, golpe: 6, cada: 2.6, bala: { vel: 110, dano: 5, radio: 7 }, anillo: 8 },
     ceo: { nombre: 'El CEO', vida: 850, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2, anillo: 10, fases: [0.66, 0.33] },
+    // Los jefes secretos: no tienen planta fija; salen (una vez por bajada, nunca donde ya hay un jefe) al entrar en una planta de su
+    // zona si se cumple su condición: rescatados = becarios rescatados en esta bajada; muebles = muebles rotos; apagon = la planta
+    // está a oscuras. patron = los ataques que usan (los de otro jefe). Su premio: secretoPremio.
+    becario2004: { nombre: 'El Becario de 2004', vida: 900, radio: 40, vel: 70, golpe: 7, cada: 1.6, bala: { vel: 150, dano: 6, radio: 7 }, abanico: 4, patron: 'rrhh', secreto: { zona: 'legacy', rescatados: 3 } },
+    fantasma: { nombre: 'El Fantasma del Servidor', vida: 650, radio: 46, vel: 60, golpe: 6, cada: 2.2, bala: { vel: 120, dano: 5, radio: 7 }, anillo: 10, patron: 'accionistas', secreto: { zona: 'servidores', apagon: true } },
+    impresora: { nombre: 'La Impresora Poseída', vida: 520, radio: 46, vel: 45, golpe: 6, cada: 2.0, bala: { vel: 140, dano: 5, radio: 7 }, invoca: 3, patron: 'impresora', secreto: { zona: 'qa', muebles: 4 } },
+    secretoPremio: { paquetes: 2, discos: 3, monedas: 300 },
     premio: { tazas: 3 },
     // Las fases: al bajar la vida de cada umbral el jefe se enfada (ataca y se mueve más deprisa). El CEO tiene tres.
     fases: [0.5], furia: { cada: 0.85, vel: 1.15 },

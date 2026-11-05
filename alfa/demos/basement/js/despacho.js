@@ -12,6 +12,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return Object.freeze({
       sala, rango: p.rango,
       trofeos: AJ.jefes.orden.filter((id) => p.catalogo[id] > 0),
+      secretos: B.jefes.secretos(AJ).filter((id) => p.catalogo[id] > 0),
       armas: Object.keys(AJ.armas).filter((id) => AJ.armas[id].rareza && p.armas[id] > 0),
       terrario: Object.entries(p.terrario).filter(([, n]) => n > 0).map(([id, n]) => ({ id, n })),
       formacion: a.formacion, mascota: p.mascota && p.mascotas[p.mascota] ? p.mascota : null,

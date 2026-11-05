@@ -1,0 +1,68 @@
+/* Fans of Rouflage · LA PINTURA DE LOS MENÚS (Daniel, 5-11-2026, boceto E: «más vivaz, más Rouflage», sin damero, sin cartulina, sin neón y
+   con brochazos de verdad). Las imágenes (--pm-brocha-*, --pm-pest-*, --pm-manchon-*, --pm-pared, --pm-suelo, --pm-fondo-*) las pinta el juego
+   al arrancar (js/pintura-menus.js); aquí solo se colocan. Vale para todos los menús con flecha (.pantalla.con-barra): fondo azul pizarra con
+   brochazos grandes, el panel un poco más claro, el título sobre un brochazo (cada menú con su color), las pestañas como brochazos cortos y
+   las casillas con un manchón pintado del color de su rareza. Se carga la última: pisa lo de antes. */
+
+/* ---------- el fondo y el panel ---------- */
+.pantalla.con-barra { background: #2a3550; }
+.pantalla.con-barra::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .9;
+  background: var(--pm-fondo-1) -40px 40px / 420px 110px no-repeat, var(--pm-fondo-2) calc(100% + 120px) 62% / 420px 110px no-repeat, var(--pm-fondo-3) -60px 90% / 420px 110px no-repeat; }
+@media (min-width: 700px) { .pantalla.con-barra::before { background-position: 4% 8%, 86% 56%, 10% 90%; } }
+.pantalla.con-barra > .caja { position: relative; z-index: 1; background: #3a4766; border-color: #141a2c; box-shadow: 0 8px 0 #141a2c; }
+.mb-barra { background: linear-gradient(180deg, #3a4766 0%, #3a4766 82%, rgba(58, 71, 102, 0) 100%); }
+
+/* ---------- el título: sobre un brochazo, cada menú con su color ---------- */
+.mb-barra h2.mb-titulo, .mb-barra .mb-titulo h2 { position: relative; color: #fff6ea; padding: 6px 14px 2px; --pm-titulo: var(--pm-brocha-naranja); }
+.mb-barra h2.mb-titulo::before, .mb-barra .mb-titulo h2::before { content: ''; position: absolute; z-index: -1; left: -28px; right: -34px; top: -16px; bottom: -22px; background: var(--pm-titulo) center / 100% 100% no-repeat; pointer-events: none; }
+#p-tienda .mb-titulo h2, #p-tienda h2.mb-titulo { --pm-titulo: var(--pm-brocha-verde); }
+#p-misiones h2.mb-titulo { --pm-titulo: var(--pm-brocha-azul); }
+#p-temporada h2.mb-titulo, #p-pase h2.mb-titulo { --pm-titulo: var(--pm-brocha-violeta); }
+#p-gacha .mb-titulo h2, #p-gacha h2.mb-titulo { --pm-titulo: var(--pm-brocha-rosa); }
+#p-talentos h2.mb-titulo { --pm-titulo: var(--pm-brocha-cian); }
+#p-perfil h2.mb-titulo, #p-amigos h2.mb-titulo, #p-amigoslista h2.mb-titulo, #p-invita h2.mb-titulo { --pm-titulo: var(--pm-brocha-amarillo); }
+#p-diario h2.mb-titulo, #p-clasif h2.mb-titulo, #p-pvp h2.mb-titulo { --pm-titulo: var(--pm-brocha-rojo); }
+.ar-cuenta { background: #141a2c; color: #fff6ea; }
+.cartera-chapa, .chip { background: #2a3550; border-color: #141a2c; }
+
+/* ---------- pestañas: brochazos cortos, cada una de un color; la activa, naranja y más gorda ---------- */
+.ar-pest, .tn-pes { position: relative; background: none; border: 0; border-radius: 0; color: #fff6ea; box-shadow: none; padding: 10px 16px 6px;
+  text-shadow: 2px 0 0 #141a2c, -2px 0 0 #141a2c, 0 2px 0 #141a2c, 0 -2px 0 #141a2c, 1.5px 1.5px 0 #141a2c, -1.5px -1.5px 0 #141a2c, 1.5px -1.5px 0 #141a2c, -1.5px 1.5px 0 #141a2c; }
+.ar-pest::before, .tn-pes::before { content: ''; position: absolute; inset: -4px -8px; z-index: -1; background: var(--pm-pest-azul) center / 100% 100% no-repeat; opacity: .75; pointer-events: none; }
+.ar-pest:nth-child(2n)::before, .tn-pes:nth-child(2n)::before { background-image: var(--pm-pest-verde); }
+.ar-pest:nth-child(3n)::before, .tn-pes:nth-child(3n)::before { background-image: var(--pm-pest-rosa); }
+.ar-pest:nth-child(5n)::before { background-image: var(--pm-pest-violeta); }
+.ar-pest.activa, .tn-pes.on { transform: scale(1.08); color: #fff6ea; background: none; box-shadow: none; }
+.ar-pest.activa::before, .tn-pes.on::before { opacity: 1; background-image: var(--pm-pest-naranja); }
+.tn-pes { padding: 8px 4px 5px; }
+.mis-pestanas .ar-pest { padding: 9px 6px 5px; }
+.ar-pestanas { padding: 8px 10px 12px; }
+.ar-nota { color: #dfe6f5; }
+
+/* ---------- casillas: fondo pizarra y un manchón pintado del color de su rareza; la equipada, verde y latiendo ---------- */
+.ar-casilla, .tn-pieza { background: #2a3550; border-color: #141a2c; border-radius: 16px; box-shadow: none; }
+.ar-casilla::before, .tn-pieza::before { content: ''; position: absolute; left: 50%; top: 36px; width: 66px; height: 66px; transform: translate(-50%, -50%); background: var(--pm-manchon-comun) center / 100% 100% no-repeat; opacity: .5; pointer-events: none; }
+.ar-casilla.r-rara::before, .tn-pieza.r-rara::before { background-image: var(--pm-manchon-rara); opacity: .95; }
+.ar-casilla.r-epica::before, .tn-pieza.r-epica::before { background-image: var(--pm-manchon-epica); opacity: .95; }
+.ar-casilla.r-legend::before, .tn-pieza.r-legend::before { background-image: var(--pm-manchon-legend); opacity: 1; }
+.ar-casilla.r-rara, .ar-casilla.r-epica, .ar-casilla.r-legend, .tn-pieza.r-rara, .tn-pieza.r-epica, .tn-pieza.r-legend { box-shadow: none; background: #2a3550; }
+.ar-casilla.puesto { background: #2a3550; }
+.ar-casilla.puesto::before { background-image: var(--pm-manchon-puesto); opacity: 1; width: 78px; height: 72px; animation: pm-late 2.2s ease-in-out infinite; }
+.ar-casilla.puesto::after { border-color: #141a2c; }
+.ar-casilla.sel { border-color: var(--gold); }
+.ar-casilla.bloq canvas:first-child { opacity: .7; filter: saturate(.6); }
+.ar-casilla > canvas:first-child, .ar-casilla > small, .tn-pieza > canvas:first-child, .tn-pieza > span, .tn-pieza > button, .tn-pieza > .tn-probar { position: relative; z-index: 1; }
+.ar-casilla .ar-candado { z-index: 2; }
+.ar-casilla small { color: #fff6ea; }
+@keyframes pm-late { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.07); } }
+
+/* ---------- la vista del armario: pared con una pintada y suelo pintado a rodillo ---------- */
+.ar-escena { position: relative; overflow: hidden; border-color: #141a2c; background: #5a6480 var(--pm-pared) 8px 10px / 150px 150px no-repeat; }
+.ar-escena::before { content: ''; position: absolute; left: -8px; right: -8px; bottom: -6px; height: 34px; z-index: 0; background: var(--pm-suelo) 0 0 / 100% 100% no-repeat; pointer-events: none; }
+.ar-escena > * { position: relative; z-index: 1; }
+
+/* ---------- el brochazo que barre una lista al cambiar de pestaña (PINTURA.barre) ---------- */
+.ar-rejilla, .tienda-lista, .mis-lista { position: relative; }
+.pm-barrido { position: absolute; left: -20%; top: 0; width: 140%; height: 100%; z-index: 5; pointer-events: none; background: center / 100% 100% no-repeat; animation: pm-barre .55s ease-out forwards; }
+@keyframes pm-barre { 0% { transform: translateX(-110%) scaleY(.6); opacity: 1; } 60% { opacity: .9; } 100% { transform: translateX(110%) scaleY(1); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ar-casilla.puesto::before { animation: none; } .pm-barrido { display: none; } }

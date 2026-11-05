@@ -38,7 +38,8 @@ const ARD = (() => {
   }
   // o = { papel (id), espalda, cabeza (piezas), ojos, boca (funciones), sinCara, esc }
   function vestida(c, w, h, o = {}) {
-    const e = o.esc || h / 78; c.save(); c.translate(w / 2 - (o.mascota ? 9 * e : 0), h * 0.95); c.scale(e, e);
+    // con mascota, la galleta se corre a la izquierda; en MASCOTAS (o.mascotaAparte) se aparta más y la mascota va a su lado, grande y viva (o.t)
+    const e = o.esc || h / 78, aparte = o.mascota && o.mascotaAparte; c.save(); c.translate(w / 2 - (aparte ? 24 * e : o.mascota ? 9 * e : 0), h * 0.95); c.scale(e, e);
     if (o.espalda && ESPALDAS[o.espalda]) ESPALDAS[o.espalda](c);
     shape(c, el(0, 1, 15, 3.6), 'rgba(20,10,40,.3)', 0);
     c.beginPath(); traza(c); c.lineWidth = 6; c.strokeStyle = OL; c.lineJoin = 'round'; c.stroke();
@@ -46,7 +47,7 @@ const ARD = (() => {
     if (PAPEL[o.papel]) { c.save(); c.beginPath(); traza(c); c.clip(); PAPEL[o.papel](c); c.restore(); }
     if (!o.sinCara) cara(c, o.ojos, o.boca);
     if (o.cabeza && CABEZAS[o.cabeza]) CABEZAS[o.cabeza](c);
-    if (o.mascota && ARD.MASCOTAS && ARD.MASCOTAS[o.mascota]) { c.save(); c.translate(27, 0); c.scale(1.05, 1.05); ARD.MASCOTAS[o.mascota](c, { t: 0.6, mov: 0, susto: false }); c.restore(); }      // su mascota, a un lado (armario-mascotas.js)
+    if (o.mascota && ARD.MASCOTAS && ARD.MASCOTAS[o.mascota]) { const k = aparte ? 1.6 : 1.05; c.save(); c.translate(aparte ? 44 : 27, 0); c.scale(k, k); ARD.MASCOTAS[o.mascota](c, { t: o.t == null ? 0.6 : o.t, mov: 0, susto: false, sem: 0, contento: !!aparte }); c.restore(); }      // su mascota, delante y a un lado (mascotas-vivas.js)
     c.restore();
   }
   /* ---------- iconos (gotas, acciones, candado, nada) ---------- */

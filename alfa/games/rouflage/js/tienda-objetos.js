@@ -19,7 +19,7 @@ function tiendaPintaPestanas() {
   E('tienda-cats').hidden = TIENDA.pestana !== 'obj';      // las categorías van fuera de la lista: no se van al bajar
   if (TIENDA.pestana === 'obj') tiendaPintaObjetos();      // muchas piezas: solo se dibujan cuando se ven
 }
-function tiendaPestana(id) { if (TIENDA.pestana === id) return; play('tick'); TIENDA.pestana = id; tiendaPintaPestanas(); E('tienda-lista').scrollTop = 0; }
+function tiendaPestana(id) { if (TIENDA.pestana === id) return; play('tick'); TIENDA.pestana = id; tiendaPintaPestanas(); E('tienda-lista').scrollTop = 0; PINTURA.barre(E('tienda-lista'), 'verde'); }
 
 // el conjunto del Rumble de la semana, en grande, arriba de DESTACADO (cambia cada jueves, igual para todos)
 function tiendaPintaDestacado() {

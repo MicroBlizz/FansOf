@@ -1,8 +1,8 @@
 {
- "build": 1001,
- "hash": "8ea06cb",
- "fecha": "2026-11-05T20:13:12Z",
- "mensaje": "Basement 0.6.0: habilidad especial con recarga y combos de ventajas",
+ "build": 1002,
+ "hash": "9d67fcf",
+ "fecha": "2026-11-05T20:15:12Z",
+ "mensaje": "Rouflage: menús pintados a brocha (ADR 059) y la mascota aparte en el armario",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

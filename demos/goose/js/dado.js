@@ -26,7 +26,7 @@ function tirarDado(opciones) {
   D.soloPares = !!o.soloPares || D.bendito; D.soloImpares = !D.soloPares && (!!o.soloImpares || D.maldito);
   if (D.bendito) { D.extra = 1; D.bendito = false; J.impulso = 0; J.avisoImpulso = false; }
   D.maldito = false;
-  J.yo.moviendo = false;
+  J.yo.moviendo = false; cierraTutoDado();
   SONIDO.dadoRueda(); vibra(20);
   return true;
 }
@@ -99,6 +99,8 @@ function pintaDado() {
   if (D.bendito) texto2(tr('¡DADO BENDITO!'), bx + 2, by - 28, 7, '#ffd34d', 'left');
   else if (D.maldito) texto2(tr('DADO MALDITO'), bx + 2, by - 28, 7, '#c9a0ff', 'left');
   else if (puede) texto2(tr('TIRA EL DADO'), bx - 14, by - 28, 7, '#fff4dc', 'left');
+  else if (J.minijefe && J.minijefe.hp > 0) texto2(esParca(J.minijefe) ? tr('VENCE A LA PARCA') : tr('VENCE AL GUARDIÁN'), bx - 14, by - 28, 7, '#ff8a6b', 'left');   // por qué no se puede tirar
+  else if (J.jefe) texto2(tr('VENCE A LA OCA MADRE'), bx - 14, by - 28, 7, '#ff8a6b', 'left');
   else if (J.fase === 'camino') { texto2(tr('Ve a la casilla {n}', { n: J.destino }), bx - 14, by - 28, 7, '#ffd34d', 'left'); texto2(String(J.destino), bx, by + 1, 13, '#ffd34d', 'center', FUENTE_G, 400, 0.3); }   // el dado se enciende al llegar
   if (puede) BOTONES.push({ x: bx - 24, y: by - 24, w: 48, h: 48, accion: () => tirarDado() });
 }

@@ -233,4 +233,6 @@ IDIOMA.add({
   "DESTACADO DE LA SEMANA": "IN EVIDENZA QUESTA SETTIMANA",
   "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "Ti mancano {n} Azioni per «{c}». Cambiale con le Gocce o ottienile qui, e tornerai all'acquisto.",
   "ESTE TE LLEGA": "QUESTO BASTA",
+  // las tarjetas vivas del título (5-11-2026)
+  "¡PREMIO!": "PREMIO!",
 });

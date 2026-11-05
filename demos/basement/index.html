@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#120a1c">
+<title>Fans of Basement</title>
+<meta name="description" content="Fans of Basement: el servidor de Microblizz se ha caído. Baja por el hueco del ascensor planta a planta, la grapadora dispara sola, no te quedes sin café y sube con la caja llena de botín.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.5.0"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<style>
+/* Fans of Basement: un solo canvas vertical (540 de ancho lógico, como Fans of Swipe) centrado en la pantalla. */
+html, body { height: 100%; margin: 0; background: #120a1c; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#juego { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: block; touch-action: none; image-rendering: pixelated; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffd23a; font: 28px/1 'Jersey 10', monospace; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<canvas id="juego" aria-label="Fans of Basement"></canvas>
+<div id="carga">…</div>
+<div id="toast"></div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Basement guarda en el navegador sus monedas, mejoras y récord
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/progreso.js', 'js/inventario.js', 'js/bajada.js', 'js/campana.js', 'js/enemigos.js', 'js/jefes.js', 'js/becarios.js', 'js/arma.js',
+    'js/guardado.js', 'js/sonido.js', 'js/estilo.js', 'js/sprites.js', 'js/aspecto-capas.js', 'js/aspecto.js', 'js/efectos.js', 'js/vista.js', 'js/vista-jefes.js', 'js/pantallas.js',
+    'js/bajada-ui.js', 'js/mesa.js', 'js/mesa-equipo.js', 'js/mesa-campana.js', 'js/mesa-armeria.js', 'js/resultado.js', 'js/tutorial.js', 'js/dev.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-11-05',
+    fecha: '5 de noviembre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF BASEMENT', tarjeta: 'g-basement', enlace: 'demos/basement/', texto: 'Prototipo nuevo: baja por el hueco del ascensor de Microblizz con la grapadora disparando sola, sin quedarte sin café, y sube con la caja llena de botín.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-11-04',
     fecha: '4 de noviembre de 2026',
     nuevos: [

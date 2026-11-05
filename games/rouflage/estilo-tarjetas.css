@@ -1,0 +1,25 @@
+/* Fans of Rouflage · LAS TARJETAS MISIONES DE HOY y TEMPORADA del título (Daniel, 5-11-2026, opción «vivo»): de colores (verde y naranja),
+   con su dibujo en un círculo, letras blancas con contorno, barra con brillo (arcoíris en misiones; el color de tu liga en temporada) y un
+   brillo que las cruza cada pocos segundos. Con un premio de misión por cobrar, la tarjeta se ilumina y sale el cartel «¡PREMIO!». */
+#p-titulo .tit-tarjeta { grid-template-columns: 40px minmax(0, 1fr); column-gap: 8px; row-gap: 2px; align-items: center; padding: 8px 10px 9px 8px; }
+#p-titulo .tit-tarjeta.mis { background: linear-gradient(160deg, #4fe08a, #1f9a55); }
+#p-titulo .tit-tarjeta.tem { background: linear-gradient(160deg, #ffc04a, #ff7a1a); }
+.tit-tar-ico { grid-row: 1 / span 3; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #fff6ea; border: 3px solid var(--outline); box-shadow: 0 2px 0 var(--outline); color: var(--outline); }
+.tit-tar-ico > i { display: block; width: 24px; height: 24px; }
+.tit-tar-ico svg { display: block; width: 100%; height: 100%; }
+#p-titulo .tit-tarjeta b, #p-titulo .tit-tarjeta.mis b, #p-titulo .tit-tarjeta.tem b { font-size: 12.5px; color: #fff; -webkit-text-stroke: 3px var(--outline); paint-order: stroke fill; }
+#p-titulo .tit-tarjeta span { color: #fff; text-shadow: 0 1px 0 var(--outline); font-size: 12px; }
+#p-titulo .tit-tarjeta .barra { width: 100%; justify-self: stretch; height: 12px; background: rgba(11, 15, 28, 0.4); }
+#p-titulo .tit-tarjeta .barra i { box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45); }
+#p-titulo .tit-tarjeta.mis .barra i { background: linear-gradient(90deg, #ff4b5c, #ff9a3d, #ffd23d, #7ee04a, #39d5e8, #4a7dff); }
+/* el brillo que cruza (se mueve el fondo dentro de la tarjeta: no hace falta recortar, y el cartel puede asomar por fuera) */
+#p-titulo .tit-tarjeta::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, 0.5) 50%, transparent 60%) 150% 0 / 300% 100% no-repeat; animation: tit-brillo 4.5s ease-in-out infinite; }
+#p-titulo .tit-tarjeta.tem::after { animation-delay: 2.2s; }
+@keyframes tit-brillo { 0%, 70% { background-position: 150% 0; } 100% { background-position: -50% 0; } }
+/* con premio por cobrar: se ilumina y sale el cartel */
+#p-titulo .tit-tarjeta.premio { box-shadow: 0 0 0 3px #ffe066, 0 3px 0 var(--outline); animation: tit-premio 1.2s ease-in-out infinite; }
+@keyframes tit-premio { 0%, 100% { box-shadow: 0 0 0 3px #ffe066, 0 3px 0 var(--outline); } 50% { box-shadow: 0 0 0 3px #ffe066, 0 0 16px 4px rgba(255, 224, 102, 0.75), 0 3px 0 var(--outline); } }
+#p-titulo .tit-premio { position: absolute; right: -6px; top: -12px; z-index: 2; padding: 1px 8px 0; border-radius: 8px; background: #ff4b5c; color: #fff; border: 2px solid var(--outline); font: 900 11px/1.5 var(--font-ui); text-shadow: none; transform: rotate(6deg); animation: tit-cartel 0.9s ease-in-out infinite; }
+#p-titulo .tit-premio[hidden] { display: none; }
+@keyframes tit-cartel { 0%, 100% { transform: rotate(6deg) scale(1); } 50% { transform: rotate(6deg) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { #p-titulo .tit-tarjeta::after, #p-titulo .tit-tarjeta.premio, #p-titulo .tit-premio { animation: none; } }

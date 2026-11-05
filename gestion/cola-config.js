@@ -18,7 +18,7 @@ const COLA_CONFIG = (() => {
       + `<td>${c.revocada ? 'revocada' : `<button type="button" class="enlace" data-revoca="${c.id}">${e.revocando === c.id ? 'Sí, revocar' : 'Revocar'}</button>`}</td></tr>`).join('');
 
     return `<section class="caja cl-cfg"><h3>Esta pestaña</h3>
-      <p><b>Token de GitHub:</b> guardado en este navegador. Es un token fino de solo lectura del repo ${REPO} con los permisos <b>Actions</b> y <b>Administration</b> (este, para saber si yoshi está encendido). Si caduca o lo revocas en GitHub, olvídalo aquí y pega el nuevo.</p>
+      <p><b>Token de GitHub:</b> guardado en este navegador. Es un token fino del repo ${REPO} con los permisos <b>Actions</b> y <b>Variables</b> en lectura y escritura (para pausar los runners y reiniciar ejecuciones fallidas) y <b>Administration</b> en solo lectura (para saber si yoshi está encendido). Si caduca o lo revocas en GitHub, olvídalo aquí y pega el nuevo.</p>
       <div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div>
       <p><label class="cl-op">Límite semanal de referencia (tokens) <input type="number" id="cl-lim" min="0" step="1000" value="${e.limite || ''}" style="width:9em"></label></p>
       <p class="meta">Con él sale la columna «Semanal» del resumen. Esta pestaña no puede leer tu límite de Claude; por defecto 1 250 000. Vacío, no se enseña el porcentaje.</p>
@@ -35,7 +35,7 @@ const COLA_CONFIG = (() => {
     <section class="caja cl-cfg"><h3>Mod de Claude (cola-actions)</h3>
       <p>El mismo panel, junto al chat de Claude Code. Cada persona, una vez:</p>
       <ol>
-        <li><b>Token de GitHub</b>: en GitHub › Settings › Developer settings › Fine-grained tokens, uno solo para ${REPO} con <b>Actions</b> y <b>Administration</b> en solo lectura (puede ser el mismo de esta pestaña).</li>
+        <li><b>Token de GitHub</b>: en GitHub › Settings › Developer settings › Fine-grained tokens, uno solo para ${REPO} con <b>Actions</b> en solo lectura (el mod no escribe) y <b>Administration</b> en solo lectura (puede ser el mismo de esta pestaña, que además lleva escritura en Actions y Variables).</li>
         <li><b>Instalar el mod</b> en el prompt de una sesión de Claude Code, con tu cuenta de GitHub con acceso al repo. Acepta el marketplace y elige el ámbito de usuario; al terminar pide el token del paso 1.${cmd('/plugin install cola-actions --marketplace ' + REPO)}</li>
         <li><b>Clave de la cola</b>: crea una abajo con tu nombre, cópiala (solo se enseña una vez) y pégala en <code>/config</code>, en la opción «Clave de la cola» del mod. Sin ella el mod funciona igual, pero no comparte el historial.</li>
       </ol>

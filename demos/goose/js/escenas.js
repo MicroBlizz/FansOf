@@ -200,6 +200,6 @@ function pintaEscenasHud() {
     texto2(tr('QUEDAN'), W / 2, 66, 7, '#c9b98a');
     texto2(String(E.restan), W / 2, 80, 20, E.tipo === 'pozo' ? '#7dff6b' : '#c9d3ff', 'center', FUENTE_G, 400, 0.2);
   } else if (E.tipo === 'posada') {
-    pintaTiendita(tr('LA POSADA'), '#ffb86b', listaPosada(), E.compradas, compraPosada, tr('Tira el dado para irte (saldrá impar)'));   // con los regalos de anuncio (js/monetiza.js)
+    pintaTiendita(tr('LA POSADA'), '#ffb86b', listaPosada(), E.compradas, compraPosada, tr('tira el dado (saldrá impar)'));   // con los regalos de anuncio (js/monetiza.js)
   }
 }

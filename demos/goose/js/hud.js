@@ -138,6 +138,7 @@ function pintaHud() {
   pintaEscenasHud();
   pintaMinijefeHud();
   pintaTrato();
+  pintaTutorial();   // js/tutorial.js
   pintaMapa();
   if (J.modo === 'juego') pintaAvisos();
 }

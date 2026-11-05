@@ -224,4 +224,6 @@ IDIOMA.add({
   "DESTACADO DE LA SEMANA": "FEATURED THIS WEEK",
   "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "You need {n} more Shares for “{c}”. Swap Drops for them or get them here, and you'll go back to the purchase.",
   "ESTE TE LLEGA": "THIS ONE COVERS IT",
+  // las tarjetas vivas del título (5-11-2026)
+  "¡PREMIO!": "REWARD!",
 });

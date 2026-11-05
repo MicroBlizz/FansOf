@@ -1,11 +1,15 @@
 // Fans of Goose · LA OCA PARCA: el jefe de la casilla de la Muerte (58). Un esqueleto de oca con capucha y una guadaña de hueso de
 // ala. Tres fases: las HOCES (lanza hoces que rebotan por la casilla), la COSECHA (a mitad de vida siega la casilla de lado a lado:
-// hay que saltar con dos toques, y llama ocas zombi) y el REGATEO (casi muerta se para y te ofrece el trato: si pierdes, vuelves
-// a la casilla 55 con la mitad de vida; si ganas, te deja pasar y suelta su guadaña, un arma única de esta partida).
+// hay que saltar con dos toques, y llama ocas zombi) y el REGATEO (casi muerta se para, la partida se PAUSA y te ofrece el trato:
+// si aceptas, vuelves a la casilla 55 con la mitad de vida; si rechazas, empieza LA IRA: recupera vida y ataca mucho más fuerte, y si
+// la tumbas te deja pasar, suelta su guadaña, un arma única de esta partida, y el doble de monedas). 5-11-2026, Daniel: con el trato en
+// marcha no daba tiempo a leer y la matabas sin querer.
 // Sus 25 fotogramas (img/parca-*.png) salen de Yoshi; si faltan, se usa el base.
 'use strict';
 
 const PARCA = { vida: 1500, r: 24, hoces: 1.4, siega: 1.1, zombis: 4 };
+// LA IRA (tras rechazar el trato): la vida que recupera, y cuánto más rápida, más hoces, más cosechas y más zombis
+const IRA = { vida: 0.35, hoces: 0.55, nHoces: 4, rebotes: 3, cosecha: 0.012, zombis: 6, vel: 1.4, monedas: 50 };
 // los fotogramas por estado: [nombres...] y su ritmo
 const PARCA_ANIM = {
   aparece: ['parca-ap1', 'parca-ap2', 'parca-ap3', 'parca-ap4', 'parca-ap5'],
@@ -40,7 +44,7 @@ function mueveParca(e, dt, ux, uy, d) {
   if (e.estado === 'aparece') { if (e.f2 <= 0) { e.estado = 'flota'; e.f2 = 1.5; } return [0, 0]; }
   if (e.estado === 'regateo') return [0, 0];
   avanzaJefe2(e, dt, mitad);   // escudo, zonas rojas y gran ataque (js/jefes2.js)
-  if (casi && !e.regateado) { e.regateado = true; e.estado = 'regateo'; e.animT = 0; J.trato = { t: 0 }; aviso(tr('¿UN TRATO?'), '#c9a0ff', 2.5); aviso2(tr('Acepta y vuelves a la 55 con media vida. Rechaza y acábala')); SONIDO.posada(); return [0, 0]; }
+  if (casi && !e.regateado) { ofreceTrato(e); return [0, 0]; }
   // fase 2: la cosecha
   if (mitad && e.fase === 0) { e.fase = 1; e.estado = 'alza'; e.f2 = 0.9; e.animT = 0; aviso(tr('¡LA COSECHA!'), '#ff2d2d', 1.6); aviso2(tr('Salta la guadaña con dos toques')); SONIDO.jefeCarga(); }
   if (e.estado === 'alza') { if (e.f2 <= 0) { e.estado = 'siega'; e.f2 = PARCA.siega; e.animT = 0; e.siegaDir = yo.x > e.x ? 1 : -1; e.siegaX = e.x; SONIDO.latigo(5); tiembla(5); } return [0, 0]; }
@@ -48,19 +52,19 @@ function mueveParca(e, dt, ux, uy, d) {
     const w = anchoDe(J.casilla), x0 = centroX(J.casilla) - w / 2, k = 1 - e.f2 / PARCA.siega;
     e.siegaX = e.siegaDir > 0 ? x0 + k * w : x0 + w - k * w;
     if (J.invul <= 0 && J.saltoParca <= 0 && Math.abs(yo.x - e.siegaX) < 8 && Math.abs(yo.y - e.y) < 70) heridaJugador(28, e.siegaX, yo.y + 10);
-    if (e.f2 <= 0) { e.estado = 'llama'; e.f2 = 1; e.animT = 0; for (let i = 0; i < PARCA.zombis; i++) { const z = creaEnemigo('oca', e.x + (i - 1.5) * 22, e.y + 30); if (z) { z.tipo = 'zombi'; z.hp = z.hpMax *= 2.2; z.vel *= 0.7; z.caida = 0.5; } } SONIDO.pozo(); }
+    if (e.f2 <= 0) { e.estado = 'llama'; e.f2 = 1; e.animT = 0; const nz = e.ira ? IRA.zombis : PARCA.zombis; for (let i = 0; i < nz; i++) { const z = creaEnemigo('oca', e.x + (i - (nz - 1) / 2) * 22, e.y + 30); if (z) { z.tipo = 'zombi'; z.hp = z.hpMax *= 2.2; z.vel *= 0.7; z.caida = 0.5; } } SONIDO.pozo(); }
     return [0, 0];
   }
   if (e.estado === 'llama') { if (e.f2 <= 0) { e.estado = 'flota'; e.f2 = 2.5; } return [0, 0]; }
   // fase 1 (y entre cosechas): flota a tu alrededor y lanza hoces
   if (e.estado === 'lanza') { if (e.f2 <= 0) { e.estado = 'flota'; e.f2 = mitad ? 2.2 : 3; } return [0, 0]; }
   if (e.cd <= 0) {
-    e.cd = PARCA.hoces * (mitad ? 0.7 : 1); e.estado = 'lanza'; e.f2 = 0.45; e.animT = 0;
-    const n = mitad ? 3 : 2;
-    for (let i = 0; i < n; i++) { const an = Math.atan2(uy, ux) + (i - (n - 1) / 2) * 0.5; disparaBala(e.x, e.y, Math.cos(an) * 75, Math.sin(an) * 75, 11, 'hoz', 4); const b = BALAS.lista[BALAS.n - 1]; if (b) { b.rebota = 2; b.vida = 5; } }
+    e.cd = PARCA.hoces * (e.ira ? IRA.hoces : mitad ? 0.7 : 1); e.estado = 'lanza'; e.f2 = 0.45; e.animT = 0;
+    const n = e.ira ? IRA.nHoces : mitad ? 3 : 2, v = e.ira ? 95 : 75;
+    for (let i = 0; i < n; i++) { const an = Math.atan2(uy, ux) + (i - (n - 1) / 2) * 0.5; disparaBala(e.x, e.y, Math.cos(an) * v, Math.sin(an) * v, 11, 'hoz', 4); const b = BALAS.lista[BALAS.n - 1]; if (b) { b.rebota = e.ira ? IRA.rebotes : 2; b.vida = 5; } }
     SONIDO.dadoArma();
   }
-  if (e.f2 <= 0 && mitad && e.fase === 1 && Math.random() < 0.004) { e.estado = 'alza'; e.f2 = 0.9; e.animT = 0; }   // otra cosecha de vez en cuando
+  if (e.f2 <= 0 && mitad && e.fase === 1 && Math.random() < (e.ira ? IRA.cosecha : 0.004)) { e.estado = 'alza'; e.f2 = 0.9; e.animT = 0; }   // otra cosecha de vez en cuando
   const a = e.t * 0.9, tx = yo.x + Math.cos(a) * 55, ty = yo.y - 20 + Math.sin(a) * 25, dd = Math.hypot(tx - e.x, ty - e.y) || 1;
   return [(tx - e.x) / dd, (ty - e.y) / dd];
 }
@@ -80,36 +84,49 @@ function saltaParca() {
   J.saltoParca = 0.55; anillo(J.yo.x, J.yo.y + 8, 14, '#f6e7b8', 0.3, 2); SONIDO.lanza(); return true;
 }
 
-// el regateo: dos botones
+// el regateo: la Parca se para, la partida se pausa (J.modo 'trato', js/principal.js) y salen dos botones. Los botones esperan un
+// momento para que un toque de la pelea no elija sin querer
+function ofreceTrato(e) {
+  const J = JUEGO; e.regateado = true; e.estado = 'regateo'; e.animT = 0;
+  J.trato = { t: 0 }; if (J.modo === 'juego') J.modo = 'trato';
+  ENTRADA.mx = ENTRADA.my = 0; BALAS.vacia();
+  SONIDO.posada(); vibra(60);
+}
 function pintaTrato() {
   const J = JUEGO; if (!J.trato) return;
-  const W = PAN.W, H = PAN.H; J.trato.t += 1 / 60;
-  caja(14, H - 120, W - 28, 100, 10, 'rgba(10,4,16,.94)', '#c9a0ff', 2);
-  texto2(tr('LA PARCA TE OFRECE UN TRATO'), W / 2, H - 106, 8, '#c9a0ff', 'center', FUENTE_G, 400, 0.25);
-  parrafo(tr('«Vuelve a la casilla 55 con media vida y te dejo en paz. O quédate… y acaba lo que empezaste.»'), 24, H - 92, W - 48, 6.5, '#e8dcc0');
-  boton(20, H - 56, (W - 50) / 2, 28, tr('ACEPTAR'), '#6e4a8a', () => aceptaTrato(), 9, tr('a la 55, media vida'));
-  boton(30 + (W - 50) / 2, H - 56, (W - 50) / 2, 28, tr('RECHAZAR'), '#c0402f', () => rechazaTrato(), 9, tr('¡acábala!'));
+  const W = PAN.W, H = PAN.H, T = J.trato; T.t += 1 / 60;
+  oscurece(Math.min(0.6, T.t * 2));
+  caja(14, H - 222, W - 28, 202, 10, 'rgba(10,4,16,.95)', '#c9a0ff', 2);
+  if (SPR['parca-rg1']) pinta(T.t * 2 % 2 < 1 ? 'parca-rg1' : 'parca-rg2', W / 2, H - 182, false, false, Math.min(1, 56 / SPR['parca-rg1'].h));
+  texto2(tr('LA PARCA TE OFRECE UN TRATO'), W / 2, H - 144, 8, '#c9a0ff', 'center', FUENTE_G, 400, 0.25);
+  const fin = parrafo(tr('«Vuelve a la casilla 55 con media vida y te dejo en paz. O quédate… y conoce mi ira.»'), 24, H - 130, W - 48, 6.5, '#e8dcc0');
+  parrafo(tr('Si rechazas, recupera vida y ataca mucho más fuerte. Si la tumbas, su guadaña y el doble de monedas.'), 24, fin + 2, W - 48, 6, '#c9b98a');
+  if (T.t < 0.8) return;   // los botones salen un poco después
+  boton(20, H - 50, (W - 50) / 2, 28, tr('ACEPTAR'), '#6e4a8a', () => aceptaTrato(), 9, tr('a la 55, media vida'));
+  boton(30 + (W - 50) / 2, H - 50, (W - 50) / 2, 28, tr('RECHAZAR'), '#c0402f', () => rechazaTrato(), 9, tr('¡su ira!'));
 }
+function cierraTrato() { const J = JUEGO; J.trato = null; if (J.modo === 'trato') J.modo = 'juego'; J.invul = Math.max(J.invul, 1); }
 function aceptaTrato() {
   const J = JUEGO, e = J.minijefe; if (!J.trato) return;
-  J.trato = null; J.minijefe = null; J.escena = null; e.hp = 0; e.xp = 0;
+  cierraTrato(); J.minijefe = null; J.escena = null; e.hp = 0; e.xp = 0;
   for (let i = ENE.n - 1; i >= 0; i--) ENE.lista[i].hp = 0; BALAS.vacia();
   const atras = CFG.muerte - CFG.muerteAtras;
   J.vida = Math.max(1, J.vida * 0.5); J.invul = 1.5; J.yo.x = centroX(atras); J.yo.y = yCentro(atras); J.casilla = atras; J.fase = 'parado'; J.quieto = 0; J.parcaHecha = true;
   J.yD = Math.max(J.yD, yCentro(atras) + TH * 1.6);
   aviso(tr('«Nos veremos, viajero»'), '#c9a0ff', 2); destella('#000', 0.6); SONIDO.muerte(); vibra(100);
 }
+// LA IRA: recupera vida, se vuelve más rápida y todo lo que hace, más fuerte (IRA)
 function rechazaTrato() {
   const J = JUEGO, e = J.minijefe; if (!J.trato) return;
-  J.trato = null; e.estado = 'flota'; e.f2 = 0.8; e.cd = 0.5; e.vel *= 1.4;
-  aviso(tr('¡QUE ASÍ SEA!'), '#ff2d2d', 1.5); SONIDO.jefeCarga(); tiembla(5);
+  cierraTrato(); e.ira = true; e.hp = Math.max(e.hp, e.hpMax * IRA.vida); e.estado = 'alza'; e.f2 = 1.2; e.animT = 0; e.cd = 1.5; e.vel *= IRA.vel; e.fase = 1;
+  aviso(tr('LA IRA DE LA PARCA'), '#ff2d2d', 2); aviso2(tr('Ahora va en serio')); SONIDO.jefeCarga(); tiembla(8); destella('#ff2d2d', 0.5); vibra([80, 40, 160]);
 }
 function muereParca(e) {
   const J = JUEGO;
-  J.trato = null; J.minijefe = null; J.escena = null; J.quieto = 0; J.parcaHecha = true;
+  J.trato = null; if (J.modo === 'trato') J.modo = 'juego'; J.minijefe = null; J.escena = null; J.quieto = 0; J.parcaHecha = true;
   J.restosParca = { x: e.x, y: e.y, t0: J.t };   // se deshace en huesos (PARCA_ANIM.muere) y se queda en el suelo
   for (let i = 0; i < 6; i++) estallido(e.x + (Math.random() - 0.5) * 40, e.y + (Math.random() - 0.5) * 40, 16, i % 2 ? '#c9a0ff' : '#ece6d6', 140, 1.2, 2.8, 1, 10);
-  for (let i = 0; i < 25; i++) suelta('moneda', e.x + (Math.random() - 0.5) * 60, e.y + (Math.random() - 0.5) * 40, 1);
+  for (let i = 0, n = e.ira ? IRA.monedas : 25; i < n; i++) suelta('moneda', e.x + (Math.random() - 0.5) * 60, e.y + (Math.random() - 0.5) * 40, 1);
   // la guadaña: un arma única de esta partida
   J.armas.guadana = { nivel: 5, evo: true, t: 0.5, ang: 0 };
   aviso(tr('¡LA MUERTE HA MUERTO!'), '#ffd34d', 2.5); aviso2(tr('Su guadaña es tuya'));
@@ -140,4 +157,5 @@ function pintaParcaExtra(e) {
   const J = JUEGO;
   if (e.estado === 'siega') { G.globalAlpha = 0.5; G.fillStyle = '#ff2d2d'; G.fillRect(e.siegaX - 3, e.y - 70, 6, 140); G.globalAlpha = 1; if (SPR['parca-guadana']) pintaGirado('parca-guadana', e.siegaX, e.y, e.siegaDir * 1.2, 1); }
   if (J.saltoParca > 0) { /* el salto lo pinta el jugador */ }
+  if (e.ira) arcoPixel(Math.round(e.x), Math.round(e.y), e.r + 8 + Math.sin(J.t * 8) * 2, 0, 6.283, 2, (J.t * 6 | 0) % 2 ? '#ff2d2d' : '#8a1010');   // la ira: un aro rojo que late
 }

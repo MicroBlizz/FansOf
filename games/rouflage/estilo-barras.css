@@ -1,16 +1,16 @@
-/* Fans of Rouflage · LAS BARRAS DE DESPLAZAMIENTO (Daniel, 5-11-2026): la barra es una brocha que va de punta a punta y pinta por donde pasa,
-   con un brochazo de bordes irregulares y los colores de las Gotas, que se borra a 50 px de la brocha. Los dibujos los hace barras-pintura.js y llegan como
-   variables: --brocha-v / --brocha-h (la brocha, con las cerdas hacia donde se mueve) --brocha-v-en / --brocha-h-en (su sitio dentro del cursor) y --rastro-v / --rastro-h (la pintura de cada lista).
-   En Chrome, Android y Safari se dibujan con ::-webkit-scrollbar (por eso ningún estilo del juego pone scrollbar-width: si lo pone, Chrome
-   se salta este dibujo); Firefox no deja dibujarlas y solo recibe los colores (al final). Lo que no quiere barra sigue con su display: none. */
-@supports selector(::-webkit-scrollbar) {
-  ::-webkit-scrollbar { width: 14px; height: 14px; }
-  ::-webkit-scrollbar-corner { background: transparent; }
-  ::-webkit-scrollbar-track { background: var(--rastro-v, none) 0 0 / 100% 100% no-repeat; }
-  ::-webkit-scrollbar-track:horizontal { background: var(--rastro-h, none) 0 0 / 100% 100% no-repeat; }
-  ::-webkit-scrollbar-thumb { min-height: 34px; background: var(--brocha-v) 50% var(--brocha-v-en, 50%) / 14px 34px no-repeat; }      /* la brocha va de punta a punta: su sitio dentro del cursor lo da barras-pintura.js */
-  ::-webkit-scrollbar-thumb:horizontal { min-width: 34px; background: var(--brocha-h) var(--brocha-h-en, 50%) 50% / 34px 14px no-repeat; }
-}
-@supports not selector(::-webkit-scrollbar) {
-  * { scrollbar-color: #ff9a3d transparent; }
-}
+/* Fans of Rouflage · LAS BARRAS DE DESPLAZAMIENTO (Daniel, 5-11-2026): cada lista lleva su barra propia, una brocha que pinta, dibujada por
+   barras-pintura.js en un lienzo pegado a su borde, en un hueco propio (no tapa nada) y que se puede agarrar. Aquí se esconde la barra del navegador en esas listas (clase rf-barra), se coloca el
+   lienzo y se dibuja la flecha que parpadea mientras no hayas movido una lista que tiene más. */
+.rf-barra { scrollbar-width: none; }
+.rf-barra::-webkit-scrollbar { display: none; }
+.rf-barra-lienzo { position: absolute; z-index: 6; touch-action: none; cursor: grab; }      /* se agarra: arrastrar la brocha mueve la lista */
+.rf-barra-lienzo:active { cursor: grabbing; }
+.rf-barra-lienzo[hidden], .rf-barra-flecha[hidden] { display: none; }
+/* la flecha: un chevrón grueso con el contorno del juego, que baja y sube parpadeando (en las listas de lado, hacia la derecha) */
+.rf-barra-flecha { position: absolute; z-index: 6; width: 28px; height: 28px; pointer-events: none; animation: rf-flecha 1s ease-in-out infinite; }
+.rf-barra-flecha::before { content: ''; position: absolute; inset: 3px 6px 9px; border: solid #ffcb3d; border-width: 0 6px 6px 0; transform: rotate(45deg); filter: drop-shadow(0 0 0 #0b0f1c) drop-shadow(2px 2px 0 #0b0f1c) drop-shadow(-1px -1px 0 #0b0f1c); }
+.rf-barra-flecha.h::before { transform: rotate(-45deg); }
+@keyframes rf-flecha { 0%, 100% { opacity: 1; translate: 0 0; } 50% { opacity: 0.25; translate: 0 6px; } }
+.rf-barra-flecha.h { animation-name: rf-flecha-h; }
+@keyframes rf-flecha-h { 0%, 100% { opacity: 1; translate: 0 0; } 50% { opacity: 0.25; translate: 6px 0; } }
+@media (prefers-reduced-motion: reduce) { .rf-barra-flecha, .rf-barra-flecha.h { animation: none; } }

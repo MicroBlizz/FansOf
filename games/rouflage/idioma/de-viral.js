@@ -224,4 +224,6 @@ IDIOMA.add({
   "DESTACADO DE LA SEMANA": "HIGHLIGHT DER WOCHE",
   "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "Dir fehlen {n} Aktien für „{c}“. Tausche Tropfen dagegen oder hol sie dir hier, dann geht es zurück zum Kauf.",
   "ESTE TE LLEGA": "DAS REICHT",
+  // las tarjetas vivas del título (5-11-2026)
+  "¡PREMIO!": "BELOHNUNG!",
 });

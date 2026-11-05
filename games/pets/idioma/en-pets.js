@@ -1,6 +1,9 @@
 // Fans Of Pets · Inglés: los textos de este juego (los nombres de las criaturas y de las facciones están en core/idioma).
 'use strict';
 IDIOMA.add({
+  "<b>HOCICO ARREGLADO</b>: el hocico ya no lleva dientes pintados encima; la boca es la del dibujo.": "<b>SNOUT FIXED</b>: the snout no longer has teeth painted on top; the mouth is the one in the drawing.",
+  "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
+  "Microblizz ha mandado a tu mascota al dentista. Phony ha pedido que le quiten a él la factura.": "Microblizz sent your pet to the dentist. Phony asked to have the bill taken off him.",
   // 0.2.4
   "<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games.": "<b>NEW LOOK</b>: the game has a new icon with its initials and, when you open it, the start screen shows the studio logo, Fans Of Games.",
   "<b>HURÓN RETOCADO</b>: el hurón estrena hocico en 3D con la trufa en la punta.": "<b>FERRET TOUCH-UP</b>: the ferret has a new 3D snout with the nose right at the tip.",

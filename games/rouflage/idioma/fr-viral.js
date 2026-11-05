@@ -224,4 +224,6 @@ IDIOMA.add({
   "DESTACADO DE LA SEMANA": "À LA UNE CETTE SEMAINE",
   "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "Il te manque {n} Actions pour « {c} ». Échange-les contre des Gouttes ou obtiens-les ici, et tu reviendras à l'achat.",
   "ESTE TE LLEGA": "CELUI-CI SUFFIT",
+  // las tarjetas vivas del título (5-11-2026)
+  "¡PREMIO!": "RÉCOMPENSE !",
 });

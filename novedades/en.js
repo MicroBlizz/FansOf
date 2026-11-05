@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "5 de noviembre de 2026": "5 November 2026",
+  "FANS OF BASEMENT": "FANS OF BASEMENT",
+  "Prototipo nuevo: baja por el hueco del ascensor de Microblizz con la grapadora disparando sola, sin quedarte sin café, y sube con la caja llena de botín.": "New prototype: dive down the Microblizz elevator shaft with your stapler firing on its own, without running out of coffee, and go up with your box full of loot.",
   "Demo nueva y muy kawaii: revienta las burbujas de un pop-it gigante y rescata a los amigos atrapados. Próximamente.": "A brand-new, super kawaii demo: pop the bubbles of a giant pop-it and rescue the trapped friends. Coming soon.",
   "Prototipo nuevo en 3D: lleva pasajeros contra el reloj, corre carreras y dale esquinazo a la policía. Próximamente.": "New 3D prototype: carry passengers against the clock, race through the streets and shake off the police. Coming soon.",
   "FANS OF TAXI": "FANS OF TAXI",

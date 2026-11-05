@@ -27,6 +27,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function cabecera(g, W, AJ, p, botones) {
     UI.panel(g, -6, -6, W + 12, 126, C.madera, '#c2432e', '#5a1714', 5);
     UI.titulo(g, tr('TU MESA'), W / 2, 30, 36);
+    UI.retosCabecera(g, botones);
     UI.becario(g, AJ, B.aspectoDe(AJ, p), W / 2, 98, 0.9);   // tu becario, con lo que llevas puesto (debajo del título, sin taparlo)
     UI.moneda(g, 34, 92, 3);
     T(g, String(p.monedas), 60, 93, 28, C.oro, 'left', 5);
@@ -112,10 +113,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), catalogo: (...a) => UI.pestanaCatalogo(...a), taller: (...a) => UI.pestanaTaller(...a) };
 
   // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo), dep (eligiendo departamento: el id del marcado), ascenso (la ventana),
-  //       armeria (eligiendo arma), taller (la receta abierta en el taller) }
+  //       armeria (eligiendo arma), taller (la receta abierta en el taller),
+  //       retos (la ventana de misiones: 'misiones' | 'logros') }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
     if (m.dep) return UI.departamentos(g, W, H, AJ, p, m.dep);
+    if (m.retos) return UI.retos(g, W, H, m.retos);
     UI.fondoMenu(g, W, H, 'fondo-oficinas');
     g.fillStyle = 'rgba(10,5,20,0.45)'; g.fillRect(0, 0, W, H);
     const botones = [];

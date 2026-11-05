@@ -36,6 +36,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const d = e.aj.habilidades[e.habilidad];
     USA[e.habilidad](e, d, rnd);
     e.habilidadT = d.recarga;
+    e.habilidadUsos++;
     e.eventos.push({ tipo: 'habilidad', id: e.habilidad, x: e.jugador.x, y: e.jugador.y, alcance: d.alcance || 0 });
   };
   H.congelados = (e) => e.congeladoT > 0;

@@ -6,7 +6,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
   const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
-    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null }, nuevos: [] };
+    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null, retos: null }, nuevos: [] };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -111,13 +111,17 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     cerrarDep: () => { est.mesa.dep = false; basSuena('boton'); },
     ascender: () => { est.mesa.ascenso = true; basSuena('boton'); },
     cerrarAscenso: () => { est.mesa.ascenso = false; basSuena('boton'); },
-    confirmarAscenso: () => { if (aplica(B.ascender(B.AJ, SAVE.progreso), 'jefeVencido')) { est.mesa.ascenso = false; FX.confeti(W / 2, est.H * 0.3); } },
+    confirmarAscenso: () => { if (aplica(B.ascender(B.AJ, SAVE.progreso), 'jefeVencido')) { est.mesa.ascenso = false; FX.confeti(W / 2, est.H * 0.3); BAS_RETOS.maximo('cargo', SAVE.progreso.rango); } },
     arma: (b) => { if (aplica(B.ponerArma(B.AJ, SAVE.progreso, b.id), 'boton')) est.mesa.armeria = false; },
     armeria: () => { est.mesa.armeria = true; basSuena('boton'); },
     habilidad: (b) => aplica(B.ponerHabilidad(B.AJ, SAVE.progreso, b.id), 'boton'),
     cerrarArmeria: () => { est.mesa.armeria = false; basSuena('boton'); },
     taller: (b) => { est.mesa.taller = b.receta; basSuena('boton'); },
-    usarTaller: () => { if (aplica(B.usarTaller(B.AJ, SAVE.progreso, est.mesa.taller), 'jefeVencido')) FX.confeti(W / 2, est.H * 0.4); },
+    usarTaller: () => { if (aplica(B.usarTaller(B.AJ, SAVE.progreso, est.mesa.taller), 'jefeVencido')) { FX.confeti(W / 2, est.H * 0.4); BAS_RETOS.evento('taller', 1); } },
+    retos: () => { est.mesa.retos = 'misiones'; basSuena('boton'); },
+    pestanaRetos: (b) => { est.mesa.retos = b.id; basSuena('boton'); },
+    cobrarReto: (b) => { if (BAS_RETOS.cobrar(b.p, b.id)) { basSuena('compra'); FX.confeti(W / 2, est.H * 0.3); } },
+    cerrarRetos: () => { est.mesa.retos = null; basSuena('boton'); },
     cerrarTaller: () => { est.mesa.taller = null; basSuena('boton'); },
     mesa: () => alaMesa(),
     pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); TU.lanza(b.id, est.t); },
@@ -149,7 +153,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function teclaMenu() {
     if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
     else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
-    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria && !est.mesa.taller) bajar();
+    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria && !est.mesa.taller && !est.mesa.retos) bajar();
   }
 
   function orden() {
@@ -183,6 +187,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     est.nuevos = B.catalogoNuevos(B.AJ, SAVE.progreso, e.resultado);
     SAVE.progreso = B.cobrar(SAVE.progreso, e.resultado, B.AJ);
     basGuarda();
+    basRetosBajada(e.resultado);
     Object.assign(est, { modo: 'resultado', resultadoT: 0 });
     Object.assign(joy, { activo: false, id: -1, dx: 0, dy: 0 });
   }

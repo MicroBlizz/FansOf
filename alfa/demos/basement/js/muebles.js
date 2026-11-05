@@ -23,6 +23,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.eventos.push({ tipo: 'impacto', x: m.x, y: m.y, dano });
     if (m.vida > 0) return false;
     e.muebles.splice(e.muebles.indexOf(m), 1);
+    e.mueblesRotos++;
     e.eventos.push({ tipo: 'mueble', x: m.x, y: m.y, mueble: m.tipo });
     suelta(e, m, rnd);
     return true;

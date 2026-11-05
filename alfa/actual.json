@@ -1,8 +1,8 @@
 {
- "build": 942,
- "hash": "14e46f0",
- "fecha": "2026-11-05T10:54:35Z",
- "mensaje": "Revert \"Pets: trufa más grande y boca de lado en el hocico del hurón\"",
+ "build": 943,
+ "hash": "26df27c",
+ "fecha": "2026-11-05T10:58:05Z",
+ "mensaje": "Pets: trufa pequeña y boca de lado en el hocico del hurón (variante suave)",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

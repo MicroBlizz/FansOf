@@ -22,7 +22,7 @@ NV.Habilidad = (() => {
   function usa(h, H, rango, azar, F) {
     if (!lista(h, H, rango)) return null;
     let def = h.def;
-    if (def.opciones) def = F[Object.keys(F).find(k => F[k].id === def.opciones[Math.floor(azar() * def.opciones.length)])];
+    if (def.opciones) { const id = def.opciones[Math.floor(azar() * def.opciones.length)]; def = Object.values(F).find(f => f.id === id); }
     h.cd = h.def.recarga; h.activa = def.dura || 0; h.efecto = def;
     return def;
   }

@@ -1,8 +1,8 @@
 {
- "build": 944,
- "hash": "64859c8",
- "fecha": "2026-11-05T11:01:56Z",
- "mensaje": "Pets: hocico más afilado con la trufa en la punta",
+ "build": 945,
+ "hash": "16c6a4f",
+ "fecha": "2026-11-05T11:20:15Z",
+ "mensaje": "Balance: --junta suma tandas del mismo commit aunque una no tenga rama",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.21",
   "karts": "0.7.20",
-  "nova": "0.3.45",
+  "nova": "0.3.46",
   "pets": "0.2.4",
   "ratkov": "0.2.34",
   "rouflage": "0.2.68",

@@ -1,8 +1,8 @@
 {
- "build": 981,
- "hash": "4ac0e7a",
- "fecha": "2026-11-05T16:55:30Z",
- "mensaje": "Basement 0.3.0: aspecto de Fans of Swipe (dibujos, letra, botones y sonidos) y tutorial con Lola",
+ "build": 982,
+ "hash": "8227e41",
+ "fecha": "2026-11-05T17:06:27Z",
+ "mensaje": "Cola: reintento automático de Generar si se pierde el runner; el hueco entre runners efímeros ya no sale apagado",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

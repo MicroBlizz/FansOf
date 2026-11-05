@@ -187,7 +187,7 @@
   }
   async function cargar(fuerza, todo) {
     if (!token() || cargando) { pinta(); return; }
-    if (!fuerza && snap && Date.now() - ultimo < CADA) { pinta(); return; }
+    if (!fuerza && snap && Date.now() - ultimo < CADA) { if (pausa === null) await leerEstadoPausa(); pinta(); return; }   // la foto guardada no trae la pausa
     cargando = true; pinta();
     let fallo = null;
     try { snap = await actualizar(!!todo); ultimo = Date.now(); } catch (e) { fallo = e; }

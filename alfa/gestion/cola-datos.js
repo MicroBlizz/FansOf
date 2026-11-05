@@ -167,12 +167,15 @@ const COLA_DATOS = (() => {
 
     // 7. Runners: si el token no puede leerlos, se dan por encendidos.
     let online = null, aviso = '';
-    try { online = new Set((await gh('/actions/runners?per_page=50')).runners.filter(r => r.status === 'online').flatMap(r => r.labels.map(l => l.name))); }
+    try { online = new Set((await gh('/actions/runners?per_page=100')).runners.filter(r => r.status === 'online').flatMap(r => r.labels.map(l => l.name))); }
     catch (e) { aviso = 'No puedo ver los runners (el token necesita Administration: lectura). Los doy por encendidos.'; }
     aviso = [aviso, ...avisos].filter(Boolean).join(' ');
     const ids = [...new Set(trabajos.map(t => t.carril))];
     if (online) online.forEach(l => { if (l.startsWith('yoshi') && !ids.includes(l)) ids.push(l); });
-    const carrilesSnap = ids.map(id => ({ id, etiqueta: id === 'github' ? 'GitHub (ubuntu)' : id, alojado: id === 'github', encendido: id === 'github' ? true : online ? online.has(id) : null }))
+    const ultimoFin = {};   // por carril, cuándo acabó su último trabajo (hechos va de más nuevo a más viejo)
+    hechos.forEach(r => { const c = carriles[r.path]; if (c && !ultimoFin[c]) ultimoFin[c] = ms(r.updated_at); });
+    const vivo = id => COLA_CONTROL.encendido({ enLinea: online ? online.has(id) : null, enCurso: trabajos.some(t => t.carril === id && t.enCurso), ultimoFin: ultimoFin[id] || 0 }, ahora);
+    const carrilesSnap = ids.map(id => ({ id, etiqueta: id === 'github' ? 'GitHub (ubuntu)' : id, alojado: id === 'github', encendido: id === 'github' ? true : vivo(id) }))
       .sort((a, b) => Number(a.alojado) - Number(b.alojado) || a.id.localeCompare(b.id));
     const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, fallidas: COLA_CONTROL.fallidas(hechos, ahora), actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
       guardados: hechos.length, historialCompleto: !!hist.completo, compartido: !!servidor && !avisos.length };

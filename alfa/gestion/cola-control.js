@@ -8,6 +8,7 @@ const COLA_CONTROL = (() => {
   const CARRIL = 'yoshi-generar-recurso';   // el carril (etiqueta del runner) que afecta la pausa
   const MAX_FALLIDAS = 30, DIAS = 7;
   const FALLO = new Set(['failure', 'timed_out', 'startup_failure']);
+  const ENTRE_TRABAJOS_MS = 3 * 60e3;   // lo que tarda un runner efímero en darse de baja y registrarse otra vez (con margen por si se actualiza)
 
   const cabeceras = (token, cuerpo) => ({ Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(cuerpo ? { 'Content-Type': 'application/json' } : {}) });
   async function llamar(f, token, metodo, ruta, cuerpo) {
@@ -52,6 +53,14 @@ const COLA_CONTROL = (() => {
       .map(r => ({ id: r.id, workflow: r.name, titulo: r.display_title, fin: Date.parse(r.updated_at), intento: r.run_attempt || 1 }));
   }
 
+  /** ¿Está encendido el carril? Los runners son efímeros: tras cada trabajo se dan de baja y se registran de nuevo, y en ese hueco GitHub no lista
+   *  ninguno con la etiqueta. Por eso cuenta como encendido si hay uno en línea, si tiene un trabajo en curso o si acabó uno hace menos de ENTRE_TRABAJOS_MS.
+   *  `c`: { enLinea (true|false|null si el token no ve los runners), enCurso, ultimoFin (ms o 0) }. null = no se sabe. */
+  function encendido(c, ahora) {
+    if (c.enLinea === null) return null;
+    return c.enLinea || c.enCurso || (c.ultimoFin > 0 && ahora - c.ultimoFin < ENTRE_TRABAJOS_MS);
+  }
+
   /** La barra de la pausa (se ve en todas las vistas menos Configuración). `e`: { pausa (true|false|null si no se sabe), ocupado, esc(texto), fallo }. */
   function htmlPausa(e) {
     const pausado = e.pausa === true;
@@ -70,5 +79,5 @@ const COLA_CONTROL = (() => {
     return `<section class="caja cl-control"><h3>Ejecuciones fallidas (${e.fallidas.length})</h3>${lista}`
       + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
-  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, htmlPausa, htmlFallidas };
+  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, encendido, htmlPausa, htmlFallidas };
 })();

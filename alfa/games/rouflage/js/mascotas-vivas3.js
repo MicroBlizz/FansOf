@@ -1,4 +1,4 @@
-// Fans of Rouflage · MASCOTAS VIVAS DE DOS PATAS: suricato, kaiju y pollito, hechos como las demás vivas (mascotas-vivas.js): una sola
+// Fans of Rouflage · MASCOTAS VIVAS DE DOS PATAS: suricato, kaiju, pollito y zombi, hechos como las demás vivas (mascotas-vivas.js): una sola
 // silueta sin costuras, gestos en la cara y cinco cosas propias cada una. Comparten un esqueleto de pie, bipedo(c, o, s): tronco derecho,
 // cabeza encima, dos piernas que andan, dos bracitos (o alas) que van al revés que las piernas y cola si la tienen. Cada animal le pasa su
 // forma (s) y lo que hacen sus acciones (s.pose cambia la postura; s.extra añade piezas a la silueta, como las púas del kaiju o la cresta;
@@ -10,7 +10,7 @@
   function puntosCadena(x, y, angs, largo) { const p = [[x, y]]; for (const a of angs) { const [px, py] = p[p.length - 1]; p.push([px + Math.cos(a) * largo, py + Math.sin(a) * largo]); } return p; }
 
   function postura(o, s, dt) {
-    const m = o.m, cor = o.mov ? 1 : 0, F = o.t * 13;
+    const m = o.m, cor = o.mov ? 1 : 0, F = o.t * (s.lento ? 7 : 13);
     const P = { cor, F, duerme: dormido(o), sienta: o.acc === 'sienta' ? env(o.k) : 0, inclina: 0, alto: 0, brazos: 0, cabExtra: 0, ladeo: 0 };
     P.bote = cor * Math.abs(Math.sin(F)) * 1.2 + Math.sin(o.t * (P.duerme ? 1.4 : 2.6)) * (P.duerme ? 0.4 : 0.22);
     if (s.pose) s.pose(o, P);
@@ -99,6 +99,21 @@
       },
       cara: (c, o) => { const ab = o.acc === 'aletea' || gestoFeliz(o) ? 0.7 : 0; mancha(c, k => tri(k, 3.6, 0.2 - ab * 0.3, 6.4, 1, 3.6, 1.8), '#fb923c'); c.lineWidth = 0.8; c.strokeStyle = OL; c.stroke(); if (ab) mancha(c, k => tri(k, 3.6, 1.2, 5.6, 1.6, 3.6, 2.4), '#ea7a20'); },
     },
+    // ZOMBI: verde, anda despacio y torcido con los brazos por delante, ropa rota y un ojo más grande. Gruñe (tiembla con la boca abierta)
+    // y tambalea (casi se cae y se recupera)
+    zombi: {
+      color: '#84cc16', panza: '#a3a3a3', piernas: 5, tronco: 7, anchoCadera: 4, anchoPecho: 3.8, rCabeza: 4.6, brazo: 4.4, grosorBrazo: 1.3, brazoAng: -0.15, hombroX: 1.6, lento: true,
+      manchas: (c, P) => { mancha(c, k => { k.moveTo(P.cadX - 4, P.cadY + 1); k.lineTo(P.cadX + 4, P.cadY + 1); k.lineTo(P.cadX + 3, P.cadY + 3); k.lineTo(P.cadX + 1, P.cadY + 1.8); k.lineTo(P.cadX - 1, P.cadY + 3.2); k.lineTo(P.cadX - 3, P.cadY + 1.8); k.closePath(); }, '#5b4a8a'); mancha(c, k => ovalo(k, P.pechoX - 2.4, P.pechoY + 2.4, 1, 0.8), '#4d7c0f'); },
+      pose: (o, P) => {
+        P.inclina += 0.08 + Math.sin(o.t * 1.7) * 0.05; P.ladeo += 0.18;
+        if (o.acc === 'gruñe') { const a = env(o.k, 0.15); P.ladeo += Math.sin(o.t * 35) * 0.06 * a - 0.2 * a; P.brazos = -0.4 * a; }
+        if (o.acc === 'tambalea') { const q = o.k; P.inclina += Math.sin(q * Math.PI * 2) * 0.7 * (1 - q); P.brazos = Math.sin(q * Math.PI * 6) * 0.9 * (1 - q); }
+      },
+      cara: (c, o) => {
+        if (o.acc === 'gruñe') { const a = env(o.k, 0.15); mancha(c, k => ovalo(k, 2.4, 2.6, 1.6, 0.5 + a), OL); return; }
+        c.lineWidth = 0.9; c.strokeStyle = OL; c.lineCap = 'round'; c.beginPath(); c.moveTo(1.2, 2.8); c.lineTo(2.2, 2.4); c.lineTo(3.2, 2.9); c.lineTo(4, 2.5); c.stroke();
+      },
+    },
   };
   const gestoFeliz = o => MV_KIT.gesto(o) === 'feliz';
   // las púas del kaiju: tres en el borde de la espalda, por fuera del tronco y apuntando hacia atrás y arriba: [x, y, giro]
@@ -113,6 +128,7 @@
     suricato: { sienta: 3, duerme: 4.5, vigila: 2.6, cava: 2 },
     kaiju: { sienta: 3, duerme: 4.5, ruge: 1.8, pisa: 1.2 },
     pollo: { sienta: 3, duerme: 4.5, picotea: 1.8, aletea: 1.4 },
+    zombi: { sienta: 3, duerme: 4.5, 'gruñe': 1.8, tambalea: 1.6 },
   });
   registraMascotasVivas(Object.keys(ESPECIES));
 })();

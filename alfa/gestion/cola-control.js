@@ -29,6 +29,13 @@ const COLA_CONTROL = (() => {
   /** Relanza solo los jobs fallidos del run. */
   const reiniciar = (f, token, id) => llamar(f, token, 'POST', '/actions/runs/' + id + '/rerun-failed-jobs');
 
+  /** Relanza cada run de la lista sin parar en el primer error. Devuelve { hechos, errores, mensaje } (mensaje vacío si todo fue bien). */
+  async function reiniciarTodas(f, token, lista) {
+    const errores = []; let hechos = 0;
+    for (const r of lista) { try { await reiniciar(f, token, r.id); hechos++; } catch (e) { errores.push(e.message); } }
+    const mensaje = errores.length ? `Reiniciadas ${hechos} de ${lista.length}. Fallo: ${errores[0]}.` : '';
+    return { hechos, errores, mensaje };
+  }
   /** De los runs terminados (más nuevos primero), los fallidos de los últimos días, ya en el formato que pinta la lista. */
   function fallidas(hechos, ahora) {
     const desde = ahora - DIAS * 864e5;
@@ -52,5 +59,5 @@ const COLA_CONTROL = (() => {
       + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '')
       + '</section>';
   }
-  return { VARIABLE, leerPausa, fijarPausa, reiniciar, fallidas, html };
+  return { VARIABLE, leerPausa, fijarPausa, reiniciar, reiniciarTodas, fallidas, html };
 })();

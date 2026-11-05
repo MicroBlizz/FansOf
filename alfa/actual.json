@@ -1,8 +1,8 @@
 {
- "build": 969,
- "hash": "3b0bdfb",
- "fecha": "2026-11-05T15:22:55Z",
- "mensaje": "Splash: espera a los flags remotos en el primer arranque (sin valor guardado) para decidir",
+ "build": 971,
+ "hash": "0462773",
+ "fecha": "2026-11-05T15:23:51Z",
+ "mensaje": "Splash: sin flag, sale siempre al abrir; SQL 114 quita la fila splash-fog (ADR 051)",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

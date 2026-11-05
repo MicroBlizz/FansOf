@@ -179,9 +179,11 @@
     catch (e) { pausa = null; falloControl = 'No pude leer la pausa: ' + e.message + '.' + permiso(e); }
   }
   async function conMandos(accion, texto) {
+    if (ocupado || cargando) { $('cl-aviso').textContent = 'Espera a que acabe lo que se está haciendo.'; return; }
     ocupado = true; falloControl = ''; pinta();
-    try { await accion(); } catch (e) { falloControl = texto + ': ' + e.message + '.' + permiso(e); }
-    ocupado = false; await leerEstadoPausa(); pinta();
+    let fallo = '';
+    try { fallo = (await accion()) || ''; } catch (e) { fallo = texto + ': ' + e.message + '.' + permiso(e); }
+    ocupado = false; await leerEstadoPausa(); if (fallo) falloControl = fallo; pinta();
   }
   async function cargar(fuerza, todo) {
     if (!token() || cargando) { pinta(); return; }
@@ -199,8 +201,8 @@
     else if (b.dataset.copia) { navigator.clipboard.writeText(b.dataset.copia).then(() => { b.textContent = 'Copiado'; }, () => { $('cl-aviso').textContent = 'No pude copiar: selecciónalo y cópialo a mano.'; }); }
     else if (b.id === 'cl-olvida') { try { localStorage.removeItem(CLAVE); } catch (e) { /* nada */ } snap = null; pinta(); }
     else if (b.id === 'cl-pausa') conMandos(() => COLA_CONTROL.fijarPausa(fetch, token(), pausa !== true), 'No pude cambiar la pausa');
-    else if (b.dataset.reinicia) conMandos(() => COLA_CONTROL.reiniciar(fetch, token(), b.dataset.reinicia).then(() => cargar(true)), 'No pude reiniciar');
-    else if (b.id === 'cl-reinicia-todas') conMandos(async () => { for (const r of snap.fallidas) await COLA_CONTROL.reiniciar(fetch, token(), r.id); await cargar(true); }, 'No pude reiniciar todas');
+    else if (b.dataset.reinicia) conMandos(async () => { await COLA_CONTROL.reiniciar(fetch, token(), b.dataset.reinicia); ultimo = 0; await cargar(true); }, 'No pude reiniciar');
+    else if (b.id === 'cl-reinicia-todas') conMandos(async () => { const r = await COLA_CONTROL.reiniciarTodas(fetch, token(), snap.fallidas); ultimo = 0; await cargar(true); return r.mensaje; }, 'No pude reiniciar todas');
     else if (b.id === 'cl-ref' || b.id === 'cl-todo') {
       const falta = Math.ceil((hasta - Date.now()) / 1000);
       if (falta > 0) { $('cl-aviso').textContent = 'Espera ' + falta + ' s para volver a refrescar.'; return; }

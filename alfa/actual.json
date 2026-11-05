@@ -1,8 +1,8 @@
 {
- "build": 1006,
- "hash": "8f0e2cc",
- "fecha": "2026-11-05T20:48:49Z",
- "mensaje": "Rouflage: vuelven las mascotas clásicas como piezas aparte (tienda y gachapón)",
+ "build": 1007,
+ "hash": "04c393d",
+ "fecha": "2026-11-05T20:51:48Z",
+ "mensaje": "Rouflage 0.2.72: vuelven las mascotas clásicas (con su nota)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",
@@ -15,7 +15,7 @@
   "nova": "0.3.50",
   "pets": "0.2.6",
   "ratkov": "0.2.36",
-  "rouflage": "0.2.71",
+  "rouflage": "0.2.72",
   "rumble": "0.9.165",
   "skate": "0.1.27",
   "survivors": "0.1.78",

@@ -6,7 +6,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
   const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
-    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null, retos: null, despacho: false }, nuevos: [] };
+    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null, retos: null, despacho: false, depModo: 'campana' }, nuevos: [] };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -116,6 +116,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     bajar: () => bajar(),
     departamento: (b) => { est.mesa.dep = b.id; basSuena('boton'); },
     acreditar: (b) => aplica(B.comprarAcreditacion(B.AJ, SAVE.progreso, b.id)),
+    modoDep: (b) => { est.mesa.depModo = b.id; basSuena('boton'); if (b.id !== 'campana') TU.lanza('modos', est.t); },
+    bajarModo: (b) => { est.mesa.dep = false; empezar(0, { tipo: b.id, clave: b.id === 'desafio' ? basClaveDia() : basClaveSemana() }); },
+    verRanking: (b) => { est.mesa.dep = false; est.mesa.retos = 'ranking'; BAS_RANKING.tab = b.id; basCargaRanking(b.id); basSuena('boton'); },
     bajarAqui: () => { const r = B.inicioDe(B.AJ, SAVE.progreso, est.mesa.dep); if (r.ok) { est.mesa.dep = false; empezar(r.valor); } },
     cerrarDep: () => { est.mesa.dep = false; basSuena('boton'); },
     ascender: () => { est.mesa.ascenso = true; basSuena('boton'); },
@@ -129,6 +132,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     usarTaller: () => { if (aplica(B.usarTaller(B.AJ, SAVE.progreso, est.mesa.taller), 'jefeVencido')) { FX.confeti(W / 2, est.H * 0.4); BAS_RETOS.evento('taller', 1); } },
     retos: () => { est.mesa.retos = 'misiones'; basSuena('boton'); },
     pestanaRetos: (b) => { est.mesa.retos = b.id; basSuena('boton'); if (b.id === 'ranking') basCargaRanking(); },
+    tabRanking: (b) => { BAS_RANKING.tab = b.id; basSuena('boton'); if (!BAS_RANKING.datos[b.id]) basCargaRanking(b.id); },
     reintentarRanking: () => basCargaRanking(),
     cobrarReto: (b) => { if (BAS_RETOS.cobrar(b.p, b.id)) { basSuena('compra'); FX.confeti(W / 2, est.H * 0.3); } },
     despacho: () => { est.mesa.despacho = true; basSuena('boton'); },
@@ -178,19 +182,24 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
 
   // ---------- bajada ----------
-  function empezar(inicio) {
-    const p = SAVE.progreso;
-    est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, p), { vencidos: p.vencidos, inicio: inicio || 0, rango: p.rango, ventajas: true });
+  // modo = null (campaña) o { tipo: 'desafio' | 'evento', clave }: el desafío lleva el azar de su clave y el evento, sus reglas
+  function empezar(inicio, modo) {
+    const p = SAVE.progreso, ev = modo && modo.tipo === 'evento' ? B.eventoDe(B.AJ, modo.clave) : null;
+    est.modoBajada = modo || null;
+    est.rnd = modo && modo.tipo === 'desafio' ? B.azarDe(B.semilla(modo.clave)) : Math.random;
+    est.e = B.nuevaBajada(B.AJ, B.statsEvento(B.statsDe(B.AJ, p), ev), { vencidos: p.vencidos, inicio: inicio || 0, rango: p.rango, ventajas: true });
     est.aspecto = B.aspectoDe(B.AJ, p);
     Object.assign(est, { modo: 'bajada', acum: 0, record: false, pulsoAscensor: false, pulsoHabilidad: false });
     FX.limpiar(); B.sensacion.reinicia(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
-    FX.cartel(tr('¡A BAJAR!'), '#ffd23a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
+    if (ev) FX.cartel(tr(ev.nombre).toUpperCase(), '#ffd23a', 2.2, tr(ev.txt));
+    else if (modo) FX.cartel(tr('DESAFÍO DEL DÍA'), '#ffd23a', 2, tr('La misma bajada para todos hoy'));
+    else FX.cartel(tr('¡A BAJAR!'), '#ffd23a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
     TU.lanza('bajada', est.t);
   }
 
   function simular(dt) {
     const e = est.e;
-    B.paso(e, dt, orden(), Math.random);
+    B.paso(e, dt, orden(), est.rnd);
     for (const ev of e.eventos) { if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev); racha(B.sensacion.alEvento(ev)); }
     if (e.becarios.some((b) => Math.abs(b.y - e.jugador.y) < 260)) TU.lanza('becario', est.t);
     if (e.fin && e.finT > 1.1 && est.modo === 'bajada') terminar(e);
@@ -199,6 +208,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     est.record = e.resultado.planta > SAVE.progreso.record;
     est.nuevos = B.catalogoNuevos(B.AJ, SAVE.progreso, e.resultado);
     SAVE.progreso = B.cobrar(SAVE.progreso, e.resultado, B.AJ);
+    const md = est.modoBajada;
+    if (md) {   // desafío o evento: su premio (la primera vez) y su ranking
+      const r = B.premioModo(B.AJ, SAVE.progreso, md.tipo, md.clave, e.resultado);
+      SAVE.progreso = r.progreso; est.premioModo = r.premio;
+      basRetoBajada(md.clave, e.resultado);
+    } else est.premioModo = null;
     basGuarda();
     basRetosBajada(e.resultado);
     basRankingBajada(e.resultado);
@@ -249,7 +264,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     G.imageSmoothingEnabled = false;
     FX.paso(dt);
     if (est.modo === 'bajada') { est.botones = []; pintarBajada(dt); }
-    else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record, est.nuevos, est.aspecto);
+    else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record, est.nuevos, est.aspecto, est.premioModo);
     else if (est.modo === 'mesa') pintarMesa();
     else est.botones = UI.portada(G, W, est.H, est.t);
     if (TU.habla()) est.botones = TU.dibuja(G, W, est.H, est.t);

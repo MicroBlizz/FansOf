@@ -57,6 +57,20 @@ BAS.AJ = Object.freeze({
     suelta: { tornillo: { desde: 0, n: [2, 4] }, cable: { desde: 5, n: [1, 2] }, chip: { desde: 10, n: [0, 2] }, disco: { desde: 15, n: [0, 1], prob: 0.25 } },
     jefe: { chip: 3, disco: 1 },   // lo que suelta además cada jefe vencido
   },
+  // Los modos especiales (modos.js), que siempre empiezan en Marketing: el DESAFÍO DEL DÍA (la misma bajada para todos: mismos
+  // bichos, muebles y eventos, con la semilla del día) y el EVENTO DE LA SEMANA (cada semana uno, con sus reglas: multiplica valor
+  // del botín, gasto de café, daño, cadencia, espera del ascensor y paquetes). Cada uno da su premio la primera vez que llegas a
+  // `premio.planta` y subes a salvo, y tiene su ranking (servidor/116-basement-retos.sql).
+  modos: {
+    desafio: { premio: { planta: 8, paquetes: { normal: 1 } } },
+    evento: { premio: { planta: 10, paquetes: { jefe: 1 } } },
+  },
+  eventos: [
+    { id: 'viernes', nombre: 'Viernes a las 17:59', txt: 'Todo vale el doble, pero el café se acaba antes', mods: { valor: 2, gasto: 1.4 } },
+    { id: 'navidad', nombre: 'Cena de empresa', txt: 'Las reuniones sueltan muchos más paquetes', mods: { paquete: 5, gasto: 1.15 } },
+    { id: 'crunch', nombre: 'Semana de crunch', txt: 'Pegas fuerte y rápido, pero el café vuela', mods: { dano: 1.5, cadencia: 0.8, gasto: 1.5 } },
+    { id: 'auditoria', nombre: 'Auditoría trimestral', txt: 'El botín vale más, pero el ascensor tarda más', mods: { valor: 1.6, espera: 2 } },
+  ],
   // La presión (como en Well Diver): cada departamento pide su acreditación, que se compra en «¿DÓNDE BAJAS?». Sin ella puedes
   // bajar, pero allí te mueves más lento (vel) y el café se gasta más (cafe). Marketing no pide nada.
   presion: { vel: 0.75, cafe: 1.8, coste: { soporte: 40, qa: 90, servidores: 180, direccion: 350, legacy: 700 } },

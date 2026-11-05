@@ -21,6 +21,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     ],
     equipo: ['Aquí te pones el equipo y eliges mascota. Todo sale de los paquetes: toca el de la rareza que quieras ponerte.'],
     ventaja: ['Al empezar y en cada departamento nuevo eliges una ventaja. Solo vale para esta bajada, así que piensa qué te hace falta.'],
+    modos: ['Aquí tienes dos modos más, siempre desde Marketing: el DESAFÍO DEL DÍA, la misma bajada para todos, y el EVENTO DE LA SEMANA, con reglas especiales. Cada uno tiene su premio y su ranking.'],
     presion: [
       'Aquí eliges dónde bajas. Cada departamento, salvo Marketing, pide su acreditación.',
       'Sin ella puedes bajar, pero la presión te frena y el café se gasta mucho más. Cómprala con el botón naranja de su fila.',

@@ -51,9 +51,23 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     UI.textoCabe(g, f.nombre, x + 74, y + h / 2, 18, w - 200, '#ffffff', 'left', 3);
     T(g, tr('Planta') + ' -' + f.planta, x + w - 14, y + h / 2, 18, '#ffffff', 'right', 3);
   }
-  UI.ranking = function (g, W, y, alto, botones) {
-    const R = BAS_RANKING, d = R.datos, mia = SAVE.marca ? SAVE.marca.planta : 0;
-    UI.franja(g, mia ? tr('Tu mejor planta del Legacy: -{n}', { n: mia }) : tr('Llega al Código Legacy (planta -25) para entrar'), W / 2, y + 12, 16, W - 40);
+  const TABS = [['legacy', 'LEGACY'], ['hoy', 'DESAFÍO'], ['semana', 'EVENTO']];
+  function cabeceraRanking(g, W, y, botones) {
+    const R = BAS_RANKING, tw = (W - 40 - 16) / 3;
+    TABS.forEach(([id, txt], i) => {
+      const b = { x: 20 + i * (tw + 8), y, w: tw, h: 40, accion: 'tabRanking', id };
+      UI.boton(g, b, R.tab === id ? 'naranja' : 'apagado', '', 0);
+      UI.textoCabe(g, tr(txt), b.x + tw / 2, y + 19, 17, tw - 10, '#ffffff', 'center', 3);
+      botones.push(b);
+    });
+    const mia = R.tab === 'legacy' ? (SAVE.marca ? SAVE.marca.planta : 0) : ((SAVE.retosModo || {})[basClaveDe(R.tab)] || {}).planta;
+    const txt = R.tab === 'legacy' ? (mia ? tr('Tu mejor planta del Legacy: -{n}', { n: mia }) : tr('Llega al Código Legacy (planta -25) para entrar'))
+      : (mia != null ? tr(R.tab === 'hoy' ? 'Tu mejor de hoy: planta -{n}' : 'Tu mejor de la semana: planta -{n}', { n: mia }) : tr('Juega el modo para entrar'));
+    UI.franja(g, txt, W / 2, y + 62, 16, W - 40);
+  }
+  UI.ranking = function (g, W, y0, alto0, botones) {
+    cabeceraRanking(g, W, y0, botones);
+    const y = y0 + 54, alto = alto0 - 54, R = BAS_RANKING, d = R.datos[R.tab];
     const msg = (t, c) => UI.lineas(g, t, W / 2, y + 90, 20, W - 80, c || C.crema, 'center', 3);
     if (!basHayRanking()) return msg(tr('El ranking necesita conexión'));
     if (R.error) { msg(tr('No se ha podido cargar'), C.rojo); const b = { x: W / 2 - 100, y: y + 130, w: 200, h: 56, accion: 'reintentarRanking' }; UI.boton(g, b, 'azul', tr('REINTENTAR'), 22); botones.push(b); return; }

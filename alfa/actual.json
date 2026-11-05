@@ -1,8 +1,8 @@
 {
- "build": 1010,
- "hash": "15904f0",
- "fecha": "2026-11-05T21:19:51Z",
- "mensaje": "Basement 0.9.0: presión por departamento con acreditaciones y repaso del equilibrio",
+ "build": 1011,
+ "hash": "2e5ac35",
+ "fecha": "2026-11-05T21:28:51Z",
+ "mensaje": "Basement 0.10.0: desafío del día y evento de la semana con su ranking (SQL 116 aplicado)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

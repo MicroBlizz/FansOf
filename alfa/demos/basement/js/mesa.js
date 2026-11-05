@@ -121,7 +121,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   //       retos (la ventana de misiones: 'misiones' | 'logros' | 'ranking'), despacho (viendo tu despacho) }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
-    if (m.dep) return UI.departamentos(g, W, H, AJ, p, m.dep);
+    if (m.dep) return UI.departamentos(g, W, H, AJ, p, m.dep, m.depModo);
     if (m.retos) return UI.retos(g, W, H, m.retos);
     if (m.despacho) return UI.despacho(g, W, H, t, AJ, p);
     UI.fondoMenu(g, W, H, 'fondo-oficinas');

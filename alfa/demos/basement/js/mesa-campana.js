@@ -41,14 +41,24 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
 
   // sel = el departamento marcado: tocar uno lo marca y BAJAR AQUÍ confirma
-  UI.departamentos = function (g, W, H, AJ, p, sel) {
+  // modo = 'campana' (los departamentos) | 'desafio' | 'evento' (mesa-modos.js)
+  const MODOS = [['campana', 'CAMPAÑA'], ['desafio', 'DESAFÍO'], ['evento', 'EVENTO']];
+  UI.departamentos = function (g, W, H, AJ, p, sel, modo) {
     UI.fondoMenu(g, W, H, 'fondo-vestibulo');
     g.fillStyle = 'rgba(10,5,20,0.75)'; g.fillRect(0, 0, W, H);
-    UI.titulo(g, tr('¿DÓNDE BAJAS?'), W / 2, 60, 46);
-    UI.franja(g, tr('Sin acreditación, la presión te frena y gasta más café'), W / 2, 116, 16, W - 30);
-    const deps = B.departamentos(AJ, p), h = Math.min(130, Math.floor((H - 320) / deps.length) - 10), botones = [];
+    UI.titulo(g, tr('¿DÓNDE BAJAS?'), W / 2, 50, 42);
+    const botones = [], tw = (W - 40 - 16) / 3, m = modo || 'campana';
+    MODOS.forEach(([id, txt], i) => {
+      const b = { x: 20 + i * (tw + 8), y: 92, w: tw, h: 50, accion: 'modoDep', id };
+      UI.boton(g, b, m === id ? 'naranja' : 'azul', '', 0);
+      UI.textoCabe(g, tr(txt), b.x + tw / 2, b.y + 24, 20, tw - 12, '#ffffff', 'center', 4);
+      botones.push(b);
+    });
+    if (m !== 'campana') return [...botones, ...UI.tarjetaModo(g, W, H, AJ, p, m)];
+    UI.franja(g, tr('Sin acreditación, la presión te frena y gasta más café'), W / 2, 162, 15, W - 30);
+    const deps = B.departamentos(AJ, p), h = Math.min(124, Math.floor((H - 370) / deps.length) - 10);
     deps.forEach((d, i) => {
-      const z = AJ.zonas.find((q) => q.id === d.id), b = { x: 20, y: 156 + i * (h + 10), w: W - 40, h, accion: 'departamento', id: d.id };
+      const z = AJ.zonas.find((q) => q.id === d.id), b = { x: 20, y: 190 + i * (h + 10), w: W - 40, h, accion: 'departamento', id: d.id };
       filaDep(g, AJ, p, z, d, b, d.id === sel);
       acreditacion(g, AJ, p, z, b, botones);   // va antes que la fila: si tocas el botón, compras
       if (d.abierto) botones.push(b);

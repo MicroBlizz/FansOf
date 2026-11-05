@@ -126,7 +126,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.eventos.push({ tipo: 'baja', x: en.x, y: en.y, enemigo: en.tipo, raro: !!d.raro });
     for (let k = 0; k < (d.botinX || 1) && d.botin; k++) soltar(e, d.botin, en.x + (k % 4 - 1.5) * 10, en.y + Math.floor(k / 4) * 10);
     if (rnd() < AJ.probCafe) soltar(e, 'cafe', en.x + 8, en.y);
-    if (en.tipo === 'reunion' && rnd() < AJ.probPaquete) soltar(e, 'paquete', en.x - 10, en.y);
+    if (en.tipo === 'reunion' && rnd() < AJ.probPaquete * (e.stats.paquete || 1)) soltar(e, 'paquete', en.x - 10, en.y);
     if (d.divide) {
       for (const s of [-1, 1]) E.crear(e, d.divide, en.x + s * 10, en.y).dir = s;
       e.eventos.push({ tipo: 'divide', x: en.x, y: en.y });

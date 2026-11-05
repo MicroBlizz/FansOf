@@ -1,0 +1,156 @@
+// Fans of Basement · Principal (composición): arranca el lienzo vertical, lee el dedo (palanca donde lo pones, como en Well Diver)
+// y el teclado, mueve la bajada a 60 pasos por segundo, convierte los eventos del dominio en efectos y sonidos, y pasa entre
+// pantallas: portada, tu mesa, la bajada y el resultado. Es el único archivo que conoce todas las piezas.
+'use strict';
+var BAS = globalThis.BAS || (globalThis.BAS = {});
+(function (B) {
+  const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.AJ.ancho, FX = B.efectos, UI = B.ui;
+  const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 640, botones: [], record: false, pulsoAscensor: false, resultadoT: 0 };
+  const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
+  B._est = est;   // para las pruebas automáticas y el panel DEV
+
+  function ajusta() {
+    est.H = Math.max(560, Math.min(820, Math.round(W * innerHeight / innerWidth)));
+    const dpr = Math.min(2, window.devicePixelRatio || 1), k = Math.min(innerWidth / W, innerHeight / est.H);
+    CV.style.width = Math.floor(W * k) + 'px'; CV.style.height = Math.floor(est.H * k) + 'px';
+    CV.width = Math.floor(W * k * dpr); CV.height = Math.floor(est.H * k * dpr);
+  }
+
+  // ---------- eventos del dominio -> efectos y sonidos ----------
+  const EFECTOS = {
+    disparo: () => basSuena('disparo'),
+    impacto: (ev) => { FX.numero(ev.x, ev.y - 10, Math.round(ev.dano), '#ffffff', 12); FX.chispas(ev.x, ev.y, 4, '#ffe14a', 70); basSuena('impacto'); },
+    baja: (ev) => { FX.chispas(ev.x, ev.y, 14, ev.enemigo === 'bug' ? '#3fa34d' : '#ffffff', 110); FX.temblor = Math.max(FX.temblor, 3); basSuena('baja'); },
+    divide: (ev) => { FX.numero(ev.x, ev.y - 18, 'RE: RE:', '#e5322d', 12); basSuena('divide'); },
+    recoge: (ev) => { FX.numero(ev.x, ev.y - 12, '+' + ev.valor, '#ffe14a', 14); basSuena('recoge'); },
+    cafe: (ev) => { FX.numero(ev.x, ev.y - 12, '+' + tr('CAFÉ'), '#ff8a2a', 14); basSuena('cafe'); },
+    golpe: (ev) => { FX.numero(ev.x, ev.y - 20, '-' + ev.cuanto, '#e5322d', 16); FX.temblor = 10; vibrar(40); basSuena('golpe'); },
+    frenado: () => { FX.cartel(tr('¡REUNIÓN!'), '#e5322d', 1, tr('Te ha frenado')); basSuena('frenado'); },
+    cajaLlena: () => { FX.cartel(tr('¡CAJA LLENA!'), '#ffe14a', 1.4, tr('Llama al ascensor')); basSuena('cajaLlena'); },
+    planta: (ev) => { if (ev.planta % 5) basSuena('planta'); },
+    zona: (ev) => { FX.cartel(tr(ev.zona.nombre).toUpperCase(), '#ffe14a', 2, ev.zona.crunch ? tr('CRUNCH ZONE: el café se gasta más rápido') : ''); basSuena('zona'); },
+    cafeBajo: () => { FX.cartel(tr('¡QUEDA POCO CAFÉ!'), '#e5322d', 1.6, tr('Sube antes de desmayarte')); basSuena('cafeBajo'); },
+    ascensorLlamado: () => { FX.cartel(tr('ASCENSOR EN CAMINO'), '#5fe05f', 1.4, tr('Aguanta unos segundos')); basSuena('ascensorLlamado'); },
+    fin: (ev) => { if (ev.como === 'ascensor') FX.confeti(est.e.jugador.x, est.e.jugador.y); else { FX.cartel(tr('¡DESMAYADO!'), '#e5322d', 1.5); vibrar(150); } },
+  };
+  function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Basement: sin vibración', err); } }
+
+  // ---------- entrada ----------
+  function aLogico(ev) { const r = CV.getBoundingClientRect(); return { x: (ev.clientX - r.left) * W / r.width, y: (ev.clientY - r.top) * est.H / r.height }; }
+
+  function abajo(ev) {
+    ev.preventDefault();
+    const p = aLogico(ev);
+    if (est.modo !== 'bajada') { tocarFuera(p); return; }
+    if (!est.e.fin && UI.dentro(p, UI.botonAscensor(W, est.H))) { est.pulsoAscensor = true; return; }
+    if (!joy.activo) Object.assign(joy, { activo: true, id: ev.pointerId, ox: p.x, oy: p.y, dx: 0, dy: 0 });
+  }
+  function mueve(ev) {
+    if (!joy.activo || ev.pointerId !== joy.id) return;
+    const p = aLogico(ev), dx = (p.x - joy.ox) / 40, dy = (p.y - joy.oy) / 40, m = Math.hypot(dx, dy);
+    joy.dx = m > 1 ? dx / m : dx; joy.dy = m > 1 ? dy / m : dy;
+  }
+  function arriba(ev) { if (ev.pointerId === joy.id) Object.assign(joy, { activo: false, id: -1, dx: 0, dy: 0 }); }
+
+  const ACCIONES = {
+    bajar: () => empezar(),
+    mesa: () => { est.modo = 'mesa'; basSuena('boton'); },
+    comprar: (b) => {
+      const r = B.comprar(B.AJ, SAVE.progreso, b.id);
+      if (!r.ok) { basSuena('no'); return; }
+      SAVE.progreso = r.valor; basGuarda(); basSuena('compra');
+    },
+  };
+  function tocarFuera(p) {
+    if (est.modo === 'portada') { est.modo = 'mesa'; basSuena('boton'); return; }
+    if (est.modo === 'resultado' && est.resultadoT < 0.8) return;
+    const b = est.botones.find((q) => UI.dentro(p, q));
+    if (b && ACCIONES[b.accion]) ACCIONES[b.accion](b);
+  }
+
+  function tecla(ev, baja) {
+    const k = ev.key.toLowerCase();
+    teclas[k] = baja;
+    if (!baja) return;
+    if (est.modo === 'bajada' && (k === ' ' || k === 'e')) { est.pulsoAscensor = true; ev.preventDefault(); }
+    else if (est.modo !== 'bajada' && (k === ' ' || k === 'enter')) teclaMenu();
+  }
+  function teclaMenu() {
+    if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
+    else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
+    else if (est.modo === 'mesa') empezar();
+  }
+
+  function orden() {
+    const T = (a, b) => (teclas[a] || teclas[b] ? 1 : 0);
+    const mx = joy.dx + T('arrowright', 'd') - T('arrowleft', 'a'), my = joy.dy + T('arrowdown', 's') - T('arrowup', 'w');
+    const ascensor = est.pulsoAscensor;
+    est.pulsoAscensor = false;
+    return { mx: Math.max(-1, Math.min(1, mx)), my: Math.max(-1, Math.min(1, my)), ascensor };
+  }
+
+  // ---------- bajada ----------
+  function empezar() {
+    est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, SAVE.progreso));
+    Object.assign(est, { modo: 'bajada', acum: 0, record: false, pulsoAscensor: false });
+    FX.limpiar(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
+    FX.cartel(tr('¡A BAJAR!'), '#ffe14a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
+  }
+
+  function simular(dt) {
+    const e = est.e;
+    B.paso(e, dt, orden(), Math.random);
+    for (const ev of e.eventos) if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev);
+    if (e.fin && e.finT > 1.1 && est.modo === 'bajada') terminar(e);
+  }
+  function terminar(e) {
+    est.record = e.resultado.planta > SAVE.progreso.record;
+    SAVE.progreso = B.cobrar(SAVE.progreso, e.resultado);
+    basGuarda();
+    Object.assign(est, { modo: 'resultado', resultadoT: 0 });
+    Object.assign(joy, { activo: false, id: -1, dx: 0, dy: 0 });
+  }
+
+  function pintarBajada(dt) {
+    const e = est.e;
+    est.acum += dt;
+    while (est.acum >= PASO && est.modo === 'bajada') { simular(PASO); est.acum -= PASO; }
+    B.vista.camara(e, est.H, dt);
+    G.save();
+    if (FX.temblor > 0) G.translate((Math.random() - 0.5) * FX.temblor, (Math.random() - 0.5) * FX.temblor);
+    B.vista.dibujar(G, e, W, est.H, UI.texto);
+    G.restore();
+    UI.marcador(G, e, W, est.H);
+    FX.dibujarCarteles(G, UI.texto, W, est.H);
+    UI.palanca(G, joy);
+  }
+
+  function fotograma(ahora) {
+    const dt = Math.min(0.05, (ahora - (est.ultimo || ahora)) / 1000);
+    est.ultimo = ahora; est.t += dt; est.resultadoT += dt;
+    const k = CV.width / W;
+    G.setTransform(k, 0, 0, k, 0, 0);
+    G.imageSmoothingEnabled = false;
+    FX.paso(dt);
+    if (est.modo === 'bajada') { est.botones = []; pintarBajada(dt); }
+    else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record);
+    else if (est.modo === 'mesa') est.botones = UI.mesa(G, W, est.H, est.t, B.AJ, SAVE.progreso);
+    else est.botones = UI.portada(G, W, est.H, est.t);
+    basMusica(est.modo, est.e);
+    requestAnimationFrame(fotograma);
+  }
+
+  async function arranca() {
+    basCarga(); ajusta();
+    try { await Promise.race([Promise.all([document.fonts.load("40px 'Luckiest Guy'"), document.fonts.load("800 16px 'Baloo 2'")]), new Promise((r) => setTimeout(r, 2000))]); }
+    catch (err) { console.warn('Basement: sin letra propia', err); }
+    document.getElementById('carga').hidden = true;
+    CV.addEventListener('pointerdown', abajo); CV.addEventListener('pointermove', mueve);
+    addEventListener('pointerup', arriba); addEventListener('pointercancel', arriba);
+    addEventListener('keydown', (ev) => tecla(ev, true)); addEventListener('keyup', (ev) => tecla(ev, false));
+    addEventListener('resize', ajusta);
+    requestAnimationFrame(fotograma);
+  }
+  B.empezar = empezar;
+  arranca();
+})(BAS);

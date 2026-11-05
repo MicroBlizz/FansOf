@@ -1,8 +1,8 @@
 {
- "build": 963,
- "hash": "95e698e",
- "fecha": "2026-11-05T14:48:42Z",
- "mensaje": "Rouflage: barra de desplazamiento propia en lienzo (fluida en el móvil), rastro de 150 px y flecha que avisa de que la lista se mueve",
+ "build": 964,
+ "hash": "d963758",
+ "fecha": "2026-11-05T15:02:07Z",
+ "mensaje": "Basement 0.1.0: prototipo nuevo tipo Well Diver en la oficina de Microblizz",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

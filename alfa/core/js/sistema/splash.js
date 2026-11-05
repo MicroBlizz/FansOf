@@ -1,14 +1,16 @@
 // Fans Of · SPLASH: la pantalla de inicio común con el logo FOG (Fans Of Games). Sale al abrir la app o la web, dura lo que tarde la carga
 // (con un mínimo para que se vea el logo) y un toque la salta. Va tras el flag «splash-fog». Las reglas (cuándo sale, cuánto espera) son
 // funciones puras en SPLASH.reglas; el resto solo pinta. El dibujo está en splash-logo.js. Guía: docs/guia/core/splash.md. ADR 051.
-// Pruebas: tests/core/splash.test.mjs.
+// Los flags llegan tras la carga: si no hay valor guardado, se leen al empezar y se espera hasta 0,7 s. Pruebas: tests/core/splash.test.mjs.
 'use strict';
 const SPLASH = (() => {
-  const MIN_MS = 800, CLAVE = 'fansof-splash-vista';
+  const MIN_MS = 800, ESPERA_FLAGS_MS = 700, CLAVE = 'fansof-splash-vista';
   const reglas = {
     MIN_MS,
     // ¿sale la splash? `forzada` (?splash=1) la saca siempre; un navegador automatizado (el comparador, las pruebas) no la ve salvo forzada
     sale({ flag, vista, automatizado, forzada }) { return !!forzada || (!!flag && !vista && !automatizado); },
+    // ¿hay que esperar a leer los flags remotos antes de decidir? Solo si aún no se sabe nada del flag (primer arranque, sin valor guardado)
+    esperaFlags({ desarrollo, conocido }) { return !desarrollo && !conocido; },
     // los ms que faltan para poder quitarla: el mínimo menos lo que ya lleva puesta
     espera(inicio, ahora) { return Math.max(0, MIN_MS - (ahora - inicio)); },
   };
@@ -34,10 +36,16 @@ const SPLASH = (() => {
     setTimeout(quita, 8000);   // por si la carga no termina: nunca deja al jugador tapado
     apunta();
   }
-  function inicia() {
+  const abierto = () => typeof NUCLEO !== 'undefined' && typeof NUCLEO.flag === 'function' && NUCLEO.flag('splash-fog', 'Splash FOG (pantalla de inicio con el logo de la empresa) al abrir la app o la web', false);
+  function decide() {
     const forzada = /[?&]splash=1\b/.test(location.search);
-    const flag = typeof NUCLEO !== 'undefined' && typeof NUCLEO.flag === 'function' && NUCLEO.flag('splash-fog', 'Splash FOG (pantalla de inicio con el logo de la empresa) al abrir la app o la web', false);
-    if (reglas.sale({ flag, vista: lee(), automatizado: !!navigator.webdriver, forzada })) muestra();
+    if (reglas.sale({ flag: abierto(), vista: lee(), automatizado: !!navigator.webdriver, forzada })) muestra();
+  }
+  // Los flags remotos se leen tras la carga: sin valor guardado (primer arranque) se piden ya y se espera un momento (ESPERA_FLAGS_MS) a la respuesta
+  function inicia() {
+    const conocido = typeof NUCLEO.flagRemoto === 'function' && NUCLEO.flagRemoto('splash-fog') !== undefined;
+    if (!reglas.esperaFlags({ desarrollo: !!NUCLEO.desarrollo, conocido }) || typeof NUCLEO.leerFlags !== 'function') return decide();
+    Promise.race([NUCLEO.leerFlags(), new Promise(r => setTimeout(r, ESPERA_FLAGS_MS))]).then(decide, decide);
   }
   if (typeof window !== 'undefined' && typeof document !== 'undefined') inicia();
   return { reglas };

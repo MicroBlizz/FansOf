@@ -1,8 +1,8 @@
 {
- "build": 968,
- "hash": "5ad8f41",
- "fecha": "2026-11-05T15:21:21Z",
- "mensaje": "Nova 0.3.50: Directo apaga a los capitanes solo la primera mitad, como todo apagón",
+ "build": 969,
+ "hash": "3b0bdfb",
+ "fecha": "2026-11-05T15:22:55Z",
+ "mensaje": "Splash: espera a los flags remotos en el primer arranque (sin valor guardado) para decidir",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

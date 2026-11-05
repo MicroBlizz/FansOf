@@ -63,16 +63,24 @@ function avanzaMascota(m, dt) {
   else { m.suelta += dt; movio = mascotaLibre(m, e, dt); }
   m.mov = movio; m.ordenY = m.y;
   // quieto un rato: hace algo por su cuenta (un saltito de alegría, mirar a los lados o menearse); corriendo, levanta polvo
-  if (m.acc) { m.tAcc += dt; if (m.tAcc >= ACCIONES_MASC[m.acc]) { m.acc = ''; m.espera = rand(2.5, 5.5); } }
-  else if (!movio && !m.susto) { m.espera -= dt; if (m.espera <= 0) { m.acc = ['salta', 'mira', 'menea'][Math.floor(Math.random() * 3)]; m.tAcc = 0; } }
+  const acciones = MASCOTAS_VIVAS_ACC[m.mascota] || ACCIONES_MASC;
+  if (m.acc) { m.tAcc += dt; if (m.tAcc >= acciones[m.acc]) { m.acc = ''; m.espera = rand(2.5, 5.5); } }
+  else if (!movio && !m.susto) { m.espera -= dt; if (m.espera <= 0) { m.acc = eligeAccionMasc(m, acciones); m.tAcc = 0; } }
   if (movio) { m.acc = ''; m.tPolvo -= dt; if (m.tPolvo <= 0) { m.tPolvo = m.susto ? 0.07 : 0.13; m.polvo.push({ x: m.x - m.dir * 6, y: m.y, t: 0 }); } }
   for (let i = m.polvo.length - 1; i >= 0; i--) if ((m.polvo[i].t += dt) > 0.45) m.polvo.splice(i, 1);
 }
-const ACCIONES_MASC = { salta: 0.55, mira: 1.4, menea: 0.9 };      // lo que dura cada cosa que hace estando quieta
+const ACCIONES_MASC = { salta: 0.55, mira: 1.4, menea: 0.9 };      // lo que dura cada cosa que hace estando quieta (las vivas: MASCOTAS_VIVAS_ACC)
+// qué hace estando quieta: si su dueño está quieto (congelado o pintándose), se sienta a su lado si sabe; si no, una al azar
+function eligeAccionMasc(m, acciones) {
+  const d = m.dueno, tranquilo = d.congelado || (d === J.yo && typeof TALLER !== 'undefined' && TALLER.abierto);
+  if (tranquilo && acciones.sienta && Math.random() < 0.6) return 'sienta';
+  const k = Object.keys(acciones); return k[Math.floor(Math.random() * k.length)];
+}
 
 // dibujada en el mundo con los pies en x,y (dibujo.js la mezcla con los personajes por su y), más grande que antes y con vida: se inclina
 // al correr, tiembla y suda con el susto, levanta polvo y, quieta, hace sus cosas (ACCIONES_MASC)
 function pintaMascota(c, m) {
+  if (MASCOTAS_VIVAS[m.mascota]) { pintaMascotaViva(c, m); return; }
   const f = ARD.MASCOTAS[m.mascota]; if (!f) return;
   const k = m.tAcc / (ACCIONES_MASC[m.acc] || 1);
   let alto = 0, giro = m.mov ? 0.12 : 0, dir = m.dir, sx = 1, sy = 1;
@@ -90,4 +98,20 @@ function pintaMascota(c, m) {
   if (m.susto > 0) {      // gotas de sudor saltando de la cabeza
     for (let i = 0; i < 2; i++) { const q = ((m.t * 2.4 + i * 0.5) % 1); c.save(); c.globalAlpha = 1 - q; ARD.shape(c, ARD.el(m.x - m.dir * (8 + q * 8) + i * 14 * m.dir, m.y - 30 - q * 6 + q * q * 14, 1.6, 2.4), '#8fd3ff', 0.9); c.restore(); }
   }
+}
+
+// las mascotas vivas (mascotas-vivas.js) llevan su propio cuerpo con inercia: aquí solo la sombra, el polvo, el sudor del susto y hacia dónde
+// mira (a su dueño, y contenta si está cerca)
+function pintaMascotaViva(c, m) {
+  const d = m.dueno, cerca = lejos(m.x, m.y, d.x, d.y) < 48, mira = limita((d.y - m.y) / 40, -1, 1) * 0.6 + (Math.sign(d.x - m.x) === m.dir ? 0.4 : -0.2);
+  const tiembla = m.susto > 0 ? (Math.random() - 0.5) * 1.2 : 0;
+  c.save(); c.translate(m.x + tiembla, m.y);
+  for (const p of m.polvo) { const q = p.t / 0.45; c.globalAlpha = 0.45 * (1 - q); ARD.shape(c, ARD.el(p.x - m.x - m.dir * q * 4, -2 - q * 5, 2.4 + q * 3.4, 1.8 + q * 2.4), '#e8e1d4', 0); }
+  c.globalAlpha = 1;
+  ARD.shape(c, ARD.el(0, 1, 11.5, 3.4), 'rgba(20,10,40,.3)', 0);
+  c.scale(m.dir * MASC.esc, MASC.esc);
+  const k = m.acc ? m.tAcc / ((MASCOTAS_VIVAS_ACC[m.mascota] || {})[m.acc] || 1) : 0;
+  try { MASCOTAS_VIVAS[m.mascota](c, { t: m.t, mov: m.mov ? 1 : 0, susto: m.susto > 0, acc: m.acc, k, m, mira, contento: cerca && !m.susto }); } catch (err) { console.warn('[mascota]', err); }
+  c.restore();
+  if (m.susto > 0) for (let i = 0; i < 2; i++) { const q = ((m.t * 2.4 + i * 0.5) % 1); c.save(); c.globalAlpha = 1 - q; ARD.shape(c, ARD.el(m.x - m.dir * (8 + q * 8) + i * 14 * m.dir, m.y - 30 - q * 6 + q * q * 14, 1.6, 2.4), '#8fd3ff', 0.9); c.restore(); }
 }

@@ -1,5 +1,6 @@
-// Fans of Rouflage · LAS BARRAS DE DESPLAZAMIENTO QUE PINTAN (Daniel, 5-11-2026): la barra es una brocha y, al mover la lista, va pintando el
-// camino por donde pasa, hacia arriba y hacia abajo (o a los lados), con un brochazo de bordes irregulares y los colores de las Gotas.
+// Fans of Rouflage · LAS BARRAS DE DESPLAZAMIENTO QUE PINTAN (Daniel, 5-11-2026): la barra es una brocha que va de punta a punta y, al
+// mover la lista, pinta por donde pasa (nunca por delante de sus cerdas) con un brochazo de bordes irregulares y los colores de las Gotas.
+// La pintura solo dura cerca de la brocha: a 50 px ya se ha borrado, así la mancha dice dónde estás.
 // Los dibujos son SVG que se pasan al estilo como variables (--rastro-v / --rastro-h en cada lista, --brocha-v / --brocha-h): los usa
 // estilo-barras.css en ::-webkit-scrollbar. Las cerdas miran hacia donde se mueve. Las funciones de dibujo (rastro, brocha, amplia) son
 // puras; escucha() las engancha a todas las listas del juego con un solo aviso de 'scroll' (lo llama principal.js, al arrancar).
@@ -13,14 +14,18 @@ const BARRAS = (() => {
   const ruido = (t, s) => Math.sin(t * 0.021 + s) * 0.55 + Math.sin(t * 0.057 + s * 2.3) * 0.35 + Math.sin(t * 0.13 + s * 4.1) * 0.2;
   const n = v => Math.round(v * 10) / 10;
 
+  const RADIO = 50, ALTO = 34;      // px de pintura alrededor de la brocha; lo que mide la brocha
+  // el tramo pintado [a, b] (0..1) se queda solo con lo que cae dentro de [lo, hi] (cerca de la brocha); null si no queda nada
+  const recorta = (r, lo, hi) => { if (!r) return null; const a = Math.max(r[0], lo), b = Math.min(r[1], hi); return a < b ? [a, b] : null; };
   // el tramo pintado [a, b] (0..1) se agranda hasta cubrir [a2, b2]; devuelve el nuevo y si ha crecido de verdad (medio punto o más)
   const amplia = (r, a2, b2) => {
     const a = Math.max(0, Math.min(r ? r[0] : a2, a2)), b = Math.min(1, Math.max(r ? r[1] : b2, b2));
     return { r: [a, b], crece: !r || r[0] - a >= 0.005 || b - r[1] >= 0.005 };
   };
 
-  // el brochazo entre a y b: bordes que tiemblan, puntas redondeadas y vetas de las cerdas; arcoíris a lo largo de toda la barra
-  const rastro = (a, b, vertical) => {
+  // el brochazo entre a y b: bordes que tiemblan, puntas redondeadas y vetas de las cerdas; arcoíris a lo largo de toda la barra. Se borra
+  // poco a poco al alejarse de `centro` (la brocha): opaco a su lado y nada a `radio` (todo en fracciones de la barra)
+  const rastro = (a, b, vertical, centro, radio) => {
     const y0 = a * LARGO, y1 = b * LARGO, izq = [], der = [];
     for (let y = y0; y <= y1; y += 14) { izq.push([n(2.2 + ruido(y, 1) * 1.3), n(y)]); der.push([n(11.8 - ruido(y, 7) * 1.3), n(y)]); }
     izq.push([n(2.2 + ruido(y1, 1) * 1.3), n(y1)]); der.push([n(11.8 - ruido(y1, 7) * 1.3), n(y1)]);
@@ -30,9 +35,12 @@ const BARRAS = (() => {
     const veta = x => 'M' + izq.map(([, y]) => p([n(x + ruido(y, x) * 0.6), y])).join(' L');
     const g = vertical ? 'x1="0" y1="0" x2="0" y2="1000"' : 'x1="0" y1="0" x2="1000" y2="0"';
     const caja = vertical ? `0 0 ${ANCHO} ${LARGO}` : `0 0 ${LARGO} ${ANCHO}`;      // 0..1000 = toda la barra: el tramo cae justo donde va la brocha
-    return url(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${caja}" preserveAspectRatio="none"><defs><linearGradient id="a" gradientUnits="userSpaceOnUse" ${g}>${ARCO.map((c, i) => `<stop offset="${i / (ARCO.length - 1)}" stop-color="${c}"/>`).join('')}</linearGradient></defs>`
+    const c = centro * LARGO, rr = radio * LARGO, desv = [[c - rr, 0], [c - rr * 0.45, 1], [c + rr * 0.45, 1], [c + rr, 0]];
+    const mancha = desv.map(([y, o]) => `<stop offset="${n(Math.max(0, Math.min(1, y / LARGO)) * 1000) / 1000}" stop-color="#fff" stop-opacity="${o}"/>`).join('');      // la máscara: se borra al alejarse
+    return url(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${caja}" preserveAspectRatio="none"><defs><linearGradient id="a" gradientUnits="userSpaceOnUse" ${g}>${ARCO.map((cl, i) => `<stop offset="${i / (ARCO.length - 1)}" stop-color="${cl}"/>`).join('')}</linearGradient>`
+      + `<linearGradient id="m" gradientUnits="userSpaceOnUse" ${g}>${mancha}</linearGradient><mask id="b" maskUnits="userSpaceOnUse" x="0" y="0" width="${vertical ? ANCHO : LARGO}" height="${vertical ? LARGO : ANCHO}"><rect width="${vertical ? ANCHO : LARGO}" height="${vertical ? LARGO : ANCHO}" fill="url(#m)"/></mask></defs><g mask="url(#b)">`
       + `<path d="${d}" fill="url(#a)" stroke="${OL}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`
-      + `<path d="${veta(5)} ${veta(9)}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>`);
+      + `<path d="${veta(5)} ${veta(9)}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1" vector-effect="non-scaling-stroke"/></g></svg>`);
   };
 
   // la brocha (14 x 34): mango de madera, virola de metal y cerdas mojadas en el color del sitio por donde va; `adelante` = las cerdas miran
@@ -46,13 +54,13 @@ const BARRAS = (() => {
     return url(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vertical ? '14 34' : '34 14'}">${svg}</svg>`);
   };
 
-  // dónde está la brocha en la barra (0..1): la barra mide `pista` px, el cursor ocupa lo que se ve (como mínimo 34 px, el alto de la brocha)
-  // y la brocha va en su centro; la punta de las cerdas, 13 px más allá hacia donde se mueve. Solo se pinta hasta la punta, nunca por delante
-  const puntaBrocha = (total, ve, pos, pista, adelante) => {
-    const largo = Math.max(34, (ve / total) * pista), recorrido = Math.max(1, total - ve);
-    const centro = (Math.min(recorrido, Math.max(0, pos)) / recorrido * (pista - largo) + largo / 2) / pista;
-    const punta = centro + (adelante ? 13 : -13) / pista;
-    return { centro, punta: Math.max(0, Math.min(1, punta)) };
+  // dónde está la brocha: va de punta a punta de la barra (`pista` px) según lo bajada que está la lista. Se dibuja dentro del cursor (que
+  // mide lo que se ve, como mínimo ALTO px): `dentro` = px desde el principio del cursor. Centro y punta de las cerdas (13 px más allá
+  // hacia donde se mueve), en fracciones de la barra: solo se pinta hasta la punta, nunca por delante
+  const posBrocha = (total, ve, pos, pista, adelante) => {
+    const largo = Math.max(ALTO, (ve / total) * pista), recorrido = Math.max(1, total - ve), f = Math.min(1, Math.max(0, pos / recorrido));
+    const centro = (f * (pista - ALTO) + ALTO / 2) / pista, punta = centro + (adelante ? 13 : -13) / pista;
+    return { centro, punta: Math.max(0, Math.min(1, punta)), dentro: f * (largo - ALTO) };
   };
 
   // el color del arcoíris en un punto (0..1) de la barra: así la brocha va mojada en lo que pinta
@@ -67,11 +75,12 @@ const BARRAS = (() => {
       if (total <= ve + 1) continue;
       const k = vertical ? 'v' : 'h';
       if (est['p' + k] !== undefined && pos !== est['p' + k]) est['d' + k] = pos > est['p' + k];
-      const adelante = est['d' + k] !== false, { centro, punta } = puntaBrocha(total, ve, pos, ve, adelante);
-      const { r, crece } = amplia(est[k], Math.min(centro, punta), Math.max(centro, punta));
+      const adelante = est['d' + k] !== false, { centro, punta, dentro } = posBrocha(total, ve, pos, ve, adelante), radio = RADIO / ve;
+      const { r } = amplia(recorta(est[k], centro - radio, centro + radio), Math.min(centro, punta), Math.max(centro, punta));
       est['p' + k] = pos; est[k] = r;
-      if (crece) el.style.setProperty('--rastro-' + k, rastro(r[0], r[1], vertical));
+      el.style.setProperty('--rastro-' + k, rastro(r[0], r[1], vertical, centro, radio));
       el.style.setProperty('--brocha-' + k, brocha(colorEn(centro), vertical, adelante));
+      el.style.setProperty('--brocha-' + k + '-en', Math.round(dentro) + 'px');
     }
   };
   const escucha = () => {
@@ -84,5 +93,5 @@ const BARRAS = (() => {
     }, { capture: true, passive: true });
   };
 
-  return Object.freeze({ amplia, rastro, brocha, colorEn, puntaBrocha, escucha });
+  return Object.freeze({ amplia, recorta, rastro, brocha, colorEn, posBrocha, escucha });
 })();

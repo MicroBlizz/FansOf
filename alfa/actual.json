@@ -1,8 +1,8 @@
 {
- "build": 957,
- "hash": "f21e94b",
- "fecha": "2026-11-05T12:41:52Z",
- "mensaje": "Rouflage: la brocha solo pinta hasta la punta de sus cerdas (no por delante) y la barra enseña en clarito la zona que se ve",
+ "build": 958,
+ "hash": "44bd2fd",
+ "fecha": "2026-11-05T12:47:03Z",
+ "mensaje": "Rouflage: la brocha de las barras va de punta a punta y la pintura se borra a 50 px de ella",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.21', real: ["<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games.", "<b>ICONO RETOCADO</b>: el icono del juego se ve entero, sin cortes ni zoom."], joke: ["Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él."] },
   { v: '0.7.20', real: ["<b>LOGO NUEVO</b>: KARTS ondea como una bandera de meta en la pantalla de título, y el icono, el favicon y la imagen que sale al compartir el juego llevan el logo nuevo."], joke: ["Microblizz ha planchado la bandera a cuadros y Phony ha firmado en la meta con un conejo."] },
   { v: '0.7.19', real: ["<b>YA SE PUEDE JUGAR</b>: Fans Of Karts sale de Próximamente. La física, los suelos y los objetos se han repasado por dentro, con las 33 pistas comprobadas una a una para que se conduzca igual que en las pruebas."], joke: ["Microblizz ha quitado el cartel de «Próximamente» y Phony ya ha salido a toda velocidad antes de que se seque la pintura."] },
   { v: '0.7.18', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },

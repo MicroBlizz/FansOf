@@ -8,7 +8,7 @@
   flex: 0 1 auto; min-height: 0; align-content: start;
   max-height: calc((100dvh - var(--sup) - var(--inf) - 24px) / var(--escala-menu, 1));
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y;
-  padding-top: 0; scrollbar-width: thin;
+  padding-top: 0;
 }
 .mb-barra {
   position: sticky; top: 0; z-index: 6;

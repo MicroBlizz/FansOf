@@ -15,7 +15,7 @@ const NOVA_FACCIONES = {
   },
   nomuertos: {
     nave: { nombre: 'Sepulcro', base: 'fragata', matiz: 135, anclajes: { 1: { 2: [22, -36], 3: [70, 0], 4: [78, 40] }, 2: { 1: [76, 42], 2: [24, -31], 3: [74, 22], 4: [90, 57] }, 3: { 2: [49, -10], 3: [105, 14], 4: [109, 42] }, 4: { 4: [129, 34] }, 5: { 3: [102, 16], 4: [143, 86] }, 6: { 3: [118, 2], 4: [163, 74] } }, brief: 'Casco morado oscuro con costillas de hueso, proa con calavera, alas de murciélago de hueso y brillo verde azulado.' },
-    insignia: { id: 'segadoraAlmas', portador: 'drones', carga: 'energia', nombre: 'Segadora de almas', dano: 1.2, n: 1, rasgo: { tipo: 'robo', parte: 0.08 }, efecto: 'Sus drones te curan una parte del daño que hacen' },
+    insignia: { id: 'segadoraAlmas', portador: 'drones', carga: 'energia', nombre: 'Segadora de almas', dano: 1.2, n: 1, rasgo: { tipo: 'robo', parte: 0.04 }, efecto: 'Sus drones te curan una parte del daño que hacen' },
     secreta: { id: 'coroAlmas', portador: 'drones', carga: 'energia', nombre: 'Coro de almas', dano: 0.8, n: 5, cad: 1.1, efecto: 'Un enjambre de ocho espectros que lo atraviesan todo' },
     especial: { id: 'dronesTumba', portador: 'drones', carga: 'cinetica', nombre: 'Drones de la tumba', dano: 1.15, n: 1, rasgo: { tipo: 'robo', parte: 0.03 }, efecto: 'Un dron más que cura un poco al golpear y derriba misiles', rango: 15 }
   },
@@ -27,13 +27,13 @@ const NOVA_FACCIONES = {
   },
   heroes: {
     nave: { nombre: 'Templo', base: 'crucero', matiz: 185, anclajes: { 1: { 2: [49, -42], 3: [80, -14] }, 2: { 2: [34, -43], 3: [110, 18] }, 3: { 3: [125, 18] }, 4: { 2: [60, -54], 3: [128, -15] }, 5: { 3: [168, -23] }, 6: { 2: [62, -52] } }, brief: 'Dorado y azul real, columnas como motores, cresta alada de laurel; alas en forma de escudo.' },
-    insignia: { id: 'rayoZeus', portador: 'laser', carga: 'energia', nombre: 'Rayo de Zeus', dano: 1.3, cad: 0.8, rasgos: [{ tipo: 'cadena', saltos: 2, mult: 0.5, radio: 240 }, { tipo: 'precision', cada: 5, mult: 2 }], efecto: 'Salta a dos enemigos más; cada quinto disparo es un crítico seguro' },
+    insignia: { id: 'rayoZeus', portador: 'laser', carga: 'energia', nombre: 'Rayo de Zeus', dano: 2.2, cad: 0.8, rasgos: [{ tipo: 'cadena', saltos: 2, mult: 0.5, radio: 240 }, { tipo: 'precision', cada: 5, mult: 2 }], efecto: 'Salta a dos enemigos más; cada quinto disparo es un crítico seguro' },
     secreta: { id: 'tormentaOlimpica', portador: 'laser', carga: 'energia', nombre: 'Tormenta olímpica', dano: 1.1, cad: 0.9, rasgo: { tipo: 'cadena', saltos: 3, mult: 0.7, radio: 99999 }, efecto: 'Cada rayo cae además sobre tres enemigos más, estén donde estén' },
     especial: { id: 'lanzaAlba', portador: 'railgun', carga: 'energia', nombre: 'Lanza del Alba', dano: 1.2, alc: 1.2, perf: 3, efecto: 'Una lanza de luz que llega lejos y atraviesa', rango: 15 }
   },
   ciber: {
     nave: { nombre: 'Crucero', casco: 'crucero', anclajes: { 6: { 1: [132, 44], 2: [80, -64], 3: [128, 20], 4: [181, 78] } } },
-    insignia: { id: 'pulsoHackeo', portador: 'laser', carga: 'energia', nombre: 'Pulso de hackeo', dano: 1, cad: 1.2, alc: 0.85, rasgo: { tipo: 'hackeo', parte: 0.5 }, efecto: 'El primer pulso sobre un enemigo le quita la mitad del escudo' },
+    insignia: { id: 'pulsoHackeo', portador: 'laser', carga: 'energia', nombre: 'Pulso de hackeo', dano: 2, cad: 1.2, alc: 0.85, rasgo: { tipo: 'hackeo', parte: 0.5 }, efecto: 'El primer pulso sobre un enemigo le quita la mitad del escudo' },
     secreta: { id: 'firewall', portador: 'drones', carga: 'cinetica', nombre: 'Firewall', dano: 1.2, n: 2, cad: 1.3, efecto: 'Drones cortafuegos que derriban misiles y pegan fuerte', },
     especial: { id: 'laserRed', portador: 'laser', carga: 'energia', nombre: 'Láser de red', dano: 1.1, cad: 1.3, alc: 1.2, efecto: 'Un láser rápido y de largo alcance', rango: 15 }
   },
@@ -57,7 +57,7 @@ const NOVA_FACCIONES = {
   },
   pop: {
     nave: { nombre: 'Estreno', base: 'crucero', matiz: 110, anclajes: { 1: { 2: [24, -36], 3: [105, 16] }, 2: { 2: [34, -11], 3: [110, 18] }, 4: { 3: [132, -19] }, 5: { 2: [50, -38], 3: [152, 9] }, 6: { 2: [80, -24], 3: [174, 2] } }, brief: 'Rosa y blanco, rayas de claqueta en las alas, focos en la proa, proa de megáfono.' },
-    insignia: { id: 'secuela', portador: 'laser', carga: 'termica', nombre: 'Secuela', dano: 0.9, rasgo: { tipo: 'secuela', espera: 0.4, mult: 1.5 }, efecto: 'Cada disparo se repite como secuela con un 50 % más de daño' },
+    insignia: { id: 'secuela', portador: 'laser', carga: 'termica', nombre: 'Secuela', dano: 1.4, rasgo: { tipo: 'secuela', espera: 0.4, mult: 1.5 }, efecto: 'Cada disparo se repite como secuela con un 50 % más de daño' },
     secreta: { id: 'spoiler', portador: 'laser', carga: 'termica', nombre: 'Spoiler', dano: 1.3, cad: 1.1, rasgo: { tipo: 'jefe', mult: 2 }, efecto: 'Revela el punto débil de los jefes: el doble de daño contra ellos' },
     especial: { id: 'canonConfeti', portador: 'flak', carga: 'termica', nombre: 'Cañón de confeti', dano: 0.9, n: 5, efecto: 'Una nube de perdigones que calienta a todo el grupo', rango: 15 }
   }

@@ -19,6 +19,7 @@ const TOPES_COMUNES = {
   compra: { vez: { gold: 100000, gems: 10000 }, dia: { gold: 1000000, gems: 100000 } },   // la tienda de prueba (no cobra); desaparece cuando haya pagos reales
   pruebas: { vez: { gold: 3000000, gems: 5000 }, dia: { gold: 12000000, gems: 20000 } },   // modo pruebas de quien desarrolla
   'quitar-pruebas': { vez: {}, dia: {} },   // solo restas
+  'tienda-gemas': { vez: {}, dia: {} },   // la tienda de gemas sin cuenta (core/js/sistema/tienda-fija.js): solo restas; con cuenta cobra comprar_fijo (servidor/112)
   gachapon: { vez: {}, dia: {} }, 'retirar-numeros': { vez: {}, dia: {} }, 'mejorar-carta': { vez: {}, dia: {} },   // gastos que cuenta un juego que aún los hace aquí: solo restas
   despedir: { vez: { gold: 1000000 }, dia: { gold: 5000000 } },   // oro de despedir copias (el juego con servidor lo calcula allí)
 };

@@ -94,16 +94,23 @@ async function ofertasPinta() {
     const tengo = of.tengo || arTiene(cat, it);
     const d = document.createElement('div'); d.className = 'tn-tarjeta oferta hoy';
     const k = arLienzo(54, 54); arPinta(k, (c, w) => it.x(c, w)); d.appendChild(k);
-    const t = document.createElement('div'); t.className = 'tn-texto'; t.innerHTML = '<b></b><small></small>'; t.children[0].textContent = tr(it.n); t.children[1].textContent = tengo ? tr('YA ES TUYO') : tr('−30 % solo hoy'); d.appendChild(t);
-    const bs = document.createElement('div'); bs.className = 'tn-dos';
-    for (const [mon, n] of [['acciones', of.pa], ['gotas', of.pg]]) {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq tn-boton'; b.disabled = tengo;
-      b.appendChild(iconoPeq(ICONO_MONEDA[mon], 20)); const s = document.createElement('span'); s.textContent = String(n); b.appendChild(s);
-      b.onclick = () => ofertaCompra(of.pieza, mon, n, tr(it.n));
-      bs.appendChild(b);
-    }
+    const t = document.createElement('div'); t.className = 'tn-texto'; t.innerHTML = '<b></b><small></small>'; t.children[0].textContent = tr(it.n); t.children[1].textContent = tengo ? tr('YA ES TUYO') : tr('solo hoy'); d.appendChild(t);
+    if (!tengo) { const rb = document.createElement('i'); rb.className = 'tn-rebaja'; rb.textContent = '−30 %'; d.appendChild(rb); }
+    const bs = document.createElement('div'), antes = arPrecio(it) || {}; bs.className = 'tn-dos';
+    for (const [mon, n] of [['acciones', of.pa], ['gotas', of.pg]]) bs.appendChild(ofertaBoton(of.pieza, mon, n, antes[mon], tr(it.n), tengo));
     d.appendChild(bs); lista.appendChild(d);
   }
+}
+// un botón de pago de la oferta: el precio de siempre tachado encima y el rebajado debajo; si no te llega, rojizo y avisa (como el resto de la tienda)
+function ofertaBoton(pieza, mon, n, antes, nombre, tengo) {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq tn-boton tn-con-antes'; b.disabled = tengo;
+  if (antes && antes > n) { const s = document.createElement('s'); s.className = 'tn-antes'; s.textContent = String(antes); b.appendChild(s); }
+  const fila = document.createElement('span'); fila.className = 'tn-ahora'; fila.appendChild(iconoPeq(ICONO_MONEDA[mon], 20));
+  const s = document.createElement('span'); s.textContent = String(n); fila.appendChild(s); b.appendChild(fila);
+  const falta = !tengo && (SAVE[mon] || 0) < n;
+  b.classList.toggle('falta', falta);
+  b.onclick = () => { if (falta) { b.classList.remove('sacude'); void b.offsetWidth; b.classList.add('sacude'); } ofertaCompra(pieza, mon, n, nombre); };
+  return b;
 }
 async function ofertaCompra(pieza, moneda, n, nombre) {
   if ((SAVE[moneda] || 0) < n) { play('deny'); if (moneda === 'acciones') avisa(tr('No tienes bastantes Acciones'), 'malo'); else avisa(tr('Te faltan gotas: juega partidas y recoge el premio diario'), 'malo'); return; }

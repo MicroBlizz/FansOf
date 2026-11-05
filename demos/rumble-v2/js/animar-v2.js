@@ -64,11 +64,12 @@ const V2A = (() => {
     if (!D || !HOJA[u.type]) return drawUnitOriginal(u);
     const s = SPR[u.type], antes = { c: s.c, w: s.w, g: s.g, wd: s.wd, ht: s.ht, ax: s.ax, ay: s.ay };
     const [a, col] = estado(u, D), lado = vista(u, D, a), f = fotograma(u.type, D, lado, a, col, u.face < 0);
-    const corrAntes = CORRUPT[u.type];
+    const corrAntes = CORRUPT[u.type], T = TYPES[u.type], pieAntes = T.foot;
+    T.foot = null;   // los pies dibujados del original no: la animación ya trae los suyos (se veían superpuestos)
     Object.assign(s, { c: f.c, w: f.w, g: f.g, wd: f.wd, ht: f.ht, ax: f.ax, ay: f.ay });
     if (u.corrupt) CORRUPT[u.type] = f.corrupt();
     try { drawUnitOriginal(u); }
-    finally { Object.assign(s, antes); if (u.corrupt) { if (corrAntes) CORRUPT[u.type] = corrAntes; else delete CORRUPT[u.type]; } }
+    finally { Object.assign(s, antes); T.foot = pieAntes; if (u.corrupt) { if (corrAntes) CORRUPT[u.type] = corrAntes; else delete CORRUPT[u.type]; } }
   };
 
   // al morir, se queda en el suelo haciendo su animación y luego se desvanece

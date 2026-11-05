@@ -40,7 +40,7 @@ async function tiendaServidorHecha(tipo, idx, texto) {
   try {
     if (tipo === 'canje') { await RFS.llama('rf_cambiar', { p_idx: idx }); play('crown'); avisa(tr('+{n} Acciones', { n: TIENDA.canje[idx].n }), 'bueno'); }
     else { await RFS.llama('rf_tienda_prueba', { p_tipo: tipo, p_idx: idx }); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); }
-    tiendaPinta();
+    tiendaPinta(); tiendaSigueCompra();
   } catch (e) { RFS.error(e); }
 }
 async function pasePremiumServidor() {
@@ -58,4 +58,4 @@ async function gachaTiraServidor(n, gratis, maq = 'ropa') {
   return est.sale.map(s => { const [cat, id] = s.pieza.split(':'); return { cat, it: arItem(cat, id), nuevo: s.nuevo, devuelve: s.devuelve, unidades: s.unidades }; }).filter(x => x.it);
 }
 // una compra con dinero real (Google Play, core/js/sistema/pagos.js) la entrega el servidor (servidor/91): aquí solo se vuelve a pedir el estado y se repinta la tienda
-if (typeof hook === 'function') hook('compra', () => { if (!RFS.activo()) return; RFS.refresca().then(() => { const t = E('p-tienda'); if (t && !t.hidden) tiendaPinta(); }); });
+if (typeof hook === 'function') hook('compra', () => { if (!RFS.activo()) return; RFS.refresca().then(() => { const t = E('p-tienda'); if (t && !t.hidden) { tiendaPinta(); tiendaSigueCompra(); } }); });

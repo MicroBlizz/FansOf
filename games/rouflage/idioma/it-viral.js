@@ -208,7 +208,7 @@ IDIOMA.add({
   "Acabaste en la liga {l}. Tu premio:": "Hai finito nella lega {l}. Il tuo premio:",
   "¡Premio de temporada cobrado!": "Premio di stagione riscosso!",
   "Cambian en {h} h {m} min": "Cambiano tra {h} h {m} min",
-  "−30 % solo hoy": "−30 % solo oggi",
+  "solo hoy": "solo oggi",
   "ESTA SEMANA": "QUESTA SETTIMANA",
   "AL ACABAR": "ALLA FINE",
   "PREMIO DE LIGA": "PREMIO DI LEGA",
@@ -221,4 +221,16 @@ IDIOMA.add({
   // economía (23-10-2026)
   "Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.": "Garanzie: una Rara o meglio ogni {r} capsule, un'Epica ogni {e} e una Leggendaria ogni {l}. Sei a {a}, {b} e {c} dall'ultima.",
   "Con PREMIUM consigues además {n} cosas y {a} Acciones: con las del pase gratis, el siguiente te sale a mitad de precio.": "Con PREMIUM ottieni anche {n} cose e {a} Azioni: con quelle del pass gratis, il prossimo ti costa la metà.",
+  // la tienda con pestañas (5-11-2026, ADR 052)
+  "DESTACADO": "IN EVIDENZA",
+  "OBJETOS": "OGGETTI",
+  "CAMBIAR GOTAS": "CAMBIA GOCCE",
+  "COMPRAR ACCIONES": "COMPRA AZIONI",
+  "Se paga con Acciones": "Si paga con Azioni",
+  "{a} Acciones · en la tienda": "{a} Azioni · in negozio",
+  "VER EN LA TIENDA": "VEDI IN NEGOZIO",
+  "Conjunto del Rumble: cabeza, espalda, cara y papel": "Completo del Rumble: testa, schiena, faccia e carta",
+  "DESTACADO DE LA SEMANA": "IN EVIDENZA QUESTA SETTIMANA",
+  "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "Ti mancano {n} Azioni per «{c}». Cambiale con le Gocce o ottienile qui, e tornerai all'acquisto.",
+  "ESTE TE LLEGA": "QUESTO BASTA",
 });

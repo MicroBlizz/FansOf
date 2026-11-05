@@ -2,6 +2,9 @@
 'use strict';
 IDIOMA.add({
   // 0.2.68
+  "<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games.": "<b>START SCREEN</b>: when you open the game, you'll see the studio logo, Fans Of Games.",
+  "<b>TIENDA NUEVA</b>: la tienda vende todo lo de pago del armario en tres pestañas (DESTACADO, OBJETOS y ACCIONES) y lo de la tienda se paga con Acciones; el armario es para vestirte y probarte lo que aún no tienes. Los menús avisan de lo nuevo, las ofertas enseñan el precio tachado y las barras de desplazamiento son una brocha que pinta su camino.": "<b>NEW SHOP</b>: the shop sells everything paid from the wardrobe in three tabs (FEATURED, ITEMS and SHARES) and shop items are paid with Shares; the wardrobe is for dressing up and trying on what you don't own yet. Menus flag what's new, deals show the crossed-out price and the scroll bars are a brush that paints its own path.",
+  "Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él.": "Microblizz asked for its logo to be bigger on the start screen. Phony asked to be on it himself.",
   "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
   "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked to show its best side.",
   // 0.2.67

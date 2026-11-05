@@ -85,10 +85,10 @@ function lienzoBlanco(e) {
 const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Legendaria' };
 // lo que cuestan N Acciones en euros, al precio del paquete pequeño (solo se enseña en la ventana de confirmar la compra: armario-compra.js)
 function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'en' ? e : e.replace('.', ','); }
-// cómo se consigue, en la ficha: lo que se vende, con sus dos precios (sin euros: esos salen al confirmar la compra)
+// cómo se consigue, en la ficha: lo que se vende, con su precio (lo de la tienda, solo en Acciones: ADR 052; sin euros: esos salen al confirmar)
 function arTextoDe(it) {
   const t = it.txt, pr = arPrecio(it); let m;
-  if (pr) return tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas }) + (pr.rebaja ? ' · ' + tr('rebajado por tener el conjunto') : it.conj ? ' · ' + tr('{n} con su conjunto', { n: it.conj.txt }) : '');
+  if (pr) return (RF.Escaparate.monedas(it).includes('gotas') ? tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas }) : tr('{a} Acciones · en la tienda', { a: pr.acciones })) + (pr.rebaja ? ' · ' + tr('rebajado por tener el conjunto') : it.conj ? ' · ' + tr('{n} con su conjunto', { n: it.conj.txt }) : '');
   if (typeof t === 'number') return tr('Solo en el gachapón, con Gotas');
   if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
   if ((m = /^(\d+) Gotas$/.exec(t))) return tr('{n} Gotas', { n: m[1] });

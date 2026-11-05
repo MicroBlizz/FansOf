@@ -1,11 +1,15 @@
 // Fans of Rouflage · LA TIENDA: paquetes de Acciones (con su precio en euros), ofertas (el Pack de inicio y el pase premium), Acciones a cambio
 // de Gotas (que se ganan jugando) y el Caos primordial ilimitado (el de toda la serie, ENERGIA). Como en el resto de la serie, de momento es DE PRUEBA: no se cobra
 // nada y lo que compras se te da (PLAN-TIENDA.md dice qué falta para cobrar de verdad). Va con el armario: solo en la alfa y en desarrollo.
-// Se abre desde MI PERFIL › TIENDA, o sola cuando te faltan Acciones en el armario o en el pase (y VOLVER te devuelve allí).
+// Se abre desde el botón TIENDA del título, o sola cuando te faltan Acciones en una compra o en el pase (y VOLVER te devuelve allí).
+// Tres pestañas (ADR 052): DESTACADO (gachapón, conjunto de la semana, ofertas), OBJETOS (todo lo de pago del armario: tienda-objetos.js) y ACCIONES.
 'use strict';
 
 const TIENDA = {
   desde: 'titulo',
+  pestana: 'dest',      // 'dest' | 'obj' | 'acc'
+  cat: null,            // la categoría que se ve en OBJETOS
+  pendiente: null,      // { cat, it }: la pieza que querías comprar cuando te faltaron Acciones; al tenerlas se vuelve a abrir su compra
   acciones: [      // { n: Acciones, eur: precio, extra: % de regalo sobre el pack pequeño }
     { n: 100, eur: 0.99 }, { n: 550, eur: 4.99, extra: 10 }, { n: 1200, eur: 9.99, extra: 20 }, { n: 2600, eur: 19.99, extra: 30 }, { n: 7000, eur: 49.99, extra: 40 },
   ],
@@ -26,10 +30,25 @@ function pintaAcciones(c, w) {
   c.restore();
 }
 
-function abreTienda(desde) { ecoEstado(); TIENDA.desde = desde || 'titulo'; tiendaPinta(); pantalla('p-tienda'); play('select'); }
+// abre la tienda; op: { pestana, cat, pendiente } (sin pestaña: DESTACADO, o ACCIONES si vienes del pase o con una compra a medias)
+function abreTienda(desde, op = {}) {
+  ecoEstado(); TIENDA.desde = desde || 'titulo';
+  TIENDA.pendiente = op.pendiente || null;
+  if (op.cat) TIENDA.cat = op.cat;
+  TIENDA.pestana = op.pestana || (TIENDA.pendiente || desde === 'pase' ? 'acc' : 'dest');
+  tiendaPinta(); pantalla('p-tienda'); play('select');
+  E('tienda-lista').scrollTop = 0;
+}
+const TIENDA_VUELTA = { armario: () => abreArmario(ARMARIO.cat, ARMARIO.desde), pase: () => abrePase(), gacha: () => abreGacha(), escenario: () => abreEscenario() };
 function cierraTienda() {
-  play('select');
-  if (TIENDA.desde === 'armario') abreArmario(ARMARIO.cat, ARMARIO.desde); else if (TIENDA.desde === 'pase') abrePase(); else if (TIENDA.desde === 'gacha') abreGacha(); else irTitulo();
+  play('select'); TIENDA.pendiente = null;
+  (TIENDA_VUELTA[TIENDA.desde] || irTitulo)();
+}
+// después de conseguir Acciones (cambio de Gotas o compra): si venías de una pieza y ya te llega, se vuelve a abrir su compra
+function tiendaSigueCompra() {
+  const p = TIENDA.pendiente; if (!p) return;
+  const pr = arPrecio(p.it); if (!pr || SAVE.acciones < pr.acciones) return;
+  TIENDA.pendiente = null; tiendaPinta(); arPideCompra(p.cat, p.it);
 }
 function tiendaCompra(texto, da) { MONEDAS.recomiendaCuenta(() => tiendaCompraHecha(texto, da)); }
 // lo que cuesta euros: en la app de Android, Google Play (core/js/sistema/pagos.js: el servidor entrega, servidor/91, y el estado vuelve por el gancho 'compra'
@@ -39,7 +58,7 @@ function tiendaEuros(tipo, idx, texto, precio, producto, daLocal) {
   if ((typeof PAGOS !== 'undefined' && PAGOS.disponible()) || pagoWeb()) return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => { if (r && r.real) { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); } }, producto);
   return RFS.activo() ? tiendaServidor(tipo, idx, texto) : tiendaCompra(texto, daLocal);
 }
-function tiendaCompraHecha(texto, da) { REPORTE.suceso('compra', { donde: 'tienda' }); da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); }
+function tiendaCompraHecha(texto, da) { REPORTE.suceso('compra', { donde: 'tienda' }); da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); tiendaSigueCompra(); }
 
 // un montón de títulos de Acciones (1 a 5): cuanto más grande el paquete, más alto el montón; el de arriba, el icono de siempre
 function pintaMontonAcciones(c, w, n) {
@@ -108,16 +127,26 @@ function tiendaPinta() {
   for (const pk of TIENDA.acciones.filter(pk => !pagoWeb() || pk.eur >= PAGOS_WEB.minimo())) ac.appendChild(   // en la web, sin los packs que se comería la comisión fija
     tarjeta((c, w) => pintaMontonAcciones(c, w, TIENDA.acciones.indexOf(pk) + 1), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
     pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, () => tiendaEuros('acciones', TIENDA.acciones.indexOf(pk), tr('{n} Acciones', { n: pk.n }), eurTexto(pk.eur), 'rouflage_acciones_' + pk.n, () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
-  // Acciones a cambio de Gotas (las Gotas solo se ganan jugando)
-  const go = E('tienda-gotas'); go.innerHTML = '';
-  for (const pk of TIENDA.canje) go.appendChild(tarjeta((c, w) => pintaMontonAcciones(c, w, TIENDA.canje.indexOf(pk) + 1), tr('{n} Acciones', { n: pk.n }), tr('Las Gotas se ganan jugando'), { moneda: 'gotas', txt: String(pk.gotas), tengo: SAVE.gotas, hace: pk.gotas }, RFS.activo() ? () => tiendaServidor('canje', TIENDA.canje.indexOf(pk)) : () => {
-    SAVE.gotas -= pk.gotas; SAVE.acciones += pk.n; guardaPartida(); play('crown'); avisa(tr('+{n} Acciones', { n: pk.n }), 'bueno'); tiendaPinta();
-  }, '', 'gotas'));
+  tiendaPintaCanje(tarjeta);
   // el caos primordial ilimitado (el de toda la serie)
   E('tienda-caos').hidden = typeof ENERGIA === 'undefined';
+  tiendaPintaPestanas();      // las pestañas, el destacado y los OBJETOS (tienda-objetos.js)
+}
+// Acciones a cambio de Gotas (las Gotas solo se ganan jugando). Con una compra a medias, «ESTE TE LLEGA» marca el paquete justo
+function tiendaPintaCanje(tarjeta) {
+  const go = E('tienda-gotas'); go.innerHTML = '';
+  const p = TIENDA.pendiente, pr = p && arPrecio(p.it), llega = pr ? RF.Escaparate.paqueteQueLlega(TIENDA.canje, pr.acciones - SAVE.acciones) : -1;
+  TIENDA.canje.forEach((pk, i) => {
+    const t = tarjeta((c, w) => pintaMontonAcciones(c, w, i + 1), tr('{n} Acciones', { n: pk.n }), tr('Las Gotas se ganan jugando'), { moneda: 'gotas', txt: String(pk.gotas), tengo: SAVE.gotas, hace: pk.gotas }, RFS.activo() ? () => tiendaServidor('canje', i) : () => {
+      SAVE.gotas -= pk.gotas; SAVE.acciones += pk.n; guardaPartida(); play('crown'); avisa(tr('+{n} Acciones', { n: pk.n }), 'bueno'); tiendaPinta(); tiendaSigueCompra();
+    }, '', 'gotas');
+    if (i === llega) { t.classList.add('llega'); const c = document.createElement('i'); c.className = 'tn-cinta'; c.textContent = tr('ESTE TE LLEGA'); t.appendChild(c); }
+    go.appendChild(t);
+  });
 }
 function preparaTienda() {
   E('b-tienda').onclick = () => abreTienda('titulo');
   E('b-tienda-volver').onclick = cierraTienda;
+  preparaTiendaPestanas();
   E('b-tienda-caos').onclick = () => { play('select'); if (typeof ENERGIA !== 'undefined') ENERGIA.abrirTienda(); };
 }

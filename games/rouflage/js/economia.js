@@ -150,7 +150,11 @@ function arPintaCompra(cat, it) {
   if (!b) return;
   const otra = muebleOtraMas(cat, it);      // un mueble que ya es tuyo: se compra otra unidad (muebles-unidades.js)
   b.hidden = !pr || (arTiene(cat.id, it) && !otra);
-  if (!b.hidden) { b.textContent = otra ? tr('COMPRAR OTRA · tienes {n}', { n: muebleUnidades(it.id) }) : tr('COMPRAR'); b.classList.toggle('falta', SAVE.gotas < pr.gotas && SAVE.acciones < pr.acciones); b.onclick = () => arPideCompra(cat, it); }
+  if (b.hidden) return;
+  // el armario es para vestirse: lo que no tienes se prueba aquí y se compra en la tienda (ADR 052), que se abre en su pieza
+  b.textContent = otra ? tr('OTRA EN LA TIENDA · tienes {n}', { n: muebleUnidades(it.id) }) : tr('VER EN LA TIENDA');
+  b.classList.remove('falta');
+  b.onclick = () => { abreTienda('armario', { pestana: 'obj', cat: cat.id }); arPideCompra(cat, it); };
 }
 
 /* ---------- la pantalla del pase ---------- */

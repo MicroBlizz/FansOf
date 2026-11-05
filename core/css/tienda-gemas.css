@@ -1,0 +1,27 @@
+/* Fans Of · Estilos de la TIENDA DE GEMAS (core/js/sistema/tienda-fija.js, ADR 050): tarjetas de cosméticos y ventajas, y filas del escaparate */
+
+.fija-intro { margin-bottom: 4px; }
+.fija-sec { width: 100%; max-width: 508px; margin: 10px 0 4px; font-family: var(--font-display); font-size: 17px; font-weight: 400; color: var(--gold); letter-spacing: .5px; }
+.fija-grid { width: 100%; max-width: 508px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.fija-card { display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 3px solid var(--outline); border-radius: 14px; background: linear-gradient(160deg, var(--rc, #3e2363), var(--tray) 60%); box-shadow: 0 3px 0 var(--outline); }
+.fija-card.ancha { grid-column: 1 / -1; }
+.fija-ver { min-height: 76px; border-radius: 10px; border: 3px solid var(--outline); background: var(--panel-2); display: flex; align-items: center; justify-content: center; padding: 6px; }
+.fija-ver canvas { width: 64px; height: 64px; }
+.fija-frases { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.fija-frases b { font-size: 11.5px; font-weight: 800; background: var(--ink); color: var(--outline); border: 2px solid var(--outline); border-radius: 8px; padding: 2px 6px 1px; }
+.fija-ic { font-family: var(--font-display); font-size: 26px; color: var(--ink); }
+.fija-rar { align-self: flex-start; display: inline-block; font-size: 10.5px; font-weight: 800; border-radius: 6px; padding: 2px 6px 1px; border: 2px solid var(--outline); color: var(--outline); }
+.fija-nm { font-family: var(--font-display); font-size: 15px; font-weight: 400; line-height: 1.05; display: block; }
+.fija-nota { display: block; font-size: 11px; font-weight: 700; line-height: 1.2; color: var(--ink-dim); }
+.fija-q { font-size: 11px; font-weight: 800; color: var(--gold); }
+.fija-card .btn-price, .fija-fila .btn-price { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 44px; margin-top: auto; }
+.fija-card .btn-price svg, .fija-fila .btn-price svg { width: 16px; height: 16px; }
+.fija-banner { width: 100%; max-width: 508px; box-sizing: border-box; border: 3px solid var(--outline); border-radius: 14px; background: linear-gradient(100deg, #b0213a, #6d28c9); padding: 10px 12px; box-shadow: 0 3px 0 var(--outline); }
+.fija-banner b { display: block; font-family: var(--font-display); font-size: 18px; font-weight: 400; line-height: 1.05; }
+.fija-banner span { display: block; font-size: 11.5px; font-weight: 700; line-height: 1.25; color: #ffd6dc; }
+.fija-fila { width: 100%; max-width: 508px; box-sizing: border-box; display: grid; grid-template-columns: 50px 1fr 96px; gap: 10px; align-items: center; padding: 10px; border: 3px solid var(--outline); border-radius: 14px; background: linear-gradient(100deg, var(--rc, #3e2363), var(--tray) 55%); box-shadow: 0 3px 0 var(--outline); }
+.fija-fila > div { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+
+/* la fila de pestañas nuevas de la tienda (Cosméticos, Ventajas, Escaparate…): debajo de Oro, Gemas y Caos, centrada y sin cortarse */
+.tabs-nuevas { flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.tabs-nuevas[hidden] { display: none; }

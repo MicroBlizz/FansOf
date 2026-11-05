@@ -4,6 +4,7 @@
 .shop-note b { color: var(--gold); }
 .gift-row { width: 100%; max-width: 508px; }
 .pack { position: relative; display: grid; grid-template-columns: 60px 1fr auto; gap: 10px; align-items: center; border: 3px solid var(--outline); border-radius: 14px; background: linear-gradient(100deg, var(--pc, #7a5310) 0%, var(--tray) 58%); padding: 8px 10px 8px 6px; box-shadow: 0 3px 0 var(--outline); text-align: left; flex: none; }
+.pack:has(.joke-flag) { overflow: hidden; }   /* la cinta en diagonal («1 VEZ», «PARA SIEMPRE») se recorta dentro de su tarjeta */
 .pack.gem { --pc: #8a1f6e; }
 .pack.gift { --pc: #1f7a3a; }
 .pack.joke { --pc: #b0213a; overflow: hidden; }

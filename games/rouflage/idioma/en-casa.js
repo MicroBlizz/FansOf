@@ -8,7 +8,7 @@ IDIOMA.add({
   "Muebles, escenarios y cosas de los mapas con la máquina de gancho. Solo con Gotas.": "Furniture, scenes and things from the maps in the claw machine. Drops only.",
   "La máquina CASA es una máquina de gancho con muebles, escenarios y cosas de los mapas, y es más barata. Un mueble repetido es una unidad más para poner en tu escenario; un escenario repetido te devuelve Gotas.": "The HOME machine is a claw machine with furniture, scenes and things from the maps, and it costs less. A repeated piece of furniture is one more unit to place in your scene; a repeated scene gives you Drops back.",
   "+1 UNIDAD · TIENES {n}": "+1 UNIT · YOU HAVE {n}",
-  "COMPRAR OTRA · tienes {n}": "BUY ANOTHER · you have {n}",
+  "OTRA EN LA TIENDA · tienes {n}": "ANOTHER IN THE SHOP · you have {n}",
   "{n}: ya tienes {u}": "{n}: you now have {u}",
   "NO TE QUEDAN MÁS": "NONE LEFT",
   "Ya has puesto todas tus unidades de {n}. Consigue más en la máquina CASA del gachapón o cómpralas en el armario.": "You've placed all your units of {n}. Get more from the HOME machine in the gachapon or buy them in the wardrobe.",

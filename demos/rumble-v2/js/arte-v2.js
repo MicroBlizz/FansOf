@@ -9,7 +9,13 @@ const V2 = (() => {
     'ceo', 'becario', 'starbot', 'fallen', 'e_tower', 'e_base', 'e_rubble',
   ];
   // fondos del campo: facción|plaza -> archivo (todo en WebP: pesa poco en el móvil)
-  const FONDOS = { 'animales|mb': 'fondo-animales-mb' };
+  // (el de Animales se baja al empezar; los demás, la primera vez que hacen falta)
+  const FONDOS = {
+    'animales|mb': 'fondo-animales-mb', 'animales|ph': 'fondo-animales-ph', 'animales|ia': 'fondo-animales-ia',
+    'nomuertos|mb': 'fondo-nomuertos-mb', 'streamers|mb': 'fondo-streamers-mb', 'heroes|mb': 'fondo-heroes-mb', 'ciber|mb': 'fondo-ciber-mb',
+    'memes|mb': 'fondo-memes-mb', 'gamer|mb': 'fondo-gamer-mb', 'olvidados|mb': 'fondo-olvidados-mb', 'pop|mb': 'fondo-pop-mb',
+  };
+  const pedidos = new Set();   // fondos que ya se están bajando
   const IMG = {};   // nombre -> Image ya descargada
   const ver = '?v=' + encodeURIComponent(NUCLEO.version || '0');
   const carga = (nombre, listo) => {
@@ -54,8 +60,8 @@ const V2 = (() => {
   // el fondo del campo pintado (sin puentes: van aparte)
   const buildBGOriginal = buildBG;
   buildBG = function (fac = 'animales', plaza = 'mb') {
-    const im = IMG[FONDOS[fac + '|' + plaza]];
-    if (!im) return buildBGOriginal(fac, plaza);
+    const clave = fac + '|' + plaza, im = IMG[FONDOS[clave]];
+    if (!im) { pideFondo(clave); return buildBGOriginal(fac, plaza); }
     const cv = document.createElement('canvas'); cv.width = W * BG_RES; cv.height = H * BG_RES;
     const c = cv.getContext('2d'); c.imageSmoothingQuality = 'high'; c.drawImage(im, 0, 0, cv.width, cv.height);
     return cv;
@@ -74,9 +80,14 @@ const V2 = (() => {
 
   // lo que llega tarde se cambia en caliente
   SPRITES.forEach(k => carga(k, () => { if (typeof READY !== 'undefined' && READY) aplicaSprite(k); }));
-  Object.entries(FONDOS).forEach(([clave, nombre]) => carga(nombre, () => {
-    if (typeof BG_KEY !== 'undefined' && BG_KEY === clave) { const [f, p] = clave.split('|'); BG = buildBG(f, p); }
-  }));
+  function pideFondo(clave) {
+    if (!FONDOS[clave] || pedidos.has(clave)) return;
+    pedidos.add(clave);
+    carga(FONDOS[clave], () => {
+      if (typeof BG_KEY !== 'undefined' && BG_KEY === clave) { const [f, p] = clave.split('|'); BG = buildBG(f, p); }
+    });
+  }
+  pideFondo('animales|mb');
   carga('puente', () => { if (typeof READY !== 'undefined' && READY) BRIDGE_LAYER = buildBridges(); });
 
   return { SPRITES, FONDOS, IMG };

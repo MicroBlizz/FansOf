@@ -1,0 +1,16 @@
+/* Fans of Rouflage · LAS BARRAS DE DESPLAZAMIENTO (Daniel, 5-11-2026): la barra es una brocha que va de punta a punta y pinta por donde pasa,
+   con un brochazo de bordes irregulares y los colores de las Gotas, que se borra a 50 px de la brocha. Los dibujos los hace barras-pintura.js y llegan como
+   variables: --brocha-v / --brocha-h (la brocha, con las cerdas hacia donde se mueve) --brocha-v-en / --brocha-h-en (su sitio dentro del cursor) y --rastro-v / --rastro-h (la pintura de cada lista).
+   En Chrome, Android y Safari se dibujan con ::-webkit-scrollbar (por eso ningún estilo del juego pone scrollbar-width: si lo pone, Chrome
+   se salta este dibujo); Firefox no deja dibujarlas y solo recibe los colores (al final). Lo que no quiere barra sigue con su display: none. */
+@supports selector(::-webkit-scrollbar) {
+  ::-webkit-scrollbar { width: 14px; height: 14px; }
+  ::-webkit-scrollbar-corner { background: transparent; }
+  ::-webkit-scrollbar-track { background: var(--rastro-v, none) 0 0 / 100% 100% no-repeat; }
+  ::-webkit-scrollbar-track:horizontal { background: var(--rastro-h, none) 0 0 / 100% 100% no-repeat; }
+  ::-webkit-scrollbar-thumb { min-height: 34px; background: var(--brocha-v) 50% var(--brocha-v-en, 50%) / 14px 34px no-repeat; }      /* la brocha va de punta a punta: su sitio dentro del cursor lo da barras-pintura.js */
+  ::-webkit-scrollbar-thumb:horizontal { min-width: 34px; background: var(--brocha-h) var(--brocha-h-en, 50%) 50% / 34px 14px no-repeat; }
+}
+@supports not selector(::-webkit-scrollbar) {
+  * { scrollbar-color: #ff9a3d transparent; }
+}

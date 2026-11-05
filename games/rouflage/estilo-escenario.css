@@ -21,7 +21,7 @@
 .esc-pest:active, .esc-carta:active, .esc-h:active, .esc-col:active, .esc-burbuja button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
 .esc-cab { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 800; color: var(--ink-dim); padding: 0 4px; }
 .esc-cab #esc-pista { color: var(--gold); text-align: right; }
-.esc-tira { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 4px 2px 6px; scrollbar-width: thin; touch-action: pan-x; -webkit-overflow-scrolling: touch; }
+.esc-tira { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 4px 2px 6px; touch-action: pan-x; -webkit-overflow-scrolling: touch; }
 /* la tarjeta: el color de su rareza (degradado, borde y etiqueta), el dibujo sobre un foco de luz y un brillo arriba */
 .esc-carta { --c1: #46597f; --c2: #1e2a45; --tag: #c9d2e2; --luz: rgba(255, 255, 255, 0.16);
   position: relative; flex: 0 0 auto; width: 90px; display: grid; justify-items: center; gap: 2px; padding: 7px 4px 6px; border-radius: 17px; border: 3px solid var(--outline); overflow: hidden;

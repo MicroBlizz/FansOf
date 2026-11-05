@@ -1,6 +1,7 @@
 // Fans Of Taxi · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.7', real: ["<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games."], joke: ["Microblizz ha intentado registrar las iniciales del juego a su nombre. Phony ya ha pedido unas para él."] },
   { v: '0.2.6', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil."] },
   { v: '0.2.5', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes ya saben la hora del juego (se puede poner a mano en las pruebas) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha puesto un reloj en el taxímetro y Phony ha cobrado la hora adelantada."] },
   { v: '0.2.4', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido que salga con su mejor perfil."] },

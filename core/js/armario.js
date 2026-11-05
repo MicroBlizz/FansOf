@@ -211,7 +211,7 @@ const MARCO_ADORNO = {
 function pintaAvatar(cv, LW, id, av) {
   const R2 = 3; cv.width = LW * R2; cv.height = LW * R2;
   const c = cv.getContext('2d'); c.setTransform(R2, 0, 0, R2, 0, 0); c.clearRect(0, 0, LW, LW);
-  const M = MARCO_ARTE[id] || MARCO_ARTE.normal;
+  const M = MARCO_ARTE[id] || (marcoDef(id) || {}).arte || MARCO_ARTE.normal;   // arte: los colores que trae el propio marco del juego (los de la tienda de gemas)
   const m = LW * 0.1, x = m, y = m, w = LW - 2 * m, T = w * 0.1, r = w * 0.22;
   // un halo para los marcos más raros
   if (M.brillo) { c.save(); c.shadowColor = M.brillo; c.shadowBlur = LW * 0.12; c.beginPath(); rrPath(c, x, y, w, w, r); c.fillStyle = M.brillo; c.fill(); c.restore(); }
@@ -231,7 +231,7 @@ function pintaAvatar(cv, LW, id, av) {
 let armTab = 'marco';
 // de dónde sale un marco o un título que aún no tienes (lo buscan los pases; el juego puede decir otra cosa con «de»)
 function lookOrigen(t, id) {
-  const D = (t === 'marco' ? marcoDef : tituloDef)(id); if (D && D.de) return D.de;
+  const D = ((ARM() || {})[LOOK_T[t]] || {})[id]; if (D && D.de) return D.de;   // marcos, títulos, frases y emoticonos
   if (typeof paseOrigen === 'function') { const o = paseOrigen(t, id); if (o) return o; }
   return 'Próximamente';
 }

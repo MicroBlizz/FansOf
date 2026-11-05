@@ -84,3 +84,10 @@
 }
 @media (prefers-reduced-motion: reduce) { .ar-compra.entra, .ar-compra.entra .ac-carta, .ar-compra.entra .ac-lado, .ac-peana canvas, .ac-pago.elegido::after { animation: none; } }
 @media (max-width: 420px) { .ac-pago-tit { font-size: 12px; padding: 0 6px; } }      /* que el sello verde no pise el título en el móvil */
+/* si no te llega: CAMBIAR GOTAS y COMPRAR ACCIONES (llevan a la pestaña ACCIONES de la tienda); con una sola moneda, una sola columna */
+.ac-pagos.una { grid-template-columns: minmax(0, 1fr); }
+.ac-falta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ac-falta[hidden] { display: none; }
+.ac-falta .boton { width: 100%; font-size: 16px; padding: 10px 6px 6px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
+#b-ac-acciones { background: linear-gradient(to bottom, #4fc3ff, #1f7fd0); }
+.ac-botones .boton[hidden] { display: none; }

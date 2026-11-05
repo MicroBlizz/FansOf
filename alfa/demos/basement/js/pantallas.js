@@ -80,7 +80,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     else boton(g, b, C.naranja, tr('ASCENSOR'), 22, tr('subir con la caja'));
   }
 
-  UI.marcador = function (g, e, W, H) { cafe(g, e); planta(g, e, W); cajaHud(g, e, W); if (!e.fin) ascensor(g, e, W, H); };
+  UI.marcador = function (g, e, W, H) { cafe(g, e); planta(g, e, W); cajaHud(g, e, W); B.vista.barraJefe(g, e, W, T); if (!e.fin) ascensor(g, e, W, H); };
 
   UI.palanca = function (g, joy) {
     if (!joy.activo) return;

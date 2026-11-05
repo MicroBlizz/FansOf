@@ -5,7 +5,8 @@
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.AJ.ancho, FX = B.efectos, UI = B.ui;
-  const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 640, botones: [], record: false, pulsoAscensor: false, resultadoT: 0 };
+  const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 640, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
+    mesa: { pestana: 'formacion', sel: null, apertura: null } };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -31,6 +32,13 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     zona: (ev) => { FX.cartel(tr(ev.zona.nombre).toUpperCase(), '#ffe14a', 2, ev.zona.crunch ? tr('CRUNCH ZONE: el café se gasta más rápido') : ''); basSuena('zona'); },
     cafeBajo: () => { FX.cartel(tr('¡QUEDA POCO CAFÉ!'), '#e5322d', 1.6, tr('Sube antes de desmayarte')); basSuena('cafeBajo'); },
     ascensorLlamado: () => { FX.cartel(tr('ASCENSOR EN CAMINO'), '#5fe05f', 1.4, tr('Aguanta unos segundos')); basSuena('ascensorLlamado'); },
+    jefe: (ev) => { FX.cartel(tr(ev.nombre).toUpperCase(), '#e5322d', 2.2, tr('No podrás bajar hasta vencerlo')); FX.temblor = 14; vibrar(80); basSuena('jefe'); },
+    jefeVencido: (ev) => { FX.confeti(ev.x, ev.y); FX.chispas(ev.x, ev.y, 40, '#ffe14a', 200); FX.temblor = 20; FX.cartel(tr('¡JEFE VENCIDO!'), '#5fe05f', 2, tr('Recoge el paquete')); vibrar(120); basSuena('jefeVencido'); },
+    ataqueJefe: () => basSuena('ataqueJefe'),
+    bloqueado: (ev) => { FX.numero(ev.x, ev.y - 30, tr('¡ESCUDO!'), '#3b8de0', 12); basSuena('no'); },
+    rescate: (ev) => { FX.confeti(ev.x, ev.y); FX.cartel(tr('¡BECARIO RESCATADO!'), '#5fe05f', 1.4, ev.ayuda ? tr('Ahora dispara contigo') : tr('Te dará propina')); basSuena('rescate'); },
+    paquete: (ev) => { FX.numero(ev.x, ev.y - 14, '+' + tr('PAQUETE'), '#ffe14a', 16); FX.confeti(ev.x, ev.y); basSuena('compra'); },
+    dronCafe: (ev) => FX.numero(ev.x, ev.y - 14, tr('¡PIZZA Y CAFÉ!'), '#ff8a2a', 12),
     fin: (ev) => { if (ev.como === 'ascensor') FX.confeti(est.e.jugador.x, est.e.jugador.y); else { FX.cartel(tr('¡DESMAYADO!'), '#e5322d', 1.5); vibrar(150); } },
   };
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Basement: sin vibración', err); } }
@@ -52,14 +60,31 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   }
   function arriba(ev) { if (ev.pointerId === joy.id) Object.assign(joy, { activo: false, id: -1, dx: 0, dy: 0 }); }
 
+  // Una regla del dominio que devuelve ok/error: si sale bien, se guarda el progreso nuevo; si no, suena «no».
+  function aplica(r, sonido) {
+    if (!r.ok) { basSuena('no'); return false; }
+    SAVE.progreso = r.valor; basGuarda(); basSuena(sonido || 'compra');
+    return true;
+  }
+  function abrirPaquete(tipo) {
+    const r = B.abrirPaquete(B.AJ, SAVE.progreso, tipo, Math.random);
+    if (!r.ok) { basSuena('no'); return; }
+    SAVE.progreso = r.valor.progreso; basGuarda();
+    est.mesa.apertura = { tipo, premio: r.valor.premio, t0: est.t, revelado: false };
+    basSuena('tiembla');
+  }
   const ACCIONES = {
     bajar: () => empezar(),
     mesa: () => { est.modo = 'mesa'; basSuena('boton'); },
-    comprar: (b) => {
-      const r = B.comprar(B.AJ, SAVE.progreso, b.id);
-      if (!r.ok) { basSuena('no'); return; }
-      SAVE.progreso = r.valor; basGuarda(); basSuena('compra');
-    },
+    pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); },
+    curso: (b) => { est.mesa.sel = b.id; basSuena('boton'); },
+    cerrar: () => { est.mesa.sel = null; },
+    comprarCurso: (b) => { if (aplica(B.comprarCurso(B.AJ, SAVE.progreso, b.id))) est.mesa.sel = null; },
+    equipar: (b) => aplica(B.equipar(B.AJ, SAVE.progreso, b.hueco, b.rareza), 'boton'),
+    mascota: (b) => aplica(B.ponerMascota(B.AJ, SAVE.progreso, b.id), 'boton'),
+    comprarPaquete: (b) => aplica(B.comprarPaquete(B.AJ, SAVE.progreso, b.id)),
+    abrirPaquete: (b) => abrirPaquete(b.id),
+    cerrarApertura: () => { est.mesa.apertura = null; basSuena('boton'); },
   };
   function tocarFuera(p) {
     if (est.modo === 'portada') { est.modo = 'mesa'; basSuena('boton'); return; }
@@ -78,7 +103,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function teclaMenu() {
     if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
     else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
-    else if (est.modo === 'mesa') empezar();
+    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura) empezar();
   }
 
   function orden() {
@@ -91,7 +116,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   // ---------- bajada ----------
   function empezar() {
-    est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, SAVE.progreso));
+    est.e = B.nuevaBajada(B.AJ, B.statsDe(B.AJ, SAVE.progreso), SAVE.progreso.vencidos);
     Object.assign(est, { modo: 'bajada', acum: 0, record: false, pulsoAscensor: false });
     FX.limpiar(); B.vista.reiniciar(est.e, est.H); basSuena('boton');
     FX.cartel(tr('¡A BAJAR!'), '#ffe14a', 1.8, tr('El servidor se ha caído: baja a arreglarlo'));
@@ -125,6 +150,19 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     UI.palanca(G, joy);
   }
 
+  // La mesa; al abrir un paquete, cuando se revela el premio, confeti y fanfarria (más cuanto más raro).
+  function pintarMesa() {
+    est.botones = UI.mesa(G, W, est.H, est.t, B.AJ, SAVE.progreso, est.mesa);
+    const a = est.mesa.apertura;
+    if (a && !a.revelado && est.t - a.t0 >= UI.REVELA) {
+      a.revelado = true;
+      const n = B.AJ.rarezas.indexOf(a.premio.rareza) + 1;
+      for (let i = 0; i < n; i++) FX.confeti(W / 2, est.H * 0.42);
+      basSuena(n >= 3 ? 'jefeVencido' : 'compra'); vibrar(30 * n);
+    }
+    FX.dibujarMundo(G, UI.texto);
+  }
+
   function fotograma(ahora) {
     const dt = Math.min(0.05, (ahora - (est.ultimo || ahora)) / 1000);
     est.ultimo = ahora; est.t += dt; est.resultadoT += dt;
@@ -134,7 +172,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     FX.paso(dt);
     if (est.modo === 'bajada') { est.botones = []; pintarBajada(dt); }
     else if (est.modo === 'resultado') est.botones = UI.resultado(G, W, est.H, est.t, est.e.resultado, est.record);
-    else if (est.modo === 'mesa') est.botones = UI.mesa(G, W, est.H, est.t, B.AJ, SAVE.progreso);
+    else if (est.modo === 'mesa') pintarMesa();
     else est.botones = UI.portada(G, W, est.H, est.t);
     basMusica(est.modo, est.e);
     requestAnimationFrame(fotograma);

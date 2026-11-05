@@ -1,14 +1,25 @@
 // Fans of Basement · utilidades del panel DEV. El panel DEV de core (core/js/sistema/desarrollo.js) solo existe en la alfa y en
-// localhost, nunca en la web publicada: lo que se toca aquí es solo para probar (monedas de prueba y empezar de cero).
+// localhost, nunca en la web publicada: lo que se toca aquí es solo para probar (monedas y paquetes de prueba, abrir toda la
+// formación o todo el equipo, y empezar de cero).
 'use strict';
-const UTILIDADES_JUEGO = [{ titulo: 'Fans of Basement: monedas de prueba', pinta(caja) {
+const UTILIDADES_JUEGO = [{ titulo: 'Fans of Basement: pruebas', pinta(caja) {
   const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#ffe14a' });
-  const pinta = () => { estado.textContent = 'Monedas ' + SAVE.progreso.monedas + ' · Récord: planta -' + SAVE.progreso.record; };
-  const fila = document.createElement('div'); fila.className = 'fila';
-  const boton = (txt, f) => fila.append(Object.assign(document.createElement('button'), { textContent: txt, onclick: () => { f(); basGuarda(); pinta(); } }));
-  boton('+100 monedas', () => { SAVE.progreso = { ...SAVE.progreso, monedas: SAVE.progreso.monedas + 100 }; });
-  boton('+10000 monedas', () => { SAVE.progreso = { ...SAVE.progreso, monedas: SAVE.progreso.monedas + 10000 }; });
-  boton('Empezar de cero', () => { SAVE.progreso = BAS.progresoNuevo(); });
-  caja.append(estado, fila);
+  const pinta = () => { const p = SAVE.progreso; estado.textContent = 'Monedas ' + p.monedas + ' · Cursos ' + p.cursos.length + ' · Paquetes ' + p.paquetes.normal + '+' + p.paquetes.jefe + ' · Récord: planta -' + p.record; };
+  const fila = () => { const d = document.createElement('div'); d.className = 'fila'; caja.append(d); return d; };
+  const cambia = (f) => { const p = BAS.copiaProgreso(SAVE.progreso); f(p); SAVE.progreso = p; };
+  const boton = (d, txt, f) => d.append(Object.assign(document.createElement('button'), { textContent: txt, onclick: () => { cambia(f); basGuarda(); pinta(); } }));
+  caja.append(estado);
+  let d = fila();
+  boton(d, '+100 monedas', (p) => { p.monedas += 100; });
+  boton(d, '+10000 monedas', (p) => { p.monedas += 10000; });
+  boton(d, '+5 paquetes de cada', (p) => { p.paquetes.normal += 5; p.paquetes.jefe += 5; });
+  d = fila();
+  boton(d, 'Toda la formación', (p) => { p.cursos = BAS.AJ.formacion.map((c) => c.id); });
+  boton(d, 'Todo el equipo y mascotas', (p) => {
+    for (const h of Object.keys(BAS.AJ.equipo)) { for (const r of BAS.AJ.rarezas) p.equipo.tiene[h + ':' + r] = true; p.equipo.puesto[h] = 'legendario'; }
+    for (const m of Object.keys(BAS.AJ.mascotas)) p.mascotas[m] = BAS.AJ.nivelMascota.max;
+    p.mascota = 'dron';
+  });
+  boton(d, 'Empezar de cero', (p) => Object.assign(p, BAS.progresoNuevo()));
   pinta();
 } }];

@@ -1,6 +1,7 @@
 // Fans of Basement · Vista del mundo (solo pantalla): la cámara que sigue al jugador, el hueco del ascensor de Microblizz con
 // sus paredes y las puertas de cada planta (con su cartel y los carteles de empresa), el botín, los enemigos, las grapas,
-// el jugador y la cabina del ascensor de emergencia que baja a recogerte.
+// el jugador y la cabina del ascensor de emergencia que baja a recogerte. Los jefes, su cinta de PRECAUCIÓN, sus proyectiles,
+// los becarios atrapados y los ayudantes se dibujan en vista-jefes.js.
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
@@ -107,7 +108,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // La cabina baja desde arriba durante la espera y se para justo encima del jugador.
   function ascensor(g, e, H) {
     if (e.ascensorT < 0 && !(e.fin === 'ascensor')) return;
-    const j = e.jugador, falta = Math.max(0, e.ascensorT) / e.aj.ascensor.espera, y = j.y - 36 - falta * H * 0.55;
+    const j = e.jugador, falta = Math.max(0, e.ascensorT) / e.stats.espera, y = j.y - 36 - falta * H * 0.55;
     g.fillStyle = '#161616'; g.fillRect(j.x - 2, V.camY - 10, 4, y - V.camY);
     g.fillRect(j.x - 34, y - 46, 68, 52);
     g.fillStyle = '#ff8a2a'; g.fillRect(j.x - 31, y - 43, 62, 46);
@@ -120,7 +121,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     recepcion(g, AJ, yA, texto);
     for (let n = Math.max(0, Math.floor(yA / AJ.altoPlanta)); n * AJ.altoPlanta < yB; n++) planta(g, AJ, n, texto);
     paredes(g, AJ, Math.max(0, yA), yB);
-    objetos(g, e); enemigos(g, e); balas(g, e); jugador(g, e); ascensor(g, e, H);
+    V.barrera(g, e, texto); objetos(g, e); V.becarios(g, e, texto); enemigos(g, e); V.jefe(g, e);
+    balas(g, e); V.proyectiles(g, e); V.ayudantes(g, e); jugador(g, e); ascensor(g, e, H);
     B.efectos.dibujarMundo(g, texto);
     g.restore();
   };

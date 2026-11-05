@@ -1,8 +1,8 @@
 {
- "build": 976,
- "hash": "756d674",
- "fecha": "2026-11-05T16:12:00Z",
- "mensaje": "Cola: los trabajos del carril de generar recursos dicen «en pausa» mientras está pausado",
+ "build": 978,
+ "hash": "c045803",
+ "fecha": "2026-11-05T16:23:46Z",
+ "mensaje": "Basement 0.2.0: jefes por zona, becarios atrapados, formación, equipo con rareza, mascotas y paquetes",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

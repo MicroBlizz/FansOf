@@ -1,6 +1,7 @@
 // Fans of Basement · Sonido: el altavoz, el motor de música y las canciones son los de la serie (core/js/sistema/sonido.js y
 // core/js/serie/canciones.js). Aquí lo que ese motor pide a cada juego (volumen y silencio), los efectos propios (chip de 16 bits)
-// y qué canción suena: el jazz de ascensor de Microblizz en la mesa, «ciber» al bajar, la del robot de oficina en la CRUNCH ZONE
+// y qué canción suena: el jazz de ascensor de Microblizz en la mesa, «ciber» al bajar, la del robot de oficina en la CRUNCH ZONE,
+// la de los jefes cuando sale uno
 // y la de ganar o perder al acabar.
 'use strict';
 
@@ -27,6 +28,11 @@ const BAS_SONIDO = {
   boton: () => tone(700, 900, 0.05, 'triangle', basV(0.06)),
   compra: () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, f, 0.08, 'square', basV(0.06), i * 0.06)),
   no: () => tone(200, 150, 0.12, 'square', basV(0.06)),
+  jefe: () => { for (let i = 0; i < 4; i++) { tone(90, 60, 0.25, 'sawtooth', basV(0.1), i * 0.3); noise(0.1, basV(0.08), 300, 'lowpass', i * 0.3); } },
+  jefeVencido: () => [1046, 880, 1046, 1318, 1568].forEach((f, i) => tone(f, f, 0.14, 'square', basV(0.07), i * 0.09)),
+  ataqueJefe: () => tone(260, 180, 0.12, 'square', basV(0.05)),
+  rescate: () => [523, 784, 1046].forEach((f, i) => tone(f, f, 0.1, 'triangle', basV(0.07), i * 0.08)),
+  tiembla: () => { for (let i = 0; i < 6; i++) noise(0.05, basV(0.06), 900, 'bandpass', i * 0.13); },
 };
 function basSuena(n) { try { if (BAS_SONIDO[n]) BAS_SONIDO[n](); } catch (e) { console.warn('Basement: sin sonido', e); } }
 
@@ -39,7 +45,7 @@ function basMusica(modo, e) {
     return;
   }
   if (M.trk && M.trk.once) return;
-  const quiero = modo === 'bajada' ? (e.zona.crunch ? 'boss0' : 'ciber') : 'menu';
+  const quiero = modo !== 'bajada' ? 'menu' : e.jefe ? 'boss' : e.zona.crunch ? 'boss0' : 'ciber';
   if (M.name !== quiero) musicSet(quiero);
   M.tmT = 1;
 }

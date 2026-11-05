@@ -1,6 +1,7 @@
 // Fans of Basement · Enemigos (dominio): los bichos de la oficina. Bugs que corretean y te persiguen si te acercas, correos
 // «RE: RE: URGENTE» que te siguen y al romperse se parten en dos, y reuniones grandes y lentas que, si te tocan, te frenan.
-// Salen por tramos según la planta (más y más duros cuanto más abajo), se borran al quedar muy arriba y sueltan botín al caer.
+// Salen por tramos según la planta (más y más duros cuanto más abajo; ninguno nuevo mientras hay un jefe), se borran al quedar
+// muy arriba y sueltan botín al caer (las reuniones, a veces, un paquete de mensajería).
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
@@ -30,7 +31,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const AJ = e.aj, G = AJ.generar;
     while (e.generadoHasta < e.jugador.y + G.delante) {
       const y = e.generadoHasta, planta = B.plantaDe(AJ, y);
-      if (e.enemigos.length < G.maxActivos && rnd() < E.densidad(AJ, planta)) {
+      if (y % AJ.altoPlanta < G.tramo) B.becarios.alGenerar(e, planta, rnd);   // primer tramo de una planta nueva
+      if (!e.jefe && e.enemigos.length < G.maxActivos && rnd() < E.densidad(AJ, planta)) {
         const x = AJ.pared + 20 + rnd() * (AJ.ancho - 2 * AJ.pared - 40);
         E.crear(e, eligeTipo(AJ, planta, rnd()), x, y + rnd() * G.tramo);
       }
@@ -99,6 +101,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.eventos.push({ tipo: 'baja', x: en.x, y: en.y, enemigo: en.tipo });
     if (d.botin) soltar(e, d.botin, en.x, en.y);
     if (rnd() < AJ.probCafe) soltar(e, 'cafe', en.x + 8, en.y);
+    if (en.tipo === 'reunion' && rnd() < AJ.probPaquete) soltar(e, 'paquete', en.x - 10, en.y);
     if (d.divide) {
       for (const s of [-1, 1]) E.crear(e, d.divide, en.x + s * 10, en.y).dir = s;
       e.eventos.push({ tipo: 'divide', x: en.x, y: en.y });
@@ -107,7 +110,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   function soltar(e, tipo, x, y) {
     const AJ = e.aj, o = AJ.objetos[tipo], planta = B.plantaDe(AJ, y);
-    const valor = Math.round(o.valor * (1 + AJ.valorPorPlanta * planta));
+    const valor = Math.round(o.valor * (1 + AJ.valorPorPlanta * planta) * e.stats.valor);
     e.objetos.push({ id: e.ids++, tipo, x, y, valor, peso: o.peso });
   }
   E.soltar = soltar;

@@ -6,7 +6,7 @@
 'use strict';
 
 (() => {
-  const K = MV_KIT, { OL, capsula, ovalo, tri, silueta, mancha, muelle, dtDe, pataAnda, ojo, boca, colorete, zetas, dormido, env } = K;
+  const K = MV_KIT, { OL, capsula, ovalo, tri, silueta, mancha, muelle, dtDe, pataAnda, gesto, ojo, boca, colorete, zetas, dormido, env } = K;
   // los puntos de una cadena (cola): para trazarla y para pintar por dentro (anillos, punta blanca)
   function puntosCadena(x, y, angs, largo) { const p = [[x, y]]; for (const a of angs) { const [px, py] = p[p.length - 1]; p.push([px + Math.cos(a) * largo, py + Math.sin(a) * largo]); } return p; }
   const trazaCadena = (c, p, r0, r1) => { for (let i = 1; i < p.length; i++) capsula(c, ...p[i - 1], ...p[i], r0 + (r1 - r0) * (i - 1) / (p.length - 1), r0 + (r1 - r0) * i / (p.length - 1)); };
@@ -17,13 +17,14 @@
     const P = { cor, F, sienta: o.acc === 'sienta' ? env(o.k) : 0, duerme: dormido(o), olfatea: o.acc === 'olfatea' ? env(o.k, 0.15) : 0, alto: 0, ladeo: 0, cabExtra: 0, manos: 0 };
     // a saltos (conejo): todas las patas a la vez y un bote grande; andando: el bote pequeño de cada pisada
     P.bote = s.saltos ? cor * Math.max(0, Math.sin(F)) * 4.5 : cor * Math.abs(Math.sin(F)) * 1.3;
+    if (s.saltos) P.ladeo = -cor * Math.cos(F) * Math.max(0, Math.sign(Math.sin(F))) * 0.22;      // a saltos: morro arriba al subir, abajo al caer
     P.bote += Math.sin(o.t * (P.duerme ? 1.4 : 2.6)) * (P.duerme ? 0.45 : 0.22);
     if (s.pose) s.pose(o, P);
     const L = s.largo || 11, cadX = -L / 2, homX = L / 2, y = -(s.altoPatas || 6.5) - 2;
     P.baja = P.duerme * ((s.altoPatas || 6.5) - 2.3) + (P.agacha || 0);
     P.cadX = cadX + (P.culo || 0); P.homX = homX;
     P.cadY = y - P.bote + P.sienta * 3.5 + P.baja - P.alto;
-    P.homY = y - P.bote - P.sienta * (s.erguido ? 5 : 2) + P.baja + P.olfatea * 1.2 - P.alto;
+    P.homY = y - P.bote - P.sienta * (s.erguido ? 5 : 2) + P.baja + P.olfatea * 1.2 - P.alto - (s.altoDel || 0);      // altoDel: los hombros más altos (patas de delante largas)
     P.caX = homX + (s.cuello || 2.8) + P.olfatea * 1.5;
     P.caY = muelle(m, 'caY', P.homY - (s.rCabeza || 4.8) + P.duerme * 2.6 + P.olfatea * 5.5 + P.cabExtra, dt, 110, 10);
     P.cabR = muelle(m, 'cabR', (o.mira || 0) * 0.12 + P.olfatea * (0.45 + Math.sin(o.t * 9) * 0.12) + (o.contento ? Math.sin(o.t * 4) * 0.06 : 0) + P.ladeo, dt, 100, 10);
@@ -39,9 +40,9 @@
     const cola = puntosCadena(P.cadX - 2, P.cadY - 1.5, Array.from({ length: s.colaTrozos || 4 }, (_, i) => P.colaA + P.colaOnda(i + 1)), s.colaLargo || 2.6);
     const patas = [[P.cadX + 1.2, 0, P.sienta], [P.cadX - 1.2, Math.PI, P.sienta], [P.homX - 1, Math.PI / 2, 0], [P.homX + 1.2, Math.PI * 1.5, 0]].map(([hx, ph, pl], i) => {
       const hy = (i < 2 ? P.cadY : P.homY) + 2, delante = i >= 2;
-      const fase = s.saltos ? P.F + (delante ? 0.6 : 0) : P.F + ph;
+      const fase = s.saltos ? P.F + (delante ? 0.7 : -0.45) : P.F + ph;      // a saltos: las de atrás empujan antes y las de delante llegan después
       if (delante && P.manos) return [hx, hy, P.caX + 0.5 + (i === 3 ? 1.5 : -0.5), P.caY + 4 + Math.sin(o.t * 14 + i) * 0.6 * P.manos];      // las manos a la boca
-      return pataAnda(fase, P.cor, hx, hy, (s.altoPatas || 6.5) + P.bote + (delante ? P.sienta * (s.erguido ? 5 : 2) - P.olfatea * 1.2 : 0) - P.baja + (delante ? 0 : P.alto * 0), Math.max(pl, P.duerme));
+      return pataAnda(fase, P.cor, hx, hy, (s.altoPatas || 6.5) + P.bote + (delante ? P.sienta * (s.erguido ? 5 : 2) - P.olfatea * 1.2 + (s.altoDel || 0) : 0) - P.baja, Math.max(pl, P.duerme));
     });
     const traza = cc => {
       capsula(cc, P.cadX, P.cadY, P.homX, P.homY, s.gordo || 4.5, (s.gordo || 4.5) - 0.3);
@@ -54,7 +55,9 @@
       orejas(cc, s, P, false);
       if (s.cabeza) s.cabeza(cc, P, false);      // lo que lleva en la cabeza dentro de la silueta (cuernos…)
       cc.restore();
-      for (const p of patas) capsula(cc, ...p, s.grosorPata || 1.6, (s.grosorPata || 1.6) - 0.1);
+      // las patas: de atrás y de delante con su grosor (conejo: ancas gordas y pies largos atrás, patas finas delante)
+      patas.forEach((p, i) => { const g = i < 2 ? (s.grosorPataTras || s.grosorPata || 1.6) : (s.grosorPataDel || s.grosorPata || 1.6); capsula(cc, ...p, g, g - 0.1); if (i < 2 && s.pieTras) capsula(cc, p[2] - 0.8, p[3], p[2] + s.pieTras, p[3] + 0.2, g * 0.75, g * 0.8); });
+      if (s.anca) for (const k of [-1, 1]) ovalo(cc, P.cadX + k * 0.6, P.cadY + 1.8 + P.sienta * 0.5, s.anca, s.anca * 0.95);      // las ancas, encima de las patas de atrás
     };
     silueta(c, traza, s.color, cc => {
       if (s.panza) mancha(cc, k => ovalo(k, 1.5, (P.cadY + P.homY) / 2 + 3, (s.largo || 11) / 2, 2.4), s.panza);
@@ -68,8 +71,8 @@
     });
     c.save(); c.translate(P.caX, P.caY); c.rotate(P.cabR);
     const nx = 3 + (s.hocico || 0);
-    ojo(c, -0.2, -0.8, 1.25, o, 1); ojo(c, 2.7, -0.9, 1.2, o, -1); colorete(c, 3.6, 1.6);
-    mancha(c, k => ovalo(k, nx, 1, s.nariz || 0.9, (s.nariz || 0.9) * 0.75), s.colorNariz || OL);
+    ojo(c, -0.2, -0.8, 1.25, o, 1); ojo(c, 2.7, -0.9, 1.2, o, -1); if (!s.sinColorete) colorete(c, 3.6, 1.6);
+    if (!s.sinNariz) mancha(c, k => ovalo(k, nx, 1, s.nariz || 0.9, (s.nariz || 0.9) * 0.75), s.colorNariz || OL);
     if (s.bigotes) { c.lineWidth = 0.5; c.strokeStyle = OL; c.beginPath(); for (const d of [-0.4, 0.7]) { c.moveTo(nx + 0.8, 1.4 + d * 0.4); c.lineTo(nx + 3.4, 1 + d); } c.stroke(); }
     if (s.cara) s.cara(c, o, P); else boca(c, nx - 0.6, 2.8, o, 1);
     c.restore();
@@ -89,15 +92,27 @@
 
   // ---------- los cinco ----------
   const ESPECIES = {
-    // CONEJO: va a saltos; orejas largas y flojas; cola de pompón. Brinco (salta y se retuerce en el aire) y nariz (la mueve sin parar)
+    // CONEJO (rehecho el 5-11-2026, Daniel: «las patas de atrás fuertes y grandes y las de delante finas y altas», y una boca de conejo):
+    // va a saltos; ancas gordas con pies largos atrás, patas finas y altas delante (el lomo sube hacia los hombros); orejas largas y flojas;
+    // cola de pompón; nariz rosa con la «y» de conejo debajo y dos paletas, y la boca nunca se abre (Daniel: «los conejos reales son muy inexpresivos»). Brinco (salta y se retuerce en el aire) y nariz (la mueve sin parar)
     conejo: {
-      color: '#f7f3ff', panza: '#ffffff', orejas: 'larga', orejaFloja: true, dentroOreja: '#ffb3cf', cola: 'pompon', saltos: true, largo: 9, gordo: 5, altoPatas: 5,
-      rCabeza: 5, colorNariz: '#ff7aa0', nariz: 0.8,
+      color: '#f7f3ff', panza: '#ffffff', orejas: 'larga', orejaFloja: true, dentroOreja: '#ffb3cf', cola: 'pompon', saltos: true, largo: 8, gordo: 4.6,
+      sinNariz: true, sinColorete: true, altoPatas: 3.6, altoDel: 2.6, grosorPataTras: 1.7, grosorPataDel: 1.0, pieTras: 3, anca: 3.3, rCabeza: 5, cuello: 2.2,
       pose: (o, P) => {
         if (o.acc === 'brinco') { const q = Math.sin(o.k * Math.PI); P.alto = q * 8; P.ladeo = Math.sin(o.k * Math.PI * 2) * 0.4; P.orejaExtra = -q * 0.6; }
         if (o.acc === 'nariz') P.orejaExtra = -0.35;
       },
-      cara: (c, o) => { if (o.acc === 'nariz') { const w = Math.sin(o.t * 30) * 0.25; mancha(c, k => ovalo(k, 3, 1 + w, 0.9, 0.7), '#ff7aa0'); } boca(c, 2.6, 2.6, o, 0.9); },
+      // la cara de conejo: nariz rosa (en «nariz» tiembla), la «y» hasta la boca, las dos paletas y, si está contento, la boca abierta debajo
+      cara: (c, o) => {
+        const w = o.acc === 'nariz' ? Math.sin(o.t * 30) * 0.25 : 0, nx = 2.9, ny = 0.9 + w;
+        mancha(c, k => { k.moveTo(nx - 0.9, ny - 0.5); k.lineTo(nx + 0.9, ny - 0.5); k.lineTo(nx, ny + 0.55); k.closePath(); }, '#ff7aa0');
+        c.lineWidth = 0.55; c.strokeStyle = OL; c.lineCap = 'round'; c.beginPath(); c.moveTo(nx, ny + 0.5); c.lineTo(nx, ny + 1.5); c.moveTo(nx - 1.1, ny + 2.2); c.quadraticCurveTo(nx, ny + 1.2, nx + 1.1, ny + 2.2); c.stroke();
+        mancha(c, k => { k.rect(nx - 0.85, ny + 1.75, 0.8, 1.1); k.rect(nx + 0.05, ny + 1.75, 0.8, 1.1); }, '#ffffff');      // las paletas
+        c.lineWidth = 0.4; c.beginPath(); c.rect(nx - 0.85, ny + 1.75, 1.7, 1.1); c.moveTo(nx, ny + 1.75); c.lineTo(nx, ny + 2.85); c.stroke();
+        // (Daniel, 5-11-2026: «los conejos reales son muy inexpresivos»: la boca no se abre nunca; el gesto va en los ojos y las orejas)
+      },
+      // las ancas, sombreadas para que se vean gordas sobre el cuerpo
+      manchas: (c, P) => { for (const k of [-1, 1]) mancha(c, q => ovalo(q, P.cadX + k * 0.6, P.cadY + 1.8 + P.sienta * 0.5, 3.1, 2.95), '#ece5f8'); },
     },
     // ZORRO: hocico largo, orejas de punta grandes y cola gorda con la punta blanca. Salta (el salto del zorro: arriba y de cabeza al suelo)
     zorro: {

@@ -12,10 +12,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=c9854e3">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=c9854e3">
-<link rel="stylesheet" href="novedades/ventana.css?v=c9854e3">
-<link rel="stylesheet" href="biblioteca/votos.css?v=c9854e3">
+<link rel="stylesheet" href="core/css/base.css?v=04c393d">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=04c393d">
+<link rel="stylesheet" href="novedades/ventana.css?v=04c393d">
+<link rel="stylesheet" href="biblioteca/votos.css?v=04c393d">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -79,7 +79,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Fans Of","alternateName":["FansOf","Fans Of Games"],"url":"https://fansof.games/","inLanguage":"es"},{"@type":"Organization","name":"Fans Of Games","alternateName":["MicroBlizz","FansOfGames","FansOf"],"url":"https://fansof.games/","sameAs":["https://x.com/Fans_Of_","https://discord.gg/PztHQhm9c"],"logo":"https://fansof.games/core/img/fog-512.png"}]}</script>
 </head>
 <body>
-<script src="menu.js?v=c9854e3" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=04c393d" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -382,7 +382,7 @@
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
 <script src="core/js/nucleo.js?v=0"></script>
-<script src="core/js/novedades.js?v=c9854e3"></script>
+<script src="core/js/novedades.js?v=04c393d"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -391,7 +391,7 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=c9854e3"></script>
+<script src="core/js/sistema/cuenta.js?v=04c393d"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -417,14 +417,14 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=c9854e3"></script>
-<script src="novedades/ventana.js?v=c9854e3"></script>
-<script src="biblioteca/tienda.js?v=c9854e3"></script>
-<script src="core/js/sistema/beta.js?v=c9854e3"></script>
-<script src="biblioteca/cuenta-web.js?v=c9854e3"></script>
-<script src="biblioteca/votos.js?v=c9854e3"></script>
-<script src="biblioteca/alfa.js?v=c9854e3"></script>
-<script src="core/js/sistema/analitica.js?v=c9854e3"></script>
-<script src="pie.js?v=c9854e3" defer></script>
+<script src="core/js/proximamente.js?v=04c393d"></script>
+<script src="novedades/ventana.js?v=04c393d"></script>
+<script src="biblioteca/tienda.js?v=04c393d"></script>
+<script src="core/js/sistema/beta.js?v=04c393d"></script>
+<script src="biblioteca/cuenta-web.js?v=04c393d"></script>
+<script src="biblioteca/votos.js?v=04c393d"></script>
+<script src="biblioteca/alfa.js?v=04c393d"></script>
+<script src="core/js/sistema/analitica.js?v=04c393d"></script>
+<script src="pie.js?v=04c393d" defer></script>
 </body>
 </html>

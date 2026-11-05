@@ -1,8 +1,8 @@
 {
- "build": 952,
- "hash": "3c45c03",
- "fecha": "2026-11-05T12:13:26Z",
- "mensaje": "Marca FoG solo para el estudio y la web; los juegos vuelven a su icono común (CrazyBunny) hasta tener el suyo",
+ "build": 953,
+ "hash": "de25d0d",
+ "fecha": "2026-11-05T12:15:56Z",
+ "mensaje": "Nova 0.3.47: Pop, Héroes y No muertos más cerca de las demás facciones",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.21",
   "karts": "0.7.20",
-  "nova": "0.3.46",
+  "nova": "0.3.47",
   "pets": "0.2.4",
   "ratkov": "0.2.34",
   "rouflage": "0.2.68",

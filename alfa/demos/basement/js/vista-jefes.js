@@ -54,10 +54,18 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
   };
 
+  // un compañero: más pequeño que los bichos de verdad y con su chapa verde debajo, para no confundirlo con un enemigo
+  const ESC_COMP = { reunion: 0.35, critico: 0.5 };
+  function companero(g, a, x, y) {
+    g.fillStyle = '#4fc25a'; g.beginPath(); g.ellipse(x, y + 18, 22, 8, 0, 0, 7); g.fill();
+    g.strokeStyle = '#1a1a1a'; g.lineWidth = 4; g.stroke();
+    V.pintaCosa(g, a.id, x, y, null, ESC_COMP[a.id] || 0.65);
+  }
   V.ayudantes = function (g, e) {
     for (const a of e.ayudantes) {
       const x = V.sx(a.x), y = V.sy(a.y) + Math.sin(e.t * 5 + a.off.x) * 3;
       if (a.tipo === 'becario') V.pinta(g, 'becario', x, y, 0.9, { filtro: VERDE });
+      else if (a.tipo === 'companero') companero(g, a, x, y);
       else V.pintaCosa(g, a.id, x, y);
     }
   };

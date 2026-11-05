@@ -27,7 +27,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   A.nuevoAyudante = function (e, tipo, datos, desde) {
     const j = e.jugador, sitio = SITIOS[e.ayudantes.length % SITIOS.length], o = desde || { x: j.x + sitio.x, y: j.y + sitio.y };
     e.ayudantes.push({ tipo, id: datos.id || tipo, x: o.x, y: o.y, off: sitio, dano: datos.dano, cadencia: datos.cadencia,
-      alcance: datos.alcance, t: 0.5, cafeCada: datos.cafeCada || 0, cafeT: datos.cafeCada || 0 });
+      alcance: datos.alcance, t: 0.5, cafeCada: datos.cafeCada || 0, cafeT: datos.cafeCada || 0, bala: datos.bala || null });
   };
 
   // Una bala: lo que haga al chocar depende de su arma (atraviesa, area, rebotes, lento, cafe). `retraso` = espera pegada al
@@ -60,6 +60,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return true;
   }
 
+  // El disparo de un ayudante: una grapa, o lo que digan los talentos de un compañero (varias, que frenan, atraviesan, explotan…).
+  function dispara(e, a, ang) {
+    if (!a.bala) { bala(e, a.x, a.y, ang, a.dano, a.tipo); return; }
+    for (const g of A.angulos(a.bala, ang, a.bala.balas || 1)) bala(e, a.x, a.y, g, a.dano, a.tipo, a.bala);
+  }
+
   // Cada ayudante se va colocando a su sitio junto al jugador y dispara cuando le toca.
   function ayudante(e, a, dt) {
     const j = e.jugador, k = Math.min(1, dt * 5);
@@ -67,7 +73,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     a.t -= dt;
     if (a.t <= 0) {
       const en = A.objetivo(e, a.x, a.y, a.alcance);
-      if (en) { bala(e, a.x, a.y, Math.atan2(en.y - a.y, en.x - a.x), a.dano, a.tipo); a.t = a.cadencia; }
+      if (en) { dispara(e, a, Math.atan2(en.y - a.y, en.x - a.x)); a.t = a.cadencia; }
     }
     if (!a.cafeCada) return;
     a.cafeT -= dt;

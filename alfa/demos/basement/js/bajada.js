@@ -25,6 +25,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       habilidad: stats.habilidad || null, habilidadT: stats.habilidad ? AJ.habilidades[stats.habilidad].recarga * 0.5 : 0, congeladoT: 0,
     };
     if (stats.mascota) B.arma.nuevoAyudante(e, 'mascota', stats.mascota);
+    for (const c of stats.companeros || []) B.arma.nuevoAyudante(e, 'companero', c);   // los bichos capturados que llevas
     return e;
   };
 

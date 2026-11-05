@@ -31,6 +31,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       '¡Lo has conseguido! El servidor vuelve a funcionar y Microblizz ni se ha enterado de que estuvo caído.',
       'Ahora puedes ASCENDER en tu mesa: empiezas la campaña otra vez con un cargo mejor. O bajar al Código Legacy de 2004, que no tiene fondo. Nadie sabe qué hay abajo del todo.',
     ],
+    bichos: [
+      'Estos son tus compañeros: los bichos que capturas con la RED pueden bajar contigo. Llevas dos, además de la mascota, y disparan solos.',
+      'Toca uno para subirlo de nivel con capturas y materiales: cada nivel le abre un talento. En el TALLER le fabricas un accesorio.',
+    ],
     catalogo: ['Este es el catálogo de bichos. Cada bicho nuevo que tumbas paga una vez; los raros pagan mucho. Complétalo y te llevas tres paquetes del jefe.'],
     habilidad: [
       'Abajo a la izquierda tienes tu habilidad especial: la Reunión de emergencia deja quietos a todos unos segundos.',

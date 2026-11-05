@@ -1,8 +1,8 @@
 {
- "build": 1014,
- "hash": "61729c8",
- "fecha": "2026-11-05T22:13:29Z",
- "mensaje": "Basement 0.12.0: la formación pasa a ser un árbol de talentos con decisiones",
+ "build": 1015,
+ "hash": "40f2826",
+ "fecha": "2026-11-05T22:39:02Z",
+ "mensaje": "Basement 0.13.0: compañeros (los bichos capturados bajan contigo) y accesorios del taller",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

@@ -100,8 +100,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     T(g, n ? 'x' + n : tr(x.clase === 'raro' ? 'RARO' : x.clase === 'jefe' ? 'JEFE' : x.clase === 'secreto' ? 'SECRETO' : ''), b.x + b.w / 2, b.y + b.h - 15, 14, n ? '#8a5a24' : '#8a7a68', 'center', 0);
   }
 
-  UI.pestanaCatalogo = function (g, W, H, AJ, p) {
-    const { y0, y1 } = UI.zonaMesa(H), lista = B.entradasCatalogo(AJ), vistos = lista.filter((x) => p.catalogo[x.id]).length;
+  UI.pestanaCatalogo = function (g, W, H, AJ, p, botones, baja) {   // baja = lo que se corre hacia abajo (bajo las sub-pestañas de BICHOS)
+    const { y0: z0, y1 } = UI.zonaMesa(H), y0 = z0 + (baja || 0), lista = B.entradasCatalogo(AJ), vistos = lista.filter((x) => p.catalogo[x.id]).length;
     UI.franja(g, tr('Descubiertos {a} de {b}', { a: vistos, b: lista.length }) + ' · ' + tr('Complétalo: {n} paquetes del jefe', { n: AJ.catalogo.completo }), W / 2, y0 + 18, 17, W - 30);
     const cols = 4, filas = Math.ceil(lista.length / cols), w = (W - 24 - (cols - 1) * 8) / cols, h = Math.min(200, (y1 - y0 - 50) / filas - 8);
     lista.forEach((x, i) => celda(g, AJ, p, x, { x: 12 + (i % cols) * (w + 8), y: y0 + 46 + Math.floor(i / cols) * (h + 8), w, h }));

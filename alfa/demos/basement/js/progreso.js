@@ -13,13 +13,14 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.progresoNuevo = () => ({
     monedas: 0, record: 0, bajadas: 0, cursos: [], equipo: { tiene: {}, puesto: {} }, mascotas: {}, mascota: null,
-    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {}, acreditaciones: [], premiados: [], pase: null,
+    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {}, acreditaciones: [], premiados: [], pase: null, companeros: {}, compEquipados: [], accesorios: {}, accComp: {},
   });
 
   // Copia profunda (el progreso se trata como inmutable: cada regla devuelve uno nuevo).
   B.copiaProgreso = (p) => ({
     ...p, cursos: [...p.cursos], equipo: { tiene: { ...p.equipo.tiene }, puesto: { ...p.equipo.puesto } },
     mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales }, terrario: { ...p.terrario }, acreditaciones: [...p.acreditaciones], premiados: [...p.premiados], pase: p.pase ? { ...p.pase, cobrados: [...p.pase.cobrados] } : null,
+    companeros: { ...p.companeros }, compEquipados: [...p.compEquipados], accesorios: { ...p.accesorios }, accComp: { ...p.accComp },
   });
 
   // Lee lo guardado (formatos for-basement-v1 y v2). Lo que falte o no valga vuelve a su valor de partida.
@@ -41,14 +42,30 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.rango = entero(datos.rango, 0, AJ.rangos.length - 1);
     p.final = datos.final === true;
     if (AJ.habilidades[datos.habilidad]) p.habilidad = datos.habilidad;
-    p.pase = esObjeto(datos.pase) && typeof datos.pase.clave === 'string' ? { clave: datos.pase.clave, xp: entero(datos.pase.xp, 0, 1e7),
-      cobrados: Array.isArray(datos.pase.cobrados) ? [...new Set(datos.pase.cobrados.map((n) => entero(n, 0, 999)))].filter((n) => n >= 1) : [] } : null;
+    p.pase = leePase(datos.pase);
     p.premiados = Array.isArray(datos.premiados) ? datos.premiados.filter((c) => typeof c === 'string' && /^[ds]-\d{4}-\d{2}-\d{2}$/.test(c)).slice(-30) : [];
     p.acreditaciones = Array.isArray(datos.acreditaciones) ? [...new Set(datos.acreditaciones)].filter((z) => AJ.presion.coste[z] != null) : [];
     for (const id of Object.keys(AJ.enemigos)) if (esObjeto(datos.terrario) && datos.terrario[id] > 0) p.terrario[id] = entero(datos.terrario[id], 0, 1e6);
     for (const t of AJ.materiales) if (esObjeto(datos.materiales) && datos.materiales[t] > 0) p.materiales[t] = entero(datos.materiales[t], 0, 1e7);
+    leeCompaneros(AJ, p, datos);   // tras el terrario: solo llevas lo que tienes capturado
     return p;
   };
+
+  // El pase de temporada: su clave, la XP y los niveles cobrados (o null si no hay o no vale).
+  function leePase(d) {
+    if (!esObjeto(d) || typeof d.clave !== 'string') return null;
+    const cobrados = Array.isArray(d.cobrados) ? [...new Set(d.cobrados.map((n) => entero(n, 0, 999)))].filter((n) => n >= 1) : [];
+    return { clave: d.clave, xp: entero(d.xp, 0, 1e7), cobrados };
+  }
+
+  // Los compañeros: niveles de 1 a 5 de especies que existen, los que llevas (con capturas y sin pasar de los huecos) y los accesorios.
+  function leeCompaneros(AJ, p, d) {
+    const E = AJ.companeros.especies;
+    for (const id of Object.keys(E)) if (esObjeto(d.companeros) && d.companeros[id] > 0) p.companeros[id] = entero(d.companeros[id], 1, 5);
+    p.compEquipados = Array.isArray(d.compEquipados) ? [...new Set(d.compEquipados)].filter((id) => E[id] && p.terrario[id] > 0).slice(0, AJ.companeros.huecos) : [];
+    for (const a of Object.keys(AJ.accesorios)) if (esObjeto(d.accesorios) && d.accesorios[a] > 0) p.accesorios[a] = entero(d.accesorios[a], 0, 99);
+    for (const [c, a] of Object.entries(esObjeto(d.accComp) ? d.accComp : {})) if (E[c] && AJ.accesorios[a] && B.accesorioLibre(p, a, c)) p.accComp[c] = a;
+  }
 
   // Solo los talentos que existen y en orden válido (fila a fila, con el de encima y sin dos del mismo grupo).
   function leeCursos(AJ, lista) {
@@ -150,6 +167,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.statsDe = function (AJ, p) {
     const e = B.efectosDe(AJ, p), v = (k) => e[k] || 0, menos = (k, tope) => 1 - Math.min(tope, v(k)), a = B.armaDe(AJ, p), R = AJ.porRango;
+    const comps = p.compEquipados.map((id) => B.companeroDe(AJ, p, id, AJ.arma.dano * (1 + v('dano')))), aura = (k) => comps.reduce((s, c) => s + (c.aura[k] || 0), 0);
     return Object.freeze({
       cafeMax: AJ.cafe.base + v('cafe'),
       caja: AJ.caja.base + v('caja'),
@@ -158,11 +176,11 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       arma: a,
       alcance: AJ.arma.alcance + v('alcance'),
       multi: 1 + v('multi'),
-      iman: AJ.iman + v('iman'),
+      iman: AJ.iman + v('iman') + aura('iman'),
       espera: Math.max(1, AJ.ascensor.espera - v('espera')),
       gasto: menos('gasto', 0.6),
       crunch: menos('crunch', 1),
-      valor: 1 + v('valor') + R.valor * p.rango,
+      valor: 1 + v('valor') + R.valor * p.rango + aura('valor'),
       taza: AJ.cafe.taza + v('taza'),
       vel: 1 + v('vel'),
       freno: Math.min(1, v('freno')),
@@ -170,6 +188,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       habilidad: B.habilidadDe(AJ, p),
       redes: AJ.captura.redes + v('redes'),
       critico: v('critico'),
+      companeros: comps,
       acreditaciones: Object.freeze([...p.acreditaciones]),
     });
   };

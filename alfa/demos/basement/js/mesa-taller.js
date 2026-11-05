@@ -1,6 +1,6 @@
 // Fans of Basement · El taller de tu mesa (solo pantalla, estilo Swipe): arriba, los materiales que tienes; debajo, las armas
 // (tocar una abre su ficha para fabricarla o subirla de nivel) y las piezas de equipo de cada rareza (para fabricar las que te
-// faltan). La ficha enseña lo que cuesta, en verde lo que tienes y en rojo lo que te falta. Las reglas, en taller.js.
+// faltan) y los accesorios de tus compañeros (se pueden fabricar varios). La ficha enseña lo que cuesta, en verde lo que tienes y en rojo lo que te falta. Las reglas, en taller.js.
 'use strict';
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
@@ -36,7 +36,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const { y0, y1 } = UI.zonaMesa(H), x = 12, w = W - 24;
     materiales(g, AJ, p, x, y0, w);
     const armas = Object.keys(AJ.armas).filter((id) => AJ.armas[id].rareza), cols = 6, lado = Math.min(70, Math.floor((w - (cols - 1) * 8) / cols));
-    const alto = Math.min(lado, Math.floor((y1 - y0 - 140) / 6) - 8);
+    const alto = Math.min(lado, Math.floor((y1 - y0 - 180) / 7) - 8);
     let y = y0 + 80;
     UI.franja(g, tr('ARMAS: fabrica o sube de nivel'), W / 2, y - 6, 16, w);
     armas.forEach((id, i) => {
@@ -50,20 +50,36 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       if (i === 0) V().pinta(g, HUECO[hueco][0], x + 28, b.y + alto / 2, HUECO[hueco][1] * 0.6);
       celdaPieza(g, AJ, p, hueco, r, b); botones.push(b);
     }));
+    y += 14 + Object.keys(AJ.equipo).length * (alto + 8) + 20;
+    UI.franja(g, tr('ACCESORIOS para tus compañeros'), W / 2, y - 6, 16, w);
+    Object.keys(AJ.accesorios).forEach((id, i) => {
+      const b = { x: x + 60 + i * (lado + 26), y: y + 14, w: lado, h: alto, accion: 'taller', receta: { tipo: 'accesorio', id } };
+      UI.cuadroRareza(g, b, '#d9c8a4', (cx, cy) => UI.pintaAccesorio(g, id, cx, cy, alto / 80), false);
+      T(g, String(p.accesorios[id] || 0), b.x + b.w - 6, b.y + b.h - 10, 16, '#ffffff', 'right', 3);
+      botones.push(b);
+    });
   };
 
-  const nombreReceta = (AJ, r) => tr(r.tipo === 'arma' ? AJ.armas[r.id].nombre : AJ.equipo[r.hueco][r.rareza].nombre);
-  const rarezaReceta = (AJ, r) => (r.tipo === 'arma' ? AJ.armas[r.id].rareza : r.rareza);
+  // cómo se enseña cada tipo de receta: su nombre, su rareza (los accesorios no tienen), lo que hace y su dibujo
+  const RECETA = {
+    arma: { nombre: (AJ, r) => AJ.armas[r.id].nombre, rareza: (AJ, r) => AJ.armas[r.id].rareza, que: (AJ, r) => UI.queHaceArma(r.id),
+      pinta: (g, AJ, r, x, y) => V().pintaCosa(g, r.id, x, y, null, 1.6) },
+    equipo: { nombre: (AJ, r) => AJ.equipo[r.hueco][r.rareza].nombre, rareza: (AJ, r) => r.rareza, que: (AJ, r) => UI.describe(AJ.equipo[r.hueco][r.rareza].ef).join(' · '),
+      pinta: (g, AJ, r, x, y) => V().pinta(g, HUECO[r.hueco][0], x, y, HUECO[r.hueco][1] * 1.3) },
+    accesorio: { nombre: (AJ, r) => AJ.accesorios[r.id].nombre, rareza: () => null, que: (AJ, r) => tr('Para un compañero') + ': ' + UI.frasesCompanero(AJ.accesorios[r.id]).join(' · '),
+      pinta: (g, AJ, r, x, y) => UI.pintaAccesorio(g, r.id, x, y, 1.6) },
+  };
+  const nombreReceta = (AJ, r) => tr(RECETA[r.tipo].nombre(AJ, r));
 
   // La ficha de una receta: qué es, qué hace, lo que cuesta y el botón de FABRICAR o MEJORAR (o por qué no se puede).
   UI.fichaTaller = function (g, W, H, AJ, p, r) {
     g.fillStyle = 'rgba(10,5,20,0.8)'; g.fillRect(0, 0, W, H);
-    const rec = B.recetaTaller(AJ, p, r), x = 30, w = W - 60, y = H / 2 - 230, rz = rarezaReceta(AJ, r), botones = [];
+    const rec = B.recetaTaller(AJ, p, r), x = 30, w = W - 60, y = H / 2 - 230, R = RECETA[r.tipo], rz = R.rareza(AJ, r), botones = [];
     UI.pergamino(g, x, y, w, 460);
-    if (r.tipo === 'arma') V().pintaCosa(g, r.id, W / 2, y + 66, null, 1.6); else V().pinta(g, HUECO[r.hueco][0], W / 2, y + 66, HUECO[r.hueco][1] * 1.3);
-    UI.nombre(g, nombreReceta(AJ, r) + (r.tipo === 'arma' && p.armas[r.id] ? ' · ' + tr('Nv') + ' ' + p.armas[r.id] : ''), W / 2, y + 132, 28, w - 50, AJ.colorRareza[rz], 'center');
-    T(g, UI.nombreRareza(rz), W / 2, y + 168, 16, C.gris, 'center', 0);
-    const que = r.tipo === 'arma' ? UI.queHaceArma(r.id) : UI.describe(AJ.equipo[r.hueco][r.rareza].ef).join(' · ');
+    R.pinta(g, AJ, r, W / 2, y + 66);
+    UI.nombre(g, nombreReceta(AJ, r) + (r.tipo === 'arma' && p.armas[r.id] ? ' · ' + tr('Nv') + ' ' + p.armas[r.id] : ''), W / 2, y + 132, 28, w - 50, rz ? AJ.colorRareza[rz] : C.cafe, 'center');
+    T(g, rz ? UI.nombreRareza(rz) : tr('Tienes {n}', { n: p.accesorios[r.id] || 0 }), W / 2, y + 168, 16, C.gris, 'center', 0);
+    const que = R.que(AJ, r);
     UI.lineas(g, que, W / 2, y + 198, 17, w - 60, '#2e6a2a', 'center', 0, 20);
     const cerrar = { x: W / 2 + 10, y: y + 370, w: w / 2 - 36, h: 66, accion: 'cerrarTaller' };
     if (rec.ok) coste(g, AJ, p, rec.valor, x, y + 262, w, botones, { x: x + 26, y: y + 370, w: w / 2 - 36, h: 66, accion: 'usarTaller' });

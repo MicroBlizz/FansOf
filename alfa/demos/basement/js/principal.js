@@ -6,7 +6,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), PASO = 1 / 60, W = B.ui.W, FX = B.efectos, UI = B.ui, TU = B.tuto;
   const est = { modo: 'portada', e: null, t: 0, acum: 0, ultimo: 0, H: 960, botones: [], record: false, pulsoAscensor: false, resultadoT: 0,
-    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null, retos: null, despacho: false, depModo: 'campana' }, nuevos: [] };
+    mesa: { pestana: 'formacion', sel: null, apertura: null, dep: false, ascenso: false, armeria: false, taller: null, retos: null, despacho: false, depModo: 'campana', bichos: 'companeros', comp: null }, nuevos: [] };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   B._est = est;   // para las pruebas automáticas y el panel DEV
 
@@ -141,6 +141,12 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     cerrarDespacho: () => { est.mesa.despacho = false; basSuena('boton'); },
     cerrarRetos: () => { est.mesa.retos = null; basSuena('boton'); },
     cerrarTaller: () => { est.mesa.taller = null; basSuena('boton'); },
+    subBichos: (b) => { est.mesa.bichos = b.id; basSuena('boton'); if (b.id === 'catalogo') TU.lanza('catalogo', est.t); },
+    companero: (b) => { est.mesa.comp = b.id; basSuena('boton'); },
+    cerrarComp: () => { est.mesa.comp = null; basSuena('boton'); },
+    subirComp: (b) => { if (aplica(B.subirCompanero(B.AJ, SAVE.progreso, b.id), 'jefeVencido')) FX.confeti(W / 2, est.H * 0.35); },
+    llevarComp: (b) => aplica(B.llevarCompanero(B.AJ, SAVE.progreso, b.id), 'boton'),
+    accComp: (b) => aplica(B.ponerAccesorio(B.AJ, SAVE.progreso, b.id, b.acc), 'boton'),
     mesa: () => alaMesa(),
     pestana: (b) => { est.mesa.pestana = b.id; basSuena('boton'); TU.lanza(b.id, est.t); },
     curso: (b) => { est.mesa.sel = b.id; basSuena('boton'); },
@@ -173,7 +179,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function teclaMenu() {
     if (est.modo === 'portada') tocarFuera({ x: -99, y: -99 });
     else if (est.modo === 'resultado' && est.resultadoT >= 0.8) ACCIONES.mesa();
-    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria && !est.mesa.taller && !est.mesa.retos && !est.mesa.despacho) bajar();
+    else if (est.modo === 'mesa' && !est.mesa.sel && !est.mesa.apertura && !est.mesa.dep && !est.mesa.ascenso && !est.mesa.armeria && !est.mesa.taller && !est.mesa.comp && !est.mesa.retos && !est.mesa.despacho) bajar();
   }
 
   function orden() {

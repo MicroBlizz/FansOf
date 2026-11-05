@@ -1,6 +1,6 @@
 // Fans of Basement · Ajustes: todas las cifras del juego (el pozo del ascensor, el jugador, el café, la caja del despedido, el arma,
 // los enemigos de cada planta, el botín, las zonas de la oficina de Microblizz, los jefes, los becarios atrapados, los paquetes,
-// el equipo con rareza, las mascotas de oficina y los cursos de la formación de tu mesa).
+// el equipo con rareza, las mascotas de oficina…). El árbol de talentos de la formación está en ajustes-formacion.js, que se carga antes.
 'use strict';
 const AJUSTES = {
   id: 'basement',                 // para core: la partida en la nube lleva este nombre
@@ -87,6 +87,30 @@ BAS.AJ = Object.freeze({
   // queda atrapado (no los jefes): vale `valor` monedas (× lo que vale el botín de su planta) si subes a salvo y va al terrario
   // de tu despacho. Si está demasiado entero, se escapa y la red se pierde.
   captura: { redes: 3, umbral: 0.45, alcance: 170, valor: { normal: 20, raro: 150 } },
+  // Los compañeros: los bichos que has capturado pueden bajar contigo (hasta `huecos`, además de la mascota) y disparan solos.
+  // Cada especie tiene su ataque (dano × tu daño, cadencia, alcance) y sube de nivel 1 a 5: para subir hacen falta `capturas`
+  // de esa especie en el terrario y los materiales de `subir` (× el nivel al que vas). Cada nivel abre un talento: el 2 y el 4 son
+  // de todos (daño y cadencia); el 3 y el 5, propios de cada especie (sus balas frenan, atraviesan, explotan, rebotan o salen
+  // varias; o un aura que te ayuda a ti: valor del botín o imán). Y cada compañero lleva un accesorio (taller).
+  companeros: {
+    huecos: 2, capturas: [1, 2, 4, 7, 10], subir: { tornillo: 15, cable: 4 }, chipDesde: 3,
+    comunes: { 2: { nombre: 'Entrenamiento', ef: { dano: 0.3 } }, 4: { nombre: 'Café para bichos', ef: { cadencia: 0.25 } } },
+    especies: {
+      bug: { dano: 0.35, cadencia: 0.9, alcance: 130, t3: { nombre: 'Mordisco venenoso', bala: { lento: [0.6, 1.2] } }, t5: { nombre: 'Plaga', bala: { balas: 2, abanico: 0.3 } } },
+      correo: { dano: 0.3, cadencia: 0.8, alcance: 150, t3: { nombre: 'Reenviar a todos', bala: { atraviesa: 3 } }, t5: { nombre: 'Spam masivo', bala: { balas: 3, abanico: 0.5 } } },
+      reunion: { dano: 0.5, cadencia: 1.4, alcance: 120, t3: { nombre: 'Orden del día', bala: { lento: [0.4, 1.5] } }, t5: { nombre: 'Reunión eterna', bala: { area: 45 } } },
+      dorado: { dano: 0.25, cadencia: 1, alcance: 130, t3: { nombre: 'Hallazgo', aura: { valor: 0.1 } }, t5: { nombre: 'Lluvia de oro', aura: { valor: 0.2, iman: 20 } } },
+      spam: { dano: 0.3, cadencia: 0.6, alcance: 160, t3: { nombre: 'Clic aquí', bala: { rebotes: 2 } }, t5: { nombre: 'Bandeja llena', ef: { cadencia: 0.35 } } },
+      critico: { dano: 0.7, cadencia: 1.3, alcance: 130, t3: { nombre: 'Fallo crítico', ef: { dano: 0.5 } }, t5: { nombre: 'Pantallazo azul', bala: { area: 60 } } },
+    },
+  },
+  // Los accesorios de los compañeros: se fabrican en el taller (coste) y cada compañero lleva uno; ef = para el compañero, aura = para ti.
+  accesorios: {
+    collar: { nombre: 'Collar de pinchos', coste: { tornillo: 30, cable: 6 }, ef: { dano: 0.25 } },
+    pila: { nombre: 'Pila alcalina', coste: { tornillo: 25, cable: 10 }, ef: { cadencia: 0.2 } },
+    gafas: { nombre: 'Gafas de realidad virtual', coste: { cable: 12, chip: 2 }, ef: { alcance: 40 } },
+    corbata: { nombre: 'Corbata de la suerte', coste: { cable: 10, chip: 3 }, aura: { valor: 0.1 } },
+  },
   // El despacho: qué sala tienes según tu cargo (índice de AJ.rangos desde el que se abre cada una).
   despacho: { salas: [['cubiculo', 0], ['oficina', 2], ['despacho', 4], ['planta', 6]] },
   // El taller de tu mesa: fabricar el arma o la pieza de equipo que quieras (sin azar) y subir de nivel las armas. Coste por rareza;
@@ -235,51 +259,5 @@ BAS.AJ = Object.freeze({
   porRango: { dano: 0.1, valor: 0.15, vida: 0.4 },
   // El aspecto del becario: con cuántos talentos de una rama se nota (primer y segundo dibujo).
   aspecto: { formacion: [4, 8] },
-  // La FORMACIÓN es un árbol de talentos con tres ramas (columnas) de 7 filas. Un talento se puede comprar si tienes alguno de la fila
-  // de encima de su rama (los de la fila 1, siempre). En las filas 2 y 4 se pueden tener los dos; en las filas clave (3 y 6), los dos
-  // del mismo `grupo` se excluyen: eliges uno. `reinicio` = lo que cuesta deshacer el árbol (te devuelve todo lo gastado).
-  // Efectos: cafe/caja/alcance/iman/taza = se suman; dano/vel/valor = % más; cadencia/gasto/crunch = % menos; espera = segundos menos;
-  // multi = una grapa más por disparo; blindaje = % menos de golpe; rebote = rebotes; critico = % más de golpe crítico; redes = redes.
-  columnas: ['bienestar', 'logistica', 'productividad'],
-  nombreColumna: { bienestar: 'BIENESTAR', logistica: 'LOGÍSTICA', productividad: 'PRODUCTIVIDAD' },
-  reinicio: 150,
-  // Lo que costaban los cursos de la formación de antes (hasta la 0.11.0), para devolverlo si una partida vieja trae uno que ya no vale.
-  cursosAntiguos: { mindfulness: 20, barista: 50, siesta: 120, pulmones: 260, cafetera: 500, inmune: 900, intravenoso: 1500, tetris: 20, doblefondo: 50,
-    iman: 120, carro: 260, expres: 500, contenedor: 900, tasador: 1500, excel: 25, titanio: 55, atajos: 125, punteria: 265, doble: 505, horasextra: 905, industrial: 1505 },
-  costeFila: [30, 70, 150, 300, 550, 900, 1500],
-  formacion: [
-    { id: 'mindfulness', col: 'bienestar', fila: 1, nombre: 'Mindfulness en el baño', ef: { cafe: 15 } },
-    { id: 'barista', col: 'bienestar', fila: 2, nombre: 'Curso de barista', ef: { cafe: 10, taza: 6 } },
-    { id: 'siesta', col: 'bienestar', fila: 2, nombre: 'Siesta estratégica', ef: { cafe: 20 } },
-    { id: 'pulmones', col: 'bienestar', fila: 3, grupo: 'b3', nombre: 'Pulmones de becario', ef: { gasto: 0.15 } },
-    { id: 'cafetera', col: 'bienestar', fila: 3, grupo: 'b3', nombre: 'Cafetera industrial', ef: { cafe: 35 } },
-    { id: 'inmune', col: 'bienestar', fila: 4, nombre: 'Inmune al crunch', ef: { crunch: 0.5 } },
-    { id: 'yoga', col: 'bienestar', fila: 4, nombre: 'Yoga de escritorio', ef: { blindaje: 0.1 } },
-    { id: 'termo', col: 'bienestar', fila: 5, nombre: 'Termo de acero', ef: { taza: 10, cafe: 15 } },
-    { id: 'intravenoso', col: 'bienestar', fila: 6, grupo: 'b6', nombre: 'Café intravenoso', ef: { cafe: 40 } },
-    { id: 'zen', col: 'bienestar', fila: 6, grupo: 'b6', nombre: 'Becario zen', ef: { gasto: 0.15, blindaje: 0.1 } },
-    { id: 'indefinido', col: 'bienestar', fila: 7, nombre: 'Contrato indefinido', ef: { cafe: 30, blindaje: 0.1 } },
-    { id: 'tetris', col: 'logistica', fila: 1, nombre: 'Tetris de mudanzas', ef: { caja: 6 } },
-    { id: 'iman', col: 'logistica', fila: 2, nombre: 'Imán de nevera', ef: { iman: 25 } },
-    { id: 'carro', col: 'logistica', fila: 2, nombre: 'Carro de la compra', ef: { caja: 6 } },
-    { id: 'expres', col: 'logistica', fila: 3, grupo: 'l3', nombre: 'Ascensor exprés', ef: { espera: 1 } },
-    { id: 'tasador', col: 'logistica', fila: 3, grupo: 'l3', nombre: 'Tasador experto', ef: { valor: 0.15 } },
-    { id: 'contenedor', col: 'logistica', fila: 4, nombre: 'Contenedor de obra', ef: { caja: 10 } },
-    { id: 'zapatillas', col: 'logistica', fila: 4, nombre: 'Zapatillas de oficina', ef: { vel: 0.1 } },
-    { id: 'redcables', col: 'logistica', fila: 5, nombre: 'Red de cables extra', ef: { redes: 1, caja: 6 } },
-    { id: 'llavevip', col: 'logistica', fila: 6, grupo: 'l6', nombre: 'Llave del ascensor VIP', ef: { espera: 1, vel: 0.1 } },
-    { id: 'subastador', col: 'logistica', fila: 6, grupo: 'l6', nombre: 'Subastador', ef: { valor: 0.25 } },
-    { id: 'jefelogistica', col: 'logistica', fila: 7, nombre: 'Jefe de logística', ef: { caja: 12, valor: 0.1 } },
-    { id: 'excel', col: 'productividad', fila: 1, nombre: 'Excel avanzado', ef: { dano: 0.15 } },
-    { id: 'titanio', col: 'productividad', fila: 2, nombre: 'Grapas de titanio', ef: { dano: 0.15 } },
-    { id: 'atajos', col: 'productividad', fila: 2, nombre: 'Atajos de teclado', ef: { cadencia: 0.1 } },
-    { id: 'doble', col: 'productividad', fila: 3, grupo: 'p3', nombre: 'Grapadora doble', ef: { multi: 1 } },
-    { id: 'punteria', col: 'productividad', fila: 3, grupo: 'p3', nombre: 'Puntería de becario', ef: { alcance: 30, dano: 0.15 } },
-    { id: 'horasextra', col: 'productividad', fila: 4, nombre: 'Horas extra', ef: { cadencia: 0.1 } },
-    { id: 'saltarinas', col: 'productividad', fila: 4, nombre: 'Grapas saltarinas', ef: { rebote: 1 } },
-    { id: 'industrial', col: 'productividad', fila: 5, nombre: 'Grapadora industrial', ef: { dano: 0.25 } },
-    { id: 'auditor', col: 'productividad', fila: 6, grupo: 'p6', nombre: 'Ojo de auditor', ef: { critico: 0.12 } },
-    { id: 'pianista', col: 'productividad', fila: 6, grupo: 'p6', nombre: 'Dedos de pianista', ef: { cadencia: 0.15 } },
-    { id: 'vision', col: 'productividad', fila: 7, nombre: 'Visión de CEO', ef: { dano: 0.25, critico: 0.05 } },
-  ],
+  ...BAS.AJ_FORMACION,   // el árbol de talentos de la FORMACIÓN (ajustes-formacion.js)
 });

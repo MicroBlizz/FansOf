@@ -6,7 +6,7 @@
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const UI = B.ui, C = UI.C, T = UI.texto;
-  const PESTANAS = [{ id: 'formacion', nombre: 'FORMACIÓN' }, { id: 'equipo', nombre: 'EQUIPO' }, { id: 'paquetes', nombre: 'PAQUETES' }, { id: 'catalogo', nombre: 'CATÁLOGO' }, { id: 'taller', nombre: 'TALLER' }];
+  const PESTANAS = [{ id: 'formacion', nombre: 'FORMACIÓN' }, { id: 'equipo', nombre: 'EQUIPO' }, { id: 'paquetes', nombre: 'PAQUETES' }, { id: 'bichos', nombre: 'BICHOS' }, { id: 'taller', nombre: 'TALLER' }];
   const COLUMNA = { bienestar: ['naranja', 'r-taza'], logistica: ['azul', 'r-iman'], productividad: ['rojo', 'r-grapadora'] };
   const POSIT = { hecho: ['#9ee38a', '#c8f5b8', '#5fae5a'], disponible: ['#ffd23a', '#fff3a0', '#c8901a'], bloqueado: ['#d9c8a4', '#e8dcc0', '#b8a47c'] };
 
@@ -138,10 +138,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     return [si, no, { x: 0, y: 0, w: W, h: H, accion: 'cerrar' }];
   }
 
-  const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), catalogo: (...a) => UI.pestanaCatalogo(...a), taller: (...a) => UI.pestanaTaller(...a) };
+  const CONTENIDO = { formacion, equipo: (...a) => UI.pestanaEquipo(...a), paquetes: (...a) => UI.pestanaPaquetes(...a), bichos: (...a) => UI.pestanaBichos(...a), taller: (...a) => UI.pestanaTaller(...a) };
 
   // m = { pestana, sel (curso abierto), apertura (paquete que se está abriendo), dep (eligiendo departamento: el id del marcado), ascenso (la ventana),
-  //       armeria (eligiendo arma), taller (la receta abierta en el taller),
+  //       armeria (eligiendo arma), taller (la receta abierta en el taller), bichos (la sub-pestaña de BICHOS), comp (la ficha de un compañero),
   //       retos (la ventana de misiones: 'misiones' | 'logros' | 'ranking'), despacho (viendo tu despacho) }
   UI.mesa = function (g, W, H, t, AJ, p, m) {
     if (m.apertura) return UI.apertura(g, W, H, t, AJ, m.apertura);
@@ -153,7 +153,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const botones = [];
     cabecera(g, W, AJ, p, botones);
     pestanas(g, W, m, botones);
-    CONTENIDO[m.pestana](g, W, H, AJ, p, botones);
+    CONTENIDO[m.pestana](g, W, H, AJ, p, botones, m);
     const bajar = { x: W / 2 - 150, y: H - 122, w: 300, h: 100, accion: 'bajar' }, k = 1 + 0.03 * Math.round(Math.sin(t * 5.6));
     g.save(); g.translate(W / 2, bajar.y + 50); g.scale(k, k); g.translate(-W / 2, -(bajar.y + 50));
     UI.boton(g, bajar, 'naranja', tr('BAJAR'), 52);
@@ -162,6 +162,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     if (m.ascenso) return UI.ascenso(g, W, H, AJ, p);
     if (m.armeria) return UI.armeria(g, W, H, AJ, p);
     if (m.taller) return UI.fichaTaller(g, W, H, AJ, p, m.taller);
+    if (m.comp) return UI.fichaCompanero(g, W, H, AJ, p, m.comp);
     if (!m.sel) return botones;
     g.fillStyle = 'rgba(10,5,20,0.8)'; g.fillRect(0, 0, W, H);
     return fichaCurso(g, W, H, AJ, p, m.sel);

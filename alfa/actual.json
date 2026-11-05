@@ -1,8 +1,8 @@
 {
- "build": 996,
- "hash": "661b60a",
- "fecha": "2026-11-05T19:06:08Z",
- "mensaje": "Release: versión nueva de los 14 juegos activos con su nota (pantalla de inicio siempre, mascotas con vida en Rouflage, hocico de Pets)",
+ "build": 997,
+ "hash": "8ea8a8e",
+ "fecha": "2026-11-05T19:50:47Z",
+ "mensaje": "Rouflage: las mascotas en la partida, pequeñas (1,0): un peluche a los pies",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

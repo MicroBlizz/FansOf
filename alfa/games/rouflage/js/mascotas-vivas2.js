@@ -1,8 +1,8 @@
-// Fans of Rouflage · MASCOTAS VIVAS (2ª tanda): conejo, zorro, ardilla, mapache y hurón, hechos como el gato y el perro (mascotas-vivas.js):
+// Fans of Rouflage · MASCOTAS VIVAS DE CUATRO PATAS: conejo, zorro, ardilla, mapache, hurón, castor y vaca, hechos como el gato y el perro (mascotas-vivas.js):
 // una sola silueta sin costuras, patas con paso de verdad, orejas y cola con muelles, gestos en la cara y cinco cosas propias cada uno.
 // Comparten un esqueleto de cuatro patas, cuadrupedo(c, o, s), al que cada animal le pasa su forma (s): colores, largo del tronco, tipo de
 // orejas y de cola, hocico, manchas, si anda o va a saltos, y lo que hacen sus acciones propias (s.pose cambia la postura; s.encima dibuja
-// lo que lleva en las manos). Usa las piezas de MV_KIT.
+// lo que lleva en las manos; s.cabeza, lo que lleva en la cabeza dentro de la silueta, como cuernos). Usa las piezas de MV_KIT.
 'use strict';
 
 (() => {
@@ -45,11 +45,14 @@
     });
     const traza = cc => {
       capsula(cc, P.cadX, P.cadY, P.homX, P.homY, s.gordo || 4.5, (s.gordo || 4.5) - 0.3);
-      if (s.cola === 'pompon') ovalo(cc, P.cadX - 4, P.cadY - 1.5, 2.6, 2.6); else trazaCadena(cc, cola, s.colaR0 || 1.6, s.colaR1 || 1.1);
+      if (s.cola === 'pompon') ovalo(cc, P.cadX - 4, P.cadY - 1.5, 2.6, 2.6);
+      else if (s.cola === 'pala') { cc.save(); cc.translate(P.cadX - 2.5, P.cadY + 1); cc.rotate(P.colaA); ovalo(cc, -4.2, 0, 4.4, 1.9); cc.restore(); }      // castor: cola plana
+      else trazaCadena(cc, cola, s.colaR0 || 1.6, s.colaR1 || 1.1);
       cc.save(); cc.translate(P.caX, P.caY); cc.rotate(P.cabR);
       ovalo(cc, 0, 0, s.rCabeza || 4.8, (s.rCabeza || 4.8) * 0.92);
       if (s.hocico) capsula(cc, 2, 1.2, 2 + s.hocico, 1.5, 2.4, 1.7);
       orejas(cc, s, P, false);
+      if (s.cabeza) s.cabeza(cc, P, false);      // lo que lleva en la cabeza dentro de la silueta (cuernos…)
       cc.restore();
       for (const p of patas) capsula(cc, ...p, s.grosorPata || 1.6, (s.grosorPata || 1.6) - 0.1);
     };
@@ -60,6 +63,7 @@
       orejas(cc, s, P, true);
       if (s.morro) mancha(cc, k => ovalo(k, 2 + (s.hocico || 0) * 0.6, 1.8, 2.6 + (s.hocico || 0) * 0.4, 1.8), s.morro);
       if (s.antifaz) s.antifaz(cc);
+      if (s.cabeza) s.cabeza(cc, P, true);
       cc.restore();
     });
     c.save(); c.translate(P.caX, P.caY); c.rotate(P.cabR);
@@ -138,6 +142,37 @@
     },
   };
 
+  // ---------- tanda 2 ----------
+  Object.assign(ESPECIES, {
+    // CASTOR: marrón, dientes grandes y cola plana de escamas. Roe (mordisquea un palo sujetándolo) y golpe (levanta la cola y la estampa)
+    castor: {
+      color: '#8b5a2b', panza: '#c99a62', morro: '#c99a62', hocico: 1, orejas: 'redonda', dentroOreja: '#5d3a1a', largo: 10, gordo: 5.2, altoPatas: 4.8, cola: 'pala', colaBase: 0.1, bigotes: true,
+      manchas: (c, P) => { c.save(); c.translate(P.cadX - 2.5, P.cadY + 1); c.rotate(P.colaA); mancha(c, k => ovalo(k, -4.2, 0, 4.4, 1.9), '#4e3420'); c.strokeStyle = 'rgba(255,255,255,.18)'; c.lineWidth = 0.5; c.beginPath(); for (let x = -7.5; x < -1; x += 1.6) { c.moveTo(x, -2); c.lineTo(x + 1.2, 2); c.moveTo(x + 1.2, -2); c.lineTo(x, 2); } c.stroke(); c.restore(); },
+      pose: (o, P) => {
+        if (o.acc === 'roe') { P.sienta = Math.max(P.sienta, env(o.k, 0.15)); P.manos = env(o.k, 0.15); P.cabExtra = Math.sin(o.t * 22) * 0.35 * P.manos; }
+        if (o.acc === 'golpe') { const q = o.k; P.colaExtra = q < 0.6 ? -q / 0.6 * 1.4 : -1.4 + (q - 0.6) / 0.1 * 1.6; if (q > 0.7) P.colaExtra = 0.2; }
+      },
+      cara: (c, o) => { mancha(c, k => k.rect(2.5, 2.3, 1.6, 1.8), '#fff'); c.lineWidth = 0.6; c.strokeStyle = OL; c.strokeRect(2.5, 2.3, 1.6, 1.8); c.beginPath(); c.moveTo(3.3, 2.3); c.lineTo(3.3, 4.1); c.stroke(); },
+      encima: (c, o, P) => {
+        if (P.manos) { c.save(); c.translate(P.caX + 3, P.caY + 4.4); c.rotate(-0.2); mancha(c, k => k.roundRect(-3.5, -0.8, 7, 1.6, 0.8), '#a8743e'); c.lineWidth = 0.8; c.strokeStyle = OL; c.stroke(); c.restore(); }
+        if (o.acc === 'golpe' && o.k > 0.6 && o.k < 0.95) for (let i = 0; i < 5; i++) { const q = (o.k - 0.6) / 0.35; c.globalAlpha = 1 - q; mancha(c, k => ovalo(k, P.cadX - 7 + Math.cos(i * 1.3) * q * 8, -1 - Math.abs(Math.sin(i * 1.3)) * q * 5, 1.4, 1), '#e8e1d4'); c.globalAlpha = 1; }
+      },
+    },
+    // VACA: blanca con manchas negras, morro rosa, cuernitos y cola con borla. Muge (abre la boca y salen ondas) y rumia (mastica de lado)
+    vaca: {
+      color: '#ffffff', morro: '#fbcfe8', hocico: 1.6, orejas: 'redonda', orejaGiro: 1.2, dentroOreja: '#fbcfe8', largo: 11.5, gordo: 5.2, altoPatas: 6, rCabeza: 4.9,
+      colaTrozos: 3, colaR0: 0.9, colaR1: 0.8, colaLargo: 2.6, colaBase: 1.9, colaOnda: 0.12, colorNariz: '#e36aa0',
+      cabeza: (c, P, dentro) => { for (const k of [-1, 1]) { if (dentro) mancha(c, q => tri(q, k * 1.6 - 0.6, -3.8, k * 1.6 + 0.6, -3.8, k * 2.2, -6.8), '#f3d9a4'); else tri(c, k * 1.6 - 0.9, -3.4, k * 1.6 + 0.9, -3.4, k * 2.2, -7.2); } },
+      manchas: (c, P, cola) => { mancha(c, k => ovalo(k, P.cadX + 1.5, P.cadY - 1.6, 3, 2.4, 0.3), OL); mancha(c, k => ovalo(k, P.homX - 2, P.homY - 2.5, 2.2, 1.8, -0.4), OL); mancha(c, k => ovalo(k, ...cola[cola.length - 1], 1.6, 1.6), OL); },
+      pose: (o, P) => { if (o.acc === 'muge') { P.cabExtra = -1.2 * env(o.k, 0.2); P.ladeo = -0.25 * env(o.k, 0.2); } },
+      cara: (c, o) => {
+        if (o.acc === 'muge') { const a = env(o.k, 0.2); mancha(c, k => ovalo(k, 3.4, 3, 1.3, 0.6 + a), OL); c.lineWidth = 0.8; c.strokeStyle = OL; for (let i = 0; i < 3; i++) { const q = (o.t * 1.6 + i / 3) % 1; c.globalAlpha = (1 - q) * a; c.beginPath(); c.arc(5.5 + q * 4, 2.5, 2 + q * 4, -0.6, 0.6); c.stroke(); } c.globalAlpha = 1; return; }
+        if (o.acc === 'rumia') { const w = Math.sin(o.t * 9) * 0.8; c.lineWidth = 0.9; c.strokeStyle = OL; c.beginPath(); c.moveTo(2.4 + w, 3.2); c.lineTo(4 + w, 3.2); c.stroke(); return; }
+        boca(c, 3.2, 3.1, o, 0.9);
+      },
+    },
+  });
+
   for (const [id, s] of Object.entries(ESPECIES)) MASCOTAS_VIVAS[id] = (c, o) => cuadrupedo(c, o, s);
   Object.assign(MASCOTAS_VIVAS_ACC, {
     conejo: { sienta: 3, duerme: 4.5, brinco: 0.9, nariz: 1.6, olfatea: 2 },
@@ -145,6 +180,8 @@
     ardilla: { sienta: 3, duerme: 4.5, bellota: 2.6, cola: 1.2 },
     mapache: { sienta: 3, duerme: 4.5, lava: 2.4, olfatea: 2.2 },
     huron: { sienta: 3, duerme: 4.5, baile: 2, olfatea: 2.2 },
+    castor: { sienta: 3, duerme: 4.5, roe: 2.4, golpe: 1.2, olfatea: 2 },
+    vaca: { sienta: 3, duerme: 4.5, muge: 1.8, rumia: 2.4, olfatea: 2 },
   });
   registraMascotasVivas(Object.keys(ESPECIES));
 })();

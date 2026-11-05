@@ -117,6 +117,7 @@ function arPrecio(it) {
 // Sin moneda, la de siempre de esa pieza (Gotas lo de Gotas, Acciones lo demás). Devuelve true si se ha comprado (con servidor, una promesa)
 function arCompra(cat, it, moneda) {
   if (moneda !== 'gotas' && moneda !== 'acciones') moneda = it && it.de === 'gotas' ? 'gotas' : 'acciones';
+  if (!RF.Escaparate.monedas(it).includes(moneda)) moneda = 'acciones';      // lo de la tienda se paga solo con Acciones (ADR 052), pidan lo que pidan
   if (RFS.activo()) return arCompraServidor(cat, it, moneda);
   const otra = muebleOtraMas(cat, it), pr = arPrecio(it); if (!pr || (arTiene(cat.id, it) && !otra) || !(moneda in pr)) return false;
   ecoEstado();

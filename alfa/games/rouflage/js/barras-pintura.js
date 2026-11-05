@@ -56,7 +56,7 @@ const BARRAS = (() => {
   }
 
   // ---- cada lista: su lienzo, su flecha y su estado ----
-  const LISTA = new WeakMap(), VIVAS = new Set();
+  const LISTA = new WeakMap(), VIVAS = new Set(), MENEO_MS = 8000;
   function prepara(el) {
     if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
     el.classList.add('rf-barra');
@@ -78,14 +78,15 @@ const BARRAS = (() => {
     const pista = v ? el.clientHeight : el.clientWidth, total = v ? el.scrollHeight : el.scrollWidth, pos = v ? el.scrollTop : el.scrollLeft;
     if (pos !== est.pos) { est.adelante = pos > est.pos; est.movido = true; est.flecha.hidden = true; est.pos = pos; }
     colocaLienzo(est, v, pista, pos);
-    const { centro, punta } = posBrocha(total, pista, pos, pista, est.adelante), meneo = est.movido ? 0 : Math.sin(performance.now() / 160) * 3;
+    const { centro, punta } = posBrocha(total, pista, pos, pista, est.adelante), ahora = performance.now(), meneo = est.movido ? 0 : Math.sin(ahora / 160) * 3;
+    if (!est.t0) est.t0 = ahora;
     est.r = amplia(recorta(est.r, centro - RADIO, centro + RADIO), Math.min(centro, punta), Math.max(centro, punta));
     const c = lienzo.getContext('2d'), k = lienzo.width / ANCHO;
     c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, lienzo.width, lienzo.height);
     c.setTransform(v ? k : 0, v ? 0 : k, v ? 0 : k, v ? k : 0, 0, 0);      // en horizontal se dibuja igual, girado
     if (est.movido) pintaRastro(c, est.r, centro, pista);
     pintaBrocha(c, centro + meneo, est.adelante, colorEn(centro / pista));
-    if (!est.movido && !lienzo.hidden) est.raf = requestAnimationFrame(() => dibuja(est));      // el meneo, hasta que la muevas
+    if (!est.movido && !lienzo.hidden && ahora - est.t0 < MENEO_MS) est.raf = requestAnimationFrame(() => dibuja(est));      // el meneo, hasta que la muevas (o unos segundos: no se queda pintando para siempre)
   }
   // el lienzo, pegado al borde de lo que se ve (sigue el desplazamiento para no irse con la lista)
   function colocaLienzo(est, v, pista, pos) {
@@ -101,7 +102,7 @@ const BARRAS = (() => {
   // busca listas nuevas (al cambiar de pantalla) y repinta las que cambian de tamaño
   function repasa() {
     for (const el of document.querySelectorAll(LISTAS)) {
-      if (!el.getClientRects().length || !sentido(el)) { const e = LISTA.get(el); if (e) e.lienzo.hidden = e.flecha.hidden = true; continue; }
+      if (!el.getClientRects().length || !sentido(el)) { const e = LISTA.get(el); if (e) { e.lienzo.hidden = e.flecha.hidden = true; e.t0 = 0; } continue; }      // (al volver a verla, el meneo empieza de nuevo)
       pide(LISTA.get(el) || prepara(el));
     }
     for (const est of VIVAS) if (!est.el.isConnected) VIVAS.delete(est);
@@ -109,7 +110,7 @@ const BARRAS = (() => {
   const escucha = () => {
     document.addEventListener('scroll', e => { const est = LISTA.get(e.target); if (est) pide(est); }, { capture: true, passive: true });
     addEventListener('resize', repasa);
-    setInterval(repasa, 700);
+    setInterval(() => { if (!document.hidden) repasa(); }, 700);      // con la pestaña en segundo plano no hace falta
     repasa();
   };
 

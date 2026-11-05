@@ -1,8 +1,8 @@
 {
- "build": 965,
- "hash": "8f5c9ba",
- "fecha": "2026-11-05T16:06:14Z",
- "mensaje": "Goose 0.11.0: tutorial de la Oca Parca, botón IRSE en las tiendas y el trato de la Parca con pausa e Ira",
+ "build": 975,
+ "hash": "43f7de0",
+ "fecha": "2026-11-05T16:08:36Z",
+ "mensaje": "Alfa: solo se sube el último main; relanzar una alfa vieja ya no hace volver atrás la alfa",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.22",
   "karts": "0.7.21",
-  "nova": "0.3.48",
+  "nova": "0.3.50",
   "pets": "0.2.5",
   "ratkov": "0.2.35",
   "rouflage": "0.2.69",

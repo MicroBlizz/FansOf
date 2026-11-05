@@ -156,7 +156,7 @@ const COLA_DATOS = (() => {
       const j = jobs[r.id], carril = j && j.length ? carrilDe(j.flatMap(x => x.labels || [])) : carriles[r.path];
       if (!carril) { extra++; return; }
       const flujo = flujoDe(r), arr = (j || []).map(x => ms(x.started_at)).filter(x => !isNaN(x));
-      trabajos.push({ id: r.id, nombre: esGenerar(r) ? leerTitulo(String(r.display_title || flujo)).titulo : flujo, flujo, enCurso: r.status === 'in_progress',
+      trabajos.push({ id: r.id, creado: ms(r.created_at), nombre: esGenerar(r) ? leerTitulo(String(r.display_title || flujo)).titulo : flujo, flujo, enCurso: r.status === 'in_progress',
         carril, media: (medias[flujo] || medias[etiquetaWf(r)] || { seg: null }).seg, gen: esGenerar(r), arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
     });
     // La GPU hace un «Generar recurso» detrás de otro: solo el primero en curso está en ella, desde que acabó el último (o desde que arrancó, si es después); los demás en curso esperan su media entera.
@@ -174,7 +174,7 @@ const COLA_DATOS = (() => {
     if (online) online.forEach(l => { if (l.startsWith('yoshi') && !ids.includes(l)) ids.push(l); });
     const carrilesSnap = ids.map(id => ({ id, etiqueta: id === 'github' ? 'GitHub (ubuntu)' : id, alojado: id === 'github', encendido: id === 'github' ? true : online ? online.has(id) : null }))
       .sort((a, b) => Number(a.alojado) - Number(b.alojado) || a.id.localeCompare(b.id));
-    const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
+    const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, fallidas: COLA_CONTROL.fallidas(hechos, ahora), actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
       guardados: hechos.length, historialCompleto: !!hist.completo, compartido: !!servidor && !avisos.length };
     guardar(K.foto, snap);
     return snap;

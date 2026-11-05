@@ -1,8 +1,8 @@
 {
- "build": 954,
- "hash": "264c82a",
- "fecha": "2026-11-05T12:25:34Z",
- "mensaje": "Rouflage: barras de desplazamiento propias («goterón con arcoíris»): chorro de pintura arcoíris que gotea, camino de lunares",
+ "build": 955,
+ "hash": "df671b3",
+ "fecha": "2026-11-05T12:34:11Z",
+ "mensaje": "Karts: icono alejado para que no se vea con zoom ni toque los bordes",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

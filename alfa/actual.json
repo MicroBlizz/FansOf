@@ -1,8 +1,8 @@
 {
- "build": 934,
- "hash": "e4fa171",
- "fecha": "2026-11-04T23:16:37Z",
- "mensaje": "Versiones y notas del despliegue: boom 0.4.6, cooking 0.2.7, crush 0.1.44, decks 0.2.26, jump 0.3.21, karts 0.7.20, nova 0.3.44, pets 0.2.4, ratkov 0.2.34, rouflage 0.2.68, rumble 0.9.163, survivors 0.1.76, tacticas 0.1.60, taxi 0.2.6, td 0.13.92",
+ "build": 935,
+ "hash": "fea6b9d",
+ "fecha": "2026-11-05T08:18:24Z",
+ "mensaje": "Pets: hocico en 3D en el muñeco del hurón (parte hocico de la plantilla)",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

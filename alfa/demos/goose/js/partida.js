@@ -3,7 +3,7 @@
 'use strict';
 
 const JUEGO = { modo: 'portada', t: 0, cuadro: 0, yo: { x: 100, y: -40, miraX: 0, miraY: -1, moviendo: false, anda: 0 }, armas: {}, pasivas: {}, st: {}, dado: null, avisos: [] };
-const enPartida = () => ['juego', 'cartas', 'cofre', 'pausa'].includes(JUEGO.modo);
+const enPartida = () => ['juego', 'cartas', 'cofre', 'pausa', 'trato'].includes(JUEGO.modo);
 
 function nuevaPartida() {
   const J = JUEGO;
@@ -14,7 +14,7 @@ function nuevaPartida() {
     modo: 'juego', t: 0, cuadro: 0, armas: {}, pasivas: {}, restosParca: null, dado: nuevoDado(), avisos: [], aviso2: null,
     nivel: 1, xp: 0, xpNecesita: xpPara(1), pendientes: 0, cartas: null, tiradas: 1 + nivelMejora('retiro'),
     casilla: 1, mejorCasilla: 1, mejorY: -40, sinAvanzar: 0, impaciente: false, yD: 40,
-    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, paso: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0, minijefe: null, trato: null, parcaHecha: false, saltoParca: 0, fuegos: [], puertas: new Set(), maldicion: null, casillas: null,
+    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, paso: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0, minijefe: null, trato: null, tuto: null, parcaHecha: false, saltoParca: 0, fuegos: [], puertas: new Set(), maldicion: null, casillas: null,
     bajas: 0, combo: 0, comboT: 0, mejorCombo: 0, hito: 0, danoTotal: 0, monedasPartida: 0,
     impulso: 0, bioma: undefined, tOla: 0, tGorda: 50, tBandada: 30, jefe: null, victoria: false, tVictoria: 0, muerto: 0, fin: null, cofre: null, carrera: null,
     camY: -40 - PAN.H * 0.62,
@@ -85,6 +85,7 @@ function avanzaPartida(dt) {
   avanzaDerrumbe(dt);
   avanzaBarreras(dt);   // se abren y se cierran (js/barreras.js)
   avanzaTierras(dt); avanzaTierras2(dt); avanzaCaminos(); charcosMalos(dt);
+  avanzaTutorial(dt);   // los carteles de la Oca Parca (js/tutorial.js)
   if (J.saltoParca > 0) J.saltoParca -= dt;
   vigilaBioma();
   avanzaDado(dt);

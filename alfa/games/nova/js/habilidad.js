@@ -83,6 +83,7 @@ const NV_HAB_EFECTO = {
       for (const e of nvHabCerca(S, d.radio * kf, false)) {
         const dx = n.x - e.x, dy = n.y - e.y, l = Math.hypot(dx, dy) || 1;
         if (l > n.r + e.r + 60 * kf) { e.x += dx / l * d.tira * kf * dt; e.y += dy / l * d.tira * kf * dt; }
+        e.est.apagon = Math.max(e.est.apagon || 0, d.apagon);   // se quedan mirando tu directo: no disparan mientras los atrae
       }
     },
   },

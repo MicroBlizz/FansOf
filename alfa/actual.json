@@ -1,8 +1,8 @@
 {
- "build": 964,
- "hash": "d963758",
- "fecha": "2026-11-05T15:02:07Z",
- "mensaje": "Basement 0.1.0: prototipo nuevo tipo Well Diver en la oficina de Microblizz",
+ "build": 966,
+ "hash": "f2794b2",
+ "fecha": "2026-11-05T15:17:44Z",
+ "mensaje": "Nova 0.3.49: Directo deja sin disparar a los enemigos que atrae (Streamers 4→29 de 120)",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.22",
   "karts": "0.7.21",
-  "nova": "0.3.48",
+  "nova": "0.3.49",
   "pets": "0.2.5",
   "ratkov": "0.2.35",
   "rouflage": "0.2.69",

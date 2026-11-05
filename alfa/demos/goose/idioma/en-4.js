@@ -1,4 +1,4 @@
-// Fans of Goose · Inglés de la demo (4/4): anuncios con premio, huevos de oro, la pestaña TESORO y el Camino de la Oca (0.7.0); jefes con escudo y mejoras nuevas (0.9.0).
+// Fans of Goose · Inglés de la demo (4/4): anuncios con premio, huevos de oro, la pestaña TESORO y el Camino de la Oca (0.7.0); jefes con escudo y mejoras nuevas (0.9.0); tutorial de la Oca Parca, botón IRSE y la ira de la Parca (0.11.0).
 'use strict';
 IDIOMA.add({
   "CAMINO DE LA OCA": "GOOSE ROAD",
@@ -98,4 +98,25 @@ IDIOMA.add({
   "La Noche de la Oca": "The Night of the Goose",
   "Para todos": "For everyone",
   "Mejoras propias: {a}/{b}": "Own upgrades: {a}/{b}",
+  "IRSE": "LEAVE",
+  "tira el dado": "rolls the die",
+  "tira el dado (saldrá impar)": "rolls the die (it will be odd)",
+  "Compra con tus monedas. Pulsa IRSE para seguir": "Shop with your coins. Press LEAVE to go on",
+  "«Vuelve a la casilla 55 con media vida y te dejo en paz. O quédate… y conoce mi ira.»": "“Go back to square 55 with half your health and I'll leave you be. Or stay… and know my wrath.”",
+  "Si rechazas, recupera vida y ataca mucho más fuerte. Si la tumbas, su guadaña y el doble de monedas.": "If you refuse, she heals and hits much harder. Beat her and you get her scythe and double coins.",
+  "¡su ira!": "her wrath!",
+  "LA IRA DE LA PARCA": "THE REAPER'S WRATH",
+  "Ahora va en serio": "Now it's serious",
+  "VENCE A LA PARCA": "BEAT THE REAPER",
+  "VENCE AL GUARDIÁN": "BEAT THE GUARDIAN",
+  "VENCE A LA OCA MADRE": "BEAT MOTHER GOOSE",
+  "Arrastra el dedo para huir. Tus armas atacan solas… mientras sigas vivo.": "Drag your finger to flee. Your weapons attack on their own… while you're still alive.",
+  "Toca el dado de abajo, o toca dos veces la pantalla. Que el destino elija tu camino.": "Tap the die below, or double-tap the screen. Let fate choose your path.",
+  "Camina hasta la casilla que te ha tocado. Las barreras se abren a tu paso.": "Walk to the square you rolled. The barriers open as you go.",
+  "Los pares bendicen; los impares, maldicen. Las plumas doradas llenan el aro del dado.": "Evens bless; odds curse. Golden feathers fill the ring around the die.",
+  "¿Oyes crujir? El tablero se hunde detrás de ti. Si el abismo te alcanza, eres mío.": "Hear that creak? The board is sinking behind you. If the abyss catches you, you're mine.",
+  "Gasta tus monedas, si te atreves. Cuando acabes, pulsa IRSE.": "Spend your coins, if you dare. When you're done, press LEAVE.",
+  "Atrapado. Tumba a las ocas que caen del cielo y quedarás libre.": "Trapped. Knock down the geese falling from the sky and you'll be free.",
+  "Un guardián cierra el paso. Mientras viva, el dado duerme.": "A guardian blocks the way. While it lives, the die sleeps.",
+  "Por fin nos vemos. Cuando alce la guadaña, salta con dos toques.": "We finally meet. When I raise my scythe, jump with a double tap.",
 });

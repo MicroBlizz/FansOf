@@ -63,7 +63,7 @@ function llegadaCamino(t) {
     aviso2(tr('El agua te cura')); texto(J.yo.x, J.yo.y - 16, '+' + Math.round(cura), '#6bf2ff', 9, 1); anillo(J.yo.x, J.yo.y, 70, '#6bf2ff', 0.6, 4); SONIDO.cura();
   } else if (X.tipo === 'mercader') {
     J.escena = { tipo: 'mercader', compradas: {} }; for (let i = ENE.n - 1; i >= 0; i--) ENE.lista[i].hp = 0; BALAS.vacia();
-    aviso2(tr('Compra con tus monedas. Tira el dado para irte')); SONIDO.posada();
+    aviso2(tr('Compra con tus monedas. Pulsa IRSE para seguir')); SONIDO.posada();
   } else if (X.tipo === 'altar') {
     const precio = Math.round(J.st.vidaMax * 0.3);
     abreEleccion(tr('EL ALTAR'), tr('La sangre por el poder'), [
@@ -123,13 +123,14 @@ function pintaCaminosHud() {
   const J = JUEGO, E = J.escena, W = PAN.W, H = PAN.H; if (!E) return false;
   if (E.tipo === 'tesoro') { texto2(tr('GUARDIANAS'), W / 2, 66, 7, '#c9b98a'); texto2(String(Math.max(0, E.restan)), W / 2, 80, 20, '#ffcf33', 'center', FUENTE_G, 400, 0.2); return true; }
   if (E.tipo !== 'mercader') return false;
-  pintaTiendita(tr('EL MERCADER'), '#ffd34d', MERCADER, E.compradas, compraMercader, tr('Tira el dado para irte'));
+  pintaTiendita(tr('EL MERCADER'), '#ffd34d', MERCADER, E.compradas, compraMercader, tr('tira el dado'));
   return true;
 }
 
-// la tienda de la Posada y del Mercader: una fila por cosa (icono, nombre, qué hace y precio), con letra que se lee
+// la tienda de la Posada y del Mercader: una fila por cosa (icono, nombre, qué hace y precio), con letra que se lee, y abajo el
+// botón IRSE, que tira el dado (el tablón tapa el botón del dado; 5-11-2026: un amigo de Daniel no sabía cómo salir)
 function pintaTiendita(titulo, color, lista, compradas, compra, pie) {
-  const J = JUEGO, W = PAN.W, H = PAN.H, fila = 25, y0 = H - 22 - lista.length * (fila + 3) - 18;
+  const J = JUEGO, W = PAN.W, H = PAN.H, fila = 25, y0 = H - 40 - lista.length * (fila + 3) - 18;
   panelMadera(4, y0 - 4, W - 8, H - y0);   // el tablón de Yoshi
   texto2(titulo, W / 2, y0 + 10, 10, color, 'center', FUENTE_G, 400, 0.25);
   lista.forEach((o, i) => {
@@ -141,7 +142,7 @@ function pintaTiendita(titulo, color, lista, compradas, compra, pie) {
     if (!hecha && o.anuncio) { icono('anuncio', W - 40, y + fila / 2, 9); texto2(tr('VER'), W - 31, y + fila / 2 + 0.5, 8, '#7dff6b', 'left'); BOTONES.push({ x: 10, y, w: W - 20, h: fila, accion: () => compra(o) }); }   // con anuncio (js/monetiza.js)
     else if (!hecha) { pinta('moneda', W - 38, y + fila / 2, false, false, 0.9); texto2(String(cuesta), W - 31, y + fila / 2 + 0.5, 8, puede ? '#ffcf33' : '#ff8a6b', 'left'); BOTONES.push({ x: 10, y, w: W - 20, h: fila, accion: () => compra(o) }); }
   });
-  texto2(pie, W / 2, H - 14, 7, color, 'center', FUENTE, 700, 0.3);
+  boton(10, H - 34, W - 20, 26, tr('IRSE'), '#c0402f', () => { if (tirarDado()) SONIDO.boton(); }, 10, pie);
 }
 
 // --- ELECCION: dos (o más) tarjetas grandes; la partida espera ---

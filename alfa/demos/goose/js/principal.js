@@ -104,7 +104,7 @@ function fotograma(ahora) {
   else if (J.modo === 'pase') { pintaPase(); }
   else {
     if (J.modo === 'juego' && !ANUNCIO_G.activo) avanzaPartida(dt);   // mientras sale un anuncio, la partida espera
-    else if (J.modo === 'fin' || J.modo === 'revivir' || J.modo === 'cofre' || J.modo === 'cartas' || J.modo === 'eleccion') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
+    else if (J.modo === 'fin' || J.modo === 'revivir' || J.modo === 'cofre' || J.modo === 'cartas' || J.modo === 'eleccion' || J.modo === 'trato') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
     pintaVacio(); pintaMundo(); pintaEncima();
     if (J.modo !== 'fin') pintaHud();
     if (J.modo === 'juego') { pintaPalanca(); pintaHabilidad(); }

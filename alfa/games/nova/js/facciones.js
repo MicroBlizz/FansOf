@@ -3,7 +3,7 @@
 // (rabia, hype, cadena…) se aplican con ganchos mínimos en armas.js. No toca estados ni combos: eso es de las cargas (armas.js / datos-armas.js).
 'use strict';
 const NV_FAC_STATS = {   // vida y velocidad de las naves nuevas (las tres de siempre mantienen las suyas en partida.js)
-  nomuertos: { hp: 300, vel: 170 }, streamers: { hp: 200, vel: 230 }, heroes: { hp: 250, vel: 190 },
+  nomuertos: { hp: 300, vel: 170 }, streamers: { hp: 260, vel: 230 }, heroes: { hp: 250, vel: 190 },
   memes: { hp: 210, vel: 215 }, gamer: { hp: 320, vel: 165 }, pop: { hp: 235, vel: 195 }
 };
 const NV_FAC_TIPO = { insignia: 'Insignia', secreta: 'Secreta', especial: 'Especial' };

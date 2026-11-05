@@ -3,7 +3,7 @@
 // Funciones puras sobre lo que devuelve la API de GitHub; las usa cola.js. Guía: docs/guia/herramientas/cola-actions.md.
 'use strict';
 const COLA_MEDIDA = (() => {
-  const MUESTRAS = 20;   // runs correctos por workflow (y por tipo en Generar recurso) que forman la media
+  const MUESTRAS = 20, MIN_FIABLE = 3;   // MIN_FIABLE: con menos muestras de su tipo, una media de «Generar recurso» no se enseña (un solo vídeo de 50 min no sirve de media)   // runs correctos por workflow (y por tipo en Generar recurso) que forman la media
   const ms = s => s ? Date.parse(s) : NaN;
   // Lo que costaría generar cada tipo con una API de pago (USD por recurso): tabla de referencia que dio Gemini el 29-10-2026, sin verificar (se corrige aquí). Gemelo de herramientas/cola-actions/hooks/precios.ts.
   const USD = { imagen: 0.04, cancion: 0.08, efecto: 0.002 * 4, video: 0.03 * 5, modelo3d: 0.2 };
@@ -51,9 +51,13 @@ const COLA_MEDIDA = (() => {
     }
     return { muestras, piden };
   }
+  /** La media de un pedido de «Generar recurso»: la de su tipo si tiene al menos MIN_FIABLE muestras; si no, sin media (no se presta la de otro tipo, que sería de imágenes). `m`: { seg, n } o undefined. */
+  const mediaFiable = m => m && m.n >= MIN_FIABLE ? m.seg : null;
+  /** Lo que dice el panel cuando no hay media: con pocas muestras del tipo, cuántas hay. */
+  const sinMedia = t => t.gen ? 'sin media fiable (' + (t.muestras || 0) + (t.muestras === 1 ? ' muestra' : ' muestras') + ')' : 'sin media';
   function mediaCadencia(d) {   // sin los saltos raros: más del triple de la mediana y 10 min por encima es que la GPU hizo otra cosa (un intento fallido relanzado, un cambio de modelo, el runner apagado)
     const o = [...d].sort((a, b) => a - b), med = o[Math.floor(o.length / 2)], ok = d.filter(x => x <= Math.max(3 * med, med + 600));
     return { seg: Math.round(ok.reduce((a, b) => a + b, 0) / ok.length), n: ok.length };
   }
-  return { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia };
+  return { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, mediaFiable, sinMedia, duracionRun, duracionPaso, cadencias, mediaCadencia };
 })();

@@ -79,7 +79,7 @@
     });
   }
   const estado = f => f.apagado ? [pausa === true && f.t.carril === COLA_CONTROL.CARRIL ? 'en pausa' : f.t.enCurso ? 'pausada' : 'retenida', 'si'] : f.t.enCurso ? ['en curso', ''] : ['en cola', 'esp'];
-  const eta = (f, ahora) => f.acum === null ? 'sin media' : f.apagado ? '+' + fmt(f.acum) + ' al encender' : 'en ' + fmt(f.acum) + ' · ' + hora(ahora + f.acum * 1000);
+  const eta = (f, ahora) => f.acum === null ? COLA_MEDIDA.sinMedia(f.t) : f.apagado ? '+' + fmt(f.acum) + ' al encender' : 'en ' + fmt(f.acum) + ' · ' + hora(ahora + f.acum * 1000);
   function vistaA(F, ahora) {
     if (!F.length) return '<div class="vacio"><b>La cola está vacía</b>No hay trabajos en curso ni esperando.</div>';
     return F.map(f => { const [txt, cls] = estado(f);

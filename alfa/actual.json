@@ -1,8 +1,8 @@
 {
- "build": 982,
- "hash": "8227e41",
- "fecha": "2026-11-05T17:06:27Z",
- "mensaje": "Cola: reintento automático de Generar si se pierde el runner; el hueco entre runners efímeros ya no sale apagado",
+ "build": 983,
+ "hash": "fcb9cc2",
+ "fecha": "2026-11-05T17:37:41Z",
+ "mensaje": "Generar: el tiempo máximo de un pedido corre desde que le toca la GPU, y el panel no inventa medias de vídeo",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

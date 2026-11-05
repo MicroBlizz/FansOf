@@ -7,7 +7,7 @@
 // última vez) y sube lo que ha cambiado aquí; así Pepins y Arkioner ven lo mismo y lo que GitHub borra a los 90 días se queda. Guía: docs/guia/herramientas/cola-actions.md.
 'use strict';
 const COLA_DATOS = (() => {
-  const { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
+  const { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, mediaFiable, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
   const P = 'fansof.gestion.cola.';
   // las claves que «Borrar lo guardado» quita (el token y el límite semanal son ajustes y se quedan)
   const K = { runs: P + 'runs', hist: P + 'historial', activos: P + 'activos', carriles: P + 'carriles', durs: P + 'duraciones-2', recs: P + 'recursos', plan: P + 'plan', foto: P + 'foto', sync: P + 'sync' };
@@ -117,8 +117,6 @@ const COLA_DATOS = (() => {
     const medias = {}, media = d => ({ seg: Math.round(d.reduce((a, b) => a + b, 0) / d.length), n: d.length });
     for (const rs of Object.values(porWf)) { const d = rs.map(r => cache[r.id]).filter(x => x > 0); if (d.length) medias[etiquetaWf(rs[0])] = media(d); }
     Object.entries(muestras).forEach(([f, d]) => { if (d.length) medias[f] = mediaCadencia(d); });
-    const todas = Object.values(muestras).flat(), generar = hechos.find(esGenerar);
-    if (generar && todas.length) medias[etiquetaWf(generar)] = mediaCadencia(todas);   // de reserva, para un tipo sin muestras
 
     // 5. Recursos terminados: tamaño del artefacto (solo si tiene menos de un día; si no, ya no está) y tipo del título (sin tipo: imagen).
     const sinVer = hechos.filter(r => esGenerar(r) && r.conclusion === 'success' && (gs[r.id] === undefined || (todo && ahora - ms(r.updated_at) < DIA)));
@@ -157,7 +155,7 @@ const COLA_DATOS = (() => {
       if (!carril) { extra++; return; }
       const flujo = flujoDe(r), arr = (j || []).map(x => ms(x.started_at)).filter(x => !isNaN(x));
       trabajos.push({ id: r.id, creado: ms(r.created_at), nombre: esGenerar(r) ? leerTitulo(String(r.display_title || flujo)).titulo : flujo, flujo, enCurso: r.status === 'in_progress',
-        carril, media: (medias[flujo] || medias[etiquetaWf(r)] || { seg: null }).seg, gen: esGenerar(r), arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
+        carril, media: esGenerar(r) ? mediaFiable(medias[flujo]) : (medias[flujo] || medias[etiquetaWf(r)] || { seg: null }).seg, muestras: (medias[flujo] || { n: 0 }).n, gen: esGenerar(r), arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
     });
     // La GPU hace un «Generar recurso» detrás de otro: solo el primero en curso está en ella, desde que acabó el último (o desde que arrancó, si es después); los demás en curso esperan su media entera.
     const finGen = Math.max(0, ...hechos.filter(esGenerar).map(r => ms(r.updated_at)));

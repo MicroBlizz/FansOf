@@ -101,8 +101,8 @@
     <button type="button" class="boton tit-jugar" id="b-jugar" hidden><b class="ol" data-tr>JUGAR</b><span data-tr>Camaleón o cazador, contra bots</span></button>
     <div class="tit-pvp-caja"><button type="button" class="boton tit-pvp pvp-boton" id="b-pvp"><span class="tit-pvp-txt"><b class="ol" data-tr>EN LÍNEA · PvP</b><span data-tr>Buscar partida o sala con amigos</span></span><i class="tit-pvp-amigos" id="tit-pvp-amigos" hidden></i></button><div class="tit-pvp-caos" id="tit-pvp-caos"></div></div>
     <div class="tit-tarjetas">
-      <button type="button" class="tit-tarjeta mis" id="b-misiones"><b data-tr>MISIONES DE HOY</b><span id="tit-mis-t"></span><i class="barra"><i id="tit-mis-b"></i></i></button>
-      <button type="button" class="tit-tarjeta tem" id="b-temporada"><b id="tit-tem-n"></b><span id="tit-tem-t"></span><i class="barra"><i id="tit-tem-b"></i></i></button>
+      <button type="button" class="tit-tarjeta mis" id="b-misiones"><i class="tit-tar-ico"><i data-icono="diana"></i></i><span class="tit-premio" id="tit-mis-premio" hidden data-tr>¡PREMIO!</span><b data-tr>MISIONES DE HOY</b><span id="tit-mis-t"></span><i class="barra"><i id="tit-mis-b"></i></i></button>
+      <button type="button" class="tit-tarjeta tem" id="b-temporada"><i class="tit-tar-ico"><i data-icono="podio"></i></i><b id="tit-tem-n"></b><span id="tit-tem-t"></span><i class="barra"><i id="tit-tem-b"></i></i></button>
     </div>
     <div class="tit-abajo" id="fila-armario">
       <button type="button" class="boton tit-ab armario" id="b-armario"><i data-icono="percha"></i><b class="ol" data-tr>ARMARIO</b></button>

@@ -53,6 +53,7 @@ function refrescaTitulo() {
   const mis = misionesDeHoy(), hechas = mis.filter(m => misionHecha(m) || misionCobrada(m)).length, cobrar = mis.some(m => misionHecha(m) && !misionCobrada(m));
   E('tit-mis-t').textContent = cobrar ? tr('¡Premio por cobrar!') : tr('{n} de {t} hechas', { n: hechas, t: mis.length });
   E('tit-mis-b').style.width = Math.round(hechas / Math.max(1, mis.length) * 100) + '%';
+  E('b-misiones').classList.toggle('premio', cobrar); E('tit-mis-premio').hidden = !cobrar;      // con premio por cobrar, la tarjeta brilla y lo dice (estilo-tarjetas.css)
   // la temporada y tu liga (temporada.js)
   if (typeof tempTarjeta === 'function') tempTarjeta();
   // la TIENDA lleva su cartel de OFERTA mientras no hayas cogido el Pack de inicio

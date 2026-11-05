@@ -224,4 +224,6 @@ IDIOMA.add({
   "DESTACADO DE LA SEMANA": "DESTAQUE DA SEMANA",
   "Te faltan {n} Acciones para «{c}». Cámbialas por Gotas o consíguelas aquí, y volverás a la compra.": "Faltam {n} Ações para «{c}». Troque Gotas por elas ou consiga-as aqui, e você volta para a compra.",
   "ESTE TE LLEGA": "ESTE DÁ",
+  // las tarjetas vivas del título (5-11-2026)
+  "¡PREMIO!": "PRÊMIO!",
 });

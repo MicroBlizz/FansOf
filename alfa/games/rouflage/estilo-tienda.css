@@ -14,8 +14,9 @@
 .tn-dest-texto small { color: #cfe3ff; font-weight: 700; font-size: 13px; }
 .tn-dest-texto .boton { min-width: 96px; display: inline-flex; gap: 5px; align-items: center; justify-content: center; }
 .tn-cinta { position: absolute; top: -10px; right: 10px; z-index: 1; padding: 1px 8px 0; border-radius: 8px; background: #ffcb3d; color: var(--outline); border: 2px solid var(--outline); font: 900 12px/1.4 var(--font-ui); font-style: normal; transform: rotate(3deg); }
-/* OBJETOS: las categorías (se deslizan de lado) y la rejilla de piezas */
-.tn-cats { display: flex !important; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 2px 2px 8px; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior-x: contain; }      /* como las pestañas del armario: se desliza con el dedo */
+/* OBJETOS: las categorías (fuera de la lista, para que no se vayan al bajar; se deslizan de lado) y la rejilla de piezas */
+.tn-cats[hidden] { display: none; }
+.tn-cats { display: flex; flex: none; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 2px 2px 8px; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior-x: contain; }      /* como las pestañas del armario: se desliza con el dedo */
 .tn-cat { flex: none; touch-action: pan-x; border: 2px solid var(--outline); border-radius: 999px; padding: 5px 12px 3px; font: 800 13px var(--font-ui); background: #2b4a75; color: #fff6ea; cursor: pointer; }
 .tn-cat.on { background: #7ee04a; color: var(--outline); }
 .tn-rejilla { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px !important; }

@@ -125,6 +125,7 @@
     <h2 class="ol" data-tr>TIENDA</h2>
     <div class="cartera" id="tienda-cartera"></div>
     <div class="tn-pestanas" role="tablist" data-tr-aria aria-label="Tienda"><button type="button" class="tn-pes ol" id="b-tn-dest" role="tab" data-tr>DESTACADO</button><button type="button" class="tn-pes ol" id="b-tn-obj" role="tab" data-tr>OBJETOS</button><button type="button" class="tn-pes ol" id="b-tn-acc" role="tab" data-tr>ACCIONES</button></div>
+    <div class="tn-cats" id="tienda-cats" hidden></div>
     <div class="tienda-lista" id="tienda-lista">
       <div class="tn-hoja" id="tn-dest" role="tabpanel">
         <button type="button" class="tienda-gacha" id="b-gacha"><b class="ol" data-tr>GACHAPÓN</b><span data-tr>Cápsulas con piezas del armario. Tiradas gratis cada día.</span><i class="tienda-gacha-aviso" id="tienda-gacha-aviso" hidden></i></button>
@@ -133,7 +134,6 @@
         <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
       </div>
       <div class="tn-hoja" id="tn-obj" role="tabpanel" hidden>
-        <div class="tn-cats" id="tienda-cats"></div>
         <div class="tn-rejilla" id="tienda-rejilla"></div>
       </div>
       <div class="tn-hoja" id="tn-acc" role="tabpanel" hidden>

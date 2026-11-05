@@ -16,6 +16,7 @@ function tiendaPintaPestanas() {
   }
   tiendaPintaDestacado();
   tiendaPintaPendiente();
+  E('tienda-cats').hidden = TIENDA.pestana !== 'obj';      // las categorías van fuera de la lista: no se van al bajar
   if (TIENDA.pestana === 'obj') tiendaPintaObjetos();      // muchas piezas: solo se dibujan cuando se ven
 }
 function tiendaPestana(id) { if (TIENDA.pestana === id) return; play('tick'); TIENDA.pestana = id; tiendaPintaPestanas(); E('tienda-lista').scrollTop = 0; }

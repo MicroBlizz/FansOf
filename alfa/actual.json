@@ -1,8 +1,8 @@
 {
- "build": 1005,
- "hash": "c9854e3",
- "fecha": "2026-11-05T20:25:55Z",
- "mensaje": "Rouflage 0.2.71: menús pintados a brocha, conejo nuevo y mascotas pequeñas (con su nota)",
+ "build": 1006,
+ "hash": "8f0e2cc",
+ "fecha": "2026-11-05T20:48:49Z",
+ "mensaje": "Rouflage: vuelven las mascotas clásicas como piezas aparte (tienda y gachapón)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

@@ -85,6 +85,8 @@
     ['kaiju', 'Kaiju de goma', 'epica', 'tienda', 0], ['recreativa', 'Recreativa en miniatura', 'epica', 'tienda', 0], ['cupido', 'Corazón alado de CupidArcher', 'epica', 'premium', 'Pase premium · nv 32'],
     ['serpiente', 'Serpiente de Medusa', 'epica', 'tienda', 0], ['dron', 'Dron cazador', 'legend', 'amigos', 'Trae amigos · 10'],
   ];
+  // y su versión clásica (los dibujos de antes, mascotas-clasicas.js; Daniel, 5-11-2026): misma rareza, de la tienda y del gachapón; detrás de todas las vivas
+  const clasica = ([id, n, r]) => { const k = id + '-clasico'; return it(k, n + ' (versión clásica)', r === 'legend' ? 'legend' : r, 'tienda', 0, mascotaIcono(k), k); };
   CATALOGO_AR.push({ id: 'mascotas', nombre: 'Mascotas', corto: 'Mascotas', nota: 'Te siguen mientras te preparas y salen corriendo al empezar. Todos ven su aspecto, pero no cambian cómo se juega', vacio: true, cuerpo: true,
-    items: MASC.map(([id, n, r, de, txt]) => it(id, n, r, de, txt, mascotaIcono(id), id)) });
+    items: MASC.map(([id, n, r, de, txt]) => it(id, n, r, de, txt, mascotaIcono(id), id)).concat(MASC.filter(([id]) => MASCOTAS_CLASICAS.includes(id)).map(clasica)) });
 })();

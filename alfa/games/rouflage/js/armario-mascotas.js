@@ -1,6 +1,6 @@
 // Fans of Rouflage · MASCOTAS (el registro): ARD.MASCOTAS[id](c, o) dibuja la mascota `id` con los pies en 0,0 mirando a la derecha, y
 // ARD.mascotaIcono(id) la pinta como icono en el armario. Los dibujos son las mascotas vivas (mascotas-vivas*.js), que se apuntan aquí con
-// registraMascotasVivas; los dibujos viejos (una bola con patas) se quitaron el 5-11-2026 a petición de Daniel. Cómo se mueven en la
+// registraMascotasVivas, y las clásicas (los dibujos de antes, mascotas-clasicas.js) como «<id>-clasico». Cómo se mueven en la
 // partida: mascotas.js.
 'use strict';
 Object.assign(ARD, (() => {

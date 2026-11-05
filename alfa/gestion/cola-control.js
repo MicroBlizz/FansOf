@@ -43,21 +43,23 @@ const COLA_CONTROL = (() => {
       .map(r => ({ id: r.id, workflow: r.name, titulo: r.display_title, fin: Date.parse(r.updated_at), intento: r.run_attempt || 1 }));
   }
 
-  /** El bloque de mandos. `e`: { pausa (true|false|null si no se sabe), ocupado, fallidas, fecha(ms), esc(texto), fallo }. */
-  function html(e) {
+  /** La barra de la pausa (se ve en todas las vistas menos Configuración). `e`: { pausa (true|false|null si no se sabe), ocupado, esc(texto), fallo }. */
+  function htmlPausa(e) {
     const pausado = e.pausa === true;
     const estado = e.pausa === null ? 'Estado desconocido' : pausado ? 'En pausa' : 'En marcha';
-    const aviso = e.fallo ? `<p class="aviso">${e.esc(e.fallo)}</p>` : '';
+    return `<section class="caja cl-control"><div class="cl-bar"><b>Runners de generar recursos: ${estado}</b>`
+      + `<button type="button" id="cl-pausa"${e.ocupado || e.pausa === null ? ' disabled' : ''}>${pausado ? 'Reanudar' : 'Pausar'}</button></div>`
+      + `<p class="meta">En pausa, el pedido en marcha termina y no entra ninguno más hasta reanudar (esperan en la cola de GitHub, hasta 24 h). Tarda hasta ~15 s en notarse. No afecta a los demás runners.</p>`
+      + (e.fallo ? `<p class="aviso">${e.esc(e.fallo)}</p>` : '') + '</section>';
+  }
+  /** La vista «Fallidas». `e`: { ocupado, fallidas, fecha(ms), esc(texto) }. */
+  function htmlFallidas(e) {
     const lista = e.fallidas.length
       ? e.fallidas.map(r => `<div class="cl-fila"><span><a href="https://github.com/${REPO}/actions/runs/${r.id}" target="_blank" rel="noopener">${e.esc(r.workflow)}</a> · ${e.esc(r.titulo)}</span>`
         + `<span class="meta">${e.fecha(r.fin)}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span><button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button></div>`).join('')
       : '<div class="meta">Ninguna en los últimos ' + DIAS + ' días.</div>';
-    return `<section class="caja cl-control"><h3>Runners de generar recursos: <b>${estado}</b></h3>`
-      + `<p class="meta">En pausa, el pedido que está en marcha termina y no entra ninguno más hasta reanudar (los pedidos esperan en la cola de GitHub, hasta 24 h). Tarda hasta ~15 s en notarse. No afecta a los demás runners.</p>`
-      + `<div class="cl-bar"><button type="button" id="cl-pausa"${e.ocupado || e.pausa === null ? ' disabled' : ''}>${pausado ? 'Reanudar' : 'Pausar'}</button></div>${aviso}`
-      + `<h3>Ejecuciones fallidas (${e.fallidas.length})</h3>${lista}`
-      + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '')
-      + '</section>';
+    return `<section class="caja cl-control"><h3>Ejecuciones fallidas (${e.fallidas.length})</h3>${lista}`
+      + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
-  return { VARIABLE, leerPausa, fijarPausa, reiniciar, reiniciarTodas, fallidas, html };
+  return { VARIABLE, leerPausa, fijarPausa, reiniciar, reiniciarTodas, fallidas, htmlPausa, htmlFallidas };
 })();

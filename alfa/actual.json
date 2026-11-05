@@ -1,8 +1,8 @@
 {
- "build": 973,
- "hash": "fec8daa",
- "fecha": "2026-11-05T15:38:19Z",
- "mensaje": "Pets: quitar los dientes del hocico, la boca es la del dibujo",
+ "build": 974,
+ "hash": "c97f69a",
+ "fecha": "2026-11-05T15:59:05Z",
+ "mensaje": "Cola: las ejecuciones fallidas pasan a su propia vista (pestaña Fallidas); la barra de la pausa queda encima de las demás",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

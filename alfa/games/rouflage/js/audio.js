@@ -66,6 +66,14 @@ Object.assign(SFX, {
   pincel: () => noise(0.09, 0.045, 2600, 'bandpass'),
   gota: () => { tone(880, 1500, 0.07, 'sine', 0.09); tone(1500, 1900, 0.06, 'sine', 0.05, 0.06); },
   cubo: () => { noise(0.22, 0.12, 900); tone(300, 160, 0.2, 'sine', 0.1); },
+  // la brocha gigante de la pintura rápida (brochazo.js), provisional hasta el de Yoshi: entra, tres brochazos (fsss) al ritmo de las
+  // pasadas, chapoteo de pintura (plaf) y sale volando
+  brochazo: () => {
+    noise(0.16, 0.05, 2600, 'highpass', 0);
+    [[0.21, 1700], [0.45, 1400], [0.69, 1900]].forEach(([d, f]) => { noise(0.22, 0.13, f, 'bandpass', d); tone(f / 6, f / 9, 0.18, 'triangle', 0.025, d); });
+    noise(0.12, 0.16, 500, 'lowpass', 0.9); tone(190, 55, 0.22, 'sine', 0.14, 0.9); tone(420, 260, 0.08, 'sine', 0.05, 0.98);
+    noise(0.25, 0.05, 3200, 'highpass', 1.05);
+  },
   congela: () => { [1318, 1568, 2093].forEach((f, i) => tone(f, f, 0.16, 'sine', 0.07, i * 0.05)); noise(0.2, 0.05, 6000, 'highpass'); },
   descongela: () => { noise(0.12, 0.08, 3600, 'highpass'); [1568, 1318, 988].forEach((f, i) => tone(f, f * 0.9, 0.09, 'sine', 0.05, i * 0.045)); },
   silbido: (v = 1, out = master) => { tonoEn(out, 1500, 2300, 0.16, 'sine', 0.13 * v); tonoEn(out, 2300, 1700, 0.22, 'sine', 0.12 * v, 0.17); },

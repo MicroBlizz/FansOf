@@ -145,7 +145,7 @@ function tallerRellena() { const yo = J.yo; guardaPaso(yo); rellena(yo, TALLER.c
 function tallerRapida() {
   const yo = J.yo; if (!yo || !TALLER.abierto) return;
   if (yo.rapida > 0) { play('deny'); return; }
-  guardaPaso(yo); pintaRapida(yo); yo.pintado = true; yo.rapida = yo.hab === 'rapida' ? TALENTOS.rapidaEspera : REGLAS.pintaRapida; play('cubo'); mideTaller(); refrescaTaller();
+  guardaPaso(yo); pintaRapida(yo); brochazoEmpieza(); yo.pintado = true; yo.rapida = yo.hab === 'rapida' ? TALENTOS.rapidaEspera : REGLAS.pintaRapida; play('brochazo'); mideTaller(); refrescaTaller();
 }
 function tallerDeshace() { if (deshace(J.yo)) { play('pop'); mideTaller(); } else play('deny'); }
 function tallerCalco() { TALLER.calco = !TALLER.calco; play('select'); refrescaTaller(); }

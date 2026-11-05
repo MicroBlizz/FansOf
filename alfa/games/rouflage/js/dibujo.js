@@ -71,6 +71,7 @@ function pintaYoEnTaller(c, yo, t) {
   c.setLineDash([]);
   if (TALLER.herr === 'senuelo') { c.beginPath(); c.arc(0, -20, alcanceSen(J.yo), 0, TAU); c.lineWidth = 1.4; c.setLineDash([6, 6]); c.lineDashOffset = -t * 8; c.strokeStyle = 'rgba(255,246,234,0.55)'; c.stroke(); c.setLineDash([]); }      // hasta dónde llega el brazo
   c.restore();
+  brochazoPinta(c, yo, t);      // la brocha gigante de la pintura rápida (brochazo.js), si está pasando
 }
 
 // un bocadillo pequeño con un signo encima de alguien

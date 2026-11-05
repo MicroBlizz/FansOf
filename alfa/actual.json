@@ -1,8 +1,8 @@
 {
- "build": 967,
- "hash": "9478f0e",
- "fecha": "2026-11-05T15:18:35Z",
- "mensaje": "Cola: pausa ordenada de los runners de generar recursos y reinicio de ejecuciones fallidas desde /gestion",
+ "build": 968,
+ "hash": "5ad8f41",
+ "fecha": "2026-11-05T15:21:21Z",
+ "mensaje": "Nova 0.3.50: Directo apaga a los capitanes solo la primera mitad, como todo apagón",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.22",
   "karts": "0.7.21",
-  "nova": "0.3.49",
+  "nova": "0.3.50",
   "pets": "0.2.5",
   "ratkov": "0.2.35",
   "rouflage": "0.2.69",

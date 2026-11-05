@@ -1,8 +1,8 @@
 {
- "build": 966,
- "hash": "f2794b2",
- "fecha": "2026-11-05T15:17:44Z",
- "mensaje": "Nova 0.3.49: Directo deja sin disparar a los enemigos que atrae (Streamers 4→29 de 120)",
+ "build": 967,
+ "hash": "9478f0e",
+ "fecha": "2026-11-05T15:18:35Z",
+ "mensaje": "Cola: pausa ordenada de los runners de generar recursos y reinicio de ejecuciones fallidas desde /gestion",
  "juegos": {
   "boom": "0.4.7",
   "cooking": "0.2.8",

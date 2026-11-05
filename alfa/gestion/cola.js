@@ -14,6 +14,7 @@
   const CAMBIO = 1, PRECIO_CLAUDE = 20;   // 1 € = 1 $; 20 USD por millón de tokens de salida de Claude Opus 5.5 (oct. 2026), para pasar el coste de cada recurso a tokens
   try { ['fansof.gestion.cola.duraciones', 'fansof.gestion.cola.precision'].forEach(k => localStorage.removeItem(k)); } catch (e) { /* lo de antes de la cadencia (-2) y la casilla de precisión, ya quitada */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0, confirmaBorrar = false;
+  let pausa = null, ocupado = false, falloControl = '';   // mandos (cola-control.js): estado de la pausa de los runners de generar recursos
   let claves = null, claveNueva = '', revocando = null;   // claves del mod (vista Configuración)
   // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
   const PLAN = COLA_DATOS.K.plan;
@@ -149,8 +150,8 @@
   function pinta() {
     const t = token(), ahora = Date.now();
     const cab = `<div class="caja ayuda"><b>Cola de Actions.</b> Lo que espera y corre en GitHub Actions de FansOf-dev, con el tiempo que le queda según la media de cada workflow (sin contar la espera; Generar recurso, por tipo y con la cadencia de la GPU de Yoshi). Si un runner está apagado, su cola no corre. Se refresca solo cada 5 minutos mientras está abierta.</div>`;
-    const clave = t ? '' : `<form class="caja" id="cl-clave"><label>Token de GitHub (solo lectura)<input type="password" id="cl-tok" autocomplete="off" placeholder="github_pat_…"></label>
-      <div class="meta">Se crea en GitHub › Settings › Developer settings › Fine-grained tokens: solo el repo ${REPO}, permisos de solo lectura en <b>Actions</b> y <b>Administration</b> (para saber si yoshi está encendido). Queda en este navegador y no sale de aquí hacia ningún sitio salvo api.github.com.</div>
+    const clave = t ? '' : `<form class="caja" id="cl-clave"><label>Token de GitHub<input type="password" id="cl-tok" autocomplete="off" placeholder="github_pat_…"></label>
+      <div class="meta">Se crea en GitHub › Settings › Developer settings › Fine-grained tokens: solo el repo ${REPO}, permisos <b>Actions</b> y <b>Variables</b> en lectura y escritura (para pausar los runners y reiniciar ejecuciones fallidas) y <b>Administration</b> en solo lectura (para saber si yoshi está encendido). Queda en este navegador y no sale de aquí hacia ningún sitio salvo api.github.com.</div>
       <div class="accion"><button type="submit" class="fuerte">Guardar token</button></div></form>`;
     let cuerpo = '';
     if (t && snap) {
@@ -158,6 +159,7 @@
       cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen'], ['cfg', 'Configuración']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
         + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span></div>`
         + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '')
+        + (vista === 'cfg' ? '' : COLA_CONTROL.html({ pausa, ocupado, fallidas: snap.fallidas || [], fecha, esc, fallo: falloControl }))
         + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
         + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
@@ -170,12 +172,24 @@
     try { claves = await rpc('gestion_cola_claves', { p_token: leerToken() }); } catch (e) { claves = []; $('cl-aviso').textContent = 'No pude leer las claves: ' + e.message; }
     pinta();
   }
+  // Mandos: pausa de los runners de generar recursos y reinicio de ejecuciones fallidas (cola-control.js). El token necesita Variables y Actions con escritura.
+  const permiso = e => /→ (401|403)/.test(e.message) ? ' El token no tiene el permiso necesario (Variables y Actions, lectura y escritura).' : '';
+  async function leerEstadoPausa() {
+    try { pausa = await COLA_CONTROL.leerPausa(fetch, token()); falloControl = ''; }
+    catch (e) { pausa = null; falloControl = 'No pude leer la pausa: ' + e.message + '.' + permiso(e); }
+  }
+  async function conMandos(accion, texto) {
+    ocupado = true; falloControl = ''; pinta();
+    try { await accion(); } catch (e) { falloControl = texto + ': ' + e.message + '.' + permiso(e); }
+    ocupado = false; await leerEstadoPausa(); pinta();
+  }
   async function cargar(fuerza, todo) {
     if (!token() || cargando) { pinta(); return; }
     if (!fuerza && snap && Date.now() - ultimo < CADA) { pinta(); return; }
     cargando = true; pinta();
     let fallo = null;
     try { snap = await actualizar(!!todo); ultimo = Date.now(); } catch (e) { fallo = e; }
+    await leerEstadoPausa();
     cargando = false; avance = null; pinta();
     if (fallo) $('cl-aviso').textContent = /→ (401|403|404)/.test(fallo.message) ? 'GitHub no acepta el token (' + fallo.message + '). Revisa que no haya caducado y que sea de este repo.' : 'No pude leer GitHub: ' + fallo.message;
   }
@@ -184,6 +198,9 @@
     if (b.dataset.v) { vista = b.dataset.v; pinta(); if (vista === 'cfg' && claves === null) cargarClaves(); }
     else if (b.dataset.copia) { navigator.clipboard.writeText(b.dataset.copia).then(() => { b.textContent = 'Copiado'; }, () => { $('cl-aviso').textContent = 'No pude copiar: selecciónalo y cópialo a mano.'; }); }
     else if (b.id === 'cl-olvida') { try { localStorage.removeItem(CLAVE); } catch (e) { /* nada */ } snap = null; pinta(); }
+    else if (b.id === 'cl-pausa') conMandos(() => COLA_CONTROL.fijarPausa(fetch, token(), pausa !== true), 'No pude cambiar la pausa');
+    else if (b.dataset.reinicia) conMandos(() => COLA_CONTROL.reiniciar(fetch, token(), b.dataset.reinicia).then(() => cargar(true)), 'No pude reiniciar');
+    else if (b.id === 'cl-reinicia-todas') conMandos(async () => { for (const r of snap.fallidas) await COLA_CONTROL.reiniciar(fetch, token(), r.id); await cargar(true); }, 'No pude reiniciar todas');
     else if (b.id === 'cl-ref' || b.id === 'cl-todo') {
       const falta = Math.ceil((hasta - Date.now()) / 1000);
       if (falta > 0) { $('cl-aviso').textContent = 'Espera ' + falta + ' s para volver a refrescar.'; return; }

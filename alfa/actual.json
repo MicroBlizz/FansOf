@@ -1,8 +1,8 @@
 {
- "build": 956,
- "hash": "f3b82e2",
- "fecha": "2026-11-05T12:36:53Z",
- "mensaje": "Rouflage: las barras de desplazamiento son una brocha que va pintando su camino; las categorías de OBJETOS ya no se van al bajar",
+ "build": 957,
+ "hash": "f21e94b",
+ "fecha": "2026-11-05T12:41:52Z",
+ "mensaje": "Rouflage: la brocha solo pinta hasta la punta de sus cerdas (no por delante) y la barra enseña en clarito la zona que se ve",
  "juegos": {
   "boom": "0.4.6",
   "cooking": "0.2.7",

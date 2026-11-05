@@ -29,7 +29,7 @@ const BARRAS = (() => {
     const d = 'M' + izq.map(p).join(' L') + ' ' + fin + p(der[der.length - 1]) + ' L' + der.slice().reverse().map(p).join(' L') + ' ' + ini + p(izq[0]) + 'Z';
     const veta = x => 'M' + izq.map(([, y]) => p([n(x + ruido(y, x) * 0.6), y])).join(' L');
     const g = vertical ? 'x1="0" y1="0" x2="0" y2="1000"' : 'x1="0" y1="0" x2="1000" y2="0"';
-    const caja = vertical ? `0 -12 ${ANCHO} ${LARGO + 24}` : `-12 0 ${LARGO + 24} ${ANCHO}`;
+    const caja = vertical ? `0 0 ${ANCHO} ${LARGO}` : `0 0 ${LARGO} ${ANCHO}`;      // 0..1000 = toda la barra: el tramo cae justo donde va la brocha
     return url(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${caja}" preserveAspectRatio="none"><defs><linearGradient id="a" gradientUnits="userSpaceOnUse" ${g}>${ARCO.map((c, i) => `<stop offset="${i / (ARCO.length - 1)}" stop-color="${c}"/>`).join('')}</linearGradient></defs>`
       + `<path d="${d}" fill="url(#a)" stroke="${OL}" stroke-width="1.4" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`
       + `<path d="${veta(5)} ${veta(9)}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>`);
@@ -46,6 +46,15 @@ const BARRAS = (() => {
     return url(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vertical ? '14 34' : '34 14'}">${svg}</svg>`);
   };
 
+  // dónde está la brocha en la barra (0..1): la barra mide `pista` px, el cursor ocupa lo que se ve (como mínimo 34 px, el alto de la brocha)
+  // y la brocha va en su centro; la punta de las cerdas, 13 px más allá hacia donde se mueve. Solo se pinta hasta la punta, nunca por delante
+  const puntaBrocha = (total, ve, pos, pista, adelante) => {
+    const largo = Math.max(34, (ve / total) * pista), recorrido = Math.max(1, total - ve);
+    const centro = (Math.min(recorrido, Math.max(0, pos)) / recorrido * (pista - largo) + largo / 2) / pista;
+    const punta = centro + (adelante ? 13 : -13) / pista;
+    return { centro, punta: Math.max(0, Math.min(1, punta)) };
+  };
+
   // el color del arcoíris en un punto (0..1) de la barra: así la brocha va mojada en lo que pinta
   const colorEn = f => ARCO[Math.max(0, Math.min(ARCO.length - 1, Math.round(f * (ARCO.length - 1))))];
 
@@ -56,12 +65,13 @@ const BARRAS = (() => {
     for (const vertical of [true, false]) {
       const total = vertical ? el.scrollHeight : el.scrollWidth, ve = vertical ? el.clientHeight : el.clientWidth, pos = vertical ? el.scrollTop : el.scrollLeft;
       if (total <= ve + 1) continue;
-      const a = pos / total, b = (pos + ve) / total, k = vertical ? 'v' : 'h';
-      const { r, crece } = amplia(est[k], a, b);
+      const k = vertical ? 'v' : 'h';
       if (est['p' + k] !== undefined && pos !== est['p' + k]) est['d' + k] = pos > est['p' + k];
+      const adelante = est['d' + k] !== false, { centro, punta } = puntaBrocha(total, ve, pos, ve, adelante);
+      const { r, crece } = amplia(est[k], Math.min(centro, punta), Math.max(centro, punta));
       est['p' + k] = pos; est[k] = r;
       if (crece) el.style.setProperty('--rastro-' + k, rastro(r[0], r[1], vertical));
-      el.style.setProperty('--brocha-' + k, brocha(colorEn((a + b) / 2), vertical, est['d' + k] !== false));
+      el.style.setProperty('--brocha-' + k, brocha(colorEn(centro), vertical, adelante));
     }
   };
   const escucha = () => {
@@ -74,5 +84,5 @@ const BARRAS = (() => {
     }, { capture: true, passive: true });
   };
 
-  return Object.freeze({ amplia, rastro, brocha, colorEn, escucha });
+  return Object.freeze({ amplia, rastro, brocha, colorEn, puntaBrocha, escucha });
 })();

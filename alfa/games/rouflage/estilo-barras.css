@@ -8,8 +8,8 @@
   ::-webkit-scrollbar-corner { background: transparent; }
   ::-webkit-scrollbar-track { background: var(--rastro-v, none) 0 0 / 100% 100% no-repeat; }
   ::-webkit-scrollbar-track:horizontal { background: var(--rastro-h, none) 0 0 / 100% 100% no-repeat; }
-  ::-webkit-scrollbar-thumb { min-height: 34px; background: var(--brocha-v) 50% 50% / 14px 34px no-repeat; }
-  ::-webkit-scrollbar-thumb:horizontal { min-width: 34px; background: var(--brocha-h) 50% 50% / 34px 14px no-repeat; }
+  ::-webkit-scrollbar-thumb { min-height: 34px; border-radius: 7px; background: var(--brocha-v) 50% 50% / 14px 34px no-repeat, rgba(255, 246, 234, 0.16); box-shadow: inset 0 0 0 1.5px rgba(255, 246, 234, 0.35); }      /* la zona clarita = lo que se ve de la lista */
+  ::-webkit-scrollbar-thumb:horizontal { min-width: 34px; background: var(--brocha-h) 50% 50% / 34px 14px no-repeat, rgba(255, 246, 234, 0.16); }
 }
 @supports not selector(::-webkit-scrollbar) {
   * { scrollbar-color: #ff9a3d transparent; }

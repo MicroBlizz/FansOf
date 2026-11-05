@@ -9,7 +9,10 @@ const TIENDA_SECCIONES = (() => {
   const lista = new Map();
   const tr = t => (typeof IDIOMA !== 'undefined' && IDIOMA.tr ? IDIOMA.tr(t) : t);
   function asegura() {
-    const t = document.querySelector('#scr-shop .tabs'); if (!t) return;
+    const base = document.querySelector('#scr-shop .tabs'); if (!base) return;
+    // las pestañas de estos sistemas van en su propia fila, debajo de Oro, Gemas y Caos, para que no se corten en pantallas estrechas
+    let t = document.querySelector('#scr-shop .tabs-nuevas');
+    if (!t) { t = document.createElement('div'); t.className = 'tabs tabs-nuevas'; t.setAttribute('role', 'group'); t.setAttribute('aria-label', 'Secciones nuevas'); base.after(t); }
     for (const [id, S] of lista) {
       let b = t.querySelector(`[data-st="${id}"]`); const on = !!S.activa();
       if (on && !b) {
@@ -17,6 +20,7 @@ const TIENDA_SECCIONES = (() => {
         b.addEventListener('click', () => { shopTab = id; play('select'); buildShop(); }); t.appendChild(b);
       } else if (!on && b) { b.remove(); if (shopTab === id) shopTab = 'gold'; }
     }
+    t.hidden = !t.children.length;
   }
   return {
     registra(id, S) { lista.set(id, S); },

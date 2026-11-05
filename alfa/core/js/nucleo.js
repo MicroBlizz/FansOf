@@ -57,6 +57,7 @@ const NUCLEO = (() => {
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
     'js/sistema/flags.js',         // flags remotos (abrir/cerrar cosas desde la base de datos), mantenimiento y versión mínima
+    'js/sistema/splash-logo.js', 'js/sistema/splash.js', // la splash común con el logo FOG (tras el flag splash-fog; ADR 051)
     'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
     'js/serie/config.js',          // la serie: constantes y CFG (las cartas, unidades, tipos y roles los añade cada facción)
     'js/serie/facciones/animales.js', 'js/serie/facciones/nomuertos.js', 'js/serie/facciones/streamers.js', 'js/serie/facciones/heroes.js', 'js/serie/facciones/ciber.js', 'js/serie/facciones/memes.js', 'js/serie/facciones/gamer.js', 'js/serie/facciones/olvidados.js', 'js/serie/facciones/pop.js', 'js/serie/facciones/microblizz.js', 'js/serie/facciones/phony.js',
@@ -117,7 +118,7 @@ const NUCLEO = (() => {
 
   // LO LIGERO: lo mínimo para un juego con su propia partida y sus pantallas (ver core/js/sistema/ligero.js). Cuenta e idioma, nada de economía.
   const LIGERO = [
-    'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js',
+    'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js', 'js/sistema/sonido.js',
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/cuenta.js',        // la partida en la nube

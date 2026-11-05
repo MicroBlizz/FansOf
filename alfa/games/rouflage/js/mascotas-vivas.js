@@ -15,6 +15,9 @@ function mascotaPata(F, cor, hx, hy, largo, plega = 0) {
   return [hx, hy, hx + pie + plega * 3, hy + largo - alza - plega * (largo - 1.5)];
 }
 
+// las piezas comunes (silueta, muelles, caras…), para las mascotas de mascotas-vivas2.js
+const MV_KIT = {};
+
 const MASCOTAS_VIVAS = (() => {
   const OL = '#20102c', T = Math.PI * 2;
   // ---- piezas de la silueta (todas en el mismo sentido de giro: se suman al rellenar, como las del colado) ----
@@ -235,6 +238,7 @@ const MASCOTAS_VIVAS = (() => {
     }
   }
 
+  Object.assign(MV_KIT, { OL, T, capsula, ovalo, tri, silueta, mancha, muelle, dtDe, pataAnda, gesto, ojo, boca, colorete, zetas, dormido, env });
   return { gato, perro, pulpo };
 })();
 
@@ -245,11 +249,15 @@ const MASCOTAS_VIVAS_ACC = {
   pulpo: { burbuja: 1.8, colores: 1.4, saluda: 1.4, duerme: 4.5, tinta: 1.4 },
 };
 
-// el armario, la habitación y Mi escenario dibujan con ARD.MASCOTAS: las vivas también salen ahí (cada sitio, con su propio estado de muelles)
-for (const id of Object.keys(MASCOTAS_VIVAS)) {
-  const estados = new Map();
-  ARD.MASCOTAS[id] = (c, o) => {
-    const clave = o.m || c.canvas; let m = estados.get(clave); if (!m) { m = { muelles: {}, sem: Math.random() * 9 }; estados.set(clave, m); if (estados.size > 20) estados.delete(estados.keys().next().value); }
-    MASCOTAS_VIVAS[id](c, { t: o.t || 0, mov: o.mov ? 1 : 0, susto: !!o.susto, acc: '', k: 0, m, mira: 0.3, contento: !o.mov });
-  };
+// el armario, la habitación y Mi escenario dibujan con ARD.MASCOTAS: las vivas también salen ahí (cada sitio, con su propio estado de
+// muelles). Lo llama cada archivo de mascotas vivas con las suyas
+function registraMascotasVivas(ids) {
+  for (const id of ids) {
+    const estados = new Map();
+    ARD.MASCOTAS[id] = (c, o) => {
+      const clave = o.m || c.canvas; let m = estados.get(clave); if (!m) { m = { muelles: {}, sem: Math.random() * 9 }; estados.set(clave, m); if (estados.size > 20) estados.delete(estados.keys().next().value); }
+      MASCOTAS_VIVAS[id](c, { t: o.t || 0, mov: o.mov ? 1 : 0, susto: !!o.susto, acc: '', k: 0, m, mira: 0.3, contento: !o.mov });
+    };
+  }
 }
+registraMascotasVivas(Object.keys(MASCOTAS_VIVAS));

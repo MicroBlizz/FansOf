@@ -8,7 +8,7 @@ const NOVA_HABILIDADES = {
  "facciones": {
   "animales":  { "id": "estampida", "nombre": "Estampida", "recarga": 35, "dura": 1.5, "vel": 2.2, "dano": 3, "txt": "Embestida: los golpes no te dañan y dañas a lo que tocas" },
   "nomuertos": { "id": "legion", "nombre": "Legión", "recarga": 40, "dura": 8, "espiritus": 3, "cada": 0.5, "alcance": 420, "dano": 0.8, "txt": "Tres espíritus de los caídos luchan a tu lado" },
-  "streamers": { "id": "directo", "nombre": "Directo", "recarga": 35, "dura": 4, "radio": 520, "tira": 240, "apagon": 0.2, "txt": "Atrae a los enemigos cercanos, que no disparan mientras dura, y tu hype no se pierde" },
+  "streamers": { "id": "directo", "nombre": "Directo", "recarga": 35, "dura": 4, "radio": 520, "tira": 240, "txt": "Atrae a los enemigos cercanos y tu hype no se pierde" },
   "heroes":    { "id": "gesta", "nombre": "Gesta", "recarga": 45, "dura": 6, "txt": "Subes un rango durante unos segundos" },
   "ciber":     { "id": "plasma", "nombre": "Escudo de plasma", "recarga": 35, "dura": 2.5, "radio": 380, "apagon": 2, "txt": "Escudo total y, al acabar, un pulso que apaga lo cercano" },
   "memes":     { "id": "tirada", "nombre": "Tirada", "recarga": 30, "opciones": ["estampida", "gesta", "plasma", "concierto"], "txt": "Una de cuatro habilidades al azar, todas útiles" },

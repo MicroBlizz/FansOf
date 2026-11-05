@@ -79,12 +79,10 @@ const NV_HAB_EFECTO = {
   },
   directo: {
     paso: (S, d, dt) => {
-      const n = S.nave, kf = nvFactor(n.rango), primeraMitad = S.hab.activa > d.dura / 2;
+      const n = S.nave, kf = nvFactor(n.rango);
       for (const e of nvHabCerca(S, d.radio * kf, false)) {
         const dx = n.x - e.x, dy = n.y - e.y, l = Math.hypot(dx, dy) || 1;
         if (l > n.r + e.r + 60 * kf) { e.x += dx / l * d.tira * kf * dt; e.y += dy / l * d.tira * kf * dt; }
-        // se quedan mirando tu directo: no disparan mientras los atrae (los capitanes, la mitad del tiempo, como en todo apagón)
-        if (!e.d.capitan || primeraMitad) e.est.apagon = Math.max(e.est.apagon || 0, d.apagon);
       }
     },
   },

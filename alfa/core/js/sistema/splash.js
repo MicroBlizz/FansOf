@@ -1,14 +1,14 @@
 // Fans Of · SPLASH: la pantalla de inicio común con el logo FOG (Fans Of Games). Sale al abrir la app o la web, dura lo que tarde la carga
-// (con un mínimo para que se vea el logo) y un toque la salta. Sale siempre (ADR 051). Las reglas (cuándo sale, cuánto espera) son
+// (con un mínimo para que se vea el logo) y un toque la salta. Va tras el flag «splash-fog». Las reglas (cuándo sale, cuánto espera) son
 // funciones puras en SPLASH.reglas; el resto solo pinta. El dibujo está en splash-logo.js. Guía: docs/guia/core/splash.md. ADR 051.
-//  Pruebas: tests/core/splash.test.mjs.
+// Pruebas: tests/core/splash.test.mjs.
 'use strict';
 const SPLASH = (() => {
   const MIN_MS = 800, CLAVE = 'fansof-splash-vista';
   const reglas = {
     MIN_MS,
-    // ¿sale la splash? Una vez por sesión; `forzada` (?splash=1) la saca siempre; un navegador automatizado (el comparador, las pruebas) no la ve salvo forzada
-    sale({ vista, automatizado, forzada }) { return !!forzada || (!vista && !automatizado); },
+    // ¿sale la splash? `forzada` (?splash=1) la saca siempre; un navegador automatizado (el comparador, las pruebas) no la ve salvo forzada
+    sale({ flag, vista, automatizado, forzada }) { return !!forzada || (!!flag && !vista && !automatizado); },
     // los ms que faltan para poder quitarla: el mínimo menos lo que ya lleva puesta
     espera(inicio, ahora) { return Math.max(0, MIN_MS - (ahora - inicio)); },
   };
@@ -36,7 +36,8 @@ const SPLASH = (() => {
   }
   function inicia() {
     const forzada = /[?&]splash=1\b/.test(location.search);
-    if (reglas.sale({ vista: lee(), automatizado: !!navigator.webdriver, forzada })) muestra();
+    const flag = typeof NUCLEO !== 'undefined' && typeof NUCLEO.flag === 'function' && NUCLEO.flag('splash-fog', 'Splash FOG (pantalla de inicio con el logo de la empresa) al abrir la app o la web', false);
+    if (reglas.sale({ flag, vista: lee(), automatizado: !!navigator.webdriver, forzada })) muestra();
   }
   if (typeof window !== 'undefined' && typeof document !== 'undefined') inicia();
   return { reglas };

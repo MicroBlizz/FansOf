@@ -6,7 +6,7 @@ IDIOMA.add({
   "Legión": "Legion",
   "Tres espíritus de los caídos luchan a tu lado": "Three spirits of the fallen fight at your side",
   "Directo": "Live",
-  "Atrae a los enemigos cercanos, que no disparan mientras dura, y tu hype no se pierde": "Pulls nearby enemies in, they don't shoot while it lasts, and your hype is not lost",
+  "Atrae a los enemigos cercanos y tu hype no se pierde": "Pulls nearby enemies in and your hype is not lost",
   "Gesta": "Feat",
   "Subes un rango durante unos segundos": "You go up one rank for a few seconds",
   "Escudo de plasma": "Plasma shield",

@@ -21,7 +21,7 @@ const NOVA_FACCIONES = {
   },
   streamers: {
     nave: { nombre: 'Directo', base: 'caza', matiz: 245, anclajes: { 1: { 2: [18, -18], 3: [57, 30], 5: [72, 66] }, 2: { 3: [65, 34], 5: [94, 76] }, 3: { 3: [92, 7], 5: [97, 79] }, 4: { 3: [120, 5], 5: [110, 82] }, 5: { 3: [121, 49], 5: [147, 100] }, 6: { 5: [169, 72] } }, brief: 'Morado y rosa neón, luz roja «LIVE» en la proa, antenas parabólicas y vainas de cámara en las alas.' },
-    insignia: { id: 'canonHype', portador: 'railgun', carga: 'explosiva', nombre: 'Cañón de Hype', dano: 1.4, rasgo: { tipo: 'hype', paso: 0.05, tope: 0.5 }, efecto: 'Dispara más rápido con cada baja seguida; se enfría si te hieren' },
+    insignia: { id: 'canonHype', portador: 'railgun', carga: 'explosiva', nombre: 'Cañón de Hype', dano: 0.9, rasgo: { tipo: 'hype', paso: 0.05, tope: 0.5 }, efecto: 'Dispara más rápido con cada baja seguida; se enfría si te hieren' },
     secreta: { id: 'hypeTrain', portador: 'flak', carga: 'explosiva', nombre: 'Hype train', dano: 0.9, n: 8, cad: 1.3, rasgo: { tipo: 'critico', prob: 0.35, mult: 2 }, efecto: 'Una tormenta de perdigones con críticos a menudo' },
     especial: { id: 'misilesSeguidores', portador: 'lanzador', carga: 'explosiva', nombre: 'Misiles de seguidores', dano: 0.8, cad: 1.5, n: 1, efecto: 'Dos misiles por salva y más a menudo, cada uno algo más flojo', rango: 15 }
   },

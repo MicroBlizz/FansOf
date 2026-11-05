@@ -31,8 +31,6 @@ const GESTION_NAV = (() => {
     el('menu').onclick = ev => { const b = ev.target.closest('button[data-j]'); if (b) ir(b.dataset.j); };
     el('tabs').onclick = ev => { const b = ev.target.closest('button[data-s]'); if (b) ir(actual, b.dataset.s); };
     el('salir').addEventListener('click', () => { Object.keys(recuerda).forEach(k => { delete recuerda[k]; }); ir('global'); });
-    const dir = new URLSearchParams(location.search).get('seccion');   // enlace directo: /gestion/?seccion=cola abre esa pestaña de Global (con la sesión abierta)
-    if (dir && buscar(dir, 'global')) recuerda.global = dir;
     pinta();
   }
   return { JUEGOS, seccion, etiqueta, ir, arranca, actual: () => actual };

@@ -53,12 +53,16 @@ const COLA_CONTROL = (() => {
     const h = (Date.parse(r.updated_at) - Date.parse(r.created_at)) / 36e5;
     return h >= CADUCA_MIN_H && h <= CADUCA_MAX_H;
   }
-  /** De los runs terminados (más nuevos primero), los fallidos y los caducados en cola de las últimas 48 h, ya en el formato que pinta la lista. */
-  function fallidas(hechos, ahora) {
-    const desde = ahora - HORAS * 36e5;
-    return hechos.filter(r => (FALLO.has(r.conclusion) || caducada(r)) && Date.parse(r.updated_at) >= desde).slice(0, MAX_FALLIDAS)
-      .map(r => ({ id: r.id, workflow: r.name, titulo: r.display_title, fin: Date.parse(r.updated_at), intento: r.run_attempt || 1, caducada: caducada(r) }));
-  }
+  /** Un run terminado, en el formato que pinta la lista. */
+  const fila = r => ({ id: r.id, workflow: r.name, titulo: r.display_title, fin: Date.parse(r.updated_at), intento: r.run_attempt || 1 });
+  /** De los runs terminados (más nuevos primero), los que cumplen `cuando` y acabaron en las últimas 48 h. */
+  const recientes = (hechos, ahora, cuando) => hechos.filter(r => cuando(r) && Date.parse(r.updated_at) >= ahora - HORAS * 36e5).slice(0, MAX_FALLIDAS).map(fila);
+  /** Los fallidos de las últimas 48 h (sin las caducadas en cola, que tienen su propia lista). */
+  const fallidas = (hechos, ahora) => recientes(hechos, ahora, r => FALLO.has(r.conclusion));
+  /** Las caducadas en cola de las últimas 48 h. */
+  const caducadas = (hechos, ahora) => recientes(hechos, ahora, caducada);
+  /** Las pestañas «Fallidas» y «Caducadas», con su cuenta. */
+  const pestanas = snap => [['f', 'Fallidas (' + (snap.fallidas || []).length + ')'], ['x', 'Caducadas (' + (snap.caducadas || []).length + ')']];
 
   /** Todos los runs no terminados, para no contarlos como fallidos aunque su último intento fallara (un reinicio los vuelve a poner en cola con el mismo id).
    *  `gh(ruta)` llama a la API. Pide cada estado por separado (in_progress, queued, waiting, requested, pending) y la cola entera, sin quedarse en la primera página. */
@@ -91,14 +95,16 @@ const COLA_CONTROL = (() => {
       + `<p class="meta">En pausa, el pedido en marcha termina y no entra ninguno más hasta reanudar (esperan en la cola de GitHub, hasta 24 h). Tarda hasta ~15 s en notarse. No afecta a los demás runners.</p>`
       + (e.fallo ? `<p class="aviso">${e.esc(e.fallo)}</p>` : '') + '</section>';
   }
-  /** La vista «Fallidas». `e`: { ocupado, fallidas, fecha(ms), esc(texto) }. */
-  function htmlFallidas(e) {
-    const lista = e.fallidas.length
-      ? e.fallidas.map(r => `<div class="cl-fila"><span><a href="https://github.com/${REPO}/actions/runs/${r.id}" target="_blank" rel="noopener">${e.esc(r.workflow)}</a> · ${e.esc(r.titulo)}</span>`
-        + `<span class="meta">${e.fecha(r.fin)}${r.caducada ? ' · caducada en cola (24 h)' : ''}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span><button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button></div>`).join('')
+  /** La vista «Fallidas» (`vista` 'f') o «Caducadas» (`vista` 'x'). `e`: { ocupado, fecha(ms), esc(texto) }; la lista sale de `snap`. */
+  function htmlLista(vista, snap, e) {
+    const x = vista === 'x', lista = (x ? snap.caducadas : snap.fallidas) || [];
+    const filas = lista.length
+      ? lista.map(r => `<div class="cl-fila"><span><a href="https://github.com/${REPO}/actions/runs/${r.id}" target="_blank" rel="noopener">${e.esc(r.workflow)}</a> · ${e.esc(r.titulo)}</span>`
+        + `<span class="meta">${e.fecha(r.fin)}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span><button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button></div>`).join('')
       : '<div class="meta">Ninguna en las últimas ' + HORAS + ' h.</div>';
-    return `<section class="caja cl-control"><h3>Ejecuciones fallidas (${e.fallidas.length})</h3>${lista}`
-      + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
+    const pie = x ? '<p class="meta">GitHub cancela lo que espera runner más de 24 h: no falló, no llegó a ejecutarse. Reiniciar le da otras 24 h de espera.</p>' : '';
+    return `<section class="caja cl-control"><h3>${x ? 'Caducadas en cola' : 'Ejecuciones fallidas'} (${lista.length})</h3>${pie}${filas}`
+      + (lista.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
-  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, caducada, sinTerminar, encendido, htmlPausa, htmlFallidas };
+  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, caducada, caducadas, pestanas, sinTerminar, encendido, htmlPausa, htmlLista };
 })();

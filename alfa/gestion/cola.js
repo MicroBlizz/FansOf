@@ -156,11 +156,11 @@
     let cuerpo = '';
     if (t && snap) {
       const F = calcular(ahora);
-      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen'], ['f', 'Fallidas (' + (snap.fallidas || []).length + ')'], ['cfg', 'Configuración']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
+      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen'], ...COLA_CONTROL.pestanas(snap), ['cfg', 'Configuración']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
         + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span></div>`
         + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '')
         + (vista === 'cfg' ? '' : COLA_CONTROL.htmlPausa({ pausa, ocupado, esc, fallo: falloControl }))
-        + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' ? COLA_CONTROL.htmlFallidas({ ocupado, fallidas: snap.fallidas || [], fecha, esc }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
+        + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' || vista === 'x' ? COLA_CONTROL.htmlLista(vista, snap, { ocupado, fecha, esc }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
         + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
     } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}<div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div></div>`;
@@ -203,7 +203,7 @@
     else if (b.id === 'cl-pausa') conMandos(() => COLA_CONTROL.fijarPausa(fetch, token(), pausa !== true), 'No pude cambiar la pausa');
     else if (b.dataset.cancela) conMandos(async () => { await COLA_CONTROL.cancelar(fetch, token(), b.dataset.cancela); ultimo = 0; await cargar(true); }, 'No pude cancelar');
     else if (b.dataset.reinicia) conMandos(async () => { await COLA_CONTROL.reiniciar(fetch, token(), b.dataset.reinicia); ultimo = 0; await cargar(true); }, 'No pude reiniciar');
-    else if (b.id === 'cl-reinicia-todas') conMandos(async () => { const r = await COLA_CONTROL.reiniciarTodas(fetch, token(), snap.fallidas); ultimo = 0; await cargar(true); return r.mensaje; }, 'No pude reiniciar todas');
+    else if (b.id === 'cl-reinicia-todas') conMandos(async () => { const r = await COLA_CONTROL.reiniciarTodas(fetch, token(), vista === 'x' ? snap.caducadas : snap.fallidas); ultimo = 0; await cargar(true); return r.mensaje; }, 'No pude reiniciar todas');
     else if (b.id === 'cl-ref' || b.id === 'cl-todo') {
       const falta = Math.ceil((hasta - Date.now()) / 1000);
       if (falta > 0) { $('cl-aviso').textContent = 'Espera ' + falta + ' s para volver a refrescar.'; return; }

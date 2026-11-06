@@ -175,7 +175,7 @@ const COLA_DATOS = (() => {
     const vivo = id => COLA_CONTROL.encendido({ enLinea: online ? online.has(id) : null, enCurso: trabajos.some(t => t.carril === id && t.enCurso), ultimoFin: ultimoFin[id] || 0 }, ahora);
     const carrilesSnap = ids.map(id => ({ id, etiqueta: id === 'github' ? 'GitHub (ubuntu)' : id, alojado: id === 'github', encendido: id === 'github' ? true : vivo(id) }))
       .sort((a, b) => Number(a.alojado) - Number(b.alojado) || a.id.localeCompare(b.id));
-    const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, fallidas: COLA_CONTROL.fallidas(hechos, ahora), actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
+    const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, fallidas: COLA_CONTROL.fallidas(hechos, ahora), caducadas: COLA_CONTROL.caducadas(hechos, ahora), actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
       guardados: hechos.length, historialCompleto: !!hist.completo, compartido: !!servidor && !avisos.length };
     guardar(K.foto, snap);
     return snap;

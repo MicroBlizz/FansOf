@@ -1,8 +1,8 @@
 {
- "build": 1028,
- "hash": "e6db763",
- "fecha": "2026-11-06T14:33:02Z",
- "mensaje": "Cola: las caducadas en cola (24 h) salen en Fallidas, marcadas y distintas de una cancelación a mano",
+ "build": 1029,
+ "hash": "45f785a",
+ "fecha": "2026-11-06T14:34:01Z",
+ "mensaje": "Cola: pestaña propia «Caducadas» junto a Fallidas",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

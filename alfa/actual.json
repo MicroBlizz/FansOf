@@ -1,8 +1,8 @@
 {
- "build": 1026,
- "hash": "7654b36",
- "fecha": "2026-11-06T10:46:01Z",
- "mensaje": "Rumble v2: vaca animada y sin el halo verde del disparo",
+ "build": 1027,
+ "hash": "ad87dce",
+ "fecha": "2026-11-06T14:19:43Z",
+ "mensaje": "Rumble v2: tamaño de cada personaje en el campo (elegido por Daniel)",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

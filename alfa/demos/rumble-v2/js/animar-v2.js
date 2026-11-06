@@ -12,13 +12,14 @@ const V2A = (() => {
   const muertos = [];                               // los que están haciendo la animación de morir
   const fila = (D, lado, a) => { const i = D.filas.indexOf(lado + '-' + a); return i >= 0 ? i : D.filas.indexOf(lado + '-quieto'); };
   const escala = (key, D) => (BOX[key][3] + 3) / D.alto;   // unidades del juego por píxel: el quieto mide lo que el dibujo de siempre
+  const escalaCampo = (key, D) => escala(key, D) * (AJUSTES.tamanoV2[key] || 1);   // en el campo, con el tamaño que eligió Daniel
 
   // un fotograma listo para drawUnit, que da la vuelta al dibujo cuando u.face = -1: si va a darle la vuelta, se guarda ya
   // volteado (espejo), así queda bien (el izquierdo pintado y la espalda tal cual, nunca el derecho en espejo)
   function fotograma(key, D, lado, a, col, espejo) {
     const id = key + '|' + lado + '|' + a + '|' + col + '|' + espejo;
     if (cache[id]) return cache[id];
-    const im = HOJA[key], [cw, ch] = D.celda, f = Math.max(0, fila(D, lado, a)), sc = escala(key, D);
+    const im = HOJA[key], [cw, ch] = D.celda, f = Math.max(0, fila(D, lado, a)), sc = escalaCampo(key, D);
     const c = document.createElement('canvas'); c.width = cw; c.height = ch;
     const x = c.getContext('2d');
     if (espejo) { x.translate(cw, 0); x.scale(-1, 1); }
@@ -85,7 +86,7 @@ const V2A = (() => {
     for (let i = muertos.length - 1; i >= 0; i--) {
       const m = muertos[i], t = G.t - m.t0, D = V2_ANIM[m.key];
       if (t < 0 || t > DUR.morir + 1.4 || !D) { muertos.splice(i, 1); continue; }
-      const [cw, ch] = D.celda, sc = escala(m.key, D), f = fila(D, m.lado, 'morir'), col = Math.min(D.n - 1, Math.floor(t / DUR.morir * D.n));
+      const [cw, ch] = D.celda, sc = escalaCampo(m.key, D), f = fila(D, m.lado, 'morir'), col = Math.min(D.n - 1, Math.floor(t / DUR.morir * D.n));
       const [px, py] = D.pies[m.lado] || D.pies.der;
       ctx.save(); ctx.globalAlpha = t > DUR.morir + 0.8 ? Math.max(0, 1 - (t - DUR.morir - 0.8) / 0.6) : 1;
       ctx.drawImage(HOJA[m.key], col * cw, f * ch, cw, ch, m.x - px * sc, m.y - py * sc, cw * sc, ch * sc);

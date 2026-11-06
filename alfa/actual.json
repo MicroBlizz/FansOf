@@ -1,8 +1,8 @@
 {
- "build": 1016,
- "hash": "64e3eb2",
- "fecha": "2026-11-06T01:14:07Z",
- "mensaje": "Cola: una fallida reiniciada que espera turno ya no sale en Fallidas (se pide la cola entera y todos los estados sin terminar)",
+ "build": 1017,
+ "hash": "97706bd",
+ "fecha": "2026-11-06T01:14:55Z",
+ "mensaje": "Cola: Fallidas solo muestra las últimas 48 h",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

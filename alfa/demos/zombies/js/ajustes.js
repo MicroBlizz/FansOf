@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.7.1',
+  version: '0.8.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -54,6 +54,13 @@ ZOM.AJ = Object.freeze({
     filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 }, cocinado: true },
     guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 }, cocinado: true },
   },
+  // el mundo por trozos (ADR 073): alrededor del distrito hecho a mano (centro) se generan trozos de 64 m. ox/oz alinean las calles de
+  // los trozos con la carretera de Ratkov (z = 8) y la calle del barrio (x = -146). tipos: lo que sale (por bloques de 2 x 2 trozos);
+  // fans: los que hay en cada trozo la primera vez; carga: cuántos trozos alrededor de ti se dibujan (1 = 3 x 3)
+  trozos: { lado: 64, ox: -178, oz: -24, centro: { x0: -208, x1: 82, z0: -62, z1: 188 }, carga: 1, descarga: 2, lejosDeTi: 18,
+    tipos: { barrio: 4, bosque: 3, granja: 2, poligono: 2, comercial: 1.5 },
+    fans: { barrio: 9, comercial: 8, poligono: 6, granja: 4, bosque: 3 },
+    reparto: { poligono: { fan: 6, bot: 5, troll: 1, ballena: 0.5 }, bosque: { fan: 6, speedrunner: 4, streamer: 1 }, granja: { fan: 8, speedrunner: 2, ballena: 1 } } },
   // las habilidades: los umbrales de experiencia de cada nivel (0 a 10), lo que da cada acción y lo que mejora cada nivel
   habilidades: {
     niveles: [0, 10, 25, 45, 70, 100, 140, 190, 250, 320, 400],
@@ -93,7 +100,7 @@ ZOM.AJ = Object.freeze({
   desmontar: { tipos: { armario: [2, 4], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6], estanteria: [2, 4], pupitre: [1, 2], escritorio: [1, 3] }, tiempo: 3, ruido: 10 },
   grifo: { sed: 40 },
   // lo que ya has visto, para el mapa (M): casillas de 8 m sobre todo el distrito; ves lo que hay a «vista» metros
-  explorado: { x0: -214, z0: -66, celda: 8, w: 39, h: 33, vista: 18 },
+  explorado: { celda: 8, vista: 18 },
   mochila: { w: 6, h: 5 },
   mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6], ['martillo', 1], ['tablas', 2], ['clavos', 6]],
   // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)
@@ -123,7 +130,7 @@ ZOM.AJ = Object.freeze({
   torre: { plantas: 10, base: 4, crece: 1, reparto: { fan: 6, bot: 3, streamer: 1, speedrunner: 1, troll: 1, ballena: 0.6 }, arriba: { troll: 0.4, ballena: 0.25, bot: 0.3 },
     jefe: { escolta: 4, refuerzos: 6, umbrales: [0.7, 0.4, 0.15], cadaEmbiste: 6, dura: 0.7, vel: 9 } },
   ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4, infeccion: 0.25 },
-  mundo: { zombis: 120, oleada: 22, maxZombis: 220, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
+  mundo: { zombis: 120, oleada: 22, maxZombis: 320, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
   // los parches de Microblizz: uno nuevo cada mañana desde el día 2
   parches: [
     { id: 'corren', n: 'Esta noche los fans corren.', velNoche: 1.6 },

@@ -47,6 +47,8 @@ function posturaZombi(zb, v, dt) {
   g.scale.setScalar(v.mod.escala * (v.respingo > 0 ? 1.08 : 1));
   animaPersonaje(v.mod, v.fase, anda);
 }
+// quitar el dibujo de un fan que ya no está (su trozo se ha descargado)
+function quitaVistaZombi(id) { const v = VISTA.zombis.get(id); if (!v) return; MOTOR.escena.remove(v.mod.grupo); VISTA.zombis.delete(id); }
 function pintaZombis(e, dt) {
   for (const zb of e.zombis) {
     let v = VISTA.zombis.get(zb.id);

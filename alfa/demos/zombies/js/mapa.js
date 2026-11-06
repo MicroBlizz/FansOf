@@ -11,8 +11,9 @@ function construyeMapa() {
   MAPA.solidos = []; MAPA.rejilla = new Map(); MAPA.contenedores = []; MAPA.fuegos = [];
   // ---- el suelo: nieve, carretera, explanadas pisadas ----
   const nieveTx = textura(32, 32, g => { g.fillStyle = '#cdd6e0'; g.fillRect(0, 0, 32, 32); const r = semilla(5); for (let i = 0; i < 120; i++) { g.fillStyle = ['#bcc6d2', '#dde4ec', '#b0bac6', '#a4aeb8'][i % 4]; g.fillRect(r() * 32 | 0, r() * 32 | 0, 1 + (r() * 2 | 0), 1); } });
-  nieveTx.repeat.set(115, 70);
-  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(460, 280), new THREE.MeshLambertMaterial({ map: nieveTx })); suelo.rotation.x = -Math.PI / 2; suelo.position.x = -60; suelo.position.z = 63; suelo.receiveShadow = true; e.add(suelo);   // más ancho hacia el oeste: el barrio (js/barrio.js)
+    nieveTx.repeat.set(150, 150);
+  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshLambertMaterial({ map: nieveTx })); suelo.rotation.x = -Math.PI / 2; suelo.receiveShadow = true; e.add(suelo);   // Zombies: el suelo te sigue (el mundo no tiene borde, ADR 073)
+  MAPA.suelo = suelo;
   const barroTx = textura(32, 16, g => { g.fillStyle = '#6a6460'; g.fillRect(0, 0, 32, 16); const r = semilla(9); for (let i = 0; i < 70; i++) { g.fillStyle = ['#57524f', '#7c7672', '#8e8a88', '#c8ccd2'][i % 4]; g.fillRect(r() * 32 | 0, r() * 16 | 0, 2, 1); } g.fillStyle = '#4a4542'; g.fillRect(0, 4, 32, 1); g.fillRect(0, 11, 32, 1); });
   const sucioTx = textura(32, 32, g => { g.fillStyle = '#9a968e'; g.fillRect(0, 0, 32, 32); const r = semilla(13); for (let i = 0; i < 110; i++) { g.fillStyle = ['#8a867e', '#b4b4b0', '#c8ced6', '#7a766e'][i % 4]; g.fillRect(r() * 32 | 0, r() * 32 | 0, 2, 1); } g.fillStyle = '#7e7a72'; g.fillRect(0, 0, 32, 1); g.fillRect(0, 0, 1, 32); });
   const suelos = new Obra();
@@ -31,14 +32,7 @@ function construyeMapa() {
   o.caja(170, 0.3, 0.4, 0x8a8c90, 0, 0.15, 3.8); o.caja(170, 0.3, 0.4, 0x8a8c90, 0, 0.15, 12.2);
   for (let x = -80; x < 80; x += 5) o.caja(2.2, 0.03, 0.18, 0x8a8250, x, 0.03, 8);
 
-  // ---- el borde del mapa: montañas de nieve y escombros (no se pasa) ----
-  // montones de nieve bajos y redondeados, con trozos de muro y vallas caídas asomando
-  const monton = (x, z) => { const s = 3 + az() * 3, r = (az() - 0.5) * 0.5; o.caja(s * 1.5, 1.0 + az() * 0.6, s * 1.2, 0xd6dee8, x, 0.5, z, r); o.caja(s * 0.9, 0.8, s * 0.7, 0xe6ecf2, x + (az() - 0.5), 1.3, z + (az() - 0.5), r);
-    if (az() < 0.25) o.caja(0.4, 1.4 + az(), 2 + az() * 2, 0x7a766e, x + (az() - 0.5) * 2, 0.9, z, az() * 3); };
-  // (Zombies: sin los bordes del oeste y del sur de Ratkov; el mapa sigue hasta x = -206 (barrio residencial) y z = 186 (barrios del sur))
-  for (let x = -206; x <= 84; x += 3.5) for (const z of [-62.5, 188.5]) monton(x, z + (az() - 0.5) * 2);
-  for (let z = -60; z <= 186; z += 3.5) for (const x of [-208.5, 82.5]) { if (x > 0 && Math.abs(z - 8) < 6) continue; monton(x + (az() - 0.5) * 2, z); }
-  solido(-216, -70, 90, -60.5, 4, 'muro'); solido(-216, 188.5, 90, 196, 4, 'muro'); solido(-216, -70, -206.5, 196, 4, 'muro'); solido(80.5, -70, 90, 196, 4, 'muro');
+  // ---- (Zombies: sin borde; alrededor del distrito el mundo sigue por trozos: js/trozos.js y js/trozos-mapa.js, ADR 073) ----
   for (let i = 0; i < 26; i++) arbolPelado(o, -78 + az() * 156, (az() < 0.5 ? -57 : 57) + (az() - 0.5) * 3, 1 + az() * 0.4, az);
 
   // ---- el norte: bloques, la torre, el despacho ----
@@ -187,3 +181,5 @@ function desatasca(e, r) {
 }
 // lo cerca que está el fuego más cercano
 function fuegoCerca(x, z) { let d = 99; for (const f of MAPA.fuegos) d = Math.min(d, lejos(x, z, f.x, f.z)); return d; }
+// el suelo de nieve te sigue a saltos de 4 m (lo que mide una baldosa de su dibujo): así no hay borde. En la torre no se ve
+function sigueSuelo(x, z, visible) { const S = MAPA.suelo; if (!S) return; S.visible = visible; S.position.x = Math.round(x / 4) * 4; S.position.z = Math.round(z / 4) * 4; }

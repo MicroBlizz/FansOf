@@ -8,7 +8,8 @@ const azarJuego = Math.random;
 const MUNDO = {
   mueve: (o, dx, dz, r) => mueve(o, dx, dz, r),
   seVe: (x0, z0, x1, z1) => seVe(x0, z0, x1, z1),
-  aparicion: (azar) => libreAlcanzable(MAPA.x0 + 6 + azar() * (MAPA.x1 - MAPA.x0 - 12), MAPA.z0 + 8 + azar() * (MAPA.z1 - MAPA.z0 - 14), 0.6),
+  aparicion: (azar) => (JUEGO.e && !JUEGO.e.planta ? aparicionCerca(azar) : aparicionDistrito(azar)),   // al empezar, por el distrito; luego, cerca de ti
+  puntoTrozo: (r, azar) => libreEn(r, azar),
   huecos: () => BARRIO.huecos.map((h) => ({ id: h.id, tipo: h.tipo })),
   huecoCerca: (x, z, r) => { const h = huecoCercaDe(x, z, r); return h && { id: h.id, x: h.x, z: h.z }; },
   posHueco: (id) => BARRIO.porId[id] || null,
@@ -16,28 +17,50 @@ const MUNDO = {
   flujo: (x, z) => (CAMINOS.flujo ? ZOM.direccionFlujo(CAMINOS.rej, CAMINOS.flujo, x, z) : null),
   alarma: (azar) => { const c = MAPA.contenedores.filter((k) => k.tipo === 'coche'); return c.length ? c[Math.floor(azar() * c.length)] : null; },
 };
-// la rejilla de los caminos (casillas de medio metro): libre, pared o hueco (puerta o ventana), y el campo de flujo hacia ti,
-// que se recalcula unas dos veces por segundo en 32 m alrededor (js/caminos.js)
-const CAMINOS = { rej: null, flujo: null, t: 0 };
-function preparaCaminos() {
-  const celda = 0.5, x0 = MAPA.x0 - 6, z0 = MAPA.z0 - 4, w = Math.ceil((MAPA.x1 + 14 - x0) / celda), h = Math.ceil((MAPA.z1 + 4 - z0) / celda), tipo = new Uint8Array(w * h);
-  for (const H of BARRIO.huecos) H.sol.abierto = true;           // los huecos cuentan como paso (más caro) al hacer la rejilla
+// la rejilla de los caminos (casillas de medio metro) en una ventana de 76 m alrededor de ti: libre, pared o hueco (puerta o ventana).
+// Se rehace al alejarte 10 m de su centro o al cargar o quitar un trozo del mundo; el campo de flujo hacia ti se recalcula unas dos veces
+// por segundo en 32 m alrededor (js/caminos.js). Sirve igual en el distrito, en los trozos y en las plantas de la torre
+const CAMINOS = { rej: null, flujo: null, t: 0, cx: 0, cz: 0, lado: 76, celda: 0.5 };
+function preparaCaminos(cx, cz) {
+  const { lado, celda } = CAMINOS, x0 = cx - lado / 2, z0 = cz - lado / 2, w = Math.round(lado / celda), h = w, tipo = new Uint8Array(w * h);
+  const huecos = BARRIO.huecos.filter((H) => H.x > x0 - 2 && H.x < x0 + lado + 2 && H.z > z0 - 2 && H.z < z0 + lado + 2);
+  for (const H of huecos) H.sol.abierto = true;           // los huecos cuentan como paso (más caro) al hacer la rejilla
   for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) tipo[j * w + i] = choca(x0 + (i + 0.5) * celda, z0 + (j + 0.5) * celda, 0.32) ? 0 : 1;
-  for (const H of BARRIO.huecos) {
-    const s = H.sol; H.sol.abierto = false;
-    if (s.x1 + 0.4 >= x0 + w * celda || s.z1 + 0.4 >= z0 + h * celda) continue;   // las puertas de la torre quedan fuera de la rejilla
-    for (let j = Math.floor((s.z0 - 0.4 - z0) / celda); j <= Math.floor((s.z1 + 0.4 - z0) / celda); j++) for (let i = Math.floor((s.x0 - 0.4 - x0) / celda); i <= Math.floor((s.x1 + 0.4 - x0) / celda); i++) if (tipo[j * w + i]) tipo[j * w + i] = 2;
-  }
-  CAMINOS.rej = { w, h, x0, z0, celda, tipo };
+  for (const H of huecos) { H.sol.abierto = false; marcaHueco(tipo, w, h, x0, z0, celda, H.sol); }
+  CAMINOS.rej = { w, h, x0, z0, celda, tipo }; CAMINOS.cx = cx; CAMINOS.cz = cz; TROZOS.sucio = false;
+}
+function marcaHueco(tipo, w, h, x0, z0, celda, s) {
+  for (let j = Math.max(0, Math.floor((s.z0 - 0.4 - z0) / celda)); j <= Math.min(h - 1, Math.floor((s.z1 + 0.4 - z0) / celda)); j++)
+    for (let i = Math.max(0, Math.floor((s.x0 - 0.4 - x0) / celda)); i <= Math.min(w - 1, Math.floor((s.x1 + 0.4 - x0) / celda)); i++) if (tipo[j * w + i]) tipo[j * w + i] = 2;
 }
 function avanzaCaminos(e, dt) {
-  if (e.planta) { CAMINOS.flujo = null; return; }   // en la torre no hay campo de flujo (los fans van a por ti y buscan las puertas)
-  if (!CAMINOS.rej || (CAMINOS.t -= dt) > 0) return;
+  const J = e.jugador;
+  if (!CAMINOS.rej || TROZOS.sucio || Math.abs(J.x - CAMINOS.cx) > 10 || Math.abs(J.z - CAMINOS.cz) > 10) { preparaCaminos(Math.round(J.x), Math.round(J.z)); CAMINOS.t = 0; }
+  if ((CAMINOS.t -= dt) > 0) return;
   CAMINOS.t = 0.4;
-  CAMINOS.flujo = ZOM.campoFlujo(CAMINOS.rej, e.jugador.x, e.jugador.z, 32, 25);
+  CAMINOS.flujo = ZOM.campoFlujo(CAMINOS.rej, J.x, J.z, 32, 25);
 }
+// ¿está dentro de una casa o un edificio? (los fans no aparecen dentro)
+const dentroDeCasa = (x, z) => BARRIO.casas.some((C) => x > C.x0 - 0.5 && x < C.x1 + 0.5 && z > C.z0 - 0.5 && z < C.z1 + 0.5);
+// ¿se ha construido ya esto? (el distrito siempre; fuera, solo los trozos cargados)
+const construido = (x, z) => { const AJ = ZOM.AJ, C = AJ.trozos.centro; if (x > C.x0 && x < C.x1 && z > C.z0 && z < C.z1) return true; const { ci, cj } = ZOM.trozoDe(AJ, x, z); return TROZOS.cargados.has(ZOM.claveTrozo(ci, cj)); };
+// un sitio libre al azar dentro de un rectángulo (fuera de casas), o null
+function libreEn(r, azar) {
+  for (let k = 0; k < 20; k++) { const x = r.x0 + 1 + azar() * (r.x1 - r.x0 - 2), z = r.z0 + 1 + azar() * (r.z1 - r.z0 - 2); if (!choca(x, z, 0.6) && !dentroDeCasa(x, z)) return { x, z }; }
+  return null;
+}
+// las oleadas llegan a 45-85 m de ti, en lo ya construido (en la torre, a la calle, como antes)
+function aparicionCerca(azar) {
+  const e = JUEGO.e, J = e.jugador;
+  for (let k = 0; k < 12; k++) {
+    const a = azar() * Math.PI * 2, d = 45 + azar() * 40, x = J.x + Math.sin(a) * d, z = J.z + Math.cos(a) * d;
+    if (construido(x, z) && !choca(x, z, 0.6) && !dentroDeCasa(x, z)) return { x, z };
+  }
+  return aparicionDistrito(azar);
+}
+const aparicionDistrito = (azar) => libreAlcanzable(MAPA.x0 + 6 + azar() * (MAPA.x1 - MAPA.x0 - 12), MAPA.z0 + 8 + azar() * (MAPA.z1 - MAPA.z0 - 14), 0.6);
 // lo que se puede registrar: los contenedores del mapa (menos la verja del despacho) y los cuerpos que deja la ballena
-function sitiosRegistrables(e) { return JUEGO.sitios.concat(TORRE.sitios, e.cuerpos); }
+function sitiosRegistrables(e) { return JUEGO.sitios.concat(TORRE.sitios, sitiosTrozos(), e.cuerpos); }
 // la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
 function huecoDelJugador(e) { const J = e.jugador; return huecoCercaDe(J.x, J.z, 1.6); }
 const SITIOS_SIEMPRE = ['fuego', 'cocina', 'escalera', 'torre'];   // se vuelven a abrir aunque estén vacíos (cocinar, beber, subir)
@@ -49,7 +72,7 @@ function sitioCerca(e) {
 }
 
 function arranca() {
-  iniciaMotor(); construyeMapa(); construyeTorre(); preparaEntrada(); preparaEfectos(); preparaCaminos();
+  iniciaMotor(); construyeMapa(); construyeTorre(); preparaEntrada(); preparaEfectos();
   JUEGO.sitios = MAPA.contenedores.filter((c) => c.tipo !== 'verja').map((c, i) => ({ id: 'c' + i, x: c.x, z: c.z, tipo: c.tipo }))
     .concat(MAPA.fuegos.map((f, i) => ({ id: 'f' + i, x: f.x, z: f.z + 0.9, tipo: 'fuego' })));   // los bidones con fuego: para cocinar
   el('carga').hidden = true;
@@ -105,7 +128,7 @@ function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuard
 function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
 addEventListener('pagehide', guardaAhora);
 document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
-function terminaPartida() { TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
+function terminaPartida() { descargaTrozos(null); TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
 
 function fotograma(ms) {
   requestAnimationFrame(fotograma);
@@ -115,6 +138,7 @@ function fotograma(ms) {
   else paseoDeFondo(dt);
   limpiaPulsos();
   animaFuegos(JUEGO.hora, MOTOR.x, MOTOR.z);
+  sigueSuelo(MOTOR.x, MOTOR.z, !(JUEGO.e && JUEGO.e.planta));
   avanzaMotor(dt, JUEGO.hora);
   pintaEscena();
 }
@@ -132,6 +156,7 @@ function avanzaJuego(dt) {
     const hueco = huecoDelJugador(e), ent = leeEntrada(e.jugador, cerca, hueco);
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));
     if (ent.registrar && esPaso(cerca)) { ent.registrar = null; subeBaja(e, cerca); }
+    avanzaTrozos(e);
     avanzaCaminos(e, dt);
     ZOM.paso(AJ, e, dt, ent, MUNDO, azarJuego);
     leeEventos(e);

@@ -1,12 +1,12 @@
 // Fans of Zombies · LAS PLANTAS DE LA TORRE (pantalla y mapa): la Torre de Microblizz por dentro. Cada planta es una zona aparte del
-// mundo, lejos al este (cada 80 m, para que el ruido de una no llegue a otra): un pasillo de punta a punta con la escalera de bajada a
+// mundo, lejísimos al norte (z = -20.000, cada 80 m, para que el ruido de una no llegue a otra): un pasillo de punta a punta con la escalera de bajada a
 // un lado y la de subida al otro, despachos a los dos lados con su puerta (se pueden atrancar), escritorios y archivadores que se
 // registran, la máquina de café, una caja fuerte en el despacho del jefe de planta y, en la planta 5, la armería de Seguridad. La 11
 // es la azotea: helipuerto, antenas y el CEO. En la calle, la puerta de la torre (bajo los soportales) lleva a la planta 1.
 'use strict';
 const TORRE = { sitios: [], plantas: {}, puerta: { x: 1.1, z: -46.8 }, calle: { x: 1.1, z: -44.5 } };
 const TORRE_W = 40, TORRE_D = 28;
-const origenPlanta = (n) => ({ x: 160 + n * 80, z: 0 });
+const origenPlanta = (n) => ({ x: n * 80, z: -20000 });   // muy lejos al norte: el mundo por trozos no llega ahí (ADR 073)
 // dónde apareces al llegar a la planta n: desde abajo, junto a su escalera de bajada; desde arriba, junto a la de subida
 function llegadaPlanta(n, desdeArriba) {
   if (n === 0) return { ...TORRE.calle };

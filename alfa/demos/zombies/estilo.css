@@ -120,7 +120,7 @@ button:disabled { opacity: 0.4; cursor: default; }
 .zm-marco header { display: flex; gap: 12px; align-items: baseline; margin-bottom: 6px; }
 .zm-marco header b { font: 20px var(--rk-tit); font-weight: 400; } .zm-marco header span { color: var(--rk-tenue); flex: 1; }
 .zm-marco header button { background: #1a242a; border: 2px solid var(--rk-borde2); color: var(--rk-tinta); font: 13px var(--rk-tit); padding: 4px 8px; }
-#zm-lienzo { display: block; width: min(90vw, calc(78vh * 312 / 264)); height: auto; image-rendering: auto; border: 1px solid #22303a; }
+#zm-lienzo { display: block; width: min(90vw, calc(78vh * 320 / 210)); height: auto; image-rendering: auto; border: 1px solid #22303a; }
 .zm-marco footer { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: center; color: var(--rk-tenue); font-size: 16px; margin-top: 6px; }
 .zm-marco footer i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: -8px; }
 .zm-marco footer .t { background: #ff7a1a; border-radius: 0; } .zm-marco footer .f { background: #ff8a2a; } .zm-marco footer .r { background: #8a929c; } .zm-marco footer .s { background: #e8c040; } .zm-marco footer .b { background: #a0602a; }

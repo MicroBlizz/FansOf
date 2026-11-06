@@ -12,7 +12,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!j.ok) return j;
     const [c0, c1] = AJ.mundo.corte;
     const e = { min: AJ.reloj.empieza, inicio: AJ.reloj.empieza, dif, dificultad: op.dificultad, jugador: j.valor, zombis: [], ruidos: [], huellas: [], cuerpos: [],
-      registrados: {}, contenidos: {}, planta: 0, torre: { visitadas: {} }, jefeCaido: null, desmontados: {}, abierto: null, sinAgua: false, diaCorteAgua: AJ.mundo.corteAgua[0] + Math.floor(op.azar() * (AJ.mundo.corteAgua[1] - AJ.mundo.corteAgua[0] + 1)), eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
+      registrados: {}, contenidos: {}, semilla: Math.floor(op.azar() * 2147483647), trozos: {}, planta: 0, torre: { visitadas: {} }, jefeCaido: null, desmontados: {}, abierto: null, sinAgua: false, diaCorteAgua: AJ.mundo.corteAgua[0] + Math.floor(op.azar() * (AJ.mundo.corteAgua[1] - AJ.mundo.corteAgua[0] + 1)), eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
     Z.preparaHuecos(AJ, e, op.mundo.huecos ? op.mundo.huecos() : []);
     const n = Math.round(AJ.mundo.zombis * dif.zombis);
     for (let i = 0; i < n; i++) {

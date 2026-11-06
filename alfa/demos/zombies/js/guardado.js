@@ -16,7 +16,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!dif || !A || e.zombis.some((z) => !AJ.zombis[z.tipo])) return Z.error('partidaRota');
     e.dif = dif; e.jugador.A = A; e.eventos = [];
     for (const z of e.zombis) z.T = AJ.zombis[z.tipo];
-    e.huecos = e.huecos || {}; e.planta = e.planta || 0; e.torre = e.torre || { visitadas: {} }; e.desmontados = e.desmontados || {}; if (e.diaCorteAgua == null) e.diaCorteAgua = AJ.mundo.corteAgua[1];   // las partidas de antes de las casas: los huecos se añaden al cargar (Z.preparaHuecos)
+    e.huecos = e.huecos || {}; e.planta = e.planta || 0; if (e.semilla == null) e.semilla = 20261106; e.trozos = e.trozos || {}; Z.pasaExplorado(e); e.torre = e.torre || { visitadas: {} }; e.desmontados = e.desmontados || {}; if (e.diaCorteAgua == null) e.diaCorteAgua = AJ.mundo.corteAgua[1];   // las partidas de antes de las casas: los huecos se añaden al cargar (Z.preparaHuecos)
     return Z.ok(e);
   };
 })(ZOM);

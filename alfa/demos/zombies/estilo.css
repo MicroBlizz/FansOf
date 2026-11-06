@@ -106,3 +106,10 @@ button:disabled { opacity: 0.4; cursor: default; }
 .vm-pieza canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
 .vm-pieza b { position: absolute; right: 3px; bottom: 0; font-weight: 400; font-size: 18px; color: var(--rk-oro); text-shadow: 1px 1px 0 #000; }
 .vm-pieza.vuela { z-index: 50; opacity: .85; cursor: grabbing; pointer-events: none; }
+
+/* los botones de fabricar, cocinar y lo del sitio */
+.vm-acciones { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; max-width: 280px; align-items: center; }
+.vm-mia .vm-acciones { max-width: none; width: 264px; }
+.vm-sub { width: 100%; font: 13px var(--rk-tit); font-weight: 400; color: var(--rk-tenue); letter-spacing: .08em; }
+.vm-accion { background: #22303a; border: 2px solid var(--rk-oro); color: var(--rk-tinta); font: 12px var(--rk-tit); padding: 4px 7px; }
+.vm-accion.no { border-color: #2a3a44; color: #6a7a84; }

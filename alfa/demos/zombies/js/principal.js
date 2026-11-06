@@ -18,15 +18,17 @@ const MUNDO = {
 function sitiosRegistrables(e) { return JUEGO.sitios.concat(e.cuerpos); }
 // la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
 function huecoDelJugador(e) { const J = e.jugador; return huecoCercaDe(J.x, J.z, 1.6); }
+const SITIOS_SIEMPRE = ['fuego', 'cocina'];   // se vuelven a abrir aunque estén vacíos (para cocinar o beber)
 function sitioCerca(e) {
   const J = e.jugador; let mejor = null, dMin = 1.9;
-  for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && (!e.registrados[s.id] || (e.contenidos[s.id] || []).length)) { dMin = d; mejor = s; } }
+  for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && (!e.registrados[s.id] || (e.contenidos[s.id] || []).length || SITIOS_SIEMPRE.includes(s.tipo) || (ZOM.AJ.desmontar.tipos[s.tipo] && !e.desmontados[s.id]))) { dMin = d; mejor = s; } }
   return mejor;
 }
 
 function arranca() {
   iniciaMotor(); construyeMapa(); preparaEntrada(); preparaEfectos();
-  JUEGO.sitios = MAPA.contenedores.filter((c) => c.tipo !== 'verja').map((c, i) => ({ id: 'c' + i, x: c.x, z: c.z, tipo: c.tipo }));
+  JUEGO.sitios = MAPA.contenedores.filter((c) => c.tipo !== 'verja').map((c, i) => ({ id: 'c' + i, x: c.x, z: c.z, tipo: c.tipo }))
+    .concat(MAPA.fuegos.map((f, i) => ({ id: 'f' + i, x: f.x, z: f.z + 0.9, tipo: 'fuego' })));   // los bidones con fuego: para cocinar
   el('carga').hidden = true;
   abreMenu();
   requestAnimationFrame(fotograma);

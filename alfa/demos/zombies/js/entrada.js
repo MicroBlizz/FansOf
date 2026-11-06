@@ -31,7 +31,7 @@ function leeEntrada(J, cerca, hueco) {
   const quiere = pulsa('registra'), usar = pulsa('venda') ? 'venda' : null;
   const empuja = ENTRADA.raton.derecho || pulsa('empuja'); ENTRADA.raton.derecho = false;
   const ent = { mx, mz, corre: mantiene('corre'), agacha: pulsa('agacha'), apunta, ataca: ENTRADA.raton.abajo || mantiene('ataca'), empuja,
-    arma: pulsa('arma1') ? 'escopeta' : pulsa('arma2') ? 'palanca' : null, usar, come: pulsa('come'), bebe: pulsa('bebe'), dormir: pulsa('duerme'), registrar: quiere && cerca ? cerca.id : null, puerta: quiere && !cerca && hueco && hueco.tipo === 'puerta' ? hueco.id : null,
+    arma: pulsa('arma1') ? 'escopeta' : pulsa('arma2') ? 'palanca' : null, usar, come: pulsa('come'), bebe: pulsa('bebe'), dormir: pulsa('duerme'), registrar: quiere && cerca ? cerca.id : null, tipoSitio: cerca ? cerca.tipo : null, puerta: quiere && !cerca && hueco && hueco.tipo === 'puerta' ? hueco.id : null,
     tablas: pulsa('tablas') && hueco ? hueco.id : null, nadaCerca: quiere && !cerca && !(hueco && hueco.tipo === 'puerta') };
   return ent;
 }

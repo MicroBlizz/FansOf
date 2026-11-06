@@ -12,7 +12,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!j.ok) return j;
     const [c0, c1] = AJ.mundo.corte;
     const e = { min: AJ.reloj.empieza, inicio: AJ.reloj.empieza, dif, dificultad: op.dificultad, jugador: j.valor, zombis: [], ruidos: [], huellas: [], cuerpos: [],
-      registrados: {}, contenidos: {}, abierto: null, eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
+      registrados: {}, contenidos: {}, desmontados: {}, abierto: null, sinAgua: false, diaCorteAgua: AJ.mundo.corteAgua[0] + Math.floor(op.azar() * (AJ.mundo.corteAgua[1] - AJ.mundo.corteAgua[0] + 1)), eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
     Z.preparaHuecos(AJ, e, op.mundo.huecos ? op.mundo.huecos() : []);
     const n = Math.round(AJ.mundo.zombis * dif.zombis);
     for (let i = 0; i < n; i++) {
@@ -31,12 +31,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const usar = ent.usar || (ent.come && (Z.primeraQue(AJ, e, 'hambre') || 'judias')) || (ent.bebe && (Z.primeraQue(AJ, e, 'sed') || 'agua'));
     if (usar) avisa(e, Z.usar(AJ, e, usar));
     if (ent.dormir) avisa(e, Z.dormir(AJ, e));
-    if (ent.registrar) avisa(e, Z.empiezaRegistro(AJ, e, ent.registrar));
+    if (ent.registrar) avisa(e, Z.empiezaRegistro(AJ, e, ent.registrar, ent.tipoSitio));
     Z.pasoJugador(AJ, e, dt, ent, mundo);
     if (ent.puerta) avisa(e, Z.usaPuerta(AJ, e, ent.puerta));
     if (ent.tablas) avisa(e, Z.empiezaTablas(AJ, e, ent.tablas));
     Z.pasoRegistro(AJ, e, dt, azar);
     Z.pasoTablas(AJ, e, dt);
+    Z.pasoDesmontar(AJ, e, dt);
     Z.pasoZombis(AJ, e, dt, mundo, azar);
     Z.vigilaSueno(AJ, e);
     Z.pasoRuidos(e, dt);

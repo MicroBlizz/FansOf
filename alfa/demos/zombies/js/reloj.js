@@ -18,6 +18,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (cruza(antes, e.min, AJ.reloj.amanece)) nuevoParche(AJ, e, azar);
     if (cruza(antes, e.min, AJ.reloj.anochece)) oleada(AJ, e, mundo, azar);
     if (!e.sinLuz && Z.diaDe(e.min) >= e.diaCorte && cruza(antes, e.min, AJ.reloj.anochece - 60)) { e.sinLuz = true; e.eventos.push({ tipo: 'corte' }); }
+    if (!e.sinAgua && Z.diaDe(e.min) >= e.diaCorteAgua && cruza(antes, e.min, 12 * 60)) { e.sinAgua = true; e.eventos.push({ tipo: 'corteAgua' }); }
     const horas = (e.min - antes) / 60;
     if (azar() < AJ.mundo.alarmaPorHora * horas) alarma(AJ, e, mundo, azar);
     return horas;

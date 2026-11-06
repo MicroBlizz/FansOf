@@ -1,8 +1,8 @@
 {
- "build": 1034,
- "hash": "705436a",
- "fecha": "2026-11-06T18:12:06Z",
- "mensaje": "Fans of Zombies 0.3.0: barrio residencial con casas, puertas, ventanas y barricadas",
+ "build": 1035,
+ "hash": "6094de3",
+ "fecha": "2026-11-06T18:19:14Z",
+ "mensaje": "Fans of Zombies: fabricar, cocinar, grifo y desmontar muebles",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

@@ -38,15 +38,17 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!U) return Z.error('noSeUsa', { cosa });
     const r = Z.gasta(J.mochila, cosa, 1);
     if (!r.ok) return r;
-    for (const n of ['hambre', 'sed', 'sueno']) if (U[n]) J[n] = Math.min(100, J[n] + U[n]);
-    if (U.vida) J.vida = Math.min(J.max, J.vida + U.vida * (J.A.venda || 1));
+    for (const n of ['hambre', 'sed', 'sueno']) if (U[n]) J[n] = Math.max(0, Math.min(100, J[n] + U[n]));
+    if (U.vida > 0) J.vida = Math.min(J.max, J.vida + U.vida * (J.A.venda || 1));
+    if (U.vida < 0) Z.dana(e, -U.vida, 'comida');
     if (U.infeccion) J.infeccion = Math.max(0, J.infeccion + U.infeccion);
     if (U.ruido) Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[U.ruido] * (J.A.ruido || 1), 'jugador');
-    e.eventos.push({ tipo: 'usa', cosa });
+    if (O.deja) Z.meter(AJ, J.mochila, O.deja, 1);              // el agua deja su botella (si cabe)
+    e.eventos.push({ tipo: 'usa', cosa, mal: !!U.mal });
     return Z.ok(cosa);
   };
   // la primera cosa de comer o beber que tengas (para las teclas E y Q)
-  Z.primeraQue = (AJ, e, necesidad) => Object.keys(AJ.objetos).find((id) => { const U = AJ.objetos[id].usa; return U && U[necesidad] && Z.tiene(e.jugador.mochila, id); }) || null;
+  Z.primeraQue = (AJ, e, necesidad) => Object.keys(AJ.objetos).find((id) => { const U = AJ.objetos[id].usa; return U && U[necesidad] > 0 && !U.mal && Z.tiene(e.jugador.mochila, id); }) || null;   // nunca lo que sienta mal
 
   // dormir: solo con sueño y sin fans cerca; te despiertas solo, o si alguno se acerca
   Z.dormir = function (AJ, e) {

@@ -3,7 +3,7 @@
 // clic en lo del sitio para cogerlo, clic derecho en lo tuyo para usarlo. Tab la abre y la cierra; el mundo sigue mientras miras.
 'use strict';
 const VM = { abierta: false, arrastra: null, celda: 44 };
-const COLOR_OBJ = { escopeta: '#4a3a2c', palanca: '#5a2a2a', judias: '#4a4430', chocolatina: '#4a3020', agua: '#24405a', refresco: '#5a2430', venda: '#4a4a52', cartuchos: '#5a2a1a', tablas: '#4a3a24', clavos: '#3a3e46', martillo: '#3a3430' };
+const COLOR_OBJ = { escopeta: '#4a3a2c', palanca: '#5a2a2a', judias: '#4a4430', chocolatina: '#4a3020', agua: '#24405a', refresco: '#5a2430', venda: '#4a4a52', cartuchos: '#5a2a1a', tablas: '#4a3a24', clavos: '#3a3e46', martillo: '#3a3430', botella: '#2a3440', tela: '#3a3a5a', carne: '#5a2a2a', podrida: '#3a4a2a', filete: '#5a3a24', guiso: '#5a4424' };
 
 // el dibujo de una cosa dentro de su caja (w x h casillas): formas sencillas en píxel
 function dibujaObjeto(g, id, W, H) {
@@ -19,6 +19,12 @@ function dibujaObjeto(g, id, W, H) {
     tablas: () => { P('#b07a40', 0.04, 0.2, 0.92, 0.26); P('#9a6a34', 0.04, 0.54, 0.92, 0.26); P('#6a4a2a', 0.2, 0.2, 0.03, 0.6); P('#6a4a2a', 0.75, 0.2, 0.03, 0.6); },
     clavos: () => { for (const x of [0.25, 0.45, 0.65]) { P('#c8ccd4', x, 0.25, 0.08, 0.5); P('#e8ecf0', x - 0.05, 0.22, 0.18, 0.07); } },
     martillo: () => { P('#7a5a3a', 0.2, 0.3, 0.12, 0.62); P('#8a8e96', 0.08, 0.16, 0.6, 0.2); P('#5c6670', 0.08, 0.16, 0.6, 0.05); },
+    botella: () => { P('#cfe8f4', 0.3, 0.14, 0.4, 0.78); P('#2a6ad0', 0.38, 0.06, 0.24, 0.1); },
+    tela: () => { P('#7a8ac8', 0.15, 0.25, 0.7, 0.5); P('#5a6aa8', 0.15, 0.5, 0.7, 0.08); P('#9aa8e0', 0.15, 0.25, 0.7, 0.06); },
+    carne: () => { P('#d8505a', 0.18, 0.28, 0.64, 0.44); P('#f0e0d0', 0.62, 0.36, 0.12, 0.26); },
+    podrida: () => { P('#7a8a3a', 0.18, 0.28, 0.64, 0.44); P('#4a5a2a', 0.3, 0.38, 0.12, 0.12); P('#4a5a2a', 0.55, 0.5, 0.1, 0.1); },
+    filete: () => { P('#8a4a2a', 0.18, 0.3, 0.64, 0.4); P('#c87a3a', 0.24, 0.36, 0.5, 0.06); },
+    guiso: () => { P('#7a7a80', 0.15, 0.4, 0.7, 0.4); P('#c8783a', 0.2, 0.36, 0.6, 0.12); P('#e8e0d0', 0.4, 0.15, 0.06, 0.2); },
     cartuchos: () => { P('#c8282e', 0.18, 0.25, 0.22, 0.5); P('#c8282e', 0.48, 0.25, 0.22, 0.5); P('#e8b840', 0.18, 0.62, 0.22, 0.13); P('#e8b840', 0.48, 0.62, 0.22, 0.13); },
   };
   (D[id] || (() => P('#888', 0.3, 0.3, 0.4, 0.4)))();
@@ -47,17 +53,18 @@ function pintaMochila() {
   const lista = e.abierto && e.contenidos[e.abierto];
   v.hidden = false;
   v.innerHTML = (lista ? '<section class="vm-sitio"><header><b>' + esc(tr(nombreSitio(e.abierto))) + '</b><button id="vm-todo">' + esc(tr('COGER TODO')) + '</button></header><div class="vm-lista" id="vm-lista">' +
-      (lista.length ? lista.map((c, i) => htmlPieza(c.id, c.n, 0, 'suelta', 'data-i="' + i + '" title="' + esc(tr(AJ.objetos[c.id].n)) + '"')).join('') : '<p>' + esc(tr('Vacío.')) + '</p>') + '</div><p class="vm-ayuda">' + esc(tr('Clic para coger. Arrastra aquí lo tuyo para dejarlo.')) + '</p></section>' : '') +
+      (lista.length ? lista.map((c, i) => htmlPieza(c.id, c.n, 0, 'suelta', 'data-i="' + i + '" title="' + esc(tr(AJ.objetos[c.id].n)) + '"')).join('') : '<p>' + esc(tr('Vacío.')) + '</p>') + '</div>' + htmlAccionesSitio(e) + '<p class="vm-ayuda">' + esc(tr('Clic para coger. Arrastra aquí lo tuyo para dejarlo.')) + '</p></section>' : '') +
     '<section class="vm-mia"><header><b>' + esc(tr('MOCHILA')) + '</b><button id="vm-ordenar">' + esc(tr('ORDENAR')) + '</button><button id="vm-cerrar">' + esc(tr('CERRAR (TAB)')) + '</button></header>' +
     '<div class="vm-rejilla" id="vm-rejilla" style="width:' + m.w * C + 'px;height:' + m.h * C + 'px">' +
       m.piezas.map((p) => htmlPieza(p.id, p.n, p.gr, 'mia', 'data-uid="' + p.uid + '" title="' + esc(tr(AJ.objetos[p.id].n)) + '"')).join('') +
-    '</div><p class="vm-ayuda">' + esc(tr('Arrastra para mover · rueda o R para girar · clic derecho para usar · fuera de la rejilla para dejar.')) + '</p></section>';
+    '</div>' + htmlFabricar(e) + '<p class="vm-ayuda">' + esc(tr('Arrastra para mover · rueda o R para girar · clic derecho para usar · fuera de la rejilla para dejar.')) + '</p></section>';
   // la posición de cada pieza en la rejilla
   v.querySelectorAll('.vm-pieza.mia').forEach((d) => { const p = ZOM.pieza(m, +d.dataset.uid); d.style.left = p.gx * C + 'px'; d.style.top = p.gy * C + 'px'; });
   pintaDibujos(v);
-  enganchaMochila(v);
+  enganchaMochila(v); enganchaOficios(v);
 }
-const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : 'LO QUE HAY AQUÍ');
+const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', basura: 'CUBO DE BASURA', fuego: 'BIDÓN CON FUEGO', coche: 'COCHE' };
+const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
 // lo que no se puede: aviso por la radio
 function resultadoMochila(r) { if (!r.ok) avisa(tr({ noCabe: 'No cabe en la mochila.', noEsta: 'Eso ya no está.' }[r.codigo] || 'No puedes hacer eso ahora.')); else play('coge'); pintaMochila(); }
 

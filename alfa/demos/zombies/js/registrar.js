@@ -4,11 +4,13 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 (function (Z) {
-  Z.empiezaRegistro = function (AJ, e, sitio) {
+  // tipo = la clase de sitio (nevera, armario, cocina, basura, fuego…), que decide lo que hay dentro
+  Z.empiezaRegistro = function (AJ, e, sitio, tipo) {
     const J = e.jugador;
     if (!sitio) return Z.error('nadaCerca');
-    if (e.contenidos[sitio]) { e.abierto = sitio; e.eventos.push({ tipo: 'abre', sitio }); return Z.ok(sitio); }   // ya mirado: se abre al momento
-    J.registra = { sitio, t: AJ.botin.tiempo * (J.A.registra || 1) };
+    if (!e.contenidos[sitio] && tipo === 'fuego') { e.contenidos[sitio] = []; e.registrados[sitio] = true; }   // en un fuego no hay nada: se abre para cocinar
+    if (e.contenidos[sitio]) { e.abierto = sitio; e.tipoAbierto = tipo || null; e.eventos.push({ tipo: 'abre', sitio }); return Z.ok(sitio); }   // ya mirado: se abre al momento
+    J.registra = { sitio, tipo: tipo || null, t: AJ.botin.tiempo * (J.A.registra || 1) };
     Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido.registrar * (J.A.ruido || 1), 'jugador');
     return Z.ok(sitio);
   };
@@ -19,22 +21,24 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (R.t > 0) return;
     J.registra = null; e.registrados[R.sitio] = true; e.stats.registros++;
     const extra = (J.A.botinExtra || 0) + (R.sitio.startsWith('cuerpo-') ? 2 : 0);
-    e.contenidos[R.sitio] = Z.botinDe(AJ, AJ.botin.maximo + extra, azar);
-    e.abierto = R.sitio;
+    e.contenidos[R.sitio] = Z.botinDe(AJ, AJ.botin.maximo + extra, azar, R.tipo, e.sinLuz);
+    e.abierto = R.sitio; e.tipoAbierto = R.tipo;
     e.eventos.push({ tipo: 'abre', sitio: R.sitio, nuevo: true, cosas: e.contenidos[R.sitio].map((c) => c.id) });
   };
-  Z.botinDe = function (AJ, n, azar) {
-    const out = [];
+  Z.botinDe = function (AJ, n, azar, tipo, sinLuz) {
+    const out = [], tabla = AJ.botin.porTipo[tipo] || AJ.botin.cosas;
+    if (!Object.keys(tabla).length) return out;
     for (let i = 0; i < n; i++) {
-      const c = Z.sortea(AJ.botin.cosas, azar);
+      let c = Z.sortea(tabla, azar);
       if (c === 'nada') continue;
+      if (c === 'carne' && sinLuz) c = 'podrida';                // sin luz, la nevera no enfría
       const ya = out.find((o) => o.id === c && (AJ.objetos[c].max || 1) > 1);
       const k = c === 'cartuchos' ? AJ.botin.cartuchos : c === 'clavos' ? AJ.botin.clavos : 1;
       if (ya) ya.n += k; else out.push({ id: c, n: k });
     }
     return out;
   };
-  Z.cierraSitio = (e) => { e.abierto = null; };
+  Z.cierraSitio = (e) => { e.abierto = null; e.tipoAbierto = null; };
   const abierto = (e) => (e.abierto && e.contenidos[e.abierto]) || null;
 
   // coger la cosa i del sitio abierto: colocada sola, o en (gx, gy, gr) si la arrastras a un hueco

@@ -29,16 +29,39 @@ ZOM.AJ = Object.freeze({
     palanca: { n: 'PALANCA', forma: ['XXX'], arma: true },
     judias: { n: 'JUDÍAS', forma: ['X'], usa: { hambre: 35, ruido: 'abrirLata' } },
     chocolatina: { n: 'CHOCOLATINA', forma: ['X'], max: 2, usa: { hambre: 15 } },
-    agua: { n: 'AGUA', forma: ['X', 'X'], usa: { sed: 45 } },
+    agua: { n: 'AGUA', forma: ['X', 'X'], usa: { sed: 45 }, deja: 'botella' },
+    botella: { n: 'BOTELLA VACÍA', forma: ['X', 'X'] },
     refresco: { n: 'REFRESCO', forma: ['X'], usa: { sed: 20, sueno: 10 } },
     venda: { n: 'VENDA', forma: ['X'], max: 3, usa: { vida: 25, infeccion: -10 } },
     cartuchos: { n: 'CARTUCHOS', forma: ['X'], max: 12 },
     tablas: { n: 'TABLAS', forma: ['XXX'], max: 3 },
     clavos: { n: 'CLAVOS', forma: ['X'], max: 20 },
     martillo: { n: 'MARTILLO', forma: ['XX', 'X.'] },
+    tela: { n: 'TELA', forma: ['X'], max: 4 },
+    carne: { n: 'CARNE CRUDA', forma: ['X'], usa: { hambre: 20, vida: -10, sed: -15, mal: true } },
+    podrida: { n: 'CARNE PODRIDA', forma: ['X'], usa: { hambre: 5, vida: -25, mal: true } },
+    filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 } },
+    guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 } },
   },
-  // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo
-  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, tiempo: 1.4 },
+  // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo.
+  // porTipo: lo que hay en cada clase de sitio (lo demás usa «cosas»). En la nevera, tras el corte de luz, la carne sale podrida
+  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, tiempo: 1.4,
+    porTipo: {
+      nevera: { carne: 5, agua: 3, refresco: 2, judias: 1, nada: 2 },
+      armario: { tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, nada: 2 },
+      cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, nada: 2 },
+      basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
+      fuego: {},
+    } },
+  // fabricar: con qué y dónde (null = en cualquier sitio; 'fuego' = junto a un bidón con fuego o en la cocina de una casa con luz)
+  recetas: [
+    { id: 'venda', sale: ['venda', 1], con: [['tela', 2]], donde: null },
+    { id: 'filete', sale: ['filete', 1], con: [['carne', 1]], donde: 'fuego' },
+    { id: 'guiso', sale: ['guiso', 1], con: [['judias', 1], ['agua', 1]], donde: 'fuego', deja: ['botella', 1] },
+  ],
+  // desmontar muebles con palanca o martillo: tarda, suena y deja tablas y clavos en el sitio
+  desmontar: { tipos: { armario: [2, 4], cama: [2, 2], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6] }, tiempo: 3, ruido: 10 },
+  grifo: { sed: 40 },
   mochila: { w: 6, h: 4 },
   mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6], ['martillo', 1], ['tablas', 2], ['clavos', 6]],
   // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)
@@ -61,7 +84,7 @@ ZOM.AJ = Object.freeze({
   // cómo de a menudo sale cada tipo al poblar el distrito (pesos)
   reparto: { fan: 10, streamer: 2, speedrunner: 2, ballena: 1, bot: 2, troll: 1 },
   ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4, infeccion: 0.25 },
-  mundo: { zombis: 70, oleada: 14, maxZombis: 140, alarmaPorHora: 0.35, corte: [3, 6], vistaNoche: 0.6, despierta: 12 },
+  mundo: { zombis: 70, oleada: 14, maxZombis: 140, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
   // los parches de Microblizz: uno nuevo cada mañana desde el día 2
   parches: [
     { id: 'corren', n: 'Esta noche los fans corren.', velNoche: 1.6 },

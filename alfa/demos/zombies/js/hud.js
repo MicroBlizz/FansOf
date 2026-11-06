@@ -48,10 +48,11 @@ function pintaHotbar(AJ, J) {
 // la etiqueta encima del sitio que puedes registrar, y la barra mientras registras
 function pintaAccion(e, cerca, hueco) {
   const a = el('h-accion'), J = e.jugador, r = el('h-registro'), H = !cerca && hueco && e.huecos[hueco.id];
-  a.hidden = (!cerca && !H) || !!J.registra || !!J.clava;
+  a.hidden = (!cerca && !H) || !!J.registra || !!J.clava || !!J.desmonta;
   if (H && !J.registra && !J.clava) { const p = sueloAPantalla(hueco.x, 2.4, hueco.z); a.textContent = textoHueco(hueco, H, J); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
-  if (cerca && !J.registra) { const p = sueloAPantalla(cerca.x, 1.6, cerca.z); a.textContent = tr('F  REGISTRAR'); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
-  r.hidden = !J.registra && !J.clava;
+  if (cerca && !J.registra) { const p = sueloAPantalla(cerca.x, 1.6, cerca.z); a.textContent = tr(e.registrados[cerca.id] ? 'F  ABRIR' : 'F  REGISTRAR'); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
+  r.hidden = !J.registra && !J.clava && !J.desmonta;
+  if (J.desmonta) { const p = sueloAPantalla(J.x, 2.8, J.z); r.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; r.firstChild.style.width = (100 - J.desmonta.t / ZOM.AJ.desmontar.tiempo * 100) + '%'; }
   if (J.clava) { const p = sueloAPantalla(J.x, 2.8, J.z); r.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; r.firstChild.style.width = (100 - J.clava.t / ZOM.AJ.huecos.barricada.tiempo * 100) + '%'; }
   if (J.registra) { const p = sueloAPantalla(J.x, 2.8, J.z), tot = ZOM.AJ.botin.tiempo * (J.A.registra || 1); r.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; r.firstChild.style.width = (100 - J.registra.t / tot * 100) + '%'; }
 }

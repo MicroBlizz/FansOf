@@ -89,7 +89,7 @@ function tiempoVivo(min) { const d = Math.floor(min / 1440), h = Math.floor((min
 function causaTxt(m) {
   const c = m.causa || {};
   if (c.causa === 'mordisco') return trf('Mordido por un fan %1.', tr(NOMBRE_ZOMBI[c.quien] || 'Fan'));
-  return tr({ hambre: 'Se le olvidó comer.', sed: 'Se le olvidó beber.', sueno: 'Se quedó dormido de pie para siempre.', infeccion: 'La infección pudo con él.', rendirse: 'Se rindió. Le entendemos.' }[c.causa] || 'Nadie sabe cómo.');
+  return tr({ hambre: 'Se le olvidó comer.', sed: 'Se le olvidó beber.', sueno: 'Se quedó dormido de pie para siempre.', infeccion: 'La infección pudo con él.', comida: 'Comió lo que no debía.', rendirse: 'Se rindió. Le entendemos.' }[c.causa] || 'Nadie sabe cómo.');
 }
 function abreMuerte(m) {
   JUEGO.pantalla = 'muerte'; musica('lose');

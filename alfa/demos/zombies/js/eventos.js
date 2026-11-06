@@ -3,7 +3,7 @@
 'use strict';
 const NO_PUEDES = {
   sinSueno: 'No tienes sueño todavía.', hayZombis: 'Con fans tan cerca no hay quien duerma.', noTienes: 'No te queda de eso.',
-  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.',
+  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.',
 };
 const EVENTOS = {
   parche: (v) => { HUD.parche = v; HUD.tParche = 12; play('alerta'); },
@@ -12,7 +12,10 @@ const EVENTOS = {
   oleada: (v) => { avisa(trf('Anochece. Llegan %1 fans más al distrito.', v.n), 'malo'); play('bocina'); },
   corte: () => { avisa(tr('Se ha ido la luz en el distrito. Las noches serán más negras.'), 'malo'); play('cuelgue'); },
   abre: (v) => { play(v.nuevo && !v.cosas.length ? 'registra' : 'coge'); if (v.nuevo && !v.cosas.length) avisa(tr('Nada. Alguien pasó antes.')); abreMochila(); },
-  usa: () => play('bebe'),
+  usa: (v) => { play('bebe'); if (v.mal) { avisa(tr('Te ha sentado fatal.'), 'malo'); MOTOR.postMat.uniforms.dano.value = 0.5; } },
+  fabrica: () => play('fabrica'),
+  desmontado: (v) => { play('puerta'); avisa(trf('Mueble desmontado: %1 tablas y %2 clavos.', v.tablas, v.clavos), 'bien'); },
+  corteAgua: () => { avisa(tr('Han cortado el agua. Los grifos ya no echan nada: guarda botellas.'), 'malo'); play('cuelgue'); },
   mordisco: () => { play('dolor'); MOTOR.postMat.uniforms.dano.value = 0.8; },
   infectado: () => avisa(tr('Te han infectado. Véndate (V) para frenarlo.'), 'malo'),
   ataque: (v) => {

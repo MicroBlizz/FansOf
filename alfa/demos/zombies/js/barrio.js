@@ -116,6 +116,11 @@ function muebles(o, cx, cz, w, d, frente, az) {
   o.caja(1.4, 0.75, 0.9, 0x7a5a3a, der - 1.6, 0.45, cz + frente * 0.6); solido(der - 2.3, cz + frente * 0.6 - 0.45, der - 0.9, cz + frente * 0.6 + 0.45, 0.8, 'bajo');
   o.caja(0.5, 1.6, 1.4, 0x5a4030, izq + 0.05, 0.85, cz + frente * 1.6); solido(izq - 0.2, cz + frente * 1.6 - 0.7, izq + 0.3, cz + frente * 1.6 + 0.7, 1.6, 'bajo');
   contenedor('armario', izq + 0.8, cz + frente * 1.6);
+  // la cocina: encimera con fogón y fregadero junto a la nevera (grifo y cocinar mientras haya luz)
+  const kx = der - 1.5;
+  o.caja(1.4, 0.9, 0.65, 0xd8d4cc, kx, 0.45, fondo); o.caja(0.5, 0.06, 0.4, 0x2a2e36, kx - 0.35, 0.93, fondo); o.caja(0.45, 0.08, 0.35, 0x8ab0c8, kx + 0.35, 0.92, fondo); o.caja(0.06, 0.3, 0.06, 0xb8c0c8, kx + 0.35, 1.05, fondo - frente * 0.15);
+  solido(kx - 0.7, fondo - 0.33, kx + 0.7, fondo + 0.33, 0.9, 'bajo');
+  contenedor('cocina', kx, fondo + frente * 0.85);
   if (az() < 0.5) o.caja(2.0, 0.6, 0.8, 0x6a3a4a, cx - w * 0.2, 0.4, cz + frente * (d / 2 - 0.9));
 }
 

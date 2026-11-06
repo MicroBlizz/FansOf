@@ -6,7 +6,7 @@ const AJUSTES = { id: 'zombies', guardado: 'forzom-partida', mudo: false, sinMus
 try { Object.assign(AJUSTES, JSON.parse(localStorage.getItem('forzom-ajustes') || '{}')); } catch (_) { /* sin guardar: se juega igual */ }
 function guardaAjustes() { try { localStorage.setItem('forzom-ajustes', JSON.stringify({ mudo: AJUSTES.mudo, sinMusica: AJUSTES.sinMusica, calidad: AJUSTES.calidad })); } catch (_) { /* sin guardar: se juega igual */ } }
 
-function partidaNueva() { return { v: 1, animal: 'bunny', dificultad: 'superviviente', partidas: 0, mejor: { min: 0, bajas: 0 }, tutoHecho: false, victorias: 0, mejorVictoria: 0 }; }
+function partidaNueva() { return { v: 1, animal: 'bunny', dificultad: 'superviviente', partidas: 0, mejor: { min: 0, bajas: 0 }, tutoHecho: false, ceos: 0 }; }
 const SAVE = (() => { let s = null; try { s = JSON.parse(localStorage.getItem(AJUSTES.guardado) || 'null'); } catch (_) { s = null; } return s && s.v === 1 ? Object.assign(partidaNueva(), s) : partidaNueva(); })();
 function guardaPartida() {
   try { localStorage.setItem(AJUSTES.guardado, JSON.stringify(SAVE)); } catch (_) { /* sin guardar: se juega igual */ }

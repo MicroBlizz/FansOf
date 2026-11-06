@@ -1,6 +1,7 @@
 // Fans of Zombies · LA TORRE DE MICROBLIZZ (dominio): subir y bajar de planta por las escaleras (e.planta: 0 = la calle, 1 a 10 las
 // oficinas, 11 la azotea). La primera vez que entras en una planta se llena de fans (más y peores cuanto más arriba); en la azotea espera
-// EL CEO con su escolta. El CEO llama a sus bots al bajar de vida y embiste. Si cae, se acaba la partida con victoria (e.victoria).
+// EL CEO con su escolta. El CEO llama a sus bots al bajar de vida y embiste. Si cae, deja su maletín (buen botín) y la partida SIGUE
+// (decisión de Daniel: se juega hasta morir); queda apuntado en e.jefeCaido y sale en el cartel de muerte.
 // El mundo da los sitios libres de cada planta (mundo.puntoPlanta(n, azar)).
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
@@ -54,10 +55,11 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     }
     return false;
   };
-  // el CEO ha caído: fin de la partida con victoria
-  Z.ganaPartida = function (e) {
-    if (e.victoria) return;
-    e.victoria = Object.assign(Z.resumen(e), { victoria: true });
-    e.eventos.push({ tipo: 'victoria' });
+  // el CEO ha caído: deja su maletín para registrar y se apunta (la partida sigue)
+  Z.jefeVencido = function (e, zb) {
+    if (e.jefeCaido) return;
+    e.jefeCaido = { min: e.min - e.inicio };
+    e.cuerpos.push({ id: 'maletin-' + zb.id, x: zb.x, z: zb.z, tipo: 'maletin' });
+    e.eventos.push({ tipo: 'jefeCaido' });
   };
 })(ZOM);

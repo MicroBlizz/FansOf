@@ -30,7 +30,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     J.vida -= cuanto; J.ultimoGolpe = { causa, quien: quien || null };
     if (J.vida <= 0) { J.vida = 0; e.muerto = Z.resumen(e); e.eventos.push({ tipo: 'muerte' }); }
   };
-  Z.resumen = (e) => ({ animal: e.jugador.animal, min: e.min - e.inicio, dias: Z.diaDe(e.min), causa: e.jugador.ultimoGolpe, bajas: e.stats.bajas, registros: e.stats.registros, parche: e.parche });
+  Z.resumen = (e) => ({ animal: e.jugador.animal, min: e.min - e.inicio, dias: Z.diaDe(e.min), causa: e.jugador.ultimoGolpe, bajas: e.stats.bajas, registros: e.stats.registros, parche: e.parche, ceo: !!e.jefeCaido });
 
   // usar una cosa de la mochila (la que tenga «usa» en AJ.objetos)
   Z.usar = function (AJ, e, cosa) {

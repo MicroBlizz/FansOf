@@ -74,7 +74,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (zb.vida > 0) return;
     zb.derribado = false;
     e.stats.bajas++;
-    if (zb.T.jefe) Z.ganaPartida(e);
+    if (zb.T.jefe) Z.jefeVencido(e, zb);
     e.eventos.push({ tipo: 'baja', id: zb.id, tipoZombi: zb.tipo, x: zb.x, z: zb.z });
     if (zb.T.botin) e.cuerpos.push({ id: 'cuerpo-' + zb.id, x: zb.x, z: zb.z });     // la ballena deja algo que registrar
   };

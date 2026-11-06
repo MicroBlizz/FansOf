@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.6.0',
+  version: '0.6.1',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -73,6 +73,7 @@ ZOM.AJ = Object.freeze({
       pupitre: { chocolatina: 3, refresco: 2, tela: 1, nada: 4 },
       escritorio: { chocolatina: 2, refresco: 2, balas: 0.6, cuchillo: 0.3, tela: 1, venda: 0.5, nada: 3 },
       cajaFuerte: { balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
+      maletin: { balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
       maquina: { chocolatina: 3, refresco: 3, nada: 2 },
       granero: { tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
     } },

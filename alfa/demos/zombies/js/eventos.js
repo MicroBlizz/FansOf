@@ -42,7 +42,7 @@ const EVENTOS = {
   planta: (v) => entraPlanta(v.n),
   refuerzos: (v) => { avisa(trf('El CEO llama a %1 bots de atención al cliente.', v.n), 'malo'); play('alerta'); },
   embiste: () => { play('bocina'); EFECTOS.temblor = Math.max(EFECTOS.temblor, 0.12); },
-  victoria: () => { play('impacto'); EFECTOS.temblor = 0.4; },
+  jefeCaido: () => { play('impacto'); EFECTOS.temblor = 0.4; musica('ciber'); SAVE.ceos = (SAVE.ceos || 0) + 1; guardaPartida(); avisa(tr('¡El CEO ha caído! Registra su maletín. Microblizz sigue sin jefe… y tú sigues vivo. De momento.'), 'bien'); },
 };
 // al cambiar de planta: el aviso, la música (la del jefe en la azotea) y el tejado de la torre de la calle
 function entraPlanta(n) {

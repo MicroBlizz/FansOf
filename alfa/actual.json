@@ -1,8 +1,8 @@
 {
- "build": 1041,
- "hash": "755cbb6",
- "fecha": "2026-11-06T18:57:09Z",
- "mensaje": "Zombies 0.6.0: la Torre de Microblizz es un rascacielos de 10 plantas con el CEO de jefe final en la azotea",
+ "build": 1042,
+ "hash": "660ec38",
+ "fecha": "2026-11-06T19:05:33Z",
+ "mensaje": "Zombies 0.6.1: tumbar al CEO ya no acaba la partida; deja su maletin y se sigue hasta morir",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

@@ -89,7 +89,7 @@ function juega(e) {
 }
 // se guarda sola cada minuto, al pausar y al cerrar o esconder la página
 function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuardar = 60; guardaMundo(JUEGO.e); }
-function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto && !JUEGO.e.victoria) guardaMundo(JUEGO.e); }
+function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
 addEventListener('pagehide', guardaAhora);
 document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
 function terminaPartida() { TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
@@ -128,7 +128,6 @@ function avanzaJuego(dt) {
   pintaMundo(AJ, e, JUEGO.pausa ? 0 : dt); pintaBarrio(e);
   if ((JUEGO.tHud -= dt) <= 0) { JUEGO.tHud = 0.15; pintaHud(AJ, e, cerca, 0.15, huecoDelJugador(e)); }
   else pintaAccion(e, cerca, huecoDelJugador(e));
-  if (e.victoria && JUEGO.pantalla === 'juego') { const m = e.victoria; borraMundo(); setTimeout(() => abreVictoria(m), 1600); JUEGO.pantalla = 'cayendo'; }
   if (e.muerto && JUEGO.pantalla === 'juego') { const m = e.muerto; borraMundo(); setTimeout(() => abreMuerte(m), 1200); JUEGO.pantalla = 'cayendo'; }
 }
 // las escaleras de la torre (y su puerta en la calle): cambiar de planta

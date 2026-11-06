@@ -49,7 +49,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const c = Z.cocheDe(e, id), J = e.jugador;
     if (!c || Z.dist(c.x, c.z, J.x, J.z) > C(AJ).alcance) return Z.error('nadaCerca');
     if (c.gas >= 1) return Z.error('tanqueLleno');
-    if (!Z.gasta(J.mochila, 'gasolina', 1).ok) return Z.error('sinGasolina');
+    if (!Z.gastaLleva(J, 'gasolina', 1).ok) return Z.error('sinGasolina');
     c.gas = Math.min(1, c.gas + C(AJ).bidon);
     e.eventos.push({ tipo: 'reposta', gas: c.gas });
     return Z.ok(c.gas);

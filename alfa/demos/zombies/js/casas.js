@@ -25,11 +25,11 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   // clavar una tabla: martillo, 1 tabla y clavos en la mochila; tarda un poco y se oye. Cierra la puerta
   Z.empiezaTablas = function (AJ, e, id) {
-    const h = e.huecos[id], J = e.jugador, B = AJ.huecos.barricada, m = J.mochila;
+    const h = e.huecos[id], J = e.jugador, B = AJ.huecos.barricada;
     if (!h) return Z.error('nadaCerca');
     if (h.tablas >= B.max) return Z.error('yaTapado');
-    if (!Z.tiene(m, 'martillo')) return Z.error('sinMartillo');
-    if (!Z.tiene(m, 'tablas') || Z.cuantos(m, 'clavos') < B.clavos) return Z.error('sinTablas');
+    if (!Z.lleva(J, 'martillo')) return Z.error('sinMartillo');
+    if (!Z.lleva(J, 'tablas') || Z.cuantosLleva(J, 'clavos') < B.clavos) return Z.error('sinTablas');
     const t = B.tiempo * Z.menos(AJ, J, 'carpinteria', 'tiempo');
     J.clava = { id, t, total: t };
     return Z.ok(id);
@@ -40,7 +40,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if ((C.t -= dt) > 0) return;
     J.clava = null;
     const h = e.huecos[C.id];
-    if (!Z.gasta(J.mochila, 'tablas', 1).ok || !Z.gasta(J.mochila, 'clavos', B.clavos).ok) return;
+    if (Z.cuantosLleva(J, 'clavos') < B.clavos || !Z.gastaLleva(J, 'tablas', 1).ok || !Z.gastaLleva(J, 'clavos', B.clavos).ok) return;
     h.tablas++; h.vida = B.vidaTabla; h.abierta = false;
     Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido.martillo * (J.A.ruido || 1), 'jugador');
     e.eventos.push({ tipo: 'tabla', id: C.id, tablas: h.tablas });

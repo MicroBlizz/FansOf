@@ -53,7 +53,7 @@ function textoCoche(e, s) {
   if (e.jugador.conduce) return tr('F  BAJAR');
   if (!(e.llaves || {})[s.coche]) return tr(e.registrados[s.id] ? 'F  ABRIR (SIN LLAVE)' : 'F  REGISTRAR LA GUANTERA');
   if (c.dano >= 100) return tr('COCHE ROTO');
-  return tr('F  SUBIR') + (ZOM.cuantos(e.jugador.mochila, 'gasolina') && c.gas < 1 ? '   ' + tr('G  REPOSTAR') : '');
+  return tr('F  SUBIR') + (ZOM.cuantosLleva(e.jugador, 'gasolina') && c.gas < 1 ? '   ' + tr('G  REPOSTAR') : '');
 }
 // el panel del volante (en lugar del arma)
 function pintaVolante(e) {

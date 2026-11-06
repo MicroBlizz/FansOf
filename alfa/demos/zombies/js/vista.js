@@ -118,7 +118,7 @@ function pintaCamara(J, dt) {
   camaraEn(VISTA.cx + tiembla(), VISTA.cz + tiembla()); avanzaTapan(J.x, J.z, dt);
 }
 function pintaMundo(AJ, e, dt) {
-  avanzaEfectos(e.jugador, dt); pintaJugador(e.jugador, dt); pintaZombis(e, dt); pintaRuidos(e); pintaHuellas(e); pintaLuz(AJ, e); pintaCamara(e.jugador, dt);
+  avanzaEfectos(e.jugador, dt); pintaJugador(e.jugador, dt); pintaRopa(e.jugador); pintaZombis(e, dt); pintaRuidos(e); pintaHuellas(e); pintaLuz(AJ, e); pintaCamara(e.jugador, dt);
   const u = MOTOR.postMat.uniforms, J = e.jugador;
   u.dano.value = Math.max(0, u.dano.value - dt * 2); u.frio.value = J.duerme ? 0.8 : 0;
 }

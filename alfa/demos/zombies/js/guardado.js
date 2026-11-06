@@ -14,7 +14,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (guardado.v !== Z.VERSION_GUARDADO) return Z.error('versionAntigua', { v: guardado.v });
     const e = guardado.partida, dif = AJ.dificultades[e.dificultad], A = e.jugador && AJ.animales[e.jugador.animal];
     if (!dif || !A || e.zombis.some((z) => !AJ.zombis[z.tipo])) return Z.error('partidaRota');
-    e.dif = dif; e.jugador.A = A; e.eventos = [];
+    e.dif = dif; e.jugador.A = A; e.eventos = []; Z.pasaEquipo(AJ, e.jugador);   // las de antes de la ropa (js/equipo.js)
     for (const z of e.zombis) z.T = AJ.zombis[z.tipo];
     e.huecos = e.huecos || {}; e.planta = e.planta || 0; if (e.semilla == null) e.semilla = 20261106; e.trozos = e.trozos || {}; e.rescates = e.rescates || []; e.coches = e.coches || []; e.llaves = e.llaves || {}; Z.pasaExplorado(e); e.torre = e.torre || { visitadas: {} }; e.desmontados = e.desmontados || {}; if (e.diaCorteAgua == null) e.diaCorteAgua = AJ.mundo.corteAgua[1];   // las partidas de antes de las casas: los huecos se añaden al cargar (Z.preparaHuecos)
     return Z.ok(e);

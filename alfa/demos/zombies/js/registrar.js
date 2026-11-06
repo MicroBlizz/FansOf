@@ -1,6 +1,6 @@
 // Fans of Zombies · REGISTRAR Y COGER (dominio): registrar un sitio tarda un poco y hace algo de ruido; la primera vez se sortea lo que
 // hay dentro (e.contenidos[sitio], una lista sin rejilla) y se abre (e.abierto) para que elijas qué coges. Coger mete la cosa en la
-// mochila Tetris si cabe; dejar la saca al sitio abierto o, si no hay ninguno, a un montón en el suelo que también se puede registrar.
+// mochila Tetris (o en la riñonera o los bolsillos) si cabe; dejar la saca al sitio abierto o, si no hay ninguno, a un montón en el suelo que también se puede registrar.
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 (function (Z) {
@@ -42,13 +42,12 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   Z.cierraSitio = (e) => { e.abierto = null; e.tipoAbierto = null; };
   const abierto = (e) => (e.abierto && e.contenidos[e.abierto]) || null;
 
-  // coger la cosa i del sitio abierto: colocada sola, o en (gx, gy, gr) si la arrastras a un hueco
+  // coger la cosa i del sitio abierto: colocada sola donde quepa, o en (gx, gy, gr) de una bolsa si la arrastras a un hueco
   Z.coger = function (AJ, e, i, donde) {
-    const lista = abierto(e), c = lista && lista[i];
+    const lista = abierto(e), c = lista && lista[i], J = e.jugador;
     if (!c) return Z.error('noEsta');
-    const m = e.jugador.mochila;
-    if (donde) { const r = Z.ponerEn(AJ, m, c, donde.gx, donde.gy, donde.gr); if (!r.ok) return r; lista.splice(i, 1); return Z.ok(0); }
-    const queda = Z.meter(AJ, m, c.id, c.n, c.dur);
+    if (donde) { const m = J[donde.bolsa || 'mochila'], r = m ? Z.ponerEn(AJ, m, c, donde.gx, donde.gy, donde.gr) : Z.error('noEsta'); if (!r.ok) return r; lista.splice(i, 1); return Z.ok(0); }
+    const queda = Z.meterLleva(AJ, J, c.id, c.n, c.dur);
     if (queda === c.n) return Z.error('noCabe', { id: c.id });
     if (queda) c.n = queda; else lista.splice(i, 1);
     return Z.ok(queda);
@@ -59,15 +58,21 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     for (let i = lista.length - 1; i >= 0; i--) Z.coger(AJ, e, i);
     return lista.length ? Z.error('noCabe') : Z.ok(true);
   };
-  // dejar una pieza de la mochila: en el sitio abierto o en un montón nuevo a tus pies
-  Z.dejar = function (AJ, e, uid) {
-    const r = Z.sacar(e.jugador.mochila, uid);
+  // dejar una pieza de una de tus bolsas (la mochila si no se dice): en el sitio abierto o en un montón nuevo a tus pies
+  Z.dejar = function (AJ, e, uid, bolsa) {
+    const m = e.jugador[bolsa || 'mochila'];
+    if (!m) return Z.error('noEsta', { uid });
+    const r = Z.sacar(m, uid);
     if (!r.ok) return r;
+    return Z.ok(Z.dejaEnSitio(e, r.valor));
+  };
+  // poner una cosa suelta en el sitio abierto o, si no hay ninguno, en un montón nuevo a tus pies (que se abre)
+  Z.dejaEnSitio = function (e, cosa) {
     if (!abierto(e)) {
       const id = 'monton-' + (++e.ultimoId), J = e.jugador;
       e.cuerpos.push({ id, x: J.x, z: J.z, monton: true }); e.contenidos[id] = []; e.registrados[id] = true; e.abierto = id;
     }
-    abierto(e).push(r.valor);
-    return Z.ok(e.abierto);
+    abierto(e).push(cosa);
+    return e.abierto;
   };
 })(ZOM);

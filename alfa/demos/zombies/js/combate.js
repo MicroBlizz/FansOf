@@ -26,8 +26,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   Z.ataca = function (AJ, e, mundo) {
     const J = e.jugador, W = AJ.armas[J.arma], G = AJ.aguante, cansado = J.agotado ? G.agotado : { dano: 1, cadencia: 1 };
-    if (!Z.tiene(J.mochila, J.arma)) { e.eventos.push({ tipo: 'noPuedes', codigo: 'sinArma' }); J.tArma = 0.4; return Z.error('sinArma'); }
-    if (W.municion && !Z.gasta(J.mochila, W.municion, 1).ok) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
+    if (!Z.lleva(J, J.arma)) { e.eventos.push({ tipo: 'noPuedes', codigo: 'sinArma' }); J.tArma = 0.4; return Z.error('sinArma'); }
+    if (W.municion && !Z.gastaLleva(J, W.municion, 1).ok) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
     J.tArma = W.cadencia * cansado.cadencia;
     const hab = W.municion ? 'disparo' : 'pelea', fuerza = W.dano * cansado.dano * Z.mas(AJ, J, hab, 'dano');
     J.aguante = Math.max(0, J.aguante - W.aguante * Z.menos(AJ, J, 'pelea', 'aguante'));
@@ -56,13 +56,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   function porLaEspalda(J, zb) { return zb.estado !== 'persigue' && Math.abs(angulo(zb.a, Math.atan2(J.x - zb.x, J.z - zb.z))) > 1.9; }
   // cada golpe que da (o disparo) gasta el arma; a cero se rompe y coges la siguiente que tengas
   function desgasta(AJ, e) {
-    const J = e.jugador, p = Z.armaPieza(J.mochila, J.arma);
+    const J = e.jugador, a = Z.armaLleva(J, J.arma), p = a && a.p;
     if (!p || p.dur == null || --p.dur > 0) return;
-    J.mochila.piezas = J.mochila.piezas.filter((q) => q !== p);
+    a.m.piezas = a.m.piezas.filter((q) => q !== p);
     e.eventos.push({ tipo: 'armaRota', arma: J.arma });
-    if (!Z.tiene(J.mochila, J.arma)) J.arma = Z.siguienteArma(AJ, J.mochila) || J.arma;
+    if (!Z.lleva(J, J.arma)) J.arma = Z.siguienteArma(AJ, J) || J.arma;
   }
-  Z.siguienteArma = (AJ, m) => Object.keys(AJ.armas).find((id) => Z.tiene(m, id)) || null;
+  Z.siguienteArma = (AJ, J) => Object.keys(AJ.armas).find((id) => Z.lleva(J, id)) || null;
 
   Z.empuja = function (AJ, e, mundo) {
     const J = e.jugador, P = AJ.empujon;

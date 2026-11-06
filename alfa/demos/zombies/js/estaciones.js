@@ -17,7 +17,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (antes) e.eventos.push({ tipo: 'estacion', estacion: k });
   };
   // el ruido que haces según el tiempo (la lluvia lo tapa) y los pasos (las hojas secas crujen)
-  Z.ruidoEstacion = (AJ, e, r) => r * Z.estacion(AJ, e.min).ruido;
+  Z.ruidoEstacion = (AJ, e, r) => r * Z.estacion(AJ, e.min).ruido * Z.lluviaRopa(AJ, e.jugador, Z.estacion(AJ, e.min));   // el chubasquero (js/equipo.js)
   Z.pasosEstacion = (AJ, e) => Z.estacion(AJ, e.min).pasos;
   // qué tabla de botín usa un sitio: el huerto da según la estación
   Z.tipoBotin = (AJ, e, tipo) => (tipo === 'huerto' ? 'huerto_' + Z.estacionDe(AJ, e.min) : tipo);

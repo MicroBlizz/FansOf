@@ -7,19 +7,19 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // ¿dónde estás para cocinar? 'fuego' si es un bidón, o una cocina con luz
   Z.dondeCocinas = (e, tipoSitio) => (tipoSitio === 'fuego' || (tipoSitio === 'cocina' && !e.sinLuz) ? 'fuego' : null);
   Z.receta = (AJ, id) => AJ.recetas.find((r) => r.id === id) || null;
-  Z.faltaPara = (AJ, m, r) => r.con.filter(([id, n]) => Z.cuantos(m, id) < n).map(([id]) => id);
+  Z.faltaPara = (AJ, J, r) => r.con.filter(([id, n]) => Z.cuantosLleva(J, id) < n).map(([id]) => id);
 
   // fabricar: comprueba en una copia que lo que sale cabe; si cabe, lo hace de verdad
   Z.fabrica = function (AJ, e, id, donde) {
-    const r = Z.receta(AJ, id), m = e.jugador.mochila;
+    const r = Z.receta(AJ, id), J = e.jugador;
     if (!r) return Z.error('sinReceta', { id });
     if (r.donde && r.donde !== donde) return Z.error('sinFuego');
-    if (Z.faltaPara(AJ, m, r).length) return Z.error('faltaMaterial', { falta: Z.faltaPara(AJ, m, r) });
-    const copia = JSON.parse(JSON.stringify(m));
-    for (const [cid, n] of r.con) Z.gasta(copia, cid, n);
-    if (Z.meter(AJ, copia, r.sale[0], r.sale[1])) return Z.error('noCabe', { id: r.sale[0] });
-    if (r.deja) Z.meter(AJ, copia, r.deja[0], r.deja[1]);
-    m.piezas = copia.piezas; m.uid = copia.uid;
+    if (Z.faltaPara(AJ, J, r).length) return Z.error('faltaMaterial', { falta: Z.faltaPara(AJ, J, r) });
+    const copia = JSON.parse(JSON.stringify({ mochila: J.mochila, rinonera: J.rinonera, bolsillos: J.bolsillos }));   // se prueba en una copia de tus bolsas
+    for (const [cid, n] of r.con) Z.gastaLleva(copia, cid, n);
+    if (Z.meterLleva(AJ, copia, r.sale[0], r.sale[1])) return Z.error('noCabe', { id: r.sale[0] });
+    if (r.deja) Z.meterLleva(AJ, copia, r.deja[0], r.deja[1]);
+    for (const b of Z.BOLSAS) if (J[b]) { J[b].piezas = copia[b].piezas; J[b].uid = copia[b].uid; }
     e.eventos.push({ tipo: 'fabrica', id });
     if (r.donde) Z.ganaXp(AJ, e, 'cocina', 'fuego');
     return Z.ok(r.sale[0]);
@@ -34,7 +34,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   Z.llenaBotella = function (AJ, e) {
     if (e.sinAgua) return Z.error('sinAgua');
-    const p = e.jugador.mochila.piezas.find((q) => q.id === 'botella');
+    const p = Z.bolsas(e.jugador).flatMap((m) => m.piezas).find((q) => q.id === 'botella');
     if (!p) return Z.error('sinBotella');
     p.id = 'agua';                                              // misma forma: se cambia en su sitio
     e.eventos.push({ tipo: 'usa', cosa: 'grifo' });
@@ -43,10 +43,10 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   // desmontar un mueble (tipo en AJ.desmontar.tipos): con palanca o martillo, tarda, suena y deja tablas y clavos dentro
   Z.empiezaDesmontar = function (AJ, e, sitio, tipo) {
-    const D = AJ.desmontar.tipos[tipo], m = e.jugador.mochila;
+    const D = AJ.desmontar.tipos[tipo], J = e.jugador;
     if (!D) return Z.error('noSeDesmonta');
     if (e.desmontados[sitio]) return Z.error('yaDesmontado');
-    if (!Z.tiene(m, 'palanca') && !Z.tiene(m, 'martillo')) return Z.error('sinHerramienta');
+    if (!Z.lleva(J, 'palanca') && !Z.lleva(J, 'martillo')) return Z.error('sinHerramienta');
     const t = AJ.desmontar.tiempo * Z.menos(AJ, e.jugador, 'carpinteria', 'tiempo');
     e.jugador.desmonta = { sitio, tipo, t, total: t };
     return Z.ok(sitio);

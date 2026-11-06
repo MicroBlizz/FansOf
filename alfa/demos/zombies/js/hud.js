@@ -39,17 +39,17 @@ function pintaRuido(AJ, e) {
 }
 // lo que le queda al arma (barra verde a roja)
 function barraDesgaste(AJ, J) {
-  const p = ZOM.armaPieza(J.mochila, J.arma), W = AJ.armas[J.arma];
+  const a = ZOM.armaLleva(J, J.arma), p = a && a.p, W = AJ.armas[J.arma];
   if (!p || p.dur == null) return '';
   const f = p.dur / W.dur;
   return '<i class="barra"><i style="width:' + Math.round(f * 100) + '%;background:' + (f > 0.5 ? 'var(--rk-bien)' : f > 0.2 ? 'var(--rk-oro)' : 'var(--rk-mal)') + '"></i></i>';
 }
 function pintaHotbar(AJ, J) {
-  const suma = (que) => Object.keys(AJ.objetos).reduce((s, id) => s + ((AJ.objetos[id].usa || {})[que] && que !== 'vida' ? ZOM.cuantos(J.mochila, id) : 0), 0);
-  const cosas = [['COMER', 'E', suma('hambre')], ['BEBER', 'Q', suma('sed')], ['VENDAS', 'V', ZOM.cuantos(J.mochila, 'venda')], ['CARTUCHOS', '', ZOM.cuantos(J.mochila, 'cartuchos')], ['MOCHILA', 'TAB', null]];
+  const suma = (que) => Object.keys(AJ.objetos).reduce((s, id) => s + ((AJ.objetos[id].usa || {})[que] && que !== 'vida' ? ZOM.cuantosLleva(J, id) : 0), 0);
+  const cosas = [['COMER', 'E', suma('hambre')], ['BEBER', 'Q', suma('sed')], ['VENDAS', 'V', ZOM.cuantosLleva(J, 'venda')], ['CARTUCHOS', '', ZOM.cuantosLleva(J, 'cartuchos')], ['MOCHILA', 'TAB', null]];
   el('h-mochila').innerHTML = cosas.map(([n, k, c]) => '<span class="' + (c === 0 ? 'vacio' : '') + '"><em>' + k + '</em>' + esc(tr(n)) + (c == null ? '' : '<b>' + c + '</b>') + '</span>').join('');
   const W = AJ.armas[J.arma];
-  el('h-arma').innerHTML = '<span class="lab">' + esc(tr(W.n)) + ' · ' + (Object.keys(AJ.armas).indexOf(J.arma) + 1) + '</span>' + barraDesgaste(AJ, J) + '<b>' + (!ZOM.tiene(J.mochila, J.arma) ? '✕' : W.municion ? ZOM.cuantos(J.mochila, W.municion) : '—') + '</b><span class="lab ' + (W.municion ? 'malo' : '') + '">' +
+  el('h-arma').innerHTML = '<span class="lab">' + esc(tr(W.n)) + ' · ' + (Object.keys(AJ.armas).indexOf(J.arma) + 1) + '</span>' + barraDesgaste(AJ, J) + '<b>' + (!ZOM.lleva(J, J.arma) ? '✕' : W.municion ? ZOM.cuantosLleva(J, W.municion) : '—') + '</b><span class="lab ' + (W.municion ? 'malo' : '') + '">' +
     esc(tr(W.municion ? 'DISPARAR = MUCHO RUIDO' : 'GOLPEAR = POCO RUIDO')) + '</span>';
 }
 // la etiqueta encima del sitio que puedes registrar, y la barra mientras registras

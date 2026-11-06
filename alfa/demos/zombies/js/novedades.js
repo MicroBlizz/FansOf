@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.12.0', real: ['<b>ROPA Y MOCHILAS</b>: cuatro huecos de ropa (cabeza, cuerpo, piernas y pies) con 10 prendas que encuentras en armarios, taquillas, tiendas y coches: el abrigo y el gorro quitan el hambre del frío, el casco y el cuero paran mordiscos, las botas de nieve dejan menos huellas, las zapatillas no suenan… Cada mordisco las gasta; se cosen con tela y el gorro se fabrica. Empiezas con una mochila pequeña (4x4), una riñonera y tres bolsillos: busca la de excursión (5x5) o la de mudanza (6x7, aunque pesa). La ropa se ve en tu personaje.'],
+    joke: ['Microblizz anuncia ropa cosmética para los zombis. Solo se ve si pagas el pase.'] },
   { v: '0.11.2', real: ['<b>LOS FANS YA NO ATRAVIESAN EL MUNDO</b>: los que iban a un ruido lejano o seguían huellas ya no se meten por zonas que aún no se habían construido, y si uno se queda dentro de una pared al aparecer un barrio nuevo, sale a la calle.'],
     joke: ['Microblizz confirma que atravesar paredes era una función premium. Ya no está incluida en la versión gratuita.'] },
   { v: '0.11.1', real: ['<b>AJUSTES TRAS PROBAR UN MES ENTERO</b>: las noches de invierno son una hora más cortas, en verano la sed baja un 50 % más (antes el doble) y los fans tranquilos que dejas muy lejos desaparecen cuando hay demasiados, para que los sitios nuevos que descubres sigan teniendo fans.'],

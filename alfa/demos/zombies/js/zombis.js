@@ -133,8 +133,9 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     zb.tMordisco = AJ.ia.mordisco;
     const J = e.jugador;
     if (J.duerme) J.duerme = false;
-    Z.dana(e, zb.T.dano * e.dif.dano, 'mordisco', zb.tipo);
-    if (J.infeccion <= 0 && azar() < AJ.ia.infeccion * (J.A.infeccion || 1)) { J.infeccion = 1; e.eventos.push({ tipo: 'infectado' }); }
+    Z.dana(e, zb.T.dano * e.dif.dano * Z.mordiscoRopa(AJ, J), 'mordisco', zb.tipo);   // la ropa protege y se gasta (js/equipo.js)
+    if (J.infeccion <= 0 && azar() < AJ.ia.infeccion * (J.A.infeccion || 1) * Z.infeccionRopa(AJ, J)) { J.infeccion = 1; e.eventos.push({ tipo: 'infectado' }); }
+    Z.gastaRopa(AJ, e);
     e.eventos.push({ tipo: 'mordisco', id: zb.id });
   }
   // cada hora de juego, si hay muchos fans, se quitan los tranquilos (y los caídos) que están muy lejos de ti: así quedan fans para los

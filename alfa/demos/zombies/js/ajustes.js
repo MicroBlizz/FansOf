@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.11.2',
+  version: '0.12.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -55,13 +55,48 @@ ZOM.AJ = Object.freeze({
     podrida: { n: 'CARNE PODRIDA', forma: ['X'], usa: { hambre: 5, vida: -25, mal: true } },
     filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 }, cocinado: true },
     guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 }, cocinado: true },
+    // la ropa (AJ.ropa dice qué hace cada prenda) y las mochilas (AJ.mochilas): se ponen con clic derecho
+    gorro: { n: 'GORRO DE LANA', forma: ['X'] },
+    casco: { n: 'CASCO DE MOTO', forma: ['XX', 'XX'] },
+    abrigo: { n: 'ABRIGO', forma: ['XX', 'XX'] },
+    cuero: { n: 'CHAQUETA DE CUERO', forma: ['XX', 'XX'] },
+    chubasquero: { n: 'CHUBASQUERO', forma: ['XX', 'X.'] },
+    vaqueros: { n: 'VAQUEROS', forma: ['X', 'X'] },
+    chandal: { n: 'PANTALÓN DE CHÁNDAL', forma: ['X', 'X'] },
+    botasNieve: { n: 'BOTAS DE NIEVE', forma: ['XX'] },
+    zapatillas: { n: 'ZAPATILLAS', forma: ['XX'] },
+    botasGoma: { n: 'BOTAS DE GOMA', forma: ['XX'] },
+    mochilaP: { n: 'MOCHILA PEQUEÑA', forma: ['XX', 'XX'] },
+    mochilaM: { n: 'MOCHILA DE EXCURSIÓN', forma: ['XX', 'XX', 'XX'] },
+    mochilaG: { n: 'MOCHILA DE MUDANZA', forma: ['XXX', 'XXX', 'XXX'] },
   },
+  // la ropa (ADR 079): en qué hueco va, cuánto aguanta (cada mordisco le quita «gastaMordisco» a todo lo que llevas puesto) y lo que hace.
+  // frio = parte del hambre extra del invierno que te quita (sumado, hasta 1); calor = sed extra en verano; dano = menos daño de los
+  // mordiscos; infeccion = menos probabilidad de que infecten; lluvia = tus ruidos se oyen menos cuando llueve; huellas = menos huellas;
+  // pasos = pasos más silenciosos; correr = correr gasta menos aguante; barro = en primavera correr no cansa más
+  ropa: {
+    gorro: { hueco: 'cabeza', dur: 60, frio: 0.4, color: 0xc8282e },
+    casco: { hueco: 'cabeza', dur: 90, dano: 0.15, color: 0x2a2e36 },
+    abrigo: { hueco: 'cuerpo', dur: 70, frio: 0.7, calor: 0.25, color: 0x6a5a3a },
+    cuero: { hueco: 'cuerpo', dur: 90, infeccion: 0.4, dano: 0.1, color: 0x3a2418 },
+    chubasquero: { hueco: 'cuerpo', dur: 50, lluvia: 0.2, color: 0xe8c020 },
+    vaqueros: { hueco: 'piernas', dur: 70, dano: 0.1, color: 0x2a4a7a },
+    chandal: { hueco: 'piernas', dur: 50, correr: 0.25, color: 0x3a3e48 },
+    botasNieve: { hueco: 'pies', dur: 70, huellas: 0.5, color: 0x5a3a24 },
+    zapatillas: { hueco: 'pies', dur: 50, pasos: 0.25, color: 0xe8e8e8 },
+    botasGoma: { hueco: 'pies', dur: 80, barro: true, color: 0x2a6a3a },
+  },
+  vestir: { huecos: ['cabeza', 'cuerpo', 'piernas', 'pies'], gastaMordisco: 6, coser: 30, danoMax: 0.6 },
+  // las mochilas (como en Ratkov): su rejilla y si pesa (vel multiplica lo que andas). Además siempre llevas la riñonera (2 x 2) y
+  // tres bolsillos (cada uno, una cosa de una casilla). JunkCoon lleva una fila más en la mochila
+  mochilas: { mochilaP: { w: 4, h: 4 }, mochilaM: { w: 5, h: 5 }, mochilaG: { w: 6, h: 7, vel: 0.9 } },
+  mochilaInicio: 'mochilaP', rinonera: { w: 2, h: 2 }, bolsillos: { w: 3, h: 1 },
   // las estaciones (ADR 076): días que dura cada una, el orden (empieza en invierno) y lo que cambia en cada una: amanecer y anochecer
   // (minutos), hambre y sed (multiplican), huellas en la nieve, ruido (lo tapa la lluvia), pasos (las hojas crujen), lo que ven y corren
-  // los fans y la probabilidad de que la carne salga podrida
+  // los fans, la probabilidad de que la carne salga podrida y el barro (correr cansa más sin botas de goma)
   estaciones: { dias: 7, orden: ['invierno', 'primavera', 'verano', 'otono'],
     invierno: { n: 'INVIERNO', amanece: 7 * 60 + 30, anochece: 18 * 60 + 30, hambre: 1.25, sed: 1, huellas: true, ruido: 1, pasos: 1, vistaFans: 1, velFans: 0.9, pudre: 0 },
-    primavera: { n: 'PRIMAVERA', amanece: 7 * 60, anochece: 20 * 60, hambre: 1, sed: 1, huellas: false, ruido: 0.75, pasos: 1, vistaFans: 0.9, velFans: 1, pudre: 0.1 },
+    primavera: { n: 'PRIMAVERA', amanece: 7 * 60, anochece: 20 * 60, hambre: 1, sed: 1, huellas: false, ruido: 0.75, pasos: 1, vistaFans: 0.9, velFans: 1, pudre: 0.1, barro: 1.15 },
     verano: { n: 'VERANO', amanece: 6 * 60, anochece: 21 * 60 + 30, hambre: 0.9, sed: 1.5, huellas: false, ruido: 1, pasos: 1, vistaFans: 1.1, velFans: 1.15, pudre: 0.4 },
     otono: { n: 'OTOÑO', amanece: 7 * 60 + 30, anochece: 19 * 60, hambre: 1, sed: 1, huellas: false, ruido: 1, pasos: 1.3, vistaFans: 0.7, velFans: 1, pudre: 0.1 } },
   // los coches (ADR 075): velocidades en m/s (máxima ~65 km/h), giro en rad/s, gasolina de 0 a 1 (consumo por metro), daño de 0 a 100,
@@ -89,32 +124,33 @@ ZOM.AJ = Object.freeze({
   },
   // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo.
   // porTipo: lo que hay en cada clase de sitio (lo demás usa «cosas»). En la nevera, tras el corte de luz, la carne sale podrida
-  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, balas: 1.2, pistola: 0.3, bate: 0.6, hacha: 0.3, cuchillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, balas: 8, tiempo: 1.4,
+  botin: { cosas: { gorro: 0.3, zapatillas: 0.2, vaqueros: 0.2, botasNieve: 0.2, mochilaM: 0.1, judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, balas: 1.2, pistola: 0.3, bate: 0.6, hacha: 0.3, cuchillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, balas: 8, tiempo: 1.4,
     porTipo: {
       nevera: { carne: 5, agua: 3, refresco: 2, judias: 1, nada: 2 },
-      armario: { tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, bate: 0.6, balas: 0.5, nada: 2 },
+      armario: { gorro: 0.6, abrigo: 0.5, vaqueros: 0.6, chandal: 0.5, zapatillas: 0.4, chubasquero: 0.3, cuero: 0.15, mochilaM: 0.15, tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, bate: 0.6, balas: 0.5, nada: 2 },
       cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, cuchillo: 1.2, nada: 2 },
       basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
       fuego: {},
-      estanteria: { gasolina: 0.6, tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
-      super: { judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
-      gasolinera: { chocolatina: 4, refresco: 4, agua: 2, gasolina: 3, nada: 2 },
-      ferreteria: { gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
+      estanteria: { mochilaG: 0.2, botasGoma: 0.2, gasolina: 0.6, tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
+      super: { gorro: 0.4, zapatillas: 0.3, judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
+      gasolinera: { chubasquero: 0.3, chocolatina: 4, refresco: 4, agua: 2, gasolina: 3, nada: 2 },
+      ferreteria: { botasGoma: 0.6, chubasquero: 0.5, gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
       farmacia: { venda: 6, tela: 2, nada: 2 },
       armeria: { balas: 4, cartuchos: 3, pistola: 1.2, escopeta: 0.4, nada: 1 },
-      taquilla: { balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
-      pupitre: { chocolatina: 3, refresco: 2, tela: 1, nada: 4 },
+      taquilla: { chandal: 0.6, zapatillas: 0.6, mochilaM: 0.3, casco: 0.2, balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
+      pupitre: { mochilaP: 0.4, mochilaM: 0.2, gorro: 0.3, chocolatina: 3, refresco: 2, tela: 1, nada: 4 },
       escritorio: { chocolatina: 2, refresco: 2, balas: 0.6, cuchillo: 0.3, tela: 1, venda: 0.5, nada: 3 },
-      cajaFuerte: { balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
-      maletin: { balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
+      cajaFuerte: { mochilaG: 0.4, balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
+      maletin: { cuero: 0.5, balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
       maquina: { chocolatina: 3, refresco: 3, nada: 2 },
-      coche: { gasolina: 1, chocolatina: 1, refresco: 1, agua: 1, cartuchos: 0.5, nada: 2 },
+      coche: { casco: 0.2, cuero: 0.15, mochilaM: 0.2, gasolina: 1, chocolatina: 1, refresco: 1, agua: 1, cartuchos: 0.5, nada: 2 },
       huerto_invierno: { nada: 1 }, huerto_primavera: { verdura: 4, nada: 2 }, huerto_verano: { verdura: 5, agua: 1, nada: 1 }, huerto_otono: { verdura: 2, carne: 1.5, nada: 3 },
-      granero: { gasolina: 1, tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
+      granero: { botasGoma: 0.6, botasNieve: 0.4, mochilaG: 0.3, gasolina: 1, tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
     } },
   // fabricar: con qué y dónde (null = en cualquier sitio; 'fuego' = junto a un bidón con fuego o en la cocina de una casa con luz)
   recetas: [
     { id: 'venda', sale: ['venda', 1], con: [['tela', 2]], donde: null },
+    { id: 'gorro', sale: ['gorro', 1], con: [['tela', 2]], donde: null },
     { id: 'filete', sale: ['filete', 1], con: [['carne', 1]], donde: 'fuego' },
     { id: 'guiso', sale: ['guiso', 1], con: [['judias', 1], ['agua', 1]], donde: 'fuego', deja: ['botella', 1] },
   ],
@@ -123,7 +159,6 @@ ZOM.AJ = Object.freeze({
   grifo: { sed: 40 },
   // lo que ya has visto, para el mapa (M): casillas de 8 m sobre todo el distrito; ves lo que hay a «vista» metros
   explorado: { celda: 8, vista: 18 },
-  mochila: { w: 6, h: 5 },
   mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6], ['martillo', 1], ['tablas', 2], ['clavos', 6]],
   // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)
   animales: {

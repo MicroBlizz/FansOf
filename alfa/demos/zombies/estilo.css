@@ -152,3 +152,20 @@ button:disabled { opacity: 0.4; cursor: default; }
 .zm-marco footer .p { background: #3ac86a; } .zm-marco footer .h { background: none; border: 2px solid #ff7a1a; border-radius: 0; }
 .zm-marco footer .c { background: #58c8ff; }
 .zb-coche > b { font-size: 34px; color: #ffb070; }
+
+/* ---------- lo puesto: ropa, mochila, riñonera y bolsillos (js/ventana-equipo.js) ---------- */
+.vm-equipo { width: 200px; }
+.vm-huecos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.vm-hueco { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--rk-borde2); background: #0a0e12; text-align: center; }
+.vm-hueco.lleno { cursor: pointer; }
+.vm-hueco.lleno:hover { border-color: var(--rk-oro); }
+.vm-hueco span { font: 12px var(--rk-tit); color: var(--rk-tenue); letter-spacing: .06em; }
+.vm-hueco em { font-style: normal; font-size: 12px; line-height: 1; min-height: 12px; }
+.vm-hueco.mochila { grid-column: 1 / -1; }
+.vm-caja, .vm-vacio { width: 40px; height: 40px; }
+.vm-vacio { border: 1px dashed #2a3a44; }
+.vm-caja canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+.vm-hueco .barra { display: block; width: 40px; height: 4px; background: #1a1e26; }
+.vm-hueco .barra i { display: block; height: 100%; }
+.vm-equipo .vm-sub { display: block; margin: 8px 0 4px; }
+.vm-equipo .vm-acciones { max-width: none; }

@@ -8,7 +8,9 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const J = e.jugador;
     if (J.duerme) return;
     if (ent.agacha) J.agacha = !J.agacha;
-    if (ent.arma && AJ.armas[ent.arma]) J.arma = ent.arma;
+    if (ent.arma && AJ.armas[ent.arma]) {
+      if (Z.tiene(J.mochila, ent.arma)) J.arma = ent.arma; else e.eventos.push({ tipo: 'noPuedes', codigo: 'sinArma' });
+    }
     if (ent.apunta != null) J.a = ent.apunta;
     const m = Math.hypot(ent.mx, ent.mz);
     J.corre = !!ent.corre && m > 0 && !J.registra && J.aguante > 0 && !J.agotado;

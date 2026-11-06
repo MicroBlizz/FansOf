@@ -12,7 +12,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!j.ok) return j;
     const [c0, c1] = AJ.mundo.corte;
     const e = { min: AJ.reloj.empieza, inicio: AJ.reloj.empieza, dif, dificultad: op.dificultad, jugador: j.valor, zombis: [], ruidos: [], huellas: [], cuerpos: [],
-      registrados: {}, eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
+      registrados: {}, contenidos: {}, abierto: null, eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
     const n = Math.round(AJ.mundo.zombis * dif.zombis);
     for (let i = 0; i < n; i++) {
       const s = op.mundo.aparicion(op.azar);
@@ -22,12 +22,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   Z.vivos = (e) => e.zombis.filter((z) => z.vida > 0);
 
-  // un fotograma de dt segundos. ent: la entrada del jugador (ver js/jugador.js) más { usar, dormir, registrar (id del sitio) }
+  // un fotograma de dt segundos. ent: la entrada del jugador (ver js/jugador.js) más { usar (id), come, bebe, dormir, registrar (id del sitio) }
   Z.paso = function (AJ, e, dt, ent, mundo, azar) {
     if (e.muerto) return;
     const horas = Z.avanzaReloj(AJ, e, dt, mundo, azar);
     Z.pasoNecesidades(AJ, e, horas);
-    if (ent.usar) avisa(e, Z.usar(AJ, e, ent.usar));
+    const usar = ent.usar || (ent.come && (Z.primeraQue(AJ, e, 'hambre') || 'judias')) || (ent.bebe && (Z.primeraQue(AJ, e, 'sed') || 'agua'));
+    if (usar) avisa(e, Z.usar(AJ, e, usar));
     if (ent.dormir) avisa(e, Z.dormir(AJ, e));
     if (ent.registrar) avisa(e, Z.empiezaRegistro(AJ, e, ent.registrar));
     Z.pasoJugador(AJ, e, dt, ent, mundo);

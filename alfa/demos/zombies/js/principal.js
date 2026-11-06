@@ -15,7 +15,7 @@ const MUNDO = {
 function sitiosRegistrables(e) { return JUEGO.sitios.concat(e.cuerpos); }
 function sitioCerca(e) {
   const J = e.jugador; let mejor = null, dMin = 1.9;
-  for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && !e.registrados[s.id]) { dMin = d; mejor = s; } }
+  for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && (!e.registrados[s.id] || (e.contenidos[s.id] || []).length)) { dMin = d; mejor = s; } }
   return mejor;
 }
 
@@ -35,7 +35,7 @@ function empiezaPartida() {
   limpiaVista(); montaJugador(JUEGO.e.jugador); montaHud(); musica('ciber');
   avisa(tr('Día 1. Busca comida y agua antes de que anochezca. Los fans oyen todo.'), 'bien');
 }
-function terminaPartida() { limpiaVista(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
+function terminaPartida() { cierraMochila(); limpiaVista(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
 
 function fotograma(ms) {
   requestAnimationFrame(fotograma);
@@ -55,8 +55,9 @@ function paseoDeFondo(dt) {
 }
 function avanzaJuego(dt) {
   const e = JUEGO.e, AJ = ZOM.AJ;
-  if (pidePausa() && !e.muerto) { if (JUEGO.pausa) cierraPausa(); else abrePausa(); }
   const cerca = sitioCerca(e);
+  if (pidePausa() && !e.muerto) { if (VM.abierta) cierraMochila(); else if (JUEGO.pausa) cierraPausa(); else abrePausa(); }
+  if (!JUEGO.pausa && !e.muerto) vigilaMochila(e, cerca);
   if (!JUEGO.pausa && !e.muerto) {
     const ent = leeEntrada(e.jugador, cerca);
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));

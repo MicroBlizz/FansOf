@@ -88,3 +88,21 @@ button:disabled { opacity: 0.4; cursor: default; }
 .zb-registro { position: absolute; left: 0; top: 0; width: 70px; height: 8px; background: #06080a; border: 2px solid var(--rk-borde2); }
 .zb-registro i { display: block; height: 100%; background: var(--rk-oro); }
 .zb-et { position: absolute; left: 0; top: 0; }
+
+/* ---------- la ventana de la mochila (Tetris) ---------- */
+#zb-mochila { position: fixed; right: 12px; top: 50%; transform: translateY(-50%); z-index: 35; display: flex; gap: 12px; align-items: flex-start; pointer-events: auto; }
+#zb-mochila section { background: var(--rk-panel2); border: 2px solid var(--rk-borde2); padding: 8px 10px 6px; }
+#zb-mochila header { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+#zb-mochila header b { font: 18px var(--rk-tit); font-weight: 400; margin-right: auto; letter-spacing: .05em; }
+#zb-mochila header button { background: #1a242a; border: 2px solid var(--rk-borde2); color: var(--rk-tinta); font: 13px var(--rk-tit); padding: 4px 8px; }
+.vm-rejilla { position: relative; background-color: #0a0e12; background-image: linear-gradient(#22303a 1px, transparent 1px), linear-gradient(90deg, #22303a 1px, transparent 1px); background-size: 44px 44px; border: 1px solid #22303a; }
+.vm-lista { display: flex; flex-wrap: wrap; gap: 6px; width: 240px; min-height: 60px; align-items: flex-start; }
+.vm-lista p { color: var(--rk-tenue); margin: 0; }
+.vm-ayuda { color: var(--rk-tenue); font-size: 14px; max-width: 240px; margin: 6px 0 0; line-height: 1.1; }
+.vm-mia .vm-ayuda { max-width: none; width: 220px; }
+.vm-pieza { position: absolute; cursor: grab; touch-action: none; }
+.vm-lista .vm-pieza { position: relative; }
+.vm-pieza i { position: absolute; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); }
+.vm-pieza canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.vm-pieza b { position: absolute; right: 3px; bottom: 0; font-weight: 400; font-size: 18px; color: var(--rk-oro); text-shadow: 1px 1px 0 #000; }
+.vm-pieza.vuela { z-index: 50; opacity: .85; cursor: grabbing; pointer-events: none; }

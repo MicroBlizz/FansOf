@@ -20,21 +20,27 @@ ZOM.AJ = Object.freeze({
   },
   // el empujón (botón derecho o R): no hace daño ni ruido, aparta y tumba un rato a los que tienes delante
   empujon: { alcance: 1.7, cono: 1.1, retroceso: 1.8, derriba: 1.6, cadencia: 0.6, aguante: 14, ruido: 1.5 },
-  // lo que hace cada cosa de la mochila al usarla
-  usos: {
-    judias: { hambre: 35, ruido: 'abrirLata' },
-    agua: { sed: 45 },
-    venda: { vida: 25, infeccion: -10 },
+  // las cosas: su nombre, su forma en la mochila Tetris (X = casilla), cuántas se apilan (max) y lo que hacen al usarlas (usa)
+  objetos: {
+    escopeta: { n: 'ESCOPETA', forma: ['XXXX', '.X..'], arma: true },
+    palanca: { n: 'PALANCA', forma: ['XXX'], arma: true },
+    judias: { n: 'JUDÍAS', forma: ['X'], usa: { hambre: 35, ruido: 'abrirLata' } },
+    chocolatina: { n: 'CHOCOLATINA', forma: ['X'], max: 2, usa: { hambre: 15 } },
+    agua: { n: 'AGUA', forma: ['X', 'X'], usa: { sed: 45 } },
+    refresco: { n: 'REFRESCO', forma: ['X'], usa: { sed: 20, sueno: 10 } },
+    venda: { n: 'VENDA', forma: ['X'], max: 3, usa: { vida: 25, infeccion: -10 } },
+    cartuchos: { n: 'CARTUCHOS', forma: ['X'], max: 12 },
   },
-  // lo que sale al registrar (peso de cada cosa) y cuántas cosas como mucho
-  botin: { cosas: { judias: 4, agua: 4, venda: 2, cartuchos: 3, nada: 4 }, maximo: 2, cartuchos: 3, tiempo: 1.4 },
-  mochilaInicial: { judias: 1, agua: 1, venda: 1, cartuchos: 6 },
+  // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo
+  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, nada: 3 }, maximo: 3, cartuchos: 4, tiempo: 1.4 },
+  mochila: { w: 5, h: 4 },
+  mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6]],
   // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)
   animales: {
     bunny: { n: 'CrazyBunny', ventaja: 'Orejas de radar', vida: 120, oye: 22 },
     squirrel: { n: 'MadSquirrel', ventaja: 'Pies ligeros', vel: 1.15, huellas: 0.5 },
     fox: { n: 'SlyFox', ventaja: 'Sombra', ruido: 0.5 },
-    junkcoon: { n: 'JunkCoon', ventaja: 'Saqueador', registra: 0.4, botinExtra: 1 },
+    junkcoon: { n: 'JunkCoon', ventaja: 'Saqueador', registra: 0.4, botinExtra: 1, mochilaExtra: 1 },
     meercat: { n: 'MeerCat', ventaja: 'Enfermera', infeccion: 0.5, venda: 1.5 },
   },
   // los fans zombificados: vida, velocidad, cuánto oyen (multiplica el radio del ruido), cuánto ven, el mordisco y lo suyo

@@ -1,14 +1,16 @@
 // Fans of Zombies · EL SUPERVIVIENTE (dominio): el animal que eliges y su ventaja, el hambre, la sed y el sueño que bajan con las
-// horas, la infección de los mordiscos, usar lo de la mochila (judías, agua, vendas), dormir, registrar y morir (con su causa).
+// horas, la infección de los mordiscos, usar lo de la mochila (js/mochila.js), dormir y morir (con su causa). Registrar y coger cosas
+// está en js/registrar.js.
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 (function (Z) {
   Z.nuevoJugador = function (AJ, animal, x, z) {
     const A = AJ.animales[animal];
     if (!A) return Z.error('animalDesconocido', { animal });
-    const vida = A.vida || AJ.jugador.vida;
+    const vida = A.vida || AJ.jugador.vida, mochila = Z.nuevaMochila(AJ.mochila.w, AJ.mochila.h + (A.mochilaExtra || 0));
+    for (const [id, n] of AJ.mochilaInicial) Z.meter(AJ, mochila, id, n);
     return Z.ok({ animal, A, x, z, a: 0, vida, max: vida, hambre: 85, sed: 85, sueno: 90, infeccion: 0, agacha: false, corre: false, duerme: false, aguante: AJ.aguante.max, agotado: false,
-      arma: 'escopeta', tArma: 0, registra: null, mochila: Object.assign({}, AJ.mochilaInicial), andado: 0, ultimoGolpe: null });
+      arma: 'escopeta', tArma: 0, registra: null, mochila, andado: 0, ultimoGolpe: null });
   };
 
   // las necesidades bajan con las horas; si alguna llega a 0, quita vida (y se apunta la causa por si mueres)
@@ -30,19 +32,21 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   Z.resumen = (e) => ({ animal: e.jugador.animal, min: e.min - e.inicio, dias: Z.diaDe(e.min), causa: e.jugador.ultimoGolpe, bajas: e.stats.bajas, registros: e.stats.registros, parche: e.parche });
 
-  // usar una cosa de la mochila
+  // usar una cosa de la mochila (la que tenga «usa» en AJ.objetos)
   Z.usar = function (AJ, e, cosa) {
-    const J = e.jugador, U = AJ.usos[cosa];
+    const J = e.jugador, O = AJ.objetos[cosa], U = O && O.usa;
     if (!U) return Z.error('noSeUsa', { cosa });
-    if (!J.mochila[cosa]) return Z.error('noTienes', { cosa });
-    J.mochila[cosa]--;
-    if (U.hambre) J.hambre = Math.min(100, J.hambre + U.hambre);
-    if (U.sed) J.sed = Math.min(100, J.sed + U.sed);
+    const r = Z.gasta(J.mochila, cosa, 1);
+    if (!r.ok) return r;
+    for (const n of ['hambre', 'sed', 'sueno']) if (U[n]) J[n] = Math.min(100, J[n] + U[n]);
     if (U.vida) J.vida = Math.min(J.max, J.vida + U.vida * (J.A.venda || 1));
     if (U.infeccion) J.infeccion = Math.max(0, J.infeccion + U.infeccion);
     if (U.ruido) Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[U.ruido] * (J.A.ruido || 1), 'jugador');
+    e.eventos.push({ tipo: 'usa', cosa });
     return Z.ok(cosa);
   };
+  // la primera cosa de comer o beber que tengas (para las teclas E y Q)
+  Z.primeraQue = (AJ, e, necesidad) => Object.keys(AJ.objetos).find((id) => { const U = AJ.objetos[id].usa; return U && U[necesidad] && Z.tiene(e.jugador.mochila, id); }) || null;
 
   // dormir: solo con sueño y sin fans cerca; te despiertas solo, o si alguno se acerca
   Z.dormir = function (AJ, e) {
@@ -59,28 +63,4 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (J.sueno >= 100 || Z.zombiCerca(e, AJ.mundo.despierta * 0.6)) { J.duerme = false; e.eventos.push({ tipo: 'despierta', susto: J.sueno < 100 }); }
   };
 
-  // registrar un sitio (id): tarda un poco, hace algo de ruido y da cosas al azar. Cada sitio, una vez
-  Z.empiezaRegistro = function (AJ, e, sitio) {
-    const J = e.jugador;
-    if (!sitio) return Z.error('nadaCerca');
-    if (e.registrados[sitio]) return Z.error('yaRegistrado', { sitio });
-    J.registra = { sitio, t: AJ.botin.tiempo * (J.A.registra || 1) };
-    Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido.registrar * (J.A.ruido || 1), 'jugador');
-    return Z.ok(sitio);
-  };
-  Z.pasoRegistro = function (AJ, e, dt, azar) {
-    const J = e.jugador, R = J.registra;
-    if (!R) return;
-    R.t -= dt;
-    if (R.t > 0) return;
-    J.registra = null; e.registrados[R.sitio] = true; e.stats.registros++;
-    const sale = Z.botinDe(AJ, AJ.botin.maximo + (J.A.botinExtra || 0), azar);
-    for (const c of sale) J.mochila[c] = (J.mochila[c] || 0) + (c === 'cartuchos' ? AJ.botin.cartuchos : 1);
-    e.eventos.push({ tipo: 'botin', cosas: sale });
-  };
-  Z.botinDe = function (AJ, n, azar) {
-    const out = [];
-    for (let i = 0; i < n; i++) { const c = Z.sortea(AJ.botin.cosas, azar); if (c !== 'nada') out.push(c); }
-    return out;
-  };
 })(ZOM);

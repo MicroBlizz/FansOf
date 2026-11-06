@@ -52,11 +52,12 @@ function iniciaMotor() {
   MOTOR.nieve.frustumCulled = false; e.add(MOTOR.nieve);
   ajustaTamano(); window.addEventListener('resize', ajustaTamano);
 }
-// cuántos puntos tiene de alto la imagen pequeña (según la calidad) y cuánto mundo se ve
+// cuántos puntos tiene de alto la imagen que se pinta y cuánto mundo se ve
 function ajustaTamano() {
   const W = window.innerWidth, H = window.innerHeight; MOTOR.W = W; MOTOR.H = H;
   MOTOR.r.setSize(W, H, false);
-  const corto = AJUSTES.calidad === 'baja' ? 220 : AJUSTES.calidad === 'alta' ? 360 : (Math.min(W, H) < 500 ? 260 : 300);
+  // Zombies va siempre en HD (Daniel, 6-11-2026): 540 puntos de alto (o los de la pantalla, si tiene menos); Ratkov pinta a 300 para el pixel art
+  const corto = Math.min(540, Math.min(W, H));
   const k = corto / Math.min(W, H);
   MOTOR.RW = Math.max(64, Math.round(W * k)); MOTOR.RH = Math.max(64, Math.round(H * k));
   MOTOR.rt.setSize(MOTOR.RW, MOTOR.RH); MOTOR.postMat.uniforms.res.value.set(MOTOR.RW, MOTOR.RH);

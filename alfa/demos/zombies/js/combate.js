@@ -25,8 +25,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   Z.ataca = function (AJ, e, mundo) {
     const J = e.jugador, W = AJ.armas[J.arma], G = AJ.aguante, cansado = J.agotado ? G.agotado : { dano: 1, cadencia: 1 };
-    if (W.municion && !(J.mochila[W.municion] > 0)) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
-    if (W.municion) J.mochila[W.municion]--;
+    if (!Z.tiene(J.mochila, J.arma)) { e.eventos.push({ tipo: 'noPuedes', codigo: 'sinArma' }); J.tArma = 0.4; return Z.error('sinArma'); }
+    if (W.municion && !Z.gasta(J.mochila, W.municion, 1).ok) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
     J.tArma = W.cadencia * cansado.cadencia;
     J.aguante = Math.max(0, J.aguante - W.aguante);
     if (J.aguante <= 0) J.agotado = true;

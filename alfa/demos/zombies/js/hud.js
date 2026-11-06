@@ -37,11 +37,12 @@ function pintaRuido(AJ, e) {
   if (J.A.oye) { const k = ZOM.vivos(e).filter((z) => ZOM.dist(z.x, z.z, J.x, J.z) < J.A.oye).length; extra = '<small class="oye">' + esc(trf('Tus orejas oyen %1 fans cerca', k)) + '</small>'; }
   el('h-ruido').innerHTML = '<span class="lab">' + esc(tr('TU RUIDO')) + '</span><i class="zb-ondas">' + [1, 2, 3, 4, 5].map((i) => '<i' + (i > n ? ' class="off"' : '') + '></i>').join('') + '</i><small>' + esc(tr(txt)) + '</small>' + extra;
 }
-function pintaMochila(AJ, J) {
-  const cosas = [['judias', 'JUDÍAS', 'E'], ['agua', 'AGUA', 'Q'], ['venda', 'VENDAS', 'V'], ['cartuchos', 'CARTUCHOS', '']];
-  el('h-mochila').innerHTML = cosas.map(([id, n, k]) => '<span class="' + (J.mochila[id] ? '' : 'vacio') + '"><em>' + k + '</em>' + esc(tr(n)) + '<b>' + (J.mochila[id] || 0) + '</b></span>').join('');
+function pintaHotbar(AJ, J) {
+  const suma = (que) => Object.keys(AJ.objetos).reduce((s, id) => s + ((AJ.objetos[id].usa || {})[que] && que !== 'vida' ? ZOM.cuantos(J.mochila, id) : 0), 0);
+  const cosas = [['COMER', 'E', suma('hambre')], ['BEBER', 'Q', suma('sed')], ['VENDAS', 'V', ZOM.cuantos(J.mochila, 'venda')], ['CARTUCHOS', '', ZOM.cuantos(J.mochila, 'cartuchos')], ['MOCHILA', 'TAB', null]];
+  el('h-mochila').innerHTML = cosas.map(([n, k, c]) => '<span class="' + (c === 0 ? 'vacio' : '') + '"><em>' + k + '</em>' + esc(tr(n)) + (c == null ? '' : '<b>' + c + '</b>') + '</span>').join('');
   const W = AJ.armas[J.arma];
-  el('h-arma').innerHTML = '<span class="lab">' + esc(tr(W.n)) + ' · ' + (J.arma === 'escopeta' ? '1' : '2') + '</span><b>' + (W.municion ? (J.mochila[W.municion] || 0) : '—') + '</b><span class="lab ' + (W.municion ? 'malo' : '') + '">' +
+  el('h-arma').innerHTML = '<span class="lab">' + esc(tr(W.n)) + ' · ' + (J.arma === 'escopeta' ? '1' : '2') + '</span><b>' + (!ZOM.tiene(J.mochila, J.arma) ? '✕' : W.municion ? ZOM.cuantos(J.mochila, W.municion) : '—') + '</b><span class="lab ' + (W.municion ? 'malo' : '') + '">' +
     esc(tr(W.municion ? 'DISPARAR = MUCHO RUIDO' : 'GOLPEAR = POCO RUIDO')) + '</span>';
 }
 // la etiqueta encima del sitio que puedes registrar, y la barra mientras registras
@@ -63,5 +64,5 @@ function pintaAvisos(dt) {
 }
 function pintaHud(AJ, e, cerca, dt) {
   const J = e.jugador;
-  pintaNecesidades(AJ, J); pintaReloj(AJ, e); pintaRuido(AJ, e); pintaMochila(AJ, J); pintaAccion(e, cerca); pintaAvisos(dt);
+  pintaNecesidades(AJ, J); pintaReloj(AJ, e); pintaRuido(AJ, e); pintaHotbar(AJ, J); pintaAccion(e, cerca); pintaAvisos(dt);
 }

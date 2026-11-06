@@ -1,10 +1,9 @@
 // Fans of Zombies · LO QUE PASA (pantalla): lee e.eventos de las reglas y los convierte en sonidos, temblores rojos y avisos de la
 // radio (el parche de cada mañana, las alarmas, los gritos del streamer, la oleada del anochecer, el corte de luz, el botín…).
 'use strict';
-const NOMBRE_COSA = { judias: 'judías', agua: 'agua', venda: 'venda', cartuchos: 'cartuchos' };
 const NO_PUEDES = {
   sinSueno: 'No tienes sueño todavía.', hayZombis: 'Con fans tan cerca no hay quien duerma.', noTienes: 'No te queda de eso.',
-  yaRegistrado: 'Aquí ya has mirado.', nadaCerca: 'No hay nada que registrar aquí.',
+  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.',
 };
 const EVENTOS = {
   parche: (v) => { HUD.parche = v; HUD.tParche = 12; play('alerta'); },
@@ -12,7 +11,8 @@ const EVENTOS = {
   grito: () => { avisa(tr('Un streamer te ha visto y está avisando a su chat.'), 'malo'); play('alerta'); },
   oleada: (v) => { avisa(trf('Anochece. Llegan %1 fans más al distrito.', v.n), 'malo'); play('bocina'); },
   corte: () => { avisa(tr('Se ha ido la luz en el distrito. Las noches serán más negras.'), 'malo'); play('cuelgue'); },
-  botin: (v) => { play(v.cosas.length ? 'coge' : 'registra'); avisa(v.cosas.length ? trf('Encuentras: %1.', v.cosas.map((c) => tr(NOMBRE_COSA[c])).join(', ')) : tr('Nada. Alguien pasó antes.'), v.cosas.length ? 'bien' : ''); },
+  abre: (v) => { play(v.nuevo && !v.cosas.length ? 'registra' : 'coge'); if (v.nuevo && !v.cosas.length) avisa(tr('Nada. Alguien pasó antes.')); abreMochila(); },
+  usa: () => play('bebe'),
   mordisco: () => { play('dolor'); MOTOR.postMat.uniforms.dano.value = 0.8; },
   infectado: () => avisa(tr('Te han infectado. Véndate (V) para frenarlo.'), 'malo'),
   ataque: (v) => {

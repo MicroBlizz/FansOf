@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Russo+One&family=Permanent+Marker&family=Special+Elite&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script src="../../core/js/nucleo.js?v=0.1.0-a1031.1530f5b"></script>
+<script src="../../core/js/nucleo.js?v=0.1.0-a1032.6fb5fc6"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.1.0">
 <link rel="stylesheet" href="estilo-menus.css?v=0.1.0">
@@ -20,6 +20,7 @@
 <canvas id="cv" aria-label="Fans of Zombies"></canvas>
 <div id="carga">…</div>
 <div id="zb"></div>
+<div id="zb-mochila" hidden></div>
 <div id="zb-capa"></div>
 <div id="toast"></div>
 <script>
@@ -48,6 +49,8 @@ NUCLEO.juego({
     'js/reloj.js',
     'js/superviviente.js',
     'js/zombis.js',
+    'js/mochila.js',
+    'js/registrar.js',
     'js/jugador.js',
     'js/combate.js',
     'js/partida.js',
@@ -55,6 +58,7 @@ NUCLEO.juego({
     'js/efectos.js',
     'js/vista.js',
     'js/hud.js',
+    'js/ventana-mochila.js',
     'js/eventos.js',
     'js/pantallas.js',
     'js/principal.js'],

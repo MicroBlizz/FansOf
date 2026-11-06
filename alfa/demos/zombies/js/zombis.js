@@ -92,22 +92,34 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     let mx = dx / d, mz = dz / d;
     const f = sigueFlujo(e, zb, mundo);                         // persiguiéndote: rodea casas y vallas por el campo de flujo
     if (f) { mx = f.x; mz = f.z; }
-    for (const o of Z.vecinos(rej, zb.x, zb.z)) {             // no se apilan: se apartan un poco de los de al lado
-      const od = Z.dist(zb.x, zb.z, o.x, o.z);
-      if (o !== zb && o.vida > 0 && od < AJ.ia.separa && od > 0) { mx += (zb.x - o.x) / od * 0.6; mz += (zb.z - o.z) / od * 0.6; }
-    }
+    [mx, mz] = apartaDeVecinos(AJ, zb, rej, mx, mz);
     const m = Math.hypot(mx, mz) || 1;
     zb.a = Math.atan2(mx, mz);
-    const [px, pz] = dentroDeLoHecho(zb, mx / m * paso, mz / m * paso, mundo);
+    const [px, pz] = dentroDeLoHecho(AJ, zb, mx / m * paso, mz / m * paso, mundo);
     const choca = mundo.mueve(zb, px, pz, zb.T.radio);
     if (choca && zb.estado !== 'vaga' && !zb.hueco && !zb.cruza) Z.buscaHueco(AJ, e, zb, mundo);   // una pared por medio: a por la puerta o ventana más cercana
   }
-  // un fan que está en lo construido no da un paso hacia lo que aún no lo está (allí no hay paredes): ese eje se queda quieto y resbala
-  // por el borde. Si ya estaba fuera (de antes de cargarse nada), anda libre hasta volver a entrar
-  function dentroDeLoHecho(zb, dx, dz, mundo) {
-    if (!mundo.construido || !mundo.construido(zb.x, zb.z)) return [dx, dz];
-    return [mundo.construido(zb.x + dx, zb.z) ? dx : 0, mundo.construido(zb.x, zb.z + dz) ? dz : 0];
+  // no se apilan: se apartan un poco de los de al lado
+  function apartaDeVecinos(AJ, zb, rej, mx, mz) {
+    for (const o of Z.vecinos(rej, zb.x, zb.z)) {
+      const od = Z.dist(zb.x, zb.z, o.x, o.z);
+      if (o !== zb && o.vida > 0 && od < AJ.ia.separa && od > 0) { mx += (zb.x - o.x) / od * 0.6; mz += (zb.z - o.z) / od * 0.6; }
+    }
+    return [mx, mz];
   }
+  // un fan que está en lo construido no da un paso hacia lo que aún no lo está (allí no hay paredes): ese eje se queda quieto y resbala
+  // por el borde. Si ya estaba fuera (de antes de cargarse nada) o está en una planta de la torre, anda libre. Si el paso no cambia de
+  // trozo ni entra o sale del distrito hecho a mano, no hace falta mirar nada
+  function dentroDeLoHecho(AJ, zb, dx, dz, mundo) {
+    if (zb.planta || !mundo.construido || mismaZona(AJ, zb.x, zb.z, zb.x + dx, zb.z + dz) || !mundo.construido(zb.x, zb.z)) return [dx, dz];
+    const px = mundo.construido(zb.x + dx, zb.z) ? dx : 0, pz = mundo.construido(zb.x, zb.z + dz) ? dz : 0;
+    return px && pz && !mundo.construido(zb.x + dx, zb.z + dz) ? [px, 0] : [px, pz];   // en una esquina, la diagonal tampoco
+  }
+  const enCentro = (C, x, z) => x > C.x0 && x < C.x1 && z > C.z0 && z < C.z1;
+  const mismaZona = (AJ, x0, z0, x1, z1) => {
+    const T = AJ.trozos, f = (v, o) => Math.floor((v - o) / T.lado);
+    return f(x0, T.ox) === f(x1, T.ox) && f(z0, T.oz) === f(z1, T.oz) && enCentro(T.centro, x0, z0) === enCentro(T.centro, x1, z1);
+  };
   // el campo de flujo (si el mundo lo da) cuando te persigue o va a donde estás, sin un hueco entre manos y no pegado a ti
   function sigueFlujo(e, zb, mundo) {
     if (!mundo.flujo || zb.hueco || zb.cruza) return null;

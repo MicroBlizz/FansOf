@@ -12,7 +12,7 @@ const MUNDO = {
   puntoTrozo: (r, azar) => libreEn(r, azar),
   puntoDentro: (r, azar) => libreDentro(r, azar),
   choca: (x, z, r) => !!choca(x, z, r),
-  construido: (x, z) => !!(JUEGO.e && JUEGO.e.planta) || construido(x, z),   // en la torre todo cuenta como hecho
+  construido: (x, z) => construido(x, z),
   huecos: () => BARRIO.huecos.map((h) => ({ id: h.id, tipo: h.tipo })),
   huecoCerca: (x, z, r) => { const h = huecoCercaDe(x, z, r); return h && { id: h.id, x: h.x, z: h.z }; },
   posHueco: (id) => BARRIO.porId[id] || null,

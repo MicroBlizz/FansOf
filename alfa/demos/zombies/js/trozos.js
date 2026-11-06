@@ -111,20 +111,31 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     return Z.ok(salen);
   };
   // los fans que ya andaban por aquí antes de construirse (los que te perseguían) y se han quedado dentro de una pared salen al sitio
-  // libre más cercano que se encuentre (6 m alrededor; si no, a uno del trozo)
+  // libre más cercano de varios que se prueban a menos de 6 m (que no choque con su tamaño); si no hay ninguno, a uno del trozo
   function sacaDeParedes(e, r, mundo, azar) {
     if (!mundo.choca) return;
+    const dentro = (z) => z.vida > 0 && z.x >= r.x0 && z.x < r.x1 && z.z >= r.z0 && z.z < r.z1;
     for (const z of e.zombis) {
-      if (z.vida <= 0 || z.x < r.x0 || z.x >= r.x1 || z.z < r.z0 || z.z >= r.z1 || !mundo.choca(z.x, z.z, z.T.radio)) continue;
-      const p = mundo.puntoTrozo({ x0: z.x - 6, x1: z.x + 6, z0: z.z - 6, z1: z.z + 6 }, azar) || mundo.puntoTrozo(r, azar);
+      if (!dentro(z) || !mundo.choca(z.x, z.z, z.T.radio)) continue;
+      const p = libreCerca(z, mundo, azar) || mundo.puntoTrozo(r, azar);
       if (p) { z.x = p.x; z.z = p.z; }
     }
   }
+  function libreCerca(z, mundo, azar) {
+    let mejor = null, dMin = Infinity;
+    for (let k = 0; k < 8; k++) {
+      const p = mundo.puntoTrozo({ x0: z.x - 6, x1: z.x + 6, z0: z.z - 6, z1: z.z + 6 }, azar), d = p && Z.dist(p.x, p.z, z.x, z.z);
+      if (p && d < dMin && !mundo.choca(p.x, p.z, z.T.radio) && (!mundo.construido || mundo.construido(p.x, p.z))) { mejor = p; dMin = d; }
+    }
+    return mejor;
+  }
   // al descargar un trozo: los fans de dentro (y los caídos) se quitan y los vivos se guardan como número. Solo se queda el que te
-  // persigue: el que iba a un ruido o seguía huellas allí lejos andaría por un sitio sin paredes
+  // persigue: el que iba a un ruido o seguía huellas allí lejos andaría por un sitio sin paredes. Los que están en la parte del distrito
+  // hecho a mano (que siempre está construido) se quedan
   Z.saleTrozo = function (AJ, e, P) {
-    const E = e.trozos || (e.trozos = {}), t = E[P.clave] || (E[P.clave] = { fans: 0 }), r = P.rect;
-    const dentro = (z) => z.x >= r.x0 && z.x < r.x1 && z.z >= r.z0 && z.z < r.z1 && (z.vida <= 0 || z.estado !== 'persigue') && !z.T.jefe;
+    const E = e.trozos || (e.trozos = {}), t = E[P.clave] || (E[P.clave] = { fans: 0 }), r = P.rect, C = T(AJ).centro;
+    const enRect = (z) => z.x >= r.x0 && z.x < r.x1 && z.z >= r.z0 && z.z < r.z1 && !(z.x > C.x0 && z.x < C.x1 && z.z > C.z0 && z.z < C.z1);
+    const dentro = (z) => enRect(z) && (z.vida <= 0 || z.estado !== 'persigue') && !z.T.jefe;
     const fuera = e.zombis.filter(dentro);
     t.fans += fuera.filter((z) => z.vida > 0).length;
     e.zombis = e.zombis.filter((z) => !dentro(z));

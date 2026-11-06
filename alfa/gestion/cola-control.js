@@ -8,6 +8,7 @@ const COLA_CONTROL = (() => {
   const CARRIL = 'yoshi-generar-recurso';   // el carril (etiqueta del runner) que afecta la pausa
   const MAX_FALLIDAS = 30, HORAS = 48, MAX_PAGINAS_COLA = 10;
   const FALLO = new Set(['failure', 'timed_out', 'startup_failure']);
+  const CADUCA_MIN_H = 23.5, CADUCA_MAX_H = 24.5;   // GitHub cancela lo que espera runner 24 h: sale «cancelled» con 24 h 0 m 5 s entre created_at y updated_at (medido el 6-11-2026 en 82 runs de Generar)
   const ENTRE_TRABAJOS_MS = 3 * 60e3;   // lo que tarda un runner efímero en darse de baja y registrarse otra vez (con margen por si se actualiza)
 
   const cabeceras = (token, cuerpo) => ({ Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(cuerpo ? { 'Content-Type': 'application/json' } : {}) });
@@ -46,11 +47,17 @@ const COLA_CONTROL = (() => {
     const mensaje = errores.length ? `Reiniciadas ${hechos} de ${lista.length}. Fallo: ${errores[0]}.` : '';
     return { hechos, errores, mensaje };
   }
-  /** De los runs terminados (más nuevos primero), los fallidos de las últimas 48 h, ya en el formato que pinta la lista. */
+  /** ¿Un run cancelado por llevar 24 h esperando runner (y no a mano)? Una cancelación a propósito no suele durar justo 24 h entre created_at y updated_at. */
+  function caducada(r) {
+    if (r.conclusion !== 'cancelled') return false;
+    const h = (Date.parse(r.updated_at) - Date.parse(r.created_at)) / 36e5;
+    return h >= CADUCA_MIN_H && h <= CADUCA_MAX_H;
+  }
+  /** De los runs terminados (más nuevos primero), los fallidos y los caducados en cola de las últimas 48 h, ya en el formato que pinta la lista. */
   function fallidas(hechos, ahora) {
     const desde = ahora - HORAS * 36e5;
-    return hechos.filter(r => FALLO.has(r.conclusion) && Date.parse(r.updated_at) >= desde).slice(0, MAX_FALLIDAS)
-      .map(r => ({ id: r.id, workflow: r.name, titulo: r.display_title, fin: Date.parse(r.updated_at), intento: r.run_attempt || 1 }));
+    return hechos.filter(r => (FALLO.has(r.conclusion) || caducada(r)) && Date.parse(r.updated_at) >= desde).slice(0, MAX_FALLIDAS)
+      .map(r => ({ id: r.id, workflow: r.name, titulo: r.display_title, fin: Date.parse(r.updated_at), intento: r.run_attempt || 1, caducada: caducada(r) }));
   }
 
   /** Todos los runs no terminados, para no contarlos como fallidos aunque su último intento fallara (un reinicio los vuelve a poner en cola con el mismo id).
@@ -88,10 +95,10 @@ const COLA_CONTROL = (() => {
   function htmlFallidas(e) {
     const lista = e.fallidas.length
       ? e.fallidas.map(r => `<div class="cl-fila"><span><a href="https://github.com/${REPO}/actions/runs/${r.id}" target="_blank" rel="noopener">${e.esc(r.workflow)}</a> · ${e.esc(r.titulo)}</span>`
-        + `<span class="meta">${e.fecha(r.fin)}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span><button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button></div>`).join('')
+        + `<span class="meta">${e.fecha(r.fin)}${r.caducada ? ' · caducada en cola (24 h)' : ''}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span><button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button></div>`).join('')
       : '<div class="meta">Ninguna en las últimas ' + HORAS + ' h.</div>';
     return `<section class="caja cl-control"><h3>Ejecuciones fallidas (${e.fallidas.length})</h3>${lista}`
       + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
-  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, sinTerminar, encendido, htmlPausa, htmlFallidas };
+  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, caducada, sinTerminar, encendido, htmlPausa, htmlFallidas };
 })();

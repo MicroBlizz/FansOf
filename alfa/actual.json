@@ -1,8 +1,8 @@
 {
- "build": 1027,
- "hash": "ad87dce",
- "fecha": "2026-11-06T14:19:43Z",
- "mensaje": "Rumble v2: tamaño de cada personaje en el campo (elegido por Daniel)",
+ "build": 1028,
+ "hash": "e6db763",
+ "fecha": "2026-11-06T14:33:02Z",
+ "mensaje": "Cola: las caducadas en cola (24 h) salen en Fallidas, marcadas y distintas de una cancelación a mano",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

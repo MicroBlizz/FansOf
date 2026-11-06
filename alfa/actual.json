@@ -1,8 +1,8 @@
 {
- "build": 1043,
- "hash": "2a4a45a",
- "fecha": "2026-11-06T20:02:40Z",
- "mensaje": "Zombies 0.7.0: habilidades que suben con el uso y casas a la escala de los personajes",
+ "build": 1044,
+ "hash": "597fd7f",
+ "fecha": "2026-11-06T20:09:38Z",
+ "mensaje": "Zombies 0.7.1: cada partida empiezas en una casa o edificio al azar (la primera, en tu casa con el tutorial)",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

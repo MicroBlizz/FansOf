@@ -62,13 +62,26 @@ function alcanceDesde(x, z) {
   calculaAlcance(x, z);
   for (const H of BARRIO.huecos) H.sol.abierto = false;
 }
+// dónde empiezas: la primera partida (con tutorial), en tu casa del barrio; las demás, dentro de una casa o edificio al azar de todo el mapa
+const LUGAR_INICIO = { casa: 'una casa del barrio residencial', nave: 'una nave del polígono', super: 'el supermercado', gasolinera: 'la gasolinera', ferreteria: 'la ferretería', farmacia: 'la farmacia', comisaria: 'la comisaría', colegio: 'el colegio', granero: 'el granero de la granja' };
+function puntoDeInicio(conTutorial) {
+  if (conTutorial && BARRIO.inicio) return { ...libreCerca(BARRIO.inicio.x, BARRIO.inicio.z, 0.6), lugar: null };
+  for (let k = 0; k < 20; k++) {
+    const C = BARRIO.casas[Math.floor(azarJuego() * BARRIO.casas.length)];
+    for (let j = 0; j < 30; j++) {
+      const x = C.x0 + 1.2 + azarJuego() * (C.x1 - C.x0 - 2.4), z = C.z0 + 1.2 + azarJuego() * (C.z1 - C.z0 - 2.4);
+      if (!choca(x, z, 0.7)) return { x, z, lugar: LUGAR_INICIO[C.tipo || 'casa'] || LUGAR_INICIO.casa };
+    }
+  }
+  return { ...libreCerca(BARRIO.inicio.x, BARRIO.inicio.z, 0.6), lugar: null };
+}
 function empiezaPartida() {
-  const p = BARRIO.inicio ? libreCerca(BARRIO.inicio.x, BARRIO.inicio.z, 0.6) : libreAlcanzable(-24, 33, 0.6);   // en la casa de partida
+  const conTutorial = !SAVE.tutoHecho, p = puntoDeInicio(conTutorial);
   alcanceDesde(p.x, p.z);
   const r = ZOM.nuevaPartida(ZOM.AJ, { animal: SAVE.animal, dificultad: SAVE.dificultad, x: p.x, z: p.z, azar: azarJuego, mundo: MUNDO });
   if (!r.ok) { avisa(tr('No se ha podido empezar la partida.'), 'malo'); return; }
   juega(r.valor);
-  avisa(tr('Día 1. Estás en tu casa del barrio. Busca comida y agua antes de que anochezca y clava tablas en las ventanas (B).'), 'bien');
+  avisa(p.lugar ? trf('Día 1. Te despiertas en %1. Busca comida y agua antes de que anochezca y clava tablas en las ventanas (B).', tr(p.lugar)) : tr('Día 1. Estás en tu casa del barrio. Busca comida y agua antes de que anochezca y clava tablas en las ventanas (B).'), 'bien');
   empiezaTutorial(r.valor);
   guardaMundo(r.valor);
 }

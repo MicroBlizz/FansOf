@@ -21,6 +21,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (r.deja) Z.meter(AJ, copia, r.deja[0], r.deja[1]);
     m.piezas = copia.piezas; m.uid = copia.uid;
     e.eventos.push({ tipo: 'fabrica', id });
+    if (r.donde) Z.ganaXp(AJ, e, 'cocina', 'fuego');
     return Z.ok(r.sale[0]);
   };
 
@@ -46,7 +47,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!D) return Z.error('noSeDesmonta');
     if (e.desmontados[sitio]) return Z.error('yaDesmontado');
     if (!Z.tiene(m, 'palanca') && !Z.tiene(m, 'martillo')) return Z.error('sinHerramienta');
-    e.jugador.desmonta = { sitio, tipo, t: AJ.desmontar.tiempo };
+    const t = AJ.desmontar.tiempo * Z.menos(AJ, e.jugador, 'carpinteria', 'tiempo');
+    e.jugador.desmonta = { sitio, tipo, t, total: t };
     return Z.ok(sitio);
   };
   Z.pasoDesmontar = function (AJ, e, dt) {
@@ -59,5 +61,6 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     Z.haceRuido(AJ, e, J.x, J.z, AJ.desmontar.ruido * (J.A.ruido || 1), 'jugador');
     e.abierto = D.sitio; e.tipoAbierto = D.tipo;
     e.eventos.push({ tipo: 'desmontado', sitio: D.sitio, tablas, clavos });
+    Z.ganaXp(AJ, e, 'carpinteria', 'desmonta');
   };
 })(ZOM);

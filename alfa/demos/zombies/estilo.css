@@ -137,3 +137,11 @@ button:disabled { opacity: 0.4; cursor: default; }
 .zb-jefe span { font-size: 14px; color: var(--rk-tenue); }
 .zb-jefe i { display: block; height: 12px; background: #2a1014; border: 2px solid #1a0a0c; margin-top: 4px; }
 .zb-jefe s { display: block; height: 100%; background: linear-gradient(#ff7080, #c82838); text-decoration: none; transition: width .2s; }
+/* las habilidades, a la izquierda de la mochila */
+.vm-hab { width: 230px; }
+.vm-h { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; margin: 6px 0 8px; }
+.vm-h span { font: 15px var(--rk-tit); letter-spacing: .06em; }
+.vm-h b { font-size: 20px; color: var(--rk-naranja); }
+.vm-h i { grid-column: 1 / -1; display: block; height: 7px; background: #1a1e26; border: 1px solid var(--rk-borde2); }
+.vm-h s { display: block; height: 100%; background: #e8c040; text-decoration: none; }
+.vm-h em { grid-column: 1 / -1; font-style: normal; font-size: 13px; color: var(--rk-tenue); }

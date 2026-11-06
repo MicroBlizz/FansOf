@@ -38,7 +38,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!U) return Z.error('noSeUsa', { cosa });
     const r = Z.gasta(J.mochila, cosa, 1);
     if (!r.ok) return r;
-    for (const n of ['hambre', 'sed', 'sueno']) if (U[n]) J[n] = Math.max(0, Math.min(100, J[n] + U[n]));
+    const nutre = O.cocinado ? Z.mas(AJ, J, 'cocina', 'nutre') : 1;   // lo que cocinas alimenta más cuanto mejor cocinas
+    for (const n of ['hambre', 'sed', 'sueno']) if (U[n]) J[n] = Math.max(0, Math.min(100, J[n] + U[n] * (U[n] > 0 ? nutre : 1)));
     if (U.vida > 0) J.vida = Math.min(J.max, J.vida + U.vida * (J.A.venda || 1));
     if (U.vida < 0) Z.dana(e, -U.vida, 'comida');
     if (U.infeccion) J.infeccion = Math.max(0, J.infeccion + U.infeccion);

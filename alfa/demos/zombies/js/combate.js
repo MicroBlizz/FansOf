@@ -29,7 +29,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!Z.tiene(J.mochila, J.arma)) { e.eventos.push({ tipo: 'noPuedes', codigo: 'sinArma' }); J.tArma = 0.4; return Z.error('sinArma'); }
     if (W.municion && !Z.gasta(J.mochila, W.municion, 1).ok) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
     J.tArma = W.cadencia * cansado.cadencia;
-    J.aguante = Math.max(0, J.aguante - W.aguante);
+    const hab = W.municion ? 'disparo' : 'pelea', fuerza = W.dano * cansado.dano * Z.mas(AJ, J, hab, 'dano');
+    J.aguante = Math.max(0, J.aguante - W.aguante * Z.menos(AJ, J, 'pelea', 'aguante'));
     if (J.aguante <= 0) J.agotado = true;
     Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[W.ruido] * (W.municion ? 1 : (J.A.ruido || 1)), 'jugador');
     let tocados = enCono(e, W.alcance, W.cono, mundo);
@@ -38,13 +39,19 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     for (const { zb, d } of tocados) {
       const espalda = W.espalda && porLaEspalda(J, zb);
       despide = despide || espalda;
-      Z.golpeaZombi(AJ, e, zb, espalda ? zb.vida : W.dano * cansado.dano * (1 - 0.4 * d / W.alcance));
+      Z.golpeaZombi(AJ, e, zb, espalda ? zb.vida : fuerza * (1 - 0.4 * d / W.alcance));
       if (zb.vida > 0) aparta(e, zb, W.retroceso, W.aturde, false, mundo);
     }
     e.eventos.push({ tipo: 'ataque', arma: J.arma, despide, tocados: tocados.map((t) => ({ id: t.zb.id, x: t.zb.x, z: t.zb.z })) });
     if (W.municion || tocados.length) desgasta(AJ, e);
+    aprende(AJ, e, hab, tocados.length, despide);
     return Z.ok(tocados.length);
   };
+  // lo que se aprende de un golpe: pelea o disparo por cada fan tocado, y sigilo si lo despides por la espalda
+  function aprende(AJ, e, hab, tocados, despide) {
+    if (tocados) Z.ganaXp(AJ, e, hab, hab === 'disparo' ? 'disparo' : 'golpe', tocados);
+    if (despide) Z.ganaXp(AJ, e, 'sigilo', 'despide');
+  }
   // por la espalda: un fan que no te ha visto y te da la espalda
   function porLaEspalda(J, zb) { return zb.estado !== 'persigue' && Math.abs(angulo(zb.a, Math.atan2(J.x - zb.x, J.z - zb.z))) > 1.9; }
   // cada golpe que da (o disparo) gasta el arma; a cero se rompe y coges la siguiente que tengas

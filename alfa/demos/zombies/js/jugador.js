@@ -40,10 +40,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     J.andado += Z.dist(x0, z0, J.x, J.z);
     if (J.andado < P.pasoHuella) return;
     J.andado = 0;
-    if (!J.agacha) Z.haceRuido(AJ, e, J.x, J.z, (J.corre ? AJ.ruido.correr : AJ.ruido.andar) * (J.A.ruido || 1), 'jugador');
+    if (!J.agacha) Z.haceRuido(AJ, e, J.x, J.z, (J.corre ? AJ.ruido.correr : AJ.ruido.andar) * (J.A.ruido || 1) * Z.menos(AJ, J, 'sigilo', 'ruido'), 'jugador');
+    else if (hayFanSinVerte(AJ, e)) Z.ganaXp(AJ, e, 'sigilo', 'paso');   // el sigilo se aprende agachado cerca de fans que no te han visto
     e.pasos = (e.pasos || 0) + 1;
     if ((J.A.huellas || 1) < 1 && e.pasos % 2) return;           // MadSquirrel deja la mitad de huellas
     e.huellas.push({ x: J.x, z: J.z, a: J.a, min: e.min });
     if (e.huellas.length > P.huellas) e.huellas.shift();
   }
+  // ¿hay algún fan cerca (12 m) que todavía no va a por ti? (para practicar el sigilo)
+  function hayFanSinVerte(AJ, e) { const J = e.jugador; return e.zombis.some((z) => z.vida > 0 && z.estado !== 'persigue' && Z.dist(z.x, z.z, J.x, J.z) < 12); }
 })(ZOM);

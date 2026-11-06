@@ -39,6 +39,7 @@ const EVENTOS = {
   tablaRota: () => play('metal'),
   huecoRoto: (v) => { play(v.hueco === 'ventana' ? 'metal' : 'puerta'); avisa(tr(v.hueco === 'ventana' ? '¡Han roto una ventana!' : '¡Han tirado una puerta!'), 'malo'); },
   golpeHueco: () => play('impacto'),
+  subeNivel: (v) => { play('fabrica'); avisa(trf('%1 sube a nivel %2.', tr(NOMBRE_HAB[v.hab][0]), v.nivel), 'bien'); },
   planta: (v) => entraPlanta(v.n),
   refuerzos: (v) => { avisa(trf('El CEO llama a %1 bots de atención al cliente.', v.n), 'malo'); play('alerta'); },
   embiste: () => { play('bocina'); EFECTOS.temblor = Math.max(EFECTOS.temblor, 0.12); },

@@ -1,8 +1,8 @@
 {
- "build": 1042,
- "hash": "660ec38",
- "fecha": "2026-11-06T19:05:33Z",
- "mensaje": "Zombies 0.6.1: tumbar al CEO ya no acaba la partida; deja su maletin y se sigue hasta morir",
+ "build": 1043,
+ "hash": "2a4a45a",
+ "fecha": "2026-11-06T20:02:40Z",
+ "mensaje": "Zombies 0.7.0: habilidades que suben con el uso y casas a la escala de los personajes",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

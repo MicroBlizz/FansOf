@@ -2,6 +2,9 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.0', real: ['<b>HABILIDADES</b>: como en Zomboid, se mejora haciendo las cosas. Pelea, Disparo, Sigilo, Carpintería y Cocina, del nivel 0 al 10: pegas más fuerte, te ven menos, clavas tablas antes y lo que cocinas alimenta más. Se ven con Tab y se pierden al caer.',
+    '<b>CASAS MÁS ALTAS</b>: paredes y puertas a la escala de los personajes, y cada puerta y cada paso entre habitaciones con su marco y su franja en el suelo para verlos desde arriba.'],
+    joke: ['Microblizz ha visto las habilidades y prepara un pase de temporada para subir de nivel más rápido. Phony ya vende «experiencia de cocina» en sobres.'] },
   { v: '0.6.1', real: ['<b>LA TORRE DE MICROBLIZZ</b>: ahora es un rascacielos y se entra por su puerta, bajo los soportales. Diez plantas de oficinas con despachos, escritorios, archivadores, cajas fuertes y la armería de Seguridad en la 5. Cuanto más arriba, más fans y peores.',
     '<b>EL JEFE DE LA TORRE</b>: en la azotea espera EL CEO de Microblizz con su escolta. Llama a sus bots al perder vida y embiste. Si cae, deja su maletín con el mejor botín, y la partida sigue: se juega hasta que caigas.'],
     joke: ['Microblizz aclara que la azotea «no es un jefe final, es una reunión de alineamiento estratégico». Asistencia obligatoria.'] },

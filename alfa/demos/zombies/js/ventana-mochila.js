@@ -53,12 +53,19 @@ function pintaDibujos(raiz) {
 
 function abreMochila() { VM.abierta = true; pintaMochila(); }
 function cierraMochila() { VM.abierta = false; VM.arrastra = null; el('zb-mochila').hidden = true; if (JUEGO.e) ZOM.cierraSitio(JUEGO.e); }
+// las habilidades: nivel y barra hacia el siguiente, con lo que mejora cada una
+const NOMBRE_HAB = { pelea: ['PELEA', 'Golpeas más fuerte y te cansas menos'], disparo: ['DISPARO', 'Las balas y los cartuchos hacen más daño'], sigilo: ['SIGILO', 'Agachado te ven menos y andando haces menos ruido'], carpinteria: ['CARPINTERÍA', 'Clavas tablas y desmontas más rápido'], cocina: ['COCINA', 'Lo que cocinas alimenta más'] };
+function htmlHabilidades(J) {
+  const AJ = ZOM.AJ;
+  return '<section class="vm-hab"><header><b>' + esc(tr('HABILIDADES')) + '</b></header>' + ZOM.HABILIDADES.map((h) => '<div class="vm-h" title="' + esc(tr(NOMBRE_HAB[h][1])) + '"><span>' + esc(tr(NOMBRE_HAB[h][0])) + '</span><b>' + ZOM.nivel(AJ, J, h) + '</b><i><s style="width:' + Math.round(ZOM.progreso(AJ, J, h) * 100) + '%"></s></i><em>' + esc(tr(NOMBRE_HAB[h][1])) + '</em></div>').join('') + '<p class="vm-ayuda">' + esc(tr('Se mejoran haciendo las cosas. Se pierden al caer.')) + '</p></section>';
+}
 function pintaMochila() {
   const e = JUEGO.e, AJ = ZOM.AJ, m = e.jugador.mochila, C = VM.celda, v = el('zb-mochila');
   const lista = e.abierto && e.contenidos[e.abierto];
   v.hidden = false;
   v.innerHTML = (lista ? '<section class="vm-sitio"><header><b>' + esc(tr(nombreSitio(e.abierto))) + '</b><button id="vm-todo">' + esc(tr('COGER TODO')) + '</button></header><div class="vm-lista" id="vm-lista">' +
       (lista.length ? lista.map((c, i) => htmlPieza(c.id, c.n, 0, 'suelta', 'data-i="' + i + '" title="' + esc(tr(AJ.objetos[c.id].n)) + '"')).join('') : '<p>' + esc(tr('Vacío.')) + '</p>') + '</div>' + htmlAccionesSitio(e) + '<p class="vm-ayuda">' + esc(tr('Clic para coger. Arrastra aquí lo tuyo para dejarlo.')) + '</p></section>' : '') +
+    (lista ? '' : htmlHabilidades(e.jugador)) +   // con un sitio abierto no caben las tres: las habilidades salen con la mochila sola
     '<section class="vm-mia"><header><b>' + esc(tr('MOCHILA')) + '</b><button id="vm-ordenar">' + esc(tr('ORDENAR')) + '</button><button id="vm-cerrar">' + esc(tr('CERRAR (TAB)')) + '</button></header>' +
     '<div class="vm-rejilla" id="vm-rejilla" style="width:' + m.w * C + 'px;height:' + m.h * C + 'px">' +
       m.piezas.map((p) => htmlPieza(p.id, p.n, p.gr, 'mia', 'data-uid="' + p.uid + '" title="' + esc(tr(AJ.objetos[p.id].n)) + '"')).join('') +

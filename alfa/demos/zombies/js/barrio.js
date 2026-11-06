@@ -5,7 +5,8 @@
 // llevan su estado en e.huecos (js/casas.js). Aquí no hay reglas: solo se construye y se pinta.
 'use strict';
 const BARRIO = { casas: [], huecos: [], porId: {}, x0: -204, x1: -86, inicio: null };
-const ALTO_CASA = 2.6, GROSOR = 0.3;
+const ALTO_CASA = 3.6, GROSOR = 0.3;   // a la escala de los personajes (se dibujan 1,5 veces más grandes): la puerta mide 3 m
+const ALTO_PUERTA = 3.0, VENTANA = [1.0, 2.6];
 const COLORES_CASA = [[0xb8a888, 0x8a3a2a], [0x9ab0a0, 0x3a4a6a], [0xc8b0a0, 0x5a3a2a], [0xa8b8c8, 0x6a2a2a], [0xd0c4a0, 0x4a5a3a], [0xb0a0b8, 0x3a3a4a]];
 
 function construyeBarrio(o, az) {
@@ -51,12 +52,24 @@ function pared(o, eje, fijo, a, b, color, huecos, casaId) {
   for (const h of cortes) {
     tramo(desde, h.en - h.ancho / 2); desde = h.en + h.ancho / 2;
     // lo de encima del hueco (y lo de debajo, si es ventana)
-    const L = h.ancho, arriba = h.tipo === 'puerta' ? 2.2 : 1.9;
+    const L = h.ancho, arriba = h.tipo === 'puerta' ? ALTO_PUERTA : VENTANA[1];
     const caja = (y0, y1) => (eje === 'x' ? o.caja(L, y1 - y0, GROSOR, color, h.en, (y0 + y1) / 2, fijo) : o.caja(GROSOR, y1 - y0, L, color, fijo, (y0 + y1) / 2, h.en));
-    caja(arriba, ALTO_CASA); if (h.tipo === 'ventana') caja(0, 0.9);
+    if (!h.tipo) { umbral(o, eje, fijo, h.en, L); continue; }   // un paso sin puerta: sin dintel (desde arriba se ve el hueco) y con su franja en el suelo
+    caja(arriba, ALTO_CASA); if (h.tipo === 'ventana') caja(0, VENTANA[0]);
     if (h.tipo) hueco(casaId, h.tipo, eje, fijo, h.en, L);
   }
   tramo(desde, b);
+}
+function umbral(o, eje, fijo, en, L) {
+  const x = eje === 'x', MARCO = 0x6a4020;   // madera oscura: contrasta con lo alto claro de las paredes
+  if (x) o.caja(L, 0.03, GROSOR + 0.7, 0xe8c070, en, 0.14, fijo); else o.caja(GROSOR + 0.7, 0.03, L, 0xe8c070, fijo, 0.14, en);   // por encima del suelo de la casa (0,12)
+  for (const s of [-1, 1]) { const p = en + s * (L / 2 + 0.07); if (x) o.caja(0.14, ALTO_CASA + 0.02, GROSOR + 0.1, MARCO, p, ALTO_CASA / 2, fijo); else o.caja(GROSOR + 0.1, ALTO_CASA + 0.02, 0.14, MARCO, fijo, ALTO_CASA / 2, p); }
+}
+// el marco claro de una puerta y la franja del umbral en el suelo: así se ve desde arriba aunque esté abierta
+function marcoPuerta(pieza, ancho) {
+  for (const s of [-1, 1]) pieza(0.14, ALTO_PUERTA, GROSOR + 0.08, 0xe8e0cc, s * (ancho / 2 + 0.03), ALTO_PUERTA / 2, 0);
+  pieza(ancho + 0.34, 0.16, GROSOR + 0.08, 0xe8e0cc, 0, ALTO_PUERTA + 0.04, 0);
+  pieza(ancho, 0.03, GROSOR + 0.7, 0xe8c070, 0, 0.14, 0);
 }
 // un hueco: su sólido (que se abre al poder pasar) y sus piezas (puerta, cristal y hasta 3 tablas)
 function hueco(casaId, tipo, eje, fijo, en, ancho) {
@@ -66,9 +79,9 @@ function hueco(casaId, tipo, eje, fijo, en, ancho) {
   const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = eje === 'x' ? 0 : Math.PI / 2; MOTOR.escena.add(g);
   const pieza = (w, h, d, color, px, py, pz, transparente) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), transparente ? new THREE.MeshLambertMaterial({ color, transparent: true, opacity: 0.55 }) : matColor(color)); m.position.set(px, py, pz); g.add(m); return m; };
   let puerta = null, cristal = null;
-  if (tipo === 'puerta') { puerta = new THREE.Group(); puerta.position.set(-ancho / 2, 0, 0); g.add(puerta); const p = pieza(ancho, 2.15, 0.12, 0x6a4a2e, ancho / 2, 1.08, 0); g.remove(p); puerta.add(p); const pomo = pieza(0.1, 0.1, 0.2, 0xd8b040, ancho - 0.2, 1.05, 0); g.remove(pomo); puerta.add(pomo); }
-  else cristal = pieza(ancho, 1.0, 0.08, 0x9ad0f0, 0, 1.4, 0, true);
-  const tablas = [0, 1, 2].map((k) => { const t = pieza(ancho + 0.3, 0.2, 0.1, 0x9a6a3a, 0, (tipo === 'puerta' ? 0.6 : 1.05) + k * (tipo === 'puerta' ? 0.55 : 0.32), 0.22); t.rotation.z = (k - 1) * 0.12; t.visible = false; return t; });
+  if (tipo === 'puerta') { puerta = new THREE.Group(); puerta.position.set(-ancho / 2, 0, 0); g.add(puerta); const p = pieza(ancho, ALTO_PUERTA - 0.05, 0.12, 0x9a6a3e, ancho / 2, ALTO_PUERTA / 2, 0); g.remove(p); puerta.add(p); const pomo = pieza(0.12, 0.12, 0.24, 0xd8b040, ancho - 0.2, 1.4, 0); g.remove(pomo); puerta.add(pomo); marcoPuerta(pieza, ancho); }
+  else cristal = pieza(ancho, VENTANA[1] - VENTANA[0], 0.08, 0x9ad0f0, 0, (VENTANA[0] + VENTANA[1]) / 2, 0, true);
+  const tablas = [0, 1, 2].map((k) => { const t = pieza(ancho + 0.3, 0.2, 0.1, 0x9a6a3a, 0, (tipo === 'puerta' ? 0.8 : VENTANA[0] + 0.3) + k * (tipo === 'puerta' ? 0.8 : 0.5), 0.22); t.rotation.z = (k - 1) * 0.12; t.visible = false; return t; });
   const H = { id, tipo, casa: casaId, x, z, sol, g, puerta, cristal, tablas, eje };
   BARRIO.huecos.push(H); BARRIO.porId[id] = H;
   return H;
@@ -84,7 +97,7 @@ function casa(o, id, cx, cz, w, d, frente, [color, tejado], az) {
   const z0 = Math.min(zf, zb), z1 = Math.max(zf, zb);
   pared(o, 'z', x0, z0 + GROSOR / 2, z1 - GROSOR / 2, color, [{ en: cz, ancho: 1.3, tipo: 'ventana' }], id);
   pared(o, 'z', x1, z0 + GROSOR / 2, z1 - GROSOR / 2, color, [{ en: cz, ancho: 1.3, tipo: 'ventana' }], id);
-  pared(o, 'z', cx + w * 0.1, z0 + GROSOR / 2, z1 - GROSOR / 2, color, [{ en: cz, ancho: 1.3, tipo: null }], id);   // el tabique, con paso
+  pared(o, 'z', cx + w * 0.1, z0 + GROSOR / 2, z1 - GROSOR / 2, color, [{ en: cz, ancho: 1.6, tipo: null }], id);   // el tabique, con paso
   muebles(o, cx, cz, w, d, frente, az);
   // el jardín: valla con hueco delante de la puerta, buzón y cubo de basura
   const zv = zf + frente * 2.6;

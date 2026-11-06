@@ -30,7 +30,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (h.tablas >= B.max) return Z.error('yaTapado');
     if (!Z.tiene(m, 'martillo')) return Z.error('sinMartillo');
     if (!Z.tiene(m, 'tablas') || Z.cuantos(m, 'clavos') < B.clavos) return Z.error('sinTablas');
-    J.clava = { id, t: B.tiempo };
+    const t = B.tiempo * Z.menos(AJ, J, 'carpinteria', 'tiempo');
+    J.clava = { id, t, total: t };
     return Z.ok(id);
   };
   Z.pasoTablas = function (AJ, e, dt) {
@@ -43,6 +44,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     h.tablas++; h.vida = B.vidaTabla; h.abierta = false;
     Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido.martillo * (J.A.ruido || 1), 'jugador');
     e.eventos.push({ tipo: 'tabla', id: C.id, tablas: h.tablas });
+    Z.ganaXp(AJ, e, 'carpinteria', 'tabla');
   };
 
   // un fan golpea un hueco: primero las tablas (de una en una), luego el cristal o la puerta. pos = dónde está (para el ruido)

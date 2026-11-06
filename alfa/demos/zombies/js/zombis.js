@@ -28,7 +28,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // ¿te ve este zombi? (más lejos de día y si vas de pie)
   function teVe(AJ, e, zb, d, mundo) {
     const J = e.jugador, noche = Z.esNoche(AJ, e.min) ? AJ.mundo.vistaNoche : 1;
-    const vista = zb.T.vista * noche * (J.agacha ? 0.55 : 1) * (J.duerme ? 0.4 : 1);
+    const vista = zb.T.vista * noche * (J.agacha ? 0.55 * Z.menos(AJ, J, 'sigilo', 'vista') : 1) * (J.duerme ? 0.4 : 1);
     return d < vista && mundo.seVe(zb.x, zb.z, J.x, J.z);
   }
   // decide el estado y hacia dónde va

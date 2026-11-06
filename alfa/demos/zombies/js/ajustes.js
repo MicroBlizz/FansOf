@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.6.1',
+  version: '0.7.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -51,8 +51,14 @@ ZOM.AJ = Object.freeze({
     tela: { n: 'TELA', forma: ['X'], max: 4 },
     carne: { n: 'CARNE CRUDA', forma: ['X'], usa: { hambre: 20, vida: -10, sed: -15, mal: true } },
     podrida: { n: 'CARNE PODRIDA', forma: ['X'], usa: { hambre: 5, vida: -25, mal: true } },
-    filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 } },
-    guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 } },
+    filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 }, cocinado: true },
+    guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 }, cocinado: true },
+  },
+  // las habilidades: los umbrales de experiencia de cada nivel (0 a 10), lo que da cada acción y lo que mejora cada nivel
+  habilidades: {
+    niveles: [0, 10, 25, 45, 70, 100, 140, 190, 250, 320, 400],
+    xp: { golpe: 1, disparo: 1, paso: 0.25, despide: 4, tabla: 4, desmonta: 3, fuego: 5 },
+    efecto: { pelea: { dano: 0.05, aguante: 0.04 }, disparo: { dano: 0.05 }, sigilo: { ruido: 0.05, vista: 0.04 }, carpinteria: { tiempo: 0.06 }, cocina: { nutre: 0.08 } },
   },
   // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo.
   // porTipo: lo que hay en cada clase de sitio (lo demás usa «cosas»). En la nevera, tras el corte de luz, la carne sale podrida

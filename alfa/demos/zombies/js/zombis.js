@@ -74,6 +74,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
       if (d > AJ.ia.duerme && zb.estado === 'vaga') continue;
       zb.olvida -= dt; zb.tMordisco -= dt;
       if (zb.aturdido > 0) { zb.aturdido -= dt; if (zb.aturdido <= 0) zb.derribado = false; continue; }   // aturdido o en el suelo: ni anda ni muerde
+      if (zb.T.jefe && Z.pasoJefe(AJ, e, zb, dt, mundo, azar)) { if (d < AJ.ia.alcanceMordisco + zb.T.radio) muerde(AJ, e, zb, azar); continue; }
       if ((zb.tPensar -= dt) <= 0) { zb.tPensar = 0.25 + azar() * 0.15; piensa(AJ, e, zb, d, mundo, azar); }
       if (zb.estado === 'persigue') zb.obj = { x: J.x, z: J.z };
       if (zb.hueco && zb.estado !== 'vaga') { if (Z.pasoHuecoZombi(AJ, e, zb, dt, mundo)) continue; const p = zb.hueco && mundo.posHueco(zb.hueco); if (p) zb.obj = { x: p.x, z: p.z }; }

@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.5.0',
+  version: '0.6.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -71,6 +71,9 @@ ZOM.AJ = Object.freeze({
       armeria: { balas: 4, cartuchos: 3, pistola: 1.2, escopeta: 0.4, nada: 1 },
       taquilla: { balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
       pupitre: { chocolatina: 3, refresco: 2, tela: 1, nada: 4 },
+      escritorio: { chocolatina: 2, refresco: 2, balas: 0.6, cuchillo: 0.3, tela: 1, venda: 0.5, nada: 3 },
+      cajaFuerte: { balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
+      maquina: { chocolatina: 3, refresco: 3, nada: 2 },
       granero: { tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
     } },
   // fabricar: con qué y dónde (null = en cualquier sitio; 'fuego' = junto a un bidón con fuego o en la cocina de una casa con luz)
@@ -80,7 +83,7 @@ ZOM.AJ = Object.freeze({
     { id: 'guiso', sale: ['guiso', 1], con: [['judias', 1], ['agua', 1]], donde: 'fuego', deja: ['botella', 1] },
   ],
   // desmontar muebles con palanca o martillo: tarda, suena y deja tablas y clavos en el sitio
-  desmontar: { tipos: { armario: [2, 4], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6], estanteria: [2, 4], pupitre: [1, 2] }, tiempo: 3, ruido: 10 },
+  desmontar: { tipos: { armario: [2, 4], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6], estanteria: [2, 4], pupitre: [1, 2], escritorio: [1, 3] }, tiempo: 3, ruido: 10 },
   grifo: { sed: 40 },
   // lo que ya has visto, para el mapa (M): casillas de 8 m sobre todo el distrito; ves lo que hay a «vista» metros
   explorado: { x0: -214, z0: -66, celda: 8, w: 39, h: 33, vista: 18 },
@@ -102,9 +105,16 @@ ZOM.AJ = Object.freeze({
     ballena: { vida: 260, vel: 0.8, persigue: 1.6, oido: 0.8, vista: 8, dano: 22, radio: 0.85, botin: 3, pesado: true },
     bot: { vida: 60, vel: 1.3, persigue: 2.4, oido: 0.7, vista: 8, dano: 12, radio: 0.45, ruta: true },
     troll: { vida: 120, vel: 1.1, persigue: 2.2, oido: 1, vista: 9, dano: 20, radio: 0.6, rompe: 3 },
-  },
   // cómo de a menudo sale cada tipo al poblar el distrito (pesos)
+  // EL CEO: el jefe de lo alto de la Torre de Microblizz. Llama a sus bots al bajar de vida y embiste de vez en cuando
+    ceo: { vida: 1500, vel: 1.2, persigue: 2.3, oido: 1.5, vista: 16, dano: 28, radio: 1.0, pesado: true, jefe: true, rompe: 4 },
+  },
   reparto: { fan: 10, streamer: 2, speedrunner: 2, ballena: 1, bot: 2, troll: 1 },
+  // la Torre de Microblizz: 10 plantas de oficinas y la azotea (la 11) con el CEO. En cada planta, más fans (base + n * crece) y,
+  // cuanto más arriba, más trolls, bots y ballenas (los ejecutivos). El jefe llama a «refuerzos» bots al bajar de cada umbral de vida
+  // y embiste cada «cadaEmbiste» segundos durante «dura» a «vel» m/s
+  torre: { plantas: 10, base: 4, crece: 1, reparto: { fan: 6, bot: 3, streamer: 1, speedrunner: 1, troll: 1, ballena: 0.6 }, arriba: { troll: 0.4, ballena: 0.25, bot: 0.3 },
+    jefe: { escolta: 4, refuerzos: 6, umbrales: [0.7, 0.4, 0.15], cadaEmbiste: 6, dura: 0.7, vel: 9 } },
   ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4, infeccion: 0.25 },
   mundo: { zombis: 120, oleada: 22, maxZombis: 220, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
   // los parches de Microblizz: uno nuevo cada mañana desde el día 2

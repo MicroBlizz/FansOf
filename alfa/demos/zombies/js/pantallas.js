@@ -91,6 +91,21 @@ function causaTxt(m) {
   if (c.causa === 'mordisco') return trf('Mordido por un fan %1.', tr(NOMBRE_ZOMBI[c.quien] || 'Fan'));
   return tr({ hambre: 'Se le olvidó comer.', sed: 'Se le olvidó beber.', sueno: 'Se quedó dormido de pie para siempre.', infeccion: 'La infección pudo con él.', comida: 'Comió lo que no debía.', rendirse: 'Se rindió. Le entendemos.' }[c.causa] || 'Nadie sabe cómo.');
 }
+// el CEO ha caído: la partida se acaba bien (se borra la partida guardada, como al morir, y se apunta la victoria)
+function abreVictoria(m) {
+  JUEGO.pantalla = 'muerte'; musica('win');
+  const A = ZOM.AJ.animales[m.animal];
+  SAVE.partidas++; SAVE.victorias = (SAVE.victorias || 0) + 1; if (!SAVE.mejorVictoria || m.min < SAVE.mejorVictoria) SAVE.mejorVictoria = m.min; guardaPartida();
+  el('zb-capa').innerHTML = '<div class="zb-oscuro"></div><div class="zb-cartel victoria"><p class="zb-cinta">' + esc(tr('COMUNICADO OFICIAL · MICROBLIZZ CIERRA · COMUNICADO OFICIAL · MICROBLIZZ CIERRA')) + '</p>' +
+    '<h2>' + esc(tr('DESPIDO PROCEDENTE')) + '</h2><p class="zb-cartel-sub">' + esc(tr('El CEO ha caído en su propia azotea. Se acabaron los parches.')) + '</p>' +
+    '<div class="zb-polaroid"><img alt="" src="' + retrato(m.animal) + '"><span>' + esc(A.n) + '</span></div>' +
+    '<h3>' + esc(trf('%1 HA SOBREVIVIDO AL DISTRITO', A.n.toUpperCase())) + '</h3>' +
+    '<div class="zb-stats"><p><b>' + esc(tiempoVivo(m.min)) + '</b><span>' + esc(tr('HASTA LA AZOTEA')) + '</span></p><p><b>' + m.bajas + '</b><span>' + esc(tr('FANS DESPEDIDOS')) + '</span></p><p><b>' + m.registros + '</b><span>' + esc(tr('SITIOS REGISTRADOS')) + '</span></p></div>' +
+    '<p class="zb-desbloq">' + esc(trf('Victorias: %1 · La más rápida: %2', SAVE.victorias, tiempoVivo(SAVE.mejorVictoria))) + '</p>' +
+    '<div class="zb-botones"><button class="btn-grande" id="d-otro">' + esc(tr('OTRA PARTIDA')) + '</button><button class="btn" id="d-menu">' + esc(tr('MENÚ')) + '</button></div></div>';
+  el('d-otro').onclick = () => { play('select'); terminaPartida(); abreFicha(); };
+  el('d-menu').onclick = () => { play('select'); terminaPartida(); abreMenu(); };
+}
 function abreMuerte(m) {
   JUEGO.pantalla = 'muerte'; musica('lose');
   const A = ZOM.AJ.animales[m.animal], record = m.min > SAVE.mejor.min;

@@ -6,7 +6,7 @@ function montaHud() {
   el('zb').innerHTML = '<div id="h-ets"></div><div class="panel zb-necesidades" id="h-nec"></div><div class="panel zb-reloj" id="h-reloj"></div>' +
     '<div class="panel zb-ruido" id="h-ruido"></div><div class="zb-parche" id="h-parche" hidden></div><div class="zb-radio" id="h-radio" hidden></div>' +
     '<div class="zb-hotbar" id="h-mochila"></div><div class="panel zb-arma" id="h-arma"></div><div class="zb-ayuda" id="h-ayuda"></div>' +
-    '<div class="zb-tuto" id="h-tuto" hidden></div><b class="zb-et accion" id="h-accion" hidden></b><div class="zb-registro" id="h-registro" hidden><i></i></div>';
+    '<div class="zb-tuto" id="h-tuto" hidden></div><div class="zb-jefe" id="h-jefe" hidden></div><b class="zb-et accion" id="h-accion" hidden></b><div class="zb-registro" id="h-registro" hidden><i></i></div>';
   el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['CLIC DCHO / R', 'empujar'], ['1-6', 'arma'], ['Z', 'dormir'], ['F', 'registrar / puerta'], ['B', 'tablas'], ['TAB', 'mochila'], ['M', 'mapa'], ['ESC', 'pausa']]
     .map(([k, t]) => '<span><b>' + esc(tr(k)) + '</b>' + esc(tr(t)) + '</span>').join('');
   HUD.avisos.length = 0; HUD.parche = null;
@@ -27,7 +27,7 @@ function pintaNecesidades(AJ, J) {
 function pintaReloj(AJ, e) {
   const noche = ZOM.esNoche(AJ, e.min), h = ZOM.horaDe(e.min), falta = AJ.reloj.anochece - h;
   const nota = !noche && falta < 120 ? trf('Anochece en %1 min', Math.ceil(falta)) : noche ? tr('NOCHE: te ven menos, pero no ves nada') : '';
-  el('h-reloj').innerHTML = '<span class="lab">' + esc(trf('DÍA %1', ZOM.diaDe(e.min))) + (e.sinLuz ? ' · ' + esc(tr('SIN LUZ')) : '') + '</span><b>' + ZOM.textoHora(e.min) + '</b><span class="zb-noche">' + esc(nota) + '</span>';
+  el('h-reloj').innerHTML = '<span class="lab">' + esc(trf('DÍA %1', ZOM.diaDe(e.min))) + (e.sinLuz ? ' · ' + esc(tr('SIN LUZ')) : '') + '</span>' + (e.planta ? '<span class="lab planta">' + esc(textoPlanta(AJ, e.planta)) + '</span>' : '') + '<b>' + ZOM.textoHora(e.min) + '</b><span class="zb-noche">' + esc(nota) + '</span>';
 }
 function pintaRuido(AJ, e) {
   const J = e.jugador, mio = e.ruidos.filter((r) => r.quien === 'jugador').reduce((m, r) => Math.max(m, r.r * r.t / r.max), 0);
@@ -57,7 +57,7 @@ function pintaAccion(e, cerca, hueco) {
   const a = el('h-accion'), J = e.jugador, r = el('h-registro'), H = !cerca && hueco && e.huecos[hueco.id];
   a.hidden = (!cerca && !H) || !!J.registra || !!J.clava || !!J.desmonta;
   if (H && !J.registra && !J.clava) { const p = sueloAPantalla(hueco.x, 2.4, hueco.z); a.textContent = textoHueco(hueco, H, J); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
-  if (cerca && !J.registra) { const p = sueloAPantalla(cerca.x, 1.6, cerca.z); a.textContent = tr(e.registrados[cerca.id] ? 'F  ABRIR' : 'F  REGISTRAR'); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
+  if (cerca && !J.registra) { const p = sueloAPantalla(cerca.x, 1.6, cerca.z); a.textContent = textoSitio(e, cerca); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
   r.hidden = !J.registra && !J.clava && !J.desmonta;
   if (J.desmonta) { const p = sueloAPantalla(J.x, 2.8, J.z); r.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; r.firstChild.style.width = (100 - J.desmonta.t / ZOM.AJ.desmontar.tiempo * 100) + '%'; }
   if (J.clava) { const p = sueloAPantalla(J.x, 2.8, J.z); r.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; r.firstChild.style.width = (100 - J.clava.t / ZOM.AJ.huecos.barricada.tiempo * 100) + '%'; }
@@ -72,6 +72,19 @@ function pintaAvisos(dt) {
   const p = el('h-parche'); HUD.tParche -= dt; p.hidden = !HUD.parche || HUD.tParche <= 0;
   if (HUD.parche && !p.hidden) p.innerHTML = '<b>' + esc(trf('PARCHE 1.0.%1 DE MICROBLIZZ', HUD.parche.dia)) + '</b><span>' + esc(tr(HUD.parche.parche.n)) + ' ' + esc(tr('«Lo sentimos (no)». — El equipo de Comunidad')) + '</span>';
 }
+// el cartel sobre un sitio: registrar, abrir o, en las escaleras, subir y bajar
+function textoSitio(e, s) {
+  if (s.tipo === 'torre') return tr('F  ENTRAR EN LA TORRE');
+  if (s.tipo === 'escalera') return s.a === 0 ? tr('F  SALIR A LA CALLE') : s.a === ZOM.AZOTEA(ZOM.AJ) ? tr('F  SUBIR A LA AZOTEA') : trf(s.desdeArriba ? 'F  BAJAR A LA PLANTA %1' : 'F  SUBIR A LA PLANTA %1', s.a);
+  return tr(e.registrados[s.id] ? 'F  ABRIR' : 'F  REGISTRAR');
+}
+const textoPlanta = (AJ, n) => (n === ZOM.AZOTEA(AJ) ? tr('AZOTEA DE LA TORRE') : trf('TORRE · PLANTA %1', n));
+// la vida del CEO, arriba en el centro, mientras estás en la azotea
+function pintaJefe(AJ, e) {
+  const b = el('h-jefe'), ceo = e.planta === ZOM.AZOTEA(AJ) && e.zombis.find((z) => z.T.jefe && z.vida > 0);
+  b.hidden = !ceo; if (!ceo) return;
+  b.innerHTML = '<b>' + esc(tr('EL CEO DE MICROBLIZZ')) + '</b><span>' + esc(tr('«Esto es una reestructuración»')) + '</span><i><s style="width:' + Math.max(0, ceo.vida / ceo.T.vida * 100).toFixed(1) + '%"></s></i>';
+}
 // lo que se puede hacer en la puerta o ventana de al lado
 function textoHueco(hueco, H, J) {
   const partes = [];
@@ -82,5 +95,6 @@ function textoHueco(hueco, H, J) {
 }
 function pintaHud(AJ, e, cerca, dt, hueco) {
   const J = e.jugador;
+  pintaJefe(AJ, e);
   pintaNecesidades(AJ, J); pintaReloj(AJ, e); pintaRuido(AJ, e); pintaHotbar(AJ, J); pintaAccion(e, cerca, hueco); pintaAvisos(dt);
 }

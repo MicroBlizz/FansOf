@@ -2,6 +2,9 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.6.0', real: ['<b>LA TORRE DE MICROBLIZZ</b>: ahora es un rascacielos y se entra por su puerta, bajo los soportales. Diez plantas de oficinas con despachos, escritorios, archivadores, cajas fuertes y la armería de Seguridad en la 5. Cuanto más arriba, más fans y peores.',
+    '<b>EL JEFE FINAL</b>: en la azotea espera EL CEO de Microblizz con su escolta. Llama a sus bots al perder vida y embiste. Si cae, ganas la partida.'],
+    joke: ['Microblizz aclara que la azotea «no es un jefe final, es una reunión de alineamiento estratégico». Asistencia obligatoria.'] },
   { v: '0.5.0', real: ['<b>LOS BARRIOS DEL SUR</b>: el mapa crece con el polígono (naves y contenedores), la zona comercial (supermercado, gasolinera, ferretería y farmacia) y las afueras (comisaría con armería, colegio y granja). Y más fans.',
     '<b>ARMAS NUEVAS QUE SE GASTAN</b>: pistola, bate, hacha y cuchillo (por la espalda, de un golpe), de la 1 a la 6. Todas se desgastan y se rompen.',
     '<b>EL MAPA</b> (M) con lo que ya has visto y un <b>TUTORIAL</b> del primer día que se puede saltar.'],

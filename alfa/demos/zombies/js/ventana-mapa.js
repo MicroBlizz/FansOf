@@ -18,6 +18,7 @@ function baseMapa() {
   VMAPA.base = c;
 }
 function abreMapa() {
+  if (JUEGO.e.planta) { avisa(tr('Dentro de la torre no hay mapa del distrito: busca las escaleras.')); return; }
   if (!VMAPA.base) baseMapa();
   VMAPA.abierto = true;
   el('zb-mapa').hidden = false;

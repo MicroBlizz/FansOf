@@ -100,3 +100,5 @@
 .zb-stats { grid-template-columns: repeat(3, 1fr) !important; }
 .zb-stats b { font-size: 26px !important; }
 .zb-pausa .btn { color: var(--rk-tinta); background: #1a242a; border-color: var(--rk-borde2); }
+.zb-cartel.victoria h2 { color: #2a7a3a; }
+.zb-cartel.victoria .zb-cinta { background: #58c8ff; }

@@ -102,11 +102,13 @@ function bloqueGirado(x, z0, tramos, d, color, azar, mira = 1) {
 
 /* ---------- la sede de Microblizz: una torre partida con el letrero sin letras ---------- */
 function torreMicroblizz(x, z) {
-  const ob = new Obra(), w = 10, d = 7, h = 18;
-  ob.caja(w, h, d, 0x2e3a46, x, h / 2, z); ob.plano(w, h, TX_CRISTAL, 4, 9, x, h / 2, z + d / 2 + 0.01);
+  const ob = new Obra(), w = 10, d = 7, h = 46;   // Zombies: un rascacielos de 11 plantas (por dentro, js/torre-plantas.js)
+  ob.caja(w, h, d, 0x2e3a46, x, h / 2, z); ob.plano(w, h, TX_CRISTAL, 4, 23, x, h / 2, z + d / 2 + 0.01); for (const s of [-1, 1]) ob.plano(d, h, TX_CRISTAL, 3, 23, x + s * (w / 2 + 0.01), h / 2, z, s * Math.PI / 2);
+  ob.cil(0.25, 0.25, 9, 6, 0x3a3e46, x + 2, h + 4.5, z); ob.caja(0.5, 0.5, 0.5, 0xff4b5c, x + 2, h + 9.2, z);
   ob.caja(w + 0.2, 0.3, d + 0.2, NIEVE_C, x, h + 0.15, z);
   ob.caja(7, 6, 6.4, 0x34404c, x - 3, h + 2.6, z + 0.4, 0, 0, 0.5); ob.caja(7.1, 0.25, 6.5, NIEVE_C, x - 1.6, h + 5.4, z + 0.4, 0, 0, 0.5);
-  ob.plano(9, 1.7, TX_LETRERO, 1, 1, x, h - 3, z + d / 2 + 0.06);
+  ob.plano(9, 1.7, TX_LETRERO, 1, 1, x, h - 3, z + d / 2 + 0.06); ob.plano(9, 1.7, TX_LETRERO, 1, 1, x, 6.5, z + d / 2 + 0.06);
+  ob.caja(1.6, 2.4, 0.1, 0x1a2a3a, x + 1.1, 1.2, z + d / 2 + 0.06); ob.caja(1.2, 0.12, 0.12, 0x58c8ff, x + 1.1, 2.5, z + d / 2 + 0.1);   // la puerta
   // soportales con columnas
   for (let i = -2; i <= 2; i++) ob.cil(0.35, 0.35, 4, 8, 0x7a7f86, x + i * 2.2, 2, z + d / 2 + 1.6);
   ob.caja(w + 1, 0.5, 2.4, 0x3a3f46, x, 4.2, z + d / 2 + 1.4); ob.caja(w + 1, 0.12, 2.4, NIEVE_C, x, 4.5, z + d / 2 + 1.4);

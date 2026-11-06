@@ -39,7 +39,21 @@ const EVENTOS = {
   tablaRota: () => play('metal'),
   huecoRoto: (v) => { play(v.hueco === 'ventana' ? 'metal' : 'puerta'); avisa(tr(v.hueco === 'ventana' ? '¡Han roto una ventana!' : '¡Han tirado una puerta!'), 'malo'); },
   golpeHueco: () => play('impacto'),
+  planta: (v) => entraPlanta(v.n),
+  refuerzos: (v) => { avisa(trf('El CEO llama a %1 bots de atención al cliente.', v.n), 'malo'); play('alerta'); },
+  embiste: () => { play('bocina'); EFECTOS.temblor = Math.max(EFECTOS.temblor, 0.12); },
+  victoria: () => { play('impacto'); EFECTOS.temblor = 0.4; },
 };
+// al cambiar de planta: el aviso, la música (la del jefe en la azotea) y el tejado de la torre de la calle
+function entraPlanta(n) {
+  const AJ = ZOM.AJ, e = JUEGO.e;
+  play('puerta');
+  if (n === ZOM.AZOTEA(AJ)) { musica('boss'); avisa(tr('La azotea. Ahí está EL CEO, rodeado de su escolta. Si cae él, cae Microblizz.'), 'malo'); return; }
+  musica('ciber');
+  if (!n) { avisa(tr('De vuelta en la calle.')); return; }
+  avisa(n === 1 && !e.torre.avisada ? tr('Dentro de la Torre de Microblizz. Diez plantas de oficinas y, arriba del todo, el CEO.') : trf('Planta %1. Cuanto más arriba, más ejecutivos.', n), n > 6 ? 'malo' : '');
+  e.torre.avisada = true;
+}
 function leeEventos(e) {
   for (const v of e.eventos) { const f = EVENTOS[v.tipo]; if (f) f(v); }
   e.eventos.length = 0;

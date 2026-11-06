@@ -49,3 +49,13 @@ ENEMIGO_MODELO.z_troll = o => {
   const k = en(o, [0, 0, 0]); k(0.12, 1.1, 0.12, 0x6a4a2a, 0.5, 1.2, 0.86, 0.6); k(0.3, 0.26, 0.3, 0x5a5e68, 0.5, 1.5, 1.3, 0.6);
   return { pantalon: 0x3a3e30, escala: 1.65 };
 };
+// EL CEO: traje caro, corbata, gafas de sol, maletín de monedas y una corona de diapositivas. Grande (el jefe de la torre)
+ENEMIGO_MODELO.z_ceo = o => {
+  const c = zbCuerpo(o, { sudadera: 0x1a1e2a, ancho: 1.2, piel: 0x8aa080, pelo: 0xd8d8d8 });
+  const k = en(o, [0, 0, 0]);
+  k(0.14, 0.5, 0.03, 0xc8282e, 0, 1.0, 0.24); k(0.62, 0.1, 0.46, 0xe8e4dc, 0, 1.22, 0.02);
+  c(0.5, 0.1, 0.05, NEGRO_C, 0, 0.06, 0.28);
+  k(0.6, 0.45, 0.18, 0x3a2a20, -0.55, 0.75, 0.2); k(0.3, 0.12, 0.2, 0xf9c531, -0.55, 1.0, 0.2);
+  for (let i = 0; i < 5; i++) c(0.14, 0.2, 0.04, [0x58c8ff, 0xf9c531, 0xff4b5c][i % 3], -0.28 + i * 0.14, 0.44, 0, 0, 0, (i - 2) * 0.15);
+  return { pantalon: 0x1a1e2a, escala: 2.7, piernaAncha: true };
+};

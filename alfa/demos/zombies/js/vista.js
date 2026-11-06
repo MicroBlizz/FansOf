@@ -82,6 +82,8 @@ function pintaHuellas(e) {
 }
 // la luz según la hora: día gris, atardecer naranja, noche azul (y más negra sin luz en el distrito)
 function pintaLuz(AJ, e) {
+  MOTOR.nieve.visible = !e.planta || e.planta === ZOM.AZOTEA(AJ);
+  if (e.planta && e.planta < ZOM.AZOTEA(AJ)) { luzOficina(e); return; }
   const h = ZOM.horaDe(e.min) / 60, dia = Math.max(0, Math.min(1, Math.min((h - 6) / 2, (21 - h) / 2)));
   const ocaso = h > 17 && h < 21 ? 1 - Math.abs(h - 19.5) / 1.5 : 0, oscuro = e.sinLuz ? 0.75 : 1;
   MOTOR.hemi.intensity = (0.3 + 0.38 * dia) * oscuro;
@@ -95,6 +97,15 @@ function pintaLuz(AJ, e) {
   if (!VISTA.linterna) { VISTA.linterna = new THREE.PointLight(0xffe2b0, 0, 11, 1.6); MOTOR.escena.add(VISTA.linterna); }
   const J = e.jugador; VISTA.linterna.position.set(J.x + Math.sin(J.a) * 1.5, 2.2, J.z + Math.cos(J.a) * 1.5);
   VISTA.linterna.intensity = J.duerme ? 0 : (1 - dia) * 1.6;
+}
+// dentro de una planta de la torre: los fluorescentes (sin hora del día) y el fondo negro, como un edificio sin ventanas a la calle
+function luzOficina(e) {
+  const tenue = e.sinLuz ? 0.55 : 1;
+  MOTOR.hemi.intensity = 0.62 * tenue; MOTOR.hemi.color.setHex(0xdce8f0); MOTOR.sol.intensity = 0.25 * tenue; MOTOR.sol.color.setHex(0xf0f4ff);
+  MOTOR.escena.background.setHex(0x0c0e14); MOTOR.escena.fog.color.setHex(0x0c0e14); MOTOR.escena.fog.near = 40; MOTOR.escena.fog.far = 80;
+  if (!VISTA.linterna) { VISTA.linterna = new THREE.PointLight(0xffe2b0, 0, 11, 1.6); MOTOR.escena.add(VISTA.linterna); }
+  const J = e.jugador; VISTA.linterna.position.set(J.x + Math.sin(J.a) * 1.5, 2.2, J.z + Math.cos(J.a) * 1.5);
+  VISTA.linterna.intensity = e.sinLuz && !J.duerme ? 1.2 : 0;
 }
 // la cámara: sigue al jugador, algo por delante de donde apunta
 function pintaCamara(J, dt) {
@@ -110,6 +121,7 @@ function pintaMundo(AJ, e, dt) {
 }
 // la luz de la ciudad de fondo (menús): la de día de Ratkov, sin linterna
 function luzDeFondo() {
+  MOTOR.nieve.visible = true;
   MOTOR.hemi.intensity = 0.68; MOTOR.hemi.color.setHex(0xc4d2e4); MOTOR.sol.intensity = 0.55; MOTOR.sol.color.setHex(0xeef0f8);
   MOTOR.escena.background.setHex(0x7a8692); MOTOR.escena.fog.color.setHex(0x8a96a2); MOTOR.escena.fog.near = 50; MOTOR.escena.fog.far = 95;
   if (VISTA.linterna) VISTA.linterna.intensity = 0;

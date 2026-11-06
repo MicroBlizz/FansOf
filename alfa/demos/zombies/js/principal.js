@@ -12,6 +12,7 @@ const MUNDO = {
   huecos: () => BARRIO.huecos.map((h) => ({ id: h.id, tipo: h.tipo })),
   huecoCerca: (x, z, r) => { const h = huecoCercaDe(x, z, r); return h && { id: h.id, x: h.x, z: h.z }; },
   posHueco: (id) => BARRIO.porId[id] || null,
+  puntoPlanta: (n, azar) => puntoEnPlanta(n, azar),
   flujo: (x, z) => (CAMINOS.flujo ? ZOM.direccionFlujo(CAMINOS.rej, CAMINOS.flujo, x, z) : null),
   alarma: (azar) => { const c = MAPA.contenedores.filter((k) => k.tipo === 'coche'); return c.length ? c[Math.floor(azar() * c.length)] : null; },
 };
@@ -24,20 +25,23 @@ function preparaCaminos() {
   for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) tipo[j * w + i] = choca(x0 + (i + 0.5) * celda, z0 + (j + 0.5) * celda, 0.32) ? 0 : 1;
   for (const H of BARRIO.huecos) {
     const s = H.sol; H.sol.abierto = false;
+    if (s.x1 + 0.4 >= x0 + w * celda || s.z1 + 0.4 >= z0 + h * celda) continue;   // las puertas de la torre quedan fuera de la rejilla
     for (let j = Math.floor((s.z0 - 0.4 - z0) / celda); j <= Math.floor((s.z1 + 0.4 - z0) / celda); j++) for (let i = Math.floor((s.x0 - 0.4 - x0) / celda); i <= Math.floor((s.x1 + 0.4 - x0) / celda); i++) if (tipo[j * w + i]) tipo[j * w + i] = 2;
   }
   CAMINOS.rej = { w, h, x0, z0, celda, tipo };
 }
 function avanzaCaminos(e, dt) {
+  if (e.planta) { CAMINOS.flujo = null; return; }   // en la torre no hay campo de flujo (los fans van a por ti y buscan las puertas)
   if (!CAMINOS.rej || (CAMINOS.t -= dt) > 0) return;
   CAMINOS.t = 0.4;
   CAMINOS.flujo = ZOM.campoFlujo(CAMINOS.rej, e.jugador.x, e.jugador.z, 32, 25);
 }
 // lo que se puede registrar: los contenedores del mapa (menos la verja del despacho) y los cuerpos que deja la ballena
-function sitiosRegistrables(e) { return JUEGO.sitios.concat(e.cuerpos); }
+function sitiosRegistrables(e) { return JUEGO.sitios.concat(TORRE.sitios, e.cuerpos); }
 // la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
 function huecoDelJugador(e) { const J = e.jugador; return huecoCercaDe(J.x, J.z, 1.6); }
-const SITIOS_SIEMPRE = ['fuego', 'cocina'];   // se vuelven a abrir aunque estén vacíos (para cocinar o beber)
+const SITIOS_SIEMPRE = ['fuego', 'cocina', 'escalera', 'torre'];   // se vuelven a abrir aunque estén vacíos (cocinar, beber, subir)
+const esPaso = (s) => s && (s.tipo === 'escalera' || s.tipo === 'torre');
 function sitioCerca(e) {
   const J = e.jugador; let mejor = null, dMin = 1.9;
   for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && (!e.registrados[s.id] || (e.contenidos[s.id] || []).length || SITIOS_SIEMPRE.includes(s.tipo) || (ZOM.AJ.desmontar.tipos[s.tipo] && !e.desmontados[s.id]))) { dMin = d; mejor = s; } }
@@ -45,7 +49,7 @@ function sitioCerca(e) {
 }
 
 function arranca() {
-  iniciaMotor(); construyeMapa(); preparaEntrada(); preparaEfectos(); preparaCaminos();
+  iniciaMotor(); construyeMapa(); construyeTorre(); preparaEntrada(); preparaEfectos(); preparaCaminos();
   JUEGO.sitios = MAPA.contenedores.filter((c) => c.tipo !== 'verja').map((c, i) => ({ id: 'c' + i, x: c.x, z: c.z, tipo: c.tipo }))
     .concat(MAPA.fuegos.map((f, i) => ({ id: 'f' + i, x: f.x, z: f.z + 0.9, tipo: 'fuego' })));   // los bidones con fuego: para cocinar
   el('carga').hidden = true;
@@ -72,7 +76,8 @@ function empiezaPartida() {
 function continuaPartida() {
   const r = ZOM.restaura(ZOM.AJ, leeMundo());
   if (!r.ok) { borraMundo(); abreMenu(); return; }
-  alcanceDesde(r.valor.jugador.x, r.valor.jugador.z);
+  const desde = r.valor.planta ? TORRE.calle : r.valor.jugador;   // en la torre, lo alcanzable se cuenta desde la calle (ahí salen las oleadas)
+  alcanceDesde(desde.x, desde.z);
   ZOM.preparaHuecos(ZOM.AJ, r.valor, MUNDO.huecos());
   juega(r.valor);
   avisa(trf('Sigues en el día %1. Bienvenido de vuelta.', ZOM.diaDe(r.valor.min)), 'bien');
@@ -84,7 +89,7 @@ function juega(e) {
 }
 // se guarda sola cada minuto, al pausar y al cerrar o esconder la página
 function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuardar = 60; guardaMundo(JUEGO.e); }
-function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
+function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto && !JUEGO.e.victoria) guardaMundo(JUEGO.e); }
 addEventListener('pagehide', guardaAhora);
 document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
 function terminaPartida() { TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
@@ -113,6 +118,7 @@ function avanzaJuego(dt) {
   if (!JUEGO.pausa && !e.muerto) {
     const hueco = huecoDelJugador(e), ent = leeEntrada(e.jugador, cerca, hueco);
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));
+    if (ent.registrar && esPaso(cerca)) { ent.registrar = null; subeBaja(e, cerca); }
     avanzaCaminos(e, dt);
     ZOM.paso(AJ, e, dt, ent, MUNDO, azarJuego);
     leeEventos(e);
@@ -122,6 +128,15 @@ function avanzaJuego(dt) {
   pintaMundo(AJ, e, JUEGO.pausa ? 0 : dt); pintaBarrio(e);
   if ((JUEGO.tHud -= dt) <= 0) { JUEGO.tHud = 0.15; pintaHud(AJ, e, cerca, 0.15, huecoDelJugador(e)); }
   else pintaAccion(e, cerca, huecoDelJugador(e));
+  if (e.victoria && JUEGO.pantalla === 'juego') { const m = e.victoria; borraMundo(); setTimeout(() => abreVictoria(m), 1600); JUEGO.pantalla = 'cayendo'; }
   if (e.muerto && JUEGO.pantalla === 'juego') { const m = e.muerto; borraMundo(); setTimeout(() => abreMuerte(m), 1200); JUEGO.pantalla = 'cayendo'; }
+}
+// las escaleras de la torre (y su puerta en la calle): cambiar de planta
+function subeBaja(e, s) {
+  const r = ZOM.cambiaPlanta(ZOM.AJ, e, s.a, llegadaPlanta(s.a, s.a < e.planta), MUNDO, azarJuego);
+  if (!r.ok) return;
+  VISTA.cx = VISTA.cz = null;
+  if (!e.planta) alcanceDesde(e.jugador.x, e.jugador.z);
+  guardaMundo(e);
 }
 arranca();

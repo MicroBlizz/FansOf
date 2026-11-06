@@ -33,8 +33,8 @@ const COLA_CONTROL = (() => {
   const cancelar = (f, token, id) => llamar(f, token, 'POST', '/actions/runs/' + id + '/cancel');
   const CANCELABLE_DIAS = 3;
   /** El botón «Cancelar» de un trabajo de la cola: solo si lleva más de 3 días (atascado); si no, vacío. */
-  function botonCancelar(t, ahora, ocupado) {
-    if (!(t.creado > 0) || ahora - t.creado < CANCELABLE_DIAS * 864e5) return '';
+  function botonCancelar(t, ahora, ocupado, sinMandos) {
+    if (sinMandos || !(t.creado > 0) || ahora - t.creado < CANCELABLE_DIAS * 864e5) return '';
     return `<button type="button" data-cancela="${t.id}"${ocupado ? ' disabled' : ''} title="Lleva más de ${CANCELABLE_DIAS} días en la cola">Cancelar</button>`;
   }
   /** Relanza solo los jobs fallidos del run. */
@@ -88,6 +88,7 @@ const COLA_CONTROL = (() => {
 
   /** La barra de la pausa (se ve en todas las vistas menos Configuración). `e`: { pausa (true|false|null si no se sabe), ocupado, esc(texto), fallo }. */
   function htmlPausa(e) {
+    if (e.sinMandos) return '';   // token de solo lectura (sin permiso de Variables): el panel funciona, sin el mando de pausa
     const pausado = e.pausa === true;
     const estado = e.pausa === null ? 'Estado desconocido' : pausado ? 'En pausa' : 'En marcha';
     return `<section class="caja cl-control"><div class="cl-bar"><b>Runners de generar recursos: ${estado}</b>`
@@ -100,11 +101,11 @@ const COLA_CONTROL = (() => {
     const x = vista === 'x', lista = (x ? snap.caducadas : snap.fallidas) || [];
     const filas = lista.length
       ? lista.map(r => `<div class="cl-fila"><span><a href="https://github.com/${REPO}/actions/runs/${r.id}" target="_blank" rel="noopener">${e.esc(r.workflow)}</a> · ${e.esc(r.titulo)}</span>`
-        + `<span class="meta">${e.fecha(r.fin)}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span><button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button></div>`).join('')
+        + `<span class="meta">${e.fecha(r.fin)}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span>${e.sinMandos ? '' : `<button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button>`}</div>`).join('')
       : '<div class="meta">Ninguna en las últimas ' + HORAS + ' h.</div>';
     const pie = x ? '<p class="meta">GitHub cancela lo que espera runner más de 24 h: no falló, no llegó a ejecutarse. Reiniciar le da otras 24 h de espera.</p>' : '';
     return `<section class="caja cl-control"><h3>${x ? 'Caducadas en cola' : 'Ejecuciones fallidas'} (${lista.length})</h3>${pie}${filas}`
-      + (lista.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
+      + (lista.length > 1 && !e.sinMandos ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
   return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, caducada, caducadas, pestanas, sinTerminar, encendido, htmlPausa, htmlLista };
 })();

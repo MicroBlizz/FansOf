@@ -1,8 +1,8 @@
 {
- "build": 1052,
- "hash": "93d733e",
- "fecha": "2026-11-06T21:22:59Z",
- "mensaje": "Zombies 0.11.1: ajustes tras probar un mes de juego (poda de fans lejanos, noches de invierno, sed de verano)",
+ "build": 1053,
+ "hash": "1821a2e",
+ "fecha": "2026-11-06T21:24:01Z",
+ "mensaje": "Nova 0.3.53: las nueve naves entre 30 y 50 victorias de 120",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.24",
   "karts": "0.7.23",
-  "nova": "0.3.52",
+  "nova": "0.3.53",
   "pets": "0.2.7",
   "ratkov": "0.2.37",
   "rouflage": "0.2.73",

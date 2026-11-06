@@ -1,8 +1,8 @@
 {
- "build": 1053,
- "hash": "1821a2e",
- "fecha": "2026-11-06T21:24:01Z",
- "mensaje": "Nova 0.3.53: las nueve naves entre 30 y 50 victorias de 120",
+ "build": 1054,
+ "hash": "2927abb",
+ "fecha": "2026-11-06T21:34:54Z",
+ "mensaje": "Rouflage 0.2.74: el brochazo de la pintura rápida suena de verdad (frus, fras) y pinta en dos pasadas; core sabe tocar sonidos de archivo (ADR 077)",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",
@@ -15,7 +15,7 @@
   "nova": "0.3.53",
   "pets": "0.2.7",
   "ratkov": "0.2.37",
-  "rouflage": "0.2.73",
+  "rouflage": "0.2.74",
   "rumble": "0.9.166",
   "skate": "0.1.27",
   "survivors": "0.1.79",

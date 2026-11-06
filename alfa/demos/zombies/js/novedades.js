@@ -2,6 +2,10 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.5.0', real: ['<b>LOS BARRIOS DEL SUR</b>: el mapa crece con el polígono (naves y contenedores), la zona comercial (supermercado, gasolinera, ferretería y farmacia) y las afueras (comisaría con armería, colegio y granja). Y más fans.',
+    '<b>ARMAS NUEVAS QUE SE GASTAN</b>: pistola, bate, hacha y cuchillo (por la espalda, de un golpe), de la 1 a la 6. Todas se desgastan y se rompen.',
+    '<b>EL MAPA</b> (M) con lo que ya has visto y un <b>TUTORIAL</b> del primer día que se puede saltar.'],
+    joke: ['Microblizz ha abierto un supermercado en el distrito. Los precios son los de la tienda del juego: altos y sin devolución.'] },
   { v: '0.4.0', real: ['<b>FABRICAR Y COCINAR</b>: vendas con tela; filete y guiso junto a un bidón con fuego o en la cocina de casa mientras haya luz. Cada sitio da lo suyo, la carne cruda sienta mal y, sin luz, la de las neveras se pudre.',
     '<b>EL GRIFO Y LAS BOTELLAS</b>: bebe y llena botellas en la cocina hasta que corten el agua. Y desmonta armarios y cajas con la palanca o el martillo para sacar tablas y clavos.',
     '<b>LOS FANS RODEAN</b>: ya no se atascan en vallas y esquinas; buscan el camino hasta ti y prefieren una puerta abierta a romper una ventana.'],

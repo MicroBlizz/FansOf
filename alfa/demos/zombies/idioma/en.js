@@ -56,6 +56,17 @@ IDIOMA.add({
   'MAPA DEL DISTRITO': 'DISTRICT MAP', 'Solo lo que ya has visto': 'Only what you have seen', 'CERRAR (M)': 'CLOSE (M)', 'tú': 'you', 'fuego': 'fire', 'registrado': 'searched',
   'sin registrar': 'not searched', 'con tablas': 'boarded up', 'CIUDAD DE RATKOV': 'RATKOV CITY', 'BARRIO RESIDENCIAL': 'NEIGHBOURHOOD', 'POLÍGONO': 'INDUSTRIAL ESTATE',
   'ZONA COMERCIAL': 'SHOPPING AREA', 'AFUERAS': 'OUTSKIRTS', 'mapa': 'map', 'el mapa de lo que has visto': 'the map of what you have seen',
+  // el tutorial
+  'TUTORIAL · %1 DE %2': 'TUTORIAL · %1 OF %2', 'SALTAR': 'SKIP',
+  'Muévete con WASD y apunta con el ratón. Estás en tu casa del barrio.': 'Move with WASD and aim with the mouse. You are in your house in the neighbourhood.',
+  'Abre la mochila con Tab. Cada cosa ocupa su forma: arrastra para moverla y usa la rueda para girarla.': 'Open the backpack with Tab. Every item has its shape: drag to move it and use the wheel to rotate it.',
+  'Registra la nevera, el armario o la cocina de tu casa (F) y elige qué coges.': 'Search the fridge, wardrobe or kitchen in your house (F) and choose what to take.',
+  'Clava una tabla en una ventana (B). Llevas martillo, tablas y clavos.': 'Nail a plank over a window (B). You carry a hammer, planks and nails.',
+  'Agáchate (C): así no haces ruido al andar y te ven desde más cerca.': 'Crouch (C): walking makes no noise and they only see you up close.',
+  'Abre el mapa (M): solo enseña lo que ya has visto.': 'Open the map (M): it only shows what you have seen.',
+  'Come (E) o bebe (Q) algo. Cuida el hambre, la sed y el sueño.': 'Eat (E) or drink (Q) something. Watch your hunger, thirst and sleep.',
+  'Si un fan se acerca, empújalo (clic derecho) o golpéalo (clic). Disparar se oye en medio distrito.': 'If a fan comes close, shove it (right click) or hit it (click). Gunshots are heard across half the district.',
+  'Al anochecer llegan más fans. Quédate en casa con las ventanas tapadas y duerme (Z) cuando tengas sueño. ¡Suerte!': 'More fans arrive at nightfall. Stay home with the windows boarded up and sleep (Z) when tired. Good luck!',
   // las casas
   'TABLAS': 'PLANKS', 'CLAVOS': 'NAILS', 'MARTILLO': 'HAMMER', 'F  CERRAR': 'F  CLOSE', 'B  TABLAS (%1/3)': 'B  PLANKS (%1/3)', 'TAPADA (3/3)': 'BOARDED UP (3/3)',
   'Tabla clavada (%1/3).': 'Plank nailed (%1/3).', '¡Han roto una ventana!': 'A window has been smashed!', '¡Han tirado una puerta!': 'A door has been knocked down!',

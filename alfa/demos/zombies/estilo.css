@@ -124,3 +124,9 @@ button:disabled { opacity: 0.4; cursor: default; }
 .zm-marco footer { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: center; color: var(--rk-tenue); font-size: 16px; margin-top: 6px; }
 .zm-marco footer i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: -8px; }
 .zm-marco footer .t { background: #ff7a1a; border-radius: 0; } .zm-marco footer .f { background: #ff8a2a; } .zm-marco footer .r { background: #8a929c; } .zm-marco footer .s { background: #e8c040; } .zm-marco footer .b { background: #a0602a; }
+
+/* ---------- el tutorial ---------- */
+.zb-tuto { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); width: min(560px, 60vw); background: var(--rk-panel2); border: 2px solid var(--rk-naranja); padding: 8px 12px; display: grid; gap: 4px; pointer-events: auto; }
+.zb-tuto b { font: 14px var(--rk-tit); font-weight: 400; letter-spacing: .08em; color: var(--rk-naranja); }
+.zb-tuto span { font-size: 20px; line-height: 1.15; }
+.zb-tuto button { justify-self: end; background: none; border: 1px solid var(--rk-borde2); color: var(--rk-tenue); font: 12px var(--rk-tit); padding: 2px 8px; }

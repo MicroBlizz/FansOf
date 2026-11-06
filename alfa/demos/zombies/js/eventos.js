@@ -12,13 +12,14 @@ const EVENTOS = {
   oleada: (v) => { avisa(trf('Anochece. Llegan %1 fans más al distrito.', v.n), 'malo'); play('bocina'); },
   corte: () => { avisa(tr('Se ha ido la luz en el distrito. Las noches serán más negras.'), 'malo'); play('cuelgue'); },
   abre: (v) => { play(v.nuevo && !v.cosas.length ? 'registra' : 'coge'); if (v.nuevo && !v.cosas.length) avisa(tr('Nada. Alguien pasó antes.')); abreMochila(); },
-  usa: (v) => { play('bebe'); if (v.mal) { avisa(tr('Te ha sentado fatal.'), 'malo'); MOTOR.postMat.uniforms.dano.value = 0.5; } },
+  usa: (v) => { TUTO.uso = true; play('bebe'); if (v.mal) { avisa(tr('Te ha sentado fatal.'), 'malo'); MOTOR.postMat.uniforms.dano.value = 0.5; } },
   fabrica: () => play('fabrica'),
   desmontado: (v) => { play('puerta'); avisa(trf('Mueble desmontado: %1 tablas y %2 clavos.', v.tablas, v.clavos), 'bien'); },
   corteAgua: () => { avisa(tr('Han cortado el agua. Los grifos ya no echan nada: guarda botellas.'), 'malo'); play('cuelgue'); },
   mordisco: () => { play('dolor'); MOTOR.postMat.uniforms.dano.value = 0.8; },
   infectado: () => avisa(tr('Te han infectado. Véndate (V) para frenarlo.'), 'malo'),
   ataque: (v) => {
+    TUTO.pelea = true;
     const J = JUEGO.e.jugador, escopeta = v.arma === 'escopeta';
     play(escopeta ? 'escopeta' : v.arma === 'pistola' ? 'pistola' : 'esquiva'); efectoGolpe(v.arma);
     if (v.despide) avisa(tr('Despedido por la espalda. Como en Microblizz.'), 'bien');
@@ -26,7 +27,7 @@ const EVENTOS = {
     for (const t of v.tocados) { sangre(t.x, t.z, escopeta ? 9 : 5, J.x, J.z); zombiRespingo(t.id); }
     if (v.tocados.length) { play('carne'); EFECTOS.temblor = Math.max(EFECTOS.temblor, 0.07); }
   },
-  empujon: (v) => { play('esquiva'); efectoGolpe('empujon'); for (const id of v.tocados) zombiRespingo(id); if (v.tocados.length) play('impacto'); },
+  empujon: (v) => { TUTO.pelea = true; play('esquiva'); efectoGolpe('empujon'); for (const id of v.tocados) zombiRespingo(id); if (v.tocados.length) play('impacto'); },
   baja: () => play('impacto'),
   sinMunicion: () => { play('vacio'); avisa(tr('Sin munición. Cambia de arma (1 a 6).')); },
   armaRota: (v) => { play('metal'); avisa(trf('Se te ha roto: %1.', tr(ZOM.AJ.armas[v.arma].n)), 'malo'); },

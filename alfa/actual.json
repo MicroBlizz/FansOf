@@ -1,8 +1,8 @@
 {
- "build": 1018,
- "hash": "05db0c2",
- "fecha": "2026-11-06T01:28:36Z",
- "mensaje": "presencia: los navegadores automáticos (tests y bots) no mandan pulso",
+ "build": 1019,
+ "hash": "17482be",
+ "fecha": "2026-11-06T01:43:36Z",
+ "mensaje": "Nova 0.3.51: las fusiones mixtas pegan +40 % (antes +15 %, que casi nunca se notaba)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.23",
   "karts": "0.7.22",
-  "nova": "0.3.50",
+  "nova": "0.3.51",
   "pets": "0.2.6",
   "ratkov": "0.2.36",
   "rouflage": "0.2.72",

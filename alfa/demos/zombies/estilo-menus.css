@@ -1,0 +1,102 @@
+/* Fans of Zombies · LOS MENÚS: la tele de emergencia, la ficha de evacuación en papel, la pausa y el cartel de «SE BUSCA». */
+:root { --zb-papel: #e9e1cc; --zb-tinta: #2a2420; --zb-rotu: "Permanent Marker", cursive; --zb-maq: "Special Elite", monospace; --zb-verde: #9fd36a; }
+/* ---------- comunes ---------- */
+.zb-oscuro { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, rgba(8,10,14,.35), rgba(8,10,14,.85)); }
+.zb-oscuro.rojo { background: radial-gradient(circle at 50% 45%, rgba(40,6,8,.55), rgba(10,2,4,.92)); }
+.zb-ver { position: absolute; right: 14px; bottom: 8px; color: var(--rk-tenue); font-size: 16px; letter-spacing: .15em; }
+.zb-polaroid { background: #f4f1ea; padding: 8px 8px 30px; box-shadow: 0 6px 16px rgba(0,0,0,.45); transform: rotate(-3deg); position: relative; width: 132px; }
+.zb-polaroid img { display: block; width: 116px; height: 116px; background: #6a7a8a; image-rendering: pixelated; }
+.zb-polaroid span { position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; font: 18px var(--zb-rotu); color: #2a2420; }
+.zb-polaroid.gris img { filter: grayscale(1) contrast(1.1); }
+
+/* ---------- menú: la tele ---------- */
+.zb-tele { position: absolute; left: 50%; top: 50%; transform: translate(-58%, -50%); width: 720px; background: linear-gradient(#4a3a2c, #2e241c); border-radius: 26px; padding: 26px 26px 14px; box-shadow: 0 20px 60px rgba(0,0,0,.7), inset 0 2px 0 #6a5a48; }
+.zb-pantalla { position: relative; height: 470px; border-radius: 40px / 30px; overflow: hidden; background: #0c1410; box-shadow: inset 0 0 70px rgba(0,0,0,.95); padding: 34px 40px; box-sizing: border-box; }
+#zb-estatica { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .09; image-rendering: pixelated; }
+.zb-pantalla::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.28) 2px 4px); pointer-events: none; }
+.zb-tv-cinta { position: absolute; left: 0; right: 0; bottom: 0; background: #c81e28; color: #fff; font: 18px var(--rk-num); white-space: nowrap; padding: 4px 0; animation: zb-cinta 14s linear infinite; letter-spacing: .08em; }
+@keyframes zb-cinta { from { text-indent: 0; } to { text-indent: -900px; } }
+.zb-tv-pre { margin: 0; color: var(--zb-verde); letter-spacing: .2em; font-size: 17px; position: relative; }
+.zb-pantalla h1 { position: relative; margin: 2px 0 0; font: 64px/1 var(--rk-tit); color: #e6f4dc; text-shadow: 3px 0 rgba(255,40,60,.5), -3px 0 rgba(60,220,255,.45); }
+.zb-pantalla h1 b { font-weight: 400; color: var(--zb-verde); display: block; font-size: 78px; }
+.zb-tv-lema { position: relative; color: #c8d8c0; font-size: 21px; margin: 8px 0 14px; }
+.zb-canales { position: relative; display: grid; gap: 6px; width: 420px; }
+.zb-canales button { text-align: left; background: rgba(10,24,14,.7); border: 2px solid #2e4a32; color: #d8eccc; font: 26px var(--rk-num); padding: 2px 10px; display: flex; align-items: baseline; gap: 12px; }
+.zb-canales button em { font-style: normal; color: #5a8a5a; font-size: 18px; }
+.zb-canales button small { margin-left: auto; color: var(--zb-verde); font-size: 17px; }
+.zb-canales button.sel { border-color: var(--zb-verde); background: rgba(60,110,40,.45); }
+.zb-tv-rec { position: absolute; right: 36px; top: 26px; margin: 0; color: #ff3a40; font-size: 20px; animation: late 1s steps(2) infinite; }
+.zb-tele-pie { display: flex; align-items: center; gap: 10px; padding: 10px 6px 0; color: #b8a088; font: 14px var(--rk-tit); letter-spacing: .2em; }
+.zb-tele-pie i { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(#8a7a68, #3a2e24); display: block; }
+.zb-tele-pie span { margin-left: auto; }
+.zb-nota { position: absolute; right: 7%; top: 30%; width: 220px; background: #f8e27a; color: #2a2420; font: 22px/1.25 var(--zb-rotu); padding: 18px 16px; transform: rotate(4deg); box-shadow: 0 8px 20px rgba(0,0,0,.5); }
+.zb-nota span { display: block; text-align: right; margin-top: 8px; }
+
+/* ---------- ficha de evacuación ---------- */
+.zb-ficha { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-.6deg); width: 820px; background: var(--zb-papel); color: var(--zb-tinta); font: 18px var(--zb-maq); padding: 18px 26px 18px; box-shadow: 0 20px 60px rgba(0,0,0,.7); background-image: repeating-linear-gradient(transparent 0 27px, rgba(80,110,160,.12) 27px 28px); pointer-events: auto; }
+.zb-ficha header { border-bottom: 3px double #2a2420; margin-bottom: 8px; }
+.zb-ficha header span { font-size: 14px; letter-spacing: .12em; }
+.zb-ficha h2 { margin: 0 0 4px; font: 28px var(--rk-tit); }
+.zb-sello { position: absolute; right: 30px; top: 22px; border: 4px solid #c8282e; color: #c8282e; font: 30px var(--rk-tit); padding: 2px 12px; transform: rotate(-12deg); opacity: .8; letter-spacing: .1em; }
+.zb-ficha-cuerpo { display: flex; gap: 26px; align-items: flex-start; }
+.zb-datos { flex: 1; }
+.zb-campo { margin: 4px 0; display: flex; gap: 10px; align-items: baseline; border-bottom: 1px dashed #8a7a68; }
+.zb-campo span { font-size: 14px; letter-spacing: .1em; width: 80px; }
+.zb-campo b { font: 24px var(--zb-rotu); font-weight: 400; color: #1a3a8a; }
+.zb-desc { margin: 2px 0 6px 90px; font-size: 16px; color: #4a4038; }
+.zb-sub { margin: 10px 0 4px; font: 15px var(--rk-tit); letter-spacing: .1em; display: flex; }
+.zb-sub em { margin-left: auto; font: 16px var(--zb-maq); color: #c8282e; }
+.zb-rasgos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px; font-size: 16px; }
+.zb-rasgos li { display: flex; align-items: center; gap: 8px; }
+.zb-rasgos li i { width: 14px; height: 14px; border: 2px solid #2a2420; display: inline-block; position: relative; }
+.zb-rasgos li.si i::after { content: "X"; position: absolute; left: 0; top: -9px; font: 22px var(--zb-rotu); color: #1a3a8a; }
+.zb-rasgos em { margin-left: auto; font-style: normal; color: #6a5a48; }
+.zb-animales { display: flex; gap: 8px; }
+.zb-anim { flex: 1; background: rgba(255,255,255,.35); border: 2px solid #8a7a68; padding: 4px; display: grid; justify-items: center; color: #2a2420; font: 14px var(--zb-maq); }
+.zb-anim img { width: 62px; height: 62px; image-rendering: pixelated; }
+.zb-anim b { font: 15px var(--rk-tit); font-weight: 400; }
+.zb-anim.sel { border-color: #c8282e; background: rgba(255,200,170,.5); box-shadow: 0 0 0 2px #c8282e; }
+.zb-dif { display: flex; gap: 8px; }
+.zb-dif button { flex: 1; background: none; border: 2px solid #8a7a68; color: #2a2420; font: 17px var(--rk-tit); padding: 4px; display: grid; }
+.zb-dif button small { font: 14px var(--zb-maq); color: #6a5a48; }
+.zb-dif button.sel { border-color: #c8282e; background: rgba(255,200,170,.5); }
+.zb-firma { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.zb-firma i { font: 30px var(--zb-rotu); color: #1a3a8a; border-bottom: 1px solid #2a2420; padding: 0 30px; }
+.zb-firma .btn-grande { background: #c8282e; color: #fff; border: 0; font: 22px var(--rk-tit); padding: 10px 26px; }
+
+/* ---------- muerte: el cartel ---------- */
+.zb-cartel { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(1deg); width: 600px; background: var(--zb-papel); color: var(--zb-tinta); padding: 20px 30px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.8); font: 18px var(--zb-maq); background-image: radial-gradient(circle at 80% 20%, rgba(120,20,20,.18) 0 40px, transparent 41px), radial-gradient(circle at 12% 85%, rgba(90,60,30,.15) 0 30px, transparent 31px); pointer-events: auto; }
+.zb-cinta { position: absolute; left: -60px; right: -60px; top: -4px; background: #f9c531; color: #1a1a1a; font: 18px var(--rk-tit); letter-spacing: .12em; margin: 0; padding: 4px 0; transform: rotate(-8deg); white-space: nowrap; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,.4); }
+.zb-cartel h2 { margin: 26px 0 0; font: 56px var(--rk-tit); letter-spacing: .08em; }
+.zb-cartel-sub { margin: -4px 0 10px; font-size: 16px; }
+.zb-cartel .zb-polaroid { margin: 0 auto 8px; }
+.zb-cartel h3 { margin: 6px 0 4px; font: 26px var(--rk-tit); color: #8a1a1a; }
+.zb-causa { margin: 0 0 10px; }
+.zb-causa b { color: #8a1a1a; }
+.zb-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid #2a2420; border-bottom: 2px solid #2a2420; padding: 6px 0; }
+.zb-stats p { margin: 0; display: grid; }
+.zb-stats b { font: 34px var(--zb-rotu); font-weight: 400; color: #8a1a1a; }
+.zb-stats span { font-size: 13px; letter-spacing: .06em; }
+.zb-diario { font: 19px var(--zb-rotu); color: #1a3a8a; margin: 10px 0 6px; }
+.zb-desbloq { margin: 0 0 10px; font-size: 16px; }
+.zb-desbloq b { color: #c8282e; }
+.zb-botones { display: flex; gap: 10px; justify-content: center; }
+.zb-botones .btn-grande { background: #8a1a1a; color: #fff; border: 0; font: 20px var(--rk-tit); padding: 10px 20px; }
+.zb-botones .btn { background: none; border: 2px solid #2a2420; color: #2a2420; font: 16px var(--rk-tit); padding: 8px 14px; }
+
+
+.zb-canales .boton-canal { text-align: left; background: rgba(10,24,14,.7); border: 2px solid #2e4a32; color: #d8eccc; font: 26px var(--rk-num); padding: 2px 10px; display: flex; align-items: baseline; gap: 12px; text-decoration: none; pointer-events: auto; }
+.zb-canales .boton-canal em { font-style: normal; color: #5a8a5a; font-size: 18px; }
+.zb-canales button:hover, .zb-canales .boton-canal:hover { border-color: var(--zb-verde); }
+.zb-nota span { display: block; text-align: right; margin-top: 8px; }
+.zb-firma .btn { background: none; border: 2px solid #2a2420; color: #2a2420; }
+.zb-anim, .zb-dif button { cursor: pointer; }
+.zb-pausa { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 560px; background: var(--rk-panel2); border: 2px solid var(--rk-borde2); padding: 16px 24px; pointer-events: auto; }
+.zb-pausa h2 { margin: 0 0 8px; font: 30px var(--rk-tit); }
+.zb-pausa ul { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 3px; }
+.zb-pausa li b { display: inline-block; min-width: 160px; font-weight: 400; color: var(--rk-oro); }
+.zb-pausa p { color: var(--rk-tenue); }
+.zb-pausa .btn-grande { background: var(--rk-naranja); color: #1a0e04; border: 0; }
+.zb-stats { grid-template-columns: repeat(3, 1fr) !important; }
+.zb-stats b { font-size: 26px !important; }
+.zb-pausa .btn { color: var(--rk-tinta); background: #1a242a; border-color: var(--rk-borde2); }

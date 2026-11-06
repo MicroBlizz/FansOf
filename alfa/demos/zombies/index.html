@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0d12">
+<title>Fans of Zombies</title>
+<meta name="description" content="Fans of Zombies: supervivencia en la ciudad nevada de Microblizz después del parche 1.0. Come, bebe, duerme, registra y no hagas ruido: los fans zombificados lo oyen todo. Para PC, con teclado y ratón.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Russo+One&family=Permanent+Marker&family=Special+Elite&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.1.0-a1030.af1c778"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<link rel="stylesheet" href="estilo.css?v=0.1.0">
+<link rel="stylesheet" href="estilo-menus.css?v=0.1.0">
+</head>
+<body>
+<canvas id="cv" aria-label="Fans of Zombies"></canvas>
+<div id="carga">…</div>
+<div id="zb"></div>
+<div id="zb-capa"></div>
+<div id="toast"></div>
+<script>
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small style="opacity:.6">' + String(e.message || '').slice(0, 120) + '</small>'; });
+</script>
+<script>
+// Fans of Zombies: lo ligero de core (cuenta, idioma y sonido), la configuración antes y el juego después, en este orden.
+// Dominio (sin pantalla): ajustes, base, reloj, superviviente, zombis, jugador y partida. El resto pinta y escucha.
+NUCLEO.juego({
+  ligero: true,
+  idioma: { en: ['idioma/en.js'] },
+  antes: ['js/config.js'],
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/textos.js',
+    'js/util.js',
+    'js/audio.js',
+    'js/motor.js',
+    'js/modelos.js',
+    'js/modelos-zombis.js',
+    'js/mapa-piezas.js',
+    'js/mapa-piezas-2.js',
+    'js/mapa.js',
+    'js/ajustes.js',
+    'js/base.js',
+    'js/reloj.js',
+    'js/superviviente.js',
+    'js/zombis.js',
+    'js/jugador.js',
+    'js/partida.js',
+    'js/entrada.js',
+    'js/vista.js',
+    'js/hud.js',
+    'js/eventos.js',
+    'js/pantallas.js',
+    'js/principal.js'],
+});
+</script>
+</body>
+</html>

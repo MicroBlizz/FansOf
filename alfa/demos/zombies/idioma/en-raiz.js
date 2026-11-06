@@ -1,0 +1,11 @@
+// Fans Of · Inglés de la ficha de la demo Fans of Zombies en la biblioteca de la página de la raíz (va aquí y no en core/idioma
+// para no tocar core). Los textos del juego en sí están en idioma/en.js.
+'use strict';
+IDIOMA.add({
+  'El prototipo (prueba), para PC con teclado y ratón. El parche 1.0 de Microblizz salió mal y los fans se han convertido en zombis. Con CrazyBunny y su escuadrón, sobrevive todos los días que puedas en la ciudad nevada de Ratkov: come, bebe, duerme, registra y no hagas ruido, porque cada paso, cada disparo y cada alarma de coche atrae a la horda. Streamers que avisan a su chat, speedrunners que esprintan, ballenas, bots y trolls; y cada mañana, un parche nuevo que lo empeora todo.':
+    'The prototype (test), for PC with keyboard and mouse. Microblizz’s patch 1.0 went wrong and the fans have turned into zombies. With CrazyBunny and her squad, survive as many days as you can in Ratkov’s snowy city: eat, drink, sleep, search and make no noise, because every step, every shot and every car alarm draws the horde. Streamers who alert their chat, sprinting speedrunners, whales, bots and trolls; and every morning, a new patch that makes everything worse.',
+  // sus novedades (js/novedades.js)
+  '<b>PRIMER PROTOTIPO</b>: sobrevive en la ciudad nevada de Ratkov con teclado y ratón. Hambre, sed, sueño e infección; todo hace ruido (los anillos te dicen hasta dónde llega) y tus huellas en la nieve te delatan. Seis tipos de fans zombificados, alarmas de coche, oleadas al anochecer, corte de luz y un parche nuevo de Microblizz cada mañana. Al caer, el cartel de «SE BUSCA» con tu historia.':
+    '<b>FIRST PROTOTYPE</b>: survive in Ratkov’s snowy city with keyboard and mouse. Hunger, thirst, sleep and infection; everything makes noise (the rings show how far it carries) and your footprints in the snow give you away. Six kinds of zombified fans, car alarms, waves at nightfall, a blackout and a new Microblizz patch every morning. When you fall, the WANTED poster tells your story.',
+  'Microblizz aclara que los fans no están infectados: «solo están muy comprometidos con la comunidad».': 'Microblizz clarifies the fans are not infected: “they are just very committed to the community”.',
+});

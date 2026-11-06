@@ -1,0 +1,62 @@
+// Fans of Zombies · AJUSTES (dominio): todas las cifras del juego en un sitio. El reloj (1 segundo real = 2 minutos del juego), las
+// necesidades, los ruidos, las armas, los animales, los fans zombificados, los parches de Microblizz y las dificultades.
+// Nada de pantalla aquí: lo leen las reglas (js/partida.js y compañía) y los tests.
+'use strict';
+var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
+ZOM.AJ = Object.freeze({
+  version: '0.1.0',
+  reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
+  // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
+  necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
+  jugador: { vida: 100, radio: 0.5, vel: 4.2, corre: 6.6, agacha: 2.2, pasoHuella: 0.9, huellas: 60, vidaHuella: 240 },
+  // radio del ruido (en metros) de cada cosa que haces
+  ruido: { andar: 4, correr: 10, abrirLata: 5, registrar: 4, golpe: 3, escopeta: 30, grito: 18, alarma: 34, dura: 1.2, duraAlarma: 25 },
+  armas: {
+    palanca: { n: 'PALANCA', alcance: 1.9, cono: 1.2, dano: 34, cadencia: 0.55, ruido: 'golpe', municion: null },
+    escopeta: { n: 'ESCOPETA', alcance: 10, cono: 0.5, dano: 70, cadencia: 0.95, ruido: 'escopeta', municion: 'cartuchos' },
+  },
+  // lo que hace cada cosa de la mochila al usarla
+  usos: {
+    judias: { hambre: 35, ruido: 'abrirLata' },
+    agua: { sed: 45 },
+    venda: { vida: 25, infeccion: -10 },
+  },
+  // lo que sale al registrar (peso de cada cosa) y cuántas cosas como mucho
+  botin: { cosas: { judias: 4, agua: 4, venda: 2, cartuchos: 3, nada: 4 }, maximo: 2, cartuchos: 3, tiempo: 1.4 },
+  mochilaInicial: { judias: 1, agua: 1, venda: 1, cartuchos: 6 },
+  // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)
+  animales: {
+    bunny: { n: 'CrazyBunny', ventaja: 'Orejas de radar', vida: 120, oye: 22 },
+    squirrel: { n: 'MadSquirrel', ventaja: 'Pies ligeros', vel: 1.15, huellas: 0.5 },
+    fox: { n: 'SlyFox', ventaja: 'Sombra', ruido: 0.5 },
+    junkcoon: { n: 'JunkCoon', ventaja: 'Saqueador', registra: 0.4, botinExtra: 1 },
+    meercat: { n: 'MeerCat', ventaja: 'Enfermera', infeccion: 0.5, venda: 1.5 },
+  },
+  // los fans zombificados: vida, velocidad, cuánto oyen (multiplica el radio del ruido), cuánto ven, el mordisco y lo suyo
+  zombis: {
+    fan: { vida: 60, vel: 1.3, persigue: 2.6, oido: 1, vista: 9, dano: 12, radio: 0.45 },
+    streamer: { vida: 55, vel: 1.2, persigue: 2.4, oido: 1, vista: 11, dano: 10, radio: 0.45, grita: true },
+    speedrunner: { vida: 45, vel: 1.6, persigue: 5.4, oido: 1.2, vista: 10, dano: 10, radio: 0.4, sprint: 3.5, descanso: 2.5 },
+    ballena: { vida: 260, vel: 0.8, persigue: 1.6, oido: 0.8, vista: 8, dano: 22, radio: 0.85, botin: 3 },
+    bot: { vida: 60, vel: 1.3, persigue: 2.4, oido: 0.7, vista: 8, dano: 12, radio: 0.45, ruta: true },
+    troll: { vida: 120, vel: 1.1, persigue: 2.2, oido: 1, vista: 9, dano: 20, radio: 0.6 },
+  },
+  // cómo de a menudo sale cada tipo al poblar el distrito (pesos)
+  reparto: { fan: 10, streamer: 2, speedrunner: 2, ballena: 1, bot: 2, troll: 1 },
+  ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4, infeccion: 0.25 },
+  mundo: { zombis: 70, oleada: 14, maxZombis: 140, alarmaPorHora: 0.35, corte: [3, 6], vistaNoche: 0.6, despierta: 12 },
+  // los parches de Microblizz: uno nuevo cada mañana desde el día 2
+  parches: [
+    { id: 'corren', n: 'Esta noche los fans corren.', velNoche: 1.6 },
+    { id: 'oido', n: 'Mejora de audio: los fans oyen el doble.', oido: 2 },
+    { id: 'hambre', n: 'Nuevo sistema de hambre: el doble de realista.', hambre: 2 },
+    { id: 'mas', n: 'Evento de fin de semana: el doble de fans.', oleada: 2 },
+    { id: 'lag', n: 'Hemos añadido lag para que sea más justo.', lag: true },
+    { id: 'ninguno', n: 'Correcciones menores. No hemos corregido nada.' },
+  ],
+  dificultades: {
+    turista: { n: 'TURISTA', zombis: 0.6, dano: 0.5, necesidades: 0.6 },
+    superviviente: { n: 'SUPERVIVIENTE', zombis: 1, dano: 1, necesidades: 1 },
+    caiste: { n: 'ASÍ ES COMO CAÍSTE', zombis: 1.4, dano: 1.4, necesidades: 1.25 },
+  },
+});

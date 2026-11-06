@@ -12,10 +12,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=45f785a">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=45f785a">
-<link rel="stylesheet" href="novedades/ventana.css?v=45f785a">
-<link rel="stylesheet" href="biblioteca/votos.css?v=45f785a">
+<link rel="stylesheet" href="core/css/base.css?v=af1c778">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=af1c778">
+<link rel="stylesheet" href="novedades/ventana.css?v=af1c778">
+<link rel="stylesheet" href="biblioteca/votos.css?v=af1c778">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -63,7 +63,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=45f785a" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=af1c778" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -211,6 +211,12 @@
           <h2 class="ol">FANS OF BASEMENT</h2>
           <p>El prototipo (prueba). El servidor de Microblizz se ha caído y alguien tiene que bajar a arreglarlo: tú, el becario. Baja por el hueco del ascensor planta a planta, de Marketing a la Sala de Servidores, mientras tu grapadora dispara sola a bugs, correos «RE: RE: URGENTE» y reuniones que te frenan. El café es tu oxígeno: llama al ascensor de emergencia antes de que se acabe, sube con la caja del despedido llena de botín y mejora tu mesa para bajar más hondo.</p>
           <div class="row"><a class="play ol" href="demos/basement/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-zombies" style="--wc: #6a9a3a" data-tipo="Prototipo" data-etiquetas="Supervivencia · Zombis · Sigilo · Solo PC" data-capturas="zombies-1.jpg zombies-2.jpg" data-horizontal>
+          <h2 class="ol">FANS OF ZOMBIES</h2>
+          <p>El prototipo (prueba), para PC con teclado y ratón. El parche 1.0 de Microblizz salió mal y los fans se han convertido en zombis. Con CrazyBunny y su escuadrón, sobrevive todos los días que puedas en la ciudad nevada de Ratkov: come, bebe, duerme, registra y no hagas ruido, porque cada paso, cada disparo y cada alarma de coche atrae a la horda. Streamers que avisan a su chat, speedrunners que esprintan, ballenas, bots y trolls; y cada mañana, un parche nuevo que lo empeora todo.</p>
+          <div class="row"><a class="play ol" href="demos/zombies/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
         <section class="game" id="g-air" style="--wc: #2a62c8" data-tipo="Prototipo" data-etiquetas="Acción · Arcade · Aviones" data-capturas="air-1.jpg air-2.jpg" data-horizontal>
@@ -366,8 +372,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a1029.45f785a"></script>
-<script src="core/js/novedades.js?v=45f785a"></script>
+<script src="core/js/nucleo.js?v=0-a1030.af1c778"></script>
+<script src="core/js/novedades.js?v=af1c778"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -376,8 +382,8 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=45f785a"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
+<script src="core/js/sistema/cuenta.js?v=af1c778"></script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'demos/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -402,14 +408,14 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=45f785a"></script>
-<script src="novedades/ventana.js?v=45f785a"></script>
-<script src="biblioteca/tienda.js?v=45f785a"></script>
-<script src="core/js/sistema/beta.js?v=45f785a"></script>
-<script src="biblioteca/cuenta-web.js?v=45f785a"></script>
-<script src="biblioteca/votos.js?v=45f785a"></script>
-<script src="biblioteca/alfa.js?v=45f785a"></script>
-<script src="core/js/sistema/analitica.js?v=45f785a"></script>
-<script src="pie.js?v=45f785a" defer></script>
+<script src="core/js/proximamente.js?v=af1c778"></script>
+<script src="novedades/ventana.js?v=af1c778"></script>
+<script src="biblioteca/tienda.js?v=af1c778"></script>
+<script src="core/js/sistema/beta.js?v=af1c778"></script>
+<script src="biblioteca/cuenta-web.js?v=af1c778"></script>
+<script src="biblioteca/votos.js?v=af1c778"></script>
+<script src="biblioteca/alfa.js?v=af1c778"></script>
+<script src="core/js/sistema/analitica.js?v=af1c778"></script>
+<script src="pie.js?v=af1c778" defer></script>
 </body>
 </html>

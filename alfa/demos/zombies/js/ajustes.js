@@ -82,6 +82,8 @@ ZOM.AJ = Object.freeze({
   // desmontar muebles con palanca o martillo: tarda, suena y deja tablas y clavos en el sitio
   desmontar: { tipos: { armario: [2, 4], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6], estanteria: [2, 4], pupitre: [1, 2] }, tiempo: 3, ruido: 10 },
   grifo: { sed: 40 },
+  // lo que ya has visto, para el mapa (M): casillas de 8 m sobre todo el distrito; ves lo que hay a «vista» metros
+  explorado: { x0: -214, z0: -66, celda: 8, w: 39, h: 33, vista: 18 },
   mochila: { w: 6, h: 5 },
   mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6], ['martillo', 1], ['tablas', 2], ['clavos', 6]],
   // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)

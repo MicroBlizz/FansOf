@@ -75,7 +75,7 @@ const DIF_TXT = { turista: 'Menos fans, muerden flojo y el hambre va despacio', 
 function abrePausa() {
   JUEGO.pausa = true; guardaAhora();
   const teclas = [['WASD / flechas', 'andar'], ['Mayús', 'correr (mucho ruido)'], ['C', 'agacharse (sin ruido)'], ['Clic / espacio', 'atacar hacia el ratón'], ['Clic derecho / R', 'empujar (tumba sin ruido)'], ['1 a 6', 'escopeta, pistola, palanca, bate, hacha y cuchillo'],
-    ['F', 'registrar o abrir y cerrar puertas'], ['B', 'clavar tablas (martillo, tablas y 2 clavos)'], ['Tab', 'abrir y cerrar la mochila'], ['E / Q / V', 'comer / beber / vendarte'], ['Z', 'dormir (sin fans cerca)']];
+    ['F', 'registrar o abrir y cerrar puertas'], ['B', 'clavar tablas (martillo, tablas y 2 clavos)'], ['Tab', 'abrir y cerrar la mochila'], ['M', 'el mapa de lo que has visto'], ['E / Q / V', 'comer / beber / vendarte'], ['Z', 'dormir (sin fans cerca)']];
   el('zb-capa').innerHTML = '<div class="zb-oscuro"></div><div class="zb-pausa"><h2>' + esc(tr('PAUSA')) + '</h2><ul>' + teclas.map(([k, t]) => '<li><b>' + esc(tr(k)) + '</b>' + esc(tr(t)) + '</li>').join('') + '</ul>' +
     '<p>' + esc(tr('Todo hace ruido y el ruido los atrae: los anillos te dicen hasta dónde llega. Las huellas en la nieve también te delatan.')) + '</p>' +
     '<div class="zb-botones"><button class="btn-grande" id="p-seguir">' + esc(tr('SEGUIR')) + '</button><button class="btn" id="p-menu">' + esc(tr('RENDIRSE')) + '</button></div></div>';

@@ -53,6 +53,9 @@ IDIOMA.add({
   'escopeta, pistola, palanca, bate, hacha y cuchillo': 'shotgun, pistol, crowbar, bat, axe and knife',
   'ESTANTERÍA': 'SHELVING', 'ESTANTE DEL SÚPER': 'SUPERMARKET SHELF', 'TIENDA DE LA GASOLINERA': 'PETROL STATION SHOP', 'FERRETERÍA': 'HARDWARE STORE', 'FARMACIA': 'PHARMACY',
   'ARMERÍA': 'ARMOURY', 'TAQUILLA': 'LOCKER', 'PUPITRE': 'SCHOOL DESK', 'GRANERO': 'BARN',
+  'MAPA DEL DISTRITO': 'DISTRICT MAP', 'Solo lo que ya has visto': 'Only what you have seen', 'CERRAR (M)': 'CLOSE (M)', 'tú': 'you', 'fuego': 'fire', 'registrado': 'searched',
+  'sin registrar': 'not searched', 'con tablas': 'boarded up', 'CIUDAD DE RATKOV': 'RATKOV CITY', 'BARRIO RESIDENCIAL': 'NEIGHBOURHOOD', 'POLÍGONO': 'INDUSTRIAL ESTATE',
+  'ZONA COMERCIAL': 'SHOPPING AREA', 'AFUERAS': 'OUTSKIRTS', 'mapa': 'map', 'el mapa de lo que has visto': 'the map of what you have seen',
   // las casas
   'TABLAS': 'PLANKS', 'CLAVOS': 'NAILS', 'MARTILLO': 'HAMMER', 'F  CERRAR': 'F  CLOSE', 'B  TABLAS (%1/3)': 'B  PLANKS (%1/3)', 'TAPADA (3/3)': 'BOARDED UP (3/3)',
   'Tabla clavada (%1/3).': 'Plank nailed (%1/3).', '¡Han roto una ventana!': 'A window has been smashed!', '¡Han tirado una puerta!': 'A door has been knocked down!',

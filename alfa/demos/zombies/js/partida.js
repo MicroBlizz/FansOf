@@ -40,6 +40,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     Z.pasoDesmontar(AJ, e, dt);
     Z.pasoZombis(AJ, e, dt, mundo, azar);
     Z.vigilaSueno(AJ, e);
+    Z.marcaExplorado(AJ, e, e.jugador.x, e.jugador.z);
     Z.pasoRuidos(e, dt);
   };
   // lo que no se ha podido hacer se avisa en pantalla (con el código del error)

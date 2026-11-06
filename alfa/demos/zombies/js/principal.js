@@ -86,7 +86,7 @@ function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuard
 function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
 addEventListener('pagehide', guardaAhora);
 document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
-function terminaPartida() { cierraMochila(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
+function terminaPartida() { cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
 
 function fotograma(ms) {
   requestAnimationFrame(fotograma);
@@ -107,8 +107,8 @@ function paseoDeFondo(dt) {
 function avanzaJuego(dt) {
   const e = JUEGO.e, AJ = ZOM.AJ;
   const cerca = sitioCerca(e);
-  if (pidePausa() && !e.muerto) { if (VM.abierta) cierraMochila(); else if (JUEGO.pausa) cierraPausa(); else abrePausa(); }
-  if (!JUEGO.pausa && !e.muerto) vigilaMochila(e, cerca);
+  if (pidePausa() && !e.muerto) { if (VMAPA.abierto) cierraMapa(); else if (VM.abierta) cierraMochila(); else if (JUEGO.pausa) cierraPausa(); else abrePausa(); }
+  if (!JUEGO.pausa && !e.muerto) { vigilaMochila(e, cerca); vigilaMapa(dt); }
   if (!JUEGO.pausa && !e.muerto) {
     const hueco = huecoDelJugador(e), ent = leeEntrada(e.jugador, cerca, hueco);
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));

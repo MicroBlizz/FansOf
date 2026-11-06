@@ -15,9 +15,9 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   // las necesidades bajan con las horas; si alguna llega a 0, quita vida (y se apunta la causa por si mueres)
   Z.pasoNecesidades = function (AJ, e, horas) {
-    const J = e.jugador, N = AJ.necesidades, p = Z.parcheDe(AJ, e), k = e.dif.necesidades * horas;
-    J.hambre = Math.max(0, J.hambre - N.hambre * k * ((p && p.hambre) || 1));
-    J.sed = Math.max(0, J.sed - N.sed * k);
+    const J = e.jugador, N = AJ.necesidades, p = Z.parcheDe(AJ, e), k = e.dif.necesidades * horas, E = Z.estacion(AJ, e.min);
+    J.hambre = Math.max(0, J.hambre - N.hambre * k * ((p && p.hambre) || 1) * E.hambre);
+    J.sed = Math.max(0, J.sed - N.sed * k * E.sed);
     J.sueno = J.duerme ? Math.min(100, J.sueno + N.recuperaSueno * horas) : Math.max(0, J.sueno - N.sueno * k);
     for (const n of ['hambre', 'sed', 'sueno']) if (J[n] <= 0) Z.dana(e, N.vidaSiVacia * horas, n);
     if (J.infeccion > 0) { J.infeccion = Math.min(100, J.infeccion + N.infeccion * horas * (J.A.infeccion || 1)); Z.dana(e, J.infeccion / 100 * N.infeccion * horas * 2, 'infeccion'); }

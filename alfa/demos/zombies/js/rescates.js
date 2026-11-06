@@ -74,7 +74,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     // al anochecer repone una tabla en cada puerta o ventana del refugio que no esté rota
     carpintera(AJ, e, R) {
       const dia = Z.diaDe(e.min);
-      if (R.repara === dia || Z.horaDe(e.min) < AJ.reloj.anochece - 60) return;
+      if (R.repara === dia || Z.horaDe(e.min) < Z.anochece(AJ, e.min) - 60) return;
       R.repara = dia;
       let n = 0;
       for (const id of R.huecos) { const h = e.huecos[id]; if (h && !h.roto && h.tablas < AJ.huecos.barricada.max) { h.tablas++; h.vida = AJ.huecos.barricada.vidaTabla; n++; } }

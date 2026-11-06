@@ -75,7 +75,7 @@ function pintaMochila() {
   pintaDibujos(v);
   enganchaMochila(v); enganchaOficios(v);
 }
-const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', basura: 'CUBO DE BASURA', fuego: 'BIDÓN CON FUEGO', coche: 'COCHE', estanteria: 'ESTANTERÍA', super: 'ESTANTE DEL SÚPER', gasolinera: 'TIENDA DE LA GASOLINERA', ferreteria: 'FERRETERÍA', farmacia: 'FARMACIA', armeria: 'ARMERÍA', taquilla: 'TAQUILLA', pupitre: 'PUPITRE', granero: 'GRANERO', escritorio: 'ESCRITORIO', cajaFuerte: 'CAJA FUERTE', archivador: 'ARCHIVADOR', maquina: 'MÁQUINA DE CAFÉ', maletin: 'MALETÍN DEL CEO', despensa: 'DESPENSA DEL REFUGIO' };
+const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', basura: 'CUBO DE BASURA', fuego: 'BIDÓN CON FUEGO', coche: 'COCHE', estanteria: 'ESTANTERÍA', super: 'ESTANTE DEL SÚPER', gasolinera: 'TIENDA DE LA GASOLINERA', ferreteria: 'FERRETERÍA', farmacia: 'FARMACIA', armeria: 'ARMERÍA', taquilla: 'TAQUILLA', pupitre: 'PUPITRE', granero: 'GRANERO', escritorio: 'ESCRITORIO', cajaFuerte: 'CAJA FUERTE', archivador: 'ARCHIVADOR', maquina: 'MÁQUINA DE CAFÉ', maletin: 'MALETÍN DEL CEO', despensa: 'DESPENSA DEL REFUGIO', huerto: 'HUERTO' };
 const sitioEsCoche = (id) => id.startsWith('car:');
 const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : id.startsWith('maletin-') ? 'MALETÍN DEL CEO' : sitioEsCoche(id) ? 'GUANTERA Y MALETERO' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
 // lo que no se puede: aviso por la radio

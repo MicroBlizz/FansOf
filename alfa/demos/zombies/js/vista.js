@@ -84,7 +84,7 @@ function pintaHuellas(e) {
 }
 // la luz según la hora: día gris, atardecer naranja, noche azul (y más negra sin luz en el distrito)
 function pintaLuz(AJ, e) {
-  MOTOR.nieve.visible = !e.planta || e.planta === ZOM.AZOTEA(AJ);
+  MOTOR.nieve.visible = MOTOR.nieveSi !== false && (!e.planta || e.planta === ZOM.AZOTEA(AJ));   // en verano no cae nada
   if (e.planta && e.planta < ZOM.AZOTEA(AJ)) { luzOficina(e); return; }
   const h = ZOM.horaDe(e.min) / 60, dia = Math.max(0, Math.min(1, Math.min((h - 6) / 2, (21 - h) / 2)));
   const ocaso = h > 17 && h < 21 ? 1 - Math.abs(h - 19.5) / 1.5 : 0, oscuro = e.sinLuz ? 0.75 : 1;
@@ -99,6 +99,7 @@ function pintaLuz(AJ, e) {
   if (!VISTA.linterna) { VISTA.linterna = new THREE.PointLight(0xffe2b0, 0, 11, 1.6); MOTOR.escena.add(VISTA.linterna); }
   const J = e.jugador; VISTA.linterna.position.set(J.x + Math.sin(J.a) * 1.5, 2.2, J.z + Math.cos(J.a) * 1.5);
   VISTA.linterna.intensity = J.duerme ? 0 : (1 - dia) * 1.6;
+  luzEstacion();
 }
 // dentro de una planta de la torre: los fluorescentes (sin hora del día) y el fondo negro, como un edificio sin ventanas a la calle
 function luzOficina(e) {

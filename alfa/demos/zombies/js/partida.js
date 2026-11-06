@@ -12,7 +12,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!j.ok) return j;
     const [c0, c1] = AJ.mundo.corte;
     const e = { min: AJ.reloj.empieza, inicio: AJ.reloj.empieza, dif, dificultad: op.dificultad, jugador: j.valor, zombis: [], ruidos: [], huellas: [], cuerpos: [],
-      registrados: {}, contenidos: {}, semilla: Math.floor(op.azar() * 2147483647), trozos: {}, rescates: [], refugio: null, coches: [], llaves: {}, planta: 0, torre: { visitadas: {} }, jefeCaido: null, desmontados: {}, abierto: null, sinAgua: false, diaCorteAgua: AJ.mundo.corteAgua[0] + Math.floor(op.azar() * (AJ.mundo.corteAgua[1] - AJ.mundo.corteAgua[0] + 1)), eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
+      registrados: {}, contenidos: {}, estacion: Z.estacionDe(AJ, AJ.reloj.empieza), semilla: Math.floor(op.azar() * 2147483647), trozos: {}, rescates: [], refugio: null, coches: [], llaves: {}, planta: 0, torre: { visitadas: {} }, jefeCaido: null, desmontados: {}, abierto: null, sinAgua: false, diaCorteAgua: AJ.mundo.corteAgua[0] + Math.floor(op.azar() * (AJ.mundo.corteAgua[1] - AJ.mundo.corteAgua[0] + 1)), eventos: [], stats: { bajas: 0, registros: 0 }, parche: null, sinLuz: false, diaCorte: c0 + Math.floor(op.azar() * (c1 - c0 + 1)), ultimoId: 0, muerto: null };
     Z.preparaHuecos(AJ, e, op.mundo.huecos ? op.mundo.huecos() : []);
     Z.ponRefugio(e, op.refugio);
     for (const c of op.coches || []) Z.nuevoCoche(AJ, e, c, op.azar);   // los coches del distrito que se conducen
@@ -29,6 +29,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   Z.paso = function (AJ, e, dt, ent, mundo, azar) {
     if (e.muerto) return;
     const horas = Z.avanzaReloj(AJ, e, dt, mundo, azar);
+    Z.pasoEstacion(AJ, e);
     Z.pasoNecesidades(AJ, e, horas);
     const usar = ent.usar || (ent.come && (Z.primeraQue(AJ, e, 'hambre') || 'judias')) || (ent.bebe && (Z.primeraQue(AJ, e, 'sed') || 'agua'));
     if (usar) avisa(e, Z.usar(AJ, e, usar));

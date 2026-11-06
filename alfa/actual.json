@@ -1,8 +1,8 @@
 {
- "build": 1050,
- "hash": "8b01e24",
- "fecha": "2026-11-06T20:46:58Z",
- "mensaje": "Zombies 0.10.0: coches que se conducen, con llave y gasolina",
+ "build": 1051,
+ "hash": "9232b24",
+ "fecha": "2026-11-06T20:56:04Z",
+ "mensaje": "Zombies 0.11.0: las estaciones del ano cambian el juego y el color de todo",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

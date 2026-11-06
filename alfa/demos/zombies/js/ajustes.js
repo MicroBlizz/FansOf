@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.10.0',
+  version: '0.11.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -31,6 +31,7 @@ ZOM.AJ = Object.freeze({
   empujon: { alcance: 1.7, cono: 1.1, retroceso: 1.8, derriba: 1.6, cadencia: 0.6, aguante: 14, ruido: 1.5 },
   // las cosas: su nombre, su forma en la mochila Tetris (X = casilla), cuántas se apilan (max) y lo que hacen al usarlas (usa)
   objetos: {
+    verdura: { n: 'VERDURA', forma: ['X'], usa: { hambre: 18, sed: 4 } },
     gasolina: { n: 'BIDÓN DE GASOLINA', forma: ['XX', 'XX'] },
     escopeta: { n: 'ESCOPETA', forma: ['XXXX', '.X..'], arma: true },
     palanca: { n: 'PALANCA', forma: ['XXX'], arma: true },
@@ -55,6 +56,14 @@ ZOM.AJ = Object.freeze({
     filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 }, cocinado: true },
     guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 }, cocinado: true },
   },
+  // las estaciones (ADR 076): días que dura cada una, el orden (empieza en invierno) y lo que cambia en cada una: amanecer y anochecer
+  // (minutos), hambre y sed (multiplican), huellas en la nieve, ruido (lo tapa la lluvia), pasos (las hojas crujen), lo que ven y corren
+  // los fans y la probabilidad de que la carne salga podrida
+  estaciones: { dias: 7, orden: ['invierno', 'primavera', 'verano', 'otono'],
+    invierno: { n: 'INVIERNO', amanece: 8 * 60, anochece: 18 * 60, hambre: 1.25, sed: 1, huellas: true, ruido: 1, pasos: 1, vistaFans: 1, velFans: 0.9, pudre: 0 },
+    primavera: { n: 'PRIMAVERA', amanece: 7 * 60, anochece: 20 * 60, hambre: 1, sed: 1, huellas: false, ruido: 0.75, pasos: 1, vistaFans: 0.9, velFans: 1, pudre: 0.1 },
+    verano: { n: 'VERANO', amanece: 6 * 60, anochece: 21 * 60 + 30, hambre: 0.9, sed: 2, huellas: false, ruido: 1, pasos: 1, vistaFans: 1.1, velFans: 1.15, pudre: 0.4 },
+    otono: { n: 'OTOÑO', amanece: 7 * 60 + 30, anochece: 19 * 60, hambre: 1, sed: 1, huellas: false, ruido: 1, pasos: 1.3, vistaFans: 0.7, velFans: 1, pudre: 0.1 } },
   // los coches (ADR 075): velocidades en m/s (máxima ~65 km/h), giro en rad/s, gasolina de 0 a 1 (consumo por metro), daño de 0 a 100,
   // atropello = daño por m/s, la llave (en la guantera o en una casa cercana) y el ruido del motor
   coches: { radio: 1.2, alcance: 3, acelera: 9, frena: 14, roce: 0.5, maxima: 18, atras: 5, giro: 2.2, consumo: 0.0006, bidon: 0.5,
@@ -100,6 +109,7 @@ ZOM.AJ = Object.freeze({
       maletin: { balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
       maquina: { chocolatina: 3, refresco: 3, nada: 2 },
       coche: { gasolina: 1, chocolatina: 1, refresco: 1, agua: 1, cartuchos: 0.5, nada: 2 },
+      huerto_invierno: { nada: 1 }, huerto_primavera: { verdura: 4, nada: 2 }, huerto_verano: { verdura: 5, agua: 1, nada: 1 }, huerto_otono: { verdura: 2, carne: 1.5, nada: 3 },
       granero: { gasolina: 1, tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
     } },
   // fabricar: con qué y dónde (null = en cualquier sitio; 'fuego' = junto a un bidón con fuego o en la cocina de una casa con luz)

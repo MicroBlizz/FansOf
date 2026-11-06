@@ -5,6 +5,9 @@ const NO_PUEDES = {
   sinSueno: 'No tienes sueño todavía.', hayZombis: 'Con fans tan cerca no hay quien duerma.', noTienes: 'No te queda de eso.',
   nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.', sinRefugio: 'No tienes refugio al que mandarlo.', sinLlave: 'No tienes la llave de este coche. Registra su guantera o busca en las casas de alrededor.', cocheRoto: 'Este coche ya no arranca.', tanqueLleno: 'El depósito está lleno.', sinGasolina: 'No llevas ningún bidón de gasolina.',
 };
+// lo que cuenta la radio al cambiar de estación y el parche de Microblizz que la acompaña
+const AVISO_ESTACION = { invierno: 'Llega el invierno. Vuelve la nieve: tus huellas te delatan y el frío da hambre.', primavera: 'Llega la primavera. Se funde la nieve: la lluvia tapa tus ruidos y los huertos dan verdura.', verano: 'Llega el verano. Calor: bebe el doble, la carne se pudre y los fans van más rápido.', otono: 'Llega el otoño. Niebla y hojas secas: se ve menos y tus pasos crujen.' };
+const TEXTO_ESTACION = { invierno: 'Hemos añadido el invierno. La calefacción es contenido de pago.', primavera: 'Primavera: hemos cambiado la nieve por lluvia. No hace falta que nos lo agradezcáis.', verano: 'Verano: el aire acondicionado llegará en la temporada 2.', otono: 'Otoño: las hojas caídas son un error conocido. No lo arreglaremos.' };
 const EVENTOS = {
   parche: (v) => { HUD.parche = v; HUD.tParche = 12; play('alerta'); },
   alarma: () => { avisa(tr('¡Una alarma de coche! Todos los fans de la zona van hacia allí.'), 'malo'); play('alarma'); },
@@ -45,6 +48,7 @@ const EVENTOS = {
   reposta: (v) => { play('bebe'); avisa(trf('Depósito al %1 %.', Math.round(v.gas * 100)), 'bien'); },
   choque: (v) => { play('impacto'); EFECTOS.temblor = Math.max(EFECTOS.temblor, Math.min(0.4, v.v * 0.02)); },
   atropello: (v) => { const J = JUEGO.e.jugador; play('carne'); sangre(v.x, v.z, 8, J.x, J.z); zombiRespingo(v.id); },
+  estacion: (v) => { play('alerta'); HUD.parche = { dia: ZOM.diaDe(JUEGO.e.min), parche: { n: TEXTO_ESTACION[v.estacion] } }; HUD.tParche = 14; avisa(tr(AVISO_ESTACION[v.estacion]), 'malo'); },
   hayRescate: () => { play('alerta'); avisa(tr('Por la radio: alguien pide ayuda muy cerca. Está atrapado en un edificio y rodeado de fans.'), 'bien'); },
   rescate: (v) => { play('win'); avisa(trf('%1 se va a tu refugio. Hará de %2.', ZOM.AJ.animales[v.animal].n, tr(OFICIO_TXT[v.oficio]).toLowerCase()), 'bien'); },
   vigia: (v) => { play('alerta'); avisa(trf('Desde el refugio: ¡hay %1 fans cerca!', v.n), 'malo'); },

@@ -95,13 +95,13 @@ function avanzaMotor(dt, hora) {
   // la nieve cae con viento y se recoloca alrededor de la cámara
   const p = MOTOR.nieve.geometry.attributes.position, a = p.array, v = (MOTOR.ventisca || 0), cx = MOTOR.x, cz = MOTOR.z;
   for (let i = 0; i < a.length; i += 3) {
-    a[i] += dt * (1.2 + v * 9) + Math.sin(hora + i) * dt * 0.4; a[i + 1] -= dt * (2.2 + v * 3); a[i + 2] += dt * (0.4 + v * 3);
+    a[i] += (dt * (1.2 + v * 9) + Math.sin(hora + i) * dt * 0.4) * (MOTOR.deriva || 1); a[i + 1] -= dt * (2.2 + v * 3) * (MOTOR.caida || 1); a[i + 2] += dt * (0.4 + v * 3);
     if (a[i + 1] < 0) a[i + 1] += 20;
     if (a[i] > cx + 30) a[i] -= 60; else if (a[i] < cx - 30) a[i] += 60;
     if (a[i + 2] > cz + 30) a[i + 2] -= 60; else if (a[i + 2] < cz - 30) a[i + 2] += 60;
   }
   p.needsUpdate = true;
-  MOTOR.nieve.material.size = 1.5 + v * 1.5;
+  MOTOR.nieve.material.size = (MOTOR.tamCopo || 1.5) + v * 1.5;   // Zombies: el tamaño y la caída cambian con la estación (js/estaciones-vista.js)
 }
 function pintaEscena() {
   const r = MOTOR.r;

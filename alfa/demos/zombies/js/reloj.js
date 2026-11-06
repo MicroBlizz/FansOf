@@ -5,7 +5,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 (function (Z) {
   Z.diaDe = (min) => Math.floor(min / 1440) + 1;
   Z.horaDe = (min) => ((min % 1440) + 1440) % 1440;
-  Z.esNoche = (AJ, min) => { const h = Z.horaDe(min); return h < AJ.reloj.amanece || h >= AJ.reloj.anochece; };
+  Z.esNoche = (AJ, min) => { const h = Z.horaDe(min); return h < Z.amanece(AJ, min) || h >= Z.anochece(AJ, min); };   // según la estación (js/estaciones.js)
   Z.textoHora = (min) => { const h = Z.horaDe(Math.floor(min)); return String(Math.floor(h / 60)).padStart(2, '0') + ':' + String(h % 60).padStart(2, '0'); };
   // ¿ha pasado la hora h (en minutos del día) entre antes y ahora?
   const cruza = (antes, ahora, h) => Math.floor((antes - h) / 1440) !== Math.floor((ahora - h) / 1440);
@@ -15,9 +15,10 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   Z.avanzaReloj = function (AJ, e, dt, mundo, azar) {
     const antes = e.min, ritmo = e.jugador.duerme ? AJ.reloj.minDormido : AJ.reloj.minPorSeg;
     e.min += dt * ritmo;
-    if (cruza(antes, e.min, AJ.reloj.amanece)) nuevoParche(AJ, e, azar);
-    if (cruza(antes, e.min, AJ.reloj.anochece)) oleada(AJ, e, mundo, azar);
-    if (!e.sinLuz && Z.diaDe(e.min) >= e.diaCorte && cruza(antes, e.min, AJ.reloj.anochece - 60)) { e.sinLuz = true; e.eventos.push({ tipo: 'corte' }); }
+    const amanece = Z.amanece(AJ, e.min), anochece = Z.anochece(AJ, e.min);
+    if (cruza(antes, e.min, amanece)) nuevoParche(AJ, e, azar);
+    if (cruza(antes, e.min, anochece)) oleada(AJ, e, mundo, azar);
+    if (!e.sinLuz && Z.diaDe(e.min) >= e.diaCorte && cruza(antes, e.min, anochece - 60)) { e.sinLuz = true; e.eventos.push({ tipo: 'corte' }); }
     if (!e.sinAgua && Z.diaDe(e.min) >= e.diaCorteAgua && cruza(antes, e.min, 12 * 60)) { e.sinAgua = true; e.eventos.push({ tipo: 'corteAgua' }); }
     const horas = (e.min - antes) / 60;
     if (azar() < AJ.mundo.alarmaPorHora * horas) alarma(AJ, e, mundo, azar);

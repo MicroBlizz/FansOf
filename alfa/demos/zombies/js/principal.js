@@ -149,6 +149,7 @@ function fotograma(ms) {
   pintaEscena();
 }
 function paseoDeFondo(dt) {
+  vigilaEstacion(null);   // el menú, siempre en invierno
   JUEGO.paseo += dt * 0.03;
   camaraEn(Math.sin(JUEGO.paseo) * 40, -14 + Math.sin(JUEGO.paseo * 0.7) * 18); avanzaTapan(9999, 9999, dt);
   luzDeFondo();
@@ -165,6 +166,7 @@ function avanzaJuego(dt) {
     if (ent.registrar && cerca.tipo === 'superviviente') { ent.registrar = null; rescataA(e, cerca); }
     usaCoche(e, ent, cerca);
     avanzaTrozos(e);
+    vigilaEstacion(e);
     avanzaCaminos(e, dt);
     ZOM.paso(AJ, e, dt, ent, MUNDO, azarJuego);
     leeEventos(e);

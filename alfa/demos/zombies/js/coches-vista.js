@@ -7,7 +7,7 @@ const COLOR_COCHE = [0x2a6ab8, 0xb8282e, 0x3a3a3e, 0xd8d8d0, 0x3a6a3a];
 // la malla de un coche (la misma forma que los de Ratkov, js/mapa-piezas-2.js) en su sitio 0,0, mirando a +x
 function montaCoche(color) {
   const o = new Obra();
-  o.caja(3.4, 0.8, 1.6, color, 0, 0.6, 0); o.caja(1.9, 0.6, 1.4, 0x1a1c20, -0.2, 1.3, 0); o.caja(1.9, 0.12, 1.4, NIEVE_M, -0.2, 1.66, 0); o.caja(1.4, 0.1, 1.6, NIEVE_M, 1.1, 1.05, 0);
+  o.caja(3.4, 0.8, 1.6, color, 0, 0.6, 0); o.caja(1.9, 0.6, 1.4, 0x1a1c20, -0.2, 1.3, 0); o.caja(1.9, 0.12, 1.4, 0xeef2f6, -0.2, 1.66, 0); o.caja(1.4, 0.1, 1.6, 0xeef2f6, 1.1, 1.05, 0);   // la nieve del techo (en verano, chapa)
   o.caja(0.1, 0.25, 1.2, 0xf8f0c0, 1.72, 0.7, 0); o.caja(0.1, 0.2, 1.2, 0xc82838, -1.72, 0.7, 0);
   for (const [a, b] of [[-1.1, 0.8], [1.1, 0.8], [-1.1, -0.8], [1.1, -0.8]]) o.cil(0.3, 0.3, 0.2, 8, 0x111111, a, 0.3, b, Math.PI / 2);
   return o.hecha();
@@ -20,7 +20,7 @@ function pintaCoches(e) {
     let v = VCOCHES.vistas.get(c.id);
     const lejos = ZOM.dist(c.x, c.z, J.x, J.z) > 140;
     if (lejos) { if (v) quitaVistaCoche(c.id, v); continue; }
-    if (!v) { v = { grupo: montaCoche(COLOR_COCHE[c.color % COLOR_COCHE.length]), sol: null }; MOTOR.escena.add(v.grupo); VCOCHES.vistas.set(c.id, v); }
+    if (!v) { v = { grupo: montaCoche(COLOR_COCHE[c.color % COLOR_COCHE.length]), sol: null }; tine(v.grupo); MOTOR.escena.add(v.grupo); VCOCHES.vistas.set(c.id, v); }
     v.grupo.position.set(c.x, 0, c.z); v.grupo.rotation.y = c.a - Math.PI / 2;
     ponChoqueCoche(c, v, J.conduce === c.id);
   }

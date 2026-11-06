@@ -3,7 +3,7 @@
 // mallas, sus choques, sus sitios para registrar, sus puertas y ventanas. Se carga como mucho un trozo por fotograma. Lo que hiciste en
 // un trozo (registrar, tablas, puertas) va en la partida por su id, así que al volver está igual. ADR 073.
 'use strict';
-const TROZOS = { cargados: new Map(), semilla: null, sucio: false };
+const TROZOS = { cargados: new Map(), semilla: null, sucio: false, version: 0 };
 const COLORES_MARITIMO = [0x8a3a2a, 0x2a5a7a, 0x3a6a3a, 0xb07a20];
 
 // cada fotograma: quita los trozos lejanos y pone el que falte más cerca (en la torre no se toca nada)
@@ -22,14 +22,15 @@ function avanzaTrozos(e) {
 }
 function ponTrozo(e, ci, cj) {
   const AJ = ZOM.AJ, P = ZOM.planTrozo(AJ, e.semilla, ci, cj), Tr = construyeTrozo(P);
-  TROZOS.cargados.set(P.clave, Tr); TROZOS.sucio = true;
+  TROZOS.cargados.set(P.clave, Tr); TROZOS.sucio = true; TROZOS.version++;
+  for (const g of Tr.objetos) tine(g);   // la nieve, del color de la estación
   ZOM.preparaHuecos(AJ, e, Tr.huecos.map((h) => ({ id: h.id, tipo: h.tipo })));
   ZOM.entraTrozo(AJ, e, P, MUNDO, azarJuego);
 }
 function quitaTrozo(e, k, Tr) {
   if (e) { for (const id of ZOM.saleTrozo(ZOM.AJ, e, Tr.P).valor) quitaVistaZombi(id); if (e.abierto && Tr.sitios.some((s) => s.id === e.abierto)) cierraMochila(); }
   borraCosas(Tr);
-  TROZOS.cargados.delete(k); TROZOS.sucio = true;
+  TROZOS.cargados.delete(k); TROZOS.sucio = true; TROZOS.version++;
 }
 // todos fuera (al acabar una partida o empezar otra con otra semilla)
 function descargaTrozos(e) { for (const [k, Tr] of TROZOS.cargados) quitaTrozo(e, k, Tr); }
@@ -38,7 +39,7 @@ function sitiosTrozos() { const out = []; for (const Tr of TROZOS.cargados.value
 
 // construir un trozo: se apunta lo que había antes para saber qué ha añadido (choques, sitios, huecos, casas y mallas)
 function construyeTrozo(P) {
-  const ini = { s: MAPA.solidos.length, c: MAPA.contenedores.length, h: BARRIO.huecos.length, k: BARRIO.casas.length, o: MOTOR.escena.children.length };
+  const ini = { a: MAPA.arboles.length, s: MAPA.solidos.length, c: MAPA.contenedores.length, h: BARRIO.huecos.length, k: BARRIO.casas.length, o: MOTOR.escena.children.length };
   const o = new Obra(), az = ZOM.azarTrozo(TROZOS.semilla, P.ci, P.cj, 3);
   for (const k of P.calles) calleTrozo(o, k);
   for (const c of P.casas) casa(o, c.id, c.cx, c.cz, c.w, c.d, c.frente, COLORES_CASA[c.paleta], az);
@@ -46,7 +47,7 @@ function construyeTrozo(P) {
   for (const c of P.campos) campoTrozo(o, c);
   for (const a of P.arboles) arbolPelado(o, a.x, a.z, a.s, az);
   MOTOR.escena.add(o.hecha());
-  const Tr = { P, solidos: MAPA.solidos.slice(ini.s), contenedores: MAPA.contenedores.slice(ini.c), huecos: BARRIO.huecos.slice(ini.h), casas: BARRIO.casas.slice(ini.k), objetos: MOTOR.escena.children.slice(ini.o) };
+  const Tr = { P, arboles: MAPA.arboles.slice(ini.a), solidos: MAPA.solidos.slice(ini.s), contenedores: MAPA.contenedores.slice(ini.c), huecos: BARRIO.huecos.slice(ini.h), casas: BARRIO.casas.slice(ini.k), objetos: MOTOR.escena.children.slice(ini.o) };
   Tr.sitios = Tr.contenedores.map((c, i) => ({ id: P.clave + ':' + i, x: c.x, z: c.z, tipo: c.tipo }));
   return Tr;
 }
@@ -55,7 +56,7 @@ function borraCosas(Tr) {
   const fuera = (lista, quitar) => { const S = new Set(quitar); return lista.filter((x) => !S.has(x)); };
   for (const s of Tr.solidos) quitaDeRejilla(s);
   MAPA.solidos = fuera(MAPA.solidos, Tr.solidos);
-  MAPA.contenedores = fuera(MAPA.contenedores, Tr.contenedores);
+  MAPA.contenedores = fuera(MAPA.contenedores, Tr.contenedores); MAPA.arboles = fuera(MAPA.arboles, Tr.arboles);
   BARRIO.huecos = fuera(BARRIO.huecos, Tr.huecos); for (const h of Tr.huecos) delete BARRIO.porId[h.id];
   BARRIO.casas = fuera(BARRIO.casas, Tr.casas);
   for (const g of Tr.objetos) { MOTOR.escena.remove(g); g.traverse((m) => { if (m.geometry) m.geometry.dispose(); if (m.material && m.material.transparent) m.material.dispose(); }); }
@@ -79,8 +80,11 @@ function calleTrozo(o, k) {
   for (let p = k.a + 2; p < k.b - 1; p += 5) (enX ? o.caja(2.2, 0.07, 0.22, 0xd8d0a0, p, 0.04, k.fijo) : o.caja(0.22, 0.07, 2.2, 0xd8d0a0, k.fijo, 0.04, p));
   for (let p = k.a + 9; p < k.b - 2; p += 22) (enX ? farolaBarrio(o, p, k.fijo + k.ancho / 2 + 1.2) : farolaBarrio(o, k.fijo + k.ancho / 2 + 1.2, p));
 }
-// un campo arado (surcos que no chocan)
-function campoTrozo(o, c) { for (let z = c.z0 + 1; z < c.z1 - 0.5; z += 2.2) o.caja(c.x1 - c.x0 - 1, 0.25, 0.6, 0x5a4a2a, (c.x0 + c.x1) / 2, 0.12, z); }
+// un campo arado (surcos que no chocan) con su huerto, que da según la estación
+function campoTrozo(o, c) {
+  for (let z = c.z0 + 1; z < c.z1 - 0.5; z += 2.2) o.caja(c.x1 - c.x0 - 1, 0.25, 0.6, 0x5a4a2a, (c.x0 + c.x1) / 2, 0.12, z);
+  o.caja(1.2, 0.8, 0.8, 0x7a5a3a, c.x0 + 1.5, 0.4, c.z0 + 1.2); contenedor('huerto', c.x0 + 1.5, c.z0 + 2.2);
+}
 // la puerta da a la calle (lado n o s) y hay ventanas en los demás lados
 const huecosTrozo = (E) => [{ lado: E.lado, en: -E.w / 4, tipo: 'puerta' }, { lado: E.lado, en: E.w / 4, tipo: 'ventana' }, { lado: E.lado === 's' ? 'n' : 's', en: 0, tipo: 'ventana' }, { lado: 'e', en: 0, tipo: 'ventana' }, { lado: 'o', en: 0, tipo: 'ventana' }];
 // los estantes en fila por el fondo del edificio (lejos de la puerta)

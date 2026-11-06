@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.11.0', real: ['<b>LAS ESTACIONES</b>: el año pasa (7 días cada estación, empezando en invierno). En invierno hay nieve, huellas y días cortos; en primavera llueve (se te oye menos) y los huertos dan verdura; en verano hace calor (bebes el doble, la carne se pudre y los fans corren más); en otoño hay niebla y hojas que crujen. Todo cambia de color: suelo, tejados, árboles y lo que cae del cielo.'],
+    joke: ['Microblizz confirma que cada estación nueva será un DLC. El otoño viene con hojas en baja resolución.'] },
   { v: '0.10.0', real: ['<b>COCHES QUE SE CONDUCEN</b>: los coches aparcados de las calles se conducen. Busca su llave en la guantera (F) o en las casas de alrededor; W acelera, S frena, A y D giran y F te baja. Gastan gasolina (G con un bidón para repostar), se abollan al chocar, atropellan fans y hacen mucho ruido.'],
     joke: ['Microblizz lanza el «Pase de Conductor»: cada kilómetro recorrido da una caja de botín con un ambientador.'] },
   { v: '0.9.0', real: ['<b>SUPERVIVIENTES Y TU REFUGIO</b>: por el mundo hay animales de la serie atrapados en edificios y rodeados de fans. Rescátalos (F) y se van a tu refugio, la casa donde empezaste. Cada uno hace su oficio: vigía (avisa y pelea), cocinera (deja comida en la despensa cada mañana), carpintera (repone tablas al anochecer) o médica (te cura dentro). Si los fans entran, pueden morir.'],

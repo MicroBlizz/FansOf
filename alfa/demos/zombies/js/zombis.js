@@ -16,6 +16,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   // un ruido en (x, z) con radio r: los zombis que lo oyen van hacia allí (quien = 'jugador' | 'alarma' | 'zombi')
   Z.haceRuido = function (AJ, e, x, z, r, quien, dura) {
+    if (quien === 'jugador') r = Z.ruidoEstacion(AJ, e, r);   // con lluvia se te oye menos
     e.ruidos.push({ x, z, r, quien, t: dura || AJ.ruido.dura, max: dura || AJ.ruido.dura });
     const p = Z.parcheDe(AJ, e), oido = (p && p.oido) || 1;
     for (const zb of e.zombis) {
@@ -28,7 +29,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // ¿te ve este zombi? (más lejos de día y si vas de pie)
   function teVe(AJ, e, zb, d, mundo) {
     const J = e.jugador, noche = Z.esNoche(AJ, e.min) ? AJ.mundo.vistaNoche : 1;
-    const vista = zb.T.vista * noche * (J.agacha ? 0.55 * Z.menos(AJ, J, 'sigilo', 'vista') : 1) * (J.duerme ? 0.4 : 1);
+    const vista = zb.T.vista * noche * Z.estacion(AJ, e.min).vistaFans * (J.agacha ? 0.55 * Z.menos(AJ, J, 'sigilo', 'vista') : 1) * (J.duerme ? 0.4 : 1);
     return d < vista && mundo.seVe(zb.x, zb.z, J.x, J.z);
   }
   // decide el estado y hacia dónde va
@@ -62,6 +63,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
       if (zb.descansa > 0) { zb.descansa -= dt; v = 0; } else if ((zb.tSprint += dt) > T.sprint) { zb.tSprint = 0; zb.descansa = T.descanso; }
     }
     if (p && p.velNoche && Z.esNoche(AJ, e.min)) v *= p.velNoche;
+    v *= Z.estacion(AJ, e.min).velFans;
     if (p && p.lag && Math.sin(e.min * 0.7 + zb.id) > 0.6) v = 0;
     return v;
   }

@@ -25,9 +25,9 @@ function pintaNecesidades(AJ, J) {
     barraHud('SUEÑO', J.sueno, '#c99bff', J.sueno < bajo ? 'Te cuesta seguir despierto (pulsa Z)' : '') + '<div class="estados">' + estados.join('') + '</div>';
 }
 function pintaReloj(AJ, e) {
-  const noche = ZOM.esNoche(AJ, e.min), h = ZOM.horaDe(e.min), falta = AJ.reloj.anochece - h;
+  const noche = ZOM.esNoche(AJ, e.min), h = ZOM.horaDe(e.min), falta = ZOM.anochece(AJ, e.min) - h;
   const nota = !noche && falta < 120 ? trf('Anochece en %1 min', Math.ceil(falta)) : noche ? tr('NOCHE: te ven menos, pero no ves nada') : '';
-  el('h-reloj').innerHTML = '<span class="lab">' + esc(trf('DÍA %1', ZOM.diaDe(e.min))) + (e.sinLuz ? ' · ' + esc(tr('SIN LUZ')) : '') + '</span>' + (e.planta ? '<span class="lab planta">' + esc(textoPlanta(AJ, e.planta)) + '</span>' : '') + '<b>' + ZOM.textoHora(e.min) + '</b><span class="zb-noche">' + esc(nota) + '</span>';
+  el('h-reloj').innerHTML = '<span class="lab">' + esc(trf('DÍA %1', ZOM.diaDe(e.min))) + ' · ' + esc(tr(ZOM.estacion(AJ, e.min).n)) + (e.sinLuz ? ' · ' + esc(tr('SIN LUZ')) : '') + '</span>' + (e.planta ? '<span class="lab planta">' + esc(textoPlanta(AJ, e.planta)) + '</span>' : '') + '<b>' + ZOM.textoHora(e.min) + '</b><span class="zb-noche">' + esc(nota) + '</span>';
 }
 function pintaRuido(AJ, e) {
   const J = e.jugador, mio = e.ruidos.filter((r) => r.quien === 'jugador').reduce((m, r) => Math.max(m, r.r * r.t / r.max), 0);

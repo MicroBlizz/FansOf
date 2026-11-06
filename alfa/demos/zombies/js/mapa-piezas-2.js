@@ -41,6 +41,7 @@ function arbolPelado(o, x, z, s, azar) {
   o.cil(0.08 * s, 0.14 * s, 3 * s, 4, 0x3a3430, x, 1.5 * s, z);
   for (let i = 0; i < 4; i++) o.cil(0.03 * s, 0.05 * s, 1.4 * s, 3, 0x3a3430, x, (1.8 + i * 0.35) * s, z, azar() - 0.5, 0, (i % 2 ? 1 : -1) * (0.6 + azar() * 0.4));
   solido(x - 0.2, z - 0.2, x + 0.2, z + 0.2, 3, 'poste');
+  MAPA.arboles.push({ x, z, s });   // Zombies: para ponerle copa según la estación (js/estaciones-vista.js)
 }
 function escombro(o, x, z, s, azar) { o.caja(s, s * 0.5, s, azar() < 0.5 ? 0x8a847a : 0x6e6a64, x, s * 0.25, z, azar() * 3); if (s > 0.9) solido(x - s / 2.4, z - s / 2.4, x + s / 2.4, z + s / 2.4, s * 0.5, 'bajo'); }
 function maritimo(o0, x, z, color, giro, alto = 0, conBotin = false) {

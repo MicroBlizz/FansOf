@@ -21,7 +21,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (R.t > 0) return;
     J.registra = null; e.registrados[R.sitio] = true; e.stats.registros++;
     const extra = (J.A.botinExtra || 0) + (R.sitio.startsWith('cuerpo-') ? 2 : 0);
-    e.contenidos[R.sitio] = Z.botinDe(AJ, AJ.botin.maximo + extra, azar, R.tipo, e.sinLuz);
+    e.contenidos[R.sitio] = Z.botinDe(AJ, AJ.botin.maximo + extra, azar, Z.tipoBotin(AJ, e, R.tipo), Z.carnePodrida(AJ, e, azar));   // el huerto y la carne, según la estación
     e.abierto = R.sitio; e.tipoAbierto = R.tipo;
     e.eventos.push({ tipo: 'abre', sitio: R.sitio, nuevo: true, cosas: e.contenidos[R.sitio].map((c) => c.id) });
     if (Z.buscaLlave) Z.buscaLlave(AJ, e, R.sitio, R.tipo, azar);   // las llaves de los coches (js/coches.js)

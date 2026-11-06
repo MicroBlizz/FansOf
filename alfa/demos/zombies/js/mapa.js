@@ -8,7 +8,7 @@
 function construyeMapa() {
   texturasMapa();
   const az = semilla(20261014), o = new Obra(), e = MOTOR.escena;
-  MAPA.solidos = []; MAPA.rejilla = new Map(); MAPA.contenedores = []; MAPA.fuegos = [];
+  MAPA.solidos = []; MAPA.arboles = []; MAPA.rejilla = new Map(); MAPA.contenedores = []; MAPA.fuegos = [];
   // ---- el suelo: nieve, carretera, explanadas pisadas ----
   const nieveTx = textura(32, 32, g => { g.fillStyle = '#cdd6e0'; g.fillRect(0, 0, 32, 32); const r = semilla(5); for (let i = 0; i < 120; i++) { g.fillStyle = ['#bcc6d2', '#dde4ec', '#b0bac6', '#a4aeb8'][i % 4]; g.fillRect(r() * 32 | 0, r() * 32 | 0, 1 + (r() * 2 | 0), 1); } });
     nieveTx.repeat.set(150, 150);

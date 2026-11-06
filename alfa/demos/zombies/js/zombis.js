@@ -76,6 +76,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
       if (zb.aturdido > 0) { zb.aturdido -= dt; if (zb.aturdido <= 0) zb.derribado = false; continue; }   // aturdido o en el suelo: ni anda ni muerde
       if ((zb.tPensar -= dt) <= 0) { zb.tPensar = 0.25 + azar() * 0.15; piensa(AJ, e, zb, d, mundo, azar); }
       if (zb.estado === 'persigue') zb.obj = { x: J.x, z: J.z };
+      if (zb.hueco && zb.estado !== 'vaga') { if (Z.pasoHuecoZombi(AJ, e, zb, dt, mundo)) continue; const p = zb.hueco && mundo.posHueco(zb.hueco); if (p) zb.obj = { x: p.x, z: p.z }; }
+      Z.pasoCruce(zb, dt);
       if (d < AJ.ia.alcanceMordisco + zb.T.radio && zb.estado === 'persigue') { muerde(AJ, e, zb, azar); continue; }
       mueveZombi(AJ, e, zb, rej, velDe(AJ, e, zb, dt) * dt, mundo);
     }
@@ -83,7 +85,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   function mueveZombi(AJ, e, zb, rej, paso, mundo) {
     if (!zb.obj || paso <= 0) return;
     const dx = zb.obj.x - zb.x, dz = zb.obj.z - zb.z, d = Math.hypot(dx, dz);
-    if (d < 0.3) { if (zb.estado === 'oye') zb.olvida = 0; return; }
+    if (d < 0.3) { if (zb.estado === 'oye' && !zb.hueco && !zb.cruza) zb.olvida = 0; return; }
     let mx = dx / d, mz = dz / d;
     for (const o of Z.vecinos(rej, zb.x, zb.z)) {             // no se apilan: se apartan un poco de los de al lado
       const od = Z.dist(zb.x, zb.z, o.x, o.z);
@@ -91,7 +93,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     }
     const m = Math.hypot(mx, mz) || 1;
     zb.a = Math.atan2(mx, mz);
-    mundo.mueve(zb, mx / m * paso, mz / m * paso, zb.T.radio);
+    const choca = mundo.mueve(zb, mx / m * paso, mz / m * paso, zb.T.radio);
+    if (choca && zb.estado !== 'vaga' && !zb.hueco && !zb.cruza) Z.buscaHueco(AJ, e, zb, mundo);   // una pared por medio: a por la puerta o ventana más cercana
   }
   function muerde(AJ, e, zb, azar) {
     zb.a = Math.atan2(e.jugador.x - zb.x, e.jugador.z - zb.z);

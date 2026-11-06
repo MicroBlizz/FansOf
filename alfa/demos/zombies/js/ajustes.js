@@ -4,13 +4,16 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.2.0',
+  version: '0.3.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
   jugador: { vida: 100, radio: 0.5, vel: 4.2, corre: 6.6, agacha: 2.2, pasoHuella: 0.9, huellas: 60, vidaHuella: 240 },
   // radio del ruido (en metros) de cada cosa que haces
-  ruido: { andar: 4, correr: 10, abrirLata: 5, registrar: 4, golpe: 3, escopeta: 30, grito: 18, alarma: 34, dura: 1.2, duraAlarma: 25 },
+  ruido: { andar: 4, correr: 10, abrirLata: 5, registrar: 4, golpe: 3, escopeta: 30, grito: 18, alarma: 34, puerta: 2, martillo: 12, dura: 1.2, duraAlarma: 25 },
+  // puertas y ventanas: su vida, el ruido al romperse; las barricadas (hasta 3 tablas, cada una con su vida, 2 clavos y 2 s);
+  // busca = metros a los que un fan que choca encuentra un hueco; alcance y cadencia de sus golpes al hueco
+  huecos: { puerta: { vida: 120, ruidoRotura: 14 }, ventana: { vida: 12, ruidoRotura: 16 }, barricada: { max: 3, vidaTabla: 60, clavos: 2, tiempo: 2 }, busca: 7, alcance: 1.5, cadencia: 1.0 },
   // aguante (sobre 100): lo que cuesta cada cosa y lo que se recupera por segundo; a 0 estás agotado hasta llegar a «salir»
   aguante: { max: 100, correr: 16, recupera: 8, salir: 30, agotado: { dano: 0.6, cadencia: 1.6 } },
   // retroceso = metros que sale despedido el zombi; aturde = segundos sin moverse ni morder
@@ -30,11 +33,14 @@ ZOM.AJ = Object.freeze({
     refresco: { n: 'REFRESCO', forma: ['X'], usa: { sed: 20, sueno: 10 } },
     venda: { n: 'VENDA', forma: ['X'], max: 3, usa: { vida: 25, infeccion: -10 } },
     cartuchos: { n: 'CARTUCHOS', forma: ['X'], max: 12 },
+    tablas: { n: 'TABLAS', forma: ['XXX'], max: 3 },
+    clavos: { n: 'CLAVOS', forma: ['X'], max: 20 },
+    martillo: { n: 'MARTILLO', forma: ['XX', 'X.'] },
   },
   // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo
-  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, nada: 3 }, maximo: 3, cartuchos: 4, tiempo: 1.4 },
-  mochila: { w: 5, h: 4 },
-  mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6]],
+  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, tiempo: 1.4 },
+  mochila: { w: 6, h: 4 },
+  mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6], ['martillo', 1], ['tablas', 2], ['clavos', 6]],
   // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)
   animales: {
     bunny: { n: 'CrazyBunny', ventaja: 'Orejas de radar', vida: 120, oye: 22 },
@@ -50,7 +56,7 @@ ZOM.AJ = Object.freeze({
     speedrunner: { vida: 45, vel: 1.6, persigue: 5.4, oido: 1.2, vista: 10, dano: 10, radio: 0.4, sprint: 3.5, descanso: 2.5 },
     ballena: { vida: 260, vel: 0.8, persigue: 1.6, oido: 0.8, vista: 8, dano: 22, radio: 0.85, botin: 3, pesado: true },
     bot: { vida: 60, vel: 1.3, persigue: 2.4, oido: 0.7, vista: 8, dano: 12, radio: 0.45, ruta: true },
-    troll: { vida: 120, vel: 1.1, persigue: 2.2, oido: 1, vista: 9, dano: 20, radio: 0.6 },
+    troll: { vida: 120, vel: 1.1, persigue: 2.2, oido: 1, vista: 9, dano: 20, radio: 0.6, rompe: 3 },
   },
   // cómo de a menudo sale cada tipo al poblar el distrito (pesos)
   reparto: { fan: 10, streamer: 2, speedrunner: 2, ballena: 1, bot: 2, troll: 1 },

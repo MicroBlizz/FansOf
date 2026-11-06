@@ -36,6 +36,13 @@ IDIOMA.add({
   'Arrastra para mover · rueda o R para girar · clic derecho para usar · fuera de la rejilla para dejar.': 'Drag to move · wheel or R to rotate · right click to use · drop outside the grid to leave it.',
   'No cabe en la mochila.': 'It does not fit in the backpack.', 'Eso ya no está.': 'That is not there anymore.', 'No llevas esa arma en la mochila.': 'That weapon is not in your backpack.',
   'CHOCOLATINA': 'CHOCOLATE BAR', 'REFRESCO': 'SODA', 'VENDA': 'BANDAGE', 'COMER': 'EAT', 'BEBER': 'DRINK', 'abrir y cerrar la mochila': 'open and close the backpack',
+  // las casas
+  'TABLAS': 'PLANKS', 'CLAVOS': 'NAILS', 'MARTILLO': 'HAMMER', 'F  ABRIR': 'F  OPEN', 'F  CERRAR': 'F  CLOSE', 'B  TABLAS (%1/3)': 'B  PLANKS (%1/3)', 'TAPADA (3/3)': 'BOARDED UP (3/3)',
+  'Tabla clavada (%1/3).': 'Plank nailed (%1/3).', '¡Han roto una ventana!': 'A window has been smashed!', '¡Han tirado una puerta!': 'A door has been knocked down!',
+  'Necesitas un martillo.': 'You need a hammer.', 'Necesitas tablas y 2 clavos.': 'You need planks and 2 nails.', 'Ya tiene 3 tablas.': 'It already has 3 planks.',
+  'Esa puerta ya no existe.': 'That door is gone.', 'Tiene tablas clavadas.': 'It has planks nailed on.', 'registrar / puerta': 'search / door', 'tablas': 'planks', 'mochila': 'backpack',
+  'registrar o abrir y cerrar puertas': 'search or open and close doors', 'clavar tablas (martillo, tablas y 2 clavos)': 'nail planks (hammer, planks and 2 nails)',
+  'Día 1. Estás en tu casa del barrio. Busca comida y agua antes de que anochezca y clava tablas en las ventanas (B).': 'Day 1. You are in your house in the neighbourhood. Find food and water before nightfall and nail planks over the windows (B).',
   'JUDÍAS': 'BEANS', 'AGUA': 'WATER', 'VENDAS': 'BANDAGES', 'CARTUCHOS': 'SHELLS', 'ESCOPETA': 'SHOTGUN', 'PALANCA': 'CROWBAR',
   'DISPARAR = MUCHO RUIDO': 'SHOOTING = LOTS OF NOISE', 'GOLPEAR = POCO RUIDO': 'HITTING = LITTLE NOISE', 'F  REGISTRAR': 'F  SEARCH', 
   'PARCHE 1.0.%1 DE MICROBLIZZ': 'MICROBLIZZ PATCH 1.0.%1', '«Lo sentimos (no)». — El equipo de Comunidad': '“We are sorry (not)”. — The Community team',
@@ -59,7 +66,7 @@ IDIOMA.add({
   // la pausa
   'PAUSA': 'PAUSE', 'SEGUIR': 'CONTINUE', 'RENDIRSE': 'GIVE UP', 'WASD / flechas': 'WASD / arrows', 'Mayús': 'Shift', 'correr (mucho ruido)': 'run (lots of noise)',
   'agacharse (sin ruido)': 'crouch (no noise)', 'Clic / espacio': 'Click / space', 'atacar hacia el ratón': 'attack towards the mouse', 'escopeta / palanca': 'shotgun / crowbar',
-  'registrar': 'search', 'comer / beber / vendarte': 'eat / drink / bandage', 'dormir (sin fans cerca)': 'sleep (no fans nearby)',
+  'comer / beber / vendarte': 'eat / drink / bandage', 'dormir (sin fans cerca)': 'sleep (no fans nearby)',
   'Todo hace ruido y el ruido los atrae: los anillos te dicen hasta dónde llega. Las huellas en la nieve también te delatan.': 'Everything makes noise and noise draws them in: the rings show how far it carries. Your footprints in the snow give you away too.',
   // la muerte
   'NO CRUZAR · ZONA INFECTADA · NO CRUZAR · ZONA INFECTADA': 'DO NOT CROSS · INFECTED ZONE · DO NOT CROSS · INFECTED ZONE', 'SE BUSCA': 'WANTED',

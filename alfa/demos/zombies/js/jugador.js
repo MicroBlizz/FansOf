@@ -31,7 +31,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   }
   function anda(AJ, e, dt, ent, m, mundo) {
     const J = e.jugador, P = AJ.jugador;
-    if (J.registra) J.registra = null;                            // moverte corta el registro
+    if (J.registra) J.registra = null;                            // moverte corta el registro (y clavar tablas)
+    if (J.clava) J.clava = null;
     const vel = (J.corre ? P.corre : J.agacha ? P.agacha : P.vel) * (J.A.vel || 1) * (J.sueno <= 0 ? 0.7 : 1);
     const x0 = J.x, z0 = J.z;
     mundo.mueve(J, ent.mx / m * vel * dt, ent.mz / m * vel * dt, P.radio);

@@ -8,11 +8,16 @@ const azarJuego = Math.random;
 const MUNDO = {
   mueve: (o, dx, dz, r) => mueve(o, dx, dz, r),
   seVe: (x0, z0, x1, z1) => seVe(x0, z0, x1, z1),
-  aparicion: (azar) => libreAlcanzable(-72 + azar() * 144, -52 + azar() * 104, 0.6),
+  aparicion: (azar) => libreAlcanzable(-200 + azar() * 272, -52 + azar() * 104, 0.6),
+  huecos: () => BARRIO.huecos.map((h) => ({ id: h.id, tipo: h.tipo })),
+  huecoCerca: (x, z, r) => { const h = huecoCercaDe(x, z, r); return h && { id: h.id, x: h.x, z: h.z }; },
+  posHueco: (id) => BARRIO.porId[id] || null,
   alarma: (azar) => { const c = MAPA.contenedores.filter((k) => k.tipo === 'coche'); return c.length ? c[Math.floor(azar() * c.length)] : null; },
 };
 // lo que se puede registrar: los contenedores del mapa (menos la verja del despacho) y los cuerpos que deja la ballena
 function sitiosRegistrables(e) { return JUEGO.sitios.concat(e.cuerpos); }
+// la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
+function huecoDelJugador(e) { const J = e.jugador; return huecoCercaDe(J.x, J.z, 1.6); }
 function sitioCerca(e) {
   const J = e.jugador; let mejor = null, dMin = 1.9;
   for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && (!e.registrados[s.id] || (e.contenidos[s.id] || []).length)) { dMin = d; mejor = s; } }
@@ -27,12 +32,12 @@ function arranca() {
   requestAnimationFrame(fotograma);
 }
 function empiezaPartida() {
-  const p = libreAlcanzable(-24, 33, 0.6);
+  const p = BARRIO.inicio ? libreCerca(BARRIO.inicio.x, BARRIO.inicio.z, 0.6) : libreAlcanzable(-24, 33, 0.6);   // en la casa de partida
   calculaAlcance(p.x, p.z);
   const r = ZOM.nuevaPartida(ZOM.AJ, { animal: SAVE.animal, dificultad: SAVE.dificultad, x: p.x, z: p.z, azar: azarJuego, mundo: MUNDO });
   if (!r.ok) { avisa(tr('No se ha podido empezar la partida.'), 'malo'); return; }
   juega(r.valor);
-  avisa(tr('Día 1. Busca comida y agua antes de que anochezca. Los fans oyen todo.'), 'bien');
+  avisa(tr('Día 1. Estás en tu casa del barrio. Busca comida y agua antes de que anochezca y clava tablas en las ventanas (B).'), 'bien');
   guardaMundo(r.valor);
 }
 // seguir la partida guardada (si se puede cargar; si no, se avisa y se borra)
@@ -40,6 +45,7 @@ function continuaPartida() {
   const r = ZOM.restaura(ZOM.AJ, leeMundo());
   if (!r.ok) { borraMundo(); abreMenu(); return; }
   calculaAlcance(r.valor.jugador.x, r.valor.jugador.z);
+  ZOM.preparaHuecos(ZOM.AJ, r.valor, MUNDO.huecos());
   juega(r.valor);
   avisa(trf('Sigues en el día %1. Bienvenido de vuelta.', ZOM.diaDe(r.valor.min)), 'bien');
 }
@@ -52,7 +58,7 @@ function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuard
 function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
 addEventListener('pagehide', guardaAhora);
 document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
-function terminaPartida() { cierraMochila(); limpiaVista(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
+function terminaPartida() { cierraMochila(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
 
 function fotograma(ms) {
   requestAnimationFrame(fotograma);
@@ -76,15 +82,15 @@ function avanzaJuego(dt) {
   if (pidePausa() && !e.muerto) { if (VM.abierta) cierraMochila(); else if (JUEGO.pausa) cierraPausa(); else abrePausa(); }
   if (!JUEGO.pausa && !e.muerto) vigilaMochila(e, cerca);
   if (!JUEGO.pausa && !e.muerto) {
-    const ent = leeEntrada(e.jugador, cerca);
+    const hueco = huecoDelJugador(e), ent = leeEntrada(e.jugador, cerca, hueco);
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));
     ZOM.paso(AJ, e, dt, ent, MUNDO, azarJuego);
     leeEventos(e);
     guardaSiToca(dt);
   }
-  pintaMundo(AJ, e, JUEGO.pausa ? 0 : dt);
-  if ((JUEGO.tHud -= dt) <= 0) { JUEGO.tHud = 0.15; pintaHud(AJ, e, cerca, 0.15); }
-  else pintaAccion(e, cerca);
+  pintaMundo(AJ, e, JUEGO.pausa ? 0 : dt); pintaBarrio(e);
+  if ((JUEGO.tHud -= dt) <= 0) { JUEGO.tHud = 0.15; pintaHud(AJ, e, cerca, 0.15, huecoDelJugador(e)); }
+  else pintaAccion(e, cerca, huecoDelJugador(e));
   if (e.muerto && JUEGO.pantalla === 'juego') { const m = e.muerto; borraMundo(); setTimeout(() => abreMuerte(m), 1200); JUEGO.pantalla = 'cayendo'; }
 }
 arranca();

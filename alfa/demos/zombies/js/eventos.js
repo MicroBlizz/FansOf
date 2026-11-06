@@ -3,7 +3,7 @@
 'use strict';
 const NO_PUEDES = {
   sinSueno: 'No tienes sueño todavía.', hayZombis: 'Con fans tan cerca no hay quien duerma.', noTienes: 'No te queda de eso.',
-  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.',
+  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.',
 };
 const EVENTOS = {
   parche: (v) => { HUD.parche = v; HUD.tParche = 12; play('alerta'); },
@@ -28,6 +28,11 @@ const EVENTOS = {
   despierta: (v) => avisa(tr(v.susto ? '¡Te despiertas de golpe! Hay fans cerca.' : 'Te despiertas descansado.'), v.susto ? 'malo' : 'bien'),
   noPuedes: (v) => avisa(tr(NO_PUEDES[v.codigo] || 'No puedes hacer eso ahora.')),
   muerte: () => play('dolor'),
+  puerta: () => play('puerta'),
+  tabla: (v) => { play('fabrica'); avisa(trf('Tabla clavada (%1/3).', v.tablas), 'bien'); },
+  tablaRota: () => play('metal'),
+  huecoRoto: (v) => { play(v.hueco === 'ventana' ? 'metal' : 'puerta'); avisa(tr(v.hueco === 'ventana' ? '¡Han roto una ventana!' : '¡Han tirado una puerta!'), 'malo'); },
+  golpeHueco: () => play('impacto'),
 };
 function leeEventos(e) {
   for (const v of e.eventos) { const f = EVENTOS[v.tipo]; if (f) f(v); }

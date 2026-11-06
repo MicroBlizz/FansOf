@@ -11,8 +11,8 @@ function construyeMapa() {
   MAPA.solidos = []; MAPA.rejilla = new Map(); MAPA.contenedores = []; MAPA.fuegos = [];
   // ---- el suelo: nieve, carretera, explanadas pisadas ----
   const nieveTx = textura(32, 32, g => { g.fillStyle = '#cdd6e0'; g.fillRect(0, 0, 32, 32); const r = semilla(5); for (let i = 0; i < 120; i++) { g.fillStyle = ['#bcc6d2', '#dde4ec', '#b0bac6', '#a4aeb8'][i % 4]; g.fillRect(r() * 32 | 0, r() * 32 | 0, 1 + (r() * 2 | 0), 1); } });
-  nieveTx.repeat.set(85, 45);
-  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(340, 180), new THREE.MeshLambertMaterial({ map: nieveTx })); suelo.rotation.x = -Math.PI / 2; suelo.receiveShadow = true; e.add(suelo);
+  nieveTx.repeat.set(115, 45);
+  const suelo = new THREE.Mesh(new THREE.PlaneGeometry(460, 180), new THREE.MeshLambertMaterial({ map: nieveTx })); suelo.rotation.x = -Math.PI / 2; suelo.position.x = -60; suelo.receiveShadow = true; e.add(suelo);   // más ancho hacia el oeste: el barrio (js/barrio.js)
   const barroTx = textura(32, 16, g => { g.fillStyle = '#6a6460'; g.fillRect(0, 0, 32, 16); const r = semilla(9); for (let i = 0; i < 70; i++) { g.fillStyle = ['#57524f', '#7c7672', '#8e8a88', '#c8ccd2'][i % 4]; g.fillRect(r() * 32 | 0, r() * 16 | 0, 2, 1); } g.fillStyle = '#4a4542'; g.fillRect(0, 4, 32, 1); g.fillRect(0, 11, 32, 1); });
   const sucioTx = textura(32, 32, g => { g.fillStyle = '#9a968e'; g.fillRect(0, 0, 32, 32); const r = semilla(13); for (let i = 0; i < 110; i++) { g.fillStyle = ['#8a867e', '#b4b4b0', '#c8ced6', '#7a766e'][i % 4]; g.fillRect(r() * 32 | 0, r() * 32 | 0, 2, 1); } g.fillStyle = '#7e7a72'; g.fillRect(0, 0, 32, 1); g.fillRect(0, 0, 1, 32); });
   const suelos = new Obra();
@@ -35,9 +35,10 @@ function construyeMapa() {
   // montones de nieve bajos y redondeados, con trozos de muro y vallas caídas asomando
   const monton = (x, z) => { const s = 3 + az() * 3, r = (az() - 0.5) * 0.5; o.caja(s * 1.5, 1.0 + az() * 0.6, s * 1.2, 0xd6dee8, x, 0.5, z, r); o.caja(s * 0.9, 0.8, s * 0.7, 0xe6ecf2, x + (az() - 0.5), 1.3, z + (az() - 0.5), r);
     if (az() < 0.25) o.caja(0.4, 1.4 + az(), 2 + az() * 2, 0x7a766e, x + (az() - 0.5) * 2, 0.9, z, az() * 3); };
-  for (let x = -84; x <= 84; x += 3.5) for (const z of [-62.5, 62.5]) monton(x, z + (az() - 0.5) * 2);
-  for (let z = -60; z <= 60; z += 3.5) for (const x of [-82.5, 82.5]) { if (x > 0 && Math.abs(z - 8) < 6) continue; monton(x + (az() - 0.5) * 2, z); }
-  solido(-90, -70, 90, -60.5, 4, 'muro'); solido(-90, 60.5, 90, 70, 4, 'muro'); solido(-90, -70, -80.5, 70, 4, 'muro'); solido(80.5, -70, 90, 70, 4, 'muro');
+  // (Zombies: sin el borde del oeste de Ratkov; el mapa sigue hasta x = -206 con el barrio residencial)
+  for (let x = -206; x <= 84; x += 3.5) for (const z of [-62.5, 62.5]) monton(x, z + (az() - 0.5) * 2);
+  for (let z = -60; z <= 60; z += 3.5) for (const x of [-208.5, 82.5]) { if (x > 0 && Math.abs(z - 8) < 6) continue; monton(x + (az() - 0.5) * 2, z); }
+  solido(-216, -70, 90, -60.5, 4, 'muro'); solido(-216, 60.5, 90, 70, 4, 'muro'); solido(-216, -70, -206.5, 70, 4, 'muro'); solido(80.5, -70, 90, 70, 4, 'muro');
   for (let i = 0; i < 26; i++) arbolPelado(o, -78 + az() * 156, (az() < 0.5 ? -57 : 57) + (az() - 0.5) * 3, 1 + az() * 0.4, az);
 
   // ---- el norte: bloques, la torre, el despacho ----
@@ -98,6 +99,7 @@ function construyeMapa() {
   // escombros sueltos por todas partes (no encima de los caminos)
   for (let i = 0; i < 70; i++) { const x = -76 + az() * 152, z = -56 + az() * 112; if (Math.abs(z - 8) < 5 || (Math.abs(x) < 20 && z > -30 && z < 0)) continue; escombro(o, x, z, 0.3 + az() * 1.0, az); }
 
+  construyeBarrio(o, semilla(20261106));   // el barrio residencial con casas en las que se entra
   MAPA.grupo = o.hecha(); e.add(MAPA.grupo);
   creaFuegos();
   MAPA.verja = verja;
@@ -165,7 +167,7 @@ function calculaAlcance(x0, z0) {
     const [i, j] = cola.pop();
     for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const ni = i + a, nj = j + b, kk = k(ni, nj);
-      if (ok.has(kk) || Math.abs(ni) > 92 || Math.abs(nj) > 92 || choca(ni, nj, 0.45)) continue;
+      if (ok.has(kk) || ni < -210 || ni > 92 || Math.abs(nj) > 92 || choca(ni, nj, 0.45)) continue;
       ok.add(kk); cola.push([ni, nj]);
     }
   }

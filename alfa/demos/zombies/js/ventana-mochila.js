@@ -3,7 +3,7 @@
 // clic en lo del sitio para cogerlo, clic derecho en lo tuyo para usarlo. Tab la abre y la cierra; el mundo sigue mientras miras.
 'use strict';
 const VM = { abierta: false, arrastra: null, celda: 44 };
-const COLOR_OBJ = { escopeta: '#4a3a2c', palanca: '#5a2a2a', judias: '#4a4430', chocolatina: '#4a3020', agua: '#24405a', refresco: '#5a2430', venda: '#4a4a52', cartuchos: '#5a2a1a' };
+const COLOR_OBJ = { escopeta: '#4a3a2c', palanca: '#5a2a2a', judias: '#4a4430', chocolatina: '#4a3020', agua: '#24405a', refresco: '#5a2430', venda: '#4a4a52', cartuchos: '#5a2a1a', tablas: '#4a3a24', clavos: '#3a3e46', martillo: '#3a3430' };
 
 // el dibujo de una cosa dentro de su caja (w x h casillas): formas sencillas en píxel
 function dibujaObjeto(g, id, W, H) {
@@ -16,6 +16,9 @@ function dibujaObjeto(g, id, W, H) {
     agua: () => { P('#9ad8ff', 0.3, 0.14, 0.4, 0.78); P('#2a6ad0', 0.38, 0.06, 0.24, 0.1); P('#ffffff', 0.34, 0.4, 0.32, 0.12); },
     refresco: () => { P('#d8283a', 0.3, 0.2, 0.4, 0.62); P('#c8c8c0', 0.3, 0.16, 0.4, 0.06); P('#ffffff', 0.36, 0.42, 0.28, 0.1); },
     venda: () => { P('#f4f0e8', 0.2, 0.28, 0.6, 0.44); P('#d8d0c0', 0.2, 0.28, 0.12, 0.44); P('#e0303a', 0.5, 0.42, 0.14, 0.16); },
+    tablas: () => { P('#b07a40', 0.04, 0.2, 0.92, 0.26); P('#9a6a34', 0.04, 0.54, 0.92, 0.26); P('#6a4a2a', 0.2, 0.2, 0.03, 0.6); P('#6a4a2a', 0.75, 0.2, 0.03, 0.6); },
+    clavos: () => { for (const x of [0.25, 0.45, 0.65]) { P('#c8ccd4', x, 0.25, 0.08, 0.5); P('#e8ecf0', x - 0.05, 0.22, 0.18, 0.07); } },
+    martillo: () => { P('#7a5a3a', 0.2, 0.3, 0.12, 0.62); P('#8a8e96', 0.08, 0.16, 0.6, 0.2); P('#5c6670', 0.08, 0.16, 0.6, 0.05); },
     cartuchos: () => { P('#c8282e', 0.18, 0.25, 0.22, 0.5); P('#c8282e', 0.48, 0.25, 0.22, 0.5); P('#e8b840', 0.18, 0.62, 0.22, 0.13); P('#e8b840', 0.48, 0.62, 0.22, 0.13); },
   };
   (D[id] || (() => P('#888', 0.3, 0.3, 0.4, 0.4)))();

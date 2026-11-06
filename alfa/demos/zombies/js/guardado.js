@@ -16,6 +16,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!dif || !A || e.zombis.some((z) => !AJ.zombis[z.tipo])) return Z.error('partidaRota');
     e.dif = dif; e.jugador.A = A; e.eventos = [];
     for (const z of e.zombis) z.T = AJ.zombis[z.tipo];
+    e.huecos = e.huecos || {};   // las partidas de antes de las casas: los huecos se añaden al cargar (Z.preparaHuecos)
     return Z.ok(e);
   };
 })(ZOM);

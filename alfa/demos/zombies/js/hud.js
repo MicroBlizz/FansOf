@@ -7,7 +7,7 @@ function montaHud() {
     '<div class="panel zb-ruido" id="h-ruido"></div><div class="zb-parche" id="h-parche" hidden></div><div class="zb-radio" id="h-radio" hidden></div>' +
     '<div class="zb-hotbar" id="h-mochila"></div><div class="panel zb-arma" id="h-arma"></div><div class="zb-ayuda" id="h-ayuda"></div>' +
     '<b class="zb-et accion" id="h-accion" hidden></b><div class="zb-registro" id="h-registro" hidden><i></i></div>';
-  el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['CLIC DCHO / R', 'empujar'], ['1 2', 'arma'], ['Z', 'dormir'], ['ESC', 'pausa']]
+  el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['CLIC DCHO / R', 'empujar'], ['1 2', 'arma'], ['Z', 'dormir'], ['F', 'registrar / puerta'], ['B', 'tablas'], ['TAB', 'mochila'], ['ESC', 'pausa']]
     .map(([k, t]) => '<span><b>' + esc(tr(k)) + '</b>' + esc(tr(t)) + '</span>').join('');
   HUD.avisos.length = 0; HUD.parche = null;
 }
@@ -46,11 +46,13 @@ function pintaHotbar(AJ, J) {
     esc(tr(W.municion ? 'DISPARAR = MUCHO RUIDO' : 'GOLPEAR = POCO RUIDO')) + '</span>';
 }
 // la etiqueta encima del sitio que puedes registrar, y la barra mientras registras
-function pintaAccion(e, cerca) {
-  const a = el('h-accion'), J = e.jugador, r = el('h-registro');
-  a.hidden = !cerca || !!J.registra;
+function pintaAccion(e, cerca, hueco) {
+  const a = el('h-accion'), J = e.jugador, r = el('h-registro'), H = !cerca && hueco && e.huecos[hueco.id];
+  a.hidden = (!cerca && !H) || !!J.registra || !!J.clava;
+  if (H && !J.registra && !J.clava) { const p = sueloAPantalla(hueco.x, 2.4, hueco.z); a.textContent = textoHueco(hueco, H, J); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
   if (cerca && !J.registra) { const p = sueloAPantalla(cerca.x, 1.6, cerca.z); a.textContent = tr('F  REGISTRAR'); a.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; }
-  r.hidden = !J.registra;
+  r.hidden = !J.registra && !J.clava;
+  if (J.clava) { const p = sueloAPantalla(J.x, 2.8, J.z); r.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; r.firstChild.style.width = (100 - J.clava.t / ZOM.AJ.huecos.barricada.tiempo * 100) + '%'; }
   if (J.registra) { const p = sueloAPantalla(J.x, 2.8, J.z), tot = ZOM.AJ.botin.tiempo * (J.A.registra || 1); r.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px) translate(-50%,-100%)'; r.firstChild.style.width = (100 - J.registra.t / tot * 100) + '%'; }
 }
 // la radio: los avisos de lo que pasa (se van solos)
@@ -62,7 +64,15 @@ function pintaAvisos(dt) {
   const p = el('h-parche'); HUD.tParche -= dt; p.hidden = !HUD.parche || HUD.tParche <= 0;
   if (HUD.parche && !p.hidden) p.innerHTML = '<b>' + esc(trf('PARCHE 1.0.%1 DE MICROBLIZZ', HUD.parche.dia)) + '</b><span>' + esc(tr(HUD.parche.parche.n)) + ' ' + esc(tr('«Lo sentimos (no)». — El equipo de Comunidad')) + '</span>';
 }
-function pintaHud(AJ, e, cerca, dt) {
+// lo que se puede hacer en la puerta o ventana de al lado
+function textoHueco(hueco, H, J) {
+  const partes = [];
+  if (hueco.tipo === 'puerta' && !H.roto && !H.tablas) partes.push(tr(H.abierta ? 'F  CERRAR' : 'F  ABRIR'));
+  if (H.tablas < ZOM.AJ.huecos.barricada.max) partes.push(trf('B  TABLAS (%1/3)', H.tablas));
+  else partes.push(tr('TAPADA (3/3)'));
+  return partes.join('   ');
+}
+function pintaHud(AJ, e, cerca, dt, hueco) {
   const J = e.jugador;
-  pintaNecesidades(AJ, J); pintaReloj(AJ, e); pintaRuido(AJ, e); pintaHotbar(AJ, J); pintaAccion(e, cerca); pintaAvisos(dt);
+  pintaNecesidades(AJ, J); pintaReloj(AJ, e); pintaRuido(AJ, e); pintaHotbar(AJ, J); pintaAccion(e, cerca, hueco); pintaAvisos(dt);
 }

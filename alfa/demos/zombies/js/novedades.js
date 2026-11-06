@@ -2,6 +2,9 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.3.0', real: ['<b>EL BARRIO RESIDENCIAL</b>: el mapa crece hacia el oeste con calles, farolas, vallas, buzones, coches y unas 25 casas en las que se entra. Al entrar se quita el tejado y ves las habitaciones; empiezas en tu casa.',
+    '<b>PUERTAS, VENTANAS Y BARRICADAS</b>: F abre y cierra puertas; B clava tablas (martillo, tablas y clavos). Los fans buscan la puerta o ventana más cercana y la golpean hasta entrar; el troll rompe el triple.'],
+    joke: ['Microblizz ha puesto el barrio a la venta como «vivienda con experiencia de supervivencia incluida». Las tablas se cobran aparte.'] },
   { v: '0.2.0', real: ['<b>GOLPES QUE SE SIENTEN</b>: la palanca barre con estela, la escopeta retrocede, los fans salen despedidos y aturdidos y la sangre se queda en la nieve. Nuevo <b>EMPUJÓN</b> (clic derecho o R): tumba sin ruido. Y <b>AGUANTE</b>: correr y golpear cansan.',
     '<b>MOCHILA TETRIS</b> (Tab): cada cosa ocupa su forma y gira. Al registrar eliges qué coges; lo que dejas se queda en el sitio o en un montón en el suelo.',
     '<b>SE GUARDA LA PARTIDA</b>: cada minuto, al pausar y al cerrar. En el menú, CONTINUAR. Y ahora todo se ve en <b>HD</b>.'],

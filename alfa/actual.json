@@ -1,8 +1,8 @@
 {
- "build": 1033,
- "hash": "d245dc7",
- "fecha": "2026-11-06T17:56:31Z",
- "mensaje": "Fans of Zombies 0.2.0: se guarda la partida",
+ "build": 1034,
+ "hash": "705436a",
+ "fecha": "2026-11-06T18:12:06Z",
+ "mensaje": "Fans of Zombies 0.3.0: barrio residencial con casas, puertas, ventanas y barricadas",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

@@ -29,7 +29,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
       const c = Z.sortea(AJ.botin.cosas, azar);
       if (c === 'nada') continue;
       const ya = out.find((o) => o.id === c && (AJ.objetos[c].max || 1) > 1);
-      const k = c === 'cartuchos' ? AJ.botin.cartuchos : 1;
+      const k = c === 'cartuchos' ? AJ.botin.cartuchos : c === 'clavos' ? AJ.botin.clavos : 1;
       if (ya) ya.n += k; else out.push({ id: c, n: k });
     }
     return out;

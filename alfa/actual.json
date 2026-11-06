@@ -1,8 +1,8 @@
 {
- "build": 1045,
- "hash": "ab78f31",
- "fecha": "2026-11-06T20:20:42Z",
- "mensaje": "Cola: sin permiso de Variables el panel funciona en solo lectura (oculta los botones que mandan)",
+ "build": 1046,
+ "hash": "2a1e4d8",
+ "fecha": "2026-11-06T20:24:42Z",
+ "mensaje": "Cola: la hoja de estilos sale de cola.js a cola-estilo.js (cola.js bajo 25 KB)",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

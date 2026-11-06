@@ -12,8 +12,27 @@ const MUNDO = {
   huecos: () => BARRIO.huecos.map((h) => ({ id: h.id, tipo: h.tipo })),
   huecoCerca: (x, z, r) => { const h = huecoCercaDe(x, z, r); return h && { id: h.id, x: h.x, z: h.z }; },
   posHueco: (id) => BARRIO.porId[id] || null,
+  flujo: (x, z) => (CAMINOS.flujo ? ZOM.direccionFlujo(CAMINOS.rej, CAMINOS.flujo, x, z) : null),
   alarma: (azar) => { const c = MAPA.contenedores.filter((k) => k.tipo === 'coche'); return c.length ? c[Math.floor(azar() * c.length)] : null; },
 };
+// la rejilla de los caminos (casillas de medio metro): libre, pared o hueco (puerta o ventana), y el campo de flujo hacia ti,
+// que se recalcula unas dos veces por segundo en 32 m alrededor (js/caminos.js)
+const CAMINOS = { rej: null, flujo: null, t: 0 };
+function preparaCaminos() {
+  const celda = 0.5, x0 = -212, z0 = -64, w = Math.ceil((94 - x0) / celda), h = Math.ceil((64 - z0) / celda), tipo = new Uint8Array(w * h);
+  for (const H of BARRIO.huecos) H.sol.abierto = true;           // los huecos cuentan como paso (más caro) al hacer la rejilla
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) tipo[j * w + i] = choca(x0 + (i + 0.5) * celda, z0 + (j + 0.5) * celda, 0.32) ? 0 : 1;
+  for (const H of BARRIO.huecos) {
+    const s = H.sol; H.sol.abierto = false;
+    for (let j = Math.floor((s.z0 - 0.4 - z0) / celda); j <= Math.floor((s.z1 + 0.4 - z0) / celda); j++) for (let i = Math.floor((s.x0 - 0.4 - x0) / celda); i <= Math.floor((s.x1 + 0.4 - x0) / celda); i++) if (tipo[j * w + i]) tipo[j * w + i] = 2;
+  }
+  CAMINOS.rej = { w, h, x0, z0, celda, tipo };
+}
+function avanzaCaminos(e, dt) {
+  if (!CAMINOS.rej || (CAMINOS.t -= dt) > 0) return;
+  CAMINOS.t = 0.4;
+  CAMINOS.flujo = ZOM.campoFlujo(CAMINOS.rej, e.jugador.x, e.jugador.z, 32, 25);
+}
 // lo que se puede registrar: los contenedores del mapa (menos la verja del despacho) y los cuerpos que deja la ballena
 function sitiosRegistrables(e) { return JUEGO.sitios.concat(e.cuerpos); }
 // la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
@@ -26,7 +45,7 @@ function sitioCerca(e) {
 }
 
 function arranca() {
-  iniciaMotor(); construyeMapa(); preparaEntrada(); preparaEfectos();
+  iniciaMotor(); construyeMapa(); preparaEntrada(); preparaEfectos(); preparaCaminos();
   JUEGO.sitios = MAPA.contenedores.filter((c) => c.tipo !== 'verja').map((c, i) => ({ id: 'c' + i, x: c.x, z: c.z, tipo: c.tipo }))
     .concat(MAPA.fuegos.map((f, i) => ({ id: 'f' + i, x: f.x, z: f.z + 0.9, tipo: 'fuego' })));   // los bidones con fuego: para cocinar
   el('carga').hidden = true;
@@ -52,6 +71,7 @@ function continuaPartida() {
   avisa(trf('Sigues en el día %1. Bienvenido de vuelta.', ZOM.diaDe(r.valor.min)), 'bien');
 }
 function juega(e) {
+  CAMINOS.flujo = null; CAMINOS.t = 0;
   JUEGO.e = e; JUEGO.pantalla = 'juego'; JUEGO.pausa = false; JUEGO.tGuardar = 60;
   limpiaVista(); montaJugador(e.jugador); montaHud(); musica('ciber');
 }
@@ -86,6 +106,7 @@ function avanzaJuego(dt) {
   if (!JUEGO.pausa && !e.muerto) {
     const hueco = huecoDelJugador(e), ent = leeEntrada(e.jugador, cerca, hueco);
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));
+    avanzaCaminos(e, dt);
     ZOM.paso(AJ, e, dt, ent, MUNDO, azarJuego);
     leeEventos(e);
     guardaSiToca(dt);

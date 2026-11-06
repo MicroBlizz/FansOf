@@ -2,6 +2,10 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.4.0', real: ['<b>FABRICAR Y COCINAR</b>: vendas con tela; filete y guiso junto a un bidón con fuego o en la cocina de casa mientras haya luz. Cada sitio da lo suyo, la carne cruda sienta mal y, sin luz, la de las neveras se pudre.',
+    '<b>EL GRIFO Y LAS BOTELLAS</b>: bebe y llena botellas en la cocina hasta que corten el agua. Y desmonta armarios y cajas con la palanca o el martillo para sacar tablas y clavos.',
+    '<b>LOS FANS RODEAN</b>: ya no se atascan en vallas y esquinas; buscan el camino hasta ti y prefieren una puerta abierta a romper una ventana.'],
+    joke: ['Microblizz ha añadido el corte de agua «para fomentar la hidratación responsable». Phony vende botellas a precio de DLC.'] },
   { v: '0.3.0', real: ['<b>EL BARRIO RESIDENCIAL</b>: el mapa crece hacia el oeste con calles, farolas, vallas, buzones, coches y unas 25 casas en las que se entra. Al entrar se quita el tejado y ves las habitaciones; empiezas en tu casa.',
     '<b>PUERTAS, VENTANAS Y BARRICADAS</b>: F abre y cierra puertas; B clava tablas (martillo, tablas y clavos). Los fans buscan la puerta o ventana más cercana y la golpean hasta entrar; el troll rompe el triple.'],
     joke: ['Microblizz ha puesto el barrio a la venta como «vivienda con experiencia de supervivencia incluida». Las tablas se cobran aparte.'] },

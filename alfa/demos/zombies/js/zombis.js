@@ -87,6 +87,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const dx = zb.obj.x - zb.x, dz = zb.obj.z - zb.z, d = Math.hypot(dx, dz);
     if (d < 0.3) { if (zb.estado === 'oye' && !zb.hueco && !zb.cruza) zb.olvida = 0; return; }
     let mx = dx / d, mz = dz / d;
+    const f = sigueFlujo(e, zb, mundo);                         // persiguiéndote: rodea casas y vallas por el campo de flujo
+    if (f) { mx = f.x; mz = f.z; }
     for (const o of Z.vecinos(rej, zb.x, zb.z)) {             // no se apilan: se apartan un poco de los de al lado
       const od = Z.dist(zb.x, zb.z, o.x, o.z);
       if (o !== zb && o.vida > 0 && od < AJ.ia.separa && od > 0) { mx += (zb.x - o.x) / od * 0.6; mz += (zb.z - o.z) / od * 0.6; }
@@ -95,6 +97,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     zb.a = Math.atan2(mx, mz);
     const choca = mundo.mueve(zb, mx / m * paso, mz / m * paso, zb.T.radio);
     if (choca && zb.estado !== 'vaga' && !zb.hueco && !zb.cruza) Z.buscaHueco(AJ, e, zb, mundo);   // una pared por medio: a por la puerta o ventana más cercana
+  }
+  // el campo de flujo (si el mundo lo da) cuando te persigue o va a donde estás, sin un hueco entre manos y no pegado a ti
+  function sigueFlujo(e, zb, mundo) {
+    if (!mundo.flujo || zb.hueco || zb.cruza) return null;
+    const J = e.jugador, aTi = zb.estado === 'persigue' || (zb.estado === 'oye' && zb.obj && Z.dist(zb.obj.x, zb.obj.z, J.x, J.z) < 4);
+    if (!aTi || Z.dist(zb.x, zb.z, J.x, J.z) < 1.6) return null;
+    return mundo.flujo(zb.x, zb.z);
   }
   function muerde(AJ, e, zb, azar) {
     zb.a = Math.atan2(e.jugador.x - zb.x, e.jugador.z - zb.z);

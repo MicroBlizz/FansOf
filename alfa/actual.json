@@ -1,8 +1,8 @@
 {
- "build": 1035,
- "hash": "6094de3",
- "fecha": "2026-11-06T18:19:14Z",
- "mensaje": "Fans of Zombies: fabricar, cocinar, grifo y desmontar muebles",
+ "build": 1036,
+ "hash": "b4edd6e",
+ "fecha": "2026-11-06T18:22:51Z",
+ "mensaje": "Fans of Zombies 0.4.0: los fans rodean casas y vallas (campo de flujo)",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

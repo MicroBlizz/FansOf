@@ -56,7 +56,7 @@ const TYPES = {   // las claves, en su orden, van vacías; cada facción pone la
   ghostagent: null, rockracer: null, titanbeta: null, directora: null, extras: null, doble: null, detective: null, heroe: null,
   spoiler: null, kaiju: null, descargabot: null, licenciabot: null, plusbot: null, cobradlc: null, servidorbot: null,
   remasterbot: null, huron: null, sombra: null, hater: null, arpia: null, dron: null, clickbait: null, campero: null, espia: null,
-  paparazzi: null,
+  paparazzi: null, survivalbot: null,
 };
 const TOPS = { ceo: 64, presi: 64, sp_crunch: 46, sp_review: 46, sp_bellotas: 46, sp_botiquin: 46, sp_pulgas: 46, sp_lapidas: 46, sp_formol: 46, sp_eternas: 46, sp_donaciones: 46, sp_merienda: 46, sp_baneo: 46, sp_rayo: 46, sp_ambrosia: 46, sp_nerfeo: 46, sp_orbital: 46, sp_nanobots: 46, sp_update: 46, sp_gatos: 46, sp_likes: 46, sp_confusion: 46, sp_critico: 46, sp_energetica: 46, sp_ping: 46, sp_cartuchos: 46, sp_parchefan: 46, sp_cancelado: 46, sp_taquilla: 46, sp_maquillaje: 46, sp_remake: 46, sp_despido: 46, sp_cobro: 46, p_tower: 86, p_base: 106, e_tower: 88, e_base: 140, u_tower: 84, u_base: 110, s_tower: 88, s_base: 104, h_tower: 106, h_base: 112, c_tower: 78, c_base: 102, m_tower: 90, m_base: 112, o_tower: 88, o_base: 104, y_tower: 92, y_base: 124, k_tower: 80, k_base: 108, g_tower: 82, g_base: 102 };
 // por piel de edificio: [boca de disparo x, altura] y proyectil [torre, base]

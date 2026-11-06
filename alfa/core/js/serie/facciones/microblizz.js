@@ -17,9 +17,10 @@ Object.assign(TYPES, {
   cajabotin:  { top: 40, foot: '#5b6578' },
   soportebot: { top: 46, foot: null, hover: true, jet: true },
   parchebot:  { top: 56, foot: '#5b6578' },
+  survivalbot: { top: 80, foot: '#20102c' },
 });
 Object.assign(ROLES, {
-  becario: 'swarm', starbot: 'ranged', fallen: 'buster', cajabotin: 'tank', soportebot: 'support', parchebot: 'tank',
+  becario: 'swarm', starbot: 'ranged', fallen: 'buster', cajabotin: 'tank', soportebot: 'support', parchebot: 'tank', survivalbot: 'tank',
   sp_despido: 'spell',
 });
 // Microblizz: solo rival (no tiene líder: su jefe es SurvivalBot, encima de la sede)

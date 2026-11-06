@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.9.0', real: ['<b>SUPERVIVIENTES Y TU REFUGIO</b>: por el mundo hay animales de la serie atrapados en edificios y rodeados de fans. Rescátalos (F) y se van a tu refugio, la casa donde empezaste. Cada uno hace su oficio: vigía (avisa y pelea), cocinera (deja comida en la despensa cada mañana), carpintera (repone tablas al anochecer) o médica (te cura dentro). Si los fans entran, pueden morir.'],
+    joke: ['Microblizz ofrece «Refugio Premium» con un superviviente extra. Es un bot de atención al cliente y solo sabe decir «lo sentimos».'] },
   { v: '0.8.0', real: ['<b>UN MUNDO SIN BORDE</b>: alrededor de Ratkov y sus barrios, el mundo sigue sin fin. Barrios de casas, tiendas, polígonos, granjas y bosques que se generan solos a medida que andas, distintos en cada partida.',
     '<b>EL MAPA TE SIGUE</b>: la M enseña lo que tienes alrededor, estés donde estés. Y los fans llegan con las oleadas cerca de donde estás, no solo en el distrito.'],
     joke: ['Microblizz anuncia que el mundo infinito tendrá «zonas premium» de pago. Phony ya vende parcelas en sitios que aún no existen.'] },

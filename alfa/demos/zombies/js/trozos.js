@@ -96,7 +96,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   // al cargar un trozo: la primera vez se llena con sus fans; las demás vuelven los que se guardaron al descargarlo
   Z.entraTrozo = function (AJ, e, P, mundo, azar) {
-    const E = e.trozos || (e.trozos = {}), t = E[P.clave] || (E[P.clave] = { fans: Math.round(P.fans * e.dif.zombis) });
+    const E = e.trozos || (e.trozos = {}), nuevo = !E[P.clave], t = E[P.clave] || (E[P.clave] = { fans: Math.round(P.fans * e.dif.zombis) });
+    if (nuevo && Z.ponRescate) Z.ponRescate(AJ, e, P, mundo, azar);   // a veces, alguien atrapado (js/rescates.js)
     const hueco = Math.max(0, AJ.mundo.maxZombis - Z.vivos(e).length), n = Math.min(t.fans, hueco), J = e.jugador;
     let salen = 0;
     for (let i = 0; i < n * 3 && salen < n; i++) {

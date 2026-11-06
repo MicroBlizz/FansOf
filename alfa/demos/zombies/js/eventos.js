@@ -3,7 +3,7 @@
 'use strict';
 const NO_PUEDES = {
   sinSueno: 'No tienes sueño todavía.', hayZombis: 'Con fans tan cerca no hay quien duerma.', noTienes: 'No te queda de eso.',
-  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.',
+  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.', sinRefugio: 'No tienes refugio al que mandarlo.',
 };
 const EVENTOS = {
   parche: (v) => { HUD.parche = v; HUD.tParche = 12; play('alerta'); },
@@ -39,6 +39,12 @@ const EVENTOS = {
   tablaRota: () => play('metal'),
   huecoRoto: (v) => { play(v.hueco === 'ventana' ? 'metal' : 'puerta'); avisa(tr(v.hueco === 'ventana' ? '¡Han roto una ventana!' : '¡Han tirado una puerta!'), 'malo'); },
   golpeHueco: () => play('impacto'),
+  hayRescate: () => { play('alerta'); avisa(tr('Por la radio: alguien pide ayuda muy cerca. Está atrapado en un edificio y rodeado de fans.'), 'bien'); },
+  rescate: (v) => { play('win'); avisa(trf('%1 se va a tu refugio. Hará de %2.', ZOM.AJ.animales[v.animal].n, tr(OFICIO_TXT[v.oficio]).toLowerCase()), 'bien'); },
+  vigia: (v) => { play('alerta'); avisa(trf('Desde el refugio: ¡hay %1 fans cerca!', v.n), 'malo'); },
+  despensa: () => avisa(tr('Han dejado comida en la despensa del refugio.'), 'bien'),
+  reparado: (v) => { if (v.n) avisa(trf('Han reforzado %1 puertas y ventanas del refugio.', v.n), 'bien'); },
+  rescateMuere: (v) => { play('dolor'); avisa(trf('Los fans han entrado en el refugio y han matado a %1.', ZOM.AJ.animales[v.animal].n), 'malo'); },
   subeNivel: (v) => { play('fabrica'); avisa(trf('%1 sube a nivel %2.', tr(NOMBRE_HAB[v.hab][0]), v.nivel), 'bien'); },
   planta: (v) => entraPlanta(v.n),
   refuerzos: (v) => { avisa(trf('El CEO llama a %1 bots de atención al cliente.', v.n), 'malo'); play('alerta'); },

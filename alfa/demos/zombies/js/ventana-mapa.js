@@ -39,7 +39,7 @@ function abreMapa() {
   VMAPA.abierto = true;
   el('zb-mapa').hidden = false;
   el('zb-mapa').innerHTML = '<div class="zm-marco"><header><b>' + esc(tr('MAPA')) + '</b><span>' + esc(tr('Solo lo que ya has visto')) + '</span><button id="zm-cerrar">' + esc(tr('CERRAR (M)')) + '</button></header>' +
-    '<canvas id="zm-lienzo"></canvas><footer><i class="t"></i>' + esc(tr('tú')) + '<i class="f"></i>' + esc(tr('fuego')) + '<i class="r"></i>' + esc(tr('registrado')) + '<i class="s"></i>' + esc(tr('sin registrar')) + '<i class="b"></i>' + esc(tr('con tablas')) + '</footer></div>';
+    '<canvas id="zm-lienzo"></canvas><footer><i class="t"></i>' + esc(tr('tú')) + '<i class="f"></i>' + esc(tr('fuego')) + '<i class="r"></i>' + esc(tr('registrado')) + '<i class="s"></i>' + esc(tr('sin registrar')) + '<i class="b"></i>' + esc(tr('con tablas')) + '<i class="p"></i>' + esc(tr('atrapado')) + '<i class="h"></i>' + esc(tr('tu refugio')) + '</footer></div>';
   el('zm-cerrar').onclick = cierraMapa;
   pintaMapa();
 }
@@ -65,6 +65,8 @@ function pintaMapa() {
   const punto = (x, z, color, r) => { if (!visto(x, z)) return; g.fillStyle = color; g.beginPath(); g.arc(px(x), pz(z), r, 0, 7); g.fill(); };
   for (const s of sitiosRegistrables(e)) punto(s.x, s.z, s.tipo === 'fuego' ? '#ff8a2a' : e.registrados[s.id] ? '#8a929c' : '#e8c040', s.tipo === 'fuego' ? 5 : 3);
   for (const H of BARRIO.huecos) { const h = e.huecos[H.id]; if (h && h.tablas) punto(H.x, H.z, '#a0602a', 4); }
+  for (const s of e.rescates || []) if (s.estado === 'atrapado') punto(s.x, s.z, '#3ac86a', 6);
+  if (e.refugio) { const R = e.refugio; g.strokeStyle = '#ff7a1a'; g.lineWidth = 3; g.strokeRect(px(R.x0), pz(R.z0), (R.x1 - R.x0) * k, (R.z1 - R.z0) * k); }
   // la niebla en lo que no has visto (casillas de 8 m)
   g.fillStyle = 'rgba(18,22,30,.92)';
   const c0 = Math.floor(ox / X.celda), c1 = Math.floor((ox + VMAPA.ancho) / X.celda), f0 = Math.floor(oz / X.celda), f1 = Math.floor((oz + VMAPA.alto) / X.celda);

@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.8.0',
+  version: '0.9.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -54,6 +54,11 @@ ZOM.AJ = Object.freeze({
     filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 }, cocinado: true },
     guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 }, cocinado: true },
   },
+  // los supervivientes (ADR 074): la probabilidad de que un trozo tenga a alguien atrapado, los fans de guardia, su oficio por animal y lo
+  // de cada oficio (daño y curas por segundo; la cocina, a partir de qué hora y qué deja; el vigía, a qué distancia y cada cuántos minutos)
+  rescates: { prob: 0.08, guardia: 4, vida: 100, alcance: 2.2, danoFans: 6,
+    oficios: { bunny: 'vigia', fox: 'vigia', squirrel: 'carpintera', junkcoon: 'cocinera', meercat: 'medica' },
+    vigia: { radio: 20, cada: 90, dano: 30 }, cocina: { hora: 8 * 60, deja: [['guiso', 1], ['agua', 1]], tope: 4 }, medica: { vida: 1.5, infeccion: 0.6 } },
   // el mundo por trozos (ADR 073): alrededor del distrito hecho a mano (centro) se generan trozos de 64 m. ox/oz alinean las calles de
   // los trozos con la carretera de Ratkov (z = 8) y la calle del barrio (x = -146). tipos: lo que sale (por bloques de 2 x 2 trozos);
   // fans: los que hay en cada trozo la primera vez; carga: cuántos trozos alrededor de ti se dibujan (1 = 3 x 3)

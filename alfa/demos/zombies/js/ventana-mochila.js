@@ -57,7 +57,7 @@ function cierraMochila() { VM.abierta = false; VM.arrastra = null; el('zb-mochil
 const NOMBRE_HAB = { pelea: ['PELEA', 'Golpeas más fuerte y te cansas menos'], disparo: ['DISPARO', 'Las balas y los cartuchos hacen más daño'], sigilo: ['SIGILO', 'Agachado te ven menos y andando haces menos ruido'], carpinteria: ['CARPINTERÍA', 'Clavas tablas y desmontas más rápido'], cocina: ['COCINA', 'Lo que cocinas alimenta más'] };
 function htmlHabilidades(J) {
   const AJ = ZOM.AJ;
-  return '<section class="vm-hab"><header><b>' + esc(tr('HABILIDADES')) + '</b></header>' + ZOM.HABILIDADES.map((h) => '<div class="vm-h" title="' + esc(tr(NOMBRE_HAB[h][1])) + '"><span>' + esc(tr(NOMBRE_HAB[h][0])) + '</span><b>' + ZOM.nivel(AJ, J, h) + '</b><i><s style="width:' + Math.round(ZOM.progreso(AJ, J, h) * 100) + '%"></s></i><em>' + esc(tr(NOMBRE_HAB[h][1])) + '</em></div>').join('') + '<p class="vm-ayuda">' + esc(tr('Se mejoran haciendo las cosas. Se pierden al caer.')) + '</p></section>';
+  return '<section class="vm-hab"><header><b>' + esc(tr('HABILIDADES')) + '</b></header>' + ZOM.HABILIDADES.map((h) => '<div class="vm-h" title="' + esc(tr(NOMBRE_HAB[h][1])) + '"><span>' + esc(tr(NOMBRE_HAB[h][0])) + '</span><b>' + ZOM.nivel(AJ, J, h) + '</b><i><s style="width:' + Math.round(ZOM.progreso(AJ, J, h) * 100) + '%"></s></i><em>' + esc(tr(NOMBRE_HAB[h][1])) + '</em></div>').join('') + '<p class="vm-ayuda">' + esc(tr('Se mejoran haciendo las cosas. Se pierden al caer.')) + '</p>' + htmlRefugio(JUEGO.e) + '</section>';
 }
 function pintaMochila() {
   const e = JUEGO.e, AJ = ZOM.AJ, m = e.jugador.mochila, C = VM.celda, v = el('zb-mochila');
@@ -75,7 +75,7 @@ function pintaMochila() {
   pintaDibujos(v);
   enganchaMochila(v); enganchaOficios(v);
 }
-const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', basura: 'CUBO DE BASURA', fuego: 'BIDÓN CON FUEGO', coche: 'COCHE', estanteria: 'ESTANTERÍA', super: 'ESTANTE DEL SÚPER', gasolinera: 'TIENDA DE LA GASOLINERA', ferreteria: 'FERRETERÍA', farmacia: 'FARMACIA', armeria: 'ARMERÍA', taquilla: 'TAQUILLA', pupitre: 'PUPITRE', granero: 'GRANERO', escritorio: 'ESCRITORIO', cajaFuerte: 'CAJA FUERTE', archivador: 'ARCHIVADOR', maquina: 'MÁQUINA DE CAFÉ', maletin: 'MALETÍN DEL CEO' };
+const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', basura: 'CUBO DE BASURA', fuego: 'BIDÓN CON FUEGO', coche: 'COCHE', estanteria: 'ESTANTERÍA', super: 'ESTANTE DEL SÚPER', gasolinera: 'TIENDA DE LA GASOLINERA', ferreteria: 'FERRETERÍA', farmacia: 'FARMACIA', armeria: 'ARMERÍA', taquilla: 'TAQUILLA', pupitre: 'PUPITRE', granero: 'GRANERO', escritorio: 'ESCRITORIO', cajaFuerte: 'CAJA FUERTE', archivador: 'ARCHIVADOR', maquina: 'MÁQUINA DE CAFÉ', maletin: 'MALETÍN DEL CEO', despensa: 'DESPENSA DEL REFUGIO' };
 const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : id.startsWith('maletin-') ? 'MALETÍN DEL CEO' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
 // lo que no se puede: aviso por la radio
 function resultadoMochila(r) { if (!r.ok) avisa(tr({ noCabe: 'No cabe en la mochila.', noEsta: 'Eso ya no está.' }[r.codigo] || 'No puedes hacer eso ahora.')); else play('coge'); pintaMochila(); }

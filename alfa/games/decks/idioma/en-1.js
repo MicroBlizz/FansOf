@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.29
+  "<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the anonymous count of connected players no longer counts the internal-testing bots.",
+  "Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público.": "Microblizz stopped counting test bots as players and Phony asked for them to count as audience at least.",
   "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
   "Microblizz ha puesto su logo en la puerta de entrada. Phony ha puesto un felpudo con el suyo.": "Microblizz put its logo on the front door. Phony put down a doormat with his.",
   // 0.2.26

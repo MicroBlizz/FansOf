@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.79
+  "<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the anonymous count of connected players no longer counts the internal-testing bots.",
+  "Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público.": "Microblizz stopped counting test bots as players and Phony asked for them to count as audience at least.",
   "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
   "Phony quería saltarse la pantalla de inicio. Microblizz le ha recordado que el logo también ficha.": "Phony wanted to skip the start screen. Microblizz reminded him the logo clocks in too.",
   // 0.1.76

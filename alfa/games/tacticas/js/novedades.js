@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.63', real: ["<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas."], joke: ["Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público."] },
   { v: '0.1.62', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos."], joke: ["Microblizz ha revisado las tripas del juego y ha encontrado a Phony echándose la siesta dentro."] },
   { v: '0.1.61', real: ["<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games."], joke: ["Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él."] },
   { v: '0.1.60', real: ["<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando."], joke: ["Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil."] },

@@ -124,5 +124,11 @@
     "fr-FR": "LE RETOUR DES ANIMAUX CLASSIQUES : les 23 animaux d'avant reviennent en version classique, à côté des nouveaux : cherche-les dans la garde-robe, achète-les en boutique avec des Actions ou obtiens-les au gachapon.\n\nPhony a trouvé les animaux classiques dans le tiroir de Microblizz et les a mis en vente sans demander.",
     "de-DE": "DIE KLASSISCHEN HAUSTIERE SIND ZURÜCK: Die 23 alten Haustiere kehren in ihrer klassischen Version zurück, neben den neuen: Such sie im Kleiderschrank, kauf sie im Shop mit Aktien oder zieh sie im Gachapon.\n\nPhony hat die klassischen Haustiere in Microblizz' Schublade gefunden und ungefragt zum Verkauf gestellt.",
     "it-IT": "TORNANO LE MASCOTTE CLASSICHE: le 23 mascotte di prima tornano nella versione classica, accanto a quelle nuove: cercale nell'armadio, comprale nel negozio con le Azioni o trovale nel gachapon.\n\nPhony ha trovato le mascotte classiche nel cassetto di Microblizz e le ha messe in vendita senza chiedere."
+  },
+  "0.2.73": {
+    "pt-BR": "MELHORIAS POR DENTRO: a contagem anônima de jogadores conectados não conta mais os bots dos testes internos.",
+    "fr-FR": "AMÉLIORATIONS INTERNES : le comptage anonyme des joueurs connectés ne compte plus les bots des tests internes.",
+    "de-DE": "VERBESSERUNGEN IM HINTERGRUND: Die anonyme Zählung verbundener Spieler zählt die Bots der internen Tests nicht mehr mit.",
+    "it-IT": "MIGLIORIE INTERNE: il conteggio anonimo dei giocatori connessi non conta più i bot dei test interni."
   }
 }

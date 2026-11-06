@@ -1,6 +1,9 @@
 // Fans Of Pets · Inglés: los textos de este juego (los nombres de las criaturas y de las facciones están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.7
+  "<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the anonymous count of connected players no longer counts the internal-testing bots.",
+  "Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público.": "Microblizz stopped counting test bots as players and Phony asked for them to count as audience at least.",
   "<b>HOCICO ARREGLADO</b>: el hocico ya no lleva dientes pintados encima; la boca es la del dibujo.": "<b>SNOUT FIXED</b>: the snout no longer has teeth painted on top; the mouth is the one in the drawing.",
   "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos.": "<b>UNDER THE HOOD</b>: the start screen with the studio logo now always shows when you open the game, plus fixes to the internal systems.",
   "Microblizz ha mandado a tu mascota al dentista. Phony ha pedido que le quiten a él la factura.": "Microblizz sent your pet to the dentist. Phony asked to have the bill taken off him.",

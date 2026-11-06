@@ -51,6 +51,8 @@ IDIOMA.add({
   'PISTOLA': 'PISTOL', 'BATE': 'BAT', 'HACHA': 'AXE', 'CUCHILLO': 'KNIFE', 'BALAS': 'BULLETS', 'Despedido por la espalda. Como en Microblizz.': 'Fired from behind. Just like at Microblizz.',
   'Sin munición. Cambia de arma (1 a 6).': 'Out of ammo. Switch weapon (1 to 6).', 'Se te ha roto: %1.': 'Your %1 broke.', '1 a 6': '1 to 6',
   'escopeta, pistola, palanca, bate, hacha y cuchillo': 'shotgun, pistol, crowbar, bat, axe and knife',
+  'ESTANTERÍA': 'SHELVING', 'ESTANTE DEL SÚPER': 'SUPERMARKET SHELF', 'TIENDA DE LA GASOLINERA': 'PETROL STATION SHOP', 'FERRETERÍA': 'HARDWARE STORE', 'FARMACIA': 'PHARMACY',
+  'ARMERÍA': 'ARMOURY', 'TAQUILLA': 'LOCKER', 'PUPITRE': 'SCHOOL DESK', 'GRANERO': 'BARN',
   // las casas
   'TABLAS': 'PLANKS', 'CLAVOS': 'NAILS', 'MARTILLO': 'HAMMER', 'F  CERRAR': 'F  CLOSE', 'B  TABLAS (%1/3)': 'B  PLANKS (%1/3)', 'TAPADA (3/3)': 'BOARDED UP (3/3)',
   'Tabla clavada (%1/3).': 'Plank nailed (%1/3).', '¡Han roto una ventana!': 'A window has been smashed!', '¡Han tirado una puerta!': 'A door has been knocked down!',

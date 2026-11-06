@@ -8,7 +8,7 @@ const azarJuego = Math.random;
 const MUNDO = {
   mueve: (o, dx, dz, r) => mueve(o, dx, dz, r),
   seVe: (x0, z0, x1, z1) => seVe(x0, z0, x1, z1),
-  aparicion: (azar) => libreAlcanzable(-200 + azar() * 272, -52 + azar() * 104, 0.6),
+  aparicion: (azar) => libreAlcanzable(MAPA.x0 + 6 + azar() * (MAPA.x1 - MAPA.x0 - 12), MAPA.z0 + 8 + azar() * (MAPA.z1 - MAPA.z0 - 14), 0.6),
   huecos: () => BARRIO.huecos.map((h) => ({ id: h.id, tipo: h.tipo })),
   huecoCerca: (x, z, r) => { const h = huecoCercaDe(x, z, r); return h && { id: h.id, x: h.x, z: h.z }; },
   posHueco: (id) => BARRIO.porId[id] || null,
@@ -19,7 +19,7 @@ const MUNDO = {
 // que se recalcula unas dos veces por segundo en 32 m alrededor (js/caminos.js)
 const CAMINOS = { rej: null, flujo: null, t: 0 };
 function preparaCaminos() {
-  const celda = 0.5, x0 = -212, z0 = -64, w = Math.ceil((94 - x0) / celda), h = Math.ceil((64 - z0) / celda), tipo = new Uint8Array(w * h);
+  const celda = 0.5, x0 = MAPA.x0 - 6, z0 = MAPA.z0 - 4, w = Math.ceil((MAPA.x1 + 14 - x0) / celda), h = Math.ceil((MAPA.z1 + 4 - z0) / celda), tipo = new Uint8Array(w * h);
   for (const H of BARRIO.huecos) H.sol.abierto = true;           // los huecos cuentan como paso (más caro) al hacer la rejilla
   for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) tipo[j * w + i] = choca(x0 + (i + 0.5) * celda, z0 + (j + 0.5) * celda, 0.32) ? 0 : 1;
   for (const H of BARRIO.huecos) {
@@ -52,9 +52,15 @@ function arranca() {
   abreMenu();
   requestAnimationFrame(fotograma);
 }
+// a dónde se llega andando desde (x, z), contando las puertas y ventanas como paso (si no, desde dentro de casa no se llega a nada)
+function alcanceDesde(x, z) {
+  for (const H of BARRIO.huecos) H.sol.abierto = true;
+  calculaAlcance(x, z);
+  for (const H of BARRIO.huecos) H.sol.abierto = false;
+}
 function empiezaPartida() {
   const p = BARRIO.inicio ? libreCerca(BARRIO.inicio.x, BARRIO.inicio.z, 0.6) : libreAlcanzable(-24, 33, 0.6);   // en la casa de partida
-  calculaAlcance(p.x, p.z);
+  alcanceDesde(p.x, p.z);
   const r = ZOM.nuevaPartida(ZOM.AJ, { animal: SAVE.animal, dificultad: SAVE.dificultad, x: p.x, z: p.z, azar: azarJuego, mundo: MUNDO });
   if (!r.ok) { avisa(tr('No se ha podido empezar la partida.'), 'malo'); return; }
   juega(r.valor);
@@ -65,7 +71,7 @@ function empiezaPartida() {
 function continuaPartida() {
   const r = ZOM.restaura(ZOM.AJ, leeMundo());
   if (!r.ok) { borraMundo(); abreMenu(); return; }
-  calculaAlcance(r.valor.jugador.x, r.valor.jugador.z);
+  alcanceDesde(r.valor.jugador.x, r.valor.jugador.z);
   ZOM.preparaHuecos(ZOM.AJ, r.valor, MUNDO.huecos());
   juega(r.valor);
   avisa(trf('Sigues en el día %1. Bienvenido de vuelta.', ZOM.diaDe(r.valor.min)), 'bien');

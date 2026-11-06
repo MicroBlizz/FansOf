@@ -2,7 +2,7 @@
 // bloques de viviendas de paneles medio derrumbados, la torre de Microblizz partida y la estatua derribada del Director General.
 // Cada pieza se dibuja en una OBRA (js/motor.js) y apunta sus rectángulos sólidos para chocar y para que las balas se paren.
 'use strict';
-const MAPA = { x0: -206, x1: 80, z0: -60, z1: 60, solidos: [], rejilla: new Map(), CEL: 4, contenedores: [], fuegos: [], salidas: [], obra: null, grupo: null };
+const MAPA = { x0: -206, x1: 80, z0: -60, z1: 186, solidos: [], rejilla: new Map(), CEL: 4, contenedores: [], fuegos: [], salidas: [], obra: null, grupo: null };
 // un rectángulo sólido: de (x0, z0) a (x1, z1), con su altura (bajo = sacos o coches: tapan menos la vista)
 function solido(x0, z0, x1, z1, h = 3, tipo = 'muro') {
   const s = { x0: Math.min(x0, x1), z0: Math.min(z0, z1), x1: Math.max(x0, x1), z1: Math.max(z0, z1), h, tipo };

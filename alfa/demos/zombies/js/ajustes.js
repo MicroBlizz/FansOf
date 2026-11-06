@@ -63,6 +63,15 @@ ZOM.AJ = Object.freeze({
       cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, cuchillo: 1.2, nada: 2 },
       basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
       fuego: {},
+      estanteria: { tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
+      super: { judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
+      gasolinera: { chocolatina: 4, refresco: 4, agua: 2, nada: 2 },
+      ferreteria: { tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
+      farmacia: { venda: 6, tela: 2, nada: 2 },
+      armeria: { balas: 4, cartuchos: 3, pistola: 1.2, escopeta: 0.4, nada: 1 },
+      taquilla: { balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
+      pupitre: { chocolatina: 3, refresco: 2, tela: 1, nada: 4 },
+      granero: { tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
     } },
   // fabricar: con qué y dónde (null = en cualquier sitio; 'fuego' = junto a un bidón con fuego o en la cocina de una casa con luz)
   recetas: [
@@ -71,7 +80,7 @@ ZOM.AJ = Object.freeze({
     { id: 'guiso', sale: ['guiso', 1], con: [['judias', 1], ['agua', 1]], donde: 'fuego', deja: ['botella', 1] },
   ],
   // desmontar muebles con palanca o martillo: tarda, suena y deja tablas y clavos en el sitio
-  desmontar: { tipos: { armario: [2, 4], cama: [2, 2], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6] }, tiempo: 3, ruido: 10 },
+  desmontar: { tipos: { armario: [2, 4], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6], estanteria: [2, 4], pupitre: [1, 2] }, tiempo: 3, ruido: 10 },
   grifo: { sed: 40 },
   mochila: { w: 6, h: 5 },
   mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6], ['martillo', 1], ['tablas', 2], ['clavos', 6]],
@@ -95,7 +104,7 @@ ZOM.AJ = Object.freeze({
   // cómo de a menudo sale cada tipo al poblar el distrito (pesos)
   reparto: { fan: 10, streamer: 2, speedrunner: 2, ballena: 1, bot: 2, troll: 1 },
   ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4, infeccion: 0.25 },
-  mundo: { zombis: 70, oleada: 14, maxZombis: 140, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
+  mundo: { zombis: 120, oleada: 22, maxZombis: 220, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
   // los parches de Microblizz: uno nuevo cada mañana desde el día 2
   parches: [
     { id: 'corren', n: 'Esta noche los fans corren.', velNoche: 1.6 },

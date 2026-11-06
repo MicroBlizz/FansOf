@@ -1,8 +1,8 @@
 {
- "build": 1020,
- "hash": "fdd0134",
- "fecha": "2026-11-06T02:00:25Z",
- "mensaje": "Versiones y notas del despliegue: boom 0.4.9, cooking 0.2.10, crush 0.1.47, decks 0.2.29, jump 0.3.24, karts 0.7.23, pets 0.2.7, ratkov 0.2.37, rouflage 0.2.73, rumble 0.9.166, survivors 0.1.79, tacticas 0.1.63, taxi 0.2.9, td 0.13.95",
+ "build": 1021,
+ "hash": "39779e5",
+ "fecha": "2026-11-06T02:14:47Z",
+ "mensaje": "Nova 0.3.52: Pulso de hackeo 2→2,2 (el crucero vuelve a 27 de 120)",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.24",
   "karts": "0.7.23",
-  "nova": "0.3.51",
+  "nova": "0.3.52",
   "pets": "0.2.7",
   "ratkov": "0.2.37",
   "rouflage": "0.2.73",

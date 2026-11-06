@@ -33,7 +33,7 @@ const NOVA_FACCIONES = {
   },
   ciber: {
     nave: { nombre: 'Crucero', casco: 'crucero', anclajes: { 6: { 1: [132, 44], 2: [80, -64], 3: [128, 20], 4: [181, 78] } } },
-    insignia: { id: 'pulsoHackeo', portador: 'laser', carga: 'energia', nombre: 'Pulso de hackeo', dano: 2, cad: 1.2, alc: 0.85, rasgo: { tipo: 'hackeo', parte: 0.5 }, efecto: 'El primer pulso sobre un enemigo le quita la mitad del escudo' },
+    insignia: { id: 'pulsoHackeo', portador: 'laser', carga: 'energia', nombre: 'Pulso de hackeo', dano: 2.2, cad: 1.2, alc: 0.85, rasgo: { tipo: 'hackeo', parte: 0.5 }, efecto: 'El primer pulso sobre un enemigo le quita la mitad del escudo' },
     secreta: { id: 'firewall', portador: 'drones', carga: 'cinetica', nombre: 'Firewall', dano: 1.2, n: 2, cad: 1.3, efecto: 'Drones cortafuegos que derriban misiles y pegan fuerte', },
     especial: { id: 'laserRed', portador: 'laser', carga: 'energia', nombre: 'Láser de red', dano: 1.1, cad: 1.3, alc: 1.2, efecto: 'Un láser rápido y de largo alcance', rango: 15 }
   },

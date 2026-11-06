@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.52', real: ["<b>EL CRUCERO, UN POCO MÁS</b>: el Pulso de hackeo pega un 10 % más. Con las fusiones nuevas las demás naves subieron y el crucero se había quedado atrás."], joke: ["Microblizz ha subido la contraseña del Pulso de hackeo a 12345. Phony dice que ahora es imposible de adivinar."] },
   { v: '0.3.51', real: ["<b>FUSIONES QUE COMPENSAN</b>: las fusiones que juntan un arma con la munición de otra pegan un 40 % más en lugar de un 15 %. Antes casi no se notaba y salía mejor quedarse con las dos armas sueltas."], joke: ["Microblizz ha descubierto que fundir dos armas en una y quedarse igual no convencía a nadie. Phony quería fundir también la tostadora."] },
   { v: '0.3.50', real: ["<b>STREAMERS AGUANTA EN DIRECTO</b>: mientras Directo atrae a los enemigos, se quedan mirando y no disparan. Además, su nave tiene más vida y el Cañón de Hype pega más. Antes Directo te llenaba de enemigos y la nave caía en menos de un minuto."], joke: ["Microblizz ha descubierto que los enemigos también ven directos. Phony ha pedido que nadie le haga spoiler del final."] },
   { v: '0.3.48', real: ["<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games."], joke: ["Microblizz ha intentado registrar las iniciales del juego a su nombre. Phony ya ha pedido unas para él."] },

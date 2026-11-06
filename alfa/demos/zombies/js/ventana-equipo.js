@@ -1,6 +1,7 @@
 // Fans of Zombies · LA ROPA EN LA VENTANA DE LA MOCHILA (pantalla, ADR 079): la columna «PUESTO» con los huecos de la ropa (cabeza,
 // cuerpo, piernas, pies) y la mochila, con lo que le queda a cada prenda, el botón de coser, la riñonera y los bolsillos. Clic en una
-// prenda puesta para quitártela; clic derecho en una prenda o una mochila (tuya o del sitio) para ponértela. Los dibujos de la ropa
+// prenda puesta para quitártela; clic derecho en una prenda o una mochila (tuya o del sitio), o arrastrarla a los huecos, para
+// ponértela. Los dibujos de la ropa
 // y de las mochilas también están aquí (los usa dibujaObjeto de js/ventana-mochila.js).
 'use strict';
 const HUECOS_ROPA = [['cabeza', 'CABEZA'], ['cuerpo', 'CUERPO'], ['piernas', 'PIERNAS'], ['pies', 'PIES']];
@@ -55,9 +56,11 @@ function enganchaEquipo(v) {
   el('vm-coser').onclick = () => resultadoEquipo(ZOM.coser(AJ, e));
 }
 // clic derecho en una cosa (tuya o del sitio): si se pone, te la pones; si se usa, la usas
-function usaOPon(desde, id) {
+// (soltar = se ha arrastrado a los huecos: lo que no se pone se queda donde estaba)
+function usaOPon(desde, id, soltar) {
   const e = JUEGO.e, AJ = ZOM.AJ;
   if (ZOM.esRopa(AJ, id) || ZOM.esMochila(AJ, id)) return resultadoEquipo(ZOM.ponerse(AJ, e, desde));
+  if (soltar) return resultadoEquipo(ZOM.error('noSePone'));
   if (desde.bolsa && AJ.objetos[id].usa) { const r = ZOM.usar(AJ, e, id); if (!r.ok) avisa(tr('No puedes hacer eso ahora.')); pintaMochila(); }
 }
 function resultadoEquipo(r) {

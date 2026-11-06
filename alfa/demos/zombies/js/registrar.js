@@ -46,7 +46,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   Z.coger = function (AJ, e, i, donde) {
     const lista = abierto(e), c = lista && lista[i], J = e.jugador;
     if (!c) return Z.error('noEsta');
-    if (donde) { const m = J[donde.bolsa || 'mochila'], r = m ? Z.ponerEn(AJ, m, c, donde.gx, donde.gy, donde.gr) : Z.error('noEsta'); if (!r.ok) return r; lista.splice(i, 1); return Z.ok(0); }
+    if (donde) { const m = J[donde.bolsa || 'mochila'], r = m ? Z.ponerEn(AJ, m, c, donde.gx, donde.gy, donde.gr) : Z.error('noEsta'); if (!r.ok) return r; if (r.valor) c.n = r.valor; else lista.splice(i, 1); return Z.ok(r.valor); }
     const queda = Z.meterLleva(AJ, J, c.id, c.n, c.dur);
     if (queda === c.n) return Z.error('noCabe', { id: c.id });
     if (queda) c.n = queda; else lista.splice(i, 1);

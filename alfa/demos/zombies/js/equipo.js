@@ -28,25 +28,24 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 
   // ponerse algo: desde una de tus bolsas ({ bolsa, uid }) o desde el sitio abierto ({ i })
   Z.ponerse = function (AJ, e, desde) {
-    const r = tomar(e, desde);
-    if (!r.ok) return r;
-    const cosa = r.valor;
-    if (Z.esRopa(AJ, cosa.id)) return Z.ok(ponPrenda(AJ, e, cosa));
-    if (Z.esMochila(AJ, cosa.id)) return Z.ok(cambiaMochila(AJ, e, cosa));
-    devolver(AJ, e, desde, cosa);
-    return Z.error('noSePone', { id: cosa.id });
+    const id = idDe(e, desde);
+    if (!id) return Z.error('noEsta');
+    if (!Z.esRopa(AJ, id) && !Z.esMochila(AJ, id)) return Z.error('noSePone', { id });   // lo demás no se toca
+    const cosa = tomar(e, desde);
+    return Z.ok(Z.esRopa(AJ, id) ? ponPrenda(AJ, e, cosa) : cambiaMochila(AJ, e, cosa));
   };
-  // coge la cosa de donde esté (sin dejarla en ningún sitio todavía)
-  function tomar(e, desde) {
-    if (desde.bolsa) { const m = e.jugador[desde.bolsa]; return m ? Z.sacar(m, desde.uid) : Z.error('noEsta'); }
+  // qué hay en ese sitio (sin cogerlo)
+  function idDe(e, desde) {
+    if (desde.bolsa) { const m = e.jugador[desde.bolsa], p = m && Z.pieza(m, desde.uid); return p && p.id; }
     const lista = e.abierto && e.contenidos[e.abierto], c = lista && lista[desde.i];
-    if (!c) return Z.error('noEsta');
-    lista.splice(desde.i, 1);
-    return Z.ok(c.dur != null ? { id: c.id, n: 1, dur: c.dur } : { id: c.id, n: 1 });
+    return c && c.id;
   }
-  function devolver(AJ, e, desde, cosa) {
-    if (desde.bolsa) { if (Z.meter(AJ, e.jugador[desde.bolsa], cosa.id, cosa.n, cosa.dur)) Z.dejaEnSitio(e, cosa); return; }
-    Z.dejaEnSitio(e, cosa);
+  // coge una (la ropa y las mochilas no se apilan) de donde esté, sin dejarla en ningún sitio todavía
+  function tomar(e, desde) {
+    if (desde.bolsa) return Z.sacar(e.jugador[desde.bolsa], desde.uid).valor;
+    const lista = e.contenidos[e.abierto], c = lista[desde.i];
+    if (c.n > 1) c.n--; else lista.splice(desde.i, 1);
+    return c.dur != null ? { id: c.id, n: 1, dur: c.dur } : { id: c.id, n: 1 };
   }
   // la prenda va a su hueco; la que llevabas ahí, a tus bolsas (o al sitio o al suelo si no cabe)
   function ponPrenda(AJ, e, cosa) {
@@ -57,20 +56,20 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     return h;
   }
   function guardaOSuelta(AJ, e, cosa) { if (Z.meterLleva(AJ, e.jugador, cosa.id, 1, cosa.dur)) Z.dejaEnSitio(e, cosa); }
-  // la mochila nueva: lo de la vieja pasa a la nueva (lo grande primero); lo que no cabe y la mochila vieja se quedan en el sitio
+  // la mochila nueva: lo de la vieja pasa a la nueva (lo grande primero; si no, a la riñonera o los bolsillos); lo que no cabe y la
+  // mochila vieja se quedan en el sitio
   function cambiaMochila(AJ, e, cosa) {
     const J = e.jugador, M = AJ.mochilas[cosa.id], vieja = J.mochila, antes = J.equipo.mochila;
-    const nueva = Z.nuevaMochila(M.w, M.h + (J.filaExtra || 0));
+    J.mochila = Z.nuevaMochila(M.w, M.h + (J.filaExtra || 0)); J.equipo.mochila = cosa.id;
     const cosas = vieja.piezas.slice().sort((a, b) => Z.formaDe(AJ, b.id).c.length - Z.formaDe(AJ, a.id).c.length);
-    for (const p of cosas) { const queda = Z.meter(AJ, nueva, p.id, p.n, p.dur); if (queda) Z.dejaEnSitio(e, p.dur != null ? { id: p.id, n: queda, dur: p.dur } : { id: p.id, n: queda }); }
-    J.mochila = nueva; J.equipo.mochila = cosa.id;
+    for (const p of cosas) { const queda = Z.meterLleva(AJ, J, p.id, p.n, p.dur); if (queda) Z.dejaEnSitio(e, p.dur != null ? { id: p.id, n: queda, dur: p.dur } : { id: p.id, n: queda }); }   // la nueva, luego la riñonera y los bolsillos
     if (antes) Z.dejaEnSitio(e, { id: antes, n: 1 });
     e.eventos.push({ tipo: 'viste', id: cosa.id });
     return 'mochila';
   }
   // quitarse una prenda: a tus bolsas, o al sitio o al suelo si no cabe. La mochila no se quita (se cambia por otra)
   Z.quitarse = function (AJ, e, hueco) {
-    const J = e.jugador, p = AJ_HUECOS.includes(hueco) && J.equipo[hueco];
+    const J = e.jugador, p = AJ_HUECOS.includes(hueco) && J.equipo && J.equipo[hueco];
     if (!p) return Z.error('noEsta', { hueco });
     J.equipo[hueco] = null;
     guardaOSuelta(AJ, e, { id: p.id, n: 1, dur: p.dur });
@@ -78,7 +77,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   // coser: con una tela, la prenda más gastada que llevas puesta recupera AJ.vestir.coser
   Z.coser = function (AJ, e) {
-    const J = e.jugador, p = AJ_HUECOS.map((h) => J.equipo[h]).filter((q) => q && q.dur < AJ.ropa[q.id].dur).sort((a, b) => a.dur / AJ.ropa[a.id].dur - b.dur / AJ.ropa[b.id].dur)[0];
+    const J = e.jugador, p = Z.puesto(J).filter((q) => q && q.dur < AJ.ropa[q.id].dur).sort((a, b) => a.dur / AJ.ropa[a.id].dur - b.dur / AJ.ropa[b.id].dur)[0];
     if (!p) return Z.error('nadaQueCoser');
     if (!Z.gastaLleva(J, 'tela', 1).ok) return Z.error('faltan', { faltan: [['tela', 1]] });
     p.dur = Math.min(AJ.ropa[p.id].dur, p.dur + AJ.vestir.coser);
@@ -88,6 +87,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // cada mordisco gasta todo lo que llevas puesto; lo que llega a cero se rompe
   Z.gastaRopa = function (AJ, e) {
     const J = e.jugador;
+    if (!J.equipo) return;
     for (const h of AJ_HUECOS) {
       const p = J.equipo[h];
       if (!p || (p.dur -= AJ.vestir.gastaMordisco) > 0) continue;

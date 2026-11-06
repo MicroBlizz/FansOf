@@ -19,17 +19,17 @@ function pintaRopa(J) {
   if (firma === ROPA_VISTA.firma && v === ROPA_VISTA.jug) return;
   quitaRopa(); ROPA_VISTA.firma = firma; ROPA_VISTA.jug = v;
   const AJ = ZOM.AJ, E = J.equipo;
-  if (E.cabeza) pon(v.cuerpo, CAJAS_ROPA.cabeza[E.cabeza.id], AJ.ropa[E.cabeza.id].color);
-  if (E.cuerpo) pon(v.cuerpo, CAJAS_ROPA.cuerpo, AJ.ropa[E.cuerpo.id].color);
+  if (E.cabeza) ponRopa(v.cuerpo, CAJAS_ROPA.cabeza[E.cabeza.id], AJ.ropa[E.cabeza.id].color);
+  if (E.cuerpo) ponRopa(v.cuerpo, CAJAS_ROPA.cuerpo, AJ.ropa[E.cuerpo.id].color);
   for (const pierna of v.piernas) {
-    if (E.piernas) pon(pierna, CAJAS_ROPA.piernas, AJ.ropa[E.piernas.id].color);
-    if (E.pies) pon(pierna, CAJAS_ROPA.pies, AJ.ropa[E.pies.id].color);
+    if (E.piernas) ponRopa(pierna, CAJAS_ROPA.piernas, AJ.ropa[E.piernas.id].color);
+    if (E.pies) ponRopa(pierna, CAJAS_ROPA.pies, AJ.ropa[E.pies.id].color);
   }
   const M = CAJAS_MOCHILA[E.mochila];
-  if (M) pon(v.cuerpo, [M], M[6]);
+  if (M) ponRopa(v.cuerpo, [M], M[6]);
 }
 // unas cajas juntas en una malla, colgada de la pieza que toca (para que se mueva con ella)
-function pon(padre, cajas, color) {
+function ponRopa(padre, cajas, color) {
   const o = new Obra();
   for (const [w, h, d, x, y, z, c] of cajas) o.caja(w, h, d, c || color, x, y, z);
   const m = o.hecha(); padre.add(m); ROPA_VISTA.piezas.push(m);

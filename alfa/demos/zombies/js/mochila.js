@@ -77,11 +77,12 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     m.piezas = m.piezas.filter((q) => q !== p);
     return Z.ok(p.dur != null ? { id: p.id, n: p.n, dur: p.dur } : { id: p.id, n: p.n });
   };
-  // poner una cosa en un sitio concreto (desde un contenedor); si es apilable y cae sobre su montón, se junta
+  // poner una cosa en un sitio concreto (desde un contenedor), como mucho un montón entero (AJ.objetos[id].max); devuelve lo que sobra
   Z.ponerEn = function (AJ, m, cosa, gx, gy, gr) {
     if (!Z.cabeEn(AJ, m, cosa.id, gr, gx, gy)) return Z.error('noCabe', { id: cosa.id });
-    m.piezas.push(Object.assign({ uid: ++m.uid, id: cosa.id, n: cosa.n, gx, gy, gr: gr % 4 }, cosa.dur != null ? { dur: cosa.dur } : Z.durDe(AJ, cosa.id) ? { dur: Z.durDe(AJ, cosa.id) } : {}));
-    return Z.ok(true);
+    const n = Math.min(cosa.n, (AJ.objetos[cosa.id] && AJ.objetos[cosa.id].max) || 1);
+    m.piezas.push(Object.assign({ uid: ++m.uid, id: cosa.id, n, gx, gy, gr: gr % 4 }, cosa.dur != null ? { dur: cosa.dur } : Z.durDe(AJ, cosa.id) ? { dur: Z.durDe(AJ, cosa.id) } : {}));
+    return Z.ok(cosa.n - n);
   };
   // ordenar: vuelve a colocarlo todo, de lo más grande a lo más pequeño
   Z.ordenar = function (AJ, m) {

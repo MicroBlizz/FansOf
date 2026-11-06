@@ -123,11 +123,14 @@ function sueltaArrastre(ev) {
   const e = JUEGO.e, AJ = ZOM.AJ, C = VM.celda;
   const clic = Math.hypot(ev.clientX - A.x0, ev.clientY - A.y0) < 5, sobre = rejillaBajo(ev);
   const donde = sobre && { bolsa: sobre.dataset.bolsa, gx: Math.round((ev.clientX - A.dx - sobre.getBoundingClientRect().left) / C), gy: Math.round((ev.clientY - A.dy - sobre.getBoundingClientRect().top) / C), gr: A.gr };
+  if (!clic && !donde && sobreHuecos(ev)) return usaOPon(A.i != null ? { i: A.i } : { bolsa: A.bolsa, uid: A.uid }, A.id, true);   // soltar en lo puesto: ponérselo
   if (A.i != null) return resultadoMochila(clic ? ZOM.coger(AJ, e, A.i) : donde ? ZOM.coger(AJ, e, A.i, donde) : ZOM.ok(0));
   if (clic) return pintaMochila();
   if (donde) return resultadoMochila(ZOM.moverA(AJ, e.jugador, A.bolsa, A.uid, donde.bolsa, donde.gx, donde.gy, donde.gr));
   resultadoMochila(ZOM.dejar(AJ, e, A.uid, A.bolsa));
 }
+// ¿se suelta sobre los huecos de la ropa?
+function sobreHuecos(ev) { const h = document.querySelector('#zb-mochila .vm-huecos'), b = h && h.getBoundingClientRect(); return !!b && ev.clientX >= b.left && ev.clientX <= b.right && ev.clientY >= b.top && ev.clientY <= b.bottom; }
 // la rejilla (mochila, riñonera o bolsillos) que hay bajo el ratón, o null
 function rejillaBajo(ev) {
   for (const r of document.querySelectorAll('#zb-mochila .vm-rejilla')) { const b = r.getBoundingClientRect(); if (ev.clientX >= b.left && ev.clientX <= b.right && ev.clientY >= b.top && ev.clientY <= b.bottom) return r; }

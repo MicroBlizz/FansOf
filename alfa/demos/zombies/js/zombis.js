@@ -98,8 +98,15 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     }
     const m = Math.hypot(mx, mz) || 1;
     zb.a = Math.atan2(mx, mz);
-    const choca = mundo.mueve(zb, mx / m * paso, mz / m * paso, zb.T.radio);
+    const [px, pz] = dentroDeLoHecho(zb, mx / m * paso, mz / m * paso, mundo);
+    const choca = mundo.mueve(zb, px, pz, zb.T.radio);
     if (choca && zb.estado !== 'vaga' && !zb.hueco && !zb.cruza) Z.buscaHueco(AJ, e, zb, mundo);   // una pared por medio: a por la puerta o ventana más cercana
+  }
+  // un fan que está en lo construido no da un paso hacia lo que aún no lo está (allí no hay paredes): ese eje se queda quieto y resbala
+  // por el borde. Si ya estaba fuera (de antes de cargarse nada), anda libre hasta volver a entrar
+  function dentroDeLoHecho(zb, dx, dz, mundo) {
+    if (!mundo.construido || !mundo.construido(zb.x, zb.z)) return [dx, dz];
+    return [mundo.construido(zb.x + dx, zb.z) ? dx : 0, mundo.construido(zb.x, zb.z + dz) ? dz : 0];
   }
   // el campo de flujo (si el mundo lo da) cuando te persigue o va a donde estás, sin un hueco entre manos y no pegado a ti
   function sigueFlujo(e, zb, mundo) {

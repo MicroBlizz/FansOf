@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.11.2', real: ['<b>LOS FANS YA NO ATRAVIESAN EL MUNDO</b>: los que iban a un ruido lejano o seguían huellas ya no se meten por zonas que aún no se habían construido, y si uno se queda dentro de una pared al aparecer un barrio nuevo, sale a la calle.'],
+    joke: ['Microblizz confirma que atravesar paredes era una función premium. Ya no está incluida en la versión gratuita.'] },
   { v: '0.11.1', real: ['<b>AJUSTES TRAS PROBAR UN MES ENTERO</b>: las noches de invierno son una hora más cortas, en verano la sed baja un 50 % más (antes el doble) y los fans tranquilos que dejas muy lejos desaparecen cuando hay demasiados, para que los sitios nuevos que descubres sigan teniendo fans.'],
     joke: ['Microblizz ha hecho pruebas de equilibrio durante un mes. Ha concluido que el problema eran los jugadores.'] },
   { v: '0.11.0', real: ['<b>LAS ESTACIONES</b>: el año pasa (7 días cada estación, empezando en invierno). En invierno hay nieve, huellas y días cortos; en primavera llueve (se te oye menos) y los huertos dan verdura; en verano hace calor (bebes el doble, la carne se pudre y los fans corren más); en otoño hay niebla y hojas que crujen. Todo cambia de color: suelo, tejados, árboles y lo que cae del cielo.'],

@@ -99,6 +99,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const E = e.trozos || (e.trozos = {}), nuevo = !E[P.clave], t = E[P.clave] || (E[P.clave] = { fans: Math.round(P.fans * e.dif.zombis) });
     if (nuevo && Z.ponRescate) Z.ponRescate(AJ, e, P, mundo, azar);   // a veces, alguien atrapado (js/rescates.js)
     if (nuevo && Z.ponCochesTrozo) Z.ponCochesTrozo(AJ, e, P, azar);   // sus coches aparcados se conducen (js/coches.js)
+    sacaDeParedes(e, P.rect, mundo, azar);
     const hueco = Math.max(0, AJ.mundo.maxZombis - Z.vivos(e).length), n = Math.min(t.fans, hueco), J = e.jugador;
     let salen = 0;
     for (let i = 0; i < n * 3 && salen < n; i++) {
@@ -109,10 +110,21 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     t.fans -= salen;
     return Z.ok(salen);
   };
-  // al descargar un trozo: los fans tranquilos (y los caídos) de dentro se quitan; los vivos se guardan como número
+  // los fans que ya andaban por aquí antes de construirse (los que te perseguían) y se han quedado dentro de una pared salen al sitio
+  // libre más cercano que se encuentre (6 m alrededor; si no, a uno del trozo)
+  function sacaDeParedes(e, r, mundo, azar) {
+    if (!mundo.choca) return;
+    for (const z of e.zombis) {
+      if (z.vida <= 0 || z.x < r.x0 || z.x >= r.x1 || z.z < r.z0 || z.z >= r.z1 || !mundo.choca(z.x, z.z, z.T.radio)) continue;
+      const p = mundo.puntoTrozo({ x0: z.x - 6, x1: z.x + 6, z0: z.z - 6, z1: z.z + 6 }, azar) || mundo.puntoTrozo(r, azar);
+      if (p) { z.x = p.x; z.z = p.z; }
+    }
+  }
+  // al descargar un trozo: los fans de dentro (y los caídos) se quitan y los vivos se guardan como número. Solo se queda el que te
+  // persigue: el que iba a un ruido o seguía huellas allí lejos andaría por un sitio sin paredes
   Z.saleTrozo = function (AJ, e, P) {
     const E = e.trozos || (e.trozos = {}), t = E[P.clave] || (E[P.clave] = { fans: 0 }), r = P.rect;
-    const dentro = (z) => z.x >= r.x0 && z.x < r.x1 && z.z >= r.z0 && z.z < r.z1 && (z.vida <= 0 || z.estado === 'vaga') && !z.T.jefe;
+    const dentro = (z) => z.x >= r.x0 && z.x < r.x1 && z.z >= r.z0 && z.z < r.z1 && (z.vida <= 0 || z.estado !== 'persigue') && !z.T.jefe;
     const fuera = e.zombis.filter(dentro);
     t.fans += fuera.filter((z) => z.vida > 0).length;
     e.zombis = e.zombis.filter((z) => !dentro(z));

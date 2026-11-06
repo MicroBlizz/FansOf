@@ -11,7 +11,7 @@ function limpiaVista() {
   if (VISTA.jug) MOTOR.escena.remove(VISTA.jug.grupo);
   for (const v of VISTA.zombis.values()) MOTOR.escena.remove(v.mod.grupo);
   for (const h of VISTA.huellas) MOTOR.escena.remove(h);
-  VISTA.zombis.clear(); VISTA.huellas.length = 0; VISTA.jug = null; VISTA.cx = VISTA.cz = null;
+  VISTA.zombis.clear(); VISTA.huellas.length = 0; VISTA.jug = null; VISTA.cx = VISTA.cz = null; limpiaEfectos();
 }
 function montaJugador(J) {
   VISTA.jug = montaPersonaje(J.animal, true); VISTA.jug.fase = 0;
@@ -23,11 +23,22 @@ function pintaJugador(J, dt) {
   if (VISTA.arma !== J.arma) { VISTA.arma = J.arma; if (J.arma === 'palanca') { ponArma(v, null); v.arma = modeloPalanca(); v.mano.add(v.arma); } else ponArma(v, J.arma); }
   const anda = Math.hypot(J.x - (v.x ?? J.x), J.z - (v.z ?? J.z)) > 0.001; v.x = J.x; v.z = J.z;
   v.fase += dt * (J.corre ? 14 : 9);
-  v.grupo.position.set(J.x, 0, J.z); v.grupo.rotation.y = J.a;
+  posturaGolpe(v);
+  v.grupo.position.set(J.x + Math.sin(J.a) * v.empuje, 0, J.z + Math.cos(J.a) * v.empuje); v.grupo.rotation.y = J.a;
   const tumbado = J.duerme || J.vida <= 0;
   v.grupo.rotation.x = tumbado ? -Math.PI / 2 : 0; v.grupo.position.y = tumbado ? 0.3 : 0;
   v.grupo.scale.set(v.escala, v.escala * (J.agacha && !J.duerme ? 0.72 : 1), v.escala);
   animaPersonaje(v, v.fase, anda);
+}
+// un zombi vivo: anda, da un respingo al recibir, se tambalea aturdido o se queda tumbado tras el empujón
+function posturaZombi(zb, v, dt) {
+  const g = v.mod.grupo, anda = !zb.aturdido && Math.hypot(zb.x - g.position.x, zb.z - g.position.z) > 0.002;
+  v.fase += dt * (anda ? 7 : 2); v.respingo = Math.max(0, (v.respingo || 0) - dt);
+  v.suelo = zb.derribado ? Math.min(1, (v.suelo || 0) + dt * 6) : Math.max(0, (v.suelo || 0) - dt * 3);
+  g.position.set(zb.x, 0.28 * v.suelo, zb.z); g.rotation.y = zb.a + Math.sin(v.fase * 0.5) * 0.12;
+  g.rotation.x = -Math.PI / 2 * v.suelo + (zb.aturdido > 0 && !zb.derribado ? 0.35 + Math.sin(v.fase * 6) * 0.08 : 0) + (v.respingo > 0 ? 0.3 : 0);
+  g.scale.setScalar(v.mod.escala * (v.respingo > 0 ? 1.08 : 1));
+  animaPersonaje(v.mod, v.fase, anda);
 }
 function pintaZombis(e, dt) {
   for (const zb of e.zombis) {
@@ -35,10 +46,7 @@ function pintaZombis(e, dt) {
     if (!v) { v = { mod: montaPersonaje('z_' + zb.tipo, false), fase: Math.random() * 6, cae: 0 }; MOTOR.escena.add(v.mod.grupo); VISTA.zombis.set(zb.id, v); }
     const g = v.mod.grupo;
     if (zb.vida <= 0) { v.cae = Math.min(1, v.cae + dt * 3); g.rotation.x = -Math.PI / 2 * v.cae; g.position.y = 0.3 * v.cae; continue; }
-    const anda = Math.hypot(zb.x - g.position.x, zb.z - g.position.z) > 0.002;
-    v.fase += dt * (anda ? 7 : 2);
-    g.position.set(zb.x, 0, zb.z); g.rotation.y = zb.a + Math.sin(v.fase * 0.5) * 0.12;
-    animaPersonaje(v.mod, v.fase, anda);
+    posturaZombi(zb, v, dt);
   }
 }
 // los anillos del ruido: uno por ruido vivo (naranja el tuyo, rojo las alarmas, morado los gritos)
@@ -86,10 +94,10 @@ function pintaCamara(J, dt) {
   const cx = J.x + Math.sin(J.a) * 2.5, cz = J.z + Math.cos(J.a) * 1.8;
   VISTA.cx = VISTA.cx == null ? cx : VISTA.cx + (cx - VISTA.cx) * Math.min(1, dt * 5);
   VISTA.cz = VISTA.cz == null ? cz : VISTA.cz + (cz - VISTA.cz) * Math.min(1, dt * 5);
-  camaraEn(VISTA.cx, VISTA.cz); avanzaTapan(J.x, J.z, dt);
+  camaraEn(VISTA.cx + tiembla(), VISTA.cz + tiembla()); avanzaTapan(J.x, J.z, dt);
 }
 function pintaMundo(AJ, e, dt) {
-  pintaJugador(e.jugador, dt); pintaZombis(e, dt); pintaRuidos(e); pintaHuellas(e); pintaLuz(AJ, e); pintaCamara(e.jugador, dt);
+  avanzaEfectos(e.jugador, dt); pintaJugador(e.jugador, dt); pintaZombis(e, dt); pintaRuidos(e); pintaHuellas(e); pintaLuz(AJ, e); pintaCamara(e.jugador, dt);
   const u = MOTOR.postMat.uniforms, J = e.jugador;
   u.dano.value = Math.max(0, u.dano.value - dt * 2); u.frio.value = J.duerme ? 0.8 : 0;
 }

@@ -22,6 +22,8 @@ IDIOMA.add({
   'Menos fans, muerden flojo y el hambre va despacio': 'Fewer fans, weak bites and slow hunger', 'Lo normal': 'The usual',
   'Más fans, más hambre y muerden fuerte': 'More fans, more hunger and hard bites',
   // el HUD
+  'AGUANTE': 'STAMINA', 'Agotado: no corres y pegas flojo': 'Exhausted: no running, weak hits', 'CLIC DCHO / R': 'RIGHT CLICK / R', 'empujar': 'shove',
+  'Clic derecho / R': 'Right click / R', 'empujar (tumba sin ruido)': 'shove (knocks down silently)',
   'VIDA': 'HEALTH', 'HAMBRE': 'HUNGER', 'SED': 'THIRST', 'SUEÑO': 'SLEEP', 'AGACHADO': 'CROUCHED', 'DURMIENDO': 'SLEEPING', 'INFECTADO': 'INFECTED',
   'Te suenan las tripas (pulsa E)': 'Your stomach is rumbling (press E)', 'Tienes sed (pulsa Q)': 'You are thirsty (press Q)', 'Te cuesta seguir despierto (pulsa Z)': 'You can barely stay awake (press Z)',
   'DÍA %1': 'DAY %1', 'SIN LUZ': 'NO POWER', 'Anochece en %1 min': 'Nightfall in %1 min', 'NOCHE: te ven menos, pero no ves nada': 'NIGHT: they see you less, but you see nothing',

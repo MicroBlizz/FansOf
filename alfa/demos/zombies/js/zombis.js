@@ -73,6 +73,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
       const d = Z.dist(zb.x, zb.z, J.x, J.z);
       if (d > AJ.ia.duerme && zb.estado === 'vaga') continue;
       zb.olvida -= dt; zb.tMordisco -= dt;
+      if (zb.aturdido > 0) { zb.aturdido -= dt; if (zb.aturdido <= 0) zb.derribado = false; continue; }   // aturdido o en el suelo: ni anda ni muerde
       if ((zb.tPensar -= dt) <= 0) { zb.tPensar = 0.25 + azar() * 0.15; piensa(AJ, e, zb, d, mundo, azar); }
       if (zb.estado === 'persigue') zb.obj = { x: J.x, z: J.z };
       if (d < AJ.ia.alcanceMordisco + zb.T.radio && zb.estado === 'persigue') { muerde(AJ, e, zb, azar); continue; }

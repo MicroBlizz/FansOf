@@ -15,7 +15,14 @@ const EVENTOS = {
   botin: (v) => { play(v.cosas.length ? 'coge' : 'registra'); avisa(v.cosas.length ? trf('Encuentras: %1.', v.cosas.map((c) => tr(NOMBRE_COSA[c])).join(', ')) : tr('Nada. Alguien pasó antes.'), v.cosas.length ? 'bien' : ''); },
   mordisco: () => { play('dolor'); MOTOR.postMat.uniforms.dano.value = 0.8; },
   infectado: () => avisa(tr('Te han infectado. Véndate (V) para frenarlo.'), 'malo'),
-  ataque: (v) => { play(v.arma === 'escopeta' ? 'escopeta' : 'esquiva'); if (v.arma === 'escopeta') { const J = JUEGO.e.jugador; destello(J.x + Math.sin(J.a), 1.2, J.z + Math.cos(J.a), 0xffc060, 3, 0.08); } if (v.tocados.length) play('carne'); },
+  ataque: (v) => {
+    const J = JUEGO.e.jugador, escopeta = v.arma === 'escopeta';
+    play(escopeta ? 'escopeta' : 'esquiva'); efectoGolpe(v.arma);
+    if (escopeta) { destello(J.x + Math.sin(J.a), 1.2, J.z + Math.cos(J.a), 0xffc060, 3, 0.08); efectoTrazas(J); }
+    for (const t of v.tocados) { sangre(t.x, t.z, escopeta ? 9 : 5, J.x, J.z); zombiRespingo(t.id); }
+    if (v.tocados.length) { play('carne'); EFECTOS.temblor = Math.max(EFECTOS.temblor, 0.07); }
+  },
+  empujon: (v) => { play('esquiva'); efectoGolpe('empujon'); for (const id of v.tocados) zombiRespingo(id); if (v.tocados.length) play('impacto'); },
   baja: () => play('impacto'),
   sinMunicion: () => { play('vacio'); avisa(tr('Sin cartuchos. Usa la palanca (2).')); },
   despierta: (v) => avisa(tr(v.susto ? '¡Te despiertas de golpe! Hay fans cerca.' : 'Te despiertas descansado.'), v.susto ? 'malo' : 'bien'),

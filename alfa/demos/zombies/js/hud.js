@@ -7,7 +7,7 @@ function montaHud() {
     '<div class="panel zb-ruido" id="h-ruido"></div><div class="zb-parche" id="h-parche" hidden></div><div class="zb-radio" id="h-radio" hidden></div>' +
     '<div class="zb-hotbar" id="h-mochila"></div><div class="panel zb-arma" id="h-arma"></div><div class="zb-ayuda" id="h-ayuda"></div>' +
     '<b class="zb-et accion" id="h-accion" hidden></b><div class="zb-registro" id="h-registro" hidden><i></i></div>';
-  el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['1 2', 'arma'], ['Z', 'dormir'], ['ESC', 'pausa']]
+  el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['CLIC DCHO / R', 'empujar'], ['1 2', 'arma'], ['Z', 'dormir'], ['ESC', 'pausa']]
     .map(([k, t]) => '<span><b>' + esc(tr(k)) + '</b>' + esc(tr(t)) + '</span>').join('');
   HUD.avisos.length = 0; HUD.parche = null;
 }
@@ -20,7 +20,7 @@ function pintaNecesidades(AJ, J) {
   if (J.agacha && !J.duerme) estados.push('<span>' + esc(tr('AGACHADO')) + '</span>');
   if (J.duerme) estados.push('<span>' + esc(tr('DURMIENDO')) + '</span>');
   if (J.infeccion > 0) estados.push('<span class="malo">' + esc(tr('INFECTADO')) + ' ' + Math.ceil(J.infeccion) + '%</span>');
-  el('h-nec').innerHTML = barraHud('VIDA', J.vida / J.max * 100, 'var(--rk-bien)') +
+  el('h-nec').innerHTML = barraHud('VIDA', J.vida / J.max * 100, 'var(--rk-bien)') + barraHud('AGUANTE', J.aguante, J.agotado ? 'var(--rk-mal)' : '#e8e0a0', J.agotado ? 'Agotado: no corres y pegas flojo' : '') +
     barraHud('HAMBRE', J.hambre, '#ffb03a', J.hambre < bajo ? 'Te suenan las tripas (pulsa E)' : '') + barraHud('SED', J.sed, '#58c8ff', J.sed < bajo ? 'Tienes sed (pulsa Q)' : '') +
     barraHud('SUEÑO', J.sueno, '#c99bff', J.sueno < bajo ? 'Te cuesta seguir despierto (pulsa Z)' : '') + '<div class="estados">' + estados.join('') + '</div>';
 }

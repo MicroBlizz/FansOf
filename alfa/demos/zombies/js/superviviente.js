@@ -7,7 +7,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const A = AJ.animales[animal];
     if (!A) return Z.error('animalDesconocido', { animal });
     const vida = A.vida || AJ.jugador.vida;
-    return Z.ok({ animal, A, x, z, a: 0, vida, max: vida, hambre: 85, sed: 85, sueno: 90, infeccion: 0, agacha: false, corre: false, duerme: false,
+    return Z.ok({ animal, A, x, z, a: 0, vida, max: vida, hambre: 85, sed: 85, sueno: 90, infeccion: 0, agacha: false, corre: false, duerme: false, aguante: AJ.aguante.max, agotado: false,
       arma: 'escopeta', tArma: 0, registra: null, mochila: Object.assign({}, AJ.mochilaInicial), andado: 0, ultimoGolpe: null });
   };
 

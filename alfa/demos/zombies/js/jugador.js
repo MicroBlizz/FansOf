@@ -1,6 +1,6 @@
-// Fans of Zombies · MOVERSE Y PELEAR (dominio): andar, correr y agacharse (cada paso hace su ruido y deja huellas en la nieve),
-// cambiar de arma y golpear o disparar. La escopeta tumba lo que tengas delante, pero se oye en medio distrito.
-// La entrada llega ya leída: { mx, mz (dirección, -1 a 1), corre, agacha, apunta (ángulo), ataca, arma }.
+// Fans of Zombies · MOVERSE (dominio): andar, correr y agacharse (cada paso hace su ruido y deja huellas en la nieve), el aguante que
+// gasta correr y se recupera al ir despacio, y cambiar de arma. Golpear, disparar y empujar están en js/combate.js.
+// La entrada llega ya leída: { mx, mz (dirección, -1 a 1), corre, agacha, apunta (ángulo), ataca, empuja, arma }.
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 (function (Z) {
@@ -11,12 +11,22 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (ent.arma && AJ.armas[ent.arma]) J.arma = ent.arma;
     if (ent.apunta != null) J.a = ent.apunta;
     const m = Math.hypot(ent.mx, ent.mz);
-    J.corre = !!ent.corre && m > 0 && !J.registra;
+    J.corre = !!ent.corre && m > 0 && !J.registra && J.aguante > 0 && !J.agotado;
     if (J.corre) J.agacha = false;
     if (m > 0) anda(AJ, e, dt, ent, m, mundo);
+    pasoAguante(AJ, J, dt);
     J.tArma -= dt;
-    if (ent.ataca && J.tArma <= 0 && !J.registra) Z.ataca(AJ, e, mundo);
+    if (J.registra) return;
+    if (ent.empuja && J.tArma <= 0) Z.empuja(AJ, e, mundo);
+    else if (ent.ataca && J.tArma <= 0) Z.ataca(AJ, e, mundo);
   };
+  // el aguante: correr lo gasta; andando o quieto se recupera. A cero, «agotado» hasta recuperar un poco (no corres y golpeas peor)
+  function pasoAguante(AJ, J, dt) {
+    const G = AJ.aguante;
+    J.aguante = Math.max(0, Math.min(G.max, J.aguante + (J.corre ? -G.correr : G.recupera) * dt));
+    if (J.aguante <= 0) J.agotado = true;
+    else if (J.agotado && J.aguante >= G.salir) J.agotado = false;
+  }
   function anda(AJ, e, dt, ent, m, mundo) {
     const J = e.jugador, P = AJ.jugador;
     if (J.registra) J.registra = null;                            // moverte corta el registro
@@ -32,30 +42,4 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     e.huellas.push({ x: J.x, z: J.z, a: J.a, min: e.min });
     if (e.huellas.length > P.huellas) e.huellas.shift();
   }
-
-  // golpear o disparar hacia donde miras: da a los zombis dentro del cono y del alcance que se vean
-  Z.ataca = function (AJ, e, mundo) {
-    const J = e.jugador, W = AJ.armas[J.arma];
-    if (W.municion && !(J.mochila[W.municion] > 0)) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
-    if (W.municion) J.mochila[W.municion]--;
-    J.tArma = W.cadencia;
-    Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[W.ruido] * (W.municion ? 1 : (J.A.ruido || 1)), 'jugador');
-    const tocados = [];
-    for (const zb of e.zombis) {
-      if (zb.vida <= 0) continue;
-      const d = Z.dist(J.x, J.z, zb.x, zb.z), ang = Math.abs(angulo(J.a, Math.atan2(zb.x - J.x, zb.z - J.z)));
-      if (d > W.alcance + zb.T.radio || ang > W.cono || !mundo.seVe(J.x, J.z, zb.x, zb.z)) continue;
-      tocados.push(zb); Z.golpeaZombi(AJ, e, zb, W.dano * (1 - 0.4 * d / W.alcance));
-    }
-    e.eventos.push({ tipo: 'ataque', arma: J.arma, tocados: tocados.map((z) => z.id) });
-    return Z.ok(tocados.length);
-  };
-  const angulo = (a, b) => { let d = (b - a) % 6.2832; if (d > 3.1416) d -= 6.2832; if (d < -3.1416) d += 6.2832; return d; };
-  Z.golpeaZombi = function (AJ, e, zb, dano) {
-    zb.vida -= dano; zb.estado = 'persigue'; zb.olvida = AJ.ia.olvida;
-    if (zb.vida > 0) return;
-    e.stats.bajas++;
-    e.eventos.push({ tipo: 'baja', id: zb.id, tipoZombi: zb.tipo, x: zb.x, z: zb.z });
-    if (zb.T.botin) e.cuerpos.push({ id: 'cuerpo-' + zb.id, x: zb.x, z: zb.z });     // la ballena deja algo que registrar
-  };
 })(ZOM);

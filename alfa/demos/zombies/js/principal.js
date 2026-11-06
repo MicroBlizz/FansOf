@@ -20,7 +20,7 @@ function sitioCerca(e) {
 }
 
 function arranca() {
-  iniciaMotor(); construyeMapa(); preparaEntrada();
+  iniciaMotor(); construyeMapa(); preparaEntrada(); preparaEfectos();
   JUEGO.sitios = MAPA.contenedores.filter((c) => c.tipo !== 'verja').map((c, i) => ({ id: 'c' + i, x: c.x, z: c.z, tipo: c.tipo }));
   el('carga').hidden = true;
   abreMenu();

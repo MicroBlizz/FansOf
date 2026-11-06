@@ -1,20 +1,20 @@
 // Fans of Zombies · TECLADO Y RATÓN (adaptador): lee las teclas y el ratón y los deja como la entrada que piden las reglas
 // ({ mx, mz, corre, agacha, apunta, ataca, arma, usar, dormir, registrar }). Para PC: WASD o flechas para andar, Mayús para correr,
-// C para agacharse, clic o espacio para atacar, 1 y 2 cambian de arma, F registra, E come, Q bebe, V venda, Z duerme, Esc pausa.
+// C para agacharse, clic o espacio para atacar, clic derecho o R para empujar, 1 y 2 cambian de arma, F registra, E come, Q bebe, V venda, Z duerme, Esc pausa.
 'use strict';
 const TECLAS_ZOM = {
   arriba: ['KeyW', 'ArrowUp'], abajo: ['KeyS', 'ArrowDown'], izq: ['KeyA', 'ArrowLeft'], der: ['KeyD', 'ArrowRight'], corre: ['ShiftLeft', 'ShiftRight'],
-  agacha: ['KeyC', 'ControlLeft'], ataca: ['Space'], arma1: ['Digit1'], arma2: ['Digit2'], registra: ['KeyF'], come: ['KeyE'], bebe: ['KeyQ'], venda: ['KeyV'],
+  agacha: ['KeyC', 'ControlLeft'], ataca: ['Space'], empuja: ['KeyR'], arma1: ['Digit1'], arma2: ['Digit2'], registra: ['KeyF'], come: ['KeyE'], bebe: ['KeyQ'], venda: ['KeyV'],
   duerme: ['KeyZ'], pausa: ['Escape', 'KeyP'],
 };
-const ENTRADA = { abajo: new Set(), pulsos: new Set(), raton: { x: 0, y: 0, abajo: false, visto: false } };
+const ENTRADA = { abajo: new Set(), pulsos: new Set(), raton: { x: 0, y: 0, abajo: false, visto: false, derecho: false } };
 function preparaEntrada() {
   addEventListener('keydown', (ev) => { if (!ENTRADA.abajo.has(ev.code)) ENTRADA.pulsos.add(ev.code); ENTRADA.abajo.add(ev.code); if (ev.code === 'Space' || ev.code === 'Tab') ev.preventDefault(); });
   addEventListener('keyup', (ev) => ENTRADA.abajo.delete(ev.code));
   addEventListener('blur', () => ENTRADA.abajo.clear());
   const cv = el('cv');
   cv.addEventListener('mousemove', (ev) => { ENTRADA.raton.x = ev.clientX; ENTRADA.raton.y = ev.clientY; ENTRADA.raton.visto = true; });
-  cv.addEventListener('mousedown', (ev) => { if (ev.button === 0) ENTRADA.raton.abajo = true; });
+  cv.addEventListener('mousedown', (ev) => { if (ev.button === 0) ENTRADA.raton.abajo = true; if (ev.button === 2) ENTRADA.raton.derecho = true; });
   addEventListener('mouseup', () => { ENTRADA.raton.abajo = false; });
   cv.addEventListener('contextmenu', (ev) => ev.preventDefault());
 }
@@ -27,7 +27,8 @@ function leeEntrada(J, cerca) {
   if (ENTRADA.raton.visto) { const p = pantallaASuelo(ENTRADA.raton.x, ENTRADA.raton.y); apunta = Math.atan2(p.x - J.x, p.z - J.z); }
   else if (mx || mz) apunta = Math.atan2(mx, mz);
   const quiere = pulsa('registra'), usar = pulsa('come') ? 'judias' : pulsa('bebe') ? 'agua' : pulsa('venda') ? 'venda' : null;
-  const ent = { mx, mz, corre: mantiene('corre'), agacha: pulsa('agacha'), apunta, ataca: ENTRADA.raton.abajo || mantiene('ataca'),
+  const empuja = ENTRADA.raton.derecho || pulsa('empuja'); ENTRADA.raton.derecho = false;
+  const ent = { mx, mz, corre: mantiene('corre'), agacha: pulsa('agacha'), apunta, ataca: ENTRADA.raton.abajo || mantiene('ataca'), empuja,
     arma: pulsa('arma1') ? 'escopeta' : pulsa('arma2') ? 'palanca' : null, usar, dormir: pulsa('duerme'), registrar: quiere && cerca ? cerca.id : null, nadaCerca: quiere && !cerca };
   return ent;
 }

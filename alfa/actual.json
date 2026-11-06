@@ -1,8 +1,8 @@
 {
- "build": 1017,
- "hash": "97706bd",
- "fecha": "2026-11-06T01:14:55Z",
- "mensaje": "Cola: Fallidas solo muestra las últimas 48 h",
+ "build": 1018,
+ "hash": "05db0c2",
+ "fecha": "2026-11-06T01:28:36Z",
+ "mensaje": "presencia: los navegadores automáticos (tests y bots) no mandan pulso",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.23', real: ["<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas."], joke: ["Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público."] },
   { v: '0.7.22', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos."], joke: ["Microblizz ha revisado las tripas del juego y ha encontrado a Phony echándose la siesta dentro."] },
   { v: '0.7.21', real: ["<b>PANTALLA DE INICIO</b>: al abrir el juego sale el logo del estudio, Fans Of Games.", "<b>ICONO RETOCADO</b>: el icono del juego se ve entero, sin cortes ni zoom."], joke: ["Microblizz ha pedido que su logo salga más grande en la pantalla de inicio. Phony ha pedido salir él."] },
   { v: '0.7.20', real: ["<b>LOGO NUEVO</b>: KARTS ondea como una bandera de meta en la pantalla de título, y el icono, el favicon y la imagen que sale al compartir el juego llevan el logo nuevo."], joke: ["Microblizz ha planchado la bandera a cuadros y Phony ha firmado en la meta con un conejo."] },

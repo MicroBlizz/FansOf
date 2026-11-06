@@ -17,19 +17,32 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     jefe: ['¡Cuidado, un jefe! La cinta de PRECAUCIÓN no te deja bajar hasta vencerlo. Esquiva lo que te lance. Si vas mal de café, siempre puedes llamar al ascensor.'],
     mesa: [
       'Esta es tu mesa. Con las monedas de la caja te formas: cada curso del tablero te hace más fuerte.',
-      'Los cursos se compran de arriba abajo en cada columna. Toca un pósit para ver qué da.',
+      'Es un árbol de talentos: cada uno pide alguno de la fila de encima. En las filas de borde naranja eliges uno de dos, y si te arrepientes puedes REINICIAR.',
     ],
     equipo: ['Aquí te pones el equipo y eliges mascota. Todo sale de los paquetes: toca el de la rareza que quieras ponerte.'],
     ventaja: ['Al empezar y en cada departamento nuevo eliges una ventaja. Solo vale para esta bajada, así que piensa qué te hace falta.'],
+    modos: ['Aquí tienes dos modos más, siempre desde Marketing: el DESAFÍO DEL DÍA, la misma bajada para todos, y el EVENTO DE LA SEMANA, con reglas especiales. Cada uno tiene su premio y su ranking.'],
+    presion: [
+      'Aquí eliges dónde bajas. Cada departamento, salvo Marketing, pide su acreditación.',
+      'Sin ella puedes bajar, pero la presión te frena y el café se gasta mucho más. Cómprala con el botón naranja de su fila.',
+    ],
     departamento: ['¡Ya puedes saltarte departamentos! El ascensor te deja en cualquiera cuyo jefe de antes hayas vencido. Abajo pagan más, pero pegan más fuerte.'],
     final: [
       '¡Lo has conseguido! El servidor vuelve a funcionar y Microblizz ni se ha enterado de que estuvo caído.',
       'Ahora puedes ASCENDER en tu mesa: empiezas la campaña otra vez con un cargo mejor. O bajar al Código Legacy de 2004, que no tiene fondo. Nadie sabe qué hay abajo del todo.',
     ],
+    bichos: [
+      'Estos son tus compañeros: los bichos que capturas con la RED pueden bajar contigo. Llevas dos, además de la mascota, y disparan solos.',
+      'Toca uno para subirlo de nivel con capturas y materiales: cada nivel le abre un talento. En el TALLER le fabricas un accesorio.',
+    ],
     catalogo: ['Este es el catálogo de bichos. Cada bicho nuevo que tumbas paga una vez; los raros pagan mucho. Complétalo y te llevas tres paquetes del jefe.'],
     habilidad: [
       'Abajo a la izquierda tienes tu habilidad especial: la Reunión de emergencia deja quietos a todos unos segundos.',
       'Úsala cuando te rodeen y espera a que se recargue. Al vencer jefes abrirás más, y en EQUIPO eliges cuál llevas.',
+    ],
+    red: [
+      '¿Ves la exclamación verde? Ese bicho está débil: pulsa RED (abajo a la derecha) y lo atrapas vivo.',
+      'Los capturados valen más que su botín y, si subes a salvo, van al terrario de tu despacho. Si está entero, se escapa y pierdes la red.',
     ],
     taller: [
       'Este es el taller. Al bajar, rompe taquillas, fotocopiadoras y máquinas de café: sueltan tornillos, cables y chips.',

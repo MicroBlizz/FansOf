@@ -18,9 +18,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   };
 
   // Un disparo le da; si se rompe, suelta sus materiales. Devuelve true si se ha roto.
-  M.herir = function (e, m, dano, rnd) {
+  M.herir = function (e, m, dano, rnd, critico) {
     m.vida -= dano; m.golpeT = 0.12;
-    e.eventos.push({ tipo: 'impacto', x: m.x, y: m.y, dano });
+    e.eventos.push({ tipo: 'impacto', x: m.x, y: m.y, dano, critico: !!critico });
     if (m.vida > 0) return false;
     e.muebles.splice(e.muebles.indexOf(m), 1);
     e.mueblesRotos++;

@@ -21,20 +21,33 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const AJ = e.aj, d = AJ.jefes[cual.id], suelo = (planta + 1) * AJ.altoPlanta;
     const dif = B.difDe(AJ, planta, 0), vida = Math.round(d.vida * dif.vida * (1 + AJ.jefes.vidaPorVuelta * cual.vuelta) * (1 + AJ.jefes.vidaPorRango * e.rango));
     e.jefe = { id: cual.id, planta, suelo, golpe: dif.golpe, x: AJ.ancho / 2, y: Math.min(suelo - 70, e.jugador.y + 160), vida, vidaMax: vida, radio: d.radio,
-      dir: 1, ataqueT: 1.5, escudoT: 0, escudoCadaT: d.escudoCada || 0, golpeT: 0 };
+      dir: 1, ataqueT: 1.5, escudoT: 0, escudoCadaT: d.escudoCada || 0, golpeT: 0, fase: 1 };
     e.jefesVistos[planta] = true;
     e.eventos.push({ tipo: 'jefe', id: cual.id, nombre: d.nombre });
   }
 
   function aparecer(e) {
     const AJ = e.aj, p = e.planta, cual = J.dePlanta(AJ, p);
-    if (!cual || e.jefesVistos[p] || e.jugador.y < p * AJ.altoPlanta + 140) return;
-    crear(e, p, cual);
+    if (e.jefesVistos[p] || e.jefe || e.jugador.y < p * AJ.altoPlanta + 140) return;
+    if (cual) { crear(e, p, cual); return; }
+    const sec = J.secretoAqui(e, p);
+    if (sec) { e.secretosVistos.push(sec); crear(e, p, { id: sec, vuelta: 0 }); }
   }
+
+  // El jefe secreto que sale en esta planta (o null): el de su zona, si se cumple su condición y no ha salido ya en esta bajada.
+  J.secretoAqui = function (e, planta) {
+    const AJ = e.aj, zona = B.zonaDe(AJ, planta).id;
+    return J.secretos(AJ).find((id) => {
+      const c = AJ.jefes[id].secreto;
+      return c.zona === zona && !e.secretosVistos.includes(id) && (!c.rescatados || e.rescatados >= c.rescatados)
+        && (!c.muebles || e.mueblesRotos >= c.muebles) && (!c.apagon || e.apagon);
+    }) || null;
+  };
+  J.secretos = (AJ) => Object.keys(AJ.jefes).filter((id) => AJ.jefes[id] && AJ.jefes[id].secreto);
 
   function mover(e, jf, d, dt) {
     const AJ = e.aj, min = AJ.pared + jf.radio, max = AJ.ancho - AJ.pared - jf.radio;
-    jf.x += jf.dir * d.vel * dt;
+    jf.x += jf.dir * d.vel * furia(AJ, jf, 'vel') * dt;
     if (jf.x < min) { jf.x = min; jf.dir = 1; }
     if (jf.x > max) { jf.x = max; jf.dir = -1; }
     const jy = e.jugador.y, debajo = jy + 115 <= jf.suelo - 60;   // se pone por debajo de ti; si no cabe, por encima
@@ -49,10 +62,17 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   const ATAQUE = {
     producto(e, jf, d) { disparar(e, jf, angAl(e, jf), d.bala, 'diapositiva'); },
+    // los secretos usan los ataques de otros jefes (patron); la impresora alterna bugs y folios
+    impresora(e, jf, d) { jf.turno = !jf.turno; if (jf.turno) ATAQUE.lanzamiento(e, jf, d); else ATAQUE.producto(e, jf, d); },
     rrhh(e, jf, d) { const a = angAl(e, jf); for (let i = 0; i < d.abanico; i++) disparar(e, jf, a + (i - (d.abanico - 1) / 2) * 0.32, d.bala, 'sello'); },
     lanzamiento(e, jf, d) { for (let i = 0; i < d.invoca; i++) B.enemigos.crear(e, 'bug', jf.x + (i ? 30 : -30), jf.y - 10).dir = i ? 1 : -1; },
     // el CEO alterna: un abanico de sellos y, al siguiente ataque, dos bugs
-    ceo(e, jf, d) { jf.turno = !jf.turno; if (jf.turno) ATAQUE.rrhh(e, jf, d); else ATAQUE.lanzamiento(e, jf, d); },
+    // el CEO: alterna sellos y bugs; en la fase 2 añade el anillo de monedas; en la 3 deja los bugs y alterna sellos y anillo
+    ceo(e, jf, d) {
+      const lista = jf.fase >= 3 ? [ATAQUE.rrhh, ATAQUE.accionistas] : jf.fase === 2 ? [ATAQUE.rrhh, ATAQUE.lanzamiento, ATAQUE.accionistas] : [ATAQUE.rrhh, ATAQUE.lanzamiento];
+      jf.turno = ((jf.turno || 0) + 1) % lista.length;
+      lista[jf.turno](e, jf, d);
+    },
     accionistas(e, jf, d) { const a0 = e.t; for (let i = 0; i < d.anillo; i++) disparar(e, jf, a0 + i * Math.PI * 2 / d.anillo, d.bala, 'moneda'); },
   };
 
@@ -66,8 +86,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function atacar(e, jf, d, dt) {
     jf.ataqueT -= dt;
     if (jf.ataqueT > 0) return;
-    jf.ataqueT = d.cada;
-    ATAQUE[jf.id](e, jf, d);
+    jf.ataqueT = d.cada * furia(e.aj, jf, 'cada');
+    ATAQUE[d.patron || jf.id](e, jf, d);
     e.eventos.push({ tipo: 'ataqueJefe', id: jf.id, x: jf.x, y: jf.y });
   }
 
@@ -88,9 +108,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
   }
 
-  J.paso = function (e, dt) {
+  J.paso = function (e, dt, rnd) {
     aparecer(e);
     proyectiles(e, dt);
+    derrumbe(e, dt, rnd);
     const jf = e.jefe;
     if (!jf) return;
     const d = e.aj.jefes[jf.id];
@@ -103,27 +124,64 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   };
 
   // Una grapa le da. Con el escudo puesto no le hace nada.
-  J.herir = function (e, dano) {
+  J.herir = function (e, dano, critico) {
     const jf = e.jefe;
     if (!jf) return false;
     if (jf.escudoT > 0) { e.eventos.push({ tipo: 'bloqueado', x: jf.x, y: jf.y }); return false; }
     jf.vida -= dano; jf.golpeT = 0.12;
-    e.eventos.push({ tipo: 'impacto', x: jf.x, y: jf.y, dano });
-    if (jf.vida <= 0) morir(e, jf);
+    e.eventos.push({ tipo: 'impacto', x: jf.x, y: jf.y, dano, critico: !!critico });
+    if (jf.vida <= 0) morir(e, jf); else fase(e, jf);
     return true;
   };
 
+  // Cuánto multiplica la furia de su fase (1 en la primera).
+  const furia = (AJ, jf, k) => AJ.jefes.furia[k] ** (jf.fase - 1);
+  // Al bajar la vida de cada umbral de sus fases, el jefe pasa a la siguiente y ataca enseguida.
+  function fase(e, jf) {
+    const um = e.aj.jefes[jf.id].fases || e.aj.jefes.fases, n = 1 + um.filter((u) => jf.vida <= jf.vidaMax * u).length;
+    if (n <= jf.fase) return;
+    jf.fase = n; jf.ataqueT = Math.min(jf.ataqueT, 0.6);
+    e.eventos.push({ tipo: 'fase', id: jf.id, fase: n, x: jf.x, y: jf.y });
+  }
+
+  // El derrumbe tras vencer al CEO: caen escombros cerca de ti hasta que llega el ascensor (que viene solo).
+  function derrumbe(e, dt, rnd) {
+    if (!e.derrumbe || e.fin) return;
+    const D = e.aj.jefes.derrumbe, j = e.jugador;
+    e.derrumbe.t -= dt;
+    if (e.derrumbe.t > 0) return;
+    e.derrumbe.t = D.cada;
+    e.proyectiles.push({ x: j.x + (rnd() - 0.5) * 220, y: j.y - 330, vx: 0, vy: D.vel, dano: D.dano * B.difDe(e.aj, e.planta, 0).golpe, radio: D.radio, tipo: 'escombro', vida: 3 });
+  }
+
+  // El premio de un jefe secreto: paquetes del jefe, discos de oro y monedas (todo a la caja: solo cuenta si subes a salvo).
+  function premioSecreto(e, jf) {
+    const S = e.aj.jefes.secretoPremio;
+    for (let i = 0; i < S.paquetes; i++) B.enemigos.soltar(e, 'paqueteJefe', jf.x + (i - 0.5) * 30, jf.y + 30);
+    for (let i = 0; i < S.discos; i++) B.enemigos.soltar(e, 'disco', jf.x + (i - 1) * 16, jf.y + 50);
+    e.caja.valor += S.monedas;
+    e.secretosVencidos = (e.secretosVencidos || 0) + 1;
+    e.eventos.push({ tipo: 'jefeSecreto', id: jf.id, nombre: e.aj.jefes[jf.id].nombre, x: jf.x, y: jf.y });
+  }
+
   function morir(e, jf) {
-    const P = e.aj.jefes.premio;
+    const P = e.aj.jefes.premio, d = e.aj.jefes[jf.id];
     e.jefe = null;
     e.jefesVencidos++; e.bajas++;
     e.bajasPorTipo[jf.id] = (e.bajasPorTipo[jf.id] || 0) + 1;
     for (let i = 0; i < P.tazas; i++) B.enemigos.soltar(e, 'taza', jf.x + (i - 1) * 24, jf.y);
-    const primera = !e.vencidos.includes(jf.planta);
-    if (primera) e.jefesNuevos.push(jf.planta);
-    B.enemigos.soltar(e, primera ? 'paqueteJefe' : 'paquete', jf.x, jf.y - 26);
+    if (d.secreto) premioSecreto(e, jf);   // los secretos no abren departamentos: dan su propio premio
+    else {
+      const primera = !e.vencidos.includes(jf.planta);
+      if (primera) e.jefesNuevos.push(jf.planta);
+      B.enemigos.soltar(e, primera ? 'paqueteJefe' : 'paquete', jf.x, jf.y - 26);
+    }
     B.muebles.botinJefe(e, jf.x, jf.y);
     e.eventos.push({ tipo: 'jefeVencido', id: jf.id, x: jf.x, y: jf.y, nombre: e.aj.jefes[jf.id].nombre });
-    if (jf.planta === e.aj.final && !e.final) { e.final = true; e.eventos.push({ tipo: 'final' }); }   // el CEO: servidor arreglado
+    if (jf.planta === e.aj.final && !e.final) {   // el CEO: servidor arreglado, y el edificio se viene abajo
+      e.final = true; e.derrumbe = { t: 1 };
+      if (e.ascensorT < 0) e.ascensorT = e.aj.jefes.derrumbe.espera;
+      e.eventos.push({ tipo: 'final' });
+    }
   }
 })(BAS);

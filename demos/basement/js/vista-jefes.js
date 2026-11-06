@@ -6,14 +6,15 @@
 var BAS = globalThis.BAS || (globalThis.BAS = {});
 (function (B) {
   const UI = B.ui, V = B.vista, T = UI.texto;
-  const JEFE = { producto: ['ladirectora', 2.5], rrhh: ['survivalbot', 2.5], lanzamiento: ['servidorbot', 2.5], accionistas: ['presidente', 2.2], ceo: ['ceo', 2.4] };
+  const JEFE = { producto: ['ladirectora', 2.5], rrhh: ['survivalbot', 2.5], lanzamiento: ['servidorbot', 2.5], accionistas: ['presidente', 2.2], ceo: ['ceo', 2.4],
+    becario2004: ['becario', 2.2, 'sepia(1) saturate(1.6) brightness(0.9)'], fantasma: ['servidorbot', 2.5, 'grayscale(1) brightness(1.6) opacity(0.75)'], impresora: ['fotocopiadora', 9, 'hue-rotate(-40deg) saturate(3)'] };
   const VERDE = 'hue-rotate(-90deg) saturate(1.2)';   // los becarios atrapados y rescatados: el becario de Swipe, en verde
 
   V.jefe = function (g, e) {
     const jf = e.jefe;
     if (!jf) return;
     const x = V.sx(jf.x), y = V.sy(jf.y) + Math.sin(e.t * 3) * 4, d = JEFE[jf.id];
-    V.pinta(g, d[0], x, y, d[1], { blanco: jf.golpeT > 0.08 });   // sin voltear
+    V.pinta(g, d[0], x, y, d[1], { blanco: jf.golpeT > 0.08, filtro: jf.golpeT > 0.08 ? undefined : d[2] });   // sin voltear; los secretos, con su filtro
     if (jf.escudoT <= 0) return;
     g.save(); g.globalAlpha = 0.85; g.translate(x, y);
     UI.panel(g, -84, -62, 168, 118, '#ffffff', '#ffffff', '#d8dee8', 4);
@@ -38,6 +39,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     diapositiva(g) { UI.panel(g, -13, -10, 26, 20, '#ffffff', null, null, 2); g.fillStyle = UI.C.rojo; g.fillRect(-10, -7, 20, 5); },
     sello(g) { g.fillStyle = '#1a0f1f'; g.beginPath(); g.arc(0, 0, 13, 0, 7); g.fill(); g.fillStyle = UI.C.rojo; g.beginPath(); g.arc(0, 0, 10, 0, 7); g.fill(); g.fillStyle = '#ffffff'; g.fillRect(-6, -2, 12, 4); },
     moneda(g) { UI.dibuja(g, 'i-oro', 0, 0, 2); },
+    escombro(g) { g.fillStyle = '#1a0f1f'; g.fillRect(-13, -11, 26, 22); g.fillStyle = '#8a7a68'; g.fillRect(-10, -8, 20, 16); g.fillStyle = '#b8a48a'; g.fillRect(-10, -8, 8, 6); },
   };
   V.proyectiles = function (g, e) {
     for (const p of e.proyectiles) { g.save(); g.translate(V.sx(p.x), V.sy(p.y)); g.rotate(p.tipo === 'moneda' ? 0 : e.t * 4); PROY[p.tipo](g); g.restore(); }
@@ -52,10 +54,18 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
   };
 
+  // un compañero: más pequeño que los bichos de verdad y con su chapa verde debajo, para no confundirlo con un enemigo
+  const ESC_COMP = { reunion: 0.35, critico: 0.5 };
+  function companero(g, a, x, y) {
+    g.fillStyle = '#4fc25a'; g.beginPath(); g.ellipse(x, y + 18, 22, 8, 0, 0, 7); g.fill();
+    g.strokeStyle = '#1a1a1a'; g.lineWidth = 4; g.stroke();
+    V.pintaCosa(g, a.id, x, y, null, ESC_COMP[a.id] || 0.65);
+  }
   V.ayudantes = function (g, e) {
     for (const a of e.ayudantes) {
       const x = V.sx(a.x), y = V.sy(a.y) + Math.sin(e.t * 5 + a.off.x) * 3;
       if (a.tipo === 'becario') V.pinta(g, 'becario', x, y, 0.9, { filtro: VERDE });
+      else if (a.tipo === 'companero') companero(g, a, x, y);
       else V.pintaCosa(g, a.id, x, y);
     }
   };

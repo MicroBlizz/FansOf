@@ -109,9 +109,9 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   };
 
   // Un disparo le da: si se queda sin vida cae, suelta su botín (y a veces una taza de café) y, si es un correo, se parte en dos.
-  E.herir = function (e, en, dano, rnd) {
+  E.herir = function (e, en, dano, rnd, critico) {
     en.vida -= dano; en.golpeT = 0.12;
-    e.eventos.push({ tipo: 'impacto', x: en.x, y: en.y, dano });
+    e.eventos.push({ tipo: 'impacto', x: en.x, y: en.y, dano, critico: !!critico });
     if (en.vida > 0) return false;
     const i = e.enemigos.indexOf(en);
     if (i >= 0) e.enemigos.splice(i, 1);
@@ -126,7 +126,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.eventos.push({ tipo: 'baja', x: en.x, y: en.y, enemigo: en.tipo, raro: !!d.raro });
     for (let k = 0; k < (d.botinX || 1) && d.botin; k++) soltar(e, d.botin, en.x + (k % 4 - 1.5) * 10, en.y + Math.floor(k / 4) * 10);
     if (rnd() < AJ.probCafe) soltar(e, 'cafe', en.x + 8, en.y);
-    if (en.tipo === 'reunion' && rnd() < AJ.probPaquete) soltar(e, 'paquete', en.x - 10, en.y);
+    if (en.tipo === 'reunion' && rnd() < AJ.probPaquete * (e.stats.paquete || 1)) soltar(e, 'paquete', en.x - 10, en.y);
     if (d.divide) {
       for (const s of [-1, 1]) E.crear(e, d.divide, en.x + s * 10, en.y).dir = s;
       e.eventos.push({ tipo: 'divide', x: en.x, y: en.y });

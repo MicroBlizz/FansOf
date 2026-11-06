@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.73
+  "<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the anonymous count of connected players no longer counts the internal-testing bots.",
+  "Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público.": "Microblizz stopped counting test bots as players and Phony asked for them to count as audience at least.",
   "<b>VUELVEN LAS MASCOTAS CLÁSICAS</b>: las 23 mascotas de antes vuelven en su versión clásica, al lado de las nuevas: búscalas en el armario, cómpralas en la tienda con Acciones o sácalas en el gachapón.": "<b>CLASSIC PETS ARE BACK</b>: the 23 old pets return in their classic version, next to the new ones: find them in the wardrobe, buy them in the shop with Actions or pull them from the gachapon.",
   "Phony ha encontrado las mascotas clásicas en el cajón de Microblizz y las ha puesto a la venta sin preguntar.": "Phony found the classic pets in Microblizz's drawer and put them up for sale without asking.",
   "<b>MENÚS PINTADOS A BROCHA</b>: todos los menús se visten de pintura de verdad: el título sobre un brochazo de su color, las pestañas como brochazos, un manchón del color de la rareza detrás de cada pieza (verde y latiendo en lo que llevas puesto) y un brochazo que barre la lista al cambiar de pestaña.": "<b>BRUSH-PAINTED MENUS</b>: every menu is dressed in real paint: the title on a brushstroke of its own colour, tabs as brushstrokes, a splodge in the rarity colour behind each piece (green and pulsing on what you wear) and a brushstroke that sweeps the list when you switch tabs.",

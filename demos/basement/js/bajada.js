@@ -16,22 +16,23 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       aj: AJ, stats: { ...stats }, t: 0, eventos: [], ids: 1, rango: o.rango || 0, conVentajas: !!o.ventajas,
       jugador: { x: AJ.ancho / 2, y, vx: 0, vy: 0, invulT: 0, frenoT: 0, mira: 1 },
       cafe: stats.cafeMax, cafeMax: stats.cafeMax, cafeBajoAvisado: false,
-      caja: { peso: 0, cap: stats.caja, valor: 0, cuenta: 0, paquetes: { normal: 0, jefe: 0 }, materiales: {} }, avisoLlenaT: 0,
+      caja: { peso: 0, cap: stats.caja, valor: 0, cuenta: 0, paquetes: { normal: 0, jefe: 0 }, materiales: {} }, avisoLlenaT: 0, capturas: {}, capturasValor: 0, redes: stats.redes || 0,
       enemigos: [], muebles: [], balas: [], objetos: [], proyectiles: [], becarios: [], ayudantes: [], armaT: 0,
       generadoHasta: y + AJ.generar.zonaSegura, jefe: null, jefesVistos: {}, jefesVencidos: 0, jefesNuevos: [], vencidos: [...(o.vencidos || [])],
       rescatados: 0, eventosPlanta: {}, ventajas: [], eleccion: null, apagon: false, apagonT: AJ.trucos.apagon.cada * 0.5,
       bajasPorTipo: {}, final: false, inicio, planta: inicio, plantaMax: inicio, zona: B.zonaDe(AJ, inicio), bajas: 0,
-      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false, combos: [], mueblesRotos: 0, habilidadUsos: 0,
+      ascensorT: -1, fin: null, finT: 0, resultado: null, empezada: false, combos: [], mueblesRotos: 0, habilidadUsos: 0, secretosVistos: [],
       habilidad: stats.habilidad || null, habilidadT: stats.habilidad ? AJ.habilidades[stats.habilidad].recarga * 0.5 : 0, congeladoT: 0,
     };
     if (stats.mascota) B.arma.nuevoAyudante(e, 'mascota', stats.mascota);
+    for (const c of stats.companeros || []) B.arma.nuevoAyudante(e, 'companero', c);   // los bichos capturados que llevas
     return e;
   };
 
   B.plantaDe = (AJ, y) => Math.max(0, Math.floor(y / AJ.altoPlanta));
   B.zonaDe = (AJ, planta) => { let z = AJ.zonas[0]; for (const q of AJ.zonas) if (planta >= q.desde) z = q; return z; };
 
-  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor y habilidad (pulsaciones) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
+  // Un paso. orden = { mx, my (−1..1, el dedo), ascensor, habilidad y red (pulsaciones) }; rnd = azar (0..1). Mientras hay que elegir ventaja, espera.
   B.paso = function (e, dt, orden, rnd) {
     e.eventos = [];
     if (e.fin) { e.finT += dt; return e; }
@@ -41,6 +42,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const o = orden || { mx: 0, my: 0, ascensor: false };
     mover(e, dt, o);
     B.habilidad.paso(e, dt, o, rnd);
+    B.captura.paso(e, o);
     plantas(e, rnd);
     B.campana.paso(e, dt);
     B.enemigos.paso(e, dt, rnd);
@@ -60,7 +62,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   function mover(e, dt, o) {
     const AJ = e.aj, j = e.jugador, J = AJ.jugador;
     const m = Math.hypot(o.mx, o.my), k = m > 1 ? 1 / m : 1;
-    const vel = J.vel * e.stats.vel * (j.frenoT > 0 ? frenoDe(e) : 1);
+    const vel = J.vel * e.stats.vel * (j.frenoT > 0 ? frenoDe(e) : 1) * B.presionDe(AJ, e.zona.id, e.stats, 'vel');
     j.vx = o.mx * k * vel;
     j.vy = m > 0.05 ? o.my * k * vel : J.deriva;
     if (Math.abs(j.vx) > 1) j.mira = j.vx > 0 ? 1 : -1;
@@ -79,7 +81,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     e.plantaMax = p;
     const z = B.zonaDe(e.aj, p);
     if (z !== e.zona) {
-      e.zona = z; e.eventos.push({ tipo: 'zona', zona: z });
+      e.zona = z; e.eventos.push({ tipo: 'zona', zona: z, presion: B.bajoPresion(e.aj, z.id, e.stats) });
       if (e.conVentajas) B.campana.ofrece(e, rnd);
     } else e.eventos.push({ tipo: 'planta', planta: p });
     B.campana.alEntrar(e, p);
@@ -121,7 +123,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   // El café que se gasta por segundo en una planta (stats: lo que lo rebajan la formación y las ventajas; sin stats, lo de base).
   B.gastoCafe = function (AJ, planta, stats) {
     const s = stats || { gasto: 1, crunch: 1 }, crunch = B.zonaDe(AJ, planta).crunch ? 1 + (AJ.cafe.crunch - 1) * s.crunch : 1;
-    return AJ.cafe.gasto * B.difDe(AJ, planta, 0).gasto * crunch * s.gasto;
+    return AJ.cafe.gasto * B.difDe(AJ, planta, 0).gasto * crunch * s.gasto * B.presionDe(AJ, B.zonaDe(AJ, planta).id, stats, 'cafe');
   };
 
   function cafe(e, dt) {
@@ -164,10 +166,10 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     const salvo = como === 'ascensor', propinas = salvo ? B.propinas(e) : 0;
     e.resultado = Object.freeze({
       como, planta: e.plantaMax, inicio: e.inicio, bajas: e.bajas, objetos: e.caja.cuenta, valorCaja: e.caja.valor, propinas,
-      monedas: salvo ? e.caja.valor + propinas : 0, rescatados: e.rescatados, jefes: e.jefesVencidos,
+      monedas: salvo ? e.caja.valor + propinas + e.capturasValor : 0, rescatados: e.rescatados, jefes: e.jefesVencidos,
       paquetes: salvo ? { ...e.caja.paquetes } : { normal: 0, jefe: 0 }, materiales: salvo ? { ...e.caja.materiales } : {}, jefesNuevos: salvo ? [...e.jefesNuevos] : [],
       bajasPorTipo: { ...e.bajasPorTipo }, final: e.final, segundos: Math.round(e.t),
-      muebles: e.mueblesRotos, habilidades: e.habilidadUsos, combos: e.combos.length,
+      muebles: e.mueblesRotos, habilidades: e.habilidadUsos, combos: e.combos.length, capturas: salvo ? { ...e.capturas } : {}, secretos: e.secretosVencidos || 0,
     });
     e.eventos.push({ tipo: 'fin', como, resultado: e.resultado });
   };

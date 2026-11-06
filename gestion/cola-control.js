@@ -6,7 +6,7 @@ const COLA_CONTROL = (() => {
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO;
   const VARIABLE = 'PAUSA_RUNNERS_GENERAR_RECURSO';   // misma que RUNNER_PAUSA_VARIABLE de docker-compose.yml
   const CARRIL = 'yoshi-generar-recurso';   // el carril (etiqueta del runner) que afecta la pausa
-  const MAX_FALLIDAS = 30, DIAS = 7;
+  const MAX_FALLIDAS = 30, HORAS = 48, MAX_PAGINAS_COLA = 10;
   const FALLO = new Set(['failure', 'timed_out', 'startup_failure']);
   const ENTRE_TRABAJOS_MS = 3 * 60e3;   // lo que tarda un runner efímero en darse de baja y registrarse otra vez (con margen por si se actualiza)
 
@@ -46,11 +46,25 @@ const COLA_CONTROL = (() => {
     const mensaje = errores.length ? `Reiniciadas ${hechos} de ${lista.length}. Fallo: ${errores[0]}.` : '';
     return { hechos, errores, mensaje };
   }
-  /** De los runs terminados (más nuevos primero), los fallidos de los últimos días, ya en el formato que pinta la lista. */
+  /** De los runs terminados (más nuevos primero), los fallidos de las últimas 48 h, ya en el formato que pinta la lista. */
   function fallidas(hechos, ahora) {
-    const desde = ahora - DIAS * 864e5;
+    const desde = ahora - HORAS * 36e5;
     return hechos.filter(r => FALLO.has(r.conclusion) && Date.parse(r.updated_at) >= desde).slice(0, MAX_FALLIDAS)
       .map(r => ({ id: r.id, workflow: r.name, titulo: r.display_title, fin: Date.parse(r.updated_at), intento: r.run_attempt || 1 }));
+  }
+
+  /** Todos los runs no terminados, para no contarlos como fallidos aunque su último intento fallara (un reinicio los vuelve a poner en cola con el mismo id).
+   *  `gh(ruta)` llama a la API. Pide cada estado por separado (in_progress, queued, waiting, requested, pending) y la cola entera, sin quedarse en la primera página. */
+  async function sinTerminar(gh) {
+    const todos = [];
+    for (const estado of ['in_progress', 'queued', 'waiting', 'requested', 'pending']) {
+      for (let p = 1; p <= MAX_PAGINAS_COLA; p++) {
+        const d = (await gh('/actions/runs?status=' + estado + '&per_page=100&page=' + p)).workflow_runs || [];
+        todos.push(...d);
+        if (d.length < 100) break;
+      }
+    }
+    return todos;
   }
 
   /** ¿Está encendido el carril? Los runners son efímeros: tras cada trabajo se dan de baja y se registran de nuevo, y en ese hueco GitHub no lista
@@ -75,9 +89,9 @@ const COLA_CONTROL = (() => {
     const lista = e.fallidas.length
       ? e.fallidas.map(r => `<div class="cl-fila"><span><a href="https://github.com/${REPO}/actions/runs/${r.id}" target="_blank" rel="noopener">${e.esc(r.workflow)}</a> · ${e.esc(r.titulo)}</span>`
         + `<span class="meta">${e.fecha(r.fin)}${r.intento > 1 ? ' · intento ' + r.intento : ''}</span><button type="button" data-reinicia="${r.id}"${e.ocupado ? ' disabled' : ''}>Reiniciar</button></div>`).join('')
-      : '<div class="meta">Ninguna en los últimos ' + DIAS + ' días.</div>';
+      : '<div class="meta">Ninguna en las últimas ' + HORAS + ' h.</div>';
     return `<section class="caja cl-control"><h3>Ejecuciones fallidas (${e.fallidas.length})</h3>${lista}`
       + (e.fallidas.length > 1 ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
-  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, encendido, htmlPausa, htmlFallidas };
+  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, sinTerminar, encendido, htmlPausa, htmlFallidas };
 })();

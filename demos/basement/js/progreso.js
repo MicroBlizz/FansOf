@@ -13,13 +13,14 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.progresoNuevo = () => ({
     monedas: 0, record: 0, bajadas: 0, cursos: [], equipo: { tiene: {}, puesto: {} }, mascotas: {}, mascota: null,
-    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar',
+    paquetes: { normal: 0, jefe: 0 }, jefes: 0, vencidos: [], armas: {}, arma: 'grapadora', catalogo: {}, rango: 0, final: false, materiales: {}, habilidad: 'congelar', terrario: {}, acreditaciones: [], premiados: [], pase: null, companeros: {}, compEquipados: [], accesorios: {}, accComp: {},
   });
 
   // Copia profunda (el progreso se trata como inmutable: cada regla devuelve uno nuevo).
   B.copiaProgreso = (p) => ({
     ...p, cursos: [...p.cursos], equipo: { tiene: { ...p.equipo.tiene }, puesto: { ...p.equipo.puesto } },
-    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales },
+    mascotas: { ...p.mascotas }, paquetes: { ...p.paquetes }, vencidos: [...p.vencidos], armas: { ...p.armas }, catalogo: { ...p.catalogo }, materiales: { ...p.materiales }, terrario: { ...p.terrario }, acreditaciones: [...p.acreditaciones], premiados: [...p.premiados], pase: p.pase ? { ...p.pase, cobrados: [...p.pase.cobrados] } : null,
+    companeros: { ...p.companeros }, compEquipados: [...p.compEquipados], accesorios: { ...p.accesorios }, accComp: { ...p.accComp },
   });
 
   // Lee lo guardado (formatos for-basement-v1 y v2). Lo que falte o no valga vuelve a su valor de partida.
@@ -31,7 +32,8 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.bajadas = entero(datos.bajadas, 0, 1e9);
     p.jefes = entero(datos.jefes, 0, 1e6);
     p.vencidos = Array.isArray(datos.vencidos) ? [...new Set(datos.vencidos.map((n) => entero(n, 0, 9999)))].filter((n) => B.jefes.dePlanta(AJ, n)) : [];
-    p.cursos = Array.isArray(datos.cursos) ? leeCursos(AJ, datos.cursos) : desdeNiveles(AJ, datos.niveles);
+    p.cursos = Array.isArray(datos.cursos) ? leeCursos(AJ, datos.cursos) : [];
+    p.monedas += devolucionCursos(AJ, datos, p.cursos);
     leeEquipo(AJ, p, datos.equipo);
     leeMascotas(AJ, p, datos);
     for (const t of Object.keys(AJ.paquetes)) p.paquetes[t] = entero(esObjeto(datos.paquetes) ? datos.paquetes[t] : 0, 0, 999);
@@ -40,27 +42,43 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     p.rango = entero(datos.rango, 0, AJ.rangos.length - 1);
     p.final = datos.final === true;
     if (AJ.habilidades[datos.habilidad]) p.habilidad = datos.habilidad;
+    p.pase = leePase(datos.pase);
+    p.premiados = Array.isArray(datos.premiados) ? datos.premiados.filter((c) => typeof c === 'string' && /^[ds]-\d{4}-\d{2}-\d{2}$/.test(c)).slice(-30) : [];
+    p.acreditaciones = Array.isArray(datos.acreditaciones) ? [...new Set(datos.acreditaciones)].filter((z) => AJ.presion.coste[z] != null) : [];
+    for (const id of Object.keys(AJ.enemigos)) if (esObjeto(datos.terrario) && datos.terrario[id] > 0) p.terrario[id] = entero(datos.terrario[id], 0, 1e6);
     for (const t of AJ.materiales) if (esObjeto(datos.materiales) && datos.materiales[t] > 0) p.materiales[t] = entero(datos.materiales[t], 0, 1e7);
+    leeCompaneros(AJ, p, datos);   // tras el terrario: solo llevas lo que tienes capturado
     return p;
   };
 
-  // Solo los cursos que existen y en orden válido (cada uno con el anterior de su columna ya comprado).
-  function leeCursos(AJ, lista) {
-    const quedan = new Set(lista), cursos = [];
-    for (const c of AJ.formacion) if (quedan.has(c.id) && B.cursoAbierto(AJ, cursos, c.id)) cursos.push(c.id);
-    return cursos;
+  // El pase de temporada: su clave, la XP y los niveles cobrados (o null si no hay o no vale).
+  function leePase(d) {
+    if (!esObjeto(d) || typeof d.clave !== 'string') return null;
+    const cobrados = Array.isArray(d.cobrados) ? [...new Set(d.cobrados.map((n) => entero(n, 0, 999)))].filter((n) => n >= 1) : [];
+    return { clave: d.clave, xp: entero(d.xp, 0, 1e7), cobrados };
   }
 
-  // Las partidas de la 0.1.0 tenían tres mejoras con nivel: cada nivel pasa a ser un curso de su columna.
-  function desdeNiveles(AJ, niveles) {
-    if (!esObjeto(niveles)) return [];
-    const col = { cafe: 'bienestar', caja: 'logistica', dano: 'productividad' }, cursos = [];
-    for (const k of Object.keys(col)) {
-      const n = entero(niveles[k], 0, 99);
-      AJ.formacion.filter((c) => c.col === col[k]).slice(0, n).forEach((c) => cursos.push(c.id));
-    }
+  // Los compañeros: niveles de 1 a 5 de especies que existen, los que llevas (con capturas y sin pasar de los huecos) y los accesorios.
+  function leeCompaneros(AJ, p, d) {
+    const E = AJ.companeros.especies;
+    for (const id of Object.keys(E)) if (esObjeto(d.companeros) && d.companeros[id] > 0) p.companeros[id] = entero(d.companeros[id], 1, 5);
+    p.compEquipados = Array.isArray(d.compEquipados) ? [...new Set(d.compEquipados)].filter((id) => E[id] && p.terrario[id] > 0).slice(0, AJ.companeros.huecos) : [];
+    for (const a of Object.keys(AJ.accesorios)) if (esObjeto(d.accesorios) && d.accesorios[a] > 0) p.accesorios[a] = entero(d.accesorios[a], 0, 99);
+    for (const [c, a] of Object.entries(esObjeto(d.accComp) ? d.accComp : {})) if (E[c] && AJ.accesorios[a] && B.accesorioLibre(p, a, c)) p.accComp[c] = a;
+  }
+
+  // Solo los talentos que existen y en orden válido (fila a fila, con el de encima y sin dos del mismo grupo).
+  function leeCursos(AJ, lista) {
+    const quedan = new Set(lista), cursos = [];
+    for (const c of [...AJ.formacion].sort((a, b) => a.fila - b.fila)) if (quedan.has(c.id) && B.cursoAbierto(AJ, cursos, c.id)) cursos.push(c.id);
     return cursos;
   }
+  // Lo que se devuelve de una partida vieja: los cursos que traía y ya no valen (a su precio de antes) y las mejoras de la 0.1.0.
+  function devolucionCursos(AJ, datos, validos) {
+    if (!Array.isArray(datos.cursos)) return esObjeto(datos.niveles) ? Object.values(datos.niveles).reduce((s, n) => s + entero(n, 0, 99) * 100, 0) : 0;
+    return datos.cursos.filter((id) => !validos.includes(id)).reduce((s, id) => s + (AJ.cursosAntiguos[id] || 0), 0);
+  }
+
 
   function leeEquipo(AJ, p, eq) {
     if (!esObjeto(eq)) return;
@@ -97,13 +115,15 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
   B.entradasCatalogo = (AJ) => [
     ...Object.keys(AJ.enemigos).map((id) => ({ id, clase: AJ.enemigos[id].raro ? 'raro' : 'normal' })),
     ...AJ.jefes.orden.map((id) => ({ id, clase: 'jefe' })),
+    ...B.jefes.secretos(AJ).map((id) => ({ id, clase: 'secreto' })),
   ];
   // Los bichos que una bajada añade por primera vez al catálogo, y lo que dan.
   B.catalogoNuevos = function (AJ, p, r) {
     const bajas = (r && r.bajasPorTipo) || {};
     return B.entradasCatalogo(AJ).filter((x) => bajas[x.id] && !p.catalogo[x.id]).map((x) => ({ ...x, monedas: AJ.catalogo.premio[x.clase] }));
   };
-  B.catalogoCompleto = (AJ, p) => B.entradasCatalogo(AJ).every((x) => p.catalogo[x.id] > 0);
+  // completo = todos menos los secretos (esos son un extra)
+  B.catalogoCompleto = (AJ, p) => B.entradasCatalogo(AJ).every((x) => x.clase === 'secreto' || p.catalogo[x.id] > 0);
 
   B.progresoAGuardar = (p) => ({ formato: 'for-basement-v2', ...B.copiaProgreso(p) });
 
@@ -117,6 +137,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     q.jefes += Math.max(0, r.jefes || 0);
     sumaPaquetes(q, paq);
     for (const [t, n] of Object.entries(r.materiales || {})) if (n > 0) q.materiales[t] = (q.materiales[t] || 0) + Math.floor(n);
+    for (const [t, n] of Object.entries(r.capturas || {})) if (n > 0) q.terrario[t] = (q.terrario[t] || 0) + Math.floor(n);
     apuntaJefes(q, r);
     return apuntaCatalogo(aj || B.AJ, q, r);
   };
@@ -146,6 +167,7 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
 
   B.statsDe = function (AJ, p) {
     const e = B.efectosDe(AJ, p), v = (k) => e[k] || 0, menos = (k, tope) => 1 - Math.min(tope, v(k)), a = B.armaDe(AJ, p), R = AJ.porRango;
+    const comps = p.compEquipados.map((id) => B.companeroDe(AJ, p, id, AJ.arma.dano * (1 + v('dano')))), aura = (k) => comps.reduce((s, c) => s + (c.aura[k] || 0), 0);
     return Object.freeze({
       cafeMax: AJ.cafe.base + v('cafe'),
       caja: AJ.caja.base + v('caja'),
@@ -154,16 +176,20 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
       arma: a,
       alcance: AJ.arma.alcance + v('alcance'),
       multi: 1 + v('multi'),
-      iman: AJ.iman + v('iman'),
+      iman: AJ.iman + v('iman') + aura('iman'),
       espera: Math.max(1, AJ.ascensor.espera - v('espera')),
       gasto: menos('gasto', 0.6),
       crunch: menos('crunch', 1),
-      valor: 1 + v('valor') + R.valor * p.rango,
+      valor: 1 + v('valor') + R.valor * p.rango + aura('valor'),
       taza: AJ.cafe.taza + v('taza'),
       vel: 1 + v('vel'),
       freno: Math.min(1, v('freno')),
       mascota: B.mascotaDe(AJ, p),
       habilidad: B.habilidadDe(AJ, p),
+      redes: AJ.captura.redes + v('redes'),
+      critico: v('critico'),
+      companeros: comps,
+      acreditaciones: Object.freeze([...p.acreditaciones]),
     });
   };
 
@@ -183,6 +209,16 @@ var BAS = globalThis.BAS || (globalThis.BAS = {});
     }
     return Object.freeze({ rango: p.rango, arma: B.armaDe(AJ, p).id, equipo: Object.freeze({ ...p.equipo.puesto }), formacion: Object.freeze(formacion) });
   };
+
+  // Lo fuerte que es un arma contra un solo bicho (daño por segundo relativo, con su nivel): para ponerte sola un arma nueva solo
+  // si es mejor que la que llevas. Las de abanico cuentan como mucho dos balas al blanco; las de círculo, una; las de área, algo más.
+  B.poderArma = function (AJ, id, nivel) {
+    const d = AJ.armas[id], n = nivel || 1, dano = d.dano * (1 + AJ.nivelArma.dano * (n - 1));
+    const balas = d.circulo ? 1 : Math.min(2, d.balas || 1), extra = (d.area ? 1.3 : 1) * (1 + 0.25 * ((d.atraviesa || 1) - 1 + (d.rebotes || 0)));
+    return dano * balas * (d.rafaga || 1) * extra / d.cadencia;
+  };
+  // ¿Es mejor el arma `id` (a ese nivel) que la que llevas?
+  B.armaMejor = (AJ, p, id, nivel) => B.poderArma(AJ, id, nivel) > B.poderArma(AJ, B.armaDe(AJ, p).id, B.armaDe(AJ, p).nivel);
 
   // La mascota puesta, con el daño de su nivel (o null).
   B.mascotaDe = function (AJ, p) {

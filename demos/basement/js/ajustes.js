@@ -1,6 +1,6 @@
 // Fans of Basement · Ajustes: todas las cifras del juego (el pozo del ascensor, el jugador, el café, la caja del despedido, el arma,
 // los enemigos de cada planta, el botín, las zonas de la oficina de Microblizz, los jefes, los becarios atrapados, los paquetes,
-// el equipo con rareza, las mascotas de oficina y los cursos de la formación de tu mesa).
+// el equipo con rareza, las mascotas de oficina…). El árbol de talentos de la formación está en ajustes-formacion.js, que se carga antes.
 'use strict';
 const AJUSTES = {
   id: 'basement',                 // para core: la partida en la nube lleva este nombre
@@ -18,6 +18,8 @@ BAS.AJ = Object.freeze({
   caja: { base: 15 },
   // El arma dispara sola al enemigo más cercano dentro del alcance (base: la formación y el equipo lo mejoran).
   arma: { dano: 10, cadencia: 0.3, alcance: 150, velBala: 560, vidaBala: 0.45, radioBala: 3 },
+  // Golpe crítico: con esta probabilidad, todo un disparo hace `mult` veces el daño (y se ve en grande).
+  critico: { prob: 0.12, mult: 2 },
   // Llamar al ascensor de emergencia: tarda `espera` segundos en llegar y te sube con lo que lleves.
   ascensor: { espera: 3 },
   // Enemigos: desde = primera planta en la que salen; peso = lo a menudo que salen; botin = qué sueltan.
@@ -32,7 +34,7 @@ BAS.AJ = Object.freeze({
     critico: { vida: 220, radio: 28, vel: 30, persigue: 120, golpe: 8, desde: 10, peso: 0, raro: 0.035, solo: 'qa', botin: 'taza', botinX: 3, puntos: 8 },
   },
   // el catálogo de bichos: monedas la primera vez que tumbas cada uno; completo, 3 paquetes del jefe
-  catalogo: { premio: { normal: 20, raro: 150, jefe: 100 }, completo: 3 },
+  catalogo: { premio: { normal: 20, raro: 150, jefe: 100, secreto: 300 }, completo: 3 },
   generar: { tramo: 40, delante: 620, detras: 560, base: 0.3, porPlanta: 0.02, max: 0.9, maxActivos: 45, zonaSegura: 180 },
   // El botín: valor en monedas (sube un 12 % por planta) y peso en la caja. La taza de café no ocupa sitio: rellena el café.
   objetos: {
@@ -55,6 +57,62 @@ BAS.AJ = Object.freeze({
     suelta: { tornillo: { desde: 0, n: [2, 4] }, cable: { desde: 5, n: [1, 2] }, chip: { desde: 10, n: [0, 2] }, disco: { desde: 15, n: [0, 1], prob: 0.25 } },
     jefe: { chip: 3, disco: 1 },   // lo que suelta además cada jefe vencido
   },
+  // Los modos especiales (modos.js), que siempre empiezan en Marketing: el DESAFÍO DEL DÍA (la misma bajada para todos: mismos
+  // bichos, muebles y eventos, con la semilla del día) y el EVENTO DE LA SEMANA (cada semana uno, con sus reglas: multiplica valor
+  // del botín, gasto de café, daño, cadencia, espera del ascensor y paquetes). Cada uno da su premio la primera vez que llegas a
+  // `premio.planta` y subes a salvo, y tiene su ranking (servidor/116-basement-retos.sql).
+  modos: {
+    desafio: { premio: { planta: 8, paquetes: { normal: 1 } } },
+    evento: { premio: { planta: 10, paquetes: { jefe: 1 } } },
+  },
+  eventos: [
+    { id: 'viernes', nombre: 'Viernes a las 17:59', txt: 'Todo vale el doble, pero el café se acaba antes', mods: { valor: 2, gasto: 1.4 } },
+    { id: 'navidad', nombre: 'Cena de empresa', txt: 'Las reuniones sueltan muchos más paquetes', mods: { paquete: 5, gasto: 1.15 } },
+    { id: 'crunch', nombre: 'Semana de crunch', txt: 'Pegas fuerte y rápido, pero el café vuela', mods: { dano: 1.5, cadencia: 0.8, gasto: 1.5 } },
+    { id: 'auditoria', nombre: 'Auditoría trimestral', txt: 'El botín vale más, pero el ascensor tarda más', mods: { valor: 1.6, espera: 2 } },
+  ],
+  // El pase de temporada (pase.js): cada temporada dura 4 semanas (la clave la pone el adaptador) y tiene `niveles` niveles de `xp`
+  // cada uno. La XP sale de cada bajada (por planta, por bicho, por captura y por jefe; a salvo, ×salvo). Cada nivel da su premio
+  // (fila gratis): monedas, materiales o paquetes, según `premios` (se repite en ciclo; los niveles de `grandes` dan el paquete del jefe).
+  pase: {
+    niveles: 30, xp: 300, salvo: 1.5,
+    porBajada: { planta: 10, baja: 1, captura: 20, jefe: 50 },
+    premios: [{ monedas: 150 }, { materiales: { tornillo: 25, cable: 6 } }, { monedas: 200 }, { materiales: { cable: 10, chip: 3 } }, { paquetes: { normal: 1 } }],
+    grandes: { 15: { paquetes: { jefe: 1 } }, 30: { paquetes: { jefe: 2 }, materiales: { disco: 3 } } },
+  },
+  // La presión (como en Well Diver): cada departamento pide su acreditación, que se compra en «¿DÓNDE BAJAS?». Sin ella puedes
+  // bajar, pero allí te mueves más lento (vel) y el café se gasta más (cafe). Marketing no pide nada.
+  presion: { vel: 0.75, cafe: 1.8, coste: { soporte: 40, qa: 90, servidores: 180, direccion: 350, legacy: 700 } },
+  // La captura: redes de cables que lanzas con su botón al bicho más cercano a `alcance`. Si le queda `umbral` de vida o menos,
+  // queda atrapado (no los jefes): vale `valor` monedas (× lo que vale el botín de su planta) si subes a salvo y va al terrario
+  // de tu despacho. Si está demasiado entero, se escapa y la red se pierde.
+  captura: { redes: 3, umbral: 0.45, alcance: 170, valor: { normal: 20, raro: 150 } },
+  // Los compañeros: los bichos que has capturado pueden bajar contigo (hasta `huecos`, además de la mascota) y disparan solos.
+  // Cada especie tiene su ataque (dano × tu daño, cadencia, alcance) y sube de nivel 1 a 5: para subir hacen falta `capturas`
+  // de esa especie en el terrario y los materiales de `subir` (× el nivel al que vas). Cada nivel abre un talento: el 2 y el 4 son
+  // de todos (daño y cadencia); el 3 y el 5, propios de cada especie (sus balas frenan, atraviesan, explotan, rebotan o salen
+  // varias; o un aura que te ayuda a ti: valor del botín o imán). Y cada compañero lleva un accesorio (taller).
+  companeros: {
+    huecos: 2, capturas: [1, 2, 4, 7, 10], subir: { tornillo: 15, cable: 4 }, chipDesde: 3,
+    comunes: { 2: { nombre: 'Entrenamiento', ef: { dano: 0.3 } }, 4: { nombre: 'Café para bichos', ef: { cadencia: 0.25 } } },
+    especies: {
+      bug: { dano: 0.35, cadencia: 0.9, alcance: 130, t3: { nombre: 'Mordisco venenoso', bala: { lento: [0.6, 1.2] } }, t5: { nombre: 'Plaga', bala: { balas: 2, abanico: 0.3 } } },
+      correo: { dano: 0.3, cadencia: 0.8, alcance: 150, t3: { nombre: 'Reenviar a todos', bala: { atraviesa: 3 } }, t5: { nombre: 'Spam masivo', bala: { balas: 3, abanico: 0.5 } } },
+      reunion: { dano: 0.5, cadencia: 1.4, alcance: 120, t3: { nombre: 'Orden del día', bala: { lento: [0.4, 1.5] } }, t5: { nombre: 'Reunión eterna', bala: { area: 45 } } },
+      dorado: { dano: 0.25, cadencia: 1, alcance: 130, t3: { nombre: 'Hallazgo', aura: { valor: 0.1 } }, t5: { nombre: 'Lluvia de oro', aura: { valor: 0.2, iman: 20 } } },
+      spam: { dano: 0.3, cadencia: 0.6, alcance: 160, t3: { nombre: 'Clic aquí', bala: { rebotes: 2 } }, t5: { nombre: 'Bandeja llena', ef: { cadencia: 0.35 } } },
+      critico: { dano: 0.7, cadencia: 1.3, alcance: 130, t3: { nombre: 'Fallo crítico', ef: { dano: 0.5 } }, t5: { nombre: 'Pantallazo azul', bala: { area: 60 } } },
+    },
+  },
+  // Los accesorios de los compañeros: se fabrican en el taller (coste) y cada compañero lleva uno; ef = para el compañero, aura = para ti.
+  accesorios: {
+    collar: { nombre: 'Collar de pinchos', coste: { tornillo: 30, cable: 6 }, ef: { dano: 0.25 } },
+    pila: { nombre: 'Pila alcalina', coste: { tornillo: 25, cable: 10 }, ef: { cadencia: 0.2 } },
+    gafas: { nombre: 'Gafas de realidad virtual', coste: { cable: 12, chip: 2 }, ef: { alcance: 40 } },
+    corbata: { nombre: 'Corbata de la suerte', coste: { cable: 10, chip: 3 }, aura: { valor: 0.1 } },
+  },
+  // El despacho: qué sala tienes según tu cargo (índice de AJ.rangos desde el que se abre cada una).
+  despacho: { salas: [['cubiculo', 0], ['oficina', 2], ['despacho', 4], ['planta', 6]] },
   // El taller de tu mesa: fabricar el arma o la pieza de equipo que quieras (sin azar) y subir de nivel las armas. Coste por rareza;
   // mejorar cuesta `mejora` × el de fabricar × el nivel al que tienes el arma.
   taller: {
@@ -92,8 +150,19 @@ BAS.AJ = Object.freeze({
     rrhh: { nombre: 'SurvivalBot de Recursos Humanos', vida: 420, radio: 46, vel: 50, golpe: 6, cada: 2.2, bala: { vel: 130, dano: 5, radio: 8 }, abanico: 3 },
     lanzamiento: { nombre: 'ServidorBot del Lanzamiento', vida: 560, radio: 46, vel: 40, golpe: 7, cada: 3.0, invoca: 2 },
     accionistas: { nombre: 'El Presidente del Consejo', vida: 750, radio: 50, vel: 45, golpe: 6, cada: 2.6, bala: { vel: 110, dano: 5, radio: 7 }, anillo: 8 },
-    ceo: { nombre: 'El CEO', vida: 1100, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2 },
+    ceo: { nombre: 'El CEO', vida: 850, radio: 50, vel: 50, golpe: 8, cada: 2.0, bala: { vel: 135, dano: 6, radio: 8 }, abanico: 5, invoca: 2, anillo: 10, fases: [0.66, 0.33] },
+    // Los jefes secretos: no tienen planta fija; salen (una vez por bajada, nunca donde ya hay un jefe) al entrar en una planta de su
+    // zona si se cumple su condición: rescatados = becarios rescatados en esta bajada; muebles = muebles rotos; apagon = la planta
+    // está a oscuras. patron = los ataques que usan (los de otro jefe). Su premio: secretoPremio.
+    becario2004: { nombre: 'El Becario de 2004', vida: 900, radio: 40, vel: 70, golpe: 7, cada: 1.6, bala: { vel: 150, dano: 6, radio: 7 }, abanico: 4, patron: 'rrhh', secreto: { zona: 'legacy', rescatados: 3 } },
+    fantasma: { nombre: 'El Fantasma del Servidor', vida: 650, radio: 46, vel: 60, golpe: 6, cada: 2.2, bala: { vel: 120, dano: 5, radio: 7 }, anillo: 10, patron: 'accionistas', secreto: { zona: 'servidores', apagon: true } },
+    impresora: { nombre: 'La Impresora Poseída', vida: 520, radio: 46, vel: 45, golpe: 6, cada: 2.0, bala: { vel: 140, dano: 5, radio: 7 }, invoca: 3, patron: 'impresora', secreto: { zona: 'qa', muebles: 4 } },
+    secretoPremio: { paquetes: 2, discos: 3, monedas: 300 },
     premio: { tazas: 3 },
+    // Las fases: al bajar la vida de cada umbral el jefe se enfada (ataca y se mueve más deprisa). El CEO tiene tres.
+    fases: [0.5], furia: { cada: 0.85, vel: 1.15 },
+    // El derrumbe: al vencer al CEO el edificio se viene abajo; el ascensor viene solo (tarda `espera` s) y caen escombros cada `cada` s.
+    derrumbe: { espera: 6, cada: 0.35, vel: 260, dano: 4, radio: 9 },
   },
   // Becarios atrapados: en cada planta (desde la 1) puede haber uno; al tocarlo te sigue y dispara solo durante la bajada.
   // Si subes a salvo, cada uno te da una propina (sube un 12 % por planta).
@@ -134,22 +203,22 @@ BAS.AJ = Object.freeze({
   // rebotes = salta a otro bicho cercano; alcance = multiplica el alcance (dispara solo si está así de cerca); lento = frena al
   // bicho tocado (factor y segundos); rafaga = balas una detrás de otra (cada `entre` s); circulo = en todas direcciones;
   // directo = el golpe cae en el sitio del blanco al momento; cafe = café que te devuelve cada bicho que tumba.
-  // Del paquete sale una al azar entre las de la rareza que toca.
+  // Del paquete sale una al azar entre las de la rareza que toca; te la pones sola si es más fuerte que la tuya (B.poderArma).
   armas: {
     grapadora: { nombre: 'Grapadora', rareza: null, dano: 1, cadencia: 1 },
     clips: { nombre: 'Lanzaclips', rareza: 'comun', dano: 0.55, cadencia: 1, balas: 3, abanico: 0.28 },
-    cinta: { nombre: 'Cinta adhesiva', rareza: 'comun', dano: 0.7, cadencia: 1.1, lento: [0.45, 1.8] },
-    perforadora: { nombre: 'Perforadora', rareza: 'comun', dano: 0.35, cadencia: 1.1, balas: 5, abanico: 0.75, vel: 0.85 },
+    cinta: { nombre: 'Cinta adhesiva', rareza: 'comun', dano: 0.9, cadencia: 1.1, lento: [0.45, 1.8] },
+    perforadora: { nombre: 'Perforadora', rareza: 'comun', dano: 0.5, cadencia: 1.1, balas: 5, abanico: 0.75, vel: 0.85 },
     abrecartas: { nombre: 'Abrecartas', rareza: 'comun', dano: 0.8, cadencia: 1.15, vel: 1.4, atraviesa: 4 },
-    boli: { nombre: 'Bolígrafo de clic', rareza: 'comun', dano: 0.36, cadencia: 0.38 },
+    boli: { nombre: 'Bolígrafo de clic', rareza: 'comun', dano: 0.4, cadencia: 0.38 },
     taladro: { nombre: 'Taladro', rareza: 'raro', dano: 1.2, cadencia: 1.35, atraviesa: 3 },
     impresora: { nombre: 'Impresora', rareza: 'raro', dano: 0.6, cadencia: 1.5, rafaga: 4, entre: 0.07 },
     trituradora: { nombre: 'Trituradora', rareza: 'raro', dano: 0.75, cadencia: 1.4, balas: 6, abanico: 1.1, alcance: 0.6, vel: 0.8 },
-    router: { nombre: 'Router wifi', rareza: 'raro', dano: 0.55, cadencia: 1.3, balas: 8, circulo: true, vel: 0.7 },
+    router: { nombre: 'Router wifi', rareza: 'raro', dano: 0.9, cadencia: 1.1, balas: 8, circulo: true, vel: 0.7 },
     extintor: { nombre: 'Extintor', rareza: 'epico', dano: 1.4, cadencia: 1.6, vel: 0.55, area: 55 },
     laser: { nombre: 'Puntero láser', rareza: 'epico', dano: 0.42, cadencia: 0.3, vel: 2.6, atraviesa: 2 },
     sello: { nombre: 'Sello de APROBADO', rareza: 'epico', dano: 3.2, cadencia: 3, directo: true, area: 70 },
-    proyector: { nombre: 'Proyector', rareza: 'epico', dano: 0.6, cadencia: 1.2, balas: 3, abanico: 0.5, lento: [0.5, 1.2], alcance: 0.85 },
+    proyector: { nombre: 'Proyector', rareza: 'epico', dano: 0.7, cadencia: 1.2, balas: 3, abanico: 0.5, lento: [0.5, 1.2], alcance: 0.85 },
     raton: { nombre: 'Ratón inalámbrico', rareza: 'legendario', dano: 1, cadencia: 0.9, rebotes: 3 },
     taza: { nombre: 'Taza lanzacafé', rareza: 'legendario', dano: 1.1, cadencia: 0.8, atraviesa: 2, cafe: 1.5 },
     industrial: { nombre: 'Grapadora industrial', rareza: 'legendario', dano: 1.7, cadencia: 1.15, atraviesa: 2, rebotes: 2 },
@@ -188,34 +257,7 @@ BAS.AJ = Object.freeze({
   // su paquete) con lo que tenías y un cargo más: más daño y botín para siempre, pero bichos y jefes más duros.
   rangos: ['Becario', 'Junior', 'Senior', 'Jefe de equipo', 'Director', 'Vicepresidente', 'CEO'],
   porRango: { dano: 0.1, valor: 0.15, vida: 0.4 },
-  // El aspecto del becario: con cuántos cursos hechos de una columna se nota (primer y segundo dibujo).
-  aspecto: { formacion: [4, 7] },
-  // La formación (tablero Kanban): tres columnas de cursos que se compran en orden, de arriba abajo.
-  // Efectos: cafe/caja/alcance/iman/taza = se suman; dano/vel/valor = % más; cadencia/gasto/crunch = % menos; espera = segundos menos;
-  // multi = una grapa más por disparo; freno = cuánto menos te frenan las reuniones (1 = nada).
-  columnas: ['bienestar', 'logistica', 'productividad'],
-  nombreColumna: { bienestar: 'BIENESTAR', logistica: 'LOGÍSTICA', productividad: 'PRODUCTIVIDAD' },
-  formacion: [
-    { id: 'mindfulness', col: 'bienestar', nombre: 'Mindfulness en el baño', coste: 20, ef: { cafe: 15 } },
-    { id: 'barista', col: 'bienestar', nombre: 'Curso de barista', coste: 50, ef: { cafe: 15, taza: 6 } },
-    { id: 'siesta', col: 'bienestar', nombre: 'Siesta estratégica', coste: 120, ef: { cafe: 20 } },
-    { id: 'pulmones', col: 'bienestar', nombre: 'Pulmones de becario', coste: 260, ef: { gasto: 0.1 } },
-    { id: 'cafetera', col: 'bienestar', nombre: 'Cafetera industrial', coste: 500, ef: { cafe: 30 } },
-    { id: 'inmune', col: 'bienestar', nombre: 'Inmune al crunch', coste: 900, ef: { crunch: 0.5 } },
-    { id: 'intravenoso', col: 'bienestar', nombre: 'Café intravenoso', coste: 1500, ef: { cafe: 40 } },
-    { id: 'tetris', col: 'logistica', nombre: 'Tetris de mudanzas', coste: 20, ef: { caja: 6 } },
-    { id: 'doblefondo', col: 'logistica', nombre: 'Caja de doble fondo', coste: 50, ef: { caja: 6 } },
-    { id: 'iman', col: 'logistica', nombre: 'Imán de nevera', coste: 120, ef: { iman: 25 } },
-    { id: 'carro', col: 'logistica', nombre: 'Carro de la compra', coste: 260, ef: { caja: 10 } },
-    { id: 'expres', col: 'logistica', nombre: 'Ascensor exprés', coste: 500, ef: { espera: 1 } },
-    { id: 'contenedor', col: 'logistica', nombre: 'Contenedor de obra', coste: 900, ef: { caja: 15 } },
-    { id: 'tasador', col: 'logistica', nombre: 'Tasador experto', coste: 1500, ef: { valor: 0.25 } },
-    { id: 'excel', col: 'productividad', nombre: 'Excel avanzado', coste: 25, ef: { dano: 0.2 } },
-    { id: 'titanio', col: 'productividad', nombre: 'Grapas de titanio', coste: 55, ef: { dano: 0.2 } },
-    { id: 'atajos', col: 'productividad', nombre: 'Atajos de teclado', coste: 125, ef: { cadencia: 0.15 } },
-    { id: 'punteria', col: 'productividad', nombre: 'Puntería de becario', coste: 265, ef: { alcance: 30 } },
-    { id: 'doble', col: 'productividad', nombre: 'Grapadora doble', coste: 505, ef: { multi: 1 } },
-    { id: 'horasextra', col: 'productividad', nombre: 'Horas extra', coste: 905, ef: { dano: 0.3 } },
-    { id: 'industrial', col: 'productividad', nombre: 'Grapadora industrial', coste: 1505, ef: { dano: 0.4 } },
-  ],
+  // El aspecto del becario: con cuántos talentos de una rama se nota (primer y segundo dibujo).
+  aspecto: { formacion: [4, 8] },
+  ...BAS.AJ_FORMACION,   // el árbol de talentos de la FORMACIÓN (ajustes-formacion.js)
 });

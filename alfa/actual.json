@@ -1,8 +1,8 @@
 {
- "build": 1021,
- "hash": "39779e5",
- "fecha": "2026-11-06T02:14:47Z",
- "mensaje": "Nova 0.3.52: Pulso de hackeo 2→2,2 (el crucero vuelve a 27 de 120)",
+ "build": 1022,
+ "hash": "52dabc2",
+ "fecha": "2026-11-06T09:47:05Z",
+ "mensaje": "Rumble v2: BoomBeaver animado y sin la sombra verde de los pies",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

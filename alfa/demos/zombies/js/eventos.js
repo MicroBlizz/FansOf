@@ -49,6 +49,7 @@ const EVENTOS = {
   choque: (v) => { play('impacto'); EFECTOS.temblor = Math.max(EFECTOS.temblor, Math.min(0.4, v.v * 0.02)); },
   atropello: (v) => { const J = JUEGO.e.jugador; play('carne'); sangre(v.x, v.z, 8, J.x, J.z); zombiRespingo(v.id); },
   estacion: (v) => { play('alerta'); HUD.parche = { dia: ZOM.diaDe(JUEGO.e.min), parche: { n: TEXTO_ESTACION[v.estacion] } }; HUD.tParche = 14; avisa(tr(AVISO_ESTACION[v.estacion]), 'malo'); },
+  poda: (v) => { for (const id of v.ids) quitaVistaZombi(id); },
   hayRescate: () => { play('alerta'); avisa(tr('Por la radio: alguien pide ayuda muy cerca. Está atrapado en un edificio y rodeado de fans.'), 'bien'); },
   rescate: (v) => { play('win'); avisa(trf('%1 se va a tu refugio. Hará de %2.', ZOM.AJ.animales[v.animal].n, tr(OFICIO_TXT[v.oficio]).toLowerCase()), 'bien'); },
   vigia: (v) => { play('alerta'); avisa(trf('Desde el refugio: ¡hay %1 fans cerca!', v.n), 'malo'); },

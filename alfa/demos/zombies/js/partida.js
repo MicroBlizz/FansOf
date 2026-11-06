@@ -41,6 +41,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     Z.pasoDesmontar(AJ, e, dt);
     Z.pasoZombis(AJ, e, dt, mundo, azar);
     Z.pasoRefugio(AJ, e, dt);
+    Z.podaLejanos(AJ, e);
     Z.vigilaSueno(AJ, e);
     Z.marcaExplorado(AJ, e, e.jugador.x, e.jugador.z);
     Z.pasoRuidos(e, dt);

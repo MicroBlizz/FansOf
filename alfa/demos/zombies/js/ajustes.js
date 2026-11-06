@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.11.0',
+  version: '0.11.1',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -60,9 +60,9 @@ ZOM.AJ = Object.freeze({
   // (minutos), hambre y sed (multiplican), huellas en la nieve, ruido (lo tapa la lluvia), pasos (las hojas crujen), lo que ven y corren
   // los fans y la probabilidad de que la carne salga podrida
   estaciones: { dias: 7, orden: ['invierno', 'primavera', 'verano', 'otono'],
-    invierno: { n: 'INVIERNO', amanece: 8 * 60, anochece: 18 * 60, hambre: 1.25, sed: 1, huellas: true, ruido: 1, pasos: 1, vistaFans: 1, velFans: 0.9, pudre: 0 },
+    invierno: { n: 'INVIERNO', amanece: 7 * 60 + 30, anochece: 18 * 60 + 30, hambre: 1.25, sed: 1, huellas: true, ruido: 1, pasos: 1, vistaFans: 1, velFans: 0.9, pudre: 0 },
     primavera: { n: 'PRIMAVERA', amanece: 7 * 60, anochece: 20 * 60, hambre: 1, sed: 1, huellas: false, ruido: 0.75, pasos: 1, vistaFans: 0.9, velFans: 1, pudre: 0.1 },
-    verano: { n: 'VERANO', amanece: 6 * 60, anochece: 21 * 60 + 30, hambre: 0.9, sed: 2, huellas: false, ruido: 1, pasos: 1, vistaFans: 1.1, velFans: 1.15, pudre: 0.4 },
+    verano: { n: 'VERANO', amanece: 6 * 60, anochece: 21 * 60 + 30, hambre: 0.9, sed: 1.5, huellas: false, ruido: 1, pasos: 1, vistaFans: 1.1, velFans: 1.15, pudre: 0.4 },
     otono: { n: 'OTOÑO', amanece: 7 * 60 + 30, anochece: 19 * 60, hambre: 1, sed: 1, huellas: false, ruido: 1, pasos: 1.3, vistaFans: 0.7, velFans: 1, pudre: 0.1 } },
   // los coches (ADR 075): velocidades en m/s (máxima ~65 km/h), giro en rad/s, gasolina de 0 a 1 (consumo por metro), daño de 0 a 100,
   // atropello = daño por m/s, la llave (en la guantera o en una casa cercana) y el ruido del motor
@@ -152,7 +152,7 @@ ZOM.AJ = Object.freeze({
   torre: { plantas: 10, base: 4, crece: 1, reparto: { fan: 6, bot: 3, streamer: 1, speedrunner: 1, troll: 1, ballena: 0.6 }, arriba: { troll: 0.4, ballena: 0.25, bot: 0.3 },
     jefe: { escolta: 4, refuerzos: 6, umbrales: [0.7, 0.4, 0.15], cadaEmbiste: 6, dura: 0.7, vel: 9 } },
   ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4, infeccion: 0.25 },
-  mundo: { zombis: 120, oleada: 22, maxZombis: 320, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
+  mundo: { zombis: 120, oleada: 22, maxZombis: 320, poda: 180, podaDesde: 0.7, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
   // los parches de Microblizz: uno nuevo cada mañana desde el día 2
   parches: [
     { id: 'corren', n: 'Esta noche los fans corren.', velNoche: 1.6 },

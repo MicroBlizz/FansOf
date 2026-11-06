@@ -118,4 +118,17 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (J.infeccion <= 0 && azar() < AJ.ia.infeccion * (J.A.infeccion || 1)) { J.infeccion = 1; e.eventos.push({ tipo: 'infectado' }); }
     e.eventos.push({ tipo: 'mordisco', id: zb.id });
   }
+  // cada hora de juego, si hay muchos fans, se quitan los tranquilos (y los caídos) que están muy lejos de ti: así quedan fans para los
+  // sitios nuevos que vas descubriendo (las oleadas vuelven a llenar lo de alrededor)
+  Z.podaLejanos = function (AJ, e) {
+    if (e.min - (e.podado || 0) < 60) return;
+    e.podado = e.min;
+    const M = AJ.mundo, J = e.jugador;
+    if (Z.vivos(e).length < M.maxZombis * M.podaDesde) return;
+    const sobra = (z) => (z.vida <= 0 || z.estado === 'vaga') && !z.T.jefe && !z.planta && Z.dist(z.x, z.z, J.x, J.z) > M.poda;
+    const fuera = e.zombis.filter(sobra).map((z) => z.id);
+    if (!fuera.length) return;
+    e.zombis = e.zombis.filter((z) => !sobra(z));
+    e.eventos.push({ tipo: 'poda', ids: fuera });
+  };
 })(ZOM);

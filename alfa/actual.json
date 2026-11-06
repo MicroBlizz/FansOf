@@ -1,8 +1,8 @@
 {
- "build": 1022,
- "hash": "52dabc2",
- "fecha": "2026-11-06T09:47:05Z",
- "mensaje": "Rumble v2: BoomBeaver animado y sin la sombra verde de los pies",
+ "build": 1023,
+ "hash": "dbe04e2",
+ "fecha": "2026-11-06T09:52:28Z",
+ "mensaje": "Rumble v2: Meercat animada (lados der e izq)",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

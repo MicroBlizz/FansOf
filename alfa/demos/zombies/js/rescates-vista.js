@@ -52,6 +52,7 @@ function limpiaRescates() { for (const v of RESCATES.vistas.values()) MOTOR.esce
 // el panel del refugio en la mochila (quién hay y qué hace)
 function htmlRefugio(e) {
   const AJ = ZOM.AJ, en = (e.rescates || []).filter((s) => s.estado !== 'atrapado');
-  if (!en.length) return '<div class="vm-ref"><b>' + esc(tr('REFUGIO')) + '</b><p class="vm-ayuda">' + esc(tr('Rescata supervivientes y vivirán en tu refugio.')) + '</p></div>';
-  return '<div class="vm-ref"><b>' + esc(tr('REFUGIO')) + '</b>' + en.map((s) => '<p class="' + (s.estado === 'muerto' ? 'muerto' : '') + '">' + esc(AJ.animales[s.animal].n) + ' · ' + esc(s.estado === 'muerto' ? tr('CAÍDO') : tr(OFICIO_TXT[ZOM.oficioDe(AJ, s.animal)])) + (s.estado === 'muerto' ? '' : ' · ' + Math.ceil(s.vida)) + '</p>').join('') + '</div>';
+  const llaves = Object.keys(e.llaves || {}).length, llavero = '<p>' + esc(trf('Llavero: %1 llaves de coche', llaves)) + '</p>';
+  if (!en.length) return '<div class="vm-ref"><b>' + esc(tr('REFUGIO')) + '</b><p class="vm-ayuda">' + esc(tr('Rescata supervivientes y vivirán en tu refugio.')) + '</p>' + llavero + '</div>';
+  return '<div class="vm-ref"><b>' + esc(tr('REFUGIO')) + '</b>' + en.map((s) => '<p class="' + (s.estado === 'muerto' ? 'muerto' : '') + '">' + esc(AJ.animales[s.animal].n) + ' · ' + esc(s.estado === 'muerto' ? tr('CAÍDO') : tr(OFICIO_TXT[ZOM.oficioDe(AJ, s.animal)])) + (s.estado === 'muerto' ? '' : ' · ' + Math.ceil(s.vida)) + '</p>').join('') + llavero + '</div>';
 }

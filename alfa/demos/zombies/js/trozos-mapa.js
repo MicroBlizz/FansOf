@@ -4,7 +4,6 @@
 // un trozo (registrar, tablas, puertas) va en la partida por su id, así que al volver está igual. ADR 073.
 'use strict';
 const TROZOS = { cargados: new Map(), semilla: null, sucio: false };
-const COLORES_COCHE = [0x2a6ab8, 0xb8282e, 0x3a3a3e, 0xd8d8d0, 0x3a6a3a];
 const COLORES_MARITIMO = [0x8a3a2a, 0x2a5a7a, 0x3a6a3a, 0xb07a20];
 
 // cada fotograma: quita los trozos lejanos y pone el que falte más cerca (en la torre no se toca nada)
@@ -46,7 +45,6 @@ function construyeTrozo(P) {
   for (const E of P.edificios) EDIFICIO_TROZO[E.tipo](o, E, az);
   for (const c of P.campos) campoTrozo(o, c);
   for (const a of P.arboles) arbolPelado(o, a.x, a.z, a.s, az);
-  for (const c of P.coches) coche(o, c.x, c.z, COLORES_COCHE[c.color], c.giro, true);
   MOTOR.escena.add(o.hecha());
   const Tr = { P, solidos: MAPA.solidos.slice(ini.s), contenedores: MAPA.contenedores.slice(ini.c), huecos: BARRIO.huecos.slice(ini.h), casas: BARRIO.casas.slice(ini.k), objetos: MOTOR.escena.children.slice(ini.o) };
   Tr.sitios = Tr.contenedores.map((c, i) => ({ id: P.clave + ':' + i, x: c.x, z: c.z, tipo: c.tipo }));

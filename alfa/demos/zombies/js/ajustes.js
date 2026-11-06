@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.9.0',
+  version: '0.10.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -31,6 +31,7 @@ ZOM.AJ = Object.freeze({
   empujon: { alcance: 1.7, cono: 1.1, retroceso: 1.8, derriba: 1.6, cadencia: 0.6, aguante: 14, ruido: 1.5 },
   // las cosas: su nombre, su forma en la mochila Tetris (X = casilla), cuántas se apilan (max) y lo que hacen al usarlas (usa)
   objetos: {
+    gasolina: { n: 'BIDÓN DE GASOLINA', forma: ['XX', 'XX'] },
     escopeta: { n: 'ESCOPETA', forma: ['XXXX', '.X..'], arma: true },
     palanca: { n: 'PALANCA', forma: ['XXX'], arma: true },
     pistola: { n: 'PISTOLA', forma: ['XX', 'X.'], arma: true },
@@ -54,6 +55,11 @@ ZOM.AJ = Object.freeze({
     filete: { n: 'FILETE', forma: ['X'], usa: { hambre: 50 }, cocinado: true },
     guiso: { n: 'GUISO', forma: ['X'], usa: { hambre: 45, sed: 20 }, cocinado: true },
   },
+  // los coches (ADR 075): velocidades en m/s (máxima ~65 km/h), giro en rad/s, gasolina de 0 a 1 (consumo por metro), daño de 0 a 100,
+  // atropello = daño por m/s, la llave (en la guantera o en una casa cercana) y el ruido del motor
+  coches: { radio: 1.2, alcance: 3, acelera: 9, frena: 14, roce: 0.5, maxima: 18, atras: 5, giro: 2.2, consumo: 0.0006, bidon: 0.5,
+    gasInicial: 0.35, danoInicial: 30, danoChoque: 1.6, atropellaDesde: 3, atropello: 9, ruido: 18, ruidoVel: 1.2,
+    llaveGuantera: 0.45, llaveEnCasa: { armario: 0.15, cocina: 0.15, nevera: 0.05, taquilla: 0.3 }, llaveRadio: 90 },
   // los supervivientes (ADR 074): la probabilidad de que un trozo tenga a alguien atrapado, los fans de guardia, su oficio por animal y lo
   // de cada oficio (daño y curas por segundo; la cocina, a partir de qué hora y qué deja; el vigía, a qué distancia y cada cuántos minutos)
   rescates: { prob: 0.08, guardia: 4, vida: 100, alcance: 2.2, danoFans: 6,
@@ -81,10 +87,10 @@ ZOM.AJ = Object.freeze({
       cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, cuchillo: 1.2, nada: 2 },
       basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
       fuego: {},
-      estanteria: { tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
+      estanteria: { gasolina: 0.6, tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
       super: { judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
-      gasolinera: { chocolatina: 4, refresco: 4, agua: 2, nada: 2 },
-      ferreteria: { tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
+      gasolinera: { chocolatina: 4, refresco: 4, agua: 2, gasolina: 3, nada: 2 },
+      ferreteria: { gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
       farmacia: { venda: 6, tela: 2, nada: 2 },
       armeria: { balas: 4, cartuchos: 3, pistola: 1.2, escopeta: 0.4, nada: 1 },
       taquilla: { balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
@@ -93,7 +99,8 @@ ZOM.AJ = Object.freeze({
       cajaFuerte: { balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
       maletin: { balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
       maquina: { chocolatina: 3, refresco: 3, nada: 2 },
-      granero: { tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
+      coche: { gasolina: 1, chocolatina: 1, refresco: 1, agua: 1, cartuchos: 0.5, nada: 2 },
+      granero: { gasolina: 1, tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
     } },
   // fabricar: con qué y dónde (null = en cualquier sitio; 'fuego' = junto a un bidón con fuego o en la cocina de una casa con luz)
   recetas: [

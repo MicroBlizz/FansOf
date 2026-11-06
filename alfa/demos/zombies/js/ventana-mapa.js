@@ -39,7 +39,7 @@ function abreMapa() {
   VMAPA.abierto = true;
   el('zb-mapa').hidden = false;
   el('zb-mapa').innerHTML = '<div class="zm-marco"><header><b>' + esc(tr('MAPA')) + '</b><span>' + esc(tr('Solo lo que ya has visto')) + '</span><button id="zm-cerrar">' + esc(tr('CERRAR (M)')) + '</button></header>' +
-    '<canvas id="zm-lienzo"></canvas><footer><i class="t"></i>' + esc(tr('tú')) + '<i class="f"></i>' + esc(tr('fuego')) + '<i class="r"></i>' + esc(tr('registrado')) + '<i class="s"></i>' + esc(tr('sin registrar')) + '<i class="b"></i>' + esc(tr('con tablas')) + '<i class="p"></i>' + esc(tr('atrapado')) + '<i class="h"></i>' + esc(tr('tu refugio')) + '</footer></div>';
+    '<canvas id="zm-lienzo"></canvas><footer><i class="t"></i>' + esc(tr('tú')) + '<i class="f"></i>' + esc(tr('fuego')) + '<i class="r"></i>' + esc(tr('registrado')) + '<i class="s"></i>' + esc(tr('sin registrar')) + '<i class="b"></i>' + esc(tr('con tablas')) + '<i class="p"></i>' + esc(tr('atrapado')) + '<i class="h"></i>' + esc(tr('tu refugio')) + '<i class="c"></i>' + esc(tr('coche')) + '</footer></div>';
   el('zm-cerrar').onclick = cierraMapa;
   pintaMapa();
 }
@@ -66,6 +66,7 @@ function pintaMapa() {
   for (const s of sitiosRegistrables(e)) punto(s.x, s.z, s.tipo === 'fuego' ? '#ff8a2a' : e.registrados[s.id] ? '#8a929c' : '#e8c040', s.tipo === 'fuego' ? 5 : 3);
   for (const H of BARRIO.huecos) { const h = e.huecos[H.id]; if (h && h.tablas) punto(H.x, H.z, '#a0602a', 4); }
   for (const s of e.rescates || []) if (s.estado === 'atrapado') punto(s.x, s.z, '#3ac86a', 6);
+  for (const c of e.coches || []) punto(c.x, c.z, (e.llaves || {})[c.id] ? '#58c8ff' : '#2a5a8a', 5);
   if (e.refugio) { const R = e.refugio; g.strokeStyle = '#ff7a1a'; g.lineWidth = 3; g.strokeRect(px(R.x0), pz(R.z0), (R.x1 - R.x0) * k, (R.z1 - R.z0) * k); }
   // la niebla en lo que no has visto (casillas de 8 m)
   g.fillStyle = 'rgba(18,22,30,.92)';

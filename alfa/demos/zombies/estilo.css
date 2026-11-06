@@ -150,3 +150,5 @@ button:disabled { opacity: 0.4; cursor: default; }
 .vm-ref p { margin: 3px 0 0; font-size: 14px; }
 .vm-ref p.muerto { color: var(--rk-tenue); text-decoration: line-through; }
 .zm-marco footer .p { background: #3ac86a; } .zm-marco footer .h { background: none; border: 2px solid #ff7a1a; border-radius: 0; }
+.zm-marco footer .c { background: #58c8ff; }
+.zb-coche > b { font-size: 34px; color: #ffb070; }

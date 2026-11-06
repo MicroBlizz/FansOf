@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.10.0', real: ['<b>COCHES QUE SE CONDUCEN</b>: los coches aparcados de las calles se conducen. Busca su llave en la guantera (F) o en las casas de alrededor; W acelera, S frena, A y D giran y F te baja. Gastan gasolina (G con un bidón para repostar), se abollan al chocar, atropellan fans y hacen mucho ruido.'],
+    joke: ['Microblizz lanza el «Pase de Conductor»: cada kilómetro recorrido da una caja de botín con un ambientador.'] },
   { v: '0.9.0', real: ['<b>SUPERVIVIENTES Y TU REFUGIO</b>: por el mundo hay animales de la serie atrapados en edificios y rodeados de fans. Rescátalos (F) y se van a tu refugio, la casa donde empezaste. Cada uno hace su oficio: vigía (avisa y pelea), cocinera (deja comida en la despensa cada mañana), carpintera (repone tablas al anochecer) o médica (te cura dentro). Si los fans entran, pueden morir.'],
     joke: ['Microblizz ofrece «Refugio Premium» con un superviviente extra. Es un bot de atención al cliente y solo sabe decir «lo sentimos».'] },
   { v: '0.8.0', real: ['<b>UN MUNDO SIN BORDE</b>: alrededor de Ratkov y sus barrios, el mundo sigue sin fin. Barrios de casas, tiendas, polígonos, granjas y bosques que se generan solos a medida que andas, distintos en cada partida.',

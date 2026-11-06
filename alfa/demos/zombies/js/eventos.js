@@ -3,7 +3,7 @@
 'use strict';
 const NO_PUEDES = {
   sinSueno: 'No tienes sueño todavía.', hayZombis: 'Con fans tan cerca no hay quien duerma.', noTienes: 'No te queda de eso.',
-  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.', sinRefugio: 'No tienes refugio al que mandarlo.',
+  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.', sinRefugio: 'No tienes refugio al que mandarlo.', sinLlave: 'No tienes la llave de este coche. Registra su guantera o busca en las casas de alrededor.', cocheRoto: 'Este coche ya no arranca.', tanqueLleno: 'El depósito está lleno.', sinGasolina: 'No llevas ningún bidón de gasolina.',
 };
 const EVENTOS = {
   parche: (v) => { HUD.parche = v; HUD.tParche = 12; play('alerta'); },
@@ -39,6 +39,12 @@ const EVENTOS = {
   tablaRota: () => play('metal'),
   huecoRoto: (v) => { play(v.hueco === 'ventana' ? 'metal' : 'puerta'); avisa(tr(v.hueco === 'ventana' ? '¡Han roto una ventana!' : '¡Han tirado una puerta!'), 'malo'); },
   golpeHueco: () => play('impacto'),
+  llave: (v) => { play('coge'); avisa(tr(v.donde === 'guantera' ? '¡La llave estaba en la guantera! Ya puedes subir (F).' : 'Entre las cosas había la llave de un coche de por aquí. La guardas en el llavero.'), 'bien'); },
+  subeCoche: (v) => { play('metal'); if (v.gas <= 0) avisa(tr('No le queda gasolina. Busca un bidón (G para repostar).'), 'malo'); },
+  bajaCoche: () => play('puerta'),
+  reposta: (v) => { play('bebe'); avisa(trf('Depósito al %1 %.', Math.round(v.gas * 100)), 'bien'); },
+  choque: (v) => { play('impacto'); EFECTOS.temblor = Math.max(EFECTOS.temblor, Math.min(0.4, v.v * 0.02)); },
+  atropello: (v) => { const J = JUEGO.e.jugador; play('carne'); sangre(v.x, v.z, 8, J.x, J.z); zombiRespingo(v.id); },
   hayRescate: () => { play('alerta'); avisa(tr('Por la radio: alguien pide ayuda muy cerca. Está atrapado en un edificio y rodeado de fans.'), 'bien'); },
   rescate: (v) => { play('win'); avisa(trf('%1 se va a tu refugio. Hará de %2.', ZOM.AJ.animales[v.animal].n, tr(OFICIO_TXT[v.oficio]).toLowerCase()), 'bien'); },
   vigia: (v) => { play('alerta'); avisa(trf('Desde el refugio: ¡hay %1 fans cerca!', v.n), 'malo'); },

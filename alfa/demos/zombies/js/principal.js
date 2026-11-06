@@ -11,6 +11,7 @@ const MUNDO = {
   aparicion: (azar) => (JUEGO.e && !JUEGO.e.planta ? aparicionCerca(azar) : aparicionDistrito(azar)),   // al empezar, por el distrito; luego, cerca de ti
   puntoTrozo: (r, azar) => libreEn(r, azar),
   puntoDentro: (r, azar) => libreDentro(r, azar),
+  choca: (x, z, r) => !!choca(x, z, r),
   huecos: () => BARRIO.huecos.map((h) => ({ id: h.id, tipo: h.tipo })),
   huecoCerca: (x, z, r) => { const h = huecoCercaDe(x, z, r); return h && { id: h.id, x: h.x, z: h.z }; },
   posHueco: (id) => BARRIO.porId[id] || null,
@@ -61,14 +62,14 @@ function aparicionCerca(azar) {
 }
 const aparicionDistrito = (azar) => libreAlcanzable(MAPA.x0 + 6 + azar() * (MAPA.x1 - MAPA.x0 - 12), MAPA.z0 + 8 + azar() * (MAPA.z1 - MAPA.z0 - 14), 0.6);
 // lo que se puede registrar: los contenedores del mapa (menos la verja del despacho) y los cuerpos que deja la ballena
-function sitiosRegistrables(e) { return JUEGO.sitios.concat(TORRE.sitios, sitiosTrozos(), sitiosRefugio(e), e.cuerpos); }
+function sitiosRegistrables(e) { return JUEGO.sitios.concat(TORRE.sitios, sitiosTrozos(), sitiosRefugio(e), sitiosCoches(e), e.cuerpos); }
 // la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
 function huecoDelJugador(e) { const J = e.jugador; return huecoCercaDe(J.x, J.z, 1.6); }
 const SITIOS_SIEMPRE = ['fuego', 'cocina', 'escalera', 'torre', 'despensa', 'superviviente'];   // se vuelven a abrir aunque estén vacíos (cocinar, beber, subir)
 const esPaso = (s) => s && (s.tipo === 'escalera' || s.tipo === 'torre');
 function sitioCerca(e) {
   const J = e.jugador; let mejor = null, dMin = 1.9;
-  for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && (!e.registrados[s.id] || (e.contenidos[s.id] || []).length || SITIOS_SIEMPRE.includes(s.tipo) || (ZOM.AJ.desmontar.tipos[s.tipo] && !e.desmontados[s.id]))) { dMin = d; mejor = s; } }
+  for (const s of sitiosRegistrables(e)) { const d = ZOM.dist(J.x, J.z, s.x, s.z); if (d < dMin && (!e.registrados[s.id] || (e.contenidos[s.id] || []).length || SITIOS_SIEMPRE.includes(s.tipo) || s.coche || (ZOM.AJ.desmontar.tipos[s.tipo] && !e.desmontados[s.id]))) { dMin = d; mejor = s; } }
   return mejor;
 }
 
@@ -86,6 +87,9 @@ function alcanceDesde(x, z) {
   calculaAlcance(x, z);
   for (const H of BARRIO.huecos) H.sol.abierto = false;
 }
+// los coches del distrito que se conducen (aparcados en las calles del barrio y en la carretera): [x, z, rumbo]
+const COCHES_DISTRITO = [[-110, 6.2, Math.PI / 2], [-170, 9.8, -Math.PI / 2], [-146, 22, 0], [-146, -40, Math.PI], [30, 6.2, Math.PI / 2], [-182, 44, Math.PI / 2], [-30, 120, Math.PI / 2]];
+function cochesDelDistrito() { return COCHES_DISTRITO.map(([x, z, a], i) => { const p = libreCerca(x, z, 1.8); return { id: 'd' + i, x: p.x, z: p.z, a, color: i % 5 }; }); }
 // dónde empiezas: la primera partida (con tutorial), en tu casa del barrio; las demás, dentro de una casa o edificio al azar de todo el mapa
 const LUGAR_INICIO = { casa: 'una casa del barrio residencial', nave: 'una nave del polígono', super: 'el supermercado', gasolinera: 'la gasolinera', ferreteria: 'la ferretería', farmacia: 'la farmacia', comisaria: 'la comisaría', colegio: 'el colegio', granero: 'el granero de la granja' };
 function puntoDeInicio(conTutorial) {
@@ -102,7 +106,7 @@ function puntoDeInicio(conTutorial) {
 function empiezaPartida() {
   const conTutorial = !SAVE.tutoHecho, p = puntoDeInicio(conTutorial);
   alcanceDesde(p.x, p.z);
-  const r = ZOM.nuevaPartida(ZOM.AJ, { animal: SAVE.animal, dificultad: SAVE.dificultad, x: p.x, z: p.z, azar: azarJuego, mundo: MUNDO, refugio: refugioDe(p.casa) });
+  const r = ZOM.nuevaPartida(ZOM.AJ, { animal: SAVE.animal, dificultad: SAVE.dificultad, x: p.x, z: p.z, azar: azarJuego, mundo: MUNDO, refugio: refugioDe(p.casa), coches: cochesDelDistrito() });
   if (!r.ok) { avisa(tr('No se ha podido empezar la partida.'), 'malo'); return; }
   juega(r.valor);
   avisa(p.lugar ? trf('Día 1. Te despiertas en %1. Busca comida y agua antes de que anochezca y clava tablas en las ventanas (B).', tr(p.lugar)) : tr('Día 1. Estás en tu casa del barrio. Busca comida y agua antes de que anochezca y clava tablas en las ventanas (B).'), 'bien');
@@ -130,7 +134,7 @@ function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuard
 function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
 addEventListener('pagehide', guardaAhora);
 document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
-function terminaPartida() { descargaTrozos(null); limpiaRescates(); TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
+function terminaPartida() { descargaTrozos(null); limpiaRescates(); limpiaCoches(); TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
 
 function fotograma(ms) {
   requestAnimationFrame(fotograma);
@@ -159,6 +163,7 @@ function avanzaJuego(dt) {
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));
     if (ent.registrar && esPaso(cerca)) { ent.registrar = null; subeBaja(e, cerca); }
     if (ent.registrar && cerca.tipo === 'superviviente') { ent.registrar = null; rescataA(e, cerca); }
+    usaCoche(e, ent, cerca);
     avanzaTrozos(e);
     avanzaCaminos(e, dt);
     ZOM.paso(AJ, e, dt, ent, MUNDO, azarJuego);
@@ -166,7 +171,7 @@ function avanzaJuego(dt) {
     guardaSiToca(dt);
     avanzaTutorial(e, dt);
   }
-  pintaMundo(AJ, e, JUEGO.pausa ? 0 : dt); pintaBarrio(e); pintaRescates(e, JUEGO.pausa ? 0 : dt);
+  pintaMundo(AJ, e, JUEGO.pausa ? 0 : dt); pintaBarrio(e); pintaRescates(e, JUEGO.pausa ? 0 : dt); pintaCoches(e);
   if ((JUEGO.tHud -= dt) <= 0) { JUEGO.tHud = 0.15; pintaHud(AJ, e, cerca, 0.15, huecoDelJugador(e)); }
   else pintaAccion(e, cerca, huecoDelJugador(e));
   if (e.muerto && JUEGO.pantalla === 'juego') { const m = e.muerto; borraMundo(); setTimeout(() => abreMuerte(m), 1200); JUEGO.pantalla = 'cayendo'; }

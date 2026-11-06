@@ -24,6 +24,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     e.contenidos[R.sitio] = Z.botinDe(AJ, AJ.botin.maximo + extra, azar, R.tipo, e.sinLuz);
     e.abierto = R.sitio; e.tipoAbierto = R.tipo;
     e.eventos.push({ tipo: 'abre', sitio: R.sitio, nuevo: true, cosas: e.contenidos[R.sitio].map((c) => c.id) });
+    if (Z.buscaLlave) Z.buscaLlave(AJ, e, R.sitio, R.tipo, azar);   // las llaves de los coches (js/coches.js)
   };
   Z.botinDe = function (AJ, n, azar, tipo, sinLuz) {
     const out = [], tabla = AJ.botin.porTipo[tipo] || AJ.botin.cosas;

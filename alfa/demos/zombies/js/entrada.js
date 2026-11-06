@@ -5,7 +5,7 @@
 'use strict';
 const TECLAS_ZOM = {
   arriba: ['KeyW', 'ArrowUp'], abajo: ['KeyS', 'ArrowDown'], izq: ['KeyA', 'ArrowLeft'], der: ['KeyD', 'ArrowRight'], corre: ['ShiftLeft', 'ShiftRight'],
-  agacha: ['KeyC', 'ControlLeft'], ataca: ['Space'], empuja: ['KeyR'], arma1: ['Digit1'], arma2: ['Digit2'], arma3: ['Digit3'], arma4: ['Digit4'], arma5: ['Digit5'], arma6: ['Digit6'], registra: ['KeyF'], tablas: ['KeyB'], come: ['KeyE'], bebe: ['KeyQ'], venda: ['KeyV'],
+  agacha: ['KeyC', 'ControlLeft'], ataca: ['Space'], empuja: ['KeyR'], arma1: ['Digit1'], arma2: ['Digit2'], arma3: ['Digit3'], arma4: ['Digit4'], arma5: ['Digit5'], arma6: ['Digit6'], registra: ['KeyF'], reposta: ['KeyG'], tablas: ['KeyB'], come: ['KeyE'], bebe: ['KeyQ'], venda: ['KeyV'],
   duerme: ['KeyZ'], pausa: ['Escape', 'KeyP'], mochila: ['Tab', 'KeyI'], mapa: ['KeyM'],
 };
 const ENTRADA = { abajo: new Set(), pulsos: new Set(), raton: { x: 0, y: 0, abajo: false, visto: false, derecho: false } };

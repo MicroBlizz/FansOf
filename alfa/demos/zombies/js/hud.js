@@ -6,7 +6,7 @@ function montaHud() {
   el('zb').innerHTML = '<div id="h-ets"></div><div class="panel zb-necesidades" id="h-nec"></div><div class="panel zb-reloj" id="h-reloj"></div>' +
     '<div class="panel zb-ruido" id="h-ruido"></div><div class="zb-parche" id="h-parche" hidden></div><div class="zb-radio" id="h-radio" hidden></div>' +
     '<div class="zb-hotbar" id="h-mochila"></div><div class="panel zb-arma" id="h-arma"></div><div class="zb-ayuda" id="h-ayuda"></div>' +
-    '<div class="zb-tuto" id="h-tuto" hidden></div><div class="zb-jefe" id="h-jefe" hidden></div><b class="zb-et accion" id="h-accion" hidden></b><div class="zb-registro" id="h-registro" hidden><i></i></div>';
+    '<div class="zb-tuto" id="h-tuto" hidden></div><div class="zb-jefe" id="h-jefe" hidden></div><div class="panel zb-arma zb-coche" id="h-coche" hidden></div><b class="zb-et accion" id="h-accion" hidden></b><div class="zb-registro" id="h-registro" hidden><i></i></div>';
   el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['CLIC DCHO / R', 'empujar'], ['1-6', 'arma'], ['Z', 'dormir'], ['F', 'registrar / puerta'], ['B', 'tablas'], ['TAB', 'mochila'], ['M', 'mapa'], ['ESC', 'pausa']]
     .map(([k, t]) => '<span><b>' + esc(tr(k)) + '</b>' + esc(tr(t)) + '</span>').join('');
   HUD.avisos.length = 0; HUD.parche = null;
@@ -75,6 +75,7 @@ function pintaAvisos(dt) {
 // el cartel sobre un sitio: registrar, abrir o, en las escaleras, subir y bajar
 function textoSitio(e, s) {
   if (s.tipo === 'torre') return tr('F  ENTRAR EN LA TORRE');
+  if (s.coche) return textoCoche(e, s);
   if (s.tipo === 'superviviente') return trf('F  RESCATAR A %1', ZOM.AJ.animales[s.animal].n);
   if (s.tipo === 'escalera') return s.a === 0 ? tr('F  SALIR A LA CALLE') : s.a === ZOM.AZOTEA(ZOM.AJ) ? tr('F  SUBIR A LA AZOTEA') : trf(s.desdeArriba ? 'F  BAJAR A LA PLANTA %1' : 'F  SUBIR A LA PLANTA %1', s.a);
   return tr(e.registrados[s.id] ? 'F  ABRIR' : 'F  REGISTRAR');
@@ -96,6 +97,6 @@ function textoHueco(hueco, H, J) {
 }
 function pintaHud(AJ, e, cerca, dt, hueco) {
   const J = e.jugador;
-  pintaJefe(AJ, e);
+  pintaJefe(AJ, e); pintaVolante(e);
   pintaNecesidades(AJ, J); pintaReloj(AJ, e); pintaRuido(AJ, e); pintaHotbar(AJ, J); pintaAccion(e, cerca, hueco); pintaAvisos(dt);
 }

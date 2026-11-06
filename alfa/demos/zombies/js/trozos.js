@@ -98,6 +98,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   Z.entraTrozo = function (AJ, e, P, mundo, azar) {
     const E = e.trozos || (e.trozos = {}), nuevo = !E[P.clave], t = E[P.clave] || (E[P.clave] = { fans: Math.round(P.fans * e.dif.zombis) });
     if (nuevo && Z.ponRescate) Z.ponRescate(AJ, e, P, mundo, azar);   // a veces, alguien atrapado (js/rescates.js)
+    if (nuevo && Z.ponCochesTrozo) Z.ponCochesTrozo(AJ, e, P, azar);   // sus coches aparcados se conducen (js/coches.js)
     const hueco = Math.max(0, AJ.mundo.maxZombis - Z.vivos(e).length), n = Math.min(t.fans, hueco), J = e.jugador;
     let salen = 0;
     for (let i = 0; i < n * 3 && salen < n; i++) {

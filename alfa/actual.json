@@ -1,8 +1,8 @@
 {
- "build": 1032,
- "hash": "6fb5fc6",
- "fecha": "2026-11-06T17:54:36Z",
- "mensaje": "Fans of Zombies: mochila Tetris, registrar para elegir qué coges y gráficos en HD",
+ "build": 1033,
+ "hash": "d245dc7",
+ "fecha": "2026-11-06T17:56:31Z",
+ "mensaje": "Fans of Zombies 0.2.0: se guarda la partida",
  "juegos": {
   "boom": "0.4.9",
   "cooking": "0.2.10",

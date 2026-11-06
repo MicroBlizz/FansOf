@@ -5,7 +5,8 @@ IDIOMA.add({
   'AVISO DE EMERGENCIA · DISTRITO MICROBLIZZ · NO SALGA DE CASA · NO HAGA RUIDO · NO ACTUALICE EL JUEGO': 'EMERGENCY ALERT · MICROBLIZZ DISTRICT · STAY INDOORS · MAKE NO NOISE · DO NOT UPDATE THE GAME',
   'MICROBLIZZ PRESENTA, AUNQUE NO QUIERA': 'MICROBLIZZ PRESENTS, UNWILLINGLY',
   'El parche 1.0 salió mal. Los fans ya no juegan: te buscan.': 'Patch 1.0 went wrong. The fans no longer play: they hunt you.',
-  'NUEVA PARTIDA': 'NEW GAME', 'SONIDO: SÍ': 'SOUND: ON', 'SONIDO: NO': 'SOUND: OFF', 'BIBLIOTECA': 'LIBRARY', 'EN DIRECTO': 'LIVE', 'PROTOTIPO': 'PROTOTYPE',
+  'NUEVA PARTIDA': 'NEW GAME', 'CONTINUAR': 'CONTINUE', 'Día %1 · %2': 'Day %1 · %2', '¿EMPEZAR DE NUEVO?': 'START OVER?', 'Se perderá la partida que tienes empezada.': 'Your current game will be lost.', 'EMPEZAR': 'START',
+  'Sigues en el día %1. Bienvenido de vuelta.': 'Still on day %1. Welcome back.', 'SONIDO: SÍ': 'SOUND: ON', 'SONIDO: NO': 'SOUND: OFF', 'BIBLIOTECA': 'LIBRARY', 'EN DIRECTO': 'LIVE', 'PROTOTIPO': 'PROTOTYPE',
   'Tu mejor: %1': 'Your best: %1',
   'Si ves esto, sigues vivo. No abras la puerta a nadie con sudadera.': 'If you can read this, you are still alive. Do not open the door to anyone in a hoodie.',
   // la ficha de evacuación

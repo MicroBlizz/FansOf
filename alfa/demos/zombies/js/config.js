@@ -1,6 +1,6 @@
-// Fans of Zombies · CONFIGURACIÓN DE ESTE NAVEGADOR (adaptador): el nombre del juego para core, el sonido y la calidad (AJUSTES) y lo
-// poco que se guarda (SAVE): la última ficha (animal y dificultad) y tus mejores marcas. Las partidas aún no se guardan (ver la
-// ficha del juego, «Pendiente»). Se carga antes de lo común (NUCLEO.juego, en index.html).
+// Fans of Zombies · CONFIGURACIÓN DE ESTE NAVEGADOR (adaptador): el nombre del juego para core, el sonido (AJUSTES), lo que se guarda en
+// la nube con la cuenta (SAVE: la última ficha y tus mejores marcas) y la partida en curso, que va aparte en este navegador
+// ('forzom-mundo', ver js/guardado.js) porque pesa más. Se carga antes de lo común (NUCLEO.juego, en index.html).
 'use strict';
 const AJUSTES = { id: 'zombies', guardado: 'forzom-partida', mudo: false, sinMusica: false, calidad: 'auto' };
 try { Object.assign(AJUSTES, JSON.parse(localStorage.getItem('forzom-ajustes') || '{}')); } catch (_) { /* sin guardar: se juega igual */ }
@@ -12,5 +12,10 @@ function guardaPartida() {
   try { localStorage.setItem(AJUSTES.guardado, JSON.stringify(SAVE)); } catch (_) { /* sin guardar: se juega igual */ }
   if (typeof CUENTA !== 'undefined') CUENTA.cambio();
 }
+// la partida en curso: leer, guardar y borrar (al morir)
+const CLAVE_MUNDO = 'forzom-mundo';
+function leeMundo() { try { return JSON.parse(localStorage.getItem(CLAVE_MUNDO) || 'null'); } catch (_) { return null; } }
+function guardaMundo(e) { try { localStorage.setItem(CLAVE_MUNDO, JSON.stringify(ZOM.serializa(e))); return true; } catch (_) { return false; } }
+function borraMundo() { try { localStorage.removeItem(CLAVE_MUNDO); } catch (_) { /* nada que borrar */ } }
 // core pregunta si se está jugando (para no interrumpir con avisos de la cuenta)
 window.enPartida = () => typeof JUEGO !== 'undefined' && !!JUEGO.e && !JUEGO.e.muerto;

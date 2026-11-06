@@ -31,10 +31,27 @@ function empiezaPartida() {
   calculaAlcance(p.x, p.z);
   const r = ZOM.nuevaPartida(ZOM.AJ, { animal: SAVE.animal, dificultad: SAVE.dificultad, x: p.x, z: p.z, azar: azarJuego, mundo: MUNDO });
   if (!r.ok) { avisa(tr('No se ha podido empezar la partida.'), 'malo'); return; }
-  JUEGO.e = r.valor; JUEGO.pantalla = 'juego'; JUEGO.pausa = false;
-  limpiaVista(); montaJugador(JUEGO.e.jugador); montaHud(); musica('ciber');
+  juega(r.valor);
   avisa(tr('Día 1. Busca comida y agua antes de que anochezca. Los fans oyen todo.'), 'bien');
+  guardaMundo(r.valor);
 }
+// seguir la partida guardada (si se puede cargar; si no, se avisa y se borra)
+function continuaPartida() {
+  const r = ZOM.restaura(ZOM.AJ, leeMundo());
+  if (!r.ok) { borraMundo(); abreMenu(); return; }
+  calculaAlcance(r.valor.jugador.x, r.valor.jugador.z);
+  juega(r.valor);
+  avisa(trf('Sigues en el día %1. Bienvenido de vuelta.', ZOM.diaDe(r.valor.min)), 'bien');
+}
+function juega(e) {
+  JUEGO.e = e; JUEGO.pantalla = 'juego'; JUEGO.pausa = false; JUEGO.tGuardar = 60;
+  limpiaVista(); montaJugador(e.jugador); montaHud(); musica('ciber');
+}
+// se guarda sola cada minuto, al pausar y al cerrar o esconder la página
+function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuardar = 60; guardaMundo(JUEGO.e); }
+function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
+addEventListener('pagehide', guardaAhora);
+document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
 function terminaPartida() { cierraMochila(); limpiaVista(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
 
 function fotograma(ms) {
@@ -63,10 +80,11 @@ function avanzaJuego(dt) {
     if (ent.nadaCerca) avisa(tr('No hay nada que registrar aquí.'));
     ZOM.paso(AJ, e, dt, ent, MUNDO, azarJuego);
     leeEventos(e);
+    guardaSiToca(dt);
   }
   pintaMundo(AJ, e, JUEGO.pausa ? 0 : dt);
   if ((JUEGO.tHud -= dt) <= 0) { JUEGO.tHud = 0.15; pintaHud(AJ, e, cerca, 0.15); }
   else pintaAccion(e, cerca);
-  if (e.muerto && JUEGO.pantalla === 'juego') { const m = e.muerto; setTimeout(() => abreMuerte(m), 1200); JUEGO.pantalla = 'cayendo'; }
+  if (e.muerto && JUEGO.pantalla === 'juego') { const m = e.muerto; borraMundo(); setTimeout(() => abreMuerte(m), 1200); JUEGO.pantalla = 'cayendo'; }
 }
 arranca();

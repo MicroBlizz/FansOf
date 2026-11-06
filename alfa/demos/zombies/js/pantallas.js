@@ -29,17 +29,19 @@ const capa = (html) => { el('zb').innerHTML = '<div class="zb-oscuro"></div>' + 
 /* ---------- el menú: la tele de emergencia ---------- */
 function abreMenu() {
   JUEGO.pantalla = 'menu'; musica('olvidados');
-  const m = SAVE.mejor;
+  const m = SAVE.mejor, g = leeMundo(), hay = g && g.v === ZOM.VERSION_GUARDADO && g.partida && ZOM.AJ.animales[g.partida.jugador.animal] ? g : null;
   capa('<div class="zb-tele"><div class="zb-pantalla"><canvas id="zb-estatica" width="160" height="100"></canvas>' +
-    '<div class="zb-tv-cinta">' + esc(tr('AVISO DE EMERGENCIA · DISTRITO MICROBLIZZ · NO SALGA DE CASA · NO HAGA RUIDO · NO ACTUALICE EL JUEGO')).repeat(2) + '</div>' +
+    '<div class="zb-tv-cinta">' + esc(tr('AVISO DE EMERGENCIA · DISTRITO MICROBLIZZ · NO SALGA DE CASA · NO HAGA RUIDO · NO ACTUALICE EL JUEGO') + ' · ').repeat(3) + '</div>' +
     '<p class="zb-tv-pre">' + esc(tr('MICROBLIZZ PRESENTA, AUNQUE NO QUIERA')) + '</p><h1>FANS OF <b>ZOMBIES</b></h1>' +
     '<p class="zb-tv-lema">' + esc(tr('El parche 1.0 salió mal. Los fans ya no juegan: te buscan.')) + '</p>' +
-    '<nav class="zb-canales"><button id="m-nueva" class="sel"><em>CH 1</em>' + esc(tr('NUEVA PARTIDA')) + (m.min ? '<small>' + esc(trf('Tu mejor: %1', tiempoVivo(m.min))) + '</small>' : '') + '</button>' +
+    '<nav class="zb-canales">' + (hay ? '<button id="m-seguir" class="sel"><em>CH 0</em>' + esc(tr('CONTINUAR')) + '<small>' + esc(trf('Día %1 · %2', ZOM.diaDe(hay.partida.min), ZOM.AJ.animales[hay.partida.jugador.animal].n)) + '</small></button>' : '') +
+    '<button id="m-nueva"' + (hay ? '' : ' class="sel"') + '><em>CH 1</em>' + esc(tr('NUEVA PARTIDA')) + (m.min ? '<small>' + esc(trf('Tu mejor: %1', tiempoVivo(m.min))) + '</small>' : '') + '</button>' +
     '<button id="m-sonido"><em>CH 2</em>' + esc(tr(AJUSTES.mudo ? 'SONIDO: NO' : 'SONIDO: SÍ')) + '</button><a class="boton-canal" href="../../"><em>CH 3</em>' + esc(tr('BIBLIOTECA')) + '</a></nav>' +
     '<p class="zb-tv-rec">' + esc(tr('EN DIRECTO')) + ' ●</p></div><div class="zb-tele-pie"><i></i><i></i><span>MICROBLIZZ VISION</span></div></div>' +
     '<div class="zb-nota">' + esc(tr('Si ves esto, sigues vivo. No abras la puerta a nadie con sudadera.')) + '<span>— CB</span></div>' +
     '<p class="zb-ver">' + esc(tr('PROTOTIPO')) + ' · v' + ZOM.AJ.version + '</p>');
-  el('m-nueva').onclick = () => { play('select'); abreFicha(); };
+  el('m-nueva').onclick = () => { play('select'); if (hay) confirmBox(tr('¿EMPEZAR DE NUEVO?'), esc(tr('Se perderá la partida que tienes empezada.')), tr('EMPEZAR'), abreFicha); else abreFicha(); };
+  if (hay) el('m-seguir').onclick = () => { play('go'); continuaPartida(); };
   el('m-sonido').onclick = () => { cambiaSonido(); abreMenu(); };
   estatica();
 }
@@ -71,7 +73,7 @@ const DIF_TXT = { turista: 'Menos fans, muerden flojo y el hambre va despacio', 
 
 /* ---------- la pausa ---------- */
 function abrePausa() {
-  JUEGO.pausa = true;
+  JUEGO.pausa = true; guardaAhora();
   const teclas = [['WASD / flechas', 'andar'], ['Mayús', 'correr (mucho ruido)'], ['C', 'agacharse (sin ruido)'], ['Clic / espacio', 'atacar hacia el ratón'], ['Clic derecho / R', 'empujar (tumba sin ruido)'], ['1 / 2', 'escopeta / palanca'],
     ['F', 'registrar'], ['Tab', 'abrir y cerrar la mochila'], ['E / Q / V', 'comer / beber / vendarte'], ['Z', 'dormir (sin fans cerca)']];
   el('zb-capa').innerHTML = '<div class="zb-oscuro"></div><div class="zb-pausa"><h2>' + esc(tr('PAUSA')) + '</h2><ul>' + teclas.map(([k, t]) => '<li><b>' + esc(tr(k)) + '</b>' + esc(tr(t)) + '</li>').join('') + '</ul>' +

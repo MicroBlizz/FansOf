@@ -1,8 +1,8 @@
 {
- "build": 1015,
- "hash": "40f2826",
- "fecha": "2026-11-05T22:39:02Z",
- "mensaje": "Basement 0.13.0: compañeros (los bichos capturados bajan contigo) y accesorios del taller",
+ "build": 1016,
+ "hash": "64e3eb2",
+ "fecha": "2026-11-06T01:14:07Z",
+ "mensaje": "Cola: una fallida reiniciada que espera turno ya no sale en Fallidas (se pide la cola entera y todos los estados sin terminar)",
  "juegos": {
   "boom": "0.4.8",
   "cooking": "0.2.9",

@@ -69,7 +69,7 @@ const COLA_DATOS = (() => {
     }
 
     // 1. La cola: lo activo manda sobre lo guardado.
-    const activos = [...(await gh('/actions/runs?status=in_progress&per_page=30')).workflow_runs, ...(await gh('/actions/runs?status=queued&per_page=100')).workflow_runs];
+    const activos = await COLA_CONTROL.sinTerminar(gh);   // todos los estados sin terminar y la cola entera: un fallido reiniciado que espera turno no es una fallida
     const vivos = new Set(activos.map(r => String(r.id)));
 
     // 2. Terminados nuevos: desde el más nuevo hasta topar con lo ya guardado (como mucho MAX_PAGINAS).

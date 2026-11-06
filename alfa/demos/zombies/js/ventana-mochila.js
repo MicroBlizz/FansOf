@@ -3,7 +3,7 @@
 // clic en lo del sitio para cogerlo, clic derecho en lo tuyo para usarlo. Tab la abre y la cierra; el mundo sigue mientras miras.
 'use strict';
 const VM = { abierta: false, arrastra: null, celda: 44 };
-const COLOR_OBJ = { escopeta: '#4a3a2c', palanca: '#5a2a2a', judias: '#4a4430', chocolatina: '#4a3020', agua: '#24405a', refresco: '#5a2430', venda: '#4a4a52', cartuchos: '#5a2a1a', tablas: '#4a3a24', clavos: '#3a3e46', martillo: '#3a3430', botella: '#2a3440', tela: '#3a3a5a', carne: '#5a2a2a', podrida: '#3a4a2a', filete: '#5a3a24', guiso: '#5a4424' };
+const COLOR_OBJ = { escopeta: '#4a3a2c', palanca: '#5a2a2a', judias: '#4a4430', chocolatina: '#4a3020', agua: '#24405a', refresco: '#5a2430', venda: '#4a4a52', cartuchos: '#5a2a1a', tablas: '#4a3a24', clavos: '#3a3e46', martillo: '#3a3430', pistola: '#2a2e36', bate: '#4a3a24', hacha: '#3a3430', cuchillo: '#2a2e36', balas: '#4a4024', botella: '#2a3440', tela: '#3a3a5a', carne: '#5a2a2a', podrida: '#3a4a2a', filete: '#5a3a24', guiso: '#5a4424' };
 
 // el dibujo de una cosa dentro de su caja (w x h casillas): formas sencillas en píxel
 function dibujaObjeto(g, id, W, H) {
@@ -19,6 +19,11 @@ function dibujaObjeto(g, id, W, H) {
     tablas: () => { P('#b07a40', 0.04, 0.2, 0.92, 0.26); P('#9a6a34', 0.04, 0.54, 0.92, 0.26); P('#6a4a2a', 0.2, 0.2, 0.03, 0.6); P('#6a4a2a', 0.75, 0.2, 0.03, 0.6); },
     clavos: () => { for (const x of [0.25, 0.45, 0.65]) { P('#c8ccd4', x, 0.25, 0.08, 0.5); P('#e8ecf0', x - 0.05, 0.22, 0.18, 0.07); } },
     martillo: () => { P('#7a5a3a', 0.2, 0.3, 0.12, 0.62); P('#8a8e96', 0.08, 0.16, 0.6, 0.2); P('#5c6670', 0.08, 0.16, 0.6, 0.05); },
+    pistola: () => { P('#3a3f47', 0.08, 0.2, 0.84, 0.22); P('#5c6670', 0.08, 0.2, 0.84, 0.06); P('#2a2420', 0.12, 0.42, 0.3, 0.5); },
+    bate: () => { P('#3a2a1a', 0.04, 0.42, 0.28, 0.16); P('#c89a5a', 0.3, 0.36, 0.66, 0.28); },
+    hacha: () => { P('#7a5a3a', 0.62, 0.1, 0.12, 0.85); P('#8a8e96', 0.08, 0.06, 0.6, 0.24); P('#d8dce4', 0.08, 0.06, 0.08, 0.24); },
+    cuchillo: () => { P('#2a2420', 0.06, 0.38, 0.3, 0.24); P('#d8dce4', 0.36, 0.4, 0.58, 0.18); },
+    balas: () => { for (const x of [0.2, 0.42, 0.64]) { P('#d8b040', x, 0.3, 0.14, 0.42); P('#a87a30', x, 0.3, 0.14, 0.1); } },
     botella: () => { P('#cfe8f4', 0.3, 0.14, 0.4, 0.78); P('#2a6ad0', 0.38, 0.06, 0.24, 0.1); },
     tela: () => { P('#7a8ac8', 0.15, 0.25, 0.7, 0.5); P('#5a6aa8', 0.15, 0.5, 0.7, 0.08); P('#9aa8e0', 0.15, 0.25, 0.7, 0.06); },
     carne: () => { P('#d8505a', 0.18, 0.28, 0.64, 0.44); P('#f0e0d0', 0.62, 0.36, 0.12, 0.26); },

@@ -20,14 +20,16 @@ const EVENTOS = {
   infectado: () => avisa(tr('Te han infectado. Véndate (V) para frenarlo.'), 'malo'),
   ataque: (v) => {
     const J = JUEGO.e.jugador, escopeta = v.arma === 'escopeta';
-    play(escopeta ? 'escopeta' : 'esquiva'); efectoGolpe(v.arma);
+    play(escopeta ? 'escopeta' : v.arma === 'pistola' ? 'pistola' : 'esquiva'); efectoGolpe(v.arma);
+    if (v.despide) avisa(tr('Despedido por la espalda. Como en Microblizz.'), 'bien');
     if (escopeta) { destello(J.x + Math.sin(J.a), 1.2, J.z + Math.cos(J.a), 0xffc060, 3, 0.08); efectoTrazas(J); }
     for (const t of v.tocados) { sangre(t.x, t.z, escopeta ? 9 : 5, J.x, J.z); zombiRespingo(t.id); }
     if (v.tocados.length) { play('carne'); EFECTOS.temblor = Math.max(EFECTOS.temblor, 0.07); }
   },
   empujon: (v) => { play('esquiva'); efectoGolpe('empujon'); for (const id of v.tocados) zombiRespingo(id); if (v.tocados.length) play('impacto'); },
   baja: () => play('impacto'),
-  sinMunicion: () => { play('vacio'); avisa(tr('Sin cartuchos. Usa la palanca (2).')); },
+  sinMunicion: () => { play('vacio'); avisa(tr('Sin munición. Cambia de arma (1 a 6).')); },
+  armaRota: (v) => { play('metal'); avisa(trf('Se te ha roto: %1.', tr(ZOM.AJ.armas[v.arma].n)), 'malo'); },
   despierta: (v) => avisa(tr(v.susto ? '¡Te despiertas de golpe! Hay fans cerca.' : 'Te despiertas descansado.'), v.susto ? 'malo' : 'bien'),
   noPuedes: (v) => avisa(tr(NO_PUEDES[v.codigo] || 'No puedes hacer eso ahora.')),
   muerte: () => play('dolor'),

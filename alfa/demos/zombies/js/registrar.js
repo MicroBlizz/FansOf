@@ -33,7 +33,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
       if (c === 'nada') continue;
       if (c === 'carne' && sinLuz) c = 'podrida';                // sin luz, la nevera no enfría
       const ya = out.find((o) => o.id === c && (AJ.objetos[c].max || 1) > 1);
-      const k = c === 'cartuchos' ? AJ.botin.cartuchos : c === 'clavos' ? AJ.botin.clavos : 1;
+      const k = c === 'cartuchos' ? AJ.botin.cartuchos : c === 'clavos' ? AJ.botin.clavos : c === 'balas' ? AJ.botin.balas : 1;
       if (ya) ya.n += k; else out.push({ id: c, n: k });
     }
     return out;
@@ -47,7 +47,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!c) return Z.error('noEsta');
     const m = e.jugador.mochila;
     if (donde) { const r = Z.ponerEn(AJ, m, c, donde.gx, donde.gy, donde.gr); if (!r.ok) return r; lista.splice(i, 1); return Z.ok(0); }
-    const queda = Z.meter(AJ, m, c.id, c.n);
+    const queda = Z.meter(AJ, m, c.id, c.n, c.dur);
     if (queda === c.n) return Z.error('noCabe', { id: c.id });
     if (queda) c.n = queda; else lista.splice(i, 1);
     return Z.ok(queda);

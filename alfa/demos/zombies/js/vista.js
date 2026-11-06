@@ -17,10 +17,17 @@ function montaJugador(J) {
   VISTA.jug = montaPersonaje(J.animal, true); VISTA.jug.fase = 0;
   MOTOR.escena.add(VISTA.jug.grupo); VISTA.arma = null;
 }
-function modeloPalanca() { const o = new Obra(); o.caja(0.07, 0.07, 0.9, 0xb8282e, 0, 0, 0.35); o.caja(0.07, 0.2, 0.07, 0xb8282e, 0, 0.08, 0.8); const m = o.hecha(); m.userData.boca = 0.8; return m; }
+// las armas cuerpo a cuerpo (la escopeta y la pistola son las de Ratkov, js/modelos.js)
+const MODELOS_MELEE = {
+  palanca: (o) => { o.caja(0.07, 0.07, 0.9, 0xb8282e, 0, 0, 0.35); o.caja(0.07, 0.2, 0.07, 0xb8282e, 0, 0.08, 0.8); },
+  bate: (o) => { o.caja(0.08, 0.08, 0.4, 0x3a2a1a, 0, 0, 0.1); o.caja(0.13, 0.13, 0.6, 0xc89a5a, 0, 0, 0.6); },
+  hacha: (o) => { o.caja(0.07, 0.07, 0.85, 0x7a5a3a, 0, 0, 0.32); o.caja(0.05, 0.32, 0.24, 0x8a8e96, 0, 0.12, 0.7); o.caja(0.06, 0.06, 0.24, 0xd8dce4, 0, 0.27, 0.7); },
+  cuchillo: (o) => { o.caja(0.06, 0.08, 0.16, 0x2a2420, 0, 0, 0.05); o.caja(0.03, 0.07, 0.3, 0xd8dce4, 0, 0.01, 0.27); },
+};
+function modeloMelee(id) { const o = new Obra(); MODELOS_MELEE[id](o); const m = o.hecha(); m.userData.boca = 0.8; return m; }
 function pintaJugador(J, dt) {
   const v = VISTA.jug;
-  if (VISTA.arma !== J.arma) { VISTA.arma = J.arma; if (J.arma === 'palanca') { ponArma(v, null); v.arma = modeloPalanca(); v.mano.add(v.arma); } else ponArma(v, J.arma); }
+  if (VISTA.arma !== J.arma) { VISTA.arma = J.arma; if (MODELOS_MELEE[J.arma]) { ponArma(v, null); v.arma = modeloMelee(J.arma); v.mano.add(v.arma); } else ponArma(v, J.arma); }
   const anda = Math.hypot(J.x - (v.x ?? J.x), J.z - (v.z ?? J.z)) > 0.001; v.x = J.x; v.z = J.z;
   v.fase += dt * (J.corre ? 14 : 9);
   posturaGolpe(v);

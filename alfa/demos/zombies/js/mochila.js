@@ -30,8 +30,9 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     for (let gr = 0; gr < 4; gr++) for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) if (Z.cabeEn(AJ, m, id, gr, x, y, sin)) return { gx: x, gy: y, gr };
     return null;
   };
-  // mete n de id: primero llena los montones que ya hay y luego busca hueco. Devuelve lo que no ha cabido (0 = todo dentro)
-  Z.meter = function (AJ, m, id, n) {
+  // mete n de id: primero llena los montones que ya hay y luego busca hueco. Devuelve lo que no ha cabido (0 = todo dentro).
+  // dur = lo que le queda a un arma usada (si no se dice, nueva: AJ.armas[id].dur)
+  Z.meter = function (AJ, m, id, n, dur) {
     const O = AJ.objetos[id];
     if (!O) return n;
     const max = O.max || 1;
@@ -39,10 +40,14 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     while (n > 0) {
       const h = Z.huecoPara(AJ, m, id);
       if (!h) return n;
-      const k = Math.min(n, max); m.piezas.push({ uid: ++m.uid, id, n: k, ...h }); n -= k;
+      const k = Math.min(n, max), p = { uid: ++m.uid, id, n: k, ...h };
+      if (AJ.armas[id] && AJ.armas[id].dur) p.dur = dur != null ? dur : AJ.armas[id].dur;
+      m.piezas.push(p); n -= k;
     }
     return 0;
   };
+  // el arma que se usa: de las de ese tipo, la más gastada (para no ir dejando muchas a medias)
+  Z.armaPieza = (m, id) => m.piezas.filter((p) => p.id === id).sort((a, b) => (a.dur ?? 1e9) - (b.dur ?? 1e9))[0] || null;
   Z.cuantos = (m, id) => m.piezas.reduce((s, p) => s + (p.id === id ? p.n : 0), 0);
   Z.tiene = (m, id) => Z.cuantos(m, id) > 0;
   // gasta n de id (de los montones más pequeños primero, para ir vaciando)
@@ -66,19 +71,19 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const p = Z.pieza(m, uid);
     if (!p) return Z.error('noEsta', { uid });
     m.piezas = m.piezas.filter((q) => q !== p);
-    return Z.ok({ id: p.id, n: p.n });
+    return Z.ok(p.dur != null ? { id: p.id, n: p.n, dur: p.dur } : { id: p.id, n: p.n });
   };
   // poner una cosa en un sitio concreto (desde un contenedor); si es apilable y cae sobre su montón, se junta
   Z.ponerEn = function (AJ, m, cosa, gx, gy, gr) {
     if (!Z.cabeEn(AJ, m, cosa.id, gr, gx, gy)) return Z.error('noCabe', { id: cosa.id });
-    m.piezas.push({ uid: ++m.uid, id: cosa.id, n: cosa.n, gx, gy, gr: gr % 4 });
+    m.piezas.push(Object.assign({ uid: ++m.uid, id: cosa.id, n: cosa.n, gx, gy, gr: gr % 4 }, cosa.dur != null ? { dur: cosa.dur } : AJ.armas[cosa.id] && AJ.armas[cosa.id].dur ? { dur: AJ.armas[cosa.id].dur } : {}));
     return Z.ok(true);
   };
   // ordenar: vuelve a colocarlo todo, de lo más grande a lo más pequeño
   Z.ordenar = function (AJ, m) {
-    const cosas = m.piezas.map((p) => ({ id: p.id, n: p.n })).sort((a, b) => Z.formaDe(AJ, b.id).c.length - Z.formaDe(AJ, a.id).c.length);
+    const cosas = m.piezas.map((p) => ({ id: p.id, n: p.n, dur: p.dur })).sort((a, b) => Z.formaDe(AJ, b.id).c.length - Z.formaDe(AJ, a.id).c.length);
     const nueva = Z.nuevaMochila(m.w, m.h); nueva.uid = m.uid;
-    for (const c of cosas) if (Z.meter(AJ, nueva, c.id, c.n)) return Z.error('noCabe');
+    for (const c of cosas) if (Z.meter(AJ, nueva, c.id, c.n, c.dur)) return Z.error('noCabe');
     m.piezas = nueva.piezas; m.uid = Math.max(m.uid, nueva.uid);
     return Z.ok(true);
   };

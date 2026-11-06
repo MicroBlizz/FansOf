@@ -1,11 +1,11 @@
 // Fans of Zombies · TECLADO Y RATÓN (adaptador): lee las teclas y el ratón y los deja como la entrada que piden las reglas
 // ({ mx, mz, corre, agacha, apunta, ataca, arma, usar, dormir, registrar }). Para PC: WASD o flechas para andar, Mayús para correr,
-// C para agacharse, clic o espacio para atacar, clic derecho o R para empujar, 1 y 2 cambian de arma, F registra, Tab abre la mochila,
+// C para agacharse, clic o espacio para atacar, clic derecho o R para empujar, 1 a 6 cambian de arma, F registra, Tab abre la mochila,
 // B clava tablas en la puerta o ventana de al lado, E come, Q bebe, V venda, Z duerme, Esc pausa. F junto a una puerta la abre o cierra. Con la mochila abierta solo se anda (los clics son para la mochila).
 'use strict';
 const TECLAS_ZOM = {
   arriba: ['KeyW', 'ArrowUp'], abajo: ['KeyS', 'ArrowDown'], izq: ['KeyA', 'ArrowLeft'], der: ['KeyD', 'ArrowRight'], corre: ['ShiftLeft', 'ShiftRight'],
-  agacha: ['KeyC', 'ControlLeft'], ataca: ['Space'], empuja: ['KeyR'], arma1: ['Digit1'], arma2: ['Digit2'], registra: ['KeyF'], tablas: ['KeyB'], come: ['KeyE'], bebe: ['KeyQ'], venda: ['KeyV'],
+  agacha: ['KeyC', 'ControlLeft'], ataca: ['Space'], empuja: ['KeyR'], arma1: ['Digit1'], arma2: ['Digit2'], arma3: ['Digit3'], arma4: ['Digit4'], arma5: ['Digit5'], arma6: ['Digit6'], registra: ['KeyF'], tablas: ['KeyB'], come: ['KeyE'], bebe: ['KeyQ'], venda: ['KeyV'],
   duerme: ['KeyZ'], pausa: ['Escape', 'KeyP'], mochila: ['Tab', 'KeyI'],
 };
 const ENTRADA = { abajo: new Set(), pulsos: new Set(), raton: { x: 0, y: 0, abajo: false, visto: false, derecho: false } };
@@ -31,9 +31,11 @@ function leeEntrada(J, cerca, hueco) {
   const quiere = pulsa('registra'), usar = pulsa('venda') ? 'venda' : null;
   const empuja = ENTRADA.raton.derecho || pulsa('empuja'); ENTRADA.raton.derecho = false;
   const ent = { mx, mz, corre: mantiene('corre'), agacha: pulsa('agacha'), apunta, ataca: ENTRADA.raton.abajo || mantiene('ataca'), empuja,
-    arma: pulsa('arma1') ? 'escopeta' : pulsa('arma2') ? 'palanca' : null, usar, come: pulsa('come'), bebe: pulsa('bebe'), dormir: pulsa('duerme'), registrar: quiere && cerca ? cerca.id : null, tipoSitio: cerca ? cerca.tipo : null, puerta: quiere && !cerca && hueco && hueco.tipo === 'puerta' ? hueco.id : null,
+    arma: armaPulsada(), usar, come: pulsa('come'), bebe: pulsa('bebe'), dormir: pulsa('duerme'), registrar: quiere && cerca ? cerca.id : null, tipoSitio: cerca ? cerca.tipo : null, puerta: quiere && !cerca && hueco && hueco.tipo === 'puerta' ? hueco.id : null,
     tablas: pulsa('tablas') && hueco ? hueco.id : null, nadaCerca: quiere && !cerca && !(hueco && hueco.tipo === 'puerta') };
   return ent;
 }
+// las teclas 1 a 6, en el orden de las armas de js/ajustes.js
+function armaPulsada() { const ids = Object.keys(ZOM.AJ.armas); for (let i = 0; i < ids.length && i < 6; i++) if (pulsa('arma' + (i + 1))) return ids[i]; return null; }
 const pidePausa = () => pulsa('pausa');
 function limpiaPulsos() { ENTRADA.pulsos.clear(); }

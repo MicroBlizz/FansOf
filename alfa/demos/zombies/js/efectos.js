@@ -44,7 +44,7 @@ function zombiRespingo(id) { const v = VISTA.zombis.get(id); if (v) v.respingo =
 function avanzaEfectos(J, dt) {
   const G = EFECTOS.golpe;
   if (G) { G.t += dt; if (G.t >= G.dura) EFECTOS.golpe = null; }
-  const est = EFECTOS.estela, f = G && G.arma === 'palanca' ? G.t / G.dura : 1;
+  const est = EFECTOS.estela, f = G && esMelee(G.arma) ? G.t / G.dura : 1;
   est.visible = f < 1;
   if (est.visible) { est.position.set(J.x, 1.05, J.z); est.rotation.z = J.a - Math.PI / 2 + (0.6 - f * 1.2); est.material.opacity = 0.85 * (1 - f); }
   EFECTOS.tTrazas -= dt; EFECTOS.trazas.material.opacity = Math.max(0, EFECTOS.tTrazas / 0.09);
@@ -63,9 +63,10 @@ function posturaGolpe(v) {
   v.mano.rotation.set(0, 0, 0); v.cuerpo.rotation.y = 0; v.mano.position.z = 0.22; v.empuje = 0;
   if (!G) return;
   const f = G.t / G.dura, ida = Math.sin(Math.PI * f);
-  if (G.arma === 'palanca') { const e2 = 1 - Math.pow(1 - f, 3); v.mano.rotation.y = 1.4 - e2 * 2.8; v.mano.rotation.x = -0.5 * ida; v.cuerpo.rotation.y = 0.5 - e2; }
-  else if (G.arma === 'escopeta') { v.mano.position.z = 0.22 - 0.25 * ida; v.mano.rotation.x = -0.35 * ida; }
+  if (esMelee(G.arma)) { const e2 = 1 - Math.pow(1 - f, 3); v.mano.rotation.y = 1.4 - e2 * 2.8; v.mano.rotation.x = -0.5 * ida; v.cuerpo.rotation.y = 0.5 - e2; }
+  else if (G.arma === 'escopeta' || G.arma === 'pistola') { v.mano.position.z = 0.22 - 0.25 * ida; v.mano.rotation.x = -0.35 * ida; }
   else { v.empuje = 0.45 * ida; v.mano.rotation.x = -0.9 * ida; }
 }
+const esMelee = (a) => a !== 'empujon' && ZOM.AJ.armas[a] && !ZOM.AJ.armas[a].municion;
 // el temblor que se suma a la cámara
 const tiembla = () => (EFECTOS.temblor > 0 ? (Math.random() - 0.5) * EFECTOS.temblor * 1.6 : 0);

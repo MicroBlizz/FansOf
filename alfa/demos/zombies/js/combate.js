@@ -1,4 +1,5 @@
-// Fans of Zombies · PELEAR (dominio): golpear o disparar hacia donde miras y empujar. Cada golpe gasta aguante (agotado, pegas más flojo
+// Fans of Zombies · PELEAR (dominio): golpear o disparar hacia donde miras y empujar. Las armas se gastan con cada golpe y se rompen;
+// la pistola y el cuchillo dan solo al más cercano, y el cuchillo tumba de un golpe por la espalda a quien no te ha visto. Cada golpe gasta aguante (agotado, pegas más flojo
 // y más despacio), echa al zombi hacia atrás y lo deja aturdido un momento; el empujón no hace daño ni ruido, pero lo tumba en el suelo.
 // La escopeta tumba lo que tengas delante, pero se oye en medio distrito. Lo que pasa va a e.eventos (ataque, empujon, baja).
 'use strict';
@@ -31,14 +32,30 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     J.aguante = Math.max(0, J.aguante - W.aguante);
     if (J.aguante <= 0) J.agotado = true;
     Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[W.ruido] * (W.municion ? 1 : (J.A.ruido || 1)), 'jugador');
-    const tocados = enCono(e, W.alcance, W.cono, mundo);
+    let tocados = enCono(e, W.alcance, W.cono, mundo);
+    if (W.uno) tocados = tocados.sort((a, b) => a.d - b.d).slice(0, 1);
+    let despide = false;
     for (const { zb, d } of tocados) {
-      Z.golpeaZombi(AJ, e, zb, W.dano * cansado.dano * (1 - 0.4 * d / W.alcance));
+      const espalda = W.espalda && porLaEspalda(J, zb);
+      despide = despide || espalda;
+      Z.golpeaZombi(AJ, e, zb, espalda ? zb.vida : W.dano * cansado.dano * (1 - 0.4 * d / W.alcance));
       if (zb.vida > 0) aparta(e, zb, W.retroceso, W.aturde, false, mundo);
     }
-    e.eventos.push({ tipo: 'ataque', arma: J.arma, tocados: tocados.map((t) => ({ id: t.zb.id, x: t.zb.x, z: t.zb.z })) });
+    e.eventos.push({ tipo: 'ataque', arma: J.arma, despide, tocados: tocados.map((t) => ({ id: t.zb.id, x: t.zb.x, z: t.zb.z })) });
+    if (W.municion || tocados.length) desgasta(AJ, e);
     return Z.ok(tocados.length);
   };
+  // por la espalda: un fan que no te ha visto y te da la espalda
+  function porLaEspalda(J, zb) { return zb.estado !== 'persigue' && Math.abs(angulo(zb.a, Math.atan2(J.x - zb.x, J.z - zb.z))) > 1.9; }
+  // cada golpe que da (o disparo) gasta el arma; a cero se rompe y coges la siguiente que tengas
+  function desgasta(AJ, e) {
+    const J = e.jugador, p = Z.armaPieza(J.mochila, J.arma);
+    if (!p || p.dur == null || --p.dur > 0) return;
+    J.mochila.piezas = J.mochila.piezas.filter((q) => q !== p);
+    e.eventos.push({ tipo: 'armaRota', arma: J.arma });
+    if (!Z.tiene(J.mochila, J.arma)) J.arma = Z.siguienteArma(AJ, J.mochila) || J.arma;
+  }
+  Z.siguienteArma = (AJ, m) => Object.keys(AJ.armas).find((id) => Z.tiene(m, id)) || null;
 
   Z.empuja = function (AJ, e, mundo) {
     const J = e.jugador, P = AJ.empujon;

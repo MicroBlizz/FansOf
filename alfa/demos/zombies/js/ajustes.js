@@ -10,16 +10,22 @@ ZOM.AJ = Object.freeze({
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
   jugador: { vida: 100, radio: 0.5, vel: 4.2, corre: 6.6, agacha: 2.2, pasoHuella: 0.9, huellas: 60, vidaHuella: 240 },
   // radio del ruido (en metros) de cada cosa que haces
-  ruido: { andar: 4, correr: 10, abrirLata: 5, registrar: 4, golpe: 3, escopeta: 30, grito: 18, alarma: 34, puerta: 2, martillo: 12, dura: 1.2, duraAlarma: 25 },
+  ruido: { andar: 4, correr: 10, abrirLata: 5, registrar: 4, golpe: 3, escopeta: 30, pistola: 18, grito: 18, alarma: 34, puerta: 2, martillo: 12, dura: 1.2, duraAlarma: 25 },
   // puertas y ventanas: su vida, el ruido al romperse; las barricadas (hasta 3 tablas, cada una con su vida, 2 clavos y 2 s);
   // busca = metros a los que un fan que choca encuentra un hueco; alcance y cadencia de sus golpes al hueco
   huecos: { puerta: { vida: 120, ruidoRotura: 14 }, ventana: { vida: 12, ruidoRotura: 16 }, barricada: { max: 3, vidaTabla: 60, clavos: 2, tiempo: 2 }, busca: 7, alcance: 1.5, cadencia: 1.0 },
   // aguante (sobre 100): lo que cuesta cada cosa y lo que se recupera por segundo; a 0 estás agotado hasta llegar a «salir»
   aguante: { max: 100, correr: 16, recupera: 8, salir: 30, agotado: { dano: 0.6, cadencia: 1.6 } },
   // retroceso = metros que sale despedido el zombi; aturde = segundos sin moverse ni morder
+  // dur = cuántos golpes (o disparos) aguanta antes de romperse; uno = solo da al más cercano; espalda = por la espalda de un fan que
+  // no te ha visto, lo tumba de un golpe. El orden es el de las teclas 1 a 6
   armas: {
-    palanca: { n: 'PALANCA', alcance: 1.9, cono: 1.2, dano: 34, cadencia: 0.55, ruido: 'golpe', municion: null, aguante: 10, retroceso: 0.8, aturde: 0.6 },
-    escopeta: { n: 'ESCOPETA', alcance: 10, cono: 0.5, dano: 70, cadencia: 0.95, ruido: 'escopeta', municion: 'cartuchos', aguante: 0, retroceso: 1.4, aturde: 0.5 },
+    escopeta: { n: 'ESCOPETA', alcance: 10, cono: 0.5, dano: 70, cadencia: 0.95, ruido: 'escopeta', municion: 'cartuchos', aguante: 0, retroceso: 1.4, aturde: 0.5, dur: 60 },
+    pistola: { n: 'PISTOLA', alcance: 12, cono: 0.35, dano: 45, cadencia: 0.4, ruido: 'pistola', municion: 'balas', aguante: 0, retroceso: 0.6, aturde: 0.3, dur: 80, uno: true },
+    palanca: { n: 'PALANCA', alcance: 1.9, cono: 1.2, dano: 34, cadencia: 0.55, ruido: 'golpe', municion: null, aguante: 10, retroceso: 0.8, aturde: 0.6, dur: 80 },
+    bate: { n: 'BATE', alcance: 2.1, cono: 1.2, dano: 30, cadencia: 0.6, ruido: 'golpe', municion: null, aguante: 9, retroceso: 1.3, aturde: 0.9, dur: 40 },
+    hacha: { n: 'HACHA', alcance: 1.9, cono: 0.9, dano: 58, cadencia: 0.85, ruido: 'golpe', municion: null, aguante: 15, retroceso: 0.5, aturde: 0.4, dur: 30 },
+    cuchillo: { n: 'CUCHILLO', alcance: 1.3, cono: 0.8, dano: 22, cadencia: 0.35, ruido: 'golpe', municion: null, aguante: 5, retroceso: 0.2, aturde: 0.2, dur: 50, uno: true, espalda: true },
   },
   // el empujón (botón derecho o R): no hace daño ni ruido, aparta y tumba un rato a los que tienes delante
   empujon: { alcance: 1.7, cono: 1.1, retroceso: 1.8, derriba: 1.6, cadencia: 0.6, aguante: 14, ruido: 1.5 },
@@ -27,6 +33,11 @@ ZOM.AJ = Object.freeze({
   objetos: {
     escopeta: { n: 'ESCOPETA', forma: ['XXXX', '.X..'], arma: true },
     palanca: { n: 'PALANCA', forma: ['XXX'], arma: true },
+    pistola: { n: 'PISTOLA', forma: ['XX', 'X.'], arma: true },
+    bate: { n: 'BATE', forma: ['XXX'], arma: true },
+    hacha: { n: 'HACHA', forma: ['XX', '.X', '.X'], arma: true },
+    cuchillo: { n: 'CUCHILLO', forma: ['XX'], arma: true },
+    balas: { n: 'BALAS', forma: ['X'], max: 30 },
     judias: { n: 'JUDÍAS', forma: ['X'], usa: { hambre: 35, ruido: 'abrirLata' } },
     chocolatina: { n: 'CHOCOLATINA', forma: ['X'], max: 2, usa: { hambre: 15 } },
     agua: { n: 'AGUA', forma: ['X', 'X'], usa: { sed: 45 }, deja: 'botella' },
@@ -45,11 +56,11 @@ ZOM.AJ = Object.freeze({
   },
   // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo.
   // porTipo: lo que hay en cada clase de sitio (lo demás usa «cosas»). En la nevera, tras el corte de luz, la carne sale podrida
-  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, tiempo: 1.4,
+  botin: { cosas: { judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, balas: 1.2, pistola: 0.3, bate: 0.6, hacha: 0.3, cuchillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, balas: 8, tiempo: 1.4,
     porTipo: {
       nevera: { carne: 5, agua: 3, refresco: 2, judias: 1, nada: 2 },
-      armario: { tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, nada: 2 },
-      cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, nada: 2 },
+      armario: { tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, bate: 0.6, balas: 0.5, nada: 2 },
+      cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, cuchillo: 1.2, nada: 2 },
       basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
       fuego: {},
     } },
@@ -62,7 +73,7 @@ ZOM.AJ = Object.freeze({
   // desmontar muebles con palanca o martillo: tarda, suena y deja tablas y clavos en el sitio
   desmontar: { tipos: { armario: [2, 4], cama: [2, 2], archivador: [1, 6], caja: [1, 2], militar: [1, 2], maquina: [0, 6] }, tiempo: 3, ruido: 10 },
   grifo: { sed: 40 },
-  mochila: { w: 6, h: 4 },
+  mochila: { w: 6, h: 5 },
   mochilaInicial: [['escopeta', 1], ['palanca', 1], ['judias', 1], ['agua', 1], ['venda', 1], ['cartuchos', 6], ['martillo', 1], ['tablas', 2], ['clavos', 6]],
   // la ventaja de cada animal (ver docs/guia/juegos/zombies/README.md)
   animales: {

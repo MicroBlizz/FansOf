@@ -7,7 +7,7 @@ function montaHud() {
     '<div class="panel zb-ruido" id="h-ruido"></div><div class="zb-parche" id="h-parche" hidden></div><div class="zb-radio" id="h-radio" hidden></div>' +
     '<div class="zb-hotbar" id="h-mochila"></div><div class="panel zb-arma" id="h-arma"></div><div class="zb-ayuda" id="h-ayuda"></div>' +
     '<b class="zb-et accion" id="h-accion" hidden></b><div class="zb-registro" id="h-registro" hidden><i></i></div>';
-  el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['CLIC DCHO / R', 'empujar'], ['1 2', 'arma'], ['Z', 'dormir'], ['F', 'registrar / puerta'], ['B', 'tablas'], ['TAB', 'mochila'], ['ESC', 'pausa']]
+  el('h-ayuda').innerHTML = [['WASD', 'andar'], ['MAYÚS', 'correr'], ['C', 'agacharse'], ['CLIC', 'atacar'], ['CLIC DCHO / R', 'empujar'], ['1-6', 'arma'], ['Z', 'dormir'], ['F', 'registrar / puerta'], ['B', 'tablas'], ['TAB', 'mochila'], ['ESC', 'pausa']]
     .map(([k, t]) => '<span><b>' + esc(tr(k)) + '</b>' + esc(tr(t)) + '</span>').join('');
   HUD.avisos.length = 0; HUD.parche = null;
 }
@@ -37,12 +37,19 @@ function pintaRuido(AJ, e) {
   if (J.A.oye) { const k = ZOM.vivos(e).filter((z) => ZOM.dist(z.x, z.z, J.x, J.z) < J.A.oye).length; extra = '<small class="oye">' + esc(trf('Tus orejas oyen %1 fans cerca', k)) + '</small>'; }
   el('h-ruido').innerHTML = '<span class="lab">' + esc(tr('TU RUIDO')) + '</span><i class="zb-ondas">' + [1, 2, 3, 4, 5].map((i) => '<i' + (i > n ? ' class="off"' : '') + '></i>').join('') + '</i><small>' + esc(tr(txt)) + '</small>' + extra;
 }
+// lo que le queda al arma (barra verde a roja)
+function barraDesgaste(AJ, J) {
+  const p = ZOM.armaPieza(J.mochila, J.arma), W = AJ.armas[J.arma];
+  if (!p || p.dur == null) return '';
+  const f = p.dur / W.dur;
+  return '<i class="barra"><i style="width:' + Math.round(f * 100) + '%;background:' + (f > 0.5 ? 'var(--rk-bien)' : f > 0.2 ? 'var(--rk-oro)' : 'var(--rk-mal)') + '"></i></i>';
+}
 function pintaHotbar(AJ, J) {
   const suma = (que) => Object.keys(AJ.objetos).reduce((s, id) => s + ((AJ.objetos[id].usa || {})[que] && que !== 'vida' ? ZOM.cuantos(J.mochila, id) : 0), 0);
   const cosas = [['COMER', 'E', suma('hambre')], ['BEBER', 'Q', suma('sed')], ['VENDAS', 'V', ZOM.cuantos(J.mochila, 'venda')], ['CARTUCHOS', '', ZOM.cuantos(J.mochila, 'cartuchos')], ['MOCHILA', 'TAB', null]];
   el('h-mochila').innerHTML = cosas.map(([n, k, c]) => '<span class="' + (c === 0 ? 'vacio' : '') + '"><em>' + k + '</em>' + esc(tr(n)) + (c == null ? '' : '<b>' + c + '</b>') + '</span>').join('');
   const W = AJ.armas[J.arma];
-  el('h-arma').innerHTML = '<span class="lab">' + esc(tr(W.n)) + ' · ' + (J.arma === 'escopeta' ? '1' : '2') + '</span><b>' + (!ZOM.tiene(J.mochila, J.arma) ? '✕' : W.municion ? ZOM.cuantos(J.mochila, W.municion) : '—') + '</b><span class="lab ' + (W.municion ? 'malo' : '') + '">' +
+  el('h-arma').innerHTML = '<span class="lab">' + esc(tr(W.n)) + ' · ' + (Object.keys(AJ.armas).indexOf(J.arma) + 1) + '</span>' + barraDesgaste(AJ, J) + '<b>' + (!ZOM.tiene(J.mochila, J.arma) ? '✕' : W.municion ? ZOM.cuantos(J.mochila, W.municion) : '—') + '</b><span class="lab ' + (W.municion ? 'malo' : '') + '">' +
     esc(tr(W.municion ? 'DISPARAR = MUCHO RUIDO' : 'GOLPEAR = POCO RUIDO')) + '</span>';
 }
 // la etiqueta encima del sitio que puedes registrar, y la barra mientras registras

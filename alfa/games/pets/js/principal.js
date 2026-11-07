@@ -40,6 +40,12 @@ PT.lienzo = (() => {
     const c = p.criatura, falta = (p.eclosionaEn - PT.casos.ahora()) / (PETS.huevoHoras * 60 * PT_MINUTO);
     PT.pintor.huevo(ctx, 270, 430, 110, PT.criaturas.color(c.fac), t, { wob: PT.ui.wob + (falta < 0.1 ? 0.25 : 0), bufanda: PT.ui.bufanda, grieta: falta < 0.25 ? 1 - falta * 4 : 0 });
   }
+  // el muñeco 3D (PT.muneco3d): de pie o dormida; el jefe es un adulto. false mientras carga o si la criatura no tiene muñeco
+  const EDAD_MUNECO = { bebe: 'bebe', nino: 'nino', adolescente: 'adolescente', adulto: 'adulto', jefe: 'adulto' };
+  function muneco3d(ctx, c, etapa, r, t, e) {
+    const lado = r * 3.1;
+    return PT.muneco3d.pinta(ctx, c.id, 270, 470 - lado * 0.44, lado, t, e.dormida ? 'dormir' : 'quieto', EDAD_MUNECO[etapa]);
+  }
   // la mascota en su etapa; en el ascenso, su jefa; en el final, triste
   function escenaMascota(ctx, p, t) {
     const c = p.criatura, m = p.mascota, jefa = p.fase === 'ascenso', etapa = jefa ? 'jefe' : m.etapa;
@@ -47,6 +53,7 @@ PT.lienzo = (() => {
     const e = { dormida: !jefa && m.dormida, triste: !jefa && (m.triste || p.fase === 'final'), anim: ui.anim, at: ui.at, rama: m.rama,
       sonolienta: !jefa && m.necesidades.de('sueno') < PETS.animacion.bostezaConSueno,
       pidiendo: !jefa && !m.dormida && ['hambre', 'diversion'].some(k => m.necesidades.de(k) < PETS.animacion.pideDesde) };
+    if (muneco3d(ctx, c, etapa, r, t, e)) return;   // el muñeco 3D de la criatura, si lo tiene (f16, docs/pets/f16-muneco-completo.md); si no, su dibujo de siempre
     if (!PT.arte.tiene(c.id, etapa) || !PT.arte.criatura(ctx, c.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(c.fac), t, e);
   }
   function escena(ctx, p, t) {

@@ -1,8 +1,8 @@
 {
- "build": 1066,
- "hash": "654e829",
- "fecha": "2026-11-07T10:56:24Z",
- "mensaje": "Rumble v2: base de los Animales repintada (B)",
+ "build": 1067,
+ "hash": "90d9949",
+ "fecha": "2026-11-07T11:04:39Z",
+ "mensaje": "Rumble v2: torres x1.5 y bases x1.35, un poco más abajo para tapar las esquinas de los caminos",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

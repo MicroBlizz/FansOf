@@ -7,8 +7,8 @@ const TAB = { x0: 0, y0: 0, w: 360, h: 480, cols: 60, filas: 80, c: 6, cel: null
 const TAPADA = 0, DESTAPADA = 1, TRAZO = 2;
 
 function calculaTablero(W, H) {
-  TAB.x0 = 0; TAB.y0 = 66; TAB.w = W; TAB.c = W / TAB.cols;
-  TAB.filas = Math.max(60, Math.min(90, Math.floor((H - 66 - 92) / TAB.c)));
+  TAB.x0 = 0; TAB.y0 = 40; TAB.w = W; TAB.c = W / TAB.cols;   // una franja fina arriba; abajo nada: el marcador flota sobre el panel
+  TAB.filas = Math.max(70, Math.min(120, Math.floor((H - 40 - 6) / TAB.c)));
   TAB.h = TAB.filas * TAB.c;
 }
 
@@ -59,11 +59,11 @@ function rellena(x0, y0, vis) {
 function cierraTrazo(jx, jy) {
   const vis = new Uint8Array(TAB.cel.length);
   rellena(jx, jy, vis);   // lo que queda del lado del jefe
-  let n = 0, sil = 0;
+  let n = 0, sil = 0; const nuevo = new Uint8Array(TAB.cel.length);
   for (let i = 0; i < TAB.cel.length; i++) {
-    if (TAB.cel[i] === TRAZO || (TAB.cel[i] === TAPADA && !vis[i])) { TAB.cel[i] = DESTAPADA; n++; if (TAB.sil[i]) sil++; }
+    if (TAB.cel[i] === TRAZO || (TAB.cel[i] === TAPADA && !vis[i])) { TAB.cel[i] = DESTAPADA; nuevo[i] = 1; n++; if (TAB.sil[i]) sil++; }
   }
-  return { n, sil };
+  return { n, sil, nuevo };
 }
 
 // borrar un trazo a medias (al morir): vuelve a tapado
@@ -105,4 +105,45 @@ function pintaTrazo(t) {
   for (let i = 0; i < TAB.cel.length; i++) if (TAB.cel[i] === TRAZO) { const x = i % TAB.cols, y = (i - x) / TAB.cols; G.fillRect(x0 + x * c + 1, y0 + y * c + 1, c - 2, c - 2); }
   G.shadowBlur = 0;
   if (J.mechaT > 0 && J.mecha) { const m = J.mecha; circulo(x0 + (m.x + 0.5) * c, y0 + (m.y + 0.5) * c, c * 0.9 + Math.sin(t * 40) * 1.5, '#ffb347', COL.tinta, 1.5); }
+}
+
+// ---------- zonas (poderes y locuras) ----------
+// destapa las casillas tapadas a menos de r de (cx, cy); devuelve cuántas de la silueta
+function destapaCirculo(cx, cy, r) {
+  let sil = 0;
+  for (let y = Math.floor(cy - r); y <= cy + r; y++) for (let x = Math.floor(cx - r); x <= cx + r; x++) {
+    if (!enTablero(x, y) || (x - cx) ** 2 + (y - cy) ** 2 > r * r) continue;
+    const i = idx(x, y);
+    if (TAB.cel[i] === TAPADA) { TAB.cel[i] = DESTAPADA; if (TAB.sil[i]) sil++; }
+  }
+  return sil;
+}
+
+// destapa (o tapa) un rectángulo de casillas; devuelve cuántas cambió
+function cambiaRect(x0, y0, w, h, de, a) {
+  let n = 0;
+  for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) {
+    if (x <= 0 || y <= 0 || x >= TAB.cols - 1 || y >= TAB.filas - 1) continue;   // el marco nunca cambia
+    const i = idx(x, y);
+    if (TAB.cel[i] === de) { TAB.cel[i] = a; n++; }
+  }
+  return n;
+}
+
+// el reflejo de lo recién destapado al otro lado del eje vertical (Doble cúter): lo que tenga `vis` marcado
+function reflejaDestapado(vis) {
+  let sil = 0;
+  for (let y = 0; y < TAB.filas; y++) for (let x = 0; x < TAB.cols; x++) {
+    if (!vis[idx(x, y)]) continue;
+    const j = idx(TAB.cols - 1 - x, y);
+    if (TAB.cel[j] === TAPADA) { TAB.cel[j] = DESTAPADA; if (TAB.sil[j]) sil++; }
+  }
+  return sil;
+}
+
+// el panel crece: tapa de nuevo `n` casillas destapadas del interior que tengan una tapada al lado
+function creceTapado(n) {
+  const cand = [];
+  for (let y = 1; y < TAB.filas - 1; y++) for (let x = 1; x < TAB.cols - 1; x++) if (esBorde(x, y)) cand.push(idx(x, y));
+  for (let k = 0; k < n && cand.length; k++) { const i = Math.floor(Math.random() * cand.length); TAB.cel[cand[i]] = TAPADA; cand.splice(i, 1); }
 }

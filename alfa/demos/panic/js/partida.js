@@ -5,7 +5,7 @@
 const JUEGO = {
   modo: 'menu', t: 0, mundo: 'playa', n: 1, nivel: null,
   tiempo: 0, pct: 0, puntos: 0, combo: 0, comboT: 0, mejorCombo: 0,
-  vidasNivel: 3, escudo: false, rapidoT: 0, mechaT: 0, mecha: null, peligro: false, objT: 0,
+  vidasNivel: 3, escudo: false, rapidoT: 0, fantasmaT: 0, dobleT: 0, lolaT: 0, mechaT: 0, mecha: null, peligro: false, objT: 0, locT: 0,
   seguidos: 0, tFin: 0, fin: null, tInicio: 0, tapadas0: 1, muerteT: 0, cortes: 0,
 };
 
@@ -15,8 +15,8 @@ function empiezaNivel(mundo, n) {
   const J = JUEGO, M = MUNDOS[mundo], nv = M.niveles[n - 1];
   J.mundo = mundo; J.n = n; J.nivel = nv; J.modo = 'juego'; J.t = 0;
   J.tiempo = nv.tiempo; J.pct = 0; J.puntos = 0; J.combo = 0; J.comboT = 0; J.mejorCombo = 0; J.cortes = 0;
-  J.vidasNivel = 3; J.escudo = false; J.rapidoT = 0; J.mechaT = 0; J.mecha = null; J.seguidos = 0; J.tInicio = 1.2; J.muerteT = 0;
-  nuevoTablero(); preparaIlustracion(mundo, n, TAB.w, TAB.h);
+  J.vidasNivel = 3; J.escudo = false; J.rapidoT = 0; J.fantasmaT = 0; J.dobleT = 0; J.lolaT = 0; J.mechaT = 0; J.mecha = null; J.seguidos = 0; J.tInicio = 1.2; J.muerteT = 0;
+  nuevoTablero(); preparaIlustracion(mundo, n, TAB.w, TAB.h); limpiaLocuras(); precargaSprites();
   colocaCursor(); nuevoJefe(nv, M); nuevosBecarios(nv.becarios, 9 + n * 1.5); nuevosObjetos();
   J.tapadas0 = tapadasTotal();
   FX.parts.length = 0; FX.textos.length = 0; OPC.abierto = false;
@@ -34,7 +34,7 @@ function avanzaJuego(dt0) {
   if (J.muerteT > 0) { J.muerteT -= dt; if (J.muerteT <= 0) reanuda(); return; }
   if (!avanzaReloj(dt)) return;
   avanzaCursor(dt); if (J.modo !== 'juego') return;
-  avanzaJefe(dt); avanzaBecarios(dt); avanzaObjetos(dt);
+  avanzaJefe(dt); avanzaBecarios(dt); avanzaObjetos(dt); avanzaLocuras(dt);
   J.peligro = CUR.trazando && Math.hypot(JEFE.x - CUR.x - 0.5, JEFE.y - CUR.y - 0.5) < JEFE.r + 6;
   if (jefeToca()) muere('jefe');
   else if (becarioPilla()) muere('becario');
@@ -46,7 +46,7 @@ function avanzaReloj(dt) {
   J.tiempo -= dt;
   if (J.tiempo <= 0) { J.tiempo = 0; muere('tiempo'); return false; }
   if (J.tiempo < 10 && Math.floor(J.tiempo) !== Math.floor(J.tiempo + dt)) SONIDO.tic();
-  if (J.rapidoT > 0) J.rapidoT -= dt;
+  for (const k of ['rapidoT', 'fantasmaT', 'dobleT', 'lolaT']) if (J[k] > 0) J[k] -= dt;
   if (J.comboT > 0) { J.comboT -= dt; if (J.comboT <= 0) J.combo = 0; }
   return true;
 }
@@ -54,9 +54,10 @@ function avanzaReloj(dt) {
 // al cerrar un trazo: destapar, contar, combo, premios
 function cierraCorte() {
   const J = JUEGO, jx = Math.floor(JEFE.x), jy = Math.floor(JEFE.y);
-  const { n, sil } = cierraTrazo(jx, jy);
+  const corte = cierraTrazo(jx, jy); let { n, sil } = corte;
+  if (J.dobleT > 0 && n > 0) { const s2 = reflejaDestapado(corte.nuevo); sil += s2; n += s2; }
   CUR.trail = []; J.mechaT = 0; J.mecha = null; J.cortes++;
-  recolocaJefe(); recogeObjetos();
+  recolocaJefe(); recolocaHijos(); recogeObjetos(); limpiaAnuncios();
   const parte = sil / TAB.total, antes = J.pct; J.pct = porcentaje();
   J.combo = J.comboT > 0 ? J.combo + 1 : 1; J.comboT = AJUSTES.combo; J.mejorCombo = Math.max(J.mejorCombo, J.combo);
   const pts = Math.round(sil * 10 * Math.max(1, J.combo));
@@ -69,6 +70,15 @@ function cierraCorte() {
   temblor(Math.min(1, parte * 4));
   if (parte >= AJUSTES.corteGrande) { camaraLenta(0.3); SONIDO.grande(); textoSube(tr('¡CORTE GRANDE!'), TAB.x0 + TAB.w / 2, TAB.y0 + TAB.h / 2, COL.rosa, 26); temblor(1); }
   if (antes < 0.5 && J.pct >= 0.5) textoSube(tr('¡Mitad!'), TAB.x0 + TAB.w / 2, TAB.y0 + 40, COL.cian, 18);
+  if (libresDelJefe(jx, jy) < J.tapadas0 * AJUSTES.atrapado) { atrapado(); return; }
+  if (J.pct >= AJUSTES.objetivo) gana();
+}
+
+// lo que destapa un poder (Bomba, Lola): puntos, porcentaje y fin del nivel si toca
+function sumaDestapado(sil, motivo) {
+  const J = JUEGO, jx = Math.floor(JEFE.x), jy = Math.floor(JEFE.y);
+  J.puntos += sil * 10; J.pct = porcentaje(); limpiaAnuncios();
+  barrido(TAB.x0, TAB.y0, TAB.w, TAB.h);
   if (libresDelJefe(jx, jy) < J.tapadas0 * AJUSTES.atrapado) { atrapado(); return; }
   if (J.pct >= AJUSTES.objetivo) gana();
 }

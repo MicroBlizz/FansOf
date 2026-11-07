@@ -1,22 +1,32 @@
-// Fans of Panic · Objetos del panel: salen sobre lo tapado y se cogen al destaparlos con un corte. Hielo (congela a los enemigos),
-// Escudo (aguanta un golpe) y Tijera (el cúter va más deprisa). Cada uno dura unos segundos.
+// Fans of Panic · Objetos del panel: salen sobre lo tapado y se cogen al destaparlos con un corte. Poderes: Hielo (congela a los
+// enemigos), Escudo (aguanta un golpe), Tijera (el cúter va más deprisa), Bomba (destapa un círculo), Fantasma (atraviesas al
+// Inspector), Imán (coge todos los objetos del panel), Doble cúter (tus cortes se reflejan al otro lado) y Lola (corta ella un
+// trozo grande). Y el «?» de locura, que lanza una de js/locuras.js. Los dibujos son de Yoshi (img/obj-<tipo>.png).
 'use strict';
 
 const OBJETOS = [];
-const TIPOS_OBJ = ['hielo', 'escudo', 'tijera'];
-const OBJ_COL = { hielo: COL.cian, escudo: COL.verde, tijera: COL.oro };
+const PODERES = ['hielo', 'escudo', 'tijera', 'bomba', 'fantasma', 'iman', 'doble', 'lola'];
+const OBJ_COL = { hielo: COL.cian, escudo: COL.verde, tijera: COL.oro, bomba: '#ff6b4a', fantasma: '#d8d8ff', iman: '#ff5fa2', doble: '#ffb347', lola: '#c86bff', locura: '#ffffff' };
+const OBJ_TXT = { hielo: '¡HIELO!', escudo: '¡ESCUDO!', tijera: '¡TIJERA!', bomba: '¡BOMBA!', fantasma: '¡FANTASMA!', iman: '¡IMÁN!', doble: '¡DOBLE CÚTER!', lola: '¡Lola al rescate!' };
 
-function nuevosObjetos() { OBJETOS.length = 0; JUEGO.objT = 5; }
+function nuevosObjetos() { OBJETOS.length = 0; JUEGO.objT = 5; JUEGO.locT = AJUSTES.locuraCada[0]; }
 
 function avanzaObjetos(dt) {
-  JUEGO.objT -= dt;
+  const J = JUEGO;
+  J.objT -= dt; J.locT -= dt;
   for (const o of OBJETOS) o.t += dt;
-  if (JUEGO.objT > 0 || OBJETOS.length >= 2) return;
-  JUEGO.objT = 7 + Math.random() * 4;
-  for (let i = 0; i < 30; i++) {   // una casilla tapada, lejos del jefe
+  if (J.locT <= 0 && !OBJETOS.some(o => o.tipo === 'locura')) { J.locT = AJUSTES.locuraCada[0] + Math.random() * AJUSTES.locuraCada[1]; sueltaObjeto('locura'); return; }
+  if (J.objT > 0 || OBJETOS.filter(o => o.tipo !== 'locura').length >= 2) return;
+  J.objT = 6 + Math.random() * 4;
+  sueltaObjeto(PODERES[Math.floor(Math.random() * PODERES.length)]);
+}
+
+// un objeto en una casilla tapada, lejos del jefe
+function sueltaObjeto(tipo) {
+  for (let i = 0; i < 30; i++) {
     const x = 2 + Math.floor(Math.random() * (TAB.cols - 4)), y = 2 + Math.floor(Math.random() * (TAB.filas - 4));
     if (TAB.cel[idx(x, y)] !== TAPADA || Math.hypot(x - JEFE.x, y - JEFE.y) < JEFE.r + 4) continue;
-    OBJETOS.push({ x, y, tipo: TIPOS_OBJ[Math.floor(Math.random() * TIPOS_OBJ.length)], t: 0 });
+    OBJETOS.push({ x, y, tipo, t: 0 });
     return;
   }
 }
@@ -30,20 +40,43 @@ function recogeObjetos() {
   }
 }
 
+const centroObj = o => [TAB.x0 + (o.x + 0.5) * TAB.c, TAB.y0 + (o.y + 0.5) * TAB.c];
+
 function cogeObjeto(o) {
-  const J = JUEGO, px = TAB.x0 + (o.x + 0.5) * TAB.c, py = TAB.y0 + (o.y + 0.5) * TAB.c;
-  if (o.tipo === 'hielo') { JEFE.congelaT = 4; SONIDO.congela(); textoSube(tr('¡HIELO!'), px, py, COL.cian); }
-  else if (o.tipo === 'escudo') { J.escudo = true; SONIDO.escudo(); textoSube(tr('¡ESCUDO!'), px, py, COL.verde); }
-  else { J.rapidoT = 6; SONIDO.objeto(); textoSube(tr('¡TIJERA!'), px, py, COL.oro); }
+  const [px, py] = centroObj(o);
+  if (o.tipo === 'locura') { lanzaLocura(px, py); return; }
+  EFECTO_PODER[o.tipo](o, px, py);
+  textoSube(tr(OBJ_TXT[o.tipo]), px, py, OBJ_COL[o.tipo]);
   confeti(px, py, 20, OBJ_COL[o.tipo]);
 }
 
+// qué hace cada poder (una tabla, no un switch)
+const EFECTO_PODER = {
+  hielo: () => { JEFE.congelaT = 4; SONIDO.congela(); },
+  escudo: () => { JUEGO.escudo = true; SONIDO.escudo(); },
+  tijera: () => { JUEGO.rapidoT = 6; SONIDO.objeto(); },
+  fantasma: () => { JUEGO.fantasmaT = 4; SONIDO.fantasma(); },
+  doble: () => { JUEGO.dobleT = 10; SONIDO.objeto(); },
+  bomba: o => { const sil = destapaCirculo(o.x, o.y, 7); recolocaJefe(); recolocaHijos(); sumaDestapado(sil, 'bomba'); SONIDO.grande(); temblor(1.2); vibra([40, 30, 80]); },
+  iman: () => { SONIDO.objeto(); for (const o of OBJETOS.splice(0)) if (o.tipo !== 'locura') { EFECTO_PODER[o.tipo](o); textoSube(tr(OBJ_TXT[o.tipo]), ...centroObj(o), OBJ_COL[o.tipo]); } },
+  lola: () => { const sil = corteDeLola(); recolocaJefe(); recolocaHijos(); sumaDestapado(sil, 'lola'); SONIDO.gana(); JUEGO.lolaT = 2; },
+};
+
+// Lola corta un rectángulo grande (un sexto del panel) donde no esté el jefe
+function corteDeLola() {
+  const w = Math.floor(TAB.cols * 0.4), h = Math.floor(TAB.filas * 0.4);
+  const izq = JEFE.x > TAB.cols / 2, arr = JEFE.y > TAB.filas / 2;
+  const x0 = izq ? 1 : TAB.cols - 1 - w, y0 = arr ? 1 : TAB.filas - 1 - h;
+  let sil = 0;
+  for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) if (TAB.sil[idx(x, y)] && TAB.cel[idx(x, y)] === TAPADA) sil++;
+  cambiaRect(x0, y0, w, h, TAPADA, DESTAPADA);
+  return sil;
+}
+
 function pintaObjetos(t) {
-  const { x0, y0, c } = TAB;
   for (const o of OBJETOS) {
-    const px = x0 + (o.x + 0.5) * c, py = y0 + (o.y + 0.5) * c + Math.sin(t * 4 + o.x) * 2, r = c * 1.6;
-    circulo(px, py, r + 2, 'rgba(255,255,255,.15)', null);
-    circulo(px, py, r, OBJ_COL[o.tipo], COL.tinta, 2);
-    letra(o.tipo === 'hielo' ? '*' : o.tipo === 'escudo' ? 'O' : 'X', px, py + 1, r * 1.3, COL.tinta, 'center', null, 0);
+    const [px, py0] = centroObj(o), py = py0 + Math.sin(t * 4 + o.x) * 2, alto = TAB.c * 3.6;
+    circulo(px, py, alto / 2 + 2, 'rgba(255,255,255,.15)', null);
+    pintaSprite('obj-' + o.tipo, px, py, alto, 0, OBJ_COL[o.tipo], o.tipo === 'locura' ? '?' : o.tipo[0].toUpperCase());
   }
 }

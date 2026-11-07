@@ -20,4 +20,6 @@ const AJUSTES = {
   llaveEstrellas: 10,          // estrellas del mundo anterior para abrir el siguiente gratis
   fichasEstrella: [1, 2, 5],   // fichas que da un nivel la primera vez, según sus estrellas
   gracia: 0.1,                 // segundos de perdón en el primer toque de un becario
+  escala: 1.35,                // cuánto más grandes se pintan el jefe, los becarios y el cúter (para verse bien en el móvil)
+  locuraCada: [14, 10],        // segundos entre dos «?» de locura (mínimo y azar extra)
 };

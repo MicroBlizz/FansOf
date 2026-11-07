@@ -63,13 +63,12 @@ function quietoCursor(dt) {
   J.mecha.x = c % TAB.cols; J.mecha.y = (c - J.mecha.x) / TAB.cols;
 }
 
-// pintar el cúter: un rombo brillante con un punto, que mira hacia donde va
+// pintar el cúter (sprite de Yoshi, girado hacia donde va; mientras no esté, un disco)
 function pintaCursor(t) {
   const { x0, y0, c } = TAB, px = x0 + (CUR.x + 0.5) * c, py = y0 + (CUR.y + 0.5) * c;
-  const r = c * 1.1 + (CUR.trazando ? Math.sin(t * 30) * 0.8 : 0);
-  if (JUEGO.escudo) circulo(px, py, r + 4, 'rgba(95,242,255,.25)', COL.cian, 1.5);
-  G.save(); G.translate(px, py); G.rotate(Math.atan2(CUR.ultimo[1], CUR.ultimo[0]) + Math.PI / 4);
-  caja(-r, -r, r * 2, r * 2, 2, CUR.trazando ? COL.oro : COL.rosa, COL.tinta, 2);
-  G.restore();
-  circulo(px, py, c * 0.3, COL.blanco, null);
+  const alto = c * 2.6 * AJUSTES.escala + (CUR.trazando ? Math.sin(t * 30) * 1.5 : 0);
+  if (JUEGO.escudo) circulo(px, py, alto * 0.7, 'rgba(95,242,255,.25)', COL.cian, 1.5);
+  if (JUEGO.fantasmaT > 0) G.globalAlpha = 0.5 + Math.sin(t * 10) * 0.2;
+  pintaSprite('cuter', px, py, alto, Math.atan2(CUR.ultimo[1], CUR.ultimo[0]) + Math.PI / 2, CUR.trazando ? COL.oro : COL.rosa, '');
+  G.globalAlpha = 1;
 }

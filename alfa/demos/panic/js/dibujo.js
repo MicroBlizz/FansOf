@@ -59,21 +59,24 @@ function toqueUI(px, py) {
   return false;
 }
 
-// una estrella de cinco puntas, llena o vacía
+// una estrella de cinco puntas, llena o vacía (sprite de Yoshi si está; si no, dibujada)
 function estrella(x, y, r, llena = true) {
+  if (sprite('estrella')) { G.globalAlpha = llena ? 1 : 0.25; pintaSprite('estrella', x, y, r * 2.2); G.globalAlpha = 1; return; }
   G.beginPath();
   for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; G.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
   G.closePath(); G.fillStyle = llena ? COL.oro : '#2a2235'; G.fill(); G.strokeStyle = COL.tinta; G.lineWidth = Math.max(1, r * 0.22); G.lineJoin = 'round'; G.stroke();
 }
 
-// una ficha (la moneda del juego): un disco rosa con una «P»
+// una ficha (la moneda del juego)
 function ficha(x, y, r) {
+  if (sprite('ficha')) { pintaSprite('ficha', x, y, r * 2.2); return; }
   circulo(x, y + 1.5, r, COL.tinta, null); circulo(x, y, r, COL.rosa, COL.tinta, Math.max(1, r * 0.18));
   letra('P', x, y + 1, r * 1.3, COL.blanco, 'center', COL.tinta, r * 0.3);
 }
 
 // un corazón (las vidas)
 function corazon(x, y, r, lleno = true) {
+  if (sprite('corazon')) { G.globalAlpha = lleno ? 1 : 0.25; pintaSprite('corazon', x, y, r * 2.2); G.globalAlpha = 1; return; }
   G.beginPath();
   G.moveTo(x, y + r);
   G.bezierCurveTo(x - r * 1.4, y - r * 0.2, x - r * 0.7, y - r * 1.1, x, y - r * 0.4);

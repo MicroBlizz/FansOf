@@ -45,8 +45,10 @@ function preparaIlustracion(mundo, n, w, h) {
   ILUS.lienzo = c; ILUS.conImagen = !!im;
 }
 
-// el panel gris de Cumplimiento de Microblizz, con su texto en diagonal
+// el panel gris de Cumplimiento de Microblizz: la textura de Yoshi (img/panel.png) repetida; mientras no esté, gris con rayas
 function pintaPanel(x, y, w, h, t) {
+  const tex = sprite('panel');
+  if (tex) { G.save(); G.fillStyle = G.createPattern(tex, 'repeat'); G.translate(x, y); G.fillRect(0, 0, w, h); G.restore(); return; }
   G.fillStyle = COL.panel; G.fillRect(x, y, w, h);
   G.save(); G.beginPath(); G.rect(x, y, w, h); G.clip();
   G.globalAlpha = 0.12; G.fillStyle = '#fff';

@@ -34,6 +34,9 @@ IDIOMA.add({
   "Si el Inspector toca tu corte, o un becario te pilla, pierdes una vida. Si te paras a medio corte, arde la mecha.": "If the Inspector touches your cut, or an intern catches you, you lose a life. Stop mid-cut and the fuse burns.",
   "Destapa el 80 % de la ilustración para ganar; el 90 % y el 100 % dan más estrellas. Acorrala al Inspector y lo destapas todo.": "Uncover 80% of the picture to win; 90% and 100% give more stars. Corner the Inspector and you uncover it all.",
   "Cortes seguidos hacen COMBO. Los objetos del panel se cogen destapándolos: Hielo, Escudo y Tijera.": "Cuts in a row make a COMBO. Items on the panel are picked up by uncovering them: Ice, Shield and Scissors.",
+  "FANTASMA {n}": "GHOST {n}", "DOBLE {n}": "DOUBLE {n}",
+  "¡BOMBA!": "BOMB!", "¡FANTASMA!": "GHOST!", "¡IMÁN!": "MAGNET!", "¡DOBLE CÚTER!": "DOUBLE CUTTER!", "¡Lola al rescate!": "Lola to the rescue!",
+  "ESPEJO": "MIRROR", "APAGÓN": "BLACKOUT", "EL PANEL CRECE": "THE PANEL GROWS", "JEFE FURIOSO": "FURIOUS BOSS", "HUELGA": "STRIKE", "ANUNCIO": "AD",
   // mundos
   "PLAYA": "BEACH", "OFICINA": "OFFICE", "PISCINA": "POOL", "GIMNASIO": "GYM", "FANTASÍA": "FANTASY", "ESPACIO": "SPACE",
   "La socorrista": "The lifeguard", "La ejecutiva": "The executive", "La DJ": "The DJ", "La entrenadora": "The trainer", "La hechicera": "The sorceress", "La capitana": "The captain",

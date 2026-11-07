@@ -18,7 +18,7 @@ function dedoMueve(x, y) {
   if (!DEDO.mando || JUEGO.modo !== 'juego') return;
   const dx = x - DEDO.x, dy = y - DEDO.y;
   if (Math.abs(dx) < DESLIZ_MIN && Math.abs(dy) < DESLIZ_MIN) return;
-  pideDir(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]);
+  pideDir(espeja(Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)]));
   DEDO.x = x; DEDO.y = y;
 }
 
@@ -56,7 +56,7 @@ window.addEventListener('keydown', e => {
   audioInit();
   if (e.key === 'Escape' || e.key === 'p') { e.preventDefault(); teclaEscape(); return; }
   if (OPC.abierto) { if (e.key === 'Enter') { e.preventDefault(); cierraOpciones(); } return; }
-  if (d && JUEGO.modo === 'juego') { e.preventDefault(); pideDir(d); return; }
+  if (d && JUEGO.modo === 'juego') { e.preventDefault(); pideDir(espeja(d)); return; }
   if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); teclaEnter(); return; }
   if (e.key === 'Backspace' && UI.atras) { e.preventDefault(); UI.atras(); }
 });

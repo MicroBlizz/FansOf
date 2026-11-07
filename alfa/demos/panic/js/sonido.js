@@ -24,6 +24,8 @@ const SONIDO = {
   atrapado: () => [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, f, 0.1, 'square', v(0.07), i * 0.06)),
   gana: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.14, 'triangle', v(0.08), i * 0.1)),
   tic: () => tone(1500, 1500, 0.03, 'square', v(0.03)),
+  fantasma: () => tone(900, 300, 0.3, 'sine', v(0.08)),
+  locura: mala => (mala ? [600, 450, 600, 450] : [450, 600, 750]).forEach((f, i) => tone(f, f, 0.08, 'triangle', v(0.06), i * 0.07)),
 };
 
 // cada fotograma: qué canción toca y a qué velocidad (el audio arranca con el primer toque)

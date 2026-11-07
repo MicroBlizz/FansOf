@@ -22,4 +22,16 @@ IDIOMA.add({
   '%1 en %2.': '%1 on %2.', 'La ropa ha parado el mordisco.': 'Your clothes stopped the bite.', 'Se ha curado: %1 en %2.': 'Healed: %1 on %2.',
   'Ese corte profundo ya está vendado: hay que coserlo con aguja e hilo.': 'That deep cut is already bandaged: it needs stitches (needle and thread).', 'Sangrando no puedes dormir: véndate primero.': 'You cannot sleep while bleeding: bandage yourself first.', 'La venda de %1 está sucia: cámbiala.': 'The bandage on %1 is dirty: change it.',
   'SANGRAS (V)': 'BLEEDING (V)', 'HUESO ROTO': 'BROKEN BONE', 'DOLOR': 'PAIN', 'Se desangró. Las vendas estaban en la mochila.': 'Bled out. The bandages were in the backpack.',
+  // los coches con piezas (0.14)
+  'LLAVE INGLESA': 'WRENCH', 'RUEDA': 'WHEEL', 'BATERÍA': 'BATTERY', 'PASTILLAS DE FRENO': 'BRAKE PADS', 'PARABRISAS': 'WINDSHIELD', 'PIEZAS DE MOTOR': 'ENGINE PARTS',
+  'MECÁNICA': 'MECHANICS', 'Las piezas se estropean menos al quitarlas y el motor se arregla más': 'Parts get less damaged when removed and engines are repaired more',
+  'MALETERO': 'BOOT', 'GUANTERA': 'GLOVEBOX', 'F  ABRIR EL MALETERO': 'F  OPEN THE BOOT', 'F  REGISTRAR EL MALETERO': 'F  SEARCH THE BOOT', 'MOTOR ROTO': 'ENGINE DEAD',
+  'MOTOR': 'ENGINE', 'FRENOS': 'BRAKES', 'CRISTALES': 'WINDOWS', 'DEL. IZQ.': 'FRONT L.', 'DEL. DCHA.': 'FRONT R.', 'TRAS. IZQ.': 'REAR L.', 'TRAS. DCHA.': 'REAR R.',
+  'EL COCHE': 'THE CAR', 'Necesitas una llave inglesa para tocar las piezas.': 'You need a wrench to work on the parts.', 'Maletero: %1 de %2 casillas': 'Boot: %1 of %2 slots', 'NO TIENE': 'MISSING',
+  'REPARAR': 'REPAIR', 'DESMONTAR': 'DISMANTLE', 'PONER': 'INSTALL', 'QUITAR': 'REMOVE', 'FAROS': 'LIGHTS', 'Faros encendidos (L)': 'Headlights on (L)', 'L: faros': 'L: headlights',
+  'Rueda pinchada: gira mal': 'Flat tyre: poor steering', 'Cristales rotos: te pueden morder': 'Broken windows: you can be bitten', 'Frenos gastados': 'Worn brakes',
+  'La batería está muerta: cámbiala por otra.': 'The battery is dead: swap it for another.', 'Le falta una rueda.': 'A wheel is missing.', 'El motor tose y no arranca. Prueba otra vez.': 'The engine coughs and will not start. Try again.',
+  'Necesitas una llave inglesa.': 'You need a wrench.', 'Ya tiene esa pieza.': 'It already has that part.', 'Este motor ya no da para piezas.': 'This engine has nothing left to salvage.', 'El maletero está lleno.': 'The boot is full.',
+  'Pieza quitada.': 'Part removed.', 'Pieza puesta.': 'Part installed.', 'Motor reparado un poco.': 'Engine repaired a bit.', 'Motor desmontado: tienes piezas de motor.': 'Engine dismantled: you have engine parts.',
+  'Faros encendidos. De noche te ven de lejos.': 'Headlights on. At night they see you from far away.', 'Faros apagados.': 'Headlights off.',
 });

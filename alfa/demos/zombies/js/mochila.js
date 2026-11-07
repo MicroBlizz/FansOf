@@ -19,7 +19,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   Z.nuevaMochila = (w, h, chica) => (chica ? { w, h, piezas: [], uid: 0, chica: true } : { w, h, piezas: [], uid: 0 });
   // lo que aguanta una cosa nueva que se gasta (armas y ropa), o null
-  Z.durDe = (AJ, id) => (AJ.armas[id] && AJ.armas[id].dur) || (AJ.ropa[id] && AJ.ropa[id].dur) || null;
+  Z.durDe = (AJ, id) => (AJ.armas[id] && AJ.armas[id].dur) || (AJ.ropa[id] && AJ.ropa[id].dur) || (AJ.objetos[id] && AJ.objetos[id].pieza && 100) || null;   // las piezas de coche, nuevas a 100
   // ¿cabe id girada gr con su esquina en (x, y)? sin = la pieza que se está moviendo (no choca consigo misma)
   Z.cabeEn = function (AJ, m, id, gr, x, y, sin) {
     const f = Z.formaDe(AJ, id, gr);

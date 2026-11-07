@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.14.0', real: ['<b>COCHES CON PIEZAS</b>: motor, ruedas, batería, frenos y cristales se gastan al chocar y atropellar. Con una llave inglesa se quitan de los coches rotos y se ponen en el tuyo, y el motor se desmonta en piezas de motor para repararlo. Habilidad nueva: mecánica. Cada coche tiene maletero (24 casillas) y faros (L): de noche iluminan, pero los fans de delante los ven.'],
+    joke: ['Microblizz informa de que los coches ya tienen piezas de recambio. Se venden por separado en la tienda del juego.'] },
   { v: '0.13.0', real: ['<b>HERIDAS COMO EN PROJECT ZOMBOID</b>: los mordiscos caen en una parte del cuerpo y dejan arañazos, cortes o mordiscos que sangran hasta que los vendas (V). Los cortes profundos se cosen, las vendas se ensucian, las fracturas llevan tablilla y el dolor hace temblar la puntería. Una hora después se sabe si la herida te infecta: el desinfectante ayuda y la infección solo la curan los antibióticos o la médica. En la mochila hay un muñeco: toca una parte para curarla.'],
     joke: ['Microblizz recuerda que las vendas son un objeto premium. Las de esta versión son de prueba y se pueden manchar.'] },
   { v: '0.12.1', real: ['<b>SE PUEDE JUGAR EN EL MÓVIL</b>: con el móvil tumbado sale una palanca para andar (llévala más allá del aro para correr) y botones para atacar (apunta solo al fan más cercano), empujar, la acción, correr, agacharse, la mochila, el mapa y lo demás. En la mochila, deja el dedo quieto sobre algo para usarlo o ponértelo.'],

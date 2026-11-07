@@ -186,13 +186,14 @@ body.tactil .zb-ayuda { display: none; }
 #t-accion { right: calc(108px + env(safe-area-inset-right)); bottom: 80px; border-color: var(--zb-verde); }
 #t-corre { right: calc(30px + env(safe-area-inset-right)); bottom: 112px; }
 #t-agacha { right: calc(178px + env(safe-area-inset-right)); bottom: 12px; }
-#t-mochila, #t-mapa, #t-duerme, #t-tablas, #t-gasolina, #t-pausa { top: 6px; width: auto; height: 30px; border-radius: 4px; padding: 0 8px; font-size: 11px; }
+#t-mochila, #t-mapa, #t-duerme, #t-tablas, #t-gasolina, #t-faros, #t-pausa { top: 6px; width: auto; height: 30px; border-radius: 4px; padding: 0 8px; font-size: 11px; }
 #t-pausa { right: calc(6px + env(safe-area-inset-right)); }
 #t-mapa { right: calc(66px + env(safe-area-inset-right)); }
 #t-mochila { right: calc(118px + env(safe-area-inset-right)); }
 #t-duerme { right: calc(196px + env(safe-area-inset-right)); }
 #t-tablas { right: calc(264px + env(safe-area-inset-right)); }
 #t-gasolina { right: calc(330px + env(safe-area-inset-right)); }
+#t-faros { right: calc(418px + env(safe-area-inset-right)); }
 #t-gira { display: none; }
 @media (orientation: portrait) {
   body.tactil #t-gira { display: grid; place-items: center; position: fixed; inset: 0; z-index: 60; background: rgba(6,8,12,.94); pointer-events: auto; text-align: center; padding: 24px; }
@@ -238,3 +239,10 @@ body.tactil #zb-mochila .vm-hab { transform: scale(.75); transform-origin: left 
 .vm-herida { border-top: 1px solid var(--rk-borde2); padding: 3px 0; font-size: 13px; }
 .vm-herida em { font-style: normal; color: var(--rk-oro); }
 .vm-cuerpo .vm-acciones { max-width: none; }
+
+/* ---------- la ficha del coche, junto al maletero (js/ventana-coche.js) ---------- */
+.vm-coche { width: 250px; }
+.vm-pz { display: grid; grid-template-columns: 1fr 70px 24px; gap: 2px 6px; align-items: center; border-top: 1px solid var(--rk-borde2); padding: 3px 0; font-size: 13px; }
+.vm-pz .barra { display: block; height: 5px; background: #1a1e26; } .vm-pz .barra i { display: block; height: 100%; }
+.vm-pz .vm-acciones { grid-column: 1 / -1; max-width: none; }
+.vm-coche .malo { color: #ff8a7a; }

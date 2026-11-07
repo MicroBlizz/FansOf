@@ -128,6 +128,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     return mundo.flujo(zb.x, zb.z);
   }
   function muerde(AJ, e, zb, azar) {
+    if (!Z.alcanzaVentanilla(AJ, e)) return;                 // al volante, con los cristales bien y deprisa, no llega (js/coches-piezas.js)
     zb.a = Math.atan2(e.jugador.x - zb.x, e.jugador.z - zb.z);
     if (zb.tMordisco > 0) return;
     zb.tMordisco = AJ.ia.mordisco;

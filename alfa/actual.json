@@ -1,8 +1,8 @@
 {
- "build": 1080,
- "hash": "ece51d5",
- "fecha": "2026-11-07T11:55:12Z",
- "mensaje": "Rumble v2: la carta de CrazyBunny, de frente y centrada (regla de Daniel)",
+ "build": 1081,
+ "hash": "5d612bd",
+ "fecha": "2026-11-07T12:01:38Z",
+ "mensaje": "Zombies 0.14.0: coches con piezas, mecánica, maletero y faros (ADR 083)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

@@ -1,6 +1,6 @@
 // Fans of Zombies · EL MÓVIL (adaptador, ADR 081): solo en pantallas táctiles (en PC no sale nada). Una palanca a la izquierda para
 // andar (llevando el dedo más allá del aro, corres) y botones a la derecha: ATACAR (se mantiene y apunta solo al fan más cercano),
-// EMPUJAR, ACCIÓN (abrir, registrar, subir al coche…), CORRER y AGACHARSE; arriba MOCHILA, MAPA, DORMIR, TABLAS, GASOLINA y PAUSA.
+// EMPUJAR, ACCIÓN (abrir, registrar, subir al coche…), CORRER y AGACHARSE; arriba MOCHILA, MAPA, DORMIR, TABLAS, GASOLINA, FAROS y PAUSA.
 // Tocar el arma la cambia y tocar COMER, BEBER o VENDAS los usa. Los botones hacen lo mismo que su tecla (entran en ENTRADA como si se
 // hubiera pulsado), así que el juego no sabe si juegas con teclado o con el dedo. De pie se pide girar el móvil.
 'use strict';
@@ -9,7 +9,7 @@ const R_PALANCA = 50, CORRE_PALANCA = 1.3;   // radio del aro (px) y cuánto má
 const BOTONES_TACTIL = [
   // [id, texto, tecla, mantener]
   ['t-ataca', 'ATACAR', 'Space', true], ['t-empuja', 'EMPUJAR', 'KeyR'], ['t-accion', 'ACCIÓN', 'KeyF'], ['t-corre', 'CORRER', 'ShiftLeft', 'fija'], ['t-agacha', 'AGACHAR', 'KeyC'],
-  ['t-mochila', 'MOCHILA', 'Tab'], ['t-mapa', 'MAPA', 'KeyM'], ['t-duerme', 'DORMIR', 'KeyZ'], ['t-tablas', 'TABLAS', 'KeyB'], ['t-gasolina', 'GASOLINA', 'KeyG'], ['t-pausa', 'PAUSA', 'Escape'],
+  ['t-mochila', 'MOCHILA', 'Tab'], ['t-mapa', 'MAPA', 'KeyM'], ['t-duerme', 'DORMIR', 'KeyZ'], ['t-tablas', 'TABLAS', 'KeyB'], ['t-gasolina', 'GASOLINA', 'KeyG'], ['t-faros', 'FAROS', 'KeyL'], ['t-pausa', 'PAUSA', 'Escape'],
 ];
 const TECLA_HOTBAR = { E: 'KeyE', Q: 'KeyQ', V: 'KeyV', TAB: 'Tab' };
 

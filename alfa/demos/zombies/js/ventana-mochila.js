@@ -33,13 +33,13 @@ function dibujaObjeto(g, id, W, H) {
     guiso: () => { P('#7a7a80', 0.15, 0.4, 0.7, 0.4); P('#c8783a', 0.2, 0.36, 0.6, 0.12); P('#e8e0d0', 0.4, 0.15, 0.06, 0.2); },
     cartuchos: () => { P('#c8282e', 0.18, 0.25, 0.22, 0.5); P('#c8282e', 0.48, 0.25, 0.22, 0.5); P('#e8b840', 0.18, 0.62, 0.22, 0.13); P('#e8b840', 0.48, 0.62, 0.22, 0.13); },
   };
-  const otro = DIBUJO_EQUIPO[id] || DIBUJO_CURAS[id];   // la ropa y las mochilas (js/ventana-equipo.js) y las curas (js/ventana-cuerpo.js)
+  const otro = DIBUJO_EQUIPO[id] || DIBUJO_CURAS[id] || DIBUJO_PIEZAS[id];   // la ropa y las mochilas (js/ventana-equipo.js) y las curas (js/ventana-cuerpo.js)
   (D[id] || (otro && (() => otro(P))) || (() => P('#888', 0.3, 0.3, 0.4, 0.4)))();
 }
 // una pieza (o una cosa del sitio): un div con las casillas de su forma y su dibujo
 function htmlPieza(id, n, gr, clase, datos) {
   const AJ = ZOM.AJ, f = ZOM.formaDe(AJ, id, gr), C = VM.celda;
-  const celdas = f.c.map(([x, y]) => '<i style="left:' + x * C + 'px;top:' + y * C + 'px;width:' + C + 'px;height:' + C + 'px;background:' + (COLOR_OBJ[id] || COLOR_EQUIPO[id] || COLOR_CURAS[id] || '#333') + '"></i>').join('');
+  const celdas = f.c.map(([x, y]) => '<i style="left:' + x * C + 'px;top:' + y * C + 'px;width:' + C + 'px;height:' + C + 'px;background:' + (COLOR_OBJ[id] || COLOR_EQUIPO[id] || COLOR_CURAS[id] || COLOR_PIEZAS[id] || '#333') + '"></i>').join('');
   return '<div class="vm-pieza ' + clase + '" ' + datos + ' style="width:' + f.w * C + 'px;height:' + f.h * C + 'px">' + celdas + '<canvas width="' + f.w * 16 + '" height="' + f.h * 16 + '" data-id="' + id + '" data-gr="' + gr + '"></canvas>' +
     ((AJ.objetos[id].max || 1) > 1 || n > 1 ? '<b>' + n + '</b>' : '') + '</div>';
 }
@@ -56,7 +56,7 @@ function pintaDibujos(raiz) {
 function abreMochila() { VM.abierta = true; pintaMochila(); }
 function cierraMochila() { VM.abierta = false; sueltaSinMas(); el('zb-mochila').hidden = true; if (JUEGO.e) ZOM.cierraSitio(JUEGO.e); }
 // las habilidades: nivel y barra hacia el siguiente, con lo que mejora cada una
-const NOMBRE_HAB = { pelea: ['PELEA', 'Golpeas más fuerte y te cansas menos'], disparo: ['DISPARO', 'Las balas y los cartuchos hacen más daño'], sigilo: ['SIGILO', 'Agachado te ven menos y andando haces menos ruido'], carpinteria: ['CARPINTERÍA', 'Clavas tablas y desmontas más rápido'], cocina: ['COCINA', 'Lo que cocinas alimenta más'] };
+const NOMBRE_HAB = { mecanica: ['MECÁNICA', 'Las piezas se estropean menos al quitarlas y el motor se arregla más'], pelea: ['PELEA', 'Golpeas más fuerte y te cansas menos'], disparo: ['DISPARO', 'Las balas y los cartuchos hacen más daño'], sigilo: ['SIGILO', 'Agachado te ven menos y andando haces menos ruido'], carpinteria: ['CARPINTERÍA', 'Clavas tablas y desmontas más rápido'], cocina: ['COCINA', 'Lo que cocinas alimenta más'] };
 function htmlHabilidades(J) {
   const AJ = ZOM.AJ;
   return '<section class="vm-hab"><header><b>' + esc(tr('HABILIDADES')) + '</b></header>' + ZOM.HABILIDADES.map((h) => '<div class="vm-h" title="' + esc(tr(NOMBRE_HAB[h][1])) + '"><span>' + esc(tr(NOMBRE_HAB[h][0])) + '</span><b>' + ZOM.nivel(AJ, J, h) + '</b><i><s style="width:' + Math.round(ZOM.progreso(AJ, J, h) * 100) + '%"></s></i><em>' + esc(tr(NOMBRE_HAB[h][1])) + '</em></div>').join('') + '<p class="vm-ayuda">' + esc(tr('Se mejoran haciendo las cosas. Se pierden al caer.')) + '</p>' + htmlRefugio(JUEGO.e) + '</section>';
@@ -70,16 +70,17 @@ function pintaMochila() {
     (lista ? '' : htmlHabilidades(J)) +   // con un sitio abierto no caben todas: las habilidades salen con la mochila sola
     htmlEquipo(e) +                        // la ropa, la riñonera y los bolsillos (js/ventana-equipo.js)
     htmlCuerpo(e) +                        // las heridas (js/ventana-cuerpo.js)
+    (e.abierto && ZOM.esMaletero(e.abierto) ? htmlCoche(e) : '') +   // las piezas del coche, junto al maletero (js/ventana-coche.js)
     '<section class="vm-mia"><header><b>' + esc(tr(AJ.objetos[J.equipo.mochila].n)) + '</b>' + (TACTIL.activo ? '<button id="vm-girar">' + esc(tr('GIRAR')) + '</button>' : '') + '<button id="vm-ordenar">' + esc(tr('ORDENAR')) + '</button><button id="vm-cerrar">' + esc(tr('CERRAR (TAB)')) + '</button></header>' +
     htmlRejilla(J, 'mochila') + htmlFabricar(e) + '<p class="vm-ayuda">' + esc(tr('Arrastra para mover · rueda o R para girar · clic derecho para usar · fuera de la rejilla para dejar.')) + '</p></section>';
   // la posición de cada pieza en su rejilla
   v.querySelectorAll('.vm-pieza.mia').forEach((d) => { const p = ZOM.pieza(J[d.dataset.bolsa], +d.dataset.uid); d.style.left = p.gx * C + 'px'; d.style.top = p.gy * C + 'px'; });
   pintaDibujos(v);
-  enganchaMochila(v); enganchaOficios(v); enganchaEquipo(v); enganchaCuerpo(v);
+  enganchaMochila(v); enganchaOficios(v); enganchaEquipo(v); enganchaCuerpo(v); enganchaCoche(v);
 }
 const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', basura: 'CUBO DE BASURA', fuego: 'BIDÓN CON FUEGO', coche: 'COCHE', estanteria: 'ESTANTERÍA', super: 'ESTANTE DEL SÚPER', gasolinera: 'TIENDA DE LA GASOLINERA', ferreteria: 'FERRETERÍA', farmacia: 'FARMACIA', armeria: 'ARMERÍA', taquilla: 'TAQUILLA', pupitre: 'PUPITRE', granero: 'GRANERO', escritorio: 'ESCRITORIO', cajaFuerte: 'CAJA FUERTE', archivador: 'ARCHIVADOR', maquina: 'MÁQUINA DE CAFÉ', maletin: 'MALETÍN DEL CEO', despensa: 'DESPENSA DEL REFUGIO', huerto: 'HUERTO' };
 const sitioEsCoche = (id) => id.startsWith('car:');
-const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : id.startsWith('maletin-') ? 'MALETÍN DEL CEO' : sitioEsCoche(id) ? 'GUANTERA Y MALETERO' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
+const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : id.startsWith('maletin-') ? 'MALETÍN DEL CEO' : ZOM.esMaletero(id) ? 'MALETERO' : sitioEsCoche(id) ? 'GUANTERA' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
 // lo que no se puede: aviso por la radio
 function resultadoMochila(r) { if (!r.ok) avisa(tr({ noCabe: 'No cabe en la mochila.', noEsta: 'Eso ya no está.' }[r.codigo] || 'No puedes hacer eso ahora.')); else play('coge'); pintaMochila(); }
 

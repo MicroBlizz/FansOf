@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.13.0',
+  version: '0.14.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -51,6 +51,13 @@ ZOM.AJ = Object.freeze({
     tablilla: { n: 'TABLILLA', forma: ['X', 'X', 'X'], cura: 'tablilla' },
     analgesico: { n: 'ANALGÉSICOS', forma: ['X'], max: 6, usa: { analgesico: true } },
     antibiotico: { n: 'ANTIBIÓTICOS', forma: ['X'], max: 3, usa: { infeccion: -40 } },
+    // las piezas de coche (pieza = tienen estado, en «dur»; js/coches-piezas.js)
+    llaveInglesa: { n: 'LLAVE INGLESA', forma: ['X', 'X'] },
+    rueda: { n: 'RUEDA', forma: ['XX', 'XX'], pieza: true },
+    bateria: { n: 'BATERÍA', forma: ['XX'], pieza: true },
+    frenos: { n: 'PASTILLAS DE FRENO', forma: ['X'], pieza: true },
+    parabrisas: { n: 'PARABRISAS', forma: ['XXX', 'XXX'], pieza: true },
+    piezasMotor: { n: 'PIEZAS DE MOTOR', forma: ['X'], max: 4 },
     cartuchos: { n: 'CARTUCHOS', forma: ['X'], max: 12 },
     tablas: { n: 'TABLAS', forma: ['XXX'], max: 3 },
     clavos: { n: 'CLAVOS', forma: ['X'], max: 20 },
@@ -124,8 +131,14 @@ ZOM.AJ = Object.freeze({
   // los coches (ADR 075): velocidades en m/s (máxima ~65 km/h), giro en rad/s, gasolina de 0 a 1 (consumo por metro), daño de 0 a 100,
   // atropello = daño por m/s, la llave (en la guantera o en una casa cercana) y el ruido del motor
   coches: { radio: 1.2, alcance: 3, acelera: 9, frena: 14, roce: 0.5, maxima: 18, atras: 5, giro: 2.2, consumo: 0.0006, bidon: 0.5,
-    gasInicial: 0.35, danoInicial: 30, danoChoque: 1.6, atropellaDesde: 3, atropello: 9, ruido: 18, ruidoVel: 1.2,
-    llaveGuantera: 0.45, llaveEnCasa: { armario: 0.15, cocina: 0.15, nevera: 0.05, taquilla: 0.3 }, llaveRadio: 90 },
+    gasInicial: 0.35, danoChoque: 1.6, atropellaDesde: 3, atropello: 9, ruido: 18, ruidoVel: 1.2,
+    llaveGuantera: 0.45, llaveEnCasa: { armario: 0.15, cocina: 0.15, nevera: 0.05, taquilla: 0.3 }, llaveRadio: 90, maletero: 24,
+    // las piezas (ADR 083): cuánto salen gastadas, lo que corre con el motor a 0 (motorMin) y con una rueda pinchada, lo que frena con
+    // los frenos a 0, lo que gasta arrancar, por debajo de qué motor falla al arrancar (y cuánto), con qué cristales te muerden, a qué
+    // velocidad (m/s) se va «despacio», la batería que carga conducir y gastan los faros (por hora), lo que se gasta una pieza al
+    // quitarla, cada cuánto motor sale una pieza de motor, lo que arregla una, y el alcance y el ángulo de los faros
+    piezas: { desgasteInicial: 60, pinchada: 0.6, motorMin: 0.4, frenosMin: 0.3, arranque: 3, motorFalla: 30, fallaArranque: 0.5, cristalRoto: 30, despacio: 3, carga: 20, farosGasta: 8,
+      gastaQuitar: 15, porPieza: 25, repara: 20, farosAlcance: 22, farosCono: 0.5 } },
   // los supervivientes (ADR 074): la probabilidad de que un trozo tenga a alguien atrapado, los fans de guardia, su oficio por animal y lo
   // de cada oficio (daño y curas por segundo; la cocina, a partir de qué hora y qué deja; el vigía, a qué distancia y cada cuántos minutos)
   rescates: { prob: 0.08, guardia: 4, vida: 100, alcance: 2.2, danoFans: 6,
@@ -141,8 +154,8 @@ ZOM.AJ = Object.freeze({
   // las habilidades: los umbrales de experiencia de cada nivel (0 a 10), lo que da cada acción y lo que mejora cada nivel
   habilidades: {
     niveles: [0, 10, 25, 45, 70, 100, 140, 190, 250, 320, 400],
-    xp: { golpe: 1, disparo: 1, paso: 0.25, despide: 4, tabla: 4, desmonta: 3, fuego: 5 },
-    efecto: { pelea: { dano: 0.05, aguante: 0.04 }, disparo: { dano: 0.05 }, sigilo: { ruido: 0.05, vista: 0.04 }, carpinteria: { tiempo: 0.06 }, cocina: { nutre: 0.08 } },
+    xp: { golpe: 1, disparo: 1, paso: 0.25, despide: 4, tabla: 4, desmonta: 3, fuego: 5, pieza: 3, repara: 4 },
+    efecto: { pelea: { dano: 0.05, aguante: 0.04 }, disparo: { dano: 0.05 }, sigilo: { ruido: 0.05, vista: 0.04 }, carpinteria: { tiempo: 0.06 }, cocina: { nutre: 0.08 }, mecanica: { cuida: 0.08, arregla: 0.1 } },
   },
   // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo.
   // porTipo: lo que hay en cada clase de sitio (lo demás usa «cosas»). En la nevera, tras el corte de luz, la carne sale podrida
@@ -153,19 +166,20 @@ ZOM.AJ = Object.freeze({
       cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, cuchillo: 1.2, nada: 2 },
       basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
       fuego: {},
-      estanteria: { mochilaG: 0.2, botasGoma: 0.2, gasolina: 0.6, tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
+      estanteria: { piezasMotor: 0.6, bateria: 0.3, mochilaG: 0.2, botasGoma: 0.2, gasolina: 0.6, tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
       super: { analgesico: 1, desinfectante: 1, gorro: 0.4, zapatillas: 0.3, judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
       gasolinera: { chubasquero: 0.3, chocolatina: 4, refresco: 4, agua: 2, gasolina: 3, nada: 2 },
-      ferreteria: { botasGoma: 0.6, chubasquero: 0.5, gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
+      ferreteria: { llaveInglesa: 1.5, frenos: 0.6, piezasMotor: 0.5, botasGoma: 0.6, chubasquero: 0.5, gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
       farmacia: { desinfectante: 3, aguja: 2, analgesico: 3, antibiotico: 0.6, venda: 6, tela: 2, nada: 2 },
       armeria: { balas: 4, cartuchos: 3, pistola: 1.2, escopeta: 0.4, nada: 1 },
-      taquilla: { analgesico: 0.5, chandal: 0.6, zapatillas: 0.6, mochilaM: 0.3, casco: 0.2, balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
+      taquilla: { llaveInglesa: 0.2, analgesico: 0.5, chandal: 0.6, zapatillas: 0.6, mochilaM: 0.3, casco: 0.2, balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
       pupitre: { mochilaP: 0.4, mochilaM: 0.2, gorro: 0.3, chocolatina: 3, refresco: 2, tela: 1, nada: 4 },
       escritorio: { analgesico: 0.5, chocolatina: 2, refresco: 2, balas: 0.6, cuchillo: 0.3, tela: 1, venda: 0.5, nada: 3 },
       cajaFuerte: { antibiotico: 1, mochilaG: 0.4, balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
       maletin: { antibiotico: 1, cuero: 0.5, balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
       maquina: { chocolatina: 3, refresco: 3, nada: 2 },
-      coche: { casco: 0.2, cuero: 0.15, mochilaM: 0.2, gasolina: 1, chocolatina: 1, refresco: 1, agua: 1, cartuchos: 0.5, nada: 2 },
+      maletero: { gasolina: 1.5, rueda: 0.6, llaveInglesa: 0.5, bateria: 0.2, tablas: 1, tela: 1, agua: 1, cartuchos: 0.5, nada: 2 },
+      coche: { llaveInglesa: 0.3, casco: 0.2, cuero: 0.15, mochilaM: 0.2, gasolina: 1, chocolatina: 1, refresco: 1, agua: 1, cartuchos: 0.5, nada: 2 },
       huerto_invierno: { nada: 1 }, huerto_primavera: { verdura: 4, nada: 2 }, huerto_verano: { verdura: 5, agua: 1, nada: 1 }, huerto_otono: { verdura: 2, carne: 1.5, nada: 3 },
       granero: { botasGoma: 0.6, botasNieve: 0.4, mochilaG: 0.3, gasolina: 1, tela: 2, hacha: 0.8, tablas: 2, clavos: 2, judias: 2, nada: 2 },
     } },

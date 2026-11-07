@@ -35,7 +35,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const usar = ent.usar || (ent.come && (Z.primeraQue(AJ, e, 'hambre') || 'judias')) || (ent.bebe && (Z.primeraQue(AJ, e, 'sed') || 'agua'));
     if (usar) avisa(e, Z.usar(AJ, e, usar));
     if (ent.dormir) avisa(e, Z.dormir(AJ, e));
-    if (e.jugador.conduce) Z.pasoCoche(AJ, e, dt, ent, mundo, azar);   // al volante no se registra, ni se pelea, ni se clavan tablas
+    if (e.jugador.conduce) Z.pasoCoche(AJ, e, dt, ent, mundo, azar, horas);   // al volante no se registra, ni se pelea, ni se clavan tablas
     else pasoAPie(AJ, e, dt, ent, mundo);
     Z.pasoRegistro(AJ, e, dt, azar);
     Z.pasoTablas(AJ, e, dt);

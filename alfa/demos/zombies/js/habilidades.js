@@ -1,10 +1,10 @@
-// Fans of Zombies · LAS HABILIDADES (dominio): se mejora haciendo las cosas, como en Zomboid. Cinco habilidades (pelea, disparo, sigilo,
-// carpintería y cocina) de nivel 0 a 10; cada acción da experiencia (AJ.habilidades.xp) y cada nivel mejora un poco lo suyo
+// Fans of Zombies · LAS HABILIDADES (dominio): se mejora haciendo las cosas, como en Zomboid. Seis habilidades (pelea, disparo, sigilo,
+// carpintería, cocina y mecánica) de nivel 0 a 10; cada acción da experiencia (AJ.habilidades.xp) y cada nivel mejora un poco lo suyo
 // (AJ.habilidades.efecto). Se guardan en el jugador (J.hab) y se pierden al morir.
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 (function (Z) {
-  Z.HABILIDADES = ['pelea', 'disparo', 'sigilo', 'carpinteria', 'cocina'];
+  Z.HABILIDADES = ['pelea', 'disparo', 'sigilo', 'carpinteria', 'cocina', 'mecanica'];
   const xpDe = (J, h) => (J.hab && J.hab[h]) || 0;
   // el nivel con tanta experiencia (el último umbral que se pasa)
   Z.nivelCon = (AJ, xp) => { const N = AJ.habilidades.niveles; let n = 0; while (n + 1 < N.length && xp >= N[n + 1]) n++; return n; };

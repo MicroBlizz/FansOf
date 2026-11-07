@@ -79,6 +79,7 @@ function pintaAvisos(dt) {
 function textoSitio(e, s) {
   if (s.tipo === 'torre') return tr('F  ENTRAR EN LA TORRE');
   if (s.coche) return textoCoche(e, s);
+  if (s.tipo === 'maletero') return tr(e.registrados[s.id] ? 'F  ABRIR EL MALETERO' : 'F  REGISTRAR EL MALETERO');
   if (s.tipo === 'superviviente') return trf('F  RESCATAR A %1', ZOM.AJ.animales[s.animal].n);
   if (s.tipo === 'escalera') return s.a === 0 ? tr('F  SALIR A LA CALLE') : s.a === ZOM.AZOTEA(ZOM.AJ) ? tr('F  SUBIR A LA AZOTEA') : trf(s.desdeArriba ? 'F  BAJAR A LA PLANTA %1' : 'F  SUBIR A LA PLANTA %1', s.a);
   return tr(e.registrados[s.id] ? 'F  ABRIR' : 'F  REGISTRAR');

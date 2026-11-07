@@ -102,6 +102,7 @@ const V2 = (() => {
   }
   FRENTE.forEach(k => carga('frente/' + k, () => {
     if (typeof ART_FIT !== 'undefined') ART_FIT[k] = [0, (ART_FIT[k] || [0, 0.92])[1]];   // el retrato de frente va centrado en su casilla
+    if (typeof elCards !== 'undefined') elCards.forEach(el => { if (el.dataset.card === k) renderCard(el, k); });   // la carta ya pintada se repinta
   }));
   pideFondo('animales|mb');
   carga('puente', () => { if (typeof READY !== 'undefined' && READY) BRIDGE_LAYER = buildBridges(); });

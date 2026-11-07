@@ -60,8 +60,9 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   // dejar una pieza de una de tus bolsas (la mochila si no se dice): en el sitio abierto o en un montón nuevo a tus pies
   Z.dejar = function (AJ, e, uid, bolsa) {
-    const m = e.jugador[bolsa || 'mochila'];
+    const m = e.jugador[bolsa || 'mochila'], p = m && Z.pieza(m, uid);
     if (!m) return Z.error('noEsta', { uid });
+    if (p && Z.esMaletero(e.abierto) && !Z.cabeEnMaletero(AJ, abierto(e), p)) return Z.error('maleteroLleno');   // el maletero tiene sitio para AJ.coches.maletero casillas
     const r = Z.sacar(m, uid);
     if (!r.ok) return r;
     return Z.ok(Z.dejaEnSitio(e, r.valor));

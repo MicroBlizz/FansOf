@@ -345,4 +345,12 @@ IDIOMA.add({
   "Cachorrito": "Puppy eyes",
   "SALIR": "EXIT",
   "ASCENDER YA": "PROMOTE NOW",
+  "CUIDADO: dar de comer con la cuchara": "CARE: feed with the spoon",
+  "CUIDADO: ducha (frotar y aclarar)": "CARE: shower (scrub and rinse)",
+  "Llena la cuchara en el bol": "Fill the spoon from the bowl",
+  "Llévala a su boca": "Take it to its mouth",
+  "¡Qué rico!": "Yum!",
+  "Frótalo con la esponja": "Scrub it with the sponge",
+  "Aclara con la ducha: mantén pulsado": "Rinse with the shower: hold down",
+  "¡Limpito!": "All clean!",
 });

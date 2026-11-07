@@ -1,8 +1,8 @@
 {
- "build": 1068,
- "hash": "2a8557d",
- "fecha": "2026-11-07T11:13:55Z",
- "mensaje": "Rumble v2: torres y bases vuelven a su sitio (siguen grandes); los caminos se rehacen aparte",
+ "build": 1069,
+ "hash": "6e2b9f4",
+ "fecha": "2026-11-07T11:15:51Z",
+ "mensaje": "Pets: minijuegos de cuidado, comer con la cuchara y la ducha (escena DEV del muñeco 3D)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

@@ -114,5 +114,13 @@ PT.muneco3d = (() => {
     mo.camara = new T.OrthographicCamera(-(med.cx + m) / k, (640 - med.cx + m) / k, (med.suelo + m) / k, -(640 - med.suelo + m) / k, 0.01, 100);
     mo.camara.position.set(0, 0, 10); LISTOS[clave] = mo;
   }
-  return { montaje, pinta, EN_T };
+  // DÓNDE CAE UN HUESO en el lienzo, si el muñeco se pintó con pinta(ctx, id, x, y, lado, …): { x, y } en las coordenadas del lienzo, o null mientras
+  // no esté listo (o si el hueso no existe). Los minijuegos de cuidado lo usan para saber dónde están la boca y las zonas del cuerpo
+  function ancla(id, edad, hueso, x, y, lado) {
+    const mo = LISTOS[id + '/' + edad], h = mo && mo.huesos[hueso];
+    if (!h) return null;
+    const v = h.getWorldPosition(new mo.T.Vector3()).project(mo.camara), borde = lado * ENCUADRE / 2;
+    return { x: x - borde + (v.x + 1) * borde, y: y - borde + (1 - v.y) * borde };
+  }
+  return { montaje, pinta, ancla, EN_T };
 })();

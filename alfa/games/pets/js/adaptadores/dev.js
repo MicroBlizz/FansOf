@@ -61,7 +61,9 @@ PT.dev = (() => {
     // el MANIQUÍ 3D con el dibujo proyectado (maniqui3d.js): de momento CrazyBunny y el hurón; las demás siguen con su dibujo
     ['3d:quieto', 'MANIQUÍ 3D: quieta'], ['3d:saludo', 'MANIQUÍ 3D: saludo'], ['3d:mirar', 'MANIQUÍ 3D: mirar'], ['3d:comer', 'MANIQUÍ 3D: comer'], ['3d:dormir', 'MANIQUÍ 3D: dormir en la cesta'],
     // el MUÑECO 3D completo con su pintura (muneco3d.js, fase f16): el hurón en sus cuatro edades; sin sus objetos (bol, cesta) todavía
-    ['m3d:quieto', 'MUÑECO 3D: quieta'], ['m3d:saludo', 'MUÑECO 3D: saludo'], ['m3d:mirar', 'MUÑECO 3D: mirar']];
+    ['m3d:quieto', 'MUÑECO 3D: quieta'], ['m3d:saludo', 'MUÑECO 3D: saludo'], ['m3d:mirar', 'MUÑECO 3D: mirar'],
+    // los minijuegos de cuidado con el muñeco 3D (cuidado-escena.js): el jugador da de comer con la cuchara y ducha a la mascota; no tocan la partida
+    ['cuida:comer', 'CUIDADO: dar de comer con la cuchara'], ['cuida:banar', 'CUIDADO: ducha (frotar y aclarar)']];
   const CUIDADOS = ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano'];
   function abreEscena() {
     ui.escena = { id: PT.arte.ids()[0], etapa: 'bebe', anim: 'base' };
@@ -71,6 +73,7 @@ PT.dev = (() => {
   }
   function cierraEscena() {
     ui.escena = null;
+    PT.cuidadoEscena.cierra();
     PT.pantallas.pinta();
   }
   // cada lista es un desplegable (criatura, etapa, animación), los tres en una fila junto a SALIR: así la caja queda baja y se ve la
@@ -99,6 +102,8 @@ PT.dev = (() => {
     // el maniquí 3D (de momento solo con el dibujo de niña, sea cual sea la etapa): donde lo pondría arte.js, con los pies en el suelo
     const rn = PETS.tamano.nino, lado = rn * PETS.arte.lienzo;
     if (s.anim.startsWith('3d:') && PT.maniqui3d.pinta(ctx, s.id, 270, 440 + rn - lado * (PETS.arte.pies - 0.5), lado, t, s.anim.slice(3))) return;
+    if (!s.anim.startsWith('cuida:')) PT.cuidadoEscena.cierra();
+    else if (PT.cuidadoEscena.pinta(ctx, s.id, etapa, 270, 440 + rn - lado * (PETS.arte.pies - 0.5), lado, t, s.anim.slice(6))) return;
     if (s.anim.startsWith('m3d:') && PT.muneco3d.pinta(ctx, s.id, 270, 440 + rn - lado * (PETS.arte.pies - 0.5), lado, t, s.anim.slice(4), etapa)) return;
     if (s.anim.startsWith('mun:') && PT.munecos.pinta(ctx, s.id, 270, 440 + r, r * PETS.arte.lienzo, t, s.anim.slice(4))) return;
     if (s.anim.startsWith('fig:') && PT.figuras.pinta(ctx, s.id, etapa, 270, 440 + r, r * PETS.arte.lienzo, t, s.anim.slice(4), e)) return;

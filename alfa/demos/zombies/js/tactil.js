@@ -21,8 +21,9 @@ function preparaTactil() {
   const m = document.createElement('div'); m.id = 'zb-mandos';
   m.innerHTML = '<div class="t-palanca" id="t-palanca"><i></i></div>' +
     BOTONES_TACTIL.map(([id, t]) => '<button type="button" class="t-boton" id="' + id + '">' + esc(tr(t)) + '</button>').join('') +
-    '<div id="t-gira"><b>' + esc(tr('Gira el móvil para jugar')) + '</b></div>';
+    '';
   document.body.appendChild(m);
+  const g = document.createElement('div'); g.id = 't-gira'; g.innerHTML = '<b>' + esc(tr('Gira el móvil para jugar')) + '</b>'; document.body.appendChild(g);   // encima de todo
   for (const b of BOTONES_TACTIL) botonTactil(...b);
   palancaTactil(el('t-palanca'));
   el('zb').addEventListener('pointerdown', tocaHud);   // el arma, la hotbar y el cartel de acción también se tocan
@@ -44,7 +45,9 @@ function palancaTactil(zona) {
   const bola = zona.querySelector('i'); let dedo = null, cx = 0, cy = 0;
   const pon = (x, y) => { bola.style.left = x + 'px'; bola.style.top = y + 'px'; };
   zona.addEventListener('pointerdown', (ev) => {
-    ev.preventDefault(); dedo = ev.pointerId; zona.setPointerCapture(dedo);
+    ev.preventDefault();
+    if (dedo !== null) return;                            // un segundo dedo no le quita la palanca al primero
+    dedo = ev.pointerId; zona.setPointerCapture(dedo);
     cx = ev.clientX; cy = ev.clientY; zona.style.setProperty('--cx', cx + 'px'); zona.style.setProperty('--cy', cy + 'px'); zona.classList.add('activa'); pon(cx, cy);
   });
   zona.addEventListener('pointermove', (ev) => {
@@ -75,6 +78,7 @@ function siguienteArmaTactil() {
 }
 // lo que el móvil cambia en la entrada: la palanca anda (y corre), y al atacar o empujar te giras solo hacia el fan más cercano
 function entradaTactil(J, ent) {
+  el('t-corre').classList.toggle('on', ENTRADA.abajo.has('ShiftLeft'));   // CORRER puesto o no (se quita al volver al menú o al salir de la página)
   if (TACTIL.mx || TACTIL.mz) { ent.mx = TACTIL.mx; ent.mz = TACTIL.mz; ent.apunta = Math.atan2(TACTIL.mx, TACTIL.mz); }
   if (TACTIL.corre) ent.corre = true;
   if (!ent.ataca && !ent.empuja) return ent;

@@ -172,7 +172,7 @@ button:disabled { opacity: 0.4; cursor: default; }
 
 /* ---------- el móvil (js/tactil.js): palanca, botones y el HUD más pequeño. Solo con body.tactil ---------- */
 #zb-mandos { display: none; }
-body.tactil #zb-mandos { display: block; position: fixed; inset: 0; z-index: 30; pointer-events: none; }
+body.tactil #zb-mandos { display: block; position: fixed; inset: 0; z-index: 29; pointer-events: none; }   /* debajo del HUD: la barra de abajo y el arma se tocan */
 body.tactil .zb-ayuda { display: none; }
 .t-palanca { position: absolute; left: 0; top: 30%; bottom: 0; width: 45%; pointer-events: auto; touch-action: none; }
 .t-palanca > i { position: fixed; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: rgba(230,238,240,.25); border: 2px solid rgba(230,238,240,.6); display: none; pointer-events: none; }
@@ -195,7 +195,7 @@ body.tactil .zb-ayuda { display: none; }
 #t-gasolina { right: calc(330px + env(safe-area-inset-right)); }
 #t-gira { display: none; }
 @media (orientation: portrait) {
-  body.tactil #t-gira { display: grid; place-items: center; position: fixed; inset: 0; background: rgba(6,8,12,.94); pointer-events: auto; text-align: center; padding: 24px; }
+  body.tactil #t-gira { display: grid; place-items: center; position: fixed; inset: 0; z-index: 60; background: rgba(6,8,12,.94); pointer-events: auto; text-align: center; padding: 24px; }
   body.tactil #t-gira b { font: 22px var(--rk-tit); font-weight: 400; color: var(--rk-naranja); }
 }
 /* el HUD encogido y en las esquinas, sin tapar los botones */

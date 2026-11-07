@@ -53,7 +53,7 @@ function pintaDibujos(raiz) {
 }
 
 function abreMochila() { VM.abierta = true; pintaMochila(); }
-function cierraMochila() { VM.abierta = false; VM.arrastra = null; el('zb-mochila').hidden = true; if (JUEGO.e) ZOM.cierraSitio(JUEGO.e); }
+function cierraMochila() { VM.abierta = false; sueltaSinMas(); el('zb-mochila').hidden = true; if (JUEGO.e) ZOM.cierraSitio(JUEGO.e); }
 // las habilidades: nivel y barra hacia el siguiente, con lo que mejora cada una
 const NOMBRE_HAB = { pelea: ['PELEA', 'Golpeas más fuerte y te cansas menos'], disparo: ['DISPARO', 'Las balas y los cartuchos hacen más daño'], sigilo: ['SIGILO', 'Agachado te ven menos y andando haces menos ruido'], carpinteria: ['CARPINTERÍA', 'Clavas tablas y desmontas más rápido'], cocina: ['COCINA', 'Lo que cocinas alimenta más'] };
 function htmlHabilidades(J) {
@@ -89,17 +89,17 @@ function enganchaMochila(v) {
   el('vm-cerrar').onclick = cierraMochila;
   v.querySelectorAll('.vm-pieza.mia').forEach((d) => {
     const desde = { bolsa: d.dataset.bolsa, uid: +d.dataset.uid };
-    d.oncontextmenu = (ev) => { ev.preventDefault(); const p = ZOM.pieza(e.jugador[desde.bolsa], desde.uid); if (p) usaOPon(desde, p.id); };
+    d.oncontextmenu = (ev) => { ev.preventDefault(); const p = !TACTIL.activo && ZOM.pieza(e.jugador[desde.bolsa], desde.uid); if (p) usaOPon(desde, p.id); };   // en el móvil lo hace la pulsación larga
     d.onpointerdown = (ev) => empiezaArrastre(ev, d, desde);
   });
   v.querySelectorAll('.vm-pieza.suelta').forEach((d) => {
-    d.oncontextmenu = (ev) => { ev.preventDefault(); const c = e.contenidos[e.abierto][+d.dataset.i]; if (c) usaOPon({ i: +d.dataset.i }, c.id); };
+    d.oncontextmenu = (ev) => { ev.preventDefault(); const c = !TACTIL.activo && e.contenidos[e.abierto][+d.dataset.i]; if (c) usaOPon({ i: +d.dataset.i }, c.id); };
     d.onpointerdown = (ev) => empiezaArrastre(ev, d, { i: +d.dataset.i });
   });
 }
 // arrastrar: la pieza sigue al ratón; al soltar se decide (mover, coger en ese hueco, dejar, o un clic si casi no se ha movido)
 function empiezaArrastre(ev, d, que) {
-  if (ev.button !== 0) return;
+  if (ev.button !== 0 || VM.arrastra) return;                    // un arrastre cada vez (en el móvil, el segundo dedo no empieza otro)
   ev.preventDefault();
   const r = d.getBoundingClientRect(), p = que.uid != null ? ZOM.pieza(JUEGO.e.jugador[que.bolsa], que.uid) : null;
   const A = VM.arrastra = { ...que, d, pid: ev.pointerId, dx: ev.clientX - r.left, dy: ev.clientY - r.top, x0: ev.clientX, y0: ev.clientY, ux: ev.clientX, uy: ev.clientY, gr: p ? p.gr : 0, id: p ? p.id : JUEGO.e.contenidos[JUEGO.e.abierto][que.i].id };
@@ -122,6 +122,7 @@ function sigueArrastre(ev) {
 }
 function giraArrastre() {
   const A = VM.arrastra; if (!A) return;
+  clearTimeout(A.larga);
   A.gr = (A.gr + 1) % 4;
   const tmp = document.createElement('div'); tmp.innerHTML = htmlPieza(A.id, 1, A.gr, 'vuela', ''); const nueva = tmp.firstChild;
   nueva.style.position = 'fixed'; nueva.style.left = A.d.style.left; nueva.style.top = A.d.style.top;
@@ -148,6 +149,9 @@ function rejillaBajo(ev) {
 }
 addEventListener('pointermove', sigueArrastre);
 addEventListener('pointerup', sueltaArrastre);
+// si el móvil corta el toque (una llamada, un gesto del sistema), la pieza vuelve a su sitio
+addEventListener('pointercancel', (ev) => { if (VM.arrastra && ev.pointerId === VM.arrastra.pid) { sueltaSinMas(); if (VM.abierta) pintaMochila(); } });
+function sueltaSinMas() { const A = VM.arrastra; VM.arrastra = null; if (A) { clearTimeout(A.larga); A.d.remove(); } }
 addEventListener('wheel', (ev) => { if (VM.arrastra) { ev.preventDefault(); giraArrastre(); } }, { passive: false });
 // cada fotograma: Tab abre o cierra; R gira lo que arrastras; si te alejas del sitio abierto, se cierra
 function vigilaMochila(e, cerca) {

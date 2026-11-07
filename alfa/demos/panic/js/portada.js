@@ -1,15 +1,21 @@
 // Fans of Panic · Portada: el título, la historia en dos líneas, las fichas y los corazones, y los botones JUGAR, GALERÍA y OPCIONES.
 'use strict';
 
+// un fondo de Yoshi a pantalla completa (recortado sin deformar); si no está, el color liso del juego
+function pintaFondo(nombre, W, H, col = COL.fondo) {
+  const im = sprite(nombre);
+  G.fillStyle = col; G.fillRect(0, 0, W, H);
+  if (!im) return false;
+  const esc = Math.max(W / im.width, H / im.height), iw = im.width * esc, ih = im.height * esc;
+  G.drawImage(im, (W - iw) / 2, (H - ih) / 2, iw, ih);
+  return true;
+}
+
 function pintaPortada(W, H) {
   const t = JUEGO.t;
-  G.fillStyle = COL.fondo; G.fillRect(0, 0, W, H);
-  // paneles grises de fondo que se van recortando solos
-  G.save(); G.globalAlpha = 0.25;
-  for (let i = 0; i < 6; i++) { const y = 60 + i * 110 + Math.sin(t + i) * 6; pintaPanel(20 + (i % 2) * 40, y, 200, 70, t); }
-  G.restore();
-  letra('FANS OF', W / 2, H * 0.17, 26, COL.blanco);
-  letra('PANIC', W / 2 + Math.sin(t * 3) * 2, H * 0.17 + 48, 70, COL.rosa, 'center', COL.tinta, 8);
+  pintaFondo('portada-fondo', W, H);
+  if (sprite('logo')) pintaSprite('logo', W / 2, H * 0.2 + Math.sin(t * 3) * 2, H * 0.24);
+  else { letra('FANS OF', W / 2, H * 0.17, 26, COL.blanco); letra('PANIC', W / 2 + Math.sin(t * 3) * 2, H * 0.17 + 48, 70, COL.rosa, 'center', COL.tinta, 8); }
   caja(W / 2 - 110, H * 0.17 + 92, 220, 22, 11, COL.oro, COL.tinta, 2);
   letra(tr('RECORTA · ESQUIVA · DESTAPA'), W / 2, H * 0.17 + 104, 13, COL.tinta, 'center', null, 0);
   parrafo(tr('Microblizz ha tapado las portadas de la revista PANIC! con paneles grises. Tú tienes el cúter.'), W / 2, H * 0.17 + 140, W - 50, 14, COL.blanco);

@@ -47,7 +47,7 @@ function preparaIlustracion(mundo, n, w, h) {
 
 // el panel gris de Cumplimiento de Microblizz: la textura de Yoshi (img/panel.png) repetida; mientras no esté, gris con rayas
 function pintaPanel(x, y, w, h, t) {
-  const tex = sprite('panel');
+  const tex = sprite('papel') || sprite('panel');   // el papel de Microblizz; si aún no está, el panel de metal
   if (tex) { G.save(); G.fillStyle = G.createPattern(tex, 'repeat'); G.translate(x, y); G.fillRect(0, 0, w, h); G.restore(); return; }
   G.fillStyle = COL.panel; G.fillRect(x, y, w, h);
   G.save(); G.beginPath(); G.rect(x, y, w, h); G.clip();

@@ -64,11 +64,11 @@ function cierraCorte() {
   J.puntos += pts;
   const px = TAB.x0 + (CUR.x + 0.5) * TAB.c, py = TAB.y0 + (CUR.y + 0.5) * TAB.c;
   if (sil > 0) textoSube(`+${pts}`, px, py - 10, COL.blanco, 16);
-  if (J.combo > 1) { textoSube(tr('COMBO x{n}', { n: J.combo }), px, py - 30, COL.oro, 20); SONIDO.combo(J.combo); }
+  if (J.combo > 1) { textoSube(tr('COMBO'), px, py - 30, COL.oro, 20, 'combo'); textoSube(`x${J.combo}`, px, py - 50, COL.oro, 18); SONIDO.combo(J.combo); }
   SONIDO.corte(Math.round(parte * 20)); vibra(parte > AJUSTES.corteGrande ? [30, 30, 60] : 20);
   confeti(px, py, Math.min(60, 6 + n / 10), MUNDOS[J.mundo].claro);
   temblor(Math.min(1, parte * 4));
-  if (parte >= AJUSTES.corteGrande) { camaraLenta(0.3); SONIDO.grande(); textoSube(tr('¡CORTE GRANDE!'), TAB.x0 + TAB.w / 2, TAB.y0 + TAB.h / 2, COL.rosa, 26); temblor(1); }
+  if (parte >= AJUSTES.corteGrande) { camaraLenta(0.3); SONIDO.grande(); textoSube(tr('¡CORTE GRANDE!'), TAB.x0 + TAB.w / 2, TAB.y0 + TAB.h / 2, COL.rosa, 26, 'corte'); temblor(1); }
   if (antes < 0.5 && J.pct >= 0.5) textoSube(tr('¡Mitad!'), TAB.x0 + TAB.w / 2, TAB.y0 + 40, COL.cian, 18);
   if (libresDelJefe(jx, jy) < J.tapadas0 * AJUSTES.atrapado) { atrapado(); return; }
   if (J.pct >= AJUSTES.objetivo) gana();
@@ -88,7 +88,7 @@ function atrapado() {
   for (let i = 0; i < TAB.cel.length; i++) TAB.cel[i] = DESTAPADA;
   JUEGO.pct = 1; JUEGO.puntos += 500;
   SONIDO.atrapado(); temblor(1.5); vibra([50, 40, 50, 40, 120]);
-  textoSube(tr('¡ATRAPADO!'), TAB.x0 + TAB.w / 2, TAB.y0 + TAB.h / 2, COL.oro, 30);
+  textoSube(tr('¡ATRAPADO!'), TAB.x0 + TAB.w / 2, TAB.y0 + TAB.h / 2, COL.oro, 30, 'atrapado');
   gana();
 }
 

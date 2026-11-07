@@ -16,7 +16,7 @@ function pintaTodo(W, H, dt) {
   if (jugando) {
     G.save(); aplicaTemblor();
     pintaTablero(J.t); pintaLocuras(J.t); pintaObjetos(J.t); pintaBecarios(J.t); pintaJefe(J.t); pintaCursor(J.t);
-    pintaBarridos(dt); pintaEfectos(); pintaLola(J.t);
+    pintaBarridos(dt); pintaMarco(); pintaEfectos(); pintaLola(J.t);
     G.restore();
     pintaMarcador(W, H, dt);
   }

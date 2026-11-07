@@ -11,7 +11,7 @@ function confeti(x, y, n, col) {
   }
 }
 
-function textoSube(txt, x, y, col = COL.oro, tam = 18) { FX.textos.push({ txt, x, y, col, tam, t: 1 }); }
+function textoSube(txt, x, y, col = COL.oro, tam = 18, spr = '') { FX.textos.push({ txt, x, y, col, tam, t: 1, spr }); }
 
 function temblor(f) { FX.temblor = Math.max(FX.temblor, f); }
 function paron(s) { FX.paron = Math.max(FX.paron, s); }
@@ -29,9 +29,10 @@ function avanzaEfectos(dt) {
 function aplicaTemblor() { if (FX.temblor > 0) G.translate((Math.random() - 0.5) * FX.temblor * 6, (Math.random() - 0.5) * FX.temblor * 6); }
 
 function pintaEfectos() {
-  for (const p of FX.parts) { G.globalAlpha = Math.min(1, p.t * 2); G.fillStyle = p.col; G.fillRect(p.x - p.r / 2, p.y - p.r / 2, p.r, p.r); }
+  const vir = sprite('viruta');
+  for (const p of FX.parts) { G.globalAlpha = Math.min(1, p.t * 2); if (vir) pintaSprite('viruta', p.x, p.y, p.r * 3, p.t * 6 + p.x); else { G.fillStyle = p.col; G.fillRect(p.x - p.r / 2, p.y - p.r / 2, p.r, p.r); } }
   G.globalAlpha = 1;
-  for (const s of FX.textos) { G.globalAlpha = Math.min(1, s.t * 2); letra(s.txt, s.x, s.y, s.tam, s.col); }
+  for (const s of FX.textos) { G.globalAlpha = Math.min(1, s.t * 2); if (s.spr) palabra(s.spr, s.txt, s.x, s.y, s.tam * 1.3, s.col); else letra(s.txt, s.x, s.y, s.tam, s.col); }
   G.globalAlpha = 1;
 }
 

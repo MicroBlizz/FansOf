@@ -46,9 +46,11 @@ const dentro = (r, px, py) => r && px >= r.x && px <= r.x + r.w && py >= r.y && 
 // Cada fotograma se vacía la lista (js/pantalla.js) y cada botón dibujado se apunta con su acción; un toque (js/entrada.js)
 // busca el último botón que esté debajo del dedo.
 const UI = []; UI.enter = null; UI.atras = null;
+const PLACA = { [COL.rosa]: 'boton', [COL.oro]: 'boton-oro', [COL.panel]: 'boton-gris', [COL.verde]: 'boton' };   // qué placa de Yoshi lleva cada color
 function botonUI(txt, x, y, w, h, accion, col = COL.rosa, colTxt = COL.tinta, tam = 16) {
-  caja(x, y + 4, w, h, 10, COL.tinta, null);
-  caja(x, y, w, h, 10, col, COL.tinta, 2.5);
+  const placa = sprite(PLACA[col] || 'boton-gris');
+  if (placa) G.drawImage(placa, x, y, w, h + 4);
+  else { caja(x, y + 4, w, h, 10, COL.tinta, null); caja(x, y, w, h, 10, col, COL.tinta, 2.5); }
   letra(txt, x + w / 2, y + h / 2 + 1, tam, colTxt, 'center', null, 0);
   UI.push({ x, y, w, h, accion });
   return { x, y, w, h };
@@ -82,4 +84,30 @@ function corazon(x, y, r, lleno = true) {
   G.bezierCurveTo(x - r * 1.4, y - r * 0.2, x - r * 0.7, y - r * 1.1, x, y - r * 0.4);
   G.bezierCurveTo(x + r * 0.7, y - r * 1.1, x + r * 1.4, y - r * 0.2, x, y + r);
   G.closePath(); G.fillStyle = lleno ? '#ff4d6d' : '#2a2235'; G.fill(); G.strokeStyle = COL.tinta; G.lineWidth = Math.max(1, r * 0.25); G.lineJoin = 'round'; G.stroke();
+}
+
+// ---------- con los dibujos de Yoshi (js/sprites.js) ----------
+// una palabra pintada (img/palabra-<nombre>.png); si no está, el texto con letra
+function palabra(nombre, txt, x, y, alto, col = COL.blanco) {
+  if (sprite('palabra-' + nombre)) { pintaSprite('palabra-' + nombre, x, y, alto); return; }
+  letra(txt, x, y, alto * 0.8, col);
+}
+
+// un número con los dígitos pintados (img/numeros.png: los diez en fila, del 0 al 9); si no está, con letra
+function numero(n, x, y, alto, col = COL.blanco, alin = 'center') {
+  const im = sprite('numeros'), s = String(n);
+  if (!im) { letra(s, x, y, alto * 0.9, col, alin); return; }
+  const dw = im.width / 10, w = alto * dw / im.height, x0 = alin === 'center' ? x - s.length * w / 2 : alin === 'right' ? x - s.length * w : x;
+  for (let i = 0; i < s.length; i++) { const d = +s[i]; if (d >= 0) G.drawImage(im, d * dw, 0, dw, im.height, x0 + i * w, y - alto / 2, w, alto); }
+}
+
+// una barra de progreso (img/barra-vacia.png y barra-llena.png); si no están, cajas
+function barra(x, y, w, h, parte, colLleno) {
+  if (sprite('barra-vacia') && sprite('barra-llena')) {
+    const v = sprite('barra-vacia'); G.drawImage(v, x, y, w, h);
+    G.save(); G.beginPath(); G.rect(x, y, w * Math.min(1, parte), h); G.clip(); G.drawImage(sprite('barra-llena'), x, y, w, h); G.restore();
+    return;
+  }
+  caja(x, y, w, h, h / 2, 'rgba(13,5,22,.8)', null);
+  caja(x + 1, y + 1, (w - 2) * Math.min(1, parte), h - 2, h / 2 - 1, colLleno, null);
 }

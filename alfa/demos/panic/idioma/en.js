@@ -7,7 +7,7 @@ IDIOMA.add({
   "SIGUIENTE": "NEXT", "REPETIR": "RETRY", "MAPA": "MAP", "AL MAPA": "TO THE MAP", "BORRAR": "DELETE", "SÍ": "YES", "NO": "NO",
   "MÚSICA": "MUSIC", "EFECTOS": "SOUND FX", "VIBRACIÓN": "VIBRATION", "CÓMO SE JUEGA": "HOW TO PLAY", "SALIR AL MAPA": "QUIT TO MAP", "EMPEZAR DE NUEVO": "START OVER",
   "Se borran las estrellas, las fichas y la galería de este navegador.": "Stars, tokens and the gallery in this browser will be deleted.",
-  "Récord: {n}": "Best: {n}", "Puntos: {n}": "Score: {n}", "NIVEL {n}": "LEVEL {n}", "COMBO x{n}": "COMBO x{n}", "TIJERA {n}": "SCISSORS {n}", "ESCUDO": "SHIELD",
+  "Récord: {n}": "Best: {n}", "Puntos: {n}": "Score: {n}", "NIVEL {n}": "LEVEL {n}", "COMBO x{n}": "COMBO x{n}", "COMBO": "COMBO", "NIVEL": "LEVEL", "TIJERA {n}": "SCISSORS {n}", "ESCUDO": "SHIELD",
   "CUMPLIMIENTO · MICROBLIZZ": "COMPLIANCE · MICROBLIZZ",
   "Destapa el {n} % para ganar": "Uncover {n}% to win",
   "Desliza el dedo para mover el cúter": "Swipe to move the cutter",

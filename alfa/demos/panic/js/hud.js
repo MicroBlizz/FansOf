@@ -10,9 +10,9 @@ function pintaMarcador(W, H, dt) {
   for (let i = 0; i < 3; i++) corazon(16 + i * 20, 20, 7, i < J.vidasNivel);          // corazones arriba a la izquierda
   botonUI('II', W - 36, 5, 30, 30, abreOpciones, COL.panel, COL.blanco, 14);       // pausa arriba a la derecha
   const urge = J.tiempo < 10;                                                        // y el resto, por el centro
-  letra(String(Math.ceil(J.tiempo)), W / 2, 20, urge ? 26 + Math.sin(J.t * 20) * 3 : 24, urge ? '#ff6b6b' : COL.blanco);
+  numero(Math.ceil(J.tiempo), W / 2, 20, urge ? 26 + Math.sin(J.t * 20) * 3 : 24, urge ? '#ff6b6b' : COL.blanco);
   letra(`${tr(M.nombre)} ${J.n}`, W / 2 - 36, 20, 11, M.claro, 'right');
-  letra(String(J.puntos), W / 2 + 36, 20, 14, COL.oro, 'left');
+  numero(J.puntos, W / 2 + 36, 20, 14, COL.oro, 'left');
   pintaBarraPct(W, M);
   pintaFlotante(W, H, M);
   if (J.tInicio > 0) pintaSalida(W, H);
@@ -21,8 +21,7 @@ function pintaMarcador(W, H, dt) {
 // la barra del porcentaje, flotando justo bajo la franja de arriba
 function pintaBarraPct(W, M) {
   const J = JUEGO, bx = 70, bw = W - 140, by = TAB.y0 + 6, lat = J.pct >= 0.7 ? Math.sin(J.t * 10) : 0;
-  caja(bx, by - lat, bw, 11 + lat * 2, 5, 'rgba(13,5,22,.8)', null);
-  caja(bx + 1, by + 1 - lat, (bw - 2) * Math.min(1, J.pct), 9 + lat * 2, 4, J.pct >= AJUSTES.objetivo ? COL.oro : M.claro, null);
+  barra(bx, by - lat, bw, 11 + lat * 2, J.pct, J.pct >= AJUSTES.objetivo ? COL.oro : M.claro);
   const ox = bx + bw * AJUSTES.objetivo; G.fillStyle = COL.blanco; G.fillRect(ox - 1, by - 3, 2, 17);
   letra(`${Math.floor(J.pct * 100)} %`, bx + bw / 2, by + 6, 10, COL.blanco, 'center', COL.tinta, 2.5);
 }
@@ -60,8 +59,8 @@ function pintaSalida(W, H) {
   const J = JUEGO, M = MUNDOS[J.mundo];
   G.fillStyle = 'rgba(0,0,0,.45)'; G.fillRect(0, TAB.y0, W, TAB.h);
   const cy = TAB.y0 + TAB.h / 2;
-  letra(tr(M.nombre), W / 2, cy - 40, 30, M.claro);
-  letra(tr('NIVEL {n}', { n: J.n }), W / 2, cy - 8, 22, COL.blanco);
+  palabra(J.mundo, tr(M.nombre), W / 2, cy - 44, 38, M.claro);
+  palabra('nivel', tr('NIVEL'), W / 2 - 24, cy - 4, 28); numero(J.n, W / 2 + 30, cy - 4, 24);
   if (J.nivel.final) letra(tr('¡Jefe final!'), W / 2, cy + 20, 16, COL.rosa);
-  letra(J.tInicio > 0.9 ? '3' : J.tInicio > 0.6 ? '2' : J.tInicio > 0.3 ? '1' : tr('¡YA!'), W / 2, cy + 60, 40, COL.oro);
+  if (J.tInicio > 0.3) numero(J.tInicio > 0.9 ? 3 : J.tInicio > 0.6 ? 2 : 1, W / 2, cy + 60, 44, COL.oro); else letra(tr('¡YA!'), W / 2, cy + 60, 40, COL.oro);
 }

@@ -94,16 +94,46 @@ function pintaTablero(t) {
     }
   }
   G.clip(); G.drawImage(ILUS.lienzo, x0, y0, w, h); G.restore();
+  pintaRasgado();
   pintaTrazo(t);
+}
+
+// el borde rasgado del papel: la tira de Yoshi (img/rasgado.png) sobre cada casilla destapada del interior que tenga papel al lado,
+// girada para que las fibras apunten al papel. Sin la tira no se pinta nada (el corte queda recto).
+function pintaRasgado() {
+  const im = sprite('rasgado'); if (!im) return;
+  const { x0, y0, c } = TAB, lados = [[1, 0, 0], [0, 1, Math.PI / 2], [-1, 0, Math.PI], [0, -1, -Math.PI / 2]];
+  let n = 0;
+  for (let y = 1; y < TAB.filas - 1 && n < 900; y++) for (let x = 1; x < TAB.cols - 1; x++) {
+    if (TAB.cel[idx(x, y)] !== DESTAPADA) continue;
+    for (const [dx, dy, rot] of lados) {
+      if (TAB.cel[idx(x + dx, y + dy)] !== TAPADA) continue;
+      G.save(); G.translate(x0 + (x + 0.5) * c, y0 + (y + 0.5) * c); G.rotate(rot);
+      G.drawImage(im, 0, -c * 0.6, c * 1.1, c * 1.2); G.restore(); n++;
+    }
+  }
+}
+
+// el marco de revista alrededor del panel (img/marco.png, con el centro transparente); sin él no hay marco
+function pintaMarco() {
+  const im = sprite('marco'); if (!im) return;
+  G.drawImage(im, TAB.x0 - 4, TAB.y0 - 4, TAB.w + 8, TAB.h + 8);
 }
 
 // el trazo que vas cortando: una línea viva que cambia de color según el peligro
 function pintaTrazo(t) {
   const { x0, y0, c } = TAB, J = JUEGO;
-  const col = J.mechaT > 0 ? '#ff3b3b' : J.peligro ? COL.oro : COL.blanco;
-  G.fillStyle = col; G.shadowColor = col; G.shadowBlur = 6;
-  for (let i = 0; i < TAB.cel.length; i++) if (TAB.cel[i] === TRAZO) { const x = i % TAB.cols, y = (i - x) / TAB.cols; G.fillRect(x0 + x * c + 1, y0 + y * c + 1, c - 2, c - 2); }
-  G.shadowBlur = 0;
+  const col = J.mechaT > 0 ? '#ff3b3b' : J.peligro ? COL.oro : COL.blanco, linea = sprite('corte');
+  G.fillStyle = col; G.shadowColor = col; G.shadowBlur = linea ? 0 : 6;
+  if (J.peligro || J.mechaT > 0) G.globalAlpha = 0.85;
+  for (let i = 0; i < TAB.cel.length; i++) {
+    if (TAB.cel[i] !== TRAZO) continue;
+    const x = i % TAB.cols, y = (i - x) / TAB.cols;
+    if (!linea) { G.fillRect(x0 + x * c + 1, y0 + y * c + 1, c - 2, c - 2); continue; }
+    const vert = celda(x, y - 1) === TRAZO || celda(x, y + 1) === TRAZO;   // la línea de corte punteada de Yoshi, en horizontal o en vertical
+    G.save(); G.translate(x0 + (x + 0.5) * c, y0 + (y + 0.5) * c); if (vert) G.rotate(Math.PI / 2); G.drawImage(linea, -c / 2, -c / 2, c, c); G.restore();
+  }
+  G.shadowBlur = 0; G.globalAlpha = 1;
   if (J.mechaT > 0 && J.mecha) { const m = J.mecha; circulo(x0 + (m.x + 0.5) * c, y0 + (m.y + 0.5) * c, c * 0.9 + Math.sin(t * 40) * 1.5, '#ffb347', COL.tinta, 1.5); }
 }
 

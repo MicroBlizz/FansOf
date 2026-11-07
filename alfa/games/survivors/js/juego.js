@@ -36,6 +36,7 @@ function nuevaPartida() {
   };
   sigId = 1;
   MEC.iniciar();
+  P.xpSig = MEC.xpNivel(1);
   chatDecir('start');
   aviso('¡SOBREVIVE 10 MINUTOS!', tr('Microblizz manda a toda su plantilla a por {l}', { l: CFG.cards[P.lider].name }));
 }
@@ -79,9 +80,9 @@ function masCercano(x, y, max, saltar) {
 /* ---------- los enemigos ---------- */
 function crearEnemigo(tipo, x, y, extra = {}) {
   const d = ENEMIGOS[tipo], min = Math.floor(P.t / 60);
-  const vida = extra.vida || d.vida * vidaPorMinuto(min) * (extra.shinyMul || 1);
+  const vida = extra.vida || d.vida * MEC.vidaMin(min) * (extra.shinyMul || 1);
   const e = {
-    id: sigId++, tipo, d, spr: extra.spr || d.spr, x, y, vida, vidaMax: vida, vel: (extra.vel || d.vel) * rand(0.92, 1.08), dano: extra.dano || d.dano * (1 + min * 0.05),
+    id: sigId++, tipo, d, spr: extra.spr || d.spr, x, y, vida, vidaMax: vida, vel: (extra.vel || d.vel * MEC.velMin(min)) * rand(0.92, 1.08), dano: extra.dano || d.dano * (1 + min * 0.05),
     r: extra.r || d.r, escala: extra.escala || 1, face: 1, walk: Math.random() * 6, hitT: 0, kbx: 0, kby: 0, edad: 0, tiroT: rand(1, 3), curaT: rand(0.5, 2),
     elite: !!extra.elite, shiny: !!extra.shiny, jefe: !!extra.jefe, xp: extra.xp !== undefined ? extra.xp : d.xp, vacaT: 0, auraT: 0, muerto: false, congT: 0,
   };
@@ -112,7 +113,7 @@ function oleadas(dt) {
     P.oleadaT = O.cada / MEC.ritmo();
     const p = puntoFuera();
     const brillo = tocaShiny() ? Math.floor(Math.random() * O.grupo) : -1;   // cuál del grupo sale shiny
-    for (let i = 0; i < O.grupo && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(MEC.tipoQueSale(elegirPeso(O.mezcla)), p.x + rand(-30, 30), p.y + rand(-30, 30), i === brillo ? marcaShiny() : {});
+    for (let i = 0, n = MEC.grupo(O.grupo, Math.floor(P.t / 60)); i < n && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(MEC.tipoQueSale(elegirPeso(O.mezcla)), p.x + rand(-30, 30), p.y + rand(-30, 30), i === brillo ? marcaShiny() : {});
   }
   // un mini jefe cada SV.apariciones.miniJefeCada segundos (no si ya viene el jefe final)
   const A = SV.apariciones, tMini = A.miniJefeCada * (P.miniJefe + 1);
@@ -121,7 +122,7 @@ function oleadas(dt) {
     aviso(m.aviso, 'Suelta un Cofre de botín (sin microtransacciones)'); play('horn');
     const p = puntoFuera(), d = ENEMIGOS[m.enemigo];
     const k = MEC.escalaJefe();
-    crearEnemigo(m.enemigo, p.x, p.y, { elite: true, vida: m.vida * k, escala: m.escala, r: d.r * m.escala * 0.75, vel: d.vel * 0.9, dano: d.dano * 2 * k, xp: 40 });
+    crearEnemigo(m.enemigo, p.x, p.y, { elite: true, vida: m.vida * k, escala: m.escala, r: d.r * m.escala * 0.75, vel: d.vel * MEC.velJefe(), dano: d.dano * 2 * k, xp: 40 });
   }
   // los momentos especiales
   const ev = EVENTOS[P.evento];
@@ -163,7 +164,7 @@ function moverEnemigos(dt) {
     let v = e.vel;
     if (e.lentoT > 0) { e.lentoT -= dt; v *= 0.5; }   // frenado por un arma
     if (e.jefe && e.vida < e.vidaMax * JEFE.furia) v *= 1.35;
-    if (e.jefe && dd > 380) v *= 2.6;   // si te alejas mucho, SurvivalBot corre a por ti
+    v *= MEC.persigue(e, dd);   // si te alejas mucho, SurvivalBot (y con las mecánicas nuevas, los mini jefes) corre a por ti
     const T = e.d.tirador;
     if (T && !e.elite) {   // los tiradores se quedan a distancia y disparan
       if (dd < T.dist) v = dd < T.dist * 0.7 ? -v * 0.5 : 0;
@@ -298,7 +299,7 @@ function recoger(dt) {
 }
 function ganarXp(v) {
   P.xp += v * EFECTO.xp(nvP('diploma')) * (1 + P.mods.xp); play('blip');
-  while (P.xp >= P.xpSig) { P.xp -= P.xpSig; P.nivel++; P.xpSig = SV.xpNivel(P.nivel); P.pendientes++; }
+  while (P.xp >= P.xpSig) { P.xp -= P.xpSig; P.nivel++; P.xpSig = MEC.xpNivel(P.nivel); P.pendientes++; }
 }
 /* ---------- subir de nivel: 3 opciones ---------- */
 function puedeMejorar() {

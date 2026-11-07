@@ -67,6 +67,14 @@ const SVR = (() => {
     const p = cerca ? antes + dt / K.abrir : antes - K.olvida * dt / K.abrir;
     return Math.max(0, Math.min(1, p));
   }
-  return Object.freeze({ pareja, evolucionesListas, aplicarEvolucion, esperaChoque, tamChoque, escalaJefe, ritmoOleada,
+  // lo que cuesta pasar del nivel n al siguiente
+  const xpNivel = (X, n) => Math.round(X.base + X.paso * (n - 1) + X.extra * Math.max(0, n - X.desde));
+  // cuánto se multiplica la vida de los enemigos en el minuto min
+  const vidaPorMinuto = (V, min) => 1 + V.lineal * min + V.cuadrado * min * min;
+  // cuántos trae un grupo de las oleadas en el minuto min (al menos los de base)
+  const grupoPorMinuto = (D, base, min) => Math.max(base, Math.round(base * (1 + D.grupoPorMinuto * min)));
+  // cuánto más rápidos van los enemigos en el minuto min
+  const velPorMinuto = (D, min) => 1 + D.velPorMinuto * min;
+  return Object.freeze({ xpNivel, vidaPorMinuto, grupoPorMinuto, velPorMinuto, pareja, evolucionesListas, aplicarEvolucion, esperaChoque, tamChoque, escalaJefe, ritmoOleada,
     distanciaApuntar, puedeCurar, caben, sorteaSitio, sorteaPoder, bebeFuente, progresoCandado });
 })();

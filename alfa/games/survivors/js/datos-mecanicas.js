@@ -24,10 +24,22 @@ const MECANICAS = Object.freeze({
   // (sustituyen a las dos primeras de OLEADAS en datos.js) y el primer cerco, antes
   inicio: Object.freeze({
     oleadas: Object.freeze([
-      Object.freeze({ cada: 1, grupo: 3, mezcla: Object.freeze({ becario: 1 }) }),
-      Object.freeze({ cada: 1, grupo: 4, mezcla: Object.freeze({ becario: 6, starbot: 1 }) }),
+      // variados y rápidos desde el principio (Daniel, 7-11-2026): Descarga99 que corren y StarBot que disparan
+      Object.freeze({ cada: 1, grupo: 3, mezcla: Object.freeze({ becario: 5, descargabot: 4, starbot: 2 }) }),
+      Object.freeze({ cada: 1, grupo: 4, mezcla: Object.freeze({ becario: 4, descargabot: 4, starbot: 2, cajabotin: 1 }) }),
     ]),
     primerCerco: 45,
+  }),
+  // Dificultad (Daniel, 7-11-2026: «en el minuto 5 ya lo tenía todo y los enemigos ni llegan a mí»):
+  // · xp: lo que cuesta cada nivel = base + paso × (n − 1) + extra × (niveles por encima de desde); unas 2,5 veces lo de antes
+  // · vida: los enemigos tienen vida × (1 + lineal × min + cuadrado × min²): ×2,5 en el minuto 5 y ×5 en el 10 (antes ×1,65 y ×2,6)
+  // · vel: +3 % de velocidad por minuto · grupo: cada grupo de las oleadas trae un 15 % más por minuto
+  // · jefes: los mini jefes van más rápido, corren si te alejas y embisten más a menudo
+  dificultad: Object.freeze({
+    xp: Object.freeze({ base: 10, paso: 14, extra: 10, desde: 12 }),
+    vida: Object.freeze({ lineal: 0.2, cuadrado: 0.02 }),
+    velPorMinuto: 0.03, grupoPorMinuto: 0.15,
+    jefes: Object.freeze({ vel: 1.4, corre: 2.2, distCorre: 300, embestidaCada: 3.5 }),
   }),
   // Cambio de cartas: cuántas veces por partida puedes volver a sacar las 3 cartas de subir de nivel
   cambiosCartas: 1,

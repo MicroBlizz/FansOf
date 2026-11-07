@@ -66,7 +66,7 @@ const MEC = (() => {
     const J = M.jefes;
     for (const e of P.enemigos) {
       if (!e.elite || e.muerto) continue;
-      const E = e.emb || (e.emb = { fase: 'espera', t: J.embestidaCada });
+      const E = e.emb || (e.emb = { fase: 'espera', t: D.jefes.embestidaCada });
       E.t -= dt;
       if (E.fase === 'espera' && E.t <= 0) {
         const dx = P.jug.x - e.x, dy = P.jug.y - e.y, d = Math.hypot(dx, dy) || 1;
@@ -75,7 +75,7 @@ const MEC = (() => {
       } else if (E.fase === 'aviso' && E.t <= 0) Object.assign(E, { fase: 'carga', t: J.embestidaDura });
       else if (E.fase === 'carga') {
         e.x += E.dx * J.embestidaVel * dt; e.y += E.dy * J.embestidaVel * dt;
-        if (E.t <= 0) Object.assign(E, { fase: 'espera', t: J.embestidaCada });
+        if (E.t <= 0) Object.assign(E, { fase: 'espera', t: D.jefes.embestidaCada });
       }
     }
   }
@@ -128,6 +128,20 @@ const MEC = (() => {
     else if (cerca) USOS[s.tipo](s, dt);
   }
 
+  /* ---------- dificultad ---------- */
+  const D = M.dificultad;
+  const xpNivel = n => (st() ? SVR.xpNivel(D.xp, n) : SV.xpNivel(n));
+  const vidaMin = min => (st() ? SVR.vidaPorMinuto(D.vida, min) : vidaPorMinuto(min));
+  const velMin = min => (st() ? SVR.velPorMinuto(D, min) : 1);
+  const grupo = (base, min) => (st() ? SVR.grupoPorMinuto(D, base, min) : base);
+  const velJefe = () => (st() ? D.jefes.vel : 0.9);
+  // lo que se multiplica la velocidad de un enemigo que está a dd del jugador: SurvivalBot y (con el flag) los mini jefes corren si te alejas
+  function persigue(e, dd) {
+    if (e.jefe && dd > 380) return 2.6;
+    if (st() && e.elite && dd > D.jefes.distCorre) return D.jefes.corre;
+    return 1;
+  }
+
   /* ---------- un principio con más ritmo ---------- */
   // la oleada del minuto `min` (la de M.inicio si la hay, si no la de OLEADAS)
   const oleada = min => (st() && M.inicio.oleadas[min]) || OLEADAS[Math.min(OLEADAS.length - 1, min)];
@@ -144,5 +158,5 @@ const MEC = (() => {
     choque(dt); embestidas(dt); sitios(dt);
   }
   return Object.freeze({ iniciar, paso, cifras, evolucionada, cartasEvolucion, evolucionar, pista, buff, distancia, tipoQueSale, puedeCurar,
-    ritmo, escalaJefe, oleada, tEvento, cambiosQuedan, gastaCambio, activas: () => !!st(), sitiosVivos: () => (st() ? st().sitios : []), buffs: () => (st() ? st().buffs : {}) });
+    ritmo, escalaJefe, xpNivel, vidaMin, velMin, grupo, velJefe, persigue, oleada, tEvento, cambiosQuedan, gastaCambio, activas: () => !!st(), sitiosVivos: () => (st() ? st().sitios : []), buffs: () => (st() ? st().buffs : {}) });
 })();

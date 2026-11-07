@@ -1,8 +1,8 @@
 {
- "build": 1065,
- "hash": "791d3ba",
- "fecha": "2026-11-07T10:53:17Z",
- "mensaje": "Pets: el prototipo con sus escenas reales se abre con el flag pets-prototipo (además del modo dev)",
+ "build": 1066,
+ "hash": "654e829",
+ "fecha": "2026-11-07T10:56:24Z",
+ "mensaje": "Rumble v2: base de los Animales repintada (B)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

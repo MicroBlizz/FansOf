@@ -103,6 +103,7 @@ IDIOMA.add({
   // el tipo de cada juego
   "Juego": "Game",
   "Prototipo": "Prototype",
+  "Recortar": "Cutting", "Frenético": "Frantic",
   "Boceto": "Sketch",
   "Prueba": "Test",
   "Demo": "Demo",

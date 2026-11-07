@@ -1,8 +1,8 @@
 {
- "build": 1100,
- "hash": "db47967",
- "fecha": "2026-11-07T17:04:07Z",
- "mensaje": "Rumble arte pintado: CajaBotín animado (lados, y de espaldas quieto y andar)",
+ "build": 1101,
+ "hash": "e784efa",
+ "fecha": "2026-11-07T17:08:35Z",
+ "mensaje": "Fans of Panic 0.1.0: primer prototipo jugable (demos/panic)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

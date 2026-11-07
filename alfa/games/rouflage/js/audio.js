@@ -67,6 +67,7 @@ SONIDO_ARCHIVO.registra('pincel', 'snd/pincel.mp3?v=' + NUCLEO.version);
 SONIDO_ARCHIVO.registra('gota', 'snd/gota.mp3?v=' + NUCLEO.version);
 SONIDO_ARCHIVO.registra('cubo', 'snd/cubo.mp3?v=' + NUCLEO.version);
 SONIDO_ARCHIVO.registra('salpica', 'snd/salpica.mp3?v=' + NUCLEO.version);
+SONIDO_ARCHIVO.registra('disparo', 'snd/disparo.mp3?v=' + NUCLEO.version);
 
 // efectos propios: pintar, coger un color, congelarse, silbar, pasos, la linterna, la persiana, el sello de despido y los poderes
 Object.assign(SFX, {
@@ -92,7 +93,12 @@ Object.assign(SFX, {
   congela: () => { [1318, 1568, 2093].forEach((f, i) => tone(f, f, 0.16, 'sine', 0.07, i * 0.05)); noise(0.2, 0.05, 6000, 'highpass'); },
   descongela: () => { noise(0.12, 0.08, 3600, 'highpass'); [1568, 1318, 988].forEach((f, i) => tone(f, f * 0.9, 0.09, 'sine', 0.05, i * 0.045)); },
   silbido: (v = 1, out = master) => { tonoEn(out, 1500, 2300, 0.16, 'sine', 0.13 * v); tonoEn(out, 2300, 1700, 0.22, 'sine', 0.12 * v, 0.17); },
-  disparo: (v = 1, out = master) => { ruidoEn(out, 0.08, 0.22 * v, 1800, 'bandpass'); tonoEn(out, 520, 150, 0.14, 'square', 0.07 * v); },
+  // el disparo del becario, desde donde dispara (snd/disparo.mp3: el «pfum» de una pistola de paintball de Yoshi con este «piu» encima, la A
+  // que eligió Daniel el 7-11-2026); si no ha llegado, el de código
+  disparo: (v = 1, out = master) => {
+    if (SONIDO_ARCHIVO.toca('disparo', { vol: 0.8 * v, salida: out })) return;
+    ruidoEn(out, 0.08, 0.22 * v, 1800, 'bandpass'); tonoEn(out, 520, 150, 0.14, 'square', 0.07 * v);
+  },
   // un becario anda: zapato de oficina sobre moqueta
   paso: (v = 1, out = master) => { ruidoEn(out, 0.06, 0.09 * v, 380 + Math.random() * 120); tonoEn(out, 150 + Math.random() * 30, 70, 0.05, 'sine', 0.06 * v); },
   // la linterna barre la sala

@@ -1,8 +1,8 @@
 {
- "build": 1089,
- "hash": "5771519",
- "fecha": "2026-11-07T13:26:15Z",
- "mensaje": "Rumble v2: todas las cartas de los Animales, de frente",
+ "build": 1090,
+ "hash": "97a256a",
+ "fecha": "2026-11-07T13:35:40Z",
+ "mensaje": "Rouflage 0.2.75: la pistola del becario suena a paintball con su «piu» (la A de Daniel); core: SONIDO_ARCHIVO.toca acepta salida para sonar desde un punto (ADR 077)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

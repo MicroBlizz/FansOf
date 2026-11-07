@@ -37,7 +37,7 @@ IDIOMA.add({
   // mundos
   "PLAYA": "BEACH", "OFICINA": "OFFICE", "PISCINA": "POOL", "GIMNASIO": "GYM", "FANTASÍA": "FANTASY", "ESPACIO": "SPACE",
   "La socorrista": "The lifeguard", "La ejecutiva": "The executive", "La DJ": "The DJ", "La entrenadora": "The trainer", "La hechicera": "The sorceress", "La capitana": "The captain",
-  "Microblizz ha comprado la playa para que sus ejecutivos veraneen gratis. Marina sigue vigilando el agua… tapada por un panel gris.": "Microblizz bought the beach so its executives can holiday for free. Marina keeps watching the water… behind a grey panel.",
+  "Microblizz ha comprado la playa para que sus ejecutivos veraneen gratis. Coral sigue vigilando el agua… tapada por un panel gris.": "Microblizz bought the beach so its executives can holiday for free. Coral keeps watching the water… behind a grey panel.",
   "Nora dirigía la revista. Ahora dirige la planta 12 de la Torre de Microblizz, donde la fotocopiadora escupe hojas de recortes.": "Nora used to run the magazine. Now she runs floor 12 of the Microblizz Tower, where the photocopier spits out cutback memos.",
   "La fiesta de la piscina la paga Microblizz, así que Dalia solo puede pinchar el jingle de la empresa. Un flamenco hinchable rebota entre los paneles.": "Microblizz pays for the pool party, so Dalia can only play the company jingle. An inflatable flamingo bounces between the panels.",
   "Microblizz obliga a los becarios a hacer cardio para ahorrar en sillas. Kira los entrena, y una mancuerna gigante embiste todo lo que se mueve.": "Microblizz makes the interns do cardio to save on chairs. Kira trains them, and a giant dumbbell charges at anything that moves.",
@@ -45,7 +45,7 @@ IDIOMA.add({
   "Microblizz ha lanzado su sede al espacio para no pagar impuestos. Vega pilota la nave; el Kraken Estelar barre los paneles con tentáculos de energía.": "Microblizz launched its HQ into space to dodge taxes. Vega flies the ship; the Star Kraken sweeps the panels with energy tentacles.",
   // Lola
   "El panel decía «Contenido pendiente de revisión». Lo revisaba un cangrejo.": "The panel said “Content pending review”. A crab was reviewing it.",
-  "Marina dice que el cangrejo lleva corbata desde que lo ascendieron.": "Marina says the crab has worn a tie since it got promoted.",
+  "Coral dice que el cangrejo lleva corbata desde que lo ascendieron.": "Coral says the crab has worn a tie since it got promoted.",
   "Microblizz ha puesto una sombrilla con su logo. Sin sombra: la sombra es de pago.": "Microblizz put up a parasol with its logo. No shade: shade is a paid feature.",
   "Los becarios-robot se oxidan con el agua. Les han dado chalecos salvavidas de cartón.": "The robot interns rust in water. They've been given cardboard life jackets.",
   "Playa libre. El Cangrejo Rey ha pedido el traslado a la Oficina.": "Beach freed. The Crab King has asked for a transfer to the Office.",

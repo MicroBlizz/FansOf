@@ -1,8 +1,8 @@
 {
- "build": 1101,
- "hash": "e784efa",
- "fecha": "2026-11-07T17:08:35Z",
- "mensaje": "Fans of Panic 0.1.0: primer prototipo jugable (demos/panic)",
+ "build": 1102,
+ "hash": "a653874",
+ "fecha": "2026-11-07T17:19:00Z",
+ "mensaje": "Panic: la socorrista pasa a llamarse Coral",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

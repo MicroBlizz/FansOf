@@ -8,9 +8,9 @@
 
 const MUNDOS = {
   playa: {
-    nombre: 'PLAYA', color: '#1fb6c9', claro: '#8fe9f5', fondo: '#07323b', chica: 'Marina', oficio: 'La socorrista',
+    nombre: 'PLAYA', color: '#1fb6c9', claro: '#8fe9f5', fondo: '#07323b', chica: 'Coral', oficio: 'La socorrista',
     jefe: { nombre: 'Cangrejo Rey', tipo: 'cangrejo', color: '#ff6b4a' },
-    intro: 'Microblizz ha comprado la playa para que sus ejecutivos veraneen gratis. Marina sigue vigilando el agua… tapada por un panel gris.',
+    intro: 'Microblizz ha comprado la playa para que sus ejecutivos veraneen gratis. Coral sigue vigilando el agua… tapada por un panel gris.',
     niveles: [
       { jefe: 14, becarios: 1, tiempo: 90, tam: 10 },
       { jefe: 17, becarios: 1, tiempo: 80, tam: 10 },
@@ -84,7 +84,7 @@ const ORDEN_MUNDOS = ['playa', 'oficina', 'piscina', 'gimnasio', 'fantasia', 'es
 
 // las frases de Lola al acabar: cada nivel enseña un trozo de la historia del mundo
 const CHARLA = {
-  playa: ['El panel decía «Contenido pendiente de revisión». Lo revisaba un cangrejo.', 'Marina dice que el cangrejo lleva corbata desde que lo ascendieron.', 'Microblizz ha puesto una sombrilla con su logo. Sin sombra: la sombra es de pago.', 'Los becarios-robot se oxidan con el agua. Les han dado chalecos salvavidas de cartón.', 'Playa libre. El Cangrejo Rey ha pedido el traslado a la Oficina.'],
+  playa: ['El panel decía «Contenido pendiente de revisión». Lo revisaba un cangrejo.', 'Coral dice que el cangrejo lleva corbata desde que lo ascendieron.', 'Microblizz ha puesto una sombrilla con su logo. Sin sombra: la sombra es de pago.', 'Los becarios-robot se oxidan con el agua. Les han dado chalecos salvavidas de cartón.', 'Playa libre. El Cangrejo Rey ha pedido el traslado a la Oficina.'],
   oficina: ['La planta 12 no tiene ventanas. Las ventanas eran un gasto.', 'La fotocopiadora escupe el mismo informe desde 2019.', 'Nora guarda las portadas originales en el cajón de los clips.', 'Hay una reunión que empezó el lunes y nadie se atreve a cerrar.', 'Fotocopiadora apagada. El CEO ha pedido que se vuelva a encender el lunes.'],
   piscina: ['El jingle de Microblizz suena a 140 pulsaciones por minuto. Es ilegal en tres países.', 'El flamenco lo compró el CEO con la tarjeta de empresa.', 'Dalia pincha de espaldas a los paneles para no verlos.', 'Las pelotas de playa llevan un anuncio de cada lado.', 'Fiesta liberada. El flamenco ha salido volando. No se sabe hacia dónde.'],
   gimnasio: ['Las cintas de correr generan la electricidad de la Torre.', 'Kira cuenta las flexiones de los becarios. Los becarios no tienen brazos.', 'La mancuerna pesa lo mismo que las deudas de Microblizz.', 'Hay una báscula que cobra por pesarte.', 'Gimnasio cerrado por fin. Los becarios han pedido una silla.'],

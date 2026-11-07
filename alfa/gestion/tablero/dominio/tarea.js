@@ -1,0 +1,45 @@
+// Fans Of · /gestion · TABLERO · dominio · TAREA: una tarea del tablero, inmutable. Nace siempre válida (fábrica `desdeJson`, que devuelve un resultado)
+// y sabe a qué columnas puede pasar quien se lo pida (`mueve`). Las mismas reglas las aplica el servidor (_tarea_mover en servidor/117-tablero.sql);
+// aquí sirven para avisar antes de ir a la red. Sin reloj, red ni pantalla.
+'use strict';
+TABLERO.Tarea = class Tarea {
+  #d;
+
+  constructor(datos) { this.#d = Object.freeze({ ...datos }); Object.freeze(this); }
+
+  // Resultado: la tarea, o 'tarea-invalida' (sin id, título, estado o prioridad que existan)
+  static desdeJson(j) {
+    const valida = j && Number.isInteger(j.id) && typeof j.titulo === 'string' && j.titulo !== ''
+      && TABLERO.esEstado(j.estado) && Object.hasOwn(TABLERO.PRIORIDADES, j.prioridad);
+    if (!valida) return TABLERO.error('tarea-invalida', { id: j && j.id });
+    return TABLERO.ok(new Tarea({ orden: 0, juego: 'general', responsable: null, ...j }));
+  }
+
+  get id() { return this.#d.id; }
+  get titulo() { return this.#d.titulo; }
+  get estado() { return this.#d.estado; }
+  get juego() { return this.#d.juego; }
+  get responsable() { return this.#d.responsable; }
+  get prioridad() { return this.#d.prioridad; }
+  get orden() { return this.#d.orden; }
+  aJson() { return { ...this.#d }; }
+
+  // Quien manda es una persona ('arkioner', 'pepins') o Claude (en cualquier mayúscula, como en el servidor). Resultado: la tarea ya movida, o el motivo
+  // con nombre: 'estado-desconocido', 'solo-personas-hecho', 'es-de-otro', 'esta-hecha' o 'sin-refinar'
+  mueve(quien, estado) {
+    if (!TABLERO.esEstado(estado)) return TABLERO.error('estado-desconocido', { estado });
+    const esClaude = String(quien).toLowerCase() === 'claude';
+    const motivo = esClaude ? this.#motivoClaudeNoPuede(estado) : null;
+    if (motivo) return TABLERO.error(motivo, { id: this.id, estado });
+    const responsable = esClaude && estado === 'en_curso' && !this.#d.responsable ? 'claude' : this.#d.responsable;
+    return TABLERO.ok(new Tarea({ ...this.#d, estado, responsable }));
+  }
+
+  // Claude no cierra tareas, no toca las de otra persona, no reabre las hechas y no saca una tarea de «por refinar» (eso lo hace una persona)
+  #motivoClaudeNoPuede(estado) {
+    if (estado === 'hecho') return 'solo-personas-hecho';
+    if (this.#d.responsable && this.#d.responsable !== 'claude') return 'es-de-otro';
+    if (this.#d.estado === 'hecho') return 'esta-hecha';
+    return this.#d.estado === 'por_refinar' && estado !== 'por_refinar' ? 'sin-refinar' : null;
+  }
+};

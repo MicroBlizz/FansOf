@@ -10,11 +10,33 @@ PT.muneco3d = (() => {
   const MONTAJES = {};
   const archivo = (id, edad) => `img/criaturas/${id.replace(':', '-')}/${edad}/muneco.glb`;
 
+  // lo «abierto» de cada vértice (de 0 a 1): 0 en un hueco de la forma (el cuello, la base de las orejas), donde el contorno hinchado de la malla de al lado
+  // asomaría por delante como una línea negra, y 1 en lo liso o abombado. Es cuánto quedan por encima de su plano los vecinos (cóncavo), suavizado
+  const HUECO = { desde: 0.04, hasta: 0.35, pasadas: 3 };
+  function abierto(geo) {
+    const pos = geo.attributes.position, nor = geo.attributes.normal, n = pos.count, vecinos = Array.from({ length: n }, () => new Set()), idx = geo.index.array;
+    for (let i = 0; i < idx.length; i += 3) for (let k = 0; k < 3; k++) { vecinos[idx[i + k]].add(idx[i + (k + 1) % 3]); vecinos[idx[i + k]].add(idx[i + (k + 2) % 3]); }
+    let c = new Float32Array(n);
+    for (let v = 0; v < n; v++) {
+      let sx = 0, sy = 0, sz = 0, largo = 0;
+      for (const w of vecinos[v]) { sx += pos.getX(w) - pos.getX(v); sy += pos.getY(w) - pos.getY(v); sz += pos.getZ(w) - pos.getZ(v); largo += Math.hypot(pos.getX(w) - pos.getX(v), pos.getY(w) - pos.getY(v), pos.getZ(w) - pos.getZ(v)); }
+      c[v] = largo ? (sx * nor.getX(v) + sy * nor.getY(v) + sz * nor.getZ(v)) / largo : 0;
+      c[v] = Math.max(c[v], 0);
+    }
+    for (let r = 0; r < HUECO.pasadas; r++) {   // el hueco se extiende un poco a lo que lo rodea: el borde de la línea no queda a medias
+      const d = new Float32Array(n);
+      for (let v = 0; v < n; v++) { let mx = c[v]; for (const w of vecinos[v]) mx = Math.max(mx, c[w]); d[v] = (mx + c[v]) / 2; }
+      c = d;
+    }
+    const a = new Float32Array(n);
+    for (let v = 0; v < n; v++) { const t = Math.min(Math.max((c[v] - HUECO.desde) / (HUECO.hasta - HUECO.desde), 0), 1); a[v] = 1 - t * t * (3 - 2 * t); }
+    return a;
+  }
   // la cara de atrás de la malla, empujada hacia fuera por su normal y de un color: el contorno de dibujo, que sigue a la piel
   function contorno(T, malla) {
     const m = new T.MeshBasicMaterial({ color: CONTORNO.color, side: T.BackSide });
-    m.onBeforeCompile = s => { s.vertexShader = s.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>\n transformed += normalize(normal) * ${CONTORNO.grosor.toFixed(4)};`); };
-    const c = malla.clone(); c.material = m; c.userData = { contorno: true };
+    m.onBeforeCompile = s => { s.vertexShader = s.vertexShader.replace('#include <common>', '#include <common>\nattribute float abierto;').replace('#include <begin_vertex>', `#include <begin_vertex>\n transformed += normalize(normal) * ${CONTORNO.grosor.toFixed(4)} * abierto;`); };
+    const c = malla.clone(); c.geometry = malla.geometry.clone(); c.geometry.setAttribute('abierto', new T.BufferAttribute(abierto(c.geometry), 1)); c.material = m; c.userData = { contorno: true };
     return c;
   }
   function viste(T, gradiente, malla, i) {

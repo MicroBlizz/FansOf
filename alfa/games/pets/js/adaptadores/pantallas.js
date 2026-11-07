@@ -28,7 +28,7 @@ PT.pantallas = (() => {
     const p = PT.casos.partida;
     $('#pt-elige').hidden = p.fase !== 'huevos';
     if (ui.escena) { $('#pt-caja').innerHTML = PT.dev.cajaEscena(); dice(''); PT.dev.enganchaEscena(); return; }   // la escena de animaciones (solo DEV)
-    $('#pt-caja').innerHTML = NUCLEO.desarrollo ? cajaDeFase(p) : cajaEnElHorno();
+    $('#pt-caja').innerHTML = PT.abierto() ? cajaDeFase(p) : cajaEnElHorno();
     PT.botones.engancha();
     refresca();
   }
@@ -96,7 +96,7 @@ PT.pantallas = (() => {
   function refresca() {
     const p = PT.casos.partida, ahora = PT.casos.ahora(), dia = PT.casos.esDia(ahora);
     $('#pt-reloj').textContent = PT.hora(PT.casos.minutoDelDia(ahora)) + ' · ' + (dia ? tr('de día') : tr('de noche'));
-    $('#pt-saldos').textContent = NUCLEO.desarrollo ? PT.MONEDAS.map(cual => `${PT.casos.cartera.saldo(cual)} ${tr(PT.MONEDA_CORTA[cual])}`).join(' · ') : '';
+    $('#pt-saldos').textContent = PT.abierto() ? PT.MONEDAS.map(cual => `${PT.casos.cartera.saldo(cual)} ${tr(PT.MONEDA_CORTA[cual])}`).join(' · ') : '';
     const ec = $('#pt-eclosion');
     if (ec) ec.textContent = tr('Eclosiona en {t}', { t: PT.duracion((p.eclosionaEn - ahora) / PT_MINUTO) });
     if (p.fase !== 'mascota' || ui.volverA) return;

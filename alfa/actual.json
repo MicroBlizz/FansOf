@@ -1,8 +1,8 @@
 {
- "build": 1079,
- "hash": "d39e08f",
- "fecha": "2026-11-07T11:48:55Z",
- "mensaje": "Zombies 0.13.0: arreglos de la revisión de las heridas",
+ "build": 1080,
+ "hash": "ece51d5",
+ "fecha": "2026-11-07T11:55:12Z",
+ "mensaje": "Rumble v2: la carta de CrazyBunny, de frente y centrada (regla de Daniel)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

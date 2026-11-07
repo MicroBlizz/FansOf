@@ -8,6 +8,8 @@ const V2 = (() => {
     'bunny', 'squirrel', 'fox', 'beaver', 'meercat', 'junkcoon', 'mechavaca', 'vaca', 'huron', 'p_tower', 'p_base', 'p_rubble',
     'ceo', 'becario', 'starbot', 'fallen', 'e_tower', 'e_base', 'e_rubble',
   ];
+  // retrato DE FRENTE de las cartas (regla de Daniel, 7-11-2026: siempre de cara, mirando recto y centrado): img/frente/<nombre>.webp
+  const FRENTE = ['bunny'];
   // fondos del campo: facción|plaza -> archivo (todo en WebP: pesa poco en el móvil)
   // (el de Animales se baja al empezar; los demás, la primera vez que hacen falta)
   const FONDOS = {
@@ -55,6 +57,12 @@ const V2 = (() => {
   // cartas, retratos y pantalla de título: si hay imagen, se dibuja la imagen a la misma altura
   const drawVectorOriginal = drawVector;
   drawVector = function (c, key, x, y, h, flip = 1) {
+    const fr = IMG['frente/' + key];
+    if (fr) {   // de frente: centrado en x, de pie en y, sin voltear (aunque el original lo volteara)
+      const ih = h * 1.08, iw = fr.width * ih / fr.height;
+      c.save(); c.imageSmoothingQuality = 'high'; c.drawImage(fr, x - iw / 2, y - ih, iw, ih); c.restore();
+      return;
+    }
     const sp = SPR[key];
     if (!sp || !sp.v2) return drawVectorOriginal(c, key, x, y, h, flip);
     const top = TYPES[key] ? TYPES[key].top : TOPS[key];
@@ -92,6 +100,9 @@ const V2 = (() => {
       if (typeof BG_KEY !== 'undefined' && BG_KEY === clave) { const [f, p] = clave.split('|'); BG = buildBG(f, p); }
     });
   }
+  FRENTE.forEach(k => carga('frente/' + k, () => {
+    if (typeof ART_FIT !== 'undefined') ART_FIT[k] = [0, (ART_FIT[k] || [0, 0.92])[1]];   // el retrato de frente va centrado en su casilla
+  }));
   pideFondo('animales|mb');
   carga('puente', () => { if (typeof READY !== 'undefined' && READY) BRIDGE_LAYER = buildBridges(); });
 

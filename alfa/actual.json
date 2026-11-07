@@ -1,8 +1,8 @@
 {
- "build": 1109,
- "hash": "1a7b1e3",
- "fecha": "2026-11-07T19:02:02Z",
- "mensaje": "Survivors: fuera los emojis; armas, mejoras, efectos, cofres, contador de bajas y botones con los 60 iconos pintados por Yoshi (js/iconos.js)",
+ "build": 1110,
+ "hash": "5fa7948",
+ "fecha": "2026-11-07T19:44:06Z",
+ "mensaje": "Rumble arte pintado: espaldas del mapache (quieto, atacar) y ataque de espaldas de la vaca; el golpe y el andar de espaldas llevan su propio texto para Yoshi",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

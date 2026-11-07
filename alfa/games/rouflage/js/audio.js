@@ -100,9 +100,19 @@ Object.assign(SFX, {
     ruidoEn(out, 0.08, 0.22 * v, 1800, 'bandpass'); tonoEn(out, 520, 150, 0.14, 'square', 0.07 * v);
   },
   // un becario anda: zapato de oficina sobre moqueta
-  paso: (v = 1, out = master) => { ruidoEn(out, 0.06, 0.09 * v, 380 + Math.random() * 120); tonoEn(out, 150 + Math.random() * 30, 70, 0.05, 'sine', 0.06 * v); },
-  // la linterna barre la sala
-  linterna: (v = 1, out = master) => ruidoEn(out, 0.32, 0.05 * v, 900, 'bandpass'),
+  // pasos «boing» (Daniel, 7-11-2026: monos y divertidos, como de goma): un tono que sube y rebota, y cada pie un poco más agudo que el otro
+  paso: (() => {
+    let pie = 0;
+    return (v = 1, out = master) => {
+      // dos números al azar por pisada, como el paso de antes: el azar es el mismo que el de la partida y así no cambia lo que viene después
+      const k = ((pie++ % 2) ? 1.12 : 1) * (0.98 + Math.random() * 0.04), w = v * (0.9 + Math.random() * 0.2);
+      tonoEn(out, 180 * k, 300 * k, 0.09, 'sine', 0.11 * w); tonoEn(out, 300 * k, 260 * k, 0.05, 'sine', 0.05 * w, 0.08);
+    };
+  })(),
+  // la linterna barre la sala: un «fiuu» que sube y baja, de dibujos animados (elegido por Daniel el 7-11-2026), con el aire de antes debajo
+  linterna: (v = 1, out = master) => {
+    tonoEn(out, 500, 1100, 0.14, 'sine', 0.06 * v); tonoEn(out, 1100, 600, 0.16, 'sine', 0.05 * v, 0.13); ruidoEn(out, 0.28, 0.03 * v, 1400, 'bandpass');
+  },
   luces: () => { tone(420, 60, 0.7, 'sawtooth', 0.07); noise(0.5, 0.08, 500); },
   // la persiana de Recursos Humanos sube, se apagan las luces y suena la bocina: empieza la caza
   comienzaCaza: () => { noise(0.55, 0.18, 700, 'lowpass'); tone(90, 240, 0.5, 'sawtooth', 0.05); noise(0.08, 0.2, 2000, 'bandpass', 0.55); tone(420, 60, 0.7, 'sawtooth', 0.07, 0.7); noise(0.5, 0.08, 500, 'lowpass', 0.7); tone(880, 1320, 0.3, 'square', 0.1, 1.15); agachaMusica(1.6); },
@@ -110,8 +120,8 @@ Object.assign(SFX, {
   visto: () => { tone(420, 520, 0.14, 'sawtooth', 0.08); tone(620, 760, 0.3, 'sawtooth', 0.08, 0.15); agachaMusica(0.6); },
   // la cuenta atrás: 3, 2, 1 cada vez más agudo
   cuenta: (d = 1) => tone(520 + (3 - d) * 160, 520 + (3 - d) * 160, 0.12, 'square', 0.09),
-  // el sello de DESPEDIDO: golpe de tampón, chirrido y papel
-  sello: (v = 1, out = master) => { ruidoEn(out, 0.18, 0.35 * v, 500); tonoEn(out, 130, 50, 0.22, 'sine', 0.3 * v); tonoEn(out, 1800, 2400, 0.08, 'square', 0.04 * v, 0.12); ruidoEn(out, 0.14, 0.1 * v, 3500, 'highpass', 0.2); agachaMusica(0.9); },
+  // el sello de DESPEDIDO: un «bonk» de dibujos animados, como un coscorrón (elegido por Daniel el 7-11-2026)
+  sello: (v = 1, out = master) => { ruidoEn(out, 0.12, 0.3 * v, 600); tonoEn(out, 700, 140, 0.18, 'square', 0.06 * v); tonoEn(out, 140, 60, 0.2, 'sine', 0.25 * v); agachaMusica(0.9); },
   // despido improcedente: la pintura salpica un mueble
   // (snd/salpica.mp3: este mismo sonido con un poco de splat de pintura de Yoshi debajo, la mezcla 1 que eligió Daniel el 7-11-2026; las de
   // Yoshi solas sonaban serias: lo gracioso es el tono que cae); si no ha llegado, el de código

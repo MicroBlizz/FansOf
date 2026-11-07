@@ -1,8 +1,8 @@
 {
- "build": 1095,
- "hash": "79933ea",
- "fecha": "2026-11-07T15:09:12Z",
- "mensaje": "Survivors: principio con más ritmo tras el flag survivors-mecanicas (3-4 becarios por segundo en los minutos 1 y 2, primera oleada de choque a los 20 s, primer cerco a los 45 s)",
+ "build": 1096,
+ "hash": "f3120e2",
+ "fecha": "2026-11-07T15:17:49Z",
+ "mensaje": "Rouflage 0.2.75: el sello de DESPEDIDO cae con un «bonk» de dibujos animados (elegido por Daniel)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

@@ -149,7 +149,7 @@ function enemigo(e) {
   const c = ctx;
   if (e.shiny) {   // resplandor dorado y destellos
     c.globalAlpha = 0.4 + Math.sin(P.t * 7) * 0.15; c.fillStyle = '#ffd23c'; c.beginPath(); c.ellipse(e.x, e.y, e.r * 1.4, e.r * 0.6, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
-    otxt(c, '✦', e.x + Math.cos(P.t * 3 + e.id) * e.r, e.y - e.r * 1.6 + Math.sin(P.t * 5 + e.id) * 6, 14, '#fff3a0');
+    ICONO.dibuja(c, 'chispa', e.x + Math.cos(P.t * 3 + e.id) * e.r, e.y - e.r * 1.6 + Math.sin(P.t * 5 + e.id) * 6, 16, 0, 1, '#fff3a0');
   }
   if (e.elite || e.jefe) {   // aura roja de los gordos
     c.globalAlpha = 0.35 + Math.sin(P.t * 5) * 0.12; c.fillStyle = '#ff3348'; c.beginPath(); c.ellipse(e.x, e.y, e.r * 1.25, e.r * 0.5, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
@@ -230,11 +230,11 @@ function marcador() {
   // el tiempo y las bajas
   const t = P.jefe ? Math.max(0, P.t - SV.duracion) : Math.max(0, SV.duracion - P.t), mm = Math.floor(t / 60), ss = Math.floor(t % 60);
   otxt(c, (P.jefe ? '+' : '') + mm + ':' + String(ss).padStart(2, '0'), VW / 2, 50, 30, P.jefe || t < 30 ? '#ff7a7a' : '#fff6ea');
-  otxt(c, '💀 ' + fmt(P.kills), VW / 2, 76, 15, '#fff6ea');
+  ICONO.dibuja(c, 'calavera', VW / 2 - 8 - c.measureText(fmt(P.kills)).width / 2, 76, 18); otxt(c, fmt(P.kills), VW / 2 + 10, 76, 15, '#fff6ea');
   // las armas y las mejoras que llevas
   let x = 10;
   for (const k2 in P.armas) { hueco(x, 68, iconoCarta(ARMAS[k2].carta, 34), P.armas[k2], k2 === 'chaos'); x += 38; }
-  x = 10; for (const k2 in P.pasivas) { c.font = '17px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = 'rgba(20,10,34,.7)'; c.beginPath(); rrPath(c, x, 112, 34, 28, 6); c.fill(); c.fillStyle = '#fff'; c.fillText(PASIVAS[k2].icono, x + 17, 126); pips(x, 142, P.pasivas[k2]); x += 38; }
+  x = 10; for (const k2 in P.pasivas) { c.fillStyle = 'rgba(20,10,34,.7)'; c.beginPath(); rrPath(c, x, 112, 34, 28, 6); c.fill(); ICONO.dibuja(c, PASIVAS[k2].icono, x + 17, 126, 26); pips(x, 142, P.pasivas[k2]); x += 38; }
   MEC_DIBUJO.marcador(c);
   // la vida del jefe
   if (P.jefe && !P.jefe.muerto) {

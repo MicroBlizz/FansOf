@@ -16,7 +16,7 @@ function sorteoCofre() {
 function iconoOp(op) {
   const ic = document.createElement('div'); ic.className = 'op-ic';
   if (op.carta) { const c = document.createElement('canvas'), K = Math.min(3, ESCALA * DPR * 1.5); c.width = c.height = 64 * K; const x = c.getContext('2d'); x.scale(K, K); drawVector(x, op.carta, 32, 58, 52); ic.appendChild(c); }
-  else ic.textContent = op.icono;
+  else ic.appendChild(ICONO.elemento(op.icono));
   return ic;
 }
 const nivelOp = op => op.clase === 'relleno' ? '' : op.clase === 'evo' ? tr('¡EVOLUCIÓN!') : op.nuevo ? tr('¡NUEVO!') : tr('Nivel ' + op.nivelNuevo);
@@ -80,8 +80,8 @@ async function entregaCofre(ops, susto) {
   for (let k = 0; k < n; k++) {
     if (mini && k === 0) $('#cof-titulo').innerHTML = `${tr('¡COFRES DENTRO DEL COFRE!')}<small>&nbsp;</small>`;
     if (!await revela(ops[k], k)) return;
-    if (k > 0 && !mini) $('#cof-titulo').innerHTML = `${tr('¡HAY MÁS!')}<small>${'⭐'.repeat(k + 1)}</small>`;
-    else if (k > 0) $('#cof-titulo').querySelector('small').textContent = '⭐'.repeat(k + 1);
+    if (k > 0 && !mini) $('#cof-titulo').innerHTML = `${tr('¡HAY MÁS!')}<small>${ICONO.html('estrella', 'ico-txt').repeat(k + 1)}</small>`;
+    else if (k > 0) $('#cof-titulo').querySelector('small').innerHTML = ICONO.html('estrella', 'ico-txt').repeat(k + 1);
     if (k + 1 < 5) chatCofre('mas', 1);
     // el suspense: la música se acelera y el latido también. ¿Habrá otra?
     const t = Math.min(k, E.tempos.length - 1);

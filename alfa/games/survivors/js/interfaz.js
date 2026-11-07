@@ -88,7 +88,7 @@ function pausar() {
   if (!jugando()) return;
   P.estado = 'pausa'; sueltaMando(); stat('pause', 1); soundBtns();
   $('#pause-quote').textContent = pick(FRASES_PAUSA);
-  const L = Object.keys(P.armas).map(k => `<li><b>${ARMAS[k].nombre}</b> · Nivel ${P.armas[k]}</li>`).concat(Object.keys(P.pasivas).map(k => `<li>${PASIVAS[k].icono} <b>${PASIVAS[k].nombre}</b> · Nivel ${P.pasivas[k]}</li>`));
+  const L = Object.keys(P.armas).map(k => `<li><b>${ARMAS[k].nombre}</b> · Nivel ${P.armas[k]}</li>`).concat(Object.keys(P.pasivas).map(k => `<li>${ICONO.html(PASIVAS[k].icono, 'ico-txt')} <b>${PASIVAS[k].nombre}</b> · Nivel ${P.pasivas[k]}</li>`));
   $('#pau-lista').innerHTML = L.join('');
   $('#scr-pause').hidden = false;
 }

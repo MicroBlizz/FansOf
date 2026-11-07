@@ -86,7 +86,7 @@ function crearEnemigo(tipo, x, y, extra = {}) {
     r: extra.r || d.r, escala: extra.escala || 1, face: 1, walk: Math.random() * 6, hitT: 0, kbx: 0, kby: 0, edad: 0, tiroT: rand(1, 3), curaT: rand(0.5, 2),
     elite: !!extra.elite, shiny: !!extra.shiny, jefe: !!extra.jefe, xp: extra.xp !== undefined ? extra.xp : d.xp, vacaT: 0, auraT: 0, muerto: false, congT: 0,
   };
-  if (e.shiny) { numero(x, y - 60, '✨ SHINY ✨', '#ffe45c'); play('crown'); }
+  if (e.shiny) { numero(x, y - 60, '¡SHINY!', '#ffe45c'); play('crown'); }
   P.enemigos.push(e); return e;
 }
 // un punto justo fuera de la pantalla, alrededor del jugador

@@ -190,10 +190,8 @@ function moverGen(p, dt) {
 }
 
 /* ---------- dibujo ---------- */
-function emoji(c, e, x, y, tam, ang = 0, espejo = 1) {
-  c.save(); c.translate(x, y); if (ang) c.rotate(ang); if (espejo < 0) c.scale(-1, 1);
-  c.font = tam + 'px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(e, 0, 0); c.restore();
-}
+// el icono pintado de un arma o efecto (js/iconos.js)
+function dibujaIcono(c, id, x, y, tam, ang = 0, espejo = 1) { ICONO.dibuja(c, id, x, y, tam * 1.25, ang, espejo); }
 function puntoBrillo(c, x, y, col, r = 5) {
   c.globalAlpha = 0.35; c.fillStyle = col; c.beginPath(); c.arc(x, y, r * 1.8, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
   c.fillStyle = col; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, r * 0.45, 0, Math.PI * 2); c.fill();
@@ -203,10 +201,10 @@ function proyectilGenDibuja(p) {
   if (DIBUJA_PROY[p.gen]) return DIBUJA_PROY[p.gen](p);
   if (p.gen === 'bala') {
     if (!p.emo) { puntoBrillo(c, p.x, p.y, p.col); return; }
-    emoji(c, p.emo, p.x, p.y, p.tam, p.gira ? p.giro : 0, p.gira ? 1 : (p.vx < 0 ? 1 : -1));
+    dibujaIcono(c, p.emo, p.x, p.y, p.tam, p.gira ? p.giro : 0, p.gira ? 1 : (p.vx < 0 ? 1 : -1));
   } else if (p.gen === 'bomba') {
     c.globalAlpha = 0.25; c.fillStyle = '#140a1e'; c.beginPath(); c.ellipse(p.x, p.y, 9, 3.5, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
-    if (p.A.emo) emoji(c, p.A.emo, p.x, p.y - p.z - 8, 22, p.k * 7); else puntoBrillo(c, p.x, p.y - p.z - 8, p.A.col, 7);
+    if (p.A.emo) dibujaIcono(c, p.A.emo, p.x, p.y - p.z - 8, 22, p.k * 7); else puntoBrillo(c, p.x, p.y - p.z - 8, p.A.col, 7);
   } else if (p.gen === 'corre') personaje(p.spr, { x: p.x, y: p.y, esc: 0.7, face: p.face, walk: p.walk, andando: true });
 }
 function efectoGenDibuja(f) {
@@ -216,11 +214,11 @@ function efectoGenDibuja(f) {
     c.globalAlpha = (1 - k) * 0.85; c.strokeStyle = f.col; c.lineWidth = 6 * (1 - k) + 1;
     c.beginPath(); c.ellipse(f.x, f.y - 8, f.r * (0.3 + k * 0.75), f.r * (0.3 + k * 0.75) * 0.75, 0, 0, Math.PI * 2); c.stroke();
     c.globalAlpha = (1 - k) * 0.18; c.fillStyle = f.col; c.fill(); c.globalAlpha = 1;
-    if (f.emo) { c.globalAlpha = 1 - k; emoji(c, f.emo, f.x, f.y - 30 - k * 14, 26 + k * 10); c.globalAlpha = 1; }
+    if (f.emo) { c.globalAlpha = 1 - k; dibujaIcono(c, f.emo, f.x, f.y - 30 - k * 14, 26 + k * 10); c.globalAlpha = 1; }
   } else if (f.gen === 'golpe') {
     c.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.3;
     c.strokeStyle = f.col; c.lineWidth = 4 * (1 - k) + 1; c.beginPath(); c.arc(f.x, f.y, 10 + k * 26, 0, Math.PI * 2); c.stroke();
-    if (f.emo) emoji(c, f.emo, f.x, f.y - 8 - k * 10, 30 * (0.7 + 0.5 * Math.sin(Math.min(1, k * 1.6) * Math.PI)));
+    if (f.emo) dibujaIcono(c, f.emo, f.x, f.y - 8 - k * 10, 30 * (0.7 + 0.5 * Math.sin(Math.min(1, k * 1.6) * Math.PI)));
     c.globalAlpha = 1;
   } else if (f.gen === 'rayo') {
     c.globalAlpha = 1 - k; c.lineJoin = 'round';
@@ -243,7 +241,7 @@ function dibujaSueloArmas(c) {
     const a = Math.min(1, z.t / 0.6);
     c.globalAlpha = 0.28 * a; c.fillStyle = z.col; c.beginPath(); c.ellipse(z.x, z.y, z.r, z.r * 0.75, 0, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 0.6 * a; c.strokeStyle = z.col; c.lineWidth = 2; c.setLineDash([5, 5]); c.lineDashOffset = -P.t * 12; c.stroke(); c.setLineDash([]);
-    if (z.emo) { c.globalAlpha = 0.8 * a; emoji(c, z.emo, z.x, z.y - 4 + Math.sin(P.t * 4 + z.x) * 2, 18); }
+    if (z.emo) { c.globalAlpha = 0.8 * a; dibujaIcono(c, z.emo, z.x, z.y - 4 + Math.sin(P.t * 4 + z.x) * 2, 18); }
     c.globalAlpha = 1;
   }
   for (const k in P.armas) {
@@ -262,7 +260,7 @@ function armasPie(L) {
     const A = ARMAS[k];
     if (A.tipo === 'orbita') {
       const v = vArma(k);
-      for (let i = 0; i < v.n; i++) { const a = P.t * v.giro + (i / v.n) * Math.PI * 2, x = j.x + Math.cos(a) * v.r, y = j.y - 10 + Math.sin(a) * v.r * 0.8; L.push({ y, f: () => emoji(ctx, A.emo, x, y - 6, 26, a + Math.PI / 2) }); }
+      for (let i = 0; i < v.n; i++) { const a = P.t * v.giro + (i / v.n) * Math.PI * 2, x = j.x + Math.cos(a) * v.r, y = j.y - 10 + Math.sin(a) * v.r * 0.8; L.push({ y, f: () => dibujaIcono(ctx, A.emo, x, y - 6, 26, a + Math.PI / 2) }); }
     } else if (A.tipo === 'escudo' && P.escudoN > 0) {
       L.push({ y: j.y + 1, f: () => {
         const c = ctx, pul = 1 + Math.sin(P.t * 5) * 0.04;

@@ -15,6 +15,9 @@ IDIOMA.add({
   "FUENTE VACÍA": "FOUNTAIN EMPTY",
   "¡ABIERTO!": "UNLOCKED!",
   "CAMBIAR CARTAS": "REROLL CARDS",
+  "¡SHINY!": "SHINY!",
+  "AL AZAR": "RANDOM",
+  "CAMBIAR NOMBRE": "CHANGE NAME",
   // 0.1.80
   "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
   "Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come.": "Microblizz tightened the engine bolts and Phony asked if that is edible.",

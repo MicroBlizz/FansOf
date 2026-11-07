@@ -4,7 +4,7 @@
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
-  version: '0.12.1',
+  version: '0.13.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
   necesidades: { hambre: 2.6, sed: 4.0, sueno: 3.2, recuperaSueno: 14, vidaSiVacia: 6, aviso: 35, infeccion: 3, curaSola: 0.6 },
@@ -45,7 +45,12 @@ ZOM.AJ = Object.freeze({
     agua: { n: 'AGUA', forma: ['X', 'X'], usa: { sed: 45 }, deja: 'botella' },
     botella: { n: 'BOTELLA VACÍA', forma: ['X', 'X'] },
     refresco: { n: 'REFRESCO', forma: ['X'], usa: { sed: 20, sueno: 10 } },
-    venda: { n: 'VENDA', forma: ['X'], max: 3, usa: { vida: 25, infeccion: -10 } },
+    venda: { n: 'VENDA', forma: ['X'], max: 3, cura: 'vendar' },   // las curas (cura) se ponen en una herida: js/heridas.js
+    desinfectante: { n: 'DESINFECTANTE', forma: ['X', 'X'], max: 3, cura: 'desinfectar' },
+    aguja: { n: 'AGUJA E HILO', forma: ['X'], max: 4, cura: 'puntos' },
+    tablilla: { n: 'TABLILLA', forma: ['X', 'X', 'X'], cura: 'tablilla' },
+    analgesico: { n: 'ANALGÉSICOS', forma: ['X'], max: 6, usa: { analgesico: true } },
+    antibiotico: { n: 'ANTIBIÓTICOS', forma: ['X'], max: 3, usa: { infeccion: -40 } },
     cartuchos: { n: 'CARTUCHOS', forma: ['X'], max: 12 },
     tablas: { n: 'TABLAS', forma: ['XXX'], max: 3 },
     clavos: { n: 'CLAVOS', forma: ['X'], max: 20 },
@@ -72,19 +77,36 @@ ZOM.AJ = Object.freeze({
   },
   // la ropa (ADR 079): en qué hueco va, cuánto aguanta (cada mordisco le quita «gastaMordisco» a todo lo que llevas puesto) y lo que hace.
   // frio = parte del hambre extra del invierno que te quita (sumado, hasta 1); calor = sed extra en verano; dano = menos daño de los
-  // mordiscos; infeccion = menos probabilidad de que infecten; lluvia = tus ruidos se oyen menos cuando llueve; huellas = menos huellas;
+  // mordiscos en la parte que tapa; para = probabilidad de que un mordisco ahí no deje herida; infeccion = menos riesgo de infección ahí; lluvia = tus ruidos se oyen menos cuando llueve; huellas = menos huellas;
   // pasos = pasos más silenciosos; correr = correr gasta menos aguante; barro = en primavera correr no cansa más
   ropa: {
-    gorro: { hueco: 'cabeza', dur: 60, frio: 0.4, color: 0xc8282e },
-    casco: { hueco: 'cabeza', dur: 90, dano: 0.15, color: 0x2a2e36 },
-    abrigo: { hueco: 'cuerpo', dur: 70, frio: 0.7, calor: 0.25, color: 0x6a5a3a },
-    cuero: { hueco: 'cuerpo', dur: 90, infeccion: 0.4, dano: 0.1, color: 0x3a2418 },
-    chubasquero: { hueco: 'cuerpo', dur: 50, lluvia: 0.2, color: 0xe8c020 },
-    vaqueros: { hueco: 'piernas', dur: 70, dano: 0.1, color: 0x2a4a7a },
-    chandal: { hueco: 'piernas', dur: 50, correr: 0.25, color: 0x3a3e48 },
+    gorro: { hueco: 'cabeza', dur: 60, frio: 0.4, para: 0.1, color: 0xc8282e },
+    casco: { hueco: 'cabeza', dur: 90, dano: 0.15, para: 0.5, color: 0x2a2e36 },
+    abrigo: { hueco: 'cuerpo', dur: 70, frio: 0.7, calor: 0.25, para: 0.3, color: 0x6a5a3a },
+    cuero: { hueco: 'cuerpo', dur: 90, infeccion: 0.4, dano: 0.1, para: 0.5, color: 0x3a2418 },
+    chubasquero: { hueco: 'cuerpo', dur: 50, lluvia: 0.2, para: 0.1, color: 0xe8c020 },
+    vaqueros: { hueco: 'piernas', dur: 70, dano: 0.1, para: 0.3, color: 0x2a4a7a },
+    chandal: { hueco: 'piernas', dur: 50, correr: 0.25, para: 0.1, color: 0x3a3e48 },
     botasNieve: { hueco: 'pies', dur: 70, huellas: 0.5, color: 0x5a3a24 },
     zapatillas: { hueco: 'pies', dur: 50, pasos: 0.25, color: 0xe8e8e8 },
     botasGoma: { hueco: 'pies', dur: 80, barro: true, color: 0x2a6a3a },
+  },
+  // LAS HERIDAS (ADR 082, versión «menos dura»): dónde muerden (pesos), qué herida dejan, y de cada herida lo que sangra (vida por hora
+  // sin vendar), las horas que tarda en curarse (sin sangrar y sin venda sucia), el riesgo de infección (se mira a la hora) y el dolor.
+  // La venda se ensucia a las vendaSucia horas; el corte profundo vendado sangra vendaProfundo (hasta coserlo). Desinfectar en la primera
+  // hora multiplica el riesgo por baja (por mordisco, el del mordisco). Ballena: fractura en un brazo o pierna; un choque a más de
+  // fracturaChoque m/s rompe una pierna. piernas/brazos: lo que multiplican la velocidad y el golpe con herida, rotos o con tablilla
+  cuerpo: {
+    dondeMuerden: { brazoI: 3, brazoD: 3, piernaI: 2, piernaD: 2, torso: 2.5, cabeza: 1 }, queHerida: { aranazo: 5, corte: 3, mordisco: 2 }, profundo: 0.25, paraMax: 0.7,
+    heridas: {
+      aranazo: { n: 'ARAÑAZO', sangra: 1, cura: 6, infecta: 0.07, dolor: 5 },
+      corte: { n: 'CORTE', sangra: 2.5, cura: 12, infecta: 0.25, dolor: 12 },
+      profundo: { n: 'CORTE PROFUNDO', sangra: 5, cura: 24, infecta: 0.25, dolor: 20 },
+      mordisco: { n: 'MORDISCO', sangra: 2, cura: 12, infecta: 0.9, dolor: 18 },
+      fractura: { n: 'FRACTURA', sangra: 0, cura: 36, infecta: 0, dolor: 30 },
+    },
+    vendaSucia: 16, vendaProfundo: 0.5, vendaVida: 10, desinfecta: { hora: 1, baja: 0.3, mordisco: 0.85 }, fracturaBallena: 0.25, fracturaChoque: 14, analgesico: 4,
+    piernas: { herida: 0.9, rota: 0.6, tablilla: 0.85 }, brazos: { herida: 0.85, rota: 0.5, tablilla: 0.75 }, temblor: 1,
   },
   vestir: { huecos: ['cabeza', 'cuerpo', 'piernas', 'pies'], gastaMordisco: 6, coser: 30, danoMax: 0.6 },
   // las mochilas (como en Ratkov): su rejilla y si pesa (vel multiplica lo que andas). Además siempre llevas la riñonera (2 x 2) y
@@ -124,24 +146,24 @@ ZOM.AJ = Object.freeze({
   },
   // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo.
   // porTipo: lo que hay en cada clase de sitio (lo demás usa «cosas»). En la nevera, tras el corte de luz, la carne sale podrida
-  botin: { cosas: { gorro: 0.3, zapatillas: 0.2, vaqueros: 0.2, botasNieve: 0.2, mochilaM: 0.1, judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, balas: 1.2, pistola: 0.3, bate: 0.6, hacha: 0.3, cuchillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, balas: 8, tiempo: 1.4,
+  botin: { cosas: { desinfectante: 0.3, analgesico: 0.4, gorro: 0.3, zapatillas: 0.2, vaqueros: 0.2, botasNieve: 0.2, mochilaM: 0.1, judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, balas: 1.2, pistola: 0.3, bate: 0.6, hacha: 0.3, cuchillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, balas: 8, tiempo: 1.4,
     porTipo: {
       nevera: { carne: 5, agua: 3, refresco: 2, judias: 1, nada: 2 },
-      armario: { gorro: 0.6, abrigo: 0.5, vaqueros: 0.6, chandal: 0.5, zapatillas: 0.4, chubasquero: 0.3, cuero: 0.15, mochilaM: 0.15, tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, bate: 0.6, balas: 0.5, nada: 2 },
+      armario: { aguja: 0.5, gorro: 0.6, abrigo: 0.5, vaqueros: 0.6, chandal: 0.5, zapatillas: 0.4, chubasquero: 0.3, cuero: 0.15, mochilaM: 0.15, tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, bate: 0.6, balas: 0.5, nada: 2 },
       cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, cuchillo: 1.2, nada: 2 },
       basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
       fuego: {},
       estanteria: { mochilaG: 0.2, botasGoma: 0.2, gasolina: 0.6, tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
-      super: { gorro: 0.4, zapatillas: 0.3, judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
+      super: { analgesico: 1, desinfectante: 1, gorro: 0.4, zapatillas: 0.3, judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
       gasolinera: { chubasquero: 0.3, chocolatina: 4, refresco: 4, agua: 2, gasolina: 3, nada: 2 },
       ferreteria: { botasGoma: 0.6, chubasquero: 0.5, gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
-      farmacia: { venda: 6, tela: 2, nada: 2 },
+      farmacia: { desinfectante: 3, aguja: 2, analgesico: 3, antibiotico: 0.6, venda: 6, tela: 2, nada: 2 },
       armeria: { balas: 4, cartuchos: 3, pistola: 1.2, escopeta: 0.4, nada: 1 },
-      taquilla: { chandal: 0.6, zapatillas: 0.6, mochilaM: 0.3, casco: 0.2, balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
+      taquilla: { analgesico: 0.5, chandal: 0.6, zapatillas: 0.6, mochilaM: 0.3, casco: 0.2, balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },
       pupitre: { mochilaP: 0.4, mochilaM: 0.2, gorro: 0.3, chocolatina: 3, refresco: 2, tela: 1, nada: 4 },
-      escritorio: { chocolatina: 2, refresco: 2, balas: 0.6, cuchillo: 0.3, tela: 1, venda: 0.5, nada: 3 },
-      cajaFuerte: { mochilaG: 0.4, balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
-      maletin: { cuero: 0.5, balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
+      escritorio: { analgesico: 0.5, chocolatina: 2, refresco: 2, balas: 0.6, cuchillo: 0.3, tela: 1, venda: 0.5, nada: 3 },
+      cajaFuerte: { antibiotico: 1, mochilaG: 0.4, balas: 4, cartuchos: 4, pistola: 1, venda: 3, escopeta: 0.5, hacha: 0.5, nada: 0.5 },
+      maletin: { antibiotico: 1, cuero: 0.5, balas: 3, cartuchos: 3, escopeta: 1, pistola: 1, hacha: 1, venda: 2, chocolatina: 1 },
       maquina: { chocolatina: 3, refresco: 3, nada: 2 },
       coche: { casco: 0.2, cuero: 0.15, mochilaM: 0.2, gasolina: 1, chocolatina: 1, refresco: 1, agua: 1, cartuchos: 0.5, nada: 2 },
       huerto_invierno: { nada: 1 }, huerto_primavera: { verdura: 4, nada: 2 }, huerto_verano: { verdura: 5, agua: 1, nada: 1 }, huerto_otono: { verdura: 2, carne: 1.5, nada: 3 },
@@ -151,6 +173,7 @@ ZOM.AJ = Object.freeze({
   recetas: [
     { id: 'venda', sale: ['venda', 1], con: [['tela', 2]], donde: null },
     { id: 'gorro', sale: ['gorro', 1], con: [['tela', 2]], donde: null },
+    { id: 'tablilla', sale: ['tablilla', 1], con: [['tablas', 2], ['tela', 1]], donde: null },
     { id: 'filete', sale: ['filete', 1], con: [['carne', 1]], donde: 'fuego' },
     { id: 'guiso', sale: ['guiso', 1], con: [['judias', 1], ['agua', 1]], donde: 'fuego', deja: ['botella', 1] },
   ],
@@ -186,7 +209,7 @@ ZOM.AJ = Object.freeze({
   // y embiste cada «cadaEmbiste» segundos durante «dura» a «vel» m/s
   torre: { plantas: 10, base: 4, crece: 1, reparto: { fan: 6, bot: 3, streamer: 1, speedrunner: 1, troll: 1, ballena: 0.6 }, arriba: { troll: 0.4, ballena: 0.25, bot: 0.3 },
     jefe: { escolta: 4, refuerzos: 6, umbrales: [0.7, 0.4, 0.15], cadaEmbiste: 6, dura: 0.7, vel: 9 } },
-  ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4, infeccion: 0.25 },
+  ia: { mordisco: 1.1, alcanceMordisco: 1.05, olvida: 8, deambula: 6, duerme: 55, separa: 0.9, huella: 1.6, celda: 4 },
   mundo: { zombis: 120, oleada: 22, maxZombis: 320, poda: 180, podaDesde: 0.7, alarmaPorHora: 0.35, corte: [3, 6], corteAgua: [2, 5], vistaNoche: 0.6, despierta: 12 },
   // los parches de Microblizz: uno nuevo cada mañana desde el día 2
   parches: [

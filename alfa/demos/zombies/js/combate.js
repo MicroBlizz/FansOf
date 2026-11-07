@@ -29,11 +29,11 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!Z.lleva(J, J.arma)) { e.eventos.push({ tipo: 'noPuedes', codigo: 'sinArma' }); J.tArma = 0.4; return Z.error('sinArma'); }
     if (W.municion && !Z.gastaLleva(J, W.municion, 1).ok) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
     J.tArma = W.cadencia * cansado.cadencia;
-    const hab = W.municion ? 'disparo' : 'pelea', fuerza = W.dano * cansado.dano * Z.mas(AJ, J, hab, 'dano');
+    const hab = W.municion ? 'disparo' : 'pelea', fuerza = W.dano * cansado.dano * Z.mas(AJ, J, hab, 'dano') * (W.municion ? 1 : Z.golpeHeridas(AJ, J));   // brazo herido: pegas más flojo
     J.aguante = Math.max(0, J.aguante - W.aguante * Z.menos(AJ, J, 'pelea', 'aguante'));
     if (J.aguante <= 0) J.agotado = true;
     Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[W.ruido] * (W.municion ? 1 : (J.A.ruido || 1)), 'jugador');
-    let tocados = enCono(e, W.alcance, W.cono, mundo);
+    let tocados = enCono(e, W.alcance, W.municion ? W.cono * Z.temblor(AJ, J) : W.cono, mundo);   // con dolor, la puntería tiembla
     if (W.uno) tocados = tocados.sort((a, b) => a.d - b.d).slice(0, 1);
     let despide = false;
     for (const { zb, d } of tocados) {

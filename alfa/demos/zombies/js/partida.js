@@ -31,6 +31,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const horas = Z.avanzaReloj(AJ, e, dt, mundo, azar);
     Z.pasoEstacion(AJ, e);
     Z.pasoNecesidades(AJ, e, horas);
+    Z.pasoHeridas(AJ, e, horas, azar);                 // sangrar, curarse y la infección de las heridas (js/heridas.js)
     const usar = ent.usar || (ent.come && (Z.primeraQue(AJ, e, 'hambre') || 'judias')) || (ent.bebe && (Z.primeraQue(AJ, e, 'sed') || 'agua'));
     if (usar) avisa(e, Z.usar(AJ, e, usar));
     if (ent.dormir) avisa(e, Z.dormir(AJ, e));

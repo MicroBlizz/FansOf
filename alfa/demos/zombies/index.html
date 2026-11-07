@@ -11,10 +11,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Russo+One&family=Permanent+Marker&family=Special+Elite&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script src="../../core/js/nucleo.js?v=0.12.1-a1075.8d4b1d9"></script>
+<script src="../../core/js/nucleo.js?v=0.13.0-a1076.2d723b5"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
-<link rel="stylesheet" href="estilo.css?v=0.12.1">
-<link rel="stylesheet" href="estilo-menus.css?v=0.12.1">
+<link rel="stylesheet" href="estilo.css?v=0.13.0">
+<link rel="stylesheet" href="estilo-menus.css?v=0.13.0">
 </head>
 <body>
 <canvas id="cv" aria-label="Fans of Zombies"></canvas>
@@ -32,7 +32,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // Dominio (sin pantalla): ajustes, base, reloj, superviviente, zombis, jugador y partida. El resto pinta y escucha.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-equipo.js'] },
   antes: ['js/config.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -73,6 +73,7 @@ NUCLEO.juego({
     'js/coches.js',
     'js/estaciones.js',
     'js/equipo.js',
+    'js/heridas.js',
     'js/partida.js',
     'js/guardado.js',
     'js/tactil.js',
@@ -81,6 +82,7 @@ NUCLEO.juego({
     'js/vista.js',
     'js/hud.js',
     'js/ventana-equipo.js',
+    'js/ventana-cuerpo.js',
     'js/ventana-mochila.js',
     'js/ventana-oficios.js',
     'js/ventana-mapa.js',

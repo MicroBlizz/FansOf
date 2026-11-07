@@ -1,8 +1,8 @@
 {
- "build": 1075,
- "hash": "8d4b1d9",
- "fecha": "2026-11-07T11:28:03Z",
- "mensaje": "Rumble v2: torres y bases otra vez 28 px más abajo, tapando las esquinas de los caminos (como en la alfa 1067)",
+ "build": 1076,
+ "hash": "2d723b5",
+ "fecha": "2026-11-07T11:41:57Z",
+ "mensaje": "Zombies 0.13.0: heridas en el cuerpo como en Project Zomboid (ADR 082)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

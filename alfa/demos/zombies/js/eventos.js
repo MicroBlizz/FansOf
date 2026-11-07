@@ -3,7 +3,7 @@
 'use strict';
 const NO_PUEDES = {
   sinSueno: 'No tienes sueño todavía.', hayZombis: 'Con fans tan cerca no hay quien duerma.', noTienes: 'No te queda de eso.',
-  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.', sinRefugio: 'No tienes refugio al que mandarlo.', sinLlave: 'No tienes la llave de este coche. Registra su guantera o busca en las casas de alrededor.', cocheRoto: 'Este coche ya no arranca.', tanqueLleno: 'El depósito está lleno.', sinGasolina: 'No llevas ningún bidón de gasolina.',
+  nadaCerca: 'No hay nada que registrar aquí.', sinArma: 'No llevas esa arma en la mochila.', sinFuego: 'Para cocinar necesitas un fuego o una cocina con luz.', faltaMaterial: 'Te falta material.', sinAgua: 'Ya no sale agua.', sinBotella: 'No tienes ninguna botella vacía.', noSeDesmonta: 'Esto no se puede desmontar.', yaDesmontado: 'Ya está desmontado.', sinHerramienta: 'Necesitas una palanca o un martillo.', sinMartillo: 'Necesitas un martillo.', sinTablas: 'Necesitas tablas y 2 clavos.', yaTapado: 'Ya tiene 3 tablas.', puertaRota: 'Esa puerta ya no existe.', conTablas: 'Tiene tablas clavadas.', sinRefugio: 'No tienes refugio al que mandarlo.', sinLlave: 'No tienes la llave de este coche. Registra su guantera o busca en las casas de alrededor.', cocheRoto: 'Este coche ya no arranca.', tanqueLleno: 'El depósito está lleno.', sinGasolina: 'No llevas ningún bidón de gasolina.', nadaQueCurar: 'No tienes ninguna herida que necesite eso.', faltan: 'No te queda de eso.', noHaceFalta: 'No hace falta.',
 };
 // lo que cuenta la radio al cambiar de estación y el parche de Microblizz que la acompaña
 const AVISO_ESTACION = { invierno: 'Llega el invierno. Vuelve la nieve: tus huellas te delatan y el frío da hambre.', primavera: 'Llega la primavera. Se funde la nieve: la lluvia tapa tus ruidos y los huertos dan verdura.', verano: 'Llega el verano. Calor: bebe el doble, la carne se pudre y los fans van más rápido.', otono: 'Llega el otoño. Niebla y hojas secas: se ve menos y tus pasos crujen.' };
@@ -20,7 +20,11 @@ const EVENTOS = {
   desmontado: (v) => { play('puerta'); avisa(trf('Mueble desmontado: %1 tablas y %2 clavos.', v.tablas, v.clavos), 'bien'); },
   corteAgua: () => { avisa(tr('Han cortado el agua. Los grifos ya no echan nada: guarda botellas.'), 'malo'); play('cuelgue'); },
   mordisco: () => { play('dolor'); MOTOR.postMat.uniforms.dano.value = 0.8; },
-  infectado: () => avisa(tr('Te han infectado. Véndate (V) para frenarlo.'), 'malo'),
+  infectado: () => avisa(tr('Te han infectado. Busca antibióticos o a la médica del refugio.'), 'malo'),
+  herida: (v) => { avisa(trf('%1 en %2.', tr(ZOM.AJ.cuerpo.heridas[v.herida].n), tr(NOMBRE_PARTE[v.parte])), 'malo'); },
+  ropaPara: () => avisa(tr('La ropa ha parado el mordisco.'), 'bien'),
+  curada: (v) => avisa(trf('Se ha curado: %1 en %2.', tr(ZOM.AJ.cuerpo.heridas[v.herida].n), tr(NOMBRE_PARTE[v.parte])), 'bien'),
+  cura: () => play('cura'),
   ataque: (v) => {
     TUTO.pelea = true;
     const J = JUEGO.e.jugador, escopeta = v.arma === 'escopeta';

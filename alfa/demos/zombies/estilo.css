@@ -221,3 +221,20 @@ body.tactil .vm-sitio { order: -2; } body.tactil .vm-mia { order: -1; } body.tac
 body.tactil #vm-cerrar { position: fixed; top: 6px; right: calc(6px + env(safe-area-inset-right)); z-index: 36; background: #3a1a1a; border-color: var(--rk-mal); }
 body.tactil #zb-mochila { font-size: 13px; }
 body.tactil #zb-mochila .vm-hab { transform: scale(.75); transform-origin: left top; }
+
+/* ---------- el cuerpo en la mochila (js/ventana-cuerpo.js) ---------- */
+.vm-cuerpo { width: 200px; }
+.vm-munyeco { display: grid; grid-template-columns: 22px 30px 30px 22px; grid-template-rows: 34px 54px 64px; gap: 3px; justify-content: center; margin: 4px 0; }
+.vm-parte { border: 2px solid #0a0e12; border-radius: 6px; padding: 0; cursor: pointer; background: #3a8a4a; }
+.vm-parte.sel { outline: 3px solid var(--rk-oro); }
+.p-cabeza { grid-column: 2 / 4; grid-row: 1; border-radius: 50%; width: 34px; justify-self: center; }
+.p-brazoI { grid-column: 1; grid-row: 2; } .p-torso { grid-column: 2 / 4; grid-row: 2; } .p-brazoD { grid-column: 4; grid-row: 2; }
+.p-piernaI { grid-column: 2; grid-row: 3; } .p-piernaD { grid-column: 3; grid-row: 3; }
+.vm-parte.aranazo { background: #d8c040; } .vm-parte.corte { background: #e8803a; } .vm-parte.mordisco, .vm-parte.sangra { background: #c8282e; }
+.vm-parte.sangra { animation: vm-late 0.8s infinite alternate; } .vm-parte.vendada { background: #e8e8e0; } .vm-parte.rota { background: #8a4ac8; }
+@keyframes vm-late { to { filter: brightness(1.5); } }
+.vm-dolor { margin: 2px 0; font-size: 14px; } .vm-cuerpo .malo { color: #ff8a7a; }
+.vm-heridas > b { font: 14px var(--rk-tit); font-weight: 400; }
+.vm-herida { border-top: 1px solid var(--rk-borde2); padding: 3px 0; font-size: 13px; }
+.vm-herida em { font-style: normal; color: var(--rk-oro); }
+.vm-cuerpo .vm-acciones { max-width: none; }

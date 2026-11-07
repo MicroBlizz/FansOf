@@ -25,7 +25,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (J.infeccion > 0) { J.infeccion = Math.min(100, J.infeccion + N.infeccion * horas * (J.A.infeccion || 1)); Z.dana(e, J.infeccion / 100 * N.infeccion * horas * 2, 'infeccion'); }
     else if (J.hambre > 30 && J.sed > 30) J.vida = Math.min(J.max, J.vida + N.curaSola * horas);
   };
-  // quitar vida; causa = 'mordisco' | 'hambre' | 'sed' | 'sueno' | 'infeccion' (y quién, si fue un zombi)
+  // quitar vida; causa = 'mordisco' | 'hambre' | 'sed' | 'sueno' | 'infeccion' | 'sangra' (y quién, si fue un zombi)
   Z.dana = function (e, cuanto, causa, quien) {
     const J = e.jugador;
     if (e.muerto || cuanto <= 0) return;
@@ -37,6 +37,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // usar una cosa de la mochila (la que tenga «usa» en AJ.objetos)
   Z.usar = function (AJ, e, cosa) {
     const J = e.jugador, O = AJ.objetos[cosa], U = O && O.usa;
+    if (O && O.cura) return Z.curaSola(AJ, e, O.cura);       // vendas, desinfectante, aguja y tablilla van a una herida (js/heridas.js)
     if (!U) return Z.error('noSeUsa', { cosa });
     const r = Z.gastaLleva(J, cosa, 1);
     if (!r.ok) return r;
@@ -45,6 +46,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (U.vida > 0) J.vida = Math.min(J.max, J.vida + U.vida * (J.A.venda || 1));
     if (U.vida < 0) Z.dana(e, -U.vida, 'comida');
     if (U.infeccion) J.infeccion = Math.max(0, J.infeccion + U.infeccion);
+    if (U.analgesico) Z.tomaAnalgesico(AJ, e);
     if (U.ruido) Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[U.ruido] * (J.A.ruido || 1), 'jugador');
     if (O.deja) Z.meterLleva(AJ, J, O.deja, 1);              // el agua deja su botella (si cabe)
     e.eventos.push({ tipo: 'usa', cosa, mal: !!U.mal });

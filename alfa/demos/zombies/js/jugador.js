@@ -34,7 +34,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (J.registra) J.registra = null;                            // moverte corta el registro (y clavar tablas)
     if (J.clava) J.clava = null;
     if (J.desmonta) J.desmonta = null;
-    const vel = (J.corre ? P.corre : J.agacha ? P.agacha : P.vel) * (J.A.vel || 1) * (J.sueno <= 0 ? 0.7 : 1) * Z.velMochila(AJ, J);   // la mochila de mudanza pesa
+    const vel = (J.corre ? P.corre : J.agacha ? P.agacha : P.vel) * (J.A.vel || 1) * (J.sueno <= 0 ? 0.7 : 1) * Z.velMochila(AJ, J) * Z.velHeridas(AJ, J);   // la mochila de mudanza pesa; las piernas heridas, también
     const x0 = J.x, z0 = J.z;
     mundo.mueve(J, ent.mx / m * vel * dt, ent.mz / m * vel * dt, P.radio);
     J.andado += Z.dist(x0, z0, J.x, J.z);

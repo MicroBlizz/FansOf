@@ -63,7 +63,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     c.v = Math.max(-K.atras, Math.min(K.maxima, c.v));
     if (Math.abs(c.v) > 0.3) c.a -= ent.mx * K.giro * dt * Math.sign(c.v) * Math.min(1, Math.abs(c.v) / 4);
     const choca = mundo.mueve(c, Math.sin(c.a) * c.v * dt, Math.cos(c.a) * c.v * dt, K.radio);
-    if (choca && Math.abs(c.v) > 2) { c.dano = Math.min(100, c.dano + Math.abs(c.v) * K.danoChoque); e.eventos.push({ tipo: 'choque', v: Math.abs(c.v) }); c.v *= -0.25; }
+    if (choca && Math.abs(c.v) > 2) { c.dano = Math.min(100, c.dano + Math.abs(c.v) * K.danoChoque); e.eventos.push({ tipo: 'choque', v: Math.abs(c.v) }); Z.choqueHiere(AJ, e, Math.abs(c.v)); c.v *= -0.25; }
     c.gas = Math.max(0, c.gas - Math.abs(c.v) * dt * K.consumo);
     atropella(AJ, e, c);
     J.x = c.x; J.z = c.z; J.a = c.a;

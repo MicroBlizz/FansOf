@@ -1,8 +1,8 @@
 {
- "build": 1063,
- "hash": "0986566",
- "fecha": "2026-11-07T04:23:01Z",
- "mensaje": "Pets: la partida pinta el muñeco 3D de la criatura si lo tiene (hurón)",
+ "build": 1064,
+ "hash": "45f659a",
+ "fecha": "2026-11-07T10:03:17Z",
+ "mensaje": "Rumble v2: torre de los Animales repintada (B) y espalda del castor s2 (la s1 tenía la barriga)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

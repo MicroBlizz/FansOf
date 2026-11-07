@@ -43,7 +43,7 @@ TABLERO.vista = (() => {
   }
 
   const tarjeta = (t, esc, fecha) => `<article class="cuenta tb-tarea" draggable="true" data-id="${t.id}">
-    <div class="cab"><b>${esc(t.titulo)}</b></div>
+    <div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b></div>
     <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.alfa ? ` <span class="estado">${esc(t.alfa)}</span>` : ''}</div>
     ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
     ${grafoHtml(t, esc, fecha)}${historial(t, esc, fecha)}
@@ -59,7 +59,7 @@ TABLERO.vista = (() => {
   // El formulario de una tarea (nueva si v.id no existe). Cada campo lleva name= para que el controlador lo lea
   const campo = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<input type="text" name="${nombre}" value="${esc(valor || '')}"${ancho ? ` maxlength="${ancho}"` : ''}></label>`;
   const area = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<textarea name="${nombre}" rows="2" maxlength="${ancho}">${esc(valor || '')}</textarea></label>`;
-  const formulario = (v, esc) => `<form class="caja tb-form" data-id="${v.id || ''}"><b>${v.id ? 'Editar tarea' : 'Nueva tarea (nace por refinar)'}</b>
+  const formulario = (v, esc) => `<form class="caja tb-form" data-id="${v.id || ''}"><b>${v.id ? 'Editar tarea #' + v.id : 'Nueva tarea (nace por refinar)'}</b>
     ${campo('titulo', 'Título', v.titulo, esc, 120)}${area('descripcion', 'Qué hay que hacer', v.descripcion, esc, 4000)}${area('criterio', 'Está hecho cuando…', v.criterio, esc, 2000)}
     <div class="filtros"><label>Juego o área<input type="text" name="juego" value="${esc(v.juego || 'general')}" maxlength="40" list="tb-juegos"></label>
     <label>Responsable<select name="responsable">${opciones([['', 'Sin responsable'], ...Object.entries(TABLERO.RESPONSABLES)], v.responsable || '', esc)}</select></label>

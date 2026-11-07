@@ -1,8 +1,8 @@
 {
- "build": 1110,
- "hash": "5fa7948",
- "fecha": "2026-11-07T19:44:06Z",
- "mensaje": "Rumble arte pintado: espaldas del mapache (quieto, atacar) y ataque de espaldas de la vaca; el golpe y el andar de espaldas llevan su propio texto para Yoshi",
+ "build": 1111,
+ "hash": "cb4fa96",
+ "fecha": "2026-11-07T22:00:23Z",
+ "mensaje": "Tablero: cada tarea enseña su número (#id) en la tarjeta y al editarla",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

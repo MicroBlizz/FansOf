@@ -1,8 +1,8 @@
 {
- "build": 1067,
- "hash": "90d9949",
- "fecha": "2026-11-07T11:04:39Z",
- "mensaje": "Rumble v2: torres x1.5 y bases x1.35, un poco más abajo para tapar las esquinas de los caminos",
+ "build": 1068,
+ "hash": "2a8557d",
+ "fecha": "2026-11-07T11:13:55Z",
+ "mensaje": "Rumble v2: torres y bases vuelven a su sitio (siguen grandes); los caminos se rehacen aparte",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

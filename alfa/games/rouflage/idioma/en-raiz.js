@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.75
+  "<b>PINTAR SUENA A PINTURA</b>: cada toque de pincel en el taller suena ahora como un pincel de verdad, y cada vez un poquito distinto para que no canse. Coger un color con el cuentagotas y contar tus Gotas al final suenan a gotas de pintura de verdad.": "<b>PAINTING SOUNDS LIKE PAINT</b>: every brush dab in the workshop now sounds like a real brush, and a little different each time so it never gets tiring. Picking a colour with the eyedropper and counting your Drops at the end sound like real paint drops.",
+  "Microblizz grabó el pincel con el cepillo de dientes del jefe. Phony dice que por eso ahora brilla tanto la pared.": "Microblizz recorded the brush with the boss's toothbrush. Phony says that's why the wall shines so much now.",
   // 0.2.74
   "<b>LA BROCHA SUENA DE VERDAD</b>: la brocha gigante de la PINTURA RÁPIDA suena ahora como una brocha de verdad, frus y fras, y te pinta en dos pasadas, ida y vuelta, al ritmo de su sonido.": "<b>THE BRUSH SOUNDS REAL</b>: the giant QUICK PAINT brush now sounds like a real brush, swish and swash, and paints you in two strokes, there and back, in time with its sound.",
   "Microblizz ha grabado el brochazo pintando la pared del despacho del jefe y Phony jura que debajo se oye su firma.": "Microblizz recorded the brushstroke by painting the wall of the boss's office, and Phony swears you can hear his signature underneath.",

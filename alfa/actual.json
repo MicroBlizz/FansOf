@@ -1,8 +1,8 @@
 {
- "build": 1076,
- "hash": "2d723b5",
- "fecha": "2026-11-07T11:41:57Z",
- "mensaje": "Zombies 0.13.0: heridas en el cuerpo como en Project Zomboid (ADR 082)",
+ "build": 1077,
+ "hash": "41eb47f",
+ "fecha": "2026-11-07T11:42:45Z",
+ "mensaje": "Rouflage 0.2.75: la gota del cuentagotas y del contador de Gotas suena a gota de pintura (Yoshi, la 8 que eligió Daniel)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",
@@ -15,7 +15,7 @@
   "nova": "0.3.53",
   "pets": "0.2.8",
   "ratkov": "0.2.38",
-  "rouflage": "0.2.74",
+  "rouflage": "0.2.75",
   "rumble": "0.9.167",
   "skate": "0.1.27",
   "survivors": "0.1.80",

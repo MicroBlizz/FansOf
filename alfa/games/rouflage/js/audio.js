@@ -63,11 +63,20 @@ function suenaEn(nombre, x, y, v = 1) {
 
 // los efectos grabados (core/js/sistema/sonido-archivos.js): se bajan ya, y hasta que lleguen suena el de código
 SONIDO_ARCHIVO.registra('brochazo', 'snd/brochazo.mp3?v=' + NUCLEO.version);
+SONIDO_ARCHIVO.registra('pincel', 'snd/pincel.mp3?v=' + NUCLEO.version);
+SONIDO_ARCHIVO.registra('gota', 'snd/gota.mp3?v=' + NUCLEO.version);
 
 // efectos propios: pintar, coger un color, congelarse, silbar, pasos, la linterna, la persiana, el sello de despido y los poderes
 Object.assign(SFX, {
-  pincel: () => noise(0.09, 0.045, 2600, 'bandpass'),
-  gota: () => { tone(880, 1500, 0.07, 'sine', 0.09); tone(1500, 1900, 0.06, 'sine', 0.05, 0.06); },
+  // el toque de pincel al pintar (snd/pincel.mp3, de Yoshi, elegido por Daniel el 7-11-2026): suena muy a menudo, así que cada toque va
+  // un poco más agudo o más grave para que no canse; si el archivo no ha llegado, el «fsss» de código
+  pincel: () => { if (!SONIDO_ARCHIVO.toca('pincel', { vol: 0.45, vel: 0.9 + Math.random() * 0.2 })) noise(0.09, 0.045, 2600, 'bandpass'); },
+  // la gota: al coger un color con el cuentagotas y, en ráfaga, al contar las Gotas del final (snd/gota.mp3, de Yoshi, elegida por Daniel
+  // el 7-11-2026), cada una un poco distinta; si no ha llegado, el «plip» de código
+  gota: () => {
+    if (SONIDO_ARCHIVO.toca('gota', { vol: 0.6, vel: 0.92 + Math.random() * 0.16 })) return;
+    tone(880, 1500, 0.07, 'sine', 0.09); tone(1500, 1900, 0.06, 'sine', 0.05, 0.06);
+  },
   cubo: () => { noise(0.22, 0.12, 900); tone(300, 160, 0.2, 'sine', 0.1); },
   // la brocha gigante de la pintura rápida (brochazo.js): el «frus, fras» de ida y vuelta (snd/brochazo.mp3, de Yoshi, elegido por Daniel
   // el 6-11-2026) al ritmo de las dos pasadas; si el archivo no ha llegado, el de repuesto hecho con código: las dos pasadas y la salida

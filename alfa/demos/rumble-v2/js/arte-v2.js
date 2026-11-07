@@ -9,7 +9,7 @@ const V2 = (() => {
     'ceo', 'becario', 'starbot', 'fallen', 'e_tower', 'e_base', 'e_rubble',
   ];
   // retrato DE FRENTE de las cartas (regla de Daniel, 7-11-2026: siempre de cara, mirando recto y centrado): img/frente/<nombre>.webp
-  const FRENTE = ['bunny'];
+  const FRENTE = ['bunny', 'beaver'];
   // fondos del campo: facción|plaza -> archivo (todo en WebP: pesa poco en el móvil)
   // (el de Animales se baja al empezar; los demás, la primera vez que hacen falta)
   const FONDOS = {

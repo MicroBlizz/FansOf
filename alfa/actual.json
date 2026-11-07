@@ -1,8 +1,8 @@
 {
- "build": 1085,
- "hash": "f1f8d38",
- "fecha": "2026-11-07T12:18:59Z",
- "mensaje": "Tablero: foto del grafo de la tarea en su tarjeta (SQL 118 aplicado)",
+ "build": 1086,
+ "hash": "8a5e7c0",
+ "fecha": "2026-11-07T12:27:55Z",
+ "mensaje": "Rumble v2: la carta de BoomBeaver, de frente y con paletas blancas",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

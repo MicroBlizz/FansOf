@@ -7,7 +7,7 @@ const MECANICAS = Object.freeze({
   // Evolución: un arma a nivel 5 + su mejora pareja (aunque sea a nivel 1) = carta dorada. Lo que gana el arma evolucionada:
   evolucion: Object.freeze({ dano: 1.8, n: 1, r: 1.2, cd: 0.85, pesoCarta: 40 }),
   // Oleadas de choque: un grupo grande que entra en fila por un lado de la pantalla
-  choque: Object.freeze({ primera: 50, cadaMin: 40, cadaMax: 55, grupo: 14, porMinuto: 2, aviso: 1.6 }),
+  choque: Object.freeze({ primera: 20, cadaMin: 40, cadaMax: 55, grupo: 14, porMinuto: 2, aviso: 1.6 }),
   // Jefes (los mini jefes cada 2 minutos): su vida y su daño suben con el tiempo; mientras hay uno vivo salen menos enemigos
   jefes: Object.freeze({ escalaCada: 600, ritmoConJefe: 0.25, embestidaCada: 5, embestidaAviso: 0.9, embestidaVel: 620, embestidaDura: 0.55, embestidaAncho: 46 }),
   // Curanderos (SoporteBot): como mucho tantos vivos; no se curan entre ellos y tus armas los buscan antes
@@ -19,6 +19,15 @@ const MECANICAS = Object.freeze({
     altar: Object.freeze({ dura: 25, poderes: Object.freeze({ dano: 2, vel: 1.4, iman: 3, recarga: 0.6 }) }),
     fuente: Object.freeze({ curaPorSeg: 0.14, capacidad: 1 }),    // fracciones de tu vida máxima
     candado: Object.freeze({ abrir: 3.5, olvida: 0.5 }),           // segundos quieto al lado; lo que se pierde por segundo si te vas
+  }),
+  // Un principio con más ritmo (Daniel, 7-11-2026: «salen pocos enemigos al principio, me aburro»): las oleadas de los minutos 1 y 2
+  // (sustituyen a las dos primeras de OLEADAS en datos.js) y el primer cerco, antes
+  inicio: Object.freeze({
+    oleadas: Object.freeze([
+      Object.freeze({ cada: 1, grupo: 3, mezcla: Object.freeze({ becario: 1 }) }),
+      Object.freeze({ cada: 1, grupo: 4, mezcla: Object.freeze({ becario: 6, starbot: 1 }) }),
+    ]),
+    primerCerco: 45,
   }),
   // Cambio de cartas: cuántas veces por partida puedes volver a sacar las 3 cartas de subir de nivel
   cambiosCartas: 1,

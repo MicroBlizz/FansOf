@@ -106,7 +106,7 @@ function oleadas(dt) {
     P.oleadaT -= dt; if (P.oleadaT <= 0 && P.enemigos.length < 60) { P.oleadaT = 2.5; const p = puntoFuera(); crearEnemigo('becario', p.x, p.y); }
     return;
   }
-  const O = OLEADAS[Math.min(OLEADAS.length - 1, Math.floor(P.t / 60))];
+  const O = MEC.oleada(Math.floor(P.t / 60));
   P.oleadaT -= dt;
   if (P.oleadaT <= 0) {
     P.oleadaT = O.cada / MEC.ritmo();
@@ -125,7 +125,7 @@ function oleadas(dt) {
   }
   // los momentos especiales
   const ev = EVENTOS[P.evento];
-  if (ev && P.t >= ev.t) {
+  if (ev && P.t >= MEC.tEvento(P.evento, ev.t)) {
     P.evento++;
     aviso(ev.aviso, '¡Que no te rodeen!');
     play('horn');

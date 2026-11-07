@@ -1,8 +1,8 @@
 {
- "build": 1094,
- "hash": "36ff1d3",
- "fecha": "2026-11-07T14:51:23Z",
- "mensaje": "Survivors: mecánicas de PokéSurvivor tras el flag survivors-mecanicas (evolución de armas, oleadas de choque, jefes que escalan y embisten, curanderos limitados, altares, fuentes, cofres con candado y cambio de cartas); pedidos de iconos a Yoshi",
+ "build": 1095,
+ "hash": "79933ea",
+ "fecha": "2026-11-07T15:09:12Z",
+ "mensaje": "Survivors: principio con más ritmo tras el flag survivors-mecanicas (3-4 becarios por segundo en los minutos 1 y 2, primera oleada de choque a los 20 s, primer cerco a los 45 s)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

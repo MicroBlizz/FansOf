@@ -86,7 +86,7 @@ const MEC = (() => {
     S.choqueT -= dt;
     if (S.choqueT > 0 || P.jefe) return;
     S.choqueT = SVR.esperaChoque(C, azar);
-    const O = OLEADAS[Math.min(OLEADAS.length - 1, Math.floor(P.t / 60))], n = SVR.tamChoque(C, Math.floor(P.t / 60));
+    const O = oleada(Math.floor(P.t / 60)), n = SVR.tamChoque(C, Math.floor(P.t / 60));
     const a = azar() * Math.PI * 2, cx = P.jug.x + Math.cos(a) * 470, cy = P.jug.y + Math.sin(a) * 470, px = -Math.sin(a), py = Math.cos(a);
     aviso('¡OLEADA DE CHOQUE!', '¡Viene una fila entera por un lado!'); play('horn');
     for (let i = 0; i < n && P.enemigos.length < SV.maxEnemigos; i++) {
@@ -128,6 +128,12 @@ const MEC = (() => {
     else if (cerca) USOS[s.tipo](s, dt);
   }
 
+  /* ---------- un principio con más ritmo ---------- */
+  // la oleada del minuto `min` (la de M.inicio si la hay, si no la de OLEADAS)
+  const oleada = min => (st() && M.inicio.oleadas[min]) || OLEADAS[Math.min(OLEADAS.length - 1, min)];
+  // el segundo en que llega el momento especial número i
+  const tEvento = (i, t) => (st() && i === 0 ? M.inicio.primerCerco : t);
+
   /* ---------- cambio de cartas ---------- */
   const cambiosQuedan = () => (st() ? st().cambios : 0);
   function gastaCambio() { if (cambiosQuedan() > 0) st().cambios--; }
@@ -138,5 +144,5 @@ const MEC = (() => {
     choque(dt); embestidas(dt); sitios(dt);
   }
   return Object.freeze({ iniciar, paso, cifras, evolucionada, cartasEvolucion, evolucionar, pista, buff, distancia, tipoQueSale, puedeCurar,
-    ritmo, escalaJefe, cambiosQuedan, gastaCambio, activas: () => !!st(), sitiosVivos: () => (st() ? st().sitios : []), buffs: () => (st() ? st().buffs : {}) });
+    ritmo, escalaJefe, oleada, tEvento, cambiosQuedan, gastaCambio, activas: () => !!st(), sitiosVivos: () => (st() ? st().sitios : []), buffs: () => (st() ? st().buffs : {}) });
 })();

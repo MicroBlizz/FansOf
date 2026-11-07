@@ -1,8 +1,8 @@
 {
- "build": 1073,
- "hash": "4eac93c",
- "fecha": "2026-11-07T11:24:33Z",
- "mensaje": "Zombies 0.12.1: arreglos de la revisión de los controles del móvil",
+ "build": 1074,
+ "hash": "151458e",
+ "fecha": "2026-11-07T11:25:56Z",
+ "mensaje": "Tablero fase 2: crear, editar y mover tareas desde /gestion",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

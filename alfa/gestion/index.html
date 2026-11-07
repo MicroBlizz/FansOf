@@ -162,8 +162,11 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     </div>
     <div id="pan-tablero" hidden>
       <style id="tb-estilo"></style>
-      <div class="caja ayuda"><b>Tablero.</b> Lo comprometido, en cinco columnas: por refinar, pendiente, en curso, en revisión y hecho. Hoy solo se lee; crear, editar y mover llegan en la siguiente fase (servidor/117-tablero.sql, docs/gestion/TABLERO.md).</div>
+      <div class="caja ayuda"><b>Tablero.</b> Lo comprometido, en cinco columnas: por refinar, pendiente, en curso, en revisión y hecho. Crea una tarea con <b>Nueva tarea</b> (nace por refinar), muévela con el desplegable o arrastrándola a otra columna, y pulsa <b>Editar</b> para refinarla. Los hilos de Claude las cogen y las pasan a en revisión; solo una persona las pasa a hecho. Detalle: docs/gestion/TABLERO.md.</div>
       <div class="aviso" id="tb-aviso" role="alert"></div>
+      <div id="tb-filtros"></div>
+      <div id="tb-form"></div>
+      <datalist id="tb-juegos"></datalist>
       <div id="tb-lista"></div>
     </div>
     <div id="pan-flags" hidden>
@@ -331,10 +334,12 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="tablero/tablero.js"></script>
 <script src="tablero/dominio/estados.js"></script>
 <script src="tablero/dominio/tarea.js"></script>
+<script src="tablero/dominio/borrador.js"></script>
 <script src="tablero/dominio/vista-tablero.js"></script>
 <script src="tablero/aplicacion/casos.js"></script>
 <script src="tablero/adaptadores/repositorio-servidor.js"></script>
 <script src="tablero/adaptadores/vista.js"></script>
+<script src="tablero/adaptadores/controlador.js"></script>
 <script src="tablero/principal.js"></script>
 <script>GESTION_NAV.arranca();</script>
 </body>

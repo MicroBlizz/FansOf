@@ -1,11 +1,56 @@
-// Fans Of · /gestion · TABLERO · adaptador · VISTA: el HTML del tablero. `html(columnas, esc)` es una función pura (se prueba en Node); `pinta` la pone en el
-// panel. Solo lectura: mover y editar llegan en la fase 2. Reutiliza las clases de /gestion (caja, cuenta, cab, estado, meta).
+// Fans Of · /gestion · TABLERO · adaptador · VISTA: el HTML del tablero y de su formulario. Todo son funciones puras (reciben `esc`, que escapa el texto, y
+// `fecha`, que da la fecha legible): se prueban en Node. El controlador (controlador.js) las pone en la página. Reutiliza las clases de /gestion
+// (caja, cuenta, cab, estado, meta, filtros, aviso).
 'use strict';
 TABLERO.vista = (() => {
-  const tarjeta = (t, esc) => `<article class="cuenta tb-tarea"><div class="cab"><b>${esc(t.titulo)}</b></div>
-    <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}</div></article>`;
-  const columna = (c, esc) => `<section class="tb-col"><h3>${esc(c.titulo)} <span class="meta">${c.tareas.length}</span></h3>${c.tareas.map(t => tarjeta(t, esc)).join('') || '<div class="meta">Vacía</div>'}</section>`;
-  const html = (columnas, esc) => `<div class="tb-tablero">${columnas.map(c => columna(c, esc)).join('')}</div>`;
-  const ESTILO = '.tb-tablero{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}@media(max-width:1000px){.tb-tablero{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.tb-tablero{grid-template-columns:minmax(0,1fr)}}.tb-tarea{overflow-wrap:anywhere}.tb-col{display:grid;gap:8px;align-content:start}.tb-col h3{margin:0;font-size:14px}.tb-tarea{padding:8px 10px;gap:4px}';
-  return { html, ESTILO };
+  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo' };
+  const MENSAJES = {
+    'solo-personas-hecho': 'Solo una persona pasa una tarea a hecho',
+    'es-de-otro': 'Esa tarea es de otra persona',
+    'esta-hecha': 'Esa tarea ya está hecha',
+    'sin-refinar': 'Una tarea sin refinar la saca una persona',
+    'no-existe': 'La tarea ya no existe: recarga el tablero',
+    'sin-servidor': 'No se ha podido hablar con el servidor',
+    'estado': 'Esa columna no existe',
+    'estado-desconocido': 'Esa columna no existe',
+    'datos': 'El servidor no ha aceptado los datos',
+  };
+  const mensaje = (error, datos) => (error === 'campo-invalido' ? CAMPOS[datos && datos.campo] || 'Hay un campo que no vale' : MENSAJES[error] || 'No se ha podido hacer: ' + error);
+
+  const opciones = (lista, actual, esc) => lista.map(([id, texto]) => `<option value="${esc(id)}"${id === actual ? ' selected' : ''}>${esc(texto)}</option>`).join('');
+  const COLUMNAS = TABLERO.COLUMNAS.map(c => [c.id, c.titulo]);
+  const enlace = (hilo, esc) => (/^https:\/\//.test(hilo) ? `<a href="${esc(hilo)}" target="_blank" rel="noopener">hilo</a>` : esc(hilo));
+  const linea = (etiqueta, texto, esc) => (texto ? `<div class="meta"><b>${etiqueta}:</b> ${esc(texto)}</div>` : '');
+  const historial = (t, esc, fecha) => (t.historial && t.historial.length
+    ? `<details><summary>Historial (${t.historial.length})</summary>${t.historial.map(h => `<div class="meta">${esc(fecha(h.cuando))} · ${esc(h.quien)}${h.de && h.de !== h.a ? ` · ${esc(h.de)} → ${esc(h.a)}` : ''}${h.nota ? ' · ' + esc(h.nota) : ''}</div>`).join('')}</details>` : '');
+
+  const tarjeta = (t, esc, fecha) => `<article class="cuenta tb-tarea" draggable="true" data-id="${t.id}">
+    <div class="cab"><b>${esc(t.titulo)}</b></div>
+    <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.alfa ? ` <span class="estado">${esc(t.alfa)}</span>` : ''}</div>
+    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
+    ${historial(t, esc, fecha)}
+    <div class="accion"><select data-mover="${t.id}" aria-label="Mover a">${opciones(COLUMNAS, t.estado, esc)}</select><button type="button" data-editar="${t.id}">Editar</button></div></article>`;
+  const columna = (c, esc, fecha) => `<section class="tb-col" data-columna="${c.id}"><h3>${esc(c.titulo)} <span class="meta">${c.tareas.length}</span></h3>${c.tareas.map(t => tarjeta(t, esc, fecha)).join('') || '<div class="meta">Vacía</div>'}</section>`;
+  const html = (columnas, esc, fecha = String) => `<div class="tb-tablero">${columnas.map(c => columna(c, esc, fecha)).join('')}</div>`;
+
+  // Los filtros de arriba: juego y responsable (con «todos») y el botón de tarea nueva
+  const filtros = (juegos, filtro, esc) => `<div class="filtros"><button type="button" class="fuerte" data-nueva>Nueva tarea</button>
+    <select data-filtro="juego" aria-label="Juego">${opciones([['', 'Todos los juegos'], ...juegos.map(j => [j, j])], filtro.juego || '', esc)}</select>
+    <select data-filtro="responsable" aria-label="Responsable">${opciones([['', 'Todos'], ...Object.entries(TABLERO.RESPONSABLES)], filtro.responsable || '', esc)}</select></div>`;
+
+  // El formulario de una tarea (nueva si v.id no existe). Cada campo lleva name= para que el controlador lo lea
+  const campo = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<input type="text" name="${nombre}" value="${esc(valor || '')}"${ancho ? ` maxlength="${ancho}"` : ''}></label>`;
+  const area = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<textarea name="${nombre}" rows="2" maxlength="${ancho}">${esc(valor || '')}</textarea></label>`;
+  const formulario = (v, esc) => `<form class="caja tb-form" data-id="${v.id || ''}"><b>${v.id ? 'Editar tarea' : 'Nueva tarea (nace por refinar)'}</b>
+    ${campo('titulo', 'Título', v.titulo, esc, 120)}${area('descripcion', 'Qué hay que hacer', v.descripcion, esc, 4000)}${area('criterio', 'Está hecho cuando…', v.criterio, esc, 2000)}
+    <div class="filtros"><label>Juego o área<input type="text" name="juego" value="${esc(v.juego || 'general')}" maxlength="40" list="tb-juegos"></label>
+    <label>Responsable<select name="responsable">${opciones([['', 'Sin responsable'], ...Object.entries(TABLERO.RESPONSABLES)], v.responsable || '', esc)}</select></label>
+    <label>Prioridad<select name="prioridad">${opciones(Object.keys(TABLERO.PRIORIDADES).map(p => [p, p]), v.prioridad || 'normal', esc)}</select></label></div>
+    ${campo('hilo', 'Enlace al hilo', v.hilo, esc, 300)}${area('enlaces', 'Otros enlaces (ADR, TODO, PR)', v.enlaces, esc, 1000)}
+    <div class="filtros"><button type="submit" class="fuerte">Guardar</button><button type="button" data-cancelar>Cancelar</button></div></form>`;
+
+  const ESTILO = '.tb-tablero{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}@media(max-width:1000px){.tb-tablero{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.tb-tablero{grid-template-columns:minmax(0,1fr)}}'
+    + '.tb-col{display:grid;gap:8px;align-content:start;min-height:80px;padding:4px;border-radius:6px}.tb-col.encima{outline:2px dashed var(--acento)}.tb-col h3{margin:0;font-size:14px}.tb-tarea{padding:8px 10px;gap:4px;overflow-wrap:anywhere}.tb-tarea[draggable=true]{cursor:grab}'
+    + '.tb-form{display:grid;gap:8px}.tb-form textarea{font:inherit;color:var(--texto);background:var(--bg);border:1px solid var(--linea);border-radius:5px;padding:7px 9px;width:100%}.tb-form .filtros label{flex:1;min-width:140px}';
+  return { html, filtros, formulario, mensaje, ESTILO };
 })();

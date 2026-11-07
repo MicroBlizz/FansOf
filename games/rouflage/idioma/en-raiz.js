@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.74
+  "<b>LA BROCHA SUENA DE VERDAD</b>: la brocha gigante de la PINTURA RÁPIDA suena ahora como una brocha de verdad, frus y fras, y te pinta en dos pasadas, ida y vuelta, al ritmo de su sonido.": "<b>THE BRUSH SOUNDS REAL</b>: the giant QUICK PAINT brush now sounds like a real brush, swish and swash, and paints you in two strokes, there and back, in time with its sound.",
+  "Microblizz ha grabado el brochazo pintando la pared del despacho del jefe y Phony jura que debajo se oye su firma.": "Microblizz recorded the brushstroke by painting the wall of the boss's office, and Phony swears you can hear his signature underneath.",
   // 0.2.73
   "<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the anonymous count of connected players no longer counts the internal-testing bots.",
   "Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público.": "Microblizz stopped counting test bots as players and Phony asked for them to count as audience at least.",

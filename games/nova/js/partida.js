@@ -27,7 +27,7 @@ const NVP = { casco: 'caza', cap: 'progamer', ofi: null, S: null, ult: 0, raf: 0
 const NV_CASCOS = {
   caza:    { hp: 220, vel: 215, arma: ['flak', 'cinetica'] },
   crucero: { hp: 230, vel: 190, arma: ['laser', 'termica'] },
-  fragata: { hp: 330, vel: 160, arma: ['flak', 'explosiva'] }
+  fragata: { hp: 290, vel: 160, arma: ['flak', 'explosiva'] }
 };
 // Sector sin bordes: es un toro de lado L que crece con la nave. La nave nunca salta; lo que queda a más de L/2 de ella
 // reaparece por el otro lado (siempre fuera de la pantalla), así que todo se ve, se apunta y se mide en su copia más cercana.

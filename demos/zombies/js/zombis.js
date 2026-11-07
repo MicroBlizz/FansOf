@@ -1,0 +1,154 @@
+// Fans of Zombies · LOS FANS ZOMBIFICADOS (dominio): el ruido (cada cosa que suena tiene un radio y quien lo oye va hacia allí) y lo
+// que piensa cada zombi: deambula, sigue huellas en la nieve, va al último ruido, te persigue si te ve y te muerde si te alcanza.
+// Cada tipo tiene lo suyo: el streamer grita y avisa a los demás, el speedrunner esprinta y descansa, el bot hace siempre la misma
+// ruta. Los lejanos «duermen» (no se calculan). El mundo (choques y vista) llega de fuera: mundo.mueve y mundo.seVe.
+'use strict';
+var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
+(function (Z) {
+  Z.nuevoZombi = function (AJ, e, tipo, x, z, azar) {
+    const T = AJ.zombis[tipo];
+    if (!T) return Z.error('tipoDesconocido', { tipo });
+    const zb = { id: ++e.ultimoId, tipo, T, x, z, a: azar() * 6.28, vida: T.vida, estado: 'vaga', obj: null, tPensar: 0, tMordisco: 0, tSprint: 0, descansa: 0, olvida: 0 };
+    if (T.ruta) zb.ruta = [{ x, z }, { x: x + (azar() - 0.5) * 30, z: z + (azar() - 0.5) * 30 }];
+    e.zombis.push(zb);
+    return Z.ok(zb);
+  };
+
+  // un ruido en (x, z) con radio r: los zombis que lo oyen van hacia allí (quien = 'jugador' | 'alarma' | 'zombi')
+  Z.haceRuido = function (AJ, e, x, z, r, quien, dura) {
+    if (quien === 'jugador') r = Z.ruidoEstacion(AJ, e, r);   // con lluvia se te oye menos
+    e.ruidos.push({ x, z, r, quien, t: dura || AJ.ruido.dura, max: dura || AJ.ruido.dura });
+    const p = Z.parcheDe(AJ, e), oido = (p && p.oido) || 1;
+    for (const zb of e.zombis) {
+      if (zb.vida <= 0 || zb.estado === 'persigue') continue;
+      if (Z.dist(zb.x, zb.z, x, z) <= r * zb.T.oido * oido) { zb.estado = 'oye'; zb.obj = { x, z }; zb.olvida = AJ.ia.olvida; }
+    }
+  };
+  Z.pasoRuidos = (e, dt) => { e.ruidos = e.ruidos.filter((r) => (r.t -= dt) > 0); };
+
+  // ¿te ve este zombi? (más lejos de día y si vas de pie)
+  function teVe(AJ, e, zb, d, mundo) {
+    const J = e.jugador, noche = Z.esNoche(AJ, e.min) ? AJ.mundo.vistaNoche : 1;
+    const vista = zb.T.vista * noche * Z.estacion(AJ, e.min).vistaFans * (J.agacha ? 0.55 * Z.menos(AJ, J, 'sigilo', 'vista') : 1) * (J.duerme ? 0.4 : 1);
+    return d < vista && mundo.seVe(zb.x, zb.z, J.x, J.z);
+  }
+  // decide el estado y hacia dónde va
+  function piensa(AJ, e, zb, d, mundo, azar) {
+    const J = e.jugador;
+    if (teVe(AJ, e, zb, d, mundo)) {
+      if (zb.estado !== 'persigue' && zb.T.grita) { Z.haceRuido(AJ, e, zb.x, zb.z, AJ.ruido.grito, 'zombi'); e.eventos.push({ tipo: 'grito', id: zb.id }); }
+      zb.estado = 'persigue'; zb.obj = { x: J.x, z: J.z }; zb.olvida = AJ.ia.olvida; return;
+    }
+    if (zb.estado === 'persigue') zb.estado = 'oye';            // te ha perdido: va a donde te vio por última vez
+    if (zb.estado === 'oye' && zb.olvida > 0) return;
+    zb.estado = 'vaga';
+    const h = huellaCerca(AJ, e, zb);
+    if (h) { zb.estado = 'huella'; zb.obj = h; return; }
+    if (zb.ruta) { const r = zb.ruta[0]; if (Z.dist(zb.x, zb.z, r.x, r.z) < 1.5) zb.ruta.push(zb.ruta.shift()); zb.obj = zb.ruta[0]; return; }
+    if (!zb.obj || azar() < 0.02) zb.obj = { x: zb.x + (azar() - 0.5) * AJ.ia.deambula * 2, z: zb.z + (azar() - 0.5) * AJ.ia.deambula * 2 };
+  }
+  // la huella más nueva cerca del zombi (las sigue hacia delante, hacia ti)
+  function huellaCerca(AJ, e, zb) {
+    let mejor = null;
+    for (const h of e.huellas) if (e.min - h.min < AJ.jugador.vidaHuella && Z.dist(zb.x, zb.z, h.x, h.z) < AJ.ia.huella && (!mejor || h.min > mejor.min)) mejor = h;
+    if (!mejor) return null;
+    const i = e.huellas.indexOf(mejor), sig = e.huellas[i + 1];
+    return sig ? { x: sig.x, z: sig.z } : { x: e.jugador.x, z: e.jugador.z };
+  }
+  // la velocidad de un zombi ahora (el speedrunner esprinta un rato y se para a mirar su tiempo)
+  function velDe(AJ, e, zb, dt) {
+    const p = Z.parcheDe(AJ, e), T = zb.T;
+    let v = zb.estado === 'persigue' ? T.persigue : T.vel;
+    if (T.sprint && zb.estado === 'persigue') {
+      if (zb.descansa > 0) { zb.descansa -= dt; v = 0; } else if ((zb.tSprint += dt) > T.sprint) { zb.tSprint = 0; zb.descansa = T.descanso; }
+    }
+    if (p && p.velNoche && Z.esNoche(AJ, e.min)) v *= p.velNoche;
+    v *= Z.estacion(AJ, e.min).velFans;
+    if (p && p.lag && Math.sin(e.min * 0.7 + zb.id) > 0.6) v = 0;
+    return v;
+  }
+
+  Z.pasoZombis = function (AJ, e, dt, mundo, azar) {
+    const J = e.jugador, rej = Z.rejilla(e.zombis, AJ.ia.celda);
+    for (const zb of e.zombis) {
+      if (zb.vida <= 0) continue;
+      const d = Z.dist(zb.x, zb.z, J.x, J.z);
+      if (d > AJ.ia.duerme && zb.estado === 'vaga') continue;
+      zb.olvida -= dt; zb.tMordisco -= dt;
+      if (zb.aturdido > 0) { zb.aturdido -= dt; if (zb.aturdido <= 0) zb.derribado = false; continue; }   // aturdido o en el suelo: ni anda ni muerde
+      if (zb.T.jefe && Z.pasoJefe(AJ, e, zb, dt, mundo, azar)) { if (d < AJ.ia.alcanceMordisco + zb.T.radio) muerde(AJ, e, zb, azar); continue; }
+      if ((zb.tPensar -= dt) <= 0) { zb.tPensar = 0.25 + azar() * 0.15; piensa(AJ, e, zb, d, mundo, azar); }
+      if (zb.estado === 'persigue') zb.obj = { x: J.x, z: J.z };
+      if (zb.hueco && zb.estado !== 'vaga') { if (Z.pasoHuecoZombi(AJ, e, zb, dt, mundo)) continue; const p = zb.hueco && mundo.posHueco(zb.hueco); if (p) zb.obj = { x: p.x, z: p.z }; }
+      Z.pasoCruce(zb, dt);
+      if (d < AJ.ia.alcanceMordisco + zb.T.radio && zb.estado === 'persigue') { muerde(AJ, e, zb, azar); continue; }
+      mueveZombi(AJ, e, zb, rej, velDe(AJ, e, zb, dt) * dt, mundo);
+    }
+  };
+  function mueveZombi(AJ, e, zb, rej, paso, mundo) {
+    if (!zb.obj || paso <= 0) return;
+    const dx = zb.obj.x - zb.x, dz = zb.obj.z - zb.z, d = Math.hypot(dx, dz);
+    if (d < 0.3) { if (zb.estado === 'oye' && !zb.hueco && !zb.cruza) zb.olvida = 0; return; }
+    let mx = dx / d, mz = dz / d;
+    const f = sigueFlujo(e, zb, mundo);                         // persiguiéndote: rodea casas y vallas por el campo de flujo
+    if (f) { mx = f.x; mz = f.z; }
+    [mx, mz] = apartaDeVecinos(AJ, zb, rej, mx, mz);
+    const m = Math.hypot(mx, mz) || 1;
+    zb.a = Math.atan2(mx, mz);
+    const [px, pz] = dentroDeLoHecho(AJ, zb, mx / m * paso, mz / m * paso, mundo);
+    const choca = mundo.mueve(zb, px, pz, zb.T.radio);
+    if (choca && zb.estado !== 'vaga' && !zb.hueco && !zb.cruza) Z.buscaHueco(AJ, e, zb, mundo);   // una pared por medio: a por la puerta o ventana más cercana
+  }
+  // no se apilan: se apartan un poco de los de al lado
+  function apartaDeVecinos(AJ, zb, rej, mx, mz) {
+    for (const o of Z.vecinos(rej, zb.x, zb.z)) {
+      const od = Z.dist(zb.x, zb.z, o.x, o.z);
+      if (o !== zb && o.vida > 0 && od < AJ.ia.separa && od > 0) { mx += (zb.x - o.x) / od * 0.6; mz += (zb.z - o.z) / od * 0.6; }
+    }
+    return [mx, mz];
+  }
+  // un fan que está en lo construido no da un paso hacia lo que aún no lo está (allí no hay paredes): ese eje se queda quieto y resbala
+  // por el borde. Si ya estaba fuera (de antes de cargarse nada) o está en una planta de la torre, anda libre. Si el paso no cambia de
+  // trozo ni entra o sale del distrito hecho a mano, no hace falta mirar nada
+  function dentroDeLoHecho(AJ, zb, dx, dz, mundo) {
+    if (zb.planta || !mundo.construido || mismaZona(AJ, zb.x, zb.z, zb.x + dx, zb.z + dz) || !mundo.construido(zb.x, zb.z)) return [dx, dz];
+    const px = mundo.construido(zb.x + dx, zb.z) ? dx : 0, pz = mundo.construido(zb.x, zb.z + dz) ? dz : 0;
+    return px && pz && !mundo.construido(zb.x + dx, zb.z + dz) ? [px, 0] : [px, pz];   // en una esquina, la diagonal tampoco
+  }
+  const enCentro = (C, x, z) => x > C.x0 && x < C.x1 && z > C.z0 && z < C.z1;
+  const mismaZona = (AJ, x0, z0, x1, z1) => {
+    const T = AJ.trozos, f = (v, o) => Math.floor((v - o) / T.lado);
+    return f(x0, T.ox) === f(x1, T.ox) && f(z0, T.oz) === f(z1, T.oz) && enCentro(T.centro, x0, z0) === enCentro(T.centro, x1, z1);
+  };
+  // el campo de flujo (si el mundo lo da) cuando te persigue o va a donde estás, sin un hueco entre manos y no pegado a ti
+  function sigueFlujo(e, zb, mundo) {
+    if (!mundo.flujo || zb.hueco || zb.cruza) return null;
+    const J = e.jugador, aTi = zb.estado === 'persigue' || (zb.estado === 'oye' && zb.obj && Z.dist(zb.obj.x, zb.obj.z, J.x, J.z) < 4);
+    if (!aTi || Z.dist(zb.x, zb.z, J.x, J.z) < 1.6) return null;
+    return mundo.flujo(zb.x, zb.z);
+  }
+  function muerde(AJ, e, zb, azar) {
+    zb.a = Math.atan2(e.jugador.x - zb.x, e.jugador.z - zb.z);
+    if (zb.tMordisco > 0) return;
+    zb.tMordisco = AJ.ia.mordisco;
+    const J = e.jugador;
+    if (J.duerme) J.duerme = false;
+    Z.dana(e, zb.T.dano * e.dif.dano * Z.mordiscoRopa(AJ, J), 'mordisco', zb.tipo);   // la ropa protege y se gasta (js/equipo.js)
+    if (J.infeccion <= 0 && azar() < AJ.ia.infeccion * (J.A.infeccion || 1) * Z.infeccionRopa(AJ, J)) { J.infeccion = 1; e.eventos.push({ tipo: 'infectado' }); }
+    Z.gastaRopa(AJ, e);
+    e.eventos.push({ tipo: 'mordisco', id: zb.id });
+  }
+  // cada hora de juego, si hay muchos fans, se quitan los tranquilos (y los caídos) que están muy lejos de ti: así quedan fans para los
+  // sitios nuevos que vas descubriendo (las oleadas vuelven a llenar lo de alrededor)
+  Z.podaLejanos = function (AJ, e) {
+    if (e.min - (e.podado || 0) < 60) return;
+    e.podado = e.min;
+    const M = AJ.mundo, J = e.jugador;
+    if (Z.vivos(e).length < M.maxZombis * M.podaDesde) return;
+    const sobra = (z) => (z.vida <= 0 || z.estado === 'vaga') && !z.T.jefe && !z.planta && Z.dist(z.x, z.z, J.x, J.z) > M.poda;
+    const fuera = e.zombis.filter(sobra).map((z) => z.id);
+    if (!fuera.length) return;
+    e.zombis = e.zombis.filter((z) => !sobra(z));
+    e.eventos.push({ tipo: 'poda', ids: fuera });
+  };
+})(ZOM);

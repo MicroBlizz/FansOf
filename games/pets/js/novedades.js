@@ -1,6 +1,7 @@
 // Fans Of Pets · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.8', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come."] },
   { v: '0.2.7', real: ["<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas."], joke: ["Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público."] },
   { v: '0.2.6', real: ["<b>HOCICO ARREGLADO</b>: el hocico ya no lleva dientes pintados encima; la boca es la del dibujo.", "<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos."], joke: ["Microblizz ha mandado a tu mascota al dentista. Phony ha pedido que le quiten a él la factura."] },
   { v: '0.2.5', real: ["<b>CARA NUEVA</b>: el juego estrena icono con sus iniciales y, al abrirlo, sale la pantalla de inicio con el logo del estudio, Fans Of Games.", "<b>HURÓN RETOCADO</b>: el hurón estrena hocico en 3D con la trufa en la punta."], joke: ["Microblizz ha intentado registrar las iniciales del juego a su nombre. Phony ya ha pedido unas para él."] },

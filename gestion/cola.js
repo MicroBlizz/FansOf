@@ -14,7 +14,7 @@
   const CAMBIO = 1, PRECIO_CLAUDE = 20;   // 1 € = 1 $; 20 USD por millón de tokens de salida de Claude Opus 5.5 (oct. 2026), para pasar el coste de cada recurso a tokens
   try { ['fansof.gestion.cola.duraciones', 'fansof.gestion.cola.precision'].forEach(k => localStorage.removeItem(k)); } catch (e) { /* lo de antes de la cadencia (-2) y la casilla de precisión, ya quitada */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0, confirmaBorrar = false;
-  let pausa = null, ocupado = false, falloControl = '';   // mandos (cola-control.js): estado de la pausa de los runners de generar recursos
+  let pausa = null, ocupado = false, falloControl = '', sinMandos = false;   // mandos (cola-control.js): estado de la pausa de los runners de generar recursos
   let claves = null, claveNueva = '', revocando = null;   // claves del mod (vista Configuración)
   // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
   const PLAN = COLA_DATOS.K.plan;
@@ -84,7 +84,7 @@
     if (!F.length) return '<div class="vacio"><b>La cola está vacía</b>No hay trabajos en curso ni esperando.</div>';
     return F.map(f => { const [txt, cls] = estado(f);
       return `<article class="cuenta"><div class="cab"><span class="estado ${cls}">${txt}</span><span class="codigo">${esc(f.t.nombre)}</span><span class="meta">${esc(f.t.flujo)} · ${esc(f.t.carril)} · ${esc(f.t.ref)}</span></div>
-        <div class="meta">media ${f.t.media === null ? '—' : fmt(f.t.media)} · <b>${esc(eta(f, ahora))}</b> ${COLA_CONTROL.botonCancelar(f.t, ahora, ocupado)}</div></article>`; }).join('')
+        <div class="meta">media ${f.t.media === null ? '—' : fmt(f.t.media)} · <b>${esc(eta(f, ahora))}</b> ${COLA_CONTROL.botonCancelar(f.t, ahora, ocupado, sinMandos)}</div></article>`; }).join('')
       + (snap.extra ? `<div class="meta">Y ${snap.extra} trabajos más en cola que no se calculan aquí.</div>` : '');
   }
   function vistaB(F, ahora) {
@@ -137,15 +137,7 @@
 
   // ----- pantalla -----
   const estilo = document.createElement('style');
-  estilo.textContent = `.cl-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.cl-bar button.on{background:var(--acento);color:var(--acento-texto);border-color:var(--acento);font-weight:600}
-    .cl-op{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--suave)}.cl-gran{font-size:26px;font-weight:700;margin-bottom:4px}.cl-fila{display:grid;grid-template-columns:minmax(120px,1.2fr) 3fr auto;gap:10px;align-items:center;padding:4px 0}.cl-rec{grid-template-columns:1fr auto auto}
-    .cl-res{margin:12px 0 6px}.cl-res td,.cl-res th{padding:6px 10px}.cl-res .cl-tot td{font-weight:700}.cl-res .cl-sub td:first-child{padding-left:1.6em}.cl-res .cl-suave{color:var(--suave)}.cl-barra{height:12px;border:1px solid var(--linea);border-radius:6px;overflow:hidden;background:var(--bg)}.cl-barra i{display:block;height:100%;background:var(--debil)}
-    .cl-lane{display:grid;gap:4px;margin-bottom:12px}.cl-strip{display:flex;min-height:48px;border:2px solid var(--texto);border-radius:8px;overflow:hidden}.cl-strip.off{background:repeating-linear-gradient(45deg,var(--bg) 0 8px,var(--panel) 8px 16px)}
-    .cl-b{display:flex;flex-direction:column;justify-content:center;padding:0 8px;border-right:2px solid var(--texto);font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:var(--panel);min-width:0}.cl-b:last-child{border-right:0}
-    .cl-b.run{background:var(--ok-fondo);color:var(--ok)}.cl-b small{font:11px var(--mono);font-weight:400;color:var(--suave)}.estado.esp{background:var(--debil-fondo);color:var(--debil)}
-    .cl-refr{display:inline-flex;flex-direction:column;gap:3px;align-items:stretch;min-width:7em}.cl-prog-txt{font:11px var(--mono);color:var(--suave);text-align:center;white-space:nowrap}
-    ${COLA_CONFIG.css}
-    .cl-prog{display:block;height:6px;border:1px solid var(--texto);border-radius:4px;overflow:hidden;background:var(--bg)}.cl-prog b{display:block;height:100%;width:0;background:var(--acento);transition:width .3s}`;
+  estilo.textContent = COLA_ESTILO.css(COLA_CONFIG.css);
   document.head.appendChild(estilo);
   function pinta() {
     const t = token(), ahora = Date.now();
@@ -156,11 +148,11 @@
     let cuerpo = '';
     if (t && snap) {
       const F = calcular(ahora);
-      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen'], ['f', 'Fallidas (' + (snap.fallidas || []).length + ')'], ['cfg', 'Configuración']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
+      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen'], ...COLA_CONTROL.pestanas(snap), ['cfg', 'Configuración']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
         + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span></div>`
         + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '')
-        + (vista === 'cfg' ? '' : COLA_CONTROL.htmlPausa({ pausa, ocupado, esc, fallo: falloControl }))
-        + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' ? COLA_CONTROL.htmlFallidas({ ocupado, fallidas: snap.fallidas || [], fecha, esc }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
+        + (vista === 'cfg' ? '' : COLA_CONTROL.htmlPausa({ pausa, ocupado, esc, fallo: falloControl, sinMandos }))
+        + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' || vista === 'x' ? COLA_CONTROL.htmlLista(vista, snap, { ocupado, fecha, esc, sinMandos }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
         + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
     } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}<div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div></div>`;
@@ -175,8 +167,12 @@
   // Mandos: pausa de los runners de generar recursos y reinicio de ejecuciones fallidas (cola-control.js). El token necesita Variables y Actions con escritura.
   const permiso = e => /→ (401|403)/.test(e.message) ? ' El token no tiene el permiso necesario (Variables y Actions, lectura y escritura).' : '';
   async function leerEstadoPausa() {
-    try { pausa = await COLA_CONTROL.leerPausa(fetch, token()); falloControl = ''; }
-    catch (e) { pausa = null; falloControl = 'No pude leer la pausa: ' + e.message + '.' + permiso(e); }
+    try { pausa = await COLA_CONTROL.leerPausa(fetch, token()); falloControl = ''; sinMandos = false; }
+    catch (e) {
+      pausa = null;
+      // 401/403: el token es de solo lectura (sin Variables): no es un error, el panel se usa para mirar y se ocultan los botones que mandan (pausa, reiniciar, cancelar)
+      if (/→ (401|403)/.test(e.message)) { sinMandos = true; falloControl = ''; } else falloControl = 'No pude leer la pausa: ' + e.message + '.';
+    }
   }
   async function conMandos(accion, texto) {
     if (ocupado || cargando) { $('cl-aviso').textContent = 'Espera a que acabe lo que se está haciendo.'; return; }
@@ -203,7 +199,7 @@
     else if (b.id === 'cl-pausa') conMandos(() => COLA_CONTROL.fijarPausa(fetch, token(), pausa !== true), 'No pude cambiar la pausa');
     else if (b.dataset.cancela) conMandos(async () => { await COLA_CONTROL.cancelar(fetch, token(), b.dataset.cancela); ultimo = 0; await cargar(true); }, 'No pude cancelar');
     else if (b.dataset.reinicia) conMandos(async () => { await COLA_CONTROL.reiniciar(fetch, token(), b.dataset.reinicia); ultimo = 0; await cargar(true); }, 'No pude reiniciar');
-    else if (b.id === 'cl-reinicia-todas') conMandos(async () => { const r = await COLA_CONTROL.reiniciarTodas(fetch, token(), snap.fallidas); ultimo = 0; await cargar(true); return r.mensaje; }, 'No pude reiniciar todas');
+    else if (b.id === 'cl-reinicia-todas') conMandos(async () => { const r = await COLA_CONTROL.reiniciarTodas(fetch, token(), vista === 'x' ? snap.caducadas : snap.fallidas); ultimo = 0; await cargar(true); return r.mensaje; }, 'No pude reiniciar todas');
     else if (b.id === 'cl-ref' || b.id === 'cl-todo') {
       const falta = Math.ceil((hasta - Date.now()) / 1000);
       if (falta > 0) { $('cl-aviso').textContent = 'Espera ' + falta + ' s para volver a refrescar.'; return; }

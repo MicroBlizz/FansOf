@@ -14,7 +14,7 @@ Object.assign(BOX, {
   s_tower: [70, 100, 35, 94], s_base: [124, 124, 62, 116], h_tower: [70, 108, 35, 102], h_base: [130, 128, 65, 120], c_tower: [70, 96, 35, 90], c_base: [130, 124, 65, 116], m_tower: [70, 100, 35, 94], m_base: [124, 128, 62, 120], x_rubble: [64, 40, 32, 30],
   p_tower: [70, 96, 35, 90], p_base: [124, 120, 62, 112], e_tower: [64, 100, 32, 94], e_base: [140, 162, 70, 154],
   p_rubble: [64, 40, 32, 30], e_rubble: [64, 40, 32, 30],
-  cajabotin: [64, 56, 32, 50], soportebot: [60, 60, 30, 54], parchebot: [80, 74, 40, 66],
+  cajabotin: [64, 56, 32, 50], soportebot: [60, 60, 30, 54], parchebot: [80, 74, 40, 66], survivalbot: [70, 98, 35, 92],
   vikingo: [96, 96, 48, 88], vikingsquad: [52, 52, 26, 46], swarmbug: [44, 34, 20, 30], retromarine: [72, 62, 34, 56], ghostagent: [72, 56, 30, 50], rockracer: [64, 40, 32, 34], titanbeta: [96, 84, 48, 76],
   o_tower: [70, 100, 35, 94], o_base: [124, 124, 62, 116],
   descargabot: [44, 50, 22, 44], licenciabot: [56, 56, 26, 50], plusbot: [56, 52, 26, 46], cobradlc: [64, 62, 30, 56], servidorbot: [76, 76, 38, 70], remasterbot: [80, 72, 38, 64],

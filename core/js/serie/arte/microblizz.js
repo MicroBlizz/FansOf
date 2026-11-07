@@ -173,6 +173,28 @@ Object.assign(ART, {
     for (let i = 0; i < 3; i++) dot(c, -3.6 + i * 3.6, -48, 1.2, '#ff3348');
     line(c, [4, -55, 6, -62], OL, 1.6); shape(c, el(6.2, -63, 2.4, 2.4), '#ffcb3d', 1.1);
   },
+  // 6-11-2026: SurvivalBot, el jefe de Microblizz cuando sale de su sede en el Modo Jefe: robot de oficina enorme con traje, corbata roja y chapa de «empleado del mes»
+  survivalbot(c) {
+    shape(c, rr(-13, -21, 10, 17, 3), '#3e4659'); shape(c, rr(3, -21, 10, 17, 3), '#3e4659');
+    shape(c, rr(-16, -7, 14, 7, 2.5), '#20102c', 1.6); shape(c, rr(2, -7, 15, 7, 2.5), '#20102c', 1.6);
+    shape(c, rr(-29, -48, 11, 24, 4), '#3e4659'); shape(c, rr(-31, -28, 14, 12, 4), '#aab4c4');
+    shape(c, rr(-21, -54, 42, 35, 8), '#3e4659');
+    shape(c, c => { c.moveTo(-8, -54); c.lineTo(0, -39); c.lineTo(8, -54); c.closePath(); }, '#ffffff', 1.4);
+    shape(c, c => { c.moveTo(-2.3, -50); c.lineTo(2.3, -50); c.lineTo(3.6, -31); c.lineTo(0, -27); c.lineTo(-3.6, -31); c.closePath(); }, '#ff4b5c', 1.3);
+    shape(c, rr(-3, -53, 6, 3.6, 1), '#c22a3a', 1.2);
+    line(c, [-8, -54, -12, -41, -5, -37], '#2b3245', 2.2); line(c, [8, -54, 12, -41, 5, -37], '#2b3245', 2.2);
+    shape(c, rr(8, -35, 10, 6, 1.2), '#ffcb3d', 1.2); c.fillStyle = '#b8860b'; c.fillRect(10, -32.6, 6, 1.2);
+    shape(c, rr(18, -48, 11, 24, 4), '#3e4659'); shape(c, rr(17, -28, 15, 13, 4), '#aab4c4');
+    line(c, [21, -22, 29, -22], '#7d889e', 1.2);
+    shape(c, rr(-5, -58, 10, 5, 1.5), '#aab4c4', 1.3);
+    shape(c, rr(-16, -79, 32, 22, 6), '#aab4c4');
+    shape(c, rr(-13, -77, 26, 3.4, 1.4), '#d7dee9', 0);
+    shape(c, rr(-13, -73, 26, 11, 3), '#20102c', 1.4);
+    c.fillStyle = 'rgba(255,75,92,.35)'; c.fillRect(-11, -70.2, 22, 5.4);
+    c.fillStyle = '#ff4b5c'; c.fillRect(-10, -68.8, 20, 2.6);
+    line(c, [-8, -79, -9, -87], OL, 1.6); shape(c, el(-9, -88.6, 2.5, 2.5), '#7df3ff', 1.1);
+    line(c, [8, -79, 9, -87], OL, 1.6); shape(c, el(9, -88.6, 2.5, 2.5), '#ffcb3d', 1.1);
+  },
   x_rubble(c) {
     shape(c, el(0, -3, 23, 8), '#6b7280');
     shape(c, poly(-17, -3, -15, -15, -9, -12, -4, -20, 2, -13, 8, -18, 13, -11, 17, -14, 17, -3), '#9ca3af');

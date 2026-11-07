@@ -117,7 +117,9 @@ Object.assign(CFG.units, {
     fallen:   { hp: 800, dmg: 34, cd: 1.6, range: 10,  speed: 26, r: 21, sight: 170, buildings: true },
     cajabotin:  { hp: 320, dmg: 10, cd: 1.0, range: 8,  speed: 30, r: 15, sight: 120, eject: 'becario', ejectN: 3, ejectTxt: '¡BOTÍN!' },
     soportebot: { hp: 200, dmg: 8,  cd: 1.0, range: 8,  speed: 30, r: 13, sight: 110, healer: true, heal: 14, healCd: 1.8, healR: 95 },
-    parchebot:  { hp: 760, dmg: 22, cd: 1.3, range: 10, speed: 28, r: 20, sight: 140, armor: 0.3 },
+    parchebot:  { hp: 760, dmg: 22, cd: 1.3, range: 10, speed: 28, r: 20, sight: 140, armor: 0.3 },    // 6-11-2026: SurvivalBot, el jefe de Microblizz que sale de su sede en el Modo Jefe (14f-jefes-campo.js): golpes en área y «crunch», que congela
+    survivalbot: { hp: 2600, dmg: 48, cd: 1.5, range: 12, speed: 24, r: 26, sight: 170, armor: 0.2, knock: 20, cleave: { r: 48, f: 0.6 },
+      pulse: { cd: 8, r: 120, stun: 3, kind: 'ip', text: '¡CRUNCH!', color: 'rgba(159,179,214,.9)', tc: '#cfe0ff', sfx: 'womp' } },
 });
 // Phony
 Object.assign(CFG.units, {

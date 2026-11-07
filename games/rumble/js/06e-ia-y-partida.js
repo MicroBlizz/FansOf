@@ -153,6 +153,7 @@ function updateGame(dt) {
     }
     if (G.autoplay) aiGeneric('p', dt);
     updateBoss(dt);
+    jefeCampoTick();   // 6-11-2026: en el Modo Jefe, el jefe sale de su sede al 30 % (14f-jefes-campo.js)
     if (G.time <= 0) { G.time = 0; timeUp(); }
   }
   for (const r of revives) {

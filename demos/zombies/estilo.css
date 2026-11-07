@@ -1,0 +1,171 @@
+/* Fans of Zombies · ESTILO DEL JUEGO: la base de Ratkov (letras de terminal VT323 y Russo One, colores fríos) y el HUD de supervivencia:
+   necesidades, reloj, ruido, la nota del parche, la radio, la mochila y las etiquetas encima de las cosas. Los menús, en estilo-menus.css. */
+:root {
+  --rk-fondo: #0b0d12; --rk-panel: rgba(10, 14, 18, 0.86); --rk-panel2: rgba(18, 24, 30, 0.96); --rk-borde: #40525a; --rk-borde2: #5c7480;
+  --rk-tinta: #e6eef0; --rk-tenue: #9ab8c0; --rk-naranja: #ff7a1a; --rk-bien: #7ee04a; --rk-mal: #ff4b5c; --rk-oro: #ffcb3d; --rk-raro: #c99bff; --rk-hielo: #7fd8ff;
+  --rk-num: "VT323", ui-monospace, Menlo, monospace; --rk-tit: "Russo One", "Arial Black", Impact, sans-serif;
+}
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--rk-fondo); color: var(--rk-tinta); overscroll-behavior: none; }
+body { display: block; font-family: var(--rk-num); font-size: 20px; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#cv { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; image-rendering: pixelated; image-rendering: crisp-edges; cursor: crosshair; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; padding: 16px; font: 24px var(--rk-num); color: var(--rk-tenue); letter-spacing: 0.1em; }
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { opacity: 0.4; cursor: default; }
+.lab { color: var(--rk-tenue); font-size: 17px; letter-spacing: 0.12em; }
+.barra { display: block; height: 8px; background: #06080a; border: 1px solid #1e2a30; margin: 2px 0 4px; }
+.barra > i { display: block; height: 100%; background: var(--rk-bien); }
+.malo { color: var(--rk-mal); } .bien { color: var(--rk-bien); }
+.panel { position: absolute; background: var(--rk-panel); border: 2px solid var(--rk-borde); padding: 5px 10px 4px; }
+.panel b { font-weight: 400; font-size: 26px; line-height: 1; }
+.fila { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.estados { display: flex; flex-wrap: wrap; gap: 4px; }
+.estados span { font-size: 15px; padding: 0 5px; border: 1px solid currentColor; letter-spacing: 0.06em; }
+.estados .malo { animation: late 0.9s ease-in-out infinite; }
+@keyframes late { 50% { opacity: 0.45; } }
+.btn, .btn-grande { background: #1a242a; border: 2px solid var(--rk-borde2); padding: 10px 16px; font: 16px var(--rk-tit); letter-spacing: 0.04em; color: var(--rk-tinta); text-decoration: none; text-align: center; display: inline-block; }
+#zb, #zb-capa { position: fixed; inset: 0; pointer-events: none; }
+#zb-capa { z-index: 40; } #zb { z-index: 30; }
+#zb button, #zb a, #zb-capa button { pointer-events: auto; }
+
+/* ---------- HUD ---------- */
+.zb-necesidades { left: 10px; top: 10px; width: 210px; }
+.zb-nec small { display: block; color: var(--rk-oro); font-size: 15px; margin: -3px 0 3px; }
+.zb-nec b { font-size: 21px !important; }
+.zb-reloj { right: 10px; top: 10px; text-align: right; display: grid; }
+.zb-reloj b { font-size: 36px; color: #ffb070; }
+.zb-noche { color: var(--rk-raro); font-size: 16px; }
+.zb-ruido { left: 10px; top: 318px; display: grid; gap: 3px; width: 210px; }
+.zb-ondas { display: flex; gap: 4px; align-items: flex-end; height: 22px; }
+.zb-ondas i { width: 14px; background: #ffa040; display: block; } .zb-ondas i.off { background: #22303a; }
+.zb-ondas i:nth-child(1) { height: 30%; } .zb-ondas i:nth-child(2) { height: 50%; } .zb-ondas i:nth-child(3) { height: 70%; } .zb-ondas i:nth-child(4) { height: 85%; } .zb-ondas i:nth-child(5) { height: 100%; }
+.zb-ruido small { color: var(--rk-tenue); font-size: 15px; }
+.zb-parche { position: absolute; left: 50%; top: 12px; transform: translateX(-50%) rotate(-1deg); background: var(--zb-papel); color: var(--zb-tinta); padding: 8px 16px 10px; max-width: 470px; box-shadow: 0 6px 18px rgba(0,0,0,.5); font: 17px var(--zb-maq); border-top: 6px solid #ff7a1a; }
+.zb-parche b { display: block; font: 15px var(--rk-tit); letter-spacing: .06em; color: #c84a1a; }
+.zb-parche::before { content: ""; position: absolute; left: 50%; top: -14px; width: 90px; height: 18px; margin-left: -45px; background: rgba(220, 210, 170, .75); transform: rotate(3deg); }
+.zb-radio { position: absolute; right: 10px; top: 118px; max-width: 250px; background: rgba(10,14,18,.86); border: 2px solid #3a5a3a; color: var(--zb-verde); font-size: 16px; padding: 5px 9px; }
+.zb-radio b { font-family: var(--rk-tit); font-weight: 400; font-size: 13px; letter-spacing: .1em; display: block; }
+.zb-hotbar { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; gap: 6px; }
+.zb-hotbar span { background: var(--rk-panel); border: 2px solid var(--rk-borde); width: 92px; height: 52px; display: grid; place-items: center; font-size: 16px; position: relative; text-align: center; line-height: 1; }
+.zb-hotbar span.sel { border-color: var(--rk-naranja); }
+.zb-hotbar em { position: absolute; left: 4px; top: 1px; font-style: normal; color: var(--rk-tenue); font-size: 14px; }
+.zb-arma { right: 10px; bottom: 14px; text-align: right; display: grid; }
+.zb-arma b { font-size: 32px; color: var(--rk-oro); } .zb-arma .lab:last-child { color: var(--rk-mal); font-size: 14px; }
+.zb-ayuda { position: absolute; left: 10px; bottom: 44px; display: grid; gap: 3px; font-size: 16px; color: var(--rk-tenue); }
+.zb-ayuda b { font-weight: 400; color: var(--rk-tinta); border: 1px solid var(--rk-borde2); padding: 0 5px; margin-right: 6px; }
+
+/* etiquetas encima de las cosas del mundo */
+#h-ets { position: absolute; inset: 0; }
+.zb-et { position: absolute; left: 0; top: 0; font: 14px var(--rk-tit); font-weight: 400; letter-spacing: .06em; padding: 2px 7px; white-space: nowrap; background: rgba(10,14,18,.82); border: 2px solid var(--rk-borde2); color: var(--rk-tinta); }
+.zb-et.alarma { background: #c81e28; border-color: #ff8a8a; color: #fff; animation: late .5s steps(2) infinite; }
+.zb-et.directo { background: #ff2a3a; border-color: #fff; color: #fff; }
+.zb-et.duda { background: #ffcb3d; border-color: #120e18; color: #120e18; }
+.zb-et.yo { border-color: var(--rk-naranja); color: var(--rk-naranja); }
+.zb-et.tipo { color: var(--zb-verde); border-color: #3a5a3a; font-size: 12px; }
+
+/* ---------- galería de fans zombificados ---------- */
+.zb-galeria { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 1060px; }
+.zb-galeria h2 { margin: 0 0 4px; font: 34px var(--rk-tit); color: #e6f4dc; text-align: center; }
+.zb-galeria > p { margin: 0 0 14px; text-align: center; color: var(--rk-tenue); }
+.zb-tarjetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.zb-tarjeta { background: var(--rk-panel2); border: 2px solid var(--rk-borde); display: flex; gap: 10px; padding: 8px; align-items: center; }
+.zb-tarjeta img { width: 110px; height: 110px; image-rendering: pixelated; background: #2a3440; flex: none; }
+.zb-tarjeta b { font: 19px var(--rk-tit); font-weight: 400; color: var(--zb-verde); display: block; }
+.zb-tarjeta span { font-size: 17px; line-height: 1.15; display: block; }
+
+.zb-necesidades { width: 230px; }
+.zb-ruido { top: 300px; width: 230px; }
+.zb-ruido .oye { color: var(--rk-hielo); }
+.zb-radio { max-width: 330px; }
+.zb-radio p { margin: 2px 0; } .zb-radio p.malo { color: #ff8a7a; } .zb-radio p.bien { color: var(--zb-verde); }
+.zb-hotbar span { width: 104px; }
+.zb-hotbar span b { position: absolute; right: 5px; bottom: 1px; font-weight: 400; font-size: 20px; color: var(--rk-oro); }
+.zb-hotbar span.vacio { opacity: .45; }
+.zb-ayuda { bottom: 50px; font-size: 15px; background: var(--rk-panel); border: 2px solid var(--rk-borde); padding: 6px 8px; color: var(--rk-tinta) !important; }
+.zb-ayuda span { display: flex; gap: 8px; align-items: center; }
+.zb-ayuda b { min-width: 58px; text-align: center; margin: 0 !important; }
+.zb-et.accion { background: var(--rk-naranja); border-color: #ffd0a0; color: #1a0e04; }
+.zb-registro { position: absolute; left: 0; top: 0; width: 70px; height: 8px; background: #06080a; border: 2px solid var(--rk-borde2); }
+.zb-registro i { display: block; height: 100%; background: var(--rk-oro); }
+.zb-et { position: absolute; left: 0; top: 0; }
+
+/* ---------- la ventana de la mochila (Tetris) ---------- */
+#zb-mochila { position: fixed; right: 12px; top: 50%; transform: translateY(-50%); z-index: 35; display: flex; gap: 12px; align-items: flex-start; pointer-events: auto; }
+#zb-mochila section { background: var(--rk-panel2); border: 2px solid var(--rk-borde2); padding: 8px 10px 6px; }
+#zb-mochila header { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+#zb-mochila header b { font: 18px var(--rk-tit); font-weight: 400; margin-right: auto; letter-spacing: .05em; }
+#zb-mochila header button { background: #1a242a; border: 2px solid var(--rk-borde2); color: var(--rk-tinta); font: 13px var(--rk-tit); padding: 4px 8px; }
+.vm-rejilla { position: relative; background-color: #0a0e12; background-image: linear-gradient(#22303a 1px, transparent 1px), linear-gradient(90deg, #22303a 1px, transparent 1px); background-size: 44px 44px; border: 1px solid #22303a; }
+.vm-lista { display: flex; flex-wrap: wrap; gap: 6px; width: 240px; min-height: 60px; align-items: flex-start; }
+.vm-lista p { color: var(--rk-tenue); margin: 0; }
+.vm-ayuda { color: var(--rk-tenue); font-size: 14px; max-width: 240px; margin: 6px 0 0; line-height: 1.1; }
+.vm-mia .vm-ayuda { max-width: none; width: 220px; }
+.vm-pieza { position: absolute; cursor: grab; touch-action: none; }
+.vm-lista .vm-pieza { position: relative; }
+.vm-pieza i { position: absolute; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); }
+.vm-pieza canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.vm-pieza b { position: absolute; right: 3px; bottom: 0; font-weight: 400; font-size: 18px; color: var(--rk-oro); text-shadow: 1px 1px 0 #000; }
+.vm-pieza.vuela { z-index: 50; opacity: .85; cursor: grabbing; pointer-events: none; }
+
+/* los botones de fabricar, cocinar y lo del sitio */
+.vm-acciones { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; max-width: 280px; align-items: center; }
+.vm-mia .vm-acciones { max-width: none; width: 264px; }
+.vm-sub { width: 100%; font: 13px var(--rk-tit); font-weight: 400; color: var(--rk-tenue); letter-spacing: .08em; }
+.vm-accion { background: #22303a; border: 2px solid var(--rk-oro); color: var(--rk-tinta); font: 12px var(--rk-tit); padding: 4px 7px; }
+.vm-accion.no { border-color: #2a3a44; color: #6a7a84; }
+
+/* ---------- el mapa (M) ---------- */
+#zb-mapa { position: fixed; inset: 0; z-index: 38; display: grid; place-items: center; background: rgba(6,8,12,.6); pointer-events: auto; }
+.zm-marco { background: var(--rk-panel2); border: 2px solid var(--rk-borde2); padding: 8px 12px; max-width: 96vw; }
+.zm-marco header { display: flex; gap: 12px; align-items: baseline; margin-bottom: 6px; }
+.zm-marco header b { font: 20px var(--rk-tit); font-weight: 400; } .zm-marco header span { color: var(--rk-tenue); flex: 1; }
+.zm-marco header button { background: #1a242a; border: 2px solid var(--rk-borde2); color: var(--rk-tinta); font: 13px var(--rk-tit); padding: 4px 8px; }
+#zm-lienzo { display: block; width: min(90vw, calc(78vh * 320 / 210)); height: auto; image-rendering: auto; border: 1px solid #22303a; }
+.zm-marco footer { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: center; color: var(--rk-tenue); font-size: 16px; margin-top: 6px; }
+.zm-marco footer i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: -8px; }
+.zm-marco footer .t { background: #ff7a1a; border-radius: 0; } .zm-marco footer .f { background: #ff8a2a; } .zm-marco footer .r { background: #8a929c; } .zm-marco footer .s { background: #e8c040; } .zm-marco footer .b { background: #a0602a; }
+
+/* ---------- el tutorial ---------- */
+.zb-tuto { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); width: min(560px, 60vw); background: var(--rk-panel2); border: 2px solid var(--rk-naranja); padding: 8px 12px; display: grid; gap: 4px; pointer-events: auto; }
+.zb-tuto b { font: 14px var(--rk-tit); font-weight: 400; letter-spacing: .08em; color: var(--rk-naranja); }
+.zb-tuto span { font-size: 20px; line-height: 1.15; }
+.zb-tuto button { justify-self: end; background: none; border: 1px solid var(--rk-borde2); color: var(--rk-tenue); font: 12px var(--rk-tit); padding: 2px 8px; }
+/* la torre: la planta en el reloj y la vida del CEO arriba en el centro */
+.zb-reloj .planta { color: #58c8ff; }
+.zb-jefe { position: absolute; left: 50%; bottom: 72px; transform: translateX(-50%); width: min(520px, 56vw); background: var(--rk-panel2); border: 2px solid #ff4b5c; padding: 6px 12px 10px; display: grid; gap: 2px; text-align: center; }
+.zb-jefe b { font: 18px var(--rk-tit); font-weight: 400; letter-spacing: .1em; color: #ff4b5c; }
+.zb-jefe span { font-size: 14px; color: var(--rk-tenue); }
+.zb-jefe i { display: block; height: 12px; background: #2a1014; border: 2px solid #1a0a0c; margin-top: 4px; }
+.zb-jefe s { display: block; height: 100%; background: linear-gradient(#ff7080, #c82838); text-decoration: none; transition: width .2s; }
+/* las habilidades, a la izquierda de la mochila */
+.vm-hab { width: 230px; }
+.vm-h { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; margin: 6px 0 8px; }
+.vm-h span { font: 15px var(--rk-tit); letter-spacing: .06em; }
+.vm-h b { font-size: 20px; color: var(--rk-naranja); }
+.vm-h i { grid-column: 1 / -1; display: block; height: 7px; background: #1a1e26; border: 1px solid var(--rk-borde2); }
+.vm-h s { display: block; height: 100%; background: #e8c040; text-decoration: none; }
+.vm-h em { grid-column: 1 / -1; font-style: normal; font-size: 13px; color: var(--rk-tenue); }
+.vm-ref { margin-top: 10px; border-top: 1px solid var(--rk-borde2); padding-top: 6px; }
+.vm-ref b { font: 15px var(--rk-tit); letter-spacing: .06em; color: #3ac86a; }
+.vm-ref p { margin: 3px 0 0; font-size: 14px; }
+.vm-ref p.muerto { color: var(--rk-tenue); text-decoration: line-through; }
+.zm-marco footer .p { background: #3ac86a; } .zm-marco footer .h { background: none; border: 2px solid #ff7a1a; border-radius: 0; }
+.zm-marco footer .c { background: #58c8ff; }
+.zb-coche > b { font-size: 34px; color: #ffb070; }
+
+/* ---------- lo puesto: ropa, mochila, riñonera y bolsillos (js/ventana-equipo.js) ---------- */
+.vm-equipo { width: 200px; }
+.vm-huecos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.vm-hueco { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--rk-borde2); background: #0a0e12; text-align: center; }
+.vm-hueco.lleno { cursor: pointer; }
+.vm-hueco.lleno:hover { border-color: var(--rk-oro); }
+.vm-hueco span { font: 12px var(--rk-tit); color: var(--rk-tenue); letter-spacing: .06em; }
+.vm-hueco em { font-style: normal; font-size: 12px; line-height: 1; min-height: 12px; }
+.vm-hueco.mochila { grid-column: 1 / -1; }
+.vm-caja, .vm-vacio { width: 40px; height: 40px; }
+.vm-vacio { border: 1px dashed #2a3a44; }
+.vm-caja canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+.vm-hueco .barra { display: block; width: 40px; height: 4px; background: #1a1e26; }
+.vm-hueco .barra i { display: block; height: 100%; }
+.vm-equipo .vm-sub { display: block; margin: 8px 0 4px; }
+.vm-equipo .vm-acciones { max-width: none; }

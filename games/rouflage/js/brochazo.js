@@ -1,5 +1,5 @@
 // Fans of Rouflage · EL BROCHAZO DE LA PINTURA RÁPIDA (idea de Daniel, 5-11-2026): al pulsar PINTURA RÁPIDA entra una brocha gigante cargada
-// de pintura arcoíris y te pinta en tres pasadas en zigzag, como quien pinta una pared deprisa: se inclina hacia donde va, las cerdas se doblan
+// de pintura arcoíris y te pinta en dos pasadas, ida y vuelta (el «frus, fras» de su sonido, Daniel 6-11-2026), como quien pinta una pared deprisa: se inclina hacia donde va, las cerdas se doblan
 // al arrastrar, salpica al cambiar de sentido y sale volando. La pintura mojada queda en franjas arcoíris recortadas a tu silueta, gotea y se
 // escurre, y debajo aparece tu camuflaje nuevo. Solo lo ves tú, en tu taller (no delata a nadie). No frena: la piel ya está pintada desde
 // el primer momento; esto solo se dibuja encima (pintaYoEnTaller, dibujo.js). Coordenadas: las de la galleta (pies en 0, 0; mide 48 x 60).
@@ -7,14 +7,17 @@
 
 const BROCHAZO_DURA = 1.5;                       // segundos que dura todo
 const BROCHAZO_ARCO = ['#ff4b5c', '#ff9a3d', '#ffd23d', '#7ee04a', '#39d5e8', '#4a7dff'];
-// el camino de la brocha: entra, tres pasadas en zigzag de arriba abajo y sale; cada tramo con su parte del tiempo (0..1)
+// el camino de la brocha: entra, pasa de ida (arriba) y de vuelta (en diagonal hasta abajo) y sale; cada tramo con su parte del tiempo
+// (0..1). Los tiempos van con el sonido (snd/brochazo.mp3): el «frus» suena de 0,06 a 0,36 s y el «fras» hasta 0,7 s.
 const BROCHAZO_CAMINO = [
-  { de: [-80, -96], a: [-34, -50], t: [0, 0.14] },       // entra
-  { de: [-34, -50], a: [34, -44], t: [0.14, 0.3] },      // pasada 1
-  { de: [34, -44], a: [-34, -26], t: [0.3, 0.46] },      // pasada 2
-  { de: [-34, -26], a: [34, -6], t: [0.46, 0.62] },      // pasada 3
-  { de: [34, -6], a: [96, -70], t: [0.62, 0.76] },       // sale volando
+  { de: [-80, -96], a: [-34, -52], t: [0, 0.04] },       // entra
+  { de: [-34, -52], a: [34, -38], t: [0.04, 0.24] },     // ida: frus (arriba)
+  { de: [34, -38], a: [-34, -4], t: [0.24, 0.47] },      // vuelta: fras (en diagonal hasta los pies)
+  { de: [-34, -4], a: [-96, -70], t: [0.47, 0.63] },     // sale volando por donde acaba la vuelta (sin volver a cruzarte)
 ];
+const BROCHAZO_SALE = BROCHAZO_CAMINO[BROCHAZO_CAMINO.length - 1].t[0];      // cuándo deja de pintar y empieza a escurrir
+const BROCHAZO_FIN = BROCHAZO_CAMINO[BROCHAZO_CAMINO.length - 1].t[1];       // cuándo se ha ido
+const brochazoPintaTramo = tramo => tramo >= 1 && tramo < BROCHAZO_CAMINO.length - 1;      // las pasadas (ni la entrada ni la salida)
 const BROCHAZO = { activo: false, inicio: null, ultima: null, gotas: [], lienzo: null, ang: 0, doblez: 0 };
 
 function brochazoEmpieza() {
@@ -37,12 +40,12 @@ function brochazoPinta(c, yo, t) {
   if (BROCHAZO.inicio === null) BROCHAZO.inicio = t;
   const f = (t - BROCHAZO.inicio) / BROCHAZO_DURA;
   if (f >= 1) { BROCHAZO.activo = false; return; }
-  const p = brochazoSitio(Math.min(f, 0.76));
+  const p = brochazoSitio(Math.min(f, BROCHAZO_FIN));
   brochazoMueve(p, f);
   c.save(); c.translate(yo.x, yo.y);
-  brochazoMojado(c, yo, Math.max(0, (f - 0.62) / 0.38));
+  brochazoMojado(c, yo, Math.max(0, (f - BROCHAZO_SALE) / (1 - BROCHAZO_SALE)));
   brochazoGotas(c, t);
-  if (f < 0.76) brochazoBrocha(c, p.x, p.y);
+  if (f < BROCHAZO_FIN) brochazoBrocha(c, p.x, p.y);
   c.restore();
 }
 
@@ -56,17 +59,18 @@ function brochazoMueve(p, f) {
     BROCHAZO.ang += Math.atan2(Math.sin(objetivo - BROCHAZO.ang), Math.cos(objetivo - BROCHAZO.ang)) * 0.35;      // gira con suavidad hacia donde va
   }
   BROCHAZO.doblez += (Math.min(1, v / 7) - BROCHAZO.doblez) * 0.4;
-  if (p.tramo >= 1 && p.tramo <= 3 && u.tramo >= 1) brochazoRaya(u, p);
-  if (u.tramo !== p.tramo && f < 0.7) brochazoSalpica(u.x, u.y, 9);      // al cambiar de sentido, salpica
+  if (brochazoPintaTramo(p.tramo) && u.tramo >= 1) brochazoRaya(u, p);
+  if (u.tramo !== p.tramo && f < BROCHAZO_FIN) brochazoSalpica(u.x, u.y, 9);      // al cambiar de sentido, salpica
   else if (v > 3 && Math.random() < 0.35) brochazoSalpica(p.x, p.y, 1);
 }
-// una raya de pintura entre dos puntos: seis franjas paralelas, una por color, con el borde que tiembla
+// una raya de pintura entre dos puntos: seis franjas paralelas, una por color, con el borde que tiembla; tan ancha como las cerdas (48 px),
+// para que con dos pasadas quede pintada toda la galleta
 function brochazoRaya(a, b) {
   const g = BROCHAZO.lienzo.getContext('2d'), n = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
   g.save(); g.translate(80, 130); g.lineCap = 'round';
   BROCHAZO_ARCO.forEach((col, i) => {
-    const o = (i - 2.5) * 5.4 + Math.sin((a.x + i) * 0.7) * 0.8, ox = Math.cos(n) * o, oy = Math.sin(n) * o;
-    g.strokeStyle = col; g.lineWidth = 6.4;
+    const o = (i - 2.5) * 8 + Math.sin((a.x + i) * 0.7) * 0.8, ox = Math.cos(n) * o, oy = Math.sin(n) * o;
+    g.strokeStyle = col; g.lineWidth = 9;
     g.beginPath(); g.moveTo(a.x + ox, a.y + oy); g.lineTo(b.x + ox, b.y + oy); g.stroke();
   });
   g.restore();

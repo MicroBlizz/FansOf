@@ -70,6 +70,7 @@ function kill(t, src) {
       revives.push({ team: t.team, type: t.type, x: t.x, y: t.y, face: t.face, share: t.abShare, t: 0.9, frac: 1, seq: true, txt: '¡SECUELA!', col: '#ff9ab8', rgb: '255,154,184' });
       parts.push({ type: 'clapper', x: t.x, y: t.y, z: topOf(t) * 0.6 + 14, life: 1.1, max: 1.1 });
     }
+    if (t.jefeCampo) jefeCampoCae(t, src);   // el jefe del Modo Jefe: al caer, golpe a su sede
     deathExtras(t, src);
     if (t.d.deathBlast) {
       const B = t.d.deathBlast, rgb = B.rgb || '123,224,74';

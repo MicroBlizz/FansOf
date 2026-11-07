@@ -130,5 +130,11 @@
     "fr-FR": "AMÉLIORATIONS INTERNES : le comptage anonyme des joueurs connectés ne compte plus les bots des tests internes.",
     "de-DE": "VERBESSERUNGEN IM HINTERGRUND: Die anonyme Zählung verbundener Spieler zählt die Bots der internen Tests nicht mehr mit.",
     "it-IT": "MIGLIORIE INTERNE: il conteggio anonimo dei giocatori connessi non conta più i bot dei test interni."
+  },
+  "0.2.74": {
+    "pt-BR": "A BROCHA SOA DE VERDADE: a brocha gigante da PINTURA RÁPIDA agora soa como uma brocha de verdade, frus e fras, e te pinta em duas passadas, ida e volta, no ritmo do som.\n\nA Microblizz gravou a pincelada pintando a parede da sala do chefe, e o Phony jura que dá para ouvir a assinatura dele embaixo.",
+    "fr-FR": "LE PINCEAU SONNE VRAI : le pinceau géant de la PEINTURE RAPIDE sonne maintenant comme un vrai pinceau, frou et fra, et te peint en deux passages, aller et retour, au rythme de son bruit.\n\nMicroblizz a enregistré le coup de pinceau en peignant le mur du bureau du patron, et Phony jure qu'on entend sa signature en dessous.",
+    "de-DE": "DER PINSEL KLINGT ECHT: Der Riesenpinsel vom SCHNELLMALEN klingt jetzt wie ein echter Pinsel, frusch und frasch, und bemalt dich in zwei Strichen, hin und zurück, im Takt seines Geräuschs.\n\nMicroblizz hat den Pinselstrich aufgenommen, während die Wand im Büro des Chefs gestrichen wurde, und Phony schwört, darunter hört man seine Unterschrift.",
+    "it-IT": "IL PENNELLO SUONA DAVVERO: il pennello gigante della PITTURA RAPIDA ora suona come un pennello vero, frus e fras, e ti dipinge in due passate, andata e ritorno, a tempo con il suo suono.\n\nMicroblizz ha registrato la pennellata dipingendo il muro dell'ufficio del capo, e Phony giura che sotto si sente la sua firma."
   }
 }

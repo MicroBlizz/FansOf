@@ -1,8 +1,8 @@
 {
- "build": 1077,
- "hash": "41eb47f",
- "fecha": "2026-11-07T11:42:45Z",
- "mensaje": "Rouflage 0.2.75: la gota del cuentagotas y del contador de Gotas suena a gota de pintura (Yoshi, la 8 que eligió Daniel)",
+ "build": 1078,
+ "hash": "a3624bc",
+ "fecha": "2026-11-07T11:44:28Z",
+ "mensaje": "Rumble v2: BoomBeaver de espaldas (quieto, andar y atacar); CrazyBunny de frente con paletas de conejo",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

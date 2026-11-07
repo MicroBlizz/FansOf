@@ -1,8 +1,8 @@
 {
- "build": 1107,
- "hash": "2383ed3",
- "fecha": "2026-11-07T18:08:23Z",
- "mensaje": "Rumble arte pintado: derrumbe pintado de la torre animal (vídeo de Yoshi s8), sin partículas dibujadas con código",
+ "build": 1108,
+ "hash": "2fe1e7b",
+ "fecha": "2026-11-07T18:25:51Z",
+ "mensaje": "Survivors: los 29 primeros iconos pintados por Yoshi (aún sin usar en el juego) y preparar.py, que les quita el croma y los deja a 96 px",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

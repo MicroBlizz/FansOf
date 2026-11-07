@@ -1,8 +1,8 @@
 {
- "build": 1074,
- "hash": "151458e",
- "fecha": "2026-11-07T11:25:56Z",
- "mensaje": "Tablero fase 2: crear, editar y mover tareas desde /gestion",
+ "build": 1075,
+ "hash": "8d4b1d9",
+ "fecha": "2026-11-07T11:28:03Z",
+ "mensaje": "Rumble v2: torres y bases otra vez 28 px más abajo, tapando las esquinas de los caminos (como en la alfa 1067)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

@@ -30,11 +30,12 @@ const V2 = (() => {
   function aplicaSprite(key) {
     const im = IMG[key]; if (!im || !BOX[key]) return;
     const rol = (key.match(/_(tower|base|rubble)$/) || [])[1], e = rol ? AJUSTES.edificiosV2[rol] : 1;   // torres y bases, más grandes
-    const [w, h, ax, ay] = BOX[key].map(n => n * e);
-    if (e !== 1 && TOPS[key] && !barraAgrandada[key]) { barraAgrandada[key] = true; TOPS[key] = Math.round(TOPS[key] * e); }   // la barra de vida, encima
+    const baja = e !== 1 ? AJUSTES.bajarEdificiosV2 : 0;   // el dibujo, un poco más abajo para tapar las esquinas de los caminos
+    const [w, h, ax, ay0] = BOX[key].map(n => n * e), ay = ay0 - baja;
+    if (e !== 1 && TOPS[key] && !barraAgrandada[key]) { barraAgrandada[key] = true; TOPS[key] = Math.round(TOPS[key] * e - baja); }   // la barra de vida, encima
     const c = document.createElement('canvas'); c.width = Math.ceil(w * RES); c.height = Math.ceil(h * RES);
     const x = c.getContext('2d'); x.scale(RES, RES); x.imageSmoothingQuality = 'high';
-    const pie = key.endsWith('_rubble') ? h : Math.min(h, ay + 3);   // los escombros llenan la caja; el resto apoya los pies
+    const pie = key.endsWith('_rubble') ? h : Math.min(h, ay0 + 3);   // los escombros llenan la caja; el resto apoya los pies
     const k = Math.min(w / im.width, pie / im.height), iw = im.width * k, ih = im.height * k;
     x.drawImage(im, ax - iw / 2, pie - ih, iw, ih);
     const blanco = document.createElement('canvas'); blanco.width = c.width; blanco.height = c.height;

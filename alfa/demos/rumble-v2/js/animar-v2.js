@@ -94,14 +94,18 @@ const V2A = (() => {
     }
   };
 
-  // cartas, retratos y título: el primer fotograma del quieto mirando a la derecha
-  const drawVectorAntes = drawVector;
+  // cartas, retratos y título: el retrato de frente si lo tiene (lo pinta arte-v2.js); si no, el primer fotograma del quieto,
+  // ajustado como los demás (misma altura, centrado: V2.dibujaAjustado)
+  const drawVectorAntes = drawVector, marco = {};
   drawVector = function (c, key, x, y, h, flip = 1) {
     const D = V2_ANIM[key];
-    if (!D || !HOJA[key]) return drawVectorAntes(c, key, x, y, h, flip);
-    const top = TYPES[key] ? TYPES[key].top : TOPS[key], k = h / top * escala(key, D), lado = flip < 0 ? 'izq' : 'der';
-    const [cw, ch] = D.celda, [px, py] = D.pies[lado] || D.pies.der, f = fila(D, lado, 'quieto');
-    c.drawImage(HOJA[key], 0, f * ch, cw, ch, x - px * k, y - py * k, cw * k, ch * k);
+    if (!D || !HOJA[key] || V2.IMG['frente/' + key]) return drawVectorAntes(c, key, x, y, h, flip);
+    const lado = flip < 0 ? 'izq' : 'der', id = key + '-' + lado;
+    if (!marco[id]) {
+      const [cw, ch] = D.celda, cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+      cv.getContext('2d').drawImage(HOJA[key], 0, fila(D, lado, 'quieto') * ch, cw, ch, 0, 0, cw, ch); marco[id] = cv;
+    }
+    V2.dibujaAjustado(c, marco[id], x, y, h, 1);
   };
 
   const ver = '?v=' + encodeURIComponent(NUCLEO.version || '0');

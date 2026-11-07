@@ -1,8 +1,8 @@
 {
- "build": 1082,
- "hash": "5d612bd",
- "fecha": "2026-11-07T12:02:48Z",
- "mensaje": "Zombies 0.14.0: coches con piezas, mecánica, maletero y faros (ADR 083)",
+ "build": 1083,
+ "hash": "4a9517f",
+ "fecha": "2026-11-07T12:13:44Z",
+ "mensaje": "Rumble v2: los dibujos de las cartas, todos a la misma altura y centrados; CrazyBunny de frente sin la sombra verde",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

@@ -56,17 +56,32 @@ const V2 = (() => {
 
   // cartas, retratos y pantalla de título: si hay imagen, se dibuja la imagen a la misma altura
   const drawVectorOriginal = drawVector;
+  // la parte con dibujo de una imagen (sin el aire transparente de alrededor), en sus píxeles; se calcula una vez
+  const cajas = new WeakMap();
+  function cajaVisible(img) {
+    if (cajas.has(img)) return cajas.get(img);
+    const w = img.width, h = img.height, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const x = cv.getContext('2d'); x.drawImage(img, 0, 0); const a = x.getImageData(0, 0, w, h).data;
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) if (a[(j * w + i) * 4 + 3] > 24) { if (i < x0) x0 = i; if (i > x1) x1 = i; if (j < y0) y0 = j; if (j > y1) y1 = j; }
+    const caja = x1 < 0 ? { x: 0, y: 0, w, h } : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+    cajas.set(img, caja); return caja;
+  }
+  // un dibujo pintado, de pie en (x, y) y centrado: todos con la misma altura h para que ninguno salga diminuto ni cortado
+  // (los muy anchos, como la mechavaca, se encogen para no salirse por los lados)
+  function dibujaAjustado(c, img, x, y, h, flip) {
+    const b = cajaVisible(img), k = Math.min(h / b.h, (h * CARTA_ANCHO_MAX) / b.w);
+    c.save(); c.imageSmoothingQuality = 'high'; c.translate(x, y); c.scale(flip, 1);
+    c.drawImage(img, b.x, b.y, b.w, b.h, -b.w * k / 2, -b.h * k, b.w * k, b.h * k); c.restore();
+  }
+  const CARTA_ANCHO_MAX = 1.35;   // ancho máximo del dibujo respecto a su alto
   drawVector = function (c, key, x, y, h, flip = 1) {
     const fr = IMG['frente/' + key];
-    if (fr) {   // de frente: centrado en x, de pie en y, sin voltear (aunque el original lo volteara)
-      const ih = h * 1.08, iw = fr.width * ih / fr.height;
-      c.save(); c.imageSmoothingQuality = 'high'; c.drawImage(fr, x - iw / 2, y - ih, iw, ih); c.restore();
-      return;
-    }
+    if (fr) return dibujaAjustado(c, fr, x, y, h, 1);   // de frente: centrado y sin voltear (aunque el original lo volteara)
     const sp = SPR[key];
     if (!sp || !sp.v2) return drawVectorOriginal(c, key, x, y, h, flip);
-    const top = TYPES[key] ? TYPES[key].top : TOPS[key];
-    const sc = h / (top || sp.ay);
+    if (TYPES[key]) return dibujaAjustado(c, sp.c, x, y, h, flip);   // personajes: la misma altura para todos
+    const top = TOPS[key], sc = h / (top || sp.ay);
     c.save(); c.translate(x, y); c.scale(sc * flip, sc); c.drawImage(sp.c, -sp.ax, -sp.ay, sp.wd, sp.ht); c.restore();
   };
 
@@ -107,5 +122,5 @@ const V2 = (() => {
   pideFondo('animales|mb');
   carga('puente', () => { if (typeof READY !== 'undefined' && READY) BRIDGE_LAYER = buildBridges(); });
 
-  return { SPRITES, FONDOS, IMG };
+  return { SPRITES, FONDOS, IMG, dibujaAjustado };
 })();

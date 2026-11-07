@@ -1,7 +1,7 @@
-// Fans of Rumble v2 · Personajes animados fotograma a fotograma (hojas de img/anim/, datos en js/anim-v2.js).
+// Fans of Rumble · Arte pintado (ADR 082): personajes animados fotograma a fotograma (hojas de img/pintado/anim/, datos en anim.js).
 // Cinco animaciones (quieto, andar, atacar, golpe, morir) y los dos lados pintados aparte: nunca se voltea el dibujo,
 // así el arma no cambia de mano al girar (Daniel). Si sube por el camino se le ve de espaldas («esp»), cuando la hoja la tiene.
-// Se carga después de arte-v2.js y antes de 21-arranque.js.
+// Se carga después de arte.js y antes de 21-arranque.js. Solo con PINTADO.activo() (ajustes.js).
 // El personaje que aún no tiene hoja se sigue viendo como antes (imagen pintada o dibujo original).
 'use strict';
 const V2A = (() => {
@@ -12,7 +12,7 @@ const V2A = (() => {
   const muertos = [];                               // los que están haciendo la animación de morir
   const fila = (D, lado, a) => { const i = D.filas.indexOf(lado + '-' + a); return i >= 0 ? i : D.filas.indexOf(lado + '-quieto'); };
   const escala = (key, D) => (BOX[key][3] + 3) / D.alto;   // unidades del juego por píxel: el quieto mide lo que el dibujo de siempre
-  const escalaCampo = (key, D) => escala(key, D) * (AJUSTES.tamanoV2[key] || 1);   // en el campo, con el tamaño que eligió Daniel
+  const escalaCampo = (key, D) => escala(key, D) * (PINTADO.tamano[key] || 1);   // en el campo, con el tamaño que eligió Daniel
 
   // un fotograma listo para drawUnit, que da la vuelta al dibujo cuando u.face = -1: si va a darle la vuelta, se guarda ya
   // volteado (espejo), así queda bien (el izquierdo pintado y la espalda tal cual, nunca el derecho en espejo)
@@ -62,7 +62,7 @@ const V2A = (() => {
   const drawUnitOriginal = drawUnit;
   drawUnit = function (u) {
     const D = V2_ANIM[u.type];
-    if (!D || !HOJA[u.type]) return drawUnitOriginal(u);
+    if (!D || !HOJA[u.type] || !PINTADO.activo()) return drawUnitOriginal(u);
     const s = SPR[u.type], antes = { c: s.c, w: s.w, g: s.g, wd: s.wd, ht: s.ht, ax: s.ax, ay: s.ay };
     const [a, col] = estado(u, D), lado = vista(u, D, a), f = fotograma(u.type, D, lado, a, col, u.face < 0);
     const corrAntes = CORRUPT[u.type], T = TYPES[u.type], pieAntes = T.foot;
@@ -77,7 +77,7 @@ const V2A = (() => {
   const killOriginal = kill;
   kill = function (t, src) {
     const D = t && t.kind === 'unit' && V2_ANIM[t.type];
-    if (D && HOJA[t.type] && D.filas.some(f => f.endsWith('-morir'))) muertos.push({ key: t.type, x: t.x, y: t.y, lado: t.face < 0 ? 'izq' : 'der', t0: G.t, corrupt: !!t.corrupt });
+    if (D && HOJA[t.type] && PINTADO.activo() && D.filas.some(f => f.endsWith('-morir'))) muertos.push({ key: t.type, x: t.x, y: t.y, lado: t.face < 0 ? 'izq' : 'der', t0: G.t, corrupt: !!t.corrupt });
     return killOriginal(t, src);
   };
   const locasSueloOriginal = locasSuelo;
@@ -94,12 +94,12 @@ const V2A = (() => {
     }
   };
 
-  // cartas, retratos y título: el retrato de frente si lo tiene (lo pinta arte-v2.js); si no, el primer fotograma del quieto,
+  // cartas, retratos y título: el retrato de frente si lo tiene (lo pinta arte.js); si no, el primer fotograma del quieto,
   // ajustado como los demás (misma altura, centrado: V2.dibujaAjustado)
   const drawVectorAntes = drawVector, marco = {};
   drawVector = function (c, key, x, y, h, flip = 1) {
     const D = V2_ANIM[key];
-    if (!D || !HOJA[key] || V2.IMG['frente/' + key]) return drawVectorAntes(c, key, x, y, h, flip);
+    if (!D || !HOJA[key] || V2.IMG['frente/' + key] || !PINTADO.activo()) return drawVectorAntes(c, key, x, y, h, flip);
     const lado = flip < 0 ? 'izq' : 'der', id = key + '-' + lado;
     if (!marco[id]) {
       const [cw, ch] = D.celda, cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
@@ -112,7 +112,7 @@ const V2A = (() => {
   for (const key in V2_ANIM) {
     const im = new Image();
     im.onload = () => { HOJA[key] = im; };
-    im.src = 'img/anim/' + key + '.webp' + ver;
+    im.src = PINTADO.ruta() + 'anim/' + key + '.webp' + ver;
   }
   return { HOJA, muertos };
 })();

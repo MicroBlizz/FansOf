@@ -1,8 +1,8 @@
 {
- "build": 1091,
- "hash": "1b7ebe9",
- "fecha": "2026-11-07T13:42:22Z",
- "mensaje": "Rumble v2: cartas de Microblizz de frente, torre y sede de Microblizz repintadas, espalda del hurón",
+ "build": 1092,
+ "hash": "99094f5",
+ "fecha": "2026-11-07T14:04:31Z",
+ "mensaje": "Rumble: el arte pintado por Yoshi pasa al juego, tras el flag rumble-arte-pintado (abierto solo en la alfa; ADR 084)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

@@ -1,14 +1,15 @@
-// Fans of Rumble v2 · Cambia los dibujos hechos con código por las imágenes pintadas por Yoshi (carpeta img/ de la v2).
-// Se carga justo antes de games/rumble/js/21-arranque.js: ahí ya existen buildSprites, drawVector, buildBG y buildBridges.
-// Lo que aún no tiene imagen se sigue viendo como en el original; cada imagen entra en cuanto se descarga.
+// Fans of Rumble · Arte pintado (ADR 082): cambia los dibujos hechos con código por las imágenes pintadas por Yoshi (img/pintado/).
+// Se carga justo antes de js/21-arranque.js: ahí ya existen buildSprites, drawVector, buildBG y buildBridges.
+// Solo con PINTADO.activo() (ajustes.js); si se apaga o se enciende con la partida abierta, se rehace todo (rehaz, al final).
+// Lo que aún no tiene imagen se sigue viendo como siempre; cada imagen entra en cuanto se descarga.
 'use strict';
-const V2 = (() => {
-  // personajes y edificios con imagen pintada: el nombre es el del dibujo (ART) y el archivo img/<nombre>.webp
+const V2 = (() => {   // (se sigue llamando V2: lo usan animar.js y la demo v2)
+  // personajes y edificios con imagen pintada: el nombre es el del dibujo (ART) y el archivo img/pintado/<nombre>.webp
   const SPRITES = [
     'bunny', 'squirrel', 'fox', 'beaver', 'meercat', 'junkcoon', 'mechavaca', 'vaca', 'huron', 'p_tower', 'p_base', 'p_rubble',
     'ceo', 'becario', 'starbot', 'fallen', 'e_tower', 'e_base', 'e_rubble',
   ];
-  // retrato DE FRENTE de las cartas (regla de Daniel, 7-11-2026: siempre de cara, mirando recto y centrado): img/frente/<nombre>.webp
+  // retrato DE FRENTE de las cartas (regla de Daniel, 7-11-2026: siempre de cara, mirando recto y centrado): img/pintado/frente/<nombre>.webp
   const FRENTE = ['bunny', 'beaver', 'squirrel', 'fox', 'meercat', 'junkcoon', 'mechavaca', 'vaca', 'huron',
     'becario', 'starbot', 'fallen', 'cajabotin', 'soportebot', 'parchebot'];
   // fondos del campo: facción|plaza -> archivo (todo en WebP: pesa poco en el móvil)
@@ -23,19 +24,19 @@ const V2 = (() => {
   const ver = '?v=' + encodeURIComponent(NUCLEO.version || '0');
   const carga = (nombre, listo) => {
     const im = new Image();
-    im.onload = () => { IMG[nombre] = im; try { listo(); } catch (e) { console.warn('[v2]', nombre, e); } };
+    im.onload = () => { IMG[nombre] = im; try { listo(); } catch (e) { console.warn('[pintado]', nombre, e); } };
     im.onerror = () => { /* aún no está pintada: se queda el dibujo original */ };
-    im.src = 'img/' + nombre + '.webp' + ver;
+    im.src = PINTADO.ruta() + nombre + '.webp' + ver;
   };
 
-  const barraAgrandada = {};   // edificios cuya barra de vida ya se subió (buildSprites se llama más de una vez)
+  const alturaBarra = {};   // altura de siempre de la barra de vida de cada edificio agrandado (para subirla una vez y poder volver)
   // el sprite pintado ocupa la caja del original (BOX), con los pies en el mismo punto de apoyo
   function aplicaSprite(key) {
     const im = IMG[key]; if (!im || !BOX[key]) return;
-    const rol = (key.match(/_(tower|base|rubble)$/) || [])[1], e = rol ? AJUSTES.edificiosV2[rol] : 1;   // torres y bases, más grandes
-    const baja = e !== 1 ? AJUSTES.bajarEdificiosV2 : 0;   // el dibujo, un poco más abajo para tapar las esquinas de los caminos
+    const rol = (key.match(/_(tower|base|rubble)$/) || [])[1], e = rol ? PINTADO.edificios[rol] : 1;   // torres y bases, más grandes
+    const baja = e !== 1 ? PINTADO.bajarEdificios : 0;   // el dibujo, un poco más abajo para tapar las esquinas de los caminos
     const [w, h, ax, ay0] = BOX[key].map(n => n * e), ay = ay0 - baja;
-    if (e !== 1 && TOPS[key] && !barraAgrandada[key]) { barraAgrandada[key] = true; TOPS[key] = Math.round(TOPS[key] * e - baja); }   // la barra de vida, encima
+    if (e !== 1 && TOPS[key]) { if (!(key in alturaBarra)) alturaBarra[key] = TOPS[key]; TOPS[key] = Math.round(alturaBarra[key] * e - baja); }   // la barra de vida, encima
     const c = document.createElement('canvas'); c.width = Math.ceil(w * RES); c.height = Math.ceil(h * RES);
     const x = c.getContext('2d'); x.scale(RES, RES); x.imageSmoothingQuality = 'high';
     const pie = key.endsWith('_rubble') ? h : Math.min(h, ay0 + 3);   // los escombros llenan la caja; el resto apoya los pies
@@ -51,9 +52,13 @@ const V2 = (() => {
   }
 
 
-  // buildSprites: el original y, encima, lo que ya está pintado
+  // buildSprites: el original y, encima, lo que ya está pintado (apagado: el original y las barras a su altura de siempre)
   const buildSpritesOriginal = buildSprites;
-  buildSprites = function () { buildSpritesOriginal(); SPRITES.forEach(aplicaSprite); };
+  buildSprites = function () {
+    buildSpritesOriginal();
+    for (const k in alturaBarra) TOPS[k] = alturaBarra[k];
+    if (PINTADO.activo()) SPRITES.forEach(aplicaSprite);
+  };
 
   // cartas, retratos y pantalla de título: si hay imagen, se dibuja la imagen a la misma altura
   const drawVectorOriginal = drawVector;
@@ -77,6 +82,7 @@ const V2 = (() => {
   }
   const CARTA_ANCHO_MAX = 1.35;   // ancho máximo del dibujo respecto a su alto
   drawVector = function (c, key, x, y, h, flip = 1) {
+    if (!PINTADO.activo()) return drawVectorOriginal(c, key, x, y, h, flip);
     const fr = IMG['frente/' + key];
     if (fr) return dibujaAjustado(c, fr, x, y, h, 1);   // de frente: centrado y sin voltear (aunque el original lo volteara)
     const sp = SPR[key];
@@ -89,6 +95,7 @@ const V2 = (() => {
   // el fondo del campo pintado (sin puentes: van aparte)
   const buildBGOriginal = buildBG;
   buildBG = function (fac = 'animales', plaza = 'mb') {
+    if (!PINTADO.activo()) return buildBGOriginal(fac, plaza);
     const clave = fac + '|' + plaza, im = IMG[FONDOS[clave]];
     if (!im) { pideFondo(clave); return buildBGOriginal(fac, plaza); }
     const cv = document.createElement('canvas'); cv.width = W * BG_RES; cv.height = H * BG_RES;
@@ -100,7 +107,7 @@ const V2 = (() => {
   const buildBridgesOriginal = buildBridges;
   buildBridges = function () {
     const im = IMG.puente;
-    if (!im || BRIDGE_STYLE) return buildBridgesOriginal();
+    if (!im || BRIDGE_STYLE || !PINTADO.activo()) return buildBridgesOriginal();
     const cv = document.createElement('canvas'); cv.width = W * BG_RES; cv.height = H * BG_RES;
     const c = cv.getContext('2d'); c.scale(BG_RES, BG_RES); c.imageSmoothingQuality = 'high';
     for (const bx of BRIDGES) { const T = RIVER.top - 16, B = RIVER.bottom + 16; c.drawImage(im, bx - 40, T, 80, B - T); }
@@ -108,7 +115,8 @@ const V2 = (() => {
   };
 
   // lo que llega tarde se cambia en caliente
-  SPRITES.forEach(k => carga(k, () => { if (typeof READY !== 'undefined' && READY) aplicaSprite(k); }));
+  const listo = () => typeof READY !== 'undefined' && READY;
+  SPRITES.forEach(k => carga(k, () => { if (listo() && PINTADO.activo()) aplicaSprite(k); }));
   function pideFondo(clave) {
     if (!FONDOS[clave] || pedidos.has(clave)) return;
     pedidos.add(clave);
@@ -116,12 +124,28 @@ const V2 = (() => {
       if (typeof BG_KEY !== 'undefined' && BG_KEY === clave) { const [f, p] = clave.split('|'); BG = buildBG(f, p); }
     });
   }
-  FRENTE.forEach(k => carga('frente/' + k, () => {
-    if (typeof ART_FIT !== 'undefined') ART_FIT[k] = [0, (ART_FIT[k] || [0, 0.92])[1]];   // el retrato de frente va centrado en su casilla
-    if (typeof elCards !== 'undefined') elCards.forEach(el => { if (el.dataset.card === k) renderCard(el, k); });   // la carta ya pintada se repinta
-  }));
+  // el retrato de frente va centrado en su casilla: se quita el desplazamiento de ART_FIT (y se devuelve si se apaga)
+  const encuadre = {};
+  function centraRetrato(k) {
+    if (typeof ART_FIT === 'undefined' || !IMG['frente/' + k]) return;
+    if (!(k in encuadre)) encuadre[k] = ART_FIT[k];
+    const f = encuadre[k] || [0, 0.92];
+    if (PINTADO.activo()) ART_FIT[k] = [0, f[1]]; else if (encuadre[k]) ART_FIT[k] = encuadre[k]; else delete ART_FIT[k];
+  }
+  const repintaCartas = k => { if (typeof elCards !== 'undefined') elCards.forEach(el => { if (el.dataset.card && (!k || el.dataset.card === k)) renderCard(el, el.dataset.card); }); };
+  FRENTE.forEach(k => carga('frente/' + k, () => { centraRetrato(k); repintaCartas(k); }));
   pideFondo('animales|mb');
-  carga('puente', () => { if (typeof READY !== 'undefined' && READY) BRIDGE_LAYER = buildBridges(); });
+  carga('puente', () => { if (listo()) BRIDGE_LAYER = buildBridges(); });
+
+  // si el flag cambia con el juego abierto, se rehace todo lo dibujado (sprites, fondo, puentes, cartas)
+  let estaba = PINTADO.activo();
+  NUCLEO.alCambiarFlags(() => {
+    const ahora = PINTADO.activo(); if (ahora === estaba || !listo()) { estaba = ahora; return; }
+    estaba = ahora;
+    buildSprites(); FRENTE.forEach(centraRetrato); repintaCartas();
+    if (BG_KEY) { const [f, p] = BG_KEY.split('|'); BG = buildBG(f, p); }
+    BRIDGE_LAYER = buildBridges();
+  });
 
   return { SPRITES, FONDOS, IMG, dibujaAjustado };
 })();

@@ -1,8 +1,8 @@
 {
- "build": 1070,
- "hash": "7e00b4f",
- "fecha": "2026-11-07T11:17:30Z",
- "mensaje": "Zombies 0.12.1: controles táctiles para jugar en el móvil (ADR 081)",
+ "build": 1071,
+ "hash": "4526fd0",
+ "fecha": "2026-11-07T11:19:08Z",
+ "mensaje": "Pets: el juego siempre funciona completo, se quita el flag pets-prototipo, el huevo provisional y el aviso en el horno",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

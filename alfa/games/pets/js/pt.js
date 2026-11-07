@@ -6,6 +6,3 @@ const PT = {};
 // un resultado de dominio: lo que ha salido bien, o un error con nombre (nunca una excepción por una regla incumplida)
 PT.ok = valor => ({ ok: true, valor });
 PT.error = (error, datos) => ({ ok: false, error, datos });
-// ¿Está abierto el prototipo? En desarrollo siempre; fuera, solo con el flag «pets-prototipo» (se abre primero en la alfa desde /gestion → Flags).
-// Se pregunta en el momento, nunca en una constante: así el cambio llega sin recargar. Cerrado, solo se ve un huevo fijo.
-PT.abierto = () => NUCLEO.desarrollo || NUCLEO.flag('pets-prototipo', 'Fans Of Pets: el prototipo con sus escenas reales (sin él, un huevo fijo)', false);

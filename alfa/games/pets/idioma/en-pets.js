@@ -28,9 +28,6 @@ IDIOMA.add({
   // 0.2.0
   "<b>EL MONIGOTE POR PIEZAS</b>: la criatura se dibuja en piezas (cara, orejas, cola, corona), con cara viva, y ahora come, se ducha y duerme en su cama.": "<b>THE PIECE-BY-PIECE PET</b>: the creature is drawn in pieces (face, ears, tail, crown), with a living face, and now it eats, showers and sleeps in its bed.",
   "Microblizz ha despiezado al monigote y Phony ha vuelto a montarlo con una oreja de sobra.": "Microblizz took the pet apart and Phony put it back together with a spare ear.",
-  // aviso fuera del modo desarrollo
-  "Fans Of Pets está en el horno": "Fans Of Pets is still in the oven",
-  "Es un prototipo y de momento solo se abre en modo desarrollo. Vuelve pronto.": "It's a prototype and for now it only opens in development mode. Come back soon.",
   // la entrevista de trabajo
   "Entrevista de trabajo": "Job interview",
   "EMPEZAR": "START",

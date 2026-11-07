@@ -1,6 +1,6 @@
 // Fans Of Pets · PRINCIPAL: la composición. Crea los adaptadores (almacén, reloj, sonido), les pasa las reglas y el catálogo a los casos de
 // uso y arranca el lienzo, el bucle de cada fotograma (la escena de cada fase) y el reloj que simula cada pocos segundos.
-// Es el único archivo que conoce todas las piezas. Pets es un prototipo tras el modo dev o el flag «pets-prototipo»: fuera de ellos solo se ve un huevo fijo.
+// Es el único archivo que conoce todas las piezas. Pets es un prototipo: se juega solo desde la alfa o con ?dev=1 mientras el juego esté en «Próximamente» (core/js/proximamente.js).
 'use strict';
 PT.almacen = PT.creaAlmacenLocal(SAVE_KEY, localStorage);
 PT.reloj = PT.creaReloj(PT.almacen);
@@ -58,8 +58,7 @@ PT.lienzo = (() => {
   }
   function escena(ctx, p, t) {
     const ui = PT.ui;
-    if (!PT.abierto()) PT.pintor.huevo(ctx, 270, 380, 90, '#ff9a3c', t, { bufanda: true });
-    else if (ui.escena) PT.dev.escena(ctx, t);   // la escena de animaciones del panel DEV
+    if (ui.escena) PT.dev.escena(ctx, t);   // la escena de animaciones del panel DEV
     else if (p.fase === 'entrevista' || p.fase === 'ritmo' || (ui.volverA === '' && p.fase === 'horario')) escenaLola(ctx, t, true);
     else if (p.fase === 'huevos') escenaHuevos(ctx, p, t);
     else if (p.fase === 'huevo' || ui.volverA === 'huevo') escenaHuevo(ctx, p, t);
@@ -84,10 +83,9 @@ PT.arranca = () => {
   const elige = PT.$('#pt-elige');
   elige.innerHTML = PT.HUEVO_X.map((x, i) => `<button type="button" style="left:${x - 70}px;top:${PT.HUEVO_Y - 80}px" aria-label="${tr('Huevo {n}', { n: i + 1 })}" aria-pressed="false"></button>`).join('');
   elige.querySelectorAll('button').forEach((b, i) => { b.onclick = () => PT.botones.eligeHuevo(i); });
-  if (PT.abierto()) PT.pantallas.trasSimular(PT.casos.simula());
+  PT.pantallas.trasSimular(PT.casos.simula());
   PT.pantallas.pinta();
   const tic = () => {
-    if (!PT.abierto()) return;
     const fase = PT.casos.partida.fase, pasa = PT.casos.simula();
     PT.pantallas.trasSimular(pasa);
     if (fase !== PT.casos.partida.fase) PT.pantallas.pinta();

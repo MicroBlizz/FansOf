@@ -1,8 +1,8 @@
 {
- "build": 1093,
- "hash": "519f3ca",
- "fecha": "2026-11-07T14:15:11Z",
- "mensaje": "Rumble: demo Fans of Rumble Clásico, el arte pintado no se descarga si está apagado, madriguera x1.2",
+ "build": 1094,
+ "hash": "36ff1d3",
+ "fecha": "2026-11-07T14:51:23Z",
+ "mensaje": "Survivors: mecánicas de PokéSurvivor tras el flag survivors-mecanicas (evolución de armas, oleadas de choque, jefes que escalan y embisten, curanderos limitados, altares, fuentes, cofres con candado y cambio de cartas); pedidos de iconos a Yoshi",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

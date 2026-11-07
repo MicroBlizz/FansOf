@@ -90,6 +90,7 @@ function dibujar() {
     c.strokeStyle = 'rgba(255,240,170,.55)'; c.lineWidth = 2; c.setLineDash([6, 6]); c.lineDashOffset = -P.t * 20; c.stroke(); c.setLineDash([]);
   }
   dibujaSueloArmas(c);
+  MEC_DIBUJO.suelo(c);
   for (const m of P.marcas) {
     const k = 1 - m.t / m.max; c.globalAlpha = 0.3 + k * 0.5; c.fillStyle = 'rgba(125,211,252,.25)'; c.strokeStyle = '#7dd3fc'; c.lineWidth = 3;
     c.beginPath(); c.ellipse(m.x, m.y, m.r, m.r * 0.8, 0, 0, Math.PI * 2); c.fill(); c.stroke();
@@ -234,6 +235,7 @@ function marcador() {
   let x = 10;
   for (const k2 in P.armas) { hueco(x, 68, iconoCarta(ARMAS[k2].carta, 34), P.armas[k2], k2 === 'chaos'); x += 38; }
   x = 10; for (const k2 in P.pasivas) { c.font = '17px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = 'rgba(20,10,34,.7)'; c.beginPath(); rrPath(c, x, 112, 34, 28, 6); c.fill(); c.fillStyle = '#fff'; c.fillText(PASIVAS[k2].icono, x + 17, 126); pips(x, 142, P.pasivas[k2]); x += 38; }
+  MEC_DIBUJO.marcador(c);
   // la vida del jefe
   if (P.jefe && !P.jefe.muerto) {
     const J = P.jefe, w = 380, bx = (VW - w) / 2, by = 156;

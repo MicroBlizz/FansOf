@@ -65,15 +65,23 @@ function abrirNivel() {
   $('#niv-titulo').innerHTML = `${tr('¡ASCENSO!')}<small>${tr('NIVEL')} ${P.nivel - P.pendientes}</small>`;
   const box = $('#niv-ops'); box.innerHTML = '';
   ops.forEach((op, i) => {
-    const b = document.createElement('button'); b.className = 'op' + (op.nuevo ? ' nuevo' : '');
+    const b = document.createElement('button'); b.className = 'op' + (op.nuevo ? ' nuevo' : '') + (op.clase === 'evo' ? ' evo' : '');
     const ic = iconoOp(op);
     const tx = document.createElement('div'); tx.className = 'op-tx';
-    tx.innerHTML = `<div class="op-nom ol">${tr(op.nombre)} <span class="op-nv">${op.clase === 'relleno' ? '' : op.nuevo ? tr('¡NUEVO!') : tr('Nivel ' + op.nivelNuevo)}</span></div><div class="op-desc">${tr(op.desc)}</div>`;
+    tx.innerHTML = `<div class="op-nom ol">${tr(op.nombre)} <span class="op-nv">${nivelOp(op)}</span></div><div class="op-desc">${tr(op.desc)}${op.pista ? `<div class="op-pista">${op.pista}</div>` : ''}</div>`;
     b.append(ic, tx);
     b.onclick = () => { aplicarOpcion(op); P.estado = 'jugando'; $('#scr-nivel').hidden = true; if (P.pendientes > 0) abrirNivel(); };
     b.style.animationDelay = (i * 0.06) + 's';
     box.appendChild(b);
   });
+  botonCambiar(ops);
+}
+// el botón de volver a sacar las 3 cartas (mecánicas nuevas: js/mecanicas.js); no sale si hay una evolución o no quedan cambios
+function botonCambiar(ops) {
+  const B = $('#niv-cambiar'), n = MEC.cambiosQuedan();
+  B.hidden = !n || ops.some(o => o.clase === 'evo');
+  $('#niv-cambios').textContent = n ? '(' + n + ')' : '';
+  B.onclick = () => { MEC.gastaCambio(); P.pendientes++; play('roll'); abrirNivel(); };
 }
 const FRASES_PAUSA = ['Los becarios no tienen pausa. Tú sí.', 'El CEO aprovecha la pausa para subir los precios.', 'Microblizz ya está pensando qué juego cerrar ahora.', 'SurvivalBot también se toma un café. Descafeinado.'];
 function pausar() {

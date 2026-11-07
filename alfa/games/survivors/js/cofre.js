@@ -19,7 +19,7 @@ function iconoOp(op) {
   else ic.textContent = op.icono;
   return ic;
 }
-const nivelOp = op => op.clase === 'relleno' ? '' : op.nuevo ? tr('¡NUEVO!') : tr('Nivel ' + op.nivelNuevo);
+const nivelOp = op => op.clase === 'relleno' ? '' : op.clase === 'evo' ? tr('¡EVOLUCIÓN!') : op.nuevo ? tr('¡NUEVO!') : tr('Nivel ' + op.nivelNuevo);
 
 // el cofre mejora 1, 2, 3 o (con suerte) 5 cosas que ya tienes (o te da algo nuevo si no hay nada que mejorar)
 // y a veces se queda atascado (el susto) y luego da el doble

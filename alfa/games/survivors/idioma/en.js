@@ -1,6 +1,20 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.81 · mecánicas nuevas e iconos pintados
+  "¡EVOLUCIÓN!": "EVOLUTION!",
+  "Mucho más daño, uno más a la vez y más área.": "Much more damage, one more at a time and a bigger area.",
+  "Evoluciona con: {p}": "Evolves with: {p}",
+  "¡OLEADA DE CHOQUE!": "SURGE WAVE!",
+  "¡Viene una fila entera por un lado!": "A whole line is coming from one side!",
+  "¡ALTAR!": "ALTAR!",
+  "25 segundos de doble daño": "25 seconds of double damage",
+  "25 segundos de velocidad": "25 seconds of speed",
+  "25 segundos de imán gigante": "25 seconds of giant magnet",
+  "25 segundos de recarga rápida": "25 seconds of fast reload",
+  "FUENTE VACÍA": "FOUNTAIN EMPTY",
+  "¡ABIERTO!": "UNLOCKED!",
+  "CAMBIAR CARTAS": "REROLL CARDS",
   // 0.1.80
   "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
   "Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come.": "Microblizz tightened the engine bolts and Phony asked if that is edible.",

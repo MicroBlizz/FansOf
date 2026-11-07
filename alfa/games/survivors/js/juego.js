@@ -35,16 +35,17 @@ function nuevaPartida() {
     sacudida: 0, aviso: null, chat: [], chatT: 8, rachaKills: [], hitStop: 0,
   };
   sigId = 1;
+  MEC.iniciar();
   chatDecir('start');
   aviso('¡SOBREVIVE 10 MINUTOS!', tr('Microblizz manda a toda su plantilla a por {l}', { l: CFG.cards[P.lider].name }));
 }
 
 /* ---------- cifras del jugador con sus mejoras ---------- */
 const nvP = k => P.pasivas[k] || 0;
-const multDano = () => EFECTO.dano(nvP('punos')) * P.mods.dmg;
-const multRecarga = () => Math.max(0.35, EFECTO.recarga(nvP('reflejos')) * (1 - P.mods.cd));
-const radioRecoger = () => SV.jugador.recoger * EFECTO.recoger(nvP('iman')) * (1 + P.mods.pickup);
-const velJugador = () => SV.jugador.velocidad * EFECTO.velocidad(nvP('cafeina')) * P.mods.speed;
+const multDano = () => EFECTO.dano(nvP('punos')) * P.mods.dmg * MEC.buff('dano');
+const multRecarga = () => Math.max(0.3, EFECTO.recarga(nvP('reflejos')) * (1 - P.mods.cd) * MEC.buff('recarga'));
+const radioRecoger = () => SV.jugador.recoger * EFECTO.recoger(nvP('iman')) * (1 + P.mods.pickup) * MEC.buff('iman');
+const velJugador = () => SV.jugador.velocidad * EFECTO.velocidad(nvP('cafeina')) * P.mods.speed * MEC.buff('vel');
 
 /* ---------- la rejilla: para buscar enemigos cercanos sin mirarlos todos ---------- */
 const CELDA = 48;
@@ -67,7 +68,11 @@ function cerca(x, y, r, fn) {
 }
 function masCercano(x, y, max, saltar) {
   let mejor = null, md = max * max;
-  for (const e of P.enemigos) { if (e.muerto || (saltar && saltar.has(e))) continue; const d = (e.x - x) ** 2 + (e.y - y) ** 2; if (d < md) { md = d; mejor = e; } }
+  for (const e of P.enemigos) {
+    if (e.muerto || (saltar && saltar.has(e))) continue;
+    const d2 = (e.x - x) ** 2 + (e.y - y) ** 2; if (d2 > max * max) continue;
+    const d = MEC.distancia(e, d2); if (d < md) { md = d; mejor = e; }
+  }
   return mejor;
 }
 
@@ -104,10 +109,10 @@ function oleadas(dt) {
   const O = OLEADAS[Math.min(OLEADAS.length - 1, Math.floor(P.t / 60))];
   P.oleadaT -= dt;
   if (P.oleadaT <= 0) {
-    P.oleadaT = O.cada;
+    P.oleadaT = O.cada / MEC.ritmo();
     const p = puntoFuera();
     const brillo = tocaShiny() ? Math.floor(Math.random() * O.grupo) : -1;   // cuál del grupo sale shiny
-    for (let i = 0; i < O.grupo && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(elegirPeso(O.mezcla), p.x + rand(-30, 30), p.y + rand(-30, 30), i === brillo ? marcaShiny() : {});
+    for (let i = 0; i < O.grupo && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(MEC.tipoQueSale(elegirPeso(O.mezcla)), p.x + rand(-30, 30), p.y + rand(-30, 30), i === brillo ? marcaShiny() : {});
   }
   // un mini jefe cada SV.apariciones.miniJefeCada segundos (no si ya viene el jefe final)
   const A = SV.apariciones, tMini = A.miniJefeCada * (P.miniJefe + 1);
@@ -115,7 +120,8 @@ function oleadas(dt) {
     const m = MINIJEFES[Math.min(P.miniJefe, MINIJEFES.length - 1)]; P.miniJefe++;
     aviso(m.aviso, 'Suelta un Cofre de botín (sin microtransacciones)'); play('horn');
     const p = puntoFuera(), d = ENEMIGOS[m.enemigo];
-    crearEnemigo(m.enemigo, p.x, p.y, { elite: true, vida: m.vida, escala: m.escala, r: d.r * m.escala * 0.75, vel: d.vel * 0.9, dano: d.dano * 2, xp: 40 });
+    const k = MEC.escalaJefe();
+    crearEnemigo(m.enemigo, p.x, p.y, { elite: true, vida: m.vida * k, escala: m.escala, r: d.r * m.escala * 0.75, vel: d.vel * 0.9, dano: d.dano * 2 * k, xp: 40 });
   }
   // los momentos especiales
   const ev = EVENTOS[P.evento];
@@ -166,7 +172,7 @@ function moverEnemigos(dt) {
     }
     if (e.d.cura) {   // SoporteBot: «¿Ha probado a reiniciar?»
       e.curaT -= dt;
-      if (e.curaT <= 0) { e.curaT = e.d.cura.cd; let n = 0; cerca(e.x, e.y, e.d.cura.r, o => { if (o !== e && o.vida < o.vidaMax) { o.vida = Math.min(o.vidaMax, o.vida + e.d.cura.cant); n++; } }); if (n) { P.efectos.push({ tipo: 'curaE', x: e.x, y: e.y, r: e.d.cura.r, t: 0.5, max: 0.5 }); } }
+      if (e.curaT <= 0) { e.curaT = e.d.cura.cd; let n = 0; cerca(e.x, e.y, e.d.cura.r, o => { if (MEC.puedeCurar(e, o)) { o.vida = Math.min(o.vidaMax, o.vida + e.d.cura.cant); n++; } }); if (n) { P.efectos.push({ tipo: 'curaE', x: e.x, y: e.y, r: e.d.cura.r, t: 0.5, max: 0.5 }); } }
     }
     if (e.d.caduca && e.edad > e.d.caduca) { e.muerto = true; numero(e.x, e.y - 40, 'LICENCIA CADUCADA', '#c4b5fd'); poof(e, '#c4b5fd'); continue; }
     e.x += (dx / dd) * v * dt + e.kbx * dt; e.y += (dy / dd) * v * dt + e.kby * dt;
@@ -303,7 +309,7 @@ function puedeMejorar() {
     const n = P.armas[k] || 0;
     if (n >= SV.nivelMax) continue;
     if (!n && nArmas >= SV.maxArmas) continue;
-    L.push({ clase: 'arma', id: k, nombre: ARMAS[k].nombre, nuevo: !n, nivelNuevo: n + 1, desc: n ? ARMAS[k].nv[n - 1] : ARMAS[k].desc, carta: ARMAS[k].carta, peso: n ? 3 : 2 });
+    L.push({ clase: 'arma', id: k, nombre: ARMAS[k].nombre, nuevo: !n, nivelNuevo: n + 1, desc: n ? ARMAS[k].nv[n - 1] : ARMAS[k].desc, pista: n === SV.nivelMax - 1 ? MEC.pista(k) : '', carta: ARMAS[k].carta, peso: n ? 3 : 2 });
   }
   for (const k in PASIVAS) {
     const n = P.pasivas[k] || 0;
@@ -316,7 +322,8 @@ function puedeMejorar() {
 function opcionesNivel(cuantas = 3, soloTuyas = false) {
   let L = puedeMejorar();
   if (soloTuyas && L.some(o => !o.nuevo)) L = L.filter(o => !o.nuevo);
-  const out = [];
+  const evo = MEC.cartasEvolucion(), out = evo.length ? [evo[0]] : [];   // una evolución lista sale seguro
+  L = L.concat(evo.slice(1));
   while (out.length < cuantas && L.length) {
     let tot = 0; for (const o of L) tot += o.peso;
     let r = Math.random() * tot, i = 0; for (; i < L.length; i++) { r -= L[i].peso; if (r <= 0) break; }
@@ -326,7 +333,8 @@ function opcionesNivel(cuantas = 3, soloTuyas = false) {
   return out;
 }
 function aplicarOpcion(op) {
-  if (op.clase === 'arma') { P.armas[op.id] = (P.armas[op.id] || 0) + 1; P.cd[op.id] = Math.min(P.cd[op.id] || 0, 0.3); }
+  if (op.clase === 'evo') MEC.evolucionar(op.id);
+  else if (op.clase === 'arma') { P.armas[op.id] = (P.armas[op.id] || 0) + 1; P.cd[op.id] = Math.min(P.cd[op.id] || 0, 0.3); }
   else if (op.clase === 'pasiva') {
     P.pasivas[op.id] = (P.pasivas[op.id] || 0) + 1;
     if (op.id === 'piel') { P.jug.vidaMax = Math.round(SV.jugador.vida * P.mods.hp) + EFECTO.vidaMax(P.pasivas.piel); curar(20); }
@@ -394,6 +402,7 @@ function actualizar(dt) {
   }
   P.cam.x += (j.x - P.cam.x) * Math.min(1, dt * 8); P.cam.y += (j.y - 30 - P.cam.y) * Math.min(1, dt * 8);
   oleadas(dt);
+  MEC.paso(dt);
   rehacerRejilla();
   moverEnemigos(dt);
   rehacerRejilla();

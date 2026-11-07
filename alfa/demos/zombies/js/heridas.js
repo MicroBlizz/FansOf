@@ -28,13 +28,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     let tipo = Z.sortea(C.queHerida, azar);
     if (tipo === 'corte' && azar() < C.profundo) tipo = 'profundo';
     Z.hiere(AJ, e, parte, tipo, Z.ropaEn(AJ, J, parte, 'infeccion'));
-    if (zb.T.pesado && parte !== 'cabeza' && parte !== 'torso' && azar() < C.fracturaBallena) Z.hiere(AJ, e, parte, 'fractura');
+    if (zb.T.fractura && parte !== 'cabeza' && parte !== 'torso' && azar() < C.fracturaBallena) Z.hiere(AJ, e, parte, 'fractura');
     return parte;
   };
   // un choque fuerte con el coche te rompe una pierna (la del lado que toque)
-  Z.choqueHiere = function (AJ, e, v) {
+  Z.choqueHiere = function (AJ, e, v, azar) {
     if (v < AJ.cuerpo.fracturaChoque) return;
-    const parte = Math.floor(e.min) % 2 ? 'piernaI' : 'piernaD';
+    const parte = azar() < 0.5 ? 'piernaI' : 'piernaD';
     if (!Z.heridasEn(e.jugador, parte).some((h) => h.tipo === 'fractura')) Z.hiere(AJ, e, parte, 'fractura');
   };
 
@@ -44,13 +44,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   Z.sangraDe = function (AJ, h) {
     const T = AJ.cuerpo.heridas[h.tipo];
     if (h.tipo === 'profundo') return h.puntos ? 0 : h.venda ? T.sangra * AJ.cuerpo.vendaProfundo : T.sangra;
-    return h.venda ? 0 : T.sangra;
+    return h.venda || (T.paraSolo && h.t >= T.paraSolo) ? 0 : T.sangra;   // el arañazo deja de sangrar solo
   };
   Z.sangra = (AJ, J) => (J.heridas || []).reduce((s, h) => s + Z.sangraDe(AJ, h), 0);
   Z.pasoHeridas = function (AJ, e, horas, azar) {
     const J = e.jugador;
-    if (!J.heridas || !horas) return;
     J.analgesico = Math.max(0, (J.analgesico || 0) - horas);
+    if (!J.heridas || !horas) return;
     for (const h of J.heridas) pasoHerida(AJ, e, h, horas, azar);
     const curadas = J.heridas.filter((h) => h.cura >= AJ.cuerpo.heridas[h.tipo].cura);
     for (const h of curadas) e.eventos.push({ tipo: 'curada', parte: h.parte, herida: h.tipo });
@@ -59,7 +59,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   function pasoHerida(AJ, e, h, horas, azar) {
     h.t += horas;
-    if (h.venda) h.venda.t += horas;
+    if (h.venda) { const antes = sucia(AJ, h); h.venda.t += horas; if (!antes && sucia(AJ, h)) e.eventos.push({ tipo: 'vendaSucia', parte: h.parte }); }
     if (!sucia(AJ, h) && Z.sangraDe(AJ, h) === 0) h.cura += horas;   // se cura sin sangrar y sin venda sucia
     if (!h.tirado && h.t >= AJ.cuerpo.desinfecta.hora) tiraInfeccion(AJ, e, h, azar);
   }
@@ -76,8 +76,8 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   /* ---------- curarse ---------- */
   // lo que se puede hacer a una herida: vendar (o cambiar la venda sucia), desinfectar, coser (corte profundo) y entablillar (fractura)
   const CURAS = {
-    vendar: { cosa: 'venda', vale: (AJ, h) => h.tipo !== 'fractura' && (!h.venda || sucia(AJ, h)), haz: (h) => { h.venda = { t: 0 }; } },
-    desinfectar: { cosa: 'desinfectante', vale: (AJ, h) => h.tipo !== 'fractura' && !h.desinf, haz: (h) => { h.desinf = true; } },
+    vendar: { cosa: 'venda', vale: (AJ, h) => h.tipo !== 'fractura' && !h.puntos && (!h.venda || sucia(AJ, h)), haz: (h) => { h.venda = { t: 0 }; } },
+    desinfectar: { cosa: 'desinfectante', vale: (AJ, h) => h.tipo !== 'fractura' && !h.desinf && !h.tirado, haz: (h) => { h.desinf = true; } },   // solo sirve antes de la hora
     puntos: { cosa: 'aguja', vale: (AJ, h) => h.tipo === 'profundo' && !h.puntos, haz: (h) => { h.puntos = true; } },
     tablilla: { cosa: 'tablilla', vale: (AJ, h) => h.tipo === 'fractura' && !h.tablilla, haz: (h) => { h.tablilla = true; } },
   };
@@ -96,6 +96,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // la herida a la que le toca esa cura: la que más sangra (vendar), la más nueva (desinfectar) o la primera que lo necesite
   Z.curaSola = function (AJ, e, accion) {
     const hs = (e.jugador.heridas || []).filter((h) => Z.puedeCurar(AJ, h, accion));
+    if (!hs.length && accion === 'vendar' && (e.jugador.heridas || []).some((h) => Z.puedeCurar(AJ, h, 'puntos'))) return Z.error('hayQueCoser');   // V con un corte profundo ya vendado
     if (!hs.length) return Z.error('nadaQueCurar', { accion });
     const orden = accion === 'vendar' ? (a, b) => Z.sangraDe(AJ, b) - Z.sangraDe(AJ, a) : (a, b) => a.t - b.t;
     return Z.cura(AJ, e, hs.sort(orden)[0].id, accion);

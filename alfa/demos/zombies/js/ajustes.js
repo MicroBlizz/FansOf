@@ -99,7 +99,7 @@ ZOM.AJ = Object.freeze({
   cuerpo: {
     dondeMuerden: { brazoI: 3, brazoD: 3, piernaI: 2, piernaD: 2, torso: 2.5, cabeza: 1 }, queHerida: { aranazo: 5, corte: 3, mordisco: 2 }, profundo: 0.25, paraMax: 0.7,
     heridas: {
-      aranazo: { n: 'ARAÑAZO', sangra: 1, cura: 6, infecta: 0.07, dolor: 5 },
+      aranazo: { n: 'ARAÑAZO', sangra: 1, cura: 6, infecta: 0.07, dolor: 5, paraSolo: 2 },   // deja de sangrar solo a las 2 h
       corte: { n: 'CORTE', sangra: 2.5, cura: 12, infecta: 0.25, dolor: 12 },
       profundo: { n: 'CORTE PROFUNDO', sangra: 5, cura: 24, infecta: 0.25, dolor: 20 },
       mordisco: { n: 'MORDISCO', sangra: 2, cura: 12, infecta: 0.9, dolor: 18 },
@@ -196,7 +196,7 @@ ZOM.AJ = Object.freeze({
     fan: { vida: 60, vel: 1.3, persigue: 2.6, oido: 1, vista: 9, dano: 12, radio: 0.45 },
     streamer: { vida: 55, vel: 1.2, persigue: 2.4, oido: 1, vista: 11, dano: 10, radio: 0.45, grita: true },
     speedrunner: { vida: 45, vel: 1.6, persigue: 5.4, oido: 1.2, vista: 10, dano: 10, radio: 0.4, sprint: 3.5, descanso: 2.5 },
-    ballena: { vida: 260, vel: 0.8, persigue: 1.6, oido: 0.8, vista: 8, dano: 22, radio: 0.85, botin: 3, pesado: true },
+    ballena: { vida: 260, vel: 0.8, persigue: 1.6, oido: 0.8, vista: 8, dano: 22, radio: 0.85, botin: 3, pesado: true, fractura: true },   // fractura = puede romperte un brazo o una pierna
     bot: { vida: 60, vel: 1.3, persigue: 2.4, oido: 0.7, vista: 8, dano: 12, radio: 0.45, ruta: true },
     troll: { vida: 120, vel: 1.1, persigue: 2.2, oido: 1, vista: 9, dano: 20, radio: 0.6, rompe: 3 },
   // cómo de a menudo sale cada tipo al poblar el distrito (pesos)

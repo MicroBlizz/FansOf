@@ -89,7 +89,7 @@ IDIOMA.add({
   'Anochece. Llegan %1 fans más al distrito.': 'Night falls. %1 more fans arrive in the district.',
   'Se ha ido la luz en el distrito. Las noches serán más negras.': 'The district has lost power. Nights will be darker.',
 'Nada. Alguien pasó antes.': 'Nothing. Someone got here first.',
-  'Te han infectado. Véndate (V) para frenarlo.': 'You are infected. Bandage up (V) to slow it.', 'Sin cartuchos. Usa la palanca (2).': 'Out of shells. Use the crowbar (2).',
+  'Sin cartuchos. Usa la palanca (2).': 'Out of shells. Use the crowbar (2).',
   '¡Te despiertas de golpe! Hay fans cerca.': 'You wake with a start! Fans nearby.', 'Te despiertas descansado.': 'You wake up rested.',
   'No tienes sueño todavía.': 'You are not sleepy yet.', 'Con fans tan cerca no hay quien duerma.': 'Nobody can sleep with fans this close.', 'No te queda de eso.': 'You have none left.',
   'Aquí ya has mirado.': 'You already searched here.', 'No hay nada que registrar aquí.': 'Nothing to search here.', 'No puedes hacer eso ahora.': 'You cannot do that now.',

@@ -231,7 +231,7 @@ body.tactil #zb-mochila .vm-hab { transform: scale(.75); transform-origin: left 
 .p-brazoI { grid-column: 1; grid-row: 2; } .p-torso { grid-column: 2 / 4; grid-row: 2; } .p-brazoD { grid-column: 4; grid-row: 2; }
 .p-piernaI { grid-column: 2; grid-row: 3; } .p-piernaD { grid-column: 3; grid-row: 3; }
 .vm-parte.aranazo { background: #d8c040; } .vm-parte.corte { background: #e8803a; } .vm-parte.mordisco, .vm-parte.sangra { background: #c8282e; }
-.vm-parte.sangra { animation: vm-late 0.8s infinite alternate; } .vm-parte.vendada { background: #e8e8e0; } .vm-parte.rota { background: #8a4ac8; }
+.vm-parte.sangra { animation: vm-late 0.8s infinite alternate; } .vm-parte.vendada { background: #e8e8e0; } .vm-parte.sucia { background: #9a8a5a; } .vm-parte.rota { background: #8a4ac8; }
 @keyframes vm-late { to { filter: brightness(1.5); } }
 .vm-dolor { margin: 2px 0; font-size: 14px; } .vm-cuerpo .malo { color: #ff8a7a; }
 .vm-heridas > b { font: 14px var(--rk-tit); font-weight: 400; }

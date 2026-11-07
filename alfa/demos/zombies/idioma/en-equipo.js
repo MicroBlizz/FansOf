@@ -15,10 +15,11 @@ IDIOMA.add({
   'ARAÑAZO': 'SCRATCH', 'CORTE': 'CUT', 'CORTE PROFUNDO': 'DEEP CUT', 'MORDISCO': 'BITE', 'FRACTURA': 'FRACTURE',
   'TORSO': 'TORSO', 'BRAZO IZQ.': 'LEFT ARM', 'BRAZO DCHO.': 'RIGHT ARM', 'PIERNA IZQ.': 'LEFT LEG', 'PIERNA DCHA.': 'RIGHT LEG',
   'DESINFECTANTE': 'DISINFECTANT', 'AGUJA E HILO': 'NEEDLE AND THREAD', 'TABLILLA': 'SPLINT', 'ANALGÉSICOS': 'PAINKILLERS', 'ANTIBIÓTICOS': 'ANTIBIOTICS',
-  'VENDAR': 'BANDAGE', 'DESINFECTAR': 'DISINFECT', 'COSER': 'STITCH', 'CUERPO': 'BODY', 'Analgésicos: %1 h': 'Painkillers: %1 h', 'Dolor: %1': 'Pain: %1', 'Infección %1%': 'Infection %1%',
+  'VENDAR': 'BANDAGE', 'DESINFECTAR': 'DISINFECT', 'COSER': 'STITCH', 'Analgésicos: %1 h': 'Painkillers: %1 h', 'Dolor: %1': 'Pain: %1', 'Infección %1%': 'Infection %1%',
   'Toca una parte del cuerpo para ver sus heridas.': 'Tap a body part to see its wounds.', 'Sin heridas.': 'No wounds.', 'SANGRA': 'BLEEDING', 'VENDA SUCIA': 'DIRTY BANDAGE', 'VENDADA': 'BANDAGED',
   'DESINFECTADA': 'DISINFECTED', 'COSIDA': 'STITCHED', 'CON TABLILLA': 'SPLINTED', 'No hace falta.': 'Not needed.', 'TABLILLA (2 TABLAS, 1 TELA)': 'SPLINT (2 PLANKS, 1 CLOTH)',
   'No tienes ninguna herida que necesite eso.': 'You have no wound that needs that.', 'Te han infectado. Busca antibióticos o a la médica del refugio.': 'You are infected. Find antibiotics or the shelter medic.',
   '%1 en %2.': '%1 on %2.', 'La ropa ha parado el mordisco.': 'Your clothes stopped the bite.', 'Se ha curado: %1 en %2.': 'Healed: %1 on %2.',
+  'Ese corte profundo ya está vendado: hay que coserlo con aguja e hilo.': 'That deep cut is already bandaged: it needs stitches (needle and thread).', 'Sangrando no puedes dormir: véndate primero.': 'You cannot sleep while bleeding: bandage yourself first.', 'La venda de %1 está sucia: cámbiala.': 'The bandage on %1 is dirty: change it.',
   'SANGRAS (V)': 'BLEEDING (V)', 'HUESO ROTO': 'BROKEN BONE', 'DOLOR': 'PAIN', 'Se desangró. Las vendas estaban en la mochila.': 'Bled out. The bandages were in the backpack.',
 });

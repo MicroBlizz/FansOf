@@ -9,7 +9,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (!A) return Z.error('animalDesconocido', { animal });
     const vida = A.vida || AJ.jugador.vida;
     const J = { animal, A, x, z, a: 0, vida, max: vida, hambre: 85, sed: 85, sueno: 90, infeccion: 0, agacha: false, corre: false, duerme: false, aguante: AJ.aguante.max, agotado: false,
-      arma: 'escopeta', tArma: 0, registra: null, andado: 0, ultimoGolpe: null, ...Z.nuevoEquipo(AJ, A) };   // la mochila, la riñonera, los bolsillos y la ropa (js/equipo.js)
+      arma: 'escopeta', tArma: 0, registra: null, andado: 0, ultimoGolpe: null, heridas: [], analgesico: 0, ...Z.nuevoEquipo(AJ, A) };   // la mochila, la riñonera, los bolsillos y la ropa (js/equipo.js)
     const grandes = AJ.mochilaInicial.slice().sort((a, b) => Z.formaDe(AJ, b[0]).c.length - Z.formaDe(AJ, a[0]).c.length);   // lo grande primero, para que quepa todo
     for (const [id, n] of grandes) Z.meterLleva(AJ, J, id, n);
     return Z.ok(J);
@@ -39,19 +39,24 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const J = e.jugador, O = AJ.objetos[cosa], U = O && O.usa;
     if (O && O.cura) return Z.curaSola(AJ, e, O.cura);       // vendas, desinfectante, aguja y tablilla van a una herida (js/heridas.js)
     if (!U) return Z.error('noSeUsa', { cosa });
+    if (U.infeccion < 0 && J.infeccion <= 0) return Z.error('noHaceFalta', { cosa });   // los antibióticos, solo si estás infectado
     const r = Z.gastaLleva(J, cosa, 1);
     if (!r.ok) return r;
-    const nutre = O.cocinado ? Z.mas(AJ, J, 'cocina', 'nutre') : 1;   // lo que cocinas alimenta más cuanto mejor cocinas
-    for (const n of ['hambre', 'sed', 'sueno']) if (U[n]) J[n] = Math.max(0, Math.min(100, J[n] + U[n] * (U[n] > 0 ? nutre : 1)));
-    if (U.vida > 0) J.vida = Math.min(J.max, J.vida + U.vida * (J.A.venda || 1));
-    if (U.vida < 0) Z.dana(e, -U.vida, 'comida');
-    if (U.infeccion) J.infeccion = Math.max(0, J.infeccion + U.infeccion);
-    if (U.analgesico) Z.tomaAnalgesico(AJ, e);
+    aplicaUso(AJ, e, O, U);
     if (U.ruido) Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[U.ruido] * (J.A.ruido || 1), 'jugador');
     if (O.deja) Z.meterLleva(AJ, J, O.deja, 1);              // el agua deja su botella (si cabe)
     e.eventos.push({ tipo: 'usa', cosa, mal: !!U.mal });
     return Z.ok(cosa);
   };
+  // lo que hace al usarla: comer, beber, vida, infección, analgésicos
+  function aplicaUso(AJ, e, O, U) {
+    const J = e.jugador, nutre = O.cocinado ? Z.mas(AJ, J, 'cocina', 'nutre') : 1;   // lo que cocinas alimenta más cuanto mejor cocinas
+    for (const n of ['hambre', 'sed', 'sueno']) if (U[n]) J[n] = Math.max(0, Math.min(100, J[n] + U[n] * (U[n] > 0 ? nutre : 1)));
+    if (U.vida > 0) J.vida = Math.min(J.max, J.vida + U.vida * (J.A.venda || 1));
+    if (U.vida < 0) Z.dana(e, -U.vida, 'comida');
+    if (U.infeccion) J.infeccion = Math.max(0, J.infeccion + U.infeccion);
+    if (U.analgesico) Z.tomaAnalgesico(AJ, e);
+  }
   // la primera cosa de comer o beber que tengas (para las teclas E y Q)
   Z.primeraQue = (AJ, e, necesidad) => Object.keys(AJ.objetos).find((id) => { const U = AJ.objetos[id].usa; return U && U[necesidad] > 0 && !U.mal && Z.lleva(e.jugador, id); }) || null;   // nunca lo que sienta mal
 
@@ -60,6 +65,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const J = e.jugador;
     if (J.sueno > 70) return Z.error('sinSueno');
     if (Z.zombiCerca(e, AJ.mundo.despierta)) return Z.error('hayZombis');
+    if (Z.sangra(AJ, J) > 0) return Z.error('sangras');            // durmiendo te desangrarías sin enterarte (js/heridas.js)
     J.duerme = true; J.agacha = true;
     return Z.ok(true);
   };

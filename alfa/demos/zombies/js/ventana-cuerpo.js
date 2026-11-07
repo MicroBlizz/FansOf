@@ -1,5 +1,5 @@
 // Fans of Zombies · EL CUERPO EN LA MOCHILA (pantalla, ADR 082): el muñeco con las 6 partes de colores (verde sano, amarillo arañazo,
-// naranja corte, rojo mordisco o sangrando, blanco vendado, morado roto). Tocar una parte enseña sus heridas y los botones para
+// naranja corte, rojo mordisco o sangrando, blanco vendado, marrón venda sucia, morado roto). Tocar una parte enseña sus heridas y los botones para
 // curarlas (VENDAR, DESINFECTAR, COSER, TABLILLA) con cuántos te quedan. Arriba, el dolor y si llevas analgésicos. Aquí también están
 // los dibujos de las curas nuevas (los usa dibujaObjeto de js/ventana-mochila.js).
 'use strict';
@@ -21,6 +21,7 @@ function estadoParte(J, parte) {
   if (!hs.length) return 'sana';
   if (hs.some((h) => h.tipo === 'fractura' && !h.tablilla)) return 'rota';
   if (hs.some((h) => ZOM.sangraDe(AJ, h) > 0)) return 'sangra';
+  if (hs.some((h) => h.venda && h.venda.t >= AJ.cuerpo.vendaSucia)) return 'sucia';
   if (hs.every((h) => h.venda || h.tablilla || h.puntos)) return 'vendada';
   return hs.some((h) => h.tipo === 'mordisco') ? 'mordisco' : hs.some((h) => h.tipo === 'corte' || h.tipo === 'profundo') ? 'corte' : 'aranazo';
 }

@@ -55,7 +55,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     return Z.ok(c.gas);
   };
   // cada fotograma al volante: acelerar (W), frenar o marcha atrás (S), girar (A/D); choques, atropellos, gasolina y ruido
-  Z.pasoCoche = function (AJ, e, dt, ent, mundo) {
+  Z.pasoCoche = function (AJ, e, dt, ent, mundo, azar) {
     const J = e.jugador, c = Z.cocheDe(e, J.conduce), K = C(AJ);
     if (!c) { J.conduce = null; return; }
     const gas = c.gas > 0 && c.dano < 100 ? -ent.mz : 0;
@@ -63,7 +63,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     c.v = Math.max(-K.atras, Math.min(K.maxima, c.v));
     if (Math.abs(c.v) > 0.3) c.a -= ent.mx * K.giro * dt * Math.sign(c.v) * Math.min(1, Math.abs(c.v) / 4);
     const choca = mundo.mueve(c, Math.sin(c.a) * c.v * dt, Math.cos(c.a) * c.v * dt, K.radio);
-    if (choca && Math.abs(c.v) > 2) { c.dano = Math.min(100, c.dano + Math.abs(c.v) * K.danoChoque); e.eventos.push({ tipo: 'choque', v: Math.abs(c.v) }); Z.choqueHiere(AJ, e, Math.abs(c.v)); c.v *= -0.25; }
+    if (choca && Math.abs(c.v) > 2) { c.dano = Math.min(100, c.dano + Math.abs(c.v) * K.danoChoque); e.eventos.push({ tipo: 'choque', v: Math.abs(c.v) }); if (azar) Z.choqueHiere(AJ, e, Math.abs(c.v), azar); c.v *= -0.25; }   // un choque fuerte te rompe una pierna (js/heridas.js)
     c.gas = Math.max(0, c.gas - Math.abs(c.v) * dt * K.consumo);
     atropella(AJ, e, c);
     J.x = c.x; J.z = c.z; J.a = c.a;

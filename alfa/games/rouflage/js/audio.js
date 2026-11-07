@@ -65,6 +65,8 @@ function suenaEn(nombre, x, y, v = 1) {
 SONIDO_ARCHIVO.registra('brochazo', 'snd/brochazo.mp3?v=' + NUCLEO.version);
 SONIDO_ARCHIVO.registra('pincel', 'snd/pincel.mp3?v=' + NUCLEO.version);
 SONIDO_ARCHIVO.registra('gota', 'snd/gota.mp3?v=' + NUCLEO.version);
+SONIDO_ARCHIVO.registra('cubo', 'snd/cubo.mp3?v=' + NUCLEO.version);
+SONIDO_ARCHIVO.registra('salpica', 'snd/salpica.mp3?v=' + NUCLEO.version);
 
 // efectos propios: pintar, coger un color, congelarse, silbar, pasos, la linterna, la persiana, el sello de despido y los poderes
 Object.assign(SFX, {
@@ -77,7 +79,9 @@ Object.assign(SFX, {
     if (SONIDO_ARCHIVO.toca('gota', { vol: 0.6, vel: 0.92 + Math.random() * 0.16 })) return;
     tone(880, 1500, 0.07, 'sine', 0.09); tone(1500, 1900, 0.06, 'sine', 0.05, 0.06);
   },
-  cubo: () => { noise(0.22, 0.12, 900); tone(300, 160, 0.2, 'sine', 0.1); },
+  // el cubo: te pinta entero de golpe en el taller, y la mancha al cobrar una misión (snd/cubo.mp3: un pegote de pintura de Yoshi, el 90 que
+  // eligió Daniel el 7-11-2026; con «cubo» en la petición salían golpes de metal); si no ha llegado, el «chof» de código
+  cubo: () => { if (!SONIDO_ARCHIVO.toca('cubo', { vol: 0.75 })) { noise(0.22, 0.12, 900); tone(300, 160, 0.2, 'sine', 0.1); } },
   // la brocha gigante de la pintura rápida (brochazo.js): el «frus, fras» de ida y vuelta (snd/brochazo.mp3, de Yoshi, elegido por Daniel
   // el 6-11-2026) al ritmo de las dos pasadas; si el archivo no ha llegado, el de repuesto hecho con código: las dos pasadas y la salida
   brochazo: () => {
@@ -103,7 +107,12 @@ Object.assign(SFX, {
   // el sello de DESPEDIDO: golpe de tampón, chirrido y papel
   sello: (v = 1, out = master) => { ruidoEn(out, 0.18, 0.35 * v, 500); tonoEn(out, 130, 50, 0.22, 'sine', 0.3 * v); tonoEn(out, 1800, 2400, 0.08, 'square', 0.04 * v, 0.12); ruidoEn(out, 0.14, 0.1 * v, 3500, 'highpass', 0.2); agachaMusica(0.9); },
   // despido improcedente: la pintura salpica un mueble
-  salpica: () => { noise(0.14, 0.16, 1200, 'bandpass'); tone(300, 110, 0.14, 'sine', 0.08); tone(900, 400, 0.09, 'triangle', 0.04, 0.05); },
+  // (snd/salpica.mp3: este mismo sonido con un poco de splat de pintura de Yoshi debajo, la mezcla 1 que eligió Daniel el 7-11-2026; las de
+  // Yoshi solas sonaban serias: lo gracioso es el tono que cae); si no ha llegado, el de código
+  salpica: () => {
+    if (SONIDO_ARCHIVO.toca('salpica', { vol: 0.8 })) return;
+    noise(0.14, 0.16, 1200, 'bandpass'); tone(300, 110, 0.14, 'sine', 0.08); tone(900, 400, 0.09, 'triangle', 0.04, 0.05);
+  },
   // la granada de humo: pum y el siseo del humo
   humo: () => { tone(220, 60, 0.18, 'sine', 0.22); noise(0.12, 0.2, 1500, 'bandpass'); noise(1.1, 0.08, 2200, 'highpass', 0.12); },
   // prácticas: diana (campanita) al acertar a un camaleón de entrenamiento

@@ -1,8 +1,8 @@
 {
- "build": 1086,
- "hash": "8a5e7c0",
- "fecha": "2026-11-07T12:27:55Z",
- "mensaje": "Rumble v2: la carta de BoomBeaver, de frente y con paletas blancas",
+ "build": 1087,
+ "hash": "0f9abd0",
+ "fecha": "2026-11-07T12:29:05Z",
+ "mensaje": "Rouflage 0.2.75: el disparo fallido salpica con el sonido de siempre y un poco de splat de Yoshi debajo (la mezcla 1 de Daniel)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

@@ -68,7 +68,7 @@ function pintaMochila() {
       (lista.length ? lista.map((c, i) => htmlPieza(c.id, c.n, 0, 'suelta', 'data-i="' + i + '" title="' + esc(tr(AJ.objetos[c.id].n)) + '"')).join('') : '<p>' + esc(tr('Vacío.')) + '</p>') + '</div>' + htmlAccionesSitio(e) + '<p class="vm-ayuda">' + esc(tr('Clic para coger. Arrastra aquí lo tuyo para dejarlo.')) + '</p></section>' : '') +
     (lista ? '' : htmlHabilidades(J)) +   // con un sitio abierto no caben todas: las habilidades salen con la mochila sola
     htmlEquipo(e) +                        // la ropa, la riñonera y los bolsillos (js/ventana-equipo.js)
-    '<section class="vm-mia"><header><b>' + esc(tr(AJ.objetos[J.equipo.mochila].n)) + '</b><button id="vm-ordenar">' + esc(tr('ORDENAR')) + '</button><button id="vm-cerrar">' + esc(tr('CERRAR (TAB)')) + '</button></header>' +
+    '<section class="vm-mia"><header><b>' + esc(tr(AJ.objetos[J.equipo.mochila].n)) + '</b>' + (TACTIL.activo ? '<button id="vm-girar">' + esc(tr('GIRAR')) + '</button>' : '') + '<button id="vm-ordenar">' + esc(tr('ORDENAR')) + '</button><button id="vm-cerrar">' + esc(tr('CERRAR (TAB)')) + '</button></header>' +
     htmlRejilla(J, 'mochila') + htmlFabricar(e) + '<p class="vm-ayuda">' + esc(tr('Arrastra para mover · rueda o R para girar · clic derecho para usar · fuera de la rejilla para dejar.')) + '</p></section>';
   // la posición de cada pieza en su rejilla
   v.querySelectorAll('.vm-pieza.mia').forEach((d) => { const p = ZOM.pieza(J[d.dataset.bolsa], +d.dataset.uid); d.style.left = p.gx * C + 'px'; d.style.top = p.gy * C + 'px'; });
@@ -85,6 +85,7 @@ function enganchaMochila(v) {
   const e = JUEGO.e, AJ = ZOM.AJ;
   if (el('vm-todo')) el('vm-todo').onclick = () => resultadoMochila(ZOM.cogerTodo(AJ, e));
   el('vm-ordenar').onclick = () => resultadoMochila(ZOM.ordenar(AJ, e.jugador.mochila));
+  if (el('vm-girar')) el('vm-girar').onpointerdown = (ev) => { ev.preventDefault(); giraArrastre(); };   // en el móvil, con otro dedo mientras arrastras
   el('vm-cerrar').onclick = cierraMochila;
   v.querySelectorAll('.vm-pieza.mia').forEach((d) => {
     const desde = { bolsa: d.dataset.bolsa, uid: +d.dataset.uid };
@@ -101,13 +102,22 @@ function empiezaArrastre(ev, d, que) {
   if (ev.button !== 0) return;
   ev.preventDefault();
   const r = d.getBoundingClientRect(), p = que.uid != null ? ZOM.pieza(JUEGO.e.jugador[que.bolsa], que.uid) : null;
-  VM.arrastra = { ...que, d, dx: ev.clientX - r.left, dy: ev.clientY - r.top, x0: ev.clientX, y0: ev.clientY, gr: p ? p.gr : 0, id: p ? p.id : JUEGO.e.contenidos[JUEGO.e.abierto][que.i].id };
+  const A = VM.arrastra = { ...que, d, pid: ev.pointerId, dx: ev.clientX - r.left, dy: ev.clientY - r.top, x0: ev.clientX, y0: ev.clientY, ux: ev.clientX, uy: ev.clientY, gr: p ? p.gr : 0, id: p ? p.id : JUEGO.e.contenidos[JUEGO.e.abierto][que.i].id };
+  if (ev.pointerType === 'touch') A.larga = setTimeout(() => pulsacionLarga(A, que), 450);   // en el móvil, dejar el dedo quieto = clic derecho
   d.classList.add('vuela');
   document.body.appendChild(d);                          // fuera de la ventana (que va con transform), para que «fixed» sea la pantalla
   d.style.position = 'fixed'; d.style.left = r.left + 'px'; d.style.top = r.top + 'px';
 }
+// el dedo quieto un rato sobre una pieza: se usa o se pone (como el clic derecho)
+function pulsacionLarga(A, que) {
+  if (VM.arrastra !== A || Math.hypot(A.ux - A.x0, A.uy - A.y0) > 8) return;
+  VM.arrastra = null; A.d.remove();
+  usaOPon(que.i != null ? { i: que.i } : { bolsa: que.bolsa, uid: que.uid }, A.id);
+  if (VM.abierta) pintaMochila();
+}
 function sigueArrastre(ev) {
-  const A = VM.arrastra; if (!A) return;
+  const A = VM.arrastra; if (!A || ev.pointerId !== A.pid) return;
+  A.ux = ev.clientX; A.uy = ev.clientY;
   A.d.style.position = 'fixed'; A.d.style.left = ev.clientX - A.dx + 'px'; A.d.style.top = ev.clientY - A.dy + 'px';
 }
 function giraArrastre() {
@@ -118,8 +128,8 @@ function giraArrastre() {
   A.d.remove(); document.body.appendChild(nueva); A.d = nueva; pintaDibujos(nueva); A.dx = A.dy = VM.celda / 2;
 }
 function sueltaArrastre(ev) {
-  const A = VM.arrastra; if (!A) return;
-  VM.arrastra = null; A.d.remove();
+  const A = VM.arrastra; if (!A || ev.pointerId !== A.pid) return;
+  VM.arrastra = null; A.d.remove(); clearTimeout(A.larga);
   const e = JUEGO.e, AJ = ZOM.AJ, C = VM.celda;
   const clic = Math.hypot(ev.clientX - A.x0, ev.clientY - A.y0) < 5, sobre = rejillaBajo(ev);
   const donde = sobre && { bolsa: sobre.dataset.bolsa, gx: Math.round((ev.clientX - A.dx - sobre.getBoundingClientRect().left) / C), gy: Math.round((ev.clientY - A.dy - sobre.getBoundingClientRect().top) / C), gr: A.gr };

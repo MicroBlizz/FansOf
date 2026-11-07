@@ -125,4 +125,6 @@ IDIOMA.add({
   'PUESTO': 'WORN', 'CABEZA': 'HEAD', 'CUERPO': 'BODY', 'PIERNAS': 'LEGS', 'PIES': 'FEET', 'COSER (1 TELA)': 'SEW (1 CLOTH)', 'RIÑONERA': 'BUMBAG', 'BOLSILLOS': 'POCKETS',
   'Clic derecho en ropa o en una mochila para ponértela. Clic en lo puesto para quitártelo.': 'Right-click clothes or a backpack to wear it. Click what you wear to take it off.',
   'Te falta tela.': 'You need cloth.', 'No llevas nada roto.': 'Nothing you wear is torn.', 'Eso no se pone.': 'You cannot wear that.', 'Te pones: %1.': 'You put on: %1.', 'Has cosido: %1.': 'You sewed: %1.', 'GORRO DE LANA (2 TELAS)': 'WOOLLY HAT (2 CLOTH)',
+  // el móvil (0.12.1)
+  'ACCIÓN': 'ACTION', 'AGACHAR': 'CROUCH', 'GIRAR': 'ROTATE', 'Gira el móvil para jugar': 'Turn your phone sideways to play',
 });

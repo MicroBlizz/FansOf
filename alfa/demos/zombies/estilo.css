@@ -169,3 +169,55 @@ button:disabled { opacity: 0.4; cursor: default; }
 .vm-hueco .barra i { display: block; height: 100%; }
 .vm-equipo .vm-sub { display: block; margin: 8px 0 4px; }
 .vm-equipo .vm-acciones { max-width: none; }
+
+/* ---------- el móvil (js/tactil.js): palanca, botones y el HUD más pequeño. Solo con body.tactil ---------- */
+#zb-mandos { display: none; }
+body.tactil #zb-mandos { display: block; position: fixed; inset: 0; z-index: 30; pointer-events: none; }
+body.tactil .zb-ayuda { display: none; }
+.t-palanca { position: absolute; left: 0; top: 30%; bottom: 0; width: 45%; pointer-events: auto; touch-action: none; }
+.t-palanca > i { position: fixed; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: rgba(230,238,240,.25); border: 2px solid rgba(230,238,240,.6); display: none; pointer-events: none; }
+.t-palanca::before { content: ''; position: fixed; left: var(--cx); top: var(--cy); width: 100px; height: 100px; margin: -50px 0 0 -50px; border-radius: 50%; border: 2px solid rgba(230,238,240,.35); background: rgba(255,255,255,.05); display: none; pointer-events: none; }
+.t-palanca.activa > i, .t-palanca.activa::before { display: block; }
+.t-palanca.corre::before { border-color: var(--rk-naranja); }
+.t-boton { position: absolute; pointer-events: auto; touch-action: none; user-select: none; -webkit-user-select: none; background: rgba(10,14,18,.7); border: 2px solid var(--rk-borde2); color: var(--rk-tinta); font: 10px var(--rk-tit); letter-spacing: .04em; border-radius: 50%; width: 58px; height: 58px; padding: 0; display: grid; place-items: center; line-height: 1; }
+.t-boton.on { border-color: var(--rk-naranja); color: var(--rk-naranja); }
+#t-ataca { width: 84px; height: 84px; right: calc(18px + env(safe-area-inset-right)); bottom: 18px; font-size: 13px; border-color: #c84a3a; }
+#t-empuja { right: calc(112px + env(safe-area-inset-right)); bottom: 12px; }
+#t-accion { right: calc(108px + env(safe-area-inset-right)); bottom: 80px; border-color: var(--zb-verde); }
+#t-corre { right: calc(30px + env(safe-area-inset-right)); bottom: 112px; }
+#t-agacha { right: calc(178px + env(safe-area-inset-right)); bottom: 12px; }
+#t-mochila, #t-mapa, #t-duerme, #t-tablas, #t-gasolina, #t-pausa { top: 6px; width: auto; height: 30px; border-radius: 4px; padding: 0 8px; font-size: 11px; }
+#t-pausa { right: calc(6px + env(safe-area-inset-right)); }
+#t-mapa { right: calc(66px + env(safe-area-inset-right)); }
+#t-mochila { right: calc(118px + env(safe-area-inset-right)); }
+#t-duerme { right: calc(196px + env(safe-area-inset-right)); }
+#t-tablas { right: calc(264px + env(safe-area-inset-right)); }
+#t-gasolina { right: calc(330px + env(safe-area-inset-right)); }
+#t-gira { display: none; }
+@media (orientation: portrait) {
+  body.tactil #t-gira { display: grid; place-items: center; position: fixed; inset: 0; background: rgba(6,8,12,.94); pointer-events: auto; text-align: center; padding: 24px; }
+  body.tactil #t-gira b { font: 22px var(--rk-tit); font-weight: 400; color: var(--rk-naranja); }
+}
+/* el HUD encogido y en las esquinas, sin tapar los botones */
+body.tactil .zb-necesidades { transform: scale(.55); transform-origin: left top; left: calc(6px + env(safe-area-inset-left)); top: 6px; }
+body.tactil .zb-ruido { transform: scale(.55); transform-origin: left top; left: calc(6px + env(safe-area-inset-left)); top: 168px; }
+body.tactil .zb-reloj { transform: scale(.55); transform-origin: right top; right: calc(6px + env(safe-area-inset-right)); top: 42px; }
+body.tactil .zb-radio { transform: scale(.6); transform-origin: right top; right: calc(6px + env(safe-area-inset-right)); top: 96px; }
+body.tactil .zb-arma { transform: scale(.55); transform-origin: right top; right: calc(6px + env(safe-area-inset-right)); top: 146px; bottom: auto; pointer-events: auto; }
+body.tactil .zb-hotbar { transform: translateX(-50%) scale(.6); transform-origin: bottom center; bottom: 4px; left: 50%; pointer-events: auto; }
+body.tactil .zb-parche { transform: translateX(-50%) scale(.6); transform-origin: top center; top: 40px; }
+body.tactil .zb-tuto { transform: translateX(-50%) scale(.65); transform-origin: top center; top: 40px; width: 560px; }
+body.tactil .zb-jefe { transform: translateX(-50%) scale(.6); transform-origin: top center; }
+body.tactil .zb-coche { transform: scale(.55); transform-origin: right top; right: calc(6px + env(safe-area-inset-right)); top: 200px; bottom: auto; }
+body.tactil #h-accion { pointer-events: auto; padding: 6px 10px; }
+/* la mochila a pantalla completa, con scroll, y las piezas se arrastran con el dedo */
+body.tactil #zb-mochila { inset: 0; right: 0; top: 0; transform: none; overflow: auto; background: rgba(6,8,12,.9); padding: 6px; gap: 6px; touch-action: pan-x pan-y; flex-wrap: nowrap; }
+body.tactil #zb-mochila section { padding: 4px 6px; flex: none; }
+body.tactil #zb-mochila header b { font-size: 14px; }
+body.tactil #zb-mochila header button { font-size: 12px; padding: 6px 8px; }
+body.tactil .vm-pieza { touch-action: none; }
+body.tactil .vm-ayuda { display: none; }
+body.tactil .vm-sitio { order: -2; } body.tactil .vm-mia { order: -1; } body.tactil .vm-hab { order: 2; }
+body.tactil #vm-cerrar { position: fixed; top: 6px; right: calc(6px + env(safe-area-inset-right)); z-index: 36; background: #3a1a1a; border-color: var(--rk-mal); }
+body.tactil #zb-mochila { font-size: 13px; }
+body.tactil #zb-mochila .vm-hab { transform: scale(.75); transform-origin: left top; }

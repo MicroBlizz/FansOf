@@ -85,4 +85,14 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     e.eventos.push({ tipo: 'baja', id: zb.id, tipoZombi: zb.tipo, x: zb.x, z: zb.z });
     if (zb.T.botin) e.cuerpos.push({ id: 'cuerpo-' + zb.id, x: zb.x, z: zb.z });     // la ballena deja algo que registrar
   };
+  // el apuntado del móvil (ADR 081): el fan vivo más cercano de tu planta a menos de dMax, o null
+  Z.blancoCerca = function (e, dMax) {
+    const J = e.jugador, planta = e.planta || 0;
+    let mejor = null, d = dMax;
+    for (const z of e.zombis) {
+      const dz = z.vida > 0 && (z.planta || 0) === planta ? Z.dist(z.x, z.z, J.x, J.z) : Infinity;
+      if (dz < d) { d = dz; mejor = z; }
+    }
+    return mejor;
+  };
 })(ZOM);

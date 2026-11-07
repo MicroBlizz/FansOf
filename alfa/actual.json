@@ -1,7 +1,7 @@
 {
- "build": 1081,
+ "build": 1082,
  "hash": "5d612bd",
- "fecha": "2026-11-07T12:01:38Z",
+ "fecha": "2026-11-07T12:02:48Z",
  "mensaje": "Zombies 0.14.0: coches con piezas, mecánica, maletero y faros (ADR 083)",
  "juegos": {
   "boom": "0.4.10",

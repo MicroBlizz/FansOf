@@ -1,4 +1,4 @@
-// Fans of Rumble · Arte pintado (ADR 082): cambia los dibujos hechos con código por las imágenes pintadas por Yoshi (img/pintado/).
+// Fans of Rumble · Arte pintado (ADR 084): cambia los dibujos hechos con código por las imágenes pintadas por Yoshi (img/pintado/).
 // Se carga justo antes de js/21-arranque.js: ahí ya existen buildSprites, drawVector, buildBG y buildBridges.
 // Solo con PINTADO.activo() (ajustes.js); si se apaga o se enciende con la partida abierta, se rehace todo (rehaz, al final).
 // Lo que aún no tiene imagen se sigue viendo como siempre; cada imagen entra en cuanto se descarga.
@@ -33,7 +33,7 @@ const V2 = (() => {   // (se sigue llamando V2: lo usan animar.js y la demo v2)
   // el sprite pintado ocupa la caja del original (BOX), con los pies en el mismo punto de apoyo
   function aplicaSprite(key) {
     const im = IMG[key]; if (!im || !BOX[key]) return;
-    const rol = (key.match(/_(tower|base|rubble)$/) || [])[1], e = rol ? PINTADO.edificios[rol] : 1;   // torres y bases, más grandes
+    const rol = (key.match(/_(tower|base|rubble)$/) || [])[1], e = PINTADO.edificioSuelto[key] || (rol ? PINTADO.edificios[rol] : 1);   // torres y bases, más grandes
     const baja = e !== 1 ? PINTADO.bajarEdificios : 0;   // el dibujo, un poco más abajo para tapar las esquinas de los caminos
     const [w, h, ax, ay0] = BOX[key].map(n => n * e), ay = ay0 - baja;
     if (e !== 1 && TOPS[key]) { if (!(key in alturaBarra)) alturaBarra[key] = TOPS[key]; TOPS[key] = Math.round(alturaBarra[key] * e - baja); }   // la barra de vida, encima
@@ -116,7 +116,6 @@ const V2 = (() => {   // (se sigue llamando V2: lo usan animar.js y la demo v2)
 
   // lo que llega tarde se cambia en caliente
   const listo = () => typeof READY !== 'undefined' && READY;
-  SPRITES.forEach(k => carga(k, () => { if (listo() && PINTADO.activo()) aplicaSprite(k); }));
   function pideFondo(clave) {
     if (!FONDOS[clave] || pedidos.has(clave)) return;
     pedidos.add(clave);
@@ -133,13 +132,22 @@ const V2 = (() => {   // (se sigue llamando V2: lo usan animar.js y la demo v2)
     if (PINTADO.activo()) ART_FIT[k] = [0, f[1]]; else if (encuadre[k]) ART_FIT[k] = encuadre[k]; else delete ART_FIT[k];
   }
   const repintaCartas = k => { if (typeof elCards !== 'undefined') elCards.forEach(el => { if (el.dataset.card && (!k || el.dataset.card === k)) renderCard(el, el.dataset.card); }); };
-  FRENTE.forEach(k => carga('frente/' + k, () => { centraRetrato(k); repintaCartas(k); }));
-  pideFondo('animales|mb');
-  carga('puente', () => { if (listo()) BRIDGE_LAYER = buildBridges(); });
+  // las imágenes se bajan solo cuando el arte pintado está encendido (y una sola vez)
+  let bajando = false;
+  function bajaTodo() {
+    if (bajando || !PINTADO.activo()) return;
+    bajando = true;
+    SPRITES.forEach(k => carga(k, () => { if (listo() && PINTADO.activo()) aplicaSprite(k); }));
+    FRENTE.forEach(k => carga('frente/' + k, () => { centraRetrato(k); repintaCartas(k); }));
+    pideFondo('animales|mb');
+    carga('puente', () => { if (listo()) BRIDGE_LAYER = buildBridges(); });
+  }
+  bajaTodo();
 
   // si el flag cambia con el juego abierto, se rehace todo lo dibujado (sprites, fondo, puentes, cartas)
   let estaba = PINTADO.activo();
   NUCLEO.alCambiarFlags(() => {
+    bajaTodo();
     const ahora = PINTADO.activo(); if (ahora === estaba || !listo()) { estaba = ahora; return; }
     estaba = ahora;
     buildSprites(); FRENTE.forEach(centraRetrato); repintaCartas();

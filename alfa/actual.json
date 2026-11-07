@@ -1,8 +1,8 @@
 {
- "build": 1092,
- "hash": "99094f5",
- "fecha": "2026-11-07T14:04:31Z",
- "mensaje": "Rumble: el arte pintado por Yoshi pasa al juego, tras el flag rumble-arte-pintado (abierto solo en la alfa; ADR 084)",
+ "build": 1093,
+ "hash": "519f3ca",
+ "fecha": "2026-11-07T14:15:11Z",
+ "mensaje": "Rumble: demo Fans of Rumble Clásico, el arte pintado no se descarga si está apagado, madriguera x1.2",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

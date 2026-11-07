@@ -1,4 +1,4 @@
-// Fans of Rumble · Arte pintado (ADR 082): personajes animados fotograma a fotograma (hojas de img/pintado/anim/, datos en anim.js).
+// Fans of Rumble · Arte pintado (ADR 084): personajes animados fotograma a fotograma (hojas de img/pintado/anim/, datos en anim.js).
 // Cinco animaciones (quieto, andar, atacar, golpe, morir) y los dos lados pintados aparte: nunca se voltea el dibujo,
 // así el arma no cambia de mano al girar (Daniel). Si sube por el camino se le ve de espaldas («esp»), cuando la hoja la tiene.
 // Se carga después de arte.js y antes de 21-arranque.js. Solo con PINTADO.activo() (ajustes.js).
@@ -108,11 +108,19 @@ const V2A = (() => {
     V2.dibujaAjustado(c, marco[id], x, y, h, 1);
   };
 
-  const ver = '?v=' + encodeURIComponent(NUCLEO.version || '0');
-  for (const key in V2_ANIM) {
-    const im = new Image();
-    im.onload = () => { HOJA[key] = im; };
-    im.src = PINTADO.ruta() + 'anim/' + key + '.webp' + ver;
+  // las hojas se bajan solo cuando el arte pintado está encendido (y una sola vez)
+  let bajando = false;
+  function bajaHojas() {
+    if (bajando || !PINTADO.activo()) return;
+    bajando = true;
+    const ver = '?v=' + encodeURIComponent(NUCLEO.version || '0');
+    for (const key in V2_ANIM) {
+      const im = new Image();
+      im.onload = () => { HOJA[key] = im; };
+      im.src = PINTADO.ruta() + 'anim/' + key + '.webp' + ver;
+    }
   }
+  bajaHojas();
+  NUCLEO.alCambiarFlags(bajaHojas);
   return { HOJA, muertos };
 })();

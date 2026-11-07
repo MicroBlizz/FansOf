@@ -27,6 +27,8 @@ IDIOMA.add({
   "Android (versión de prueba)": "Android (test version)",
   "Descarga los juegos como app para probarlos en el móvil.": "Download the games as an app to try them on your phone.",
   "Las reglas del juego, juego limpio incluido.": "The rules of the game, fair play included.",
+  "Contacto": "Contact",
+  "Prensa, colaboraciones o permisos: fansofmicroblizz@gmail.com": "Press, collaborations or permissions: fansofmicroblizz@gmail.com",
   "© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados": "© 2026 Arkioner and Pepins · MicroBlizz · All rights reserved",
   "Demo de otro proyecto nuestro. Survival horror en el Albright Memorial Hospital (Granollers, 1999), con cámaras fijas y control tanque. Repara la red de fibra sin perder la Lucidez.": "A demo from another project of ours. Survival horror in the Albright Memorial Hospital (Granollers, 1999), with fixed cameras and tank controls. Repair the fibre network without losing your Lucidity.",
   "FANS OF RUMBLE: TÁCTICAS": "FANS OF RUMBLE: TACTICS",

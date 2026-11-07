@@ -1,8 +1,8 @@
 {
- "build": 1084,
- "hash": "3c918be",
- "fecha": "2026-11-07T12:15:21Z",
- "mensaje": "Zombies: arreglos de la revisión de los coches y dominio de construir (sin pantalla aún)",
+ "build": 1085,
+ "hash": "f1f8d38",
+ "fecha": "2026-11-07T12:18:59Z",
+ "mensaje": "Tablero: foto del grafo de la tarea en su tarjeta (SQL 118 aplicado)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

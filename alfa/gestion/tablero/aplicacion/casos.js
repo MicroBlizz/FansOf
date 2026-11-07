@@ -7,17 +7,23 @@
 TABLERO.casos = repositorio => {
   // el servidor da los motivos con guion bajo (es_de_otro); el dominio, con guion (es-de-otro): aquí se igualan
   const aResultado = r => (r && r.ok ? TABLERO.ok(r) : TABLERO.error(String((r && r.motivo) || 'rechazado').replace(/_/g, '-')));
+  // la foto del grafo se valida una sola vez, al cargar: la tarea lleva el Grafo ya leído, o el motivo por el que no vale
+  const conGrafo = t => {
+    if (!t.grafo) return { ...t, grafo: null };
+    const g = TABLERO.Grafo.desdeJson(t.grafo);
+    return g.ok ? { ...t, grafo: g.valor } : { ...t, grafo: null, grafoMal: g.datos.motivo };
+  };
   async function enviar(llamada) {
     try { return aResultado(await llamada()); } catch (e) { return TABLERO.error('sin-servidor', { causa: e }); }
   }
   return {
-    // Resultado: { columnas, juegos, tareas (las válidas, en json), descartadas } o 'sin-servidor' (la causa en datos)
+    // Resultado: { columnas, juegos, tareas (las válidas, con su Grafo ya leído), descartadas } o 'sin-servidor' (la causa en datos)
     async cargar(filtro) {
       let json;
       try { json = await repositorio.lista(); } catch (e) { return TABLERO.error('sin-servidor', { causa: e }); }
       if (!Array.isArray(json)) return TABLERO.error('sin-servidor', { causa: new Error('respuesta-inesperada') });
       const lectura = json.map(TABLERO.Tarea.desdeJson);
-      const tareas = lectura.filter(r => r.ok).map(r => r.valor.aJson());
+      const tareas = lectura.filter(r => r.ok).map(r => conGrafo(r.valor.aJson()));
       return TABLERO.ok({ columnas: TABLERO.reparte(tareas, filtro), juegos: TABLERO.juegosDe(tareas), tareas, descartadas: lectura.length - tareas.length });
     },
     // Una tarea nueva nace siempre «por refinar»

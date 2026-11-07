@@ -31,7 +31,7 @@ IDIOMA.add({
   'REPARAR': 'REPAIR', 'DESMONTAR': 'DISMANTLE', 'PONER': 'INSTALL', 'QUITAR': 'REMOVE', 'FAROS': 'LIGHTS', 'Faros encendidos (L)': 'Headlights on (L)', 'L: faros': 'L: headlights',
   'Rueda pinchada: gira mal': 'Flat tyre: poor steering', 'Cristales rotos: te pueden morder': 'Broken windows: you can be bitten', 'Frenos gastados': 'Worn brakes',
   'La batería está muerta: cámbiala por otra.': 'The battery is dead: swap it for another.', 'Le falta una rueda.': 'A wheel is missing.', 'El motor tose y no arranca. Prueba otra vez.': 'The engine coughs and will not start. Try again.',
-  'Necesitas una llave inglesa.': 'You need a wrench.', 'Ya tiene esa pieza.': 'It already has that part.', 'Este motor ya no da para piezas.': 'This engine has nothing left to salvage.', 'El maletero está lleno.': 'The boot is full.',
+  'Necesitas una llave inglesa.': 'You need a wrench.', 'Ya tiene esa pieza.': 'It already has that part.', 'Este motor ya no da para piezas.': 'This engine has nothing left to salvage.', 'El maletero está lleno.': 'The boot is full.', 'Aquí ya no cabe más.': 'Nothing more fits here.', 'Eso no se pone así.': 'That does not go on like that.',
   'Pieza quitada.': 'Part removed.', 'Pieza puesta.': 'Part installed.', 'Motor reparado un poco.': 'Engine repaired a bit.', 'Motor desmontado: tienes piezas de motor.': 'Engine dismantled: you have engine parts.',
   'Faros encendidos. De noche te ven de lejos.': 'Headlights on. At night they see you from far away.', 'Faros apagados.': 'Headlights off.',
 });

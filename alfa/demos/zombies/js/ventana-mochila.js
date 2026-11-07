@@ -82,7 +82,7 @@ const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', ba
 const sitioEsCoche = (id) => id.startsWith('car:');
 const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : id.startsWith('maletin-') ? 'MALETÍN DEL CEO' : ZOM.esMaletero(id) ? 'MALETERO' : sitioEsCoche(id) ? 'GUANTERA' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
 // lo que no se puede: aviso por la radio
-function resultadoMochila(r) { if (!r.ok) avisa(tr({ noCabe: 'No cabe en la mochila.', noEsta: 'Eso ya no está.' }[r.codigo] || 'No puedes hacer eso ahora.')); else play('coge'); pintaMochila(); }
+function resultadoMochila(r) { if (!r.ok) avisa(tr({ noCabe: 'No cabe en la mochila.', noEsta: 'Eso ya no está.' }[r.codigo] || NO_PUEDES[r.codigo] || 'No puedes hacer eso ahora.')); else play('coge'); pintaMochila(); }
 
 function enganchaMochila(v) {
   const e = JUEGO.e, AJ = ZOM.AJ;

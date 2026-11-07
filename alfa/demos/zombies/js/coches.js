@@ -38,7 +38,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   Z.bajaCoche = function (AJ, e, mundo) {
     const J = e.jugador, c = Z.cocheDe(e, J.conduce);
     if (!c) { J.conduce = null; return Z.error('nadaCerca'); }
-    J.conduce = null; c.v = 0;
+    J.conduce = null; c.v = 0; c.faros = false;              // al bajar se apagan los faros
     for (const ang of [Math.PI / 2, -Math.PI / 2, Math.PI]) {
       const x = c.x + Math.sin(c.a + ang) * 2, z = c.z + Math.cos(c.a + ang) * 2;
       if (!mundo.choca || !mundo.choca(x, z, AJ.jugador.radio)) { J.x = x; J.z = z; break; }

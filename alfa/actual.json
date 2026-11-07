@@ -1,8 +1,8 @@
 {
- "build": 1083,
- "hash": "4a9517f",
- "fecha": "2026-11-07T12:13:44Z",
- "mensaje": "Rumble v2: los dibujos de las cartas, todos a la misma altura y centrados; CrazyBunny de frente sin la sombra verde",
+ "build": 1084,
+ "hash": "3c918be",
+ "fecha": "2026-11-07T12:15:21Z",
+ "mensaje": "Zombies: arreglos de la revisión de los coches y dominio de construir (sin pantalla aún)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

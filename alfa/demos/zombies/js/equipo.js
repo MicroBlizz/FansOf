@@ -55,15 +55,15 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     e.eventos.push({ tipo: 'viste', id: cosa.id });
     return h;
   }
-  function guardaOSuelta(AJ, e, cosa) { if (Z.meterLleva(AJ, e.jugador, cosa.id, 1, cosa.dur)) Z.dejaEnSitio(e, cosa); }
+  function guardaOSuelta(AJ, e, cosa) { if (Z.meterLleva(AJ, e.jugador, cosa.id, 1, cosa.dur)) Z.dejaEnSitio(e, cosa, AJ); }
   // la mochila nueva: lo de la vieja pasa a la nueva (lo grande primero; si no, a la riñonera o los bolsillos); lo que no cabe y la
   // mochila vieja se quedan en el sitio
   function cambiaMochila(AJ, e, cosa) {
     const J = e.jugador, M = AJ.mochilas[cosa.id], vieja = J.mochila, antes = J.equipo.mochila;
     J.mochila = Z.nuevaMochila(M.w, M.h + (J.filaExtra || 0)); J.equipo.mochila = cosa.id;
     const cosas = vieja.piezas.slice().sort((a, b) => Z.formaDe(AJ, b.id).c.length - Z.formaDe(AJ, a.id).c.length);
-    for (const p of cosas) { const queda = Z.meterLleva(AJ, J, p.id, p.n, p.dur); if (queda) Z.dejaEnSitio(e, p.dur != null ? { id: p.id, n: queda, dur: p.dur } : { id: p.id, n: queda }); }   // la nueva, luego la riñonera y los bolsillos
-    if (antes) Z.dejaEnSitio(e, { id: antes, n: 1 });
+    for (const p of cosas) { const queda = Z.meterLleva(AJ, J, p.id, p.n, p.dur); if (queda) Z.dejaEnSitio(e, p.dur != null ? { id: p.id, n: queda, dur: p.dur } : { id: p.id, n: queda }, AJ); }   // la nueva, luego la riñonera y los bolsillos
+    if (antes) Z.dejaEnSitio(e, { id: antes, n: 1 }, AJ);
     e.eventos.push({ tipo: 'viste', id: cosa.id });
     return 'mochila';
   }

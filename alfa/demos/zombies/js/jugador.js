@@ -33,6 +33,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const J = e.jugador, P = AJ.jugador;
     if (J.registra) J.registra = null;                            // moverte corta el registro (y clavar tablas)
     if (J.clava) J.clava = null;
+    if (J.construye) J.construye = null;                 // construir también se corta al moverte (js/construir.js)
     if (J.desmonta) J.desmonta = null;
     const vel = (J.corre ? P.corre : J.agacha ? P.agacha : P.vel) * (J.A.vel || 1) * (J.sueno <= 0 ? 0.7 : 1) * Z.velMochila(AJ, J) * Z.velHeridas(AJ, J);   // la mochila de mudanza pesa; las piernas heridas, también
     const x0 = J.x, z0 = J.z;

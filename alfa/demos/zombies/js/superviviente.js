@@ -20,7 +20,7 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     const J = e.jugador, N = AJ.necesidades, p = Z.parcheDe(AJ, e), k = e.dif.necesidades * horas, E = Z.estacion(AJ, e.min);
     J.hambre = Math.max(0, J.hambre - N.hambre * k * ((p && p.hambre) || 1) * Z.hambreRopa(AJ, J, E));   // el frío y el calor, según la ropa (js/equipo.js)
     J.sed = Math.max(0, J.sed - N.sed * k * Z.sedRopa(AJ, J, E));
-    J.sueno = J.duerme ? Math.min(100, J.sueno + N.recuperaSueno * horas) : Math.max(0, J.sueno - N.sueno * k);
+    J.sueno = J.duerme ? Math.min(100, J.sueno + N.recuperaSueno * horas * (J.enCama ? 1 : AJ.construir.sueloDuro)) : Math.max(0, J.sueno - N.sueno * k);
     for (const n of ['hambre', 'sed', 'sueno']) if (J[n] <= 0) Z.dana(e, N.vidaSiVacia * horas, n);
     if (J.infeccion > 0) { J.infeccion = Math.min(100, J.infeccion + N.infeccion * horas * (J.A.infeccion || 1)); Z.dana(e, J.infeccion / 100 * N.infeccion * horas * 2, 'infeccion'); }
     else if (J.hambre > 30 && J.sed > 30) J.vida = Math.min(J.max, J.vida + N.curaSola * horas);
@@ -60,13 +60,13 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // la primera cosa de comer o beber que tengas (para las teclas E y Q)
   Z.primeraQue = (AJ, e, necesidad) => Object.keys(AJ.objetos).find((id) => { const U = AJ.objetos[id].usa; return U && U[necesidad] > 0 && !U.mal && Z.lleva(e.jugador, id); }) || null;   // nunca lo que sienta mal
 
-  // dormir: solo con sueño y sin fans cerca; te despiertas solo, o si alguno se acerca
-  Z.dormir = function (AJ, e) {
+  // dormir: solo con sueño y sin fans cerca; te despiertas solo, o si alguno se acerca. Sin cama cerca, descansas menos
+  Z.dormir = function (AJ, e, mundo) {
     const J = e.jugador;
     if (J.sueno > 70) return Z.error('sinSueno');
     if (Z.zombiCerca(e, AJ.mundo.despierta)) return Z.error('hayZombis');
     if (Z.sangra(AJ, J) > 0) return Z.error('sangras');            // durmiendo te desangrarías sin enterarte (js/heridas.js)
-    J.duerme = true; J.agacha = true;
+    J.duerme = true; J.agacha = true; J.enCama = Z.camaCerca(AJ, e, mundo);   // en el suelo se descansa menos (js/construir.js)
     return Z.ok(true);
   };
   Z.zombiCerca = (e, r) => e.zombis.some((z) => z.vida > 0 && Z.dist(z.x, z.z, e.jugador.x, e.jugador.z) < r);

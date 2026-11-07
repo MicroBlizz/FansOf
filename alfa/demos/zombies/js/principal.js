@@ -66,7 +66,7 @@ const aparicionDistrito = (azar) => libreAlcanzable(MAPA.x0 + 6 + azar() * (MAPA
 function sitiosRegistrables(e) { return JUEGO.sitios.concat(TORRE.sitios, sitiosTrozos(), sitiosRefugio(e), sitiosCoches(e), e.cuerpos); }
 // la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
 function huecoDelJugador(e) { const J = e.jugador; return huecoCercaDe(J.x, J.z, 1.6); }
-const SITIOS_SIEMPRE = ['fuego', 'cocina', 'escalera', 'torre', 'despensa', 'superviviente'];   // se vuelven a abrir aunque estén vacíos (cocinar, beber, subir)
+const SITIOS_SIEMPRE = ['fuego', 'cocina', 'escalera', 'torre', 'despensa', 'superviviente', 'maletero', 'obra'];   // el maletero y lo que construyes, también vacíos   // se vuelven a abrir aunque estén vacíos (cocinar, beber, subir)
 const esPaso = (s) => s && (s.tipo === 'escalera' || s.tipo === 'torre');
 function sitioCerca(e) {
   const J = e.jugador; let mejor = null, dMin = 1.9;

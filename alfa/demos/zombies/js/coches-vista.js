@@ -16,13 +16,14 @@ function montaCoche(color) {
 function pintaCoches(e) {
   const J = e.jugador;
   if (VISTA.jug) VISTA.jug.grupo.visible = !J.conduce;
+  if (VCOCHES.faro) { const c = J.conduce && ZOM.cocheDe(e, J.conduce); VCOCHES.faro.intensity = c && c.faros ? 4 : 0; }
   for (const c of e.coches || []) {
     let v = VCOCHES.vistas.get(c.id);
     const lejos = ZOM.dist(c.x, c.z, J.x, J.z) > 140;
     if (lejos) { if (v) quitaVistaCoche(c.id, v); continue; }
     if (!v) { v = { grupo: montaCoche(COLOR_COCHE[c.color % COLOR_COCHE.length]), sol: null }; tine(v.grupo); MOTOR.escena.add(v.grupo); VCOCHES.vistas.set(c.id, v); }
     v.grupo.position.set(c.x, 0, c.z); v.grupo.rotation.y = c.a - Math.PI / 2;
-    ponFaros(v, !!c.faros);
+    if (J.conduce === c.id) ponFaros(v, !!c.faros);
     ponChoqueCoche(c, v, J.conduce === c.id);
   }
 }
@@ -33,13 +34,18 @@ function ponChoqueCoche(c, v, conducido) {
   if (conducido) return;
   v.sol = solidoGirado(c.x, c.z, 3.4, 1.6, c.a - Math.PI / 2, 1.1, 'bajo'); v.sx = c.x; v.sz = c.z; v.sa = c.a;
 }
-// los faros: una luz delante del coche (se crea la primera vez que se encienden)
+// los faros: una sola luz, creada una vez y apagada con intensidad 0 (así no cambia el número de luces ni se recompilan los
+// sombreadores), que se pone delante del coche que conduces
 function ponFaros(v, on) {
-  if (on && !v.faros) {
-    v.faros = new THREE.SpotLight(0xfff0c0, 4, 26, 0.55, 0.5, 1); v.faros.position.set(1.8, 0.8, 0);
-    const blanco = new THREE.Object3D(); blanco.position.set(14, 0, 0); v.grupo.add(blanco); v.faros.target = blanco; v.grupo.add(v.faros);
+  const P = ZOM.AJ.coches.piezas;
+  if (!VCOCHES.faro) {
+    VCOCHES.faro = new THREE.SpotLight(0xfff0c0, 0, P.farosAlcance, P.farosCono, 0.5, 1); VCOCHES.blanco = new THREE.Object3D();
+    VCOCHES.faro.target = VCOCHES.blanco; MOTOR.escena.add(VCOCHES.faro); MOTOR.escena.add(VCOCHES.blanco);
   }
-  if (v.faros) v.faros.visible = on;
+  if (!on) return;
+  const g = v.grupo, a = g.rotation.y;
+  VCOCHES.faro.position.set(g.position.x + Math.cos(a) * 1.8, 0.8, g.position.z - Math.sin(a) * 1.8);
+  VCOCHES.blanco.position.set(g.position.x + Math.cos(a) * 14, 0, g.position.z - Math.sin(a) * 14);
 }
 function quitaVistaCoche(id, v) { MOTOR.escena.remove(v.grupo); v.grupo.traverse((m) => m.geometry && m.geometry.dispose()); ponChoqueCoche({}, v, true); VCOCHES.vistas.delete(id); }
 function limpiaCoches() { for (const [id, v] of VCOCHES.vistas) quitaVistaCoche(id, v); }
@@ -70,7 +76,7 @@ function textoCoche(e, s) {
   return tr('F  SUBIR') + (ZOM.cuantosLleva(e.jugador, 'gasolina') && c.gas < 1 ? '   ' + tr('G  REPOSTAR') : '');
 }
 // lo que va mal en el coche, para el panel del volante
-const avisoPiezas = (P) => (P.ruedas.some((r) => !r) ? 'Rueda pinchada: gira mal' : (P.cristales || 0) < ZOM.AJ.coches.piezas.cristalRoto ? 'Cristales rotos: te pueden morder' : (P.frenos || 0) < 30 ? 'Frenos gastados' : '');
+const avisoPiezas = (P) => (P.ruedas.some((r) => !r) ? 'Rueda pinchada: gira mal' : (P.cristales || 0) < ZOM.AJ.coches.piezas.cristalRoto ? 'Cristales rotos: te pueden morder' : (P.frenos || 0) < ZOM.AJ.coches.piezas.frenosAviso ? 'Frenos gastados' : '');
 // el panel del volante (en lugar del arma)
 function pintaVolante(e) {
   const p = el('h-coche'), c = e.jugador.conduce && ZOM.cocheDe(e, e.jugador.conduce);

@@ -1,9 +1,11 @@
 // Fans of Zombies · AJUSTES (dominio): todas las cifras del juego en un sitio. El reloj (1 segundo real = 2 minutos del juego), las
-// necesidades, los ruidos, las armas, los animales, los fans zombificados, los parches de Microblizz y las dificultades.
+// necesidades, los ruidos, las armas, los animales, los fans zombificados, los parches de Microblizz y las dificultades. Las heridas y
+// construir están en js/ajustes-casa.js (se carga antes y se mezcla aquí).
 // Nada de pantalla aquí: lo leen las reglas (js/partida.js y compañía) y los tests.
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
 ZOM.AJ = Object.freeze({
+  ...ZOM.AJ_CASA,                                          // las heridas, construir y la casa (js/ajustes-casa.js)
   version: '0.14.0',
   reloj: { minPorSeg: 2, minDormido: 40, empieza: 8 * 60, amanece: 7 * 60, anochece: 20 * 60 },
   // cuánto baja cada necesidad por hora del juego (sobre 100), lo que quita la vida si llega a 0 y los avisos
@@ -62,6 +64,7 @@ ZOM.AJ = Object.freeze({
     tablas: { n: 'TABLAS', forma: ['XXX'], max: 3 },
     clavos: { n: 'CLAVOS', forma: ['X'], max: 20 },
     martillo: { n: 'MARTILLO', forma: ['XX', 'X.'] },
+    lampara: { n: 'LÁMPARA', forma: ['X', 'X'] },          // se pone con CONSTRUIR (js/construir.js)
     tela: { n: 'TELA', forma: ['X'], max: 4 },
     carne: { n: 'CARNE CRUDA', forma: ['X'], usa: { hambre: 20, vida: -10, sed: -15, mal: true } },
     podrida: { n: 'CARNE PODRIDA', forma: ['X'], usa: { hambre: 5, vida: -25, mal: true } },
@@ -98,23 +101,6 @@ ZOM.AJ = Object.freeze({
     zapatillas: { hueco: 'pies', dur: 50, pasos: 0.25, color: 0xe8e8e8 },
     botasGoma: { hueco: 'pies', dur: 80, barro: true, color: 0x2a6a3a },
   },
-  // LAS HERIDAS (ADR 082, versión «menos dura»): dónde muerden (pesos), qué herida dejan, y de cada herida lo que sangra (vida por hora
-  // sin vendar), las horas que tarda en curarse (sin sangrar y sin venda sucia), el riesgo de infección (se mira a la hora) y el dolor.
-  // La venda se ensucia a las vendaSucia horas; el corte profundo vendado sangra vendaProfundo (hasta coserlo). Desinfectar en la primera
-  // hora multiplica el riesgo por baja (por mordisco, el del mordisco). Ballena: fractura en un brazo o pierna; un choque a más de
-  // fracturaChoque m/s rompe una pierna. piernas/brazos: lo que multiplican la velocidad y el golpe con herida, rotos o con tablilla
-  cuerpo: {
-    dondeMuerden: { brazoI: 3, brazoD: 3, piernaI: 2, piernaD: 2, torso: 2.5, cabeza: 1 }, queHerida: { aranazo: 5, corte: 3, mordisco: 2 }, profundo: 0.25, paraMax: 0.7,
-    heridas: {
-      aranazo: { n: 'ARAÑAZO', sangra: 1, cura: 6, infecta: 0.07, dolor: 5, paraSolo: 2 },   // deja de sangrar solo a las 2 h
-      corte: { n: 'CORTE', sangra: 2.5, cura: 12, infecta: 0.25, dolor: 12 },
-      profundo: { n: 'CORTE PROFUNDO', sangra: 5, cura: 24, infecta: 0.25, dolor: 20 },
-      mordisco: { n: 'MORDISCO', sangra: 2, cura: 12, infecta: 0.9, dolor: 18 },
-      fractura: { n: 'FRACTURA', sangra: 0, cura: 36, infecta: 0, dolor: 30 },
-    },
-    vendaSucia: 16, vendaProfundo: 0.5, vendaVida: 10, desinfecta: { hora: 1, baja: 0.3, mordisco: 0.85 }, fracturaBallena: 0.25, fracturaChoque: 14, analgesico: 4,
-    piernas: { herida: 0.9, rota: 0.6, tablilla: 0.85 }, brazos: { herida: 0.85, rota: 0.5, tablilla: 0.75 }, temblor: 1,
-  },
   vestir: { huecos: ['cabeza', 'cuerpo', 'piernas', 'pies'], gastaMordisco: 6, coser: 30, danoMax: 0.6 },
   // las mochilas (como en Ratkov): su rejilla y si pesa (vel multiplica lo que andas). Además siempre llevas la riñonera (2 x 2) y
   // tres bolsillos (cada uno, una cosa de una casilla). JunkCoon lleva una fila más en la mochila
@@ -137,7 +123,7 @@ ZOM.AJ = Object.freeze({
     // los frenos a 0, lo que gasta arrancar, por debajo de qué motor falla al arrancar (y cuánto), con qué cristales te muerden, a qué
     // velocidad (m/s) se va «despacio», la batería que carga conducir y gastan los faros (por hora), lo que se gasta una pieza al
     // quitarla, cada cuánto motor sale una pieza de motor, lo que arregla una, y el alcance y el ángulo de los faros
-    piezas: { desgasteInicial: 60, pinchada: 0.6, motorMin: 0.4, frenosMin: 0.3, arranque: 3, motorFalla: 30, fallaArranque: 0.5, cristalRoto: 30, despacio: 3, carga: 20, farosGasta: 8,
+    piezas: { desgasteInicial: 60, pinchada: 0.6, motorMin: 0.4, frenosMin: 0.3, arranque: 3, motorFalla: 30, fallaArranque: 0.5, cristalRoto: 30, frenosAviso: 30, despacio: 3, carga: 20, farosGasta: 28,
       gastaQuitar: 15, porPieza: 25, repara: 20, farosAlcance: 22, farosCono: 0.5 } },
   // los supervivientes (ADR 074): la probabilidad de que un trozo tenga a alguien atrapado, los fans de guardia, su oficio por animal y lo
   // de cada oficio (daño y curas por segundo; la cocina, a partir de qué hora y qué deja; el vigía, a qué distancia y cada cuántos minutos)
@@ -154,7 +140,7 @@ ZOM.AJ = Object.freeze({
   // las habilidades: los umbrales de experiencia de cada nivel (0 a 10), lo que da cada acción y lo que mejora cada nivel
   habilidades: {
     niveles: [0, 10, 25, 45, 70, 100, 140, 190, 250, 320, 400],
-    xp: { golpe: 1, disparo: 1, paso: 0.25, despide: 4, tabla: 4, desmonta: 3, fuego: 5, pieza: 3, repara: 4 },
+    xp: { golpe: 1, disparo: 1, paso: 0.25, despide: 4, tabla: 4, desmonta: 3, fuego: 5, pieza: 3, repara: 4, obra: 6 },
     efecto: { pelea: { dano: 0.05, aguante: 0.04 }, disparo: { dano: 0.05 }, sigilo: { ruido: 0.05, vista: 0.04 }, carpinteria: { tiempo: 0.06 }, cocina: { nutre: 0.08 }, mecanica: { cuida: 0.08, arregla: 0.1 } },
   },
   // lo que sale al registrar (peso de cada cosa), cuántas cosas como mucho y cuántos cartuchos trae cada hallazgo.
@@ -162,14 +148,14 @@ ZOM.AJ = Object.freeze({
   botin: { cosas: { desinfectante: 0.3, analgesico: 0.4, gorro: 0.3, zapatillas: 0.2, vaqueros: 0.2, botasNieve: 0.2, mochilaM: 0.1, judias: 4, chocolatina: 3, agua: 3, refresco: 2, venda: 2, cartuchos: 3, tablas: 3, clavos: 3, martillo: 0.5, tela: 2, botella: 1, balas: 1.2, pistola: 0.3, bate: 0.6, hacha: 0.3, cuchillo: 0.5, nada: 3 }, maximo: 3, cartuchos: 4, clavos: 4, balas: 8, tiempo: 1.4,
     porTipo: {
       nevera: { carne: 5, agua: 3, refresco: 2, judias: 1, nada: 2 },
-      armario: { aguja: 0.5, gorro: 0.6, abrigo: 0.5, vaqueros: 0.6, chandal: 0.5, zapatillas: 0.4, chubasquero: 0.3, cuero: 0.15, mochilaM: 0.15, tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, bate: 0.6, balas: 0.5, nada: 2 },
+      armario: { lampara: 0.3, aguja: 0.5, gorro: 0.6, abrigo: 0.5, vaqueros: 0.6, chandal: 0.5, zapatillas: 0.4, chubasquero: 0.3, cuero: 0.15, mochilaM: 0.15, tela: 5, venda: 1, clavos: 2, tablas: 1, cartuchos: 1, bate: 0.6, balas: 0.5, nada: 2 },
       cocina: { judias: 4, chocolatina: 2, botella: 3, agua: 1, cuchillo: 1.2, nada: 2 },
       basura: { tela: 1, botella: 3, chocolatina: 1, nada: 5 },
       fuego: {},
       estanteria: { piezasMotor: 0.6, bateria: 0.3, mochilaG: 0.2, botasGoma: 0.2, gasolina: 0.6, tablas: 3, clavos: 3, martillo: 1, palanca: 0.6, hacha: 0.5, tela: 1, nada: 2 },
-      super: { analgesico: 1, desinfectante: 1, gorro: 0.4, zapatillas: 0.3, judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
+      super: { lampara: 0.5, analgesico: 1, desinfectante: 1, gorro: 0.4, zapatillas: 0.3, judias: 5, chocolatina: 4, agua: 4, refresco: 3, botella: 1, nada: 2 },
       gasolinera: { chubasquero: 0.3, chocolatina: 4, refresco: 4, agua: 2, gasolina: 3, nada: 2 },
-      ferreteria: { llaveInglesa: 1.5, frenos: 0.6, piezasMotor: 0.5, botasGoma: 0.6, chubasquero: 0.5, gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
+      ferreteria: { lampara: 0.6, llaveInglesa: 1.5, frenos: 0.6, piezasMotor: 0.5, botasGoma: 0.6, chubasquero: 0.5, gasolina: 1, tablas: 4, clavos: 4, martillo: 1.5, hacha: 1, palanca: 0.8, cuchillo: 0.5, nada: 1 },
       farmacia: { desinfectante: 3, aguja: 2, analgesico: 3, antibiotico: 0.6, venda: 6, tela: 2, nada: 2 },
       armeria: { balas: 4, cartuchos: 3, pistola: 1.2, escopeta: 0.4, nada: 1 },
       taquilla: { llaveInglesa: 0.2, analgesico: 0.5, chandal: 0.6, zapatillas: 0.6, mochilaM: 0.3, casco: 0.2, balas: 2, venda: 1, chocolatina: 1, cuchillo: 0.5, nada: 3 },

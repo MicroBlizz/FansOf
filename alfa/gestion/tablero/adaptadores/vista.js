@@ -6,6 +6,6 @@ TABLERO.vista = (() => {
     <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}</div></article>`;
   const columna = (c, esc) => `<section class="tb-col"><h3>${esc(c.titulo)} <span class="meta">${c.tareas.length}</span></h3>${c.tareas.map(t => tarjeta(t, esc)).join('') || '<div class="meta">Vacía</div>'}</section>`;
   const html = (columnas, esc) => `<div class="tb-tablero">${columnas.map(c => columna(c, esc)).join('')}</div>`;
-  const ESTILO = '.tb-tablero{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(210px,1fr);gap:10px;overflow-x:auto}.tb-col{display:grid;gap:8px;align-content:start}.tb-col h3{margin:0;font-size:14px}.tb-tarea{padding:8px 10px;gap:4px}';
+  const ESTILO = '.tb-tablero{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}@media(max-width:1000px){.tb-tablero{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.tb-tablero{grid-template-columns:minmax(0,1fr)}}.tb-tarea{overflow-wrap:anywhere}.tb-col{display:grid;gap:8px;align-content:start}.tb-col h3{margin:0;font-size:14px}.tb-tarea{padding:8px 10px;gap:4px}';
   return { html, ESTILO };
 })();

@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.14.1', real: ['<b>EN EL MÓVIL</b>: los menús (la tele, la ficha de evacuación, la pausa, los carteles y el mapa) se encogen para caber enteros en el móvil tumbado, y ya se puede empezar partida. El cuadro del arma sube junto al reloj para no tapar CORRER, y el tutorial nombra los botones de la pantalla en vez del teclado y el ratón.'],
+    joke: ['Microblizz confirma que el juego ya cabe en el móvil. Los fans también: caben en cualquier sitio.'] },
   { v: '0.14.0', real: ['<b>COCHES CON PIEZAS</b>: motor, ruedas, batería, frenos y cristales se gastan al chocar y atropellar. Con una llave inglesa se quitan de los coches rotos y se ponen en el tuyo, y el motor se desmonta en piezas de motor para repararlo. Habilidad nueva: mecánica. Cada coche tiene maletero (24 casillas) y faros (L): de noche iluminan, pero los fans de delante los ven.'],
     joke: ['Microblizz informa de que los coches ya tienen piezas de recambio. Se venden por separado en la tienda del juego.'] },
   { v: '0.13.0', real: ['<b>HERIDAS COMO EN PROJECT ZOMBOID</b>: los mordiscos caen en una parte del cuerpo y dejan arañazos, cortes o mordiscos que sangran hasta que los vendas (V). Los cortes profundos se cosen, las vendas se ensucian, las fracturas llevan tablilla y el dolor hace temblar la puntería. Una hora después se sabe si la herida te infecta: el desinfectante ayuda y la infección solo la curan los antibióticos o la médica. En la mochila hay un muñeco: toca una parte para curarla.'],

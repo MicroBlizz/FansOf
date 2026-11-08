@@ -67,6 +67,16 @@ IDIOMA.add({
   'Come (E) o bebe (Q) algo. Cuida el hambre, la sed y el sueño.': 'Eat (E) or drink (Q) something. Watch your hunger, thirst and sleep.',
   'Si un fan se acerca, empújalo (clic derecho) o golpéalo (clic). Disparar se oye en medio distrito.': 'If a fan comes close, shove it (right click) or hit it (click). Gunshots are heard across half the district.',
   'Al anochecer llegan más fans. Quédate en casa con las ventanas tapadas y duerme (Z) cuando tengas sueño. ¡Suerte!': 'More fans arrive at nightfall. Stay home with the windows boarded up and sleep (Z) when tired. Good luck!',
+  // el tutorial en el móvil (botones en vez de teclas)
+  'Muévete con la palanca de la izquierda. Estás en tu casa del barrio.': 'Move with the stick on the left. You are in your house in the neighbourhood.',
+  'Abre la MOCHILA. Cada cosa ocupa su forma: arrástrala con el dedo para moverla y toca GIRAR para girarla.': 'Open the BACKPACK. Every item has its shape: drag it with your finger to move it and tap ROTATE to rotate it.',
+  'Registra la nevera, el armario o la cocina de tu casa (ACCIÓN) y elige qué coges.': 'Search the fridge, wardrobe or kitchen in your house (ACTION) and pick what you take.',
+  'Clava una tabla en una ventana (TABLAS). Llevas martillo, tablas y clavos.': 'Nail a plank over a window (PLANKS). You carry a hammer, planks and nails.',
+  'Agáchate (AGACHAR): así no haces ruido al andar y te ven desde más cerca.': 'Crouch (CROUCH): walking makes no noise and they have to be closer to see you.',
+  'Abre el MAPA: solo enseña lo que ya has visto.': 'Open the MAP: it only shows what you have seen.',
+  'Toca COMER o BEBER abajo. Cuida el hambre, la sed y el sueño.': 'Tap EAT or DRINK at the bottom. Watch your hunger, thirst and sleep.',
+  'Si un fan se acerca, apártalo con EMPUJAR o golpéalo con ATACAR (apunta solo). Disparar se oye en medio distrito.': 'If a fan comes close, push it away with SHOVE or hit it with ATTACK (it aims by itself). Shooting can be heard across half the district.',
+  'Al anochecer llegan más fans. Quédate en casa con las ventanas tapadas y toca DORMIR cuando tengas sueño. ¡Suerte!': 'More fans come at nightfall. Stay home with the windows covered and tap SLEEP when you are sleepy. Good luck!',
   // las casas
   'TABLAS': 'PLANKS', 'CLAVOS': 'NAILS', 'MARTILLO': 'HAMMER', 'F  CERRAR': 'F  CLOSE', 'B  TABLAS (%1/3)': 'B  PLANKS (%1/3)', 'TAPADA (3/3)': 'BOARDED UP (3/3)',
   'Tabla clavada (%1/3).': 'Plank nailed (%1/3).', '¡Han roto una ventana!': 'A window has been smashed!', '¡Han tirado una puerta!': 'A door has been knocked down!',

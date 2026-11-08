@@ -64,7 +64,7 @@ button:disabled { opacity: 0.4; cursor: default; }
 .zb-et.tipo { color: var(--zb-verde); border-color: #3a5a3a; font-size: 12px; }
 
 /* ---------- galería de fans zombificados ---------- */
-.zb-galeria { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 1060px; }
+.zb-galeria { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(var(--zb-k, 1)); width: 1060px; }
 .zb-galeria h2 { margin: 0 0 4px; font: 34px var(--rk-tit); color: #e6f4dc; text-align: center; }
 .zb-galeria > p { margin: 0 0 14px; text-align: center; color: var(--rk-tenue); }
 .zb-tarjetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -116,7 +116,7 @@ button:disabled { opacity: 0.4; cursor: default; }
 
 /* ---------- el mapa (M) ---------- */
 #zb-mapa { position: fixed; inset: 0; z-index: 38; display: grid; place-items: center; background: rgba(6,8,12,.6); pointer-events: auto; }
-.zm-marco { background: var(--rk-panel2); border: 2px solid var(--rk-borde2); padding: 8px 12px; max-width: 96vw; }
+.zm-marco { background: var(--rk-panel2); border: 2px solid var(--rk-borde2); padding: 8px 12px; max-width: 96vw; transform: scale(var(--zb-k, 1)); }
 .zm-marco header { display: flex; gap: 12px; align-items: baseline; margin-bottom: 6px; }
 .zm-marco header b { font: 20px var(--rk-tit); font-weight: 400; } .zm-marco header span { color: var(--rk-tenue); flex: 1; }
 .zm-marco header button { background: #1a242a; border: 2px solid var(--rk-borde2); color: var(--rk-tinta); font: 13px var(--rk-tit); padding: 4px 8px; }
@@ -204,7 +204,8 @@ body.tactil .zb-necesidades { transform: scale(.55); transform-origin: left top;
 body.tactil .zb-ruido { transform: scale(.55); transform-origin: left top; left: calc(6px + env(safe-area-inset-left)); top: 168px; }
 body.tactil .zb-reloj { transform: scale(.55); transform-origin: right top; right: calc(6px + env(safe-area-inset-right)); top: 42px; }
 body.tactil .zb-radio { transform: scale(.6); transform-origin: right top; right: calc(6px + env(safe-area-inset-right)); top: 96px; }
-body.tactil .zb-arma { transform: scale(.55); transform-origin: right top; right: calc(6px + env(safe-area-inset-right)); top: 146px; bottom: auto; pointer-events: auto; }
+/* el arma arriba, a la izquierda del reloj: abajo tapaba CORRER en los móviles tumbados (poca altura) */
+body.tactil .zb-arma { transform: scale(.55); transform-origin: right top; right: calc(108px + env(safe-area-inset-right)); top: 42px; bottom: auto; pointer-events: auto; }
 body.tactil .zb-hotbar { transform: translateX(-50%) scale(.6); transform-origin: bottom center; bottom: 4px; left: 50%; pointer-events: auto; }
 body.tactil .zb-parche { transform: translateX(-50%) scale(.6); transform-origin: top center; top: 40px; }
 body.tactil .zb-tuto { transform: translateX(-50%) scale(.65); transform-origin: top center; top: 40px; width: 560px; }

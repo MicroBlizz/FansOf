@@ -20,6 +20,7 @@ function preparaEntrada() {
   addEventListener('mouseup', () => { ENTRADA.raton.abajo = false; });
   cv.addEventListener('contextmenu', (ev) => ev.preventDefault());
   preparaTactil();                                        // los botones del móvil (js/tactil.js)
+  preparaEncaje();                                        // los menús caben en pantallas pequeñas (js/encaje.js)
 }
 const mantiene = (acc) => TECLAS_ZOM[acc].some((k) => ENTRADA.abajo.has(k));
 const pulsa = (acc) => TECLAS_ZOM[acc].some((k) => ENTRADA.pulsos.has(k));

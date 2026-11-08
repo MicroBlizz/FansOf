@@ -112,6 +112,8 @@ const PETS = {
   // los minijuegos de cuidado (docs/pets/cuidados-minijuegos.md). comida: bocados de una ración. ducha: las zonas del cuerpo (con sus puntos y su radio), la fracción de ellas que
   // tiene que quedar cubierta de espuma para pasar a aclarar, la espuma que ya cuenta como limpio, los píxeles que se frotan para llenar una zona
   // y los segundos de agua que quitan toda su espuma. Los radios y la boca son del encuadre del muñeco, en fracciones del lado
+  // las criaturas que ya tienen su muñeco 3D (img/criaturas/<criatura>/<edad>/muneco.glb): las demás se pintan con su dibujo y no piden el archivo
+  munecos3d: ['animales:bunny', 'animales:huron'],
   cuidado: {
     cierraTras: 1.6,   // segundos que se queda el muñeco contento tras acabar, antes de volver a la casa
     comida: { bocados: 4, boca: { hueso: 'cabeza', dx: 0, dy: -0.046, radio: 0.11 }, bol: { x: 140, y: 735, radio: 70 }, cuchara: { x: 310, y: 735 } },

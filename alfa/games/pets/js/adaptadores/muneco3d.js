@@ -129,6 +129,7 @@ PT.muneco3d = (() => {
   // no hay muñeco de esa criatura y edad) y quien llama pinta lo de siempre
   const LISTOS = {}, ENCUADRE = 1.15, LADO_RENDER = 640;
   function pinta(ctx, id, x, y, lado, t, nombre, edad = 'nino', boca = false) {
+    if (!PETS.munecos3d.includes(id)) return false;   // sin muñeco 3D: quien llama pinta el dibujo de siempre, sin pedir un archivo que no existe
     const clave = id + '/' + edad;
     if (!(clave in LISTOS)) { LISTOS[clave] = null; montaje(id, edad).then(() => monta_listo(clave, id, edad), e => { console.warn('Pets · muñeco 3D sin montar:', clave, e.message); }); }
     const mo = LISTOS[clave], pose = PT.maniquiPoses.de(nombre, t);

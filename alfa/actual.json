@@ -1,8 +1,8 @@
 {
- "build": 1122,
- "hash": "c427a19",
- "fecha": "2026-11-08T05:34:42Z",
- "mensaje": "Tablero con refinamiento: seis columnas, informe de refinado, espera, búsqueda y parecidas (SQL 120 aplicado; ADR 089)",
+ "build": 1123,
+ "hash": "f066df7",
+ "fecha": "2026-11-08T05:49:59Z",
+ "mensaje": "Pets: el guion de smoke-test cierra el minijuego de COMER y BAÑAR, y solo piden muñeco 3D las criaturas que lo tienen",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

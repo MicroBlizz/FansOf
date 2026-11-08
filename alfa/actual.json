@@ -1,8 +1,8 @@
 {
- "build": 1134,
- "hash": "2eb175a",
- "fecha": "2026-11-08T23:40:52Z",
- "mensaje": "Roles por invitación: arreglos de la revisión y prueba del SQL con Postgres temporal",
+ "build": 1135,
+ "hash": "e08756e",
+ "fecha": "2026-11-08T23:45:12Z",
+ "mensaje": "Roles: el aviso de invitación también cubre el enlace por correo, no solo Google",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

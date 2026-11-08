@@ -20,7 +20,7 @@
     try {
       const r = await rpc('gestion_rol_dar', { p_token: leerToken(), p_correo: $('r-correo').value, p_rol: $('r-rol').value });
       $('r-correo').value = ''; await cargar();
-      if (r && r.pendiente) $('r-aviso').textContent = 'Invitación guardada: el rol se activa solo cuando esa persona entre con Google con ese correo.';
+      if (r && r.pendiente) $('r-aviso').textContent = 'Invitación guardada: el rol se activa solo cuando esa persona entre con ese correo (con Google o con el enlace que le llega al correo).';
     } catch (e) { $('r-aviso').textContent = /cuenta_no_existe/.test(String(e.message)) ? 'El servidor aún no admite invitaciones (falta aplicar servidor/122).' : textoError(e); }
   };
   $('r-lista').onclick = async ev => {

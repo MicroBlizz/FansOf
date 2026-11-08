@@ -1,5 +1,6 @@
 // Fans Of · /gestion · TABLERO · adaptador · CONTROLADOR: lo que pasa cuando se usa la pestaña. Pone el HTML de vista.js y vista-detalle.js en la página, abre
-// el detalle de una tarea (o el formulario) en el panel de la derecha, lee lo escrito, arrastra las tarjetas y le pide cada cosa a los casos de uso
+// el detalle de una tarea (o el formulario) en el panel de la derecha, filtra mientras se busca, avisa de las tareas parecidas al escribir un título,
+// lee lo escrito, arrastra las tarjetas y le pide cada cosa a los casos de uso
 // (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js los casos, los ids de sus huecos, `esc`, `fecha` y `textoError`
 // de /gestion; no sabe nada del servidor.
 'use strict';
@@ -7,7 +8,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea) o { formulario: valores } (nueva o editar)
-  let tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null;
+  let tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
@@ -26,14 +27,14 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     else if (panel && conFormulario) { caja.innerHTML = TABLERO.vista.formulario(panel.formulario, esc); caja.querySelector('input[name=titulo]').focus(); }
     else if (!panel) caja.innerHTML = '';
   }
-  const abre = nuevo => { panel = nuevo; pintaTablero(); pintaPanel(true); };
+  const abre = nuevo => { clearTimeout(esperaParecidas); panel = nuevo; pintaTablero(); pintaPanel(true); };
   const cierra = () => abre(null);
 
   async function cargar() {
     aviso('');
     const este = ++pedido, r = await casos.cargar(filtro);
     if (este !== pedido) return;   // llegó otra carga después: esta ya es vieja
-    if (!r.ok) { aviso(/does not exist|PGRST202|404/.test(String(r.datos.causa && r.datos.causa.message)) ? 'Falta aplicar servidor/117-tablero.sql en Supabase.' : textoError(r.datos.causa)); return; }
+    if (!r.ok) { aviso(/does not exist|PGRST202|404/.test(String(r.datos.causa && r.datos.causa.message)) ? 'Faltan los SQL del tablero en Supabase (servidor/117 a 120).' : textoError(r.datos.causa)); return; }
     ({ tareas, columnas, descartadas } = r.valor);
     el(hueco.filtros).innerHTML = TABLERO.vista.filtros(r.valor.juegos, filtro, esc);
     pintaPanel(false);
@@ -63,10 +64,33 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       if (ev.target.closest('[data-nueva]')) abre({ formulario: {} });
       if (ev.target.closest('[data-refrescar]')) cargar();
     };
-    el(hueco.filtros).onchange = ev => { const s = ev.target.closest('[data-filtro]'); if (s) { filtro[s.dataset.filtro] = s.value; cargar(); } };
+    el(hueco.filtros).onchange = ev => { const s = ev.target.closest('[data-filtro]'); if (s) refiltra(s.dataset.filtro, s.value); };
+    el(hueco.filtros).oninput = ev => { if (ev.target.closest('[data-buscar]')) refiltra('texto', ev.target.value); };
     conectaTarjetas();
     conectaPanel();
     conectaArrastre();
+  }
+  // filtrar (juego, responsable o lo buscado) reparte otra vez lo ya cargado, sin ir al servidor
+  function refiltra(clave, valor) {
+    filtro[clave] = valor;
+    columnas = casos.repartir(tareas, filtro);
+    pintaTablero();
+  }
+  // Al escribir el título en el formulario, tras una pausa, salen las tareas parecidas (también las hechas antiguas) para no duplicar
+  // `form` es el formulario donde se escribe: si al volver la respuesta ya no está en la página (se cerró o se abrió otro), no se pinta
+  function buscaParecidas(titulo, form) {
+    clearTimeout(esperaParecidas);
+    const excluir = Number(form.dataset.id) || null;
+    esperaParecidas = setTimeout(async () => {
+      const este = ++pidoParecidas, r = await casos.parecidas(titulo, excluir);
+      const sitio = form.querySelector('[data-parecidas]');
+      if (este !== pidoParecidas || !form.isConnected || !sitio) return;   // llegó otra búsqueda después, o el formulario ya se cerró
+      sitio.innerHTML = r.ok ? TABLERO.vista.parecidas(r.valor, esc) : '<span class="meta">No se han podido buscar las parecidas.</span>';
+    }, 400);
+  }
+  function abreParecida(id) {
+    if (tareaDe(id)) abre({ id: Number(id) });
+    else aviso('La #' + id + ' no está en el tablero: se hizo hace más de 14 días.');
   }
   // pulsar una tarjeta (o Intro sobre ella) abre su detalle; pulsar la que ya está abierta lo cierra
   function conectaTarjetas() {
@@ -81,7 +105,10 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       const b = ev.target.closest('[data-editar]');
       if (b) abre({ formulario: tareaDe(b.dataset.editar) });
       if (ev.target.closest('[data-cancelar]')) abre(panel.formulario.id ? { id: panel.formulario.id } : null);
+      const p = ev.target.closest('[data-abrir]');
+      if (p) abreParecida(p.dataset.abrir);
     };
+    caja.oninput = ev => { if (ev.target.name === 'titulo') buscaParecidas(ev.target.value, ev.target.form); };
     caja.onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };
     caja.onsubmit = ev => { ev.preventDefault(); aviso(''); guarda(ev.target); };
     el(hueco.vista).onkeydown = ev => { if (ev.key === 'Escape' && panel && panel.id) cierra(); };

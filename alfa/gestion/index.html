@@ -162,7 +162,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     </div>
     <div id="pan-tablero" hidden>
       <style id="tb-estilo"></style>
-      <div class="caja ayuda"><b>Tablero.</b> Lo comprometido, en cinco columnas: por refinar, pendiente, en curso, en revisión y hecho. Crea una tarea con <b>Nueva tarea</b> (nace por refinar) y pulsa una tarjeta para ver su detalle en el panel de la derecha, donde se mueve de columna y se <b>edita</b>; también se mueve arrastrándola. <b>Refrescar</b> trae lo último. En por refinar se acuerda qué hacer y sus criterios; si se da por buena y se empieza, pasa a en curso, y si queda para más tarde, a pendiente. Los hilos de Claude la pasan a en revisión al subirla y ahí espera; solo una persona la pasa a hecho. Detalle: docs/gestion/TABLERO.md.</div>
+      <div class="caja ayuda"><b>Tablero.</b> Lo comprometido, en seis columnas: <b>ideas</b> (lluvia de ideas), <b>en refinamiento</b> (se acuerda qué hacer, sus criterios, dudas y choques), <b>pendiente</b> (refinada y lista, por prioridad), en curso, en revisión y hecho. <b>Nueva tarea</b> nace en ideas y, al escribir el título, avisa de las parecidas. Pulsa una tarjeta para ver su detalle a la derecha, donde se mueve y se <b>edita</b>; también se mueve arrastrándola. <b>Buscar</b> filtra mientras escribes y <b>Refrescar</b> trae lo último. Claude saca una tarea de ideas o refinamiento solo con vuestra aprobación, la deja en revisión al subirla y solo una persona la pasa a hecho. Detalle: docs/gestion/TABLERO.md.</div>
       <div class="aviso" id="tb-aviso" role="alert"></div>
       <div id="tb-filtros"></div>
       <datalist id="tb-juegos"></datalist>
@@ -335,6 +335,7 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="tablero/dominio/tarea.js"></script>
 <script src="tablero/dominio/borrador.js"></script>
 <script src="tablero/dominio/grafo.js"></script>
+<script src="tablero/dominio/buscar.js"></script>
 <script src="tablero/dominio/vista-tablero.js"></script>
 <script src="tablero/aplicacion/casos.js"></script>
 <script src="tablero/adaptadores/repositorio-servidor.js"></script>

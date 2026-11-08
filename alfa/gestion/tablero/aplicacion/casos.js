@@ -1,6 +1,7 @@
-// Fans Of · /gestion · TABLERO · aplicación · CASOS: lo que se le puede pedir al tablero: `cargar` (leerlo y repartirlo en columnas), `crear`, `editar` y
-// `mover` una tarea. Habla con el servidor por un PUERTO (`repositorio`), nunca por la red:
-//   { lista() → Promise<json[]>, guardar(tarea) → Promise<{ok, id?, motivo?}>, mover(id, estado, nota) → Promise<{ok, motivo?}> }
+// Fans Of · /gestion · TABLERO · aplicación · CASOS: lo que se le puede pedir al tablero: `cargar` (leerlo y repartirlo en columnas), `crear`, `editar`,
+// `mover` una tarea y buscar las `parecidas` a un título. Habla con el servidor por un PUERTO (`repositorio`), nunca por la red:
+//   { lista() → Promise<json[]>, guardar(tarea) → Promise<{ok, id?, motivo?}>, mover(id, estado, nota) → Promise<{ok, motivo?}>,
+//     parecidas(texto, excluir) → Promise<[{ id, titulo, estado, parecido }]> }
 // Los adaptadores lo cumplen (adaptadores/repositorio-servidor.js) y los tests le pasan uno en memoria. Antes de ir al servidor, el dominio avisa de lo que
 // está mal (formulario o movimiento no permitido); un rechazo del servidor llega como el mismo tipo de error, con su motivo. Todo devuelve resultados, no excepciones.
 'use strict';
@@ -26,7 +27,17 @@ TABLERO.casos = repositorio => {
       const tareas = lectura.filter(r => r.ok).map(r => conGrafo(r.valor.aJson()));
       return TABLERO.ok({ columnas: TABLERO.reparte(tareas, filtro), juegos: TABLERO.juegosDe(tareas), tareas, descartadas: lectura.length - tareas.length });
     },
-    // Una tarea nueva nace siempre «por refinar»
+    // Repartir otra vez las tareas ya cargadas con otro filtro (juego, responsable o texto), sin ir al servidor
+    repartir: (tareas, filtro) => TABLERO.reparte(tareas, filtro),
+    // Las tareas que se parecen a un título (para no duplicar). Con menos de 3 letras no pregunta. Resultado: la lista, o 'sin-servidor'
+    async parecidas(texto, excluir) {
+      if (TABLERO.normaliza(texto).trim().length < 3) return TABLERO.ok([]);
+      try {
+        const r = await repositorio.parecidas(texto, excluir || null);
+        return Array.isArray(r) ? TABLERO.ok(r) : TABLERO.error('sin-servidor', { causa: new Error('respuesta-inesperada') });
+      } catch (e) { return TABLERO.error('sin-servidor', { causa: e }); }
+    },
+    // Una tarea nueva nace siempre en «Ideas»
     crear(form) {
       const b = TABLERO.borrador(form);
       return b.ok ? enviar(() => repositorio.guardar(b.valor)) : Promise.resolve(b);

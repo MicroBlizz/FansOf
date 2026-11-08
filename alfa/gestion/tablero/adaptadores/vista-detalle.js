@@ -1,12 +1,12 @@
-// Fans Of · /gestion · TABLERO · adaptador · VISTA DEL DETALLE: el HTML del panel de la derecha con todo lo de una tarea (qué, criterio, enlaces, fechas,
-// mover y editar, la foto del grafo y el historial), para seguir viendo el tablero mientras se van abriendo tareas. Funciones puras como vista.js
+// Fans Of · /gestion · TABLERO · adaptador · VISTA DEL DETALLE: el HTML del panel de la derecha con todo lo de una tarea (qué, criterio, a quién espera,
+// informe de refinado, enlaces, fechas, mover y editar, la foto del grafo y el historial), para seguir viendo el tablero mientras se van abriendo tareas. Funciones puras como vista.js
 // (reciben `esc` y `fecha`), de la que usa `opciones` y `COLUMNAS`; se prueban en Node.
 'use strict';
 TABLERO.vistaDetalle = (() => {
   const enlace = (hilo, esc) => (/^https:\/\//.test(hilo) ? `<a href="${esc(hilo)}" target="_blank" rel="noopener">hilo</a>` : esc(hilo));
   const linea = (etiqueta, texto, esc) => (texto ? `<div class="meta"><b>${etiqueta}:</b> ${esc(texto)}</div>` : '');
   const historial = (t, esc, fecha) => (t.historial && t.historial.length
-    ? `<details><summary>Historial (${t.historial.length})</summary>${t.historial.map(h => `<div class="meta">${esc(fecha(h.cuando))} · ${esc(h.quien)}${h.de && h.de !== h.a ? ` · ${esc(h.de)} → ${esc(h.a)}` : ''}${h.nota ? ' · ' + esc(h.nota) : ''}</div>`).join('')}</details>` : '');
+    ? `<details><summary>Historial (${t.historial.length})</summary>${t.historial.map(h => `<div class="meta">${esc(fecha(h.cuando))} · ${esc(h.quien)}${h.de && h.de !== h.a ? ` · ${esc(TABLERO.tituloDe(h.de))} → ${esc(TABLERO.tituloDe(h.a))}` : ''}${h.nota ? ' · ' + esc(h.nota) : ''}</div>`).join('')}</details>` : '');
 
   // La foto del grafo de la tarea (skill tarea-como-grafo): cuántos nodos pasan, de cuándo es la foto y los nodos por niveles con su evidencia
   const estadoNodo = e => e.replace('_', ' ');
@@ -32,7 +32,8 @@ TABLERO.vistaDetalle = (() => {
     + `${t.alfa ? ` <span class="estado">${esc(t.alfa)}</span>` : ''}`;
   const detalle = (t, esc, fecha = String) => `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>
     <div class="meta">${etiquetas(t, esc)}</div>
-    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
+    ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
+    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${t.refinado ? `<div class="meta tb-informe"><b>Informe de refinado:</b> ${esc(t.refinado)}</div>` : ''}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
     <div class="meta">${fechas(t, esc, fecha)}</div>
     <div class="accion"><select data-mover="${t.id}" aria-label="Mover a">${TABLERO.vista.opciones(TABLERO.vista.COLUMNAS, t.estado, esc)}</select><button type="button" data-editar="${t.id}">Editar</button></div>
     ${grafoHtml(t, esc, fecha)}${historial(t, esc, fecha)}`;

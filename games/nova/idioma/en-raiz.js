@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.54
+  "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
+  "Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido.": "Microblizz oiled the engine again and Phony asked if it runs faster now.",
   // 0.3.44
   "<b>MEJORAS POR DENTRO</b>: la web se ve mejor al compartirla y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website looks better when shared and internal testing keeps improving.",
   "Microblizz ha repasado la tarjeta de visita del juego y Phony ha pedido salir con su mejor perfil.": "Microblizz has gone over the game's business card and Phony asked to show its best side.",

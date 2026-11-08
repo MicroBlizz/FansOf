@@ -44,12 +44,12 @@ Object.assign(TIPOS, {
     if (!P.enemigos.length) return false;
     for (let i = 0; i < v.n; i++) {
       const q = Math.floor(Math.random() * 4), base = k => Object.assign({}, BASE_TIPO[k]);
-      if (q === 0) { curar(5 + v.dano * 0.45); P.efectos.push({ gen: 'anillo', x: P.jug.x, y: P.jug.y, r: 50, emo: '💚', col: '#5fe05a', t: 0.5, max: 0.5 }); }
-      else if (q === 1) TIPOS.onda(Object.assign(base('onda'), { dano: v.dano * 0.6, r: 105, aturde: 1.3 }), { emo: '😵', col: '#ffe14d' });
-      else if (q === 2) TIPOS.bomba(Object.assign(base('bomba'), { dano: v.dano * 2.2, r: 75 }), { emo: '🔥', col: '#ff7a1a' });
+      if (q === 0) { curar(5 + v.dano * 0.45); P.efectos.push({ gen: 'anillo', x: P.jug.x, y: P.jug.y, r: 50, emo: 'cura', col: '#5fe05a', t: 0.5, max: 0.5 }); }
+      else if (q === 1) TIPOS.onda(Object.assign(base('onda'), { dano: v.dano * 0.6, r: 105, aturde: 1.3 }), { emo: 'mareo', col: '#ffe14d' });
+      else if (q === 2) TIPOS.bomba(Object.assign(base('bomba'), { dano: v.dano * 2.2, r: 75 }), { emo: 'fuego', col: '#ff7a1a' });
       else TIPOS.corre(Object.assign(base('corre'), { dano: v.dano * 1.3, n: 2, r: 48, vel: 340, spr: 'suchdog' }), { carta: 'suchdog', col: '#ffcb3d' });
     }
-    P.efectos.push({ gen: 'golpe', x: P.jug.x, y: P.jug.y - 70, emo: '🃏', col: A.col, t: 0.45, max: 0.45 });
+    P.efectos.push({ gen: 'golpe', x: P.jug.x, y: P.jug.y - 70, emo: 'carta', col: A.col, t: 0.45, max: 0.45 });
     return true;
   },
   // ProGamer: golpes rapidísimos al más cercano; cada 4.º es un ¡COMBO! de daño triple en área
@@ -58,7 +58,7 @@ Object.assign(TIPOS, {
     P.combo = (P.combo || 0) + 1; const grande = P.combo % v.cadaN === 0, [nx, ny] = empujeA(e, j.x, j.y);
     if (grande) {
       cerca(e.x, e.y, 70, o => { const [mx, my] = empujeA(o, e.x, e.y); herir(o, v.dano * v.mult, mx, my, 260, true); });
-      P.efectos.push({ gen: 'anillo', x: e.x, y: e.y, r: 80, emo: '💥', col: A.col, t: 0.4, max: 0.4 }); numero(e.x, e.y - 55, '¡COMBO!', '#ff4b5c', true); P.sacudida = Math.max(P.sacudida, 4);
+      P.efectos.push({ gen: 'anillo', x: e.x, y: e.y, r: 80, emo: 'explosion', col: A.col, t: 0.4, max: 0.4 }); numero(e.x, e.y - 55, '¡COMBO!', '#ff4b5c', true); P.sacudida = Math.max(P.sacudida, 4);
     } else { herir(e, v.dano, nx, ny, 90); P.efectos.push({ gen: 'golpe', x: e.x, y: e.y - 10, emo: A.emo, col: A.col, t: 0.22, max: 0.22 }); }
     golpeCajas(e.x, e.y, 24, v.dano);
     return true;
@@ -120,7 +120,7 @@ CONT_EXTRA.haz = (k, A, v) => {
 };
 
 /* ---------- dibujo ---------- */
-DIBUJA_PROY.boomer = p => emoji(ctx, p.emo, p.x, p.y, p.tam, p.giro);
+DIBUJA_PROY.boomer = p => dibujaIcono(ctx, p.emo, p.x, p.y, p.tam, p.giro);
 DIBUJA_EFECTO.tajo = (f, c, k) => {
   c.save(); c.translate(f.x, f.y); c.globalAlpha = 1 - k;
   const r = f.r * (0.55 + k * 0.45), a0 = f.ang - f.mitad, a1 = f.ang + f.mitad;
@@ -145,10 +145,10 @@ SUELO_EXTRA.push(c => {
       const a = P.t * v.giro + (i / v.n) * Math.PI * 2, x = j.x + Math.cos(a) * v.r, y = j.y - 10 + Math.sin(a) * v.r;
       c.lineCap = 'round'; c.strokeStyle = A.col; c.globalAlpha = 0.28; c.lineWidth = 16; c.beginPath(); c.moveTo(j.x, j.y - 10); c.lineTo(x, y); c.stroke();
       c.globalAlpha = 0.9; c.strokeStyle = '#fff'; c.lineWidth = 3; c.beginPath(); c.moveTo(j.x, j.y - 10); c.lineTo(x, y); c.stroke(); c.globalAlpha = 1;
-      if (A.emo) emoji(c, A.emo, x, y, 22, a);
+      if (A.emo) dibujaIcono(c, A.emo, x, y, 22, a);
     }
   }
 });
 PIE_EXTRA.push(L => {
-  for (const q of P.torretas) L.push({ y: q.y, f: () => { ctx.globalAlpha = Math.min(1, q.t / 0.5); emoji(ctx, q.A.emo, q.x, q.y - 12, 26); ctx.globalAlpha = 1; } });
+  for (const q of P.torretas) L.push({ y: q.y, f: () => { ctx.globalAlpha = Math.min(1, q.t / 0.5); dibujaIcono(ctx, q.A.emo, q.x, q.y - 12, 26); ctx.globalAlpha = 1; } });
 });

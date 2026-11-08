@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.25
+  "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
+  "Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido.": "Microblizz oiled the engine again and Phony asked if it runs faster now.",
   // 0.7.24
   "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
   "Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come.": "Microblizz tightened the engine bolts and Phony asked if that is edible.",

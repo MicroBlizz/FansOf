@@ -1,6 +1,6 @@
 // Fans of Zombies · LA ROPA Y LA MOCHILA (dominio, ADR 079): lo que llevas puesto (J.equipo: cabeza, cuerpo, piernas, pies y la
 // mochila), ponerse y quitarse las cosas, cambiar de mochila (lo que no cabe en la nueva se queda en el sitio o en el suelo), coser
-// con tela, lo que gasta cada mordisco y lo que hace la ropa (frío, calor, mordiscos, infección, huellas, ruido y aguante).
+// con tela, lo que gasta cada mordisco y lo que hace la ropa (frío, calor, mordiscos en la parte que tapa, huellas, ruido y aguante).
 // Las cifras están en AJ.ropa, AJ.vestir y AJ.mochilas.
 'use strict';
 var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
@@ -55,15 +55,15 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     e.eventos.push({ tipo: 'viste', id: cosa.id });
     return h;
   }
-  function guardaOSuelta(AJ, e, cosa) { if (Z.meterLleva(AJ, e.jugador, cosa.id, 1, cosa.dur)) Z.dejaEnSitio(e, cosa); }
+  function guardaOSuelta(AJ, e, cosa) { if (Z.meterLleva(AJ, e.jugador, cosa.id, 1, cosa.dur)) Z.dejaEnSitio(e, cosa, AJ); }
   // la mochila nueva: lo de la vieja pasa a la nueva (lo grande primero; si no, a la riñonera o los bolsillos); lo que no cabe y la
   // mochila vieja se quedan en el sitio
   function cambiaMochila(AJ, e, cosa) {
     const J = e.jugador, M = AJ.mochilas[cosa.id], vieja = J.mochila, antes = J.equipo.mochila;
     J.mochila = Z.nuevaMochila(M.w, M.h + (J.filaExtra || 0)); J.equipo.mochila = cosa.id;
     const cosas = vieja.piezas.slice().sort((a, b) => Z.formaDe(AJ, b.id).c.length - Z.formaDe(AJ, a.id).c.length);
-    for (const p of cosas) { const queda = Z.meterLleva(AJ, J, p.id, p.n, p.dur); if (queda) Z.dejaEnSitio(e, p.dur != null ? { id: p.id, n: queda, dur: p.dur } : { id: p.id, n: queda }); }   // la nueva, luego la riñonera y los bolsillos
-    if (antes) Z.dejaEnSitio(e, { id: antes, n: 1 });
+    for (const p of cosas) { const queda = Z.meterLleva(AJ, J, p.id, p.n, p.dur); if (queda) Z.dejaEnSitio(e, p.dur != null ? { id: p.id, n: queda, dur: p.dur } : { id: p.id, n: queda }, AJ); }   // la nueva, luego la riñonera y los bolsillos
+    if (antes) Z.dejaEnSitio(e, { id: antes, n: 1 }, AJ);
     e.eventos.push({ tipo: 'viste', id: cosa.id });
     return 'mochila';
   }
@@ -103,8 +103,12 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   // la sed de la estación: en verano (sed > 1) el abrigo da más
   Z.sedRopa = (AJ, J, E) => (E.sed > 1 ? E.sed * (1 + Z.ropa(AJ, J, 'calor')) : E.sed);
   // lo que queda del daño de un mordisco y de la probabilidad de infección
-  Z.mordiscoRopa = (AJ, J) => 1 - Math.min(AJ.vestir.danoMax, Z.ropa(AJ, J, 'dano'));
-  Z.infeccionRopa = (AJ, J) => 1 - Math.min(1, Z.ropa(AJ, J, 'infeccion'));
+  // lo que protege la ropa de una parte del cuerpo (js/heridas.js): la cabeza, el gorro o casco; el torso y los brazos, lo del cuerpo;
+  // las piernas, el pantalón
+  const HUECO_PARTE = { cabeza: 'cabeza', torso: 'cuerpo', brazoI: 'cuerpo', brazoD: 'cuerpo', piernaI: 'piernas', piernaD: 'piernas' };
+  Z.ropaEn = (AJ, J, parte, que) => { const p = J.equipo && J.equipo[HUECO_PARTE[parte]]; return (p && AJ.ropa[p.id][que]) || 0; };
+  // lo que queda del daño de un mordisco en esa parte
+  Z.mordiscoRopa = (AJ, J, parte) => 1 - Math.min(AJ.vestir.danoMax, Z.ropaEn(AJ, J, parte, 'dano'));
   // tus pasos (zapatillas) y tus ruidos con lluvia (chubasquero)
   Z.pasosRopa = (AJ, J) => 1 - Math.min(0.9, Z.ropa(AJ, J, 'pasos'));
   Z.lluviaRopa = (AJ, J, E) => (E.ruido < 1 ? 1 - Math.min(0.9, Z.ropa(AJ, J, 'lluvia')) : 1);

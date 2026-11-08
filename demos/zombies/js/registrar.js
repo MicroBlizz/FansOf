@@ -60,15 +60,17 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
   };
   // dejar una pieza de una de tus bolsas (la mochila si no se dice): en el sitio abierto o en un montón nuevo a tus pies
   Z.dejar = function (AJ, e, uid, bolsa) {
-    const m = e.jugador[bolsa || 'mochila'];
+    const m = e.jugador[bolsa || 'mochila'], p = m && Z.pieza(m, uid);
     if (!m) return Z.error('noEsta', { uid });
+    if (p && abierto(e) && !Z.cabeEnSitio(AJ, e, p)) return Z.error(Z.esMaletero(e.abierto) ? 'maleteroLleno' : 'sitioLleno');   // el maletero, las cajas y armarios tienen sitio limitado (js/construir.js)
     const r = Z.sacar(m, uid);
     if (!r.ok) return r;
     return Z.ok(Z.dejaEnSitio(e, r.valor));
   };
   // poner una cosa suelta en el sitio abierto o, si no hay ninguno, en un montón nuevo a tus pies (que se abre)
-  Z.dejaEnSitio = function (e, cosa) {
-    if (!abierto(e)) {
+  // (con AJ, si el sitio abierto tiene sitio limitado y no cabe, va a un montón nuevo: el maletero, las cajas)
+  Z.dejaEnSitio = function (e, cosa, AJ) {
+    if (!abierto(e) || (AJ && !Z.cabeEnSitio(AJ, e, cosa))) {
       const id = 'monton-' + (++e.ultimoId), J = e.jugador;
       e.cuerpos.push({ id, x: J.x, z: J.z, monton: true }); e.contenidos[id] = []; e.registrados[id] = true; e.abierto = id;
     }

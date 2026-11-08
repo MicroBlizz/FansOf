@@ -24,16 +24,18 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (derriba && !zb.T.pesado) zb.derribado = true;
   }
 
+  // lo que las heridas cambian al arma (js/heridas.js): brazo herido, pegas más flojo; con dolor, la puntería de las de fuego tiembla
+  const heridasArma = (AJ, J, W) => (W.municion ? { golpe: 1, cono: Z.temblor(AJ, J) } : { golpe: Z.golpeHeridas(AJ, J), cono: 1 });
   Z.ataca = function (AJ, e, mundo) {
     const J = e.jugador, W = AJ.armas[J.arma], G = AJ.aguante, cansado = J.agotado ? G.agotado : { dano: 1, cadencia: 1 };
     if (!Z.lleva(J, J.arma)) { e.eventos.push({ tipo: 'noPuedes', codigo: 'sinArma' }); J.tArma = 0.4; return Z.error('sinArma'); }
     if (W.municion && !Z.gastaLleva(J, W.municion, 1).ok) { e.eventos.push({ tipo: 'sinMunicion' }); J.tArma = 0.4; return Z.error('sinMunicion'); }
     J.tArma = W.cadencia * cansado.cadencia;
-    const hab = W.municion ? 'disparo' : 'pelea', fuerza = W.dano * cansado.dano * Z.mas(AJ, J, hab, 'dano');
+    const hab = W.municion ? 'disparo' : 'pelea', fuerza = W.dano * cansado.dano * Z.mas(AJ, J, hab, 'dano') * heridasArma(AJ, J, W).golpe;
     J.aguante = Math.max(0, J.aguante - W.aguante * Z.menos(AJ, J, 'pelea', 'aguante'));
     if (J.aguante <= 0) J.agotado = true;
     Z.haceRuido(AJ, e, J.x, J.z, AJ.ruido[W.ruido] * (W.municion ? 1 : (J.A.ruido || 1)), 'jugador');
-    let tocados = enCono(e, W.alcance, W.cono, mundo);
+    let tocados = enCono(e, W.alcance, W.cono * heridasArma(AJ, J, W).cono, mundo);
     if (W.uno) tocados = tocados.sort((a, b) => a.d - b.d).slice(0, 1);
     let despide = false;
     for (const { zb, d } of tocados) {
@@ -84,5 +86,15 @@ var ZOM = globalThis.ZOM || (globalThis.ZOM = {});
     if (zb.T.jefe) Z.jefeVencido(e, zb);
     e.eventos.push({ tipo: 'baja', id: zb.id, tipoZombi: zb.tipo, x: zb.x, z: zb.z });
     if (zb.T.botin) e.cuerpos.push({ id: 'cuerpo-' + zb.id, x: zb.x, z: zb.z });     // la ballena deja algo que registrar
+  };
+  // el apuntado del móvil (ADR 081): el fan vivo más cercano de tu planta a menos de dMax, o null
+  Z.blancoCerca = function (e, dMax) {
+    const J = e.jugador, planta = e.planta || 0;
+    let mejor = null, d = dMax;
+    for (const z of e.zombis) {
+      const dz = z.vida > 0 && (z.planta || 0) === planta ? Z.dist(z.x, z.z, J.x, J.z) : Infinity;
+      if (dz < d) { d = dz; mejor = z; }
+    }
+    return mejor;
   };
 })(ZOM);

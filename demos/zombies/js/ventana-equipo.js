@@ -5,7 +5,7 @@
 // y de las mochilas también están aquí (los usa dibujaObjeto de js/ventana-mochila.js).
 'use strict';
 const HUECOS_ROPA = [['cabeza', 'CABEZA'], ['cuerpo', 'CUERPO'], ['piernas', 'PIERNAS'], ['pies', 'PIES']];
-const QUE_HACE_ROPA = { gorro: 'Menos hambre con frío', casco: 'Los mordiscos hacen menos daño', abrigo: 'Sin hambre de frío; en verano, más sed', cuero: 'Los mordiscos infectan menos', chubasquero: 'Con lluvia se te oye aún menos', vaqueros: 'Los mordiscos hacen algo menos de daño', chandal: 'Correr cansa menos', botasNieve: 'Dejas la mitad de huellas', zapatillas: 'Pasos más silenciosos', botasGoma: 'El barro de la primavera no te cansa', mochilaP: '4 × 4 casillas', mochilaM: '5 × 5 casillas', mochilaG: '6 × 7 casillas, pero vas más lento' };
+const QUE_HACE_ROPA = { gorro: 'Menos hambre con frío', casco: 'Protege la cabeza de los mordiscos', abrigo: 'Sin hambre de frío; en verano, más sed', cuero: 'Protege torso y brazos; sus heridas infectan menos', chubasquero: 'Con lluvia se te oye aún menos', vaqueros: 'Protege las piernas de los mordiscos', chandal: 'Correr cansa menos', botasNieve: 'Dejas la mitad de huellas', zapatillas: 'Pasos más silenciosos', botasGoma: 'El barro de la primavera no te cansa', mochilaP: '4 × 4 casillas', mochilaM: '5 × 5 casillas', mochilaG: '6 × 7 casillas, pero vas más lento' };
 const COLOR_EQUIPO = { gorro: '#5a2a2a', casco: '#2a2e36', abrigo: '#4a3e2a', cuero: '#3a2418', chubasquero: '#5a4a1a', vaqueros: '#24344a', chandal: '#2e3038', botasNieve: '#3a2a1e', zapatillas: '#4a4a4a', botasGoma: '#1e3a24', mochilaP: '#4a3a24', mochilaM: '#3a4a2a', mochilaG: '#4a2a1a' };
 // los dibujos (sobre 0..1 del ancho y alto de su caja)
 const DIBUJO_EQUIPO = {
@@ -61,7 +61,7 @@ function usaOPon(desde, id, soltar) {
   const e = JUEGO.e, AJ = ZOM.AJ;
   if (ZOM.esRopa(AJ, id) || ZOM.esMochila(AJ, id)) return resultadoEquipo(ZOM.ponerse(AJ, e, desde));
   if (soltar) return resultadoEquipo(ZOM.error('noSePone'));
-  if (desde.bolsa && AJ.objetos[id].usa) { const r = ZOM.usar(AJ, e, id); if (!r.ok) avisa(tr('No puedes hacer eso ahora.')); pintaMochila(); }
+  if (desde.bolsa && (AJ.objetos[id].usa || AJ.objetos[id].cura)) { const r = ZOM.usar(AJ, e, id); if (!r.ok) avisa(tr('No puedes hacer eso ahora.')); pintaMochila(); }
 }
 function resultadoEquipo(r) {
   if (!r.ok) avisa(tr({ faltan: 'Te falta tela.', nadaQueCoser: 'No llevas nada roto.', noSePone: 'Eso no se pone.', noEsta: 'Eso ya no está.' }[r.codigo] || 'No puedes hacer eso ahora.'));

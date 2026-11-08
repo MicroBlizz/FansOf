@@ -21,7 +21,7 @@ function showMenu() {
 }
 function pintaRecord() {
   const S = SAVE.stats || {};
-  $('#rec-line').innerHTML = S.best_t ? `Tu récord: <b>${mmss(S.best_t)}</b> · ${fmt(S.best_k || 0)} robots · nivel ${S.best_n || 1}${S.win ? ` · 👑 x${S.win}` : ''}` : 'Aguanta 10 minutos y despide a SurvivalBot.';
+  $('#rec-line').innerHTML = S.best_t ? `Tu récord: <b>${mmss(S.best_t)}</b> · ${fmt(S.best_k || 0)} robots · nivel ${S.best_n || 1}${S.win ? ` · ${ICONO.html('corona', 'ico-txt')} x${S.win}` : ''}` : 'Aguanta 10 minutos y despide a SurvivalBot.';
 }
 // la portada: tu líder y dos de sus cartas, rodeados de becarios
 function dibujaPortada() {
@@ -80,5 +80,5 @@ $('#btn-reset').onclick = () => confirmBox('¿EMPEZAR DE CERO?', 'Se borra <b>to
 $('#btn-howto').onclick = () => { play('select'); stat('howto', 1); show('scr-howto'); };
 $('#btn-howto-ok').onclick = () => { play('select'); showMenu(); };
 // los botones de sonido (en la pausa)
-const soundBtns = () => { for (const b of document.querySelectorAll('.btn-sound')) { b.textContent = SAVE.muted ? '🔇' : '🔊'; b.setAttribute('aria-label', SAVE.muted ? 'Activar sonido' : 'Silenciar sonido'); } };
+const soundBtns = () => { for (const b of document.querySelectorAll('.btn-sound')) { b.replaceChildren(ICONO.elemento(SAVE.muted ? 'silencio' : 'altavoz', 'ico-txt')); b.setAttribute('aria-label', SAVE.muted ? 'Activar sonido' : 'Silenciar sonido'); } };
 for (const b of document.querySelectorAll('.btn-sound')) b.onclick = () => { SAVE.muted = !SAVE.muted; if (SAVE.muted) stat('mute', 1); audioInit(); applyVolume(); saveGame(); soundBtns(); };

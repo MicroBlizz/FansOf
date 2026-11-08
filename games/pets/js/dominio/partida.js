@@ -155,6 +155,8 @@ PT.Partida = class Partida {
   }
   // un cuidado de la mascota. Resultado: el de PT.Mascota, o 'fase-equivocada'
   cuida(tipo) { return this.#conMascota(m => m.cuida(tipo)); }
+  // ¿se le puede hacer ese cuidado ahora? Como cuida, sin aplicarlo. Resultado: el de PT.Mascota, o 'fase-equivocada'
+  puedeCuidar(tipo) { return this.#conMascota(m => m.puedeCuidar(tipo)); }
   // un minijuego. Resultado: el de PT.Mascota, o 'fase-equivocada'
   juega(id) { return this.#conMascota(m => m.juega(id)); }
   // dormir o despertar a la mascota a la hora `ahora`. Resultado: lo que ha pasado ('dormir', 'despertar', 'noche'), o 'fase-equivocada'

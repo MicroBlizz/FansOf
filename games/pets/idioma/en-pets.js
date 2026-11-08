@@ -1,6 +1,9 @@
 // Fans Of Pets · Inglés: los textos de este juego (los nombres de las criaturas y de las facciones están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.9
+  "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
+  "Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido.": "Microblizz oiled the engine again and Phony asked if it runs faster now.",
   // 0.2.8
   "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
   "Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come.": "Microblizz tightened the engine bolts and Phony asked if that is edible.",
@@ -28,9 +31,6 @@ IDIOMA.add({
   // 0.2.0
   "<b>EL MONIGOTE POR PIEZAS</b>: la criatura se dibuja en piezas (cara, orejas, cola, corona), con cara viva, y ahora come, se ducha y duerme en su cama.": "<b>THE PIECE-BY-PIECE PET</b>: the creature is drawn in pieces (face, ears, tail, crown), with a living face, and now it eats, showers and sleeps in its bed.",
   "Microblizz ha despiezado al monigote y Phony ha vuelto a montarlo con una oreja de sobra.": "Microblizz took the pet apart and Phony put it back together with a spare ear.",
-  // aviso fuera del modo desarrollo
-  "Fans Of Pets está en el horno": "Fans Of Pets is still in the oven",
-  "Es un prototipo y de momento solo se abre en modo desarrollo. Vuelve pronto.": "It's a prototype and for now it only opens in development mode. Come back soon.",
   // la entrevista de trabajo
   "Entrevista de trabajo": "Job interview",
   "EMPEZAR": "START",
@@ -345,4 +345,22 @@ IDIOMA.add({
   "Cachorrito": "Puppy eyes",
   "SALIR": "EXIT",
   "ASCENDER YA": "PROMOTE NOW",
+  "CUIDADO: dar de comer con la cuchara": "CARE: feed with the spoon",
+  "CUIDADO: ducha (frotar y aclarar)": "CARE: shower (scrub and rinse)",
+  "Llena la cuchara en el bol": "Fill the spoon from the bowl",
+  "Llévala a su boca": "Take it to its mouth",
+  "¡Qué rico!": "Yum!",
+  "Frótalo con la esponja": "Scrub it with the sponge",
+  "Aclara con la ducha: mantén pulsado": "Rinse with the shower: hold down",
+  "¡Bien enjabonado! Aclara con la ducha: mantén pulsado": "Nice and soapy! Rinse with the shower: hold down",
+  "Te falta jabón en {zonas}": "Still needs soap on {zonas}",
+  "Te falta jabón en {n} zonas": "Still needs soap on {n} spots",
+  " y ": " and ",
+  "la cabeza": "the head",
+  "el torso": "the tummy",
+  "los brazos": "the arms",
+  "las piernas": "the legs",
+  "la cola": "the tail",
+  "¡Limpito!": "All clean!",
+  "DEJARLO": "LEAVE IT",
 });

@@ -33,12 +33,13 @@ function dibujaObjeto(g, id, W, H) {
     guiso: () => { P('#7a7a80', 0.15, 0.4, 0.7, 0.4); P('#c8783a', 0.2, 0.36, 0.6, 0.12); P('#e8e0d0', 0.4, 0.15, 0.06, 0.2); },
     cartuchos: () => { P('#c8282e', 0.18, 0.25, 0.22, 0.5); P('#c8282e', 0.48, 0.25, 0.22, 0.5); P('#e8b840', 0.18, 0.62, 0.22, 0.13); P('#e8b840', 0.48, 0.62, 0.22, 0.13); },
   };
-  (D[id] || (DIBUJO_EQUIPO[id] && (() => DIBUJO_EQUIPO[id](P))) || (() => P('#888', 0.3, 0.3, 0.4, 0.4)))();   // la ropa y las mochilas, en js/ventana-equipo.js
+  const otro = DIBUJO_EQUIPO[id] || DIBUJO_CURAS[id] || DIBUJO_PIEZAS[id];   // la ropa y las mochilas (js/ventana-equipo.js) y las curas (js/ventana-cuerpo.js)
+  (D[id] || (otro && (() => otro(P))) || (() => P('#888', 0.3, 0.3, 0.4, 0.4)))();
 }
 // una pieza (o una cosa del sitio): un div con las casillas de su forma y su dibujo
 function htmlPieza(id, n, gr, clase, datos) {
   const AJ = ZOM.AJ, f = ZOM.formaDe(AJ, id, gr), C = VM.celda;
-  const celdas = f.c.map(([x, y]) => '<i style="left:' + x * C + 'px;top:' + y * C + 'px;width:' + C + 'px;height:' + C + 'px;background:' + (COLOR_OBJ[id] || COLOR_EQUIPO[id] || '#333') + '"></i>').join('');
+  const celdas = f.c.map(([x, y]) => '<i style="left:' + x * C + 'px;top:' + y * C + 'px;width:' + C + 'px;height:' + C + 'px;background:' + (COLOR_OBJ[id] || COLOR_EQUIPO[id] || COLOR_CURAS[id] || COLOR_PIEZAS[id] || '#333') + '"></i>').join('');
   return '<div class="vm-pieza ' + clase + '" ' + datos + ' style="width:' + f.w * C + 'px;height:' + f.h * C + 'px">' + celdas + '<canvas width="' + f.w * 16 + '" height="' + f.h * 16 + '" data-id="' + id + '" data-gr="' + gr + '"></canvas>' +
     ((AJ.objetos[id].max || 1) > 1 || n > 1 ? '<b>' + n + '</b>' : '') + '</div>';
 }
@@ -53,9 +54,9 @@ function pintaDibujos(raiz) {
 }
 
 function abreMochila() { VM.abierta = true; pintaMochila(); }
-function cierraMochila() { VM.abierta = false; VM.arrastra = null; el('zb-mochila').hidden = true; if (JUEGO.e) ZOM.cierraSitio(JUEGO.e); }
+function cierraMochila() { VM.abierta = false; sueltaSinMas(); el('zb-mochila').hidden = true; if (JUEGO.e) ZOM.cierraSitio(JUEGO.e); }
 // las habilidades: nivel y barra hacia el siguiente, con lo que mejora cada una
-const NOMBRE_HAB = { pelea: ['PELEA', 'Golpeas más fuerte y te cansas menos'], disparo: ['DISPARO', 'Las balas y los cartuchos hacen más daño'], sigilo: ['SIGILO', 'Agachado te ven menos y andando haces menos ruido'], carpinteria: ['CARPINTERÍA', 'Clavas tablas y desmontas más rápido'], cocina: ['COCINA', 'Lo que cocinas alimenta más'] };
+const NOMBRE_HAB = { mecanica: ['MECÁNICA', 'Las piezas se estropean menos al quitarlas y el motor se arregla más'], pelea: ['PELEA', 'Golpeas más fuerte y te cansas menos'], disparo: ['DISPARO', 'Las balas y los cartuchos hacen más daño'], sigilo: ['SIGILO', 'Agachado te ven menos y andando haces menos ruido'], carpinteria: ['CARPINTERÍA', 'Clavas tablas y desmontas más rápido'], cocina: ['COCINA', 'Lo que cocinas alimenta más'] };
 function htmlHabilidades(J) {
   const AJ = ZOM.AJ;
   return '<section class="vm-hab"><header><b>' + esc(tr('HABILIDADES')) + '</b></header>' + ZOM.HABILIDADES.map((h) => '<div class="vm-h" title="' + esc(tr(NOMBRE_HAB[h][1])) + '"><span>' + esc(tr(NOMBRE_HAB[h][0])) + '</span><b>' + ZOM.nivel(AJ, J, h) + '</b><i><s style="width:' + Math.round(ZOM.progreso(AJ, J, h) * 100) + '%"></s></i><em>' + esc(tr(NOMBRE_HAB[h][1])) + '</em></div>').join('') + '<p class="vm-ayuda">' + esc(tr('Se mejoran haciendo las cosas. Se pierden al caer.')) + '</p>' + htmlRefugio(JUEGO.e) + '</section>';
@@ -68,58 +69,71 @@ function pintaMochila() {
       (lista.length ? lista.map((c, i) => htmlPieza(c.id, c.n, 0, 'suelta', 'data-i="' + i + '" title="' + esc(tr(AJ.objetos[c.id].n)) + '"')).join('') : '<p>' + esc(tr('Vacío.')) + '</p>') + '</div>' + htmlAccionesSitio(e) + '<p class="vm-ayuda">' + esc(tr('Clic para coger. Arrastra aquí lo tuyo para dejarlo.')) + '</p></section>' : '') +
     (lista ? '' : htmlHabilidades(J)) +   // con un sitio abierto no caben todas: las habilidades salen con la mochila sola
     htmlEquipo(e) +                        // la ropa, la riñonera y los bolsillos (js/ventana-equipo.js)
-    '<section class="vm-mia"><header><b>' + esc(tr(AJ.objetos[J.equipo.mochila].n)) + '</b><button id="vm-ordenar">' + esc(tr('ORDENAR')) + '</button><button id="vm-cerrar">' + esc(tr('CERRAR (TAB)')) + '</button></header>' +
+    htmlCuerpo(e) +                        // las heridas (js/ventana-cuerpo.js)
+    (e.abierto && ZOM.esMaletero(e.abierto) ? htmlCoche(e) : '') +   // las piezas del coche, junto al maletero (js/ventana-coche.js)
+    '<section class="vm-mia"><header><b>' + esc(tr(AJ.objetos[J.equipo.mochila].n)) + '</b>' + (TACTIL.activo ? '<button id="vm-girar">' + esc(tr('GIRAR')) + '</button>' : '') + '<button id="vm-ordenar">' + esc(tr('ORDENAR')) + '</button><button id="vm-cerrar">' + esc(tr('CERRAR (TAB)')) + '</button></header>' +
     htmlRejilla(J, 'mochila') + htmlFabricar(e) + '<p class="vm-ayuda">' + esc(tr('Arrastra para mover · rueda o R para girar · clic derecho para usar · fuera de la rejilla para dejar.')) + '</p></section>';
   // la posición de cada pieza en su rejilla
   v.querySelectorAll('.vm-pieza.mia').forEach((d) => { const p = ZOM.pieza(J[d.dataset.bolsa], +d.dataset.uid); d.style.left = p.gx * C + 'px'; d.style.top = p.gy * C + 'px'; });
   pintaDibujos(v);
-  enganchaMochila(v); enganchaOficios(v); enganchaEquipo(v);
+  enganchaMochila(v); enganchaOficios(v); enganchaEquipo(v); enganchaCuerpo(v); enganchaCoche(v);
 }
 const NOMBRE_TIPO = { nevera: 'NEVERA', armario: 'ARMARIO', cocina: 'COCINA', basura: 'CUBO DE BASURA', fuego: 'BIDÓN CON FUEGO', coche: 'COCHE', estanteria: 'ESTANTERÍA', super: 'ESTANTE DEL SÚPER', gasolinera: 'TIENDA DE LA GASOLINERA', ferreteria: 'FERRETERÍA', farmacia: 'FARMACIA', armeria: 'ARMERÍA', taquilla: 'TAQUILLA', pupitre: 'PUPITRE', granero: 'GRANERO', escritorio: 'ESCRITORIO', cajaFuerte: 'CAJA FUERTE', archivador: 'ARCHIVADOR', maquina: 'MÁQUINA DE CAFÉ', maletin: 'MALETÍN DEL CEO', despensa: 'DESPENSA DEL REFUGIO', huerto: 'HUERTO' };
 const sitioEsCoche = (id) => id.startsWith('car:');
-const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : id.startsWith('maletin-') ? 'MALETÍN DEL CEO' : sitioEsCoche(id) ? 'GUANTERA Y MALETERO' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
+const nombreSitio = (id) => (id.startsWith('cuerpo-') ? 'CUERPO DE LA BALLENA' : id.startsWith('monton-') ? 'MONTÓN EN EL SUELO' : id.startsWith('maletin-') ? 'MALETÍN DEL CEO' : ZOM.esMaletero(id) ? 'MALETERO' : sitioEsCoche(id) ? 'GUANTERA' : NOMBRE_TIPO[JUEGO.e.tipoAbierto] || 'LO QUE HAY AQUÍ');
 // lo que no se puede: aviso por la radio
-function resultadoMochila(r) { if (!r.ok) avisa(tr({ noCabe: 'No cabe en la mochila.', noEsta: 'Eso ya no está.' }[r.codigo] || 'No puedes hacer eso ahora.')); else play('coge'); pintaMochila(); }
+function resultadoMochila(r) { if (!r.ok) avisa(tr({ noCabe: 'No cabe en la mochila.', noEsta: 'Eso ya no está.' }[r.codigo] || NO_PUEDES[r.codigo] || 'No puedes hacer eso ahora.')); else play('coge'); pintaMochila(); }
 
 function enganchaMochila(v) {
   const e = JUEGO.e, AJ = ZOM.AJ;
   if (el('vm-todo')) el('vm-todo').onclick = () => resultadoMochila(ZOM.cogerTodo(AJ, e));
   el('vm-ordenar').onclick = () => resultadoMochila(ZOM.ordenar(AJ, e.jugador.mochila));
+  if (el('vm-girar')) el('vm-girar').onpointerdown = (ev) => { ev.preventDefault(); giraArrastre(); };   // en el móvil, con otro dedo mientras arrastras
   el('vm-cerrar').onclick = cierraMochila;
   v.querySelectorAll('.vm-pieza.mia').forEach((d) => {
     const desde = { bolsa: d.dataset.bolsa, uid: +d.dataset.uid };
-    d.oncontextmenu = (ev) => { ev.preventDefault(); const p = ZOM.pieza(e.jugador[desde.bolsa], desde.uid); if (p) usaOPon(desde, p.id); };
+    d.oncontextmenu = (ev) => { ev.preventDefault(); const p = !TACTIL.activo && ZOM.pieza(e.jugador[desde.bolsa], desde.uid); if (p) usaOPon(desde, p.id); };   // en el móvil lo hace la pulsación larga
     d.onpointerdown = (ev) => empiezaArrastre(ev, d, desde);
   });
   v.querySelectorAll('.vm-pieza.suelta').forEach((d) => {
-    d.oncontextmenu = (ev) => { ev.preventDefault(); const c = e.contenidos[e.abierto][+d.dataset.i]; if (c) usaOPon({ i: +d.dataset.i }, c.id); };
+    d.oncontextmenu = (ev) => { ev.preventDefault(); const c = !TACTIL.activo && e.contenidos[e.abierto][+d.dataset.i]; if (c) usaOPon({ i: +d.dataset.i }, c.id); };
     d.onpointerdown = (ev) => empiezaArrastre(ev, d, { i: +d.dataset.i });
   });
 }
 // arrastrar: la pieza sigue al ratón; al soltar se decide (mover, coger en ese hueco, dejar, o un clic si casi no se ha movido)
 function empiezaArrastre(ev, d, que) {
-  if (ev.button !== 0) return;
+  if (ev.button !== 0 || VM.arrastra) return;                    // un arrastre cada vez (en el móvil, el segundo dedo no empieza otro)
   ev.preventDefault();
   const r = d.getBoundingClientRect(), p = que.uid != null ? ZOM.pieza(JUEGO.e.jugador[que.bolsa], que.uid) : null;
-  VM.arrastra = { ...que, d, dx: ev.clientX - r.left, dy: ev.clientY - r.top, x0: ev.clientX, y0: ev.clientY, gr: p ? p.gr : 0, id: p ? p.id : JUEGO.e.contenidos[JUEGO.e.abierto][que.i].id };
+  const A = VM.arrastra = { ...que, d, pid: ev.pointerId, dx: ev.clientX - r.left, dy: ev.clientY - r.top, x0: ev.clientX, y0: ev.clientY, ux: ev.clientX, uy: ev.clientY, gr: p ? p.gr : 0, id: p ? p.id : JUEGO.e.contenidos[JUEGO.e.abierto][que.i].id };
+  if (ev.pointerType === 'touch') A.larga = setTimeout(() => pulsacionLarga(A, que), 450);   // en el móvil, dejar el dedo quieto = clic derecho
   d.classList.add('vuela');
   document.body.appendChild(d);                          // fuera de la ventana (que va con transform), para que «fixed» sea la pantalla
   d.style.position = 'fixed'; d.style.left = r.left + 'px'; d.style.top = r.top + 'px';
 }
+// el dedo quieto un rato sobre una pieza: se usa o se pone (como el clic derecho)
+function pulsacionLarga(A, que) {
+  if (VM.arrastra !== A || Math.hypot(A.ux - A.x0, A.uy - A.y0) > 8) return;
+  VM.arrastra = null; A.d.remove();
+  usaOPon(que.i != null ? { i: que.i } : { bolsa: que.bolsa, uid: que.uid }, A.id);
+  if (VM.abierta) pintaMochila();
+}
 function sigueArrastre(ev) {
-  const A = VM.arrastra; if (!A) return;
+  const A = VM.arrastra; if (!A || ev.pointerId !== A.pid) return;
+  A.ux = ev.clientX; A.uy = ev.clientY;
   A.d.style.position = 'fixed'; A.d.style.left = ev.clientX - A.dx + 'px'; A.d.style.top = ev.clientY - A.dy + 'px';
 }
 function giraArrastre() {
   const A = VM.arrastra; if (!A) return;
+  clearTimeout(A.larga);
   A.gr = (A.gr + 1) % 4;
   const tmp = document.createElement('div'); tmp.innerHTML = htmlPieza(A.id, 1, A.gr, 'vuela', ''); const nueva = tmp.firstChild;
   nueva.style.position = 'fixed'; nueva.style.left = A.d.style.left; nueva.style.top = A.d.style.top;
   A.d.remove(); document.body.appendChild(nueva); A.d = nueva; pintaDibujos(nueva); A.dx = A.dy = VM.celda / 2;
 }
 function sueltaArrastre(ev) {
-  const A = VM.arrastra; if (!A) return;
-  VM.arrastra = null; A.d.remove();
+  const A = VM.arrastra; if (!A || ev.pointerId !== A.pid) return;
+  VM.arrastra = null; A.d.remove(); clearTimeout(A.larga);
   const e = JUEGO.e, AJ = ZOM.AJ, C = VM.celda;
   const clic = Math.hypot(ev.clientX - A.x0, ev.clientY - A.y0) < 5, sobre = rejillaBajo(ev);
   const donde = sobre && { bolsa: sobre.dataset.bolsa, gx: Math.round((ev.clientX - A.dx - sobre.getBoundingClientRect().left) / C), gy: Math.round((ev.clientY - A.dy - sobre.getBoundingClientRect().top) / C), gr: A.gr };
@@ -138,6 +152,9 @@ function rejillaBajo(ev) {
 }
 addEventListener('pointermove', sigueArrastre);
 addEventListener('pointerup', sueltaArrastre);
+// si el móvil corta el toque (una llamada, un gesto del sistema), la pieza vuelve a su sitio
+addEventListener('pointercancel', (ev) => { if (VM.arrastra && ev.pointerId === VM.arrastra.pid) { sueltaSinMas(); if (VM.abierta) pintaMochila(); } });
+function sueltaSinMas() { const A = VM.arrastra; VM.arrastra = null; if (A) { clearTimeout(A.larga); A.d.remove(); } }
 addEventListener('wheel', (ev) => { if (VM.arrastra) { ev.preventDefault(); giraArrastre(); } }, { passive: false });
 // cada fotograma: Tab abre o cierra; R gira lo que arrastras; si te alejas del sitio abierto, se cierra
 function vigilaMochila(e, cerca) {

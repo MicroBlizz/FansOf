@@ -54,6 +54,7 @@ function pintaSuelo(g) {
     const X = Math.round(sx(i * tam)), Y = Math.round(sy(j * tam)), X2 = Math.round(sx((i + 1) * tam)), Y2 = Math.round(sy((j + 1) * tam));
     g.drawImage(SUELO.trozos[j * SUELO.nx + i], X, Y, X2 - X, Y2 - Y);
   }
+  g.fillStyle = 'rgba(214,226,245,0.14)'; g.fillRect(0, 0, J.W, J.H);   // el velo frío de la nieve
 }
 function enVista(x, y, m = 40) { const z = J.cam.z; return Math.abs(x - J.cam.x) < J.W / 2 / z + m && Math.abs(y - J.cam.y) < J.H / 2 / z + m; }
 
@@ -69,7 +70,8 @@ function pintaCosas(g) {
   for (const p of S.peatones) if (!p.muerto && enVista(p.x, p.y)) pintaSprite(g, fotoPeaton(p.estilo)[p.cuadro], p.x, p.y, p.ang, true);
   if (j.coche === null && !j.muerto && !j.baneado) pintaSprite(g, ARTE.conejo[j.cuadro], j.x, j.y, j.ang, true);
   // las luces de los Moderadores
-  for (const c of S.coches) if (c.policia && c.conductor === 'ia' && !c.chatarra && enVista(c.x, c.y)) { g.globalAlpha = 0.5; g.fillStyle = (S.tick >> 3) & 1 ? '#ff4040' : '#4080ff'; g.beginPath(); g.arc(sx(c.x), sy(c.y), 7 * z, 0, 7); g.fill(); g.globalAlpha = 1; }
+  pintaSirenas(g);
+  pintaManguera(g);
   // balas y efectos
   g.fillStyle = '#fff4b8';
   for (const b of S.balas) g.fillRect(Math.round(sx(b.x)) - 1, Math.round(sy(b.y)) - 1, 2, 2);
@@ -77,6 +79,7 @@ function pintaCosas(g) {
     if (!enVista(f.x, f.y)) continue;
     if (f.tipo === 'humo') { const k = f.t > 25 ? 0 : f.t > 12 ? 1 : 2; g.globalAlpha = 0.6; pintaSprite(g, ARTE.humo[2 - k], f.x, f.y, 0, false); g.globalAlpha = 1; }
     else if (f.tipo === 'fuego') pintaSprite(g, ARTE.fuego[f.t > 14 ? 2 : f.t > 7 ? 1 : 0], f.x, f.y, 0, false);
+    else if (f.tipo === 'nieve') { g.fillStyle = 'rgba(240,246,255,' + Math.min(1, f.t / 12).toFixed(2) + ')'; g.fillRect(Math.round(sx(f.x)), Math.round(sy(f.y)), Math.max(1, Math.round(z)), Math.max(1, Math.round(z))); }
     else if (f.tipo === 'dinero') escribe(g, f.texto, sx(f.x), sy(f.y), { fuente: 'mini', c: '#ffd23c', borde: TINTA, alin: 'centro' });
     else if (f.tipo === 'frase') escribe(g, f.texto, sx(f.x), sy(f.y), { fuente: 'mini', c: '#ffffff', borde: TINTA, alin: 'centro' });
   }
@@ -168,8 +171,88 @@ function pintaMundo(g) {
   const sac = J.sacude || 0;
   if (sac > 0.3) { g.save(); g.translate(Math.round((Math.random() - 0.5) * sac * 2), Math.round((Math.random() - 0.5) * sac * 2)); J.sacude = sac * 0.85; }
   pintaSuelo(g);
+  pintaMarcas(g);
+  pintaSemaforos(g);
   pintaCosas(g);
+  pintaFarolas(g);
   pintaArboles(g);
   pintaEdificios(g);
+  pintaNoche(g);
+  pintaNieve(g);
   if (sac > 0.3) g.restore();
+}
+
+/* ---------- las marcas de rueda: una capa del tamaño del barrio que se va ensuciando ---------- */
+let RODADAS = null, RODADAS_G = null;
+function pintaMarcas(g) {
+  if (!RODADAS) { [RODADAS, RODADAS_G] = lienzoNuevo(MAPA.W * T, MAPA.H * T); }
+  for (const m of S.marcas) { RODADAS_G.globalAlpha = 0.18 + 0.3 * m.f; RODADAS_G.fillStyle = '#15171c'; RODADAS_G.fillRect(Math.round(m.x) - 1, Math.round(m.y) - 1, 2, 2); }
+  S.marcas.length = 0;
+  const z = J.cam.z;
+  g.drawImage(RODADAS, Math.round(sx(0)), Math.round(sy(0)), Math.round(MAPA.W * T * z), Math.round(MAPA.H * T * z));
+}
+
+/* ---------- las farolas: en las esquinas de cada manzana ---------- */
+let FAROLAS = null;
+function farolas() {
+  if (FAROLAS) return FAROLAS;
+  FAROLAS = [];
+  for (let by = 0; by < 4; by++) for (let bx = 0; bx < 5; bx++) for (const [i, j] of [[2, 2], [9, 2], [2, 9], [9, 9]]) {
+    const tx = COLS[bx] + i, ty = FILAS[by] + j;
+    if (tipoEn(tx, ty) === TIPO.ACERA || tipoEn(tx, ty) === TIPO.HIERBA) FAROLAS.push({ x: tx * T + T / 2, y: ty * T + T / 2 });
+  }
+  return FAROLAS;
+}
+function pintaFarolas(g) {
+  const z = J.cam.z, f = 0.5 * PERSPECTIVA, noche = oscuridad() > 0.3;
+  for (const F of farolas()) {
+    if (!enVista(F.x, F.y, 20)) continue;
+    const X = sx(F.x), Y = sy(F.y), tx = X + (X - J.W / 2) * f, ty = Y + (Y - J.H / 2) * f;
+    g.strokeStyle = '#2a2c33'; g.lineWidth = Math.max(1, 1.5 * z); g.beginPath(); g.moveTo(X, Y); g.lineTo(tx, ty); g.stroke();
+    g.fillStyle = noche ? '#ffe39a' : '#9a9a9e'; g.fillRect(Math.round(tx - z), Math.round(ty - z), Math.max(1, Math.round(2 * z)), Math.max(1, Math.round(2 * z)));
+  }
+}
+
+/* ---------- la noche: una capa oscura con agujeros para las farolas y los faros ---------- */
+function pintaNoche(g) {
+  const o = oscuridad();
+  if (o <= 0.02) return;
+  const z = J.cam.z, bajo = AJUSTES.detalle === 'bajo';
+  if (!J.luz || J.luz.width !== J.W || J.luz.height !== J.H) { const [c, q] = lienzoNuevo(J.W, J.H); J.luz = c; J.luzG = q; }
+  const L = J.luzG;
+  L.globalCompositeOperation = 'source-over'; L.globalAlpha = 1;
+  L.clearRect(0, 0, J.W, J.H); L.fillStyle = 'rgba(8,12,34,' + (0.78 * o).toFixed(3) + ')'; L.fillRect(0, 0, J.W, J.H);
+  L.globalCompositeOperation = 'destination-out';
+  for (const F of farolas()) if (enVista(F.x, F.y, 50)) agujero(L, sx(F.x), sy(F.y), 46 * z, 0.85, bajo);
+  const j = S.jugadores[0];
+  for (const c of S.coches) if (!c.chatarra && enVista(c.x, c.y, 90) && (c.conductor !== null || c.policia)) faros(L, c, z, c.conductor === j.id ? 1 : 0.7, bajo);
+  if (j.coche === null && !j.muerto) agujero(L, sx(j.x), sy(j.y), 22 * z, 0.5, bajo);
+  L.globalCompositeOperation = 'source-over';
+  g.drawImage(J.luz, 0, 0);
+  // el brillo cálido de las farolas
+  if (!bajo) { g.globalAlpha = 0.16 * o; g.fillStyle = '#ffd27a'; for (const F of farolas()) if (enVista(F.x, F.y, 50)) { g.beginPath(); g.arc(sx(F.x), sy(F.y), 30 * z, 0, 7); g.fill(); } g.globalAlpha = 1; }
+}
+function agujero(L, X, Y, R, fuerza, bajo) {
+  if (bajo) { L.fillStyle = 'rgba(0,0,0,' + (fuerza * 0.7).toFixed(2) + ')'; L.beginPath(); L.arc(X, Y, R * 0.8, 0, 7); L.fill(); return; }
+  const gr = L.createRadialGradient(X, Y, 1, X, Y, R); gr.addColorStop(0, 'rgba(0,0,0,' + fuerza + ')'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  L.fillStyle = gr; L.fillRect(X - R, Y - R, 2 * R, 2 * R);
+}
+function faros(L, c, z, k, bajo) {
+  const D = COCHES[c.tipo], a = c.ang, cs = Math.cos(a), sn = Math.sin(a);
+  const X = sx(c.x + cs * (D.l / 2 - 1)), Y = sy(c.y + sn * (D.l / 2 - 1)), len = 72 * z * k, ancho = 0.4;
+  L.save(); L.beginPath(); L.moveTo(X, Y); L.lineTo(X + Math.cos(a - ancho) * len, Y + Math.sin(a - ancho) * len); L.lineTo(X + Math.cos(a + ancho) * len, Y + Math.sin(a + ancho) * len); L.closePath(); L.clip();
+  agujero(L, X, Y, len, 0.9, bajo);
+  L.restore();
+}
+
+/* ---------- la nieve: copos en pantalla y un velo frío sobre el barrio ---------- */
+function pintaNieve(g) {
+  const n = AJUSTES.detalle === 'bajo' ? 30 : 80;
+  if (!J.copos || J.copos.length !== n) J.copos = Array.from({ length: n }, () => ({ x: Math.random() * J.W, y: Math.random() * J.H, v: 0.4 + Math.random() * 0.7, f: Math.random() * 6.28, g: Math.random() < 0.3 ? 2 : 1 }));
+  g.fillStyle = 'rgba(235,242,255,0.85)';
+  for (const c of J.copos) {
+    c.y += c.v; c.f += 0.03; c.x += Math.sin(c.f) * 0.3 - 0.15;
+    if (c.y > J.H) { c.y = -2; c.x = Math.random() * J.W; } if (c.x < 0) c.x = J.W;
+    g.fillRect(Math.round(c.x), Math.round(c.y), c.g, c.g);
+  }
 }

@@ -19,10 +19,10 @@ function latido(ms, tono) {
 
 /* ---------- lo que se ve ---------- */
 function confeti(n) {
-  const S = $('#scr-cofre'), E = ['⭐', '🪙', '💎', '✨', '🎉'];
+  const S = $('#scr-cofre'), E = ['estrella', 'moneda', 'gema', 'chispa', 'confeti'];
   for (let i = 0; i < n; i++) {
-    const s = document.createElement('span'); s.className = 'confeti'; s.textContent = E[i % E.length];
-    s.style.left = rand(0, 100) + '%'; s.style.fontSize = rand(20, 44) + 'px'; s.style.animationDuration = rand(1.8, 3.6) + 's'; s.style.animationDelay = rand(0, 1.2) + 's';
+    const s = document.createElement('span'); s.className = 'confeti'; s.appendChild(ICONO.elemento(E[i % E.length]));
+    s.style.left = rand(0, 100) + '%'; s.style.width = rand(20, 44) + 'px'; s.style.animationDuration = rand(1.8, 3.6) + 's'; s.style.animationDelay = rand(0, 1.2) + 's';
     S.appendChild(s); setTimeout(() => s.remove(), 5500);
   }
 }

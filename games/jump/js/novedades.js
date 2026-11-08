@@ -2,6 +2,7 @@
 // lo lee para su tarjeta de la Biblioteca; el juego no lo carga.
 'use strict';
 const NEWS = [
+  { v: '0.3.26', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido."] },
   { v: '0.3.25', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come."] },
   { v: '0.3.24', real: ["<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas."], joke: ["Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público."] },
   { v: '0.3.23', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos."], joke: ["Phony quería saltarse la pantalla de inicio. Microblizz le ha recordado que el logo también ficha."] },

@@ -64,6 +64,7 @@ PT.creaCasos = ({ reglas, catalogo, almacen, reloj, retos }) => {
     },
 
     cuida: tipo => accion('cuida', partida.cuida(tipo)),
+    puedeCuidar: tipo => partida.puedeCuidar(tipo),   // solo mira: no guarda ni avisa a los logros
     juega: id => conGuardado(partida.juega(id)),
     dormirODespertar: () => accion('dormirODespertar', partida.dormirODespertar(reloj.ahora(), minutoDelDia)),
     contraoferta: () => accion('contraoferta', partida.contraoferta()),

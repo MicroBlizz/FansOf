@@ -1,6 +1,6 @@
 // Fans Of Pets · AJUSTES: el nombre del juego para core y TODAS las cifras del prototipo (huevo, bebé, necesidades, sueño, horario de vida,
 // modos de ritmo, tope de ausencia y efecto de cada cuidado). Se carga antes de lo común. Calibrar Pets es tocar solo este archivo.
-// Prototipo tras el modo dev (NUCLEO.desarrollo): de la entrevista al ascenso a jefe. Diseño: docs/pets/PLAN.md y docs/pets/diseno.md.
+// Prototipo (en «Próximamente» fuera de la alfa y el modo dev): de la entrevista al ascenso a jefe. Diseño: docs/pets/PLAN.md y docs/pets/diseno.md.
 'use strict';
 const AJUSTES = {
   // sin `id` a propósito: así la cuenta de core queda apagada y la partida del prototipo vive solo en este navegador.
@@ -109,4 +109,18 @@ const PETS = {
   // y por debajo de qué hambre o diversión pide con ojos de cachorrito
   // y cuánto dura, a qué ritmo mastica al comer y con cuánto sueño (0-100) empieza a bostezar
   animacion: { parpadeoCada: [2.5, 5.5], parpadeoDura: 0.13, bostezoCada: [6, 12], bostezoDura: 1.3, mascaCada: 0.22, bostezaConSueno: 35, pideDesde: 30 },
+  // los minijuegos de cuidado (docs/pets/cuidados-minijuegos.md). comida: bocados de una ración. ducha: las zonas del cuerpo (con sus puntos y su radio), la fracción de ellas que
+  // tiene que quedar cubierta de espuma para pasar a aclarar, la espuma que ya cuenta como limpio, los píxeles que se frotan para llenar una zona
+  // y los segundos de agua que quitan toda su espuma. Los radios y la boca son del encuadre del muñeco, en fracciones del lado
+  // las criaturas que ya tienen su muñeco 3D (img/criaturas/<criatura>/<edad>/muneco.glb): las demás se pintan con su dibujo y no piden el archivo
+  munecos3d: ['animales:bunny', 'animales:huron'],
+  cuidado: {
+    cierraTras: 1.6,   // segundos que se queda el muñeco contento tras acabar, antes de volver a la casa
+    comida: { bocados: 4, boca: { hueso: 'cabeza', dx: 0, dy: -0.046, radio: 0.11 }, bol: { x: 140, y: 735, radio: 70 }, cuchara: { x: 310, y: 735 } },
+    ducha: { cubierta: 0.8, limpia: 0.05, frotar: 380, aclarar: 1.2,
+      // cada zona: sus puntos [hueso, dx, dy] (el hueso es una articulación: el desplazamiento, en fracciones del lado, lleva al centro de la parte) y su radio
+      zonas: { cabeza: { puntos: [['cabeza', 0, -0.23]], radio: 0.3 }, torso: { puntos: [['cuerpo', 0, -0.06]], radio: 0.12 },
+        brazos: { puntos: [['brazo-1', -0.02, 0], ['brazo1', 0.02, 0]], radio: 0.08 }, piernas: { puntos: [['pierna-1', -0.04, 0], ['pierna1', 0.04, 0]], radio: 0.08 },
+        cola: { puntos: [['cola', -0.22, -0.1]], radio: 0.1 } } },
+  },
 };

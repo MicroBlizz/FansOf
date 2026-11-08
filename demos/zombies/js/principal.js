@@ -66,7 +66,7 @@ const aparicionDistrito = (azar) => libreAlcanzable(MAPA.x0 + 6 + azar() * (MAPA
 function sitiosRegistrables(e) { return JUEGO.sitios.concat(TORRE.sitios, sitiosTrozos(), sitiosRefugio(e), sitiosCoches(e), e.cuerpos); }
 // la puerta o ventana que tienes al lado (para abrir con F o clavar tablas con B)
 function huecoDelJugador(e) { const J = e.jugador; return huecoCercaDe(J.x, J.z, 1.6); }
-const SITIOS_SIEMPRE = ['fuego', 'cocina', 'escalera', 'torre', 'despensa', 'superviviente'];   // se vuelven a abrir aunque estén vacíos (cocinar, beber, subir)
+const SITIOS_SIEMPRE = ['fuego', 'cocina', 'escalera', 'torre', 'despensa', 'superviviente', 'maletero', 'obra'];   // el maletero y lo que construyes, también vacíos   // se vuelven a abrir aunque estén vacíos (cocinar, beber, subir)
 const esPaso = (s) => s && (s.tipo === 'escalera' || s.tipo === 'torre');
 function sitioCerca(e) {
   const J = e.jugador; let mejor = null, dMin = 1.9;
@@ -135,7 +135,7 @@ function guardaSiToca(dt) { if ((JUEGO.tGuardar -= dt) > 0) return; JUEGO.tGuard
 function guardaAhora() { if (JUEGO.e && !JUEGO.e.muerto) guardaMundo(JUEGO.e); }
 addEventListener('pagehide', guardaAhora);
 document.addEventListener('visibilitychange', () => { if (document.hidden) guardaAhora(); });
-function terminaPartida() { descargaTrozos(null); limpiaRescates(); limpiaCoches(); TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
+function terminaPartida() { ENTRADA.abajo.clear(); descargaTrozos(null); limpiaRescates(); limpiaCoches(); TUTO.activo = false; cierraMochila(); cierraMapa(); limpiaVista(); tejadosFuera(); JUEGO.e = null; el('zb-capa').innerHTML = ''; }
 
 function fotograma(ms) {
   requestAnimationFrame(fotograma);

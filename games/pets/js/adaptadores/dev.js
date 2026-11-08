@@ -61,7 +61,9 @@ PT.dev = (() => {
     // el MANIQUÍ 3D con el dibujo proyectado (maniqui3d.js): de momento CrazyBunny y el hurón; las demás siguen con su dibujo
     ['3d:quieto', 'MANIQUÍ 3D: quieta'], ['3d:saludo', 'MANIQUÍ 3D: saludo'], ['3d:mirar', 'MANIQUÍ 3D: mirar'], ['3d:comer', 'MANIQUÍ 3D: comer'], ['3d:dormir', 'MANIQUÍ 3D: dormir en la cesta'],
     // el MUÑECO 3D completo con su pintura (muneco3d.js, fase f16): el hurón en sus cuatro edades; sin sus objetos (bol, cesta) todavía
-    ['m3d:quieto', 'MUÑECO 3D: quieta'], ['m3d:saludo', 'MUÑECO 3D: saludo'], ['m3d:mirar', 'MUÑECO 3D: mirar']];
+    ['m3d:quieto', 'MUÑECO 3D: quieta'], ['m3d:saludo', 'MUÑECO 3D: saludo'], ['m3d:mirar', 'MUÑECO 3D: mirar'],
+    // los minijuegos de cuidado con el muñeco 3D (cuidado-juego.js): el jugador da de comer con la cuchara y ducha a la mascota; no tocan la partida
+    ['cuida:comer', 'CUIDADO: dar de comer con la cuchara'], ['cuida:banar', 'CUIDADO: ducha (frotar y aclarar)']];
   const CUIDADOS = ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano'];
   function abreEscena() {
     ui.escena = { id: PT.arte.ids()[0], etapa: 'bebe', anim: 'base' };
@@ -71,6 +73,7 @@ PT.dev = (() => {
   }
   function cierraEscena() {
     ui.escena = null;
+    PT.cuidadoJuego.cierra();
     PT.pantallas.pinta();
   }
   // cada lista es un desplegable (criatura, etapa, animación), los tres en una fila junto a SALIR: así la caja queda baja y se ve la
@@ -90,6 +93,15 @@ PT.dev = (() => {
     }
     document.getElementById('pt-escena-salir').onclick = cierraEscena;
   }
+  // los minijuegos de cuidado en la escena: con un «casos» de mentira, así que acabar un juego NO toca la partida; a los 2,5 s empieza otro
+  const SIN_PARTIDA = { puedeCuidar: () => PT.ok(true), cuida: tipo => PT.ok(tipo) }, REPITE = 2.5;
+  function cuidaEnEscena(ctx, s, etapa, x, y, lado, t) {
+    const juego = s.anim.startsWith('cuida:') ? s.anim.slice(6) : '';
+    const cj = PT.cuidadoJuego;
+    if (!juego) { if (cj.activo) cj.cierra(); return false; }
+    if (!cj.activo || cj.juego !== juego || (cj.terminado >= 0 && t - cj.terminado > REPITE)) cj.empieza(juego, SIN_PARTIDA);
+    return cj.pinta(ctx, s.id, etapa, x, y, lado, t);
+  }
   // el dibujo de la escena: la criatura elegida con su animación; el blob si aún no hay dibujo
   function escena(ctx, t) {
     const s = ui.escena, [etapa, rama] = s.etapa.split(':'), r = PETS.tamano[etapa], dura = PETS.poseSegundos + 0.8;
@@ -99,6 +111,7 @@ PT.dev = (() => {
     // el maniquí 3D (de momento solo con el dibujo de niña, sea cual sea la etapa): donde lo pondría arte.js, con los pies en el suelo
     const rn = PETS.tamano.nino, lado = rn * PETS.arte.lienzo;
     if (s.anim.startsWith('3d:') && PT.maniqui3d.pinta(ctx, s.id, 270, 440 + rn - lado * (PETS.arte.pies - 0.5), lado, t, s.anim.slice(3))) return;
+    if (cuidaEnEscena(ctx, s, etapa, 270, 440 + rn - lado * (PETS.arte.pies - 0.5), lado, t)) return;
     if (s.anim.startsWith('m3d:') && PT.muneco3d.pinta(ctx, s.id, 270, 440 + rn - lado * (PETS.arte.pies - 0.5), lado, t, s.anim.slice(4), etapa)) return;
     if (s.anim.startsWith('mun:') && PT.munecos.pinta(ctx, s.id, 270, 440 + r, r * PETS.arte.lienzo, t, s.anim.slice(4))) return;
     if (s.anim.startsWith('fig:') && PT.figuras.pinta(ctx, s.id, etapa, 270, 440 + r, r * PETS.arte.lienzo, t, s.anim.slice(4), e)) return;

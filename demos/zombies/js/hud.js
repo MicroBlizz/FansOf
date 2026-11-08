@@ -20,6 +20,9 @@ function pintaNecesidades(AJ, J) {
   if (J.agacha && !J.duerme) estados.push('<span>' + esc(tr('AGACHADO')) + '</span>');
   if (J.duerme) estados.push('<span>' + esc(tr('DURMIENDO')) + '</span>');
   if (J.infeccion > 0) estados.push('<span class="malo">' + esc(tr('INFECTADO')) + ' ' + Math.ceil(J.infeccion) + '%</span>');
+  if (ZOM.sangra(ZOM.AJ, J) > 0) estados.push('<span class="malo">' + esc(tr('SANGRAS (V)')) + '</span>');   // las heridas (js/heridas.js)
+  if ((J.heridas || []).some((h) => h.tipo === 'fractura' && !h.tablilla)) estados.push('<span class="malo">' + esc(tr('HUESO ROTO')) + '</span>');
+  if (ZOM.dolor(ZOM.AJ, J) > 30) estados.push('<span>' + esc(tr('DOLOR')) + '</span>');
   el('h-nec').innerHTML = barraHud('VIDA', J.vida / J.max * 100, 'var(--rk-bien)') + barraHud('AGUANTE', J.aguante, J.agotado ? 'var(--rk-mal)' : '#e8e0a0', J.agotado ? 'Agotado: no corres y pegas flojo' : '') +
     barraHud('HAMBRE', J.hambre, '#ffb03a', J.hambre < bajo ? 'Te suenan las tripas (pulsa E)' : '') + barraHud('SED', J.sed, '#58c8ff', J.sed < bajo ? 'Tienes sed (pulsa Q)' : '') +
     barraHud('SUEÑO', J.sueno, '#c99bff', J.sueno < bajo ? 'Te cuesta seguir despierto (pulsa Z)' : '') + '<div class="estados">' + estados.join('') + '</div>';
@@ -76,6 +79,7 @@ function pintaAvisos(dt) {
 function textoSitio(e, s) {
   if (s.tipo === 'torre') return tr('F  ENTRAR EN LA TORRE');
   if (s.coche) return textoCoche(e, s);
+  if (s.tipo === 'maletero') return tr(e.registrados[s.id] ? 'F  ABRIR EL MALETERO' : 'F  REGISTRAR EL MALETERO');
   if (s.tipo === 'superviviente') return trf('F  RESCATAR A %1', ZOM.AJ.animales[s.animal].n);
   if (s.tipo === 'escalera') return s.a === 0 ? tr('F  SALIR A LA CALLE') : s.a === ZOM.AZOTEA(ZOM.AJ) ? tr('F  SUBIR A LA AZOTEA') : trf(s.desdeArriba ? 'F  BAJAR A LA PLANTA %1' : 'F  SUBIR A LA PLANTA %1', s.a);
   return tr(e.registrados[s.id] ? 'F  ABRIR' : 'F  REGISTRAR');

@@ -126,3 +126,13 @@
 #cof-bot canvas { width: 130px; height: 130px; display: block; margin: 0 auto; }
 #cof-bot div { background: #fff; color: #1b0f2a; padding: 4px 10px; border-radius: 12px; border: 3px solid var(--outline); font-size: 15px; }
 @keyframes botEntra { from { transform: translateX(200px); } to { transform: none; } }
+
+/* iconos pintados (js/iconos.js): sustituyen a los emojis */
+.ico-txt { width: 1.25em; height: 1.25em; vertical-align: -0.28em; object-fit: contain; }
+.op-ic .ico { width: 64px; height: 64px; object-fit: contain; }
+.confeti img { width: 100%; height: auto; display: block; }
+/* mecánicas nuevas: carta dorada de evolución, pista de pareja y botón de cambiar cartas */
+.op.evo { background: linear-gradient(110deg, #b8860b, #ffcb3d 55%, var(--tray)); box-shadow: 0 5px 0 var(--outline), 0 0 22px rgba(255,203,61,.7); }
+.op.evo .op-nv { color: #fff6ea; }
+.op-pista { margin-top: 4px; font-size: 13px; font-weight: 800; color: #ffcb3d; }
+#niv-cambiar { margin-top: 4px; }

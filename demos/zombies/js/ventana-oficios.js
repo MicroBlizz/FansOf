@@ -2,7 +2,7 @@
 // abierto: el grifo de la cocina (beber y llenar botella), desmontar el mueble y las recetas «al fuego» si estás en un bidón o en una
 // cocina con luz. Debajo de la mochila: lo que se fabrica en cualquier sitio (vendas con tela).
 'use strict';
-const NOMBRE_RECETA = { venda: 'VENDA (2 TELAS)', gorro: 'GORRO DE LANA (2 TELAS)', filete: 'FILETE (CARNE)', guiso: 'GUISO (JUDÍAS Y AGUA)' };
+const NOMBRE_RECETA = { venda: 'VENDA (2 TELAS)', gorro: 'GORRO DE LANA (2 TELAS)', tablilla: 'TABLILLA (2 TABLAS, 1 TELA)', filete: 'FILETE (CARNE)', guiso: 'GUISO (JUDÍAS Y AGUA)' };
 const boton = (id, txt, ok, extra) => '<button class="vm-accion' + (ok ? '' : ' no') + '" data-accion="' + id + '"' + (extra || '') + '>' + esc(tr(txt)) + '</button>';
 function htmlRecetas(e, donde) {
   const AJ = ZOM.AJ, J = e.jugador;

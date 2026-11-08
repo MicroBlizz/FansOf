@@ -220,16 +220,23 @@ PT.Mascota = class Mascota {
   // un cuidado (comer, beber, bañar, el aseo, una chuchería). Resultado: ok, o 'durmiendo', 'llena' (de eso ya no quiere más),
   // 'no-desbloqueado' (aún no toca en esta etapa), 'empacho' (no quiere comida de verdad) o 'muchas-chuches' (hoy ya no más)
   cuida(tipo) {
+    const antes = this.puedeCuidar(tipo);
+    if (!antes.ok) return antes.error === 'muchas-chuches' ? this.#empacha() : antes;
+    const efecto = this.#r.cuidados[tipo];
+    for (const n in efecto) this.#nec = this.#nec.con(n, efecto[n]);
+    this.#apuntaElCuidado(tipo);
+    return PT.ok(tipo);
+  }
+  // ¿se le puede hacer ese cuidado ahora? Mismas reglas que cuida, sin aplicar nada (los minijuegos de cuidado preguntan antes de empezar).
+  // Resultado: ok, o el error de cuida (con 'muchas-chuches' sin empachar todavía: eso lo hace cuida)
+  puedeCuidar(tipo) {
     if (this.#dormida) return PT.error('durmiendo');
     const efecto = this.#r.cuidados[tipo];
     if (!efecto || tipo === 'jugar') return PT.error('cuidado-desconocido', { tipo });
     if (!this.cuidados.includes(tipo)) return PT.error('no-desbloqueado', { tipo });
-    const k = Object.keys(efecto)[0];
-    if (this.#nec.de(k) >= this.#r.llena) return PT.error('llena', { tipo });
+    if (this.#nec.de(Object.keys(efecto)[0]) >= this.#r.llena) return PT.error('llena', { tipo });
     if (tipo === 'comer' && this.empachada) return PT.error('empacho');
-    if (tipo === 'chuche' && this.#hoy.chuches >= this.#r.chuches.topeDia) return this.#empacha();
-    for (const n in efecto) this.#nec = this.#nec.con(n, efecto[n]);
-    this.#apuntaElCuidado(tipo);
+    if (tipo === 'chuche' && this.#hoy.chuches >= this.#r.chuches.topeDia) return PT.error('muchas-chuches');
     return PT.ok(tipo);
   }
   #empacha() {

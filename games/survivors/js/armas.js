@@ -7,7 +7,7 @@ function vArma(k) {
   const v = ARMAS[k].v(P.armas[k]), A = P.mods.arma[ARMAS[k].carta], area = 1 + P.mods.area + (A ? A.area : 0);
   if (A) { v.dano *= A.mul; if (v.cd) v.cd *= Math.max(0.5, 1 - A.cd); }
   if (v.r) v.r *= area;
-  return v;
+  return MEC.cifras(k, v);
 }
 function armasDisparan(dt) {
   const R = multRecarga();

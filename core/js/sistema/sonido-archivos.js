@@ -2,7 +2,8 @@
 // (core/js/sistema/sonido.js), así que respetan el volumen y el silencio del juego. Un juego los registra al cargar y, al tocarlos, si el
 // archivo aún no ha llegado o no se pudo leer, toca() devuelve false y el juego hace sonar su versión de código: nunca se queda mudo.
 //   SONIDO_ARCHIVO.registra(nombre, url)   empieza a bajarlo y descifrarlo ya (sin esperar a que el jugador toque la pantalla)
-//   SONIDO_ARCHIVO.toca(nombre, { vol, vel, retraso })  →  true si ha sonado el archivo; false si no (suena el de repuesto)
+//   SONIDO_ARCHIVO.toca(nombre, { vol, vel, retraso, salida })  →  true si ha sonado el archivo; false si no (suena el de repuesto)
+//     salida: un nodo de audio propio en vez del altavoz común, para lo que suena desde un punto (con su distancia y su lado)
 //   SONIDO_ARCHIVO.estado(nombre)          'sin-registrar' | 'cargando' | 'listo' | 'falla'
 // SONIDO_ARCHIVO.crear({ descarga, descifra, contexto, salida, apagado }) hace uno con sus propias piezas (lo usan los tests).
 // El url lleva ?v= con la versión del juego: el service worker guarda los archivos, y así uno nuevo no se queda tapado por el viejo.
@@ -19,8 +20,8 @@ const SONIDO_ARCHIVO = (() => {
         .catch(e => { s.estado = 'falla'; s.motivo = String((e && e.message) || e); });
     }
     function estado(nombre) { const s = sonidos.get(nombre); return s ? s.estado : 'sin-registrar'; }
-    function toca(nombre, { vol = 1, vel = 1, retraso = 0 } = {}) {
-      const s = sonidos.get(nombre), ac = contexto(), out = salida();
+    function toca(nombre, { vol = 1, vel = 1, retraso = 0, salida: destino = null } = {}) {
+      const s = sonidos.get(nombre), ac = contexto(), out = destino || salida();
       if (!s || s.estado !== 'listo' || !ac || !out || apagado()) return false;
       try {
         const fuente = ac.createBufferSource(), g = ac.createGain();

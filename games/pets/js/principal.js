@@ -1,6 +1,6 @@
 // Fans Of Pets · PRINCIPAL: la composición. Crea los adaptadores (almacén, reloj, sonido), les pasa las reglas y el catálogo a los casos de
 // uso y arranca el lienzo, el bucle de cada fotograma (la escena de cada fase) y el reloj que simula cada pocos segundos.
-// Es el único archivo que conoce todas las piezas. Pets es un prototipo tras el modo dev: fuera de él solo se ve un aviso.
+// Es el único archivo que conoce todas las piezas. Pets es un prototipo: se juega solo desde la alfa o con ?dev=1 mientras el juego esté en «Próximamente» (core/js/proximamente.js).
 'use strict';
 PT.almacen = PT.creaAlmacenLocal(SAVE_KEY, localStorage);
 PT.reloj = PT.creaReloj(PT.almacen);
@@ -40,6 +40,16 @@ PT.lienzo = (() => {
     const c = p.criatura, falta = (p.eclosionaEn - PT.casos.ahora()) / (PETS.huevoHoras * 60 * PT_MINUTO);
     PT.pintor.huevo(ctx, 270, 430, 110, PT.criaturas.color(c.fac), t, { wob: PT.ui.wob + (falta < 0.1 ? 0.25 : 0), bufanda: PT.ui.bufanda, grieta: falta < 0.25 ? 1 - falta * 4 : 0 });
   }
+  // el muñeco 3D (PT.muneco3d): de pie o dormida; el jefe es un adulto. false mientras carga o si la criatura no tiene muñeco. Con un minijuego de cuidado
+  // en marcha (PT.cuidadoJuego) lo pinta él, con su pose y sus objetos; un segundo y medio después de acabar, la partida lo da por cerrado
+  function muneco3d(ctx, c, etapa, r, t, e) {
+    const lado = r * 3.1, y = 470 - lado * 0.44, edad = PT.muneco3d.edad(etapa), cj = PT.cuidadoJuego;
+    if (cj.activo && cj.pinta(ctx, c.id, edad, 270, y, lado, t)) {
+      if (cj.terminado >= 0 && t - cj.terminado > PETS.cuidado.cierraTras) PT.botones.acabaCuidado();
+      return true;
+    }
+    return PT.muneco3d.pinta(ctx, c.id, 270, y, lado, t, e.dormida ? 'dormir' : 'quieto', edad);
+  }
   // la mascota en su etapa; en el ascenso, su jefa; en el final, triste
   function escenaMascota(ctx, p, t) {
     const c = p.criatura, m = p.mascota, jefa = p.fase === 'ascenso', etapa = jefa ? 'jefe' : m.etapa;
@@ -47,12 +57,12 @@ PT.lienzo = (() => {
     const e = { dormida: !jefa && m.dormida, triste: !jefa && (m.triste || p.fase === 'final'), anim: ui.anim, at: ui.at, rama: m.rama,
       sonolienta: !jefa && m.necesidades.de('sueno') < PETS.animacion.bostezaConSueno,
       pidiendo: !jefa && !m.dormida && ['hambre', 'diversion'].some(k => m.necesidades.de(k) < PETS.animacion.pideDesde) };
+    if (muneco3d(ctx, c, etapa, r, t, e)) return;   // el muñeco 3D de la criatura, si lo tiene (f16, docs/pets/f16-muneco-completo.md); si no, su dibujo de siempre
     if (!PT.arte.tiene(c.id, etapa) || !PT.arte.criatura(ctx, c.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(c.fac), t, e);
   }
   function escena(ctx, p, t) {
     const ui = PT.ui;
-    if (!NUCLEO.desarrollo) PT.pintor.huevo(ctx, 270, 380, 90, '#ff9a3c', t, { bufanda: true });
-    else if (ui.escena) PT.dev.escena(ctx, t);   // la escena de animaciones del panel DEV
+    if (ui.escena) PT.dev.escena(ctx, t);   // la escena de animaciones del panel DEV
     else if (p.fase === 'entrevista' || p.fase === 'ritmo' || (ui.volverA === '' && p.fase === 'horario')) escenaLola(ctx, t, true);
     else if (p.fase === 'huevos') escenaHuevos(ctx, p, t);
     else if (p.fase === 'huevo' || ui.volverA === 'huevo') escenaHuevo(ctx, p, t);
@@ -77,10 +87,9 @@ PT.arranca = () => {
   const elige = PT.$('#pt-elige');
   elige.innerHTML = PT.HUEVO_X.map((x, i) => `<button type="button" style="left:${x - 70}px;top:${PT.HUEVO_Y - 80}px" aria-label="${tr('Huevo {n}', { n: i + 1 })}" aria-pressed="false"></button>`).join('');
   elige.querySelectorAll('button').forEach((b, i) => { b.onclick = () => PT.botones.eligeHuevo(i); });
-  if (NUCLEO.desarrollo) PT.pantallas.trasSimular(PT.casos.simula());
+  PT.pantallas.trasSimular(PT.casos.simula());
   PT.pantallas.pinta();
   const tic = () => {
-    if (!NUCLEO.desarrollo) return;
     const fase = PT.casos.partida.fase, pasa = PT.casos.simula();
     PT.pantallas.trasSimular(pasa);
     if (fase !== PT.casos.partida.fase) PT.pantallas.pinta();

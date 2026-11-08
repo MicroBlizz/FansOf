@@ -1,6 +1,7 @@
 // Fans of Boom · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.4.11', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido."] },
   { v: '0.4.10', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come."] },
   { v: '0.4.9', real: ["<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas."], joke: ["Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público."] },
   { v: '0.4.8', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de inicio con el logo del estudio sale siempre al abrir el juego, y arreglos en los sistemas internos."], joke: ["Microblizz ha puesto su logo en la puerta de entrada. Phony ha puesto un felpudo con el suyo."] },

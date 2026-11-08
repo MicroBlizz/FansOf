@@ -43,7 +43,7 @@
 .pt-fila > .pt-btn { flex: 1; }
 .pt-escena { gap: 6px; flex-wrap: nowrap; } .pt-escena > .pt-btn.pt-mini { flex: none; font-size: 13px; padding: 5px 8px; border-width: 3px; border-radius: 10px; }
 .pt-escena-sel { flex: 1; min-width: 0; font: 800 14px var(--font-ui); padding: 5px 4px; border-radius: 10px; border: 3px solid var(--outline); background: #fff6ea; color: var(--outline); }
-#pt-caja:has(.pt-escena) { min-height: 0; padding: 10px 12px; gap: 6px; } .pt-escena-nota { font-size: 12px; }
+#pt-caja:has(.pt-escena), #pt-caja:has(.pt-cuidado) { min-height: 0; padding: 10px 12px; gap: 6px; } .pt-escena-nota { font-size: 12px; }
 .pt-respuestas { display: flex; flex-direction: column; gap: 8px; }
 
 .pt-btn { font-family: var(--font-ui); font-weight: 800; font-size: 20px; padding: 10px 14px; border-radius: 16px; border: 4px solid var(--outline); cursor: pointer;

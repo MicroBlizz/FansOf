@@ -56,14 +56,14 @@ const ARMAS = {
 
 /* ---------- las mejoras: habilidades del gashapón ---------- */
 const PASIVAS = {
-  cafeina:    { nombre: 'Cafeína', icono: '☕', desc: '+8 % de velocidad al andar.' },
-  piel:       { nombre: 'Piel dura', icono: '🛡️', desc: '+20 de vida máxima (y te cura 20).' },
-  punos:      { nombre: 'Puños de hierro', icono: '👊', desc: '+10 % de daño con todas las armas.' },
-  reflejos:   { nombre: 'Reflejos', icono: '⚡', desc: 'Las armas se recargan un 7 % antes.' },
-  iman:       { nombre: 'Imán de CAOS', icono: '🧲', desc: 'Recoges el CAOS desde un 25 % más lejos.' },
-  vampirismo: { nombre: 'Vampirismo', icono: '🦇', desc: 'Cada enemigo que cae te cura un poco.' },
-  hitbox:     { nombre: 'Hitbox dudosa', icono: '👻', desc: 'Un 6 % de los golpes no te dan. Nadie sabe por qué.' },
-  diploma:    { nombre: 'Becario del Mes', icono: '📜', desc: '+10 % de CAOS de cada cristal.' },
+  cafeina:    { nombre: 'Cafeína', icono: 'cafe', desc: '+8 % de velocidad al andar.' },
+  piel:       { nombre: 'Piel dura', icono: 'piel', desc: '+20 de vida máxima (y te cura 20).' },
+  punos:      { nombre: 'Puños de hierro', icono: 'puno', desc: '+10 % de daño con todas las armas.' },
+  reflejos:   { nombre: 'Reflejos', icono: 'reflejos', desc: 'Las armas se recargan un 7 % antes.' },
+  iman:       { nombre: 'Imán de CAOS', icono: 'iman', desc: 'Recoges el CAOS desde un 25 % más lejos.' },
+  vampirismo: { nombre: 'Vampirismo', icono: 'murcielago', desc: 'Cada enemigo que cae te cura un poco.' },
+  hitbox:     { nombre: 'Hitbox dudosa', icono: 'fantasma', desc: 'Un 6 % de los golpes no te dan. Nadie sabe por qué.' },
+  diploma:    { nombre: 'Becario del Mes', icono: 'diploma', desc: '+10 % de CAOS de cada cristal.' },
 };
 // lo que hace cada mejora a su nivel n (0 = no la tienes)
 const EFECTO = {
@@ -78,8 +78,8 @@ const EFECTO = {
 };
 // si ya lo tienes todo al máximo
 const RELLENO = [
-  { id: 'cafe', nombre: 'Café de máquina', icono: '🥤', desc: 'Te cura 40 de vida. Sabe a despacho.' },
-  { id: 'bonus', nombre: 'Bonus del CEO', icono: '💰', desc: '+500 puntos. El CEO se ha llevado el resto.' },
+  { id: 'cafe', nombre: 'Café de máquina', icono: 'refresco', desc: 'Te cura 40 de vida. Sabe a despacho.' },
+  { id: 'bonus', nombre: 'Bonus del CEO', icono: 'dinero', desc: '+500 puntos. El CEO se ha llevado el resto.' },
 ];
 
 /* ---------- los enemigos: los bots de Microblizz y de Phony ----------

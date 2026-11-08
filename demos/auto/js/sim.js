@@ -13,7 +13,7 @@ function nuevoEstado(guardado) {
   const az = Azar(Date.now() & 0xffff);
   S = {
     tick: 0, semilla: az.semilla(), jugadores: [], coches: [], peatones: [], balas: [], objetos: [], fx: [], telefonos: [], mensaje: null, rotulo: null,
-    mision: null, hechas: guardado ? guardado.hechas.slice() : [], sigId: 1, pausa: false,
+    mision: null, hechas: guardado ? guardado.hechas.slice() : [], sigId: 1, pausa: false, marcas: [], hora: 19.5,
   };
   S.az = Azar(S.semilla);
   const j = {
@@ -37,12 +37,12 @@ function nuevoEstado(guardado) {
 
 function nuevoCoche(tipo, x, y, ang, conductor, extra = {}) {
   const D = COCHES[tipo];
-  const c = Object.assign({ id: S.sigId++, tipo, color: D.policia ? '#f4f4f4' : D.taxi ? '#f0c020' : D.helados ? '#f7d9e3' : tipo === 'granizo' ? '#1d3f8f' : S.az.elige(COLORES_COCHE), x, y, ang, vx: 0, vy: 0, vida: D.vida, conductor, ia: conductor === 'ia' ? { objetivo: null, espera: 0 } : null, chatarra: false, fuego: 0, humo: 0, policia: !!D.policia, bocina: 0, derrapa: 0 }, extra);
+  const c = Object.assign({ id: S.sigId++, tipo, color: D.color || D.policia ? D.color || '#f4f4f4' : D.taxi ? '#f0c020' : D.helados ? '#f7d9e3' : tipo === 'granizo' ? '#1d3f8f' : S.az.elige(COLORES_COCHE), x, y, ang, vx: 0, vy: 0, vida: D.vida, conductor, ia: conductor === 'ia' ? nuevaIA(tipo) : null, chatarra: false, fuego: 0, humo: 0, policia: !!D.policia, bocina: 0, derrapa: 0 }, extra);
   S.coches.push(c);
   return c;
 }
 function nuevoPeaton(x, y, banda = null, extra = {}) {
-  const p = Object.assign({ id: S.sigId++, x, y, ang: S.az() * 6.283, estilo: estiloPeaton(S.az, banda), banda, estado: 'pasea', vel: 0.45, cuadro: 0, paso: 0, miedo: 0, huyeDe: null, disparoT: 0, vida: 10, muerto: 0, dir: null, espera: 0 }, extra);
+  const p = Object.assign({ id: S.sigId++, x, y, ang: S.az() * 6.283, estilo: estiloPeaton(S.az, banda), banda, estado: 'pasea', vel: 0.45, cuadro: 0, paso: 0, miedo: 0, huyeDe: null, disparoT: 0, vida: 10, muerto: 0, dir: [1, 0], meta: null, destino: null, espera: 0 }, extra);
   S.peatones.push(p);
   return p;
 }
@@ -86,7 +86,7 @@ function pasoJugador(j, o) {
   if (o.entrar) entrarSalir(j, coche);
   if (o.disparo && !coche && j.disparoT === 0) { dispara(j); j.disparoT = 14; }
   // el nivel de buscado: sube con el calor, baja cuando los Moderadores te pierden de vista
-  if (j.visto > 0) j.visto--; else j.calor = Math.max(0, j.calor - 0.03);
+  if (j.visto > 0) j.visto--; else j.calor = Math.max(0, j.calor - 0.05);
   const b = Math.min(5, Math.floor(j.calor / 40));
   if (b > j.buscado) { play('martillo'); if (b === 1) mensaje(tr('Los Moderadores te buscan.')); }
   j.buscado = b;
@@ -116,6 +116,7 @@ function cocheEn(x, y, j) { for (const c of S.coches) if (c.conductor !== j.id &
 function pasoConduce(j, c, o) {
   const D = COCHES[c.tipo];
   let acel = o.acel, giro = o.giro;
+  if (o.freno && acel <= 0 && Math.hypot(c.vx, c.vy) < 0.4) acel = -1;   // con el coche parado, el freno es marcha atrás
   if (o.palanca) {
     // mando del móvil: la palanca dice hacia dónde quieres ir y el coche gira solo hacia allí
     const m = Math.hypot(o.mx, o.my);
@@ -141,55 +142,76 @@ function pasoConduce(j, c, o) {
 function fisicaCoche(c, acel, giro, freno, jugador) {
   const D = COCHES[c.tipo], cs = Math.cos(c.ang), sn = Math.sin(c.ang);
   let vf = c.vx * cs + c.vy * sn, vl = -c.vx * sn + c.vy * cs;
-  if (acel > 0) vf += D.acel * acel * (jugador ? 1 : 0.8); else if (acel < 0) vf += (vf > 0.3 ? 0.12 : D.acel * 0.6) * acel;
-  vf *= 0.985;
+  if (acel > 0) vf += D.acel * acel * (jugador ? 1.15 : 0.8); else if (acel < 0) vf += (vf > 0.3 ? 0.12 : D.acel * 0.6) * acel;
+  vf *= 0.988;
   if (Math.abs(vf) < 0.02 && acel === 0) vf = 0;
-  const vmax = jugador ? D.vmax : D.vmax * 0.6;
+  const vmax = jugador ? D.vmax * 1.15 : D.vmax * 0.6;
   vf = acota(vf, -vmax * 0.45, vmax);
-  if (freno) { vf *= 0.96; vl *= 0.93; } else vl *= 0.72;
+  // el agarre: el jugador resbala mucho (derrapes largos, como en el vídeo); el tráfico va pegado al suelo
+  if (freno) { vf *= 0.965; vl *= 0.975; } else vl *= jugador ? 0.92 : 0.72;
   c.derrapa = Math.abs(vl);
-  // el giro depende de la velocidad (parado no gira)
+  // el giro con inercia: el morro tarda un poco en ir y en volver, que es lo que hace que el derrape se sienta
   const k = acota(vf / 1.5, -1, 1);
-  c.ang += giro * D.giro * k * (freno ? 1.4 : 1);
+  const quiere = giro * D.giro * k * (freno ? 1.5 : 1.25);
+  c.w = (c.w || 0) * (jugador ? 0.8 : 0.5) + quiere * (jugador ? 0.35 : 0.6);
+  c.ang += c.w;
   const cs2 = Math.cos(c.ang), sn2 = Math.sin(c.ang);
   c.vx = vf * cs2 - vl * sn2; c.vy = vf * sn2 + vl * cs2;
-  // mover y chocar con los edificios (se intenta deslizar; si no, rebota)
-  const x0 = c.x, y0 = c.y;
-  c.x += c.vx; c.y += c.vy;
-  if (cocheChoca(c)) {
-    c.x = x0 + c.vx; c.y = y0;
-    if (cocheChoca(c)) { c.x = x0; c.y = y0 + c.vy; if (cocheChoca(c)) { c.x = x0; c.y = y0; } }
-    const v = Math.hypot(c.vx, c.vy);
-    if (v > 0.8) { c.vida -= v * 4; if (jugador) { play('choque', Math.min(1, v / 3)); sacude(v * 1.5); } }
-    c.vx *= -0.3; c.vy *= -0.3;
-    if (c.ia) c.ia.espera = 20;
-  }
+  if (jugador && c.derrapa > 0.55 && Math.hypot(c.vx, c.vy) > 1) marcasYNieve(c, cs2, sn2);
+  mueveCoche(c, jugador);
   if (c.bocina > 0) c.bocina--;
 }
+// mover y chocar con los edificios (se intenta deslizar; si no, rebota)
+function mueveCoche(c, jugador) {
+  const x0 = c.x, y0 = c.y;
+  c.x += c.vx; c.y += c.vy;
+  if (!cocheChoca(c)) return;
+  c.x = x0 + c.vx; c.y = y0;
+  if (cocheChoca(c)) { c.x = x0; c.y = y0 + c.vy; if (cocheChoca(c)) { c.x = x0; c.y = y0; } }
+  const v = Math.hypot(c.vx, c.vy);
+  if (v > 0.8) { c.vida -= v * 4; if (jugador) { play('choque', Math.min(1, v / 3)); sacude(v * 1.5); } }
+  c.vx *= -0.3; c.vy *= -0.3; c.w = 0;
+}
+// las marcas de rueda en el asfalto y la nieve que salta al derrapar (las marcas se dibujan en dibujo.js, en una capa fija)
+function marcasYNieve(c, cs, sn) {
+  const D = COCHES[c.tipo], atras = -D.l / 2 + 3, lado = D.a / 2 - 1;
+  for (const s of [1, -1]) {
+    const x = c.x + atras * cs - lado * s * sn, y = c.y + atras * sn + lado * s * cs;
+    S.marcas.push({ x, y, f: Math.min(1, c.derrapa / 2) });
+    if (S.tick % 2 === 0) S.fx.push({ tipo: 'nieve', x, y, dx: -sn * s * S.az.entre(0.3, 1.2) - c.vx * 0.15, dy: cs * s * S.az.entre(0.3, 1.2) - c.vy * 0.15, t: 18 + S.az.entero(0, 10) });
+  }
+}
 function entrarSalir(j, coche) {
-  if (coche) {
-    // bajar: a un lado del coche, donde no haya pared
-    const D = COCHES[coche.tipo];
-    if (Math.hypot(coche.vx, coche.vy) > 1.8) return;
-    for (const lado of [1, -1]) {
-      const x = coche.x - Math.sin(coche.ang) * (D.a / 2 + 6) * lado, y = coche.y + Math.cos(coche.ang) * (D.a / 2 + 6) * lado;
-      if (!solidoPx(x, y)) { j.x = x; j.y = y; j.coche = null; coche.conductor = null; coche.vx *= 0.5; coche.vy *= 0.5; play('puerta'); return; }
-    }
-    return;
-  }
+  if (coche) { bajaDelCoche(j, coche); return; }
   // subir al coche más cercano (si lleva a alguien, lo echas)
-  let mejor = null, md = 26;
-  for (const c of S.coches) { if (c.chatarra) continue; const d = dist(j, c); if (d < md) { md = d; mejor = c; } }
+  const mejor = cocheMasCercano(j, 26);
   if (!mejor) return;
-  if (mejor.conductor === 'ia') {
-    // el conductor sale corriendo
-    const p = nuevoPeaton(mejor.x - Math.sin(mejor.ang) * 12, mejor.y + Math.cos(mejor.ang) * 12, mejor.policia ? 'moderador' : null);
-    if (mejor.policia) p.estado = 'ataca'; else { p.estado = 'huye'; p.miedo = 240; p.huyeDe = { x: j.x, y: j.y }; }
-    mejor.ia = null; suma(j, PUNTOS.robo, mejor.x, mejor.y - 10); calor(j, mejor.policia ? 60 : 15); play('golpe');
-  }
+  if (mejor.conductor === 'ia') echaConductor(j, mejor);
   if (mejor.policia) calor(j, 20);
-  mejor.conductor = j.id; mejor.ia = null; j.coche = mejor.id; play('arranque');
+  mejor.conductor = j.id; mejor.ia = null; mejor.sirena = false; j.coche = mejor.id; play('arranque');
   j.enTaller = 2;
+}
+// bajar: a un lado del coche, donde no haya pared (y no en marcha)
+function bajaDelCoche(j, coche) {
+  const D = COCHES[coche.tipo];
+  if (Math.hypot(coche.vx, coche.vy) > 1.8) return;
+  for (const lado of [1, -1]) {
+    const x = coche.x - Math.sin(coche.ang) * (D.a / 2 + 6) * lado, y = coche.y + Math.cos(coche.ang) * (D.a / 2 + 6) * lado;
+    if (!solidoPx(x, y)) { j.x = x; j.y = y; j.coche = null; coche.conductor = null; coche.vx *= 0.5; coche.vy *= 0.5; play('puerta'); return; }
+  }
+}
+function cocheMasCercano(j, max) {
+  let mejor = null, md = max;
+  for (const c of S.coches) { if (c.chatarra) continue; const d = dist(j, c); if (d < md) { md = d; mejor = c; } }
+  return mejor;
+}
+// el conductor sale: el Moderador te ataca, el agresivo te pega y los demás huyen
+function echaConductor(j, c) {
+  const p = nuevoPeaton(c.x - Math.sin(c.ang) * 12, c.y + Math.cos(c.ang) * 12, c.policia ? 'moderador' : null);
+  if (c.policia) p.estado = 'ataca';
+  else if (c.ia && c.ia.caracter === 'agresivo') { Object.assign(p, { estado: 'ataca', punos: true, cansa: S.tick + 600 }); dice(p, ['¡ESE ES MI COCHE!', '¡BAJA DE AHÍ!']); }
+  else { p.estado = 'huye'; p.miedo = 240; p.huyeDe = { x: j.x, y: j.y }; }
+  suma(j, PUNTOS.robo, c.x, c.y - 10); calor(j, c.policia ? 60 : 15); play('golpe');
 }
 function dispara(j) {
   const cs = Math.cos(j.ang), sn = Math.sin(j.ang);
@@ -222,11 +244,11 @@ function pasoCoches() {
   const j = S.jugadores[0];
   for (const c of S.coches) {
     if (c.chatarra) { if (c.humo > 0) { c.humo--; if (c.humo % 8 === 0) S.fx.push({ tipo: 'humo', x: c.x + S.az.entre(-4, 4), y: c.y, t: 40 }); } continue; }
-    if (c.conductor === 'ia') pasoTrafico(c); else if (c.conductor === null) { c.vx *= 0.9; c.vy *= 0.9; if (Math.hypot(c.vx, c.vy) > 0.05) fisicaCoche(c, 0, 0, false, false); }
+    if (c.conductor === 'ia' && c.ia) pasoIA(c); else if (c.conductor === null) { c.vx *= 0.9; c.vy *= 0.9; if (Math.hypot(c.vx, c.vy) > 0.05) fisicaCoche(c, 0, 0, false, false); }
     // humo y fuego cuando está mal
     const D = COCHES[c.tipo];
     if (c.vida < D.vida * 0.35 && S.tick % 6 === 0) S.fx.push({ tipo: 'humo', x: c.x, y: c.y, t: 30 });
-    if (c.vida <= 0) { c.fuego++; if (S.tick % 4 === 0) S.fx.push({ tipo: 'fuego', x: c.x + S.az.entre(-5, 5), y: c.y + S.az.entre(-3, 3), t: 20 }); if (c.fuego > 90) explota(c); }
+    if (c.vida <= 0) { c.fuego++; if (S.tick % 4 === 0) S.fx.push({ tipo: 'fuego', x: c.x + S.az.entre(-5, 5), y: c.y + S.az.entre(-3, 3), t: 20 }); if (c.fuego > 300) explota(c); }   // cinco segundos ardiendo: da tiempo a que lleguen los bomberos
     // atropellos
     const v = Math.hypot(c.vx, c.vy);
     if (v > 0.9) for (const p of S.peatones) {
@@ -248,11 +270,10 @@ function pasoCoches() {
       if (vr > 0.8) {
         const golpe = vr * 5; a.vida -= golpe; b.vida -= golpe;
         const mio = a.conductor === j.id ? a : b.conductor === j.id ? b : null;
-        if (mio) { play('choque', Math.min(1, vr / 3)); sacude(vr * 1.2); const otro = mio === a ? b : a; if (otro.policia) calor(j, 10); if (otro.conductor === 'ia' && otro.ia) otro.ia.espera = 40; }
+        if (mio) { play('choque', Math.min(1, vr / 3)); sacude(vr * 1.2); const otro = mio === a ? b : a; if (otro.policia) calor(j, 10); if (otro.conductor === 'ia' && otro.ia) reacciona(otro, 'golpe'); }
         else if (vr > 1.5) play('chapa');
       }
     }
-    if (a.ia && b.ia && Math.hypot(a.vx, a.vy) < 0.3) a.ia.espera = 10;
   }
 }
 function explota(c) {
@@ -302,7 +323,7 @@ function pasoBalas() {
     if (solidoPx(b.x, b.y)) { b.t = 0; continue; }
     if (b.de === j.id) {
       for (const p of S.peatones) if (!p.muerto && Math.abs(p.x - b.x) < 5 && Math.abs(p.y - b.y) < 5) { p.vida -= 10; if (p.vida <= 0) mataPeaton(p, j, 'bala'); else { p.estado = 'huye'; p.miedo = 200; p.huyeDe = { x: j.x, y: j.y }; } b.t = 0; break; }
-      if (b.t) for (const c of S.coches) if (!c.chatarra && puntoEnCoche(c, b.x, b.y)) { c.vida -= 9; c.ultimoGolpe = j.id; if (c.policia) calor(j, 6); if (c.conductor === 'ia' && c.ia) { c.ia.huye = 300; } b.t = 0; play('chapa'); break; }
+      if (b.t) for (const c of S.coches) if (!c.chatarra && puntoEnCoche(c, b.x, b.y)) { c.vida -= 9; c.ultimoGolpe = j.id; if (c.policia) calor(j, 6); if (c.conductor === 'ia' && c.ia) reacciona(c, 'tiro'); b.t = 0; play('chapa'); break; }
     } else if (!j.muerto && !j.baneado) {
       if (j.coche === null) { if (Math.abs(j.x - b.x) < 5 && Math.abs(j.y - b.y) < 5) { danaJugador(j, 6); b.t = 0; } }
       else { const c = S.coches.find(c => c.id === j.coche); if (c && puntoEnCoche(c, b.x, b.y)) { c.vida -= 4; b.t = 0; play('chapa'); } }
@@ -326,7 +347,7 @@ function pasoObjetos() {
   S.objetos = S.objetos.filter(o => !o.cogido);
 }
 function pasoFx() {
-  for (const f of S.fx) { f.t--; if (f.tipo === 'humo') { f.y -= 0.3; f.x += 0.15; } else if (f.tipo === 'dinero') f.y -= 0.4; }
+  for (const f of S.fx) { f.t--; if (f.tipo === 'humo') { f.y -= 0.3; f.x += 0.15; } else if (f.tipo === 'dinero') f.y -= 0.4; else if (f.tipo === 'nieve' || f.tipo === 'agua') { f.x += f.dx; f.y += f.dy; f.dx *= 0.92; f.dy *= 0.92; } }
   S.fx = S.fx.filter(f => f.t > 0);
   if (S.mensaje && --S.mensaje.t <= 0) S.mensaje = null;
   if (S.rotulo && --S.rotulo.t <= 0) S.rotulo = null;
@@ -340,10 +361,20 @@ function pasoSim(ordenes) {
   pasoCoches();
   pasoPeatones();
   pasoModeradores();
+  pasoEmergencias();
   pasoBalas();
   pasoObjetos();
   pasoMision();
   pasoFx();
+  S.hora = (S.hora + 24 / (6 * 60 * 60)) % 24;   // un día entero cada seis minutos
   if (S.tick % 30 === 0) { reponeTrafico(); reponeVecinos(); }
+}
+// cuánta noche hay ahora (0 = pleno día, 1 = noche cerrada)
+function oscuridad() {
+  const h = S.hora;
+  if (h >= 8 && h < 18) return 0;
+  if (h >= 21 || h < 5) return 1;
+  if (h >= 18) return (h - 18) / 3;
+  return 1 - (h - 5) / 3;
 }
 const ORDEN_VACIA = { mx: 0, my: 0, acel: 0, giro: 0, freno: false, disparo: false, entrar: false, claxon: false, palanca: false };

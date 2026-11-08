@@ -27,15 +27,29 @@ const NOMBRE_TECLA = { ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', Arrow
 function nombreTecla(code) { if (NOMBRE_TECLA[code]) return NOMBRE_TECLA[code]; if (code.startsWith('Key')) return code.slice(3); if (code.startsWith('Digit')) return code.slice(5); if (code.startsWith('Numpad')) return 'NUM ' + code.slice(6); return code.toUpperCase(); }
 const tecla = accion => teclasDe(accion).some(k => MANDO.teclas.has(k));
 
-// la geometría de los mandos táctiles (en píxeles del lienzo); el tamaño se cambia en Opciones
+// la geometría de los mandos táctiles (en píxeles del lienzo); el tamaño se cambia en Opciones. Vale en vertical y en
+// horizontal. Conduciendo con «botones»: IZQ y DER abajo a la izquierda y ACELERAR grande a la derecha (como en el vídeo que
+// eligió Daniel), con FRENO/atrás y SALIR encima; con la «palanca» no hay IZQ ni DER. A pie: palanca, TIRO y ENTRAR.
 function geoMandos() {
-  const W = J.W, H = J.H, k = AJUSTES.mandos || 1, r = 16 * k, m = 6 * k;
-  return {
-    entrar: { x: W - m - r - 2, y: H - m - r - 2, r: r + 2, texto: 'E' },
-    accion: { x: W - m - r * 3 - 10, y: H - m - r - 10, r, texto: 'A' },
-    claxon: { x: W - m - r - 8, y: H - m - r * 3 - 10, r: r * 0.75, texto: 'H' },
-    pausa: { x: W - 12, y: 10, r: 9, texto: '||' },
-  };
+  const W = J.W, H = J.H, k = AJUSTES.mandos || 1, j = S && S.jugadores[0], enCoche = !!(j && j.coche !== null);
+  const botones = enCoche && AJUSTES.mandoCoche !== 'palanca';
+  const g = { pausa: { x: W - 12, y: 28, r: 9, texto: '||' } };
+  if (botones) {
+    g.izq = { x: 26 * k, y: H - 28 * k, r: 19 * k, texto: '<' };
+    g.der = { x: 72 * k, y: H - 28 * k, r: 19 * k, texto: '>' };
+    g.acel = { x: W - 30 * k, y: H - 30 * k, r: 25 * k, texto: 'GAS' };
+    g.freno = { x: W - 78 * k, y: H - 24 * k, r: 14 * k, texto: 'FRENO' };
+    g.entrar = { x: W - 30 * k, y: H - 78 * k, r: 14 * k, texto: 'SALIR' };
+    g.claxon = { x: W - 72 * k, y: H - 62 * k, r: 11 * k, texto: 'PI' };
+  } else if (enCoche) {
+    g.entrar = { x: W - 24 * k, y: H - 24 * k, r: 18 * k, texto: 'SALIR' };
+    g.freno = { x: W - 66 * k, y: H - 30 * k, r: 16 * k, texto: 'FRENO' };
+    g.claxon = { x: W - 30 * k, y: H - 64 * k, r: 12 * k, texto: 'PI' };
+  } else {
+    g.entrar = { x: W - 24 * k, y: H - 24 * k, r: 18 * k, texto: 'ENTRAR' };
+    g.accion = { x: W - 66 * k, y: H - 30 * k, r: 16 * k, texto: 'TIRO' };
+  }
+  return g;
 }
 function botonEn(x, y) {
   const g = geoMandos();
@@ -56,7 +70,8 @@ function dedoBaja(ev) {
   if (J.estado !== 'juego' || S.pausa) return;
   const b = botonEn(x, y);
   if (b) { MANDO.botones[ev.pointerId] = b; MANDO.pulsados[b] = true; if (b === 'entrar' || b === 'pausa') MANDO.pulso[b] = true; return; }
-  if (x < J.W * 0.55 && MANDO.palanca.id === null) { MANDO.palanca.id = ev.pointerId; MANDO.palanca.x0 = x; MANDO.palanca.y0 = y; MANDO.palanca.dx = 0; MANDO.palanca.dy = 0; }
+  const g = geoMandos();
+  if (!g.izq && x < J.W * 0.55 && MANDO.palanca.id === null) { MANDO.palanca.id = ev.pointerId; MANDO.palanca.x0 = x; MANDO.palanca.y0 = y; MANDO.palanca.dx = 0; MANDO.palanca.dy = 0; }
 }
 function dedoMueve(ev) {
   if (MANDO.palanca.id !== ev.pointerId) return;
@@ -103,12 +118,13 @@ function leeMando() {
   o.palanca = false;
   if (MANDO.palanca.id !== null) { mx = MANDO.palanca.dx; my = MANDO.palanca.dy; o.palanca = enCoche; }
   o.mx = mx; o.my = my;
-  o.acel = tecla('arriba') ? 1 : tecla('abajo') ? -1 : 0;
-  o.giro = (tecla('derecha') ? 1 : 0) - (tecla('izquierda') ? 1 : 0);
-  const accion = tecla('accion') || !!MANDO.pulsados.accion;
-  o.freno = enCoche && accion;
+  const P = MANDO.pulsados;
+  o.acel = tecla('arriba') || P.acel ? 1 : tecla('abajo') || P.freno ? -1 : 0;
+  o.giro = (tecla('derecha') || P.der ? 1 : 0) - (tecla('izquierda') || P.izq ? 1 : 0);
+  const accion = tecla('accion') || !!P.accion;
+  o.freno = enCoche && (accion || !!P.freno);
   o.disparo = !enCoche && accion;
   o.entrar = !!MANDO.pulso.entrar;
-  o.claxon = tecla('claxon') || !!MANDO.pulsados.claxon;
+  o.claxon = tecla('claxon') || !!P.claxon;
   MANDO.pulso.entrar = false;
 }

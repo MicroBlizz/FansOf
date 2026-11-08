@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
-<script src="../../core/js/nucleo.js?v=0.1.80"></script>
+<script src="../../core/js/nucleo.js?v=0.1.81"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/survivors.css', '../../core/css/biblioteca.css')</script>
 </head>
 <body>
@@ -29,6 +29,7 @@
       <h2 class="h2 ol-big" id="niv-titulo">¡ASCENSO!</h2>
       <p class="niv-sub">Elige una mejora. Microblizz no te la va a pagar.</p>
       <div id="niv-ops"></div>
+      <button class="btn-ghost ol" id="niv-cambiar" hidden><span>CAMBIAR CARTAS</span> <b id="niv-cambios"></b></button>
     </section>
     <div id="cof-intro" hidden><div class="haz"></div></div>
     <section id="scr-cofre" class="screen" hidden>
@@ -42,7 +43,7 @@
       <button class="btn-big ol" id="btn-cofre" hidden>¡GENIAL!</button>
     </section>
     <section id="scr-pause" class="screen" hidden>
-      <button class="icon-btn btn-sound" aria-label="Silenciar sonido">🔊</button>
+      <button class="icon-btn btn-sound" aria-label="Silenciar sonido"><img class="ico-txt" src="img/iconos/altavoz.png" alt="" draggable="false"></button>
       <h2 class="h2 ol">PAUSA</h2>
       <p class="quote" id="pause-quote">Los becarios no tienen pausa. Tú sí.</p>
       <ul id="pau-lista"></ul>
@@ -228,13 +229,13 @@
       <div class="modal-card name-card"><span class="coach-who">LOLA · DESPEDIDA POR MICROBLIZZ</span><h3 class="ol" id="name-title">¿CÓMO TE LLAMAS?</h3><p id="name-text"></p>
         <input id="name-in" type="text" maxlength="14" autocomplete="nickname" spellcheck="false" placeholder="Tu nombre" aria-label="Tu nombre">
         <p class="name-err" id="name-err" role="alert"></p>
-        <div class="row"><button class="btn-ghost ol" id="name-dice">🎲 AL AZAR</button><button class="btn-big ol" id="name-ok">¡ESE SOY YO!</button></div>
+        <div class="row"><button class="btn-ghost ol" id="name-dice"><img class="ico-txt" src="img/iconos/dado.png" alt="" draggable="false"> <span>AL AZAR</span></button><button class="btn-big ol" id="name-ok">¡ESE SOY YO!</button></div>
         <button class="btn-link" id="name-cancel" hidden>Cancelar</button>
         <p class="small-print">De 3 a 14 letras o números. Lo puedes cambiar cuando quieras en tu perfil.</p></div>
     </section>
     <section id="scr-profile" class="screen modal" hidden>
       <div class="modal-card profile-card"><h3 class="ol">TU PERFIL</h3>
-        <div class="pf-top"><canvas id="profile-av" aria-hidden="true"></canvas><div><b class="ol" id="profile-who"></b><small id="profile-league"></small><button class="btn-ghost ol" id="profile-name">✏️ CAMBIAR NOMBRE</button></div></div>
+        <div class="pf-top"><canvas id="profile-av" aria-hidden="true"></canvas><div><b class="ol" id="profile-who"></b><small id="profile-league"></small><button class="btn-ghost ol" id="profile-name"><img class="ico-txt" src="img/iconos/lapiz.png" alt="" draggable="false"> <span>CAMBIAR NOMBRE</span></button></div></div>
         <div class="pf-grid" id="profile-stats"></div>
         <div class="pf-avtitle">TU AVATAR <small>(los líderes de las facciones)</small></div>
         <div class="pf-avs" id="profile-avs"></div>
@@ -256,7 +257,7 @@ NUCLEO.juego({
   antes: ['js/ajustes.js', 'js/novedades.js'],
   idioma: { en: ['idioma/en.js', 'idioma/en-facciones.js'] },
   despues: [
-    'js/datos.js', 'js/datos-facciones.js', 'js/datos-facciones-2.js', 'js/catalogo.js', 'js/sonido.js', 'js/retos.js', 'js/juego.js', 'js/cofre-efectos.js', 'js/cofre.js', 'js/armas.js', 'js/armas-tipos.js', 'js/armas-tipos-2.js', 'js/dibujo.js', 'js/menus.js', 'js/facciones.js',
+    'js/iconos.js', 'js/datos.js', 'js/datos-facciones.js', 'js/datos-facciones-2.js', 'js/datos-mecanicas.js', 'js/reglas.js', 'js/catalogo.js', 'js/sonido.js', 'js/retos.js', 'js/juego.js', 'js/mecanicas.js', 'js/cofre-efectos.js', 'js/cofre.js', 'js/armas.js', 'js/armas-tipos.js', 'js/armas-tipos-2.js', 'js/dibujo.js', 'js/mecanicas-dibujo.js', 'js/menus.js', 'js/facciones.js',
     '../../core/js/retos.js', '../../core/js/pases.js', '../../core/js/retos-pantallas.js', 'js/interfaz.js'],
 });
 </script>

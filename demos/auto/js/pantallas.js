@@ -65,7 +65,7 @@ function pintaTitulo(g) {
   escribe(g, 'AUTO', J.W / 2, 34, { esc: 4, c: ORO, borde: TINTA, alin: 'centro' });
   escribe(g, tr('DISTRITO BETA ABIERTA · DEMO ') + VERSION_AUTO, J.W / 2, 72, { fuente: 'mini', c: '#d9d4c7', borde: TINTA, alin: 'centro' });
   pintaMenu(g, 88);
-  const ayuda = MANDO.tactil ? tr('Palanca para moverte · ENTRAR sube al coche · TIRO dispara / FRENO derrapa') : tr('Mover: ') + nombreTecla(teclasDe('arriba')[0]) + nombreTecla(teclasDe('izquierda')[0]) + nombreTecla(teclasDe('abajo')[0]) + nombreTecla(teclasDe('derecha')[0]) + ' · ' + nombreTecla(teclasDe('entrar')[0]) + tr(' coche · ') + nombreTecla(teclasDe('accion')[0]) + tr(' disparar o freno de mano');
+  const ayuda = MANDO.tactil ? tr('Palanca para andar · ENTRAR sube al coche · al volante: < > y GAS') : tr('Mover: ') + nombreTecla(teclasDe('arriba')[0]) + nombreTecla(teclasDe('izquierda')[0]) + nombreTecla(teclasDe('abajo')[0]) + nombreTecla(teclasDe('derecha')[0]) + ' · ' + nombreTecla(teclasDe('entrar')[0]) + tr(' coche · ') + nombreTecla(teclasDe('accion')[0]) + tr(' disparar o freno de mano');
   escribe(g, ayuda, J.W / 2, J.H - 12, { fuente: 'mini', c: '#8fc3e6', borde: TINTA, alin: 'centro' });
 }
 
@@ -91,6 +91,7 @@ function abreOpciones(desde) {
     { texto: tr('Música'), valor: () => siNo(!AJUSTES.sinMusica), haz: cambiaMusica },
     { texto: tr('Pantalla completa'), valor: () => siNo(!!document.fullscreenElement), haz: pantallaCompleta },
     { texto: tr('Gráficos'), valor: () => (AJUSTES.detalle === 'bajo' ? tr('Bajos (móvil flojo)') : tr('Normales')), haz: () => { AJUSTES.detalle = AJUSTES.detalle === 'bajo' ? 'normal' : 'bajo'; guardaAjustes(); } },
+    { texto: tr('Mandos al conducir'), valor: () => (AJUSTES.mandoCoche === 'palanca' ? tr('Palanca') : tr('Botones')), haz: () => { AJUSTES.mandoCoche = AJUSTES.mandoCoche === 'palanca' ? 'botones' : 'palanca'; guardaAjustes(); } },
     { texto: tr('Tamaño de los mandos táctiles'), valor: () => ({ 0.8: tr('Pequeños'), 1: tr('Normales'), 1.25: tr('Grandes') })[AJUSTES.mandos], haz: d => { const v = [0.8, 1, 1.25], i = v.indexOf(AJUSTES.mandos); AJUSTES.mandos = v[(i + (d < 0 ? 2 : 1)) % 3]; guardaAjustes(); } },
     { texto: tr('Mandos en pantalla con ratón'), valor: () => siNo(!!AJUSTES.mandosPc), haz: () => { AJUSTES.mandosPc = !AJUSTES.mandosPc; } },
     { texto: tr('Teclas del ordenador'), haz: abreTeclas },

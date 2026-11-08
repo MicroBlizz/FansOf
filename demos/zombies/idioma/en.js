@@ -67,6 +67,16 @@ IDIOMA.add({
   'Come (E) o bebe (Q) algo. Cuida el hambre, la sed y el sueño.': 'Eat (E) or drink (Q) something. Watch your hunger, thirst and sleep.',
   'Si un fan se acerca, empújalo (clic derecho) o golpéalo (clic). Disparar se oye en medio distrito.': 'If a fan comes close, shove it (right click) or hit it (click). Gunshots are heard across half the district.',
   'Al anochecer llegan más fans. Quédate en casa con las ventanas tapadas y duerme (Z) cuando tengas sueño. ¡Suerte!': 'More fans arrive at nightfall. Stay home with the windows boarded up and sleep (Z) when tired. Good luck!',
+  // el tutorial en el móvil (botones en vez de teclas)
+  'Muévete con la palanca de la izquierda. Estás en tu casa del barrio.': 'Move with the stick on the left. You are in your house in the neighbourhood.',
+  'Abre la MOCHILA. Cada cosa ocupa su forma: arrástrala con el dedo para moverla y toca GIRAR para girarla.': 'Open the BACKPACK. Every item has its shape: drag it with your finger to move it and tap ROTATE to rotate it.',
+  'Registra la nevera, el armario o la cocina de tu casa (ACCIÓN) y elige qué coges.': 'Search the fridge, wardrobe or kitchen in your house (ACTION) and pick what you take.',
+  'Clava una tabla en una ventana (TABLAS). Llevas martillo, tablas y clavos.': 'Nail a plank over a window (PLANKS). You carry a hammer, planks and nails.',
+  'Agáchate (AGACHAR): así no haces ruido al andar y te ven desde más cerca.': 'Crouch (CROUCH): walking makes no noise and they have to be closer to see you.',
+  'Abre el MAPA: solo enseña lo que ya has visto.': 'Open the MAP: it only shows what you have seen.',
+  'Toca COMER o BEBER abajo. Cuida el hambre, la sed y el sueño.': 'Tap EAT or DRINK at the bottom. Watch your hunger, thirst and sleep.',
+  'Si un fan se acerca, apártalo con EMPUJAR o golpéalo con ATACAR (apunta solo). Disparar se oye en medio distrito.': 'If a fan comes close, push it away with SHOVE or hit it with ATTACK (it aims by itself). Shooting can be heard across half the district.',
+  'Al anochecer llegan más fans. Quédate en casa con las ventanas tapadas y toca DORMIR cuando tengas sueño. ¡Suerte!': 'More fans come at nightfall. Stay home with the windows covered and tap SLEEP when you are sleepy. Good luck!',
   // las casas
   'TABLAS': 'PLANKS', 'CLAVOS': 'NAILS', 'MARTILLO': 'HAMMER', 'F  CERRAR': 'F  CLOSE', 'B  TABLAS (%1/3)': 'B  PLANKS (%1/3)', 'TAPADA (3/3)': 'BOARDED UP (3/3)',
   'Tabla clavada (%1/3).': 'Plank nailed (%1/3).', '¡Han roto una ventana!': 'A window has been smashed!', '¡Han tirado una puerta!': 'A door has been knocked down!',
@@ -89,7 +99,7 @@ IDIOMA.add({
   'Anochece. Llegan %1 fans más al distrito.': 'Night falls. %1 more fans arrive in the district.',
   'Se ha ido la luz en el distrito. Las noches serán más negras.': 'The district has lost power. Nights will be darker.',
 'Nada. Alguien pasó antes.': 'Nothing. Someone got here first.',
-  'Te han infectado. Véndate (V) para frenarlo.': 'You are infected. Bandage up (V) to slow it.', 'Sin cartuchos. Usa la palanca (2).': 'Out of shells. Use the crowbar (2).',
+  'Sin cartuchos. Usa la palanca (2).': 'Out of shells. Use the crowbar (2).',
   '¡Te despiertas de golpe! Hay fans cerca.': 'You wake with a start! Fans nearby.', 'Te despiertas descansado.': 'You wake up rested.',
   'No tienes sueño todavía.': 'You are not sleepy yet.', 'Con fans tan cerca no hay quien duerma.': 'Nobody can sleep with fans this close.', 'No te queda de eso.': 'You have none left.',
   'Aquí ya has mirado.': 'You already searched here.', 'No hay nada que registrar aquí.': 'Nothing to search here.', 'No puedes hacer eso ahora.': 'You cannot do that now.',
@@ -118,11 +128,4 @@ IDIOMA.add({
   'F  BAJAR': 'F  GET OUT',
   'INVIERNO': 'WINTER', 'PRIMAVERA': 'SPRING', 'VERANO': 'SUMMER', 'OTOÑO': 'AUTUMN', 'HUERTO': 'VEGETABLE PATCH', 'VERDURA': 'VEGETABLES', 'Hemos añadido el invierno. La calefacción es contenido de pago.': 'We have added winter. Heating is paid content.', 'Primavera: hemos cambiado la nieve por lluvia. No hace falta que nos lo agradezcáis.': 'Spring: we have swapped the snow for rain. No need to thank us.', 'Verano: el aire acondicionado llegará en la temporada 2.': 'Summer: air conditioning is coming in season 2.', 'Otoño: las hojas caídas son un error conocido. No lo arreglaremos.': 'Autumn: fallen leaves are a known bug. We will not fix it.',
   'Llega el invierno. Vuelve la nieve: tus huellas te delatan y el frío da hambre.': 'Winter arrives. The snow is back: your footprints give you away and the cold makes you hungry.', 'Llega la primavera. Se funde la nieve: la lluvia tapa tus ruidos y los huertos dan verdura.': 'Spring arrives. The snow melts: the rain covers your noise and the patches give vegetables.', 'Llega el verano. Calor: bebe el doble, la carne se pudre y los fans van más rápido.': 'Summer arrives. Heat: drink twice as much, meat goes off and the fans are faster.', 'Llega el otoño. Niebla y hojas secas: se ve menos y tus pasos crujen.': 'Autumn arrives. Fog and dry leaves: you see less and your steps crunch.',
-  // la ropa y las mochilas (0.12)
-  'GORRO DE LANA': 'WOOLLY HAT', 'CASCO DE MOTO': 'MOTORBIKE HELMET', 'ABRIGO': 'WINTER COAT', 'CHAQUETA DE CUERO': 'LEATHER JACKET', 'CHUBASQUERO': 'RAINCOAT', 'VAQUEROS': 'JEANS', 'PANTALÓN DE CHÁNDAL': 'TRACKSUIT BOTTOMS', 'BOTAS DE NIEVE': 'SNOW BOOTS', 'ZAPATILLAS': 'TRAINERS', 'BOTAS DE GOMA': 'WELLIES',
-  'MOCHILA PEQUEÑA': 'SMALL BACKPACK', 'MOCHILA DE EXCURSIÓN': 'HIKING BACKPACK', 'MOCHILA DE MUDANZA': 'MOVING-DAY BACKPACK',
-  'Menos hambre con frío': 'Less hunger in the cold', 'Los mordiscos hacen menos daño': 'Bites do less damage', 'Sin hambre de frío; en verano, más sed': 'No cold hunger; more thirst in summer', 'Los mordiscos infectan menos': 'Bites infect less', 'Con lluvia se te oye aún menos': 'Even quieter in the rain', 'Los mordiscos hacen algo menos de daño': 'Bites do a bit less damage', 'Correr cansa menos': 'Running tires you less', 'Dejas la mitad de huellas': 'You leave half the footprints', 'Pasos más silenciosos': 'Quieter footsteps', 'El barro de la primavera no te cansa': 'Spring mud does not tire you', '4 × 4 casillas': '4 × 4 slots', '5 × 5 casillas': '5 × 5 slots', '6 × 7 casillas, pero vas más lento': '6 × 7 slots, but you move slower',
-  'PUESTO': 'WORN', 'CABEZA': 'HEAD', 'CUERPO': 'BODY', 'PIERNAS': 'LEGS', 'PIES': 'FEET', 'COSER (1 TELA)': 'SEW (1 CLOTH)', 'RIÑONERA': 'BUMBAG', 'BOLSILLOS': 'POCKETS',
-  'Clic derecho en ropa o en una mochila para ponértela. Clic en lo puesto para quitártelo.': 'Right-click clothes or a backpack to wear it. Click what you wear to take it off.',
-  'Te falta tela.': 'You need cloth.', 'No llevas nada roto.': 'Nothing you wear is torn.', 'Eso no se pone.': 'You cannot wear that.', 'Te pones: %1.': 'You put on: %1.', 'Has cosido: %1.': 'You sewed: %1.', 'GORRO DE LANA (2 TELAS)': 'WOOLLY HAT (2 CLOTH)',
 });

@@ -1,6 +1,6 @@
 // Fans of Zombies · LOS COCHES EN PANTALLA (pantalla y mapa): dibuja los coches que se conducen (cada uno con su malla, que se mueve), les
-// pone su choque mientras están aparcados, el cartel (subir, registrar la guantera, repostar con G), el panel del volante (velocidad,
-// gasolina y daño) y lo que pasa al subir, bajar, chocar y atropellar. Las reglas están en js/coches.js. ADR 075.
+// pone su choque mientras están aparcados, el cartel (subir, registrar la guantera, repostar con G), el maletero (detrás), los faros (L),
+// el panel del volante (velocidad, gasolina, motor y batería) y lo que pasa al subir, bajar, chocar y atropellar. Las reglas están en js/coches.js. ADR 075.
 'use strict';
 const VCOCHES = { vistas: new Map() };
 const COLOR_COCHE = [0x2a6ab8, 0xb8282e, 0x3a3a3e, 0xd8d8d0, 0x3a6a3a];
@@ -16,12 +16,14 @@ function montaCoche(color) {
 function pintaCoches(e) {
   const J = e.jugador;
   if (VISTA.jug) VISTA.jug.grupo.visible = !J.conduce;
+  if (VCOCHES.faro) { const c = J.conduce && ZOM.cocheDe(e, J.conduce); VCOCHES.faro.intensity = c && c.faros ? 4 : 0; }
   for (const c of e.coches || []) {
     let v = VCOCHES.vistas.get(c.id);
     const lejos = ZOM.dist(c.x, c.z, J.x, J.z) > 140;
     if (lejos) { if (v) quitaVistaCoche(c.id, v); continue; }
     if (!v) { v = { grupo: montaCoche(COLOR_COCHE[c.color % COLOR_COCHE.length]), sol: null }; tine(v.grupo); MOTOR.escena.add(v.grupo); VCOCHES.vistas.set(c.id, v); }
     v.grupo.position.set(c.x, 0, c.z); v.grupo.rotation.y = c.a - Math.PI / 2;
+    if (J.conduce === c.id) ponFaros(v, !!c.faros);
     ponChoqueCoche(c, v, J.conduce === c.id);
   }
 }
@@ -32,33 +34,55 @@ function ponChoqueCoche(c, v, conducido) {
   if (conducido) return;
   v.sol = solidoGirado(c.x, c.z, 3.4, 1.6, c.a - Math.PI / 2, 1.1, 'bajo'); v.sx = c.x; v.sz = c.z; v.sa = c.a;
 }
+// los faros: una sola luz, creada una vez y apagada con intensidad 0 (así no cambia el número de luces ni se recompilan los
+// sombreadores), que se pone delante del coche que conduces
+function ponFaros(v, on) {
+  const P = ZOM.AJ.coches.piezas;
+  if (!VCOCHES.faro) {
+    VCOCHES.faro = new THREE.SpotLight(0xfff0c0, 0, P.farosAlcance, P.farosCono, 0.5, 1); VCOCHES.blanco = new THREE.Object3D();
+    VCOCHES.faro.target = VCOCHES.blanco; MOTOR.escena.add(VCOCHES.faro); MOTOR.escena.add(VCOCHES.blanco);
+  }
+  if (!on) return;
+  const g = v.grupo, a = g.rotation.y;
+  VCOCHES.faro.position.set(g.position.x + Math.cos(a) * 1.8, 0.8, g.position.z - Math.sin(a) * 1.8);
+  VCOCHES.blanco.position.set(g.position.x + Math.cos(a) * 14, 0, g.position.z - Math.sin(a) * 14);
+}
 function quitaVistaCoche(id, v) { MOTOR.escena.remove(v.grupo); v.grupo.traverse((m) => m.geometry && m.geometry.dispose()); ponChoqueCoche({}, v, true); VCOCHES.vistas.delete(id); }
 function limpiaCoches() { for (const [id, v] of VCOCHES.vistas) quitaVistaCoche(id, v); }
 // los coches que tienes cerca, como sitios (subir, o registrar su guantera)
 function sitiosCoches(e) {
   const J = e.jugador, out = [];
-  for (const c of e.coches || []) if (VCOCHES.vistas.has(c.id) && ZOM.dist(c.x, c.z, J.x, J.z) < 30) out.push({ id: 'car:' + c.id, tipo: 'coche', x: c.x, z: c.z, coche: c.id });
+  for (const c of e.coches || []) {
+    if (!VCOCHES.vistas.has(c.id) || ZOM.dist(c.x, c.z, J.x, J.z) >= 30) continue;
+    out.push({ id: 'car:' + c.id, tipo: 'coche', x: c.x, z: c.z, coche: c.id });
+    if (J.conduce !== c.id) out.push({ id: 'trunk:' + c.id, tipo: 'maletero', x: c.x - Math.sin(c.a) * 2.3, z: c.z - Math.cos(c.a) * 2.3, deCoche: c.id });   // el maletero, detrás
+  }
   return out;
 }
 // F junto a un coche (o al volante): subir, bajar o registrar; G: repostar
 function usaCoche(e, ent, cerca) {
   const AJ = ZOM.AJ, J = e.jugador, r = (x) => { if (!x.ok) e.eventos.push({ tipo: 'noPuedes', codigo: x.codigo }); };
+  if (J.conduce && pulsa('faros')) r(ZOM.cambiaFaros(AJ, e));   // L: los faros (js/coches-piezas.js)
   if (J.conduce) { if (ent.registrar || ent.nadaCerca) { r(ZOM.bajaCoche(AJ, e, MUNDO)); ent.registrar = null; ent.nadaCerca = false; } return; }
   if (cerca && cerca.coche && pulsa('reposta')) r(ZOM.reposta(AJ, e, cerca.coche));
-  if (ent.registrar && cerca && cerca.coche && (e.llaves || {})[cerca.coche]) { r(ZOM.subeCoche(AJ, e, cerca.coche)); ent.registrar = null; }
+  if (ent.registrar && cerca && cerca.coche && (e.llaves || {})[cerca.coche]) { r(ZOM.subeCoche(AJ, e, cerca.coche, azarJuego)); ent.registrar = null; }
 }
 // el cartel sobre un coche
 function textoCoche(e, s) {
   const c = ZOM.cocheDe(e, s.coche);
   if (e.jugador.conduce) return tr('F  BAJAR');
   if (!(e.llaves || {})[s.coche]) return tr(e.registrados[s.id] ? 'F  ABRIR (SIN LLAVE)' : 'F  REGISTRAR LA GUANTERA');
-  if (c.dano >= 100) return tr('COCHE ROTO');
+  if (!ZOM.cocheVivo(ZOM.AJ, c)) return tr('MOTOR ROTO');
   return tr('F  SUBIR') + (ZOM.cuantosLleva(e.jugador, 'gasolina') && c.gas < 1 ? '   ' + tr('G  REPOSTAR') : '');
 }
+// lo que va mal en el coche, para el panel del volante
+const avisoPiezas = (P) => (P.ruedas.some((r) => !r) ? 'Rueda pinchada: gira mal' : (P.cristales || 0) < ZOM.AJ.coches.piezas.cristalRoto ? 'Cristales rotos: te pueden morder' : (P.frenos || 0) < ZOM.AJ.coches.piezas.frenosAviso ? 'Frenos gastados' : '');
 // el panel del volante (en lugar del arma)
 function pintaVolante(e) {
   const p = el('h-coche'), c = e.jugador.conduce && ZOM.cocheDe(e, e.jugador.conduce);
   p.hidden = !c; el('h-arma').hidden = !!c; if (!c) return;
+  const P = ZOM.piezas(ZOM.AJ, c);
   p.innerHTML = '<span class="lab">' + esc(tr('AL VOLANTE')) + ' · ' + esc(tr('F BAJAR')) + '</span><b>' + Math.round(Math.abs(c.v) * 3.6) + ' km/h</b>' +
-    barraHud('GASOLINA', c.gas * 100, '#e8c040', c.gas <= 0 ? 'Sin gasolina' : '') + barraHud('DAÑO', c.dano, '#ff4b5c', c.dano >= 100 ? 'Ya no arranca' : '');
+    barraHud('GASOLINA', c.gas * 100, '#e8c040', c.gas <= 0 ? 'Sin gasolina' : '') + barraHud('MOTOR', P.motor || 0, '#ff8a3a', avisoPiezas(P)) +
+    barraHud('BATERÍA', P.bateria || 0, '#58c8ff', c.faros ? 'Faros encendidos (L)' : 'L: faros');
 }

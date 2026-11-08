@@ -1,8 +1,8 @@
 {
- "build": 1124,
- "hash": "54db5f6",
- "fecha": "2026-11-08T05:58:37Z",
- "mensaje": "Pets: la ducha marca con aros y dice qué zonas faltan por enjabonar",
+ "build": 1125,
+ "hash": "0ea68b4",
+ "fecha": "2026-11-08T06:10:06Z",
+ "mensaje": "Karts: el smoke-test mide por separado acelerar (avance) y girar (rumbo); girando a fondo el kart daba vueltas y el avance neto rozaba el mínimo",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

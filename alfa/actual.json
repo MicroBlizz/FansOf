@@ -1,8 +1,8 @@
 {
- "build": 1133,
- "hash": "d38b0d9",
- "fecha": "2026-11-08T16:31:24Z",
- "mensaje": "Rumble arte pintado: colgado al arrastrar (CrazyBunny, MadSquirrel y becario) y colgado de los demás pedido otra vez",
+ "build": 1134,
+ "hash": "2eb175a",
+ "fecha": "2026-11-08T23:40:52Z",
+ "mensaje": "Roles por invitación: arreglos de la revisión y prueba del SQL con Postgres temporal",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

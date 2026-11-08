@@ -6,8 +6,8 @@
 const SAVE = { menuMus: null };   // el motor lo mira al acabar las canciones cortas
 // los ajustes: sonido, música, detalle de los gráficos (bajo = menos coches, gente y sombras, para móviles flojos),
 // tamaño de los mandos táctiles, mostrar los mandos en PC y las teclas cambiadas
-const AJUSTES = { mudo: false, sinMusica: false, detalle: 'normal', mandos: 1, teclas: {}, sombras: true };
-try { const a = JSON.parse(localStorage.getItem('fansof-auto-ajustes') || '{}'); Object.assign(AJUSTES, { mudo: !!a.mudo, sinMusica: !!a.sinMusica, detalle: a.detalle === 'bajo' ? 'bajo' : 'normal', mandos: [0.8, 1, 1.25].includes(a.mandos) ? a.mandos : 1, teclas: a.teclas && typeof a.teclas === 'object' ? a.teclas : {} }); } catch (_) { /* sin guardar */ }
+const AJUSTES = { mudo: false, sinMusica: false, detalle: 'normal', mandos: 1, teclas: {}, sombras: true, mandoCoche: 'botones' };
+try { const a = JSON.parse(localStorage.getItem('fansof-auto-ajustes') || '{}'); Object.assign(AJUSTES, { mudo: !!a.mudo, sinMusica: !!a.sinMusica, detalle: a.detalle === 'bajo' ? 'bajo' : 'normal', mandos: [0.8, 1, 1.25].includes(a.mandos) ? a.mandos : 1, teclas: a.teclas && typeof a.teclas === 'object' ? a.teclas : {}, mandoCoche: a.mandoCoche === 'palanca' ? 'palanca' : 'botones' }); } catch (_) { /* sin guardar */ }
 function guardaAjustes() { try { localStorage.setItem('fansof-auto-ajustes', JSON.stringify(AJUSTES)); } catch (_) { /* sin guardar */ } }
 const sonidoApagado = () => AJUSTES.mudo;
 const volGeneral = () => (AJUSTES.mudo ? 0 : 0.55);

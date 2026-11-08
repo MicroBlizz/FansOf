@@ -6,11 +6,15 @@
 const cv = document.getElementById('juego'), CTX = cv.getContext('2d');
 const PASO = 1000 / 60;
 
+// el lienzo: en horizontal entre 320 y 480 de ancho por 224 a 270 de alto; en vertical (el móvil de pie, como quiere Daniel)
+// entre 240 y 300 de ancho por 400 a 640 de alto. Siempre se amplía un número entero de veces.
 function ajusta() {
   const dpr = window.devicePixelRatio || 1, aw = Math.floor(innerWidth * dpr), ah = Math.floor(innerHeight * dpr);
-  let k = Math.max(1, Math.floor(ah / 224));
-  while (k > 1 && 320 * k > aw) k--;
-  const H = Math.max(224, Math.min(270, Math.floor(ah / k))), W = Math.max(320, Math.min(480, Math.floor(aw / k)));
+  const vertical = ah > aw;
+  const [wMin, wMax, hMin, hMax] = vertical ? [240, 300, 400, 640] : [320, 480, 224, 270];
+  let k = Math.max(1, Math.floor((vertical ? aw : ah) / (vertical ? wMin : hMin)));
+  while (k > 1 && (vertical ? hMin * k > ah : wMin * k > aw)) k--;
+  const H = Math.max(hMin, Math.min(hMax, Math.floor(ah / k))), W = Math.max(wMin, Math.min(wMax, Math.floor(aw / k)));
   const e = Math.min(k, aw / W, ah / H);
   if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
   cv.style.width = (W * e / dpr) + 'px'; cv.style.height = (H * e / dpr) + 'px';

@@ -37,7 +37,7 @@ function pintaMarcador(g) {
   // el aviso de arriba (amarillo, como los avisos de misión de entonces)
   if (S.mensaje) {
     const lineas = envuelve(S.mensaje.texto, W - 60);
-    const y0 = S.mision ? 18 : 6;
+    const y0 = J.W < 320 ? 28 : S.mision ? 18 : 6;   // en vertical, debajo del dinero
     g.fillStyle = 'rgba(14,16,22,0.75)'; g.fillRect(28, y0 - 2, W - 56, lineas.length * 10 + 4);
     lineas.forEach((l, i) => escribe(g, l, W / 2, y0 + i * 10, { c: '#ffd23c', borde: TINTA, alin: 'centro' }));
   }
@@ -52,22 +52,23 @@ function pintaMarcador(g) {
 }
 
 function pintaMandos(g) {
-  const j = S.jugadores[0], G = geoMandos(), enCoche = j.coche !== null, k = AJUSTES.mandos || 1;
-  // la palanca (donde se puso el dedo)
-  if (MANDO.palanca.id !== null) {
-    const P = MANDO.palanca, R = 22 * k;
-    g.globalAlpha = 0.35; g.fillStyle = '#f4efe6'; g.beginPath(); g.arc(P.x0, P.y0, R, 0, 7); g.fill();
-    g.globalAlpha = 0.8; g.beginPath(); g.arc(P.x0 + P.dx * R, P.y0 + P.dy * R, 9 * k, 0, 7); g.fill(); g.globalAlpha = 1;
-  } else if (!enCoche || true) { g.globalAlpha = 0.18; g.fillStyle = '#f4efe6'; g.beginPath(); g.arc(34 * k, J.H - 34 * k, 22 * k, 0, 7); g.fill(); g.globalAlpha = 1; }
-  const boton = (b, color, texto, on) => {
-    g.globalAlpha = on ? 0.9 : 0.55; g.fillStyle = TINTA; g.beginPath(); g.arc(b.x, b.y, b.r + 1.5, 0, 7); g.fill();
-    g.fillStyle = color; g.beginPath(); g.arc(b.x, b.y, b.r, 0, 7); g.fill(); g.globalAlpha = 1;
-    escribe(g, texto, b.x, b.y - 4, { fuente: 'mini', c: TINTA, borde: null, sombra: null, alin: 'centro' });
-  };
-  boton(G.entrar, '#f28c28', enCoche ? 'SALIR' : 'ENTRAR', MANDO.pulsados.entrar);
-  boton(G.accion, enCoche ? '#55585f' : '#2a8c86', enCoche ? 'FRENO' : 'TIRO', MANDO.pulsados.accion);
-  if (enCoche) boton(G.claxon, '#e9c46a', 'PI', MANDO.pulsados.claxon);
-  boton(G.pausa, '#d9d4c7', '||', false);
+  const G = geoMandos(), k = AJUSTES.mandos || 1, P = MANDO.pulsados;
+  // la palanca (donde se puso el dedo), solo cuando no hay botones de dirección
+  if (!G.izq) {
+    if (MANDO.palanca.id !== null) {
+      const Pa = MANDO.palanca, R = 22 * k;
+      g.globalAlpha = 0.35; g.fillStyle = '#f4efe6'; g.beginPath(); g.arc(Pa.x0, Pa.y0, R, 0, 7); g.fill();
+      g.globalAlpha = 0.8; g.beginPath(); g.arc(Pa.x0 + Pa.dx * R, Pa.y0 + Pa.dy * R, 9 * k, 0, 7); g.fill(); g.globalAlpha = 1;
+    } else { g.globalAlpha = 0.18; g.fillStyle = '#f4efe6'; g.beginPath(); g.arc(34 * k, J.H - 34 * k, 22 * k, 0, 7); g.fill(); g.globalAlpha = 1; }
+  }
+  const COLOR = { izq: '#4aa3df', der: '#4aa3df', acel: '#f28c28', freno: '#e0302c', entrar: '#5cbf4a', accion: '#2a8c86', claxon: '#e9c46a', pausa: '#d9d4c7' };
+  for (const k2 in G) {
+    const b = G[k2], on = !!P[k2];
+    g.globalAlpha = on ? 0.95 : 0.6; g.fillStyle = TINTA; g.beginPath(); g.arc(b.x, b.y, b.r + 1.5, 0, 7); g.fill();
+    g.fillStyle = COLOR[k2] || '#d9d4c7'; g.beginPath(); g.arc(b.x, b.y, b.r, 0, 7); g.fill(); g.globalAlpha = 1;
+    const grande = b.r >= 18 * k && b.texto.length <= 3;
+    escribe(g, b.texto, b.x, b.y - (grande ? 6 : 4), { fuente: grande ? 'normal' : 'mini', c: TINTA, borde: null, sombra: null, alin: 'centro' });
+  }
 }
 
 // la oferta: la cabina (una misión) o el Templo (guardar pagando)

@@ -1,8 +1,8 @@
 {
- "build": 1111,
- "hash": "cb4fa96",
- "fecha": "2026-11-07T22:00:23Z",
- "mensaje": "Tablero: cada tarea enseña su número (#id) en la tarjeta y al editarla",
+ "build": 1112,
+ "hash": "6f82268",
+ "fecha": "2026-11-08T00:51:40Z",
+ "mensaje": "Fans of Auto 0.2.0: vertical en el móvil, conducción con derrape y marcas, mandos de tres botones, día y noche con faros y nieve (ADR 086)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

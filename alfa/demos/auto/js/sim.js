@@ -13,7 +13,7 @@ function nuevoEstado(guardado) {
   const az = Azar(Date.now() & 0xffff);
   S = {
     tick: 0, semilla: az.semilla(), jugadores: [], coches: [], peatones: [], balas: [], objetos: [], fx: [], telefonos: [], mensaje: null, rotulo: null,
-    mision: null, hechas: guardado ? guardado.hechas.slice() : [], sigId: 1, pausa: false,
+    mision: null, hechas: guardado ? guardado.hechas.slice() : [], sigId: 1, pausa: false, marcas: [], hora: 19.5,
   };
   S.az = Azar(S.semilla);
   const j = {
@@ -116,6 +116,7 @@ function cocheEn(x, y, j) { for (const c of S.coches) if (c.conductor !== j.id &
 function pasoConduce(j, c, o) {
   const D = COCHES[c.tipo];
   let acel = o.acel, giro = o.giro;
+  if (o.freno && acel <= 0 && Math.hypot(c.vx, c.vy) < 0.4) acel = -1;   // con el coche parado, el freno es marcha atrás
   if (o.palanca) {
     // mando del móvil: la palanca dice hacia dónde quieres ir y el coche gira solo hacia allí
     const m = Math.hypot(o.mx, o.my);
@@ -141,30 +142,45 @@ function pasoConduce(j, c, o) {
 function fisicaCoche(c, acel, giro, freno, jugador) {
   const D = COCHES[c.tipo], cs = Math.cos(c.ang), sn = Math.sin(c.ang);
   let vf = c.vx * cs + c.vy * sn, vl = -c.vx * sn + c.vy * cs;
-  if (acel > 0) vf += D.acel * acel * (jugador ? 1 : 0.8); else if (acel < 0) vf += (vf > 0.3 ? 0.12 : D.acel * 0.6) * acel;
-  vf *= 0.985;
+  if (acel > 0) vf += D.acel * acel * (jugador ? 1.15 : 0.8); else if (acel < 0) vf += (vf > 0.3 ? 0.12 : D.acel * 0.6) * acel;
+  vf *= 0.988;
   if (Math.abs(vf) < 0.02 && acel === 0) vf = 0;
-  const vmax = jugador ? D.vmax : D.vmax * 0.6;
+  const vmax = jugador ? D.vmax * 1.15 : D.vmax * 0.6;
   vf = acota(vf, -vmax * 0.45, vmax);
-  if (freno) { vf *= 0.96; vl *= 0.93; } else vl *= 0.72;
+  // el agarre: el jugador resbala mucho (derrapes largos, como en el vídeo); el tráfico va pegado al suelo
+  if (freno) { vf *= 0.965; vl *= 0.975; } else vl *= jugador ? 0.92 : 0.72;
   c.derrapa = Math.abs(vl);
-  // el giro depende de la velocidad (parado no gira)
+  // el giro con inercia: el morro tarda un poco en ir y en volver, que es lo que hace que el derrape se sienta
   const k = acota(vf / 1.5, -1, 1);
-  c.ang += giro * D.giro * k * (freno ? 1.4 : 1);
+  const quiere = giro * D.giro * k * (freno ? 1.5 : 1.25);
+  c.w = (c.w || 0) * (jugador ? 0.8 : 0.5) + quiere * (jugador ? 0.35 : 0.6);
+  c.ang += c.w;
   const cs2 = Math.cos(c.ang), sn2 = Math.sin(c.ang);
   c.vx = vf * cs2 - vl * sn2; c.vy = vf * sn2 + vl * cs2;
-  // mover y chocar con los edificios (se intenta deslizar; si no, rebota)
+  if (jugador && c.derrapa > 0.55 && Math.hypot(c.vx, c.vy) > 1) marcasYNieve(c, cs2, sn2);
+  mueveCoche(c, jugador);
+  if (c.bocina > 0) c.bocina--;
+}
+// mover y chocar con los edificios (se intenta deslizar; si no, rebota)
+function mueveCoche(c, jugador) {
   const x0 = c.x, y0 = c.y;
   c.x += c.vx; c.y += c.vy;
-  if (cocheChoca(c)) {
-    c.x = x0 + c.vx; c.y = y0;
-    if (cocheChoca(c)) { c.x = x0; c.y = y0 + c.vy; if (cocheChoca(c)) { c.x = x0; c.y = y0; } }
-    const v = Math.hypot(c.vx, c.vy);
-    if (v > 0.8) { c.vida -= v * 4; if (jugador) { play('choque', Math.min(1, v / 3)); sacude(v * 1.5); } }
-    c.vx *= -0.3; c.vy *= -0.3;
-    if (c.ia) c.ia.espera = 20;
+  if (!cocheChoca(c)) return;
+  c.x = x0 + c.vx; c.y = y0;
+  if (cocheChoca(c)) { c.x = x0; c.y = y0 + c.vy; if (cocheChoca(c)) { c.x = x0; c.y = y0; } }
+  const v = Math.hypot(c.vx, c.vy);
+  if (v > 0.8) { c.vida -= v * 4; if (jugador) { play('choque', Math.min(1, v / 3)); sacude(v * 1.5); } }
+  c.vx *= -0.3; c.vy *= -0.3; c.w = 0;
+  if (c.ia) c.ia.espera = 20;
+}
+// las marcas de rueda en el asfalto y la nieve que salta al derrapar (las marcas se dibujan en dibujo.js, en una capa fija)
+function marcasYNieve(c, cs, sn) {
+  const D = COCHES[c.tipo], atras = -D.l / 2 + 3, lado = D.a / 2 - 1;
+  for (const s of [1, -1]) {
+    const x = c.x + atras * cs - lado * s * sn, y = c.y + atras * sn + lado * s * cs;
+    S.marcas.push({ x, y, f: Math.min(1, c.derrapa / 2) });
+    if (S.tick % 2 === 0) S.fx.push({ tipo: 'nieve', x, y, dx: -sn * s * S.az.entre(0.3, 1.2) - c.vx * 0.15, dy: cs * s * S.az.entre(0.3, 1.2) - c.vy * 0.15, t: 18 + S.az.entero(0, 10) });
   }
-  if (c.bocina > 0) c.bocina--;
 }
 function entrarSalir(j, coche) {
   if (coche) {
@@ -326,7 +342,7 @@ function pasoObjetos() {
   S.objetos = S.objetos.filter(o => !o.cogido);
 }
 function pasoFx() {
-  for (const f of S.fx) { f.t--; if (f.tipo === 'humo') { f.y -= 0.3; f.x += 0.15; } else if (f.tipo === 'dinero') f.y -= 0.4; }
+  for (const f of S.fx) { f.t--; if (f.tipo === 'humo') { f.y -= 0.3; f.x += 0.15; } else if (f.tipo === 'dinero') f.y -= 0.4; else if (f.tipo === 'nieve') { f.x += f.dx; f.y += f.dy; f.dx *= 0.92; f.dy *= 0.92; } }
   S.fx = S.fx.filter(f => f.t > 0);
   if (S.mensaje && --S.mensaje.t <= 0) S.mensaje = null;
   if (S.rotulo && --S.rotulo.t <= 0) S.rotulo = null;
@@ -344,6 +360,15 @@ function pasoSim(ordenes) {
   pasoObjetos();
   pasoMision();
   pasoFx();
+  S.hora = (S.hora + 24 / (6 * 60 * 60)) % 24;   // un día entero cada seis minutos
   if (S.tick % 30 === 0) { reponeTrafico(); reponeVecinos(); }
+}
+// cuánta noche hay ahora (0 = pleno día, 1 = noche cerrada)
+function oscuridad() {
+  const h = S.hora;
+  if (h >= 8 && h < 18) return 0;
+  if (h >= 21 || h < 5) return 1;
+  if (h >= 18) return (h - 18) / 3;
+  return 1 - (h - 5) / 3;
 }
 const ORDEN_VACIA = { mx: 0, my: 0, acel: 0, giro: 0, freno: false, disparo: false, entrar: false, claxon: false, palanca: false };

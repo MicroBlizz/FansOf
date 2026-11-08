@@ -9,7 +9,10 @@ function imagenNivel(mundo, n) {
   const k = `${mundo}-${n}`;
   if (!(k in ILUS.cache)) {
     const im = new Image(); ILUS.cache[k] = null;
-    im.onload = () => { ILUS.cache[k] = im; };
+    im.onload = () => {   // si el nivel ya había empezado con el cartel provisional, se rehace con la portada de verdad
+      ILUS.cache[k] = im;
+      if (enPartida() && `${JUEGO.mundo}-${JUEGO.n}` === k && !ILUS.conImagen) preparaIlustracion(JUEGO.mundo, JUEGO.n, TAB.w, TAB.h);
+    };
     im.src = `img/${k}.jpg?v=1`;
   }
   return ILUS.cache[k];
@@ -38,9 +41,12 @@ function preparaIlustracion(mundo, n, w, h) {
   const c = document.createElement('canvas'); c.width = Math.round(w * PAN.k); c.height = Math.round(h * PAN.k);
   const g = c.getContext('2d'); g.scale(PAN.k, PAN.k);
   const im = imagenNivel(mundo, n);
-  if (im) {   // la imagen de Yoshi, recortada a lo que quepa (sin deformar)
-    const esc = Math.max(w / im.width, h / im.height), iw = im.width * esc, ih = im.height * esc;
-    g.drawImage(im, (w - iw) / 2, (h - ih) / 2, iw, ih);
+  if (im) {   // la portada de Yoshi ENTERA (sin recortar ni acercar el cuerpo); el hueco que sobra, con la misma imagen desenfocada y oscura
+    const cubre = Math.max(w / im.width, h / im.height), cabe = Math.min(w / im.width, h / im.height);
+    g.filter = 'blur(14px) brightness(.55)';
+    g.drawImage(im, (w - im.width * cubre) / 2, (h - im.height * cubre) / 2, im.width * cubre, im.height * cubre);
+    g.filter = 'none';
+    g.drawImage(im, (w - im.width * cabe) / 2, (h - im.height * cabe) / 2, im.width * cabe, im.height * cabe);
   } else pintaCartelProvisional(g, MUNDOS[mundo], n, w, h);
   ILUS.lienzo = c; ILUS.conImagen = !!im;
 }

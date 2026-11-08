@@ -40,16 +40,25 @@ function circulo(x, y, r, fill, stroke, lw = 2) {
   if (stroke) { G.strokeStyle = stroke; G.lineWidth = lw; G.stroke(); }
 }
 
+// texto oscuro sin borde (dentro de una burbuja blanca)
+function parrafoTinta(txt, x, y, w, tam) {
+  G.font = `700 ${tam}px "Baloo 2", system-ui, sans-serif`;
+  const lineas = []; let fila = '';
+  for (const p of txt.split(' ')) { const pr = fila ? fila + ' ' + p : p; if (G.measureText(pr).width > w && fila) { lineas.push(fila); fila = p; } else fila = pr; }
+  if (fila) lineas.push(fila);
+  lineas.forEach((l, i) => letra(l, x, y + i * tam * 1.2, tam, COL.tinta, 'center', null, 0, 700));
+}
+
 const dentro = (r, px, py) => r && px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h;
 
 // ---------- botones de las pantallas ----------
 // Cada fotograma se vacía la lista (js/pantalla.js) y cada botón dibujado se apunta con su acción; un toque (js/entrada.js)
 // busca el último botón que esté debajo del dedo.
 const UI = []; UI.enter = null; UI.atras = null;
-const PLACA = { [COL.rosa]: 'boton', [COL.oro]: 'boton-oro', [COL.panel]: 'boton-gris', [COL.verde]: 'boton' };   // qué placa de Yoshi lleva cada color
+const PLACA = { [COL.rosa]: 'boton', [COL.oro]: 'boton-oro', [COL.panel]: 'boton-azul', [COL.verde]: 'boton-azul' };   // qué placa de Yoshi lleva cada color (nada de gris ni lila: Daniel)
 function botonUI(txt, x, y, w, h, accion, col = COL.rosa, colTxt = COL.tinta, tam = 16) {
-  const placa = sprite(PLACA[col] || 'boton-gris');
-  if (placa) G.drawImage(placa, x, y, w, h + 4);
+  const placa = sprite(PLACA[col] || 'boton-azul');
+  if (placa) { G.drawImage(placa, x, y, w, h + 4); colTxt = COL.tinta; }
   else { caja(x, y + 4, w, h, 10, COL.tinta, null); caja(x, y, w, h, 10, col, COL.tinta, 2.5); }
   letra(txt, x + w / 2, y + h / 2 + 1, tam, colTxt, 'center', null, 0);
   UI.push({ x, y, w, h, accion });
@@ -93,12 +102,32 @@ function palabra(nombre, txt, x, y, alto, col = COL.blanco) {
   letra(txt, x, y, alto * 0.8, col);
 }
 
-// un número con los dígitos pintados (img/numeros.png: los diez en fila, del 0 al 9); si no está, con letra
+// los diez dígitos de img/numeros.png: se buscan una vez por las columnas transparentes que los separan (Yoshi no los deja
+// igual de separados). Devuelve [{x, w}] x10, o null si la hoja no está o no salen diez trozos.
+let DIGITOS = null;
+function digitos() {
+  const im = sprite('numeros');
+  if (!im) return null;
+  if (DIGITOS) return DIGITOS.length === 10 ? DIGITOS : null;
+  const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+  const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+  const d = g.getImageData(0, 0, im.width, im.height).data, llena = x => { for (let y = 0; y < im.height; y++) if (d[(y * im.width + x) * 4 + 3] > 40) return true; return false; };
+  DIGITOS = []; let desde = -1;
+  for (let x = 0; x <= im.width; x++) {
+    const l = x < im.width && llena(x);
+    if (l && desde < 0) desde = x;
+    else if (!l && desde >= 0) { if (x - desde > 2) DIGITOS.push({ x: desde, w: x - desde }); desde = -1; }
+  }
+  return DIGITOS.length === 10 ? DIGITOS : null;
+}
+
+// un número con los dígitos pintados por Yoshi; si no están, con letra
 function numero(n, x, y, alto, col = COL.blanco, alin = 'center') {
-  const im = sprite('numeros'), s = String(n);
-  if (!im) { letra(s, x, y, alto * 0.9, col, alin); return; }
-  const dw = im.width / 10, w = alto * dw / im.height, x0 = alin === 'center' ? x - s.length * w / 2 : alin === 'right' ? x - s.length * w : x;
-  for (let i = 0; i < s.length; i++) { const d = +s[i]; if (d >= 0) G.drawImage(im, d * dw, 0, dw, im.height, x0 + i * w, y - alto / 2, w, alto); }
+  const im = sprite('numeros'), D = digitos(), s = String(n);
+  if (!im || !D || !/^[0-9]+$/.test(s)) { letra(s, x, y, alto * 0.9, col, alin); return; }
+  const k = alto / im.height, ancho = [...s].reduce((t, ch) => t + D[+ch].w * k + alto * 0.04, 0);
+  let cx = alin === 'center' ? x - ancho / 2 : alin === 'right' ? x - ancho : x;
+  for (const ch of s) { const dg = D[+ch]; G.drawImage(im, dg.x, 0, dg.w, im.height, cx, y - alto / 2, dg.w * k, alto); cx += dg.w * k + alto * 0.04; }
 }
 
 // una barra de progreso (img/barra-vacia.png y barra-llena.png); si no están, cajas

@@ -16,16 +16,16 @@ const idx = (x, y) => y * TAB.cols + x;
 const enTablero = (x, y) => x >= 0 && y >= 0 && x < TAB.cols && y < TAB.filas;
 const celda = (x, y) => (enTablero(x, y) ? TAB.cel[idx(x, y)] : DESTAPADA);   // fuera del tablero cuenta como destapado (es el marco)
 
-// un tablero nuevo: todo tapado menos el marco, y la silueta (un óvalo centrado, mientras Yoshi no dé la forma de verdad)
+// un tablero nuevo: todo tapado menos el marco, y la silueta: la franja donde está la portada entera (3:4, centrada en vertical;
+// js/ilustra.js la pinta ahí y rellena arriba y abajo con la misma imagen desenfocada, que no cuenta para el porcentaje)
 function nuevoTablero() {
   const n = TAB.cols * TAB.filas;
   TAB.cel = new Uint8Array(n); TAB.sil = new Uint8Array(n); TAB.total = 0;
-  const cx = (TAB.cols - 1) / 2, cy = (TAB.filas - 1) / 2, rx = TAB.cols * 0.36, ry = TAB.filas * 0.4;
+  const alto = Math.round(TAB.cols * 4 / 3), y0 = Math.max(1, Math.floor((TAB.filas - alto) / 2)), y1 = Math.min(TAB.filas - 1, y0 + alto);
   for (let y = 0; y < TAB.filas; y++) for (let x = 0; x < TAB.cols; x++) {
     const i = idx(x, y);
     if (x === 0 || y === 0 || x === TAB.cols - 1 || y === TAB.filas - 1) TAB.cel[i] = DESTAPADA;
-    const dx = (x - cx) / rx, dy = (y - cy) / ry;
-    if (dx * dx + dy * dy <= 1) { TAB.sil[i] = 1; TAB.total++; }
+    else if (y >= y0 && y < y1) { TAB.sil[i] = 1; TAB.total++; }
   }
 }
 

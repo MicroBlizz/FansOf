@@ -1,8 +1,8 @@
 {
- "build": 1128,
- "hash": "bcef38b",
- "fecha": "2026-11-08T06:35:20Z",
- "mensaje": "Pets: el guion de smoke-test espera 10 s al clic (sin pulsar por JS) y, si no llega, dice por qué en una línea",
+ "build": 1129,
+ "hash": "5b8f80b",
+ "fecha": "2026-11-08T09:12:12Z",
+ "mensaje": "Fans of Panic 0.1.2: arte de Yoshi recogido (58 de 67 buenos) y 9 repetidos",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

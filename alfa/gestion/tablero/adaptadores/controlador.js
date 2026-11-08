@@ -98,9 +98,32 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     el(hueco.lista).onclick = ev => { const t = ev.target.closest('[data-id]'); if (t) elige(t); };
     el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter') { ev.preventDefault(); elige(t); } };
   }
+  // Pulsar una caja del grafo marca esa caja y enseña debajo su check y su evidencia; «Ver grande» abre el dibujo a pantalla completa (y vuelve a cerrarlo)
+  function eligeNodo(caja) {
+    const dibujo = caja.closest('[data-dibujo]'), t = panel && panel.id ? tareaDe(panel.id) : null, n = t && t.grafo && t.grafo.nodo(caja.dataset.nodo);
+    if (!n) return;
+    dibujo.querySelectorAll('.elegido').forEach(x => x.classList.remove('elegido'));
+    caja.classList.add('elegido');
+    dibujo.querySelector('[data-nodo-info]').innerHTML = TABLERO.vistaDetalle.nodoInfo(n, esc);
+  }
+  function alternaGrande(boton) {
+    const grande = boton.closest('[data-dibujo]').classList.toggle('grande');
+    boton.textContent = grande ? 'Cerrar' : 'Ver grande';
+    boton.focus();   // el foco dentro del panel, para que Escape llegue siempre aquí (Safari no da foco al pulsar un botón)
+  }
+  // Escape cierra primero el dibujo grande; devuelve si había uno abierto
+  function cierraGrande() {
+    const abierto = el(hueco.detalle).querySelector('[data-dibujo].grande');
+    if (abierto) alternaGrande(abierto.querySelector('[data-grande]'));
+    return !!abierto;
+  }
   function conectaPanel() {
     const caja = el(hueco.detalle);
+    caja.onkeydown = ev => { const c = ev.target.closest('[data-nodo]'); if (c && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); eligeNodo(c); } };
     caja.onclick = ev => {
+      const nodo = ev.target.closest('[data-nodo]'), grande = ev.target.closest('[data-grande]');
+      if (nodo) eligeNodo(nodo);
+      if (grande) alternaGrande(grande);
       if (ev.target.closest('[data-cerrar]')) cierra();
       const b = ev.target.closest('[data-editar]');
       if (b) abre({ formulario: tareaDe(b.dataset.editar) });
@@ -111,7 +134,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     caja.oninput = ev => { if (ev.target.name === 'titulo') buscaParecidas(ev.target.value, ev.target.form); };
     caja.onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };
     caja.onsubmit = ev => { ev.preventDefault(); aviso(''); guarda(ev.target); };
-    el(hueco.vista).onkeydown = ev => { if (ev.key === 'Escape' && panel && panel.id) cierra(); };
+    el(hueco.vista).onkeydown = ev => { if (ev.key === 'Escape' && !cierraGrande() && panel && panel.id) cierra(); };
   }
   // arrastrar una tarjeta a otra columna es lo mismo que elegirla en el desplegable del detalle
   function conectaArrastre() {

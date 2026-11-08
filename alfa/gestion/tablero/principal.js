@@ -5,7 +5,7 @@
 (() => {
   const casos = TABLERO.casos(TABLERO.repositorioServidor({ rpc, leerToken }));
   const controlador = TABLERO.controlador({ casos, hueco: { aviso: 'tb-aviso', filtros: 'tb-filtros', vista: 'tb-vista', lista: 'tb-lista', detalle: 'tb-detalle', juegos: 'tb-juegos' }, esc, fecha, textoError });
-  $('tb-estilo').textContent = TABLERO.vista.ESTILO;   // la hoja de estilos se pone una vez, no en cada carga
+  $('tb-estilo').textContent = TABLERO.vista.ESTILO + TABLERO.vistaGrafo.ESTILO;   // la hoja de estilos se pone una vez, no en cada carga
   controlador.conecta();
   GESTION_NAV.seccion({ id: 'tablero', pan: 'pan-tablero', etiqueta: 'Tablero', orden: 2, cargar: controlador.cargar });
 })();

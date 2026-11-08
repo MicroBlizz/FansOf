@@ -3,6 +3,8 @@
 // depende de nadie; un nodo va un nivel por debajo del más profundo del que depende) y resumir cuántos hay en cada estado. Sin reloj, red ni pantalla.
 'use strict';
 TABLERO.ESTADOS_NODO = Object.freeze(['pendiente', 'en_curso', 'pasa', 'falla', 'bloqueado']);
+// el estado de un nodo como se lee en pantalla («en curso»)
+TABLERO.estadoNodoTexto = e => e.replace('_', ' ');
 TABLERO.Grafo = class Grafo {
   #nodos;
   #niveles;
@@ -48,6 +50,8 @@ TABLERO.Grafo = class Grafo {
     return nivel;
   }
 
+  // el nodo con ese id, o undefined
+  nodo(id) { return this.#nodos.find(n => n.id === id); }
   get fase() { return this.#datos.fase; }
   get siguiente() { return this.#datos.siguiente; }
   // los nodos por niveles, en el orden en que llegaron dentro de cada nivel

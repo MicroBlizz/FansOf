@@ -1,8 +1,8 @@
 {
- "build": 1130,
- "hash": "2ec5b51",
- "fecha": "2026-11-08T11:19:04Z",
- "mensaje": "Rumble arte pintado: derrumbes de las 4 piezas, humo pintado de las ruinas y espaldas nuevas",
+ "build": 1131,
+ "hash": "5e573d9",
+ "fecha": "2026-11-08T11:49:30Z",
+ "mensaje": "Tablero: dibujar el grafo de una tarea como grafo (#14)",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

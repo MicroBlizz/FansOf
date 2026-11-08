@@ -8,6 +8,7 @@
 PT.muneco3d = (() => {
   const CONTORNO = { color: '#2b1a14', grosor: 0.011 };   // el grosor, en unidades del mundo (la criatura mide algo más de 1)
   const MONTAJES = {};
+  const PUFF = { escala: 0.7, y: 0.02 };   // la cesta del maniquí (hecha para un cuerpo más alto) a la medida del muñeco, que es un 40 % más bajo
   const archivo = (id, edad) => `img/criaturas/${id.replace(':', '-')}/${edad}/muneco.glb`;
 
   // lo «abierto» de cada vértice (de 0 a 1): 0 en un hueco de la forma (el cuello, la base de las orejas), donde el contorno hinchado de la malla de al lado
@@ -55,12 +56,12 @@ PT.muneco3d = (() => {
     return r;
   }
   async function monta(id, edad) {
-    const { T, render, tonos, luces } = await PT.maniqui3d.comun(), gradiente = tonos();
+    const { T, render, tonos, luces, cosaCon } = await PT.maniqui3d.comun(), gradiente = tonos();
     const gltf = await new T.GLTFLoader().loadAsync(archivo(id, edad)), raiz = gltf.scene, mallas = [], huesos = [];
     raiz.traverse(o => { if (o.isMesh) mallas.push(o); if (o.isBone) huesos.push(o); });
     mallas.forEach((m, i) => { viste(T, gradiente, m, i); m.parent.add(contorno(T, m)); });
     const escena = new T.Scene(); escena.add(raiz); luces(escena);
-    return { T, render, escena, raiz, mallas, piel: mallas.find(m => m.material.map) || null, cara: '', caras: null, huesos: Object.fromEntries(huesos.map(h => [h.name, h])), reposo: reposos(T, raiz, huesos) };
+    return { T, render, escena, raiz, mallas, piel: mallas.find(m => m.material.map) || null, cara: '', caras: null, objetos: PT.maniqui3dObjetos.crea(T, cosaCon(gradiente), PT.maniqui.de(id).valor.medidas.estampado), huesos: Object.fromEntries(huesos.map(h => [h.name, h])), reposo: reposos(T, raiz, huesos) };
   }
   // un giro de la pose (ejes del mundo, como el maniquí) en el eje del hueso: reposo · (mundo⁻¹ · giro · mundo)
   function gira(T, h, rp, q, caida = 0) {
@@ -78,6 +79,8 @@ PT.muneco3d = (() => {
     for (const [n, h] of Object.entries(mo.huesos)) h.scale.copy(mo.reposo[n].s);
     for (const [n, h] of Object.entries(mo.huesos)) gira(T, h, mo.reposo[n], pose.huesos[n] || {}, enT ? 0 : CAIDA[n] || 0);
     mo.raiz.position.y = pose.sentado;
+    PT.maniqui3dObjetos.coloca(mo.T, mo.objetos, mo.escena, { ...pose, objetos: pose.objetos.filter(n => n === 'cesta') }, null, null);
+    mo.objetos.cesta.scale.setScalar(PUFF.escala); mo.objetos.cesta.position.y = PUFF.y;   // la cama puff al dormir (con su zeta); los objetos de comer los pone el minijuego
   }
   // el mismo montaje que PT.maniqui3d.montaje; edad: la carpeta del muñeco (bebe, nino, adolescente o adulto)
   async function montaje(id, edad = 'nino') {

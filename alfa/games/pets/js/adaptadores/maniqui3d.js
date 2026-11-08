@@ -173,6 +173,6 @@ PT.maniqui3d = (() => {
     return true;
   }
   // lo común con el inflado (adaptadores/inflado3d.js): three.js, el renderizador, el sombreado de dibujo y las tres luces
-  const comun = async () => { await tres(); return { T, render, tonos, luces }; };
+  const comun = async () => { await tres(); return { T, render, tonos, luces, cosaCon }; };
   return { pinta, montaje, comun, listo: id => typeof MONTAJES[id] === 'object' };
 })();

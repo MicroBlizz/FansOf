@@ -1,8 +1,8 @@
 {
- "build": 1126,
- "hash": "8e890c9",
- "fecha": "2026-11-08T06:19:44Z",
- "mensaje": "Pets: el guion de smoke-test cierra el minijuego con un clic por JS repetido (en GitHub el muñeco 3D va lento y el clic de Playwright se agotaba)",
+ "build": 1127,
+ "hash": "942d7aa",
+ "fecha": "2026-11-08T06:32:02Z",
+ "mensaje": "Pets: el guion de smoke-test pulsa por JS cuando el clic de Playwright no llega en 3 s (la pantalla se repinta sin parar en la máquina de GitHub)",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

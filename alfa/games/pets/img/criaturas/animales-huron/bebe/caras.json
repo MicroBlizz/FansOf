@@ -1,0 +1,37 @@
+{
+ "lado": 2048,
+ "caras": {
+  "ojos-cerrados": [
+   {
+    "x": 640,
+    "y": 1794,
+    "w": 122,
+    "h": 134,
+    "archivo": "cara-ojos-cerrados-0.webp"
+   },
+   {
+    "x": 704,
+    "y": 1482,
+    "w": 131,
+    "h": 133,
+    "archivo": "cara-ojos-cerrados-1.webp"
+   }
+  ],
+  "boca-abierta": [
+   {
+    "x": 358,
+    "y": 1524,
+    "w": 215,
+    "h": 147,
+    "archivo": "cara-boca-abierta-0.webp"
+   },
+   {
+    "x": 1302,
+    "y": 1450,
+    "w": 6,
+    "h": 13,
+    "archivo": "cara-boca-abierta-1.webp"
+   }
+  ]
+ }
+}

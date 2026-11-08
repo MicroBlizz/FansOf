@@ -60,7 +60,7 @@ PT.muneco3d = (() => {
     raiz.traverse(o => { if (o.isMesh) mallas.push(o); if (o.isBone) huesos.push(o); });
     mallas.forEach((m, i) => { viste(T, gradiente, m, i); m.parent.add(contorno(T, m)); });
     const escena = new T.Scene(); escena.add(raiz); luces(escena);
-    return { T, render, escena, raiz, mallas, huesos: Object.fromEntries(huesos.map(h => [h.name, h])), reposo: reposos(T, raiz, huesos) };
+    return { T, render, escena, raiz, mallas, piel: mallas.find(m => m.material.map) || null, cara: '', caras: null, huesos: Object.fromEntries(huesos.map(h => [h.name, h])), reposo: reposos(T, raiz, huesos) };
   }
   // un giro de la pose (ejes del mundo, como el maniquí) en el eje del hueso: reposo · (mundo⁻¹ · giro · mundo)
   function gira(T, h, rp, q, caida = 0) {
@@ -92,17 +92,46 @@ PT.muneco3d = (() => {
       // para probar el esqueleto (visor): los huesos y una pose hecha a mano, { hueso: { x, y, z } } en radianes, con los brazos en T o bajados
       huesos: mo.huesos, aMano: (giros, enT = false) => aplica(mo, { huesos: giros, sentado: 0 }, enT) };
   }
+  // LAS CARAS (f16, «Expresiones»): la piel lleva la cara de base; las otras (ojos cerrados, boca abierta) son parches sin pérdida de las zonas que cambian
+  // (img/criaturas/<criatura>/<edad>/caras.json y cara-<estado>-<n>.webp, de herramientas/pets/caras_del_muneco.py). Para cambiar de cara, la piel se
+  // copia a un lienzo, se le pegan los parches pedidos y ese lienzo es su textura. Mientras los parches cargan, o si no los hay, se queda la cara de base
+  const carpeta = (id, edad) => `img/criaturas/${id.replace(':', '-')}/${edad}/`;
+  function cargaCaras(mo, id, edad) {
+    if (mo.caras) return;
+    mo.caras = { listas: false, parches: {} };
+    const dir = carpeta(id, edad), foto = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error(src)); i.src = src; });
+    fetch(dir + 'caras.json').then(r => r.ok ? r.json() : Promise.reject(new Error('caras.json'))).then(async datos => {
+      for (const [nombre, rs] of Object.entries(datos.caras)) mo.caras.parches[nombre] = await Promise.all(rs.map(async r => ({ ...r, imagen: await foto(dir + r.archivo) })));
+      const base = mo.piel.material.map.image, lienzo = document.createElement('canvas'); lienzo.width = lienzo.height = datos.lado;
+      const textura = new mo.T.CanvasTexture(lienzo), vieja = mo.piel.material.map;
+      textura.flipY = vieja.flipY; textura.colorSpace = vieja.colorSpace; textura.generateMipmaps = vieja.generateMipmaps; textura.minFilter = vieja.minFilter; textura.anisotropy = vieja.anisotropy;
+      Object.assign(mo.caras, { base, lienzo, textura, listas: true });
+    }).catch(e => { console.warn('Pets · muñeco 3D sin caras:', id, edad, e.message); });
+  }
+  // pone la cara con esos estados (lista de nombres de caras.json, o vacía: la de base); no hace nada si ya la tiene o si los parches aún no han cargado
+  function poneCara(mo, estados) {
+    const c = mo.caras, clave = estados.join('+');
+    if (!c || !c.listas || mo.cara === clave) return;
+    const ctx = c.lienzo.getContext('2d'); ctx.drawImage(c.base, 0, 0, c.lienzo.width, c.lienzo.height);
+    for (const n of estados) for (const r of c.parches[n] || []) ctx.drawImage(r.imagen, r.x, r.y);
+    c.textura.needsUpdate = true; mo.piel.material.map = c.textura; mo.piel.material.needsUpdate = true; mo.cara = clave;
+  }
+  // los ojos, solos: abiertos, o cerrados al dormir y en el parpadeo (cada 4 s y cuarto, durante una décima y media)
+  const PARPADEO = { cada: 4.2, dura: 0.15 };
+  const parpadea = t => t % PARPADEO.cada < PARPADEO.dura;
+  const caraDe = (nombre, t, boca) => [...(nombre === 'dormir' || parpadea(t) ? ['ojos-cerrados'] : []), ...(boca ? ['boca-abierta'] : [])];
   const EN_T = 'en-t';
   // PINTAR EN EL LIENZO DEL JUEGO (como PT.maniqui3d.pinta): el muñeco de la criatura id y de su edad, en la pose nombre, con el encuadre de su dibujo de
   // 640 (los pies donde los tenía) centrado en (x, y) a lado píxeles, con un margen por si el muñeco sobresale. Devuelve false mientras carga (o si
   // no hay muñeco de esa criatura y edad) y quien llama pinta lo de siempre
   const LISTOS = {}, ENCUADRE = 1.15, LADO_RENDER = 640;
-  function pinta(ctx, id, x, y, lado, t, nombre, edad = 'nino') {
+  function pinta(ctx, id, x, y, lado, t, nombre, edad = 'nino', boca = false) {
     const clave = id + '/' + edad;
     if (!(clave in LISTOS)) { LISTOS[clave] = null; montaje(id, edad).then(() => monta_listo(clave, id, edad), e => { console.warn('Pets · muñeco 3D sin montar:', clave, e.message); }); }
     const mo = LISTOS[clave], pose = PT.maniquiPoses.de(nombre, t);
     if (!mo || !pose.ok) return false;
     aplica(mo, pose.valor);
+    if (mo.piel) { cargaCaras(mo, id, edad); poneCara(mo, caraDe(nombre, t, boca)); }
     mo.render.setSize(LADO_RENDER, LADO_RENDER, false); mo.render.render(mo.escena, mo.camara);
     const borde = lado * ENCUADRE / 2;
     ctx.drawImage(mo.render.domElement, x - borde, y - borde, 2 * borde, 2 * borde);
@@ -127,5 +156,5 @@ PT.muneco3d = (() => {
   // la carpeta del muñeco de cada etapa de la mascota: el jefe es un adulto
   const EDADES = { bebe: 'bebe', nino: 'nino', adolescente: 'adolescente', adulto: 'adulto', jefe: 'adulto' };
   const edad = etapa => EDADES[etapa];
-  return { montaje, pinta, ancla, tiene, edad, EN_T };
+  return { montaje, pinta, ancla, tiene, edad, caraDe, EN_T };
 })();

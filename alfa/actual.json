@@ -1,8 +1,8 @@
 {
- "build": 1117,
- "hash": "151c027",
- "fecha": "2026-11-08T04:58:38Z",
- "mensaje": "Tablero: tarjetas pequeñas, detalle en un panel a la derecha y botón de refrescar",
+ "build": 1118,
+ "hash": "6a17995",
+ "fecha": "2026-11-08T05:03:38Z",
+ "mensaje": "Pets: caras del muñeco 3D (parpadeo, ojos cerrados al dormir, boca abierta) por parches de la piel",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

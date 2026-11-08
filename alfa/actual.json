@@ -1,8 +1,8 @@
 {
- "build": 1127,
- "hash": "942d7aa",
- "fecha": "2026-11-08T06:32:02Z",
- "mensaje": "Pets: el guion de smoke-test pulsa por JS cuando el clic de Playwright no llega en 3 s (la pantalla se repinta sin parar en la máquina de GitHub)",
+ "build": 1128,
+ "hash": "bcef38b",
+ "fecha": "2026-11-08T06:35:20Z",
+ "mensaje": "Pets: el guion de smoke-test espera 10 s al clic (sin pulsar por JS) y, si no llega, dice por qué en una línea",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

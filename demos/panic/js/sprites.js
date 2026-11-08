@@ -1,15 +1,17 @@
 // Fans of Panic · Sprites: todos los dibujos del juego los pinta Yoshi (/encolar-recurso, pedidos en herramientas/comfyui/panic/)
-// y viven en img/<nombre>.png con el fondo ya quitado. Aquí se cargan y se pintan centrados; mientras uno no exista, se pinta un
+// y viven en img/<nombre>.png con el fondo ya quitado (los fondos y texturas, en .jpg). Aquí se cargan y se pintan centrados; mientras uno no exista, se pinta un
 // disco liso del color que toque (solo para poder jugar: no es arte del juego).
 'use strict';
 
 const SPR = { cache: {} };
+const EN_JPG = ['mapa-', 'portada-fondo', 'papel', 'panel'];   // fondos y texturas sin transparencia: van en jpg (pesan mucho menos)
+const extension = nombre => (EN_JPG.some(p => nombre.startsWith(p)) ? 'jpg' : 'png');
 
 function sprite(nombre) {
   if (!(nombre in SPR.cache)) {
     const im = new Image(); SPR.cache[nombre] = null;
     im.onload = () => { SPR.cache[nombre] = im; };
-    im.src = `img/${nombre}.png?v=1`;
+    im.src = `img/${nombre}.${extension(nombre)}?v=1`;
   }
   return SPR.cache[nombre];
 }
@@ -29,5 +31,5 @@ function pintaSprite(nombre, x, y, alto, rot = 0, col = COL.gris, letraProv = ''
 function precargaSprites() {
   for (const n of ['cuter', 'becario', 'cangrejo', 'fotocopiadora', 'flamenco', 'mancuerna', 'dragon', 'kraken', 'hijo', 'lola',
     'obj-hielo', 'obj-escudo', 'obj-tijera', 'obj-bomba', 'obj-fantasma', 'obj-iman', 'obj-doble', 'obj-lola', 'obj-locura',
-    'corazon', 'ficha', 'estrella', 'anuncio']) sprite(n);
+    'corazon', 'ficha', 'estrella', 'anuncio', 'boton', 'boton-oro', 'boton-azul', 'numeros', 'barra-vacia', 'barra-llena']) sprite(n);
 }

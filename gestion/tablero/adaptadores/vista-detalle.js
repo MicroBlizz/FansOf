@@ -9,7 +9,7 @@ TABLERO.vistaDetalle = (() => {
     ? `<details><summary>Historial (${t.historial.length})</summary>${t.historial.map(h => `<div class="meta">${esc(fecha(h.cuando))} · ${esc(h.quien)}${h.de && h.de !== h.a ? ` · ${esc(TABLERO.tituloDe(h.de))} → ${esc(TABLERO.tituloDe(h.a))}` : ''}${h.nota ? ' · ' + esc(h.nota) : ''}</div>`).join('')}</details>` : '');
 
   // La foto del grafo de la tarea (skill tarea-como-grafo): cuántos nodos pasan, de cuándo es la foto y los nodos por niveles con su evidencia
-  const estadoNodo = e => e.replace('_', ' ');
+  const estadoNodo = TABLERO.estadoNodoTexto;
   const intentos = n => (n.intentos ? ` × ${n.intentos}` : '');
   const nodoHtml = (n, esc) => `<div class="tb-nodo ${esc(n.estado)}"><div><span class="estado">${esc(estadoNodo(n.estado))}</span> <b>${esc(n.titulo || n.id)}</b>`
     + `${n.tipo ? ` <span class="meta">${esc(n.tipo)}</span>` : ''}${n.modelo || n.intentos ? ` <span class="meta">· ${esc(n.modelo || '')}${esc(intentos(n))}</span>` : ''}</div>`
@@ -23,7 +23,8 @@ TABLERO.vistaDetalle = (() => {
     const niveles = g.niveles().map((fila, i) => `<div class="tb-nivel"><span class="meta">Nivel ${i}</span>${fila.map(n => nodoHtml(n, esc)).join('')}</div>`).join('');
     const foto = [t.grafo_foto ? 'Foto del ' + fecha(t.grafo_foto) : 'Foto sin fecha', g.fase && 'fase: ' + g.fase, g.siguiente && 'siguiente: ' + g.siguiente].filter(Boolean).join(' · ');
     return `<details class="tb-grafo" open><summary>Grafo: ${res.pasa} de ${res.total} nodos pasan${cuenta(res.porEstado.falla, 'fallan')}${cuenta(res.porEstado.bloqueado, 'bloqueados')}</summary>`
-      + `<div class="tb-barra"><i style="width:${pct}%"></i></div><div class="meta">${esc(foto)}</div>${niveles}</details>`;
+      + `<div class="tb-barra"><i style="width:${pct}%"></i></div><div class="meta">${esc(foto)}</div>${TABLERO.vistaGrafo.dibujo(g.niveles(), esc)}`
+      + `<details><summary>Lista de nodos</summary>${niveles}</details></details>`;
   }
 
   const fechas = (t, esc, fecha) => [t.creado && 'Creada el ' + fecha(t.creado) + (t.creado_por ? ' por ' + t.creado_por : ''), t.actualizado && 'cambiada el ' + fecha(t.actualizado)]
@@ -37,5 +38,5 @@ TABLERO.vistaDetalle = (() => {
     <div class="meta">${fechas(t, esc, fecha)}</div>
     <div class="accion"><select data-mover="${t.id}" aria-label="Mover a">${TABLERO.vista.opciones(TABLERO.vista.COLUMNAS, t.estado, esc)}</select><button type="button" data-editar="${t.id}">Editar</button></div>
     ${grafoHtml(t, esc, fecha)}${historial(t, esc, fecha)}`;
-  return { detalle };
+  return { detalle, nodoInfo: nodoHtml };
 })();

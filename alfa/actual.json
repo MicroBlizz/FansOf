@@ -1,8 +1,8 @@
 {
- "build": 1123,
- "hash": "f066df7",
- "fecha": "2026-11-08T05:49:59Z",
- "mensaje": "Pets: el guion de smoke-test cierra el minijuego de COMER y BAÑAR, y solo piden muñeco 3D las criaturas que lo tienen",
+ "build": 1124,
+ "hash": "54db5f6",
+ "fecha": "2026-11-08T05:58:37Z",
+ "mensaje": "Pets: la ducha marca con aros y dice qué zonas faltan por enjabonar",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

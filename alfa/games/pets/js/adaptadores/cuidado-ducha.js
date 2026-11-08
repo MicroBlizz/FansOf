@@ -4,6 +4,8 @@
 'use strict';
 PT.cuidadoDucha = (() => {
   const D = PT.cuidadoDibujo, A = PETS.cuidado.ducha, BOLAS = 16, TINTA = D.TINTA;
+  // cómo se nombra cada zona en el aviso de lo que falta (cada nombre pasa por tr() antes de pegarlo)
+  const NOMBRE = { cabeza: () => tr('la cabeza'), torso: () => tr('el torso'), brazos: () => tr('los brazos'), piernas: () => tr('las piernas'), cola: () => tr('la cola') };
 
   function crea(sesion) {
     const j = sesion.juego, v = { lleva: false, p: null, ultimo: null, t: 0, fin: -1, zonas: {}, lado: 1 };
@@ -41,9 +43,25 @@ PT.cuidadoDucha = (() => {
       if (j.terminada && v.fin < 0 && sesion.termina().ok) v.fin = t;
       for (const z of j.zonas) espuma(ctx, v.zonas[z], j.espuma(z), lado, t, z);
       if (v.fin < 0) herramienta(ctx, v, j.fase, t);
-      D.ayuda(ctx, v.fin >= 0 ? tr('¡Limpito!') : j.fase === 'frotar' ? tr('Frótalo con la esponja') : tr('Aclara con la ducha: mantén pulsado'));
+      const faltan = j.fase === 'frotar' ? j.zonas.filter(z => j.espuma(z) < 1) : [];
+      if (faltan.length && faltan.length < j.zonas.length) for (const z of faltan) aviso(ctx, v.zonas[z], A.zonas[z].radio * lado, t);
+      D.ayuda(ctx, textoAyuda(j.fase, v.fin >= 0, faltan.length < j.zonas.length ? faltan : []));
     }
     return { baja, mueve, sube, pose, pinta, get terminado() { return v.fin; } };
+  }
+  // el texto de arriba: lo que toca ahora y, al frotar, las zonas donde aún falta jabón (las que quedan sin cubrir del todo)
+  function textoAyuda(fase, acabado, faltan) {
+    if (acabado) return tr('¡Limpito!');
+    if (fase !== 'frotar') return fase === 'aclarar' ? tr('¡Bien enjabonado! Aclara con la ducha: mantén pulsado') : tr('Aclara con la ducha: mantén pulsado');
+    if (!faltan.length) return tr('Frótalo con la esponja');
+    // con dos o menos se dicen por su nombre; con más no cabrían en la línea, y los aros ya las señalan
+    return faltan.length <= 2 ? tr('Te falta jabón en {zonas}', { zonas: faltan.map(z => NOMBRE[z]()).join(tr(' y ')) }) : tr('Te falta jabón en {n} zonas', { n: faltan.length });
+  }
+  // un aro discontinuo que late sobre una zona a medio enjabonar, para ver dónde falta
+  function aviso(ctx, anclas, radio, t) {
+    ctx.save(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.setLineDash([10, 8]); ctx.globalAlpha = 0.55 + 0.35 * Math.sin(t * 5);
+    for (const a of anclas) { ctx.beginPath(); ctx.arc(a.x, a.y, radio, 0, Math.PI * 2); ctx.stroke(); }
+    ctx.restore();
   }
   // los puntos de una zona en el lienzo: el hueso más su desplazamiento (en fracciones del lado); los que aún no tienen muñeco se saltan
   function puntos(lista, ancla, lado) {

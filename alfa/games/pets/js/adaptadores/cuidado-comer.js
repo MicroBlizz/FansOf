@@ -1,7 +1,7 @@
 // Fans Of Pets · adaptador · CUIDADO COMER: la VISTA del minijuego de la cuchara (dominio/comida.js, docs/pets/cuidados-minijuegos.md). Traduce los
 // gestos (arrastrar la cuchara) a llenaCuchara y daBocado, y dibuja el bol, la cuchara y la ayuda. El muñeco solo reacciona: atiende y, tras cada
 // bocado, mastica (pose). Recibe la sesión de PT.creaCuidadoJugado (juego + termina) y devuelve { baja, mueve, sube, pose, pinta, terminado }.
-// pinta(ctx, t, { ancla(hueso), lado }) y pose(t) → { nombre, desde }; el que la usa pinta el muñeco con esa pose y llama a pinta encima.
+// pinta(ctx, t, { ancla(hueso), lado }) y pose(t) → { nombre, desde, boca }; el que la usa pinta el muñeco con esa pose y llama a pinta encima.
 'use strict';
 PT.cuidadoComer = (() => {
   const D = PT.cuidadoDibujo, A = PETS.cuidado.comida, MASTICA = 1.4, DESPLAZA = 52, AGARRE = 70;   // segundos de masticar; la cuchara va sobre el dedo; px para agarrarla
@@ -28,7 +28,9 @@ PT.cuidadoComer = (() => {
       v.bocado = v.t;
       if (j.terminada && sesion.termina().ok) v.fin = v.t;
     }
-    const pose = t => (t - v.bocado < MASTICA ? { nombre: 'mastica', desde: v.bocado } : { nombre: 'atiende', desde: 0 });
+    // la boca se abre cuando la cuchara llena se acerca (el doble del aro) y se cierra al bocado, para masticar
+    const seAcerca = () => v.lleva && j.cucharaLlena && v.boca && D.distancia(cuchara(), v.boca) < 2 * A.boca.radio * v.lado;
+    const pose = t => (t - v.bocado < MASTICA ? { nombre: 'mastica', desde: v.bocado, boca: false } : { nombre: 'atiende', desde: 0, boca: !!seAcerca() });
     function pinta(ctx, t, { ancla, lado }) {
       v.t = t; v.lado = lado;
       const cabeza = ancla(A.boca.hueso);

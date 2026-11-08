@@ -1,8 +1,8 @@
 {
- "build": 1118,
- "hash": "6a17995",
- "fecha": "2026-11-08T05:03:38Z",
- "mensaje": "Pets: caras del muñeco 3D (parpadeo, ojos cerrados al dormir, boca abierta) por parches de la piel",
+ "build": 1119,
+ "hash": "dc700a8",
+ "fecha": "2026-11-08T05:07:31Z",
+ "mensaje": "Pets: la boca del hurón se abre al acercar la cuchara llena y el punto de la boca se mide para las cuatro edades",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

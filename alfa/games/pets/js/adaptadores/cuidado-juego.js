@@ -25,7 +25,7 @@ PT.cuidadoJuego = (() => {
   function pinta(ctx, id, edad, x, y, lado, t) {
     if (!ahora) return false;
     const vista = ahora.vista, pose = vista.pose(t);
-    if (!PT.muneco3d.pinta(ctx, id, x, y, lado, Math.max(0, t - pose.desde), pose.nombre, edad)) return false;
+    if (!PT.muneco3d.pinta(ctx, id, x, y, lado, Math.max(0, t - pose.desde), pose.nombre, edad, !!pose.boca)) return false;
     vista.pinta(ctx, t, { ancla: hueso => PT.muneco3d.ancla(id, edad, hueso, x, y, lado), lado });
     return true;
   }

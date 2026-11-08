@@ -1,8 +1,8 @@
 {
- "build": 1125,
- "hash": "0ea68b4",
- "fecha": "2026-11-08T06:10:06Z",
- "mensaje": "Karts: el smoke-test mide por separado acelerar (avance) y girar (rumbo); girando a fondo el kart daba vueltas y el avance neto rozaba el mínimo",
+ "build": 1126,
+ "hash": "8e890c9",
+ "fecha": "2026-11-08T06:19:44Z",
+ "mensaje": "Pets: el guion de smoke-test cierra el minijuego con un clic por JS repetido (en GitHub el muñeco 3D va lento y el clic de Playwright se agotaba)",
  "juegos": {
   "boom": "0.4.11",
   "cooking": "0.2.12",

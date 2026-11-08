@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.49
+  "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
+  "Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido.": "Microblizz oiled the engine again and Phony asked if it runs faster now.",
   // 0.1.48
   "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
   "Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come.": "Microblizz tightened the engine bolts and Phony asked if that is edible.",

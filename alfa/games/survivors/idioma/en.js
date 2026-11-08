@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.81
+  "<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the inner systems so everything runs smoother.",
+  "Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido.": "Microblizz oiled the engine again and Phony asked if it runs faster now.",
   // 0.1.81 · mecánicas nuevas e iconos pintados
   "¡EVOLUCIÓN!": "EVOLUTION!",
   "Mucho más daño, uno más a la vez y más área.": "Much more damage, one more at a time and a bigger area.",

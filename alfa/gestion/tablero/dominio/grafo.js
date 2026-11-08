@@ -1,4 +1,4 @@
-// Fans Of · /gestion · TABLERO · dominio · GRAFO: la foto del grafo de nodos de una tarea (skill tarea-como-grafo, ADR 081), solo para verla. Nace válida
+// Fans Of · /gestion · TABLERO · dominio · GRAFO: la foto del grafo de nodos de una tarea (skill tarea-como-grafo, ADR 088), solo para verla. Nace válida
 // (fábrica `desdeJson`): cada nodo con id único y estado conocido, sus dependencias existen y no hay ciclos. Sabe repartir los nodos por NIVELES (nivel 0 = no
 // depende de nadie; un nodo va un nivel por debajo del más profundo del que depende) y resumir cuántos hay en cada estado. Sin reloj, red ni pantalla.
 'use strict';

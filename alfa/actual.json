@@ -1,8 +1,8 @@
 {
- "build": 1114,
- "hash": "6b62a9d",
- "fecha": "2026-11-08T02:54:42Z",
- "mensaje": "Fans of Zombies 0.14.1: los menús caben en el móvil tumbado",
+ "build": 1115,
+ "hash": "c45b3be",
+ "fecha": "2026-11-08T04:54:23Z",
+ "mensaje": "Tablero: Claude saca de «por refinar» la tarea aprobada, con nota que enlaza la aprobación (SQL 119 aplicado)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

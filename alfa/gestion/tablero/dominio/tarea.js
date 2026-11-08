@@ -24,22 +24,26 @@ TABLERO.Tarea = class Tarea {
   get orden() { return this.#d.orden; }
   aJson() { return { ...this.#d }; }
 
-  // Quien manda es una persona ('arkioner', 'pepins') o Claude (en cualquier mayúscula, como en el servidor). Resultado: la tarea ya movida, o el motivo
-  // con nombre: 'estado-desconocido', 'solo-personas-hecho', 'es-de-otro', 'esta-hecha' o 'sin-refinar'
-  mueve(quien, estado) {
+  // Quien manda es una persona ('arkioner', 'pepins') o Claude (en cualquier mayúscula, como en el servidor). La nota va al historial; para Claude, al
+  // sacar una tarea de «por refinar», es el enlace a la aprobación de la persona. Resultado: la tarea ya movida, o el motivo con nombre:
+  // 'estado-desconocido', 'solo-personas-hecho', 'es-de-otro', 'esta-hecha', 'sin-refinar' o 'sin-aprobacion'
+  mueve(quien, estado, nota = '') {
     if (!TABLERO.esEstado(estado)) return TABLERO.error('estado-desconocido', { estado });
     const esClaude = String(quien).toLowerCase() === 'claude';
-    const motivo = esClaude ? this.#motivoClaudeNoPuede(estado) : null;
+    const motivo = esClaude ? this.#motivoClaudeNoPuede(estado, nota) : null;
     if (motivo) return TABLERO.error(motivo, { id: this.id, estado });
     const responsable = esClaude && estado === 'en_curso' && !this.#d.responsable ? 'claude' : this.#d.responsable;
     return TABLERO.ok(new Tarea({ ...this.#d, estado, responsable }));
   }
 
-  // Claude no cierra tareas, no toca las de otra persona, no reabre las hechas y no saca una tarea de «por refinar» (eso lo hace una persona)
-  #motivoClaudeNoPuede(estado) {
+  // Claude no cierra tareas, no toca las de otra persona y no reabre las hechas. De «por refinar» solo saca una tarea que una persona dio por buena:
+  // a «en curso» (se empieza ya) o a «pendiente» (lista para más tarde), y con la nota que enlaza esa aprobación
+  #motivoClaudeNoPuede(estado, nota) {
     if (estado === 'hecho') return 'solo-personas-hecho';
     if (this.#d.responsable && this.#d.responsable !== 'claude') return 'es-de-otro';
     if (this.#d.estado === 'hecho') return 'esta-hecha';
-    return this.#d.estado === 'por_refinar' && estado !== 'por_refinar' ? 'sin-refinar' : null;
+    if (this.#d.estado !== 'por_refinar') return null;
+    if (estado !== 'pendiente' && estado !== 'en_curso') return 'sin-refinar';
+    return String(nota ?? '').trim() === '' ? 'sin-aprobacion' : null;
   }
 };

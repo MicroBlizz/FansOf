@@ -122,5 +122,10 @@ PT.muneco3d = (() => {
     const v = h.getWorldPosition(new mo.T.Vector3()).project(mo.camara), borde = lado * ENCUADRE / 2;
     return { x: x - borde + (v.x + 1) * borde, y: y - borde + (1 - v.y) * borde };
   }
-  return { montaje, pinta, ancla, EN_T };
+  // ¿está el muñeco de esa criatura y edad cargado y listo para pintar? (la partida decide con esto si usa el minijuego o el cuidado directo)
+  const tiene = (id, edad) => !!LISTOS[id + '/' + edad];
+  // la carpeta del muñeco de cada etapa de la mascota: el jefe es un adulto
+  const EDADES = { bebe: 'bebe', nino: 'nino', adolescente: 'adolescente', adulto: 'adulto', jefe: 'adulto' };
+  const edad = etapa => EDADES[etapa];
+  return { montaje, pinta, ancla, tiene, edad, EN_T };
 })();

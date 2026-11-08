@@ -96,18 +96,49 @@ PT.botones = (() => {
   }
   const SONIDO_CUIDADO = { comer: 'pop', beber: 'blip', banar: 'heal', dientes: 'heal', cara: 'heal', bano: 'blip', chuche: 'pop' };
   const FRASE_ERROR = { durmiendo: 'durmiendo', empacho: 'empacho', 'muchas-chuches': 'muchasChuches', 'muchas-jugadas': 'muchasJugadas' };
-  function cuida(tipo) {
-    const r = PT.casos.cuida(tipo);
-    if (!r.ok) {
-      dice(r.error === 'llena' ? tr(PT.FRASES.llena[tipo] || PT.FRASES.llena.comer) : PT.frase(FRASE_ERROR[r.error] || 'durmiendo'));
-      sonido('deny');
-      if (r.error === 'muchas-chuches') PT.pantallas.refresca();
-      return;
-    }
+  // un cuidado que no ha podido ser: la frase de por qué
+  function rechaza(r, tipo) {
+    dice(r.error === 'llena' ? tr(PT.FRASES.llena[tipo] || PT.FRASES.llena.comer) : PT.frase(FRASE_ERROR[r.error] || 'durmiendo'));
+    sonido('deny');
+    if (r.error === 'muchas-chuches') PT.pantallas.refresca();
+  }
+  // lo hecho: su animación, su sonido y su frase
+  function cuidado(tipo) {
     anima(tipo);
     sonido(SONIDO_CUIDADO[tipo]);
     dice(PT.frase(tipo));
     PT.pantallas.refresca();
+  }
+  function cuida(tipo) {
+    if (MINIJUEGOS.includes(tipo) && conMinijuego(tipo)) return;
+    const r = PT.casos.cuida(tipo);
+    if (r.ok) cuidado(tipo);
+    else rechaza(r, tipo);
+  }
+  // COMER y la DUCHA los hace el jugador (docs/pets/cuidados-minijuegos.md): se abre el minijuego con el muñeco 3D y el cuidado se aplica al acabarlo. Sin muñeco
+  // 3D (la criatura aún no lo tiene) sigue siendo el cuidado directo de siempre. true si lo ha tratado (abierto o rechazado), false si no hay muñeco
+  const MINIJUEGOS = ['comer', 'banar'];
+  function conMinijuego(tipo) {
+    const p = PT.casos.partida;
+    if (!p.mascota || !PT.muneco3d.tiene(p.criatura.id, PT.muneco3d.edad(p.mascota.etapa))) return false;
+    const r = PT.cuidadoJuego.empieza(tipo, PT.casos);
+    if (!r.ok) rechaza(r, tipo);
+    else { ui.cuidando = tipo; pinta(); }
+    return true;
+  }
+  function enganchaCuidado() { clic('pt-cuidado-salir', saleDelCuidado); }
+  function saleDelCuidado() {
+    PT.cuidadoJuego.cierra();
+    ui.cuidando = '';
+    pinta();
+  }
+  // el minijuego acabó solo (el cuidado ya está aplicado): vuelve la casa, con la animación y la frase de siempre
+  function acabaCuidado() {
+    const tipo = ui.cuidando;
+    PT.cuidadoJuego.cierra();
+    ui.cuidando = '';
+    pinta();
+    if (tipo) cuidado(tipo);
   }
   const TRAS_DORMIR = { dormir: ['dormir', 'note', 'dormir'], despertar: ['despertar', '', 'despertar'], noche: ['despertar', 'womp', 'noche'] };   // animación, sonido, frase
   function dormir() {
@@ -165,5 +196,5 @@ PT.botones = (() => {
     pinta();
   }
 
-  return { engancha, eligeHuevo, anima };
+  return { engancha, eligeHuevo, anima, enganchaCuidado, acabaCuidado };
 })();

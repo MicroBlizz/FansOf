@@ -350,4 +350,5 @@ IDIOMA.add({
   "Frótalo con la esponja": "Scrub it with the sponge",
   "Aclara con la ducha: mantén pulsado": "Rinse with the shower: hold down",
   "¡Limpito!": "All clean!",
+  "DEJARLO": "LEAVE IT",
 });

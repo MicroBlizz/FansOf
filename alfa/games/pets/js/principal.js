@@ -40,11 +40,15 @@ PT.lienzo = (() => {
     const c = p.criatura, falta = (p.eclosionaEn - PT.casos.ahora()) / (PETS.huevoHoras * 60 * PT_MINUTO);
     PT.pintor.huevo(ctx, 270, 430, 110, PT.criaturas.color(c.fac), t, { wob: PT.ui.wob + (falta < 0.1 ? 0.25 : 0), bufanda: PT.ui.bufanda, grieta: falta < 0.25 ? 1 - falta * 4 : 0 });
   }
-  // el muñeco 3D (PT.muneco3d): de pie o dormida; el jefe es un adulto. false mientras carga o si la criatura no tiene muñeco
-  const EDAD_MUNECO = { bebe: 'bebe', nino: 'nino', adolescente: 'adolescente', adulto: 'adulto', jefe: 'adulto' };
+  // el muñeco 3D (PT.muneco3d): de pie o dormida; el jefe es un adulto. false mientras carga o si la criatura no tiene muñeco. Con un minijuego de cuidado
+  // en marcha (PT.cuidadoJuego) lo pinta él, con su pose y sus objetos; un segundo y medio después de acabar, la partida lo da por cerrado
   function muneco3d(ctx, c, etapa, r, t, e) {
-    const lado = r * 3.1;
-    return PT.muneco3d.pinta(ctx, c.id, 270, 470 - lado * 0.44, lado, t, e.dormida ? 'dormir' : 'quieto', EDAD_MUNECO[etapa]);
+    const lado = r * 3.1, y = 470 - lado * 0.44, edad = PT.muneco3d.edad(etapa), cj = PT.cuidadoJuego;
+    if (cj.activo && cj.pinta(ctx, c.id, edad, 270, y, lado, t)) {
+      if (cj.terminado >= 0 && t - cj.terminado > PETS.cuidado.cierraTras) PT.botones.acabaCuidado();
+      return true;
+    }
+    return PT.muneco3d.pinta(ctx, c.id, 270, y, lado, t, e.dormida ? 'dormir' : 'quieto', edad);
   }
   // la mascota en su etapa; en el ascenso, su jefa; en el final, triste
   function escenaMascota(ctx, p, t) {

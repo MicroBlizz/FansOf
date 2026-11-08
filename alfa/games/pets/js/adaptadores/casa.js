@@ -35,6 +35,8 @@ PT.casa = (() => {
     return `<div class="pt-fila">${boton('pt-comer', tr('COMER'))}${boton('pt-beber', tr('BEBER'))}${boton('pt-dormir', tr('DORMIR'))}${aseo}</div>` +
       `<div class="pt-fila">${boton('pt-jugar', tr('JUGAR'))}${chuche}${boton('pt-mas', tr('MÁS') + pendientes(), 'pt-chico')}</div>`;
   }
+  // mientras dura un minijuego de cuidado la caja se encoge a un botón, para dejar ver el muñeco y el bol (o la ducha)
+  const cajaCuidado = () => `<div class="pt-fila pt-cuidado">${boton('pt-cuidado-salir', tr('DEJARLO'), 'pt-mini')}</div>`;
   function cajaAseo(m) {
     const b = ['banar', 'dientes', 'cara', 'bano'].filter(t => m.cuidados.includes(t));
     const T = { banar: tr('DUCHA'), dientes: tr('DIENTES'), cara: tr('CARA'), bano: tr('BAÑO') };
@@ -105,5 +107,5 @@ PT.casa = (() => {
       boton('pt-otro-huevo', tr('OTRO HUEVO'), 'pt-grande') + `<div class="pt-fila">${boton('pt-logros', tr('LOGROS') + pendientes(), 'pt-chico')}</div>`;
   }
 
-  return { caja, cajaAscenso, cajaFinal };
+  return { caja, cajaAscenso, cajaFinal, cajaCuidado };
 })();

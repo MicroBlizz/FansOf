@@ -113,6 +113,7 @@ const PETS = {
   // tiene que quedar cubierta de espuma para pasar a aclarar, la espuma que ya cuenta como limpio, los píxeles que se frotan para llenar una zona
   // y los segundos de agua que quitan toda su espuma. Los radios y la boca son del encuadre del muñeco, en fracciones del lado
   cuidado: {
+    cierraTras: 1.6,   // segundos que se queda el muñeco contento tras acabar, antes de volver a la casa
     comida: { bocados: 4, boca: { hueso: 'cabeza', dx: 0, dy: -0.08, radio: 0.11 }, bol: { x: 140, y: 735, radio: 70 }, cuchara: { x: 310, y: 735 } },
     ducha: { cubierta: 0.8, limpia: 0.05, frotar: 380, aclarar: 1.2,
       // cada zona: sus puntos [hueso, dx, dy] (el hueso es una articulación: el desplazamiento, en fracciones del lado, lleva al centro de la parte) y su radio

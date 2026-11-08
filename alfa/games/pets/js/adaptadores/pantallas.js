@@ -3,7 +3,7 @@
 // refresca solo lo que cambia con el reloj (PT.pantallas.refresca). Lo que hace cada botón está en botones.js; los dibujos, en pintar.js.
 'use strict';
 // lo que la pantalla recuerda y no es de la partida: la pregunta por la que va la entrevista, el huevo marcado, la animación en curso…
-PT.ui = { paso: 'hola', respuestas: [], elegido: -1, anim: '', at: -9, wob: 0, bufanda: false, bocadillo: '', volverA: '', triste: false, menu: '', escena: null };
+PT.ui = { paso: 'hola', respuestas: [], elegido: -1, anim: '', at: -9, wob: 0, bufanda: false, bocadillo: '', volverA: '', triste: false, menu: '', escena: null, cuidando: '' };
 PT.$ = s => document.querySelector(s);
 PT.esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 PT.MONEDA_CORTA = { ganada: 'Tickets', comprada: 'Bonus' };   // en la cabecera cabe poco: los nombres enteros los da MONEDAS.nombre
@@ -28,6 +28,7 @@ PT.pantallas = (() => {
     const p = PT.casos.partida;
     $('#pt-elige').hidden = p.fase !== 'huevos';
     if (ui.escena) { $('#pt-caja').innerHTML = PT.dev.cajaEscena(); dice(''); PT.dev.enganchaEscena(); return; }   // la escena de animaciones (solo DEV)
+    if (ui.cuidando) { $('#pt-caja').innerHTML = PT.casa.cajaCuidado(); dice(''); PT.botones.enganchaCuidado(); refresca(); return; }   // un minijuego de cuidado en marcha
     $('#pt-caja').innerHTML = cajaDeFase(p);
     PT.botones.engancha();
     refresca();

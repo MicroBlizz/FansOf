@@ -2,7 +2,7 @@
 // por tr(), así que el día que se quiera el inglés basta con rellenar EN y elegir el idioma como en los demás juegos.
 'use strict';
 
-const VERSION_AUTO = '0.2.0';   // la misma que el ?v= de index.html y la de js/novedades.js
+const VERSION_AUTO = '0.3.0';   // la misma que el ?v= de index.html y la de js/novedades.js
 const EN = {};
 const IDIOMA_AUTO = 'es';
 function tr(s) { return IDIOMA_AUTO === 'es' ? s : (EN[s] ?? s); }

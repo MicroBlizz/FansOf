@@ -70,7 +70,8 @@ function pintaCosas(g) {
   for (const p of S.peatones) if (!p.muerto && enVista(p.x, p.y)) pintaSprite(g, fotoPeaton(p.estilo)[p.cuadro], p.x, p.y, p.ang, true);
   if (j.coche === null && !j.muerto && !j.baneado) pintaSprite(g, ARTE.conejo[j.cuadro], j.x, j.y, j.ang, true);
   // las luces de los Moderadores
-  for (const c of S.coches) if (c.policia && c.conductor === 'ia' && !c.chatarra && enVista(c.x, c.y)) { g.globalAlpha = 0.5; g.fillStyle = (S.tick >> 3) & 1 ? '#ff4040' : '#4080ff'; g.beginPath(); g.arc(sx(c.x), sy(c.y), 7 * z, 0, 7); g.fill(); g.globalAlpha = 1; }
+  pintaSirenas(g);
+  pintaManguera(g);
   // balas y efectos
   g.fillStyle = '#fff4b8';
   for (const b of S.balas) g.fillRect(Math.round(sx(b.x)) - 1, Math.round(sy(b.y)) - 1, 2, 2);
@@ -171,6 +172,7 @@ function pintaMundo(g) {
   if (sac > 0.3) { g.save(); g.translate(Math.round((Math.random() - 0.5) * sac * 2), Math.round((Math.random() - 0.5) * sac * 2)); J.sacude = sac * 0.85; }
   pintaSuelo(g);
   pintaMarcas(g);
+  pintaSemaforos(g);
   pintaCosas(g);
   pintaFarolas(g);
   pintaArboles(g);

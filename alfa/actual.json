@@ -1,8 +1,8 @@
 {
- "build": 1112,
- "hash": "6f82268",
- "fecha": "2026-11-08T00:51:40Z",
- "mensaje": "Fans of Auto 0.2.0: vertical en el móvil, conducción con derrape y marcas, mandos de tres botones, día y noche con faros y nieve (ADR 086)",
+ "build": 1113,
+ "hash": "cd38c40",
+ "fecha": "2026-11-08T01:30:15Z",
+ "mensaje": "Fans of Auto 0.3.0: IA del barrio rehecha (ADR 087)",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

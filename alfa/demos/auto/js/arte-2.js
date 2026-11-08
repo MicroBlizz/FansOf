@@ -19,8 +19,10 @@ function pintaCasilla(g, tx, ty, px, py, az) {
       if (dy === 1 && tipoEn(tx + 1, ty) === TIPO.CALLE) { rect(g, px + 15, py + 2, 1, 5, '#d9c46a'); rect(g, px + 15, py + 10, 1, 5, '#d9c46a'); }
       if (dx === -1 && tipoEn(tx, ty + 1) === TIPO.CALLE) { rect(g, px + 2, py + 15, 5, 1, '#d9c46a'); rect(g, px + 10, py + 15, 5, 1, '#d9c46a'); }
       // paso de cebra al llegar a un cruce
-      const cruce = (dx || dy) && MAPA.carril[((ty + dy) * MAPA.W + tx + dx) * 2] === 0 && MAPA.carril[((ty + dy) * MAPA.W + tx + dx) * 2 + 1] === 0 && tipoEn(tx + dx, ty + dy) === TIPO.CALLE;
-      if (cruce) { for (let k = 1; k < T; k += 4) { if (dy) rect(g, px + k, py + (dy > 0 ? 11 : 2), 2, 3, '#c9c7c0'); else rect(g, px + (dx > 0 ? 11 : 2), py + k, 3, 2, '#c9c7c0'); } }
+      // el paso de cebra (rutas.js dice dónde): rayas a lo largo de la calle, una por cada paso del peatón
+      const paso = RUTAS.paso[ty * MAPA.W + tx];
+      if (paso === 1) for (let k = 2; k < T; k += 4) rect(g, px + k, py + 2, 2, 12, '#c9c7c0');
+      if (paso === 2) for (let k = 2; k < T; k += 4) rect(g, px + 2, py + k, 12, 2, '#c9c7c0');
     } else {
       // explanada: plazas de aparcamiento pintadas
       if (tx % 2 === 0 && ty % 3 !== 0) rect(g, px, py + 2, 1, 12, '#8a8c92');

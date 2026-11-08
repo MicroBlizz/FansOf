@@ -16,6 +16,8 @@ const COCHES = {
   helados: { l: 24, a: 12, capo: 5, cola: 2, ruedas: [4, 17], vmax: 2.7, acel: 0.05, giro: 0.035, vida: 160, caja: true, helados: true },
   granizo: { l: 22, a: 10, capo: 7, cola: 4, ruedas: [3, 16], vmax: 3.8, acel: 0.08, giro: 0.045, vida: 110 },
   taxi: { l: 20, a: 10, capo: 6, cola: 4, ruedas: [3, 14], vmax: 3.4, acel: 0.07, giro: 0.045, vida: 100, taxi: true },
+  ambulancia: { l: 24, a: 11, capo: 5, cola: 2, ruedas: [4, 17], vmax: 3.4, acel: 0.07, giro: 0.04, vida: 140, caja: true, ambulancia: true, color: '#f4f4f4' },
+  bomberos: { l: 28, a: 12, capo: 5, cola: 2, ruedas: [4, 12, 21], vmax: 3.0, acel: 0.06, giro: 0.035, vida: 200, caja: true, bomberos: true, color: '#c43b32' },
 };
 const COLORES_COCHE = ['#c43b32', '#2f6fc4', '#d9d4c7', '#3f8f3c', '#e0a030', '#6a6f78', '#8a4fb0', '#2d3c50', '#c87a3a', '#4fa9a0', '#b5b0a8', '#7a2c2c'];
 
@@ -49,9 +51,23 @@ function fotoCoche(tipo, color) {
     const m = (xLun + 2 + xPar) >> 1; rect(g, m - 2, (A >> 1) - 1, 2, 2, '#e0302c'); rect(g, m, (A >> 1) - 1, 2, 2, '#2a7fff');
   }
   if (D.taxi) { const m = (xLun + 2 + xPar) >> 1; rect(g, m - 1, (A >> 1) - 1, 3, 2, '#141418'); rect(g, m, A >> 1, 1, 1, '#fff4b8'); }
+  if (D.ambulancia) pintaAmbulancia(g, A, xPar);
+  if (D.bomberos) pintaBomberos(g, A, xPar);
   if (D.helados) { rect(g, 3, 2, xPar - 5, A - 4, '#f7d9e3'); rect(g, 5, 4, 3, A - 8, '#f08aa8'); rect(g, 9, 3, 2, 2, '#f0c060'); rect(g, 9, 5, 2, A - 9, '#fff4b8'); }
   ARTE.coches.set(clave, c);
   return c;
+}
+// la cruz roja y las luces de la ambulancia; la escalera y las luces del camión de bomberos (sobre la caja)
+function pintaAmbulancia(g, A, xPar) {
+  const m = A >> 1;
+  rect(g, 6, m - 1, 7, 2, '#e0302c'); rect(g, 8, m - 3, 3, 6, '#e0302c');
+  rect(g, xPar - 3, 2, 2, 2, '#e0302c'); rect(g, xPar - 3, A - 4, 2, 2, '#2a7fff');
+}
+function pintaBomberos(g, A, xPar) {
+  const m = A >> 1;
+  rect(g, 3, m - 3, xPar - 6, 1, '#d9d4c7'); rect(g, 3, m + 2, xPar - 6, 1, '#d9d4c7');
+  for (let x = 4; x < xPar - 3; x += 3) rect(g, x, m - 2, 1, 4, '#d9d4c7');
+  rect(g, xPar - 3, 2, 2, 2, '#ffd23c'); rect(g, xPar - 3, A - 4, 2, 2, '#ffd23c');
 }
 // un coche quemado (el mismo molde, en gris oscuro y sin luces)
 function fotoChatarra(tipo) {

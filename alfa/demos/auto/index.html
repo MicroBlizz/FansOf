@@ -25,24 +25,29 @@ body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none
 window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
 </script>
 <!-- el sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código); no se cambian -->
-<script src="../../core/js/sistema/sonido.js?v=0.2.0"></script>
-<script src="../../core/js/serie/canciones.js?v=0.2.0"></script>
+<script src="../../core/js/sistema/sonido.js?v=0.3.0"></script>
+<script src="../../core/js/serie/canciones.js?v=0.3.0"></script>
 <!-- ?v= es la versión de la demo: súbela al publicar un cambio para que el navegador no mezcle archivos viejos y nuevos -->
-<script src="js/textos.js?v=0.2.0"></script>
-<script src="js/audio.js?v=0.2.0"></script>
-<script src="js/lona.js?v=0.2.0"></script>
-<script src="js/letras.js?v=0.2.0"></script>
-<script src="js/mapa.js?v=0.2.0"></script>
-<script src="js/arte.js?v=0.2.0"></script>
-<script src="js/arte-2.js?v=0.2.0"></script>
-<script src="js/sim.js?v=0.2.0"></script>
-<script src="js/ia.js?v=0.2.0"></script>
-<script src="js/mision.js?v=0.2.0"></script>
-<script src="js/mandos.js?v=0.2.0"></script>
-<script src="js/dibujo.js?v=0.2.0"></script>
-<script src="js/marcador.js?v=0.2.0"></script>
-<script src="js/pantallas.js?v=0.2.0"></script>
-<script src="js/novedades.js?v=0.2.0"></script>
-<script src="js/principal.js?v=0.2.0"></script>
+<script src="js/textos.js?v=0.3.0"></script>
+<script src="js/audio.js?v=0.3.0"></script>
+<script src="js/lona.js?v=0.3.0"></script>
+<script src="js/letras.js?v=0.3.0"></script>
+<script src="js/mapa.js?v=0.3.0"></script>
+<script src="js/rutas.js?v=0.3.0"></script>
+<script src="js/arte.js?v=0.3.0"></script>
+<script src="js/arte-2.js?v=0.3.0"></script>
+<script src="js/sim.js?v=0.3.0"></script>
+<script src="js/conduccion-ia.js?v=0.3.0"></script>
+<script src="js/ia.js?v=0.3.0"></script>
+<script src="js/policia.js?v=0.3.0"></script>
+<script src="js/emergencias.js?v=0.3.0"></script>
+<script src="js/mision.js?v=0.3.0"></script>
+<script src="js/mandos.js?v=0.3.0"></script>
+<script src="js/dibujo.js?v=0.3.0"></script>
+<script src="js/dibujo-calle.js?v=0.3.0"></script>
+<script src="js/marcador.js?v=0.3.0"></script>
+<script src="js/pantallas.js?v=0.3.0"></script>
+<script src="js/novedades.js?v=0.3.0"></script>
+<script src="js/principal.js?v=0.3.0"></script>
 </body>
 </html>

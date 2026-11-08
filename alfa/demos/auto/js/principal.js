@@ -26,7 +26,7 @@ function ajusta() {
 const CARGA = {
   k: 0,
   frases: ['ASFALTANDO EL DISTRITO...', 'APARCANDO EN DOBLE FILA...', 'CONTRATANDO MODERADORES...', 'PONIENDO PEAJES...', 'DIBUJANDO LOS TEJADOS...', 'CASI: FALTA EL PARCHE DEL DÍA UNO...'],
-  pasos: [() => creaMapa(), () => { creaConejo(); creaObjetos(); creaIconos(); }],
+  pasos: [() => { creaMapa(); preparaRutas(); }, () => { creaConejo(); creaObjetos(); creaIconos(); }],
 };
 function pintaCarga(g) {
   g.fillStyle = '#101418'; g.fillRect(0, 0, J.W, J.H);

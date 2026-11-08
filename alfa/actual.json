@@ -1,8 +1,8 @@
 {
- "build": 1116,
- "hash": "adac250",
- "fecha": "2026-11-08T04:57:18Z",
- "mensaje": "Pets: los minijuegos de comer y ducha se abren desde los botones de la partida real",
+ "build": 1117,
+ "hash": "151c027",
+ "fecha": "2026-11-08T04:58:38Z",
+ "mensaje": "Tablero: tarjetas pequeñas, detalle en un panel a la derecha y botón de refrescar",
  "juegos": {
   "boom": "0.4.10",
   "cooking": "0.2.11",

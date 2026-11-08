@@ -1,59 +1,92 @@
-// Fans Of · /gestion · TABLERO · adaptador · CONTROLADOR: lo que pasa cuando se usa la pestaña. Pone el HTML de vista.js en la página, abre el formulario, lee lo
-// escrito, arrastra las tarjetas y le pide cada cosa a los casos de uso (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js
-// los casos, los ids de sus huecos, `esc`, `fecha` y `textoError` de /gestion; no sabe nada del servidor.
+// Fans Of · /gestion · TABLERO · adaptador · CONTROLADOR: lo que pasa cuando se usa la pestaña. Pone el HTML de vista.js y vista-detalle.js en la página, abre
+// el detalle de una tarea (o el formulario) en el panel de la derecha, lee lo escrito, arrastra las tarjetas y le pide cada cosa a los casos de uso
+// (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js los casos, los ids de sus huecos, `esc`, `fecha` y `textoError`
+// de /gestion; no sabe nada del servidor.
 'use strict';
 TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
-  let tareas = [], pedido = 0, ocupado = false;
+  // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea) o { formulario: valores } (nueva o editar)
+  let tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
-  const cierraFormulario = () => { el(hueco.formulario).innerHTML = ''; };
-  const abreFormulario = valores => {
-    el(hueco.formulario).innerHTML = TABLERO.vista.formulario(valores, esc);
-    el(hueco.formulario).querySelector('input[name=titulo]').focus();
+  const tareaDe = id => tareas.find(t => t.id === Number(id));
+
+  const pintaTablero = () => {
+    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
   };
+  // El panel se pinta según `panel`; si la tarea abierta ya no está (filtro o borrada), se cierra. El formulario no se repinta al recargar, para no perder lo escrito
+  function pintaPanel(conFormulario) {
+    const caja = el(hueco.detalle), t = panel && panel.id ? tareaDe(panel.id) : null;
+    if (panel && panel.id && !t) panel = null;
+    el(hueco.vista).classList.toggle('abierto', !!panel);
+    caja.hidden = !panel;
+    if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha);
+    else if (panel && conFormulario) { caja.innerHTML = TABLERO.vista.formulario(panel.formulario, esc); caja.querySelector('input[name=titulo]').focus(); }
+    else if (!panel) caja.innerHTML = '';
+  }
+  const abre = nuevo => { panel = nuevo; pintaTablero(); pintaPanel(true); };
+  const cierra = () => abre(null);
 
   async function cargar() {
     aviso('');
     const este = ++pedido, r = await casos.cargar(filtro);
     if (este !== pedido) return;   // llegó otra carga después: esta ya es vieja
     if (!r.ok) { aviso(/does not exist|PGRST202|404/.test(String(r.datos.causa && r.datos.causa.message)) ? 'Falta aplicar servidor/117-tablero.sql en Supabase.' : textoError(r.datos.causa)); return; }
-    tareas = r.valor.tareas;
+    ({ tareas, columnas, descartadas } = r.valor);
     el(hueco.filtros).innerHTML = TABLERO.vista.filtros(r.valor.juegos, filtro, esc);
-    el(hueco.lista).innerHTML = TABLERO.vista.html(r.valor.columnas, esc, fecha)
-      + (r.valor.descartadas ? `<div class="meta">${r.valor.descartadas} tareas con datos raros no se han enseñado.</div>` : '');
+    pintaPanel(false);
+    pintaTablero();
     el(hueco.juegos).innerHTML = r.valor.juegos.map(j => `<option value="${esc(j)}">`).join('');
   }
-  const tareaDe = id => tareas.find(t => t.id === Number(id));
   // Una acción a la vez (un doble clic no crea la tarea dos veces). Si no sale, el tablero se vuelve a pintar como estaba y se dice por qué
   async function aplica(promesa, alTerminar) {
     if (ocupado) return;
     ocupado = true;
     try {
       const r = await promesa;
-      if (r.ok && alTerminar) alTerminar();
+      if (r.ok && alTerminar) alTerminar(r.valor);
       await cargar();
       if (!r.ok) avisaError(r);
     } finally { ocupado = false; }
   }
   const mueve = (id, estado) => (tareaDe(id).estado === estado ? Promise.resolve() : aplica(casos.mover(tareaDe(id), estado)));
+  // al guardar, el panel enseña el detalle de la tarea guardada
   const guarda = f => {
     const id = Number(f.dataset.id), form = leeFormulario(f);
-    return aplica(id ? casos.editar(id, form) : casos.crear(form), cierraFormulario);
+    return aplica(id ? casos.editar(id, form) : casos.crear(form), r => { panel = { id: r.id || id }; });
   };
 
   function conecta() {
-    el(hueco.filtros).onclick = ev => { if (ev.target.closest('[data-nueva]')) abreFormulario({}); };
+    el(hueco.filtros).onclick = ev => {
+      if (ev.target.closest('[data-nueva]')) abre({ formulario: {} });
+      if (ev.target.closest('[data-refrescar]')) cargar();
+    };
     el(hueco.filtros).onchange = ev => { const s = ev.target.closest('[data-filtro]'); if (s) { filtro[s.dataset.filtro] = s.value; cargar(); } };
-    el(hueco.lista).onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };
-    el(hueco.lista).onclick = ev => { const b = ev.target.closest('[data-editar]'); if (b) abreFormulario(tareaDe(b.dataset.editar)); };
-    el(hueco.formulario).onclick = ev => { if (ev.target.closest('[data-cancelar]')) cierraFormulario(); };
-    el(hueco.formulario).onsubmit = ev => { ev.preventDefault(); aviso(''); guarda(ev.target); };
+    conectaTarjetas();
+    conectaPanel();
     conectaArrastre();
   }
-  // arrastrar una tarjeta a otra columna es lo mismo que elegirla en su lista
+  // pulsar una tarjeta (o Intro sobre ella) abre su detalle; pulsar la que ya está abierta lo cierra
+  function conectaTarjetas() {
+    const elige = t => abre(panel && panel.id === Number(t.dataset.id) ? null : { id: Number(t.dataset.id) });
+    el(hueco.lista).onclick = ev => { const t = ev.target.closest('[data-id]'); if (t) elige(t); };
+    el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter') { ev.preventDefault(); elige(t); } };
+  }
+  function conectaPanel() {
+    const caja = el(hueco.detalle);
+    caja.onclick = ev => {
+      if (ev.target.closest('[data-cerrar]')) cierra();
+      const b = ev.target.closest('[data-editar]');
+      if (b) abre({ formulario: tareaDe(b.dataset.editar) });
+      if (ev.target.closest('[data-cancelar]')) abre(panel.formulario.id ? { id: panel.formulario.id } : null);
+    };
+    caja.onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };
+    caja.onsubmit = ev => { ev.preventDefault(); aviso(''); guarda(ev.target); };
+    el(hueco.vista).onkeydown = ev => { if (ev.key === 'Escape' && panel && panel.id) cierra(); };
+  }
+  // arrastrar una tarjeta a otra columna es lo mismo que elegirla en el desplegable del detalle
   function conectaArrastre() {
     const lista = el(hueco.lista), col = ev => ev.target.closest('[data-columna]');
     lista.ondragstart = ev => { const t = ev.target.closest('[data-id]'); if (t) ev.dataTransfer.setData('text/plain', t.dataset.id); };

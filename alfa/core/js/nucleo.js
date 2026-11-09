@@ -2,7 +2,7 @@
 //
 // Cada juego lo pone en la cabecera de su index.html, con su versión:
 //     <script src="../../core/js/nucleo.js?v=0.9.6"></script>      (lo primero de la cabecera: pinta la splash)
-//     <script>NUCLEO.fuentes('https://fonts.googleapis.com/…')</script> <script>NUCLEO.estilos('css/mi-juego.css')</script>
+//     <script>NUCLEO.fuentes('../../core/fuentes/baloo-2.css')</script> <script>NUCLEO.estilos('css/mi-juego.css')</script>
 // y, al final de la página, dice qué archivos suyos hay que cargar antes y después de lo común:
 //     <script>NUCLEO.juego({ antes: ['js/ajustes.js'], despues: ['js/juego.js'] })</script>
 //
@@ -163,11 +163,13 @@ const NUCLEO = (() => {
   // el código del juego no corre hasta que han llegado todas (la puerta de carga, PUERTA_CARGA). Sin splash, un velo tapa la página mientras tanto.
   const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css', '../../core/css/miniaturas.css', '../../core/css/tienda-gemas.css'];   // las pantallas comunes: un juego pide la primera y se cargan todas, en este orden
   function estilos(...hojas) { if (cerrado) return; PUERTA_CARGA.avisa(avisosPuerta); for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); carga.pide(); PUERTA_CARGA.hoja(conV(h)); } }
-  // La hoja de las fuentes (hoy la de Google Fonts; ADR 092): como una hoja más, pero opcional (sin red, el juego sale con la letra de repuesto)
-  // En la página de «Próximamente» va como una hoja normal (allí no hay juego que esperar).
-  function fuentes(url) {
-    if (cerrado) { document.write(`<link rel="stylesheet" href="${url}">`); return; }
-    PUERTA_CARGA.avisa(avisosPuerta); carga.pide(); PUERTA_CARGA.hoja(url, true);
+  // Las hojas de las fuentes, las de core/fuentes/ (servidas por nosotros, ADR 092): como una hoja más, pero opcionales (si una falta, el juego
+  // sale con la letra de repuesto). En la página de «Próximamente» van como hojas normales (allí no hay juego que esperar).
+  function fuentes(...hojas) {
+    for (const h of hojas) {
+      if (cerrado) { document.write(`<link rel="stylesheet" href="${conV(h)}">`); continue; }
+      PUERTA_CARGA.avisa(avisosPuerta); pedido.push(conV(h)); carga.pide(); PUERTA_CARGA.hoja(conV(h), true);
+    }
   }
 
   // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados. Se empieza a bajar ya

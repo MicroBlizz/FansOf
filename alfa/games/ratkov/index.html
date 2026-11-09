@@ -9,11 +9,11 @@
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
+<script src="../../core/js/nucleo.js?v=0.2.39-a1136.58d9bed"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Russo+One&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="../../core/js/nucleo.js?v=0.2.39-a1135.e08756e"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.3">
 <link rel="stylesheet" href="estilo-refugio.css?v=0.2.3">
@@ -111,6 +111,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 <script>
 // Fans of Ratkov: lo ligero de core (cuenta e idioma), los ajustes antes y el juego después, en este orden
 NUCLEO.juego({
+  esperaListo: true,   // la splash de core espera también a NUCLEO.listo(), que js/principal.js llama al quitar la pantalla de carga del juego (ADR 091)
   ligero: true,
   idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js'] },
   antes: ['js/ajustes.js'],

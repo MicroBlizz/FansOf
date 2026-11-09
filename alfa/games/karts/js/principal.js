@@ -175,6 +175,6 @@ function fotograma(ahora) {
   if (q.get('auto') === '1') PANT.auto = true;
   if (ip >= 0) { PANT.pista = ip; PANT.mundo = PISTAS[ip].mundo - 1; PANT.premium = !!PISTAS[ip].premium; empiezaCarga(); }
   ajusta();
-  document.getElementById('carga').hidden = true;
+  document.getElementById('carga').hidden = true; NUCLEO.listo();   // la splash de core (ADR 091) espera a esto para irse
   requestAnimationFrame(t => { ULTIMO = t; fotograma(t); });
 })();

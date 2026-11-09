@@ -44,5 +44,5 @@ window.PROXIMAMENTE = (() => {
       '<a href="' + base + '" style="font:800 15px system-ui,sans-serif;padding:10px 16px;border-radius:10px;background:#3a2a4a;color:#fff;text-decoration:none">' + (en ? 'BACK TO THE LIBRARY' : 'VOLVER A LA LIBRERÍA') + '</a></p></div></body>';
     window.stop();   // el resto de la página (y sus scripts) no llega a ejecutarse
   }
-  return { jugable, enBeta, verificar, cerrado, ABIERTOS };
+  return { jugable, enBeta, verificar, cerrado, ABIERTOS, juego: id };   // juego: el id de la página si es un juego o una demo ('' en la portada y el resto de la web); lo usa la splash
 })();

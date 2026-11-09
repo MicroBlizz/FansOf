@@ -99,6 +99,7 @@ PT.arranca = () => {
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tic(); });
   const carga = document.getElementById('carga');
   if (carga) carga.remove();
+  NUCLEO.listo();   // la splash de core (ADR 091) espera a esto para irse
   requestAnimationFrame(PT.lienzo.fotograma);
 };
 PT.arranca();

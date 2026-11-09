@@ -21,6 +21,13 @@ const NUCLEO = (() => {
   document.write('<script src="' + CORE + 'js/proximamente.js"><\/script>');   // en la release solo se juegan los juegos abiertos (ver proximamente.js)
   const cerrado = !!(window.PROXIMAMENTE && PROXIMAMENTE.cerrado);   // si lo está, la página ya es la de «Próximamente»: no se carga nada
   const pedido = [];   // todo lo que carga la página: es lo que se guarda para jugar sin conexión
+  // LA SPLASH, lo primero (ADR 091): es la pantalla de carga de los juegos. Se pide aquí, antes que cualquier hoja o script, para que tape la página
+  // desde el primer pintado; splash.js decide si sale (solo en un juego o una demo, ver PROXIMAMENTE.juego). Lo que pide el juego se le cuenta (carga, abajo).
+  for (const f of ['js/sistema/splash-reglas.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js']) { pedido.push(conV(CORE + f)); document.write('<script src="' + conV(CORE + f) + '"><\/script>'); }
+  // cada hoja y cada script que se pide avisa a la splash al llegar o al fallar (la barra de carga y el aviso de error). Si la splash no está, no pasa nada.
+  // Si splash.js no hubiera llegado (bloqueado o sin red), el juego carga igual, sin splash: por eso todo pasa por aSplash.
+  const aSplash = (orden, ...datos) => { if (typeof SPLASH !== 'undefined') SPLASH[orden](...datos); };
+  const carga = { pide: () => aSplash('pide'), llega: () => aSplash('llega'), falla(src) { console.error('No se ha podido cargar ' + src); aSplash('falla', src); } };
 
   // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es', uno de
   // IDIOMAS → ese, y cualquier otro → 'en'. Cambiarlo recarga la página. Los diccionarios solo se cargan si no es español (ver core/js/sistema/idioma.js).
@@ -57,7 +64,6 @@ const NUCLEO = (() => {
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
     'js/sistema/flags.js',         // flags remotos (abrir/cerrar cosas desde la base de datos), mantenimiento y versión mínima
-    'js/sistema/splash-logo.js', 'js/sistema/splash.js', // la splash común con el logo FOG (tras el flag splash-fog; ADR 051)
     'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
     'js/sistema/sonido-archivos.js', // los efectos grabados en archivo (SONIDO_ARCHIVO), con el de código de repuesto (ADR 077)
     'js/serie/config.js',          // la serie: constantes y CFG (las cartas, unidades, tipos y roles los añade cada facción)
@@ -119,7 +125,7 @@ const NUCLEO = (() => {
 
   // LO LIGERO: lo mínimo para un juego con su propia partida y sus pantallas (ver core/js/sistema/ligero.js). Cuenta e idioma, nada de economía.
   const LIGERO = [
-    'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js', 'js/sistema/sonido.js', 'js/sistema/sonido-archivos.js',
+    'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js', 'js/sistema/sonido-archivos.js',
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/cuenta.js',        // la partida en la nube
@@ -150,43 +156,52 @@ const NUCLEO = (() => {
 
   // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, como si estuvieran en el HTML, para que la página no se pinte sin ellas.
   const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css', '../../core/css/miniaturas.css', '../../core/css/tienda-gemas.css'];   // las pantallas comunes: un juego pide la primera y se cargan todas, en este orden
-  function estilos(...hojas) { if (cerrado) return; for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
+  function estilos(...hojas) { if (cerrado) return; for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); carga.pide(); document.write(`<link rel="stylesheet" href="${conV(h)}" onload="NUCLEO.carga.llega()" onerror="NUCLEO.carga.falla(this.href)">`); } }
 
   // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados.
-  function codigo(src) {
+  // opcional: si no llega, el juego sigue (no para la splash); es lo que no hace falta para jugar (estadísticas, panel DEV)
+  function codigo(src, opcional = false) {
     const s = document.createElement('script'); s.src = conV(src); s.async = false;
-    s.onerror = () => console.error('No se ha podido cargar ' + src);
-    pedido.push(s.src); document.body.appendChild(s);
+    s.onload = carga.llega;
+    s.onerror = () => { if (!opcional) { carga.falla(src); return; } console.error('No se ha podido cargar ' + src); carga.llega(); };
+    carga.pide(); pedido.push(s.src); document.body.appendChild(s);
   }
   // antes: lo que el juego le dice a lo común (sus ajustes) · despues: el juego en sí
   // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
-  function juego({ antes = [], despues = [], idioma: dic = {}, ligero = false }) {
+  // esperaListo: el juego llamará a NUCLEO.listo() cuando tenga su pantalla preparada, y la splash espera también a eso (no solo al load)
+  function juego({ antes = [], despues = [], idioma: dic = {}, ligero = false, esperaListo = false }) {
     if (cerrado) return;
+    if (esperaListo) aSplash('esperaListo');
     ajustaIdioma(dic);
     codigo(CORE + 'js/sistema/idioma.js');
-    codigo(CORE + 'js/sistema/analitica.js');   // estadísticas de visitas, solo si el jugador acepta
+    codigo(CORE + 'js/sistema/analitica.js', true);   // estadísticas de visitas, solo si el jugador acepta (opcional: un bloqueador no para el juego)
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
     antes.forEach(codigo); (ligero ? LIGERO : COMUN).forEach(f => codigo(CORE + f)); despues.forEach(codigo);
-    if (desarrollo || alfa) codigo(CORE + 'js/sistema/desarrollo.js');   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
-    if (idioma !== 'es') {   // la página espera, tapada, a que se traduzca lo que ya hay; después se traduce también lo que el juego escriba
-      const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }'; document.head.appendChild(velo);
-      const listo = () => { IDIOMA.pantalla(); velo.remove(); };
-      window.addEventListener('load', listo); setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
-    }
+    if (desarrollo || alfa) codigo(CORE + 'js/sistema/desarrollo.js', true);   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
+    aSplash('todoPedido');   // ya se sabe cuántos archivos hay: la barra puede contarlos
+    if (idioma !== 'es') veloDeIdioma();
     sinConexion();
+  }
+
+  // En otro idioma, la página espera tapada a que se traduzca lo que ya hay (después se traduce también lo que el juego escriba). Si la splash
+  // está puesta, ella ya tapa: no hace falta el velo, solo traducir al cargar (antes de que la splash se vaya: se va en el siguiente cuadro).
+  function veloDeIdioma() {
+    const tapada = typeof SPLASH !== 'undefined' && SPLASH.visible;
+    const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }';
+    if (!tapada) document.head.appendChild(velo);
+    const listo = () => { IDIOMA.pantalla(); velo.remove(); };
+    window.addEventListener('load', listo); if (!tapada) setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
   }
 
   // Una página que no es un juego (la de la raíz) también se traduce: carga idioma.js y los diccionarios de lo común y los que se le den
   function idiomaSolo(dic = {}) {
     ajustaIdioma(dic);
     codigo(CORE + 'js/sistema/idioma.js');
-    if (idioma !== 'es') {
-      (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo);
-      const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }'; document.head.appendChild(velo);
-      const listo = () => { IDIOMA.pantalla(); velo.remove(); };
-      window.addEventListener('load', listo); setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
-    }
+    if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); veloDeIdioma(); }
   }
+
+  // El juego avisa de que su pantalla está preparada (solo cuenta si lo declaró con juego({ esperaListo: true })): la splash ya puede irse
+  function listo() { aSplash('listo'); }
 
   // Instalar como app y jugar sin conexión: solo en la web del juego. No en un archivo abierto a mano, ni dentro de otra página,
   // ni en la app de Android (que ya lleva el juego dentro).
@@ -202,7 +217,7 @@ const NUCLEO = (() => {
     } catch (e) { /* el navegador no lo permite aquí */ }
   }
 
-  Object.assign(nucleo, { version, nativa, alfa, idioma, idiomas: ['es', 'en'], elegirIdioma, desarrollo, estilos, juego, idiomaSolo });
+  Object.assign(nucleo, { version, nativa, alfa, idioma, idiomas: ['es', 'en'], elegirIdioma, desarrollo, estilos, juego, idiomaSolo, listo, carga });
   return nucleo;
 })();
 const VERSION = NUCLEO.version;

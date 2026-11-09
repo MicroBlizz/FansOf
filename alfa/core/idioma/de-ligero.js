@@ -237,5 +237,10 @@ IDIOMA.add({
   "Abriendo el pago…": "Zahlung wird geöffnet…",
   "El pago todavía no está confirmado: lo recibirás en cuanto lo esté": "Die Zahlung ist noch nicht bestätigt: Du bekommst es, sobald sie es ist",
   "No se ha podido completar la compra. Si te han cobrado, lo recibirás en unos minutos.": "Der Kauf konnte nicht abgeschlossen werden. Wenn dir etwas berechnet wurde, bekommst du es in ein paar Minuten.",
-  "Las compras con euros solo están en la app de Android": "Käufe mit Euro gibt es nur in der Android-App"
+  "Las compras con euros solo están en la app de Android": "Käufe mit Euro gibt es nur in der Android-App",
+  // la splash de carga (core/js/sistema/splash.js, ADR 091)
+  "No se ha podido cargar": "Konnte nicht geladen werden",
+  "Sin conexión. Comprueba la red y reintenta": "Keine Verbindung. Prüfe das Netz und versuch es nochmal",
+  "Está tardando más de lo normal": "Das dauert länger als sonst",
+  "Reintentar": "Nochmal versuchen",
 });

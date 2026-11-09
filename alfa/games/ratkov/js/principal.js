@@ -4,7 +4,7 @@
 const RELOJ = { antes: 0, hora: 0, paseo: 0 };
 function arranca() {
   iniciaMotor(); construyeMapa(); preparaBalas(); preparaControles(); ajustaMochilas(); ajustaAlijo(); // las partidas de antes pasan a la mochila Tetris
-  el('carga').hidden = true;
+  el('carga').hidden = true; NUCLEO.listo();   // la splash de core (ADR 091) espera a esto para irse
   el('t-ver').textContent = 'v' + (NEWS[0] ? NEWS[0].v : '0.1.0');
   el('t-jugar').onclick = () => { play('select'); abreRefugio('incursion'); };
   el('t-como').onclick = () => { play('select'); muestraComo(); };

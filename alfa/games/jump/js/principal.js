@@ -35,7 +35,7 @@ async function arranca() {
   JS.arranca();   // la cuenta en el servidor (servidor.js): no se espera, lo que llegue sustituye lo local
   nuevaPartida();
   setTimeout(subePendiente, 4000);   // la mejor marca que no esté aún en el ranking mundial
-  document.getElementById('carga').hidden = true;
+  document.getElementById('carga').hidden = true; NUCLEO.listo();   // la splash de core (ADR 091) espera a esto para irse
   const punto = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * PAN.W / r.width, (e.clientY - r.top) * PAN.H / r.height]; };
   cv.addEventListener('pointerdown', e => { audioInit(); cv.setPointerCapture(e.pointerId); dedoBaja(...punto(e)); e.preventDefault(); });
   cv.addEventListener('pointermove', e => { dedoMueve(...punto(e)); e.preventDefault(); });

@@ -7,10 +7,11 @@
 <title>Fans of Rouflage</title>
 <meta name="description" content="Fans of Rouflage (juego): el escondite con pintura. Píntate como el suelo, congélate y que los becarios de Microblizz no te despidan. O coge la linterna y encuéntralos tú.">
 <link rel="icon" type="image/png" href="img/icono-192.png">
+<!-- nucleo.js, lo primero (antes de las fuentes y las hojas): pinta la splash de carga desde el primer momento (ADR 091) -->
+<script src="../../core/js/nucleo.js?v=0.2.75-a1136.58d9bed"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.75-a1135.e08756e"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-tienda.css', 'estilo-barras.css', 'estilo-tarjetas.css', 'estilo-barra.css', 'estilo-sala-viva.css', 'estilo-obra.css', 'estilo-ayuda.css', 'estilo-pintura.css', 'estilo-carga.css')</script>      <!-- la intro, la última: pisa el #carga de estilo.css (antes iba en línea dentro de #carga) -->
 </head>
@@ -62,7 +63,7 @@
 <!-- las pantallas de los menús (PvP, armario, tienda, gachapón, pase, misiones, diario, perfil) las pone js/pantallas-html.js aquí al arrancar -->
 <div id="pantallas-menus" hidden></div>
 
-<div id="carga"><div class="cg-escena"><span class="cg-oculto"></span><span class="cg-susto"></span><span class="cg-cam"></span><span class="cg-excl">!</span><span class="cg-caz"><span class="cg-haz"></span></span></div><div class="cg"><div class="cg-arriba"><span class="cg-fans">FANS OF</span><div class="cg-titulo" aria-label="Rouflage"><span class="cg-mancha m1"></span><span class="cg-mancha m2"></span><span class="cg-mancha m3"></span><span class="cg-mancha m4"></span><span class="cg-mancha m5"></span><span class="cg-fila f1"><i class="p1">R</i><i class="p2">O</i><i class="p3">U</i></span><span class="cg-fila f2"><i class="p2">F</i><i class="p1">L</i><i class="p3">A</i><i class="p2">G</i><i class="p1">E</i></span></div></div></div><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div>
+<div id="carga" class="cg-espera"><div class="cg-escena"><span class="cg-oculto"></span><span class="cg-susto"></span><span class="cg-cam"></span><span class="cg-excl">!</span><span class="cg-caz"><span class="cg-haz"></span></span></div><div class="cg"><div class="cg-arriba"><span class="cg-fans">FANS OF</span><div class="cg-titulo" aria-label="Rouflage"><span class="cg-mancha m1"></span><span class="cg-mancha m2"></span><span class="cg-mancha m3"></span><span class="cg-mancha m4"></span><span class="cg-mancha m5"></span><span class="cg-fila f1"><i class="p1">R</i><i class="p2">O</i><i class="p3">U</i></span><span class="cg-fila f2"><i class="p2">F</i><i class="p1">L</i><i class="p3">A</i><i class="p2">G</i><i class="p1">E</i></span></div></div></div><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div>
 <script src="js/intro-musica.js?v=0.2.62"></script>
 <script>
 // el título de la intro cabe siempre a lo ancho y no tapa la escena: en la app de Android el texto puede salir más grande (el tamaño de letra del móvil),
@@ -79,36 +80,43 @@
 })();
 </script>
 <script>
-// cuando el juego está listo, la pantalla de carga no se va sola: pone «TOCA PARA JUGAR» y se quita con el toque (que además deja sonar la música en el móvil). Las pruebas automáticas la quitan como siempre.
+// la intro (letras, colado y becario) y su música esperan quietas, en el segundo 0, a que se vaya la splash de carga de core (SPLASH.alIrse, ADR 091):
+// entonces empiezan desde el principio. Cuando el juego está listo se lo dice a core (NUCLEO.listo) y la pantalla no se va sola: al acabar la intro
+// pone «TOCA PARA JUGAR» y se quita con el toque (que además deja sonar la música en el móvil). Las pruebas automáticas la quitan como siempre.
+// Si algo falla al cargar, lo dice la splash (con su botón de reintentar).
 (function () {
   const c = document.getElementById('carga'), t = document.getElementById('cg-txt'), real = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'hidden');
-  if (!c || !t || !real || navigator.webdriver) return;
+  if (!c || !t || !real) return;
+  SPLASH.alIrse(() => c.classList.remove('cg-espera'));
+  const auto = !!navigator.webdriver;
   let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
   const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
-  if (en) t.textContent = 'LOADING…';
-  let esperando = false; const t0 = performance.now(); c.classList.add('cg-sacude');
-  // la música de la intro (js/intro-musica.js): intenta sonar ya, a la par que las animaciones (en la app de Android sí; en el navegador del móvil, no hasta tocar)
-  if (typeof INTRO_MUSICA !== 'undefined') INTRO_MUSICA.empieza();
+  if (!auto) {
+    if (en) t.textContent = 'LOADING…';
+    c.classList.add('cg-sacude');
+    // la música de la intro (js/intro-musica.js): a la par que las animaciones (en la app de Android suena sola; en el navegador del móvil, no hasta tocar)
+    if (typeof INTRO_MUSICA !== 'undefined') SPLASH.alIrse(() => INTRO_MUSICA.empieza());
+  }
+  const INTRO_MS = 3500;   // el «TOCA PARA JUGAR» sale cuando la intro ha enseñado lo suyo: letras, colado y becario
+  let esperando = false;
+  const va = e => { if (e) e.preventDefault(); c.removeEventListener('click', va); removeEventListener('keydown', va); if (typeof INTRO_MUSICA !== 'undefined') INTRO_MUSICA.para(); real.set.call(c, true); };
+  const toca = () => { t.textContent = en ? 'TAP TO PLAY' : 'TOCA PARA JUGAR'; t.classList.add('toca'); c.addEventListener('click', va); addEventListener('keydown', va); };
   Object.defineProperty(c, 'hidden', { configurable: true, get() { return real.get.call(c); }, set(v) {
     if (!v) { real.set.call(c, false); return; }
     if (esperando) return;
     esperando = true;
-    // el «TOCA PARA JUGAR» no sale antes del segundo 3,5 (deja ver la intro entera: letras, colado y becario)
-    setTimeout(() => { t.textContent = en ? 'TAP TO PLAY' : 'TOCA PARA JUGAR'; t.classList.add('toca'); }, Math.max(0, 3500 - (performance.now() - t0)));
-    const va = e => { if (e) e.preventDefault(); c.removeEventListener('click', va); removeEventListener('keydown', va); if (typeof INTRO_MUSICA !== 'undefined') INTRO_MUSICA.para(); real.set.call(c, true); };
-    c.addEventListener('click', va); addEventListener('keydown', va);
+    NUCLEO.listo();
+    if (auto) { real.set.call(c, true); return; }
+    SPLASH.alIrse(() => setTimeout(toca, INTRO_MS));
   } });
 })();
-</script>
-<script>
-// si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
-window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
 </script>
 <script>
 // lo ligero de core (cuenta, idioma y caos primordial: NUCLEO.juego con ligero), los ajustes antes y el juego después, en este orden.
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
+  esperaListo: true,   // la splash espera también a NUCLEO.listo() (lo llama la pantalla de carga de arriba cuando el juego la quita)
   idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-misiones2.js', 'idioma/en-escenario.js', 'idioma/en-pintar.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js', 'idioma/en-chat.js', 'idioma/en-viral.js', 'idioma/en-pegatinas.js', 'idioma/en-codigos.js', 'idioma/en-casa.js', 'idioma/en-ayuda.js', 'idioma/en-fantasma.js'],
     pt: ['idioma/pt.js', 'idioma/pt-2.js', 'idioma/pt-3.js', 'idioma/pt-armario.js', 'idioma/pt-armario2.js', 'idioma/pt-opciones.js', 'idioma/pt-foto.js', 'idioma/pt-misiones.js', 'idioma/pt-misiones2.js', 'idioma/pt-escenario.js', 'idioma/pt-pintar.js', 'idioma/pt-votos.js', 'idioma/pt-premios.js', 'idioma/pt-mapas.js', 'idioma/pt-talentos.js', 'idioma/pt-chat.js', 'idioma/pt-viral.js', 'idioma/pt-pegatinas.js', 'idioma/pt-codigos.js', 'idioma/pt-casa.js', 'idioma/pt-ayuda.js', 'idioma/pt-fantasma.js', 'idioma/pt-comun.js'],
     fr: ['idioma/fr.js', 'idioma/fr-2.js', 'idioma/fr-3.js', 'idioma/fr-armario.js', 'idioma/fr-armario2.js', 'idioma/fr-opciones.js', 'idioma/fr-foto.js', 'idioma/fr-misiones.js', 'idioma/fr-misiones2.js', 'idioma/fr-escenario.js', 'idioma/fr-pintar.js', 'idioma/fr-votos.js', 'idioma/fr-premios.js', 'idioma/fr-mapas.js', 'idioma/fr-talentos.js', 'idioma/fr-chat.js', 'idioma/fr-viral.js', 'idioma/fr-pegatinas.js', 'idioma/fr-codigos.js', 'idioma/fr-casa.js', 'idioma/fr-ayuda.js', 'idioma/fr-fantasma.js', 'idioma/fr-comun.js'],

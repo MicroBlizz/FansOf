@@ -1,6 +1,7 @@
 // Fans Of Pets · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.10', real: ["<b>PANTALLA DE CARGA</b>: el juego se tapa con una pantalla de carga hasta que todo ha cargado, para que no veas nada a medias."], joke: ["Microblizz ha puesto una cortina para que no veas cómo se monta el escenario y Phony ha pedido entrar detrás."] },
   { v: '0.2.9', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido."] },
   { v: '0.2.8', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha afinado las tuercas del motor y Phony ha preguntado si eso se come."] },
   { v: '0.2.7', real: ["<b>MEJORAS POR DENTRO</b>: el recuento anónimo de jugadores conectados ya no cuenta a los bots de las pruebas internas."], joke: ["Microblizz ha dejado de contar a los bots de pruebas como jugadores y Phony ha pedido que cuenten por lo menos como público."] },

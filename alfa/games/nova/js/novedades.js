@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.55', real: ["<b>PANTALLA DE CARGA</b>: el juego se tapa con una pantalla de carga hasta que todo ha cargado, para que no veas nada a medias."], joke: ["Microblizz ha puesto una cortina para que no veas cómo se monta el escenario y Phony ha pedido entrar detrás."] },
   { v: '0.3.54', real: ["<b>MEJORAS POR DENTRO</b>: retoques en los sistemas internos para que todo vaya más fino."], joke: ["Microblizz ha engrasado el motor otra vez y Phony ha preguntado si ahora corre más rápido."] },
   { v: '0.3.53', real: ["<b>LAS NUEVE NAVES, MÁS PAREJAS</b>: la Fragata y Héroes tienen ahora 290 de vida (antes 330 y 250) y Streamers también sube a 290. Además, la Secuela y el Cañón RNG pegan más, el Rayo de Zeus, el Francotirador y el Pulso de hackeo disparan más rápido y la Segadora de almas cura menos. Con cualquier nave se gana parecido."], joke: ["Microblizz ha repartido la vida entre las naves a partes iguales. Phony ha pedido su parte en vacaciones."] },
   { v: '0.3.52', real: ["<b>EL CRUCERO, UN POCO MÁS</b>: el Pulso de hackeo pega un 10 % más. Con las fusiones nuevas las demás naves subieron y el crucero se había quedado atrás."], joke: ["Microblizz ha subido la contraseña del Pulso de hackeo a 12345. Phony dice que ahora es imposible de adivinar."] },

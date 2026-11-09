@@ -8,11 +8,11 @@
 <meta name="description" content="Fans of Jump: el prólogo de los Animales Locos. Microblizz arrasa el bosque y su topadora gigante empuja una ola de barro río arriba. Salta con CrazyBunny de tronco en tronco y rescata a su pandilla.">
 <link rel="icon" type="image/png" href="img/icono-192.png">
 <link rel="manifest" href="manifest.webmanifest">
+<script src="../../core/js/nucleo.js?v=0.3.27"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- ?v= es la versión del juego (la misma en la web y en la app): súbela al publicar y pon su entrada en js/novedades.js -->
-<script src="../../core/js/nucleo.js?v=0.3.26"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
 <style>
 /* Fans of Jump: un solo canvas a la resolución real de la pantalla, con los dibujos 3D. El mundo mide unos 200 de ancho y se
@@ -31,6 +31,7 @@ body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color
 <div id="toast"></div>
 <script>
 NUCLEO.juego({
+  esperaListo: true,   // la splash de core espera también a NUCLEO.listo(), que js/principal.js llama al quitar la pantalla de carga del juego (ADR 091)
   ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Jump lleva su propia partida y sus pantallas
   antes: ['js/ajustes.js'],
   idioma: { en: ['idioma/en.js'] },

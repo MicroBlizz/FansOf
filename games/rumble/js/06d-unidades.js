@@ -211,9 +211,14 @@ function bunnyJump(u, dt) {
   u.face = u.jump.x1 > u.x ? 1 : -1; u.jumpCd = u.d.jumpCd * (u.jumpCdM || 1); play('jump');
   return true;
 }
+// humo de las ruinas de un edificio caído (partículas); el arte pintado lo sustituye por su vídeo de humo (pintado/derrumbe.js)
+function ruinSmoke(s, dt) {
+  s.smokeT -= dt; if (s.smokeT > 0) return;
+  s.smokeT = rand(0.25, 0.5); parts.push({ type: 'smoke', x: s.x + rand(-12, 12), y: s.y, z: rand(6, 16), vx: rand(-4, 4), vy: 0, vz: rand(14, 24), g: 0, life: rand(1.2, 1.8), max: 1.8, size: rand(5, 10) });
+}
 function updateStruct(s, dt) {
   s.hitT = Math.max(0, s.hitT - dt); s.recoil = Math.max(0, s.recoil - dt); s.castT = Math.max(0, s.castT - dt);
-  if (!s.alive) { if (s.hidden) return; s.smokeT -= dt; if (s.smokeT <= 0) { s.smokeT = rand(0.25, 0.5); parts.push({ type: 'smoke', x: s.x + rand(-12, 12), y: s.y, z: rand(6, 16), vx: rand(-4, 4), vy: 0, vz: rand(14, 24), g: 0, life: rand(1.2, 1.8), max: 1.8, size: rand(5, 10) }); } return; }
+  if (!s.alive) { if (!s.hidden) ruinSmoke(s, dt); return; }
   if (s.hackedT > 0) { s.hackedT -= dt; return; }
   s.atkT -= dt; if (s.atkT > 0) return;
   const seen = u => targetable(u) && !(u.olvT > 0);   // v0.9.13: Nostalgia

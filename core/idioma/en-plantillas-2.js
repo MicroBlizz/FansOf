@@ -131,4 +131,8 @@ IDIOMA.add({
   "Garantías: una épica o mejor como mucho cada %#1 tiradas, una legendaria a las %#2 y una copia de calidad Director (excelente) o mejor como mucho cada %#3. Cada bloque de 10 tiradas trae al menos una épica.": "Guarantees: an epic or better at most every %1 pulls, a legendary by %2, and a Director-quality (excellent) or better copy at most every %3. Every block of 10 pulls brings at least one epic.",
   "Tus otras copias:": "Your other copies:",
   "y {n} más": "and {n} more",
+  // la splash de carga (core/js/sistema/splash.js, ADR 091)
+  "Sin conexión. Comprueba la red y reintenta": "No connection. Check your network and try again",
+  "Está tardando más de lo normal": "This is taking longer than usual",
+  "Reintentar": "Try again",
 });

@@ -66,3 +66,5 @@
 @keyframes cg-busca { 0%, 28.5% { transform: translateY(-50%) rotate(-10deg); } 33% { transform: translateY(-50%) rotate(8deg); } 38% { transform: translateY(-50%) rotate(-9deg); } 43% { transform: translateY(-50%) rotate(5deg); } 46.5%, 100% { transform: translateY(-50%) rotate(0deg); } }
 @keyframes cg-excl { 0%, 46.5% { opacity: 0; transform: translateY(0.15em) scale(0.5); } 48% { opacity: 1; transform: translateY(0) scale(1.3); } 50% { transform: scale(1); } 55%, 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #carga * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } #carga .cg-cam, #carga .cg-caz, #carga .cg-excl, #carga .cg-susto { animation: none !important; opacity: 0; } #carga .cg-oculto { animation: none !important; opacity: 1; } }
+/* quieta en el segundo 0 mientras está la splash de carga de core; al irse (SPLASH.alIrse, index.html) se quita la clase y la intro empieza desde el principio (ADR 091) */
+#carga.cg-espera, #carga.cg-espera *, #carga.cg-espera *::before, #carga.cg-espera *::after { animation-play-state: paused !important; }

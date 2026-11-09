@@ -1,8 +1,8 @@
 {
- "build": 1137,
- "hash": "3e983a3",
- "fecha": "2026-11-09T22:44:44Z",
- "mensaje": "Versiones y novedades para la publicación diaria (pantalla de carga de core)",
+ "build": 1138,
+ "hash": "17d64d5",
+ "fecha": "2026-11-09T22:55:40Z",
+ "mensaje": "Splash al instante (tarea #26, ADR 093): las hojas no bloquean el pintado y el juego espera a sus hojas y su letra",
  "juegos": {
   "boom": "0.4.12",
   "cooking": "0.2.13",

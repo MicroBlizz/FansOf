@@ -1,8 +1,8 @@
 // Fans Of · NÚCLEO: carga, en orden, lo común (core/) y el juego.
 //
 // Cada juego lo pone en la cabecera de su index.html, con su versión:
-//     <script src="../../core/js/nucleo.js?v=0.9.6"></script>
-//     <script>NUCLEO.estilos('css/mi-juego.css')</script>
+//     <script src="../../core/js/nucleo.js?v=0.9.6"></script>      (lo primero de la cabecera: pinta la splash)
+//     <script>NUCLEO.fuentes('https://fonts.googleapis.com/…')</script> <script>NUCLEO.estilos('css/mi-juego.css')</script>
 // y, al final de la página, dice qué archivos suyos hay que cargar antes y después de lo común:
 //     <script>NUCLEO.juego({ antes: ['js/ajustes.js'], despues: ['js/juego.js'] })</script>
 //
@@ -23,11 +23,16 @@ const NUCLEO = (() => {
   const pedido = [];   // todo lo que carga la página: es lo que se guarda para jugar sin conexión
   // LA SPLASH, lo primero (ADR 091): es la pantalla de carga de los juegos. Se pide aquí, antes que cualquier hoja o script, para que tape la página
   // desde el primer pintado; splash.js decide si sale (solo en un juego o una demo, ver PROXIMAMENTE.juego). Lo que pide el juego se le cuenta (carga, abajo).
-  for (const f of ['js/sistema/splash-reglas.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js']) { pedido.push(conV(CORE + f)); document.write('<script src="' + conV(CORE + f) + '"><\/script>'); }
+  // Detrás, la puerta de carga (PUERTA_CARGA, ADR 093): las hojas no bloquean el pintado y el código del juego espera a que hayan llegado ellas y la letra.
+  for (const f of ['js/sistema/splash-reglas.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js', 'js/sistema/puerta.js']) { pedido.push(conV(CORE + f)); document.write('<script src="' + conV(CORE + f) + '"><\/script>'); }
   // cada hoja y cada script que se pide avisa a la splash al llegar o al fallar (la barra de carga y el aviso de error). Si la splash no está, no pasa nada.
   // Si splash.js no hubiera llegado (bloqueado o sin red), el juego carga igual, sin splash: por eso todo pasa por aSplash.
   const aSplash = (orden, ...datos) => { if (typeof SPLASH !== 'undefined') SPLASH[orden](...datos); };
   const carga = { pide: () => aSplash('pide'), llega: () => aSplash('llega'), falla(src) { console.error('No se ha podido cargar ' + src); aSplash('falla', src); } };
+  // la puerta de carga (puerta.js) le avisa también cuando ha cargado todo: la página y todo el código pedido (el load solo ya no basta)
+  const avisosPuerta = Object.assign({ cargada: () => aSplash('cargada') }, carga);
+  // lo que antes colgaba del load de la ventana cuelga de aquí: el load puede llegar antes que el código del juego (ADR 093)
+  const alCargar = fn => PUERTA_CARGA.alCargar(fn);
 
   // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es', uno de
   // IDIOMAS → ese, y cualquier otro → 'en'. Cambiarlo recarga la página. Los diccionarios solo se cargan si no es español (ver core/js/sistema/idioma.js).
@@ -154,18 +159,31 @@ const NUCLEO = (() => {
     'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
   ];
 
-  // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, como si estuvieran en el HTML, para que la página no se pinte sin ellas.
+  // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, en su sitio, pero sin bloquear el pintado (la splash sale ya):
+  // el código del juego no corre hasta que han llegado todas (la puerta de carga, PUERTA_CARGA). Sin splash, un velo tapa la página mientras tanto.
   const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css', '../../core/css/miniaturas.css', '../../core/css/tienda-gemas.css'];   // las pantallas comunes: un juego pide la primera y se cargan todas, en este orden
-  function estilos(...hojas) { if (cerrado) return; for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); carga.pide(); document.write(`<link rel="stylesheet" href="${conV(h)}" onload="NUCLEO.carga.llega()" onerror="NUCLEO.carga.falla(this.href)">`); } }
+  function estilos(...hojas) { if (cerrado) return; PUERTA_CARGA.avisa(avisosPuerta); for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); carga.pide(); PUERTA_CARGA.hoja(conV(h)); } }
+  // La hoja de las fuentes (hoy la de Google Fonts; ADR 092): como una hoja más, pero opcional (sin red, el juego sale con la letra de repuesto)
+  // En la página de «Próximamente» va como una hoja normal (allí no hay juego que esperar).
+  function fuentes(url) {
+    if (cerrado) { document.write(`<link rel="stylesheet" href="${url}">`); return; }
+    PUERTA_CARGA.avisa(avisosPuerta); carga.pide(); PUERTA_CARGA.hoja(url, true);
+  }
 
-  // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados.
+  // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados. Se empieza a bajar ya
+  // (preload) pero no se pone en la página hasta que se abre la puerta de carga (PUERTA_CARGA): así arranca con sus hojas y su letra.
   // opcional: si no llega, el juego sigue (no para la splash); es lo que no hace falta para jugar (estadísticas, panel DEV)
   function codigo(src, opcional = false) {
     const s = document.createElement('script'); s.src = conV(src); s.async = false;
-    s.onload = carga.llega;
-    s.onerror = () => { if (!opcional) { carga.falla(src); return; } console.error('No se ha podido cargar ' + src); carga.llega(); };
-    carga.pide(); pedido.push(s.src); document.body.appendChild(s);
+    s.onload = () => { carga.llega(); PUERTA_CARGA.codigoHecho(); };
+    s.onerror = () => { if (!opcional) carga.falla(src); else { console.error('No se ha podido cargar ' + src); carga.llega(); } PUERTA_CARGA.codigoHecho(); };
+    carga.pide(); pedido.push(s.src); PUERTA_CARGA.codigoPide();
+    if (!PUERTA_CARGA.abierta) { const l = document.createElement('link'); l.rel = 'preload'; l.as = 'script'; l.href = s.src; document.head.appendChild(l); }
+    PUERTA_CARGA.alAbrir(() => document.body.appendChild(s));
   }
+  // ya se ha pedido todo el código: la barra de la splash ya puede contarlo, la puerta puede abrirse (cuando lleguen las hojas)
+  // y la carga puede darse por acabada
+  function todoPedido() { aSplash('todoPedido'); PUERTA_CARGA.avisa(avisosPuerta); PUERTA_CARGA.todoPedido(); }
   // antes: lo que el juego le dice a lo común (sus ajustes) · despues: el juego en sí
   // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
   // esperaListo: el juego llamará a NUCLEO.listo() cuando tenga su pantalla preparada, y la splash espera también a eso (no solo al load)
@@ -178,7 +196,7 @@ const NUCLEO = (() => {
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
     antes.forEach(codigo); (ligero ? LIGERO : COMUN).forEach(f => codigo(CORE + f)); despues.forEach(codigo);
     if (desarrollo || alfa) codigo(CORE + 'js/sistema/desarrollo.js', true);   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
-    aSplash('todoPedido');   // ya se sabe cuántos archivos hay: la barra puede contarlos
+    todoPedido();
     if (idioma !== 'es') veloDeIdioma();
     sinConexion();
   }
@@ -189,15 +207,17 @@ const NUCLEO = (() => {
     const tapada = typeof SPLASH !== 'undefined' && SPLASH.visible;
     const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }';
     if (!tapada) document.head.appendChild(velo);
-    const listo = () => { IDIOMA.pantalla(); velo.remove(); };
-    window.addEventListener('load', listo); if (!tapada) setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
+    const listo = () => { if (typeof IDIOMA !== 'undefined') IDIOMA.pantalla(); velo.remove(); };
+    alCargar(listo); if (!tapada) setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
   }
 
   // Una página que no es un juego (la de la raíz) también se traduce: carga idioma.js y los diccionarios de lo común y los que se le den
   function idiomaSolo(dic = {}) {
     ajustaIdioma(dic);
     codigo(CORE + 'js/sistema/idioma.js');
-    if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); veloDeIdioma(); }
+    if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
+    todoPedido();
+    if (idioma !== 'es') veloDeIdioma();
   }
 
   // El juego avisa de que su pantalla está preparada (solo cuenta si lo declaró con juego({ esperaListo: true })): la splash ya puede irse
@@ -217,7 +237,8 @@ const NUCLEO = (() => {
     } catch (e) { /* el navegador no lo permite aquí */ }
   }
 
-  Object.assign(nucleo, { version, nativa, alfa, idioma, idiomas: ['es', 'en'], elegirIdioma, desarrollo, estilos, juego, idiomaSolo, listo, carga });
+  // alEstilos(fn): lo que un juego hace en línea en su HTML y necesita sus estilos y su letra (medir, encajar un título) corre aquí
+  Object.assign(nucleo, { version, nativa, alfa, idioma, idiomas: ['es', 'en'], elegirIdioma, desarrollo, estilos, fuentes, juego, idiomaSolo, listo, carga, alCargar, alEstilos: fn => PUERTA_CARGA.alAbrir(fn) });
   return nucleo;
 })();
 const VERSION = NUCLEO.version;

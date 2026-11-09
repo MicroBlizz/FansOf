@@ -167,7 +167,7 @@ const REPORTE = (() => {
 
   // sin que el juego haga nada, el botón sale solo (si la cuenta es admin) al terminar de cargar y al cambiar de cuenta
   if (typeof hook === 'function') hook('cuenta', () => { compruebaAdmin(); });
-  if (typeof window !== 'undefined') window.addEventListener('load', () => setTimeout(compruebaAdmin, 1500));
+  if (typeof NUCLEO !== 'undefined') NUCLEO.alCargar(() => setTimeout(compruebaAdmin, 1500));
 
   return { activar, parar, traza, suceso: (tipo, datos) => { if (typeof CAJA !== 'undefined') CAJA.suceso(tipo, datos); } };
 })();

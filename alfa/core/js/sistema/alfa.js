@@ -43,5 +43,5 @@
 
   const recordado = () => { const v = leer(); return typeof CUENTA !== 'undefined' && !!v.u && v.u === CUENTA.usuario && v.hasta > Date.now(); };
   if (recordado()) setTimeout(comprobar, 5000);   // recordado: juega ya y se vuelve a mirar de fondo
-  else window.addEventListener('load', () => setTimeout(comprobar, 0));
+  else NUCLEO.alCargar(comprobar);   // al acabar de cargar la página y su código (ADR 093)
 })();

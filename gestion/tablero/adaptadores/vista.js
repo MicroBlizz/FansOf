@@ -5,11 +5,10 @@
 TABLERO.vista = (() => {
   const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo' };
   const MENSAJES = {
-    'solo-personas-hecho': 'Solo una persona pasa una tarea a hecho',
     'es-de-otro': 'Esa tarea es de otra persona',
     'esta-hecha': 'Esa tarea ya está hecha',
     'sin-refinar': 'Una idea o una tarea en refinamiento solo pasa a pendiente o en curso',
-    'sin-aprobacion': 'Para sacarla de ideas o de refinamiento, Claude enlaza vuestra aprobación en la nota',
+    'sin-aprobacion': 'Para sacarla de ideas o de refinamiento, o pasarla a hecho, Claude enlaza vuestro sí en la nota',
     'no-existe': 'La tarea ya no existe: recarga el tablero',
     'sin-servidor': 'No se ha podido hablar con el servidor',
     'estado': 'Esa columna no existe',

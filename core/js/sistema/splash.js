@@ -1,5 +1,5 @@
 // Fans Of · SPLASH: la pantalla de carga de los juegos, con el logo FOG (Fans Of Games) y una barra de progreso real. nucleo.js la pide lo
-// primero, así que tapa la página desde el primer pintado; se va cuando llegan el load y, si el juego lo declaró, su NUCLEO.listo(). No se
+// primero, así que tapa la página desde el primer pintado; se va cuando ha cargado todo (lo dice nucleo.js) y, si el juego lo declaró, su NUCLEO.listo(). No se
 // salta. Si algo falla al cargar lo dice ella, con un botón para reintentar. La intro de cada juego arranca en SPLASH.alIrse(fn).
 // Reglas (puras): splash-reglas.js. Dibujo del logo: splash-logo.js. Guía: docs/guia/core/splash.md. ADR 091 (antes 051).
 'use strict';
@@ -89,7 +89,6 @@ const SPLASH = (() => {
     if (!enJuego || !R.sale({ automatizado: !!navigator.webdriver, forzada })) { ido = true; return; }
     monta();
     window.addEventListener('error', alFallarCodigo);
-    window.addEventListener('load', () => { estado.cargada = true; }, { once: true });
     const t0 = performance.now(); requestAnimationFrame(cuadro(t0, t0));
   }
 
@@ -98,6 +97,7 @@ const SPLASH = (() => {
     get visible() { return !ido; },
     pide() { estado.pedidos++; }, llega() { estado.llegados++; }, falla, todoPedido() { estado.todoPedido = true; },
     esperaListo() { estado.esperaListo = true; }, listo() { estado.listo = true; },
+    cargada() { estado.cargada = true; },   // nucleo.js: la página y todo su código han cargado (el load solo ya no basta, ADR 093)
     // fn corre cuando la splash se va (si ya se fue o no salió, ahora mismo): aquí arranca la intro de cada juego
     alIrse(fn) { if (ido) fn(); else alIrseFns.push(fn); },
   };

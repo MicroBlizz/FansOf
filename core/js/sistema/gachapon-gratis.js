@@ -76,6 +76,7 @@ const GRATIS = (() => {
     $('#gacha-badge').hidden = false;
     if (!(SAVE.tickets || 0)) $('#feat-gacha').textContent = tr(listo10() ? '¡Tirada x10 gratis!' : '¡Tirada gratis lista!');
   });
-  setTimeout(() => { if (nube()) refrescar().then(avisa); else avisa(); }, 3000);   // en el menú: el punto rojo y el aviso del domingo   // con cuenta: el menú sabe enseguida si hay una esperando
+  // en el menú: el punto rojo y el aviso del domingo; con cuenta, el menú sabe enseguida si hay una esperando. Cuando ya está todo el código (ADR 093): con red lenta, un reloj fijo llegaba antes que el juego
+  NUCLEO.alCargar(() => setTimeout(() => { if (nube()) refrescar().then(avisa); else avisa(); }, 3000));
   return { listo1, listo10, falta, refrescar };
 })();

@@ -6,18 +6,23 @@
 window.PROXIMAMENTE = (() => {
   const ABIERTOS = ['rouflage', 'karts'];
   const alfa = /\/alfa\//.test(location.pathname);
-  const desarrollo = (() => {   // la misma regla que NUCLEO.desarrollo (core/js/nucleo.js)
+  // la misma regla que NUCLEO.desarrollo (core/js/nucleo/entorno.js): solo en localhost o en la alfa, y nunca en la app de Android. Lo guardado
+  // en el navegador no basta: la alfa y la release comparten origen, así que un ?dev=1 de la alfa no debe abrir los juegos de la release.
+  const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+  const nativa = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+  const dondeVale = !nativa && (alfa || local);
+  const desarrollo = (() => {
+    if (!dondeVale) return false;
     try {
       const v = localStorage.getItem('fansof-dev'); if (v) return v === '1';
     } catch (e) { /* sin guardar */ }
-    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) return false;
-    return ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+    return local;
   })();
   // el rol «beta»: el veredicto se recuerda 6 horas en este navegador (como el de la alfa, core/js/sistema/alfa.js) y se vuelve a comprobar de fondo en cada carga
   const CLAVE = 'fansof-beta', HORAS = 6;
   const beta = () => { try { const v = JSON.parse(localStorage.getItem(CLAVE) || 'null'); return !!(v && v.hasta > Date.now()); } catch (e) { return false; } };
   const usadoBeta = beta();   // con lo que se ha pintado esta página
-  const abierto = (() => { try { return localStorage.getItem('fansof-abierto') === '1'; } catch (e) { return false; } })();   // lo pone el comparador de pruebas (comparar.js) para ver todos los juegos sin el botón DEV
+  const abierto = dondeVale && (() => { try { return localStorage.getItem('fansof-abierto') === '1'; } catch (e) { return false; } })();   // lo pone el comparador de pruebas (comparar.js) para ver todos los juegos sin el botón DEV
   const jugable = id => alfa || desarrollo || abierto || ABIERTOS.includes(id) || usadoBeta;
   const enBeta = id => usadoBeta && !alfa && !desarrollo && !ABIERTOS.includes(id);   // se juega solo por ser beta tester
   async function verificar() {   // lo llaman la librería y cada juego cuando ya hay cuenta; si el veredicto cambia, se recarga para pintar lo que toca

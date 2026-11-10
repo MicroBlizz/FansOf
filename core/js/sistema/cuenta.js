@@ -210,7 +210,7 @@ const CUENTA = (() => {
   }
 
   if (activa) {
-    window.addEventListener('load', () => setTimeout(() => deLaDireccion().catch(() => { aviso = tr('No se ha podido entrar. Prueba otra vez.'); }).then(() => { if (aviso && typeof toast === 'function') toast(aviso, true); fire('cuenta'); return sincronizar(true); }), 500));
+    NUCLEO.alCargar(() => setTimeout(() => deLaDireccion().catch(() => { aviso = tr('No se ha podido entrar. Prueba otra vez.'); }).then(() => { if (aviso && typeof toast === 'function') toast(aviso, true); fire('cuenta'); return sincronizar(true); }), 500));
     window.addEventListener('online', () => sincronizar(false));
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && meta.pendiente) { clearTimeout(temporizador); sincronizar(false); } });
   }

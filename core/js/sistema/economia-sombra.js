@@ -103,7 +103,7 @@ const ECO_SOMBRA = (() => {
   };
 
   if (activa()) {
-    window.addEventListener('load', () => setTimeout(enviar, 4000));
+    NUCLEO.alCargar(() => setTimeout(enviar, 4000));
     window.addEventListener('online', enviar);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && est.cola.length) enviar(); });
   }

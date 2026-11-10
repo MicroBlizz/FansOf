@@ -59,7 +59,7 @@ function basSubeReto(clave) {
 // al arrancar (y al volver la red): lo que quedó sin subir
 function basSubePendiente() { basSubeMarca(); for (const k of Object.keys(SAVE.retosModo || {})) basSubeReto(k); }
 window.addEventListener('online', () => setTimeout(basSubePendiente, 1500));
-window.addEventListener('load', () => setTimeout(basSubePendiente, 4000));
+NUCLEO.alCargar(() => setTimeout(basSubePendiente, 4000));   // al acabar de cargar la página y su código (ADR 093)
 
 // tab = 'legacy' | 'hoy' | 'semana'
 function basCargaRanking(tab) {

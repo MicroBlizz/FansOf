@@ -8,10 +8,8 @@
 <meta name="description" content="El escondite con pintura: píntate como el suelo, congélate y que los becarios de Microblizz no te despidan. O coge la linterna y caza a los colados. Gratis.">
 <link rel="icon" type="image/png" href="img/icono-192.png">
 <!-- nucleo.js, lo primero (antes de las fuentes y las hojas): pinta la splash de carga desde el primer momento (ADR 091) -->
-<script src="../../core/js/nucleo.js?v=0.2.76"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<script src="../../core/js/nucleo.js?v=0.2.77"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/baloo-2.css', '../../core/fuentes/luckiest-guy.css')</script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-tienda.css', 'estilo-barras.css', 'estilo-tarjetas.css', 'estilo-barra.css', 'estilo-sala-viva.css', 'estilo-obra.css', 'estilo-ayuda.css', 'estilo-pintura.css', 'estilo-carga.css')</script>      <!-- la intro, la última: pisa el #carga de estilo.css (antes iba en línea dentro de #carga) -->
 <link rel="canonical" href="https://fansof.games/games/rouflage/">
@@ -92,7 +90,7 @@
     const k = Math.min(1, innerWidth * 0.92 / (w || 1), innerHeight * 0.42 / (a.offsetHeight || 1));
     a.style.transform = k < 0.999 ? 'scale(' + k.toFixed(3) + ')' : '';
   };
-  ajusta(); addEventListener('resize', ajusta); if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajusta);
+  NUCLEO.alEstilos(ajusta); addEventListener('resize', ajusta);   // se mide con sus estilos y su letra ya puestos (ADR 093)
 })();
 </script>
 <script>

@@ -86,7 +86,7 @@
 
   Object.assign(NUCLEO, { flag, flagRemoto, configRemota, flagMensaje, alCambiarFlags, flagsDev, leerFlags });
   if (!/[?&]sinflags\b/.test(location.search)) {   // el comparador de partidas lo apaga para no depender de la red
-    window.addEventListener('load', () => { avisos(); leerFlags(); });
+    NUCLEO.alCargar(() => { avisos(); leerFlags(); });   // al acabar de cargar la página y su código (ADR 093)
     setInterval(leerFlags, 5 * 60 * 1000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - ultimaLectura > 5 * 60 * 1000) leerFlags(); });
   }

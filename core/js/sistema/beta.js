@@ -5,5 +5,5 @@
   if (typeof PROXIMAMENTE === 'undefined') return;
   const comprobar = () => PROXIMAMENTE.verificar();
   document.addEventListener('cuenta-cambio', comprobar);
-  window.addEventListener('load', () => setTimeout(comprobar, 800));
+  NUCLEO.alCargar(() => setTimeout(comprobar, 800));   // al acabar de cargar la página y su código (ADR 093)
 })();

@@ -159,4 +159,4 @@ async function salonPuesto() {
   }
 }
 hook('pantalla', id => { if (id === 'scr-title') salonPuesto(); });
-setTimeout(salonPuesto, 2500);   // al abrir el juego, cuando ya hay sesión en la nube
+NUCLEO.alCargar(() => setTimeout(salonPuesto, 2500));   // al abrir el juego, cuando ya hay sesión en la nube y todo el código (ADR 093)

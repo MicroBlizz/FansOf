@@ -1,8 +1,8 @@
 {
- "build": 1141,
- "hash": "600fd0b",
- "fecha": "2026-11-10T12:04:46Z",
- "mensaje": "Variables de Actions en Cola: avisa si el token no puede leerlas, sigue las paginas y usa el nombre de la pausa de COLA_CONTROL",
+ "build": 1142,
+ "hash": "96a4e30",
+ "fecha": "2026-11-10T13:40:56Z",
+ "mensaje": "Core: los relojes de arranque del gashapón gratis y del salón esperan a NUCLEO.alCargar (arregla «isUnlocked is not defined» con red lenta)",
  "juegos": {
   "boom": "0.4.12",
   "cooking": "0.2.13",

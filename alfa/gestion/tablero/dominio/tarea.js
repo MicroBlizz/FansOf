@@ -26,7 +26,7 @@ TABLERO.Tarea = class Tarea {
 
   // Quien manda es una persona ('arkioner', 'pepins') o Claude (en cualquier mayúscula, como en el servidor). La nota va al historial; para Claude, al
   // sacar una tarea de ideas o de en refinamiento, es el enlace a la aprobación de la persona. Resultado: la tarea ya movida, o el motivo con nombre:
-  // 'estado-desconocido', 'solo-personas-hecho', 'es-de-otro', 'esta-hecha', 'sin-refinar' o 'sin-aprobacion'
+  // 'estado-desconocido', 'es-de-otro', 'esta-hecha', 'sin-refinar' o 'sin-aprobacion'
   mueve(quien, estado, nota = '') {
     if (!TABLERO.esEstado(estado)) return TABLERO.error('estado-desconocido', { estado });
     const esClaude = String(quien).toLowerCase() === 'claude';
@@ -37,14 +37,15 @@ TABLERO.Tarea = class Tarea {
     return TABLERO.ok(new Tarea({ ...this.#d, estado, responsable, esperando }));
   }
 
-  // Claude no cierra tareas, no toca las de otra persona y no reabre las hechas. Lleva una idea a refinamiento sin más, pero de ahí solo saca una tarea
+  // Claude no toca las de otra persona ni reabre las hechas, y solo pasa una tarea a «hecho» con la nota que enlaza el sí de Arkioner o de Pepins. Lleva una idea a refinamiento sin más, pero de ahí solo saca una tarea
   // que una persona dio por buena: a «en curso» (se empieza ya) o a «pendiente» (lista para más tarde), y con la nota que enlaza esa aprobación
   #motivoClaudeNoPuede(estado, nota) {
-    if (estado === 'hecho') return 'solo-personas-hecho';
     if (this.#d.responsable && this.#d.responsable !== 'claude') return 'es-de-otro';
     if (this.#d.estado === 'hecho') return 'esta-hecha';
+    const sinNota = String(nota ?? '').trim() === '';
+    if (estado === 'hecho') return sinNota ? 'sin-aprobacion' : null;
     if (!TABLERO.sinRefinar(this.#d.estado) || TABLERO.sinRefinar(estado)) return null;
     if (estado !== 'pendiente' && estado !== 'en_curso') return 'sin-refinar';
-    return String(nota ?? '').trim() === '' ? 'sin-aprobacion' : null;
+    return sinNota ? 'sin-aprobacion' : null;
   }
 };

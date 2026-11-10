@@ -1,8 +1,8 @@
 {
- "build": 1143,
- "hash": "8da52c1",
- "fecha": "2026-11-10T17:29:17Z",
- "mensaje": "Núcleo (tarea #28): una pieza que no llega para la carga con su nombre y aviso en la splash; fuera las ramas de Próximamente que no podían correr; huella de carga en Docker",
+ "build": 1144,
+ "hash": "d758e70",
+ "fecha": "2026-11-10T17:42:22Z",
+ "mensaje": "SQL 123 aplicado: APLICADAS.md al día",
  "juegos": {
   "boom": "0.4.12",
   "cooking": "0.2.13",

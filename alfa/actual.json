@@ -1,8 +1,8 @@
 {
- "build": 1142,
- "hash": "96a4e30",
- "fecha": "2026-11-10T13:40:56Z",
- "mensaje": "Core: los relojes de arranque del gashapón gratis y del salón esperan a NUCLEO.alCargar (arregla «isUnlocked is not defined» con red lenta)",
+ "build": 1143,
+ "hash": "8da52c1",
+ "fecha": "2026-11-10T17:29:17Z",
+ "mensaje": "Núcleo (tarea #28): una pieza que no llega para la carga con su nombre y aviso en la splash; fuera las ramas de Próximamente que no podían correr; huella de carga en Docker",
  "juegos": {
   "boom": "0.4.12",
   "cooking": "0.2.13",

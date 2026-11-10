@@ -12,235 +12,122 @@
 //   · el nombre de la copia para jugar sin conexión.
 // Hay que cambiarla cada vez que se publica algo, aunque el jugador no vaya a notar nada. Si lo va a notar,
 // además se añade el informe en js/novedades.js del juego.
+//
+// nucleo.js solo ORQUESTA (tarea #28, ADR 095): pide lo primero (Próximamente, la splash y la puerta de carga) y sus piezas de core/js/nucleo/,
+// y las monta cuando han llegado, antes de que la página siga. Cada pieza hace una cosa y se prueba sola (tests/core/nucleo-*.test.mjs):
+//   listas.js           qué archivos de core carga cada tipo de juego (COMUN, LIGERO), los diccionarios y las hojas comunes
+//   entorno.js          la alfa, la app de Android y el modo desarrollo
+//   idioma-eleccion.js  qué idioma se usa, cambiarlo y el velo hasta traducir
+//   cargador.js         pedir hojas, fuentes y código por la puerta de carga y contarlos para la splash
+//   sin-conexion.js     instalar como app y jugar sin conexión
+// Las piezas se apuntan en NUCLEO_PIEZAS (el único global que añaden) y nucleo.js les pasa lo que usan (la página, el almacenamiento…).
+// El entorno y el idioma van antes que Próximamente (guarda el ?dev= que este lee); las demás, después de la splash y la puerta.
 'use strict';
+const NUCLEO_PIEZAS = {};
 const NUCLEO = (() => {
   const yo = document.currentScript, CORE = new URL('..', yo.src).href;      // la dirección de core/
   const version = new URL(yo.src).searchParams.get('v') || '0';
-  const alfa = /\/alfa\//.test(location.pathname);   // la copia de pruebas (carpeta alfa/ de la web): su versión es «<versión>-a<hash>»
   const conV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + version;
-  document.write('<script src="' + CORE + 'js/proximamente.js"><\/script>');   // en la release solo se juegan los juegos abiertos (ver proximamente.js)
-  const cerrado = !!(window.PROXIMAMENTE && PROXIMAMENTE.cerrado);   // si lo está, la página ya es la de «Próximamente»: no se carga nada
-  const pedido = [];   // todo lo que carga la página: es lo que se guarda para jugar sin conexión
+  // LO PRIMERO, antes que proximamente.js: dónde corre la página y en qué idioma. Así el ?dev=1 o ?dev=0 queda guardado antes de que
+  // Próximamente lo lea (allí decide si se juega un juego cerrado) y la página, aunque pase a ser la de Próximamente, ya lleva su idioma en <html lang>
+  const ANTES = ['js/nucleo/entorno.js', 'js/nucleo/idioma-eleccion.js'].map(f => conV(CORE + f));
+  for (const src of ANTES) document.write('<script src="' + src + '"><\/script>');
+  document.write('<script>NUCLEO_PIEZAS.montarPrimero()<\/script>');
+  // en la release solo se juegan los juegos abiertos (ver proximamente.js); si no lo está, la página pasa a ser la de «Próximamente» y se
+  // para ahí (window.stop): no llega a correr nada más de la página, así que nada de aquí abajo tiene que mirarlo
+  document.write('<script src="' + CORE + 'js/proximamente.js"><\/script>');
   // LA SPLASH, lo primero (ADR 091): es la pantalla de carga de los juegos. Se pide aquí, antes que cualquier hoja o script, para que tape la página
-  // desde el primer pintado; splash.js decide si sale (solo en un juego o una demo, ver PROXIMAMENTE.juego). Lo que pide el juego se le cuenta (carga, abajo).
+  // desde el primer pintado; splash.js decide si sale (solo en un juego o una demo, ver PROXIMAMENTE.juego). Lo que pide el juego se le cuenta.
   // Detrás, la puerta de carga (PUERTA_CARGA, ADR 093): las hojas no bloquean el pintado y el código del juego espera a que hayan llegado ellas y la letra.
-  for (const f of ['js/sistema/splash-reglas.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js', 'js/sistema/puerta.js']) { pedido.push(conV(CORE + f)); document.write('<script src="' + conV(CORE + f) + '"><\/script>'); }
-  // cada hoja y cada script que se pide avisa a la splash al llegar o al fallar (la barra de carga y el aviso de error). Si la splash no está, no pasa nada.
+  // Y luego las piezas, que corren antes de que la página siga: el montaje (el último script escrito) las junta.
+  const PRIMEROS = ['js/sistema/splash-reglas.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js', 'js/sistema/puerta.js'];
+  const PIEZAS = ['js/nucleo/listas.js', 'js/nucleo/cargador.js', 'js/nucleo/sin-conexion.js'];
+  const escritos = PRIMEROS.concat(PIEZAS).map(f => conV(CORE + f));
+  for (const src of escritos) document.write('<script src="' + src + '"><\/script>');
+  document.write('<script>NUCLEO_PIEZAS.montar()<\/script>');
   // Si splash.js no hubiera llegado (bloqueado o sin red), el juego carga igual, sin splash: por eso todo pasa por aSplash.
   const aSplash = (orden, ...datos) => { if (typeof SPLASH !== 'undefined') SPLASH[orden](...datos); };
-  const carga = { pide: () => aSplash('pide'), llega: () => aSplash('llega'), falla(src) { console.error('No se ha podido cargar ' + src); aSplash('falla', src); } };
-  // la puerta de carga (puerta.js) le avisa también cuando ha cargado todo: la página y todo el código pedido (el load solo ya no basta)
-  const avisosPuerta = Object.assign({ cargada: () => aSplash('cargada') }, carga);
+
+  const nucleo = {};   // lo que se devuelve (NUCLEO): se rellena al montar; el idioma puede cambiar al registrar el juego
+  let p = null, en = null, idioma = null;   // las piezas ya montadas, el entorno y la elección del idioma
+  // el almacenamiento puede estar bloqueado (leer localStorage ya falla): las piezas siguen sin él
+  const almacen = () => { try { return localStorage; } catch (e) { return null; } };
+  // una pieza que no llegó (sin red, bloqueada) para la carga con su nombre y la splash lo dice, en vez de quedarse esperando sin aviso
+  function exige(...nombres) {
+    const falta = nombres.filter(n => typeof NUCLEO_PIEZAS[n] === 'undefined');
+    if (!falta.length) return;
+    aSplash('falla', 'core/js/nucleo/ (' + falta.join(', ') + ')');
+    throw new Error('Faltan piezas del núcleo: ' + falta.join(', '));
+  }
+  function montarPrimero() {
+    if (en) return;
+    exige('entorno', 'idiomaEleccion');
+    const e = NUCLEO_PIEZAS.entorno({ ubicacion: location, almacen: almacen(), capacitor: window.Capacitor });
+    idioma = NUCLEO_PIEZAS.idiomaEleccion({ almacen: almacen(), navegador: navigator, documento: document, recarga: () => location.reload() });
+    en = e;   // solo con las dos hechas: si una falla, se vuelve a intentar entera
+    Object.assign(nucleo, { nativa: en.nativa, alfa: en.alfa, desarrollo: en.desarrollo, idioma: idioma.idioma, idiomas: idioma.idiomas });
+  }
+  function montar() {
+    if (p) return p;
+    montarPrimero(); exige('listas', 'cargador', 'sinConexion');
+    const P = NUCLEO_PIEZAS;
+    p = {
+      listas: P.listas, entorno: en,
+      idioma,
+      carga: P.cargador({ documento: document, puerta: PUERTA_CARGA, aSplash, conV, estilosComunes: P.listas.ESTILOS_COMUNES, consola: console }),
+      sinConexion: P.sinConexion({ ventana: window, ubicacion: location, documento: document, navegador: navigator, nativa: en.nativa, alfa: en.alfa }),
+    };
+    p.carga.pedido.push(...ANTES, ...escritos);
+    nucleo.carga = p.carga.carga;
+    return p;
+  }
+  Object.assign(NUCLEO_PIEZAS, { montarPrimero, montar });
+  const ajustaIdioma = dic => { p.idioma.ajusta(dic); Object.assign(nucleo, { idioma: p.idioma.idioma, idiomas: p.idioma.idiomas }); };
+  // los diccionarios de lo común y los del juego (dic), si no se juega en español
+  function diccionarios(dic) {
+    const i = p.idioma.idioma; if (i === 'es') return;
+    (p.listas.DICCIONARIOS[i] || []).forEach(f => p.carga.codigo(CORE + f)); (dic[i] || []).forEach(f => p.carga.codigo(f));
+  }
+  // la página espera tapada a que se traduzca (si la splash ya tapa, solo se traduce al cargar)
+  const veloDeIdioma = () => p.idioma.velo({ tapada: typeof SPLASH !== 'undefined' && SPLASH.visible, alCargar, traduce: () => { if (typeof IDIOMA !== 'undefined') IDIOMA.pantalla(); }, espera: setTimeout });
   // lo que antes colgaba del load de la ventana cuelga de aquí: el load puede llegar antes que el código del juego (ADR 093)
   const alCargar = fn => PUERTA_CARGA.alCargar(fn);
 
-  // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es', uno de
-  // IDIOMAS → ese, y cualquier otro → 'en'. Cambiarlo recarga la página. Los diccionarios solo se cargan si no es español (ver core/js/sistema/idioma.js).
-  // Un juego que no tenga diccionario de ese idioma (no lo pasa en juego({ idioma })) se juega en inglés; NUCLEO.idiomas dice cuáles ofrece.
-  const IDIOMAS = ['es', 'en', 'pt', 'fr', 'de', 'it'];
-  const idiomaElegido = () => { try { return localStorage.getItem('fansof-idioma') || ''; } catch (e) { return ''; } };
-  const idiomaDelNavegador = () => { for (const l of (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'])) { const c = String(l).slice(0, 2).toLowerCase(); if (IDIOMAS.includes(c)) return c; } return 'en'; };
-  let idioma = IDIOMAS.includes(idiomaElegido()) ? idiomaElegido() : idiomaDelNavegador();
-  document.documentElement.lang = idioma;
-  const nucleo = {};   // lo que se devuelve (NUCLEO): se rellena al final; el idioma puede cambiar al registrar el juego
-  function ajustaIdioma(dic) {
-    if (idioma !== 'es' && idioma !== 'en' && !dic[idioma]) { idioma = 'en'; document.documentElement.lang = idioma; }
-    nucleo.idioma = idioma; nucleo.idiomas = ['es', 'en'].concat(Object.keys(dic).filter(i => i !== 'es' && i !== 'en' && IDIOMAS.includes(i)));
-  }
-  function elegirIdioma(i) { try { if (i) localStorage.setItem('fansof-idioma', i); else localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ } location.reload(); }
-  // EL MODO DESARROLLO: en localhost (o con ?dev=1, que se recuerda en este navegador; ?dev=0 lo apaga) se carga core/js/sistema/desarrollo.js,
-  // un botón «DEV» con utilidades para quien trabaja en el juego. El panel DEV sale también en la alfa; en la release no se carga ni se ve, ni con ?dev=1. El comparador lo apaga a propósito.
-  // Fuera de localhost y de la alfa (la release) NUNCA vale: ni ?dev=1 ni lo guardado en el navegador, con rol o sin él.
-  const lugarDev = alfa || ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-  const desarrollo = (() => {
-    if (!lugarDev) return false;
-    try {
-      const q = new URLSearchParams(location.search).get('dev');
-      if (q === '1' || q === '0') localStorage.setItem('fansof-dev', q);
-      const v = localStorage.getItem('fansof-dev'); if (v) return v === '1';
-    } catch (e) { /* sin guardar */ }
-    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) return false; // la app de Android también es «localhost»
-    return ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-  })();
-  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js', 'idioma/en-tienda-gemas.js'],
-    pt: ['idioma/pt-ligero.js'], fr: ['idioma/fr-ligero.js'], de: ['idioma/de-ligero.js'], it: ['idioma/it-ligero.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...], pt: [...] } }). De momento solo el inglés cubre todo lo común: los demás idiomas llevan lo que usan los juegos ligeros (*-ligero.js) y un juego solo los ofrece si tiene su diccionario
-
-  // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
-  const COMUN = [
-    'js/sistema/utiles.js',        // utilidades: no dependen de nada
-    'js/sistema/flags.js',         // flags remotos (abrir/cerrar cosas desde la base de datos), mantenimiento y versión mínima
-    'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
-    'js/sistema/sonido-archivos.js', // los efectos grabados en archivo (SONIDO_ARCHIVO), con el de código de repuesto (ADR 077)
-    'js/serie/config.js',          // la serie: constantes y CFG (las cartas, unidades, tipos y roles los añade cada facción)
-    'js/serie/facciones/animales.js', 'js/serie/facciones/nomuertos.js', 'js/serie/facciones/streamers.js', 'js/serie/facciones/heroes.js', 'js/serie/facciones/ciber.js', 'js/serie/facciones/memes.js', 'js/serie/facciones/gamer.js', 'js/serie/facciones/olvidados.js', 'js/serie/facciones/pop.js', 'js/serie/facciones/microblizz.js', 'js/serie/facciones/phony.js',
-    'js/serie/facciones/cierre.js', // lo que se calcula con todas las cartas ya puestas
-    'js/serie/arte/base.js',        //           las ayudas de dibujo y ART y BOX vacíos
-    'js/serie/arte/animales.js', 'js/serie/arte/nomuertos.js', 'js/serie/arte/streamers.js', 'js/serie/arte/heroes.js', 'js/serie/arte/ciber.js', 'js/serie/arte/memes.js', 'js/serie/arte/gamer.js', 'js/serie/arte/olvidados.js', 'js/serie/arte/pop.js', 'js/serie/arte/microblizz.js', 'js/serie/arte/phony.js',
-    'js/serie/arte/sprites.js',     //           las cajas, buildSprites y drawVector (después de todos los dibujos)
-    'js/serie/arte/fondos.js',      //           el campo y los colores de cada facción
-    'js/serie/canciones.js',       //           las canciones
-    'js/serie/frases.js',          //           frases de humor comunes
-    'js/serie/iconos.js',          //           iconos y colores
-    'js/serie/catalogo.js',        //           qué habilidades y objetos existen
-    'js/serie/miniaturas.js', 'js/serie/miniaturas-armas.js', 'js/serie/miniaturas-cabeza-y-accesorios.js',   // los dibujos de sus miniaturas
-    'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
-    'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
-    'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
-    'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
-    'js/sistema/hora.js',         // la hora del servidor para los temporizadores (HORA.ahora)
-    'js/sistema/cola.js',         // la cola sin conexión: lo que se manda al servidor cuando hay red (COLA.crea)
-    'js/sistema/pagos.js',         // compras con dinero real dentro de la app de Android (Google Play Billing); en la web no hace nada
-    'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web): lo entrega el mismo servidor
-    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
-    'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
-    'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
-    'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
-    'js/sistema/coleccion.js',     // colección: las cartas y lo que llevan puesto
-    'js/sistema/biblioteca.js',    // biblioteca: galería de habilidades y objetos
-    'js/sistema/inventario.js',    // inventario: las copias de habilidades y objetos
-    'js/sistema/gachapon.js',      // gashapón
-    'js/sistema/gachapon-gratis.js', // gashapón: la tirada gratis cada 2 horas, con cuenta atrás
-    'js/sistema/gachapon-anim.js', // gashapón: la animación nueva al tirar y el marco de las máquinas animadas (flag 'gashapon-nuevo')
-    'js/sistema/gachapon-clasica.js', // gashapón: la máquina clásica animada (bolas, manivela, trampilla)
-    'js/sistema/gachapon-garra.js', // gashapón: la máquina de gancho (Cartas de Rumble, CASA de Rouflage)
-    'js/sistema/probabilidades.js', // tablas de probabilidades del gashapón (las enseña la tienda)
-    'js/sistema/tienda.js',        // tienda
-    'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú
-    'js/sistema/idioma-banderas.js', // el selector de idioma de Opciones
-    'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
-    'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()
-    'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
-    'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
-    'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
-    'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
-    'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
-    'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
-    'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
-    'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
-    'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
-    'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
-    'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
-    'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
-    'js/sistema/anuncios.js',      // la capa común de anuncios con premio: AdMob en la app, H5 Games Ads en la web y el nuestro de reserva (tras el flag «anuncios»)
-    'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
-    'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
-    'js/sistema/pruebas.js',       // el modo pruebas de Opciones: todo al máximo, con copia para volver a tu partida
-    'js/novedades.js',             // el informe de parches (la lista es de cada juego: su js/novedades.js)
-  ];
-
-  // LO LIGERO: lo mínimo para un juego con su propia partida y sus pantallas (ver core/js/sistema/ligero.js). Cuenta e idioma, nada de economía.
-  const LIGERO = [
-    'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js', 'js/sistema/sonido-archivos.js',
-    'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
-    'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
-    'js/sistema/cuenta.js',        // la partida en la nube
-    'js/sistema/hora.js',          // la hora del servidor para los temporizadores (HORA.ahora)
-    'js/sistema/cola.js',          // la cola sin conexión: lo que se manda al servidor cuando hay red (COLA.crea)
-    'js/sistema/pagos.js',         // compras con dinero real en la app de Android (Google Play Billing): lo entrega el servidor (productos.entrega = el juego)
-    'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web)
-    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
-    'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
-    'js/sistema/idioma-banderas.js', // el selector de idioma
-    'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()
-    'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
-    'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
-    'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
-    'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
-    'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
-    'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
-    'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
-    'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
-    'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
-    'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
-    'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
-    'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
-    'js/sistema/anuncios.js',      // la capa común de anuncios con premio: AdMob en la app, H5 Games Ads en la web y el nuestro de reserva (tras el flag «anuncios»)
-    'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
-    'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
-  ];
-
-  // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, en su sitio, pero sin bloquear el pintado (la splash sale ya):
-  // el código del juego no corre hasta que han llegado todas (la puerta de carga, PUERTA_CARGA). Sin splash, un velo tapa la página mientras tanto.
-  const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css', '../../core/css/miniaturas.css', '../../core/css/tienda-gemas.css'];   // las pantallas comunes: un juego pide la primera y se cargan todas, en este orden
-  function estilos(...hojas) { if (cerrado) return; PUERTA_CARGA.avisa(avisosPuerta); for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); carga.pide(); PUERTA_CARGA.hoja(conV(h)); } }
-  // Las hojas de las fuentes, las de core/fuentes/ (servidas por nosotros, ADR 092): como una hoja más, pero opcionales (si una falta, el juego
-  // sale con la letra de repuesto). En la página de «Próximamente» van como hojas normales (allí no hay juego que esperar).
-  function fuentes(...hojas) {
-    for (const h of hojas) {
-      if (cerrado) { document.write(`<link rel="stylesheet" href="${conV(h)}">`); continue; }
-      PUERTA_CARGA.avisa(avisosPuerta); pedido.push(conV(h)); carga.pide(); PUERTA_CARGA.hoja(conV(h), true);
-    }
-  }
-
-  // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados. Se empieza a bajar ya
-  // (preload) pero no se pone en la página hasta que se abre la puerta de carga (PUERTA_CARGA): así arranca con sus hojas y su letra.
-  // opcional: si no llega, el juego sigue (no para la splash); es lo que no hace falta para jugar (estadísticas, panel DEV)
-  function codigo(src, opcional = false) {
-    const s = document.createElement('script'); s.src = conV(src); s.async = false;
-    s.onload = () => { carga.llega(); PUERTA_CARGA.codigoHecho(); };
-    s.onerror = () => { if (!opcional) carga.falla(src); else { console.error('No se ha podido cargar ' + src); carga.llega(); } PUERTA_CARGA.codigoHecho(); };
-    carga.pide(); pedido.push(s.src); PUERTA_CARGA.codigoPide();
-    if (!PUERTA_CARGA.abierta) { const l = document.createElement('link'); l.rel = 'preload'; l.as = 'script'; l.href = s.src; document.head.appendChild(l); }
-    PUERTA_CARGA.alAbrir(() => document.body.appendChild(s));
-  }
-  // ya se ha pedido todo el código: la barra de la splash ya puede contarlo, la puerta puede abrirse (cuando lleguen las hojas)
-  // y la carga puede darse por acabada
-  function todoPedido() { aSplash('todoPedido'); PUERTA_CARGA.avisa(avisosPuerta); PUERTA_CARGA.todoPedido(); }
   // antes: lo que el juego le dice a lo común (sus ajustes) · despues: el juego en sí
   // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
   // esperaListo: el juego llamará a NUCLEO.listo() cuando tenga su pantalla preparada, y la splash espera también a eso (no solo al load)
   function juego({ antes = [], despues = [], idioma: dic = {}, ligero = false, esperaListo = false }) {
-    if (cerrado) return;
+    montar();
+    const codigo = (src, opcional) => p.carga.codigo(src, opcional);
     if (esperaListo) aSplash('esperaListo');
     ajustaIdioma(dic);
     codigo(CORE + 'js/sistema/idioma.js');
     codigo(CORE + 'js/sistema/analitica.js', true);   // estadísticas de visitas, solo si el jugador acepta (opcional: un bloqueador no para el juego)
-    if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
-    antes.forEach(codigo); (ligero ? LIGERO : COMUN).forEach(f => codigo(CORE + f)); despues.forEach(codigo);
-    if (desarrollo || alfa) codigo(CORE + 'js/sistema/desarrollo.js', true);   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
-    todoPedido();
-    if (idioma !== 'es') veloDeIdioma();
-    sinConexion();
+    diccionarios(dic);
+    antes.forEach(f => codigo(f)); (ligero ? p.listas.LIGERO : p.listas.COMUN).forEach(f => codigo(CORE + f)); despues.forEach(f => codigo(f));
+    if (p.entorno.desarrollo || p.entorno.alfa) codigo(CORE + 'js/sistema/desarrollo.js', true);   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
+    p.carga.todoPedido();
+    if (p.idioma.idioma !== 'es') veloDeIdioma();
+    p.sinConexion({ nucleoSrc: yo.src, core: CORE, pedido: p.carga.pedido, conV });
   }
-
-  // En otro idioma, la página espera tapada a que se traduzca lo que ya hay (después se traduce también lo que el juego escriba). Si la splash
-  // está puesta, ella ya tapa: no hace falta el velo, solo traducir al cargar (antes de que la splash se vaya: se va en el siguiente cuadro).
-  function veloDeIdioma() {
-    const tapada = typeof SPLASH !== 'undefined' && SPLASH.visible;
-    const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }';
-    if (!tapada) document.head.appendChild(velo);
-    const listo = () => { if (typeof IDIOMA !== 'undefined') IDIOMA.pantalla(); velo.remove(); };
-    alCargar(listo); if (!tapada) setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
-  }
-
   // Una página que no es un juego (la de la raíz) también se traduce: carga idioma.js y los diccionarios de lo común y los que se le den
   function idiomaSolo(dic = {}) {
-    ajustaIdioma(dic);
-    codigo(CORE + 'js/sistema/idioma.js');
-    if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
-    todoPedido();
-    if (idioma !== 'es') veloDeIdioma();
+    montar(); ajustaIdioma(dic);
+    p.carga.codigo(CORE + 'js/sistema/idioma.js');
+    diccionarios(dic);
+    p.carga.todoPedido();
+    if (p.idioma.idioma !== 'es') veloDeIdioma();
   }
-
   // El juego avisa de que su pantalla está preparada (solo cuenta si lo declaró con juego({ esperaListo: true })): la splash ya puede irse
   function listo() { aSplash('listo'); }
 
-  // Instalar como app y jugar sin conexión: solo en la web del juego. No en un archivo abierto a mano, ni dentro de otra página,
-  // ni en la app de Android (que ya lleva el juego dentro).
-  const nativa = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
-  function sinConexion() {
-    let arriba = true; try { arriba = window.self === window.top; } catch (e) { arriba = false; }
-    if (!arriba || nativa || alfa || !(location.protocol === 'https:' || location.hostname === 'localhost')) return;
-    const l = document.createElement('link'); l.rel = 'manifest'; l.href = 'manifest.webmanifest'; document.head.appendChild(l);
-    const guardar = ['./', yo.src, 'manifest.webmanifest', CORE + 'img/icon-192.png', CORE + 'img/icon-512.png', CORE + 'img/icon-maskable.png'].concat(pedido);
-    try {
-      if ('serviceWorker' in navigator) navigator.serviceWorker.register(conV('sw.js')).then(() => navigator.serviceWorker.ready)
-        .then(reg => { if (reg.active) reg.active.postMessage({ guardar }); }).catch(() => { /* sin modo sin conexión */ });
-    } catch (e) { /* el navegador no lo permite aquí */ }
-  }
-
   // alEstilos(fn): lo que un juego hace en línea en su HTML y necesita sus estilos y su letra (medir, encajar un título) corre aquí
-  Object.assign(nucleo, { version, nativa, alfa, idioma, idiomas: ['es', 'en'], elegirIdioma, desarrollo, estilos, fuentes, juego, idiomaSolo, listo, carga, alCargar, alEstilos: fn => PUERTA_CARGA.alAbrir(fn) });
+  Object.assign(nucleo, {
+    version, nativa: false, alfa: false, idioma: 'es', idiomas: ['es', 'en'], desarrollo: false, carga: null,   // los pone el montaje
+    elegirIdioma: i => montar().idioma.elegir(i),
+    estilos: (...h) => montar().carga.estilos(...h), fuentes: (...h) => montar().carga.fuentes(...h),
+    juego, idiomaSolo, listo, alCargar, alEstilos: fn => PUERTA_CARGA.alAbrir(fn),
+  });
   return nucleo;
 })();
 const VERSION = NUCLEO.version;

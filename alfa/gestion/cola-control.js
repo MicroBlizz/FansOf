@@ -31,10 +31,16 @@ const COLA_CONTROL = (() => {
     try { await llamar(f, token, 'PATCH', '/actions/variables/' + nombre, cuerpo); }
     catch (e) { if (e.status !== 404) throw e; await llamar(f, token, 'POST', '/actions/variables', cuerpo); }
   }
-  /** Las variables de Actions del repo como { NOMBRE: valor }. */
+  /** Las variables de Actions del repo como { NOMBRE: valor }. GitHub da 30 por página como máximo: sigue las páginas hasta total_count. */
   async function leerVariables(f, token) {
-    const d = await llamar(f, token, 'GET', '/actions/variables?per_page=30');
-    return Object.fromEntries(((d && d.variables) || []).map(v => [v.name, v.value]));
+    const todas = {}; let leidas = 0;
+    for (let p = 1; p <= 10; p++) {
+      const d = await llamar(f, token, 'GET', '/actions/variables?per_page=30&page=' + p), lista = (d && d.variables) || [];
+      lista.forEach(v => { todas[v.name] = v.value; });
+      leidas += lista.length;
+      if (!lista.length || leidas >= ((d && d.total_count) || 0)) break;
+    }
+    return todas;
   }
   /** Cancela un run en cola o en marcha. */
   const cancelar = (f, token, id) => llamar(f, token, 'POST', '/actions/runs/' + id + '/cancel');

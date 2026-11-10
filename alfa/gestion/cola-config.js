@@ -17,7 +17,7 @@ const COLA_CONFIG = (() => {
     const filas = (e.claves || []).map(c => `<tr><td>${esc(c.nombre)}</td><td>${esc(c.creador)}</td><td>${c.ultimo_uso ? e.fecha(Date.parse(c.ultimo_uso)) : 'nunca'}</td>`
       + `<td>${c.revocada ? 'revocada' : `<button type="button" class="enlace" data-revoca="${c.id}">${e.revocando === c.id ? 'Sí, revocar' : 'Revocar'}</button>`}</td></tr>`).join('');
 
-    return COLA_VARIABLES.html({ valores: e.variables, ocupado: e.ocupado, sinMandos: e.sinMandos }) + `<section class="caja cl-cfg"><h3>Esta pestaña</h3>
+    return COLA_VARIABLES.html({ valores: e.variables, fallo: e.variablesFallo, ocupado: e.ocupado, sinMandos: e.sinMandos }) + `<section class="caja cl-cfg"><h3>Esta pestaña</h3>
       <p><b>Token de GitHub:</b> guardado en este navegador. Es un token fino del repo ${REPO} con los permisos <b>Actions</b> y <b>Variables</b> en lectura y escritura (para pausar los runners y reiniciar ejecuciones fallidas) y <b>Administration</b> en solo lectura (para saber si yoshi está encendido). Si caduca o lo revocas en GitHub, olvídalo aquí y pega el nuevo.</p>
       <div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div>
       <p><label class="cl-op">Límite semanal de referencia (tokens) <input type="number" id="cl-lim" min="0" step="1000" value="${e.limite || ''}" style="width:9em"></label></p>

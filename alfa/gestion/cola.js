@@ -15,7 +15,7 @@
   try { ['fansof.gestion.cola.duraciones', 'fansof.gestion.cola.precision'].forEach(k => localStorage.removeItem(k)); } catch (e) { /* lo de antes de la cadencia (-2) y la casilla de precisión, ya quitada */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0, confirmaBorrar = false;
   let pausa = null, ocupado = false, falloControl = '', sinMandos = false;   // mandos (cola-control.js): estado de la pausa de los runners de generar recursos
-  let variables = null;   // variables de Actions (vista Configuración, cola-variables.js)
+  let variables = null, variablesFallo = '';   // variables de Actions (vista Configuración, cola-variables.js); null = sin leer
   let claves = null, claveNueva = '', revocando = null;   // claves del mod (vista Configuración)
   // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
   const PLAN = COLA_DATOS.K.plan;
@@ -153,7 +153,7 @@
         + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span></div>`
         + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '')
         + (vista === 'cfg' ? '' : COLA_CONTROL.htmlPausa({ pausa, ocupado, esc, fallo: falloControl, sinMandos }))
-        + (vista === 'cfg' ? COLA_CONFIG.html({ variables, ocupado, sinMandos, limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' || vista === 'x' ? COLA_CONTROL.htmlLista(vista, snap, { ocupado, fecha, esc, sinMandos }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
+        + (vista === 'cfg' ? COLA_CONFIG.html({ variables, variablesFallo, ocupado, sinMandos, limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' || vista === 'x' ? COLA_CONTROL.htmlLista(vista, snap, { ocupado, fecha, esc, sinMandos }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
         + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
     } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}<div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div></div>`;
@@ -166,7 +166,8 @@
     pinta();
   }
   async function cargarVariables() {
-    try { variables = await COLA_CONTROL.leerVariables(fetch, token()); } catch (e) { variables = {}; $('cl-aviso').textContent = 'No pude leer las variables: ' + e.message; }
+    try { variables = await COLA_CONTROL.leerVariables(fetch, token()); variablesFallo = ''; }
+    catch (e) { variables = null; variablesFallo = 'No pude leer las variables: ' + e.message + '.' + permiso(e); }
     pinta();
   }
   // Mandos: pausa de los runners de generar recursos y reinicio de ejecuciones fallidas (cola-control.js). El token necesita Variables y Actions con escritura.

@@ -15,6 +15,7 @@
   try { ['fansof.gestion.cola.duraciones', 'fansof.gestion.cola.precision'].forEach(k => localStorage.removeItem(k)); } catch (e) { /* lo de antes de la cadencia (-2) y la casilla de precisión, ya quitada */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0, confirmaBorrar = false;
   let pausa = null, ocupado = false, falloControl = '', sinMandos = false;   // mandos (cola-control.js): estado de la pausa de los runners de generar recursos
+  let variables = null;   // variables de Actions (vista Configuración, cola-variables.js)
   let claves = null, claveNueva = '', revocando = null;   // claves del mod (vista Configuración)
   // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
   const PLAN = COLA_DATOS.K.plan;
@@ -152,7 +153,7 @@
         + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span></div>`
         + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '')
         + (vista === 'cfg' ? '' : COLA_CONTROL.htmlPausa({ pausa, ocupado, esc, fallo: falloControl, sinMandos }))
-        + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' || vista === 'x' ? COLA_CONTROL.htmlLista(vista, snap, { ocupado, fecha, esc, sinMandos }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
+        + (vista === 'cfg' ? COLA_CONFIG.html({ variables, ocupado, sinMandos, limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : (vista === 'f' || vista === 'x' ? COLA_CONTROL.htmlLista(vista, snap, { ocupado, fecha, esc, sinMandos }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos())
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
         + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
     } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}<div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div></div>`;
@@ -162,6 +163,10 @@
   // Claves para el mod de Claude (vista Configuración, cola-config.js): el mod no tiene sesión de /gestion (caduca a las 8 h), así que usa una clave larga que se crea aquí.
   async function cargarClaves() {
     try { claves = await rpc('gestion_cola_claves', { p_token: leerToken() }); } catch (e) { claves = []; $('cl-aviso').textContent = 'No pude leer las claves: ' + e.message; }
+    pinta();
+  }
+  async function cargarVariables() {
+    try { variables = await COLA_CONTROL.leerVariables(fetch, token()); } catch (e) { variables = {}; $('cl-aviso').textContent = 'No pude leer las variables: ' + e.message; }
     pinta();
   }
   // Mandos: pausa de los runners de generar recursos y reinicio de ejecuciones fallidas (cola-control.js). El token necesita Variables y Actions con escritura.
@@ -193,10 +198,11 @@
   }
   pan.onclick = ev => {
     const b = ev.target.closest('button'); if (!b) return;
-    if (b.dataset.v) { vista = b.dataset.v; pinta(); if (vista === 'cfg' && claves === null) cargarClaves(); }
+    if (b.dataset.v) { vista = b.dataset.v; pinta(); if (vista === 'cfg') { if (claves === null) cargarClaves(); cargarVariables(); } }
     else if (b.dataset.copia) { navigator.clipboard.writeText(b.dataset.copia).then(() => { b.textContent = 'Copiado'; }, () => { $('cl-aviso').textContent = 'No pude copiar: selecciónalo y cópialo a mano.'; }); }
     else if (b.id === 'cl-olvida') { try { localStorage.removeItem(CLAVE); } catch (e) { /* nada */ } snap = null; pinta(); }
     else if (b.id === 'cl-pausa') conMandos(() => COLA_CONTROL.fijarPausa(fetch, token(), pausa !== true), 'No pude cambiar la pausa');
+    else if (b.dataset.var) conMandos(async () => { await COLA_CONTROL.fijarVariable(fetch, token(), b.dataset.var, b.dataset.valor); variables = await COLA_CONTROL.leerVariables(fetch, token()); }, 'No pude cambiar la variable');
     else if (b.dataset.cancela) conMandos(async () => { await COLA_CONTROL.cancelar(fetch, token(), b.dataset.cancela); ultimo = 0; await cargar(true); }, 'No pude cancelar');
     else if (b.dataset.reinicia) conMandos(async () => { await COLA_CONTROL.reiniciar(fetch, token(), b.dataset.reinicia); ultimo = 0; await cargar(true); }, 'No pude reiniciar');
     else if (b.id === 'cl-reinicia-todas') conMandos(async () => { const r = await COLA_CONTROL.reiniciarTodas(fetch, token(), vista === 'x' ? snap.caducadas : snap.fallidas); ultimo = 0; await cargar(true); return r.mensaje; }, 'No pude reiniciar todas');

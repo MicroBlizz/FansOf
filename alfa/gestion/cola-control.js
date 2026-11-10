@@ -24,10 +24,17 @@ const COLA_CONTROL = (() => {
     catch (e) { if (e.status === 404) return false; throw e; }
   }
   /** Pone o quita la pausa. Si la variable no existe, la crea. */
-  async function fijarPausa(f, token, pausar) {
-    const cuerpo = { name: VARIABLE, value: pausar ? '1' : '0' };
-    try { await llamar(f, token, 'PATCH', '/actions/variables/' + VARIABLE, cuerpo); }
+  const fijarPausa = (f, token, pausar) => fijarVariable(f, token, VARIABLE, pausar ? '1' : '0');
+  /** Pone el valor de una variable de Actions del repo; si no existe, la crea. */
+  async function fijarVariable(f, token, nombre, valor) {
+    const cuerpo = { name: nombre, value: valor };
+    try { await llamar(f, token, 'PATCH', '/actions/variables/' + nombre, cuerpo); }
     catch (e) { if (e.status !== 404) throw e; await llamar(f, token, 'POST', '/actions/variables', cuerpo); }
+  }
+  /** Las variables de Actions del repo como { NOMBRE: valor }. */
+  async function leerVariables(f, token) {
+    const d = await llamar(f, token, 'GET', '/actions/variables?per_page=30');
+    return Object.fromEntries(((d && d.variables) || []).map(v => [v.name, v.value]));
   }
   /** Cancela un run en cola o en marcha. */
   const cancelar = (f, token, id) => llamar(f, token, 'POST', '/actions/runs/' + id + '/cancel');
@@ -107,5 +114,5 @@ const COLA_CONTROL = (() => {
     return `<section class="caja cl-control"><h3>${x ? 'Caducadas en cola' : 'Ejecuciones fallidas'} (${lista.length})</h3>${pie}${filas}`
       + (lista.length > 1 && !e.sinMandos ? `<div class="cl-bar"><button type="button" id="cl-reinicia-todas"${e.ocupado ? ' disabled' : ''}>Reiniciar todas</button></div>` : '') + '</section>';
   }
-  return { VARIABLE, CARRIL, leerPausa, fijarPausa, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, caducada, caducadas, pestanas, sinTerminar, encendido, htmlPausa, htmlLista };
+  return { VARIABLE, CARRIL, leerPausa, fijarPausa, fijarVariable, leerVariables, cancelar, botonCancelar, reiniciar, reiniciarTodas, fallidas, caducada, caducadas, pestanas, sinTerminar, encendido, htmlPausa, htmlLista };
 })();

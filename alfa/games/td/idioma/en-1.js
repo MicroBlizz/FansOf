@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.99
+  "<b>CARGA MÁS LIMPIA</b>: la pantalla de carga sale al instante, las letras las servimos nosotros (ya no se pide nada a Google) y, si una pieza no llega, el aviso dice cuál.": "<b>CLEANER LOADING</b>: the loading screen shows up instantly, we serve the fonts ourselves (nothing is requested from Google anymore) and, if a piece fails to arrive, the notice says which one.",
+  "Microblizz ha despedido a Google de las letras y Phony ha preguntado si ahora las escribimos a mano.": "Microblizz fired Google from the lettering and Phony asked if we now write them by hand.",
   // 0.13.98
   "<b>PANTALLA DE CARGA</b>: el juego se tapa con una pantalla de carga hasta que todo ha cargado, para que no veas nada a medias.": "<b>LOADING SCREEN</b>: the game stays covered by a loading screen until everything has loaded, so you never see anything half-built.",
   "Microblizz ha puesto una cortina para que no veas cómo se monta el escenario y Phony ha pedido entrar detrás.": "Microblizz hung a curtain so you can't see the stage being built and Phony asked to go backstage.",

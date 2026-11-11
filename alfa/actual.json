@@ -1,8 +1,8 @@
 {
- "build": 1146,
- "hash": "2b00c3a",
- "fecha": "2026-11-10T22:44:20Z",
- "mensaje": "Versiones y novedades para la publicación diaria (carga más limpia de core)",
+ "build": 1147,
+ "hash": "554700c",
+ "fecha": "2026-11-11T03:12:43Z",
+ "mensaje": "Tablero: con el sí en la nota, Claude cierra también tareas de otro responsable (SQL 124, tarea #35)",
  "juegos": {
   "boom": "0.4.13",
   "cooking": "0.2.14",

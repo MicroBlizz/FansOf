@@ -37,13 +37,13 @@ TABLERO.Tarea = class Tarea {
     return TABLERO.ok(new Tarea({ ...this.#d, estado, responsable, esperando }));
   }
 
-  // Claude no toca las de otra persona ni reabre las hechas, y solo pasa una tarea a «hecho» con la nota que enlaza el sí de Arkioner o de Pepins. Lleva una idea a refinamiento sin más, pero de ahí solo saca una tarea
+  // Claude no reabre las hechas, no mueve las de otra persona y solo pasa una tarea a «hecho» (sea de quien sea) con la nota que enlaza el sí de Arkioner o de Pepins. Lleva una idea a refinamiento sin más, pero de ahí solo saca una tarea
   // que una persona dio por buena: a «en curso» (se empieza ya) o a «pendiente» (lista para más tarde), y con la nota que enlaza esa aprobación
   #motivoClaudeNoPuede(estado, nota) {
-    if (this.#d.responsable && this.#d.responsable !== 'claude') return 'es-de-otro';
     if (this.#d.estado === 'hecho') return 'esta-hecha';
     const sinNota = String(nota ?? '').trim() === '';
-    if (estado === 'hecho') return sinNota ? 'sin-aprobacion' : null;
+    if (estado === 'hecho') return sinNota ? 'sin-aprobacion' : null;   // con el sí en la nota vale también para lo de otra persona (SQL 124)
+    if (this.#d.responsable && this.#d.responsable !== 'claude') return 'es-de-otro';
     if (!TABLERO.sinRefinar(this.#d.estado) || TABLERO.sinRefinar(estado)) return null;
     if (estado !== 'pendiente' && estado !== 'en_curso') return 'sin-refinar';
     return sinNota ? 'sin-aprobacion' : null;

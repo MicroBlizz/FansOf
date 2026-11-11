@@ -1,6 +1,7 @@
 // Fans Of · DESARROLLO: un botón «DEV» con utilidades para quien trabaja en el juego. Existe en la alfa y en modo desarrollo (NUCLEO.desarrollo:
-// localhost, o ?dev=1 en la dirección; ?dev=0 lo apaga). En la web publicada nunca se carga. Es común: los dos juegos lo tienen igual.
-// Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja) } y pinta lo suyo dentro de `caja`.
+// localhost, o ?dev=1 en la dirección; ?dev=0 lo apaga) y, en la web publicada y la app, solo con el rol «alfa» (ADR 096): ahí sin los flags ni el
+// modo desarrollo, que no actúan fuera de él. Es común: los dos juegos lo tienen igual.
+// Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja), soloDesarrollo? } y pinta lo suyo dentro de `caja`.
 // Las de un solo juego van en ese juego: que defina UTILIDADES_JUEGO (una lista igual) y salen aquí, detrás de «Este juego».
 'use strict';
 (() => {
@@ -78,7 +79,7 @@
         }),
         boton('Recargar', () => location.reload())));
     } },
-    { titulo: 'Flags de desarrollo', pinta(c) {
+    { titulo: 'Flags de desarrollo', soloDesarrollo: true, pinta(c) {
       pintaFlags = () => {
         c.textContent = '';
         const nombres = Object.keys(NUCLEO.flagsDev);
@@ -97,12 +98,12 @@
       const pintaB = () => { b.textContent = fpsVisibles() ? 'Ocultar los fps' : 'Mostrar los fps'; };
       pintaB(); c.append(el('div', { className: 'fila' }, b));
     } },
-    { titulo: 'Modo desarrollo', pinta(c) {
+    { titulo: 'Modo desarrollo', soloDesarrollo: true, pinta(c) {
       c.append(el('p', { textContent: 'Se activa solo en localhost, o con ?dev=1 en la dirección (se recuerda en este navegador).' }));
       c.append(el('div', { className: 'fila' }, boton('Apagarlo en este navegador', () => { try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ } location.reload(); })));
     } },
   ];
-  if (typeof UTILIDADES_JUEGO !== 'undefined') UTILIDADES.splice(1, 0, ...UTILIDADES_JUEGO);   // las propias del juego (ver arriba)
+  if (typeof UTILIDADES_JUEGO !== 'undefined') UTILIDADES.splice(1, 0, ...UTILIDADES_JUEGO.map(u => Object.assign({ soloDesarrollo: true }, u)));   // las propias del juego (ver arriba): escriben su partida, así que solo salen donde hay modo desarrollo o alfa; una puede salir en todas con soloDesarrollo: false
 
   const estilo = el('style', { textContent: `
     #dev-boton { position: fixed; left: 6px; bottom: 6px; z-index: 99998; font: 800 11px/1 system-ui, sans-serif; letter-spacing: 1px; padding: 6px 8px; border-radius: 8px; border: 2px solid #20102c; background: #ffcb3d; color: #20102c; opacity: 0.55; cursor: pointer; }
@@ -125,7 +126,9 @@
   const caja = el('div', { className: 'caja' });
   const cierra = () => { panel.hidden = true; };
   caja.append(el('h2', {}, 'Desarrollo', boton('CERRAR', cierra)), el('div', { id: 'dev-aviso' }));
-  for (const u of UTILIDADES) { caja.append(el('h3', { textContent: u.titulo })); const c = el('div'); try { u.pinta(c); } catch (e) { c.textContent = 'Error: ' + e.message; } caja.append(c); }
+  // con el rol «alfa» en la release (sin modo desarrollo ni alfa) se quitan las que solo actúan en el modo desarrollo
+  const enRelease = !NUCLEO.desarrollo && !NUCLEO.alfa;
+  for (const u of UTILIDADES.filter(x => !(enRelease && x.soloDesarrollo))) { caja.append(el('h3', { textContent: u.titulo })); const c = el('div'); try { u.pinta(c); } catch (e) { c.textContent = 'Error: ' + e.message; } caja.append(c); }
   panel.append(caja); panel.addEventListener('click', e => { if (e.target === panel) cierra(); });
   const abre = el('button', { id: 'dev-boton', textContent: 'DEV', title: 'Utilidades de desarrollo', onclick: () => { panel.hidden = !panel.hidden; if (!panel.hidden) pintaFlags(); } });
   abre.setAttribute('translate', 'no');

@@ -1,8 +1,8 @@
 {
- "build": 1147,
- "hash": "554700c",
- "fecha": "2026-11-11T03:12:43Z",
- "mensaje": "Tablero: con el sí en la nota, Claude cierra también tareas de otro responsable (SQL 124, tarea #35)",
+ "build": 1148,
+ "hash": "35809d3",
+ "fecha": "2026-11-11T04:11:41Z",
+ "mensaje": "Tarea #34: mapa de core/js al día con los roles y las piezas del núcleo",
  "juegos": {
   "boom": "0.4.13",
   "cooking": "0.2.14",

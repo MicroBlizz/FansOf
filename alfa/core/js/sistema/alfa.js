@@ -1,14 +1,11 @@
 // Fans Of · ALFA: la puerta y la franja de la copia de pruebas (la carpeta /alfa/ de la web, que pone sola la Action alfa.yml; ver PLAN-REPOS.md).
 // En la release no hace nada. En /alfa/: franja «ALFA <hash>» abajo y, sin cuenta con el rol «alfa», una pantalla «Solo probadores» en vez del juego.
-// El veredicto se recuerda 6 horas por cuenta (así no se pregunta en cada carga) y se vuelve a comprobar de fondo.
+// El rol lo lleva CUENTA.roles (core/js/cuenta/, ADR 097): se recuerda 6 horas por cuenta (así no se pregunta en cada carga) y se vuelve a comprobar de fondo.
 'use strict';
 (() => {
   if (!NUCLEO.alfa) return;
-  const CLAVE = 'fansof-alfa', HORAS = 6;
   const [build, hash] = (String(NUCLEO.version).split('-a')[1] || '').split('.');   // «<versión>-a<build>.<hash>»
   const base = location.pathname.split('/alfa/')[0] + '/';   // la librería, un nivel por encima de alfa/
-  const leer = () => { try { return JSON.parse(localStorage.getItem(CLAVE) || 'null') || {}; } catch (e) { return {}; } };
-  const guardar = v => { try { localStorage.setItem(CLAVE, JSON.stringify(v)); } catch (e) { /* sin guardar */ } };
   const T = typeof tr === 'function' ? tr : x => x;
 
   // la franja: siempre visible, no estorba (abajo a la izquierda, no recibe toques)
@@ -33,15 +30,13 @@
   }
 
   async function comprobar() {
-    if (typeof CUENTA === 'undefined' || !CUENTA.activa) return;   // sin cuenta posible (archivo suelto, iframe del comparador…): no se exige nada
-    try {
-      const tiene = await CUENTA.rpc('tiene_rol', { p_rol: 'alfa' });
-      guardar(tiene ? { u: CUENTA.usuario, hasta: Date.now() + HORAS * 3600e3 } : {});
-      if (!tiene) puerta(CUENTA.invitado ? 'Esta es la copia de pruebas de Fans Of. Entra con tu cuenta de probador para jugar.' : 'Esta cuenta no tiene acceso a la copia de pruebas. Pídelo a Microblizz.');
-    } catch (e) { if (!recordado()) puerta('No se ha podido comprobar tu acceso a la copia de pruebas. Revisa la conexión y recarga.'); }   // con el veredicto recordado se sigue jugando
+    if (typeof CUENTA === 'undefined') return;
+    const r = await CUENTA.roles.refrescar(['alfa']);
+    if (!r.ok) {   // sin cuenta posible (archivo suelto, iframe del comparador…) no se exige nada; sin red, solo se juega con el rol recordado
+      if (r.error === 'sin-respuesta' && !CUENTA.roles.tiene('alfa')) puerta('No se ha podido comprobar tu acceso a la copia de pruebas. Revisa la conexión y recarga.');
+    } else if (!r.valor.roles.tiene('alfa')) puerta(CUENTA.invitado ? 'Esta es la copia de pruebas de Fans Of. Entra con tu cuenta de probador para jugar.' : 'Esta cuenta no tiene acceso a la copia de pruebas. Pídelo a Microblizz.');
   }
 
-  const recordado = () => { const v = leer(); return typeof CUENTA !== 'undefined' && !!v.u && v.u === CUENTA.usuario && v.hasta > Date.now(); };
-  if (recordado()) setTimeout(comprobar, 5000);   // recordado: juega ya y se vuelve a mirar de fondo
+  if (typeof CUENTA !== 'undefined' && CUENTA.roles.tiene('alfa')) setTimeout(comprobar, 5000);   // recordado: juega ya y se vuelve a mirar de fondo
   else NUCLEO.alCargar(comprobar);   // al acabar de cargar la página y su código (ADR 093)
 })();

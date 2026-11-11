@@ -6,7 +6,7 @@
 window.PROXIMAMENTE = (() => {
   const ABIERTOS = ['rouflage', 'karts'];
   const alfa = /\/alfa\//.test(location.pathname);
-  // la misma regla que NUCLEO.desarrollo (core/js/nucleo/entorno.js): solo en localhost o en la alfa, y nunca en la app de Android. Lo guardado
+  // la misma regla que NUCLEO.desarrollo (core/js/nucleo/entorno.js): solo en localhost o en la alfa, y nunca en la app de Android. El panel DEV por rol (ADR 096) no entra aquí: no abre ningún juego cerrado. Lo guardado
   // en el navegador no basta: la alfa y la release comparten origen, así que un ?dev=1 de la alfa no debe abrir los juegos de la release.
   const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   const nativa = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());

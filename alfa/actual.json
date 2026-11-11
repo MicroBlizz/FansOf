@@ -1,8 +1,8 @@
 {
- "build": 1148,
- "hash": "35809d3",
- "fecha": "2026-11-11T04:11:41Z",
- "mensaje": "Tarea #34: mapa de core/js al día con los roles y las piezas del núcleo",
+ "build": 1149,
+ "hash": "8e2be70",
+ "fecha": "2026-11-11T04:26:16Z",
+ "mensaje": "SQL 125 aplicado: APLICADAS.md al día",
  "juegos": {
   "boom": "0.4.13",
   "cooking": "0.2.14",

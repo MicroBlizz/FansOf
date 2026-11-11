@@ -1,9 +1,11 @@
 // Fans Of · /gestion · TABLERO · dominio · TAREA: una tarea del tablero, inmutable. Nace siempre válida (fábrica `desdeJson`, que devuelve un resultado)
-// y sabe a qué columnas puede pasar quien se lo pida (`mueve`). Las mismas reglas las aplica el servidor (_tarea_mover en servidor/120-tablero-refinamiento.sql);
+// y sabe a qué columnas puede pasar quien se lo pida (`mueve`). Las mismas reglas las aplica el servidor (_tarea_mover, hoy en servidor/125-tablero-requisitos.sql);
 // aquí sirven para avisar antes de ir a la red. Sin reloj, red ni pantalla.
 'use strict';
 TABLERO.Tarea = class Tarea {
   #d;
+  // requiere y requerida_por: [{ id, titulo, estado }] (SQL 125), congeladas; sin ellas (página o servidor anterior), ninguna; lo mal formado se deja fuera
+  static #lista = x => Object.freeze((Array.isArray(x) ? x : []).filter(r => r && Number.isInteger(r.id) && typeof r.estado === 'string').map(r => Object.freeze({ ...r })));
 
   constructor(datos) { this.#d = Object.freeze({ ...datos }); Object.freeze(this); }
 
@@ -12,7 +14,7 @@ TABLERO.Tarea = class Tarea {
     const valida = j && Number.isInteger(j.id) && typeof j.titulo === 'string' && j.titulo !== ''
       && TABLERO.esEstado(j.estado) && Object.hasOwn(TABLERO.PRIORIDADES, j.prioridad);
     if (!valida) return TABLERO.error('tarea-invalida', { id: j && j.id });
-    return TABLERO.ok(new Tarea({ orden: 0, juego: 'general', responsable: null, esperando: null, ...j }));
+    return TABLERO.ok(new Tarea({ orden: 0, juego: 'general', responsable: null, esperando: null, ...j, requiere: Tarea.#lista(j.requiere), requerida_por: Tarea.#lista(j.requerida_por) }));
   }
 
   get id() { return this.#d.id; }
@@ -22,20 +24,27 @@ TABLERO.Tarea = class Tarea {
   get responsable() { return this.#d.responsable; }
   get prioridad() { return this.#d.prioridad; }
   get orden() { return this.#d.orden; }
+  get requiere() { return this.#d.requiere; }
   aJson() { return { ...this.#d }; }
 
   // Quien manda es una persona ('arkioner', 'pepins') o Claude (en cualquier mayúscula, como en el servidor). La nota va al historial; para Claude, al
   // sacar una tarea de ideas o de en refinamiento, es el enlace a la aprobación de la persona. Resultado: la tarea ya movida, o el motivo con nombre:
-  // 'estado-desconocido', 'es-de-otro', 'esta-hecha', 'sin-refinar' o 'sin-aprobacion'
+  // 'estado-desconocido', 'es-de-otro', 'esta-hecha', 'sin-refinar', 'sin-aprobacion' o 'requisitos-abiertos' (a en curso con algún requisito que
+  // aún no está en revisión ni hecho; lleva sus números)
   mueve(quien, estado, nota = '') {
     if (!TABLERO.esEstado(estado)) return TABLERO.error('estado-desconocido', { estado });
     const esClaude = String(quien).toLowerCase() === 'claude';
     const motivo = esClaude ? this.#motivoClaudeNoPuede(estado, nota) : null;
     if (motivo) return TABLERO.error(motivo, { id: this.id, estado });
+    const abiertos = this.#abiertosAlEntrar(estado);
+    if (abiertos.length) return TABLERO.error('requisitos-abiertos', { id: this.id, estado, requisitos: abiertos });   // para todos, no solo Claude
     const responsable = esClaude && estado === 'en_curso' && !this.#d.responsable ? 'claude' : this.#d.responsable;
     const esperando = estado === 'en_curso' ? this.#d.esperando : null;   // la espera solo tiene sentido en curso, como en el servidor
     return TABLERO.ok(new Tarea({ ...this.#d, estado, responsable, esperando }));
   }
+
+  // Solo al empezarla (de ideas, refinamiento o pendiente a en curso) se miran los requisitos (TABLERO.bloqueos); volver de revisión para cambios no se bloquea
+  #abiertosAlEntrar(estado) { return estado === 'en_curso' ? TABLERO.bloqueos(this.#d) : []; }
 
   // Claude no reabre las hechas, no mueve las de otra persona y solo pasa una tarea a «hecho» (sea de quien sea) con la nota que enlaza el sí de Arkioner o de Pepins. Lleva una idea a refinamiento sin más, pero de ahí solo saca una tarea
   // que una persona dio por buena: a «en curso» (se empieza ya) o a «pendiente» (lista para más tarde), y con la nota que enlaza esa aprobación

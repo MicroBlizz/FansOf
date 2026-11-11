@@ -56,7 +56,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   // al guardar, el panel enseña el detalle de la tarea guardada
   const guarda = f => {
     const id = Number(f.dataset.id), form = leeFormulario(f);
-    return aplica(id ? casos.editar(id, form) : casos.crear(form), r => { panel = { id: r.id || id }; });
+    return aplica(id ? casos.editar(id, form, tareas) : casos.crear(form), r => { panel = { id: r.id || id }; });
   };
 
   function conecta() {

@@ -3,7 +3,7 @@
 // se prueban en Node. El controlador (controlador.js) las pone en la página. Reutiliza las clases de /gestion (caja, cuenta, cab, estado, meta…).
 'use strict';
 TABLERO.vista = (() => {
-  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo' };
+  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo', requiere: 'En «Requiere» van números de tarea (#3, 7), como mucho 20' };
   const MENSAJES = {
     'es-de-otro': 'Esa tarea es de otra persona',
     'esta-hecha': 'Esa tarea ya está hecha',
@@ -14,17 +14,26 @@ TABLERO.vista = (() => {
     'estado': 'Esa columna no existe',
     'estado-desconocido': 'Esa columna no existe',
     'datos': 'El servidor no ha aceptado los datos',
+    'requisitos-abiertos': 'Para pasar a en curso, antes tienen que estar en revisión o hechas',
+    'requisito-propio': 'Una tarea no puede requerirse a sí misma',
+    'ciclo': 'Eso cerraría un círculo de tareas que se esperan entre sí',
+    'requisito-no-existe': 'No existen las tareas',
+    'requisitos-muchos': 'Como mucho 20 requisitos',
   };
-  const mensaje = (error, datos) => (error === 'campo-invalido' ? CAMPOS[datos && datos.campo] || 'Hay un campo que no vale' : MENSAJES[error] || 'No se ha podido hacer: ' + error);
+  const numeros = datos => (datos && Array.isArray(datos.requisitos) && datos.requisitos.length ? ': ' + datos.requisitos.map(n => '#' + n).join(', ') : '');
+  const mensaje = (error, datos) => (error === 'campo-invalido' ? CAMPOS[datos && datos.campo] || 'Hay un campo que no vale'
+    : MENSAJES[error] ? MENSAJES[error] + numeros(datos) : 'No se ha podido hacer: ' + error);
 
   const opciones = (lista, actual, esc) => lista.map(([id, texto]) => `<option value="${esc(id)}"${id === actual ? ' selected' : ''}>${esc(texto)}</option>`).join('');
   const COLUMNAS = TABLERO.COLUMNAS.map(c => [c.id, c.titulo]);
   // La tarjeta es pequeña: número, título y etiquetas (si espera respuesta, si ya tiene informe de refinado y cuántos nodos pasan si lleva grafo).
   // Al pulsarla, su detalle sale en el panel de la derecha
+  // Si aún no ha empezado y algún requisito sigue abierto: «Espera a #N», o «Bloqueada» si son varios (el detalle dice cuáles)
+  const bloqueo = t => (b => (b.length ? ` <span class="estado tb-bloqueo">${b.length === 1 ? 'Espera a #' + b[0] : 'Bloqueada'}</span>` : ''))(TABLERO.bloqueos(t));
   const avanceGrafo = t => (t.grafo ? (r => ` <span class="estado">${r.pasa}/${r.total} nodos</span>`)(t.grafo.resumen()) : '');
   const tarjeta = (t, esc, elegida) => `<article class="cuenta tb-tarea${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
     <div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b></div>
-    <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.refinado ? ' <span class="estado">con informe</span>' : ''}${avanceGrafo(t)}</div>
+    <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.refinado ? ' <span class="estado">con informe</span>' : ''}${avanceGrafo(t)}${bloqueo(t)}</div>
     ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}</article>`;
   const columna = (c, esc, elegida) => `<section class="tb-col" data-columna="${c.id}"><h3>${esc(c.titulo)} <span class="meta">${c.tareas.length}</span></h3>${c.tareas.map(t => tarjeta(t, esc, elegida)).join('') || '<div class="meta">Vacía</div>'}</section>`;
   // elegida: el id de la tarea abierta en el panel (su tarjeta se marca)
@@ -45,6 +54,7 @@ TABLERO.vista = (() => {
     <div class="filtros"><label>Juego o área<input type="text" name="juego" value="${esc(v.juego || 'general')}" maxlength="40" list="tb-juegos"></label>
     <label>Responsable<select name="responsable">${opciones([['', 'Sin responsable'], ...Object.entries(TABLERO.RESPONSABLES)], v.responsable || '', esc)}</select></label>
     <label>Prioridad<select name="prioridad">${opciones(Object.keys(TABLERO.PRIORIDADES).map(p => [p, p]), v.prioridad || 'normal', esc)}</select></label></div>
+    ${campo('requiere', 'Requiere (números de tarea: #3, 7; no entra en curso hasta que estén en revisión o hechas)', (v.requiere || []).map(r => '#' + r.id).join(', '), esc, 200)}
     ${campo('hilo', 'Enlace al hilo', v.hilo, esc, 300)}${area('enlaces', 'Otros enlaces (ADR, TODO, PR)', v.enlaces, esc, 1000)}
     <div class="filtros"><button type="submit" class="fuerte">Guardar</button><button type="button" data-cancelar>Cancelar</button></div></form>`;
 
@@ -58,6 +68,6 @@ TABLERO.vista = (() => {
     + '@media(max-width:1200px){.tb-vista.abierto{grid-template-columns:minmax(0,1fr)}.tb-panel{position:fixed;inset:0 0 0 auto;width:min(420px,100%);max-height:none;z-index:20;border-radius:0;box-shadow:-4px 0 16px rgba(0,0,0,.25)}}'
     + '.tb-barra{height:6px;border:1px solid var(--linea);border-radius:4px;overflow:hidden;background:var(--bg);margin:4px 0}.tb-barra i{display:block;height:100%;background:var(--ok)}.tb-nivel{display:grid;gap:4px;margin-top:6px}.tb-nodo{border-left:3px solid var(--linea);padding-left:6px}.tb-nodo.pasa{border-color:var(--ok)}.tb-nodo.falla,.tb-nodo.bloqueado{border-color:var(--clara)}.tb-nodo.en_curso{border-color:var(--acento)}'
     + '.tb-form{display:grid;gap:8px}.tb-form textarea{font:inherit;color:var(--texto);background:var(--bg);border:1px solid var(--linea);border-radius:5px;padding:7px 9px;width:100%}.tb-form .filtros label{flex:1;min-width:140px}'
-    + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}';
+    + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}';
   return { html, filtros, formulario, parecidas, mensaje, opciones, COLUMNAS, ESTILO };
 })();

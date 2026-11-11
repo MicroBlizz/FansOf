@@ -42,6 +42,7 @@ function ppNimListo() {
 }
 function ppNimRival(T) {
   if (!PP_P || PP_P.T !== T || T.nim.fin || PP_PANT.actual !== 'sala') return;
+  if (ppCortActiva()) { setTimeout(() => ppNimRival(T), 120); return; }   // la cortinilla del jefe: el primer turno sale nada más acabar
   if (PP_PANT.pausa || !$pp('#pp-modal').hidden) { setTimeout(() => ppNimRival(T), 500); return; }
   const N = T.nim, [fila, cuantas] = ppNimJugada(ppFilasDuelo(T), N.fallo);
   const sitios = []; for (let x = 0; x < T.n; x++) { const i = fila * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }

@@ -1,5 +1,5 @@
 // Fans Of · /gestion · TABLERO · adaptador · VISTA DEL DETALLE: el HTML del panel de la derecha con todo lo de una tarea (qué, criterio, a quién espera,
-// informe de refinado, enlaces, fechas, mover y editar, la foto del grafo y el historial), para seguir viendo el tablero mientras se van abriendo tareas. Funciones puras como vista.js
+// informe de refinado, requisitos, enlaces, fechas, mover y editar, la foto del grafo y el historial), para seguir viendo el tablero mientras se van abriendo tareas. Funciones puras como vista.js
 // (reciben `esc` y `fecha`), de la que usa `opciones` y `COLUMNAS`; se prueban en Node.
 'use strict';
 TABLERO.vistaDetalle = (() => {
@@ -27,6 +27,8 @@ TABLERO.vistaDetalle = (() => {
       + `<details><summary>Lista de nodos</summary>${niveles}</details></details>`;
   }
 
+  // «Requiere» y «Lo necesitan»: número, título y columna; cada una abre su detalle (si es una hecha antigua, el controlador avisa de que no está en el tablero)
+  const enlazadas = (etiqueta, lista, esc) => (lista && lista.length ? `<div class="meta tb-enlazadas"><b>${etiqueta}:</b> ${lista.map(r => `<button type="button" class="tb-parecida" data-abrir="${r.id}">#${r.id} ${esc(r.titulo)} <span class="meta">${esc(TABLERO.tituloDe(r.estado))}</span></button>`).join(' ')}</div>` : '');
   const fechas = (t, esc, fecha) => [t.creado && 'Creada el ' + fecha(t.creado) + (t.creado_por ? ' por ' + t.creado_por : ''), t.actualizado && 'cambiada el ' + fecha(t.actualizado)]
     .filter(Boolean).map(esc).join(' · ');
   const etiquetas = (t, esc) => `<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span> <span class="estado">${esc(t.prioridad)}</span>`
@@ -34,7 +36,7 @@ TABLERO.vistaDetalle = (() => {
   const detalle = (t, esc, fecha = String) => `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>
     <div class="meta">${etiquetas(t, esc)}</div>
     ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
-    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${t.refinado ? `<div class="meta tb-informe"><b>Informe de refinado:</b> ${esc(t.refinado)}</div>` : ''}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
+    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${t.refinado ? `<div class="meta tb-informe"><b>Informe de refinado:</b> ${esc(t.refinado)}</div>` : ''}${enlazadas('Requiere', t.requiere, esc)}${enlazadas('Lo necesitan', t.requerida_por, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
     <div class="meta">${fechas(t, esc, fecha)}</div>
     <div class="accion"><select data-mover="${t.id}" aria-label="Mover a">${TABLERO.vista.opciones(TABLERO.vista.COLUMNAS, t.estado, esc)}</select><button type="button" data-editar="${t.id}">Editar</button></div>
     ${grafoHtml(t, esc, fecha)}${historial(t, esc, fecha)}`;

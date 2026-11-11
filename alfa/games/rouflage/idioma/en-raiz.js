@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.78
+  "<b>MEJORAS POR DENTRO</b>: el panel de pruebas se abre según el rol de tu cuenta y se puede copiar la versión y el idioma del juego.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the testing panel opens according to your account role and the game version and language can be copied.",
+  "Microblizz ha repartido llaves del taller por rol y Phony ha pedido la del cuarto de las escobas.": "Microblizz handed out workshop keys by role and Phony asked for the broom closet one.",
   // 0.2.77
   "<b>CARGA MÁS LIMPIA</b>: la pantalla de carga sale al instante, las letras las servimos nosotros (ya no se pide nada a Google) y, si una pieza no llega, el aviso dice cuál.": "<b>CLEANER LOADING</b>: the loading screen shows up instantly, we serve the fonts ourselves (nothing is requested from Google anymore) and, if a piece fails to arrive, the notice says which one.",
   "Microblizz ha despedido a Google de las letras y Phony ha preguntado si ahora las escribimos a mano.": "Microblizz fired Google from the lettering and Phony asked if we now write them by hand.",

@@ -154,5 +154,11 @@
     "fr-FR": "Nouveautés : chargement plus propre, écran de chargement instantané et polices à nous.\n\nMicroblizz a viré Google des lettres. Phony a demandé si on les écrit maintenant à la main.",
     "de-DE": "Neu: saubereres Laden, sofortiger Ladebildschirm und eigene Schriften.\n\nMicroblizz hat Google die Buchstaben gekündigt. Phony fragte, ob wir sie jetzt von Hand schreiben.",
     "it-IT": "Novità: caricamento più pulito, schermata di caricamento istantanea e font nostri.\n\nMicroblizz ha licenziato Google dalle lettere. Phony ha chiesto se ora le scriviamo a mano."
+  },
+  "0.2.78": {
+    "pt-BR": "Novidades: melhorias internas no painel de testes.\n\nA Microblizz distribuiu chaves da oficina por função. O Phony pediu a do armário das vassouras.",
+    "fr-FR": "Nouveautés : améliorations internes du panneau de tests.\n\nMicroblizz a distribué les clés de l'atelier par rôle. Phony a demandé celle du placard à balais.",
+    "de-DE": "Neu: interne Verbesserungen am Testpanel.\n\nMicroblizz hat die Werkstattschlüssel nach Rolle verteilt. Phony wollte den für den Besenschrank.",
+    "it-IT": "Novità: miglioramenti interni al pannello di prova.\n\nMicroblizz ha distribuito le chiavi dell'officina per ruolo. Phony ha chiesto quella dello sgabuzzino delle scope."
   }
 }

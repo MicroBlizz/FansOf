@@ -28,6 +28,7 @@
       const filas = [['Juego', (typeof AJUSTES !== 'undefined' && AJUSTES.nombre) || document.title], ['Versión', typeof VERSION !== 'undefined' ? VERSION : '?'], ['Idioma', NUCLEO.idioma],
         ['Navegador', (navigator.languages || [navigator.language]).join(', ')], ['Partida guardada en', (typeof AJUSTES !== 'undefined' && AJUSTES.guardado) || '?']];
       c.append(el('table', {}, ...filas.map(([a, b]) => el('tr', {}, el('td', { textContent: a }), el('td', { textContent: b })))));
+      c.append(el('div', { className: 'fila' }, boton('Copiar', () => copiar(filas.map(([a, b]) => a + ': ' + b).join('\n')))));
     } },
     { titulo: 'Idioma', pinta(c) {
       const fila = el('div', { className: 'fila' });
@@ -114,7 +115,7 @@
     #dev-panel h2 { margin: 0 0 8px; font-size: 18px; color: #ffcb3d; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     #dev-panel h3 { margin: 14px 0 6px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #ffcb3d; }
     #dev-panel p { margin: 4px 0; color: #cdb9ea; }
-    #dev-panel table { border-collapse: collapse; } #dev-panel td { padding: 2px 10px 2px 0; vertical-align: top; } #dev-panel td:first-child { color: #cdb9ea; }
+    #dev-panel table { border-collapse: collapse; user-select: text; -webkit-user-select: text; } #dev-panel td { padding: 2px 10px 2px 0; vertical-align: top; } #dev-panel td:first-child { color: #cdb9ea; }
     #dev-panel .fila { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
     #dev-panel button { font: 700 13px system-ui, sans-serif; padding: 7px 10px; border-radius: 8px; border: 2px solid #20102c; background: #cdb9ea; color: #20102c; cursor: pointer; }
     #dev-panel button.peligro { background: #ff8a8a; }

@@ -1,5 +1,5 @@
 // Fans of Pop · CORTINILLA (dominio): cuándo sale la cortinilla de entrada a un nivel jefe y cómo avanza en el tiempo. Todo son
-// funciones puras (sin reloj, azar, SAVE ni dibujo): el dibujo está en pintar-cortinilla.js. ADR 098 (tarea #18, Arkioner, 11-11-2026).
+// funciones puras (sin reloj, azar, SAVE ni dibujo): el dibujo está en pintar-cortinilla.js. ADR 098 (tarea #18, Arkioner, 11-11-2026; ampliada a los difíciles el mismo día).
 'use strict';
 const PP_CORTINILLA = Object.freeze((() => {
   const DURACION = 3.2;   // segundos, si no se salta con un toque
@@ -7,8 +7,9 @@ const PP_CORTINILLA = Object.freeze((() => {
   const PASOS = [1.09, 1.5, 1.98], PASO_DUR = 0.26, VS = { desde: 0.7, pico: 0.93, asienta: 1.09, escala: 1.35 };
   const tramo = (t, [a, b]) => Math.min(1, Math.max(0, (t - a) / (b - a)));
   const lerp = (a, b, k) => a + (b - a) * k;
-  // La cortinilla es del duelo contra el jefe: en Pesadilla el jefe sigue la regla del «Lights Out» y no lleva duelo, así que no sale
-  const salePara = d => !!(d && d.jefe && d.nim);
+  // La cortinilla es de los niveles con duelo (los jefes y los difíciles): en Pesadilla siguen la regla del «Lights Out», sin duelo, y no sale
+  const salePara = d => !!(d && d.nim);
+  const tipoDe = d => (d.jefe ? 'jefe' : 'duelo');   // el rótulo: «¡NIVEL JEFE!» o «¡DUELO!»
   const rivalDe = d => d.nim.rival;   // 'ceo' o 'ceoespacial'
   const golpeVs = t => (t < VS.desde ? 0 : t < VS.pico ? lerp(0, VS.escala, (t - VS.desde) / (VS.pico - VS.desde)) : t < VS.asienta ? lerp(VS.escala, 1, (t - VS.pico) / (VS.asienta - VS.pico)) : 1);
   // todo lo que se ve en el segundo t: de 0 (fuera) a 1 (puesto); `vs` es la escala del VS (pasa de 1 al golpearlo)
@@ -20,5 +21,5 @@ const PP_CORTINILLA = Object.freeze((() => {
     };
   }
   const terminada = t => t >= DURACION;
-  return { DURACION, salePara, rivalDe, fotograma, terminada };
+  return { DURACION, salePara, tipoDe, rivalDe, fotograma, terminada };
 })());

@@ -54,17 +54,17 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   PP_AYUDA.modo = null;
   const manita = !dif && d.mundo === 0 && d.l <= 2;   // en los dos primeros niveles la manita señala qué tocar
   if (manita) { T.mano = true; T.pista = [...T.sol][0]; }
+  ppCortinillaSi(T, d, dif, manita);   // antes de pintar la sala: así ni Lola ni las ayudas se adelantan a la cortinilla
   ppIrA('sala');
   ppFxEntraSala(T);
   ppBarraAyudas();
   if (d.lo && PP_P.equipo.length) ppFlota(tr('En Pesadilla tus amigos descansan'), 270, 240, '#ff8a8a');
   if (T.extra) ppFlota(tr('+{n} toques de racha y amigos', { n: T.extra }), 270, 240, '#ff8a2a');
-  ppArrancaNivel(T, d, dif, manita);
+  if (!PP_CORTINILLA.salePara(d)) ppEmpiezaNivel(T, d, dif, manita);
 }
-// un jefe con duelo abre con su cortinilla (ADR 098): el nivel espera a que acabe o se salte con un toque
-function ppArrancaNivel(T, d, dif, manita) {
+// un nivel con duelo abre con su cortinilla (ADR 098): el nivel espera a que acabe o se salte con un toque
+function ppCortinillaSi(T, d, dif, manita) {
   if (PP_CORTINILLA.salePara(d)) ppCortEmpieza(d, () => ppEmpiezaNivel(T, d, dif, manita));
-  else ppEmpiezaNivel(T, d, dif, manita);
 }
 // lo que pasa al empezar de verdad un nivel (tras la cortinilla del jefe, si la hay)
 function ppEmpiezaNivel(T, d, dif, manita) {

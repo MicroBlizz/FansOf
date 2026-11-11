@@ -6,7 +6,7 @@ const PP_PANT = { actual: 'titulo', pausa: false };
 const $pp = s => document.querySelector(s);
 function ppIrA(p) {
   PP_PANT.actual = p;
-  if (p !== 'sala') ppCortCancela();   // salir del nivel durante la cortinilla de un jefe la apaga
+  if (p !== 'sala' && p !== 'duelo') ppCortCancela();   // salir del nivel durante la cortinilla de un jefe la apaga
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
   $pp('#pp-titulo').hidden = p !== 'titulo';
   if (p !== 'sala' && p !== 'duelo' && p !== 'memoria') ppLolaCierra();

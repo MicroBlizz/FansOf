@@ -1,8 +1,8 @@
 {
- "build": 1151,
- "hash": "42dcb64",
- "fecha": "2026-11-11T04:32:19Z",
- "mensaje": "Panel DEV: botón Copiar en «Este juego» (versión, idioma…) y la tabla se puede seleccionar",
+ "build": 1152,
+ "hash": "8bc77d4",
+ "fecha": "2026-11-11T04:40:07Z",
+ "mensaje": "Pop: la cortinilla sale también en los difíciles (¡DUELO!) y en el Duelo contra el CEO; Lola y las ayudas esperan (tarea #18, ADR 098)",
  "juegos": {
   "boom": "0.4.13",
   "cooking": "0.2.14",

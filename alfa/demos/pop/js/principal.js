@@ -23,6 +23,7 @@ PP_CV.addEventListener('pointerdown', e => {
   ppCargaSonidos();
   const [lx, ly] = ppLogico(e);
   if (PP_PANT.actual === 'titulo') { ppPortadaToque(lx, ly); return; }
+  if (ppCortActiva()) { ppCortTermina(); return; }   // un toque salta la cortinilla de duelo
   if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }
   if (PP_PANT.actual === 'memoria' && PP_MEM) { ppMemToque(ppCeldaEn(ppGeom(PP_MEM.T.n), lx, ly)); return; }
   if (!PP_P) return;
@@ -50,7 +51,7 @@ function ppFotograma(ahora) {
   c.imageSmoothingEnabled = false;
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
-  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaDuelo(c, t); }
+  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
   else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
   else ppPintaPortada(c, t, dt);
 }

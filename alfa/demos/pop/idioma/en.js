@@ -375,6 +375,7 @@ IDIOMA.add({
   "Revientas las que quieras de una fila": "Pop as many as you like from one row",
   "Pulsas ¡LISTO! y le toca a tu rival": "Press DONE! and it's your rival's turn",
   "Pierde quien revienta la última": "Whoever pops the last one loses",
+  "¡DUELO!": "DUEL!",
   "¡PIERDE!": "LOSES!",
   "Toca para saltar": "Tap to skip",
 });

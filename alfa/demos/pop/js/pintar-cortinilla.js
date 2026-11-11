@@ -1,11 +1,11 @@
-// Fans of Pop · CORTINILLA (dibujo y manejo): la cortinilla D de los niveles jefe (ADR 098), cara a cara con el rival y la regla en tres
+// Fans of Pop · CORTINILLA (dibujo y manejo): la cortinilla D de los niveles con duelo, jefes y difíciles (ADR 098), cara a cara con el rival y la regla en tres
 // viñetas, pintada en el lienzo encima de la sala. Mientras sale, el nivel espera (tutorial, ayudita y primer turno del rival);
 // un toque la salta. Lo que decide cuándo sale y cómo avanza está en cortinilla.js (puro).
 'use strict';
-const PP_CORT = { activa: false, t: 0, rival: 'ceo', golpe: false, alTerminar: null };
-const ppCortActiva = () => PP_CORT.activa && PP_PANT.actual === 'sala';   // si saliste del nivel a medias, ya no cuenta
+const PP_CORT = { activa: false, t: 0, rival: 'ceo', tipo: 'jefe', golpe: false, alTerminar: null };
+const ppCortActiva = () => PP_CORT.activa && (PP_PANT.actual === 'sala' || PP_PANT.actual === 'duelo');   // si saliste del nivel a medias, ya no cuenta
 function ppCortEmpieza(d, alTerminar) {
-  Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), golpe: false, alTerminar });
+  Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), tipo: PP_CORTINILLA.tipoDe(d), golpe: false, alTerminar });
 }
 // entrar en otro nivel apaga la cortinilla que quedara abierta sin su callback
 const ppCortCancela = () => { PP_CORT.activa = false; PP_CORT.alTerminar = null; };
@@ -71,7 +71,7 @@ function ppPintaCortinilla(c, t) {
   c.fillStyle = '#ff8a2a'; c.beginPath(); c.moveTo(0, 0); c.lineTo(330, 0); c.lineTo(210, H); c.lineTo(0, H); c.fill();
   c.fillStyle = '#2a1747'; c.beginPath(); c.moveTo(330, 0); c.lineTo(540, 0); c.lineTo(540, H); c.lineTo(210, H); c.fill();
   c.restore();
-  ppTexto(c, tr('¡NIVEL JEFE!'), 270, H * 0.1, 64, `rgba(42,23,71,${f.etiqueta})`, 'center', `rgba(255,255,255,${f.etiqueta})`);
+  ppTexto(c, tr(PP_CORT.tipo === 'jefe' ? '¡NIVEL JEFE!' : '¡DUELO!'), 270, H * 0.1, 64, `rgba(42,23,71,${f.etiqueta})`, 'center', `rgba(255,255,255,${f.etiqueta})`);
   ppCortFigura(c, PP_CORT.rival, false, 130, yFig, f.figuras, t);
   ppCortFigura(c, PP_CORT.rival, true, 410, yFig, f.figuras, t);
   if (f.vs > 0.01) { c.save(); c.translate(270, yFig + 20); c.scale(f.vs, f.vs); ppTexto(c, 'VS', 0, 0, 120, '#fff', 'center', '#2a1747'); c.restore(); }

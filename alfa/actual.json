@@ -1,8 +1,8 @@
 {
- "build": 1154,
- "hash": "6c10820",
- "fecha": "2026-11-12T10:01:53Z",
- "mensaje": "Pop: la cortinilla del duelo espera al botón ¡A JUGAR! y el toque ya no la salta (tarea #42, ADR 100)",
+ "build": 1155,
+ "hash": "a1ad8dd",
+ "fecha": "2026-11-12T14:52:35Z",
+ "mensaje": "Portada: la ventana de Novedades ya no se abre sola; una tira discreta «Novedades · N nuevas» la abre al pulsar (tarea #43, ADR 101)",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

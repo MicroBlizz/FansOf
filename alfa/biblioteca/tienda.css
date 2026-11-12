@@ -137,3 +137,11 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
   .fi-tira.h button { width: 220px; }
 }
 @media (prefers-reduced-motion: reduce) { .game { transition: none; } .game:hover { transform: none; } }
+/* Prototipos y En pausa van plegados (ADR 102): el título es lo que se pulsa y lleva cuántas tarjetas esconde */
+details.plegable > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 0 8px; }
+details.plegable > summary::-webkit-details-marker { display: none; }
+details.plegable > summary > h3.grupo { margin: 0; text-align: center; font-family: var(--font-display); font-weight: 400; font-size: 28px; color: var(--gold); }
+details.plegable > summary::after { content: ""; width: 10px; height: 10px; border-right: 4px solid var(--gold); border-bottom: 4px solid var(--gold); transform: rotate(45deg) translateY(-3px); transition: transform .15s; }
+details.plegable[open] > summary::after { transform: rotate(-135deg) translateY(-3px); }
+details.plegable > summary .cuantos { order: 1; font-weight: 800; font-size: 13px; color: var(--ink-dim); border: 2px solid var(--outline); border-radius: 10px; padding: 1px 8px; }
+details.plegable > summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; border-radius: 10px; }

@@ -1,8 +1,8 @@
 {
- "build": 1155,
- "hash": "a1ad8dd",
- "fecha": "2026-11-12T14:52:35Z",
- "mensaje": "Portada: la ventana de Novedades ya no se abre sola; una tira discreta «Novedades · N nuevas» la abre al pulsar (tarea #43, ADR 101)",
+ "build": 1156,
+ "hash": "38325d8",
+ "fecha": "2026-11-12T14:58:06Z",
+ "mensaje": "Portada: la biblioteca con jerarquía (Juega ya, Próximamente, Prototipos y En pausa plegados) y un solo tipo Prototipo (tarea #44, ADR 102)",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

@@ -2,13 +2,15 @@
 'use strict';
 IDIOMA.add({
   // PRÓXIMAMENTE (tienda.js)
+  "JUEGA YA": "PLAY NOW",
+  "Los juegos que vienen en camino. Vota en su ficha los que más quieres que salgan.": "The games on their way. Vote on their page for the ones you most want to see released.",
+  "Juegos a medio hacer y pruebas cortas de una idea: todavía cambian mucho.": "Half-finished games and short tests of an idea: they still change a lot.",
+  "Prototipos que hemos parado. Si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.": "Prototypes we've put on hold. If you want them back, vote on their page: the ones with the most votes, we'll pick up again.",
   "PRÓXIMAMENTE": "COMING SOON",
   "JUGAR BETA": "PLAY BETA",
-  "Estos juegos todavía no están abiertos: por ahora solo se puede jugar a Fans Of Rouflage.": "These games are not open yet: for now you can only play Fans Of Rouflage.",
   // EN PAUSA (index.html, tienda.js y votos.js)
   "En pausa": "On hold",
   "EN PAUSA": "ON HOLD",
-  "Prototipos que hemos parado. Se pueden jugar tal cual están y, si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.": "Prototypes we've put on hold. You can play them as they are and, if you want them back, vote on their page: the ones with the most votes are the ones we pick up again.",
   "Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos.": "On hold while we finish the big games. You can play it as it is: if lots of people want it back, we'll pick it up again.",
   "Ni el 2D ni el 3D quedaron como queríamos y lo dejamos aparcado. Se juega tal cual está: si mucha gente quiere que vuelva, lo rehacemos con otra idea.": "Neither the 2D nor the 3D version turned out the way we wanted, so we parked it. You can play it as it is: if lots of people want it back, we'll remake it with a new idea.",
   "¿QUIERES QUE VUELVA?": "DO YOU WANT IT BACK?",
@@ -27,9 +29,6 @@ IDIOMA.add({
   // los grupos de la biblioteca (index.html)
   "JUEGOS": "GAMES",
   "PROTOTIPOS": "PROTOTYPES",
-  "DEMOS": "DEMOS",
-  "Juegos a medio hacer: se pueden jugar, pero todavía cambian mucho.": "Half-finished games: you can play them, but they still change a lot.",
-  "Bocetos y pruebas cortas de una idea.": "Sketches and short tests of an idea.",
   "DESCARGAR APK": "DOWNLOAD APK",
   "‹ VOLVER": "‹ BACK",
   "VERSIÓN": "VERSION",
@@ -104,9 +103,6 @@ IDIOMA.add({
   "Juego": "Game",
   "Prototipo": "Prototype",
   "Recortar": "Cutting", "Frenético": "Frantic",
-  "Boceto": "Sketch",
-  "Prueba": "Test",
-  "Demo": "Demo",
   // las etiquetas
   "Estrategia": "Strategy",
   "Cartas": "Cards",

@@ -1,8 +1,8 @@
 {
- "build": 1157,
- "hash": "f3c14a8",
- "fecha": "2026-11-12T15:58:09Z",
- "mensaje": "Portada: LOS MÁS PEDIDOS, los 4 prototipos con más votos; solo Rouflage y Karts son Juego (tarea #46, ADR 103, SQL 126)",
+ "build": 1158,
+ "hash": "9b8d08a",
+ "fecha": "2026-11-12T18:54:15Z",
+ "mensaje": "Pop: la cortinilla del duelo lleva su sintonía de presentación (8 bits, 3 s, una vez) y después silencio hasta el botón (tarea #42, ADR 100)",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

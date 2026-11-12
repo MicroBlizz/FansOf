@@ -89,8 +89,11 @@ const PP_MUS = { quiere: 'menu' };
 function ppMusica(nombre) { PP_MUS.quiere = nombre && TRACKS[nombre] ? nombre : 'menu'; }
 function ppMusicaRuta() { ppMusica(PP_P && PP_P.tipo === 'jefe' && PP_PANT.actual === 'sala' ? 'boss' : 'menu'); }
 function ppSintonia(nombre) { if (AC && M.bus && TRACKS[nombre]) musicSet(nombre); }
+// corta una sintonía si sigue sonando (la de la cortinilla, al pulsar su botón o al salir del nivel)
+function ppSintoniaCorta(nombre) { if (AC && M.bus && M.name === nombre) musicSet(null); }
 function ppMusicaBucle() {
   if (!AC || !M.bus) return;
   if (M.trk && M.trk.once) return;
+  if (ppCortActiva()) return;   // con la cortinilla puesta solo suena su sintonía, una vez; después, silencio hasta el botón (ADR 100)
   if (M.name !== PP_MUS.quiere) musicSet(PP_MUS.quiere);
 }

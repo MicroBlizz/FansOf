@@ -7,6 +7,7 @@ const ppCortActiva = () => PP_CORT.activa && (PP_PANT.actual === 'sala' || PP_PA
 function ppCortEmpieza(d, alTerminar) {
   Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), tipo: PP_CORTINILLA.tipoDe(d), golpe: false, salida: null, alTerminar });
   ppCortBoton();
+  ppSintonia('popCortinilla');   // la presentación: suena una vez (js/cancion-cortinilla.js)
 }
 // el botón es de DOM (con el estilo de los de Pop): sale cuando acaban las viñetas y se oculta al pulsarlo o al irse la cortinilla
 function ppCortBoton() { const b = $pp('#pp-cort-jugar'); if (b) b.hidden = !(PP_CORT.activa && PP_CORT.salida === null && PP_CORTINILLA.puedePulsar(PP_CORT.t)); }
@@ -15,10 +16,10 @@ function ppCortPulsa() {
   PP_CORT.salida = 0; play('select'); ppCortBoton();
 }
 // entrar en otro nivel apaga la cortinilla que quedara abierta sin su callback
-const ppCortCancela = () => { PP_CORT.activa = false; PP_CORT.alTerminar = null; ppCortBoton(); };
+const ppCortCancela = () => { PP_CORT.activa = false; PP_CORT.alTerminar = null; ppCortBoton(); ppSintoniaCorta('popCortinilla'); };
 function ppCortTermina() {
   if (!PP_CORT.activa) return;
-  PP_CORT.activa = false; ppCortBoton();
+  PP_CORT.activa = false; ppCortBoton(); ppSintoniaCorta('popCortinilla');   // al quitarse, vuelve la música del nivel (ppMusicaBucle)
   const sigue = PP_CORT.alTerminar; PP_CORT.alTerminar = null;
   if (sigue) sigue();
 }

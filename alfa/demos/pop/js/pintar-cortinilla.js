@@ -1,25 +1,33 @@
 // Fans of Pop · CORTINILLA (dibujo y manejo): la cortinilla D de los niveles con duelo, jefes y difíciles (ADR 098), cara a cara con el rival y la regla en tres
 // viñetas, pintada en el lienzo encima de la sala. Mientras sale, el nivel espera (tutorial, ayudita y primer turno del rival);
-// un toque la salta. Lo que decide cuándo sale y cómo avanza está en cortinilla.js (puro).
+// solo el botón ¡A JUGAR! la quita (ADR 100). Lo que decide cuándo sale y cómo avanza está en cortinilla.js (puro).
 'use strict';
-const PP_CORT = { activa: false, t: 0, rival: 'ceo', tipo: 'jefe', golpe: false, alTerminar: null };
+const PP_CORT = { activa: false, t: 0, rival: 'ceo', tipo: 'jefe', golpe: false, salida: null, alTerminar: null };
 const ppCortActiva = () => PP_CORT.activa && (PP_PANT.actual === 'sala' || PP_PANT.actual === 'duelo');   // si saliste del nivel a medias, ya no cuenta
 function ppCortEmpieza(d, alTerminar) {
-  Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), tipo: PP_CORTINILLA.tipoDe(d), golpe: false, alTerminar });
+  Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), tipo: PP_CORTINILLA.tipoDe(d), golpe: false, salida: null, alTerminar });
+  ppCortBoton();
+}
+// el botón es de DOM (con el estilo de los de Pop): sale cuando acaban las viñetas y se oculta al pulsarlo o al irse la cortinilla
+function ppCortBoton() { const b = $pp('#pp-cort-jugar'); if (b) b.hidden = !(PP_CORT.activa && PP_CORT.salida === null && PP_CORTINILLA.puedePulsar(PP_CORT.t)); }
+function ppCortPulsa() {
+  if (!ppCortActiva() || PP_CORT.salida !== null || !PP_CORTINILLA.puedePulsar(PP_CORT.t)) return;
+  PP_CORT.salida = 0; play('select'); ppCortBoton();
 }
 // entrar en otro nivel apaga la cortinilla que quedara abierta sin su callback
-const ppCortCancela = () => { PP_CORT.activa = false; PP_CORT.alTerminar = null; };
+const ppCortCancela = () => { PP_CORT.activa = false; PP_CORT.alTerminar = null; ppCortBoton(); };
 function ppCortTermina() {
   if (!PP_CORT.activa) return;
-  PP_CORT.activa = false;
+  PP_CORT.activa = false; ppCortBoton();
   const sigue = PP_CORT.alTerminar; PP_CORT.alTerminar = null;
   if (sigue) sigue();
 }
 function ppCortAvanza(dt) {
   if (!PP_CORT.activa) return;
-  PP_CORT.t += dt;
+  PP_CORT.t += dt; if (PP_CORT.salida !== null) PP_CORT.salida += dt;
+  ppCortBoton();
   if (PP_CORTINILLA.fotograma(PP_CORT.t).golpe && !PP_CORT.golpe) { PP_CORT.golpe = true; ppBoing(0.5); ppVibra(25); }
-  if (PP_CORTINILLA.terminada(PP_CORT.t)) ppCortTermina();
+  if (PP_CORTINILLA.terminada(PP_CORT.salida)) ppCortTermina();
 }
 // parte un texto en líneas que quepan en `ancho`
 function ppEnvuelve(c, s, ancho) {
@@ -64,7 +72,7 @@ function ppCortFigura(c, rival, esRival, x, y, a, t) {
 }
 function ppPintaCortinilla(c, t) {
   if (!PP_CORT.activa) return;
-  const f = PP_CORTINILLA.fotograma(PP_CORT.t), H = PP_V.H, yFig = H * 0.3;
+  const f = PP_CORTINILLA.fotograma(PP_CORT.t, PP_CORT.salida), H = PP_V.H, yFig = H * 0.3;
   c.save();
   c.fillStyle = `rgba(18,10,36,${0.45 * f.panel})`; c.fillRect(0, 0, 540, H);
   c.translate(0, -(1 - f.panel) * H);
@@ -76,5 +84,4 @@ function ppPintaCortinilla(c, t) {
   ppCortFigura(c, PP_CORT.rival, true, 410, yFig, f.figuras, t);
   if (f.vs > 0.01) { c.save(); c.translate(270, yFig + 20); c.scale(f.vs, f.vs); ppTexto(c, 'VS', 0, 0, 120, '#fff', 'center', '#2a1747'); c.restore(); }
   PP_CORT_PASOS.forEach((p, i) => { if (f.pasos[i] > 0.01) ppCortViñeta(c, p, 24, H * 0.5 + i * 116, 492, 104, f.pasos[i]); });
-  ppTexto(c, tr('Toca para saltar'), 270, H - 30, 22, '#fff', 'center', '#2a1747');
 }

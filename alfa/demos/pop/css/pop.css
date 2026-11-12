@@ -105,6 +105,9 @@ img.pp-ico { border-radius: 0; }
 /* el botón ¡LISTO! del duelo, debajo del tablero */
 #pp-listo { position: absolute; left: 50%; bottom: 13%; transform: translateX(-50%); z-index: 30; min-width: 240px; }
 #pp-listo[hidden] { display: none; }
+/* el botón de la cortinilla de duelo (ADR 100): verde de Pop, abajo, por encima de todo lo del nivel */
+#pp-cort-jugar { position: absolute; left: 50%; bottom: 3%; width: 340px; margin-left: -170px; padding-left: 0; padding-right: 0; white-space: nowrap; font-size: 40px; z-index: 45; --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }   /* sin translate: el latido (pp-enorme) ya usa transform */
+#pp-cort-jugar[hidden] { display: none; }
 .pp-pack .pp-precio { color: #c43a84; font-size: 30px; font-weight: 700; }
 /* «copiarnos de Candy Crush»: la barra de ayudas del nivel, los botones del lado del camino, la tienda con pestañas y el pase */
 #pp-ayudas { position: absolute; left: 50%; bottom: 0.5%; transform: translateX(-50%); display: flex; gap: 14px; z-index: 25; }

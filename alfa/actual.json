@@ -1,8 +1,8 @@
 {
- "build": 1156,
- "hash": "38325d8",
- "fecha": "2026-11-12T14:58:06Z",
- "mensaje": "Portada: la biblioteca con jerarquía (Juega ya, Próximamente, Prototipos y En pausa plegados) y un solo tipo Prototipo (tarea #44, ADR 102)",
+ "build": 1157,
+ "hash": "f3c14a8",
+ "fecha": "2026-11-12T15:58:09Z",
+ "mensaje": "Portada: LOS MÁS PEDIDOS, los 4 prototipos con más votos; solo Rouflage y Karts son Juego (tarea #46, ADR 103, SQL 126)",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

@@ -2,11 +2,15 @@
 'use strict';
 IDIOMA.add({
   // PRÓXIMAMENTE (tienda.js)
+  "PRÓXIMAMENTE": "COMING SOON",
+  "LOS MÁS PEDIDOS": "MOST WANTED",
+  "Todo lo que no es Rouflage ni Karts son prototipos: pruebas en las que trabajamos. Lo que votáis decide cuáles terminamos.": "Everything that isn't Rouflage or Karts is a prototype: tests we're working on. What you vote for decides which ones we finish.",
+  "Nº {n}": "No. {n}",
+  "1 punto": "1 point",
+  "{p} puntos": "{p} points",
   "JUEGA YA": "PLAY NOW",
-  "Los juegos que vienen en camino. Vota en su ficha los que más quieres que salgan.": "The games on their way. Vote on their page for the ones you most want to see released.",
   "Juegos a medio hacer y pruebas cortas de una idea: todavía cambian mucho.": "Half-finished games and short tests of an idea: they still change a lot.",
   "Prototipos que hemos parado. Si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.": "Prototypes we've put on hold. If you want them back, vote on their page: the ones with the most votes, we'll pick up again.",
-  "PRÓXIMAMENTE": "COMING SOON",
   "JUGAR BETA": "PLAY BETA",
   // EN PAUSA (index.html, tienda.js y votos.js)
   "En pausa": "On hold",

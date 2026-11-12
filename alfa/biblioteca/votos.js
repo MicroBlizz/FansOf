@@ -34,7 +34,8 @@
 
   // ---------- el orden: los favoritos primero ----------
   function ordenar() {
-    for (const s of [...original.filter(s => es(s.id)), ...original.filter(s => !es(s.id))]) s.parentNode.insertBefore(s, colas.get(grupo.get(s)));
+    // los de LOS MÁS PEDIDOS llevan su puesto (data-puesto): no se recolocan
+    for (const s of [...original.filter(s => es(s.id)), ...original.filter(s => !es(s.id))].filter(s => !s.dataset.puesto)) s.parentNode.insertBefore(s, colas.get(grupo.get(s)));
   }
   const cuantos = id => totales[slug(id)] || 0;
   const etiqueta = id => `${ICONO.marca(es(id))}${cuantos(id) ? `<span>${cuantos(id)}</span>` : ''}`;
@@ -79,6 +80,10 @@
       caja.hidden = false; pintarCorazones(); pintarMinis(); sincronizar();
       if (!ficha.caja.hidden && ficha.id) { voto.clave = ''; cargarVoto(ficha.id); }
     }).catch(() => {});
+
+  // LOS MÁS PEDIDOS (ADR 103): los puntos de cada juego (guardados + recomendaciones SÍ) y cuándo llegó el último; la portada destaca los 4 prototipos con más. Público y solo números.
+  fetch(SERVIDOR + '/rest/v1/rpc/votos_destacados', { method: 'POST', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: '{}' })
+    .then(r => (r.ok ? r.json() : Promise.reject())).then(d => { if (d && typeof d === 'object') AGRUPAR.destacar(d); }).catch(() => { /* sin servidor: la sección no sale y todo sigue como estaba */ });
 
   // ---------- SÍ / NO en la tarjeta: votar sin abrir la ficha (sin nota) ----------
   // Lo votado hoy se apunta en este navegador para marcar el botón; el servidor es quien manda (si ya habías votado, contesta ya_votado).

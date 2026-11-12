@@ -145,3 +145,5 @@ details.plegable > summary::after { content: ""; width: 10px; height: 10px; bord
 details.plegable[open] > summary::after { transform: rotate(-135deg) translateY(-3px); }
 details.plegable > summary .cuantos { order: 1; font-weight: 800; font-size: 13px; color: var(--ink-dim); border: 2px solid var(--outline); border-radius: 10px; padding: 1px 8px; }
 details.plegable > summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; border-radius: 10px; }
+/* LOS MÁS PEDIDOS (ADR 103): la franja con el puesto y los puntos, arriba de la tarjeta */
+.game .puesto { font-family: var(--font-display); font-size: 14px; color: var(--gold); background: rgba(20, 10, 34, .92); border-bottom: 3px solid var(--outline); padding: 4px 10px; text-align: center; }

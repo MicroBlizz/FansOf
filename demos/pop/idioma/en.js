@@ -371,4 +371,11 @@ IDIOMA.add({
   "Lola: «Revienta {n} más de esta fila»": "Lola: \"Pop {n} more from this row\"",
   "GRATIS": "FREE",
   "Al entrar en una sala y con cada COMBO x2 te marca una burbuja de la solución. En cada duelo, una lupa gratis.": "When you enter a room and with every COMBO x2, marks a bubble from the solution. One free hint in every duel.",
+  "¡NIVEL JEFE!": "BOSS LEVEL!",
+  "Revientas las que quieras de una fila": "Pop as many as you like from one row",
+  "Pulsas ¡LISTO! y le toca a tu rival": "Press DONE! and it's your rival's turn",
+  "Pierde quien revienta la última": "Whoever pops the last one loses",
+  "¡DUELO!": "DUEL!",
+  "¡PIERDE!": "LOSES!",
+  "Toca para saltar": "Tap to skip",
 });

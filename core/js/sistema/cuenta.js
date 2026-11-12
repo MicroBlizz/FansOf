@@ -193,11 +193,13 @@ const CUENTA = (() => {
     const s = leer(SESION, null);
     try { if (s) await pedir('/auth/v1/logout', { method: 'POST' }, s.access); } catch (e) { /* da igual: se olvida aquí */ }
     try { localStorage.removeItem(SESION); } catch (e) { /* sin almacenamiento */ }
+    CUENTA_ROLES.sesion.olvidar();   // los roles eran de esa cuenta (ADR 097)
     meta = { version: 0, pendiente: true }; guardarMeta();   // la partida de este aparato sigue aquí; irá a una cuenta de invitado nueva
   }
   async function borrarCuenta() {   // la cuenta y todas sus partidas en la nube; lo de este aparato no se toca
     await pedir('/rest/v1/rpc/borrar_mi_cuenta', { method: 'POST', body: '{}' }, await token());
     try { localStorage.removeItem(SESION); } catch (e) { /* sin almacenamiento */ }
+    CUENTA_ROLES.sesion.olvidar();   // los roles eran de esa cuenta (ADR 097)
     meta = { version: 0, pendiente: true }; guardarMeta();
   }
 
@@ -230,7 +232,8 @@ const CUENTA = (() => {
   // PERFIL GLOBAL (servidor/36-perfil.sql): el nombre único de la cuenta para todos los juegos. Sin cuenta, sin red o sin esa función → null / no hace nada.
   const perfil = async () => { if (!activa || sesion().invitado !== false) return null; try { return await rpc('perfil_leer', {}); } catch (e) { return null; } };
   const ponNombre = nombre => rpc('perfil_nombre', { p_nombre: nombre });
-  return { activa, cambio, sincronizar, rpc, funcion, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
+  return { activa, cambio, sincronizar, rpc, funcion, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, get roles() { return CUENTA_ROLES.sesion; },   // los roles de la cuenta (ADR 097)
+    guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
     get estado() { return estado; }, get version() { return meta.version; }, get pendiente() { return meta.pendiente; },
     get invitado() { return sesion().invitado !== false; }, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; }, get foto() { return sesion().foto || ''; } };
 })();

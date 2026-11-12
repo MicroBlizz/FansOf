@@ -17,6 +17,7 @@
 // y las monta cuando han llegado, antes de que la página siga. Cada pieza hace una cosa y se prueba sola (tests/core/nucleo-*.test.mjs):
 //   listas.js           qué archivos de core carga cada tipo de juego (COMUN, LIGERO), los diccionarios y las hojas comunes
 //   entorno.js          la alfa, la app de Android y el modo desarrollo
+//   panel-dev.js        cuándo sale el panel DEV: siempre en la alfa y en desarrollo, y con el rol «alfa» (CUENTA.roles) en la release y la app (ADR 096)
 //   idioma-eleccion.js  qué idioma se usa, cambiarlo y el velo hasta traducir
 //   cargador.js         pedir hojas, fuentes y código por la puerta de carga y contarlos para la splash
 //   sin-conexion.js     instalar como app y jugar sin conexión
@@ -41,13 +42,14 @@ const NUCLEO = (() => {
   // Detrás, la puerta de carga (PUERTA_CARGA, ADR 093): las hojas no bloquean el pintado y el código del juego espera a que hayan llegado ellas y la letra.
   // Y luego las piezas, que corren antes de que la página siga: el montaje (el último script escrito) las junta.
   const PRIMEROS = ['js/sistema/splash-reglas.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js', 'js/sistema/puerta.js'];
-  const PIEZAS = ['js/nucleo/listas.js', 'js/nucleo/cargador.js', 'js/nucleo/sin-conexion.js'];
+  const PIEZAS = ['js/nucleo/listas.js', 'js/nucleo/cargador.js', 'js/nucleo/sin-conexion.js', 'js/nucleo/panel-dev.js'];
   const escritos = PRIMEROS.concat(PIEZAS).map(f => conV(CORE + f));
   for (const src of escritos) document.write('<script src="' + src + '"><\/script>');
   document.write('<script>NUCLEO_PIEZAS.montar()<\/script>');
   // Si splash.js no hubiera llegado (bloqueado o sin red), el juego carga igual, sin splash: por eso todo pasa por aSplash.
   const aSplash = (orden, ...datos) => { if (typeof SPLASH !== 'undefined') SPLASH[orden](...datos); };
 
+  const PANEL = 'js/sistema/desarrollo.js';   // el panel DEV (ADR 096)
   const nucleo = {};   // lo que se devuelve (NUCLEO): se rellena al montar; el idioma puede cambiar al registrar el juego
   let p = null, en = null, idioma = null;   // las piezas ya montadas, el entorno y la elección del idioma
   // el almacenamiento puede estar bloqueado (leer localStorage ya falla): las piezas siguen sin él
@@ -69,7 +71,7 @@ const NUCLEO = (() => {
   }
   function montar() {
     if (p) return p;
-    montarPrimero(); exige('listas', 'cargador', 'sinConexion');
+    montarPrimero(); exige('listas', 'cargador', 'sinConexion', 'panelDev');
     const P = NUCLEO_PIEZAS;
     p = {
       listas: P.listas, entorno: en,
@@ -77,6 +79,11 @@ const NUCLEO = (() => {
       carga: P.cargador({ documento: document, puerta: PUERTA_CARGA, aSplash, conV, estilosComunes: P.listas.ESTILOS_COMUNES, consola: console }),
       sinConexion: P.sinConexion({ ventana: window, ubicacion: location, documento: document, navegador: navigator, nativa: en.nativa, alfa: en.alfa }),
     };
+    p.panel = P.panelDev({
+      entorno: en, roles: () => (typeof CUENTA === 'undefined' ? null : CUENTA.roles),   // CUENTA llega después de montar: se pregunta en el momento
+      alCargar: fn => PUERTA_CARGA.alCargar(fn), carga: enCola => (enCola ? p.carga.codigo(CORE + PANEL, true) : p.carga.codigoTardio(CORE + PANEL)),
+      recarga: () => location.reload(), espera: setTimeout, consola: console,
+    });
     p.carga.pedido.push(...ANTES, ...escritos);
     nucleo.carga = p.carga.carga;
     return p;
@@ -105,7 +112,7 @@ const NUCLEO = (() => {
     codigo(CORE + 'js/sistema/analitica.js', true);   // estadísticas de visitas, solo si el jugador acepta (opcional: un bloqueador no para el juego)
     diccionarios(dic);
     antes.forEach(f => codigo(f)); (ligero ? p.listas.LIGERO : p.listas.COMUN).forEach(f => codigo(CORE + f)); despues.forEach(f => codigo(f));
-    if (p.entorno.desarrollo || p.entorno.alfa) codigo(CORE + 'js/sistema/desarrollo.js', true);   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
+    p.panel.programa();   // el panel DEV, el último: en la alfa y en desarrollo entre lo pedido; con el rol «alfa», ya con la página cargada
     p.carga.todoPedido();
     if (p.idioma.idioma !== 'es') veloDeIdioma();
     p.sinConexion({ nucleoSrc: yo.src, core: CORE, pedido: p.carga.pedido, conV });
@@ -126,6 +133,7 @@ const NUCLEO = (() => {
     version, nativa: false, alfa: false, idioma: 'es', idiomas: ['es', 'en'], desarrollo: false, carga: null,   // los pone el montaje
     elegirIdioma: i => montar().idioma.elegir(i),
     estilos: (...h) => montar().carga.estilos(...h), fuentes: (...h) => montar().carga.fuentes(...h),
+    panelDev: () => !!(p && p.panel.sale()),   // ¿sale el panel DEV? Se pregunta en el momento: el rol llega de fondo
     juego, idiomaSolo, listo, alCargar, alEstilos: fn => PUERTA_CARGA.alAbrir(fn),
   });
   return nucleo;

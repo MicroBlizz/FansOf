@@ -1,6 +1,7 @@
 // Fans Of · DESARROLLO: un botón «DEV» con utilidades para quien trabaja en el juego. Existe en la alfa y en modo desarrollo (NUCLEO.desarrollo:
-// localhost, o ?dev=1 en la dirección; ?dev=0 lo apaga). En la web publicada nunca se carga. Es común: los dos juegos lo tienen igual.
-// Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja) } y pinta lo suyo dentro de `caja`.
+// localhost, o ?dev=1 en la dirección; ?dev=0 lo apaga) y, en la web publicada y la app, solo con el rol «alfa» (ADR 096): ahí sin los flags ni el
+// modo desarrollo, que no actúan fuera de él. Es común: los dos juegos lo tienen igual.
+// Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja), soloDesarrollo? } y pinta lo suyo dentro de `caja`.
 // Las de un solo juego van en ese juego: que defina UTILIDADES_JUEGO (una lista igual) y salen aquí, detrás de «Este juego».
 'use strict';
 (() => {
@@ -27,6 +28,7 @@
       const filas = [['Juego', (typeof AJUSTES !== 'undefined' && AJUSTES.nombre) || document.title], ['Versión', typeof VERSION !== 'undefined' ? VERSION : '?'], ['Idioma', NUCLEO.idioma],
         ['Navegador', (navigator.languages || [navigator.language]).join(', ')], ['Partida guardada en', (typeof AJUSTES !== 'undefined' && AJUSTES.guardado) || '?']];
       c.append(el('table', {}, ...filas.map(([a, b]) => el('tr', {}, el('td', { textContent: a }), el('td', { textContent: b })))));
+      c.append(el('div', { className: 'fila' }, boton('Copiar', () => copiar(filas.map(([a, b]) => a + ': ' + b).join('\n')))));
     } },
     { titulo: 'Idioma', pinta(c) {
       const fila = el('div', { className: 'fila' });
@@ -78,7 +80,7 @@
         }),
         boton('Recargar', () => location.reload())));
     } },
-    { titulo: 'Flags de desarrollo', pinta(c) {
+    { titulo: 'Flags de desarrollo', soloDesarrollo: true, pinta(c) {
       pintaFlags = () => {
         c.textContent = '';
         const nombres = Object.keys(NUCLEO.flagsDev);
@@ -97,12 +99,12 @@
       const pintaB = () => { b.textContent = fpsVisibles() ? 'Ocultar los fps' : 'Mostrar los fps'; };
       pintaB(); c.append(el('div', { className: 'fila' }, b));
     } },
-    { titulo: 'Modo desarrollo', pinta(c) {
+    { titulo: 'Modo desarrollo', soloDesarrollo: true, pinta(c) {
       c.append(el('p', { textContent: 'Se activa solo en localhost, o con ?dev=1 en la dirección (se recuerda en este navegador).' }));
       c.append(el('div', { className: 'fila' }, boton('Apagarlo en este navegador', () => { try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ } location.reload(); })));
     } },
   ];
-  if (typeof UTILIDADES_JUEGO !== 'undefined') UTILIDADES.splice(1, 0, ...UTILIDADES_JUEGO);   // las propias del juego (ver arriba)
+  if (typeof UTILIDADES_JUEGO !== 'undefined') UTILIDADES.splice(1, 0, ...UTILIDADES_JUEGO.map(u => Object.assign({ soloDesarrollo: true }, u)));   // las propias del juego (ver arriba): escriben su partida, así que solo salen donde hay modo desarrollo o alfa; una puede salir en todas con soloDesarrollo: false
 
   const estilo = el('style', { textContent: `
     #dev-boton { position: fixed; left: 6px; bottom: 6px; z-index: 99998; font: 800 11px/1 system-ui, sans-serif; letter-spacing: 1px; padding: 6px 8px; border-radius: 8px; border: 2px solid #20102c; background: #ffcb3d; color: #20102c; opacity: 0.55; cursor: pointer; }
@@ -113,7 +115,7 @@
     #dev-panel h2 { margin: 0 0 8px; font-size: 18px; color: #ffcb3d; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     #dev-panel h3 { margin: 14px 0 6px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #ffcb3d; }
     #dev-panel p { margin: 4px 0; color: #cdb9ea; }
-    #dev-panel table { border-collapse: collapse; } #dev-panel td { padding: 2px 10px 2px 0; vertical-align: top; } #dev-panel td:first-child { color: #cdb9ea; }
+    #dev-panel table { border-collapse: collapse; user-select: text; -webkit-user-select: text; } #dev-panel td { padding: 2px 10px 2px 0; vertical-align: top; } #dev-panel td:first-child { color: #cdb9ea; }
     #dev-panel .fila { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
     #dev-panel button { font: 700 13px system-ui, sans-serif; padding: 7px 10px; border-radius: 8px; border: 2px solid #20102c; background: #cdb9ea; color: #20102c; cursor: pointer; }
     #dev-panel button.peligro { background: #ff8a8a; }
@@ -125,7 +127,9 @@
   const caja = el('div', { className: 'caja' });
   const cierra = () => { panel.hidden = true; };
   caja.append(el('h2', {}, 'Desarrollo', boton('CERRAR', cierra)), el('div', { id: 'dev-aviso' }));
-  for (const u of UTILIDADES) { caja.append(el('h3', { textContent: u.titulo })); const c = el('div'); try { u.pinta(c); } catch (e) { c.textContent = 'Error: ' + e.message; } caja.append(c); }
+  // con el rol «alfa» en la release (sin modo desarrollo ni alfa) se quitan las que solo actúan en el modo desarrollo
+  const enRelease = !NUCLEO.desarrollo && !NUCLEO.alfa;
+  for (const u of UTILIDADES.filter(x => !(enRelease && x.soloDesarrollo))) { caja.append(el('h3', { textContent: u.titulo })); const c = el('div'); try { u.pinta(c); } catch (e) { c.textContent = 'Error: ' + e.message; } caja.append(c); }
   panel.append(caja); panel.addEventListener('click', e => { if (e.target === panel) cierra(); });
   const abre = el('button', { id: 'dev-boton', textContent: 'DEV', title: 'Utilidades de desarrollo', onclick: () => { panel.hidden = !panel.hidden; if (!panel.hidden) pintaFlags(); } });
   abre.setAttribute('translate', 'no');

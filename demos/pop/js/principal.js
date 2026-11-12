@@ -23,9 +23,11 @@ PP_CV.addEventListener('pointerdown', e => {
   ppCargaSonidos();
   const [lx, ly] = ppLogico(e);
   if (PP_PANT.actual === 'titulo') { ppPortadaToque(lx, ly); return; }
+  if (ppCortActiva()) { ppCortTermina(); return; }   // un toque salta la cortinilla de duelo
   if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }
   if (PP_PANT.actual === 'memoria' && PP_MEM) { ppMemToque(ppCeldaEn(ppGeom(PP_MEM.T.n), lx, ly)); return; }
   if (!PP_P) return;
+  if (ppCortActiva()) { ppCortTermina(); return; }   // un toque salta la cortinilla del jefe
   if (PP_PANT.actual === 'sala' && PP_P.T) {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
     if (i >= 0) ppToque(i);
@@ -47,9 +49,9 @@ function ppFotograma(ahora) {
   ppMusicaBucle();
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
-  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaSala(c, t); }
+  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
-  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaDuelo(c, t); }
+  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
   else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
   else ppPintaPortada(c, t, dt);
 }
@@ -68,7 +70,7 @@ function ppArranque() {
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)
   $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevaMemoria(); };
-  $pp('#pp-listo').onclick = () => { play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
+  $pp('#pp-listo').onclick = () => { if (ppCortActiva()) return; play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-tienda').onclick = () => { ppCargaSonidos(); play('select'); ppTienda(null, 'ofertas'); };

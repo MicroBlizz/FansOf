@@ -36,11 +36,18 @@
       if (!puerta.abierta) { const l = documento.createElement('link'); l.rel = 'preload'; l.as = 'script'; l.href = s.src; documento.head.appendChild(l); }
       puerta.alAbrir(() => documento.body.appendChild(s));
     }
+    // Un archivo de código que se pide cuando la página ya ha cargado (el panel DEV de quien tiene el rol «alfa», ADR 096): se pone en la página sin
+    // pasar por la puerta ni contarse para la splash, que ya se ha ido. Opcional siempre: si no llega, solo se apunta en la consola.
+    function codigoTardio(src) {
+      const s = documento.createElement('script'); s.src = conV(src);
+      s.onerror = () => consola.error('No se ha podido cargar ' + src);
+      documento.body.appendChild(s);
+    }
     // ya se ha pedido todo el código: la barra de la splash ya puede contarlo, la puerta puede abrirse (cuando lleguen las hojas)
     // y la carga puede darse por acabada
     function todoPedido() { aSplash('todoPedido'); puerta.avisa(avisosPuerta); puerta.todoPedido(); }
 
-    return { pedido, carga, estilos, fuentes, codigo, todoPedido };
+    return { pedido, carga, estilos, fuentes, codigo, codigoTardio, todoPedido };
   }
 
   if (typeof NUCLEO_PIEZAS !== 'undefined') NUCLEO_PIEZAS.cargador = cargador;

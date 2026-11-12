@@ -6,6 +6,7 @@ const PP_PANT = { actual: 'titulo', pausa: false };
 const $pp = s => document.querySelector(s);
 function ppIrA(p) {
   PP_PANT.actual = p;
+  if (p !== 'sala' && p !== 'duelo') ppCortCancela();   // salir del nivel durante la cortinilla de un jefe la apaga
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
   $pp('#pp-titulo').hidden = p !== 'titulo';
   if (p !== 'sala' && p !== 'duelo' && p !== 'memoria') ppLolaCierra();
@@ -260,7 +261,7 @@ function ppTutorial(k) {
   if (!PP_TUTO[k] || SAVE.tuto[k]) return;
   SAVE.tuto[k] = true; ppGuarda();
   PP_LOLA.cola.push(...PP_TUTO[k]);
-  if (!PP_LOLA.actual) ppLolaSiguiente();
+  if (!PP_LOLA.actual && !ppCortActiva()) ppLolaSiguiente();   // con la cortinilla del jefe puesta, Lola espera a que acabe (ppEmpiezaNivel)
 }
 function ppLolaSiguiente() {
   const caja = $pp('#pp-lola'), f = PP_LOLA.cola.shift();

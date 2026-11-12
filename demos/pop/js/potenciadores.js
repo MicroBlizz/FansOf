@@ -38,7 +38,7 @@ function ppBarraAyudas() {
   }
 }
 function ppPulsaAyuda(k) {
-  const T = PP_P && PP_P.T; if (!T || T.hecho) return;
+  const T = PP_P && PP_P.T; if (!T || T.hecho || ppCortActiva()) return;   // con la cortinilla del jefe puesta, las ayudas esperan
   if (k === 'martillo' || k === 'bomba') {
     if (T.parado) return;
     PP_AYUDA.modo = PP_AYUDA.modo === k ? null : k;   // se elige la burbuja con el siguiente toque (otra pulsación, cancela)

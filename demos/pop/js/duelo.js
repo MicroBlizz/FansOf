@@ -15,8 +15,14 @@ function ppNuevoDuelo() {
   }
   const T = ppNuevoTablero({ g: 0, lado: n, mask, need, opt: [], limite: 99, amigos: 0, jefe: true }, { equipo: [] });
   PP_DUELO = { T, turno: Math.random() < 0.5 ? 'yo' : 'ceo', fila: null, esta: [], fin: null };
+  ppCortEmpieza({ nim: { rival: 'ceo' } }, ppDueloEmpieza);   // la cortinilla de duelo (ADR 098); al acabar o saltarla, Lola y el turno del CEO
   ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton();
+}
+// lo que pasa al empezar de verdad el duelo contra el CEO de la portada (tras su cortinilla)
+function ppDueloEmpieza() {
+  if (!PP_DUELO || PP_PANT.actual !== 'duelo') return;
   ppTutorial('duelo'); ppTutorial('trucoNim');
+  if (!PP_LOLA.actual && PP_LOLA.cola.length) ppLolaSiguiente();
   if (PP_DUELO.turno === 'ceo') setTimeout(ppTurnoCeo, 1100);
 }
 // cuántas burbujas levantadas quedan en cada fila
@@ -55,6 +61,7 @@ function ppNimJugada(filas, fallo) {
 }
 function ppTurnoCeo() {
   const D = PP_DUELO; if (!D || D.fin || PP_PANT.actual !== 'duelo') return;
+  if (ppCortActiva()) { setTimeout(ppTurnoCeo, 120); return; }
   if (PP_PANT.pausa) { setTimeout(ppTurnoCeo, 500); return; }
   const T = D.T, [fila, cuantas] = ppNimJugada(ppFilasDuelo(T), SAVE.duelo.fallo);
   const sitios = []; for (let x = 0; x < T.n; x++) { const i = fila * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }

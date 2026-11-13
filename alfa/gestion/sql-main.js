@@ -57,5 +57,13 @@ const GESTION_SQL_MAIN = (() => {
     }
     return { propuestos, aviso: saltados.length ? 'En main hay SQL sin la envoltura del registro y no se proponen: ' + saltados.join(', ') : '' };
   }
-  return { sincronizar, candidatos, nota, huella, toca, envuelto };
+  // Justo antes de aprobar: ¿ese fichero sigue en main con esa misma huella? Devuelve '' si sí, o el motivo en llano. Sin poder leer main no se aprueba.
+  async function comprobar(nombre, h) {
+    if (!token()) return 'Para aprobar hace falta el token de GitHub (Cola → Configuración): se comprueba que el SQL sigue igual en main.';
+    let texto;
+    try { texto = await pedir('/' + nombre + '?ref=main', true); }
+    catch (e) { return /github 404/.test(String(e.message)) ? `${nombre} ya no está en main: no se aprueba. Pulsa «Refrescar».` : 'No pude comprobar el fichero en main y no se aprueba: ' + textoError(e); }
+    return (await huella(texto)) === h ? '' : `${nombre} ha cambiado en main desde que se propuso: no se aprueba. Pulsa «Refrescar» y vuelve a leerlo.`;
+  }
+  return { comprobar, sincronizar, candidatos, nota, huella, toca, envuelto };
 })();

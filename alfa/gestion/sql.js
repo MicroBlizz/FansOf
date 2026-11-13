@@ -1,6 +1,7 @@
 // Fans Of · /gestion → Global → SQL (ADR 110): los SQL del servidor que esperan APROBACIÓN. Un hilo de Claude propone el fichero; aquí se lee entero, con su nota
 // en llano y su huella, y Arkioner o Pepins lo aprueban o lo rechazan. Aprobar no lo ejecuta desde el navegador: lo deja marcado y el servicio de Yoshi
 // (herramientas/sql/aplica.sh) lo aplica en un minuto, con copia previa si borra algo, y deja aquí el resultado. Aprobar pide dos toques: el segundo confirma.
+// Al aprobar se vuelve a leer ese fichero de main: si ya no está o cambió, no se aprueba.
 // Al abrir (y con «Refrescar») mira también los SQL nuevos de main y los deja en la lista (sql-main.js): lo que se aprueba es el fichero de main.
 // Datos (servidor/130-sql-pendiente.sql): gestion_sql_pendientes, gestion_sql_aprobar (con la huella del texto leído) y gestion_sql_rechazar.
 // Usa lo de gestion/index.html: rpc(), leerToken(), esc(), fecha(), textoError() y $(); GESTION_NAV (nav.js).
@@ -63,6 +64,10 @@ const GESTION_SQL = (() => {
     if (sql === 'refrescar') { armado = null; b.disabled = true; b.textContent = 'Leyendo…'; await cargar(); return; }
     if (sql === 'aprobar' && armado !== fichero) { armado = fichero; b.textContent = 'Seguro: aplicar en producción'; return; }
     armado = null; b.disabled = true;
+    if (sql === 'aprobar') {   // lo que se aprueba tiene que ser, ahora mismo, el fichero de main
+      const pega = await GESTION_SQL_MAIN.comprobar(fichero, huella);
+      if (pega) { await cargar(); if ($('sql-aviso')) $('sql-aviso').textContent = pega; return; }
+    }
     const r = sql === 'aprobar' ? await rpc('gestion_sql_aprobar', { p_token: leerToken(), p_fichero: fichero, p_huella: huella })
       : await rpc('gestion_sql_rechazar', { p_token: leerToken(), p_fichero: fichero, p_motivo: null });
     await cargar();

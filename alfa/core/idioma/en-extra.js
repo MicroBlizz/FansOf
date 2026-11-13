@@ -9,6 +9,7 @@ IDIOMA.add({
   "Quien gana, no paga: el caos primordial de esta partida vuelve a ti.": "Winners don't pay: this match's primordial chaos comes back to you.",
   "Anuncio": "Ad",
   "PROTOTIPO": "PROTOTYPE",
+  "Esto es un prototipo: toca para votarlo en su ficha": "This is a prototype: tap to vote for it on its page",
   "DEMO": "DEMO",
   "BOCETO": "SKETCH",
   "PRUEBA": "TEST BUILD",

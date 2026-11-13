@@ -1,8 +1,8 @@
 {
- "build": 1167,
- "hash": "0bb51c8",
- "fecha": "2026-11-13T05:48:49Z",
- "mensaje": "/gestion: el contador de solicitudes de beta no depende de qué carga antes (revisión, #47 N6)",
+ "build": 1168,
+ "hash": "5ab2eeb",
+ "fecha": "2026-11-13T09:30:00Z",
+ "mensaje": "Feedback con topes y oferta de beta tester, y etiqueta «PROTOTIPO» en cada juego (ADR 106, #47 N5 y N3)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

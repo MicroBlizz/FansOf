@@ -1,21 +1,37 @@
 // Fans Of · PROMO de nuestros juegos: mientras no haya anuncios pagados, el anuncio de prueba enseña la miniatura de OTRO juego activo
 // (al azar, nunca el actual) y al pulsarla se abre su ficha en la biblioteca de la web. Cada juego solo llama a PROMO.html() y PROMO.enlaza(raiz).
-// La lista es la de los juegos publicados con tarjeta en la biblioteca (sin los «en pausa» ni las demos): uno nuevo se apunta aquí.
+// Salen todos los juegos vivos con tarjeta en la biblioteca (sin el Archivo), y más a menudo los más votados: la regla está en promo-reglas.js (ADR 109).
 'use strict';
 const PROMO = (() => {
-  // [id, nombre, capturas de la ficha, tipo de la biblioteca]: sin tipo (juego final) no lleva marca; si uno cambia de tipo en index.html, se cambia aquí
+  // [id, nombre, capturas de la ficha, ¿de «Nuestros favoritos»?]: todo lo vivo con tarjeta en la portada, en su orden (sin el Archivo). Al añadir,
+  // archivar o cambiar las capturas de una tarjeta se toca aquí: tests/core/promo.test.mjs falla si no coincide con web/index.html (ADR 109).
   const JUEGOS = [
-    ['rumble', 'Fans Of Rumble', 2], ['td', 'Fans Of TD', 2], ['rouflage', 'Fans Of Rouflage', 2], ['karts', 'Fans Of Karts', 3], ['ratkov', 'Fans Of Ratkov', 2],
-    ['jump', 'Fans Of Jump', 2], ['crush', 'Fans Of Crush', 2, 'PROTOTIPO'], ['survivors', 'Fans Of Survivors', 2, 'PROTOTIPO'],
-    ['tacticas', 'Fans Of Rumble: Tácticas', 2, 'PROTOTIPO'], ['nova', 'Fans Of Nova', 5, 'PROTOTIPO'], ['decks', 'Fans Of Decks', 2, 'PROTOTIPO'],
-    ['roguelite', 'Fans Of Roguelite', 2, 'PROTOTIPO'], ['dungeons', 'Fans Of Dungeons', 2, 'PROTOTIPO'], ['recruit', 'Fans Of Recruit', 3, 'PROTOTIPO'],
-    ['beams', 'Fans Of Beams', 3, 'DEMO'], ['terminal-shock', 'Terminal Shock', 2, 'DEMO'],
-    ['rumble-3d', 'Fans Of Rumble 3D', 2, 'BOCETO'], ['tactics-advance', 'Fans Of Tactics Advance', 2, 'PRUEBA'],
-  ].map(([id, nombre, caps, tipo]) => ({ id, nombre, caps, tipo }));
+    ['rumble', 'Fans Of Rumble', 2], ['td', 'Fans Of TD', 2], ['rouflage', 'Fans Of Rouflage', 2, true], ['karts', 'Fans Of Karts', 3, true],
+    ['ratkov', 'Fans Of Ratkov', 2], ['jump', 'Fans Of Jump', 2], ['crush', 'Fans Of Crush', 2], ['survivors', 'Fans Of Survivors', 2],
+    ['tacticas', 'Fans Of Rumble: Tácticas', 2], ['roguelite', 'Fans Of Roguelite', 2], ['dungeons', 'Fans Of Dungeons', 2],
+    ['recruit', 'Fans Of Recruit', 3], ['nova', 'Fans Of Nova', 5], ['shelter', 'Fans Of Shelter', 2], ['soccer', 'Fans Of Soccer', 2],
+    ['basement', 'Fans Of Basement', 2], ['zombies', 'Fans Of Zombies', 2], ['air', 'Fans Of Air', 2], ['auto', 'Fans Of Auto', 2],
+    ['asalto', 'Fans Of Asalto', 2], ['goose', 'Fans Of Goose', 2], ['vikings', 'Fans Of Vikings', 2], ['merge', 'Fans Of Merge', 2],
+    ['swipe', 'Fans Of Swipe', 2], ['panic', 'Fans Of Panic', 2], ['pop', 'Fans Of Pop', 2], ['snakes', 'Fans Of Snakes', 3],
+    ['beams', 'Fans Of Beams', 3], ['decks', 'Fans Of Decks', 2], ['boom', 'Fans Of Boom', 2], ['cooking', 'Fans Of Cooking', 2],
+    ['taxi', 'Fans Of Taxi', 2], ['pets', 'Fans Of Pets', 2], ['chef', 'Fans Of Chef', 2], ['rumble-v2', 'Fans Of Rumble V2', 2],
+    ['rumble-3d', 'Fans Of Rumble 3D', 2], ['tactics-advance', 'Fans Of Tactics Advance', 2], ['terminal-shock', 'Terminal Shock', 2],
+  ].map(([id, nombre, caps, favorito]) => ({ id, nombre, caps, tipo: favorito ? '' : 'PROTOTIPO' }));
+  // los que tienen cartel propio en biblioteca/anuncios/<id>.jpg (el anuncio empieza por él); los demás empiezan por su primera captura
+  const CARTEL = new Set(['beams', 'crush', 'decks', 'dungeons', 'jump', 'karts', 'nova', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble-3d', 'rumble', 'survivors',
+    'tacticas', 'tactics-advance', 'td', 'terminal-shock']);
   const nativa = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
   // la biblioteca está dos carpetas por encima del juego (también en /alfa/); en la app de Android, la web de verdad
   const base = () => nativa() ? 'https://fansof.games/' : '../../';
-  const elige = () => { const l = JUEGOS.filter(j => j.id !== AJUSTES.id); return l[Math.floor(Math.random() * l.length)] || null; };
+  // los votos públicos de la portada (solo números): se piden una vez por sesión, la primera vez que hace falta; sin ellos todos pesan igual
+  let votos = null, pedidos = false;
+  const pideVotos = () => {
+    if (pedidos || typeof CUENTA === 'undefined' || !CUENTA.activa) return;
+    pedidos = true;
+    // sin red o con una respuesta que no es el mapa { id: { puntos, ultimo } }: al azar sin pesos, y se reintenta en el siguiente anuncio
+    CUENTA.rpc('votos_destacados', {}).then(d => { if (d && typeof d === 'object' && !Array.isArray(d)) votos = d; else pedidos = false; }).catch(() => { pedidos = false; });
+  };
+  const elige = () => { pideVotos(); const id = PROMO_REGLAS.elige(JUEGOS.map(j => j.id), votos, AJUSTES.id, Math.random()); return JUEGOS.find(j => j.id === id) || null; };
   const estilo = () => {
     if (document.getElementById('promo-css')) return;
     const s = document.createElement('style'); s.id = 'promo-css';
@@ -41,7 +57,7 @@ const PROMO = (() => {
   const html = () => {
     const j = elige(); if (!j) return '';
     estilo();
-    const r = `${base()}biblioteca/`, fotos = [`${r}anuncios/${j.id}.jpg`];
+    const r = `${base()}biblioteca/`, fotos = CARTEL.has(j.id) ? [`${r}anuncios/${j.id}.jpg`] : [];
     for (let i = 1; i <= j.caps; i++) fotos.push(`${r}capturas/${j.id}-${i}.jpg`);
     const sl = fotos.map((f, i) => `<div class="promo-sl${i ? '' : ' on'}" style="background-image:url('${f}')"><img src="${f}" alt="" onerror="this.parentNode.remove()"></div>`).join('');
     return `<a class="promo-ad" data-promo="${j.id}" href="${base()}#juego-${j.id}" target="_blank" rel="noopener"><div class="promo-pase">${sl}</div>`
@@ -68,5 +84,6 @@ const PROMO = (() => {
       if (Br && Br.open) Br.open({ url: a.href }); else window.open(a.href, '_system');
     };
   };
-  return { JUEGOS, elige, html, enlaza };
+  if (typeof hook === 'function') hook('cuenta', pideVotos);   // con la sesión lista, para que ya el primer anuncio salga con sus pesos
+  return { JUEGOS, CARTEL, elige, html, enlaza };
 })();

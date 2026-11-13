@@ -1,8 +1,8 @@
 {
- "build": 1169,
- "hash": "65a620c",
- "fecha": "2026-11-13T12:59:03Z",
- "mensaje": "publico_excluye.py: fuera las reglas muertas que quitaban tarjetas de la release (Nova, Beams, Boom, Cooking), con test (#47)",
+ "build": 1170,
+ "hash": "8a33084",
+ "fecha": "2026-11-13T14:16:26Z",
+ "mensaje": "Nuestro anuncio enseña todos los juegos vivos y más a menudo los más votados, por escalones 3 / 2 / 1 (ADR 109, tarea #54)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

@@ -17,9 +17,10 @@ const PROMO = (() => {
     ['taxi', 'Fans Of Taxi', 2], ['pets', 'Fans Of Pets', 2], ['chef', 'Fans Of Chef', 2], ['rumble-v2', 'Fans Of Rumble V2', 2],
     ['rumble-3d', 'Fans Of Rumble 3D', 2], ['tactics-advance', 'Fans Of Tactics Advance', 2], ['terminal-shock', 'Terminal Shock', 2],
   ].map(([id, nombre, caps, favorito]) => ({ id, nombre, caps, tipo: favorito ? '' : 'PROTOTIPO' }));
-  // los que tienen cartel propio en biblioteca/anuncios/<id>.jpg (el anuncio empieza por él); los demás empiezan por su primera captura
-  const CARTEL = new Set(['beams', 'crush', 'decks', 'dungeons', 'jump', 'karts', 'nova', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble-3d', 'rumble', 'survivors',
-    'tacticas', 'tactics-advance', 'td', 'terminal-shock']);
+  // los que tienen cartel propio en biblioteca/anuncios/<id>.jpg (el anuncio empieza por él); uno sin cartel empieza por su primera captura (hoy lo tienen todos)
+  const CARTEL = new Set(['air', 'asalto', 'auto', 'basement', 'beams', 'boom', 'chef', 'cooking', 'crush', 'decks', 'dungeons', 'goose', 'jump', 'karts', 'merge',
+    'nova', 'panic', 'pets', 'pop', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble', 'rumble-3d', 'rumble-v2', 'shelter', 'snakes', 'soccer', 'survivors', 'swipe',
+    'tacticas', 'tactics-advance', 'taxi', 'td', 'terminal-shock', 'vikings', 'zombies']);
   const nativa = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
   // la biblioteca está dos carpetas por encima del juego (también en /alfa/); en la app de Android, la web de verdad
   const base = () => nativa() ? 'https://fansof.games/' : '../../';

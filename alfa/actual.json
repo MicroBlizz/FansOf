@@ -1,8 +1,8 @@
 {
- "build": 1171,
- "hash": "599ffb2",
- "fecha": "2026-11-13T18:07:54Z",
- "mensaje": "/gestion → SQL: pantalla para aprobar o rechazar los SQL del servidor, con tests (ADR 110, #56 N6)",
+ "build": 1172,
+ "hash": "2e54a0a",
+ "fecha": "2026-11-13T18:25:05Z",
+ "mensaje": "Cartel de anuncio para los 20 juegos que no tenían: los 38 del anuncio propio empiezan por su cartel (tarea #57, ADR 109)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

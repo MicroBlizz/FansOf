@@ -1,6 +1,7 @@
 // Fans Of Pets · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.13', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio."], joke: ["Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse."] },
   { v: '0.2.12', real: ["<b>MEJORAS POR DENTRO</b>: el panel de pruebas se abre según el rol de tu cuenta y se puede copiar la versión y el idioma del juego."], joke: ["Microblizz ha repartido llaves del taller por rol y Phony ha pedido la del cuarto de las escobas."] },
   { v: '0.2.11', real: ["<b>CARGA MÁS LIMPIA</b>: la pantalla de carga sale al instante, las letras las servimos nosotros (ya no se pide nada a Google) y, si una pieza no llega, el aviso dice cuál."], joke: ["Microblizz ha despedido a Google de las letras y Phony ha preguntado si ahora las escribimos a mano."] },
   { v: '0.2.10', real: ["<b>PANTALLA DE CARGA</b>: el juego se tapa con una pantalla de carga hasta que todo ha cargado, para que no veas nada a medias."], joke: ["Microblizz ha puesto una cortina para que no veas cómo se monta el escenario y Phony ha pedido entrar detrás."] },

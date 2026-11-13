@@ -4,24 +4,20 @@
 //   · al tocar una tarjeta se abre su FICHA: capturas grandes, JUGAR, versión, de qué va, lo último y todas sus novedades.
 // Lo que cada tarjeta necesita se escribe en su <section> de index.html:
 //   data-tipo="Prototipo"  data-etiquetas="Acción · Hordas"  data-capturas="survivors-1.jpg survivors-2.jpg"  (y data-horizontal si las capturas son apaisadas; data-alfa si la tarjeta solo va en la alfa)
-//   Cada tarjeta va bajo su grupo de <section id="biblioteca">: JUEGOS (data-tipo="Juego"), PROTOTIPOS ("Prototipo") o DEMOS ("Demo", "Boceto", "Prueba").
-//   Un prototipo parado va en <section id="en-pausa"> con data-tipo="En pausa" y data-pausa="por qué está parado" (su inglés en biblioteca/en.js).
+//   Solo hay tres tipos: "Juego", "Prototipo" (demos, bocetos y pruebas incluidos) y "En pausa" (con data-pausa="por qué está parado", su inglés en biblioteca/en.js).
+//   Da igual en qué grupo de index.html se escriba la tarjeta: biblioteca/agrupar.js la coloca según su tipo y si se puede jugar (ADR 102).
 // Las capturas van en biblioteca/capturas/ (partidas de verdad: sin regalo diario, ni novedades, ni menús de opciones).
 // Usa lo que ya tiene la página: esc(), t(), newsLista(), newsHtml(), nuevos(), cerrarNovedades() y la lista ENTRADAS que llena la carga de novedades.
 'use strict';
 const CAPTURAS = 'biblioteca/capturas/';
 document.querySelectorAll('section.game[data-alfa]').forEach(s => { if (!NUCLEO.alfa) s.remove(); });   // data-alfa: tarjeta que solo existe en la copia de pruebas
 const TARJETAS = [...document.querySelectorAll('section.game')];
-// PRÓXIMAMENTE: en la release solo se juegan los juegos abiertos (core/js/proximamente.js). El resto conserva su tarjeta y su ficha, pero sin JUGAR, y pasa a su propia sección.
+// PRÓXIMAMENTE: en la release solo se juegan los juegos abiertos (core/js/proximamente.js). El resto conserva su tarjeta y su ficha, pero sin JUGAR.
+// A qué grupo va cada tarjeta lo decide biblioteca/grupos.js y lo coloca biblioteca/agrupar.js (ADR 102).
 const idDe = s => (s.querySelector('a.play').getAttribute('href').match(/(?:games|demos)\/([^/]+)/) || [])[1];
-const cerrados = TARJETAS.filter(s => !PROXIMAMENTE.jugable(idDe(s)));
-if (cerrados.length) {
-  const sec = document.createElement('div'); sec.className = 'subsec'; sec.id = 'proximamente';
-  sec.innerHTML = `<h3 class="grupo ol">${esc(t('PRÓXIMAMENTE'))}</h3><p class="note">${esc(t('Estos juegos todavía no están abiertos: por ahora solo se puede jugar a Fans Of Rouflage.'))}</p><div class="rejilla"></div>`;
-  for (const c of cerrados) { c.dataset.proximamente = '1'; sec.querySelector('.rejilla').append(c); }
-  const juegos = document.getElementById('lista-juegos'); juegos.after(sec);
-  document.querySelectorAll('#biblioteca .subsec').forEach(g => { if (!g.querySelector('section.game')) g.remove(); });
-}
+const jugable = s => PROXIMAMENTE.jugable(idDe(s));
+for (const s of TARJETAS) if (!jugable(s)) s.dataset.proximamente = '1';
+AGRUPAR.colocar(TARJETAS, jugable);
 function datosDe(s) {
   return {
     id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'), cerrado: 'proximamente' in s.dataset, beta: PROXIMAMENTE.enBeta(idDe(s)), apk: s.dataset.apk || '',
@@ -39,7 +35,7 @@ for (const s of TARJETAS) {
   s.insertAdjacentHTML('afterbegin', `<div class="cap-img" style="${fondo(d.capturas[0])}"></div>${d.tipo ? `<span class="tipo">${esc(d.tipo)}</span>` : ''}`);
   s.querySelector('h2').insertAdjacentHTML('afterend', etiquetasHtml(d.etiquetas));
   s.tabIndex = 0; s.setAttribute('role', 'button'); s.setAttribute('aria-label', d.nombre);
-  s.addEventListener('click', e => { if (!e.target.closest('a, details')) abrirFicha(s.id); });
+  s.addEventListener('click', e => { if (GRUPOS.tocaAbreFicha(s, e.target)) abrirFicha(s.id); });
   s.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === s) { e.preventDefault(); abrirFicha(s.id); } });
 }
 

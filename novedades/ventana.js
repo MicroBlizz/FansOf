@@ -2,8 +2,8 @@
 // Usa lo que define index.html antes: text(), grab(), show() y fail(). Lo que guarda (ENTRADAS, NOV_BOLETIN) lo usa también biblioteca/tienda.js.
 'use strict';
 // ---------- la ventana NOVEDADES ----------
-// Sale SOLA solo si hay algo nuevo desde la última visita en este navegador (un boletín nuevo o la versión nueva de algún juego);
-// si no, no molesta (al volver de jugar, por ejemplo). Desde la pestaña Novedades del menú se abre siempre, con todo.
+// Nunca se abre sola (ADR 101): si hay algo nuevo desde la última visita en este navegador (un boletín nuevo o la versión nueva de algún juego)
+// sale una tira discreta («Novedades · N nuevas») que la abre al pulsar. Desde la pestaña Novedades del menú se abre siempre, con todo.
 // JUEGOS NUEVOS sale de novedades/lista.js (escrito a mano) y ACTUALIZACIONES, del js/novedades.js de cada juego: la nota entera de su
 // última versión. Si ya habías venido, solo los juegos que han cambiado (y un botón para ver los demás).
 // tr() llega con el idioma, que se carga aparte: hasta entonces el texto va tal cual (y la página lo traduce sola al pintarlo)
@@ -112,15 +112,23 @@ function filtrar(cambios) {
   document.getElementById('nov-todas').hidden = !solo;
   document.getElementById('nov-desde').hidden = !solo;
 }
+// la tira: contar lo nuevo y abrir la ventana con solo eso; abrirla o cerrar la tira da lo nuevo por visto
+function mostrarAviso(cambios, guardar) {
+  const aviso = document.getElementById('nov-aviso'), boton = document.getElementById('nov-aviso-abrir');
+  boton.textContent = cambios.length === 1 ? t('Novedades · 1 nueva') : t('Novedades · {n} nuevas', { n: cambios.length });
+  const visto = () => { aviso.hidden = true; guardar(); };
+  boton.onclick = () => { visto(); abrirNovedades(boton, cambios); };
+  document.getElementById('nov-aviso-x').onclick = visto;
+  aviso.hidden = false;
+}
 Promise.allSettled([...JUEGOS.map(([id, dir]) => Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js')])), text('novedades/lista.js'), cargada])
   .then(() => new Promise(r => setTimeout(r, 50)))   // que se pinten las filas
   .then(() => {
     const antes = leerVisto(), ahora = { b: NOV_BOLETIN ? NOV_BOLETIN.id : '', v: {} };
     for (const [id] of JUEGOS) if (ENTRADAS[id] && ENTRADAS[id].ver) ahora.v[id] = ENTRADAS[id].ver;
-    try { localStorage.setItem(VISTO, JSON.stringify(ahora)); } catch (e) { /* sin almacenamiento: sale siempre, como antes */ }
-    if (location.hash === '#novedades') { abrirNovedades(); return; }   // desde el menú de otra página (…/#novedades): todas
-    if (!antes) { abrirNovedades(); return; }   // primera visita (o sin memoria): todo
-    const cambios = Object.keys(ahora.v).filter(id => antes.v && antes.v[id] !== ahora.v[id]);
-    if (ahora.b && ahora.b !== antes.b) cambios.push('boletin');
-    if (cambios.length) abrirNovedades(null, cambios);
+    const guardar = () => { try { localStorage.setItem(VISTO, JSON.stringify(ahora)); } catch (e) { /* sin almacenamiento: el aviso sale siempre */ } };
+    const cambios = LO_NUEVO.cambios(antes, ahora);
+    if (location.hash === '#novedades') { guardar(); abrirNovedades(); return; }   // desde el menú de otra página (…/#novedades): todas
+    if (!cambios || !cambios.length) { guardar(); return; }   // primera visita (o sin memoria) o nada nuevo: la portada no se interrumpe (ADR 101)
+    mostrarAviso(cambios, guardar);
   });

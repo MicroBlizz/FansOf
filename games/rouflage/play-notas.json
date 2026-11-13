@@ -160,5 +160,11 @@
     "fr-FR": "Nouveautés : améliorations internes du panneau de tests.\n\nMicroblizz a distribué les clés de l'atelier par rôle. Phony a demandé celle du placard à balais.",
     "de-DE": "Neu: interne Verbesserungen am Testpanel.\n\nMicroblizz hat die Werkstattschlüssel nach Rolle verteilt. Phony wollte den für den Besenschrank.",
     "it-IT": "Novità: miglioramenti interni al pannello di prova.\n\nMicroblizz ha distribuito le chiavi dell'officina per ruolo. Phony ha chiesto quella dello sgabuzzino delle scope."
+  },
+  "0.2.79": {
+    "pt-BR": "melhorias internas: a tela de carregamento sai sempre a tempo e os papéis da conta são lidos de um só lugar",
+    "fr-FR": "améliorations internes : l'écran de chargement disparaît toujours à temps et les rôles du compte sont lus à un seul endroit",
+    "de-DE": "interne Verbesserungen: Der Ladebildschirm verschwindet immer rechtzeitig und die Kontorollen werden an einer Stelle gelesen",
+    "it-IT": "miglioramenti interni: la schermata di caricamento sparisce sempre in tempo e i ruoli dell'account si leggono in un solo posto"
   }
 }

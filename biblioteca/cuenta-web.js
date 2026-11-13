@@ -49,8 +49,8 @@
   }
   // enlaces directos para quien tiene el rol: «alfa» → la copia de pruebas, «admin» → el panel /gestion, «alfa», «beta» o «admin» → la beta de Android en Play (sin rol, sin función o sin red no se enseña nada)
   async function rolEnlaces(donde) {
-    const tiene = async rol => { try { return !!(await CUENTA.rpc('tiene_rol', { p_rol: rol })); } catch (e) { return false; } };
-    const [alfa, admin, beta] = await Promise.all([NUCLEO.alfa ? false : tiene('alfa'), tiene('admin'), tiene('beta')]);
+    await CUENTA.roles.refrescar(['alfa', 'admin', 'beta']);   // una sola pregunta al servidor; sin red vale lo recordado
+    const [alfa, admin, beta] = [!NUCLEO.alfa && CUENTA.roles.tiene('alfa'), CUENTA.roles.tiene('admin'), CUENTA.roles.tiene('beta')];
     if (!donde.isConnected || donde.querySelector('.cuenta-roles') || !(alfa || admin || beta)) return;
     const fila = document.createElement('div'); fila.className = 'cuenta-botones cuenta-roles';
     const enlace = (txt, href) => { const a = document.createElement('a'); a.className = 'boton sec'; a.href = href; a.textContent = txt; fila.append(a); };

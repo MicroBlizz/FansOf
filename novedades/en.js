@@ -39,6 +39,8 @@ IDIOMA.add({
   "Cerrar": "Close",
   "versión %1": "version %1",
   "Mejoras por dentro": "Behind-the-scenes improvements",
+  "Novedades · 1 nueva": "News · 1 new",
+  "Novedades · {n} nuevas": "News · {n} new",
   "VER TODAS LAS ACTUALIZACIONES": "SEE ALL UPDATES",
   "Lo que ha cambiado desde tu última visita.": "What has changed since your last visit.",
   // el boletín del 11-10-2026 (Fans of Recruit)

@@ -28,7 +28,7 @@
     const alfa = /\/alfa\//.test(ubicacion.pathname);   // la copia de pruebas (carpeta alfa/ de la web): su versión es «<versión>-a<hash>»
     const nativa = esNativa(capacitor);
     const desarrollo = enDesarrollo({ alfa, host: ubicacion.hostname, busqueda: ubicacion.search, almacen, nativa });
-    // ¿sale el panel DEV? rolRecordado: el veredicto guardado del rol «alfa» de la cuenta que está dentro (CUENTA.roles, ADR 097)
+    // ¿sale el panel DEV? rolRecordado: lo confirmado guardado del rol «alfa» de la cuenta que está dentro (CUENTA.roles, ADR 097)
     const panelDev = rolRecordado => desarrollo || alfa || !!rolRecordado;
     return Object.freeze({ alfa, nativa, desarrollo, panelDev });
   }

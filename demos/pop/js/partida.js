@@ -62,7 +62,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   if (T.extra) ppFlota(tr('+{n} toques de racha y amigos', { n: T.extra }), 270, 240, '#ff8a2a');
   if (!PP_CORTINILLA.salePara(d)) ppEmpiezaNivel(T, d, dif, manita);
 }
-// un nivel con duelo abre con su cortinilla (ADR 098): el nivel espera a que acabe o se salte con un toque
+// un nivel con duelo abre con su cortinilla (ADR 098): el nivel espera a que se pulse su botón ¡A JUGAR! (ADR 100)
 function ppCortinillaSi(T, d, dif, manita) {
   if (PP_CORTINILLA.salePara(d)) ppCortEmpieza(d, () => ppEmpiezaNivel(T, d, dif, manita));
 }

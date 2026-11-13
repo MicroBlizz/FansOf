@@ -9,12 +9,12 @@
 <link rel="icon" type="image/png" href="core/img/fog-192.png">
 <link rel="apple-touch-icon" href="core/img/fog-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=4dcfda7">
-<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=4dcfda7">
-<link rel="stylesheet" href="core/css/base.css?v=4dcfda7">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=4dcfda7">
-<link rel="stylesheet" href="novedades/ventana.css?v=4dcfda7">
-<link rel="stylesheet" href="biblioteca/votos.css?v=4dcfda7">
+<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=41604a6">
+<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=41604a6">
+<link rel="stylesheet" href="core/css/base.css?v=41604a6">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=41604a6">
+<link rel="stylesheet" href="novedades/ventana.css?v=41604a6">
+<link rel="stylesheet" href="biblioteca/votos.css?v=41604a6">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -78,7 +78,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Fans Of","alternateName":["FansOf","Fans Of Games"],"url":"https://fansof.games/","inLanguage":"es"},{"@type":"Organization","name":"Fans Of Games","alternateName":["MicroBlizz","FansOfGames","FansOf"],"url":"https://fansof.games/","sameAs":["https://x.com/Fans_Of_","https://discord.gg/PztHQhm9c"],"logo":"https://fansof.games/core/img/fog-512.png"}]}</script>
 </head>
 <body>
-<script src="menu.js?v=4dcfda7" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=41604a6" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -114,6 +114,7 @@
     <h1><span class="l2 ol-big">FANS OF</span></h1>
     <p class="sub">Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.</p>
     <p class="sub">Fans Of es una serie de juegos de humor gratis para el navegador y el móvil: estrategia, cartas, carreras y escondite contra Microblizz, la empresa que lo ha comprado todo.</p>
+      <div class="nov-aviso" id="nov-aviso" hidden><button type="button" class="ol" id="nov-aviso-abrir"></button><button type="button" class="nov-aviso-x" id="nov-aviso-x" aria-label="Cerrar">✕</button></div>
   </section>
   <section class="sec" id="destacado">
     <h2 class="sec ol">DESTACADO</h2>
@@ -124,15 +125,15 @@
     <h2 class="sec ol">BIBLIOTECA</h2>
     <p class="note">Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
     <div class="subsec" id="lista-juegos">
-      <h3 class="grupo ol" id="juegos">JUEGOS</h3>
+      <h3 class="grupo ol" id="juegos">JUEGA YA</h3>
       <div class="rejilla">
-        <section class="game" id="g-rumble" data-apk="rumble" style="--wc: #8a3a12" data-tipo="Juego" data-etiquetas="Estrategia · Cartas · PvP" data-capturas="rumble-1.jpg rumble-2.jpg">
+        <section class="game" id="g-rumble" data-apk="rumble" style="--wc: #8a3a12" data-tipo="Prototipo" data-etiquetas="Estrategia · Cartas · PvP" data-capturas="rumble-1.jpg rumble-2.jpg">
           <h2 class="ol">FANS OF RUMBLE</h2>
           <p>El original. Saca tus cartas al campo, cruza el río y tira la sede de Microblizz antes de que acabe el tiempo.</p>
           <div class="row"><a class="play ol" href="games/rumble/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-td" data-apk="td" style="--wc: #1d3f8a" data-tipo="Juego" data-etiquetas="Defensa de torres · Campaña" data-capturas="td-1.jpg td-2.jpg">
+        <section class="game" id="g-td" data-apk="td" style="--wc: #1d3f8a" data-tipo="Prototipo" data-etiquetas="Defensa de torres · Campaña" data-capturas="td-1.jpg td-2.jpg">
           <h2 class="ol">FANS OF TD</h2>
           <p>La defensa de torres. Monta un laberinto para que los robots no lleguen a tu base. Con campaña de 12 mundos y modo VS.</p>
           <div class="row"><a class="play ol" href="games/td/">JUGAR</a><span class="ver ol" data-ver></span></div>
@@ -150,13 +151,13 @@
           <div class="row"><a class="play ol" href="games/karts/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-ratkov" data-apk="ratkov" style="--wc: #c4581a" data-tipo="Juego" data-etiquetas="Extracción · Acción · Pixel art" data-capturas="ratkov-1.jpg ratkov-2.jpg" data-horizontal>
+        <section class="game" id="g-ratkov" data-apk="ratkov" style="--wc: #c4581a" data-tipo="Prototipo" data-etiquetas="Extracción · Acción · Pixel art" data-capturas="ratkov-1.jpg ratkov-2.jpg" data-horizontal>
           <h2 class="ol">FANS OF RATKOV</h2>
           <p>Shooter de extracción visto desde arriba en la ciudad nevada y en ruinas de Microblizz: entra con CrazyBunny y su escuadrón, registra, fabrica, monta anomalías bugueadas en tus armas y sal antes de la ventisca. Si caes, lo pierdes todo.</p>
           <div class="row"><a class="play ol" href="games/ratkov/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-jump" data-apk="jump" style="--wc: #8a68d8" data-tipo="Juego" data-etiquetas="Saltos · 3D" data-capturas="jump-1.jpg jump-2.jpg">
+        <section class="game" id="g-jump" data-apk="jump" style="--wc: #8a68d8" data-tipo="Prototipo" data-etiquetas="Saltos · 3D" data-capturas="jump-1.jpg jump-2.jpg">
           <h2 class="ol">FANS OF JUMP</h2>
           <p>El prólogo de los Animales Locos. Microblizz arrasa el bosque y su topadora gigante empuja una ola de barro río arriba. Salta con CrazyBunny de tronco en tronco, rescata a su pandilla y llévala a cuestas: así empezó la rebelión.</p>
           <div class="row"><a class="play ol" href="games/jump/">JUGAR</a><span class="ver ol" data-ver></span></div>
@@ -166,7 +167,7 @@
     </div>
     <div class="subsec" id="lista-prototipos">
       <h3 class="grupo ol" id="prototipos">PROTOTIPOS</h3>
-      <p class="note grupo">Juegos a medio hacer: se pueden jugar, pero todavía cambian mucho.</p>
+      <p class="note grupo">Juegos a medio hacer y pruebas cortas de una idea: todavía cambian mucho.</p>
       <div class="rejilla">
         <section class="game" id="g-crush" data-apk="crush" style="--wc: #c35b9e" data-tipo="Prototipo" data-etiquetas="Puzle · Tres en raya" data-capturas="crush-1.jpg crush-2.jpg">
           <h2 class="ol">FANS OF CRUSH</h2>
@@ -240,7 +241,7 @@
           <div class="row"><a class="play ol" href="demos/air/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-auto" style="--wc: #b8501a" data-tipo="Demo" data-etiquetas="Acción · Conducción · Pixel art" data-capturas="auto-1.jpg auto-2.jpg">
+        <section class="game" id="g-auto" style="--wc: #b8501a" data-tipo="Prototipo" data-etiquetas="Acción · Conducción · Pixel art" data-capturas="auto-1.jpg auto-2.jpg">
           <h2 class="ol">FANS OF AUTO</h2>
           <p>La demo (prueba). El Distrito Beta Abierta visto desde arriba, como en los clásicos de la primera PlayStation, con ciclo de día y noche y nieve: roba coches, derrapa, siembra el caos, huye de los Moderadores (los martillos de baneo son tu nivel de buscado) y haz los recados de tres bandas: Los Animales Locos, Granizo Corp. y Los Extractores. Solo se guarda en el Templo del Autoguardado, pagando. Pixel art dibujado con código.</p>
           <div class="row"><a class="play ol" href="demos/auto/">JUGAR</a><span class="ver ol" data-ver></span></div>
@@ -264,13 +265,13 @@
           <div class="row"><a class="play ol" href="demos/vikings/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-merge" style="--wc: #4f9a32" data-tipo="Demo" data-etiquetas="Puzle · Juntar tres · Por turnos" data-capturas="merge-1.jpg merge-2.jpg">
+        <section class="game" id="g-merge" style="--wc: #4f9a32" data-tipo="Prototipo" data-etiquetas="Puzle · Juntar tres · Por turnos" data-capturas="merge-1.jpg merge-2.jpg">
           <h2 class="ol">FANS OF MERGE</h2>
           <p>Planta brotes en la pradera de CrazyBunny y junta tres iguales para hacerlos crecer: zanahoria, huerto, casita, madriguera, torre, palacio… hasta el palacio flotante. Los zorros te ocupan el huerto y los cuervos saltan donde menos te lo esperas: enciérralos y se duermen. Supera los 15 niveles de la Aventura, elige cartas de habilidad, carga el Rayo zanahoria y, cuando la domines, a por el récord en el Modo libre.</p>
           <div class="row"><a class="play ol" href="demos/merge/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-swipe" style="--wc: #c2432e" data-tipo="Demo" data-etiquetas="Roguelike · Cartas · Deslizar" data-capturas="swipe-1.jpg swipe-2.jpg">
+        <section class="game" id="g-swipe" style="--wc: #c2432e" data-tipo="Prototipo" data-etiquetas="Roguelike · Cartas · Deslizar" data-capturas="swipe-1.jpg swipe-2.jpg">
           <h2 class="ol">FANS OF SWIPE</h2>
           <p>Sube los 15 pisos de la Torre de Microblizz con CrazyBunny, deslizando cartas a la izquierda o a la derecha. Cada carta tiene dos caminos: atacar o cubrirte, comprar o pasar, curarte o arriesgar. Los enemigos enseñan lo que van a hacer y cada carta tiene su mecha: desliza rápido, encadena la racha y entra en FRENESÍ, con la pantalla ardiendo y el doble de golpes. Junta reliquias que premian tus gestos, elige camino en cada piso y llega arriba del todo, donde te espera el CEO en su trono de monedas.</p>
           <div class="row"><a class="play ol" href="demos/swipe/">JUGAR</a><span class="ver ol" data-ver></span></div>
@@ -282,19 +283,19 @@
           <div class="row"><a class="play ol" href="demos/panic/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-pop" style="--wc: #ff6ec7" data-tipo="Demo" data-etiquetas="Puzle · Pop-it · Kawaii" data-capturas="pop-1.jpg pop-2.jpg">
+        <section class="game" id="g-pop" style="--wc: #ff6ec7" data-tipo="Prototipo" data-etiquetas="Puzle · Pop-it · Kawaii" data-capturas="pop-1.jpg pop-2.jpg">
           <h2 class="ol">FANS OF POP</h2>
           <p>¡Pop, pop, pop! Los amigos de Fans Of se han quedado atrapados dentro de las burbujas de un pop-it gigante. Toca una burbuja y revientan ella y sus vecinas: revienta todas antes de que se acaben los toques. Recorre mundo a mundo, del Jardín a la Pastelería y sus burbujas con nata, con un jefe al final de cada uno; Lola te enseña a jugar y cada amigo rescatado te echa una mano. Gana las tres estrellas con el mínimo de toques. Con dibujos lisos o en pixel art, como más te guste.</p>
           <div class="row"><a class="play ol" href="demos/pop/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-snakes" style="--wc: #1f8a4c" data-tipo="Demo" data-etiquetas="Arcade · Serpiente · Frenesí" data-capturas="snakes-1.jpg snakes-2.jpg snakes-3.jpg">
+        <section class="game" id="g-snakes" style="--wc: #1f8a4c" data-tipo="Prototipo" data-etiquetas="Arcade · Serpiente · Frenesí" data-capturas="snakes-1.jpg snakes-2.jpg snakes-3.jpg">
           <h2 class="ol">FANS OF SNAKES</h2>
           <p>La serpiente del móvil de botones, reventada por Microblizz. Come manzanas y crece, como siempre; pero aquí el enemigo eres tú: pasa rozando tu propia cola para cargar la barra de Frenesí y, cuando explote, diez segundos de neón con manzanas doradas que valen x10 y la Demolición: córtate la cola a tu paso y cada trozo es una moneda. Los «?» del tablero son locuras: de pronto todo es blanco y negro de píxeles gordos, o la izquierda es la derecha. Juega al Infinito, supera los Mundos, compite en el Reto diario o reta a un rival en el VS.</p>
           <div class="row"><a class="play ol" href="demos/snakes/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-beams" style="--wc: #0b4a8a" data-tipo="Demo" data-etiquetas="Matamarcianos · Espacial · Pixel art" data-capturas="beams-1.jpg beams-2.jpg beams-3.jpg" data-horizontal>
+        <section class="game" id="g-beams" style="--wc: #0b4a8a" data-tipo="Prototipo" data-etiquetas="Matamarcianos · Espacial · Pixel art" data-capturas="beams-1.jpg beams-2.jpg beams-3.jpg" data-horizontal>
           <h2 class="ol">FANS OF BEAMS</h2>
           <p>Año 30XX. Microblizz ya no se conforma con cerrar juegos: su guerra ha llegado al espacio y sus flotas de robots arrasan las galaxias. Solo queda tu nave. Dispara a lo grande y lanza la bola de captura: atrapa naves enemigas, hasta los capitanes y los acorazados gigantes, y haz que luchen a tu lado con sus propias armas, como escudo o como rayo gigante que arrasa media pantalla. Recoge núcleos para evolucionar de Caza a Nave jefe, cruza tres sectores y revienta al jefe de cada facción. Rayos de película, planetas de pixel art y explosiones en cadena.</p>
           <div class="row"><a class="play ol" href="demos/beams/">JUGAR</a></div>
@@ -328,19 +329,19 @@
       <h3 class="grupo ol" id="demos">DEMOS</h3>
       <p class="note grupo">Bocetos y pruebas cortas de una idea.</p>
       <div class="rejilla">
-        <section class="game" id="g-rumble-3d" style="--wc: #a3325e" data-tipo="Boceto" data-etiquetas="3D · Misión" data-capturas="rumble-3d-1.jpg rumble-3d-2.jpg">
+        <section class="game" id="g-rumble-3d" style="--wc: #a3325e" data-tipo="Prototipo" data-etiquetas="3D · Misión" data-capturas="rumble-3d-1.jpg rumble-3d-2.jpg">
           <h2 class="ol">FANS OF RUMBLE 3D</h2>
           <p>El boceto (prueba). Fans of Rumble en 3D, como un dibujo animado: una misión corta con CrazyBunny, MadSquirrel, MeerCat y MechaVaca contra SurvivalBot, con comentarista, voces y la música del juego. Y un modo libre para ver si tu móvil aguanta.</p>
           <div class="row"><a class="play ol" href="demos/rumble-3d/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-tactics-advance" style="--wc: #2f4fae" data-tipo="Prueba" data-etiquetas="Tácticas · Casillas · Pixel art" data-capturas="tactics-advance-1.jpg tactics-advance-2.jpg">
+        <section class="game" id="g-tactics-advance" style="--wc: #2f4fae" data-tipo="Prototipo" data-etiquetas="Tácticas · Casillas · Pixel art" data-capturas="tactics-advance-1.jpg tactics-advance-2.jpg">
           <h2 class="ol">FANS OF TACTICS ADVANCE</h2>
           <p>El prototipo (prueba). Tácticas por casillas en pixel art de consola portátil: mueve a CrazyBunny y a EpicChampion, aprovecha la altura y el CAOS, y despide a los esbirros de Microblizz en el Cementerio de juegos o en sus oficinas.</p>
           <div class="row"><a class="play ol" href="demos/tactics-advance/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-terminal-shock" style="--wc: #0f5450" data-tipo="Demo" data-etiquetas="Terror · Cámaras fijas" data-capturas="terminal-shock-1.jpg terminal-shock-2.jpg" data-horizontal>
+        <section class="game" id="g-terminal-shock" style="--wc: #0f5450" data-tipo="Prototipo" data-etiquetas="Terror · Cámaras fijas" data-capturas="terminal-shock-1.jpg terminal-shock-2.jpg" data-horizontal>
           <h2 class="ol">TERMINAL SHOCK</h2>
           <p>Demo de otro proyecto nuestro. Survival horror en el Albright Memorial Hospital (Granollers, 1999): 13 salas con cámaras fijas y control tanque. Repara la red de fibra, encuentra a Zoe y no pierdas la Lucidez.</p>
           <div class="row"><a class="play ol" href="demos/terminal-shock/">JUGAR</a><span class="ver ol" data-ver></span></div>
@@ -350,7 +351,7 @@
     </div>
     <div class="subsec" id="en-pausa">
       <h3 class="grupo ol">EN PAUSA</h3>
-      <p class="note grupo">Prototipos que hemos parado. Se pueden jugar tal cual están y, si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.</p>
+      <p class="note grupo">Prototipos que hemos parado. Si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.</p>
       <div class="rejilla">
         <section class="game" id="g-dark" data-apk="dark" style="--wc: #4a1f7a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
           <h2 class="ol">FANS OF DARK</h2>
@@ -394,7 +395,7 @@
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
 <script src="core/js/nucleo.js?v=0"></script>
-<script src="core/js/novedades.js?v=4dcfda7"></script>
+<script src="core/js/novedades.js?v=41604a6"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -403,12 +404,12 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=4dcfda7"></script>
-<script src="core/js/cuenta/dominio/roles.js?v=4dcfda7"></script>
-<script src="core/js/cuenta/aplicacion/roles-casos.js?v=4dcfda7"></script>
-<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=4dcfda7"></script>
-<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=4dcfda7"></script>
-<script src="core/js/cuenta/roles.js?v=4dcfda7"></script>
+<script src="core/js/sistema/cuenta.js?v=41604a6"></script>
+<script src="core/js/cuenta/dominio/roles.js?v=41604a6"></script>
+<script src="core/js/cuenta/aplicacion/roles-casos.js?v=41604a6"></script>
+<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=41604a6"></script>
+<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=41604a6"></script>
+<script src="core/js/cuenta/roles.js?v=41604a6"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/panic/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'demos/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -434,14 +435,17 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=4dcfda7"></script>
-<script src="novedades/ventana.js?v=4dcfda7"></script>
-<script src="biblioteca/tienda.js?v=4dcfda7"></script>
-<script src="core/js/sistema/beta.js?v=4dcfda7"></script>
-<script src="biblioteca/cuenta-web.js?v=4dcfda7"></script>
-<script src="biblioteca/votos.js?v=4dcfda7"></script>
-<script src="biblioteca/alfa.js?v=4dcfda7"></script>
-<script src="core/js/sistema/analitica.js?v=4dcfda7"></script>
-<script src="pie.js?v=4dcfda7" defer></script>
+<script src="core/js/proximamente.js?v=41604a6"></script>
+<script src="novedades/lo-nuevo.js?v=41604a6"></script>
+<script src="novedades/ventana.js?v=41604a6"></script>
+<script src="biblioteca/grupos.js?v=41604a6"></script>
+<script src="biblioteca/agrupar.js?v=41604a6"></script>
+<script src="biblioteca/tienda.js?v=41604a6"></script>
+<script src="core/js/sistema/beta.js?v=41604a6"></script>
+<script src="biblioteca/cuenta-web.js?v=41604a6"></script>
+<script src="biblioteca/votos.js?v=41604a6"></script>
+<script src="biblioteca/alfa.js?v=41604a6"></script>
+<script src="core/js/sistema/analitica.js?v=41604a6"></script>
+<script src="pie.js?v=41604a6" defer></script>
 </body>
 </html>

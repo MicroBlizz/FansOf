@@ -8,27 +8,27 @@
 //   publicar()                                               aviso de que los roles han cambiado
 'use strict';
 CUENTA_ROLES.casos = ({ sesion, servidor, almacen, reloj, publicar }) => {
-  const { ok, error, Roles, Veredicto } = CUENTA_ROLES;
+  const { ok, error, Roles, RolesConfirmados } = CUENTA_ROLES;
   // Lo guardado se lee una vez y se recuerda: preguntar «¿tiene el rol?» es barato aunque se haga en cada fotograma
   let guardado = null, leido = false;
-  function veredicto() {
+  function confirmados() {
     if (!leido) {
       leido = true;
-      const datos = almacen.leer(), r = datos ? Veredicto.deDatos(datos) : null;
+      const datos = almacen.leer(), r = datos ? RolesConfirmados.deDatos(datos) : null;
       guardado = r && r.ok ? r.valor : null;
     }
     return guardado;
   }
 
-  // Los roles que se sabe que tiene ahora la cuenta: los del último veredicto si vale para ella y sigue vigente; si no, ninguno
+  // Los roles que se sabe que tiene ahora la cuenta: los de los últimos roles confirmados si vale para ella y sigue vigente; si no, ninguno
   function actuales() {
-    const v = veredicto();
+    const v = confirmados();
     return v && v.vigentePara(sesion.usuario(), reloj.ahora()) ? v.roles : Roles.vacio;
   }
   const tiene = nombre => actuales().tiene(nombre);
-  // ¿hay un veredicto vigente de esta cuenta, sea sí o no? Sirve para no volver a preguntar lo que se acaba de saber
+  // ¿hay unos roles confirmados vigentes de esta cuenta, sea sí o no? Sirve para no volver a preguntar lo que se acaba de saber
   function vigente() {
-    const v = veredicto();
+    const v = confirmados();
     return !!v && v.vigentePara(sesion.usuario(), reloj.ahora());
   }
 
@@ -52,7 +52,7 @@ CUENTA_ROLES.casos = ({ sesion, servidor, almacen, reloj, publicar }) => {
     const ahora = antes.actualiza(preguntados, tenidos);
     if (!ahora.ok) return ahora;
     const sinPreguntar = antes.lista.some(n => !preguntados.includes(n));   // roles de antes que no se han vuelto a preguntar: conservan su caducidad
-    const nuevo = Veredicto.crear({ usuario, roles: ahora.valor, ahora: reloj.ahora(), conservaHasta: sinPreguntar ? veredicto().hasta : undefined });
+    const nuevo = RolesConfirmados.crear({ usuario, roles: ahora.valor, ahora: reloj.ahora(), conservaHasta: sinPreguntar ? confirmados().hasta : undefined });
     if (!nuevo.ok) return nuevo;
     guardado = nuevo.valor; leido = true;
     const quedo = almacen.guardar(nuevo.valor.aDatos());

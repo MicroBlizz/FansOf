@@ -377,5 +377,5 @@ IDIOMA.add({
   "Pierde quien revienta la última": "Whoever pops the last one loses",
   "¡DUELO!": "DUEL!",
   "¡PIERDE!": "LOSES!",
-  "Toca para saltar": "Tap to skip",
+  "¡A JUGAR!": "LET'S PLAY!",
 });

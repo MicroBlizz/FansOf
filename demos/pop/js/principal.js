@@ -23,11 +23,11 @@ PP_CV.addEventListener('pointerdown', e => {
   ppCargaSonidos();
   const [lx, ly] = ppLogico(e);
   if (PP_PANT.actual === 'titulo') { ppPortadaToque(lx, ly); return; }
-  if (ppCortActiva()) { ppCortTermina(); return; }   // un toque salta la cortinilla de duelo
+  if (ppCortActiva()) return;   // la cortinilla de duelo solo se quita con su botón (ADR 100)
   if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }
   if (PP_PANT.actual === 'memoria' && PP_MEM) { ppMemToque(ppCeldaEn(ppGeom(PP_MEM.T.n), lx, ly)); return; }
   if (!PP_P) return;
-  if (ppCortActiva()) { ppCortTermina(); return; }   // un toque salta la cortinilla del jefe
+  if (ppCortActiva()) return;   // la cortinilla del jefe solo se quita con su botón (ADR 100)
   if (PP_PANT.actual === 'sala' && PP_P.T) {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
     if (i >= 0) ppToque(i);
@@ -70,6 +70,7 @@ function ppArranque() {
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)
   $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevaMemoria(); };
+  $pp('#pp-cort-jugar').onclick = ppCortPulsa;
   $pp('#pp-listo').onclick = () => { if (ppCortActiva()) return; play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };

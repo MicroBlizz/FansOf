@@ -11,7 +11,7 @@ function reinicioRevisa() {
   if (REINICIO.alfa !== null) return reinicioMuestra(REINICIO.alfa);
   reinicioMuestra(false);
   if (typeof CUENTA === 'undefined' || !CUENTA.activa) return;
-  CUENTA.rpc('tiene_rol', { p_rol: 'alfa' }).then(v => { REINICIO.alfa = v === true; reinicioMuestra(REINICIO.alfa); }).catch(() => { /* sin red: no sale */ });
+  CUENTA.roles.refrescar(['alfa']).then(() => { REINICIO.alfa = CUENTA.roles.tiene('alfa'); reinicioMuestra(REINICIO.alfa); });   // sin red vale lo recordado
 }
 function reinicioPregunta() {
   play('select');

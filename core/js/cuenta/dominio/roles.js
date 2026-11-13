@@ -1,7 +1,7 @@
 // Fans Of · CUENTA · dominio de los roles (ADR 097): qué roles tiene una cuenta y hasta cuándo vale lo que se sabe de ello. Reglas puras: sin red,
 // sin reloj, sin almacenamiento ni pantalla; todo lo de fuera llega por los puertos de la capa de aplicación (cuenta/aplicacion/roles-casos.js).
 // CUENTA_ROLES es el único objeto global del contexto: cada archivo cuelga de él sus piezas. Un resultado es { ok: true, valor } o { ok: false, error, datos }.
-// Roles y Veredicto son value objects: se crean con su fábrica (nunca con new), no cambian y se comparan por valor.
+// Roles y RolesConfirmados son value objects: se crean con su fábrica (nunca con new), no cambian y se comparan por valor.
 'use strict';
 const CUENTA_ROLES = {};
 CUENTA_ROLES.ok = valor => ({ ok: true, valor });
@@ -49,28 +49,28 @@ CUENTA_ROLES.MINUTOS_SIN_ROL = 30;   // y de un «no» quien no necesita la resp
   const VACIO = new Roles(LLAVE, []);
 
   // Lo que se sabe de los roles de UNA cuenta y hasta cuándo se fía uno (ms del aparato): lo que se guarda en el navegador
-  class Veredicto {
+  class RolesConfirmados {
     #usuario; #roles; #hasta;
     constructor(llave, usuario, roles, hasta) {
-      if (llave !== LLAVE) throw new Error('Veredicto se crea con Veredicto.crear()');
+      if (llave !== LLAVE) throw new Error('RolesConfirmados se crea con RolesConfirmados.crear()');
       this.#usuario = usuario; this.#roles = roles; this.#hasta = hasta;
       Object.freeze(this);
     }
     // Un «sí» se fía 6 horas y un «no» (sin ningún rol) solo 30 minutos, para que quien recibe un rol no espere horas.
-    // conservaHasta: si parte de los roles son de un veredicto anterior que no se ha vuelto a preguntar, no se les alarga la vida:
+    // conservaHasta: si parte de los roles son de unos roles confirmados anteriores que no se ha vuelto a preguntar, no se les alarga la vida:
     // todo el conjunto caduca cuando caduca lo más viejo que lleva
     static crear({ usuario, roles, ahora, conservaHasta }) {
       if (typeof usuario !== 'string' || usuario === '') return error('usuario-vacio');
       if (!(roles instanceof Roles)) return error('roles-invalidos');
       if (!Number.isFinite(ahora)) return error('hora-invalida');
       const propio = ahora + (roles.esVacio ? CUENTA_ROLES.MINUTOS_SIN_ROL * 60e3 : CUENTA_ROLES.HORAS_VALIDO * 3600e3);
-      return ok(new Veredicto(LLAVE, usuario, roles, Number.isFinite(conservaHasta) ? Math.min(propio, conservaHasta) : propio));
+      return ok(new RolesConfirmados(LLAVE, usuario, roles, Number.isFinite(conservaHasta) ? Math.min(propio, conservaHasta) : propio));
     }
     // En la frontera: lo guardado en el navegador (JSON de cualquiera) se convierte aquí o se rechaza con su motivo
     static deDatos(datos) {
       if (!datos || typeof datos !== 'object' || typeof datos.u !== 'string' || datos.u === '' || !Number.isFinite(datos.hasta)) return error('datos-invalidos');
       const r = Roles.crear(datos.r);
-      return r.ok ? ok(new Veredicto(LLAVE, datos.u, r.valor, datos.hasta)) : r;
+      return r.ok ? ok(new RolesConfirmados(LLAVE, datos.u, r.valor, datos.hasta)) : r;
     }
     aDatos() { return { u: this.#usuario, r: [...this.#roles.lista], hasta: this.#hasta }; }
     get roles() { return this.#roles; }
@@ -80,5 +80,5 @@ CUENTA_ROLES.MINUTOS_SIN_ROL = 30;   // y de un «no» quien no necesita la resp
   }
 
   CUENTA_ROLES.Roles = Roles;
-  CUENTA_ROLES.Veredicto = Veredicto;
+  CUENTA_ROLES.RolesConfirmados = RolesConfirmados;
 })();

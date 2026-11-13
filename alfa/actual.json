@@ -1,8 +1,8 @@
 {
- "build": 1165,
- "hash": "6bb4482",
- "fecha": "2026-11-13T05:19:29Z",
- "mensaje": "Revisión (#47): lo repetido se mira antes que el tope de feedback y fuera un try vacío",
+ "build": 1166,
+ "hash": "4d62b9a",
+ "fecha": "2026-11-13T05:41:09Z",
+ "mensaje": "MAPA.md regenerados con mapa.py (estaban atrasados; tarea #52, n3)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

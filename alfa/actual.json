@@ -1,8 +1,8 @@
 {
- "build": 1168,
- "hash": "5ab2eeb",
- "fecha": "2026-11-13T09:30:00Z",
- "mensaje": "Feedback con topes y oferta de beta tester, y etiqueta «PROTOTIPO» en cada juego (ADR 106, #47 N5 y N3)",
+ "build": 1169,
+ "hash": "65a620c",
+ "fecha": "2026-11-13T12:59:03Z",
+ "mensaje": "publico_excluye.py: fuera las reglas muertas que quitaban tarjetas de la release (Nova, Beams, Boom, Cooking), con test (#47)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

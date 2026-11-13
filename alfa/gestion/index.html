@@ -129,6 +129,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="caja cifras" id="v-resumen"></div>
       <div class="filtros">
         <select id="v-juego" aria-label="Juego"></select>
+        <select id="v-quien" aria-label="Quién lo manda"><option value="">de cualquiera</option><option value="beta">solo de beta</option><option value="resto">sin los de beta</option></select>
         <select id="v-estado" aria-label="Estado"><option value="pendiente">pendientes</option><option value="resuelto">resueltos</option><option value="descartado">descartados</option><option value="todos">todos</option></select>
         <button id="v-recargar" type="button">Actualizar</button>
       </div>
@@ -199,13 +200,14 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="lista" id="cd-lista"></div>
     </div>
     <div id="pan-roles" hidden>
-      <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>admin</b>: puede entrar en esta página. Se dan por correo: si esa persona aún no ha entrado con Google queda como invitación y el rol se activa solo en su primer inicio de sesión con ese correo (Google o enlace por correo).</div>
+      <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>beta</b>: persona de confianza, manda feedback sin topes (las solicitudes que llegan desde los juegos salen aquí abajo). <b>admin</b>: puede entrar en esta página. Se dan por correo: si esa persona aún no ha entrado con Google queda como invitación y el rol se activa solo en su primer inicio de sesión con ese correo (Google o enlace por correo).</div>
       <form class="filtros" id="r-form">
         <input type="text" id="r-correo" placeholder="correo@gmail.com" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Correo" required style="flex:1 1 220px;width:auto">
         <select id="r-rol" aria-label="Rol"><option value="alfa">alfa</option><option value="beta">beta</option><option value="admin">admin</option></select>
         <button class="fuerte" type="submit">Dar rol</button>
       </form>
       <div class="aviso" id="r-aviso" role="alert"></div>
+      <div class="lista" id="r-solicitudes"></div>
       <div class="lista" id="r-lista"></div>
     </div>
   </section>
@@ -245,6 +247,7 @@ async function abrir() {
   try { datos = await rpc('gestion_datos', { p_token: leerToken() }); }
   catch (e) { guardarToken(''); vista(false); $('g-aviso').style.color = ''; $('g-aviso').textContent = textoError(e); return; }
   vista(true); pinta();
+  document.dispatchEvent(new Event('gestion-abierta'));   // las secciones que enseñan un contador en su pestaña lo piden aquí
 }
 $('recargar').onclick = abrir;
 $('f-ver').onchange = $('f-min').onchange = () => pinta();
@@ -313,6 +316,7 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 </script>
 <script>GESTION_NAV.seccion({ id: 'cuentas', pan: 'pan-cuentas', etiqueta: 'Cuentas', orden: 1 });</script>
 <script src="votos.js"></script>
+<script src="solicitudes-beta.js"></script>
 <script src="roles.js"></script>
 <script src="flags.js"></script>
 <script src="codigos.js"></script>

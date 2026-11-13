@@ -188,7 +188,7 @@ IDIOMA.add({
   "ACCIONES": "AZIONI",
   "GOTAS DE PINTURA": "GOCCE DI VERNICE",
   "CAOS PRIMORDIAL": "CAOS PRIMORDIALE",
-  "Caos primordial ilimitado": "Caos primordiale illimitato",
+  "Conseguir caos primordial": "Ottieni caos primordiale",
   "¡Comprado! {c}": "Comprato! {c}",
   "(pruebas: no se ha cobrado nada)": "(prova: non è stato addebitato niente)",
   "una sola vez": "una volta sola",

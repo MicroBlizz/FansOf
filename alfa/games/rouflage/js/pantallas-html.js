@@ -140,7 +140,7 @@
         <p class="tn-pendiente" id="tienda-pendiente" hidden></p>
         <h3 class="ol" data-tr>ACCIONES CON GOTAS</h3><div id="tienda-gotas"></div>
         <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>
-        <div id="tienda-caos"><h3 class="ol" data-tr>CAOS PRIMORDIAL</h3><button type="button" class="boton" id="b-tienda-caos" data-tr>Caos primordial ilimitado</button></div>
+        <div id="tienda-caos"><h3 class="ol" data-tr>CAOS PRIMORDIAL</h3><button type="button" class="boton" id="b-tienda-caos" data-tr>Conseguir caos primordial</button></div>
       </div>
     </div>
     <button type="button" class="boton peq" id="b-tienda-volver" data-tr>Volver</button>

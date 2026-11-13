@@ -1,8 +1,8 @@
 {
- "build": 1166,
- "hash": "4d62b9a",
- "fecha": "2026-11-13T05:41:09Z",
- "mensaje": "MAPA.md regenerados con mapa.py (estaban atrasados; tarea #52, n3)",
+ "build": 1167,
+ "hash": "0bb51c8",
+ "fecha": "2026-11-13T05:48:49Z",
+ "mensaje": "/gestion: el contador de solicitudes de beta no depende de qué carga antes (revisión, #47 N6)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

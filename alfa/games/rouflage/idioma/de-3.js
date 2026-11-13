@@ -188,7 +188,7 @@ IDIOMA.add({
   "ACCIONES": "AKTIEN",
   "GOTAS DE PINTURA": "FARBTROPFEN",
   "CAOS PRIMORDIAL": "URCHAOS",
-  "Caos primordial ilimitado": "Unbegrenztes Urchaos",
+  "Conseguir caos primordial": "Urchaos holen",
   "¡Comprado! {c}": "Gekauft! {c}",
   "(pruebas: no se ha cobrado nada)": "(Test: es wurde nichts berechnet)",
   "una sola vez": "nur einmal",

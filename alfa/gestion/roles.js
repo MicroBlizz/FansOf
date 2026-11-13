@@ -14,7 +14,9 @@
     $('r-aviso').textContent = '';
     try { const d = await rpc('gestion_roles', { p_token: leerToken() }); pinta(d.roles || [], d.pendientes || []); } catch (e) { $('r-aviso').textContent = textoError(e); }
   }
-  GESTION_NAV.seccion({ id: 'roles', pan: 'pan-roles', etiqueta: 'Roles', orden: 3, cargar });
+  // al abrir la pestaña se pide también el buzón de solicitudes de beta (solicitudes-beta.js, cargado antes), y al aceptar una se vuelve a pedir esta lista
+  GESTION_NAV.seccion({ id: 'roles', pan: 'pan-roles', etiqueta: 'Roles', orden: 3, cargar: () => Promise.all([GESTION_SOLICITUDES_BETA.cargar(), cargar()]) });
+  GESTION_SOLICITUDES_BETA.alAceptar(cargar);
   $('r-form').onsubmit = async ev => {
     ev.preventDefault(); $('r-aviso').textContent = '';
     try {

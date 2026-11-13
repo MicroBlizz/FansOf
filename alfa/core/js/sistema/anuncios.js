@@ -7,7 +7,7 @@
 // La app necesita el plugin nativo `Anuncios` (android-app, aún por escribir): mostrarRecompensa({ unidad, menores: true }) → { visto }. Sin él, cae a nuestro anuncio.
 'use strict';
 const ANUNCIOS = (() => {
-  const SEG = 5;                 // lo que dura nuestro anuncio
+  const SEG = 15;                // lo que dura nuestro anuncio: como uno de verdad, para medir si la gente está dispuesta a verlo (ADR 106)
   const ESPERA_H5 = 8000;        // si la web no responde en tanto, se da por no cargado
   const CLAVE_PERMISO = 'fansof-anuncios';   // 'si' | 'no': el permiso para cargar anuncios de Google en la web (nada de Google se carga sin él)
   const abierto = () => NUCLEO.flag('anuncios', 'Anuncios de verdad (AdMob en la app, H5 Games Ads en la web); cerrado, solo el anuncio propio', false);

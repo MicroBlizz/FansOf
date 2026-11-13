@@ -52,10 +52,10 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
 .puntos button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
 /* EN PAUSA: los prototipos parados se ven apagados, como guardados en un cajón; su ficha dice por qué */
-#en-pausa .game .cap-img { filter: grayscale(.75) brightness(.8); }
-#en-pausa .game:hover .cap-img { filter: grayscale(.2); }
-#en-pausa .game .tipo { color: var(--gold); }
-.fi-pausa { border-style: dashed; }
+#lista-archivo .game .cap-img { filter: grayscale(.75) brightness(.8); }
+#lista-archivo .game:hover .cap-img { filter: grayscale(.2); }
+#lista-archivo .game .tipo { color: var(--gold); }
+.fi-archivo { border-style: dashed; }
 
 /* ---------- LA FICHA de un juego (estilo biblioteca) ---------- */
 .ficha { position: fixed; inset: 0; z-index: 15; overflow-y: auto; background: var(--bg); text-align: left; -webkit-overflow-scrolling: touch; }
@@ -137,7 +137,7 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
   .fi-tira.h button { width: 220px; }
 }
 @media (prefers-reduced-motion: reduce) { .game { transition: none; } .game:hover { transform: none; } }
-/* Prototipos y En pausa van plegados (ADR 102): el título es lo que se pulsa y lleva cuántas tarjetas esconde */
+/* Prototipos y Archivo van plegados (ADR 102 y 104): el título es lo que se pulsa y lleva cuántas tarjetas esconde */
 details.plegable > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 0 8px; }
 details.plegable > summary::-webkit-details-marker { display: none; }
 details.plegable > summary > h3.grupo { margin: 0; text-align: center; font-family: var(--font-display); font-weight: 400; font-size: 28px; color: var(--gold); }

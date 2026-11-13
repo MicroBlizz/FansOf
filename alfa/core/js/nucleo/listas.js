@@ -34,7 +34,6 @@
     'js/sistema/cola.js',         // la cola sin conexión: lo que se manda al servidor cuando hay red (COLA.crea)
     'js/sistema/pagos.js',         // compras con dinero real dentro de la app de Android (Google Play Billing); en la web no hace nada
     'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web): lo entrega el mismo servidor
-    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
     'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
@@ -83,7 +82,6 @@
     'js/sistema/cola.js',          // la cola sin conexión: lo que se manda al servidor cuando hay red (COLA.crea)
     'js/sistema/pagos.js',         // compras con dinero real en la app de Android (Google Play Billing): lo entrega el servidor (productos.entrega = el juego)
     'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web)
-    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
     'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()

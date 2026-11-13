@@ -1,17 +1,17 @@
-// Fans Of · LA PORTADA · reparte las tarjetas de la biblioteca en sus grupos (ADR 102 y 103): Juega ya, Los más pedidos, Prototipos y En pausa.
-// Prototipos y En pausa van plegados (y se acuerdan de si los abriste en este navegador). Usa GRUPOS (biblioteca/grupos.js), esc() y t() de la página.
-// Lo que el menú o un enlace señala (#prototipos, #en-pausa…) despliega su grupo.
+// Fans Of · LA PORTADA · reparte las tarjetas de la biblioteca en sus grupos (ADR 102, 103 y 104): Nuestros favoritos, Los más pedidos, Prototipos y Archivo.
+// Prototipos y Archivo van plegados (y se acuerdan de si los abriste en este navegador). Usa GRUPOS (biblioteca/grupos.js), esc() y t() de la página.
+// Lo que un enlace señala (#prototipos, #archivo…) despliega su grupo.
 'use strict';
 const AGRUPAR = (() => {
-  const GUARDADO = 'fansof-portada-abiertos', PLEGABLES = ['lista-prototipos', 'en-pausa'];
+  const GUARDADO = 'fansof-portada-abiertos', PLEGABLES = ['lista-prototipos', 'lista-archivo'];
   const leer = () => { try { const l = JSON.parse(localStorage.getItem(GUARDADO) || '[]'); return Array.isArray(l) ? l : []; } catch (e) { return []; } };
   const guardar = l => { try { localStorage.setItem(GUARDADO, JSON.stringify(l)); } catch (e) { /* sin almacenamiento: vale mientras la página esté abierta */ } };
   const rejilla = id => document.querySelector(`#${id} .rejilla`);
   // LOS MÁS PEDIDOS: los 4 prototipos con más votos (ADR 103). Llega cuando contesta el servidor (votos.js); si no contesta, no sale.
   function crearMasPedidos() {
     const sec = document.createElement('div'); sec.className = 'subsec'; sec.id = 'mas-pedidos';
-    sec.innerHTML = `<h3 class="grupo ol">${esc(t('LOS MÁS PEDIDOS'))}</h3><p class="note grupo">${esc(t('Todo lo que no es Rouflage ni Karts son prototipos: pruebas en las que trabajamos. Lo que votáis decide cuáles terminamos.'))}</p><div class="rejilla"></div>`;
-    (document.getElementById('lista-juegos') || document.querySelector('#biblioteca .note')).after(sec);
+    sec.innerHTML = `<h3 class="grupo ol">${esc(t('LOS MÁS PEDIDOS'))}</h3><p class="note grupo">${esc(t('Todo lo que hay aquí son prototipos: pruebas en las que trabajamos. Lo que votáis decide en cuáles nos centramos.'))}</p><div class="rejilla"></div>`;
+    (document.getElementById('lista-favoritos') || document.querySelector('#biblioteca .note')).after(sec);
     return sec;
   }
   function destacar(datos) {
@@ -41,9 +41,9 @@ const AGRUPAR = (() => {
     const el = hash.length > 1 && document.getElementById(hash.slice(1));
     const det = el && el.closest('details.plegable'); if (det) det.open = true;
   }
-  function colocar(tarjetas, jugable) {
-    const sitio = { jugar: 'lista-juegos', prototipos: 'lista-prototipos', pausa: 'en-pausa' };
-    for (const s of tarjetas) rejilla(sitio[GRUPOS.de(s.dataset.tipo, jugable(s))]).append(s);
+  function colocar(tarjetas) {
+    const sitio = { favoritos: 'lista-favoritos', prototipos: 'lista-prototipos', archivo: 'lista-archivo' };
+    for (const s of tarjetas) rejilla(sitio[GRUPOS.de(s.dataset.tipo, 'favorito' in s.dataset)]).append(s);
     document.querySelectorAll('#biblioteca .subsec').forEach(g => { if (!g.querySelector('section.game')) g.remove(); });
     const abiertos = leer();
     PLEGABLES.forEach(id => plegar(id, abiertos));

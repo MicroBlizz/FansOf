@@ -15,14 +15,15 @@
   let favs = leer(), totales = {}, avisado = false, listo = false;   // listo: el servidor ya tiene las funciones (si no, solo van los guardados de este navegador y no se ve ni cuenta ni voto)
   const guardar = () => { try { localStorage.setItem(GUARDADO, JSON.stringify(favs)); } catch (e) { /* sin almacenamiento: vale mientras la página esté abierta */ } };
   const original = TARJETAS.slice();
-  // las tarjetas viven en grupos (JUEGOS, PROTOTIPOS y DEMOS de la BIBLIOTECA, y EN PAUSA): cada una se ordena dentro del suyo.
+  // las tarjetas viven en grupos (NUESTROS FAVORITOS, PROTOTIPOS y ARCHIVO): cada una se ordena dentro del suyo.
   // El grupo es lo que tiene justo antes de su tanda de tarjetas (el título o la nota) y su cola, lo que va justo después (null: el final de la sección).
   const vecino = (s, lado) => { let e = s[lado]; while (e && e.matches('section.game')) e = e[lado]; return e; };
   const grupo = new Map(), colas = new Map();
   for (const s of original) { const g = vecino(s, 'previousElementSibling'); grupo.set(s, g); colas.set(g, vecino(s, 'nextElementSibling')); }
-  // EN PAUSA (data-pausa en index.html): el mismo SÍ / NO, pero la pregunta es si quieres que vuelva
-  const pausado = id => { const s = document.getElementById(id); return !!(s && s.dataset.pausa); };
-  const SI_TXT = id => (pausado(id) ? 'Quiero que vuelva' : 'Lo recomiendo'), NO_TXT = id => (pausado(id) ? 'Que siga en pausa' : 'No lo recomiendo');
+  // ARCHIVO (data-archivo en index.html): el mismo SÍ / NO, pero la pregunta es si quieres que vuelva. Es informativo: no hay umbral que lo devuelva (ADR 104)
+  // un recuerdo (data-recuerdo) está en el Archivo pero no se pide que vuelva: conserva el voto normal.
+  const pideVuelta = id => { const s = document.getElementById(id); return !!(s && s.dataset.archivo && !('recuerdo' in s.dataset)); };
+  const SI_TXT = id => (pideVuelta(id) ? 'Quiero que vuelva' : 'Lo recomiendo'), NO_TXT = id => (pideVuelta(id) ? 'Que siga archivado' : 'No lo recomiendo');
   const es = id => favs.includes(id);
   // los iconos, dibujados con el contorno grueso de la serie
   const ICONO = {
@@ -127,21 +128,21 @@
   // la barra de «% lo recomienda» (sin votos todavía, no sale)
   function barra(id) {
     const r = recomiendan[slug(id)]; if (!r || !r.total) return '';
-    const pc = Math.round(100 * r.si / r.total), txt = pausado(id) ? '{p} % quiere que vuelva' : '{p} % lo recomienda';
+    const pc = Math.round(100 * r.si / r.total), txt = pideVuelta(id) ? '{p} % quiere que vuelva' : '{p} % lo recomienda';
     return `<div class="reco-barra" role="img" aria-label="${esc(t(txt, { p: pc }))}"><i style="width:${pc}%"></i></div>`
       + `<div class="reco-datos"><span>${esc(t(txt, { p: pc }))}</span><span>${esc(t(r.total === 1 ? '1 voto' : '{n} votos', { n: r.total }))}</span></div>`;
   }
   // un voto nuevo se suma al momento (el recuento de verdad llega la próxima vez que se abre la web)
   function sumar(id, v) { const k = slug(id), r = recomiendan[k] || { si: 0, total: 0 }; recomiendan[k] = { si: r.si + (v > 0 ? 1 : 0), total: r.total + 1 }; }
   function pintarVoto() {
-    const pausa = pausado(voto.id), cab = `<h4 class="ol">${esc(t(pausa ? '¿QUIERES QUE VUELVA?' : '¿LO RECOMIENDAS?'))}</h4>`;
+    const archivo = pideVuelta(voto.id), cab = `<h4 class="ol">${esc(t(archivo ? '¿QUIERES QUE VUELVA?' : '¿LO RECOMIENDAS?'))}</h4>`;
     if (voto.estado === 'cargando') { caja.innerHTML = cab + `<p>${esc(t('Cargando…'))}</p>` + barra(voto.id); return; }
     if (voto.estado === 'hecho') {
-      caja.innerHTML = cab + `<p class="voto-gracias">${esc(t(pausa ? (voto.hecho > 0 ? '¡Gracias! Hoy has pedido que vuelva.' : '¡Gracias! Hoy has votado que siga en pausa.') : (voto.hecho > 0 ? '¡Gracias! Hoy lo has recomendado.' : '¡Gracias! Hoy no lo has recomendado.')))}</p>` + barra(voto.id) + `<small>${esc(t('Mañana puedes volver a votar, o antes si sale una versión nueva.'))}</small>`;
+      caja.innerHTML = cab + `<p class="voto-gracias">${esc(t(archivo ? (voto.hecho > 0 ? '¡Gracias! Hoy has pedido que vuelva.' : '¡Gracias! Hoy has votado que siga archivado.') : (voto.hecho > 0 ? '¡Gracias! Hoy lo has recomendado.' : '¡Gracias! Hoy no lo has recomendado.')))}</p>` + barra(voto.id) + `<small>${esc(t('Mañana puedes volver a votar, o antes si sale una versión nueva.'))}</small>`;
       return;
     }
     const p = v => `aria-pressed="${voto.elegido === v}" aria-label="${esc(t(v > 0 ? SI_TXT(voto.id) : NO_TXT(voto.id)))}"`;
-    caja.innerHTML = cab + `<p>${esc(t(pausa ? 'Un voto al día. Los prototipos con más votos para que vuelvan son los primeros que retomamos.' : 'Un voto al día por juego. Si sale una versión nueva, puedes votar otra vez.'))}</p>`
+    caja.innerHTML = cab + `<p>${esc(t(archivo ? 'Un voto al día. Así sabemos cuánta gente quiere que vuelva.' : 'Un voto al día por juego. Si sale una versión nueva, puedes votar otra vez.'))}</p>`
       + `<div class="voto-botones"><button type="button" class="voto si ol" data-v="1" ${p(1)}>${ICONO.arriba}${esc(t('SÍ'))}</button><button type="button" class="voto no ol" data-v="-1" ${p(-1)}>${ICONO.abajo}${esc(t('NO'))}</button></div>`
       + (voto.elegido ? `<textarea id="voto-nota" maxlength="500" placeholder="${esc(t('¿Por qué? (opcional)'))}" aria-label="${esc(t('Nota'))}"></textarea>`
         + `<button type="button" class="boton ol voto-enviar">${esc(t('ENVIAR'))}</button><small>${esc(t('Tu nota la leemos solo nosotros: no se enseña a nadie más.'))}</small>`

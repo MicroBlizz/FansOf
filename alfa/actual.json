@@ -1,8 +1,8 @@
 {
- "build": 1164,
- "hash": "b263d82",
- "fecha": "2026-11-13T05:07:46Z",
- "mensaje": "Biblioteca: tarjeta para Pets, Chef, Rumble v2 y Rumble Clásico, y guardia de que toda carpeta publicada tiene la suya (tarea #50, ADR 108)",
+ "build": 1165,
+ "hash": "6bb4482",
+ "fecha": "2026-11-13T05:19:29Z",
+ "mensaje": "Revisión (#47): lo repetido se mira antes que el tope de feedback y fuera un try vacío",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

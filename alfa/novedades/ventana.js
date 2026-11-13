@@ -11,12 +11,8 @@ const t = (s, datos) => (typeof tr === 'function' ? tr(s, datos) : s);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const nov = { fondo: document.getElementById('novedades'), volver: null };
 const ENTRADAS = {};   // id de tarjeta → { ver, entries }: los informes de cada juego, para su ficha (biblioteca/tienda.js)
-// el botón de jugar sigue la misma lógica que los de la biblioteca (core/js/proximamente.js): cerrado en la release → PRÓXIMAMENTE; abierto solo por el rol beta → JUGAR BETA
-function botonJugar(enlace) {
-  const id = (String(enlace).match(/(?:games|demos)\/([^/]+)/) || [])[1];
-  if (id && !PROXIMAMENTE.jugable(id)) return `<span class="ol" style="opacity:.6">${esc(t('PRÓXIMAMENTE'))}</span>`;
-  return `<a class="ol" href="${esc(enlace)}">${esc(t(id && PROXIMAMENTE.enBeta(id) ? 'JUGAR BETA' : 'JUGAR'))}</a>`;
-}
+// el botón de jugar: todo se puede jugar (ADR 106)
+function botonJugar(enlace) { return `<a class="ol" href="${esc(enlace)}">${esc(t('JUGAR'))}</a>`; }
 // JUEGOS NUEVOS: del boletín de novedades/lista.js (solo el primero), con el color de su tarjeta en la librería
 function pintarNuevos(b) {
   const caja = document.getElementById('nov-nuevos');

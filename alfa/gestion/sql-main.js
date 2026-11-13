@@ -1,7 +1,7 @@
 // Fans Of · /gestion → SQL: los SQL NUEVOS DE MAIN (ADR 110). Lee la carpeta servidor/ del repo con el token de GitHub que el admin ya pegó en la pestaña Cola
 // (necesita además el permiso Contents en solo lectura) y deja en la lista de espera los ficheros que aún no están apuntados en la base ni propuestos con ese mismo
 // texto: así lo que se aprueba es exactamente el fichero de main, sin pegar nada a mano y sin pasar por el conector. La nota en llano sale de la cabecera del fichero.
-// Solo mira los ficheros desde el 129 (los anteriores son de antes del registro). Datos: gestion_sql_proponer (servidor/132). Lo usa sql.js; no pinta nada.
+// Si un fichero que esperaba aprobación ya no está en main (se renombró o se quitó), lo retira de la lista. Solo mira los ficheros desde el 129 (los anteriores son de antes del registro). Datos: gestion_sql_proponer (servidor/132). Lo usa sql.js; no pinta nada.
 'use strict';
 const GESTION_SQL_MAIN = (() => {
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO + '/contents/servidor', CLAVE = 'fansof.gestion.githubToken';
@@ -40,6 +40,10 @@ const GESTION_SQL_MAIN = (() => {
     const propuestos = [], saltados = [];
     try {
       const nombres = (await pedir('?ref=main', false)).map(f => f.name);
+      for (const c of (d.cola || []).filter(c => c.estado === 'esperando' && !nombres.includes(c.fichero))) {
+        await rpc('gestion_sql_rechazar', { p_token: leerToken(), p_fichero: c.fichero, p_motivo: 'ya no está en main' });
+        propuestos.push(c.fichero);   // cuenta como cambio: la lista se vuelve a leer
+      }
       for (const n of candidatos(nombres, d)) {
         const texto = await pedir('/' + n + '?ref=main', true);
         if (!envuelto(n, texto)) { saltados.push(n); continue; }

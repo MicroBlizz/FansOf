@@ -1,8 +1,8 @@
 {
- "build": 1173,
- "hash": "373f20d",
- "fecha": "2026-11-13T19:27:17Z",
- "mensaje": "/gestion → SQL lee los SQL nuevos de main y los deja en espera; botón Refrescar; SQL 132 sin aplicar (ADR 110, #56)",
+ "build": 1174,
+ "hash": "5272478",
+ "fecha": "2026-11-13T19:35:52Z",
+ "mensaje": "Los SQL se aplican en orden (133, sin aplicar): el del índice pasa de 131 a 134; /gestion retira lo que ya no está en main y descarta fallidos (ADR 110, #56)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

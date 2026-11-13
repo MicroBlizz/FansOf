@@ -1,8 +1,8 @@
 {
- "build": 1172,
- "hash": "2e54a0a",
- "fecha": "2026-11-13T18:25:05Z",
- "mensaje": "Cartel de anuncio para los 20 juegos que no tenían: los 38 del anuncio propio empiezan por su cartel (tarea #57, ADR 109)",
+ "build": 1173,
+ "hash": "373f20d",
+ "fecha": "2026-11-13T19:27:17Z",
+ "mensaje": "/gestion → SQL lee los SQL nuevos de main y los deja en espera; botón Refrescar; SQL 132 sin aplicar (ADR 110, #56)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

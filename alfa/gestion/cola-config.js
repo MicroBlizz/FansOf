@@ -18,7 +18,7 @@ const COLA_CONFIG = (() => {
       + `<td>${c.revocada ? 'revocada' : `<button type="button" class="enlace" data-revoca="${c.id}">${e.revocando === c.id ? 'Sí, revocar' : 'Revocar'}</button>`}</td></tr>`).join('');
 
     return COLA_VARIABLES.html({ valores: e.variables, fallo: e.variablesFallo, ocupado: e.ocupado, sinMandos: e.sinMandos }) + `<section class="caja cl-cfg"><h3>Esta pestaña</h3>
-      <p><b>Token de GitHub:</b> guardado en este navegador. Es un token fino del repo ${REPO} con los permisos <b>Actions</b> y <b>Variables</b> en lectura y escritura (para pausar los runners y reiniciar ejecuciones fallidas) y <b>Administration</b> en solo lectura (para saber si yoshi está encendido). Si caduca o lo revocas en GitHub, olvídalo aquí y pega el nuevo.</p>
+      <p><b>Token de GitHub:</b> guardado en este navegador. Es un token fino del repo ${REPO} con los permisos <b>Actions</b> y <b>Variables</b> en lectura y escritura (para pausar los runners y reiniciar ejecuciones fallidas) y <b>Contents</b> en solo lectura (para que la pestaña SQL lea los SQL nuevos de main) y <b>Administration</b> en solo lectura (para saber si yoshi está encendido). Si caduca o lo revocas en GitHub, olvídalo aquí y pega el nuevo.</p>
       <div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div>
       <p><label class="cl-op">Límite semanal de referencia (tokens) <input type="number" id="cl-lim" min="0" step="1000" value="${e.limite || ''}" style="width:9em"></label></p>
       <p class="meta">Con él sale la columna «Semanal» del resumen. Esta pestaña no puede leer tu límite de Claude; por defecto 1 250 000. Vacío, no se enseña el porcentaje.</p>

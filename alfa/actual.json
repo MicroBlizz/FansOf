@@ -1,8 +1,8 @@
 {
- "build": 1159,
- "hash": "84a821a",
- "fecha": "2026-11-13T02:39:14Z",
- "mensaje": "Roles: Veredicto pasa a llamarse RolesConfirmados, sin alias (tarea #36, nodo N2)",
+ "build": 1160,
+ "hash": "e164cf4",
+ "fecha": "2026-11-13T03:25:24Z",
+ "mensaje": "SQL 128 (mis_roles) aplicado: APLICADAS.md (tarea #36, nodo N3)",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

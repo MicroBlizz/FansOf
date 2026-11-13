@@ -1,8 +1,8 @@
 {
- "build": 1160,
- "hash": "e164cf4",
- "fecha": "2026-11-13T03:25:24Z",
- "mensaje": "SQL 128 (mis_roles) aplicado: APLICADAS.md (tarea #36, nodo N3)",
+ "build": 1161,
+ "hash": "af12bcd",
+ "fecha": "2026-11-13T03:28:13Z",
+ "mensaje": "Roles: la biblioteca, el botón «!» y el reinicio de Rouflage preguntan a CUENTA.roles en vez de llamar a tiene_rol (tarea #36, nodo N4)",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

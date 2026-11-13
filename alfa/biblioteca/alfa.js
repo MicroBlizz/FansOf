@@ -7,9 +7,8 @@
   const base = location.pathname.replace(/[^/]*$/, '');
   async function pintar() {
     if (document.getElementById('alfa-panel') || CUENTA.invitado) return;
-    let tiene = false;
-    try { tiene = await CUENTA.rpc('tiene_rol', { p_rol: 'alfa' }); } catch (e) { return; }
-    if (!tiene) return;
+    if (!CUENTA.roles.vigente()) await CUENTA.roles.refrescar(['alfa']);   // lo recordado vale unas horas (y sin red, también)
+    if (!CUENTA.roles.tiene('alfa')) return;
     let a; try { a = await (await fetch(base + 'alfa/actual.json', { cache: 'no-store' })).json(); } catch (e) { return; }
     const lugar = [...document.querySelectorAll('h2.sec')].pop(); if (!lugar) return;
     const sec = document.createElement('section'); sec.id = 'alfa-panel';

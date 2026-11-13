@@ -144,7 +144,7 @@ const REPORTE = (() => {
   let esAdmin = false, parado = false;
   async function compruebaAdmin() {
     let admin = false;
-    if (hayCuenta() && !CUENTA.invitado) { try { admin = (await CUENTA.rpc('tiene_rol', { p_rol: 'admin' })) === true; } catch (e) { admin = false; } }
+    if (hayCuenta() && !CUENTA.invitado) { await CUENTA.roles.refrescar(['admin']); admin = CUENTA.roles.tiene('admin'); }   // sin red vale lo recordado; el servidor lo vuelve a comprobar al recibir
     esAdmin = admin;
     if (esAdmin) ponBoton(); else quitaBoton();
   }

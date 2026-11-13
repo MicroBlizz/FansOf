@@ -1,8 +1,8 @@
 {
- "build": 1163,
- "hash": "41604a6",
- "fecha": "2026-11-13T04:52:47Z",
- "mensaje": "Versiones y novedades para la release extra (portada nueva, roles y arreglo de carga)",
+ "build": 1164,
+ "hash": "b263d82",
+ "fecha": "2026-11-13T05:07:46Z",
+ "mensaje": "Biblioteca: tarjeta para Pets, Chef, Rumble v2 y Rumble Clásico, y guardia de que toda carpeta publicada tiene la suya (tarea #50, ADR 108)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

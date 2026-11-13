@@ -9,12 +9,12 @@
 <link rel="icon" type="image/png" href="core/img/fog-192.png">
 <link rel="apple-touch-icon" href="core/img/fog-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=41604a6">
-<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=41604a6">
-<link rel="stylesheet" href="core/css/base.css?v=41604a6">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=41604a6">
-<link rel="stylesheet" href="novedades/ventana.css?v=41604a6">
-<link rel="stylesheet" href="biblioteca/votos.css?v=41604a6">
+<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=b263d82">
+<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=b263d82">
+<link rel="stylesheet" href="core/css/base.css?v=b263d82">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=b263d82">
+<link rel="stylesheet" href="novedades/ventana.css?v=b263d82">
+<link rel="stylesheet" href="biblioteca/votos.css?v=b263d82">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -62,7 +62,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=41604a6" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=b263d82" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -307,6 +307,24 @@
           <div class="row"><a class="play ol" href="games/taxi/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
+        <section class="game" id="g-pets" style="--wc: #6a3fb8" data-tipo="Prototipo" data-etiquetas="Mascota virtual · Cuidados · Humor de oficina" data-capturas="pets-1.jpg pets-2.jpg">
+          <h2 class="ol">FANS OF PETS</h2>
+          <p>Tu mascota virtual con las criaturas de la serie. Lola te hace una entrevista de trabajo absurda, eliges uno de tres huevos misteriosos y cuidas a la criatura que sale: darle de comer, bañarla, acostarla a su hora y jugar con ella mientras crece de bebé a adulta. Si la cuidas bien, asciende a jefa; si no, te deja su carta de dimisión.</p>
+          <div class="row"><a class="play ol" href="games/pets/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-chef" style="--wc: #8a4a1a" data-tipo="Prototipo" data-etiquetas="Cocina · Caza · Acción · Pixel art" data-capturas="chef-1.jpg chef-2.jpg">
+          <h2 class="ol">FANS OF CHEF</h2>
+          <p>Somos los cocineros de la cantina de Microblizz. Baja al sótano a cazar comida viva con el cuchillo y la sartén (cebollones monstruosos, gelatinas con mala idea) y cocínala a tiempo para servir las comandas de toda la empresa. Caza y cocina a la vez, sin que te cocinen a ti.</p>
+          <div class="row"><a class="play ol" href="demos/chef/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-rumble-v2" style="--wc: #2f7a4a" data-tipo="Prototipo" data-etiquetas="Estrategia · Cartas · Arte pintado" data-capturas="rumble-v2-1.jpg rumble-v2-2.jpg">
+          <h2 class="ol">FANS OF RUMBLE V2</h2>
+          <p>Fans of Rumble con el arte pintado a mano, como unos dibujos animados en 3D. Las mismas reglas y las mismas cartas: lo que cambia es el dibujo. Ya están pintados los Animales Locos, Microblizz y su campo de batalla; el resto llega personaje a personaje.</p>
+          <div class="row"><a class="play ol" href="demos/rumble-v2/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
       </div>
     </div>
     <div class="subsec" id="lista-demos">
@@ -355,6 +373,12 @@
           <div class="row"><a class="play ol" href="games/skate/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
+        <section class="game" id="g-rumble-clasico" style="--wc: #8a3a12" data-tipo="En pausa" data-pausa="Guardado como recuerdo: es Fans of Rumble con los dibujos de siempre, de antes del arte pintado. Se juega tal cual está." data-etiquetas="Estrategia · Cartas · Recuerdo" data-capturas="rumble-clasico-1.jpg rumble-clasico-2.jpg">
+          <h2 class="ol">FANS OF RUMBLE CLÁSICO</h2>
+          <p>Fans of Rumble como era antes del arte pintado: los mismos Animales Locos contra Microblizz, con sus dibujos de siempre y su propia partida guardada.</p>
+          <div class="row"><a class="play ol" href="demos/rumble-clasico/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
       </div>
     </div>
   </section>
@@ -379,8 +403,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a1163.41604a6"></script>
-<script src="core/js/novedades.js?v=41604a6"></script>
+<script src="core/js/nucleo.js?v=0-a1164.b263d82"></script>
+<script src="core/js/novedades.js?v=b263d82"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -389,12 +413,12 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=41604a6"></script>
-<script src="core/js/cuenta/dominio/roles.js?v=41604a6"></script>
-<script src="core/js/cuenta/aplicacion/roles-casos.js?v=41604a6"></script>
-<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=41604a6"></script>
-<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=41604a6"></script>
-<script src="core/js/cuenta/roles.js?v=41604a6"></script>
+<script src="core/js/sistema/cuenta.js?v=b263d82"></script>
+<script src="core/js/cuenta/dominio/roles.js?v=b263d82"></script>
+<script src="core/js/cuenta/aplicacion/roles-casos.js?v=b263d82"></script>
+<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=b263d82"></script>
+<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=b263d82"></script>
+<script src="core/js/cuenta/roles.js?v=b263d82"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/panic/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'demos/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -420,17 +444,17 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=41604a6"></script>
-<script src="novedades/lo-nuevo.js?v=41604a6"></script>
-<script src="novedades/ventana.js?v=41604a6"></script>
-<script src="biblioteca/grupos.js?v=41604a6"></script>
-<script src="biblioteca/agrupar.js?v=41604a6"></script>
-<script src="biblioteca/tienda.js?v=41604a6"></script>
-<script src="core/js/sistema/beta.js?v=41604a6"></script>
-<script src="biblioteca/cuenta-web.js?v=41604a6"></script>
-<script src="biblioteca/votos.js?v=41604a6"></script>
-<script src="biblioteca/alfa.js?v=41604a6"></script>
-<script src="core/js/sistema/analitica.js?v=41604a6"></script>
-<script src="pie.js?v=41604a6" defer></script>
+<script src="core/js/proximamente.js?v=b263d82"></script>
+<script src="novedades/lo-nuevo.js?v=b263d82"></script>
+<script src="novedades/ventana.js?v=b263d82"></script>
+<script src="biblioteca/grupos.js?v=b263d82"></script>
+<script src="biblioteca/agrupar.js?v=b263d82"></script>
+<script src="biblioteca/tienda.js?v=b263d82"></script>
+<script src="core/js/sistema/beta.js?v=b263d82"></script>
+<script src="biblioteca/cuenta-web.js?v=b263d82"></script>
+<script src="biblioteca/votos.js?v=b263d82"></script>
+<script src="biblioteca/alfa.js?v=b263d82"></script>
+<script src="core/js/sistema/analitica.js?v=b263d82"></script>
+<script src="pie.js?v=b263d82" defer></script>
 </body>
 </html>

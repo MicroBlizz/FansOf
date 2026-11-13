@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.29
+  "<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the loading screen now always clears in time and account roles are read from a single place.",
+  "Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse.": "Microblizz switched off the loading screen light and Phony stayed inside to see if it came back on.",
   // 0.7.28
   "<b>MEJORAS POR DENTRO</b>: el panel de pruebas se abre según el rol de tu cuenta y se puede copiar la versión y el idioma del juego.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the testing panel opens according to your account role and the game version and language can be copied.",
   "Microblizz ha repartido llaves del taller por rol y Phony ha pedido la del cuarto de las escobas.": "Microblizz handed out workshop keys by role and Phony asked for the broom closet one.",

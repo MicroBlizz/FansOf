@@ -35,7 +35,7 @@ for (const s of TARJETAS) {
   s.insertAdjacentHTML('afterbegin', `<div class="cap-img" style="${fondo(d.capturas[0])}"></div>${d.tipo ? `<span class="tipo">${esc(d.tipo)}</span>` : ''}`);
   s.querySelector('h2').insertAdjacentHTML('afterend', etiquetasHtml(d.etiquetas));
   s.tabIndex = 0; s.setAttribute('role', 'button'); s.setAttribute('aria-label', d.nombre);
-  s.addEventListener('click', e => { if (!e.target.closest('a, details')) abrirFicha(s.id); });
+  s.addEventListener('click', e => { if (GRUPOS.tocaAbreFicha(s, e.target)) abrirFicha(s.id); });
   s.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === s) { e.preventDefault(); abrirFicha(s.id); } });
 }
 

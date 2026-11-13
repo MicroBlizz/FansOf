@@ -57,6 +57,15 @@ const SPLASH = (() => {
     setTimeout(() => { caja.remove(); estilo.remove(); }, quieto() ? 0 : 300);
     corre();
   }
+  // otra pantalla ocupa la página en lugar del juego (la puerta «Solo probadores» de la alfa): la splash se quita sin arrancar el juego,
+  // y lo que falle después en el código del juego ya no es un fallo de carga que avisar
+  let retirada = false;
+  function retira() {
+    if (ido) return;
+    ido = true; retirada = true; alIrseFns.length = 0;
+    window.removeEventListener('error', alFallarCodigo);
+    caja.remove(); estilo.remove();
+  }
   function corre() { while (alIrseFns.length) { const fn = alIrseFns.shift(); try { fn(); } catch (e) { setTimeout(() => { throw e; }); } } }   // un fallo del juego no para a los demás: sale a la consola y a errores.js
 
   // cada cuadro: la barra persigue lo real (y entre señales se arrastra), el aviso según el tiempo o el error, y se va cuando toca
@@ -99,7 +108,8 @@ const SPLASH = (() => {
     esperaListo() { estado.esperaListo = true; }, listo() { estado.listo = true; },
     cargada() { estado.cargada = true; },   // nucleo.js: la página y todo su código han cargado (el load solo ya no basta, ADR 093)
     // fn corre cuando la splash se va (si ya se fue o no salió, ahora mismo): aquí arranca la intro de cada juego
-    alIrse(fn) { if (ido) fn(); else alIrseFns.push(fn); },
+    alIrse(fn) { if (retirada) return; if (ido) fn(); else alIrseFns.push(fn); },   // retirada: el juego ya no arranca
+    retira,
   };
 })();
 if (typeof module !== 'undefined') module.exports = SPLASH;

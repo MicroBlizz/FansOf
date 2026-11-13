@@ -18,5 +18,11 @@ const GRUPOS = (() => {
     .sort((a, b) => b.puntos - a.puntos || b.llegada - a.llegada || a.orden - b.orden)
     .slice(0, cuantos)
     .map(x => ({ id: x.id, puntos: x.puntos }));
-  return { de, masPedidos };
+  // ¿Un toque en la tarjeta abre su ficha? Sí, salvo que caiga en algo de DENTRO de la tarjeta que ya hace otra cosa (un enlace, su plegable de novedades).
+  // El plegable del grupo (Prototipos, En pausa) envuelve a la tarjeta por fuera y no cuenta. tarjeta y objetivo: elementos (closest y contains).
+  const tocaAbreFicha = (tarjeta, objetivo) => {
+    const propio = objetivo.closest('a, details');
+    return !propio || !tarjeta.contains(propio);
+  };
+  return { de, masPedidos, tocaAbreFicha };
 })();

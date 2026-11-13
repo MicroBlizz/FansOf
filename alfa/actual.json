@@ -1,8 +1,8 @@
 {
- "build": 1161,
- "hash": "af12bcd",
- "fecha": "2026-11-13T03:28:13Z",
- "mensaje": "Roles: la biblioteca, el botón «!» y el reinicio de Rouflage preguntan a CUENTA.roles en vez de llamar a tiene_rol (tarea #36, nodo N4)",
+ "build": 1162,
+ "hash": "a79aee4",
+ "fecha": "2026-11-13T04:36:50Z",
+ "mensaje": "Arreglo de carga: la puerta de la alfa retira la pantalla de carga (ya no sale «No se ha podido cargar» sin sesión) y las tarjetas de los grupos plegados abren su ficha; smoke-test de carga nuevo para que no se repita",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

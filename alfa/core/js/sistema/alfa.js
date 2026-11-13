@@ -16,6 +16,7 @@
   document.body ? poner() : window.addEventListener('DOMContentLoaded', poner);
 
   function puerta(motivo) {   // el juego se quita de en medio y queda esta pantalla
+    if (typeof SPLASH !== 'undefined') SPLASH.retira();   // si la pantalla de carga sigue ahí, se quita: manda esta
     document.body.replaceChildren();
     const caja = document.createElement('div');
     caja.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#20102c;color:#fff;font:600 16px/1.4 system-ui,sans-serif;text-align:center;padding:24px';

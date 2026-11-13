@@ -1,4 +1,4 @@
-// Fans Of · CUENTA · adaptador del puerto «almacén» de los roles: el veredicto se guarda en este navegador (localStorage), en una sola clave.
+// Fans Of · CUENTA · adaptador del puerto «almacén» de los roles: los roles confirmados se guardan en este navegador (localStorage), en una sola clave.
 // Un almacenamiento bloqueado o con basura no rompe nada: leer da null y guardar dice false (el caso de uso sigue sin recordar).
 'use strict';
 // obtener() da el almacenamiento (localStorage); puede lanzar, porque ya leerlo falla si el navegador lo bloquea

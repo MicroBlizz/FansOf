@@ -1,8 +1,8 @@
 {
- "build": 1158,
- "hash": "9b8d08a",
- "fecha": "2026-11-12T18:54:15Z",
- "mensaje": "Pop: la cortinilla del duelo lleva su sintonía de presentación (8 bits, 3 s, una vez) y después silencio hasta el botón (tarea #42, ADR 100)",
+ "build": 1159,
+ "hash": "84a821a",
+ "fecha": "2026-11-13T02:39:14Z",
+ "mensaje": "Roles: Veredicto pasa a llamarse RolesConfirmados, sin alias (tarea #36, nodo N2)",
  "juegos": {
   "boom": "0.4.14",
   "cooking": "0.2.15",

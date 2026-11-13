@@ -1,8 +1,8 @@
 {
- "build": 1170,
- "hash": "8a33084",
- "fecha": "2026-11-13T14:16:26Z",
- "mensaje": "Nuestro anuncio enseña todos los juegos vivos y más a menudo los más votados, por escalones 3 / 2 / 1 (ADR 109, tarea #54)",
+ "build": 1171,
+ "hash": "599ffb2",
+ "fecha": "2026-11-13T18:07:54Z",
+ "mensaje": "/gestion → SQL: pantalla para aprobar o rechazar los SQL del servidor, con tests (ADR 110, #56 N6)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

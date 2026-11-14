@@ -18,7 +18,8 @@ const GESTION_SQL = (() => {
   const pan = document.createElement('div'); pan.id = 'pan-sql'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
 
-  const etiqueta = n => 'SQL' + (n > 0 ? ' (' + n + ')' : '');
+  // La pestaña dice cuántos esperan aprobación y, con «!», si algo más pide atención (se calcula al entrar en /gestion, sin abrirla)
+  const etiqueta = (n, aviso) => 'SQL' + (n > 0 || aviso ? ' (' + [n > 0 ? n : '', aviso ? '!' : ''].filter(Boolean).join(' · ') + ')' : '');
   const corta = h => String(h || '').slice(0, 12);
   const boton = (accion, s, texto, clase) => `<button${clase ? ` class="${clase}"` : ''} data-sql="${accion}" data-fichero="${esc(s.fichero)}" data-huella="${esc(s.huella)}">${texto}</button>`;
   // qué se puede hacer con el fichero que toca, según su estado
@@ -76,22 +77,28 @@ const GESTION_SQL = (() => {
   const NOCHE = { bien: 'Bien: nadie ha cambiado la base por fuera del motor.', diferencias: 'Hay cambios hechos por fuera del motor.',
     no_se_pudo: 'No se pudo validar (se reintenta solo en una hora).', primera_foto: 'Primera foto guardada: la noche que viene se compara con ella.' };
   const hace = ms => ms < 3600000 ? Math.max(0, Math.round(ms / 60000)) + ' min' : Math.round(ms / 3600000) + ' h';
+  // Lo que pone algo en rojo, una sola vez para la pantalla y para la marca de la pestaña
+  const ROJO = {
+    copia: (v, ahora) => !!v && !!v.copia_visto && (!v.copia_valida || ahora - Date.parse(v.copia_valida) > DIA_Y_PICO || (!!v.copia_fallida && Date.parse(v.copia_fallida) > Date.parse(v.copia_valida))),
+    copiasCalladas: (v, ahora) => !!v && !!v.copia_visto && ahora - Date.parse(v.copia_visto) > DOS_HORAS,
+    validacionVieja: (v, ahora) => !!v && !!v.validado && ahora - Date.parse(v.validado) > DIA_Y_PICO + DOS_HORAS,   // la de anoche puede llegar hasta las 06:30 UTC, con sus reintentos
+    diferencias: v => !!v && v.resultado === 'diferencias',
+  };
   function copias(v, ahora) {
     if (!v || !v.copia_visto) return '<div class="meta"><b>Copia nocturna:</b> el servicio aún no ha mirado las copias.</div>';
     const valida = v.copia_valida ? Date.parse(v.copia_valida) : 0;
-    const mal = !valida || ahora - valida > DIA_Y_PICO || (v.copia_fallida && Date.parse(v.copia_fallida) > valida);
-    const callado = ahora - Date.parse(v.copia_visto) > DOS_HORAS;
+    const mal = ROJO.copia(v, ahora), callado = ROJO.copiasCalladas(v, ahora);
     return `<div class="meta"><b>Copia nocturna:</b> ${valida ? 'la última válida es de ' + fecha(v.copia_valida) + ' (hace ' + hace(ahora - valida) + ')' : 'no hay ninguna válida'}. ${esc(v.copia_detalle || '')}</div>`
       + (mal ? '<div class="aviso" role="alert">La copia nocturna de la base ha fallado o tiene más de 26 horas: mira el servicio svc-copias-supabase en Yoshi (docs/servidor/COPIAS.md).</div>' : '')
       + (callado ? PARADO : '');
   }
   function validacion(v, ahora) {
     if (!v || !v.validado) return '<div class="meta"><b>Validación nocturna:</b> aún no ha corrido (cada noche desde las 04:30 UTC).</div>';
-    const vieja = ahora - Date.parse(v.validado) > DIA_Y_PICO + DOS_HORAS;   // la de anoche puede llegar hasta las 06:30 UTC, con sus reintentos
+    const vieja = ROJO.validacionVieja(v, ahora);
     return `<div class="meta"><b>Validación nocturna:</b> ${esc(NOCHE[v.resultado] || v.resultado)} · ${fecha(v.validado)}</div>`
       + (vieja ? PARADO : '')
       + (v.detalle ? `<details${v.resultado === 'diferencias' ? ' open' : ''}><summary>Detalle</summary><pre>${esc(v.detalle)}</pre></details>` : '')
-      + (v.resultado === 'diferencias' ? '<div class="aviso" role="alert">Alguien ha cambiado la base sin pasar por un SQL de main: el cambio va en un fichero nuevo de servidor/ (o se deshace a mano con un SQL nuevo).</div>' : '');
+      + (ROJO.diferencias(v) ? '<div class="aviso" role="alert">Alguien ha cambiado la base sin pasar por un SQL de main: el cambio va en un fichero nuevo de servidor/ (o se deshace a mano con un SQL nuevo).</div>' : '');
   }
   function vigilancia(r) {
     if (!r) return '';
@@ -115,11 +122,18 @@ const GESTION_SQL = (() => {
     try { return await rpc('gestion_sql_vigia', { p_token: leerToken() }); } catch (e) { return sinFuncion(e) ? null : { error: textoError(e) }; }
   }
   const esperan = d => (d.cola || []).filter(s => s.estado === 'esperando').length;
+  // Cierto si algo pide atención aparte de aprobar: el servicio parado o callado, un fallo en la cola o al deshacer, o el vigía en rojo
+  function pideAtencion(d, ahora) {
+    const m = d.motor, r = d.vigilancia, v = r && r.vigia, hora = (r && Date.parse(r.ahora)) || ahora;
+    const motorMal = !m || m.estado === 'bloqueado' || ahora - new Date(m.visto).getTime() > CALLADO;
+    const colaMal = (d.cola || []).some(s => s.estado === 'fallido') || (!!d.deshacer && d.deshacer.estado === 'fallido');
+    return motorMal || colaMal || (!!r && (!!r.error || Object.values(ROJO).some(f => f(v, hora))));
+  }
   async function cargar() {
     try {
       const [d, vigia] = await Promise.all([rpc('gestion_sql_estado', { p_token: leerToken() }), leerVigia()]);
       d.vigilancia = vigia;
-      pan.innerHTML = vista(d, ''); GESTION_NAV.etiqueta('sql', etiqueta(esperan(d)));
+      pan.innerHTML = vista(d, ''); GESTION_NAV.etiqueta('sql', etiqueta(esperan(d), pideAtencion(d, horaDe(d))));
     } catch (e) {
       pan.innerHTML = `<div class="caja">${sinFuncion(e) ? 'Esta pantalla necesita el SQL 133 del servidor, que aún no está aplicado: lo aplica solo el servicio de Yoshi en cuanto arranque con la versión nueva.' : esc(textoError(e))}</div>`;
     }
@@ -149,5 +163,6 @@ const GESTION_SQL = (() => {
     try { await pulsar(b); } catch (e) { if ($('sql-aviso')) $('sql-aviso').textContent = textoError(e); b.disabled = false; }
   };
   GESTION_NAV.seccion({ id: 'sql', pan: 'pan-sql', etiqueta: 'SQL', orden: 7.5, cargar });
-  return { cargar, etiqueta, vista, enCola, motor, pulsar, vigilancia };
+  document.addEventListener('gestion-abierta', cargar);   // al entrar en /gestion: la marca de la pestaña sale sin abrirla
+  return { cargar, etiqueta, vista, enCola, motor, pulsar, vigilancia, pideAtencion };
 })();

@@ -1,8 +1,8 @@
 {
- "build": 1181,
- "hash": "3c57871",
- "fecha": "2026-11-14T23:25:36Z",
- "mensaje": "APLICADAS.md sale del registro de la base: sql_aplicadas.py pregunta a sql_estado por cada fichero con su huella (ADR 110, #56)",
+ "build": 1182,
+ "hash": "1d44b24",
+ "fecha": "2026-11-14T23:26:02Z",
+ "mensaje": "/gestion: la pestaña SQL se marca al entrar si algo pide atención (ADR 110, #56, nodo N9)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

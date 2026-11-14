@@ -3,8 +3,9 @@
 // Solo lo que puede perder datos espera aquí la aprobación de Arkioner o de Pepins (dos toques: el segundo confirma), con copia de la base justo antes.
 // Si uno falla o se rechaza, la cola se para en él: se corrige el fichero en main o se pulsa «Reintentar». Nada se ejecuta desde el navegador.
 // Deshacer en producción el último aplicado (SQL 139): dos toques; Yoshi lo hace con copia previa y con la vuelta atrás que se ensayó al aplicarlo.
-// Datos (servidor/133-sql-en-orden.sql y 139): gestion_sql_estado, gestion_sql_aprueba (con la huella del texto leído), gestion_sql_rechaza, gestion_sql_reintenta,
-// gestion_sql_deshaz (con la huella de la vuelta atrás) y gestion_sql_deshaz_quita.
+// El vigía (SQL 140): la última copia nocturna válida (en rojo si falló o pasa de 26 h) y la validación de cada noche (cambios hechos por fuera del motor).
+// Datos (servidor/133-sql-en-orden.sql, 139 y 140): gestion_sql_estado, gestion_sql_aprueba (con la huella del texto leído), gestion_sql_rechaza, gestion_sql_reintenta,
+// gestion_sql_deshaz (con la huella de la vuelta atrás), gestion_sql_deshaz_quita y gestion_sql_vigia.
 // Usa lo de gestion/index.html: rpc(), leerToken(), esc(), fecha(), textoError() y $(); GESTION_NAV (nav.js).
 'use strict';
 const GESTION_SQL = (() => {
@@ -69,21 +70,55 @@ const GESTION_SQL = (() => {
     return `<h3>Deshacer</h3><div class="caja"><div class="meta">El último aplicado es ${esc(u.fichero)}. Si hace falta, se deshace en producción con la vuelta atrás que se ensayó al aplicarlo; antes, Yoshi hace una copia de la base. Lo que el fichero añadió (una columna, una tabla) se pierde. No se vuelve a aplicar solo.</div>`
       + `<div class="accion">${boton('deshacer', s, armado === u.fichero ? SEGURO.deshacer : 'Deshacer ' + esc(u.fichero), 'peligro')}</div></div>`;
   }
+  // El vigía (SQL 140): las copias y la validación nocturna, con la hora de la base
+  const DIA_Y_PICO = 26 * 3600 * 1000, DOS_HORAS = 2 * 3600 * 1000;
+  const PARADO = '<div class="aviso" role="alert">El vigía no da señal: el servicio svc-aplica-sql de Yoshi está parado o el vigía falla (mira su registro). Mientras tanto nadie mira las copias ni la base.</div>';
+  const NOCHE = { bien: 'Bien: nadie ha cambiado la base por fuera del motor.', diferencias: 'Hay cambios hechos por fuera del motor.',
+    no_se_pudo: 'No se pudo validar (se reintenta solo en una hora).', primera_foto: 'Primera foto guardada: la noche que viene se compara con ella.' };
+  const hace = ms => ms < 3600000 ? Math.max(0, Math.round(ms / 60000)) + ' min' : Math.round(ms / 3600000) + ' h';
+  function copias(v, ahora) {
+    if (!v || !v.copia_visto) return '<div class="meta"><b>Copia nocturna:</b> el servicio aún no ha mirado las copias.</div>';
+    const valida = v.copia_valida ? Date.parse(v.copia_valida) : 0;
+    const mal = !valida || ahora - valida > DIA_Y_PICO || (v.copia_fallida && Date.parse(v.copia_fallida) > valida);
+    const callado = ahora - Date.parse(v.copia_visto) > DOS_HORAS;
+    return `<div class="meta"><b>Copia nocturna:</b> ${valida ? 'la última válida es de ' + fecha(v.copia_valida) + ' (hace ' + hace(ahora - valida) + ')' : 'no hay ninguna válida'}. ${esc(v.copia_detalle || '')}</div>`
+      + (mal ? '<div class="aviso" role="alert">La copia nocturna de la base ha fallado o tiene más de 26 horas: mira el servicio svc-copias-supabase en Yoshi (docs/servidor/COPIAS.md).</div>' : '')
+      + (callado ? PARADO : '');
+  }
+  function validacion(v, ahora) {
+    if (!v || !v.validado) return '<div class="meta"><b>Validación nocturna:</b> aún no ha corrido (cada noche desde las 04:30 UTC).</div>';
+    const vieja = ahora - Date.parse(v.validado) > DIA_Y_PICO + DOS_HORAS;   // la de anoche puede llegar hasta las 06:30 UTC, con sus reintentos
+    return `<div class="meta"><b>Validación nocturna:</b> ${esc(NOCHE[v.resultado] || v.resultado)} · ${fecha(v.validado)}</div>`
+      + (vieja ? PARADO : '')
+      + (v.detalle ? `<details${v.resultado === 'diferencias' ? ' open' : ''}><summary>Detalle</summary><pre>${esc(v.detalle)}</pre></details>` : '')
+      + (v.resultado === 'diferencias' ? '<div class="aviso" role="alert">Alguien ha cambiado la base sin pasar por un SQL de main: el cambio va en un fichero nuevo de servidor/ (o se deshace a mano con un SQL nuevo).</div>' : '');
+  }
+  function vigilancia(r) {
+    if (!r) return '';
+    if (r.error) return `<h3>Copias y validación nocturna</h3><div class="caja"><div class="aviso" role="alert">No se pudo leer: ${esc(r.error)}</div></div>`;
+    const ahora = Date.parse(r.ahora) || Date.now();
+    return '<h3>Copias y validación nocturna</h3><div class="caja">' + copias(r.vigia, ahora) + validacion(r.vigia, ahora) + '</div>';
+  }
   function vista(d, aviso, ahora) {
     const C = d.cola || [], A = d.aplicados || [];
     return '<div class="caja ayuda"><b>SQL del servidor.</b> Un SQL se aplica solo al llegar a main: el servicio de Yoshi lo ensaya en una copia de la base (lo aplica, lo deshace con su vuelta atrás '
       + 'y comprueba que queda igual) y después lo aplica en producción, siempre en orden. Solo lo que puede perder datos espera aquí tu aprobación.'
       + '<div class="accion"><button data-sql="refrescar">Refrescar</button></div></div>'
-      + `<div class="aviso" id="sql-aviso" role="alert">${esc(aviso || '')}</div>` + motor(d.motor, ahora == null ? horaDe(d) : ahora)
+      + `<div class="aviso" id="sql-aviso" role="alert">${esc(aviso || '')}</div>` + motor(d.motor, ahora == null ? horaDe(d) : ahora) + vigilancia(d.vigilancia)
       + (C.length ? '<h3>El que toca</h3>' + C.map(enCola).join('') : '')
       + deshacer(d) + (A.length ? '<h3>Últimos aplicados</h3><div class="caja"><table><thead><tr><th>Fichero</th><th>Cuándo</th><th>Tardó</th><th>Por dónde</th><th>Con qué permiso</th><th>Ensayo</th><th>Huella</th></tr></thead><tbody>' + A.map(aplicado).join('') + '</tbody></table></div>' : '');
   }
   // un servidor sin el SQL 133 no tiene la función: se dice claro en vez de un error técnico
   const sinFuncion = e => /Could not find the function|PGRST202|does not exist/.test(String(e && e.message));
+  // sin el SQL 140 no hay vigía: la pantalla sigue sin esa parte; y un fallo al leerlo se dice en su sitio sin quitar los botones del motor
+  async function leerVigia() {
+    try { return await rpc('gestion_sql_vigia', { p_token: leerToken() }); } catch (e) { return sinFuncion(e) ? null : { error: textoError(e) }; }
+  }
   const esperan = d => (d.cola || []).filter(s => s.estado === 'esperando').length;
   async function cargar() {
     try {
-      const d = await rpc('gestion_sql_estado', { p_token: leerToken() });
+      const [d, vigia] = await Promise.all([rpc('gestion_sql_estado', { p_token: leerToken() }), leerVigia()]);
+      d.vigilancia = vigia;
       pan.innerHTML = vista(d, ''); GESTION_NAV.etiqueta('sql', etiqueta(esperan(d)));
     } catch (e) {
       pan.innerHTML = `<div class="caja">${sinFuncion(e) ? 'Esta pantalla necesita el SQL 133 del servidor, que aún no está aplicado: lo aplica solo el servicio de Yoshi en cuanto arranque con la versión nueva.' : esc(textoError(e))}</div>`;
@@ -114,5 +149,5 @@ const GESTION_SQL = (() => {
     try { await pulsar(b); } catch (e) { if ($('sql-aviso')) $('sql-aviso').textContent = textoError(e); b.disabled = false; }
   };
   GESTION_NAV.seccion({ id: 'sql', pan: 'pan-sql', etiqueta: 'SQL', orden: 7.5, cargar });
-  return { cargar, etiqueta, vista, enCola, motor, pulsar };
+  return { cargar, etiqueta, vista, enCola, motor, pulsar, vigilancia };
 })();

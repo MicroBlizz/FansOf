@@ -1,8 +1,8 @@
 {
- "build": 1180,
- "hash": "38ff99e",
- "fecha": "2026-11-14T13:16:37Z",
- "mensaje": "La portada se sella con el árbol web/: un commit de solo docs ya no saca release (ADR 112, #58)",
+ "build": 1181,
+ "hash": "3c57871",
+ "fecha": "2026-11-14T23:25:36Z",
+ "mensaje": "APLICADAS.md sale del registro de la base: sql_aplicadas.py pregunta a sql_estado por cada fichero con su huella (ADR 110, #56)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

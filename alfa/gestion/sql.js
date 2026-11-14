@@ -2,7 +2,9 @@
 // (herramientas/sql/aplica.py) lo ensaya con su vuelta atrás y lo aplica, en orden. Aquí se ve la señal del servicio, el fichero que toca y lo último aplicado.
 // Solo lo que puede perder datos espera aquí la aprobación de Arkioner o de Pepins (dos toques: el segundo confirma), con copia de la base justo antes.
 // Si uno falla o se rechaza, la cola se para en él: se corrige el fichero en main o se pulsa «Reintentar». Nada se ejecuta desde el navegador.
-// Datos (servidor/133-sql-en-orden.sql): gestion_sql_estado, gestion_sql_aprueba (con la huella del texto leído), gestion_sql_rechaza y gestion_sql_reintenta.
+// Deshacer en producción el último aplicado (SQL 139): dos toques; Yoshi lo hace con copia previa y con la vuelta atrás que se ensayó al aplicarlo.
+// Datos (servidor/133-sql-en-orden.sql y 139): gestion_sql_estado, gestion_sql_aprueba (con la huella del texto leído), gestion_sql_rechaza, gestion_sql_reintenta,
+// gestion_sql_deshaz (con la huella de la vuelta atrás) y gestion_sql_deshaz_quita.
 // Usa lo de gestion/index.html: rpc(), leerToken(), esc(), fecha(), textoError() y $(); GESTION_NAV (nav.js).
 'use strict';
 const GESTION_SQL = (() => {
@@ -10,7 +12,8 @@ const GESTION_SQL = (() => {
     aplicando: 'ensayándose y aplicándose ahora', fallido: 'falló: no se aplicó', rechazado: 'rechazado', deshecho: 'deshecho' };
   const MOTOR = { al_dia: 'Al día: todo lo de main está aplicado.', aplicando: 'Aplicando un SQL.', espera_boton: 'Esperando una aprobación.', bloqueado: 'Parado: algo impide seguir.' };
   const CALLADO = 5 * 60 * 1000;   // sin señal más de este tiempo, el servicio se da por caído
-  let armado = null;   // el fichero cuyo «Aprobar» ya se pulsó una vez
+  let armado = null;   // el fichero cuyo «Aprobar», «Volver a aplicarlo» o «Deshacer» ya se pulsó una vez
+  const SEGURO = { aprobar: 'Seguro: aplicar en producción', reaplicar: 'Seguro: aplicar en producción', deshacer: 'Seguro: deshacer en producción' };
   const pan = document.createElement('div'); pan.id = 'pan-sql'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
 
@@ -19,11 +22,11 @@ const GESTION_SQL = (() => {
   const boton = (accion, s, texto, clase) => `<button${clase ? ` class="${clase}"` : ''} data-sql="${accion}" data-fichero="${esc(s.fichero)}" data-huella="${esc(s.huella)}">${texto}</button>`;
   // qué se puede hacer con el fichero que toca, según su estado
   const ACCIONES = {
-    esperando: s => boton('aprobar', s, armado === s.fichero ? 'Seguro: aplicar en producción' : 'Aprobar', 'peligro') + boton('rechazar', s, 'Rechazar'),
+    esperando: s => boton('aprobar', s, armado === s.fichero ? SEGURO.aprobar : 'Aprobar', 'peligro') + boton('rechazar', s, 'Rechazar'),
     aprobado: s => boton('rechazar', s, 'Retirar la aprobación'),
     fallido: s => boton('reintentar', s, 'Reintentar'),
     rechazado: s => boton('reintentar', s, 'Volver a ponerlo en espera'),
-    deshecho: s => boton('reaplicar', s, armado === s.fichero ? 'Seguro: aplicar en producción' : 'Volver a aplicarlo', 'peligro'),
+    deshecho: s => boton('reaplicar', s, armado === s.fichero ? SEGURO.reaplicar : 'Volver a aplicarlo', 'peligro'),
   };
   const PARADA = { fallido: 'La cola está parada aquí: los SQL posteriores no se aplican hasta que este se corrija en main (vuelve a intentarse solo) o pulses «Reintentar».',
     rechazado: 'La cola está parada aquí hasta que el fichero cambie o salga de main.', deshecho: 'No se vuelve a aplicar hasta que el fichero cambie o salga de main, o pulses «Volver a aplicarlo» (dos toques).' };
@@ -50,6 +53,22 @@ const GESTION_SQL = (() => {
   const tardo = ms => ms == null ? '-' : ms < 1000 ? ms + ' ms' : ms < 60000 ? (ms / 1000).toFixed(1).replace('.', ',') + ' s' : minutos(Math.round(ms / 1000));
   const minutos = s => Math.floor(s / 60) + ' min ' + (s % 60) + ' s';
   const aplicado = a => `<tr><td>${esc(a.fichero)}</td><td>${fecha(a.aplicado)}</td><td>${tardo(a.duracion_ms)}</td><td>${esc(a.via || '-')}</td><td>${esc(a.aprobacion || '-')}</td><td>${esc(a.nota || '-')}</td><td>${esc(corta(a.huella) || '-')}</td></tr>`;
+  // Deshacer: el servidor dice cuál se puede (d.deshacible: el último aplicado, posterior al motor y con su vuelta atrás ensayada; SQL 139)
+  const DESHACER = { pedido: 'pedido: Yoshi lo deshace en la siguiente vuelta, con copia previa', deshaciendo: 'deshaciéndose ahora', fallido: 'no se deshizo' };
+  function peticion(p) {
+    const accion = p.estado === 'pedido' ? boton('quitar', p, 'Retirar la petición') : p.estado === 'fallido' ? boton('quitar', p, 'Quitar el aviso') : '';
+    return `<article class="cuenta"><div class="cab"><span class="codigo">Deshacer ${esc(p.fichero)}</span><span class="estado si">${esc(DESHACER[p.estado] || p.estado)}</span>`
+      + `<span class="meta">pedido por ${esc(p.pedido_por)} · ${fecha(p.pedido_en)}</span></div>`
+      + (p.resultado ? `<details open><summary>Resultado</summary><pre>${esc(p.resultado)}</pre></details>` : '') + (accion ? `<div class="accion">${accion}</div>` : '') + '</article>';
+  }
+  function deshacer(d) {
+    if (d.deshacer) return '<h3>Deshacer</h3>' + peticion(d.deshacer);
+    const u = d.deshacible;
+    if (!u) return '';
+    const s = { fichero: u.fichero, huella: u.vuelta };
+    return `<h3>Deshacer</h3><div class="caja"><div class="meta">El último aplicado es ${esc(u.fichero)}. Si hace falta, se deshace en producción con la vuelta atrás que se ensayó al aplicarlo; antes, Yoshi hace una copia de la base. Lo que el fichero añadió (una columna, una tabla) se pierde. No se vuelve a aplicar solo.</div>`
+      + `<div class="accion">${boton('deshacer', s, armado === u.fichero ? SEGURO.deshacer : 'Deshacer ' + esc(u.fichero), 'peligro')}</div></div>`;
+  }
   function vista(d, aviso, ahora) {
     const C = d.cola || [], A = d.aplicados || [];
     return '<div class="caja ayuda"><b>SQL del servidor.</b> Un SQL se aplica solo al llegar a main: el servicio de Yoshi lo ensaya en una copia de la base (lo aplica, lo deshace con su vuelta atrás '
@@ -57,7 +76,7 @@ const GESTION_SQL = (() => {
       + '<div class="accion"><button data-sql="refrescar">Refrescar</button></div></div>'
       + `<div class="aviso" id="sql-aviso" role="alert">${esc(aviso || '')}</div>` + motor(d.motor, ahora == null ? horaDe(d) : ahora)
       + (C.length ? '<h3>El que toca</h3>' + C.map(enCola).join('') : '')
-      + (A.length ? '<h3>Últimos aplicados</h3><div class="caja"><table><thead><tr><th>Fichero</th><th>Cuándo</th><th>Tardó</th><th>Por dónde</th><th>Con qué permiso</th><th>Ensayo</th><th>Huella</th></tr></thead><tbody>' + A.map(aplicado).join('') + '</tbody></table></div>' : '');
+      + deshacer(d) + (A.length ? '<h3>Últimos aplicados</h3><div class="caja"><table><thead><tr><th>Fichero</th><th>Cuándo</th><th>Tardó</th><th>Por dónde</th><th>Con qué permiso</th><th>Ensayo</th><th>Huella</th></tr></thead><tbody>' + A.map(aplicado).join('') + '</tbody></table></div>' : '');
   }
   // un servidor sin el SQL 133 no tiene la función: se dice claro en vez de un error técnico
   const sinFuncion = e => /Could not find the function|PGRST202|does not exist/.test(String(e && e.message));
@@ -70,17 +89,21 @@ const GESTION_SQL = (() => {
       pan.innerHTML = `<div class="caja">${sinFuncion(e) ? 'Esta pantalla necesita el SQL 133 del servidor, que aún no está aplicado: lo aplica solo el servicio de Yoshi en cuanto arranque con la versión nueva.' : esc(textoError(e))}</div>`;
     }
   }
-  const MOTIVOS = { huella_cambiada: 'El SQL ha cambiado en main desde que lo abriste: vuelve a leerlo.', estado: 'Ese SQL ya no está esperando.', no_existe: 'Ese SQL ya no está en la cola.' };
+  const MOTIVOS = { huella_cambiada: 'El SQL ha cambiado en main desde que lo abriste: vuelve a leerlo.', estado: 'Ese SQL ya no está esperando.', no_existe: 'Ese SQL ya no está en la cola.',
+    no_es_el_ultimo: 'Ese SQL ya no es el último aplicado: solo se deshace el último.', del_motor: 'El motor (SQL 133 y 139) y lo anterior no se deshacen desde aquí.',
+    sin_vuelta_ensayada: 'Ese SQL no tiene una vuelta atrás ensayada: no se puede deshacer desde aquí.', ya_pedido: 'Ya hay una petición de deshacer en marcha.' };
   const LLAMADAS = {
     aprobar: (fichero, huella) => rpc('gestion_sql_aprueba', { p_token: leerToken(), p_fichero: fichero, p_huella: huella }),
     rechazar: fichero => rpc('gestion_sql_rechaza', { p_token: leerToken(), p_fichero: fichero, p_motivo: null }),
     reintentar: fichero => rpc('gestion_sql_reintenta', { p_token: leerToken(), p_fichero: fichero }),
     reaplicar: fichero => rpc('gestion_sql_reintenta', { p_token: leerToken(), p_fichero: fichero }),
+    deshacer: (fichero, huella) => rpc('gestion_sql_deshaz', { p_token: leerToken(), p_fichero: fichero, p_vuelta: huella }),
+    quitar: () => rpc('gestion_sql_deshaz_quita', { p_token: leerToken() }),
   };
   async function pulsar(b) {
     const { sql, fichero, huella } = b.dataset;
     if (sql === 'refrescar') { armado = null; b.disabled = true; b.textContent = 'Leyendo…'; await cargar(); return; }
-    if ((sql === 'aprobar' || sql === 'reaplicar') && armado !== fichero) { armado = fichero; b.textContent = 'Seguro: aplicar en producción'; return; }
+    if (SEGURO[sql] && armado !== fichero) { armado = fichero; b.textContent = SEGURO[sql]; return; }
     armado = null; b.disabled = true;
     const r = await LLAMADAS[sql](fichero, huella);
     await cargar();

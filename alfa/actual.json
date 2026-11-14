@@ -1,8 +1,8 @@
 {
- "build": 1178,
- "hash": "bbdab73",
- "fecha": "2026-11-14T05:04:30Z",
- "mensaje": "SQL 137: cuánto tardó cada SQL en aplicarse, y /gestion → SQL lo enseña (ADR 110, #56)",
+ "build": 1179,
+ "hash": "5ae9bd1",
+ "fecha": "2026-11-14T13:15:35Z",
+ "mensaje": "SQL 139: deshacer en producción desde /gestion → SQL, con copia previa (ADR 110, #56)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

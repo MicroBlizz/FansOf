@@ -46,7 +46,10 @@ const GESTION_SQL = (() => {
       + (s.resultado ? `<details open><summary>Resultado</summary><pre>${esc(s.resultado)}</pre></details>` : '')
       + (PARADA[s.estado] ? `<div class="meta">${PARADA[s.estado]}</div>` : '') + acciones + '</article>';
   }
-  const aplicado = a => `<tr><td>${esc(a.fichero)}</td><td>${fecha(a.aplicado)}</td><td>${esc(a.via || '-')}</td><td>${esc(a.aprobacion || '-')}</td><td>${esc(a.nota || '-')}</td><td>${esc(corta(a.huella) || '-')}</td></tr>`;
+  // Lo que tardó el fichero en aplicarse (SQL 137); los aplicados antes no se midieron
+  const tardo = ms => ms == null ? '-' : ms < 1000 ? ms + ' ms' : ms < 60000 ? (ms / 1000).toFixed(1).replace('.', ',') + ' s' : minutos(Math.round(ms / 1000));
+  const minutos = s => Math.floor(s / 60) + ' min ' + (s % 60) + ' s';
+  const aplicado = a => `<tr><td>${esc(a.fichero)}</td><td>${fecha(a.aplicado)}</td><td>${tardo(a.duracion_ms)}</td><td>${esc(a.via || '-')}</td><td>${esc(a.aprobacion || '-')}</td><td>${esc(a.nota || '-')}</td><td>${esc(corta(a.huella) || '-')}</td></tr>`;
   function vista(d, aviso, ahora) {
     const C = d.cola || [], A = d.aplicados || [];
     return '<div class="caja ayuda"><b>SQL del servidor.</b> Un SQL se aplica solo al llegar a main: el servicio de Yoshi lo ensaya en una copia de la base (lo aplica, lo deshace con su vuelta atrás '
@@ -54,7 +57,7 @@ const GESTION_SQL = (() => {
       + '<div class="accion"><button data-sql="refrescar">Refrescar</button></div></div>'
       + `<div class="aviso" id="sql-aviso" role="alert">${esc(aviso || '')}</div>` + motor(d.motor, ahora == null ? horaDe(d) : ahora)
       + (C.length ? '<h3>El que toca</h3>' + C.map(enCola).join('') : '')
-      + (A.length ? '<h3>Últimos aplicados</h3><div class="caja"><table><thead><tr><th>Fichero</th><th>Cuándo</th><th>Por dónde</th><th>Con qué permiso</th><th>Ensayo</th><th>Huella</th></tr></thead><tbody>' + A.map(aplicado).join('') + '</tbody></table></div>' : '');
+      + (A.length ? '<h3>Últimos aplicados</h3><div class="caja"><table><thead><tr><th>Fichero</th><th>Cuándo</th><th>Tardó</th><th>Por dónde</th><th>Con qué permiso</th><th>Ensayo</th><th>Huella</th></tr></thead><tbody>' + A.map(aplicado).join('') + '</tbody></table></div>' : '');
   }
   // un servidor sin el SQL 133 no tiene la función: se dice claro en vez de un error técnico
   const sinFuncion = e => /Could not find the function|PGRST202|does not exist/.test(String(e && e.message));

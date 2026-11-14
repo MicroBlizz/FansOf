@@ -1,8 +1,8 @@
 {
- "build": 1177,
- "hash": "e33f9dc",
- "fecha": "2026-11-14T03:36:09Z",
- "mensaje": "La alfa espera a los SQL del servidor antes de publicar (ADR 110, #56)",
+ "build": 1178,
+ "hash": "bbdab73",
+ "fecha": "2026-11-14T05:04:30Z",
+ "mensaje": "SQL 137: cuánto tardó cada SQL en aplicarse, y /gestion → SQL lo enseña (ADR 110, #56)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

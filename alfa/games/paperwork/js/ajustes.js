@@ -5,8 +5,9 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.3.1',
-  planta: { columnas: 6, filas: 4, limpia: 0.7, plantasPorPar: 4, plantasPorZona: 16, extraSinFin: 1.15 },
+  version: '0.4.0',
+  // bajar: las veces que el modo auto puede pedir limpiar una planta antes de bajar (0 = quedarse en ella)
+  planta: { bajar: [0, 1, 3, 5, 10], columnas: 6, filas: 4, limpia: 0.7, plantasPorPar: 4, plantasPorZona: 16, extraSinFin: 1.15 },
   documento: { vida0: 10, vidaBase: 2.5, valor0: 1, valorBase: 2.4, receta0: 2 },
   lider: { vistazosSeg: 1.2, toqueMulti: 1 },
   // los útiles del líder, pagados con oro: coste = base · factor^nivel. Los guantes multiplican la dureza por paso^nivel
@@ -45,7 +46,7 @@ PW.AJ = {
   clasificado: { x2: 0.05, x3: 0 },
   // la Trituradora: lo que le cabe (capacidad) y lo que traga sin enterarse (tragaderas); en un intento come bocadosSeg documentos por segundo:
   // sin munición el atasco vale sinMunicion, con caducados 1 y con expedientes del documento i, 1 + porDocumento · (i + 1)
-  trituradora: { niveles: 10, capacidad0: 150000, capacidadBase: 3.2, tragaderas0: 2, tragaderasBase: 2.6, intento: 30, espera: 1200, premioOro: 200,
+  trituradora: { niveles: 10, capacidad0: 80000, capacidadBase: 3.2, tragaderas0: 2, tragaderasBase: 2.6, intento: 30, espera: 1200, premioOro: 200,
     bocadosSeg: 2, sinMunicion: 0.25, caducado: 1, porDocumento: 0.25 },
   despido: { base: 12, factor: 1.084, desde: 10 },
   recuerdo: { base: 8, factor: 1.6, max: 20 },

@@ -6,8 +6,8 @@ PW.despido = (() => {
   const AJ = PW.AJ, C = PW.curvas;
   // lo que cobraría ahora: la Indemnización de su nivel con sus bonos, menos la sanción de los pedidos del CEO fallados
   const cobraria = (e, B) => Math.floor(C.indemnizacion(e.r.nivel) * B.indemn * (1 - (e.c.sancion || 0)));
-  // se puede en cuanto cobraría al menos 1 (no hay un nivel fijo)
-  const puede = (e, B) => cobraria(e, B || PW.bonos.calcula(e)) >= 1;
+  // se puede con «Tu carrera» abierta (primer nivel de la Trituradora) y en cuanto cobraría al menos 1 (no hay un nivel fijo)
+  const puede = (e, B) => PW.desbloqueos.tiene(e, 'carrera') && cobraria(e, B || PW.bonos.calcula(e)) >= 1;
 
   // Resultado: PW.ok(Indemnización cobrada) o 'sin-indemnizacion' (aún no cobraría nada)
   function despide(e, B, azar) {

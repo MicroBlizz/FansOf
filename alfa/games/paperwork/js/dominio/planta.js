@@ -32,11 +32,12 @@ PW.planta = (() => {
     p.auditoria = 0;
     return n;
   }
-  function crea(n, azar, B, especialidad) {
+  // nueva = la primera vez que el equipo pisa esta planta en el turno (solo entonces puede traer auditoría)
+  function crea(n, azar, B, especialidad, nueva = true, sorteo = true) {
     const archivadores = [];
     for (let i = 0; i < total(); i++) archivadores.push(archivadorDe(n, azar, especialidad));
-    const p = { n, archivadores, vaciados: 0, especial: especialDe(azar, B) };
-    if (n % AJ.auditoria.cada === 0) precinta(p, azar);
+    const p = { n, archivadores, vaciados: 0, especial: sorteo ? especialDe(azar, B) : 'normal' };
+    if (nueva && B.abierto.encargos && n % AJ.auditoria.cada === 0) precinta(p, azar);
     return p;
   }
   const objetivo = () => Math.ceil(total() * AJ.planta.limpia);

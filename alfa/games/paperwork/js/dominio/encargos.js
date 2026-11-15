@@ -40,7 +40,7 @@ PW.encargos = (() => {
     if (p.auditoria > 0) return;
     const n = PW.planta.requisa(p);
     if (n) sucesos.push({ t: 'requisa', n });
-    if (PW.planta.limpia(p)) PW.rebuscar.bajaPlanta(e, B, azar, sucesos);
+    if (PW.planta.limpia(p)) PW.rebuscar.alLimpiar(e, B, azar, sucesos);
   }
   // el ritmo de archivadores vaciados por segundo, suavizado (con él se mide el pedido)
   function mideRitmo(e, antes, dt) { e.r.ritmoVacio = PW.suaviza(e.r.ritmoVacio, e.c.totales.archivadores - antes, dt); }

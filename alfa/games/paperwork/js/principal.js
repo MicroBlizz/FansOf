@@ -4,7 +4,7 @@
 'use strict';
 // pestana: la abierta (las del turno o las de la carrera, adaptadores/paneles.js); elegido: el trabajador al que se va a mandar a otro
 // archivador (0 = ninguno); alto: el del lienzo, que crece en pantallas alargadas
-PW.ui = { pestana: 'utiles', elegido: 0, t: 0, sucio: true, velocidad: 1, html: {}, alto: 960 };
+PW.ui = { pestana: 'utiles', cortinilla: false, elegido: 0, t: 0, sucio: true, velocidad: 1, html: {}, alto: 960 };
 // con el guardado del navegador bloqueado, leer localStorage lanza: se juega sin guardar y se dice
 PW.almacenamiento = (() => { try { return window.localStorage; } catch (error) { console.warn('Paperwork: sin almacenamiento', error); return null; } })();
 PW.avisosAlmacen = [];
@@ -19,11 +19,12 @@ PW.principal = (() => {
   const V = { sc: 1, dpr: 1, W: 540, H: 960 }, ui = PW.ui;
   const PESTANAS = {
     utiles: (e, B) => PW.paneles.utiles(e, B), documentos: (e, B) => PW.paneles.documentos(e, B), trituradora: (e, B) => PW.paneles.trituradora(e, B),
+    plantas: e => PW.panelesTurno.plantas(e), jefe: (e, B) => PW.panelesTurno.jefe(e, B),
     cofres: e => PW.paneles.cofres(e), despido: (e, B) => PW.panelesCarrera.despido(e, B), recuerdos: e => PW.panelesCarrera.recuerdos(e),
     plan: e => PW.panelesCarrera.plan(e), equipo: (e, B) => PW.panelesCarrera.equipo(e, B), retos: () => PW.panelesCarrera.retos(), opciones: () => PW.panelesCarrera.opciones(),
   };
   // el sonido de cada suceso del motor (los que no salen, callan)
-  const SONIDOS = { vistazo: 'hit', vacio: 'clank', nivel: 'levelup', planta: 'blip', trituradora: 'crown', despido: 'despido', estanteria: 'boom', correo: 'card', 'intento-fin': 'sad', 'pedido-ok': 'crown', 'pedido-mal': 'sad', requisa: 'sad' };
+  const SONIDOS = { vistazo: 'hit', vacio: 'clank', nivel: 'levelup', planta: 'blip', trituradora: 'crown', despido: 'despido', estanteria: 'boom', correo: 'card', empujon: 'hit', 'intento-fin': 'sad', 'pedido-ok': 'crown', 'pedido-mal': 'sad', requisa: 'sad' };
 
   // el escenario ocupa todo el alto que haya: 540 de ancho de diseño y de 960 a 1280 de alto (un móvil alargado gana panel, no bandas vacías)
   function ajusta() {
@@ -45,11 +46,17 @@ PW.principal = (() => {
   }
   function refresca() {
     const e = PW.casos.partida, B = PW.casos.bonos();
-    UI.dataset.nivel = PW.paneles.enCarrera(ui.pestana) ? 'carrera' : 'turno';
+    // durante un intento contra la Trituradora no hay menús: es una pelea de jefe (y se vuelve al pasillo al acabar)
+    const jefe = PW.trituradora.atascando(e);
+    if (jefe) ui.pestana = 'utiles';
+    UI.dataset.nivel = jefe ? 'jefe' : PW.paneles.enCarrera(ui.pestana) ? 'carrera' : 'turno';
     pon('pw-hud', PW.paneles.hud(e));
     pon('pw-acciones', PW.paneles.acciones(e, B));
+    pon('pw-recursos', PW.panelesTurno.recursos(e, B));
+    pon('pw-lateral', PW.panelesTurno.lateral(e));
     pon('pw-pestanas', PW.paneles.pestanas(e, B, ui.pestana));
-    pon('pw-panel', PESTANAS[ui.pestana](e, B));
+    pon('pw-panel', PESTANAS[jefe ? 'jefe' : ui.pestana](e, B));
+    pon('pw-cortinilla', ui.cortinilla && PW.trituradora.lista(e) ? PW.panelesTurno.cortinilla(e, B) : '');
     ui.sucio = false;
   }
   function suenan(sucesos) {
@@ -72,6 +79,8 @@ PW.principal = (() => {
   // un toque en el lienzo: el correo, un trabajador de la fila (queda elegido para mandarlo) o un archivador (un vistazo, o el destino del elegido)
   function toca(ev, primero = true) {
     const r = CV.getBoundingClientRect(), x = (ev.clientX - r.left) / V.sc, y = (ev.clientY - r.top) / V.sc;
+    // en plena pelea, cualquier toque en el lienzo empuja a la Trituradora
+    if (PW.trituradora.atascando(PW.casos.partida)) { const s = PW.casos.toca(0).sucesos; PW.efectos.sucesos(s, ui.t); suenan(s); return; }
     const q = PW.escena.toque(PW.casos.partida, x, y);
     if (!q) return;
     if (q.que === 'correo') { if (primero) abreCorreo(); }

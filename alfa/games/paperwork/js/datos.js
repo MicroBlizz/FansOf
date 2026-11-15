@@ -25,12 +25,22 @@ PW.ZONAS = [
   { id: 'almacen', nombre: 'El Almacén de los Olvidados', fondo: 'almacen', musica: 'olvidados', papel: 'encuadernado', herramienta: { id: 'abrecartas', nombre: 'Abrecartas' } },
 ];
 
+// lo que se abre al atascar cada nivel de la Trituradora (dominio/desbloqueos.js). Lo que no sale aquí está desde el principio.
+PW.DESBLOQUEOS = [
+  { id: 'carrera', nivel: 1, nombre: 'Tu carrera', txt: 'El Despido, los Recuerdos, tu equipo y las cartas de recomendación' },
+  { id: 'carrito', nivel: 1, nombre: 'Carrito de archivo', txt: 'Un útil nuevo: se lleva también lo del archivador de al lado' },
+  { id: 'sellos', nivel: 2, nombre: 'Sellos y munición', txt: 'Documentos confidenciales, urgentes y caducados, y elegir qué le echas a la Trituradora' },
+  { id: 'cofres', nivel: 2, nombre: 'Cofres', txt: 'Vaciando archivadores salen cofres con objetos' },
+  { id: 'plan', nivel: 3, nombre: 'Plan de carrera y retos', txt: 'Puntos de carrera para mejoras permanentes, y misiones diarias y logros' },
+  { id: 'sindicato', nivel: 3, nombre: 'Paquete del sindicato', txt: 'Un regalo cada 10 minutos de juego' },
+  { id: 'encargos', nivel: 4, nombre: 'Pedidos del CEO y auditorías', txt: 'Encargos con plazo en los correos y archivadores precintados por IAhorro' },
+];
 // los útiles del líder, que se compran con oro y se pierden con el Despido (las cifras, en AJ.utiles)
 PW.UTILES = [
   { id: 'gafas', nombre: 'Gafas de cerca' },
   { id: 'cafe', nombre: 'Café' },
-  { id: 'guantes', nombre: 'Guantes' },
-  { id: 'carrito', nombre: 'Carrito de archivo' },
+  { id: 'guantes', nombre: 'Guantes', duro: true },   // sale cuando aparece el primer papel con dureza
+  { id: 'carrito', nombre: 'Carrito de archivo', abre: 'carrito' },   // sale al abrirse su desbloqueo
   { id: 'fundas', nombre: 'Fundas de plástico', zona: 2 },   // solo sale al llegar a su zona
 ];
 

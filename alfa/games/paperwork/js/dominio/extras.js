@@ -61,8 +61,8 @@ PW.extras = (() => {
     if (!(k.vuela > 0)) return PW.error('sin-correo');
     k.vuela = 0;
     e.c.totales.correos++;
-    if (azar() < AJ.correo.cofre) { guardaCofre(e); return PW.ok({ oro: 0, cofre: 1 }); }
-    if (!e.r.pedido && !PW.trituradora.atascando(e) && azar() < AJ.pedido.prob) return PW.ok({ oro: 0, cofre: 0, pedido: PW.encargos.abre(e) });
+    if (azar() < AJ.correo.cofre && B.abierto.cofres) { guardaCofre(e); return PW.ok({ oro: 0, cofre: 1 }); }
+    if (B.abierto.encargos && !e.r.pedido && !PW.trituradora.atascando(e) && azar() < AJ.pedido.prob) return PW.ok({ oro: 0, cofre: 0, pedido: PW.encargos.abre(e) });
     const oro = premioOro(e, AJ.correo.premioSegundos) * B.correos;
     e.r.oro += oro;
     return PW.ok({ oro, cofre: 0 });
@@ -71,7 +71,7 @@ PW.extras = (() => {
   // ---- paquete del sindicato
   function avanzaSindicato(e, dt) {
     const s = e.c.sindicato;
-    if (s.guardados >= AJ.sindicato.guardaMax) return;
+    if (!PW.desbloqueos.tiene(e, 'sindicato') || s.guardados >= AJ.sindicato.guardaMax) return;
     s.falta -= dt;
     while (s.falta <= 0 && s.guardados < AJ.sindicato.guardaMax) { s.guardados++; s.falta += AJ.sindicato.cada; }
   }

@@ -3,7 +3,7 @@
 'use strict';
 PW.botones = (() => {
   const ERRORES = {
-    'sin-saldo': 'No te llega', 'al-maximo': 'Ya está al máximo', 'no-disponible': 'Aún no has llegado ahí',
+    'sin-saldo': 'No te llega', 'al-maximo': 'Ya está al máximo', 'no-disponible': 'Aún no has llegado ahí', auditoria: 'Antes, acaba la auditoría',
     'falta-requisito': 'Antes necesitas el nodo anterior', cargando: 'El castor aún está cogiendo carrerilla', esperando: 'La Trituradora aún no está lista',
     atascando: 'Ya la estás atascando', acabada: 'La Trituradora ya está atascada del todo', 'sin-indemnizacion': 'Aún no cobrarías nada',
     'sin-cofres': 'No tienes cofres', 'no-tienes': 'No tienes ese objeto', 'sin-paquetes': 'Aún no ha llegado el paquete del sindicato',
@@ -52,7 +52,12 @@ PW.botones = (() => {
     fotocopia: arg => cuenta(PW.casos.fijaFotocopia(+arg)),
     pestana: arg => { PW.ui.pestana = arg; PW.ui.elegido = 0; },
     estanteria: () => cuenta(PW.casos.estanteria(), 'boom'),
-    atascar: () => cuenta(PW.casos.atasca(), 'boom'),
+    // atascar pasa por la cortinilla (si se puede intentar); el intento empieza con su botón
+    atascar: () => { if (PW.trituradora.lista(PW.casos.partida)) { PW.ui.cortinilla = true; PW.sonido.toca('select'); } else cuenta(PW.casos.atasca()); },
+    'atascar-ya': () => { PW.ui.cortinilla = false; cuenta(PW.casos.atasca(), 'boom'); },
+    'cortinilla-no': () => { PW.ui.cortinilla = false; },
+    planta: arg => cuenta(PW.casos.irA(+arg), 'blip'),
+    bajar: arg => cuenta(PW.casos.fijaBajar(+arg)),
     urgente,
     municion,
     herramienta: arg => cuenta(PW.casos.compraHerramienta(+arg), 'pop'),

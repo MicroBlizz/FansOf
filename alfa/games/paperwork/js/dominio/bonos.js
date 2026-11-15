@@ -54,6 +54,7 @@ PW.bonos = (() => {
       indemn: 1 + b('indemn'),
       trit: 1 + b('trit'),
       espera: Math.max(0.3, 1 - b('espera')),
+      abierto: PW.desbloqueos.abiertos(e),
       trabajadores: liberadas(e) - 1,
       drones: b('drones') + (e.r.temporales || 0),
       trab: AJ.trabajador.parteDelLider * (1 + b('trab')),

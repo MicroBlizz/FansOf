@@ -4,7 +4,7 @@
    Colores y letras de core (core/css/base.css): contorno grueso y tinta clara sobre morado oscuro. */
 #stage { background: var(--bg); }
 #pw-ui { position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; color: var(--ink); font-family: var(--font-ui); }
-#pw-ui button, #pw-panel { pointer-events: auto; }
+#pw-ui button, #pw-panel, #pw-cortinilla .pw-cort { pointer-events: auto; }
 #pw-ui button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 #carga { position: fixed; inset: 0; display: grid; place-items: center; font: 800 28px var(--font-ui); color: var(--ink-dim); }
 
@@ -26,7 +26,7 @@
 .pw-planta small { font: 700 13px var(--font-ui); color: var(--ink-dim); text-shadow: none; }
 
 /* los cinco botones de acción, con su carga de fondo (--p, de 0 a 1) */
-#pw-acciones { position: absolute; left: 8px; right: 8px; top: 460px; height: 70px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+#pw-acciones { position: absolute; left: 8px; right: 8px; top: 460px; height: 68px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
 .pw-acc { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 0 2px;
   border: 4px solid var(--outline); border-radius: 14px; background: var(--tray); color: var(--ink); font: 16px var(--font-display); white-space: nowrap; cursor: pointer; }
 .pw-acc::before { content: ''; position: absolute; left: 0; bottom: 0; top: 0; width: calc(var(--p, 0) * 100%); background: rgba(126, 249, 255, 0.18); }
@@ -35,17 +35,17 @@
 .pw-acc:active, .pw-btn:active:not(:disabled) { transform: translateY(2px); filter: brightness(1.15); }
 
 /* el menú de «Este turno»: sus pestañas (naranja) y el salto a «Tu carrera» (morado) */
-#pw-pestanas { position: absolute; left: 10px; right: 10px; top: 540px; height: 50px; display: grid; grid-template-columns: 1fr 1fr 150px; gap: 6px; }
+#pw-pestanas { position: absolute; left: 10px; right: 10px; top: 574px; height: 50px; display: grid; grid-template-columns: 1fr 1fr 150px; gap: 6px; }
 #pw-pestanas button { position: relative; border: 3px solid var(--outline); border-radius: 12px 12px 0 0; background: var(--off); color: var(--ink-dim); font: 18px var(--font-display); cursor: pointer; }
 #pw-pestanas button.activo { background: #7a3d12; color: #ffd9a8; }
 #pw-pestanas button.pw-salto { background: #5a2d91; color: #f0dcff; border-radius: 12px; height: 44px; }
 #pw-pestanas button[data-globo]:not([data-globo=""]):not([data-globo="0"])::after { content: attr(data-globo); position: absolute; right: -4px; top: -10px; min-width: 24px; height: 24px; border-radius: 12px;
   background: var(--danger); border: 2px solid var(--outline); color: #fff; font: 15px/20px var(--font-display); }
-#pw-panel { position: absolute; left: 10px; right: 10px; top: 588px; bottom: 8px; overflow-y: auto; padding: 8px 10px 60px; border: 3px solid var(--outline); border-top: 5px solid #ff9a3c; border-radius: 0 0 14px 14px;
+#pw-panel { position: absolute; left: 10px; right: 10px; top: 622px; bottom: 8px; overflow-y: auto; padding: 8px 10px 60px; border: 3px solid var(--outline); border-top: 5px solid #ff9a3c; border-radius: 0 0 14px 14px;
   background: var(--panel); display: flex; flex-direction: column; gap: 4px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 
 /* «Tu carrera»: la mesa. Tapa el pasillo y los botones de acción (el turno sigue corriendo debajo) */
-#pw-ui[data-nivel="carrera"] #pw-acciones { display: none; }
+#pw-ui[data-nivel="carrera"] #pw-acciones, #pw-ui[data-nivel="carrera"] #pw-recursos, #pw-ui[data-nivel="carrera"] #pw-lateral { display: none; }
 #pw-ui[data-nivel="carrera"] #pw-pestanas { top: 72px; height: 104px; display: block; }
 #pw-ui[data-nivel="carrera"] #pw-panel { top: 174px; border-top-color: #b06bff; background: linear-gradient(#2b1746, #1d1030 220px), var(--panel); }
 #pw-ui[data-nivel="carrera"]::before { content: ''; position: absolute; left: 0; right: 0; top: 64px; bottom: 0; background: #160b26; pointer-events: auto; }
@@ -98,3 +98,45 @@
   background: rgba(20, 10, 32, 0.94); color: var(--ink); border: 3px solid var(--danger); border-radius: 16px; padding: 8px 16px 6px; font: 800 17px var(--font-ui); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
 #toast.show { opacity: 1; }
 #toast.good { border-color: var(--gold); }
+
+/* el indicador de planta de la barra es un botón: abre la lista de plantas */
+#pw-hud button.pw-planta { border: 0; background: none; color: inherit; font-family: var(--font-display); text-align: left; padding: 2px 4px; cursor: pointer; }
+/* la tira de recursos: los expedientes de cada documento visto (y los caducados), siempre a la vista entre los botones y el menú */
+#pw-recursos { position: absolute; left: 8px; right: 8px; top: 534px; height: 34px; }
+.pw-recursos { width: 100%; height: 100%; display: flex; align-items: center; gap: 4px; padding: 0 6px; overflow: hidden; border: 3px solid var(--outline); border-radius: 10px; background: rgba(10, 6, 20, 0.82); color: var(--ink); cursor: pointer; }
+.pw-ficha { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 3px; font: 800 14px var(--font-ui); white-space: nowrap; }
+.pw-ficha i { flex: none; width: 12px; height: 15px; background: var(--c, #9aa0a8); border: 2px solid var(--outline); border-radius: 2px; }
+.pw-caducados i { background: repeating-linear-gradient(45deg, #9aa0a8 0 3px, #5b6578 3px 6px); }
+/* las flechas de planta, a la derecha del pasillo */
+#pw-lateral { position: absolute; right: 2px; top: 222px; width: 44px; display: flex; flex-direction: column; gap: 14px; }
+.pw-flecha { position: relative; width: 44px; height: 64px; border: 3px solid var(--outline); border-radius: 12px; background: var(--tray); cursor: pointer; }
+.pw-flecha::before { content: ''; position: absolute; left: 9px; top: 20px; border: 10px solid transparent; }
+.pw-flecha.sube::before { border-bottom: 16px solid var(--gold); border-top: 0; }
+.pw-flecha.baja::before { border-top: 16px solid var(--gold); border-bottom: 0; top: 22px; }
+.pw-flecha:disabled { opacity: 0.35; }
+#pw-pestanas:has(.pw-mas) { grid-template-columns: 1fr 1fr 112px 44px; }
+#pw-pestanas button.pw-cerrado { background: var(--off); color: var(--ink-dim); font-size: 14px; line-height: 1.05; }
+/* la pelea contra la Trituradora: sin botones ni menús, solo la máquina y lo que pasa */
+#pw-ui[data-nivel="jefe"] #pw-acciones, #pw-ui[data-nivel="jefe"] #pw-recursos, #pw-ui[data-nivel="jefe"] #pw-lateral, #pw-ui[data-nivel="jefe"] #pw-pestanas { display: none; }
+#pw-ui[data-nivel="jefe"] #pw-panel { top: 470px; border-top-color: var(--danger); pointer-events: none; text-align: center; }
+.pw-jefe h4 { font-size: 26px; color: var(--danger); }
+.pw-jefe-toca { font: 26px var(--font-display) !important; color: var(--gold); animation: pw-late 0.7s ease-in-out infinite alternate; }
+.pw-jefe-flojo { color: var(--danger); font-weight: 700; }
+@keyframes pw-late { from { transform: scale(1); } to { transform: scale(1.08); } }
+/* la cortinilla de entrada a la pelea: tapa todo hasta que se pulsa su botón */
+.pw-cort { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 70px 26px 20px; text-align: center;
+  background: linear-gradient(160deg, #3a0d1c, #160b26 60%); animation: pw-cort-entra 0.3s ease-out; }
+@keyframes pw-cort-entra { from { transform: translateY(-100%); } to { transform: none; } }
+.pw-cort-rotulo { margin: 0; font: 30px var(--font-display); color: var(--gold); transform: rotate(-4deg); }
+.pw-cort h3 { margin: 0; font: 46px var(--font-display); color: var(--danger); }
+.pw-cort-nivel { margin: 0; font: 22px var(--font-display); }
+.pw-cort img { width: 220px; height: 220px; object-fit: contain; image-rendering: pixelated; animation: pw-late 0.5s ease-in-out infinite alternate; }
+.pw-cort ol { list-style: none; margin: 4px 0; padding: 0; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.pw-cort li { display: flex; align-items: center; gap: 12px; padding: 8px 12px; text-align: left; border: 3px solid var(--outline); border-radius: 12px; background: rgba(255, 255, 255, 0.08);
+  font-size: 17px; line-height: 1.2; opacity: 0; animation: pw-cort-paso 0.3s ease-out forwards; animation-delay: calc(0.35s + var(--k) * 0.35s); }
+@keyframes pw-cort-paso { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+.pw-cort li b { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: #1a1020; font: 22px/34px var(--font-display); text-align: center; }
+.pw-cort-premio { margin: 2px 0; min-height: 22px; font-size: 16px; color: #9df0b8; }
+.pw-cort .pw-btn.grande { margin-top: auto; }
+.pw-btn.pw-cort-no { background: none; border-color: transparent; color: var(--ink-dim); font-size: 17px; min-height: 40px; }
+@media (prefers-reduced-motion: reduce) { .pw-cort, .pw-cort li, .pw-cort img, .pw-jefe-toca { animation: none; opacity: 1; } }

@@ -13,6 +13,7 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     planta: s => ['maximo', 'planta', s.n],
     nivel: s => ['maximo', 'nivel', s.n],
     trituradora: s => ['maximo', 'trituradora', s.nivel],
+    empujon: () => ['evento', 'empujones', 1],
     despido: () => ['evento', 'despidos', 1],
     estanteria: () => ['evento', 'estanterias', 1],
     especialidad: () => ['evento', 'especialidad', 1],
@@ -79,14 +80,14 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     if (res.ok) {
       avisa(sucesos);
       if (aviso) retos.evento(aviso, 1);
-      if (guardaYa) guarda();
+      if (guardaYa || sucesos.some(s => s.t === 'trituradora')) guarda();
     }
     return { ...res, sucesos };
   }
-  // tocar un archivador: un vistazo extra del líder, que además se queda trabajando ahí (no mientras se atasca la Trituradora)
+  // tocar un archivador: un vistazo extra del líder, que además se queda trabajando ahí; durante un intento, el toque empuja a la Trituradora
   function toca(i) {
     return orden(s => {
-      if (PW.trituradora.atascando(e)) return PW.error('atascando');
+      if (PW.trituradora.atascando(e)) return PW.trituradora.empuja(e, B(), s);
       if (!(e.r.planta.archivadores[i] && e.r.planta.archivadores[i].vida > 0)) return PW.error('sin-archivador');
       const b = B();
       e.r.ultimoToque = e.r.tiempo;
@@ -118,6 +119,8 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     fijaMunicion: (cual, si) => orden(() => PW.trituradora.fijaMunicion(e, cual, si)),
     eligeCarta: id => orden(s => PW.cartas.elige(e, B(), id, azar, s), 'cartas'),
     fijaFotocopia: m => orden(() => PW.compras.fijaFotocopia(e, m)),
+    irA: n => orden(s => PW.rebuscar.irA(e, B(), n, azar, s)),
+    fijaBajar: veces => orden(() => PW.rebuscar.fijaBajar(e, veces)),
     manda: (k, i) => orden(() => PW.equipo.manda(e, B(), k, i)),
     compraDocumento: m => orden(() => PW.compras.compraDocumento(e, m), 'mejoras'),
     compraRecuerdo: id => orden(() => PW.compras.compraRecuerdo(e, id), 'recuerdos'),

@@ -1,8 +1,8 @@
 {
- "build": 1191,
- "hash": "b51462d",
- "fecha": "2026-11-15T12:12:43Z",
- "mensaje": "Paperwork 0.3.1: arreglos de la revisión de código de la 0.2.0",
+ "build": 1192,
+ "hash": "04be5cc",
+ "fecha": "2026-11-15T12:37:20Z",
+ "mensaje": "Paperwork 0.4.0: desbloqueos por nivel de la Trituradora, plantas con modo auto y pelea de jefe",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.3.1",
+  "paperwork": "0.4.0",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

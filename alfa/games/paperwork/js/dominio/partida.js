@@ -1,6 +1,6 @@
 // Fans Of Paperwork · dominio · PARTIDA: el estado entero y su forma guardada. Dos partes: el recorrido (r: lo que se pierde en el Despido)
 // y la carrera (c: lo que se queda para siempre). Las fábricas devuelven PW.ok / PW.error; lo guardado se valida al cargarlo y lo que
-// falte se rellena con el valor de una partida nueva (así una versión vieja del guardado sigue sirviendo).
+// falte se rellena con el valor de una partida nueva. Mientras sea prototipo, una partida de otra versión del juego no se carga: empieza de cero.
 'use strict';
 PW.partida = (() => {
   const NM = () => PW.DOCUMENTOS.length;
@@ -10,19 +10,19 @@ PW.partida = (() => {
   function recorridoNuevo(c, azar) {
     const r = { planta: null, sueltos: ceros(), expedientes: ceros(), oro: 0, nivel: 1, xp: 0, utiles: { gafas: 0, cafe: 0, carrito: 0, guantes: 0, fundas: 0 }, temporales: 0, bonoCarta: {}, pedido: null,
       herramientas: PW.ZONAS.map(() => 0), caducados: 0, urgentes: [], equipo: PW.equipo.nuevo(),
-      mejorasDoc: ceros(), restoVenta: ceros(), estanteria: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, vaciados: 0 };
+      mejorasDoc: ceros(), restoVenta: ceros(), estanteria: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, repes: 0, vaciados: 0 };
     r.planta = PW.planta.crea(1, azar, PW.bonos.calcula({ r, c }), c.especialidad);
     return r;
   }
   function carreraNueva() {
     return { trituradora: { nivel: 0, atasco: 0, espera: 0, intento: 0, hambre: 0, multi: 0 },
-      municion: { caducados: true, docs: PW.DOCUMENTOS.map((d, i) => i === 0) }, oferta: [], fotocopia: -1, sancion: 0, recuerdos: {}, especialidad: ceros(), plan: {}, indemnizacion: 0,
+      municion: { caducados: true, docs: PW.DOCUMENTOS.map((d, i) => i === 0) }, oferta: [], fotocopia: -1, sancion: 0, bajar: 1, recuerdos: {}, especialidad: ceros(), plan: {}, indemnizacion: 0,
       despidos: 0, autoDespido: 0, nivelMax: 1, plantaMax: 1, correo: { falta: 20, vuela: 0, x: 0 }, sindicato: { guardados: 0, falta: PW.AJ.sindicato.cada },
       totales: { archivadores: 0, oro: 0, estanterias: 0, correos: 0, cofres: 0 }, tiempoTotal: 0 };
   }
   function nueva(azar) {
     const c = carreraNueva();
-    return { v: 1, r: recorridoNuevo(c, azar), c };
+    return { v: PW.AJ.version, r: recorridoNuevo(c, azar), c };
   }
   // rellena lo que falte con lo de una partida nueva, sin tocar lo que ya hay
   // (y alarga las listas por documento si el juego tiene documentos nuevos)
@@ -47,8 +47,8 @@ PW.partida = (() => {
   // Resultado: la partida guardada, o 'partida-invalida' con el campo que falla
   function desdeJson(j, azar) {
     if (!j || typeof j !== 'object' || !j.r || !j.c) return PW.error('partida-invalida', { campo: 'raiz' });
-    // una partida de antes de los documentos (0.1) no tiene archivadores ni documentos sueltos: no se rellena, se empieza de nuevo
-    if (!j.r.planta || !Array.isArray(j.r.planta.archivadores) || !Array.isArray(j.r.sueltos)) return PW.error('partida-invalida', { campo: 'formato' });
+    // mientras sea prototipo, cada versión nueva empieza de cero (Arkioner, 15-11-2026): no se migra nada
+    if (j.v !== PW.AJ.version) return PW.error('partida-invalida', { campo: 'version' });
     const e = JSON.parse(JSON.stringify(j));
     rellena(e, nueva(azar));
     const mal = valida(e);

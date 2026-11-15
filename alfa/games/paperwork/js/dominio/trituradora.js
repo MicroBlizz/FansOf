@@ -25,6 +25,7 @@ PW.trituradora = (() => {
   // la máquina se come un bocado: el mejor que haya (y lo gasta). Devuelve lo que vale. Si el equipo no le hace nada (se lo traga todo),
   // no se gasta munición
   function come(e, B) {
+    if (!B.abierto.sellos) return 1;   // hasta que se abre la munición, la máquina se atasca con lo que le echen
     const m = municion(e)[0];
     if (!m || atascoSeg(e, B) <= 0) return A.sinMunicion;
     if (m.i < 0) e.r.caducados--; else e.r.expedientes[m.i]--;
@@ -51,6 +52,7 @@ PW.trituradora = (() => {
   // lo que haría un intento entero con la munición de ahora (sin gastarla): { atasco, multi (el valor medio del bocado), bocados }
   function prevision(e, B) {
     const bocados = Math.ceil(A.bocadosSeg * A.intento);
+    if (!B.abierto.sellos) return { atasco: atascoSeg(e, B) * A.intento, multi: 1, bocados };
     let falta = bocados, suma = 0;
     for (const m of municion(e)) { const usa = Math.min(falta, m.hay); suma += usa * m.multi; falta -= usa; }
     const multi = (suma + falta * A.sinMunicion) / bocados;
@@ -80,6 +82,17 @@ PW.trituradora = (() => {
     while (t.hambre >= 1) { t.hambre -= 1; if (t.intento > 0) t.multi = come(e, B); }
     if (t.intento <= 0) sucesos.push({ t: 'intento-fin', parte: t.atasco / capacidad(e) });
   }
+  // el jugador empuja con el dedo durante el intento: un vistazo del líder contra la máquina, con el bocado que tenga en la boca.
+  // Resultado: PW.ok(lo que atasca), 'esperando' (no hay intento en marcha) o 'sin-fuerza' (se lo traga todo: se ve, pero no cuenta)
+  function empuja(e, B, sucesos) {
+    if (!atascando(e)) return PW.error('esperando');
+    const t = T(e), d = Math.max(0, B.dano * B.trit - tragaderas(e, B)) * t.multi;
+    sucesos.push({ t: 'empujon', d });
+    if (!(d > 0)) return PW.error('sin-fuerza');
+    t.atasco += d;
+    if (t.atasco >= capacidad(e)) atascaNivel(e, sucesos);
+    return PW.ok(d);
+  }
   // avanzar la espera sin atascar (horas extra)
   const pasaEspera = (e, dt) => { T(e).espera = Math.max(0, T(e).espera - dt); };
   // elegir qué se le echa: cual = 'caducados' o el índice de un documento. Resultado: PW.ok(si queda puesto) o 'desconocido'
@@ -91,5 +104,5 @@ PW.trituradora = (() => {
     return PW.ok(M.docs[cual]);
   }
 
-  return { atasca, avanza, atascoSeg, prevision, municion, multiDoc, capacidad, tragaderas, lista, atascando, acabada, pasaEspera, fijaMunicion };
+  return { empuja, atasca, avanza, atascoSeg, prevision, municion, multiDoc, capacidad, tragaderas, lista, atascando, acabada, pasaEspera, fijaMunicion };
 })();

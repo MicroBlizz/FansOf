@@ -4,7 +4,7 @@
 'use strict';
 PW.efectos = (() => {
   const R = PW.REJILLA, numeros = [], papeles = [], carteles = [], vistazos = {};
-  let temblor = 0, destello = 0, ahora = 0;
+  let temblor = 0, destello = 0, ahora = 0, ultimaPlanta = 0;
 
   const centro = i => ({ x: R.x + (i % R.cols) * R.paso + R.lado / 2, y: R.y + Math.floor(i / R.cols) * R.paso + R.lado / 2 });
   function numero(x, y, txt, color, grande = false) {
@@ -30,18 +30,25 @@ PW.efectos = (() => {
     if (sello) numero(c.x, c.y - 14, tr(sello[0]), sello[1], s.sello !== 'caducado');
     if (s.n > 1) numero(c.x, c.y + 12, '+' + PW.txt.num(s.n), D.color);
   }
+  // lo que se abre al atascar ese nivel de la Trituradora, en un cartel aparte
+  function abre(nivel) {
+    const lista = PW.desbloqueos.alAtascar(nivel).map(d => tr(d.nombre));
+    if (lista.length) cartel(tr('¡Nuevo!'), '#3ddc84', 4, lista.join(' · '));
+  }
   // cada suceso, su efecto (los que no salen aquí no se ven)
   const POR_SUCESO = {
     vistazo: s => { const c = centro(s.i); vistazos[s.i] = ahora; numero(c.x, c.y - 20, PW.txt.num(Math.max(1, s.d)), s.duro ? '#9aa0a8' : '#ffffff'); },
     trabaja: s => { vistazos[s.i] = ahora; },
     vacio,
-    planta: s => cartel(tr('Planta −{n}', { n: s.n }), PLANTA[s.especial][0], 1.2, tr(PLANTA[s.especial][1])),
+    // repetir la misma planta (modo auto) no se anuncia cada vez, salvo que salga especial
+    planta: s => { if (s.n !== ultimaPlanta || s.especial !== 'normal') cartel(tr('Planta −{n}', { n: s.n }), PLANTA[s.especial][0], 1.2, tr(PLANTA[s.especial][1])); ultimaPlanta = s.n; },
+    empujon: s => numero(270, R.y + 110, s.d > 0 ? '+' + PW.txt.num(Math.max(1, s.d)) : '0', s.d > 0 ? '#ffd23f' : '#9aa0a8', s.d > 0),
     nivel: s => cartel(tr('¡Nivel {n}!', { n: s.n }), '#7ef9ff', 1.2),
     estanteria: () => { temblor = 0.5; destello = 0.35; },
     clasificado: s => numero(R.x + R.ancho / 2, R.y - 10, tr('Clasificado x{n}', { n: s.multi }), '#3ddc84'),
     'urgente-tarde': () => numero(R.x + R.ancho / 2, R.y - 10, tr('Se pasó el plazo'), '#9aa0a8'),
     especialidad: s => cartel(tr('Especialidad en {m}: rango {r}', { m: tr(PW.DOCUMENTOS[s.m].nombre), r: s.rango }), '#b06bff', 2),
-    trituradora: s => { temblor = 1; destello = 0.6; cartel(tr('¡Trituradora atascada!'), '#ff4d5e', 3, PW.FACCIONES[s.nivel] ? tr('{lider} se une al equipo', { lider: PW.FACCIONES[s.nivel].lider }) : ''); },
+    trituradora: s => { temblor = 1; destello = 0.6; cartel(tr('¡Trituradora atascada!'), '#ff4d5e', 3, PW.FACCIONES[s.nivel] ? tr('{lider} se une al equipo', { lider: PW.FACCIONES[s.nivel].lider }) : ''); abre(s.nivel); },
     'intento-fin': s => cartel(tr('Intento terminado'), '#ffffff', 2, tr('{p} de la Trituradora atascada', { p: PW.txt.pct(s.parte) })),
     'pedido-ok': s => cartel(tr('¡Pedido cumplido!'), '#3ddc84', 2.2, tr('{n} de oro y un cofre', { n: PW.txt.num(s.oro) })),
     'pedido-mal': s => cartel(tr('Pedido sin cumplir'), '#ff4d5e', 2.4, tr('Sanción: {p} menos en tu próximo Despido', { p: PW.txt.pct(s.sancion) })),

@@ -31,7 +31,9 @@ PW.creaAlmacenLocal = (clave, almacenamiento, alFallar = () => {}) => {
   }
   const escribe = (json, k = clave) => escribeTexto(JSON.stringify(json), k);
   // los extras se leen una vez y se tienen en memoria; la partida, la última que se guardó (así guardar no relee todo)
-  const inicial = lee(), extras = Object.fromEntries(EXTRAS.filter(k => inicial && inicial[k] !== undefined).map(k => [k, inicial[k]]));
+  const inicial = lee(), deOtraVersion = !!inicial && inicial.v !== PW.AJ.version;
+  // de otra versión la partida empieza de cero, y con ella los retos y logros (el sonido apagado sí se respeta)
+  const extras = Object.fromEntries(EXTRAS.filter(k => inicial && inicial[k] !== undefined && !(deOtraVersion && k === 'retos')).map(k => [k, inicial[k]]));
   let partida = inicial && inicial.r ? inicial : null;
 
   return {

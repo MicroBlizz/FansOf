@@ -18,9 +18,11 @@ PW.paneles = (() => {
     const parte = r.nivel >= tope ? 1 : r.xp / xp;
     return `<span class="pw-oro ol">${n(r.oro)}</span>`
       + `<span class="pw-nivel"><b class="ol">${tr('Nv. {n}', { n: r.nivel })}</b><i style="width:${Math.round(parte * 100)}%"></i>${r.nivel >= tope ? `<small>${tr('tope')}</small>` : ''}</span>`
-      + `<span class="pw-planta ol">${tr('Planta −{n}', { n: r.planta.n })}<small>${tr(PW.ZONAS[PW.curvas.zonaDe(r.planta.n)].nombre)}</small></span>`
+      + `<button class="pw-planta ol" data-acc="pestana" data-arg="plantas"${PW.trituradora.atascando(e) ? ' disabled' : ''}>${tr('Planta −{n}', { n: r.planta.n })}<small>${tr(PW.ZONAS[PW.curvas.zonaDe(r.planta.n)].nombre)}${modoAuto(e)}</small></button>`
       + `<span class="pw-indem ol" title="${tr('Indemnización')}">${n(e.c.indemnizacion)}</span>`;
   }
+  // cómo va el modo auto, junto al nombre de la zona: cuántas limpiezas lleva de las pedidas, o que el equipo se queda
+  const modoAuto = e => (e.c.bajar === 0 ? ' · ' + tr('sin bajar') : e.c.bajar > 1 ? ` · ${e.r.repes || 0}/${e.c.bajar}` : '');
   // los botones grandes de acción, con su carga o su cuenta (la carga va de 5 en 5 %: así el botón no se rehace a cada instante)
   const carga = v => Math.floor(Math.max(0, Math.min(1, v)) * 20) / 20;
   const accion = (acc, arg, listo, p, img, txt) => `<button class="pw-acc ol${listo ? ' listo' : ''}" data-acc="${acc}" data-arg="${arg}" style="--p:${p}"><img src="img/${img}.png" alt="" onerror="this.remove()">${txt}</button>`;
@@ -28,23 +30,26 @@ PW.paneles = (() => {
     const T = e.c.trituradora, sind = e.c.sindicato, urg = e.r.urgentes, cofres = PW.extras.cofres(e);
     const trit = PW.trituradora.acabada(e) ? tr('Atascada') : PW.trituradora.atascando(e) ? tr('¡Dale!') : T.espera > 0 ? t(T.espera) : tr('¡Atascar!');
     const plazo = urg.length ? Math.min(...urg.map(u => u.falta)) : 0;
+    // solo salen los botones de lo que ya está abierto (dominio/desbloqueos.js)
     return accion('estanteria', '', e.r.estanteria >= B.recargaEstanteria, carga(e.r.estanteria / B.recargaEstanteria), 'icono-castor', tr('Castor'))
       + accion('pestana', 'trituradora', PW.trituradora.lista(e), 0, 'trituradora', trit)
-      + accion('urgente', '', urg.length > 0, carga(plazo / PW.AJ.sellos.urgenteDura), 'icono-sello', urg.length ? `${tr('Urgente')} ${t(plazo)}` : tr('Urgente'))
-      + accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / PW.AJ.sindicato.cada), 'icono-sindicato', `${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : ''}`)
-      + accion('pestana', 'cofres', cofres > 0, carga(e.r.medidor / PW.AJ.cofre.medidor), 'icono-cofre', `${tr('Cofres')} ${cofres ? '×' + cofres : ''}`);
+      + (B.abierto.sellos ? accion('urgente', '', urg.length > 0, carga(plazo / PW.AJ.sellos.urgenteDura), 'icono-sello', urg.length ? `${tr('Urgente')} ${t(plazo)}` : tr('Urgente')) : '')
+      + (B.abierto.sindicato ? accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / PW.AJ.sindicato.cada), 'icono-sindicato', `${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : ''}`) : '')
+      + (B.abierto.cofres ? accion('pestana', 'cofres', cofres > 0, carga(e.r.medidor / PW.AJ.cofre.medidor), 'icono-cofre', `${tr('Cofres')} ${cofres ? '×' + cofres : ''}`) : '');
   }
   const pestanaDe = (id, txt, activa, globo, clase = '') => `<button class="ol ${clase}${activa === id ? ' activo' : ''}" data-acc="pestana" data-arg="${id}" data-globo="${globo || ''}">${txt}</button>`;
   // la barra de pestañas del nivel en el que se está: las del turno y el salto a la carrera, o las de la carrera y la vuelta al turno
   function pestanas(e, B, activa) {
     const av = avisos(e, B);
     if (!enCarrera(activa)) {
-      return TURNO.map(([id, txt]) => pestanaDe(id, tr(txt), activa, av[id])).join('')
-        + pestanaDe('despido', tr('Tu carrera'), '', av.despido + av.recuerdos + av.plan + av.retos, 'pw-salto');
+      // con «Tu carrera» aún cerrada, su sitio dice qué la abre y lleva a la Trituradora
+      const salto = B.abierto.carrera ? pestanaDe('despido', tr('Tu carrera'), '', av.despido + av.recuerdos + av.plan + av.retos, 'pw-salto')
+        : pestanaDe('trituradora', tr('Atasca la Trituradora'), '', '', 'pw-salto pw-cerrado') + pestanaDe('opciones', '···', '', '', 'pw-salto pw-mas');
+      return TURNO.map(([id, txt]) => pestanaDe(id, tr(txt), activa, av[id])).join('') + salto;
     }
     return `<div class="pw-cabecera"><button class="ol pw-vuelta" data-acc="pestana" data-arg="utiles">${tr('Este turno')}</button><b class="ol">${tr('TU CARRERA')}</b>`
       + `<small>${tr('Lo que se queda cuando te despiden')}</small></div><div class="pw-fila-pestanas">`
-      + CARRERA.map(([id, txt]) => pestanaDe(id, id === 'opciones' ? txt : tr(txt), activa, av[id])).join('') + '</div>';
+      + CARRERA.filter(([id]) => id === 'opciones' || (B.abierto.carrera && (B.abierto.plan || (id !== 'plan' && id !== 'retos')))).map(([id, txt]) => pestanaDe(id, id === 'opciones' ? txt : tr(txt), activa, av[id])).join('') + '</div>';
   }
 
   // los útiles del líder: su icono y lo que hacen ahora
@@ -68,7 +73,8 @@ PW.paneles = (() => {
     const utiles = (e.c.oferta.length ? 1 : 0) + utilesVistos(e).filter(u => e.r.utiles[u.id] < PW.AJ.utiles[u.id].max && e.r.oro >= PW.compras.precioUtil(e, u.id)).length
       + zonasVistas(e).filter(z => e.r.herramientas[z] < PW.AJ.herramienta.max && e.r.oro >= PW.compras.precioHerramienta(e, z)).length;
     const documentos = PW.DOCUMENTOS.filter((m, i) => PW.compras.vistoDocumento(e, i) && e.r.mejorasDoc[i] < B.topeDocumento && e.r.expedientes[i] >= PW.compras.precioDocumento(e, i)).length;
-    return { utiles, documentos, ...PW.panelesCarrera.avisos(e), retos: PW.retos.listos() };
+    const carrera = PW.panelesCarrera.avisos(e);
+    return { utiles, documentos, ...carrera, plan: B.abierto.plan ? carrera.plan : 0, retos: B.abierto.plan ? PW.retos.listos() : 0 };
   }
   // lo que el papel de esta planta le quita al líder: para que se vea cuándo tocan guantes
   function notaDureza(e, B) {
@@ -94,6 +100,7 @@ PW.paneles = (() => {
   }
   // los montones urgentes (con lo que pagan si se entregan ya) y los caducados guardados
   function montones(e, B) {
+    if (!B.abierto.sellos) return '';
     const urg = e.r.urgentes, paga = urg.reduce((s, u) => s + PW.sellos.pagaUrgente(B, u), 0);
     const urgente = urg.length ? `<div class="pw-texto pw-urgente"><p>${tr('Tienes {n} montones urgentes. Entrégalos antes de {t} y pagan el triple.', { n: urg.length, t: t(Math.min(...urg.map(u => u.falta))) })}</p>`
       + `${boton('urgente', '', `${tr('ENTREGAR')} · ${n(paga)}<i class="pw-oro-i"></i>`, true, 'grande listo')}</div>` : '';
@@ -122,11 +129,12 @@ PW.paneles = (() => {
     const cabe = acabada ? 1 : PW.trituradora.capacidad(e), pre = PW.trituradora.prevision(e, B);
     const estado = acabada ? tr('¡Atascada del todo! Ya no tritura nada más.')
       : tr('Nivel {n} de {t}. Lleva {d} de {v} atascado; se traga {a} de cada vistazo sin enterarse.', { n: T.nivel + 1, t: A.niveles, d: n(T.atasco), v: n(cabe), a: n(PW.trituradora.tragaderas(e, B)) });
-    const prevision = acabada ? '' : `<p>${tr('Con lo que le vas a echar, tu equipo la atascaría unos {d} en un intento de {s} s (el bocado medio vale {m}).', { d: n(pre.atasco), s: A.intento, m: x(pre.multi) })}`
+    const prevision = acabada ? '' : `<p>${(B.abierto.sellos ? tr('Con lo que le vas a echar, tu equipo la atascaría unos {d} en un intento de {s} s (el bocado medio vale {m}).', { d: n(pre.atasco), s: A.intento, m: x(pre.multi) }) : tr('Tu equipo la atascaría unos {d} en un intento de {s} s.', { d: n(pre.atasco), s: A.intento }))}`
       + `${PW.trituradora.atascoSeg(e, B) <= 0 ? ' ' + tr('Ahora se lo traga todo: mejora las gafas o los guantes.') : ''}</p>`
-      + `<p><small>${tr('Se come {b} documentos por intento. Sin munición casi no se atasca ({m}).', { b: pre.bocados, m: x(A.sinMunicion) })}</small></p>`;
+      + (B.abierto.sellos ? `<p><small>${tr('Se come {b} documentos por intento. Sin munición casi no se atasca ({m}).', { b: pre.bocados, m: x(A.sinMunicion) })}</small></p>` : '')
+      + `<p class="pw-nota">${PW.panelesTurno.premio(e)}</p>`;
     const espera = T.espera > 0 && !PW.trituradora.atascando(e) ? `<p>${tr('Se puede volver a intentar en {t}.', { t: t(T.espera) })}</p>` : '';
-    return `<div class="pw-texto"><p>${estado}</p>${prevision}${espera}${boton('atascar', '', tr('ATASCAR'), PW.trituradora.lista(e), 'grande')}</div>${acabada ? '' : municion(e)}`;
+    return `<div class="pw-texto"><p>${estado}</p>${prevision}${espera}${boton('atascar', '', tr('ATASCAR'), PW.trituradora.lista(e), 'grande')}</div>${acabada || !B.abierto.sellos ? '' : municion(e)}${PW.panelesTurno.desbloqueos(e)}`;
   }
   function cofres(e) {
     const hay = PW.extras.cofres(e);

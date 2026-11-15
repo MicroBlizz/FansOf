@@ -42,6 +42,7 @@ PW.rebuscar = (() => {
   }
   function llenaMedidor(e, B, sucesos) {
     const r = e.r;
+    if (!B.abierto.cofres) return;
     r.medidor += B.medidor;
     if (r.medidor < AJ.cofre.medidor) return;
     r.medidor -= AJ.cofre.medidor;
@@ -65,12 +66,40 @@ PW.rebuscar = (() => {
     llenaMedidor(e, B, sucesos);
     PW.encargos.cuenta(e, B, sucesos);
   }
-  function bajaPlanta(e, B, azar, sucesos) {
-    const r = e.r, n = r.planta.n + 1;
-    r.planta = PW.planta.crea(n, azar, B, e.c.especialidad);
+  // pone al equipo en la planta n (nueva: la primera vez que se pisa en este turno, que es cuando puede haber auditoría)
+  // sorteo: si la planta puede salir especial (no al ir a ella a mano: las flechas no son una tirada gratis)
+  function ponPlanta(e, B, n, azar, sucesos, sorteo = true) {
+    const r = e.r, nueva = n > r.plantaMax;
+    r.planta = PW.planta.crea(n, azar, B, e.c.especialidad, nueva, sorteo);
+    r.repes = 0;
     r.plantaMax = Math.max(r.plantaMax, n);
     e.c.plantaMax = Math.max(e.c.plantaMax, n);
-    sucesos.push({ t: 'planta', n, especial: r.planta.especial, zona: C.zonaDe(n) });
+    sucesos.push({ t: 'planta', n, especial: r.planta.especial, zona: C.zonaDe(n), nueva });
+  }
+  const bajaPlanta = (e, B, azar, sucesos) => ponPlanta(e, B, e.r.planta.n + 1, azar, sucesos);
+  // la planta está limpia: se baja si ya se ha limpiado las veces que pide el modo auto (c.bajar; 0 = quedarse); si no, se repite
+  function alLimpiar(e, B, azar, sucesos) {
+    const r = e.r;
+    r.repes = (r.repes || 0) + 1;
+    if (e.c.bajar > 0 && r.repes >= e.c.bajar) return bajaPlanta(e, B, azar, sucesos);
+    const repes = r.repes;
+    ponPlanta(e, B, r.planta.n, azar, sucesos);
+    r.repes = repes;
+  }
+  // el jugador lleva al equipo a otra planta ya pisada en este turno (de una auditoría en marcha no se escapa).
+  // Resultado: PW.ok(n), 'atascando', 'auditoria' o 'no-disponible'
+  function irA(e, B, n, azar, sucesos) {
+    if (PW.trituradora.atascando(e)) return PW.error('atascando');
+    if (e.r.planta.auditoria > 0) return PW.error('auditoria');
+    if (!(Number.isInteger(n) && n >= 1 && n <= e.r.plantaMax) || n === e.r.planta.n) return PW.error('no-disponible', { n });
+    ponPlanta(e, B, n, azar, sucesos, false);
+    return PW.ok(n);
+  }
+  // cuántas veces hay que limpiar una planta para bajar sola (0 = no bajar). Resultado: PW.ok(veces) o 'desconocido'
+  function fijaBajar(e, veces) {
+    if (!AJ.planta.bajar.includes(veces)) return PW.error('desconocido', { veces });
+    e.c.bajar = veces;
+    return PW.ok(veces);
   }
   // lo que de verdad lee un vistazo de d de base en el archivador i, tras la dureza de su papel (0 si no hay archivador)
   function lee(e, B, i, d) {
@@ -82,7 +111,7 @@ PW.rebuscar = (() => {
     const res = PW.planta.rebusca(e.r.planta, i, sinDureza ? d : lee(e, B, i, d));
     if (!res.ok || !res.valor.vacio) return false;
     vacia(e, B, res.valor.m, i, azar, sucesos, res.valor.precinto);
-    if (PW.planta.limpia(e.r.planta)) bajaPlanta(e, B, azar, sucesos);
+    if (PW.planta.limpia(e.r.planta)) alLimpiar(e, B, azar, sucesos);
     return true;
   }
   // un vistazo del líder (o de un toque) al archivador i; y, con suerte de carrito, también al de al lado
@@ -95,5 +124,5 @@ PW.rebuscar = (() => {
     if (conCarrito && planta === e.r.planta) rebusca(e, B, vecino, base, azar, sucesos);
   }
 
-  return { rebusca, vistazo, clasifica, lee, bajaPlanta };
+  return { rebusca, vistazo, clasifica, lee, bajaPlanta, ponPlanta, alLimpiar, irA, fijaBajar };
 })();

@@ -8,7 +8,7 @@
 <meta name="description" content="Fans Of Paperwork: baja planta a planta por el archivo de Microblizz, rebusca en los archivadores y atasca la Trituradora con su propio papeleo. Prototipo en desarrollo.">
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="img/icono-192.png">
-<script src="../../core/js/nucleo.js?v=0.3.1-a1191.b51462d"></script>
+<script src="../../core/js/nucleo.js?v=0.4.0-a1192.04be5cc"></script>
 <script>NUCLEO.fuentes('../../core/fuentes/baloo-2.css', '../../core/fuentes/luckiest-guy.css')</script>
 <!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
 <script>NUCLEO.estilos('../../core/css/base.css', 'css/paperwork.css')</script>
@@ -18,9 +18,12 @@
   <canvas id="cv" width="540" height="960" aria-label="Fans Of Paperwork"></canvas>
   <div id="pw-ui">
     <header id="pw-hud"></header>
+    <div id="pw-lateral"></div>
     <div id="pw-acciones"></div>
+    <div id="pw-recursos"></div>
     <nav id="pw-pestanas"></nav>
     <section id="pw-panel"></section>
+    <div id="pw-cortinilla"></div>
   </div>
 </div>
 <div id="carga">…</div>
@@ -44,11 +47,11 @@ NUCLEO.juego({
     '../../core/js/sistema/retos-ligero.js',   // el sistema común de logros (RETOSL): los datos son de Paperwork (js/retos.js)
     // el juego, por capas (docs/calidad/ARQUITECTURA.md): los datos, el dominio, los casos de uso, los adaptadores y la composición
     'js/datos.js', 'js/retos.js',
-    'js/dominio/curvas.js', 'js/dominio/bonos.js', 'js/dominio/planta.js', 'js/dominio/partida.js', 'js/dominio/rebuscar.js', 'js/dominio/sellos.js', 'js/dominio/equipo.js', 'js/dominio/encargos.js', 'js/dominio/cartas.js', 'js/dominio/compras.js',
+    'js/dominio/curvas.js', 'js/dominio/desbloqueos.js', 'js/dominio/bonos.js', 'js/dominio/planta.js', 'js/dominio/partida.js', 'js/dominio/rebuscar.js', 'js/dominio/sellos.js', 'js/dominio/equipo.js', 'js/dominio/encargos.js', 'js/dominio/cartas.js', 'js/dominio/compras.js',
     'js/dominio/trituradora.js', 'js/dominio/despido.js', 'js/dominio/extras.js',
     'js/aplicacion/motor.js', 'js/aplicacion/casos.js',
     'js/adaptadores/almacen-local.js', 'js/adaptadores/reloj.js', 'js/adaptadores/sonido.js', 'js/adaptadores/retos.js', 'js/adaptadores/textos.js',
-    'js/adaptadores/arte.js', 'js/adaptadores/escena.js', 'js/adaptadores/efectos.js', 'js/adaptadores/paneles.js', 'js/adaptadores/paneles-carrera.js',
+    'js/adaptadores/arte.js', 'js/adaptadores/escena.js', 'js/adaptadores/efectos.js', 'js/adaptadores/paneles.js', 'js/adaptadores/paneles-turno.js', 'js/adaptadores/paneles-carrera.js',
     'js/adaptadores/botones.js',
     'js/principal.js'],
 });

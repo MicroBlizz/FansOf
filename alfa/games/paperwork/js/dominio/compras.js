@@ -27,7 +27,9 @@ PW.compras = (() => {
   // un útil propio de una zona (las fundas) no sale hasta llegar a ella
   function vistoUtil(e, cual) {
     const u = PW.UTILES.find(x => x.id === cual);
-    return !!u && (u.zona === undefined || zonaVista(e) >= u.zona);
+    if (!u || (u.abre && !PW.desbloqueos.tiene(e, u.abre))) return false;
+    if (u.duro && C.documentosDe(e.r.plantaMax)[1] < AJ.dureza.desde) return false;
+    return u.zona === undefined || zonaVista(e) >= u.zona;
   }
   function compraUtil(e, cual) {
     const c = AJ.utiles[cual];
@@ -71,6 +73,7 @@ PW.compras = (() => {
   function compraCarrera(e, id) {
     const n = PW.CARRERA.find(x => x.id === id);
     if (!n) return PW.error('desconocido', { id });
+    if (!PW.desbloqueos.tiene(e, 'plan')) return PW.error('no-disponible');
     if (e.c.plan[id]) return PW.error('al-maximo');
     if (n.pide && !e.c.plan[n.pide]) return PW.error('falta-requisito', { pide: n.pide });
     if (puntos(e) < n.coste) return PW.error('sin-saldo', { falta: n.coste - puntos(e) });

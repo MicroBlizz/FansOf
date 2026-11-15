@@ -10,10 +10,7 @@ PW.cartas = (() => {
     temporal: e => { e.r.temporales = (e.r.temporales || 0) + 1; },
     ascensor: (e, B, azar, sucesos) => {
       const n = e.r.planta.n + K.planta;
-      e.r.planta = PW.planta.crea(n, azar, B, e.c.especialidad);
-      e.r.plantaMax = Math.max(e.r.plantaMax, n);
-      e.c.plantaMax = Math.max(e.c.plantaMax, n);
-      sucesos.push({ t: 'planta', n, especial: e.r.planta.especial, zona: PW.curvas.zonaDe(n) });
+      PW.rebuscar.ponPlanta(e, B, n, azar, sucesos);
     },
     guantes: e => { e.r.utiles.guantes = Math.min(PW.AJ.utiles.guantes.max, e.r.utiles.guantes + K.guantes); },
     adelanto: e => { e.r.oro += K.oro * (1 + e.c.trituradora.nivel); },

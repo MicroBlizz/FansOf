@@ -8,6 +8,7 @@ PW.sellos = (() => {
   // qué sello sale: 'secreto', 'confidencial', 'urgente', 'caducado' o 'normal'
   function tira(B, azar) {
     const t = azar();
+    if (!B.abierto.sellos) return 'normal';   // (la tirada se gasta igual: el azar no cambia de orden al abrirlos)
     if (t < B.confidencial) return azar() < B.altoSecreto ? 'secreto' : 'confidencial';
     if (t < B.confidencial + S.urgente) return 'urgente';
     return t < B.confidencial + S.urgente + S.caducado ? 'caducado' : 'normal';

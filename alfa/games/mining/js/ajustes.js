@@ -5,7 +5,7 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Mining', guardado: 'for-mining-v1', sinFeedback: true };
 MN.AJ = {
-  version: '0.1.1',
+  version: '0.1.2',
   planta: { columnas: 6, filas: 4, limpia: 0.7, plantasPorPar: 4, plantasPorZona: 16, extraSinFin: 1.15 },
   material: { vida0: 10, vidaBase: 2.5, valor0: 1, valorBase: 2.4, receta0: 2 },
   pico: { golpesSeg: 1.2, critBase: 0.05, critMulti: 2, superMulti: 3, toqueMulti: 1 },
@@ -22,7 +22,7 @@ MN.AJ = {
   especiales: { dorada: 0.04, doradaMulti: 3, arcoiris: 0, arcoirisMulti: 10, multiRoca: 0.04, multiRocaMulti: 3 },
   reciclado: { x2: 0.05, x3: 0 },
   trituradora: { niveles: 10, vida0: 150000, vidaBase: 3.2, armadura0: 2, armaduraBase: 2.6, intento: 30, espera: 1200, premioOro: 200 },
-  despido: { nivelMinimo: 20, base: 12, factor: 1.084, desde: 10 },
+  despido: { base: 12, factor: 1.084, desde: 10 },
   recuerdo: { base: 8, factor: 1.6, max: 20 },
   expediente: { umbrales: [40, 400, 4000], vida: [1, 0.9, 0.8, 0.65], premio: [1, 1.1, 1.2, 1.35] },
   ayudante: { parteDelPico: 0.3, golpesSeg: 0.8 },

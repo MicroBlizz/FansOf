@@ -5,17 +5,17 @@ MN.panelesCarrera = (() => {
   const P = MN.paneles, n = v => MN.txt.num(v);
 
   function despido(e, B) {
-    const puede = MN.despido.puede(e), cobra = MN.despido.cobraria(e, B), min = MN.AJ.despido.nivelMinimo;
+    const puede = MN.despido.puede(e), cobra = MN.despido.cobraria(e, B);
     const txt = puede ? tr('El CEO os echa a todos. Vuelves a la planta 1 sin oro, piezas, nivel ni mejoras del pico, y cobras {n} de Indemnización.', { n: n(cobra) })
-      : tr('Hasta el nivel {m} no te pueden despedir (te faltan {f}).', { m: min, f: min - e.r.nivel });
+      : tr('Aún no cobrarías nada: sube un poco de nivel y el Despido empezará a dar Indemnización.');
     return `<div class="so-texto"><h4>${tr('El Despido')}</h4><p>${txt}</p><p><small>${tr('Se quedan la Trituradora, tu equipo, los Recuerdos, los expedientes, el plan de carrera y los objetos.')}</small></p>`
       + `${P.boton('despedir', '', tr('DESPEDIRSE'), puede, 'grande peligro')}${autoDespido(e)}</div>`;
   }
   function autoDespido(e) {
     if (!e.c.plan.autodespido) return '';
-    const min = MN.AJ.despido.nivelMinimo, tope = MN.curvas.topeNivel(e.c.trituradora.nivel);
+    const tope = MN.curvas.topeNivel(e.c.trituradora.nivel);
     const opciones = [0];
-    for (let v = min; v <= tope; v += 5) opciones.push(v);
+    for (let v = 10; v <= tope; v += 5) opciones.push(v);
     const botones = opciones.map(v => P.boton('autodespido', v, v ? tr('Nv. {n}', { n: v }) : tr('No'), true, e.c.autoDespido === v ? 'activo' : '')).join('');
     return `<div class="so-venta"><b>${tr('Despedirse solo al llegar al nivel')}</b><div>${botones}</div></div>`;
   }

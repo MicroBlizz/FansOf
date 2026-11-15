@@ -1,8 +1,8 @@
 {
- "build": 1185,
- "hash": "fd15438",
- "fecha": "2026-11-15T10:51:53Z",
- "mensaje": "Fans Of Mining: el idle de minería cambia de nombre y de carpeta (ADR 114)",
+ "build": 1186,
+ "hash": "cf041bc",
+ "fecha": "2026-11-15T10:56:16Z",
+ "mensaje": "Mining 0.1.2: el Despido se puede en cuanto da algo de Indemnización, sin nivel mínimo",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.30",
   "karts": "0.7.29",
-  "mining": "0.1.1",
+  "mining": "0.1.2",
   "nova": "0.3.58",
   "pets": "0.2.13",
   "ratkov": "0.2.43",

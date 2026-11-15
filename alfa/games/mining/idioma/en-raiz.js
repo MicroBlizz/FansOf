@@ -1,6 +1,8 @@
 // Fans Of Mining · Inglés de lo que la portada de la web lee del juego (sus novedades).
 'use strict';
 IDIOMA.add({
+  "El Despido ya no espera al nivel 20: se puede en cuanto da algo de Indemnización.": "Getting fired no longer waits for level 20: you can do it as soon as it pays any Severance.",
+  "Recursos Humanos ha simplificado los trámites: ahora te pueden echar casi el primer día.": "Human Resources has streamlined the paperwork: now they can fire you almost on day one.",
   "<b>INTERFAZ NUEVA</b>: el panel de mejoras ocupa el doble, con letras y botones grandes, y crece en los móviles alargados. Las pestañas avisan con un globo cuando hay algo que comprar y puedes dejar el dedo apoyado para seguir picando.": "<b>NEW INTERFACE</b>: the upgrade panel is twice as tall, with big text and buttons, and it grows on tall phones. Tabs show a badge when there is something to buy, and you can hold your finger down to keep digging.",
   "Arreglo: con la venta al 50 % no se vendía ninguna pieza suelta y casi no llegaba oro.": "Fix: with auto-sell at 50 %, single parts were never sold and gold barely came in.",
   "El CEO ha aprobado un panel más grande. Dice que así se ve mejor cuánto trabajáis.": "The CEO has approved a bigger panel. He says it makes it easier to see how hard you work.",

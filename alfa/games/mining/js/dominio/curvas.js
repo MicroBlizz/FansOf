@@ -26,9 +26,10 @@ MN.curvas = (() => {
   const danoBase = b => ((b + 1) * (b + 2)) / 2;
   const xpParaSubir = n => Math.ceil(AJ.xp.base * Math.pow(AJ.xp.factor, n - 1));
   const topeNivel = nivelTrituradora => AJ.xp.topeBase + AJ.xp.topePorNivelTrituradora * nivelTrituradora;
+  // lo que paga el Despido según el nivel: nada en el nivel 1 y crece exponencial desde ahí (no hay nivel mínimo: se puede en cuanto da algo)
   function indemnizacion(nivel) {
     const D = AJ.despido;
-    return nivel < D.nivelMinimo ? 0 : Math.floor(D.base * Math.pow(D.factor, nivel - D.desde));
+    return Math.max(0, Math.floor(D.base * (Math.pow(D.factor, nivel - D.desde) - Math.pow(D.factor, 1 - D.desde)) + 1e-9));
   }
   const vidaTrituradora = n => Math.round(AJ.trituradora.vida0 * Math.pow(AJ.trituradora.vidaBase, n));
   const armaduraTrituradora = n => Math.round(AJ.trituradora.armadura0 * Math.pow(AJ.trituradora.armaduraBase, n));

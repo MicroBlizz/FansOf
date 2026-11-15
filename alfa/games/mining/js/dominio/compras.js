@@ -67,7 +67,7 @@ MN.compras = (() => {
   // el nivel al que el equipo se despide solo (nodo 'autodespido' del plan de carrera); 0 lo apaga
   function fijaAutoDespido(e, nivel) {
     if (!e.c.plan.autodespido) return MN.error('falta-requisito', { pide: 'autodespido' });
-    if (!(nivel === 0 || (Number.isInteger(nivel) && nivel >= AJ.despido.nivelMinimo))) return MN.error('desconocido', { nivel });
+    if (!(nivel === 0 || (Number.isInteger(nivel) && nivel >= 2))) return MN.error('desconocido', { nivel });
     e.c.autoDespido = nivel;
     return MN.ok(nivel);
   }

@@ -5,7 +5,7 @@ MN.botones = (() => {
   const ERRORES = {
     'sin-saldo': 'No te llega', 'al-maximo': 'Ya está al máximo', 'no-disponible': 'Aún no has llegado a ese material',
     'falta-requisito': 'Antes necesitas el nodo anterior', cargando: 'La dinamita aún se está cargando', esperando: 'La Trituradora aún no está lista',
-    atacando: 'Ya estás atacando', acabada: 'La Trituradora ya está destrozada', 'nivel-bajo': 'Aún no te pueden despedir',
+    atacando: 'Ya estás atacando', acabada: 'La Trituradora ya está destrozada', 'sin-indemnizacion': 'Aún no cobrarías nada',
     'sin-cofres': 'No tienes cofres', 'no-tienes': 'No tienes ese objeto', 'sin-paquetes': 'Aún no ha llegado el paquete del sindicato',
     'sin-correo': 'Se ha ido el correo',
   };

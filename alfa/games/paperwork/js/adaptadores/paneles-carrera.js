@@ -6,10 +6,11 @@ PW.panelesCarrera = (() => {
   const P = PW.paneles, n = v => PW.txt.num(v);
 
   function despido(e, B) {
-    const puede = PW.despido.puede(e), cobra = PW.despido.cobraria(e, B);
+    const puede = PW.despido.puede(e, B), cobra = PW.despido.cobraria(e, B);
     const txt = puede ? tr('El CEO os echa a todos. Vuelves a la planta 1 sin oro, expedientes, nivel ni útiles, y cobras {n} de Indemnización.', { n: n(cobra) })
       : tr('Aún no cobrarías nada: sube un poco de nivel y el Despido empezará a dar Indemnización.');
-    return `<div class="pw-texto"><h4>${tr('El Despido')}</h4><p>${txt}</p><p><small>${tr('Se quedan la Trituradora, tu equipo, los Recuerdos, la especialidad, el plan de carrera y los objetos.')}</small></p>`
+    const sancion = e.c.sancion > 0 ? `<p class="pw-nota pw-aviso">${tr('Sanción del CEO por pedidos sin cumplir: {p} menos en este Despido.', { p: PW.txt.pct(e.c.sancion) })}</p>` : '';
+    return `<div class="pw-texto"><h4>${tr('El Despido')}</h4><p>${txt}</p>${sancion}<p><small>${tr('Al despedirte, tu antiguo jefe te ofrece 3 cartas de recomendación: eliges una ventaja para el turno siguiente.')}</small></p><p><small>${tr('Se quedan la Trituradora, tu equipo, los Recuerdos, la especialidad, el plan de carrera y los objetos.')}</small></p>`
       + `${P.boton('despedir', '', tr('DESPEDIRSE'), puede, 'grande peligro')}${autoDespido(e)}</div>`;
   }
   function autoDespido(e) {
@@ -28,22 +29,31 @@ PW.panelesCarrera = (() => {
       return `<div class="pw-recuerdo">${P.icono(`img/icono-${r.id}.png`, '#b06bff')}<b>${tr(r.nombre)}</b><small>${tr(r.txt)} · ${tr('nivel {n}', { n: nivel })}</small>${der}</div>`;
     }).join('') + '</div>';
   }
+  // la fotocopiadora (si se tiene su nodo): qué tipo de documento, de los que ya se han visto, sale el doble
+  function fotocopia(e) {
+    if (!e.c.plan.fotocopiadora) return '';
+    const hasta = PW.curvas.documentosDe(e.c.plantaMax)[1];
+    const botones = P.boton('fotocopia', -1, tr('Apagada'), true, e.c.fotocopia === -1 ? 'activo' : '')
+      + PW.DOCUMENTOS.slice(0, hasta + 1).map((d, i) => P.boton('fotocopia', i, tr(d.nombre), true, e.c.fotocopia === i ? 'activo' : '')).join('');
+    return `<div class="pw-venta"><b>${tr('La fotocopiadora saca el doble de')}</b><div>${botones}</div></div>`;
+  }
   function plan(e) {
     const puntos = PW.compras.puntos(e);
     return `<h4 class="pw-sub">${tr('Plan de carrera')} · ${tr('{n} puntos', { n: puntos })}</h4>`
-      + `<p class="pw-nota">${tr('Un punto por cada nivel atascado de la Trituradora y otro cada 10 niveles de tu nivel más alto.')}</p>` + PW.CARRERA.map(c => {
+      + `<p class="pw-nota">${tr('Un punto por cada nivel atascado de la Trituradora y otro cada 10 niveles de tu nivel más alto.')}</p>` + fotocopia(e) + PW.CARRERA.map(c => {
         const hecho = !!e.c.plan[c.id], falta = c.pide && !e.c.plan[c.pide];
         const der = hecho ? `<em>${tr('Hecho')}</em>` : falta ? `<em>${tr('Antes: {n}', { n: tr(PW.CARRERA.find(x => x.id === c.pide).nombre) })}</em>` : P.boton('carrera', c.id, tr('{n} pt', { n: c.coste }), puntos >= c.coste);
         return P.fila(P.icono('', hecho ? '#3ddc84' : '#555'), tr(c.nombre), tr(c.txt), der);
       }).join('');
   }
   // el equipo: quién se ha unido ya (con su poder y su manía) y quién falta
-  function equipo(e) {
+  function equipo(e, B) {
     const lib = PW.bonos.liberadas(e);
+    const drones = B.drones ? P.fila(P.icono('img/icono-dron.png', '#7ef9ff'), `${tr('Drones')} ×${B.drones}`, tr('Rebuscan sin manía y solo llegan a la fila de arriba del pasillo.'), '') : '';
     return `<h4 class="pw-sub">${tr('Tu equipo')}</h4><p class="pw-nota">${tr('Cada trabajador rebusca en su archivador a la vez que tú. Tócalo en el pasillo y luego toca un archivador para mandarlo ahí.')}</p>`
       + PW.FACCIONES.map((f, k) => (k < lib
         ? P.fila(P.icono('', '#ff9a3c'), `${f.lider} · ${tr(f.poder)}`, `${tr(f.txt)}<br>${tr(f.mania)}`, '')
-        : P.fila(P.icono('', '#555'), '???', tr('Se une al atascar el nivel {n} de la Trituradora', { n: k }), ''))).join('');
+        : P.fila(P.icono('', '#555'), '???', tr('Se une al atascar el nivel {n} de la Trituradora', { n: k }), ''))).join('') + drones;
   }
   // cuántos Recuerdos y nodos del plan se pueden pagar ahora, y si ya se puede cobrar un Despido
   function avisos(e) {

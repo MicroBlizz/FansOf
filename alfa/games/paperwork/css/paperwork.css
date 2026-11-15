@@ -89,3 +89,12 @@
 .pw-aviso { color: #ffb37a; }
 .pw-urgente { padding: 6px 8px; border: 3px solid #ff9a3c; border-radius: 12px; background: rgba(255, 154, 60, 0.12); }
 .pw-municion .pw-btn { min-width: 0; font-size: 16px; }
+.pw-cartas { padding: 6px 8px; margin-bottom: 6px; border: 3px solid var(--gold); border-radius: 12px; background: rgba(255, 210, 63, 0.1); }
+.pw-btn.pw-carta { display: block; width: 100%; margin: 6px 0; padding: 8px 12px; text-align: left; }
+.pw-btn.pw-carta b { display: block; font: 20px var(--font-display); }
+.pw-btn.pw-carta small { display: block; font: 15px var(--font-ui); color: #fff; }
+/* el aviso corto de core (toast): flota centrado sobre el pasillo, sin ocupar sitio ni mover el escenario */
+#toast { position: fixed; left: 50%; top: 40%; transform: translateX(-50%); z-index: 70; width: max-content; max-width: 88vw; box-sizing: border-box; text-align: center; line-height: 1.25;
+  background: rgba(20, 10, 32, 0.94); color: var(--ink); border: 3px solid var(--danger); border-radius: 16px; padding: 8px 16px 6px; font: 800 17px var(--font-ui); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+#toast.show { opacity: 1; }
+#toast.good { border-color: var(--gold); }

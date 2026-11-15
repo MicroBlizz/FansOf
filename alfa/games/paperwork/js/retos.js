@@ -10,6 +10,7 @@ PW.DIARIAS = [
   { id: 'd-cofres', txt: 'Abre 3 cofres', goal: 3, ev: 'cofres', r: 3 },
   { id: 'd-mejoras', txt: 'Compra 25 mejoras', goal: 25, ev: 'mejoras', r: 3 },
   { id: 'd-urgentes', txt: 'Entrega algo urgente a tiempo 3 veces', goal: 3, ev: 'urgentes', r: 4 },
+  { id: 'd-pedidos', txt: 'Cumple un pedido del CEO', goal: 1, ev: 'pedidos', r: 4 },
   { id: 'd-ataque', txt: 'Intenta atascar la Trituradora', goal: 1, ev: 'atascos', r: 3 },
 ];
 PW.SEMANALES = [
@@ -32,6 +33,8 @@ PW.LOGROS = [
   { id: 'l-trit5', txt: 'Atasca cinco niveles de la Trituradora', goal: 5, ev: 'trituradora', r: 40 },
   { id: 'l-trit10', txt: 'Atasca la Trituradora del todo', goal: 10, ev: 'trituradora', r: 200 },
   { id: 'l-despido', txt: 'Que te despidan por primera vez', goal: 1, ev: 'despidos', r: 5 },
+  { id: 'l-cartas', txt: 'Elige 10 cartas de recomendación', goal: 10, ev: 'cartas', r: 10 },
+  { id: 'l-pedidos', txt: 'Cumple 25 pedidos del CEO', goal: 25, ev: 'pedidos', r: 20 },
   { id: 'l-despido25', txt: 'Que te despidan 25 veces', goal: 25, ev: 'despidos', r: 40 },
   { id: 'l-estanteria', txt: 'Vuelca 100 estanterías', goal: 100, ev: 'estanterias', r: 10 },
   { id: 'l-correos', txt: 'Abre 100 correos del CEO', goal: 100, ev: 'correos', r: 15 },

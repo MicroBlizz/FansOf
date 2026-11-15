@@ -20,12 +20,9 @@ PW.motor = (() => {
     if (B.autoEstanteria && PW.extras.estanteriaLista(e, B)) PW.extras.lanzaEstanteria(e, B, azar, sucesos);
   }
   // el ritmo de oro por segundo, suavizado (lo usan los premios y las horas extra)
-  function mideRitmo(e, oroAntes, dt) {
-    const ahora = Math.max(0, e.r.oro - oroAntes) / dt, k = Math.min(1, dt / 30);
-    e.r.ritmoOro = (e.r.ritmoOro || 0) * (1 - k) + ahora * k;
-  }
+  function mideRitmo(e, oroAntes, dt) { e.r.ritmoOro = PW.suaviza(e.r.ritmoOro, e.r.oro - oroAntes, dt); }
   function paso(e, dt, azar, sucesos) {
-    const B = PW.bonos.calcula(e), oroAntes = e.r.oro;
+    const B = PW.bonos.calcula(e), oroAntes = e.r.oro, vaciosAntes = e.c.totales.archivadores;
     e.r.tiempo += dt;
     e.c.tiempoTotal += dt;
     if (PW.trituradora.atascando(e)) PW.trituradora.avanza(e, B, dt, sucesos);
@@ -39,6 +36,8 @@ PW.motor = (() => {
     PW.extras.avanzaSindicato(e, dt);
     PW.extras.gastaActivos(e, dt);
     PW.sellos.avanza(e, B, dt, azar, sucesos);
+    PW.encargos.avanza(e, B, dt, azar, sucesos);
+    PW.encargos.mideRitmo(e, vaciosAntes, dt);
     mideRitmo(e, oroAntes, dt);
   }
   // con el nodo 'autodespido', el equipo se despide solo al llegar al nivel elegido

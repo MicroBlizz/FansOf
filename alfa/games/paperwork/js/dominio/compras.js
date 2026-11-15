@@ -22,9 +22,15 @@ PW.compras = (() => {
     e.r.oro = pago.valor;
     return PW.ok(++e.r.herramientas[z]);
   }
+  // un útil propio de una zona (las fundas) no sale hasta llegar a ella
+  function vistoUtil(e, cual) {
+    const u = PW.UTILES.find(x => x.id === cual);
+    return !!u && (u.zona === undefined || C.zonaDe(e.r.plantaMax) >= u.zona);
+  }
   function compraUtil(e, cual) {
     const c = AJ.utiles[cual];
     if (!c) return PW.error('desconocido', { cual });
+    if (!vistoUtil(e, cual)) return PW.error('no-disponible');
     if (e.r.utiles[cual] >= c.max) return PW.error('al-maximo');
     const pago = paga(e.r.oro, precioUtil(e, cual));
     if (!pago.ok) return pago;
@@ -69,7 +75,15 @@ PW.compras = (() => {
     e.c.plan[id] = true;
     return PW.ok(1);
   }
-  // qué parte de las expedientes se vende sola al reciclar (0 a 1, en cuartos)
+  // la fotocopiadora (nodo del plan): el tipo de documento que da el doble; -1 la apaga. Solo documentos a los que ya se llegó alguna vez
+  function fijaFotocopia(e, m) {
+    if (!e.c.plan.fotocopiadora) return PW.error('falta-requisito', { pide: 'fotocopiadora' });
+    if (m !== -1 && !(Number.isInteger(m) && m >= 0 && m < PW.DOCUMENTOS.length)) return PW.error('desconocido', { m });
+    if (m !== -1 && C.documentosDe(e.c.plantaMax)[1] < m) return PW.error('no-disponible');
+    e.c.fotocopia = m;
+    return PW.ok(m);
+  }
+  // qué parte de los expedientes se vende sola al clasificar (0 a 1, en cuartos)
   function fijaVenta(e, parte) {
     if (![0, 0.25, 0.5, 0.75, 1].includes(parte)) return PW.error('desconocido', { parte });
     e.r.venta = parte;
@@ -84,5 +98,5 @@ PW.compras = (() => {
     return PW.ok(nivel);
   }
 
-  return { fijaAutoDespido, precioUtil, compraUtil, vistaZona, precioHerramienta, compraHerramienta, vistoDocumento, precioDocumento, compraDocumento, precioRecuerdo, compraRecuerdo, puntos, compraCarrera, fijaVenta };
+  return { vistoUtil, fijaFotocopia, fijaAutoDespido, precioUtil, compraUtil, vistaZona, precioHerramienta, compraHerramienta, vistoDocumento, precioDocumento, compraDocumento, precioRecuerdo, compraRecuerdo, puntos, compraCarrera, fijaVenta };
 })();

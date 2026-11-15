@@ -5,7 +5,7 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.2.0',
+  version: '0.3.0',
   planta: { columnas: 6, filas: 4, limpia: 0.7, plantasPorPar: 4, plantasPorZona: 16, extraSinFin: 1.15 },
   documento: { vida0: 10, vidaBase: 2.5, valor0: 1, valorBase: 2.4, receta0: 2 },
   lider: { vistazosSeg: 1.2, toqueMulti: 1 },
@@ -15,6 +15,7 @@ PW.AJ = {
     cafe: { base: 60, factor: 1.55, max: 15, paso: 0.08 },
     carrito: { base: 150, factor: 1.7, max: 10, paso: 0.06 },
     guantes: { base: 30, factor: 1.35, max: 60, paso: 0.85 },
+    fundas: { base: 4000, factor: 3, max: 5, paso: 0.1 },
   },
   // la dureza del papel: lo que cada tipo de documento resta a cada vistazo. Los `desde` primeros no tienen; desde ahí, base0 · base^n
   // (y sigue creciendo en las plantas sin fin). Un vistazo nunca baja de `minimo` de su lectura
@@ -23,6 +24,19 @@ PW.AJ = {
   herramienta: { base: 40, factor: 2, max: 6, paso: 0.75, porZona: 30 },
   // los sellos que puede traer un archivador al vaciarlo (probabilidades base y lo que dan)
   sellos: { confidencial: 0.05, confidencialMulti: 3, secretoMulti: 3, urgente: 0.05, urgenteMulti: 3, urgenteDura: 60, urgentesMax: 3, caducado: 0.08 },
+  // el papel mojado: los expedientes de la última zona se venden a `parte` de su precio; cada nivel de fundas de plástico suma utiles.fundas.paso
+  mojado: { parte: 0.5 },
+  // la carta de recomendación que se elige tras un Despido (dominio/cartas.js): cuántas se ofrecen y lo que da cada una (termo: segundos de café doble;
+  // guantes: niveles que suma; planta: plantas que baja; oro: por cada nivel de la Trituradora más uno; lacre: parte de sello confidencial)
+  cartas: { ofrece: 3, termo: 600, guantes: 5, planta: 10, oro: 300, lacre: 0.1 },
+  // los pedidos del CEO (un correo puede traer uno): vaciar `minimo` archivadores o más (lo que el equipo vacía en `plazo` segundos, por
+  // `apuro`) antes de que acabe el plazo. Cumplirlo paga premioSegundos de oro y un cofre; fallarlo quita `sancion` de la próxima Indemnización
+  pedido: { prob: 0.3, plazo: 45, minimo: 6, apuro: 1.2, premioSegundos: 60, sancion: 0.1, sancionMax: 0.3 },
+  // la auditoría de IAhorro: cada `cada` plantas precinta `precintos` archivadores durante `plazo` segundos; vaciados a tiempo dan `multi`
+  // veces sus documentos, y los que queden se los lleva
+  auditoria: { cada: 8, precintos: 4, plazo: 45, multi: 3 },
+  // la fotocopiadora (nodo del plan): el tipo de documento elegido sale `multi` veces
+  fotocopia: { multi: 2 },
   // la mejora de cada documento, pagada con expedientes de ese documento
   mejoraDocumento: { base: 4, factor: 1.18, max: 25 },
   xp: { base: 10, factor: 1.16, topeBase: 30, topePorNivelTrituradora: 5 },

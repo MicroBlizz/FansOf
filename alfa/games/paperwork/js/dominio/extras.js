@@ -55,13 +55,14 @@ PW.extras = (() => {
     k.falta = AJ.correo.cadaMin + azar() * AJ.correo.cadaExtra;
     sucesos.push({ t: 'correo' });
   }
-  // tocar el correo en vuelo. Resultado: PW.ok({ oro, cofre }) o 'sin-correo'
+  // tocar el correo en vuelo. Resultado: PW.ok({ oro, cofre, pedido? }) (puede traer un pedido del CEO en vez de premio) o 'sin-correo'
   function abreCorreo(e, B, azar) {
     const k = e.c.correo;
     if (!(k.vuela > 0)) return PW.error('sin-correo');
     k.vuela = 0;
     e.c.totales.correos++;
     if (azar() < AJ.correo.cofre) { guardaCofre(e); return PW.ok({ oro: 0, cofre: 1 }); }
+    if (!e.r.pedido && !PW.trituradora.atascando(e) && azar() < AJ.pedido.prob) return PW.ok({ oro: 0, cofre: 0, pedido: PW.encargos.abre(e) });
     const oro = premioOro(e, AJ.correo.premioSegundos) * B.correos;
     e.r.oro += oro;
     return PW.ok({ oro, cofre: 0 });
@@ -94,6 +95,6 @@ PW.extras = (() => {
     return PW.ok({ oro, segundos });
   }
 
-  return { estanteriaLista, lanzaEstanteria, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo,
+  return { premioOro, estanteriaLista, lanzaEstanteria, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo,
     avanzaSindicato, abreSindicato, horasExtra };
 })();

@@ -13,8 +13,22 @@ PW.REJILLA = (() => {
 PW.escena = (() => {
   const R = PW.REJILLA, W = 540, ZONA_COLOR = ['#2a2140', '#14203a', '#1d2a1a'];
   const celda = i => ({ x: R.x + (i % R.cols) * R.paso, y: R.y + Math.floor(i / R.cols) * R.paso });
-  // dónde está cada trabajador en la fila de arriba (k = 0 el líder)
-  const enFila = k => (k ? { x: 150 + (k - 1) * 36, y: R.y - 6 - (k % 2) * 10, r: 20 } : { x: 78, y: R.y - 8, r: 40 });
+  // dónde está en la fila de arriba el que ocupa el hueco s (0 = el líder; los demás, en el orden de la plantilla)
+  // (n = cuántos hay en la fila: si son muchos se aprietan para no pisar al castor)
+  const enFila = (s, n = 1) => (s ? { x: 150 + (s - 1) * Math.min(36, 300 / Math.max(1, n - 1)), y: R.y - 6 - (s % 2) * 10, r: 20 } : { x: 78, y: R.y - 8, r: 40 });
+  const aviso = k => (PW.equipo.esDron(k) ? tr('Toca un archivador de la fila de arriba para mandar al dron') : tr('Toca un archivador para mandar a {lider}', { lider: PW.FACCIONES[k].lider }));
+  // un dron: caja con ojo y dos hélices que giran
+  function dron(ctx, x, y, t, esc) {
+    ctx.save(); ctx.translate(x, y - 26 * esc); ctx.scale(esc, esc);
+    ctx.lineWidth = 4; ctx.strokeStyle = OL; ctx.fillStyle = '#99a3b5';
+    ctx.fillRect(-16, -10, 32, 22); ctx.strokeRect(-16, -10, 32, 22);
+    ctx.fillStyle = '#7ef9ff'; ctx.beginPath(); ctx.arc(0, 1, 6, 0, 7); ctx.fill(); ctx.stroke();
+    const h = Math.cos(t * 40) * 14;
+    ctx.beginPath(); ctx.moveTo(-16 - h, -16); ctx.lineTo(-16 + h, -16); ctx.moveTo(16 - h, -16); ctx.lineTo(16 + h, -16); ctx.stroke();
+    ctx.restore();
+  }
+  // dibuja al trabajador k (un líder de core o un dron)
+  const figura = (ctx, k, x, y, t, esc) => (PW.equipo.esDron(k) ? dron(ctx, x, y, t, esc / 0.62) : PW.arte.personaje(ctx, PW.FACCIONES[k].arte, x, y, esc));
 
   // el fondo cubre el lienzo sin deformarse (se recorta por los lados si la pantalla es más alta)
   function fondo(ctx, e, H) {
@@ -50,21 +64,40 @@ PW.escena = (() => {
     if (im) ctx.drawImage(im, x + sac, y, R.lado, R.lado);
     else mueble(ctx, x + sac, y, PW.DOCUMENTOS[a.m].color, parte);
     ctx.lineWidth = 4; ctx.strokeStyle = OL; ctx.strokeRect(x + sac, y, R.lado, R.lado);
+    if (a.precinto) precinto(ctx, x + sac, y);
     if (parte > 0) { ctx.fillStyle = OL; ctx.fillRect(x + 6, y + R.lado - 12, R.lado - 12, 7); ctx.fillStyle = '#3ddc84'; ctx.fillRect(x + 7, y + R.lado - 11, (R.lado - 14) * (1 - parte), 5); }
+  }
+  // la cinta de la auditoría de IAhorro cruzando un archivador precintado
+  function precinto(ctx, x, y) {
+    ctx.save(); ctx.beginPath(); ctx.rect(x, y, R.lado, R.lado); ctx.clip();
+    ctx.translate(x + R.lado / 2, y + R.lado / 2); ctx.rotate(-0.5);
+    ctx.fillStyle = OL; ctx.fillRect(-60, -11, 120, 22);
+    for (let k = -4; k < 5; k++) { ctx.fillStyle = k % 2 ? '#ffd23f' : '#23262d'; ctx.fillRect(k * 14, -8, 14, 16); }
+    ctx.restore();
+  }
+  // lo que corre prisa, en una tira bajo la barra de arriba: el pedido del CEO y la auditoría de IAhorro, con su cuenta atrás
+  function encargos(ctx, e) {
+    const p = e.r.pedido, au = e.r.planta.auditoria, lineas = [];
+    if (p) lineas.push([tr('Pedido del CEO: {a} de {n} · {t}', { a: p.hechos, n: p.n, t: PW.txt.tiempo(p.falta) }), '#ffd23f']);
+    if (au > 0) lineas.push([tr('Auditoría de IAhorro: {t} para los precintados', { t: PW.txt.tiempo(au) }), '#ff9a3c']);
+    lineas.forEach(([s, color], k) => {
+      ctx.fillStyle = 'rgba(10,6,20,0.8)'; ctx.fillRect(200, 66 + k * 24, W - 206, 22);
+      ctx.font = '15px ' + FONT_D; ctx.textAlign = 'right'; ctx.fillStyle = color; ctx.fillText(s, W - 12, 82 + k * 24);
+    });
   }
   // la fila del equipo encima del pasillo: el líder grande a la izquierda, los trabajadores en fila (el elegido, marcado) y el castor
   function equipo(ctx, e, B, t) {
-    const lib = PW.bonos.liberadas(e), atascando = PW.trituradora.atascando(e);
+    const atascando = PW.trituradora.atascando(e);
     const ritmo = atascando ? 9 : 6 * B.vistazosSeg / PW.AJ.lider.vistazosSeg;
     const giro = Math.sin(t * Math.min(18, ritmo)) * 0.25, L = enFila(0);
     if (!PW.arte.personaje(ctx, PW.FACCIONES[0].arte, L.x, L.y, 0.95, giro)) { ctx.fillStyle = '#ff9a3c'; ctx.fillRect(56, R.y - 78, 44, 70); }
-    for (let k = 1; k < lib; k++) {
-      const p = enFila(k), bote = Math.abs(Math.sin(t * 5 + k)) * 6;
+    PW.equipo.plantilla(B).forEach((k, s, fila) => {
+      const p = enFila(s + 1, fila.length), bote = Math.abs(Math.sin(t * 5 + s)) * 6;
       if (PW.ui.elegido === k) { ctx.fillStyle = 'rgba(255,210,63,0.55)'; ctx.beginPath(); ctx.arc(p.x, p.y - 22, 24, 0, 7); ctx.fill(); }
-      PW.arte.personaje(ctx, PW.FACCIONES[k].arte, p.x, p.y - bote, 0.62);
-    }
+      figura(ctx, k, p.x, p.y - bote, t, 0.62);
+    });
     if (e.r.estanteria >= B.recargaEstanteria) PW.arte.personaje(ctx, 'beaver', 495, R.y - 6 - Math.abs(Math.sin(t * 4)) * 8, 0.75);
-    if (PW.ui.elegido) texto(ctx, tr('Toca un archivador para mandar a {lider}', { lider: PW.FACCIONES[PW.ui.elegido].lider }), W / 2, R.y - 84, 18, '#ffd23f');
+    if (PW.ui.elegido) texto(ctx, aviso(PW.ui.elegido), W / 2, R.y - 84, 18, '#ffd23f');
   }
   // quién está en cada archivador: el del líder, enmarcado; cada trabajador, dibujado en pequeño sobre el suyo
   function puestos(ctx, e, B, t) {
@@ -73,7 +106,7 @@ PW.escena = (() => {
       if (s.i < 0) continue;
       const { x, y } = celda(s.i);
       if (!s.k) { ctx.lineWidth = 4; ctx.strokeStyle = '#ff9a3c'; ctx.strokeRect(x - 3, y - 3, R.lado + 6, R.lado + 6); continue; }
-      PW.arte.personaje(ctx, PW.FACCIONES[s.k].arte, x + R.lado - 20, y + R.lado - 8 - Math.abs(Math.sin(t * 7 + s.k)) * 4, 0.4);
+      figura(ctx, s.k, x + R.lado - 20, y + R.lado - 8 - Math.abs(Math.sin(t * 7 + s.k)) * 4, t, 0.4);
     }
   }
   // el correo del CEO cruzando la pantalla de izquierda a derecha (dónde está ahora: o null)
@@ -137,6 +170,7 @@ PW.escena = (() => {
     e.r.planta.archivadores.forEach((a, i) => archivador(ctx, a, i));
     puestos(ctx, e, B, t);
     trituradora(ctx, e, t);
+    encargos(ctx, e);
     correo(ctx, e, t);
     ctx.restore();
     PW.efectos.pinta(ctx, t, W, H);
@@ -146,10 +180,11 @@ PW.escena = (() => {
   function toque(e, x, y) {
     const c = sitioCorreo(e);
     if (c && Math.hypot(x - c.x, y - c.y) < c.r + 18) return { que: 'correo' };
-    for (let k = PW.bonos.liberadas(e) - 1; k >= 1; k--) { const p = enFila(k); if (Math.hypot(x - p.x, y - (p.y - 22)) < p.r + 4) return { que: 'trabajador', k }; }
-    const col = Math.floor((x - R.x) / R.paso), fila = Math.floor((y - R.y) / R.paso);
-    if (col < 0 || col >= R.cols || fila < 0 || fila >= R.filas) return null;
-    return { que: 'archivador', i: llenoCerca(e, fila * R.cols + col) };
+    const fila = PW.equipo.plantilla(PW.bonos.calcula(e));
+    for (let s = fila.length; s >= 1; s--) { const p = enFila(s, fila.length); if (Math.hypot(x - p.x, y - (p.y - 22)) < p.r + 4) return { que: 'trabajador', k: fila[s - 1] }; }
+    const col = Math.floor((x - R.x) / R.paso), fil = Math.floor((y - R.y) / R.paso);
+    if (col < 0 || col >= R.cols || fil < 0 || fil >= R.filas) return null;
+    return { que: 'archivador', i: llenoCerca(e, fil * R.cols + col) };
   }
   // si el hueco tocado ya está vacío, el vistazo va al archivador lleno más cercano: cualquier toque en el pasillo rebusca
   function llenoCerca(e, i) {

@@ -1,8 +1,8 @@
 {
- "build": 1188,
- "hash": "8be8c62",
- "fecha": "2026-11-15T11:35:42Z",
- "mensaje": "Paperwork 0.2.0: el retema a documentos (ADR 115)",
+ "build": 1189,
+ "hash": "a85daa3",
+ "fecha": "2026-11-15T12:00:23Z",
+ "mensaje": "Paperwork 0.3.0: cartas de recomendación, pedidos del CEO, auditoría de IAhorro, fotocopiadora, papel mojado y dron",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.2.0",
+  "paperwork": "0.3.0",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

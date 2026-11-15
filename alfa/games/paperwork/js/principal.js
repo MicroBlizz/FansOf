@@ -1,6 +1,6 @@
 // Fans Of Paperwork · PRINCIPAL: la composición. Crea los adaptadores (almacén, reloj, sonido, retos), les pasa el azar a los casos de uso y
 // arranca el lienzo, el bucle de cada fotograma (avanza el motor con el tiempo real y pinta) y los paneles de abajo. Es el único archivo que
-// conoce todas las expedientes.
+// conoce todas las capas.
 'use strict';
 // pestana: la abierta (las del turno o las de la carrera, adaptadores/paneles.js); elegido: el trabajador al que se va a mandar a otro
 // archivador (0 = ninguno); alto: el del lienzo, que crece en pantallas alargadas
@@ -17,10 +17,10 @@ PW.principal = (() => {
   const PESTANAS = {
     utiles: (e, B) => PW.paneles.utiles(e, B), documentos: (e, B) => PW.paneles.documentos(e, B), trituradora: (e, B) => PW.paneles.trituradora(e, B),
     cofres: e => PW.paneles.cofres(e), despido: (e, B) => PW.panelesCarrera.despido(e, B), recuerdos: e => PW.panelesCarrera.recuerdos(e),
-    plan: e => PW.panelesCarrera.plan(e), equipo: e => PW.panelesCarrera.equipo(e), retos: () => PW.panelesCarrera.retos(), opciones: () => PW.panelesCarrera.opciones(),
+    plan: e => PW.panelesCarrera.plan(e), equipo: (e, B) => PW.panelesCarrera.equipo(e, B), retos: () => PW.panelesCarrera.retos(), opciones: () => PW.panelesCarrera.opciones(),
   };
   // el sonido de cada suceso del motor (los que no salen, callan)
-  const SONIDOS = { vistazo: 'hit', vacio: 'clank', nivel: 'levelup', planta: 'blip', trituradora: 'crown', despido: 'despido', estanteria: 'boom', correo: 'card', 'intento-fin': 'sad' };
+  const SONIDOS = { vistazo: 'hit', vacio: 'clank', nivel: 'levelup', planta: 'blip', trituradora: 'crown', despido: 'despido', estanteria: 'boom', correo: 'card', 'intento-fin': 'sad', 'pedido-ok': 'crown', 'pedido-mal': 'sad', requisa: 'sad' };
 
   // el escenario ocupa todo el alto que haya: 540 de ancho de diseño y de 960 a 1280 de alto (un móvil alargado gana panel, no bandas vacías)
   function ajusta() {
@@ -90,6 +90,8 @@ PW.principal = (() => {
   function abreCorreo() {
     const res = PW.casos.abreCorreo();
     if (!PW.botones.cuenta(res, 'pop')) return;
+    const p = res.valor.pedido;
+    if (p) { toast(tr('Pedido del CEO: vacía {n} archivadores en {t}', { n: p.n, t: PW.txt.tiempo(p.falta) }), true); return; }
     toast(res.valor.cofre ? tr('El CEO te manda un cofre por error') : tr('Correo del CEO: {n} de oro', { n: PW.txt.num(res.valor.oro) }), true);
   }
   function bienvenida(v) {

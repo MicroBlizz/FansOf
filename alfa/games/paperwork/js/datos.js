@@ -31,6 +31,7 @@ PW.UTILES = [
   { id: 'cafe', nombre: 'Café' },
   { id: 'guantes', nombre: 'Guantes' },
   { id: 'carrito', nombre: 'Carrito de archivo' },
+  { id: 'fundas', nombre: 'Fundas de plástico', zona: 2 },   // solo sale al llegar a su zona
 ];
 
 // las facciones en el orden en que se liberan: la primera ya está; cada nivel atascado de la Trituradora libera la siguiente.
@@ -76,6 +77,8 @@ PW.CARRERA = [
   { id: 'extra', nombre: 'Convenio colectivo', coste: 2, pide: 'cofres', bono: { horasExtra: 0.15 }, txt: '+15 % de horas extra' },
   { id: 'triple', nombre: 'Clasificación creativa', coste: 2, pide: null, bono: { x3: 0.05 }, txt: 'Un 5 % de clasificado triple' },
   { id: 'autodespido', nombre: 'Carta de despido firmada', coste: 2, pide: 'auto', bono: {}, txt: 'El equipo se despide solo al llegar al nivel que elijas' },
+  { id: 'fotocopiadora', nombre: 'La fotocopiadora', coste: 2, pide: null, bono: {}, txt: 'Elige un tipo de documento: sus archivadores dan el doble' },
+  { id: 'dron', nombre: 'Dron de reparto', coste: 2, pide: 'equipo', bono: { drones: 1 }, txt: 'Un dron rebusca en la fila de arriba del pasillo' },
   { id: 'abogado', nombre: 'Abogado laboralista', coste: 3, pide: 'extra', bono: { indemn: 0.25 }, txt: '+25 % de Indemnización' },
 ];
 
@@ -85,4 +88,15 @@ PW.OBJETOS = [
   { id: 'pizza', nombre: 'Pizza de reunión', bono: { botin: 1 }, txt: 'x2 de documentos durante un minuto' },
   { id: 'bocadillo', nombre: 'Bocadillo de la madre del streamer', bono: { xp: 1 }, txt: 'x2 de experiencia durante un minuto' },
   { id: 'silbato', nombre: 'Silbato del castor', bono: {}, txt: 'El castor vuelca la estantería al momento' },
+];
+
+// las cartas de recomendación: tras cada Despido se ofrecen AJ.cartas.ofrece al azar y se elige una para el turno que empieza
+// (lo que hace cada una, en dominio/cartas.js; las cifras, en AJ.cartas)
+PW.CARTAS = [
+  { id: 'termo', nombre: 'Un termo lleno', txt: 'Café doble durante 10 minutos' },
+  { id: 'temporal', nombre: 'Un dron prestado', txt: 'Un dron más en el equipo durante este turno' },
+  { id: 'ascensor', nombre: 'La llave del ascensor', txt: 'Bajas 10 plantas de golpe' },
+  { id: 'guantes', nombre: 'Guantes de segunda mano', txt: '+5 niveles de guantes' },
+  { id: 'adelanto', nombre: 'Un adelanto de la nómina', txt: 'Oro en el bolsillo, más cuanto más atascada esté la Trituradora' },
+  { id: 'lacre', nombre: 'Un sello de lacre', txt: '+10 % de sello confidencial durante este turno' },
 ];

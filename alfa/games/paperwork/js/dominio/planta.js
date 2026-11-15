@@ -19,10 +19,25 @@ PW.planta = (() => {
     const vida = Math.max(1, Math.round(C.vidaDocumento(m, n) * AJ.especialidad.vida[rango]));
     return { m, vida, max: vida };
   }
+  // la auditoría de IAhorro: precinta unos cuantos archivadores distintos y pone la cuenta atrás (p.auditoria = segundos que quedan)
+  function precinta(p, azar) {
+    for (const i of PW.saca(p.archivadores.map((a, k) => k), AJ.auditoria.precintos, azar)) p.archivadores[i].precinto = true;
+    p.auditoria = AJ.auditoria.plazo;
+  }
+  // se acaba el plazo: IAhorro se lleva los archivadores precintados que queden (cuentan como vaciados, sin dar nada). Devuelve cuántos
+  function requisa(p) {
+    let n = 0;
+    for (const a of p.archivadores) if (a.precinto && a.vida > 0) { a.vida = 0; p.vaciados++; n++; }
+    for (const a of p.archivadores) a.precinto = false;
+    p.auditoria = 0;
+    return n;
+  }
   function crea(n, azar, B, especialidad) {
     const archivadores = [];
     for (let i = 0; i < total(); i++) archivadores.push(archivadorDe(n, azar, especialidad));
-    return { n, archivadores, vaciados: 0, especial: especialDe(azar, B) };
+    const p = { n, archivadores, vaciados: 0, especial: especialDe(azar, B) };
+    if (n % AJ.auditoria.cada === 0) precinta(p, azar);
+    return p;
   }
   const objetivo = () => Math.ceil(total() * AJ.planta.limpia);
   const limpia = p => p.vaciados >= objetivo();
@@ -37,10 +52,10 @@ PW.planta = (() => {
     b.vida = Math.max(0, b.vida - d);
     if (b.vida > 0) return PW.ok({ vacio: false, m: b.m, i });
     p.vaciados++;
-    return PW.ok({ vacio: true, m: b.m, i });
+    return b.precinto ? PW.ok({ vacio: true, m: b.m, i, precinto: true }) : PW.ok({ vacio: true, m: b.m, i });
   }
   // multiplicador del botín de la planta
   const multiPlanta = p => (p.especial === 'ceo' ? AJ.especiales.ceoMulti : p.especial === 'jefe' ? AJ.especiales.jefeMulti : 1);
 
-  return { crea, rebusca, limpia, primerLleno, llenos, objetivo, multiPlanta, total };
+  return { requisa, crea, rebusca, limpia, primerLleno, llenos, objetivo, multiPlanta, total };
 })();

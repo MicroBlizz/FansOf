@@ -43,6 +43,9 @@ PW.efectos = (() => {
     especialidad: s => cartel(tr('Especialidad en {m}: rango {r}', { m: tr(PW.DOCUMENTOS[s.m].nombre), r: s.rango }), '#b06bff', 2),
     trituradora: s => { temblor = 1; destello = 0.6; cartel(tr('¡Trituradora atascada!'), '#ff4d5e', 3, tr('{lider} se une al equipo', { lider: PW.FACCIONES[Math.min(s.nivel, PW.FACCIONES.length - 1)].lider })); },
     'intento-fin': s => cartel(tr('Intento terminado'), '#ffffff', 2, tr('{p} de la Trituradora atascada', { p: PW.txt.pct(s.parte) })),
+    'pedido-ok': s => cartel(tr('¡Pedido cumplido!'), '#3ddc84', 2.2, tr('{n} de oro y un cofre', { n: PW.txt.num(s.oro) })),
+    'pedido-mal': s => cartel(tr('Pedido sin cumplir'), '#ff4d5e', 2.4, tr('Sanción: {p} menos en tu próximo Despido', { p: PW.txt.pct(s.sancion) })),
+    requisa: s => cartel(tr('IAhorro se lleva {n} archivadores', { n: s.n }), '#9aa0a8', 2.2),
     despido: s => cartel(tr('¡DESPEDIDOS!'), '#ff4d5e', 2.5, tr('Indemnización: {n}', { n: PW.txt.num(s.cobra) })),
   };
   function sucesos(lista, t) {

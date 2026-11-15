@@ -53,11 +53,19 @@ PW.paneles = (() => {
     cafe: ['cafe', B => tr('{n} vistazos por segundo', { n: fmtV(Math.round(B.vistazosSeg * 100) / 100) })],
     guantes: ['guantes', B => tr('Quitan un {p} de la dureza del papel y de las tragaderas de la Trituradora', { p: pct(1 - B.guantes) })],
     carrito: ['carrito', B => tr('{p} de llevarte también lo del archivador de al lado', { p: pct(B.carrito) })],
+    fundas: ['fundas', B => tr('El papel mojado del Almacén se vende al {p} de su precio', { p: pct(B.mojado) })],
   };
+  const utilesVistos = e => PW.UTILES.filter(u => PW.compras.vistoUtil(e, u.id));
+  // la carta de recomendación que queda por elegir tras un Despido: una ventaja para este turno
+  function cartas(e) {
+    if (!e.c.oferta.length) return '';
+    const botones = e.c.oferta.map(id => { const c = PW.CARTAS.find(x => x.id === id); return boton('carta', id, `<b>${tr(c.nombre)}</b><small>${tr(c.txt)}</small>`, true, 'pw-carta'); }).join('');
+    return `<div class="pw-texto pw-cartas"><h4>${tr('Carta de recomendación')}</h4><p>${tr('Tu antiguo jefe te recomienda. Elige una ventaja para este turno.')}</p>${botones}</div>`;
+  }
   const zonasVistas = e => PW.ZONAS.map((z, i) => i).filter(z => PW.compras.vistaZona(e, z));
   // cuántas compras se pueden pagar ahora en cada pestaña (el globo que avisa de que hay algo que comprar)
   function avisos(e, B) {
-    const utiles = PW.UTILES.filter(u => e.r.utiles[u.id] < PW.AJ.utiles[u.id].max && e.r.oro >= PW.compras.precioUtil(e, u.id)).length
+    const utiles = (e.c.oferta.length ? 1 : 0) + utilesVistos(e).filter(u => e.r.utiles[u.id] < PW.AJ.utiles[u.id].max && e.r.oro >= PW.compras.precioUtil(e, u.id)).length
       + zonasVistas(e).filter(z => e.r.herramientas[z] < PW.AJ.herramienta.max && e.r.oro >= PW.compras.precioHerramienta(e, z)).length;
     const documentos = PW.DOCUMENTOS.filter((m, i) => PW.compras.vistoDocumento(e, i) && e.r.mejorasDoc[i] < B.topeDocumento && e.r.expedientes[i] >= PW.compras.precioDocumento(e, i)).length;
     return { utiles, documentos, ...PW.panelesCarrera.avisos(e), retos: PW.retos.listos() };
@@ -70,7 +78,7 @@ PW.paneles = (() => {
     return `<p class="pw-nota${poco ? ' pw-aviso' : ''}">${tr('El papel de esta planta resta {d} a cada vistazo: lees {n}.', { d: n(du), n: n(lee) })}${poco ? ' ' + tr('Tocan guantes.') : ''}</p>`;
   }
   function utiles(e, B) {
-    const filas = PW.UTILES.map(u => {
+    const filas = utilesVistos(e).map(u => {
       const nivel = e.r.utiles[u.id], max = PW.AJ.utiles[u.id].max, precio = PW.compras.precioUtil(e, u.id);
       const der = nivel >= max ? `<em>${tr('Máximo')}</em>` : boton('util', u.id, `${n(precio)}<i class="pw-oro-i"></i>`, e.r.oro >= precio);
       return fila(icono(`img/icono-${UTIL[u.id][0]}.png`, '#ff9a3c'), `${tr(u.nombre)} · ${tr('nivel {n}', { n: nivel })}`, UTIL[u.id][1](B), der);
@@ -82,7 +90,7 @@ PW.paneles = (() => {
       return fila(icono(`img/icono-${H.id}.png`, '#9aa7b8'), `${tr(H.nombre)} · ${tr('nivel {n}', { n: nivel })}`, det, der);
     }).join('');
     const venta = [0, 0.25, 0.5, 0.75, 1].map(p => boton('venta', p, pct(p), true, e.r.venta === p ? 'activo' : '')).join('');
-    return notaDureza(e, B) + filas + herramientas + `<div class="pw-venta"><b>${tr('Expedientes que se venden solos a la prensa')}</b><div>${venta}</div></div>`;
+    return cartas(e) + notaDureza(e, B) + filas + herramientas + `<div class="pw-venta"><b>${tr('Expedientes que se venden solos a la prensa')}</b><div>${venta}</div></div>`;
   }
   // los montones urgentes (con lo que pagan si se entregan ya) y los caducados guardados
   function montones(e, B) {

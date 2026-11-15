@@ -15,6 +15,7 @@ PW.bonos = (() => {
     PW.RECUERDOS.forEach(r => suma(acc, r.bono, e.c.recuerdos[r.id] || 0));
     PW.CARRERA.forEach(n => { if (e.c.plan[n.id]) suma(acc, n.bono, 1); });
     PW.OBJETOS.forEach(o => { if ((e.r.activos[o.id] || 0) > 0) suma(acc, o.bono, 1); });
+    suma(acc, e.r.bonoCarta, 1);   // lo que dé la carta de recomendación de este turno
     return acc;
   }
   const liberadas = e => Math.min(PW.FACCIONES.length, 1 + e.c.trituradora.nivel);
@@ -28,6 +29,7 @@ PW.bonos = (() => {
       carrito: U.carrito * AU.carrito.paso,
       guantes: Math.pow(AU.guantes.paso, U.guantes),                               // por cuánto se multiplica toda dureza
       herramientas: r.herramientas.map(n => Math.pow(AJ.herramienta.paso, n)),     // y la de los documentos de cada zona
+      mojado: Math.min(1, AJ.mojado.parte + U.fundas * AU.fundas.paso),            // a cuánto se vende el papel mojado de la última zona
     };
   }
   // las cifras finales a partir de las fuentes
@@ -53,6 +55,7 @@ PW.bonos = (() => {
       trit: 1 + b('trit'),
       espera: Math.max(0.3, 1 - b('espera')),
       trabajadores: liberadas(e) - 1,
+      drones: b('drones') + (e.r.temporales || 0),
       trab: AJ.trabajador.parteDelLider * (1 + b('trab')),
       correos: b('correosDobles') ? 2 : 1,
       medidor: 1 + b('medidor'),
@@ -63,5 +66,8 @@ PW.bonos = (() => {
   // la dureza que le queda al documento m (en la planta p) con los guantes y la herramienta de su zona
   const dureza = (B, m, p = 1) => C.dureza(m, p) * B.guantes * B.herramientas[C.zonaDeDocumento(m)];
 
-  return { calcula, liberadas, dureza };
+  // por cuánto se multiplica el precio de venta del documento m: el de la última zona está mojado
+  const precioDe = (B, m) => B.precio * (C.zonaDeDocumento(m) === PW.ZONAS.length - 1 ? B.mojado : 1);
+
+  return { calcula, liberadas, dureza, precioDe };
 })();

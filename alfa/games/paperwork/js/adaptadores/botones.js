@@ -8,6 +8,7 @@ PW.botones = (() => {
     atascando: 'Ya la estás atascando', acabada: 'La Trituradora ya está atascada del todo', 'sin-indemnizacion': 'Aún no cobrarías nada',
     'sin-cofres': 'No tienes cofres', 'no-tienes': 'No tienes ese objeto', 'sin-paquetes': 'Aún no ha llegado el paquete del sindicato',
     'sin-correo': 'Se ha ido el correo', 'sin-urgentes': 'Ahora no hay nada urgente', 'sin-archivador': 'Ese archivador ya está vacío',
+    'sin-oferta': 'Ya has elegido tu carta', desconocido: 'Eso no está aquí', 'no-alcanza': 'El dron solo llega a la fila de arriba',
   };
   // cuenta el resultado de una orden: sonido si sale bien, aviso si no; y pasa sus sucesos a los efectos
   function cuenta(res, sonidoBien = 'select') {
@@ -43,7 +44,12 @@ PW.botones = (() => {
     const M = PW.casos.partida.c.municion, cual = arg === 'caducados' ? arg : +arg;
     cuenta(PW.casos.fijaMunicion(cual, !(cual === 'caducados' ? M.caducados : M.docs[cual])));
   }
+  function carta(id) {
+    if (cuenta(PW.casos.eligeCarta(id), 'card')) toast(tr('¡{o}!', { o: tr(PW.CARTAS.find(c => c.id === id).nombre) }), true);
+  }
   const ACCIONES = {
+    carta,
+    fotocopia: arg => cuenta(PW.casos.fijaFotocopia(+arg)),
     pestana: arg => { PW.ui.pestana = arg; PW.ui.elegido = 0; },
     estanteria: () => cuenta(PW.casos.estanteria(), 'boom'),
     atascar: () => cuenta(PW.casos.atasca(), 'boom'),

@@ -9,6 +9,7 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
   // los sucesos del motor y de las órdenes que cuentan para los logros
   const AVISOS = {
     vacio: () => ['evento', 'archivadores', 1],
+    'pedido-ok': () => ['evento', 'pedidos', 1],
     planta: s => ['maximo', 'planta', s.n],
     nivel: s => ['maximo', 'nivel', s.n],
     trituradora: s => ['maximo', 'trituradora', s.nivel],
@@ -115,6 +116,8 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     compraHerramienta: z => orden(() => PW.compras.compraHerramienta(e, z), 'mejoras'),
     entregaUrgente: () => orden(() => PW.sellos.entrega(e, B()), 'urgentes'),
     fijaMunicion: (cual, si) => orden(() => PW.trituradora.fijaMunicion(e, cual, si)),
+    eligeCarta: id => orden(s => PW.cartas.elige(e, B(), id, azar, s), 'cartas'),
+    fijaFotocopia: m => orden(() => PW.compras.fijaFotocopia(e, m)),
     manda: (k, i) => orden(() => PW.equipo.manda(e, B(), k, i)),
     compraDocumento: m => orden(() => PW.compras.compraDocumento(e, m), 'mejoras'),
     compraRecuerdo: id => orden(() => PW.compras.compraRecuerdo(e, id), 'recuerdos'),

@@ -10,7 +10,8 @@ PW.rebuscar = (() => {
   function botinDe(e, B, m, azar) {
     const rango = C.rangoEspecialidad(e.c.especialidad[m] || 0);
     const repleto = azar() < B.repleto ? AJ.especiales.repletoMulti : 1;
-    return Math.max(1, Math.round(PW.planta.multiPlanta(e.r.planta) * repleto * B.botin * AJ.especialidad.premio[rango]));
+    const copia = e.c.fotocopia === m && e.c.plan.fotocopiadora ? AJ.fotocopia.multi : 1;
+    return Math.max(1, Math.round(PW.planta.multiPlanta(e.r.planta) * repleto * copia * B.botin * AJ.especialidad.premio[rango]));
   }
   // clasificar: los documentos sueltos de m que llegan a una receta pasan a expedientes; una parte (r.venta) se vende al momento
   function clasifica(e, B, m, azar, sucesos) {
@@ -22,7 +23,7 @@ PW.rebuscar = (() => {
     // lo que toca vender se va sumando con decimales (restoVenta): al 50 %, de cada dos expedientes sueltos se vende uno, no ninguno
     const hechos = lotes * multi, aVender = r.restoVenta[m] + hechos * r.venta, vendidos = Math.min(hechos, Math.floor(aVender + 1e-9));
     r.restoVenta[m] = aVender - vendidos;
-    const oro = Math.round(vendidos * C.valorExpediente(m) * B.precio);
+    const oro = Math.round(vendidos * C.valorExpediente(m) * PW.bonos.precioDe(B, m));
     r.expedientes[m] += hechos - vendidos;
     r.oro += oro;
     e.c.totales.oro += oro;
@@ -52,8 +53,9 @@ PW.rebuscar = (() => {
     e.c.especialidad[m] = (e.c.especialidad[m] || 0) + 1;
     if (C.rangoEspecialidad(e.c.especialidad[m]) > antes) sucesos.push({ t: 'especialidad', m, rango: antes + 1 });
   }
-  function vacia(e, B, m, i, azar, sucesos) {
-    const sello = PW.sellos.tira(B, azar), n = botinDe(e, B, m, azar) * PW.sellos.multi(sello);
+  // precinto: el archivador estaba precintado por la auditoría y se ha vaciado a tiempo
+  function vacia(e, B, m, i, azar, sucesos, precinto) {
+    const sello = PW.sellos.tira(B, azar), n = botinDe(e, B, m, azar) * PW.sellos.multi(sello) * (precinto ? AJ.auditoria.multi : 1);
     e.r.vaciados++;
     e.c.totales.archivadores++;
     subeEspecialidad(e, m, sucesos);
@@ -61,6 +63,7 @@ PW.rebuscar = (() => {
     if (!PW.sellos.guarda(e, m, n, sello)) { e.r.sueltos[m] += n; clasifica(e, B, m, azar, sucesos); }
     ganaXp(e, B, m, sucesos);
     llenaMedidor(e, B, sucesos);
+    PW.encargos.cuenta(e, B, sucesos);
   }
   function bajaPlanta(e, B, azar, sucesos) {
     const r = e.r, n = r.planta.n + 1;
@@ -78,7 +81,7 @@ PW.rebuscar = (() => {
   function rebusca(e, B, i, d, azar, sucesos, sinDureza = false) {
     const res = PW.planta.rebusca(e.r.planta, i, sinDureza ? d : lee(e, B, i, d));
     if (!res.ok || !res.valor.vacio) return false;
-    vacia(e, B, res.valor.m, i, azar, sucesos);
+    vacia(e, B, res.valor.m, i, azar, sucesos, res.valor.precinto);
     if (PW.planta.limpia(e.r.planta)) bajaPlanta(e, B, azar, sucesos);
     return true;
   }
@@ -92,5 +95,5 @@ PW.rebuscar = (() => {
     if (conCarrito && planta === e.r.planta) rebusca(e, B, vecino, base, azar, sucesos);
   }
 
-  return { rebusca, vistazo, clasifica, lee };
+  return { rebusca, vistazo, clasifica, lee, bajaPlanta };
 })();

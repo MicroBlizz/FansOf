@@ -3,27 +3,29 @@
 // falte se rellena con el valor de una partida nueva (así una versión vieja del guardado sigue sirviendo).
 'use strict';
 PW.partida = (() => {
-  const NM = () => PW.MATERIALES.length;
+  const NM = () => PW.DOCUMENTOS.length;
   const ceros = () => new Array(NM()).fill(0);
   const entero = n => Number.isFinite(n) && n >= 0;
 
   function recorridoNuevo(c, azar) {
-    const r = { planta: null, materiales: ceros(), piezas: ceros(), oro: 0, nivel: 1, xp: 0, pico: { dano: 0, velocidad: 0, radio: 0 },
-      mejorasMat: ceros(), restoVenta: ceros(), dinamita: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, rotos: 0 };
-    r.planta = PW.planta.crea(1, azar, PW.bonos.calcula({ r, c }), c.expedientes);
+    const r = { planta: null, sueltos: ceros(), expedientes: ceros(), oro: 0, nivel: 1, xp: 0, utiles: { gafas: 0, cafe: 0, carrito: 0, guantes: 0 },
+      herramientas: PW.ZONAS.map(() => 0), caducados: 0, urgentes: [], equipo: PW.equipo.nuevo(),
+      mejorasDoc: ceros(), restoVenta: ceros(), estanteria: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, vaciados: 0 };
+    r.planta = PW.planta.crea(1, azar, PW.bonos.calcula({ r, c }), c.especialidad);
     return r;
   }
   function carreraNueva() {
-    return { trituradora: { nivel: 0, dano: 0, espera: 0, intento: 0 }, recuerdos: {}, expedientes: ceros(), plan: {}, indemnizacion: 0,
+    return { trituradora: { nivel: 0, atasco: 0, espera: 0, intento: 0, hambre: 0, multi: 0 },
+      municion: { caducados: true, docs: PW.DOCUMENTOS.map((d, i) => i === 0) }, recuerdos: {}, especialidad: ceros(), plan: {}, indemnizacion: 0,
       despidos: 0, autoDespido: 0, nivelMax: 1, plantaMax: 1, correo: { falta: 20, vuela: 0, x: 0 }, sindicato: { guardados: 0, falta: PW.AJ.sindicato.cada },
-      totales: { bloques: 0, oro: 0, dinamitas: 0, correos: 0, cofres: 0 }, tiempoTotal: 0 };
+      totales: { archivadores: 0, oro: 0, estanterias: 0, correos: 0, cofres: 0 }, tiempoTotal: 0 };
   }
   function nueva(azar) {
     const c = carreraNueva();
     return { v: 1, r: recorridoNuevo(c, azar), c };
   }
   // rellena lo que falte con lo de una partida nueva, sin tocar lo que ya hay
-  // (y alarga las listas por material si el juego tiene materiales nuevos)
+  // (y alarga las listas por documento si el juego tiene documentos nuevos)
   function rellena(guardado, base) {
     for (const k in base) {
       const b = base[k], g = guardado[k], objeto = b && typeof b === 'object';
@@ -35,10 +37,10 @@ PW.partida = (() => {
   }
   function valida(e) {
     const r = e.r, c = e.c;
-    if (!Array.isArray(r.materiales) || r.materiales.length !== NM() || !r.materiales.every(entero)) return 'materiales';
-    if (!Array.isArray(r.piezas) || !r.piezas.every(entero)) return 'piezas';
+    if (!Array.isArray(r.sueltos) || r.sueltos.length !== NM() || !r.sueltos.every(entero)) return 'documentos';
+    if (!Array.isArray(r.expedientes) || !r.expedientes.every(entero)) return 'expedientes';
     if (!entero(r.oro) || !(r.nivel >= 1)) return 'recorrido';
-    if (!r.planta || !Array.isArray(r.planta.bloques)) return 'planta';
+    if (!r.planta || !Array.isArray(r.planta.archivadores)) return 'planta';
     if (!entero(c.trituradora.nivel) || !entero(c.indemnizacion)) return 'carrera';
     return '';
   }

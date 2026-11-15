@@ -1,4 +1,4 @@
-// Fans Of Paperwork · dominio · EXTRAS: lo que se carga con el tiempo y da premios aparte del picar. La dinamita del castor, los cofres
+// Fans Of Paperwork · dominio · EXTRAS: lo que se carga con el tiempo y da premios aparte de rebuscar. La estantería que vuelca el castor, los cofres
 // (el medidor da un cofre; un cofre da un objeto que se usa cuando quieras), los correos del CEO que cruzan la pantalla, el paquete del
 // sindicato cada AJ.sindicato.cada segundos y las horas extra al volver. Los premios en oro se miden con el ritmo de oro del recorrido.
 'use strict';
@@ -6,17 +6,17 @@ PW.extras = (() => {
   const AJ = PW.AJ;
   const premioOro = (e, segundos) => Math.max(10, Math.round((e.r.ritmoOro || 0) * segundos));
 
-  // ---- dinamita
-  const dinamitaLista = (e, B) => e.r.dinamita >= B.recargaDinamita;
-  // Resultado: PW.ok(bloques golpeados) o 'cargando'
-  function lanzaDinamita(e, B, azar, sucesos) {
-    if (!dinamitaLista(e, B)) return PW.error('cargando', { falta: B.recargaDinamita - e.r.dinamita });
-    e.r.dinamita = 0;
-    e.c.totales.dinamitas++;
-    const golpe = B.dano * B.dinamita, vivos = PW.planta.vivos(e.r.planta), planta = e.r.planta;
-    sucesos.push({ t: 'dinamita' });
-    for (const i of vivos) if (planta === e.r.planta) PW.picar.golpea(e, B, i, golpe, azar, sucesos);
-    return PW.ok(vivos.length);
+  // ---- estanteria
+  const estanteriaLista = (e, B) => e.r.estanteria >= B.recargaEstanteria;
+  // Resultado: PW.ok(archivadores rebuscados) o 'cargando'
+  function lanzaEstanteria(e, B, azar, sucesos) {
+    if (!estanteriaLista(e, B)) return PW.error('cargando', { falta: B.recargaEstanteria - e.r.estanteria });
+    e.r.estanteria = 0;
+    e.c.totales.estanterias++;
+    const fuerza = B.dano * B.estanteria, llenos = PW.planta.llenos(e.r.planta), planta = e.r.planta;
+    sucesos.push({ t: 'estanteria' });
+    for (const i of llenos) if (planta === e.r.planta) PW.rebuscar.rebusca(e, B, i, fuerza, azar, sucesos);
+    return PW.ok(llenos.length);
   }
 
   // ---- cofres y objetos
@@ -38,7 +38,7 @@ PW.extras = (() => {
     if (!PW.OBJETOS.some(o => o.id === id)) return PW.error('desconocido', { id });
     if (!(e.r.objetos[id] > 0)) return PW.error('no-tienes');
     e.r.objetos[id]--;
-    if (id === 'mechero') { e.r.dinamita = B.recargaDinamita; return PW.ok(0); }
+    if (id === 'silbato') { e.r.estanteria = B.recargaEstanteria; return PW.ok(0); }
     e.r.activos[id] = (e.r.activos[id] || 0) + AJ.cofre.duracion;
     return PW.ok(e.r.activos[id]);
   }
@@ -94,6 +94,6 @@ PW.extras = (() => {
     return PW.ok({ oro, segundos });
   }
 
-  return { dinamitaLista, lanzaDinamita, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo,
+  return { estanteriaLista, lanzaEstanteria, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo,
     avanzaSindicato, abreSindicato, horasExtra };
 })();

@@ -1,53 +1,93 @@
-// Fans Of Paperwork · dominio · TRITURADORA: el muro del juego. Se la ataca en intentos de AJ.trituradora.intento segundos; entre uno y
-// otro hay que esperar AJ.trituradora.espera (menos con Recuerdos). El daño se acumula entre intentos; la armadura se resta a cada
-// golpe. Al vaciar su vida se rompe un nivel: sube el tope de nivel, se libera una facción (su líder baja a ayudar) y da un punto de carrera.
+// Fans Of Paperwork · dominio · TRITURADORA: el muro del juego. No se rompe: se atasca. Cada intento dura AJ.trituradora.intento segundos, en
+// los que el equipo le echa documentos; entre uno y otro hay que esperar AJ.trituradora.espera (menos con Recuerdos). El atasco se acumula
+// entre intentos; sus tragaderas se restan a cada vistazo (menos con guantes). Mientras dura el intento come munición (c.municion: los
+// caducados y los expedientes de los documentos que elija el jugador), siempre la mejor primero: cuanto mejor es el bocado, más atasca; sin
+// munición apenas se nota. Al llenar su capacidad se atasca un nivel: sube el tope de nivel, se libera una facción y da un punto de carrera.
 'use strict';
 PW.trituradora = (() => {
-  const AJ = PW.AJ, C = PW.curvas;
+  const AJ = PW.AJ, C = PW.curvas, A = AJ.trituradora;
   const T = e => e.c.trituradora;
-  const acabada = e => T(e).nivel >= AJ.trituradora.niveles;
-  const vida = e => C.vidaTrituradora(T(e).nivel);
-  const armadura = e => C.armaduraTrituradora(T(e).nivel);
-  const atacando = e => T(e).intento > 0;
-  const lista = e => !acabada(e) && !atacando(e) && T(e).espera <= 0;
+  const acabada = e => T(e).nivel >= A.niveles;
+  const capacidad = e => C.capacidadTrituradora(T(e).nivel);
+  const tragaderas = (e, B) => C.tragaderasTrituradora(T(e).nivel) * B.guantes;
+  const atascando = e => T(e).intento > 0;
+  const lista = e => !acabada(e) && !atascando(e) && T(e).espera <= 0;
+  // lo que vale un bocado de cada munición
+  const multiDoc = i => 1 + A.porDocumento * (i + 1);
 
-  // empieza un intento. Resultado: PW.ok(segundos) o 'acabada' / 'atacando' / 'esperando' (con los segundos que faltan)
-  function ataca(e, B) {
+  // la munición que hay, de mejor a peor: [{ i (documento, o -1 los caducados), hay, multi }]
+  function municion(e) {
+    const M = e.c.municion, lista = [];
+    for (let i = PW.DOCUMENTOS.length - 1; i >= 0; i--) if (M.docs[i] && e.r.expedientes[i] >= 1) lista.push({ i, hay: Math.floor(e.r.expedientes[i]), multi: multiDoc(i) });
+    if (M.caducados && e.r.caducados >= 1) lista.push({ i: -1, hay: Math.floor(e.r.caducados), multi: A.caducado });
+    return lista.sort((a, b) => b.multi - a.multi);
+  }
+  // la máquina se come un bocado: el mejor que haya (y lo gasta). Devuelve lo que vale. Si el equipo no le hace nada (se lo traga todo),
+  // no se gasta munición
+  function come(e, B) {
+    const m = municion(e)[0];
+    if (!m || atascoSeg(e, B) <= 0) return A.sinMunicion;
+    if (m.i < 0) e.r.caducados--; else e.r.expedientes[m.i]--;
+    return m.multi;
+  }
+  // empieza un intento. Resultado: PW.ok(segundos) o 'acabada' / 'atascando' / 'esperando' (con los segundos que faltan)
+  function atasca(e, B) {
     if (acabada(e)) return PW.error('acabada');
-    if (atacando(e)) return PW.error('atacando');
+    if (atascando(e)) return PW.error('atascando');
     if (T(e).espera > 0) return PW.error('esperando', { falta: T(e).espera });
-    T(e).intento = AJ.trituradora.intento;
-    T(e).espera = AJ.trituradora.espera * B.espera;
+    T(e).intento = A.intento;
+    T(e).espera = A.espera * B.espera;
+    T(e).hambre = 0;
+    T(e).multi = come(e, B);
     return PW.ok(T(e).intento);
   }
-  // daño por segundo del jugador contra la Trituradora: el pico y los ayudantes, con críticos y menos la armadura de cada golpe
-  function danoSeg(e, B) {
-    const golpe = Math.max(0, PW.bonos.golpeMedio(B) * B.trit - armadura(e));
-    const ayudantes = Math.max(0, B.dano * B.ayud * B.trit - armadura(e)) * AJ.ayudante.golpesSeg * B.ayudantes;
-    return golpe * B.golpesSeg + ayudantes;
+  // atasco por segundo del equipo con un bocado que vale 1: el líder y los trabajadores, menos las tragaderas en cada vistazo
+  function atascoSeg(e, B) {
+    const traga = tragaderas(e, B);
+    const lider = Math.max(0, B.dano * B.trit - traga) * B.vistazosSeg;
+    const equipo = Math.max(0, B.dano * B.trab * B.trit - traga) * AJ.trabajador.vistazosSeg * B.trabajadores;
+    return lider + equipo;
   }
-  function rompeNivel(e, sucesos) {
+  // lo que haría un intento entero con la munición de ahora (sin gastarla): { atasco, multi (el valor medio del bocado), bocados }
+  function prevision(e, B) {
+    const bocados = Math.ceil(A.bocadosSeg * A.intento);
+    let falta = bocados, suma = 0;
+    for (const m of municion(e)) { const usa = Math.min(falta, m.hay); suma += usa * m.multi; falta -= usa; }
+    const multi = (suma + falta * A.sinMunicion) / bocados;
+    return { atasco: atascoSeg(e, B) * A.intento * multi, multi, bocados };
+  }
+  function atascaNivel(e, sucesos) {
     const t = T(e);
-    t.dano = 0;
+    t.atasco = 0;
     t.nivel++;
     t.intento = 0;
-    t.espera = 0;   // el siguiente nivel se puede atacar ya
-    e.r.oro += AJ.trituradora.premioOro * t.nivel;
+    t.espera = 0;   // el siguiente nivel se puede intentar ya
+    e.r.oro += A.premioOro * t.nivel;
     sucesos.push({ t: 'trituradora', nivel: t.nivel, faccion: PW.FACCIONES[Math.min(t.nivel, PW.FACCIONES.length - 1)].fac });
   }
   // avanza dt segundos: corre el intento en curso (y la espera, siempre)
   function avanza(e, B, dt, sucesos) {
     const t = T(e);
     t.espera = Math.max(0, t.espera - dt);
-    if (!atacando(e)) return;
+    if (!atascando(e)) return;
     const paso = Math.min(dt, t.intento);
     t.intento -= paso;
-    t.dano += danoSeg(e, B) * paso;
-    if (t.dano >= vida(e)) return rompeNivel(e, sucesos);
-    if (t.intento <= 0) sucesos.push({ t: 'intento-fin', parte: t.dano / vida(e) });
+    t.atasco += atascoSeg(e, B) * paso * t.multi;
+    t.hambre += A.bocadosSeg * paso;
+    while (t.hambre >= 1) { t.hambre -= 1; t.multi = come(e, B); }
+    if (t.atasco >= capacidad(e)) return atascaNivel(e, sucesos);
+    if (t.intento <= 0) sucesos.push({ t: 'intento-fin', parte: t.atasco / capacidad(e) });
   }
-  // avanzar la espera sin atacar (horas extra)
+  // avanzar la espera sin atascar (horas extra)
   const pasaEspera = (e, dt) => { T(e).espera = Math.max(0, T(e).espera - dt); };
+  // elegir qué se le echa: cual = 'caducados' o el índice de un documento. Resultado: PW.ok(si queda puesto) o 'desconocido'
+  function fijaMunicion(e, cual, si) {
+    const M = e.c.municion;
+    if (cual === 'caducados') { M.caducados = !!si; return PW.ok(M.caducados); }
+    if (!(Number.isInteger(cual) && cual >= 0 && cual < PW.DOCUMENTOS.length)) return PW.error('desconocido', { cual });
+    M.docs[cual] = !!si;
+    return PW.ok(M.docs[cual]);
+  }
 
-  return { ataca, avanza, danoSeg, vida, armadura, lista, atacando, acabada, pasaEspera };
+  return { atasca, avanza, atascoSeg, prevision, municion, multiDoc, capacidad, tragaderas, lista, atascando, acabada, pasaEspera, fijaMunicion };
 })();

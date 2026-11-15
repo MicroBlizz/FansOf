@@ -1,6 +1,6 @@
-// Fans Of Paperwork · adaptador · ARTE: las imágenes del juego (img/), hechas en Yoshi: los bloques de cada material, el fondo de cada zona, la
-// Trituradora y los iconos. Se piden al arrancar; mientras no han llegado (o si falta alguna) se devuelve null y la escena dibuja su repuesto.
-// Los personajes no son imágenes: son los dibujos de core (ART, core/js/serie/arte), con personaje(ctx, clave, x, y, escala).
+// Fans Of Paperwork · adaptador · ARTE: las imágenes del juego (img/), hechas en Yoshi: el archivador de cada tipo de documento, el fondo de
+// cada zona, la Trituradora y los iconos. Se piden al arrancar; mientras no han llegado (o si falta alguna) se devuelve null y la escena
+// dibuja su repuesto. Los personajes no son imágenes: son los dibujos de core (ART, core/js/serie/arte), con personaje(ctx, clave, x, y, escala).
 'use strict';
 PW.arte = (() => {
   const cache = {};
@@ -12,7 +12,7 @@ PW.arte = (() => {
     cache[ruta] = im;
     return null;
   }
-  const bloque = m => img(`img/bloque-${PW.MATERIALES[m].id}.png`);
+  const archivador = m => img(`img/archivador-${PW.DOCUMENTOS[m].id}.png`);
   const fondo = z => img(`img/fondo-${PW.ZONAS[z].fondo}.jpg`);
   const trituradora = () => img('img/trituradora.png');
   const icono = id => img(`img/icono-${id}.png`);
@@ -30,9 +30,9 @@ PW.arte = (() => {
   }
   // pide todo lo fijo de una vez, para que esté al empezar a jugar
   function precarga() {
-    PW.MATERIALES.forEach((m, i) => bloque(i));
+    PW.DOCUMENTOS.forEach((m, i) => archivador(i));
     PW.ZONAS.forEach((z, i) => fondo(i));
     trituradora();
   }
-  return { bloque, fondo, trituradora, icono, personaje, precarga };
+  return { archivador, fondo, trituradora, icono, personaje, precarga };
 })();

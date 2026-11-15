@@ -3,11 +3,11 @@
 'use strict';
 PW.botones = (() => {
   const ERRORES = {
-    'sin-saldo': 'No te llega', 'al-maximo': 'Ya está al máximo', 'no-disponible': 'Aún no has llegado a ese material',
-    'falta-requisito': 'Antes necesitas el nodo anterior', cargando: 'La dinamita aún se está cargando', esperando: 'La Trituradora aún no está lista',
-    atacando: 'Ya estás atacando', acabada: 'La Trituradora ya está destrozada', 'sin-indemnizacion': 'Aún no cobrarías nada',
+    'sin-saldo': 'No te llega', 'al-maximo': 'Ya está al máximo', 'no-disponible': 'Aún no has llegado ahí',
+    'falta-requisito': 'Antes necesitas el nodo anterior', cargando: 'El castor aún está cogiendo carrerilla', esperando: 'La Trituradora aún no está lista',
+    atascando: 'Ya la estás atascando', acabada: 'La Trituradora ya está atascada del todo', 'sin-indemnizacion': 'Aún no cobrarías nada',
     'sin-cofres': 'No tienes cofres', 'no-tienes': 'No tienes ese objeto', 'sin-paquetes': 'Aún no ha llegado el paquete del sindicato',
-    'sin-correo': 'Se ha ido el correo',
+    'sin-correo': 'Se ha ido el correo', 'sin-urgentes': 'Ahora no hay nada urgente', 'sin-archivador': 'Ese archivador ya está vacío',
   };
   // cuenta el resultado de una orden: sonido si sale bien, aviso si no; y pasa sus sucesos a los efectos
   function cuenta(res, sonidoBien = 'select') {
@@ -20,7 +20,7 @@ PW.botones = (() => {
   function despedir() {
     const cobra = PW.despido.cobraria(PW.casos.partida, PW.casos.bonos());
     confirmBox(tr('¿DESPEDIROS?'), tr('Vuelves a la planta 1 y cobras {n} de Indemnización.', { n: PW.txt.num(cobra) }), tr('SÍ, A LA CALLE'), () => {
-      if (cuenta(PW.casos.despide(), 'despido')) PW.ui.pestana = 'carrera';
+      if (cuenta(PW.casos.despide(), 'despido')) PW.ui.pestana = 'recuerdos';
     });
   }
   function borrar() {
@@ -34,15 +34,27 @@ PW.botones = (() => {
     const res = PW.casos.abreSindicato();
     if (cuenta(res, 'pop')) toast(tr('Paquete del sindicato: {n} de oro y un cofre', { n: PW.txt.num(res.valor.oro) }), true);
   }
+  function urgente() {
+    const res = PW.casos.entregaUrgente();
+    if (cuenta(res, 'pop')) toast(tr('Entregado a tiempo: {n} de oro', { n: PW.txt.num(res.valor.oro) }), true);
+  }
+  // marcar o desmarcar una munición de la Trituradora: los caducados o los expedientes de un documento
+  function municion(arg) {
+    const M = PW.casos.partida.c.municion, cual = arg === 'caducados' ? arg : +arg;
+    cuenta(PW.casos.fijaMunicion(cual, !(cual === 'caducados' ? M.caducados : M.docs[cual])));
+  }
   const ACCIONES = {
-    pestana: arg => { PW.ui.pestana = arg; },
-    dinamita: () => cuenta(PW.casos.dinamita(), 'boom'),
-    atacar: () => cuenta(PW.casos.ataca(), 'boom'),
+    pestana: arg => { PW.ui.pestana = arg; PW.ui.elegido = 0; },
+    estanteria: () => cuenta(PW.casos.estanteria(), 'boom'),
+    atascar: () => cuenta(PW.casos.atasca(), 'boom'),
+    urgente,
+    municion,
+    herramienta: arg => cuenta(PW.casos.compraHerramienta(+arg), 'pop'),
     sindicato,
     cofre: abreCofre,
     usar: arg => cuenta(PW.casos.usaObjeto(arg)),
-    pico: arg => cuenta(PW.casos.compraPico(arg), 'pop'),
-    material: arg => cuenta(PW.casos.compraMaterial(+arg), 'pop'),
+    util: arg => cuenta(PW.casos.compraUtil(arg), 'pop'),
+    documento: arg => cuenta(PW.casos.compraDocumento(+arg), 'pop'),
     venta: arg => cuenta(PW.casos.fijaVenta(+arg)),
     recuerdo: arg => cuenta(PW.casos.compraRecuerdo(arg), 'pop'),
     carrera: arg => cuenta(PW.casos.compraCarrera(arg), 'pop'),

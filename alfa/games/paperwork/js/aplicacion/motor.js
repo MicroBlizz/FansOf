@@ -1,38 +1,23 @@
-// Fans Of Paperwork · aplicación · MOTOR: avanza la partida dt segundos. El líder pica el primer bloque vivo a su ritmo, los ayudantes
-// (los líderes de las facciones liberadas) golpean bloques al azar, la dinamita se carga (y se lanza sola con el plan de carrera), y
-// corren la Trituradora, los correos, el sindicato y los objetos en uso. Mientras hay un intento contra la Trituradora, todo el equipo
-// pega a la máquina y no se pica. Devuelve la lista de sucesos para que la pantalla los pinte. El azar y dt vienen de fuera.
+// Fans Of Paperwork · aplicación · MOTOR: avanza la partida dt segundos. El líder rebusca en su archivador a su ritmo, cada trabajador en el
+// suyo (dominio/equipo.js), el castor carga la estantería (y la vuelca solo con el plan de carrera), y corren la Trituradora, los correos,
+// el sindicato, los urgentes y los objetos en uso. Mientras hay un intento contra la Trituradora, todo el equipo le echa documentos a la
+// máquina y no se rebusca. Devuelve la lista de sucesos para que la pantalla los pinte. El azar y dt vienen de fuera.
 'use strict';
 PW.motor = (() => {
-  const AJ = PW.AJ;
-  const PASO_MAX = 0.25;   // un tick largo se parte en pasos, para que los golpes no se salten plantas
+    const PASO_MAX = 0.25;   // un tick largo se parte en pasos, para que los vistazos no se salten plantas
 
-  function pica(e, B, dt, azar, sucesos) {
+  function lider(e, B, dt, azar, sucesos) {
     const r = e.r;
-    r.acumPico = (r.acumPico || 0) + dt * B.golpesSeg;
-    while (r.acumPico >= 1) {
-      r.acumPico -= 1;
-      const i = PW.planta.primerVivo(r.planta);
-      if (i >= 0) PW.picar.golpeDePico(e, B, i, B.dano, azar, sucesos);
+    r.acumLider = (r.acumLider || 0) + dt * B.vistazosSeg;
+    while (r.acumLider >= 1) {
+      r.acumLider -= 1;
+      const i = PW.equipo.delLider(e);
+      if (i >= 0) PW.rebuscar.vistazo(e, B, i, B.dano, azar, sucesos);
     }
   }
-  function ayudan(e, B, dt, azar, sucesos) {
-    const r = e.r;
-    if (!B.ayudantes) return;
-    r.acumAyud = (r.acumAyud || 0) + dt * AJ.ayudante.golpesSeg * B.ayudantes;
-    while (r.acumAyud >= 1) {
-      r.acumAyud -= 1;
-      const vivos = PW.planta.vivos(r.planta);
-      if (!vivos.length) return;
-      const i = vivos[Math.floor(azar() * vivos.length) % vivos.length];
-      const quien = 1 + Math.floor(azar() * B.ayudantes) % B.ayudantes;
-      sucesos.push({ t: 'ayuda', i, quien });
-      PW.picar.golpea(e, B, i, B.dano * B.ayud, azar, sucesos);
-    }
-  }
-  function dinamita(e, B, dt, azar, sucesos) {
-    e.r.dinamita = Math.min(B.recargaDinamita, (e.r.dinamita || 0) + dt);
-    if (B.autoDinamita && PW.extras.dinamitaLista(e, B)) PW.extras.lanzaDinamita(e, B, azar, sucesos);
+  function estanteria(e, B, dt, azar, sucesos) {
+    e.r.estanteria = Math.min(B.recargaEstanteria, (e.r.estanteria || 0) + dt);
+    if (B.autoEstanteria && PW.extras.estanteriaLista(e, B)) PW.extras.lanzaEstanteria(e, B, azar, sucesos);
   }
   // el ritmo de oro por segundo, suavizado (lo usan los premios y las horas extra)
   function mideRitmo(e, oroAntes, dt) {
@@ -43,16 +28,17 @@ PW.motor = (() => {
     const B = PW.bonos.calcula(e), oroAntes = e.r.oro;
     e.r.tiempo += dt;
     e.c.tiempoTotal += dt;
-    if (PW.trituradora.atacando(e)) PW.trituradora.avanza(e, B, dt, sucesos);
+    if (PW.trituradora.atascando(e)) PW.trituradora.avanza(e, B, dt, sucesos);
     else {
       PW.trituradora.pasaEspera(e, dt);
-      pica(e, B, dt, azar, sucesos);
-      ayudan(e, B, dt, azar, sucesos);
-      dinamita(e, B, dt, azar, sucesos);
+      lider(e, B, dt, azar, sucesos);
+      PW.equipo.trabajan(e, B, dt, azar, sucesos);
+      estanteria(e, B, dt, azar, sucesos);
     }
     PW.extras.avanzaCorreo(e, dt, azar, sucesos);
     PW.extras.avanzaSindicato(e, dt);
     PW.extras.gastaActivos(e, dt);
+    PW.sellos.avanza(e, B, dt, azar, sucesos);
     mideRitmo(e, oroAntes, dt);
   }
   // con el nodo 'autodespido', el equipo se despide solo al llegar al nivel elegido

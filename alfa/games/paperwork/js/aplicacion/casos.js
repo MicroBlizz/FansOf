@@ -1,5 +1,5 @@
 // Fans Of Paperwork · aplicación · CASOS DE USO: lo único que la pantalla puede pedir. Carga la partida (y cobra las horas extra del tiempo
-// fuera), avanza el motor cada fotograma, ejecuta las órdenes del jugador (picar, comprar, atacar, despedirse…), guarda y avisa a los
+// fuera), avanza el motor cada fotograma, ejecuta las órdenes del jugador (rebuscar, comprar, atascar, despedirse…), guarda y avisa a los
 // retos. Los puertos vienen de fuera: almacen { cargaPartida, guardaPartida }, reloj { ahora }, azar () → 0..1, retos { evento, maximo }.
 'use strict';
 PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
@@ -8,14 +8,14 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
 
   // los sucesos del motor y de las órdenes que cuentan para los logros
   const AVISOS = {
-    roto: () => ['evento', 'bloques', 1],
+    vacio: () => ['evento', 'archivadores', 1],
     planta: s => ['maximo', 'planta', s.n],
     nivel: s => ['maximo', 'nivel', s.n],
     trituradora: s => ['maximo', 'trituradora', s.nivel],
     despido: () => ['evento', 'despidos', 1],
-    dinamita: () => ['evento', 'dinamitas', 1],
-    expediente: () => ['evento', 'expedientes', 1],
-    reciclado: () => ['evento', 'reciclados', 1],
+    estanteria: () => ['evento', 'estanterias', 1],
+    especialidad: () => ['evento', 'especialidad', 1],
+    clasificado: () => ['evento', 'clasificados', 1],
   };
   // junta los avisos de una tanda (suma los eventos y se queda con el mayor de cada máximo) para escribir los retos una sola vez
   function avisa(sucesos) {
@@ -82,13 +82,15 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     }
     return { ...res, sucesos };
   }
-  // tocar un bloque: un golpe extra del pico (no mientras se ataca a la Trituradora)
+  // tocar un archivador: un vistazo extra del líder, que además se queda trabajando ahí (no mientras se atasca la Trituradora)
   function toca(i) {
     return orden(s => {
-      if (PW.trituradora.atacando(e)) return PW.error('atacando');
-      if (!(e.r.planta.bloques[i] && e.r.planta.bloques[i].vida > 0)) return PW.error('sin-bloque');
+      if (PW.trituradora.atascando(e)) return PW.error('atascando');
+      if (!(e.r.planta.archivadores[i] && e.r.planta.archivadores[i].vida > 0)) return PW.error('sin-archivador');
       const b = B();
-      PW.picar.golpeDePico(e, b, i, b.dano * AJ.pico.toqueMulti, azar, s);
+      e.r.ultimoToque = e.r.tiempo;
+      PW.equipo.apunta(e, i);
+      PW.rebuscar.vistazo(e, b, i, b.dano * AJ.lider.toqueMulti, azar, s);
       return PW.ok(i);
     }, 'toques', false);
   }
@@ -107,10 +109,14 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     arranca, vuelve, sale, entra, tick, toca, despide, ingresa, borra, guarda,
     get partida() { return e; },
     bonos: B,
-    dinamita: () => orden(s => PW.extras.lanzaDinamita(e, B(), azar, s)),
-    ataca: () => orden(() => PW.trituradora.ataca(e, B()), 'ataques'),
-    compraPico: cual => orden(() => PW.compras.compraPico(e, cual), 'mejoras'),
-    compraMaterial: m => orden(() => PW.compras.compraMaterial(e, m), 'mejoras'),
+    estanteria: () => orden(s => PW.extras.lanzaEstanteria(e, B(), azar, s)),
+    atasca: () => orden(() => PW.trituradora.atasca(e, B()), 'atascos'),
+    compraUtil: cual => orden(() => PW.compras.compraUtil(e, cual), 'mejoras'),
+    compraHerramienta: z => orden(() => PW.compras.compraHerramienta(e, z), 'mejoras'),
+    entregaUrgente: () => orden(() => PW.sellos.entrega(e, B()), 'urgentes'),
+    fijaMunicion: (cual, si) => orden(() => PW.trituradora.fijaMunicion(e, cual, si)),
+    manda: (k, i) => orden(() => PW.equipo.manda(e, B(), k, i)),
+    compraDocumento: m => orden(() => PW.compras.compraDocumento(e, m), 'mejoras'),
     compraRecuerdo: id => orden(() => PW.compras.compraRecuerdo(e, id), 'recuerdos'),
     compraCarrera: id => orden(() => PW.compras.compraCarrera(e, id), 'carrera'),
     fijaVenta: parte => orden(() => PW.compras.fijaVenta(e, parte)),

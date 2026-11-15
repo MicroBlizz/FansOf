@@ -1,6 +1,6 @@
 // Fans Of Paperwork · dominio · DESPIDO: el reinicio del recorrido. En cuanto el Despido dé algo de Indemnización, el CEO puede despedir a tu equipo:
-// se pierde todo el recorrido (plantas, materiales, piezas, oro, nivel y mejoras) y se cobra la Indemnización, que compra Recuerdos.
-// La carrera (Trituradora, facciones, Recuerdos, expedientes, plan de carrera) se queda.
+// se pierde todo el recorrido (plantas, documentos, expedientes, oro, nivel y mejoras) y se cobra la Indemnización, que compra Recuerdos.
+// La carrera (Trituradora, facciones, Recuerdos, especialidad, plan de carrera) se queda.
 'use strict';
 PW.despido = (() => {
   const AJ = PW.AJ, C = PW.curvas;

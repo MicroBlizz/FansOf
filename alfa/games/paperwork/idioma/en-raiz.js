@@ -1,6 +1,9 @@
 // Fans Of Paperwork · Inglés de lo que la portada de la web lee del juego (sus novedades).
 'use strict';
 IDIOMA.add({
+  "<b>AHORA SE REBUSCA</b>: el pico y los bloques dejan paso a archivadores con 12 tipos de documento. Útiles nuevos (gafas, café, guantes y carrito), papel cada vez más duro, sellos (confidencial, urgente y caducado) y un menú en dos niveles: «Este turno» y «Tu carrera».": "<b>NOW YOU RUMMAGE</b>: the pickaxe and the blocks give way to filing cabinets with 12 kinds of document. New gear (glasses, coffee, gloves and cart), paper that keeps getting tougher, stamps (confidential, urgent and expired) and a two-level menu: «This shift» and «Your career».",
+  "Cada líder liberado rebusca en su propio archivador, con su manía, y lo puedes mandar a otro. La Trituradora ya no se rompe: se atasca, y tú eliges qué documentos le echas. La partida anterior empieza de cero.": "Each freed leader rummages through their own cabinet, with their own quirk, and you can send them to another one. The Shredder no longer breaks: it jams, and you choose which documents to feed it. Previous saves start over.",
+  "El CEO ha prohibido los picos en la oficina. Los guantes son obligatorios desde que alguien se cortó con un memo.": "The CEO has banned pickaxes in the office. Gloves are mandatory ever since someone got a paper cut from a memo.",
   "El Despido ya no espera al nivel 20: se puede en cuanto da algo de Indemnización.": "Getting fired no longer waits for level 20: you can do it as soon as it pays any Severance.",
   "Recursos Humanos ha simplificado los trámites: ahora te pueden echar casi el primer día.": "Human Resources has streamlined the paperwork: now they can fire you almost on day one.",
   "<b>AHORA SE LLAMA FANS OF PAPERWORK</b>. La partida de la versión anterior empieza de cero.": "<b>IT IS NOW CALLED FANS OF PAPERWORK</b>. Saves from the previous version start over.",

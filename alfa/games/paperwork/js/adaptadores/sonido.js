@@ -14,11 +14,11 @@ if (typeof M !== 'undefined') M.shepard = true;
 function sonidoApagado() { return PW.sonido ? PW.sonido.apagado : false; }
 function volGeneral() { return sonidoApagado() ? 0 : 1; }
 function volMusica() { return 0.3; }
-// qué canción toca: la de la zona, o la del jefe mientras se ataca a la Trituradora
+// qué canción toca: la de la zona, o la del jefe mientras se atasca a la Trituradora
 function musicUpdate() {
   if (typeof AC === 'undefined' || !AC || !M.bus || !PW.casos || !PW.casos.partida) return;
   const e = PW.casos.partida;
-  const quiere = PW.trituradora.atacando(e) ? 'boss' : PW.ZONAS[PW.curvas.zonaDe(e.r.planta.n)].musica;
+  const quiere = PW.trituradora.atascando(e) ? 'boss' : PW.ZONAS[PW.curvas.zonaDe(e.r.planta.n)].musica;
   const want = typeof TRACKS !== 'undefined' && TRACKS[quiere] ? quiere : 'menu';
   if (want !== M.want) { M.want = want; musicSet(want); }
 }

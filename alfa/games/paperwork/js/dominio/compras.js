@@ -1,35 +1,47 @@
-// Fans Of Paperwork · dominio · COMPRAS: lo que se compra y con qué. Las mejoras del pico con oro; la mejora de cada material con piezas
-// de ese material (aparece al haberlo visto); los Recuerdos con Indemnización; los nodos del plan de carrera con puntos. Cada compra
+// Fans Of Paperwork · dominio · COMPRAS: lo que se compra y con qué. Los útiles del líder y la herramienta de cada zona con oro; la mejora de cada documento con expedientes
+// de ese documento (aparece al haberlo visto); los Recuerdos con Indemnización; los nodos del plan de carrera con puntos. Cada compra
 // devuelve PW.ok(nivel nuevo) o un error con nombre: 'sin-saldo', 'al-maximo', 'no-disponible', 'falta-requisito', 'desconocido'.
 'use strict';
 PW.compras = (() => {
   const AJ = PW.AJ, C = PW.curvas;
   const paga = (saldo, precio) => (saldo >= precio ? PW.ok(saldo - precio) : PW.error('sin-saldo', { falta: precio - saldo }));
 
-  function precioPico(e, cual) {
-    const c = AJ.picoMejoras[cual];
-    return c ? C.coste(c, e.r.pico[cual]) : NaN;
+  function precioUtil(e, cual) {
+    const c = AJ.utiles[cual];
+    return c ? C.coste(c, e.r.utiles[cual]) : NaN;
   }
-  function compraPico(e, cual) {
-    const c = AJ.picoMejoras[cual];
-    if (!c) return PW.error('desconocido', { cual });
-    if (e.r.pico[cual] >= c.max) return PW.error('al-maximo');
-    const pago = paga(e.r.oro, precioPico(e, cual));
+  // la herramienta de la zona z (quitagrapas, cúter, abrecartas): se puede comprar al llegar a su zona
+  const vistaZona = (e, z) => C.zonaDe(e.r.plantaMax) >= z;
+  const precioHerramienta = (e, z) => C.coste(AJ.herramienta, e.r.herramientas[z]) * Math.pow(AJ.herramienta.porZona, z);
+  function compraHerramienta(e, z) {
+    if (!(Number.isInteger(z) && z >= 0 && z < PW.ZONAS.length)) return PW.error('desconocido', { z });
+    if (!vistaZona(e, z)) return PW.error('no-disponible');
+    if (e.r.herramientas[z] >= AJ.herramienta.max) return PW.error('al-maximo');
+    const pago = paga(e.r.oro, precioHerramienta(e, z));
     if (!pago.ok) return pago;
     e.r.oro = pago.valor;
-    return PW.ok(++e.r.pico[cual]);
+    return PW.ok(++e.r.herramientas[z]);
   }
-  // un material está disponible cuando ya se ha llegado a una planta donde sale
-  const vistoMaterial = (e, m) => C.materialesDe(e.r.plantaMax)[1] >= m;
-  const precioMaterial = (e, m) => C.coste(AJ.mejoraMaterial, e.r.mejorasMat[m]);
-  function compraMaterial(e, m) {
-    if (!(m >= 0 && m < PW.MATERIALES.length)) return PW.error('desconocido', { m });
-    if (!vistoMaterial(e, m)) return PW.error('no-disponible');
-    if (e.r.mejorasMat[m] >= PW.bonos.calcula(e).topeMaterial) return PW.error('al-maximo');
-    const pago = paga(e.r.piezas[m], precioMaterial(e, m));
+  function compraUtil(e, cual) {
+    const c = AJ.utiles[cual];
+    if (!c) return PW.error('desconocido', { cual });
+    if (e.r.utiles[cual] >= c.max) return PW.error('al-maximo');
+    const pago = paga(e.r.oro, precioUtil(e, cual));
     if (!pago.ok) return pago;
-    e.r.piezas[m] = pago.valor;
-    return PW.ok(++e.r.mejorasMat[m]);
+    e.r.oro = pago.valor;
+    return PW.ok(++e.r.utiles[cual]);
+  }
+  // un documento está disponible cuando ya se ha llegado a una planta donde sale
+  const vistoDocumento = (e, m) => C.documentosDe(e.r.plantaMax)[1] >= m;
+  const precioDocumento = (e, m) => C.coste(AJ.mejoraDocumento, e.r.mejorasDoc[m]);
+  function compraDocumento(e, m) {
+    if (!(m >= 0 && m < PW.DOCUMENTOS.length)) return PW.error('desconocido', { m });
+    if (!vistoDocumento(e, m)) return PW.error('no-disponible');
+    if (e.r.mejorasDoc[m] >= PW.bonos.calcula(e).topeDocumento) return PW.error('al-maximo');
+    const pago = paga(e.r.expedientes[m], precioDocumento(e, m));
+    if (!pago.ok) return pago;
+    e.r.expedientes[m] = pago.valor;
+    return PW.ok(++e.r.mejorasDoc[m]);
   }
   const precioRecuerdo = (e, id) => C.coste(AJ.recuerdo, e.c.recuerdos[id] || 0);
   function compraRecuerdo(e, id) {
@@ -41,7 +53,7 @@ PW.compras = (() => {
     e.c.recuerdos[id] = (e.c.recuerdos[id] || 0) + 1;
     return PW.ok(e.c.recuerdos[id]);
   }
-  // puntos del plan de carrera: uno por nivel roto de la Trituradora y uno cada AJ.carreraPuntos.cadaNiveles del nivel más alto
+  // puntos del plan de carrera: uno por nivel atascado de la Trituradora y uno cada AJ.carreraPuntos.cadaNiveles del nivel más alto
   function puntos(e) {
     const P = AJ.carreraPuntos;
     const ganados = e.c.trituradora.nivel * P.porNivelTrituradora + Math.floor(e.c.nivelMax / P.cadaNiveles);
@@ -57,7 +69,7 @@ PW.compras = (() => {
     e.c.plan[id] = true;
     return PW.ok(1);
   }
-  // qué parte de las piezas se vende sola al reciclar (0 a 1, en cuartos)
+  // qué parte de las expedientes se vende sola al reciclar (0 a 1, en cuartos)
   function fijaVenta(e, parte) {
     if (![0, 0.25, 0.5, 0.75, 1].includes(parte)) return PW.error('desconocido', { parte });
     e.r.venta = parte;
@@ -72,5 +84,5 @@ PW.compras = (() => {
     return PW.ok(nivel);
   }
 
-  return { fijaAutoDespido, precioPico, compraPico, vistoMaterial, precioMaterial, compraMaterial, precioRecuerdo, compraRecuerdo, puntos, compraCarrera, fijaVenta };
+  return { fijaAutoDespido, precioUtil, compraUtil, vistaZona, precioHerramienta, compraHerramienta, vistoDocumento, precioDocumento, compraDocumento, precioRecuerdo, compraRecuerdo, puntos, compraCarrera, fijaVenta };
 })();

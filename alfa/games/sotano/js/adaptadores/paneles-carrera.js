@@ -22,7 +22,7 @@ SO.panelesCarrera = (() => {
   function recuerdos(e) {
     return `<h4 class="so-sub">${tr('Recuerdos')} · ${tr('tienes {n} de Indemnización', { n: n(e.c.indemnizacion) })}</h4>` + SO.RECUERDOS.map(r => {
       const nivel = e.c.recuerdos[r.id] || 0, precio = SO.compras.precioRecuerdo(e, r.id);
-      const der = nivel >= SO.AJ.recuerdo.max ? `<em>${tr('Máximo')}</em>` : P.boton('recuerdo', r.id, n(precio), e.c.indemnizacion >= precio);
+      const der = nivel >= SO.AJ.recuerdo.max ? `<em>${tr('Máximo')}</em>` : P.boton('recuerdo', r.id, `${n(precio)}<i class="so-indem-i"></i>`, e.c.indemnizacion >= precio);
       return P.fila(P.icono(`img/icono-${r.id}.png`, '#b06bff'), `${tr(r.nombre)} · ${tr('nivel {n}', { n: nivel })}`, tr(r.txt), der);
     }).join('');
   }
@@ -34,6 +34,13 @@ SO.panelesCarrera = (() => {
         const der = hecho ? `<em>${tr('Hecho')}</em>` : falta ? `<em>${tr('Antes: {n}', { n: tr(SO.CARRERA.find(x => x.id === c.pide).nombre) })}</em>` : P.boton('carrera', c.id, tr('{n} pt', { n: c.coste }), puntos >= c.coste);
         return P.fila(P.icono('', hecho ? '#3ddc84' : '#555'), tr(c.nombre), tr(c.txt), der);
       }).join('');
+  }
+  // cuántos Recuerdos y nodos del plan se pueden pagar ahora
+  function avisos(e) {
+    const puntos = SO.compras.puntos(e);
+    const recuerdos = SO.RECUERDOS.filter(r => (e.c.recuerdos[r.id] || 0) < SO.AJ.recuerdo.max && e.c.indemnizacion >= SO.compras.precioRecuerdo(e, r.id)).length;
+    const nodos = SO.CARRERA.filter(c => !e.c.plan[c.id] && !(c.pide && !e.c.plan[c.pide]) && puntos >= c.coste).length;
+    return recuerdos + nodos;
   }
   const carrera = (e, B) => despido(e, B) + recuerdos(e) + plan(e);
 
@@ -54,5 +61,5 @@ SO.panelesCarrera = (() => {
     return `<div class="so-texto">${P.boton('sonido', '', SO.sonido.apagado ? tr('Activar el sonido') : tr('Quitar el sonido'))}`
       + `<p>${tr('Versión {v}. Prototipo: las cifras cambiarán.', { v: SO.AJ.version })}</p>${P.boton('borrar', '', tr('Borrar la partida'), true, 'peligro')}</div>${dev()}`;
   }
-  return { carrera, retos, opciones };
+  return { carrera, retos, opciones, avisos };
 })();

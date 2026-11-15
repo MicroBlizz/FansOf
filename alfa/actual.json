@@ -1,8 +1,8 @@
 {
- "build": 1183,
- "hash": "9dbc0aa",
- "fecha": "2026-11-15T02:23:01Z",
- "mensaje": "Sótano: revisión de código, iconos de Yoshi y horas extra al volver a la pestaña",
+ "build": 1184,
+ "hash": "0918ef8",
+ "fecha": "2026-11-15T10:40:13Z",
+ "mensaje": "Sótano 0.1.1: interfaz nueva (panel el doble de alto, letras y botones grandes) y venta de piezas arreglada",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -18,7 +18,7 @@
   "rouflage": "0.2.79",
   "rumble": "0.9.172",
   "skate": "0.1.27",
-  "sotano": "0.1.0",
+  "sotano": "0.1.1",
   "survivors": "0.1.85",
   "tacticas": "0.1.69",
   "taxi": "0.2.15",

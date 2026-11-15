@@ -24,7 +24,9 @@ SO.picar = (() => {
     if (!lotes) return;
     r.materiales[m] -= lotes * receta;
     const t = azar(), multi = t < B.x3 ? 3 : t < B.x3 + B.x2 ? 2 : 1;
-    const piezas = lotes * multi, vendidas = Math.floor(piezas * r.venta);
+    // lo que toca vender se va sumando con decimales (restoVenta): al 50 %, de cada dos piezas sueltas se vende una, no ninguna
+    const piezas = lotes * multi, aVender = r.restoVenta[m] + piezas * r.venta, vendidas = Math.min(piezas, Math.floor(aVender + 1e-9));
+    r.restoVenta[m] = aVender - vendidas;
     const oro = Math.round(vendidas * C.valorPieza(m) * B.precio);
     r.piezas[m] += piezas - vendidas;
     r.oro += oro;

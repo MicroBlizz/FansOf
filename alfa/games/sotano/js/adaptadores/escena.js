@@ -1,19 +1,21 @@
 // Fans Of Sótano · adaptador · ESCENA: lo que se dibuja en el lienzo de 540 × 960 cada fotograma. El fondo de la zona, el equipo (el líder
 // que pica y los ayudantes, dibujos de core), la rejilla de bloques con sus grietas, el correo del CEO que cruza, la Trituradora cuando se
-// la ataca y los efectos. Solo lee la partida: los toques los traduce a órdenes principal.js (aquí solo se dice qué hay bajo el dedo).
+// la ataca y los efectos. El lienzo mide 540 de ancho y de alto lo que dé la pantalla (960 o más, SO.ui.alto): lo de arriba (equipo y
+// rejilla) no se mueve y lo que sobra es para el panel. Solo lee la partida: los toques los traduce a órdenes principal.js (aquí solo se dice qué hay bajo el dedo).
 'use strict';
 // dónde va la rejilla de bloques en el lienzo
 SO.REJILLA = (() => {
-  const cols = SO.AJ.planta.columnas, filas = SO.AJ.planta.filas, lado = 78, paso = 82;
+  const cols = SO.AJ.planta.columnas, filas = SO.AJ.planta.filas, lado = 70, paso = 74;
   const ancho = cols * paso - (paso - lado);
-  return { cols, filas, lado, paso, ancho, x: Math.round((540 - ancho) / 2), y: 300 };
+  return { cols, filas, lado, paso, ancho, x: Math.round((540 - ancho) / 2), y: 160 };
 })();
 SO.escena = (() => {
-  const R = SO.REJILLA, W = 540, H = 960, ZONA_COLOR = ['#2a2140', '#14203a', '#1d2a1a'];
+  const R = SO.REJILLA, W = 540, ZONA_COLOR = ['#2a2140', '#14203a', '#1d2a1a'];
 
-  function fondo(ctx, e) {
+  // el fondo cubre el lienzo sin deformarse (se recorta por los lados si la pantalla es más alta)
+  function fondo(ctx, e, H) {
     const z = SO.curvas.zonaDe(e.r.planta.n), im = SO.arte.fondo(z);
-    if (im) ctx.drawImage(im, 0, 0, W, H);
+    if (im) { const an = im.width * H / im.height; ctx.drawImage(im, (W - Math.max(W, an)) / 2, 0, Math.max(W, an), H); }
     else { ctx.fillStyle = ZONA_COLOR[z]; ctx.fillRect(0, 0, W, H); }
     ctx.fillStyle = 'rgba(10,6,20,0.45)';
     ctx.fillRect(0, 0, W, H);
@@ -51,19 +53,19 @@ SO.escena = (() => {
     const lib = SO.bonos.liberadas(e), atacando = SO.trituradora.atacando(e);
     const ritmo = atacando ? 9 : 6 * B.golpesSeg / SO.AJ.pico.golpesSeg;
     const swing = Math.sin(t * Math.min(18, ritmo)) * 0.25;
-    if (!SO.arte.personaje(ctx, SO.FACCIONES[0].arte, 92, 280, 1.25, swing)) { ctx.fillStyle = '#ff9a3c'; ctx.fillRect(70, 190, 44, 90); }
+    if (!SO.arte.personaje(ctx, SO.FACCIONES[0].arte, 78, R.y - 8, 0.95, swing)) { ctx.fillStyle = '#ff9a3c'; ctx.fillRect(56, R.y - 78, 44, 70); }
     for (let k = 1; k < lib; k++) {
-      const x = 168 + (k - 1) * 38, y = 284 - (k % 2) * 14, bote = Math.abs(Math.sin(t * 5 + k)) * 6;
-      SO.arte.personaje(ctx, SO.FACCIONES[k].arte, x, y - bote, 0.78);
+      const x = 150 + (k - 1) * 36, y = R.y - 6 - (k % 2) * 10, bote = Math.abs(Math.sin(t * 5 + k)) * 6;
+      SO.arte.personaje(ctx, SO.FACCIONES[k].arte, x, y - bote, 0.62);
     }
-    if (e.r.dinamita >= B.recargaDinamita) SO.arte.personaje(ctx, 'beaver', 495, 282 - Math.abs(Math.sin(t * 4)) * 8, 0.85);
+    if (e.r.dinamita >= B.recargaDinamita) SO.arte.personaje(ctx, 'beaver', 495, R.y - 6 - Math.abs(Math.sin(t * 4)) * 8, 0.75);
   }
   // el correo del CEO cruzando la pantalla de izquierda a derecha (dónde está ahora: o null)
   function sitioCorreo(e) {
     const k = e.c.correo;
     if (!(k.vuela > 0)) return null;
     const p = 1 - k.vuela / SO.AJ.correo.vuelo;
-    return { x: -40 + p * (W + 80), y: 130 + k.x * 60 + Math.sin(p * 12) * 14, r: 34 };
+    return { x: -40 + p * (W + 80), y: 110 + k.x * 120 + Math.sin(p * 12) * 14, r: 34 };
   }
   function correo(ctx, e, t) {
     const c = sitioCorreo(e);
@@ -82,11 +84,11 @@ SO.escena = (() => {
     if (!SO.trituradora.atacando(e)) return;
     const T = e.c.trituradora, vida = SO.trituradora.vida(e), im = SO.arte.trituradora(), s = Math.sin(t * 30) * 3;
     ctx.fillStyle = 'rgba(10,0,10,0.6)'; ctx.fillRect(0, R.y - 20, W, R.filas * R.paso + 40);
-    if (im) ctx.drawImage(im, 130 + s, R.y - 4, 280, 280);
-    else { ctx.fillStyle = '#5b6578'; ctx.fillRect(150 + s, R.y + 20, 240, 240); }
-    barra(ctx, 40, R.y + 284, 460, 26, 1 - T.dano / vida, '#ff4d5e');
-    texto(ctx, SO.txt.num(vida - T.dano), W / 2, R.y + 305, 20, '#fff');
-    texto(ctx, tr('Trituradora · nivel {n}', { n: T.nivel + 1 }), W / 2, R.y - 30, 24, '#ff4d5e');
+    if (im) ctx.drawImage(im, 140 + s, R.y + 2, 260, 260);
+    else { ctx.fillStyle = '#5b6578'; ctx.fillRect(160 + s, R.y + 20, 220, 220); }
+    barra(ctx, 40, R.y + 264, 460, 26, 1 - T.dano / vida, '#ff4d5e');
+    texto(ctx, SO.txt.num(vida - T.dano), W / 2, R.y + 285, 20, '#fff');
+    texto(ctx, tr('Trituradora · nivel {n}', { n: T.nivel + 1 }), W / 2, R.y - 24, 24, '#ff4d5e');
     texto(ctx, SO.txt.tiempo(T.intento), 470, R.y + 40, 30, '#ffd23f');
   }
   function barra(ctx, x, y, w, h, parte, color) {
@@ -99,10 +101,10 @@ SO.escena = (() => {
     ctx.fillStyle = color; ctx.fillText(s, x, y);
   }
   function pinta(ctx, e, t) {
-    const B = SO.bonos.calcula(e), [dx, dy] = SO.efectos.sacudida();
+    const B = SO.bonos.calcula(e), [dx, dy] = SO.efectos.sacudida(), H = SO.ui.alto;
     ctx.save();
     ctx.translate(dx, dy);
-    fondo(ctx, e);
+    fondo(ctx, e, H);
     equipo(ctx, e, B, t);
     e.r.planta.bloques.forEach((b, i) => bloque(ctx, b, i, t));
     trituradora(ctx, e, t);
@@ -110,13 +112,20 @@ SO.escena = (() => {
     ctx.restore();
     SO.efectos.pinta(ctx, t, W, H);
   }
-  // qué hay bajo el dedo en (x, y) del lienzo: { que: 'correo' } o { que: 'bloque', i } o null
+  // qué hay bajo el dedo en (x, y) del lienzo: { que: 'correo' } o { que: 'bloque', i } (i = -1 si no queda ninguno) o null
   function toque(e, x, y) {
     const c = sitioCorreo(e);
     if (c && Math.hypot(x - c.x, y - c.y) < c.r + 18) return { que: 'correo' };
     const col = Math.floor((x - R.x) / R.paso), fila = Math.floor((y - R.y) / R.paso);
     if (col < 0 || col >= R.cols || fila < 0 || fila >= R.filas) return null;
-    return { que: 'bloque', i: fila * R.cols + col };
+    return { que: 'bloque', i: vivoCerca(e, fila * R.cols + col) };
+  }
+  // si el hueco tocado ya está roto, el golpe va al bloque entero más cercano: cualquier toque en la rejilla pica
+  function vivoCerca(e, i) {
+    const bl = e.r.planta.bloques, vivo = k => bl[k] && bl[k].vida > 0;
+    if (vivo(i)) return i;
+    const lejos = k => Math.hypot(k % R.cols - i % R.cols, Math.floor(k / R.cols) - Math.floor(i / R.cols));
+    return bl.reduce((mejor, _, k) => (vivo(k) && (mejor < 0 || lejos(k) < lejos(mejor)) ? k : mejor), -1);
   }
   return { pinta, toque };
 })();

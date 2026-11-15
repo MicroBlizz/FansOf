@@ -16,14 +16,15 @@ SO.paneles = (() => {
       + `<span class="so-planta ol">${tr('Planta −{n}', { n: r.planta.n })}<small>${tr(SO.ZONAS[SO.curvas.zonaDe(r.planta.n)].nombre)}</small></span>`
       + `<span class="so-indem ol" title="${tr('Indemnización')}">${n(e.c.indemnizacion)}</span>`;
   }
-  // los cuatro botones grandes de acción, con su carga o su cuenta
+  // los cuatro botones grandes de acción, con su carga o su cuenta (la carga va de 5 en 5 %: así el botón no se rehace a cada instante)
+  const carga = v => Math.floor(Math.max(0, Math.min(1, v)) * 20) / 20;
   function acciones(e, B) {
-    const din = Math.min(1, e.r.dinamita / B.recargaDinamita), T = e.c.trituradora, sind = e.c.sindicato;
+    const din = carga(e.r.dinamita / B.recargaDinamita), T = e.c.trituradora, sind = e.c.sindicato;
     const trit = SO.trituradora.acabada(e) ? tr('Rota') : SO.trituradora.atacando(e) ? tr('¡Dale!') : T.espera > 0 ? t(T.espera) : tr('¡Atacar!');
     return `<button class="so-acc ol${din >= 1 ? ' listo' : ''}" data-acc="dinamita" style="--p:${din}"><img src="img/icono-dinamita.png" alt="" onerror="this.remove()">${tr('Dinamita')}</button>`
       + `<button class="so-acc ol${SO.trituradora.lista(e) ? ' listo' : ''}" data-acc="pestana" data-arg="trituradora"><img src="img/trituradora.png" alt="">${trit}</button>`
-      + `<button class="so-acc ol${sind.guardados ? ' listo' : ''}" data-acc="sindicato" style="--p:${1 - sind.falta / SO.AJ.sindicato.cada}"><img src="img/icono-sindicato.png" alt="" onerror="this.remove()">${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : ''}</button>`
-      + `<button class="so-acc ol${SO.extras.cofres(e) ? ' listo' : ''}" data-acc="pestana" data-arg="cofres" style="--p:${e.r.medidor / SO.AJ.cofre.medidor}"><img src="img/icono-cofre.png" alt="" onerror="this.remove()">${tr('Cofres')} ${SO.extras.cofres(e) ? '×' + SO.extras.cofres(e) : ''}</button>`;
+      + `<button class="so-acc ol${sind.guardados ? ' listo' : ''}" data-acc="sindicato" style="--p:${carga(1 - sind.falta / SO.AJ.sindicato.cada)}"><img src="img/icono-sindicato.png" alt="" onerror="this.remove()">${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : ''}</button>`
+      + `<button class="so-acc ol${SO.extras.cofres(e) ? ' listo' : ''}" data-acc="pestana" data-arg="cofres" style="--p:${carga(e.r.medidor / SO.AJ.cofre.medidor)}"><img src="img/icono-cofre.png" alt="" onerror="this.remove()">${tr('Cofres')} ${SO.extras.cofres(e) ? '×' + SO.extras.cofres(e) : ''}</button>`;
   }
 
   // cada mejora del pico con su icono (la zanahoria de CrazyBunny, el café y la dinamita)
@@ -31,6 +32,12 @@ SO.paneles = (() => {
   const PICO = [['dano', 'Daño del pico', B => tr('{n} por golpe', { n: n(B.dano) })],
     ['velocidad', 'Velocidad', B => tr('{n} golpes por segundo', { n: fmtV(Math.round(B.golpesSeg * 100) / 100) })],
     ['radio', 'Radio', B => tr('{p} de dar también al bloque de al lado', { p: SO.txt.pct(B.radio) })]];
+  // cuántas compras se pueden pagar ahora en cada pestaña (el globo que avisa de que hay algo que comprar)
+  function avisos(e, B) {
+    const pico = PICO.filter(([k]) => e.r.pico[k] < SO.AJ.picoMejoras[k].max && e.r.oro >= SO.compras.precioPico(e, k)).length;
+    const materiales = SO.MATERIALES.filter((m, i) => SO.compras.vistoMaterial(e, i) && e.r.mejorasMat[i] < B.topeMaterial && e.r.piezas[i] >= SO.compras.precioMaterial(e, i)).length;
+    return { pico, materiales, carrera: SO.panelesCarrera.avisos(e), retos: SO.retos.listos() };
+  }
   function pico(e, B) {
     const filas = PICO.map(([k, nombre, det]) => {
       const nivel = e.r.pico[k], max = SO.AJ.picoMejoras[k].max, precio = SO.compras.precioPico(e, k);
@@ -45,7 +52,7 @@ SO.paneles = (() => {
     return vistos.map(i => {
       const M = SO.MATERIALES[i], nivel = e.r.mejorasMat[i], precio = SO.compras.precioMaterial(e, i), rango = SO.curvas.rangoExpediente(e.c.expedientes[i] || 0);
       const der = nivel >= B.topeMaterial ? `<em>${tr('Máximo')}</em>` : boton('material', i, `${n(precio)} ${tr('piezas')}`, e.r.piezas[i] >= precio);
-      const det = `${tr(M.txt)} · ${tr('tienes {n} piezas', { n: n(e.r.piezas[i]) })} · ${tr('expediente {r}/3', { r: rango })}`;
+      const det = `${tr(M.txt)} · ${tr('expediente {r}/3', { r: rango })}<br>${tr('tienes {n} piezas', { n: n(e.r.piezas[i]) })}`;
       return fila(icono(`img/bloque-${M.id}.png`, M.color), `${tr(M.nombre)} · ${tr('nivel {n}', { n: nivel })}`, det, der);
     }).join('');
   }
@@ -70,5 +77,5 @@ SO.paneles = (() => {
     return `<div class="so-texto"><p>${tr('Rompiendo bloques se llena el medidor y sale un cofre. Cada cofre trae un objeto.')}</p>`
       + `${boton('cofre', '', tr('Abrir cofre ({n})', { n: hay }), hay > 0, 'grande')}</div>${objetos}`;
   }
-  return { hud, acciones, pico, materiales, trituradora, cofres, boton, fila, icono };
+  return { hud, acciones, avisos, pico, materiales, trituradora, cofres, boton, fila, icono };
 })();

@@ -72,10 +72,12 @@ SO.efectos = (() => {
     carteles.forEach((c, k) => {
       const dt = t - c.t0;
       if (dt > c.dura) return;
-      const y = 200 + k * 64, entra = Math.min(1, dt * 6), a = Math.min(1, (c.dura - dt) * 3);
+      const y = R.y + 110 + k * 64, entra = Math.min(1, dt * 6), a = Math.min(1, (c.dura - dt) * 3);
       ctx.globalAlpha = a;
       ctx.textAlign = 'center';
-      ctx.font = Math.round(40 * entra) + 'px ' + FONT_D;
+      ctx.font = '40px ' + FONT_D;
+      const cabe = Math.min(1, (W - 28) / ctx.measureText(c.txt).width);   // un cartel largo se encoge hasta caber en el ancho
+      ctx.font = Math.round(40 * entra * cabe) + 'px ' + FONT_D;
       ctx.lineWidth = 8; ctx.strokeStyle = OL; ctx.strokeText(c.txt, W / 2, y);
       ctx.fillStyle = c.color; ctx.fillText(c.txt, W / 2, y);
       if (c.sub) { ctx.font = '20px ' + FONT_D; ctx.lineWidth = 5; ctx.strokeText(c.sub, W / 2, y + 30); ctx.fillStyle = '#fff'; ctx.fillText(c.sub, W / 2, y + 30); }

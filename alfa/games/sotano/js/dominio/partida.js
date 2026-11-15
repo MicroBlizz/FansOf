@@ -9,7 +9,7 @@ SO.partida = (() => {
 
   function recorridoNuevo(c, azar) {
     const r = { planta: null, materiales: ceros(), piezas: ceros(), oro: 0, nivel: 1, xp: 0, pico: { dano: 0, velocidad: 0, radio: 0 },
-      mejorasMat: ceros(), dinamita: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, rotos: 0 };
+      mejorasMat: ceros(), restoVenta: ceros(), dinamita: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, rotos: 0 };
     r.planta = SO.planta.crea(1, azar, SO.bonos.calcula({ r, c }), c.expedientes);
     return r;
   }

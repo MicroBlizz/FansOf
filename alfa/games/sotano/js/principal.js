@@ -2,7 +2,7 @@
 // arranca el lienzo, el bucle de cada fotograma (avanza el motor con el tiempo real y pinta) y los paneles de abajo. Es el único archivo que
 // conoce todas las piezas.
 'use strict';
-SO.ui = { pestana: 'pico', t: 0, sucio: true, velocidad: 1, html: {} };
+SO.ui = { pestana: 'pico', t: 0, sucio: true, velocidad: 1, html: {}, alto: 960 };   // alto: el del lienzo, que crece en pantallas alargadas
 SO.almacen = SO.creaAlmacenLocal(SAVE_KEY, localStorage);
 SO.reloj = SO.creaReloj();
 SO.sonido = SO.creaSonido(SO.almacen);
@@ -19,14 +19,16 @@ SO.principal = (() => {
   // el sonido de cada suceso del motor (los que no salen, callan)
   const SONIDOS = { golpe: 'hit', roto: 'clank', nivel: 'levelup', planta: 'blip', trituradora: 'crown', despido: 'despido', dinamita: 'boom', correo: 'card', 'intento-fin': 'sad' };
 
+  // el escenario ocupa todo el alto que haya: 540 de ancho de diseño y de 960 a 1280 de alto (un móvil alargado gana panel, no bandas vacías)
   function ajusta() {
     const bw = document.body.clientWidth, bh = document.body.clientHeight, pad = bw < 600 ? 0 : 24;
-    let w = bw - pad * 2, h = (w * V.H) / V.W;
-    if (h > bh - pad * 2) { h = bh - pad * 2; w = (h * V.W) / V.H; }
-    w = Math.max(200, Math.floor(w)); h = Math.floor((w * V.H) / V.W);
+    const libreW = bw - pad * 2, libreH = bh - pad * 2;
+    V.H = Math.round(Math.max(960, Math.min(1280, (V.W * libreH) / libreW)));
+    const w = Math.max(200, Math.floor(Math.min(libreW, (libreH * V.W) / V.H))), h = Math.floor((w * V.H) / V.W);
     const st = document.getElementById('stage'); st.style.width = w + 'px'; st.style.height = h + 'px';
-    V.sc = w / V.W; V.dpr = Math.min(window.devicePixelRatio || 1, 3);
+    V.sc = w / V.W; V.dpr = Math.min(window.devicePixelRatio || 1, 3); ui.alto = V.H;
     CV.width = Math.round(w * V.dpr); CV.height = Math.round(h * V.dpr);
+    UI.style.height = V.H + 'px';
     UI.style.transform = `scale(${V.sc})`;
   }
   // pone el HTML de un trozo solo si cambió (así no se pierden los toques ni el desplazamiento)
@@ -40,10 +42,10 @@ SO.principal = (() => {
     pon('so-hud', SO.paneles.hud(e, B));
     pon('so-acciones', SO.paneles.acciones(e, B));
     pon('so-panel', PESTANAS[ui.pestana](e, B));
-    const retos = SO.retos.listos();
+    const avisos = SO.paneles.avisos(e, B);
     document.querySelectorAll('#so-pestanas [data-arg]').forEach(b => {
       b.classList.toggle('activo', b.dataset.arg === ui.pestana);
-      if (b.dataset.arg === 'retos') b.dataset.globo = retos || '';
+      b.dataset.globo = avisos[b.dataset.arg] || '';
     });
     ui.sucio = false;
   }
@@ -72,6 +74,17 @@ SO.principal = (() => {
     if (q.que === 'correo') abreCorreo();
     else SO.efectos.sucesos(SO.casos.toca(q.i).sucesos, ui.t);
   }
+  // con el dedo apoyado se sigue picando donde esté (5 toques por segundo): no hace falta aporrear la pantalla
+  let dedo = null;
+  function mantiene(ev) {
+    suelta();
+    CV.setPointerCapture(ev.pointerId);   // el final del toque llega al lienzo aunque el dedo acabe fuera o salga algo encima
+    dedo = { ev, reloj: setInterval(() => toca(dedo.ev), 200) };
+  }
+  function suelta() {
+    if (dedo) clearInterval(dedo.reloj);
+    dedo = null;
+  }
   function abreCorreo() {
     const res = SO.casos.abreCorreo();
     if (!SO.botones.cuenta(res, 'pop')) return;
@@ -87,9 +100,12 @@ SO.principal = (() => {
     bienvenida(SO.casos.arranca().valor.vuelta);
     document.querySelectorAll('#so-pestanas [data-arg]').forEach(b => { if (b.dataset.arg !== 'opciones') b.textContent = tr(b.textContent.trim()); });
     SO.botones.engancha(UI);
-    CV.addEventListener('pointerdown', ev => { if (typeof audioInit === 'function') audioInit(); toca(ev); });
+    CV.addEventListener('pointerdown', ev => { if (typeof audioInit === 'function') audioInit(); toca(ev); mantiene(ev); });
+    CV.addEventListener('pointermove', ev => { if (dedo) dedo.ev = ev; });
+    for (const fin of ['pointerup', 'pointercancel', 'lostpointercapture']) CV.addEventListener(fin, suelta);
+    window.addEventListener('blur', suelta);
     UI.addEventListener('pointerdown', () => { if (typeof audioInit === 'function') audioInit(); });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) SO.casos.sale(); else bienvenida(SO.casos.entra()); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { suelta(); SO.casos.sale(); } else bienvenida(SO.casos.entra()); });
     setInterval(() => { try { musicUpdate(); } catch (e) { /* la música nunca debe parar el juego */ } }, 200);
     document.getElementById('carga').remove();
     requestAnimationFrame(fotograma);

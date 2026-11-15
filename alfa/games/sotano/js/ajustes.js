@@ -5,7 +5,7 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Sótano', guardado: 'for-sotano-v1', sinFeedback: true };
 SO.AJ = {
-  version: '0.1.0',
+  version: '0.1.1',
   planta: { columnas: 6, filas: 4, limpia: 0.7, plantasPorPar: 4, plantasPorZona: 16, extraSinFin: 1.15 },
   material: { vida0: 10, vidaBase: 2.5, valor0: 1, valorBase: 2.4, receta0: 2 },
   pico: { golpesSeg: 1.2, critBase: 0.05, critMulti: 2, superMulti: 3, toqueMulti: 1 },
@@ -32,3 +32,6 @@ SO.AJ = {
   horasExtra: { parte: 0.25, topeHoras: 12 },
   carreraPuntos: { porNivelTrituradora: 1, cadaNiveles: 10 },
 };
+// Un idle no tiene «fuera de partida»: para core (la etiqueta «Prototipo» del borde, el sitio de los avisos) se está jugando siempre menos
+// con las opciones abiertas, que es donde se ve la etiqueta sin tapar los botones.
+function enPartida() { return !!SO.ui && SO.ui.pestana !== 'opciones'; }

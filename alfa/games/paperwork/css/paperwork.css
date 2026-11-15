@@ -1,0 +1,67 @@
+/* Fans Of Paperwork · estilos: la capa de 540 de ancho (y de 960 a 1280 de alto, según la pantalla) encima del lienzo. Arriba la barra (oro,
+   nivel, planta, Indemnización); bajo la rejilla los botones de acción, las pestañas y el panel, que se queda con todo el alto que sobre.
+   Colores y letras de core (core/css/base.css): contorno grueso y tinta clara sobre morado oscuro. */
+#stage { background: var(--bg); }
+#pw-ui { position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; color: var(--ink); font-family: var(--font-ui); }
+#pw-ui button, #pw-panel { pointer-events: auto; }
+#pw-ui button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; font: 800 28px var(--font-ui); color: var(--ink-dim); }
+
+/* la barra de arriba */
+#pw-hud { position: absolute; left: 0; right: 0; top: 0; height: 64px; display: flex; align-items: center; gap: 10px; padding: 0 12px;
+  background: rgba(20, 10, 34, 0.88); border-bottom: 4px solid var(--outline); font-family: var(--font-display); font-size: 24px; }
+.pw-oro, .pw-indem { display: flex; align-items: center; gap: 6px; }
+.pw-oro { min-width: 92px; }
+.pw-oro::before, .pw-oro-i::before { content: ''; display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); border: 3px solid var(--outline); flex: none; }
+.pw-oro-i { display: inline-block; margin-left: 5px; vertical-align: -4px; }
+.pw-indem { margin-left: auto; color: #e6c3ff; }
+.pw-indem::before { content: ''; width: 16px; height: 20px; background: #b06bff; border: 3px solid var(--outline); border-radius: 3px; transform: rotate(8deg); }
+.pw-indem-i { display: inline-block; width: 14px; height: 18px; margin-left: 6px; vertical-align: -3px; background: #b06bff; border: 3px solid var(--outline); border-radius: 3px; transform: rotate(8deg); }
+.pw-nivel { position: relative; width: 130px; height: 36px; border: 3px solid var(--outline); border-radius: 10px; background: var(--off); overflow: hidden; }
+.pw-nivel i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#7ef9ff, #22a6c9); }
+.pw-nivel b { position: relative; z-index: 1; display: block; text-align: center; line-height: 30px; font-size: 21px; }
+.pw-nivel small { position: absolute; right: 4px; bottom: -2px; z-index: 1; font: 700 11px var(--font-ui); color: var(--gold); }
+.pw-planta { display: flex; flex-direction: column; line-height: 1; font-size: 22px; }
+.pw-planta small { font: 700 13px var(--font-ui); color: var(--ink-dim); text-shadow: none; }
+
+/* los cuatro botones de acción, con su carga de fondo (--p, de 0 a 1) */
+#pw-acciones { position: absolute; left: 10px; right: 10px; top: 460px; height: 70px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pw-acc { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+  border: 4px solid var(--outline); border-radius: 14px; background: var(--tray); color: var(--ink); font: 18px var(--font-display); cursor: pointer; }
+.pw-acc::before { content: ''; position: absolute; left: 0; bottom: 0; top: 0; width: calc(var(--p, 0) * 100%); background: rgba(126, 249, 255, 0.18); }
+.pw-acc.listo { background: var(--tray-hi); box-shadow: 0 0 0 3px var(--gold) inset; }
+.pw-acc img { position: relative; width: 34px; height: 34px; object-fit: contain; image-rendering: pixelated; }
+.pw-acc:active, .pw-btn:active:not(:disabled) { transform: translateY(2px); filter: brightness(1.15); }
+
+/* las pestañas y el panel */
+#pw-pestanas { position: absolute; left: 10px; right: 10px; top: 540px; height: 50px; display: grid; grid-template-columns: repeat(4, 1fr) 54px; gap: 6px; }
+#pw-pestanas button { position: relative; border: 3px solid var(--outline); border-radius: 12px 12px 0 0; background: var(--off); color: var(--ink-dim); font: 18px var(--font-display); cursor: pointer; }
+#pw-pestanas button.activo { background: var(--panel); color: var(--gold); }
+#pw-pestanas button[data-globo]:not([data-globo=""])::after { content: attr(data-globo); position: absolute; right: -4px; top: -10px; min-width: 24px; height: 24px; border-radius: 12px;
+  background: var(--danger); border: 2px solid var(--outline); color: #fff; font: 15px/20px var(--font-display); }
+#pw-panel { position: absolute; left: 10px; right: 10px; top: 588px; bottom: 8px; overflow-y: auto; padding: 8px 10px 60px; border: 3px solid var(--outline); border-radius: 0 0 14px 14px;
+  background: var(--panel); display: flex; flex-direction: column; gap: 4px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.pw-fila { flex: none; display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 6px 2px; border-bottom: 2px solid rgba(255, 255, 255, 0.06); }
+.pw-fila p { flex: 1; margin: 0; line-height: 1.15; min-width: 0; }
+.pw-fila p b { display: block; font-size: 19px; }
+.pw-fila p small { font-size: 15px; color: var(--ink-dim); }
+.pw-fila em { flex: none; max-width: 150px; text-align: right; font-style: normal; font-size: 15px; color: var(--ink-dim); }
+.pw-ico { flex: none; width: 52px; height: 52px; border-radius: 10px; border: 3px solid var(--outline); background: var(--c); overflow: hidden; }
+.pw-ico img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+.pw-btn { flex: none; min-width: 104px; min-height: 52px; padding: 6px 12px; border: 3px solid var(--outline); border-radius: 12px; background: var(--player); color: #fff; font: 20px var(--font-display); cursor: pointer; }
+.pw-btn:disabled { background: var(--off); color: var(--ink-dim); cursor: default; }
+.pw-btn.activo { background: var(--gold); color: var(--outline); text-shadow: none; }
+.pw-btn.listo { background: #2f9e3a; }
+.pw-btn.grande { flex: none; display: block; width: 100%; margin: 6px 0; padding: 12px; font-size: 24px; }
+.pw-btn.peligro { background: var(--danger); }
+.pw-btn.peligro:disabled { background: var(--off); }
+.pw-venta { flex: none; padding: 8px 2px; }
+.pw-venta b { display: block; font-size: 16px; color: var(--ink-dim); margin-bottom: 6px; }
+.pw-venta div { display: flex; flex-wrap: wrap; gap: 8px; }
+.pw-venta .pw-btn { min-width: 76px; min-height: 46px; font-size: 18px; padding: 4px 10px; }
+.pw-texto { flex: none; }
+.pw-texto p { margin: 4px 0; font-size: 17px; line-height: 1.25; }
+.pw-texto p small { font-size: 15px; color: var(--ink-dim); }
+.pw-texto h4, .pw-sub { flex: none; margin: 10px 0 2px; font: 20px var(--font-display); color: var(--gold); }
+.pw-texto ul { margin: 2px 0; padding-left: 18px; font-size: 16px; color: var(--ink-dim); }
+.pw-nota { flex: none; margin: 0 0 4px; font-size: 15px; color: var(--ink-dim); }

@@ -74,10 +74,6 @@ PW.botones = (() => {
     cobrar: arg => { const [p, id] = arg.split(':'); if (PW.retos.cobrar(p, id)) PW.sonido.toca('pop'); },
     sonido: () => PW.sonido.alterna(),
     borrar,
-    // las ayudas de pruebas (solo salen en desarrollo y en la alfa): velocidad del tiempo, una hora fuera y oro
-    'dev-velocidad': arg => { PW.ui.velocidad = +arg; },
-    'dev-fuera': () => { PW.casos.tick(3600); toast('+1 h'); },
-    'dev-oro': () => { PW.casos.partida.r.oro += 1e3 + PW.casos.partida.r.oro; },
   };
   // un solo oyente para toda la capa de botones. El panel se rehace cuatro veces por segundo, así que el botón que se pulsa puede no ser
   // el mismo nodo al soltar: se apunta su orden al apoyar el dedo y se lanza al soltarlo cerca. El clic de teclado (detail 0) va directo.

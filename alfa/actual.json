@@ -1,8 +1,8 @@
 {
- "build": 1192,
- "hash": "04be5cc",
- "fecha": "2026-11-15T12:37:20Z",
- "mensaje": "Paperwork 0.4.0: desbloqueos por nivel de la Trituradora, plantas con modo auto y pelea de jefe",
+ "build": 1193,
+ "hash": "c02ca39",
+ "fecha": "2026-11-15T14:55:44Z",
+ "mensaje": "Paperwork 0.4.1: los trucos de pruebas pasan al panel DEV de core, con más opciones",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.4.0",
+  "paperwork": "0.4.1",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

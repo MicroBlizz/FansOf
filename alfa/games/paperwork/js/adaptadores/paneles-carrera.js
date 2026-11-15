@@ -70,15 +70,9 @@ PW.panelesCarrera = (() => {
       return P.fila(P.icono('', m.listo ? '#ffd23f' : '#555'), tr(m.txt), `${n(m.prog)} / ${n(m.goal)}`, der);
     }).join('')).join('');
   }
-  // las ayudas de pruebas: solo en desarrollo y en la alfa
-  function dev() {
-    if (typeof NUCLEO === 'undefined' || !(NUCLEO.desarrollo || NUCLEO.alfa)) return '';
-    const vel = [1, 10, 100].map(v => P.boton('dev-velocidad', v, 'x' + v, true, PW.ui.velocidad === v ? 'activo' : '')).join('');
-    return `<div class="pw-venta"><b>DEV</b><div>${vel}${P.boton('dev-fuera', '', '+1 h')}${P.boton('dev-oro', '', '+oro')}</div></div>`;
-  }
   function opciones() {
     return `<div class="pw-texto">${P.boton('sonido', '', PW.sonido.apagado ? tr('Activar el sonido') : tr('Quitar el sonido'))}`
-      + `<p>${tr('Versión {v}. Prototipo: las cifras cambiarán.', { v: PW.AJ.version })}</p>${P.boton('borrar', '', tr('Borrar la partida'), true, 'peligro')}</div>${dev()}`;
+      + `<p>${tr('Versión {v}. Prototipo: las cifras cambiarán.', { v: PW.AJ.version })}</p>${P.boton('borrar', '', tr('Borrar la partida'), true, 'peligro')}</div>`;
   }
   return { despido, recuerdos, plan, equipo, retos, opciones, avisos };
 })();

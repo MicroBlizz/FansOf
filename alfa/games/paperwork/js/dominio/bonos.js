@@ -37,6 +37,7 @@ PW.bonos = (() => {
     const f = fuentes(e), b = k => f[k] || 0;   // b(k): lo que suman las fuentes en k (0 si nada)
     return {
       ...deUtiles(e.r, b),
+      entrada: Math.max(AJ.entrada.minimo, 1 - b('entrada')),   // por cuánto se multiplica lo que pide cada planta para encontrar su entrada
       confidencial: AJ.sellos.confidencial + b('confidencial'),
       altoSecreto: b('altoSecreto'),
       x2: AJ.clasificado.x2 + b('x2'),

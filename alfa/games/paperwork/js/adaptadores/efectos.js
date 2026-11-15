@@ -40,7 +40,8 @@ PW.efectos = (() => {
     vistazo: s => { const c = centro(s.i); vistazos[s.i] = ahora; numero(c.x, c.y - 20, PW.txt.num(Math.max(1, s.d)), s.duro ? '#9aa0a8' : '#ffffff'); },
     trabaja: s => { vistazos[s.i] = ahora; },
     vacio,
-    // repetir la misma planta (modo auto) no se anuncia cada vez, salvo que salga especial
+    entrada: s => cartel(tr('¡Entrada encontrada!'), '#3ddc84', 1.1, s.auto ? tr('Vacía la planta entera y bajarás a la −{n}', { n: s.n }) : tr('Ya puedes bajar a la −{n} con la flecha', { n: s.n })),
+    // repetir la misma planta (se vuelve a llenar) no se anuncia cada vez, salvo que salga especial
     planta: s => { if (s.n !== ultimaPlanta || s.especial !== 'normal') cartel(tr('Planta −{n}', { n: s.n }), PLANTA[s.especial][0], 1.2, tr(PLANTA[s.especial][1])); ultimaPlanta = s.n; },
     empujon: s => numero(270, R.y + 110, s.d > 0 ? '+' + PW.txt.num(Math.max(1, s.d)) : '0', s.d > 0 ? '#ffd23f' : '#9aa0a8', s.d > 0),
     nivel: s => cartel(tr('¡Nivel {n}!', { n: s.n }), '#7ef9ff', 1.2),

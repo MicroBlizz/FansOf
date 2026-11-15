@@ -1,8 +1,8 @@
 {
- "build": 1193,
- "hash": "c02ca39",
- "fecha": "2026-11-15T14:55:44Z",
- "mensaje": "Paperwork 0.4.1: los trucos de pruebas pasan al panel DEV de core, con más opciones",
+ "build": 1194,
+ "hash": "08b30b5",
+ "fecha": "2026-11-15T15:06:55Z",
+ "mensaje": "Paperwork 0.5.0: para bajar hay que vaciar la planta entera y encontrar la entrada",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.4.1",
+  "paperwork": "0.5.0",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

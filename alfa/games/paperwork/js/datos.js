@@ -71,6 +71,7 @@ PW.RECUERDOS = [
   { id: 'petardo', nombre: 'El petardo de la fiesta de lanzamiento', bono: { estanteria: 0.25 }, txt: '+25 % de fuerza del castor' },
   { id: 'enchufe', nombre: 'El enchufe arrancado', bono: { espera: 0.04 }, txt: '−4 % de espera de la Trituradora' },
   { id: 'carta', nombre: 'La carta de un fan', bono: { indemn: 0.10 }, txt: '+10 % de Indemnización' },
+  { id: 'plano', nombre: 'El plano del archivo', bono: { entrada: 0.04 }, txt: '−4 % de archivadores para encontrar la entrada' },
 ];
 
 // el plan de carrera (el árbol de habilidades): cada nodo cuesta puntos y algunos piden otro antes

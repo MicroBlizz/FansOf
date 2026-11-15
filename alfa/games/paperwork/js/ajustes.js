@@ -5,9 +5,11 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.4.1',
-  // bajar: las veces que el modo auto puede pedir limpiar una planta antes de bajar (0 = quedarse en ella)
-  planta: { bajar: [0, 1, 3, 5, 10], columnas: 6, filas: 4, limpia: 0.7, plantasPorPar: 4, plantasPorZona: 16, extraSinFin: 1.15 },
+  version: '0.5.0',
+  // entrada: archivadores que hay que vaciar en una planta para encontrar la entrada a la siguiente (base en la planta 1, y una parte
+  // más por cada planta; los bonos de entrada la bajan hasta el mínimo)
+  entrada: { base: 24, porPlanta: 0.06, minimo: 0.3 },
+  planta: { columnas: 6, filas: 4, limpia: 1, plantasPorPar: 4, plantasPorZona: 16, extraSinFin: 1.15 },
   documento: { vida0: 10, vidaBase: 2.5, valor0: 1, valorBase: 2.4, receta0: 2 },
   lider: { vistazosSeg: 1.2, toqueMulti: 1 },
   // los útiles del líder, pagados con oro: coste = base · factor^nivel. Los guantes multiplican la dureza por paso^nivel

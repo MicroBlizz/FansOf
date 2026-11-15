@@ -39,10 +39,12 @@ PW.curvas = (() => {
   const trasDureza = (d, du) => Math.max(d * AJ.dureza.minimo, d - du);
   // la zona a la que pertenece el documento i (los documentos se reparten a partes iguales entre las zonas)
   const zonaDeDocumento = i => Math.min(PW.ZONAS.length - 1, Math.floor(i / Math.ceil(NM() / PW.ZONAS.length)));
+  // archivadores que pide la planta p para encontrar la entrada a la siguiente (sin bonos)
+  const entrada = p => Math.ceil(AJ.entrada.base * (1 + AJ.entrada.porPlanta * (p - 1)));
   // el rango del especialidad de un documento según los archivadores vaciados de ese documento (0 a 3)
   const rangoEspecialidad = vaciados => AJ.especialidad.umbrales.filter(u => vaciados >= u).length;
 
-  return { coste, esperanza, documentosDe, zonaDe, vidaDocumento, valorExpediente, receta, danoBase, xpParaSubir, topeNivel, indemnizacion,
+  return { entrada, coste, esperanza, documentosDe, zonaDe, vidaDocumento, valorExpediente, receta, danoBase, xpParaSubir, topeNivel, indemnizacion,
     capacidadTrituradora, tragaderasTrituradora, rangoEspecialidad,
     dureza, trasDureza, zonaDeDocumento };
 })();

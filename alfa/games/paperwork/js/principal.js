@@ -19,7 +19,7 @@ PW.principal = (() => {
   const V = { sc: 1, dpr: 1, W: 540, H: 960 }, ui = PW.ui;
   const PESTANAS = {
     utiles: (e, B) => PW.paneles.utiles(e, B), documentos: (e, B) => PW.paneles.documentos(e, B), trituradora: (e, B) => PW.paneles.trituradora(e, B),
-    plantas: e => PW.panelesTurno.plantas(e), jefe: (e, B) => PW.panelesTurno.jefe(e, B),
+    plantas: (e, B) => PW.panelesTurno.plantas(e, B), jefe: (e, B) => PW.panelesTurno.jefe(e, B),
     cofres: e => PW.paneles.cofres(e), despido: (e, B) => PW.panelesCarrera.despido(e, B), recuerdos: e => PW.panelesCarrera.recuerdos(e),
     plan: e => PW.panelesCarrera.plan(e), equipo: (e, B) => PW.panelesCarrera.equipo(e, B), retos: () => PW.panelesCarrera.retos(), opciones: () => PW.panelesCarrera.opciones(),
   };
@@ -50,10 +50,10 @@ PW.principal = (() => {
     const jefe = PW.trituradora.atascando(e);
     if (jefe) ui.pestana = 'utiles';
     UI.dataset.nivel = jefe ? 'jefe' : PW.paneles.enCarrera(ui.pestana) ? 'carrera' : 'turno';
-    pon('pw-hud', PW.paneles.hud(e));
+    pon('pw-hud', PW.paneles.hud(e, B));
     pon('pw-acciones', PW.paneles.acciones(e, B));
     pon('pw-recursos', PW.panelesTurno.recursos(e, B));
-    pon('pw-lateral', PW.panelesTurno.lateral(e));
+    pon('pw-lateral', PW.panelesTurno.lateral(e, B));
     pon('pw-pestanas', PW.paneles.pestanas(e, B, ui.pestana));
     pon('pw-panel', PESTANAS[jefe ? 'jefe' : ui.pestana](e, B));
     pon('pw-cortinilla', ui.cortinilla && PW.trituradora.lista(e) ? PW.panelesTurno.cortinilla(e, B) : '');

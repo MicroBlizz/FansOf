@@ -120,7 +120,7 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     eligeCarta: id => orden(s => PW.cartas.elige(e, B(), id, azar, s), 'cartas'),
     fijaFotocopia: m => orden(() => PW.compras.fijaFotocopia(e, m)),
     irA: n => orden(s => PW.rebuscar.irA(e, B(), n, azar, s)),
-    fijaBajar: veces => orden(() => PW.rebuscar.fijaBajar(e, veces)),
+    cambiaAuto: () => orden(() => PW.rebuscar.fijaAuto(e)),
     manda: (k, i) => orden(() => PW.equipo.manda(e, B(), k, i)),
     compraDocumento: m => orden(() => PW.compras.compraDocumento(e, m), 'mejoras'),
     compraRecuerdo: id => orden(() => PW.compras.compraRecuerdo(e, id), 'recuerdos'),

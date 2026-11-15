@@ -13,16 +13,16 @@ PW.paneles = (() => {
   const CARRERA = [['despido', 'Despido'], ['recuerdos', 'Recuerdos'], ['plan', 'Plan'], ['equipo', 'Equipo'], ['retos', 'Retos'], ['opciones', '···']];
   const enCarrera = pestana => CARRERA.some(([id]) => id === pestana);
 
-  function hud(e) {
+  function hud(e, B) {
     const r = e.r, xp = PW.curvas.xpParaSubir(r.nivel), tope = PW.curvas.topeNivel(e.c.trituradora.nivel);
     const parte = r.nivel >= tope ? 1 : r.xp / xp;
     return `<span class="pw-oro ol">${n(r.oro)}</span>`
       + `<span class="pw-nivel"><b class="ol">${tr('Nv. {n}', { n: r.nivel })}</b><i style="width:${Math.round(parte * 100)}%"></i>${r.nivel >= tope ? `<small>${tr('tope')}</small>` : ''}</span>`
-      + `<button class="pw-planta ol" data-acc="pestana" data-arg="plantas"${PW.trituradora.atascando(e) ? ' disabled' : ''}>${tr('Planta −{n}', { n: r.planta.n })}<small>${tr(PW.ZONAS[PW.curvas.zonaDe(r.planta.n)].nombre)}${modoAuto(e)}</small></button>`
+      + `<button class="pw-planta ol" data-acc="pestana" data-arg="plantas"${PW.trituradora.atascando(e) ? ' disabled' : ''}>${tr('Planta −{n}', { n: r.planta.n })}<small>${tr(PW.ZONAS[PW.curvas.zonaDe(r.planta.n)].nombre)}${modoAuto(e, B)}</small></button>`
       + `<span class="pw-indem ol" title="${tr('Indemnización')}">${n(e.c.indemnizacion)}</span>`;
   }
-  // cómo va el modo auto, junto al nombre de la zona: cuántas limpiezas lleva de las pedidas, o que el equipo se queda
-  const modoAuto = e => (e.c.bajar === 0 ? ' · ' + tr('sin bajar') : e.c.bajar > 1 ? ` · ${e.r.repes || 0}/${e.c.bajar}` : '');
+  // junto al nombre de la zona: cuánto falta para la entrada a la siguiente planta, y si el equipo se queda (sin modo auto)
+  const modoAuto = (e, B) => ' · ' + PW.panelesTurno.entrada(e, B).txt + (e.c.auto ? '' : ' · ' + tr('sin bajar'));
   // los botones grandes de acción, con su carga o su cuenta (la carga va de 5 en 5 %: así el botón no se rehace a cada instante)
   const carga = v => Math.floor(Math.max(0, Math.min(1, v)) * 20) / 20;
   const accion = (acc, arg, listo, p, img, txt) => `<button class="pw-acc ol${listo ? ' listo' : ''}" data-acc="${acc}" data-arg="${arg}" style="--p:${p}"><img src="img/${img}.png" alt="" onerror="this.remove()">${txt}</button>`;

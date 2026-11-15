@@ -10,13 +10,13 @@ PW.partida = (() => {
   function recorridoNuevo(c, azar) {
     const r = { planta: null, sueltos: ceros(), expedientes: ceros(), oro: 0, nivel: 1, xp: 0, utiles: { gafas: 0, cafe: 0, carrito: 0, guantes: 0, fundas: 0 }, temporales: 0, bonoCarta: {}, pedido: null,
       herramientas: PW.ZONAS.map(() => 0), caducados: 0, urgentes: [], equipo: PW.equipo.nuevo(),
-      mejorasDoc: ceros(), restoVenta: ceros(), estanteria: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, repes: 0, vaciados: 0 };
+      mejorasDoc: ceros(), restoVenta: ceros(), estanteria: 0, medidor: 0, objetos: {}, activos: {}, venta: 0.5, tiempo: 0, plantaMax: 1, buscados: 0, vaciados: 0 };
     r.planta = PW.planta.crea(1, azar, PW.bonos.calcula({ r, c }), c.especialidad);
     return r;
   }
   function carreraNueva() {
     return { trituradora: { nivel: 0, atasco: 0, espera: 0, intento: 0, hambre: 0, multi: 0 },
-      municion: { caducados: true, docs: PW.DOCUMENTOS.map((d, i) => i === 0) }, oferta: [], fotocopia: -1, sancion: 0, bajar: 1, recuerdos: {}, especialidad: ceros(), plan: {}, indemnizacion: 0,
+      municion: { caducados: true, docs: PW.DOCUMENTOS.map((d, i) => i === 0) }, oferta: [], fotocopia: -1, sancion: 0, auto: true, recuerdos: {}, especialidad: ceros(), plan: {}, indemnizacion: 0,
       despidos: 0, autoDespido: 0, nivelMax: 1, plantaMax: 1, correo: { falta: 20, vuela: 0, x: 0 }, sindicato: { guardados: 0, falta: PW.AJ.sindicato.cada },
       totales: { archivadores: 0, oro: 0, estanterias: 0, correos: 0, cofres: 0 }, tiempoTotal: 0 };
   }

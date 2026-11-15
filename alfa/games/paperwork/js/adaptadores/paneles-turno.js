@@ -13,18 +13,25 @@ PW.panelesTurno = (() => {
     const caducados = B.abierto.sellos ? `<span class="pw-ficha pw-caducados" title="${tr('Caducados')}"><i></i>${n(e.r.caducados)}</span>` : '';
     return `<button class="pw-recursos" data-acc="pestana" data-arg="documentos">${fichas}${caducados}</button>`;
   }
-  // las flechas del lateral: subir a la planta anterior y bajar a la siguiente ya pisada (no salen hasta haber bajado una planta)
-  function lateral(e) {
-    const r = e.r, nPl = r.planta.n;
-    if (r.plantaMax < 2) return '';
+  // la búsqueda de la entrada a la siguiente planta: lo que lleva de lo que pide, o que ya está abierta
+  function entrada(e, B) {
+    const R = PW.rebuscar, pide = R.pide(e, B);
+    return R.abierta(e, B) ? { abierta: true, txt: tr('Abierta') } : { abierta: false, txt: `${Math.min(e.r.buscados, pide)}/${pide}` };
+  }
+  // el lateral del pasillo: subir, el contador de la entrada a la siguiente, bajar (cuando ya tiene entrada) y el modo auto
+  function lateral(e, B) {
+    const nPl = e.r.planta.n, en = entrada(e, B);
     const flecha = (clase, a, activo) => `<button class="pw-flecha ${clase}" data-acc="planta" data-arg="${a}" aria-label="${clase === 'sube' ? tr('Subir una planta') : tr('Bajar una planta')}"${activo ? '' : ' disabled'}></button>`;
-    return flecha('sube', nPl - 1, nPl > 1) + flecha('baja', nPl + 1, nPl < r.plantaMax);
+    return flecha('sube', nPl - 1, nPl > 1)
+      + `<span class="pw-entrada ol${en.abierta ? ' abierta' : ''}" title="${tr('Archivadores para encontrar la entrada a la siguiente planta')}">${en.txt}</span>`
+      + flecha('baja', nPl + 1, en.abierta)
+      + `<button class="pw-auto ol${e.c.auto ? ' activo' : ''}" data-acc="auto" aria-pressed="${e.c.auto}">${tr('AUTO')}</button>`;
   }
   const LISTA = 30;   // plantas que enseña la lista, desde la más honda (a las demás se llega con las flechas)
-  const AUTO = v => (v === 0 ? tr('Quedarme') : v === 1 ? tr('Siempre') : tr('Tras {n}', { n: v }));
-  // el panel de plantas: el modo auto y la lista de las plantas ya pisadas en este turno, de la más honda a la primera
-  function plantas(e) {
-    const r = e.r, auto = PW.AJ.planta.bajar.map(v => P.boton('bajar', v, AUTO(v), true, e.c.bajar === v ? 'activo' : '')).join('');
+  // el panel de plantas: el modo auto, cómo va la entrada y la lista de las plantas ya pisadas en este turno, de la más honda a la primera
+  function plantas(e, B) {
+    const r = e.r, en = entrada(e, B);
+    const auto = P.boton('auto', '', e.c.auto ? tr('Bajar solo: sí') : tr('Bajar solo: no'), true, e.c.auto ? 'activo' : '');
     const filas = [];
     for (let p = r.plantaMax; p >= Math.max(1, r.plantaMax - LISTA + 1); p--) {
       const [a, b] = PW.curvas.documentosDe(p), aqui = p === r.planta.n;
@@ -32,9 +39,10 @@ PW.panelesTurno = (() => {
       const der = aqui ? `<em>${tr('Estás aquí')}</em>` : P.boton('planta', p, tr('Ir'));
       filas.push(P.fila(P.icono(`img/archivador-${PW.DOCUMENTOS[b].id}.png`, PW.DOCUMENTOS[b].color), tr('Planta −{n}', { n: p }), `${tr(PW.ZONAS[PW.curvas.zonaDe(p)].nombre)}<br>${docs}`, der));
     }
-    const repes = e.c.bajar > 1 ? ' ' + tr('Llevas {a} de {b} limpiezas de esta planta.', { a: r.repes || 0, b: e.c.bajar }) : '';
-    return `<div class="pw-venta"><b>${tr('Bajar sola a la planta siguiente')}</b><div>${auto}</div></div>`
-      + `<p class="pw-nota">${tr('Elige cuántas veces limpia el equipo una planta antes de bajar, o que se quede en ella para sacar más de sus documentos.')}${repes}</p>` + filas.join('') + (r.plantaMax > LISTA ? `<p class="pw-nota">${tr('A las plantas de más arriba se llega con las flechas del pasillo.')}</p>` : '');
+    const lleva = en.abierta ? tr('La entrada a la siguiente planta ya está abierta.') : tr('Llevas {t} archivadores para encontrar la entrada a la siguiente planta.', { t: en.txt });
+    return `<div class="pw-venta"><b>${tr('Modo auto')}</b><div>${auto}</div></div>`
+      + `<p class="pw-nota">${tr('Hay tanto papel por medio que en cada planta hay que vaciar unos cuantos archivadores para dar con la entrada a la siguiente, y cada planta pide más. Con el modo auto el equipo baja al dejar la planta vacía del todo, si ya ha dado con la entrada; sin él, se queda a sacar más documentos.')} ${lleva}</p>`
+      + filas.join('') + (r.plantaMax > LISTA ? `<p class="pw-nota">${tr('A las plantas de más arriba se llega con las flechas del pasillo.')}</p>` : '');
   }
   // lo que queda por abrir y lo ya abierto, por nivel de la Trituradora
   function desbloqueos(e) {
@@ -72,5 +80,5 @@ PW.panelesTurno = (() => {
       + `<img src="img/trituradora.png" alt="" onerror="this.remove()"><ol>${pasos}</ol><p class="pw-cort-premio">${premio(e)}</p>`
       + `${P.boton('atascar-ya', '', tr('¡A ATASCAR!'), true, 'grande listo')}${P.boton('cortinilla-no', '', tr('Ahora no'), true, 'pw-cort-no')}</div>`;
   }
-  return { recursos, lateral, plantas, desbloqueos, jefe, cortinilla, premio };
+  return { entrada, recursos, lateral, plantas, desbloqueos, jefe, cortinilla, premio };
 })();

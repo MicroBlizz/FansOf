@@ -3,7 +3,7 @@
 'use strict';
 PW.botones = (() => {
   const ERRORES = {
-    'sin-saldo': 'No te llega', 'al-maximo': 'Ya está al máximo', 'no-disponible': 'Aún no has llegado ahí', auditoria: 'Antes, acaba la auditoría',
+    'sin-saldo': 'No te llega', 'al-maximo': 'Ya está al máximo', 'no-disponible': 'Aún no has llegado ahí', auditoria: 'Antes, acaba la auditoría', 'sin-entrada': 'Aún no has encontrado la entrada',
     'falta-requisito': 'Antes necesitas el nodo anterior', cargando: 'El castor aún está cogiendo carrerilla', esperando: 'La Trituradora aún no está lista',
     atascando: 'Ya la estás atascando', acabada: 'La Trituradora ya está atascada del todo', 'sin-indemnizacion': 'Aún no cobrarías nada',
     'sin-cofres': 'No tienes cofres', 'no-tienes': 'No tienes ese objeto', 'sin-paquetes': 'Aún no ha llegado el paquete del sindicato',
@@ -57,7 +57,7 @@ PW.botones = (() => {
     'atascar-ya': () => { PW.ui.cortinilla = false; cuenta(PW.casos.atasca(), 'boom'); },
     'cortinilla-no': () => { PW.ui.cortinilla = false; },
     planta: arg => cuenta(PW.casos.irA(+arg), 'blip'),
-    bajar: arg => cuenta(PW.casos.fijaBajar(+arg)),
+    auto: () => cuenta(PW.casos.cambiaAuto()),
     urgente,
     municion,
     herramienta: arg => cuenta(PW.casos.compraHerramienta(+arg), 'pop'),

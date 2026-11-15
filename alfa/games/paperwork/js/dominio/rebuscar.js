@@ -71,35 +71,46 @@ PW.rebuscar = (() => {
   function ponPlanta(e, B, n, azar, sucesos, sorteo = true) {
     const r = e.r, nueva = n > r.plantaMax;
     r.planta = PW.planta.crea(n, azar, B, e.c.especialidad, nueva, sorteo);
-    r.repes = 0;
+    if (nueva) r.buscados = 0;   // lo buscado es de la planta más honda del turno: se conserva al volver a ella o al rellenarla
     r.plantaMax = Math.max(r.plantaMax, n);
     e.c.plantaMax = Math.max(e.c.plantaMax, n);
     sucesos.push({ t: 'planta', n, especial: r.planta.especial, zona: C.zonaDe(n), nueva });
   }
   const bajaPlanta = (e, B, azar, sucesos) => ponPlanta(e, B, e.r.planta.n + 1, azar, sucesos);
-  // la planta está limpia: se baja si ya se ha limpiado las veces que pide el modo auto (c.bajar; 0 = quedarse); si no, se repite
-  function alLimpiar(e, B, azar, sucesos) {
-    const r = e.r;
-    r.repes = (r.repes || 0) + 1;
-    if (e.c.bajar > 0 && r.repes >= e.c.bajar) return bajaPlanta(e, B, azar, sucesos);
-    const repes = r.repes;
-    ponPlanta(e, B, r.planta.n, azar, sucesos);
-    r.repes = repes;
+  // archivadores que pide la planta en la que se está para encontrar la entrada a la siguiente
+  const pide = (e, B) => Math.max(1, Math.ceil(C.entrada(e.r.planta.n) * B.entrada));
+  // la siguiente planta está abierta: ya se pisó en este turno, o ya se ha encontrado su entrada
+  const abierta = (e, B) => e.r.plantaMax > e.r.planta.n || e.r.buscados >= pide(e, B);
+  // k archivadores vaciados (por el equipo o por la requisa) cuentan para encontrar la entrada de la planta más honda.
+  // Devuelve true si con ellos se acaba de encontrar
+  function busca(e, B, k = 1) {
+    if (e.r.planta.n !== e.r.plantaMax) return false;
+    const antes = abierta(e, B);
+    e.r.buscados += k;
+    return !antes && abierta(e, B);
   }
-  // el jugador lleva al equipo a otra planta ya pisada en este turno (de una auditoría en marcha no se escapa).
-  // Resultado: PW.ok(n), 'atascando', 'auditoria' o 'no-disponible'
+  // la planta está vacía del todo: con la entrada encontrada y el modo auto se baja; si no, se vuelve a llenar para seguir rebuscando
+  // en ella. Devuelve true si se ha bajado
+  function alLimpiar(e, B, azar, sucesos) {
+    if (e.c.auto && abierta(e, B)) { bajaPlanta(e, B, azar, sucesos); return true; }
+    ponPlanta(e, B, e.r.planta.n, azar, sucesos);
+    return false;
+  }
+  // el jugador lleva al equipo a otra planta: una ya pisada en este turno, o la siguiente si ya tiene su entrada (de una auditoría en
+  // marcha no se escapa). Resultado: PW.ok(n), 'atascando', 'auditoria', 'sin-entrada' o 'no-disponible'
   function irA(e, B, n, azar, sucesos) {
     if (PW.trituradora.atascando(e)) return PW.error('atascando');
     if (e.r.planta.auditoria > 0) return PW.error('auditoria');
-    if (!(Number.isInteger(n) && n >= 1 && n <= e.r.plantaMax) || n === e.r.planta.n) return PW.error('no-disponible', { n });
-    ponPlanta(e, B, n, azar, sucesos, false);
+    const siguiente = n === e.r.planta.n + 1;
+    if (siguiente && !abierta(e, B)) return PW.error('sin-entrada', { faltan: pide(e, B) - e.r.buscados });
+    if (!(Number.isInteger(n) && n >= 1 && (n <= e.r.plantaMax || siguiente)) || n === e.r.planta.n) return PW.error('no-disponible', { n });
+    ponPlanta(e, B, n, azar, sucesos, siguiente && n > e.r.plantaMax);
     return PW.ok(n);
   }
-  // cuántas veces hay que limpiar una planta para bajar sola (0 = no bajar). Resultado: PW.ok(veces) o 'desconocido'
-  function fijaBajar(e, veces) {
-    if (!AJ.planta.bajar.includes(veces)) return PW.error('desconocido', { veces });
-    e.c.bajar = veces;
-    return PW.ok(veces);
+  // el modo auto: bajar al vaciar la planta si ya tiene la entrada (true) o quedarse en ella; sin `si`, lo cambia. Resultado: PW.ok(si)
+  function fijaAuto(e, si = !e.c.auto) {
+    e.c.auto = !!si;
+    return PW.ok(e.c.auto);
   }
   // lo que de verdad lee un vistazo de d de base en el archivador i, tras la dureza de su papel (0 si no hay archivador)
   function lee(e, B, i, d) {
@@ -111,7 +122,9 @@ PW.rebuscar = (() => {
     const res = PW.planta.rebusca(e.r.planta, i, sinDureza ? d : lee(e, B, i, d));
     if (!res.ok || !res.valor.vacio) return false;
     vacia(e, B, res.valor.m, i, azar, sucesos, res.valor.precinto);
-    if (PW.planta.limpia(e.r.planta)) alLimpiar(e, B, azar, sucesos);
+    const n = e.r.planta.n, encontrada = busca(e, B);
+    const bajo = PW.planta.limpia(e.r.planta) && alLimpiar(e, B, azar, sucesos);
+    if (encontrada && !bajo) sucesos.push({ t: 'entrada', n: n + 1, auto: e.c.auto });   // si ya se ha bajado, basta el cartel de la planta
     return true;
   }
   // un vistazo del líder (o de un toque) al archivador i; y, con suerte de carrito, también al de al lado
@@ -124,5 +137,5 @@ PW.rebuscar = (() => {
     if (conCarrito && planta === e.r.planta) rebusca(e, B, vecino, base, azar, sucesos);
   }
 
-  return { rebusca, vistazo, clasifica, lee, bajaPlanta, ponPlanta, alLimpiar, irA, fijaBajar };
+  return { rebusca, vistazo, clasifica, lee, bajaPlanta, ponPlanta, alLimpiar, irA, fijaAuto, pide, abierta, busca };
 })();

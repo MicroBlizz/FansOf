@@ -15,7 +15,7 @@ PW.rebuscar = (() => {
   }
   // clasificar: los documentos sueltos de m que llegan a una receta pasan a expedientes; una parte (r.venta) se vende al momento
   function clasifica(e, B, m, azar, sucesos) {
-    const r = e.r, receta = Math.max(1, Math.round(C.receta(m) * B.coste));
+    const r = e.r, receta = PW.bonos.recetaDe(B, m);
     const lotes = Math.floor(r.sueltos[m] / receta);
     if (!lotes) return;
     r.sueltos[m] -= lotes * receta;

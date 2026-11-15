@@ -4,7 +4,8 @@
 // máquina y no se rebusca. Devuelve la lista de sucesos para que la pantalla los pinte. El azar y dt vienen de fuera.
 'use strict';
 PW.motor = (() => {
-    const PASO_MAX = 0.25;   // un tick largo se parte en pasos, para que los vistazos no se salten plantas
+  const PREMIO = { 'pedido-ok': true, trituradora: true };   // sucesos cuyo oro es un premio, no venta
+  const PASO_MAX = 0.25;   // un tick largo se parte en pasos, para que los vistazos no se salten plantas
 
   function lider(e, B, dt, azar, sucesos) {
     const r = e.r;
@@ -22,10 +23,11 @@ PW.motor = (() => {
   // el ritmo de oro por segundo, suavizado (lo usan los premios y las horas extra)
   function mideRitmo(e, oroAntes, dt) { e.r.ritmoOro = PW.suaviza(e.r.ritmoOro, e.r.oro - oroAntes, dt); }
   function paso(e, dt, azar, sucesos) {
-    const B = PW.bonos.calcula(e), oroAntes = e.r.oro, vaciosAntes = e.c.totales.archivadores;
+    const B = PW.bonos.calcula(e), oroAntes = e.r.oro, vaciosAntes = e.c.totales.archivadores, desde = sucesos.length;
+    const atascando = PW.trituradora.atascando(e);
     e.r.tiempo += dt;
     e.c.tiempoTotal += dt;
-    if (PW.trituradora.atascando(e)) PW.trituradora.avanza(e, B, dt, sucesos);
+    if (atascando) PW.trituradora.avanza(e, B, dt, sucesos);
     else {
       PW.trituradora.pasaEspera(e, dt);
       lider(e, B, dt, azar, sucesos);
@@ -37,8 +39,11 @@ PW.motor = (() => {
     PW.extras.gastaActivos(e, dt);
     PW.sellos.avanza(e, B, dt, azar, sucesos);
     PW.encargos.avanza(e, B, dt, azar, sucesos);
+    if (atascando) return;   // durante un intento no se rebusca: el ritmo se queda como estaba
+    // los premios que se calculan con el ritmo de oro (y el de atascar un nivel) no cuentan como ritmo
+    const premios = sucesos.slice(desde).reduce((s, x) => s + (PREMIO[x.t] ? x.oro || 0 : 0), 0);
     PW.encargos.mideRitmo(e, vaciosAntes, dt);
-    mideRitmo(e, oroAntes, dt);
+    mideRitmo(e, oroAntes + premios, dt);
   }
   // con el nodo 'autodespido', el equipo se despide solo al llegar al nivel elegido
   function despidoSolo(e, azar, sucesos) {

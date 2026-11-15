@@ -21,7 +21,7 @@ PW.sellos = (() => {
     return true;
   }
   // lo que paga entregar ahora un montón urgente
-  const pagaUrgente = (B, u) => Math.max(1, Math.round((u.n / C.receta(u.m)) * C.valorExpediente(u.m) * PW.bonos.precioDe(B, u.m) * S.urgenteMulti));
+  const pagaUrgente = (B, u) => Math.max(1, Math.round((u.n / PW.bonos.recetaDe(B, u.m)) * C.valorExpediente(u.m) * PW.bonos.precioDe(B, u.m) * S.urgenteMulti));
   // entrega todos los urgentes pendientes. Resultado: PW.ok({ oro, montones }) o 'sin-urgentes'
   function entrega(e, B) {
     const r = e.r;

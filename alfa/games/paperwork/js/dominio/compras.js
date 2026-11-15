@@ -10,8 +10,10 @@ PW.compras = (() => {
     const c = AJ.utiles[cual];
     return c ? C.coste(c, e.r.utiles[cual]) : NaN;
   }
-  // la herramienta de la zona z (quitagrapas, cúter, abrecartas): se puede comprar al llegar a su zona
-  const vistaZona = (e, z) => C.zonaDe(e.r.plantaMax) >= z;
+  // la zona más honda de la que ya han salido documentos en este turno (los de una zona asoman unas plantas antes de llegar a ella)
+  const zonaVista = e => C.zonaDeDocumento(C.documentosDe(e.r.plantaMax)[1]);
+  // la herramienta de la zona z (quitagrapas, cúter, abrecartas): se puede comprar en cuanto sale un documento de su zona
+  const vistaZona = (e, z) => zonaVista(e) >= z;
   const precioHerramienta = (e, z) => C.coste(AJ.herramienta, e.r.herramientas[z]) * Math.pow(AJ.herramienta.porZona, z);
   function compraHerramienta(e, z) {
     if (!(Number.isInteger(z) && z >= 0 && z < PW.ZONAS.length)) return PW.error('desconocido', { z });
@@ -25,7 +27,7 @@ PW.compras = (() => {
   // un útil propio de una zona (las fundas) no sale hasta llegar a ella
   function vistoUtil(e, cual) {
     const u = PW.UTILES.find(x => x.id === cual);
-    return !!u && (u.zona === undefined || C.zonaDe(e.r.plantaMax) >= u.zona);
+    return !!u && (u.zona === undefined || zonaVista(e) >= u.zona);
   }
   function compraUtil(e, cual) {
     const c = AJ.utiles[cual];

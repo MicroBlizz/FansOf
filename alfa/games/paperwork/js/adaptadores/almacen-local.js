@@ -1,16 +1,35 @@
 // Fans Of Paperwork · adaptador · ALMACÉN LOCAL: la partida en localStorage de este navegador, con la clave de AJUSTES.guardado. Un solo JSON:
 // lo de la partida (PW.partida.aJson y la hora de guardado) y, aparte, los extras de otros adaptadores en el mismo sobre (los logros y el
 // sonido apagado). Nada se comparte con otros juegos. Un guardado que no se entiende se aparta en <clave>-ilegible.
+// almacenamiento puede ser null (navegador con el guardado bloqueado): se juega igual, sin guardar. Cada fallo de lectura o de escritura se
+// cuenta una vez a alFallar(motivo, error): 'sin-almacenamiento', 'ilegible' o 'no-guarda'.
 'use strict';
-PW.creaAlmacenLocal = (clave, almacenamiento) => {
+PW.creaAlmacenLocal = (clave, almacenamiento, alFallar = () => {}) => {
   const EXTRAS = ['retos', 'muted'];   // lo que no es de la partida pero viaja en el mismo JSON
-
+  const avisados = {};
+  function falla(motivo, error) {
+    if (avisados[motivo]) return;
+    avisados[motivo] = true;
+    alFallar(motivo, error);
+  }
   function lee(k = clave) {
-    try { return JSON.parse(almacenamiento.getItem(k)) || null; } catch (e) { return null; }   // sin almacenamiento o JSON roto: no hay partida
+    if (!almacenamiento) { falla('sin-almacenamiento'); return null; }
+    let texto = null;
+    try {
+      texto = almacenamiento.getItem(k);
+      return JSON.parse(texto) || null;
+    } catch (error) {
+      // un JSON roto no se pisa sin más: se aparta tal cual antes de empezar de nuevo
+      if (typeof texto === 'string') escribeTexto(texto, clave + '-ilegible');
+      falla('ilegible', error);
+      return null;
+    }
   }
-  function escribe(json, k = clave) {
-    try { almacenamiento.setItem(k, JSON.stringify(json)); } catch (e) { /* sin almacenamiento: se juega igual, sin guardar */ }
+  function escribeTexto(texto, k) {
+    if (!almacenamiento) return;
+    try { almacenamiento.setItem(k, texto); } catch (error) { falla('no-guarda', error); }
   }
+  const escribe = (json, k = clave) => escribeTexto(JSON.stringify(json), k);
   // los extras se leen una vez y se tienen en memoria; la partida, la última que se guardó (así guardar no relee todo)
   const inicial = lee(), extras = Object.fromEntries(EXTRAS.filter(k => inicial && inicial[k] !== undefined).map(k => [k, inicial[k]]));
   let partida = inicial && inicial.r ? inicial : null;
@@ -20,6 +39,8 @@ PW.creaAlmacenLocal = (clave, almacenamiento) => {
     guardaPartida(json) { partida = json; escribe({ ...json, ...extras }); },
     leeExtra: nombre => extras[nombre],
     escribeExtra(nombre, valor) { extras[nombre] = valor; escribe({ ...(partida || {}), ...extras }); },
+    // deja el extra apuntado para el próximo guardado, sin escribir ahora (lo que cambia muchas veces por segundo, como los retos)
+    apuntaExtra(nombre, valor) { extras[nombre] = valor; },
     // un guardado que no se pudo leer se aparta con otra clave antes de empezar de nuevo
     guardaCopia(json) { escribe(json, clave + '-ilegible'); },
   };

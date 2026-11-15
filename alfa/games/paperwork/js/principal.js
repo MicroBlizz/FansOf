@@ -5,7 +5,10 @@
 // pestana: la abierta (las del turno o las de la carrera, adaptadores/paneles.js); elegido: el trabajador al que se va a mandar a otro
 // archivador (0 = ninguno); alto: el del lienzo, que crece en pantallas alargadas
 PW.ui = { pestana: 'utiles', elegido: 0, t: 0, sucio: true, velocidad: 1, html: {}, alto: 960 };
-PW.almacen = PW.creaAlmacenLocal(SAVE_KEY, localStorage);
+// con el guardado del navegador bloqueado, leer localStorage lanza: se juega sin guardar y se dice
+PW.almacenamiento = (() => { try { return window.localStorage; } catch (error) { console.warn('Paperwork: sin almacenamiento', error); return null; } })();
+PW.avisosAlmacen = [];
+PW.almacen = PW.creaAlmacenLocal(SAVE_KEY, PW.almacenamiento, (motivo, error) => { console.warn('Paperwork: guardado', motivo, error); PW.avisosAlmacen.push(motivo); });
 PW.reloj = PW.creaReloj();
 PW.sonido = PW.creaSonido(PW.almacen);
 PW.retos = PW.creaRetos(PW.almacen, PW.reloj, n => PW.casos.ingresa(n));   // paga por los casos de uso (que se crean justo después)
@@ -97,11 +100,23 @@ PW.principal = (() => {
   function bienvenida(v) {
     if (v && v.oro > 0) confirmBox(tr('HORAS EXTRA'), tr('Mientras no estabas ({t}), tu equipo ha sacado {n} de oro.', { t: PW.txt.tiempo(v.segundos), n: PW.txt.num(v.oro) }), '', null, tr('A REBUSCAR'));
   }
+  // lo que el almacén no ha podido leer o guardar se dice una vez, en cuanto hay pantalla
+  const AVISO_ALMACEN = {
+    'sin-almacenamiento': () => tr('Este navegador no deja guardar: la partida se perderá al cerrar'),
+    'no-guarda': () => tr('No se ha podido guardar la partida'),
+    ilegible: () => tr('La partida guardada no se podía leer: se ha apartado una copia'),
+  };
+  function avisaAlmacen() {
+    const motivo = PW.avisosAlmacen.shift();
+    if (motivo) toast(AVISO_ALMACEN[motivo]());
+  }
   function arranca() {
     ajusta();
     window.addEventListener('resize', ajusta);
     PW.arte.precarga();
     bienvenida(PW.casos.arranca().valor.vuelta);
+    avisaAlmacen();
+    setInterval(avisaAlmacen, 5000);
     PW.botones.engancha(UI);
     CV.addEventListener('pointerdown', ev => { if (typeof audioInit === 'function') audioInit(); toca(ev); mantiene(ev); });
     CV.addEventListener('pointermove', ev => { if (dedo) dedo.ev = ev; });

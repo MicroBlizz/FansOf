@@ -67,7 +67,9 @@ PW.bonos = (() => {
   const dureza = (B, m, p = 1) => C.dureza(m, p) * B.guantes * B.herramientas[C.zonaDeDocumento(m)];
 
   // por cuánto se multiplica el precio de venta del documento m: el de la última zona está mojado
+  // cuántos documentos sueltos de m hacen un expediente (la receta, con lo que la abarate el manual)
+  const recetaDe = (B, m) => Math.max(1, Math.round(C.receta(m) * B.coste));
   const precioDe = (B, m) => B.precio * (C.zonaDeDocumento(m) === PW.ZONAS.length - 1 ? B.mojado : 1);
 
-  return { calcula, liberadas, dureza, precioDe };
+  return { calcula, liberadas, dureza, precioDe, recetaDe };
 })();

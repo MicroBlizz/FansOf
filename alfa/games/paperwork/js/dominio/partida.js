@@ -47,6 +47,8 @@ PW.partida = (() => {
   // Resultado: la partida guardada, o 'partida-invalida' con el campo que falla
   function desdeJson(j, azar) {
     if (!j || typeof j !== 'object' || !j.r || !j.c) return PW.error('partida-invalida', { campo: 'raiz' });
+    // una partida de antes de los documentos (0.1) no tiene archivadores ni documentos sueltos: no se rellena, se empieza de nuevo
+    if (!j.r.planta || !Array.isArray(j.r.planta.archivadores) || !Array.isArray(j.r.sueltos)) return PW.error('partida-invalida', { campo: 'formato' });
     const e = JSON.parse(JSON.stringify(j));
     rellena(e, nueva(azar));
     const mal = valida(e);

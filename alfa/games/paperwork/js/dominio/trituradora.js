@@ -62,8 +62,9 @@ PW.trituradora = (() => {
     t.nivel++;
     t.intento = 0;
     t.espera = 0;   // el siguiente nivel se puede intentar ya
-    e.r.oro += A.premioOro * t.nivel;
-    sucesos.push({ t: 'trituradora', nivel: t.nivel, faccion: PW.FACCIONES[Math.min(t.nivel, PW.FACCIONES.length - 1)].fac });
+    const oro = A.premioOro * t.nivel, libera = PW.FACCIONES[t.nivel];   // el último nivel ya no libera a nadie
+    e.r.oro += oro;
+    sucesos.push({ t: 'trituradora', nivel: t.nivel, oro, faccion: libera ? libera.fac : null });
   }
   // avanza dt segundos: corre el intento en curso (y la espera, siempre)
   function avanza(e, B, dt, sucesos) {
@@ -74,8 +75,9 @@ PW.trituradora = (() => {
     t.intento -= paso;
     t.atasco += atascoSeg(e, B) * paso * t.multi;
     t.hambre += A.bocadosSeg * paso;
-    while (t.hambre >= 1) { t.hambre -= 1; t.multi = come(e, B); }
     if (t.atasco >= capacidad(e)) return atascaNivel(e, sucesos);
+    // el bocado siguiente solo se come si queda intento para aprovecharlo
+    while (t.hambre >= 1) { t.hambre -= 1; if (t.intento > 0) t.multi = come(e, B); }
     if (t.intento <= 0) sucesos.push({ t: 'intento-fin', parte: t.atasco / capacidad(e) });
   }
   // avanzar la espera sin atascar (horas extra)

@@ -6,7 +6,7 @@ PW.creaRetos = (almacen, reloj, ingresa) => {
   const sobre = { retos: almacen.leeExtra('retos') || undefined };
   const RL = RETOSL.crear({
     save: () => sobre,
-    guardar: () => almacen.escribeExtra('retos', sobre.retos),
+    guardar: () => almacen.apuntaExtra('retos', sobre.retos),   // viaja en el siguiente guardado de la partida (cada pocos segundos y en cada orden)
     pagar: r => ingresa(r),
     diarias: PW.DIARIAS, semanales: PW.SEMANALES, logros: PW.LOGROS, nDiarias: 3, nSemanales: 2,
     hoy: () => new Date(reloj.ahora()),

@@ -93,7 +93,8 @@ PW.equipo = (() => {
   // dónde está cada uno ahora, para pintarlo: [{ k, i }] (k = 0 el líder)
   function sitios(e, B) {
     const lista = [{ k: 0, i: delLider(e) }];
-    for (const k of plantilla(B)) lista.push({ k, i: delTrabajador(e, k) });
+    // solo se mira: quien aún no tiene archivador (lo elige el motor al trabajar) no sale
+    for (const k of plantilla(B)) { const pu = e.r.equipo.puestos[k]; lista.push({ k, i: pu && lleno(e.r.planta, pu.i) ? pu.i : -1 }); }
     return lista;
   }
   return { nuevo, delLider, delTrabajador, trabajan, apunta, manda, sitios, velocidad, plantilla, esDron, DRON };

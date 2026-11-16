@@ -104,6 +104,7 @@
     'js/sistema/promo-reglas.js',  // a quién enseña nuestro anuncio: todos los vivos, más a menudo los más votados (ADR 109)
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
     'js/sistema/anuncios.js',      // la capa común de anuncios con premio: AdMob en la app, H5 Games Ads en la web y el nuestro de reserva (tras el flag «anuncios»)
+    'js/sistema/medidor-anuncios.js', // las reglas del medidor de anuncios: niveles y multiplicadores de cada acción con anuncio (ADR 123)
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
     'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
   ];

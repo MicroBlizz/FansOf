@@ -1,8 +1,8 @@
 {
- "build": 1215,
- "hash": "4d7ffb7",
- "fecha": "2026-11-16T22:49:17Z",
- "mensaje": "Pop: cortinilla de duelo en estilo cozy y «haz pop» en vez de «revienta» (tarea #71, ADR 127)",
+ "build": 1216,
+ "hash": "dd4829a",
+ "fecha": "2026-11-16T22:55:00Z",
+ "mensaje": "Portada nueva «Arcade nocturno» tras el flag portada-nueva, solo en la alfa (tarea #69, ADR 128)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

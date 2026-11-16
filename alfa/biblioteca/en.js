@@ -187,4 +187,13 @@ IDIOMA.add({
   "Persecuciones": "Chases",
   "Teclado compartido": "Shared keyboard",
   "Hot seat": "Hot seat",
+  // PORTADA NUEVA (biblioteca/portada-nueva.js, tarea #69)
+  "MICROBLIZZ LO HA": "MICROBLIZZ HAS",
+  "COMPRADO TODO.": "BOUGHT IT ALL.",
+  "Accesos": "Shortcuts",
+  "Juegos": "Games",
+  "Votar": "Vote",
+  "TÚ DECIDES CUÁL TERMINAMOS": "YOU DECIDE WHICH ONE WE FINISH",
+  "Juega los prototipos y vota en su ficha: lo que más pedís es en lo que nos centramos.": "Play the prototypes and vote on their page: what you ask for most is what we focus on.",
+  "IR A VOTAR": "GO VOTE",
 });

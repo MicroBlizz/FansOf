@@ -42,27 +42,45 @@ PW.calibrado.ajusta = (() => {
     for (const k of Object.keys(finales[0])) fin[k] = mediana(finales.map(f => f[k]));
     return { trituradora, despidos: mediana(partidas.map(p => p.hitos.despidos.length)), fin };
   }
-  function juegaVarias({ perfil, horas, semillas }) {
+  // progreso(): se llama al acabar cada partida (para que el panel diga cuánto falta)
+  function juegaVarias({ perfil, horas, semillas, progreso }) {
     const partidas = [];
     for (const semilla of semillas) {
       const r = PW.calibrado.jugador.juega({ perfil, horas, semilla });
       if (!r.ok) return r;
       partidas.push({ semilla, hitos: r.valor.hitos, serie: r.valor.serie });
+      progreso();
     }
     return PW.ok(partidas);
   }
   // juega con las cifras de siempre y con los cambios. Resultado: PW.ok({ base, cambiado }) con { partidas, resumen } cada uno, o el error
-  function compara({ cambios = [], perfil = 'activo', horas = 6, semillas = [7] } = {}) {
-    const base = juegaVarias({ perfil, horas, semillas });
+  function compara({ cambios = [], perfil = 'activo', horas = 6, semillas = [7], progreso = () => {} } = {}) {
+    const base = juegaVarias({ perfil, horas, semillas, progreso });
     if (!base.ok) return base;
     const ap = aplica(cambios);
     if (!ap.ok) return ap;
     let cambiado;
-    try { cambiado = juegaVarias({ perfil, horas, semillas }); } finally { ap.valor(); }
+    try { cambiado = juegaVarias({ perfil, horas, semillas, progreso }); } finally { ap.valor(); }
     if (!cambiado.ok) return cambiado;
     return PW.ok({ base: { partidas: base.valor, resumen: resume(base.valor) }, cambiado: { partidas: cambiado.valor, resumen: resume(cambiado.valor) } });
   }
+  // la serie mediana de un campo entre varias partidas del mismo perfil y horas (apuntan en los mismos segundos), con `max` puntos como
+  // mucho (se queda uno de cada k, siempre con el último): [[t, valor]…]
+  function serieMediana(partidas, campo, max = 600) {
+    const n = Math.min(...partidas.map(p => p.serie.length)), k = Math.max(1, Math.ceil(n / max)), fuera = [];
+    for (let i = 0; i < n; i += k) fuera.push(i);
+    if (fuera[fuera.length - 1] !== n - 1) fuera.push(n - 1);
+    return fuera.map(i => [partidas[0].serie[i].t, mediana(partidas.map(p => p.serie[i][campo]))]);
+  }
+  // las tablas de las fórmulas con las cifras de siempre y con los cambios (PW.AJ queda como estaba)
+  function formulas(cambios, perfil, n) {
+    const F = PW.calibrado.formulas, base = F.todo(perfil, n), ap = aplica(cambios);
+    if (!ap.ok) return ap;
+    let cambiado;
+    try { cambiado = F.todo(perfil, n); } finally { ap.valor(); }
+    return PW.ok({ base, cambiado });
+  }
   // el texto del cambio, una línea por cifra: «trituradora.capacidadBase: 3.5 → 4»
   const texto = cambios => cambios.map(c => `${c.ruta}: ${lee(c.ruta)} → ${c.valor}`).join('\n');
-  return { rutas, lee, aplica, resume, compara, texto };
+  return { rutas, lee, aplica, resume, compara, serieMediana, formulas, texto };
 })();

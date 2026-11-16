@@ -4,7 +4,7 @@
 // Quien cambia la etiqueta de una pestaña (por ejemplo, con un contador) usa GESTION_NAV.etiqueta(id, texto, juego?). Esto solo muestra y oculta: no sabe de datos.
 'use strict';
 const GESTION_NAV = (() => {
-  const JUEGOS = [['rumble', 'Rumble'], ['td', 'TD'], ['survivors', 'Survivors'], ['decks', 'Decks'], ['tacticas', 'Tácticas'], ['nova', 'Nova'], ['crush', 'Crush'], ['ratkov', 'Ratkov'], ['rouflage', 'Rouflage'], ['taxi', 'Taxi']];
+  const JUEGOS = [['rumble', 'Rumble'], ['td', 'TD'], ['survivors', 'Survivors'], ['decks', 'Decks'], ['tacticas', 'Tácticas'], ['nova', 'Nova'], ['crush', 'Crush'], ['ratkov', 'Ratkov'], ['rouflage', 'Rouflage'], ['taxi', 'Taxi'], ['paperwork', 'Paperwork']];
   const S = [], el = id => document.getElementById(id), ambito = s => s.juego || 'global';
   const recuerda = {};   // la pestaña abierta en cada ámbito
   let actual = 'global';

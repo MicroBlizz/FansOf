@@ -1,8 +1,8 @@
 {
- "build": 1201,
- "hash": "f26dce3",
- "fecha": "2026-11-16T16:40:10Z",
- "mensaje": "Paperwork 0.10.1 y calibrado (tarea #60, ADR 122): jugadores tipo, fórmulas y comparar",
+ "build": 1202,
+ "hash": "df8a8f9",
+ "fecha": "2026-11-16T16:47:49Z",
+ "mensaje": "/gestion → Paperwork → Calibrado: panel para comparar partidas a cámara rápida (tarea #60, ADR 122)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

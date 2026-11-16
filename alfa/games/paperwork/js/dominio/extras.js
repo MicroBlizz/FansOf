@@ -84,6 +84,9 @@ PW.extras = (() => {
     if (!PW.desbloqueos.tiene(e, 'sindicato') || s.guardados >= B.sindicatoMax) return;
     s.falta = Math.min(s.falta, B.sindicatoCada) - dt;   // si un nodo acaba de acortar la espera, cuenta ya
     while (s.falta <= 0 && s.guardados < B.sindicatoMax) { s.guardados++; s.falta += B.sindicatoCada; }
+    // con la taquilla llena el reloj se para: el siguiente llega un plazo entero después de abrir (sin esto, tras un rato largo fuera la
+    // espera quedaba muy en negativo y la taquilla se rellenaba en cada tick)
+    if (s.guardados >= B.sindicatoMax) s.falta = Math.max(s.falta, B.sindicatoCada);
   }
   // abrir un paquete: un mérito al azar, sus grapas de oro, oro y, con los cofres abiertos, un cofre.
   // Resultado: PW.ok({ oro, cofre, merito, nivel, grapas }) o 'sin-paquetes'

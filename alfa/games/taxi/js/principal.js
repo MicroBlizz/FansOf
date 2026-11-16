@@ -28,6 +28,7 @@
     HUD.montar(); CONTROLES.montar();
     if (CIUDAD.estaciones.length) montaEstaciones();
     document.getElementById('b-accion').addEventListener('click', CONTROLES.pulsaAccion);
+    HUD.coche(GARAJE.de(SAVE.coche).nombre); document.getElementById('b-coche').addEventListener('click', cambiaCoche);
     if (typeof RENDIMIENTO !== 'undefined') RENDIMIENTO.activar({ juego: 'taxi' });
     if (typeof REPORTE !== 'undefined') REPORTE.activar({ datos: datosReporte, captura: ESCENA.captura });
     if (CIUDAD.mapa === 'ciudad') { HUD.radio(tr(LOLA.bienvenida[0]), 7); setTimeout(() => HUD.radio(tr(LOLA.bienvenida[1]), 7), 7500); }
@@ -113,6 +114,9 @@
     const ahora = { evento: EVENTOS.activo ? EVENTOS.activo.tipo : 'ninguno', busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro, zona: CIUDAD.zona(jugador.x, jugador.z) };
     for (const k of Object.keys(ahora)) if (visto[k] !== ahora[k]) { visto[k] = ahora[k]; REPORTE.suceso('cambio', { que: k, a: ahora[k] }); }
   }
+  // el botón de cambiar de coche: pasa al siguiente del garaje, lo recuerda y cambia el aspecto (la conducción es la misma)
+  function cambiaCoche(e) { if (e && e.currentTarget) e.currentTarget.blur();   // sin foco: si no, la barra espaciadora (el freno) volvería a pulsarlo
+    const c = GARAJE.siguiente(SAVE.coche); SAVE.coche = c.id; txGuarda(); ESCENA.ponCoche(c.id); HUD.coche(c.nombre); play('card'); }
   const datosReporte = () => { const i = ESCENA.info(), tz = TROZOS.estado(); return { x: Math.round(jugador.x), y: Math.round(jugador.y * 10) / 10, z: Math.round(jugador.z), ang: Math.round(jugador.ang * 100) / 100, v: Math.round(jugador.v * 10) / 10, suelo: jugador.suelo, zona: CIUDAD.zona(jugador.x, jugador.z), fps: fpsReporte, dibujos: i.calls, tris: i.tris, res: i.res, trozos: tz.cargados, evento: EVENTOS.activo ? EVENTOS.activo.tipo : null, busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro, fisica: fisico ? 'rapier' : 'arcade' }; };
   function cuadro(t) {
     requestAnimationFrame(cuadro);

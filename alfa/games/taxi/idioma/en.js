@@ -1,6 +1,9 @@
 // Fans Of Taxi · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  "COCHE": "CAR",
+  "TAXI": "TAXI",
+  "DEPORTIVO": "SPORTS CAR",
   "GAS": "GAS",
   "CHAPUZÓN": "SPLASH",
   "Bahía Microblizz": "Microblizz Bay",

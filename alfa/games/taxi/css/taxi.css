@@ -38,6 +38,8 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
 #mandos button.on { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); background: var(--tray-hi, #3e2363); }
 #b-freno { background: #7a2a3a; } #b-nitro { background: #1f5f8a; } #b-gas { background: #2f7a3a; width: 88px; height: 88px; }
 #b-accion { position: absolute; left: 50%; bottom: calc(var(--inf) + 160px); transform: translateX(-50%); padding: 10px 18px 8px; border-radius: 14px; background: var(--gold); color: var(--outline); border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); font-family: var(--font-display); font-size: 18px; text-shadow: none; animation: late 1s ease-in-out infinite alternate; }
+#capa #b-coche { position: absolute; left: 12px; top: calc(var(--sup) + 74px); padding: 8px 12px 6px; border-radius: 12px; background: #ff7a1a; color: var(--outline); border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); font-family: var(--font-display); font-size: 14px; text-shadow: none; pointer-events: auto; }
+#capa #b-coche:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
 @keyframes entra { from { opacity: 0; transform: translateY(-6px); } }
 @keyframes late { to { transform: translateX(-50%) scale(1.05); } }
 #reloj.poco b { animation-name: parpadea; } @keyframes parpadea { to { opacity: 0.5; } }
@@ -56,7 +58,7 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
 /* el botón DEV de core (abajo a la izquierda) caía sobre las flechas de girar: aquí va en la columna izquierda, encima del «!» de reportar */
 body #dev-boton { left: 8px; bottom: auto; top: calc(50% - 62px); }
 /* circuito de pruebas: la botonera de estaciones (arriba a la izquierda, bajo el dinero) */
-#estaciones { position: absolute; left: 12px; top: 96px; display: grid; gap: 6px; justify-items: start; pointer-events: auto; }
+#estaciones { position: absolute; left: 12px; top: 124px; display: grid; gap: 6px; justify-items: start; pointer-events: auto; }
 #capa .est-boton { background: var(--tray, #26143c); border: 3px solid var(--outline); border-radius: 10px; box-shadow: 0 3px 0 var(--outline); padding: 4px 10px; font-family: var(--font-display); font-size: 15px; color: var(--ink); }
 #capa .est-boton.fuerte { background: var(--gold, #ffcb3d); color: #20102c; }
 .est-panel { display: none; gap: 4px; max-height: 60vh; overflow: auto; }

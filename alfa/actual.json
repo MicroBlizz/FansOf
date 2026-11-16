@@ -1,8 +1,8 @@
 {
- "build": 1206,
- "hash": "9bff69c",
- "fecha": "2026-11-16T18:19:50Z",
- "mensaje": "Fans of Wings 0.1.0: combate aéreo en lonchas apiladas (3D) con tres cámaras; sustituye a Air",
+ "build": 1207,
+ "hash": "9a7f491",
+ "fecha": "2026-11-16T18:25:28Z",
+ "mensaje": "Taxi: deportivo nuevo y botón para cambiar de coche (tarea #64)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

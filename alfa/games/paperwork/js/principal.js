@@ -22,6 +22,19 @@ PW.mejorasPago = PW.creaMejorasPago({
   alCambiar: claves => { PW.casos.ponMejoras(PW.mejoras.de(claves)); PW.ui.sucio = true; },
 });
 PW.casos.ponMejoras(PW.mejoras.de(PW.mejorasPago.claves()));
+// el medidor de anuncios de core (ADR 123) con las cifras de Paperwork: lo guardado va en la carrera, y «Sin anuncios» es de la cuenta
+PW.medidorAnuncios = MEDIDOR_ANUNCIOS.crea({
+  config: PW.AJ.anuncios, anuncios: ANUNCIOS, guardado: PW.casos.anuncios, hoy: () => MEDIDOR_ANUNCIOS.fechas(new Date(PW.reloj.ahora())),
+  sinAnuncios: () => PW.mejorasPago.tiene(MEDIDOR_ANUNCIOS.DERECHO), alCambiar: () => { PW.ui.sucio = true; },
+}).valor;
+PW.tiendaAnuncios = MEDIDOR_ANUNCIOS.creaTienda({
+  oferta: PW.AJ.anuncios.sinAnuncios, derechos: PW.mejorasPago, sePuede: MEDIDOR_ANUNCIOS.sePuedeComprar, idioma: () => NUCLEO.idioma,
+  comprar: (titulo, html, alComprar, producto) => MONEDAS.compraReal(titulo, html, alComprar, producto),
+});
+PW.anuncioCorreo = PW.creaAnuncioCorreo({
+  medidor: PW.medidorAnuncios, casos: PW.casos, abierto: () => PW.desbloqueos.tiene(PW.casos.partida, 'anuncios'), dura: PW.AJ.anuncios.oferta,
+  alPagar: res => PW.botones.anuncio(res),
+});
 
 PW.principal = (() => {
   const CV = document.getElementById('cv'), CTX = CV.getContext('2d'), UI = document.getElementById('pw-ui');
@@ -65,6 +78,7 @@ PW.principal = (() => {
     pon('pw-lateral', PW.panelesTurno.lateral(e, B));
     pon('pw-pestanas', PW.paneles.pestanas(e, B, ui.pestana));
     pon('pw-panel', PESTANAS[jefe ? 'jefe' : ui.pestana](e, B));
+    pon('pw-oferta', jefe ? '' : PW.panelesAnuncios.oferta(PW.anuncioCorreo.oferta()));
     pon('pw-cortinilla', ui.cortinilla && PW.trituradora.lista(e) ? PW.panelesTurno.cortinilla(e, B) : '');
     ui.sucio = false;
   }
@@ -77,6 +91,7 @@ PW.principal = (() => {
     const t = ms / 1000, dt = antes ? Math.min(1, t - antes) : 0;
     antes = t; ui.t = t;
     const sucesos = PW.casos.tick(dt * ui.velocidad);
+    PW.anuncioCorreo.avanza(dt);   // la oferta del anuncio caduca con el reloj de verdad, no con el del truco de tiempo
     PW.efectos.sucesos(sucesos, t);
     suenan(sucesos);
     const k = V.sc * V.dpr;
@@ -115,6 +130,7 @@ PW.principal = (() => {
     if (p) { toast(tr('Pedido del CEO: vacía {n} archivadores en {t}', { n: p.n, t: PW.txt.tiempo(p.falta) }), true); return; }
     const racha = res.valor.racha ? ' · ' + tr('racha ×{r}', { r: PW.txt.num(1 + res.valor.racha * PW.AJ.racha.paso) }) : '';
     toast(res.valor.cofre ? tr('El CEO te manda un cofre por error') : tr('Correo del CEO: {n} de oro', { n: PW.txt.num(res.valor.oro) }) + racha, true);
+    if (PW.anuncioCorreo.llega(res.valor.oro)) ui.sucio = true;   // unos segundos para multiplicarlo con un anuncio
   }
   function bienvenida(v) {
     if (!v || !(v.oro > 0 || v.paquetes > 0 || v.cofres > 0)) return;

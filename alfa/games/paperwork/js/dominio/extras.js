@@ -69,6 +69,14 @@ PW.extras = (() => {
     e.r.oro += oro;
     return PW.ok(racha ? { oro, cofre: 0, racha } : { oro, cofre: 0 });
   }
+  // el anuncio del correo (el medidor de anuncios de core dice el multiplicador): paga lo que falta hasta oro × mult, porque el correo ya
+  // dio su oro al abrirlo. Resultado: PW.ok({ oro, mult }) con lo que suma, o 'sin-premio' si no hay nada que multiplicar
+  function premioAnuncio(e, oro, mult) {
+    if (!(oro > 0) || !(mult > 1)) return PW.error('sin-premio');
+    const extra = Math.floor(oro * (mult - 1));
+    e.r.oro += extra;
+    return PW.ok({ oro: extra, mult });
+  }
   // la racha: un correo abierto poco después del anterior la sube (con su desbloqueo); si no, vuelve a cero
   function sigueRacha(e, B) {
     const k = e.c.correo, seguido = B.abierto.racha && k.desde <= AJ.racha.ventana;
@@ -142,6 +150,6 @@ PW.extras = (() => {
     return cofres(e) - antes;   // los que caben (los cofres guardados tienen tope)
   }
 
-  return { premioOro, estanteriaLista, lanzaEstanteria, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo,
+  return { premioOro, estanteriaLista, lanzaEstanteria, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo, premioAnuncio,
     avanzaSindicato, abreSindicato, abreTodosSindicato, sindicatoLleno, horasExtra };
 })();

@@ -30,6 +30,7 @@ PW.DESBLOQUEOS = [
   { id: 'carrera', nivel: 1, nombre: 'Tu carrera', txt: 'El Despido, los Recuerdos, tu equipo y las cartas de recomendación' },
   { id: 'carrito', nivel: 1, nombre: 'Carrito de archivo', txt: 'Un útil nuevo: se lleva también lo del archivador de al lado' },
   { id: 'sellos', nivel: 2, nombre: 'Sellos y munición', txt: 'Documentos confidenciales, urgentes y caducados, y elegir qué le echas a la Trituradora' },
+  { id: 'anuncios', nivel: 2, nombre: 'Nivel de anuncios', txt: 'El correo del CEO paga más si ves un anuncio, y cuantos más ves, más multiplica' },
   { id: 'cofres', nivel: 2, nombre: 'Cofres', txt: 'Vaciando archivadores salen cofres con objetos' },
   { id: 'plan', nivel: 3, nombre: 'Plan de carrera y retos', txt: 'Puntos de carrera para mejoras permanentes, y misiones diarias y logros' },
   { id: 'sindicato', nivel: 1, nombre: 'Paquete del sindicato', txt: 'Cada 10 minutos, un mérito para toda la carrera y grapas de oro' },

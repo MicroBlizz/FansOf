@@ -19,10 +19,11 @@ MEDIDOR_ANUNCIOS.creaTienda = ({ oferta, derechos, comprar, sePuede, idioma = ()
   const euros = v => (idioma() === 'en' ? '€' + v.toFixed(2) : v.toFixed(2).replace('.', ',') + ' €');
   const comprado = () => derechos.tiene(DERECHO);
   const QUE_DA = 'Los premios de los anuncios te llegan al momento, sin verlos, y tu nivel de anuncios es siempre el máximo. El tope de cada día sigue igual.';
-  // el bloque de la tienda: comprado, dice que ya lo tiene; si no, el botón con el precio (data-med-an-compra), solo donde se puede comprar
-  function html() {
+  // el bloque de la tienda: comprado, dice que ya lo tiene; si no, el botón con el precio (data-med-an-compra), solo donde se puede comprar.
+  // atributos: lo que el juego necesite añadir al botón para enterarse del toque (por ejemplo 'data-acc="sin-anuncios"')
+  function html(atributos = '') {
     if (!comprado() && !sePuede()) return '';
-    const derecha = comprado() ? `<em>${texto('Ya lo tienes')}</em>` : `<button type="button" class="med-an-compra" data-med-an-compra>${euros(oferta.precio)}</button>`;
+    const derecha = comprado() ? `<em>${texto('Ya lo tienes')}</em>` : `<button type="button" class="med-an-compra" data-med-an-compra${atributos ? ' ' + atributos : ''}>${euros(oferta.precio)}</button>`;
     return `<div class="med-an-oferta${comprado() ? ' tuya' : ''}"><div><b>${texto('Sin anuncios')}</b> <span class="med-an-siempre">${texto('PARA SIEMPRE')}</span>`
       + `<p>${texto(QUE_DA)}</p></div>${derecha}</div>`;
   }

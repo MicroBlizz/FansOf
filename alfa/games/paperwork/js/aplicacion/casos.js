@@ -136,6 +136,9 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     abreCofre: () => orden(() => PW.extras.abreCofre(e, azar), 'cofres'),
     usaObjeto: id => orden(() => PW.extras.usaObjeto(e, B(), id), 'objetos'),
     abreCorreo: () => orden(() => PW.extras.abreCorreo(e, B(), azar), 'correos'),
+    premioAnuncio: (oro, mult) => orden(() => PW.extras.premioAnuncio(e, oro, mult)),
+    // lo guardado del medidor de anuncios, en la carrera (el puerto `guardado` de MEDIDOR_ANUNCIOS.crea)
+    anuncios: { lee: () => (e ? e.c.anuncios : null), escribe: estado => { if (!e) return; e.c.anuncios = JSON.parse(JSON.stringify(estado)); guarda(); } },
     recogeSindicato: () => {   // todos los paquetes guardados de una vez; el reto cuenta cada paquete
       const res = orden(() => PW.extras.abreTodosSindicato(e, B(), azar));
       if (res.ok) retos.evento('sindicatos', res.valor.paquetes);

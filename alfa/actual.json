@@ -1,8 +1,8 @@
 {
- "build": 1212,
- "hash": "10b6f5a",
- "fecha": "2026-11-16T20:11:23Z",
- "mensaje": "Medidor de anuncios en core: caso de uso, barra y bloque de tienda «Sin anuncios» (tarea #62, ADR 123, nodos 3 a 5)",
+ "build": 1213,
+ "hash": "8baff5e",
+ "fecha": "2026-11-16T20:43:34Z",
+ "mensaje": "Paperwork: el correo del CEO con el medidor de anuncios y la oferta «Sin anuncios» (tarea #62, ADR 123, nodo 7)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.10.2",
+  "paperwork": "0.11.0",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

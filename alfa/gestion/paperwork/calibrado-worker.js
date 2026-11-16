@@ -6,7 +6,7 @@
 const ARCHIVOS = ['pw', 'ajustes', 'datos',
   'dominio/curvas', 'dominio/desbloqueos', 'dominio/hitos', 'dominio/mejoras', 'dominio/bonos', 'dominio/planta', 'dominio/partida', 'dominio/rebuscar', 'dominio/sellos', 'dominio/equipo', 'dominio/encargos', 'dominio/cartas', 'dominio/compras',
   'dominio/trituradora', 'dominio/despido', 'dominio/meritos', 'dominio/expediente', 'dominio/tienda', 'dominio/extras',
-  'aplicacion/motor', 'aplicacion/casos',
+  'aplicacion/motor', 'aplicacion/casos', 'aplicacion/anuncio-correo',
   'calibrado/puertos', 'calibrado/jugador', 'calibrado/formulas', 'calibrado/ajusta'];
 const VERSION = new URL(self.location.href).searchParams.get('v') || '';
 importScripts(...ARCHIVOS.map(f => `../../games/paperwork/js/${f}.js?v=${VERSION}`));

@@ -45,7 +45,7 @@ PW.panelesCarrera = (() => {
     }).join('');
     return `<h4 class="pw-sub">${tr('Méritos')} · ${n(PW.meritos.total(e))}</h4>`
       + `<p class="pw-nota">${tr('Cada paquete del sindicato trae un mérito al azar y unas grapas de oro. Los méritos son para toda la carrera, no se pierden con el Despido y no tienen tope: cada uno suma su bono otra vez.')}</p>`
-      + taquilla(e, B) + PW.panelesPago.seccion(e.m) + rarezas(e)
+      + taquilla(e, B) + PW.panelesPago.seccion(e.m) + PW.panelesAnuncios.seccion(e, PW.medidorAnuncios, PW.tiendaAnuncios) + rarezas(e)
       + `<p class="pw-nota"><b>${tr('Grapas de oro: {n}', { n: n(e.c.grapas) })}</b> · ${PW.desbloqueos.tiene(e, 'plan') ? tr('Con ellas compras puntos del plan de carrera.') : tr('Guárdalas: cuando se abra el plan de carrera, compran puntos.')}</p>` + tienda(e) + filas;
   }
   // con los méritos raros abiertos: cuántos ha salido de cada rareza y cuánto falta para el raro asegurado

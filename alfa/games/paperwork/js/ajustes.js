@@ -5,7 +5,7 @@
 // de pago (ADR 125); la partida se sigue empezando de cero con cada versión
 const AJUSTES = { id: 'paperwork', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.10.2',
+  version: '0.11.0',
   // entrada: archivadores que hay que vaciar en una planta para encontrar la entrada a la siguiente (base en la planta 1, y una parte
   // más por cada planta; los bonos de entrada la bajan hasta el mínimo)
   entrada: { base: 24, porPlanta: 0.06, minimo: 0.3 },
@@ -73,6 +73,15 @@ PW.AJ = {
     turno: { clave: 'mejora:turno-rapido', producto: 'paperwork_turno_rapido', eur: 5, factor: 0.75 },
     taquilla: { clave: 'mejora:taquilla-xl', producto: 'paperwork_taquilla_xl', eur: 5, huecos: 8 },
     pack: { clave: 'mejora:pack', producto: 'paperwork_pack_mejoras', eur: 8 },
+  },
+  // el medidor de anuncios (core/js/sistema/medidor-anuncios.js, ADR 123): la barra, sus niveles y lo que multiplica cada acción con anuncio.
+  // correo = el regalo del CEO: recogido sin anuncio da lo de siempre (×1); con anuncio, ×2 a ×5 según el nivel, hasta `max` al día.
+  // oferta: segundos que se queda el botón del anuncio tras abrir un correo. sinAnuncios: el producto de la tienda y el precio que se enseña
+  anuncios: {
+    medidor: { umbrales: [0, 10, 50, 100], tope: 120, sube: 20, baja: 2 },
+    acciones: { correo: { nombre: 'Regalo del CEO', max: 8, clase: 'ambas', mult: [2, 3, 4, 5] } },
+    oferta: 8,
+    sinAnuncios: { producto: 'paperwork_sin_anuncios', precio: 6.99 },
   },
   // grapas de oro: las que trae cada paquete y lo que cuesta el primer punto del plan de carrera (cada uno, más)
   grapas: { porPaquete: 2, punto0: 30, puntoFactor: 1.5, porNivel: 10 },

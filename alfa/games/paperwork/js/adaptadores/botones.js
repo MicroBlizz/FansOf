@@ -8,7 +8,7 @@ PW.botones = (() => {
     atascando: 'Ya la estás atascando', acabada: 'La Trituradora ya está atascada del todo', 'sin-indemnizacion': 'Aún no cobrarías nada',
     'sin-cofres': 'No tienes cofres', 'no-tienes': 'No tienes ese objeto', 'sin-paquetes': 'Aún no ha llegado el paquete del sindicato',
     'sin-correo': 'Se ha ido el correo', 'sin-urgentes': 'Ahora no hay nada urgente', 'sin-archivador': 'Ese archivador ya está vacío',
-    'sin-oferta': 'Ya has elegido tu carta', desconocido: 'Eso no está aquí', 'no-alcanza': 'El dron solo llega a la fila de arriba',
+    'sin-oferta': 'Ya has elegido tu carta', 'otro-recorrido': 'Ese correo era de antes del Despido', desconocido: 'Eso no está aquí', 'no-alcanza': 'El dron solo llega a la fila de arriba',
   };
   // cuenta el resultado de una orden: sonido si sale bien, aviso si no; y pasa sus sucesos a los efectos
   function cuenta(res, sonidoBien = 'select') {
@@ -49,6 +49,15 @@ PW.botones = (() => {
     const html = `<p>${tr(x.txt, PW.panelesPago.cifras())}</p><p><b>${PW.panelesPago.euros(PW.AJ.mejoras[id].eur)}</b></p>`;
     PW.mejorasPago.compra(id, tr(x.nombre), html, r => { if (r && (r.prueba || r.real)) { PW.sonido.toca('pop'); toast(tr('¡{n} ya es tuya!', { n: tr(x.nombre) }), true); } });
   }
+  // lo que ha dado el anuncio de un correo (PW.anuncioCorreo.acepta): si lo cerró, core ya lo ha dicho y aquí no se añade nada
+  function anuncio(res) {
+    PW.ui.sucio = true;
+    if (res.error === 'no_visto') return;
+    if (cuenta(res, 'crown')) toast(tr('Con el anuncio: +{n} de oro (×{m})', { n: PW.txt.num(res.valor.oro), m: res.valor.mult }), true);
+  }
+  function sinAnuncios() {
+    PW.tiendaAnuncios.compra(r => { if (r && (r.prueba || r.real)) { PW.sonido.toca('pop'); toast(tr('¡Sin anuncios ya es tuyo!'), true); PW.ui.sucio = true; } });
+  }
   function urgente() {
     const res = PW.casos.entregaUrgente();
     if (cuenta(res, 'pop')) toast(tr('Entregado a tiempo: {n} de oro', { n: PW.txt.num(res.valor.oro) }), true);
@@ -86,6 +95,8 @@ PW.botones = (() => {
     punto: () => cuenta(PW.casos.compraPunto(), 'pop'),
     tienda: arg => cuenta(PW.casos.compraTienda(arg), 'pop'),
     pago,
+    'anuncio-correo': () => { PW.anuncioCorreo.acepta().then(anuncio); },
+    'sin-anuncios': sinAnuncios,
     autodespido: arg => cuenta(PW.casos.fijaAutoDespido(+arg)),
     despedir,
     cobrar: arg => { const [p, id] = arg.split(':'); if (PW.retos.cobrar(p, id)) PW.sonido.toca('pop'); },
@@ -112,5 +123,5 @@ PW.botones = (() => {
     raiz.addEventListener('pointercancel', () => { apoyo = null; });
     raiz.addEventListener('click', ev => { if (ev.detail === 0) lanza(ev.target.closest('[data-acc]')); });
   }
-  return { engancha, cuenta };
+  return { engancha, cuenta, anuncio };
 })();

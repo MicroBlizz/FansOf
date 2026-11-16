@@ -8,10 +8,10 @@
 <meta name="description" content="Fans Of Paperwork: baja planta a planta por el archivo de Microblizz, rebusca en los archivadores y atasca la Trituradora con su propio papeleo. Prototipo en desarrollo.">
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="img/icono-192.png">
-<script src="../../core/js/nucleo.js?v=0.10.2-a1212.10b6f5a"></script>
+<script src="../../core/js/nucleo.js?v=0.11.0-a1213.8baff5e"></script>
 <script>NUCLEO.fuentes('../../core/fuentes/baloo-2.css', '../../core/fuentes/luckiest-guy.css')</script>
 <!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
-<script>NUCLEO.estilos('../../core/css/base.css', 'css/paperwork.css')</script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/medidor-anuncios.css', 'css/paperwork.css')</script>
 </head>
 <body>
 <div id="stage">
@@ -19,6 +19,7 @@
   <div id="pw-ui">
     <header id="pw-hud"></header>
     <div id="pw-lateral"></div>
+    <div id="pw-oferta"></div>
     <div id="pw-acciones"></div>
     <div id="pw-recursos"></div>
     <nav id="pw-pestanas"></nav>
@@ -49,9 +50,9 @@ NUCLEO.juego({
     'js/datos.js', 'js/retos.js',
     'js/dominio/curvas.js', 'js/dominio/desbloqueos.js', 'js/dominio/hitos.js', 'js/dominio/mejoras.js', 'js/dominio/bonos.js', 'js/dominio/planta.js', 'js/dominio/partida.js', 'js/dominio/rebuscar.js', 'js/dominio/sellos.js', 'js/dominio/equipo.js', 'js/dominio/encargos.js', 'js/dominio/cartas.js', 'js/dominio/compras.js',
     'js/dominio/trituradora.js', 'js/dominio/despido.js', 'js/dominio/meritos.js', 'js/dominio/expediente.js', 'js/dominio/tienda.js', 'js/dominio/extras.js',
-    'js/aplicacion/motor.js', 'js/aplicacion/casos.js',
+    'js/aplicacion/motor.js', 'js/aplicacion/casos.js', 'js/aplicacion/anuncio-correo.js',
     'js/adaptadores/almacen-local.js', 'js/adaptadores/mejoras-pago.js', 'js/adaptadores/nube.js', 'js/adaptadores/reloj.js', 'js/adaptadores/sonido.js', 'js/adaptadores/retos.js', 'js/adaptadores/textos.js',
-    'js/adaptadores/arte.js', 'js/adaptadores/escena.js', 'js/adaptadores/efectos.js', 'js/adaptadores/paneles.js', 'js/adaptadores/paneles-turno.js', 'js/adaptadores/paneles-carrera.js', 'js/adaptadores/paneles-pago.js',
+    'js/adaptadores/arte.js', 'js/adaptadores/escena.js', 'js/adaptadores/efectos.js', 'js/adaptadores/paneles.js', 'js/adaptadores/paneles-turno.js', 'js/adaptadores/paneles-carrera.js', 'js/adaptadores/paneles-pago.js', 'js/adaptadores/paneles-anuncios.js',
     'js/adaptadores/botones.js', 'js/adaptadores/dev.js',
     'js/principal.js'],
 });

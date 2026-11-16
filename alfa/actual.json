@@ -1,8 +1,8 @@
 {
- "build": 1208,
- "hash": "fac4b75",
- "fecha": "2026-11-16T18:25:58Z",
- "mensaje": "Librería: Air se mantiene junto a Wings (lo pidió Daniel, por si acaso)",
+ "build": 1209,
+ "hash": "9160575",
+ "fecha": "2026-11-16T18:37:10Z",
+ "mensaje": "Auto: coches en lonchas que se inclinan como los edificios (tarea #65)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

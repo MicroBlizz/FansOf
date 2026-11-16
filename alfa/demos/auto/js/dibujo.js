@@ -22,12 +22,30 @@ const sy = wy => (wy - J.cam.y) * J.cam.z + J.H / 2;
 // un sprite girado en (x, y) del mundo; con sombra (desplazada) si se pide
 function pintaSprite(g, spr, x, y, ang, sombra) {
   const z = J.cam.z;
-  if (sombra && AJUSTES.detalle !== 'bajo') {
-    g.globalAlpha = 0.3; g.setTransform(z, 0, 0, z, sx(x) + 2 * z, sy(y) + 2 * z); g.rotate(ang);
-    g.fillStyle = '#000'; g.fillRect(-spr.width / 2 + 1, -spr.height / 2 + 1, spr.width - 2, spr.height - 2); g.globalAlpha = 1;
-  }
+  if (sombra && AJUSTES.detalle !== 'bajo') pintaSombra(g, spr, x, y, ang);
   g.setTransform(z, 0, 0, z, sx(x), sy(y)); g.rotate(ang);
   g.drawImage(spr, -spr.width >> 1, -spr.height >> 1);
+  g.setTransform(1, 0, 0, 1, 0, 0);
+}
+function pintaSombra(g, spr, x, y, ang) {
+  const z = J.cam.z;
+  g.globalAlpha = 0.3; g.setTransform(z, 0, 0, z, sx(x) + 2 * z, sy(y) + 2 * z); g.rotate(ang);
+  g.fillStyle = '#000'; g.fillRect(-spr.width / 2 + 1, -spr.height / 2 + 1, spr.width - 2, spr.height - 2); g.globalAlpha = 1;
+}
+// un coche en lonchas (arte-capas.js): cada loncha se aleja del centro de la pantalla según su altura, como los tejados de los
+// edificios, así que hacia los bordes el coche enseña el lateral. Con los gráficos bajos se pinta plano, como siempre.
+function pintaCoche(g, spr, tipo, x, y, ang) {
+  if (AJUSTES.detalle === 'bajo') { pintaSprite(g, spr, x, y, ang, false); return; }
+  const z = J.cam.z, px = sx(x), py = sy(y), capas = lonchasCoche(spr, tipo), ultima = capas.length - 1;
+  const k = ALTO_LONCHA * PERSPECTIVA, dx = (px - J.W / 2) * k, dy = (py - J.H / 2) * k;
+  pintaSombra(g, spr, x, y, ang);
+  // si las lonchas se separan más de un píxel, se repiten por el camino para que no queden huecos entre ellas
+  const pasos = Math.max(capas.length, Math.ceil(Math.hypot(dx, dy) * ultima) + 1);
+  for (let s = 0; s < pasos; s++) {
+    const i = pasos > 1 ? s / (pasos - 1) * ultima : 0;
+    g.setTransform(z, 0, 0, z, px + dx * i, py + dy * i); g.rotate(ang);
+    g.drawImage(capas[Math.round(i)], -spr.width >> 1, -spr.height >> 1);
+  }
   g.setTransform(1, 0, 0, 1, 0, 0);
 }
 // alrededor del barrio hay agua (como en los clásicos: la ciudad era una isla)
@@ -65,8 +83,8 @@ function pintaCosas(g) {
   for (const o of S.objetos) if (enVista(o.x, o.y)) { const spr = ARTE.objetos[o.tipo]; if (spr) pintaSprite(g, spr, o.x, o.y - ((o.t >> 4) & 1), 0, false); }
   // los muertos en el suelo (aplastados), luego los coches, la gente, el jugador
   for (const p of S.peatones) if (p.muerto && enVista(p.x, p.y)) { g.setTransform(z, 0, 0, z, sx(p.x), sy(p.y)); g.rotate(p.ang); g.globalAlpha = 0.9; g.drawImage(fotoPeaton(p.estilo)[0], -5, -3, 11, 6); g.globalAlpha = 1; g.setTransform(1, 0, 0, 1, 0, 0); }
-  for (const c of S.coches) if (c.chatarra && enVista(c.x, c.y)) pintaSprite(g, fotoChatarra(c.tipo), c.x, c.y, c.ang, true);
-  for (const c of S.coches) if (!c.chatarra && enVista(c.x, c.y)) pintaSprite(g, fotoCoche(c.tipo, c.color), c.x, c.y, c.ang, true);
+  for (const c of S.coches) if (c.chatarra && enVista(c.x, c.y)) pintaCoche(g, fotoChatarra(c.tipo), c.tipo, c.x, c.y, c.ang);
+  for (const c of S.coches) if (!c.chatarra && enVista(c.x, c.y)) pintaCoche(g, fotoCoche(c.tipo, c.color), c.tipo, c.x, c.y, c.ang);
   for (const p of S.peatones) if (!p.muerto && enVista(p.x, p.y)) pintaSprite(g, fotoPeaton(p.estilo)[p.cuadro], p.x, p.y, p.ang, true);
   if (j.coche === null && !j.muerto && !j.baneado) pintaSprite(g, ARTE.conejo[j.cuadro], j.x, j.y, j.ang, true);
   // las luces de los Moderadores

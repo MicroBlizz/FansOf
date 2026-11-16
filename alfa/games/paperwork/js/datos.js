@@ -35,6 +35,7 @@ PW.DESBLOQUEOS = [
   { id: 'sindicato', nivel: 1, nombre: 'Paquete del sindicato', txt: 'Cada 10 minutos, un mérito para toda la carrera y grapas de oro' },
   { id: 'rarezas', nivel: 4, nombre: 'Méritos raros', txt: 'Los méritos del paquete pueden salir raros, épicos, legendarios o míticos, y valen más' },
   { id: 'racha', nivel: 3, nombre: 'Racha de correos', txt: 'Abrir correos del CEO seguidos multiplica su premio' },
+  { id: 'tienda', nivel: 6, nombre: 'Tienda de grapas de oro', txt: 'Mejoras para toda la carrera y monumentos en cada zona, pagadas con grapas de oro' },
   { id: 'expediente', nivel: 5, nombre: 'Expediente de la semana', txt: 'Un encargo de varios días que se cumple jugando y paga grapas de oro' },
   { id: 'encargos', nivel: 4, nombre: 'Pedidos del CEO y auditorías', txt: 'Encargos con plazo en los correos y archivadores precintados por IAhorro' },
 ];
@@ -84,6 +85,19 @@ PW.RAREZAS = [
   { id: 'epico', nombre: 'épico', peso: 14, vale: 3, color: '#b06cff' },
   { id: 'legendario', nombre: 'legendario', peso: 7, vale: 5, color: '#ffb02e' },
   { id: 'mitico', nombre: 'mítico', peso: 1, vale: 10, color: '#ff4d8d' },
+];
+// la tienda de grapas de oro (abierta al nivel 6 de la Trituradora): solo cosas sin azar, para toda la carrera. Cada nivel cuesta
+// precio0 × factor^nivel grapas y suma su bono otra vez, hasta max. Los monumentos (zona) piden haber pisado esa zona alguna vez.
+PW.TIENDA = [
+  { id: 'taquilla', nombre: 'Taquilla ampliada', txt: '+1 paquete guardado en el sindicato', max: 5, precio0: 40, factor: 1.6, bono: { sindicatoMax: 1 } },
+  { id: 'reloj', nombre: 'Reloj de fichar', txt: 'El paquete del sindicato llega 30 s antes', max: 5, precio0: 50, factor: 1.6, bono: { sindicatoCada: 30 } },
+  { id: 'gafas', nombre: 'Gafas de diseño', txt: '+5 % de lectura', max: 10, precio0: 25, factor: 1.4, bono: { dano: 0.05 } },
+  { id: 'cafetera', nombre: 'Cafetera de cápsulas', txt: '+5 % de velocidad', max: 10, precio0: 25, factor: 1.4, bono: { vel: 0.05 } },
+  { id: 'despacho', nombre: 'Pasillo del despacho', txt: '+2 % de archivo del jefe', max: 5, precio0: 60, factor: 1.6, bono: { jefe: 0.02 } },
+  { id: 'dron', nombre: 'Dron de empresa', txt: 'Un dron más rebusca en la fila de arriba', max: 2, precio0: 150, factor: 2, bono: { drones: 1 } },
+  { id: 'monumento0', zona: 0, nombre: 'Estatua del primer archivero', txt: '+10 % de precio de los documentos de El Archivo', max: 3, precio0: 80, factor: 2, bono: { precioZona0: 0.10 } },
+  { id: 'monumento1', zona: 1, nombre: 'Busto del técnico de guardia', txt: '+10 % de precio de los documentos de la Sala de servidores', max: 3, precio0: 120, factor: 2, bono: { precioZona1: 0.10 } },
+  { id: 'monumento2', zona: 2, nombre: 'Placa a los olvidados', txt: '+10 % de precio de los documentos del Almacén de los Olvidados', max: 3, precio0: 160, factor: 2, bono: { precioZona2: 0.10 } },
 ];
 // los hitos: lo que se regala al acumular Despidos (lo tedioso se automatiza solo). nodo = el del plan de carrera que regala (si lo hay)
 PW.HITOS = [

@@ -16,7 +16,7 @@ PW.partida = (() => {
   }
   function carreraNueva() {
     return { trituradora: { nivel: 0, atasco: 0, espera: 0, intento: 0, hambre: 0, multi: 0 },
-      municion: { caducados: true, docs: PW.DOCUMENTOS.map((d, i) => i === 0) }, oferta: [], fotocopia: -1, sancion: 0, auto: true, recuerdos: {}, meritos: {}, rarezas: {}, sinRaro: 0, cofresFuera: 0, grapas: 0, puntosComprados: 0, especialidad: ceros(), plan: {}, indemnizacion: 0,
+      municion: { caducados: true, docs: PW.DOCUMENTOS.map((d, i) => i === 0) }, oferta: [], fotocopia: -1, sancion: 0, auto: true, recuerdos: {}, meritos: {}, rarezas: {}, sinRaro: 0, cofresFuera: 0, tienda: {}, grapas: 0, puntosComprados: 0, especialidad: ceros(), plan: {}, indemnizacion: 0,
       despidos: 0, autoDespido: 0, nivelMax: 1, plantaMax: 1, correo: { falta: 20, vuela: 0, x: 0, racha: 0, desde: 1e9 }, expediente: null, sindicato: { guardados: 0, falta: PW.AJ.sindicato.cada },
       totales: { archivadores: 0, oro: 0, estanterias: 0, correos: 0, cofres: 0 }, tiempoTotal: 0 };
   }

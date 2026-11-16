@@ -43,7 +43,7 @@ PW.paneles = (() => {
     const av = avisos(e, B);
     if (!enCarrera(activa)) {
       // con «Tu carrera» aún cerrada, su sitio dice qué la abre y lleva a la Trituradora
-      const salto = B.abierto.carrera ? pestanaDe('despido', tr('Tu carrera'), '', av.despido + av.recuerdos + av.plan + av.retos, 'pw-salto')
+      const salto = B.abierto.carrera ? pestanaDe('despido', tr('Tu carrera'), '', av.despido + av.recuerdos + av.plan + av.retos + av.meritos, 'pw-salto')
         : pestanaDe('trituradora', tr('Atasca la Trituradora'), '', '', 'pw-salto pw-cerrado') + pestanaDe('opciones', '···', '', '', 'pw-salto pw-mas');
       return TURNO.map(([id, txt]) => pestanaDe(id, tr(txt), activa, av[id])).join('') + salto;
     }

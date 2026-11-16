@@ -77,6 +77,7 @@ PW.botones = (() => {
     recuerdo: arg => cuenta(PW.casos.compraRecuerdo(arg), 'pop'),
     carrera: arg => cuenta(PW.casos.compraCarrera(arg), 'pop'),
     punto: () => cuenta(PW.casos.compraPunto(), 'pop'),
+    tienda: arg => cuenta(PW.casos.compraTienda(arg), 'pop'),
     autodespido: arg => cuenta(PW.casos.fijaAutoDespido(+arg)),
     despedir,
     cobrar: arg => { const [p, id] = arg.split(':'); if (PW.retos.cobrar(p, id)) PW.sonido.toca('pop'); },

@@ -46,7 +46,7 @@ PW.panelesCarrera = (() => {
     return `<h4 class="pw-sub">${tr('Méritos')} · ${n(PW.meritos.total(e))}</h4>`
       + `<p class="pw-nota">${tr('Cada paquete del sindicato trae un mérito al azar y unas grapas de oro. Los méritos son para toda la carrera, no se pierden con el Despido y no tienen tope: cada uno suma su bono otra vez.')}</p>`
       + taquilla(e, B) + rarezas(e)
-      + `<p class="pw-nota"><b>${tr('Grapas de oro: {n}', { n: n(e.c.grapas) })}</b> · ${PW.desbloqueos.tiene(e, 'plan') ? tr('Con ellas compras puntos del plan de carrera.') : tr('Guárdalas: cuando se abra el plan de carrera, compran puntos.')}</p>` + filas;
+      + `<p class="pw-nota"><b>${tr('Grapas de oro: {n}', { n: n(e.c.grapas) })}</b> · ${PW.desbloqueos.tiene(e, 'plan') ? tr('Con ellas compras puntos del plan de carrera.') : tr('Guárdalas: cuando se abra el plan de carrera, compran puntos.')}</p>` + tienda(e) + filas;
   }
   // con los méritos raros abiertos: cuántos ha salido de cada rareza y cuánto falta para el raro asegurado
   function rarezas(e) {
@@ -60,6 +60,16 @@ PW.panelesCarrera = (() => {
     const s = e.c.sindicato, lleno = PW.extras.sindicatoLleno(e, B), t = v => PW.txt.tiempo(v);
     const cuando = lleno ? tr('Siguiente en {a} · taquilla llena en {b}', { a: t(Math.min(s.falta, B.sindicatoCada)), b: t(lleno) }) : tr('Taquilla llena: ábrelos, que no llegan más');
     return `<p class="pw-nota"><b>${tr('Paquetes guardados: {n} de {m}', { n: n(s.guardados), m: n(B.sindicatoMax) })}</b> · ${cuando}</p>`;
+  }
+  // la tienda de grapas de oro: cada cosa con su nivel y su precio (nada al azar); cerrada, no sale
+  function tienda(e) {
+    if (!PW.desbloqueos.tiene(e, 'tienda')) return '';
+    const filas = PW.tienda.lista(e).map(t => {
+      const nv = PW.tienda.nivel(e, t.id), precio = PW.tienda.precio(e, t.id);
+      const der = nv >= t.max ? `<em>${tr('Máximo')}</em>` : P.boton('tienda', t.id, tr('{n} grapas', { n: n(precio) }), e.c.grapas >= precio);
+      return P.fila(P.icono('', t.zona === undefined ? '#ffd23f' : '#b06bff'), `${tr(t.nombre)} · ${tr('{a} de {b}', { a: n(nv), b: n(t.max) })}`, tr(t.txt), der);
+    }).join('');
+    return `<h4 class="pw-sub">${tr('Tienda de grapas de oro')}</h4>${filas}<h4 class="pw-sub">${tr('Tus méritos')}</h4>`;
   }
   // comprar puntos del plan con grapas de oro (el precio sube con cada uno)
   function punto(e) {
@@ -99,7 +109,8 @@ PW.panelesCarrera = (() => {
     const tiene = id => PW.hitos.tieneNodo(e, id);
     const plan = PW.CARRERA.filter(c => !tiene(c.id) && !(c.pide && !tiene(c.pide)) && puntos >= c.coste).length
       + (PW.desbloqueos.tiene(e, 'plan') && e.c.grapas >= PW.meritos.precioPunto(e) ? 1 : 0);   // un punto que se puede comprar con grapas
-    return { despido: 0, recuerdos, plan };
+    const meritos = PW.desbloqueos.tiene(e, 'tienda') ? PW.tienda.lista(e).filter(t => PW.tienda.nivel(e, t.id) < t.max && e.c.grapas >= PW.tienda.precio(e, t.id)).length : 0;
+    return { despido: 0, recuerdos, plan, meritos };
   }
 
   const LISTAS = [['d', 'Hoy'], ['s', 'Esta semana'], ['l', 'Logros']];

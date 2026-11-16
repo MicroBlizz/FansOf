@@ -137,5 +137,6 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
       return res;
     },
     compraPunto: () => orden(() => PW.meritos.compraPunto(e), 'carrera'),
+    compraTienda: id => orden(() => PW.tienda.compra(e, id), 'carrera'),
   };
 };

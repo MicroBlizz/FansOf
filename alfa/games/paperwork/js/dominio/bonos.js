@@ -16,6 +16,7 @@ PW.bonos = (() => {
     PW.CARRERA.forEach(n => { if (PW.hitos.tieneNodo(e, n.id)) suma(acc, n.bono, 1); });   // comprado o regalado por un hito
     PW.hitos.logrados(e).forEach(h => { if (!h.nodo) suma(acc, h.bono, 1); });
     PW.MERITOS.forEach(m => suma(acc, m.bono, e.c.meritos[m.id] || 0));
+    PW.TIENDA.forEach(t => suma(acc, t.bono, e.c.tienda[t.id] || 0));
     PW.OBJETOS.forEach(o => { if ((e.r.activos[o.id] || 0) > 0) suma(acc, o.bono, 1); });
     suma(acc, e.r.bonoCarta, 1);   // lo que dé la carta de recomendación de este turno
     return acc;
@@ -69,6 +70,7 @@ PW.bonos = (() => {
       sindicatoCada: Math.max(AJ.sindicato.cadaMin, AJ.sindicato.cada - b('sindicatoCada')),
       sindicatoMax: AJ.sindicato.guardaMax + b('sindicatoMax'),
       grapasPaquete: b('grapasPaquete'),
+      precioZona: PW.ZONAS.map((z, i) => 1 + b('precioZona' + i)),   // los monumentos de la tienda
     };
   }
   // la dureza que le queda al documento m (en la planta p) con los guantes y la herramienta de su zona
@@ -77,7 +79,7 @@ PW.bonos = (() => {
   // por cuánto se multiplica el precio de venta del documento m: el de la última zona está mojado
   // cuántos documentos sueltos de m hacen un expediente (la receta, con lo que la abarate el manual)
   const recetaDe = (B, m) => Math.max(1, Math.round(C.receta(m) * B.coste));
-  const precioDe = (B, m) => B.precio * (C.zonaDeDocumento(m) === PW.ZONAS.length - 1 ? B.mojado : 1);
+  const precioDe = (B, m) => { const z = C.zonaDeDocumento(m); return B.precio * B.precioZona[z] * (z === PW.ZONAS.length - 1 ? B.mojado : 1); };
 
   return { calcula, liberadas, dureza, precioDe, recetaDe };
 })();

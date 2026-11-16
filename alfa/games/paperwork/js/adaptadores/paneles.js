@@ -34,7 +34,7 @@ PW.paneles = (() => {
     return accion('estanteria', '', e.r.estanteria >= B.recargaEstanteria, carga(e.r.estanteria / B.recargaEstanteria), 'icono-castor', tr('Castor'))
       + accion('pestana', 'trituradora', PW.trituradora.lista(e), 0, 'trituradora', trit)
       + (B.abierto.sellos ? accion('urgente', '', urg.length > 0, carga(plazo / PW.AJ.sellos.urgenteDura), 'icono-sello', urg.length ? `${tr('Urgente')} ${t(plazo)}` : tr('Urgente')) : '')
-      + (B.abierto.sindicato ? accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / B.sindicatoCada), 'icono-sindicato', `${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : ''}`) : '')
+      + (B.abierto.sindicato ? accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / B.sindicatoCada), 'icono-sindicato', `${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : PW.txt.reloj(Math.min(sind.falta, B.sindicatoCada))}`) : '')
       + (B.abierto.cofres ? accion('pestana', 'cofres', cofres > 0, carga(e.r.medidor / PW.AJ.cofre.medidor), 'icono-cofre', `${tr('Cofres')} ${cofres ? '×' + cofres : ''}`) : '');
   }
   const pestanaDe = (id, txt, activa, globo, clase = '') => `<button class="ol ${clase}${activa === id ? ' activo' : ''}" data-acc="pestana" data-arg="${id}" data-globo="${globo || ''}">${txt}</button>`;
@@ -49,7 +49,17 @@ PW.paneles = (() => {
     }
     return `<div class="pw-cabecera"><button class="ol pw-vuelta" data-acc="pestana" data-arg="utiles">${tr('Este turno')}</button><b class="ol">${tr('TU CARRERA')}</b>`
       + `<small>${tr('Lo que se queda cuando te despiden')}</small></div><div class="pw-fila-pestanas">`
-      + CARRERA.filter(([id]) => id === 'opciones' || (B.abierto.carrera && (B.abierto.plan || (id !== 'plan' && id !== 'retos')))).map(([id, txt]) => pestanaDe(id, id === 'opciones' ? txt : tr(txt), activa, av[id])).join('') + '</div>';
+      + CARRERA.map(([id, txt]) => pestanaCarrera(B, id, txt, activa, av[id])).join('') + '</div>';
+  }
+  // una pestaña de la carrera; el plan y los retos, aún cerrados, se ven apagados con el nivel de la Trituradora que los abre
+  function pestanaCarrera(B, id, txt, activa, globo) {
+    if (id === 'opciones') return pestanaDe(id, txt, activa, globo);
+    if (!B.abierto.carrera) return '';   // a las opciones se llega antes de abrir la carrera: solo sale esa pestaña
+    if ((id === 'plan' || id === 'retos') && !B.abierto.plan) {
+      const nivel = PW.DESBLOQUEOS.find(d => d.id === 'plan').nivel;
+      return pestanaDe('trituradora', `${tr(txt)}<small>${tr('nv. {n}', { n: nivel })}</small>`, '', '', 'pw-cerrado');
+    }
+    return pestanaDe(id, tr(txt), activa, globo);
   }
 
   // los útiles del líder: su icono y lo que hacen ahora

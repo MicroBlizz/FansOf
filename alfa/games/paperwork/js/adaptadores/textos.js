@@ -18,6 +18,12 @@ PW.txt = (() => {
     if (!h) return s % 60 ? tr('{m} min {s} s', { m, s: s % 60 }) : tr('{m} min', { m });
     return m % 60 ? tr('{h} h {m} min', { h, m: m % 60 }) : tr('{h} h', { h });
   }
+  // segundos en reloj corto, para los botones estrechos: «9:05», «1:02:30»
+  function reloj(s) {
+    s = Math.max(0, Math.ceil(s));
+    const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, dd = v => String(v).padStart(2, '0');
+    return (h ? h + ':' + dd(m) : m) + ':' + dd(s % 60);
+  }
   const pct = p => fmtV(Math.round(p * 1000) / 10) + ' %';
-  return { num, tiempo, pct };
+  return { num, tiempo, reloj, pct };
 })();

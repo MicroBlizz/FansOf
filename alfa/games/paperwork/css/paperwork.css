@@ -121,6 +121,7 @@
 .pw-auto.activo { background: #3ddc84; color: #10301c; }
 #pw-pestanas:has(.pw-mas) { grid-template-columns: 1fr 1fr 112px 44px; }
 #pw-pestanas button.pw-cerrado { background: var(--off); color: var(--ink-dim); font-size: 14px; line-height: 1.05; }
+#pw-pestanas button.pw-cerrado small { display: block; font-size: 11px; }
 /* la pelea contra la Trituradora: sin botones ni menús, solo la máquina y lo que pasa */
 #pw-ui[data-nivel="jefe"] #pw-acciones, #pw-ui[data-nivel="jefe"] #pw-recursos, #pw-ui[data-nivel="jefe"] #pw-lateral, #pw-ui[data-nivel="jefe"] #pw-pestanas { display: none; }
 #pw-ui[data-nivel="jefe"] #pw-panel { top: 470px; border-top-color: var(--danger); pointer-events: none; text-align: center; }

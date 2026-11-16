@@ -30,14 +30,21 @@ PW.panelesCarrera = (() => {
     }).join('') + '</div>';
   }
   // los méritos: los que trae el paquete del sindicato, cuántas veces se tiene cada uno y lo que suman en total
-  function meritos(e) {
+  function meritos(e, B) {
     const filas = PW.MERITOS.map(m => {
       const veces = PW.meritos.nivel(e, m.id);
       return P.fila(P.icono('', veces ? '#ffd23f' : '#555'), tr(m.nombre), tr(m.txt), `<em>×${n(veces)}</em>`);
     }).join('');
     return `<h4 class="pw-sub">${tr('Méritos')} · ${n(PW.meritos.total(e))}</h4>`
       + `<p class="pw-nota">${tr('Cada paquete del sindicato trae un mérito al azar y unas grapas de oro. Los méritos son para toda la carrera, no se pierden con el Despido y no tienen tope: cada uno suma su bono otra vez.')}</p>`
+      + taquilla(e, B)
       + `<p class="pw-nota"><b>${tr('Grapas de oro: {n}', { n: n(e.c.grapas) })}</b> · ${PW.desbloqueos.tiene(e, 'plan') ? tr('Con ellas compras puntos del plan de carrera.') : tr('Guárdalas: cuando se abra el plan de carrera, compran puntos.')}</p>` + filas;
+  }
+  // cuántos paquetes hay guardados, cuándo llega el siguiente y cuándo se llena la taquilla (entrar antes de que se llene no pierde nada)
+  function taquilla(e, B) {
+    const s = e.c.sindicato, lleno = PW.extras.sindicatoLleno(e, B), t = v => PW.txt.tiempo(v);
+    const cuando = lleno ? tr('Siguiente en {a} · taquilla llena en {b}', { a: t(Math.min(s.falta, B.sindicatoCada)), b: t(lleno) }) : tr('Taquilla llena: ábrelos, que no llegan más');
+    return `<p class="pw-nota"><b>${tr('Paquetes guardados: {n} de {m}', { n: n(s.guardados), m: n(B.sindicatoMax) })}</b> · ${cuando}</p>`;
   }
   // comprar puntos del plan con grapas de oro (el precio sube con cada uno)
   function punto(e) {

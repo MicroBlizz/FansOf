@@ -87,6 +87,23 @@ PW.extras = (() => {
     if (cofre) guardaCofre(e);
     return PW.ok({ oro, cofre, ...PW.meritos.abre(e, B, azar) });
   }
+  // abrir todos los paquetes guardados de una vez (se entra una vez por hora y se recoge todo).
+  // Resultado: PW.ok({ paquetes, oro, cofres, grapas, meritos: { id: cuántos } }) o 'sin-paquetes'
+  function abreTodosSindicato(e, B, azar) {
+    if (!e.c.sindicato.guardados) return PW.error('sin-paquetes');
+    const suma = { paquetes: 0, oro: 0, cofres: 0, grapas: 0, meritos: {} };
+    while (e.c.sindicato.guardados) {
+      const v = abreSindicato(e, B, azar).valor;
+      suma.paquetes++; suma.oro += v.oro; suma.cofres += v.cofre; suma.grapas += v.grapas;
+      suma.meritos[v.merito] = (suma.meritos[v.merito] || 0) + 1;
+    }
+    return PW.ok(suma);
+  }
+  // segundos que faltan para que la taquilla del sindicato esté llena (0 si ya lo está)
+  function sindicatoLleno(e, B) {
+    const s = e.c.sindicato, faltan = B.sindicatoMax - s.guardados;
+    return faltan <= 0 ? 0 : Math.min(s.falta, B.sindicatoCada) + (faltan - 1) * B.sindicatoCada;
+  }
 
   // ---- horas extra: al volver tras s segundos fuera, se cobra el ritmo de oro a una parte, con tope de horas
   function horasExtra(e, B, s) {
@@ -99,5 +116,5 @@ PW.extras = (() => {
   }
 
   return { premioOro, estanteriaLista, lanzaEstanteria, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo,
-    avanzaSindicato, abreSindicato, horasExtra };
+    avanzaSindicato, abreSindicato, abreTodosSindicato, sindicatoLleno, horasExtra };
 })();

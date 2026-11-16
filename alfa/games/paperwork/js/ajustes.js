@@ -5,7 +5,7 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.6.0',
+  version: '0.6.1',
   // entrada: archivadores que hay que vaciar en una planta para encontrar la entrada a la siguiente (base en la planta 1, y una parte
   // más por cada planta; los bonos de entrada la bajan hasta el mínimo)
   entrada: { base: 24, porPlanta: 0.06, minimo: 0.3 },

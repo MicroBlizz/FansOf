@@ -130,7 +130,11 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     abreCofre: () => orden(() => PW.extras.abreCofre(e, azar), 'cofres'),
     usaObjeto: id => orden(() => PW.extras.usaObjeto(e, B(), id), 'objetos'),
     abreCorreo: () => orden(() => PW.extras.abreCorreo(e, B(), azar), 'correos'),
-    abreSindicato: () => orden(() => PW.extras.abreSindicato(e, B(), azar), 'sindicatos'),
+    recogeSindicato: () => {   // todos los paquetes guardados de una vez; el reto cuenta cada paquete
+      const res = orden(() => PW.extras.abreTodosSindicato(e, B(), azar));
+      if (res.ok) retos.evento('sindicatos', res.valor.paquetes);
+      return res;
+    },
     compraPunto: () => orden(() => PW.meritos.compraPunto(e), 'carrera'),
   };
 };

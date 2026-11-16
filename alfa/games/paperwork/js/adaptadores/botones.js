@@ -32,10 +32,13 @@ PW.botones = (() => {
     if (cuenta(res, 'pop')) toast(tr('¡{o}!', { o: tr(PW.OBJETOS.find(o => o.id === res.valor).nombre) }), true);
   }
   function sindicato() {
-    const res = PW.casos.abreSindicato();
+    const res = PW.casos.recogeSindicato();
     if (!cuenta(res, 'pop')) return;
-    const v = res.valor, m = PW.MERITOS.find(x => x.id === v.merito);
-    toast(tr('Mérito: {m} (×{v}) · +{g} grapas de oro · {o} de oro', { m: tr(m.nombre), v: v.nivel, g: PW.txt.num(v.grapas), o: PW.txt.num(v.oro) }) + (v.cofre ? ' · ' + tr('un cofre') : ''), true);
+    const v = res.valor, num = PW.txt.num;
+    const meritos = Object.entries(v.meritos).map(([id, k]) => tr(PW.MERITOS.find(x => x.id === id).nombre) + (k > 1 ? ' ×' + k : '')).join(', ');
+    const cuantos = v.paquetes > 1 ? tr('{p} paquetes', { p: num(v.paquetes) }) : tr('Un paquete');
+    toast(cuantos + ': ' + tr('+{g} grapas de oro · {o} de oro', { g: num(v.grapas), o: num(v.oro) })
+      + (v.cofres ? ' · ' + tr('{c} cofres', { c: num(v.cofres) }) : '') + ' · ' + tr('Méritos: {lista}', { lista: meritos }), true);
   }
   function urgente() {
     const res = PW.casos.entregaUrgente();

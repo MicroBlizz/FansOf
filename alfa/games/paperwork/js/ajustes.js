@@ -5,7 +5,7 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.7.0',
+  version: '0.8.0',
   // entrada: archivadores que hay que vaciar en una planta para encontrar la entrada a la siguiente (base en la planta 1, y una parte
   // más por cada planta; los bonos de entrada la bajan hasta el mínimo)
   entrada: { base: 24, porPlanta: 0.06, minimo: 0.3 },
@@ -66,7 +66,7 @@ PW.AJ = {
   grapas: { porPaquete: 2, punto0: 30, puntoFactor: 1.5, porNivel: 10 },
   // la garantía de los méritos raros: tras (garantia - 1) paquetes seguidos de comunes, el siguiente es raro o mejor
   meritosGarantia: 10,
-  horasExtra: { parte: 0.25, topeHoras: 12 },
+  horasExtra: { parte: 0.25, topeHoras: 12, cofresHora: 0.3 },
   carreraPuntos: { porNivelTrituradora: 1, cadaNiveles: 10 },
 };
 // Un idle no tiene «fuera de partida»: para core (la etiqueta «Prototipo» del borde, el sitio de los avisos) se está jugando siempre menos

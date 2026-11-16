@@ -11,10 +11,18 @@ PW.panelesCarrera = (() => {
       : tr('Aún no cobrarías nada: sube un poco de nivel y el Despido empezará a dar Indemnización.');
     const sancion = e.c.sancion > 0 ? `<p class="pw-nota pw-aviso">${tr('Sanción del CEO por pedidos sin cumplir: {p} menos en este Despido.', { p: PW.txt.pct(e.c.sancion) })}</p>` : '';
     return `<div class="pw-texto"><h4>${tr('El Despido')}</h4><p>${txt}</p>${sancion}<p><small>${tr('Al despedirte, tu antiguo jefe te ofrece 3 cartas de recomendación: eliges una ventaja para el turno siguiente.')}</small></p><p><small>${tr('Se quedan la Trituradora, tu equipo, los Recuerdos, la especialidad, el plan de carrera y los objetos.')}</small></p>`
-      + `${P.boton('despedir', '', tr('DESPEDIRSE'), puede, 'grande peligro')}${autoDespido(e)}</div>`;
+      + `${P.boton('despedir', '', tr('DESPEDIRSE'), puede, 'grande peligro')}${autoDespido(e)}${hitos(e)}</div>`;
+  }
+  // los hitos por Despidos: lo que ya se ha regalado y a cuántos Despidos llega lo siguiente
+  function hitos(e) {
+    const filas = PW.HITOS.map(h => {
+      const ya = e.c.despidos >= h.despidos;
+      return P.fila(P.icono('', ya ? '#3ddc84' : '#555'), tr(h.nombre), tr(h.txt), `<em>${ya ? tr('Regalado') : tr('{n} Despidos', { n: h.despidos })}</em>`);
+    }).join('');
+    return `<h4 class="pw-sub">${tr('Hitos · {n} Despidos', { n: n(e.c.despidos) })}</h4>${filas}`;
   }
   function autoDespido(e) {
-    if (!e.c.plan.autodespido) return '';
+    if (!PW.hitos.tieneNodo(e, 'autodespido')) return '';
     const tope = PW.curvas.topeNivel(e.c.trituradora.nivel);
     const opciones = [0];
     for (let v = 10; v <= tope; v += 5) opciones.push(v);
@@ -70,7 +78,7 @@ PW.panelesCarrera = (() => {
     const puntos = PW.compras.puntos(e);
     return `<h4 class="pw-sub">${tr('Plan de carrera')} · ${tr('{n} puntos', { n: puntos })}</h4>`
       + `<p class="pw-nota">${tr('Un punto por cada nivel atascado de la Trituradora, otro cada 10 niveles de tu nivel más alto y los que compres con grapas de oro.')}</p>` + punto(e) + fotocopia(e) + PW.CARRERA.map(c => {
-        const hecho = !!e.c.plan[c.id], falta = c.pide && !e.c.plan[c.pide];
+        const tiene = id => PW.hitos.tieneNodo(e, id), hecho = tiene(c.id), falta = c.pide && !tiene(c.pide);
         const der = hecho ? `<em>${tr('Hecho')}</em>` : falta ? `<em>${tr('Antes: {n}', { n: tr(PW.CARRERA.find(x => x.id === c.pide).nombre) })}</em>` : P.boton('carrera', c.id, tr('{n} pt', { n: c.coste }), puntos >= c.coste);
         return P.fila(P.icono('', hecho ? '#3ddc84' : '#555'), tr(c.nombre), tr(c.txt), der);
       }).join('');
@@ -88,7 +96,8 @@ PW.panelesCarrera = (() => {
   function avisos(e) {
     const puntos = PW.compras.puntos(e);
     const recuerdos = PW.RECUERDOS.filter(r => (e.c.recuerdos[r.id] || 0) < PW.AJ.recuerdo.max && e.c.indemnizacion >= PW.compras.precioRecuerdo(e, r.id)).length;
-    const plan = PW.CARRERA.filter(c => !e.c.plan[c.id] && !(c.pide && !e.c.plan[c.pide]) && puntos >= c.coste).length
+    const tiene = id => PW.hitos.tieneNodo(e, id);
+    const plan = PW.CARRERA.filter(c => !tiene(c.id) && !(c.pide && !tiene(c.pide)) && puntos >= c.coste).length
       + (PW.desbloqueos.tiene(e, 'plan') && e.c.grapas >= PW.meritos.precioPunto(e) ? 1 : 0);   // un punto que se puede comprar con grapas
     return { despido: 0, recuerdos, plan };
   }

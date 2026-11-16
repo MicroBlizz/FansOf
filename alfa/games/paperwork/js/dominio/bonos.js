@@ -13,7 +13,8 @@ PW.bonos = (() => {
     PW.DOCUMENTOS.forEach((m, i) => suma(acc, m.bono, e.r.mejorasDoc[i] || 0));
     PW.FACCIONES.slice(0, liberadas(e)).forEach(f => suma(acc, f.bono, 1));
     PW.RECUERDOS.forEach(r => suma(acc, r.bono, e.c.recuerdos[r.id] || 0));
-    PW.CARRERA.forEach(n => { if (e.c.plan[n.id]) suma(acc, n.bono, 1); });
+    PW.CARRERA.forEach(n => { if (PW.hitos.tieneNodo(e, n.id)) suma(acc, n.bono, 1); });   // comprado o regalado por un hito
+    PW.hitos.logrados(e).forEach(h => { if (!h.nodo) suma(acc, h.bono, 1); });
     PW.MERITOS.forEach(m => suma(acc, m.bono, e.c.meritos[m.id] || 0));
     PW.OBJETOS.forEach(o => { if ((e.r.activos[o.id] || 0) > 0) suma(acc, o.bono, 1); });
     suma(acc, e.r.bonoCarta, 1);   // lo que dé la carta de recomendación de este turno

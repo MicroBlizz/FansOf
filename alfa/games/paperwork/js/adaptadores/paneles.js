@@ -34,7 +34,7 @@ PW.paneles = (() => {
     return accion('estanteria', '', e.r.estanteria >= B.recargaEstanteria, carga(e.r.estanteria / B.recargaEstanteria), 'icono-castor', tr('Castor'))
       + accion('pestana', 'trituradora', PW.trituradora.lista(e), 0, 'trituradora', trit)
       + (B.abierto.sellos ? accion('urgente', '', urg.length > 0, carga(plazo / PW.AJ.sellos.urgenteDura), 'icono-sello', urg.length ? `${tr('Urgente')} ${t(plazo)}` : tr('Urgente')) : '')
-      + (B.abierto.sindicato ? accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / B.sindicatoCada), 'icono-sindicato', `${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : PW.txt.reloj(Math.min(sind.falta, B.sindicatoCada))}`) : '')
+      + (B.abierto.sindicato ? accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / B.sindicatoCada), 'icono-sindicato', sind.guardados ? `${tr('Sindicato')} ×${sind.guardados}` : PW.txt.reloj(Math.min(sind.falta, B.sindicatoCada))) : '')
       + (B.abierto.cofres ? accion('pestana', 'cofres', cofres > 0, carga(e.r.medidor / PW.AJ.cofre.medidor), 'icono-cofre', `${tr('Cofres')} ${cofres ? '×' + cofres : ''}`) : '');
   }
   const pestanaDe = (id, txt, activa, globo, clase = '') => `<button class="ol ${clase}${activa === id ? ' activo' : ''}" data-acc="pestana" data-arg="${id}" data-globo="${globo || ''}">${txt}</button>`;

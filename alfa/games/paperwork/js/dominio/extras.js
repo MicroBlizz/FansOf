@@ -107,13 +107,25 @@ PW.extras = (() => {
   }
 
   // ---- horas extra: al volver tras s segundos fuera, se cobra el ritmo de oro a una parte, con tope de horas
+  // Resultado: PW.ok({ oro, segundos, paquetes (los que han llegado), cofres }). Los cofres llegan a ritmo fijo por hora (con los cofres
+  // abiertos): lo que sobre de un cofre entero se guarda para la próxima vez, así que no hay azar. Como en partida, los que no caben se pierden.
   function horasExtra(e, B, s) {
     const segundos = Math.min(Math.max(0, s), AJ.horasExtra.topeHoras * 3600);
     const oro = Math.floor((e.r.ritmoOro || 0) * segundos * B.horasExtra);
     e.r.oro += oro;
     PW.trituradora.pasaEspera(e, s);
+    const antes = e.c.sindicato.guardados;
     avanzaSindicato(e, B, s);
-    return PW.ok({ oro, segundos });
+    return PW.ok({ oro, segundos, paquetes: e.c.sindicato.guardados - antes, cofres: cofresFuera(e, B, segundos) });
+  }
+  function cofresFuera(e, B, segundos) {
+    if (!B.abierto.cofres) return 0;
+    e.c.cofresFuera += AJ.horasExtra.cofresHora * segundos / 3600;
+    const n = Math.floor(e.c.cofresFuera);
+    const antes = cofres(e);
+    e.c.cofresFuera -= n;
+    for (let i = 0; i < n; i++) guardaCofre(e);
+    return cofres(e) - antes;   // los que caben (los cofres guardados tienen tope)
   }
 
   return { premioOro, estanteriaLista, lanzaEstanteria, cofres, guardaCofre, abreCofre, usaObjeto, gastaActivos, avanzaCorreo, abreCorreo,

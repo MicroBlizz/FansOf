@@ -107,7 +107,11 @@ PW.principal = (() => {
     toast(res.valor.cofre ? tr('El CEO te manda un cofre por error') : tr('Correo del CEO: {n} de oro', { n: PW.txt.num(res.valor.oro) }), true);
   }
   function bienvenida(v) {
-    if (v && v.oro > 0) confirmBox(tr('HORAS EXTRA'), tr('Mientras no estabas ({t}), tu equipo ha sacado {n} de oro.', { t: PW.txt.tiempo(v.segundos), n: PW.txt.num(v.oro) }), '', null, tr('A REBUSCAR'));
+    if (!v || !(v.oro > 0 || v.paquetes > 0 || v.cofres > 0)) return;
+    const num = PW.txt.num, partes = [tr('{n} de oro', { n: num(v.oro) })];
+    if (v.paquetes) partes.push(tr('{n} paquetes del sindicato', { n: num(v.paquetes) }));
+    if (v.cofres) partes.push(tr('{c} cofres', { c: num(v.cofres) }));
+    confirmBox(tr('MIENTRAS NO ESTABAS'), tr('En {t} fuera, tu equipo ha conseguido: {lista}.', { t: PW.txt.tiempo(v.segundos), lista: partes.join(', ') }), '', null, tr('A REBUSCAR'));
   }
   // lo que el almacén no ha podido leer o guardar se dice una vez, en cuanto hay pantalla
   const AVISO_ALMACEN = {

@@ -75,8 +75,8 @@ PW.compras = (() => {
     const n = PW.CARRERA.find(x => x.id === id);
     if (!n) return PW.error('desconocido', { id });
     if (!PW.desbloqueos.tiene(e, 'plan')) return PW.error('no-disponible');
-    if (e.c.plan[id]) return PW.error('al-maximo');
-    if (n.pide && !e.c.plan[n.pide]) return PW.error('falta-requisito', { pide: n.pide });
+    if (PW.hitos.tieneNodo(e, id)) return PW.error('al-maximo');   // comprado, o ya regalado por un hito
+    if (n.pide && !PW.hitos.tieneNodo(e, n.pide)) return PW.error('falta-requisito', { pide: n.pide });
     if (puntos(e) < n.coste) return PW.error('sin-saldo', { falta: n.coste - puntos(e) });
     e.c.plan[id] = true;
     return PW.ok(1);
@@ -98,7 +98,7 @@ PW.compras = (() => {
 
   // el nivel al que el equipo se despide solo (nodo 'autodespido' del plan de carrera); 0 lo apaga
   function fijaAutoDespido(e, nivel) {
-    if (!e.c.plan.autodespido) return PW.error('falta-requisito', { pide: 'autodespido' });
+    if (!PW.hitos.tieneNodo(e, 'autodespido')) return PW.error('falta-requisito', { pide: 'autodespido' });
     if (!(nivel === 0 || (Number.isInteger(nivel) && nivel >= 2))) return PW.error('desconocido', { nivel });
     e.c.autoDespido = nivel;
     return PW.ok(nivel);

@@ -83,6 +83,12 @@ PW.RAREZAS = [
   { id: 'legendario', nombre: 'legendario', peso: 7, vale: 5, color: '#ffb02e' },
   { id: 'mitico', nombre: 'mítico', peso: 1, vale: 10, color: '#ff4d8d' },
 ];
+// los hitos: lo que se regala al acumular Despidos (lo tedioso se automatiza solo). nodo = el del plan de carrera que regala (si lo hay)
+PW.HITOS = [
+  { id: 'castor', despidos: 3, nodo: 'auto', bono: { autoEstanteria: 1 }, nombre: 'Castor en plantilla', txt: 'El castor vuelca la estantería solo' },
+  { id: 'carta', despidos: 6, nodo: 'autodespido', bono: {}, nombre: 'Carta de despido firmada', txt: 'El equipo se despide solo al llegar al nivel que elijas' },
+  { id: 'veterano', despidos: 10, bono: { sindicatoMax: 1 }, nombre: 'Veterano del sindicato', txt: 'Cabe un paquete más en la taquilla' },
+];
 // los méritos: los trae el paquete del sindicato, uno al azar cada vez; cada uno suma su bono por su rareza, sin tope, y no se pierden nunca
 PW.MERITOS = [
   { id: 'puntual', nombre: 'Llega puntual', bono: { dano: 0.01 }, txt: '+1 % de lectura' },

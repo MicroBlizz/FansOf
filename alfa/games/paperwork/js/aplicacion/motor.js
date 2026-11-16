@@ -48,7 +48,7 @@ PW.motor = (() => {
   // con el nodo 'autodespido', el equipo se despide solo al llegar al nivel elegido
   function despidoSolo(e, azar, sucesos) {
     const n = Math.min(e.c.autoDespido, PW.curvas.topeNivel(e.c.trituradora.nivel));   // si el elegido pasa del tope, al llegar al tope
-    if (!e.c.plan.autodespido || !n || e.r.nivel < n) return;
+    if (!PW.hitos.tieneNodo(e, 'autodespido') || !n || e.r.nivel < n) return;
     const res = PW.despido.despide(e, PW.bonos.calcula(e), azar);
     if (res.ok) sucesos.push({ t: 'despido', cobra: res.valor, solo: true });
   }

@@ -1,11 +1,11 @@
 // Fans Of Paperwork · AJUSTES: todas las cifras del juego en un sitio (economía, curvas, tiempos). Las fija la simulación de ritmo
 // (tests/paperwork/integracion/ritmo.test.mjs): si cambias una, vuelve a pasarla. Qué es cada cosa: docs/paperwork/PLAN.md.
 'use strict';
-// lo que core pide a todo juego (core/js/sistema/ligero.js): sin `id` a propósito, así la cuenta de core queda apagada y la partida del
-// prototipo vive solo en este navegador
-const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
+// lo que core pide a todo juego (core/js/sistema/ligero.js): con `id`, la cuenta de Fans Of guarda la partida en la nube y las mejoras
+// de pago (ADR 125); la partida se sigue empezando de cero con cada versión
+const AJUSTES = { id: 'paperwork', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.10.1',
+  version: '0.10.2',
   // entrada: archivadores que hay que vaciar en una planta para encontrar la entrada a la siguiente (base en la planta 1, y una parte
   // más por cada planta; los bonos de entrada la bajan hasta el mínimo)
   entrada: { base: 24, porPlanta: 0.06, minimo: 0.3 },
@@ -67,6 +67,13 @@ PW.AJ = {
   expediente: { duracion: 259200, horasJuego: 2, minimo: 150, grapasNivel: 25 },
   // el paquete del sindicato: cada cuánto llega (los nodos del plan lo bajan, con un mínimo) y cuántos se guardan
   sindicato: { cada: 600, cadaMin: 300, guardaMax: 4, premioSegundos: 90 },
+  // las mejoras de pago, para siempre y guardadas en la cuenta (dominio/mejoras.js, ADR 125): la clave de reclamos que da el servidor,
+  // el producto (su id en servidor/ y en Play Console) y el precio que se enseña. Cobrar de verdad espera al alta en Hacienda
+  mejoras: {
+    turno: { clave: 'mejora:turno-rapido', producto: 'paperwork_turno_rapido', eur: 5, factor: 0.75 },
+    taquilla: { clave: 'mejora:taquilla-xl', producto: 'paperwork_taquilla_xl', eur: 5, huecos: 8 },
+    pack: { clave: 'mejora:pack', producto: 'paperwork_pack_mejoras', eur: 8 },
+  },
   // grapas de oro: las que trae cada paquete y lo que cuesta el primer punto del plan de carrera (cada uno, más)
   grapas: { porPaquete: 2, punto0: 30, puntoFactor: 1.5, porNivel: 10 },
   // la garantía de los méritos raros: tras (garantia - 1) paquetes seguidos de comunes, el siguiente es raro o mejor

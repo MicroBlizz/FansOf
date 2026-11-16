@@ -1,8 +1,8 @@
 {
- "build": 1203,
- "hash": "f8ba1bb",
- "fecha": "2026-11-16T17:40:14Z",
- "mensaje": "Tablero sencillo: primero en Global, colores y frase por columna, tres grupos en el móvil y «Apuntar idea o fallo» (tarea #63, ADR 124)",
+ "build": 1204,
+ "hash": "26fb583",
+ "fecha": "2026-11-16T17:43:31Z",
+ "mensaje": "Paperwork 0.10.2: mejoras de pago Turno rápido y Taquilla XL con cuenta de Fans Of (tarea #61, ADR 125)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.10.1",
+  "paperwork": "0.10.2",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

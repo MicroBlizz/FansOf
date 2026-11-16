@@ -4,7 +4,7 @@
 'use strict';
 // los archivos del juego sin pantalla, en el orden de su index.html (lo comprueba tests/gestion/calibrado-paperwork.test.mjs)
 const ARCHIVOS = ['pw', 'ajustes', 'datos',
-  'dominio/curvas', 'dominio/desbloqueos', 'dominio/hitos', 'dominio/bonos', 'dominio/planta', 'dominio/partida', 'dominio/rebuscar', 'dominio/sellos', 'dominio/equipo', 'dominio/encargos', 'dominio/cartas', 'dominio/compras',
+  'dominio/curvas', 'dominio/desbloqueos', 'dominio/hitos', 'dominio/mejoras', 'dominio/bonos', 'dominio/planta', 'dominio/partida', 'dominio/rebuscar', 'dominio/sellos', 'dominio/equipo', 'dominio/encargos', 'dominio/cartas', 'dominio/compras',
   'dominio/trituradora', 'dominio/despido', 'dominio/meritos', 'dominio/expediente', 'dominio/tienda', 'dominio/extras',
   'aplicacion/motor', 'aplicacion/casos',
   'calibrado/puertos', 'calibrado/jugador', 'calibrado/formulas', 'calibrado/ajusta'];

@@ -54,7 +54,8 @@ PW.partida = (() => {
     const mal = valida(e);
     return mal ? PW.error('partida-invalida', { campo: mal }) : PW.ok(e);
   }
-  const aJson = e => JSON.parse(JSON.stringify(e));
+  // lo que se guarda: todo menos e.m, las mejoras de pago, que son de la cuenta y no de la partida (ADR 125)
+  const aJson = e => { const { m, ...resto } = e; return JSON.parse(JSON.stringify(resto)); };
 
   return { nueva, desdeJson, aJson, recorridoNuevo };
 })();

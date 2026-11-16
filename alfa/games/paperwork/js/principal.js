@@ -8,11 +8,20 @@ PW.ui = { pestana: 'utiles', cortinilla: false, elegido: 0, t: 0, sucio: true, v
 // con el guardado del navegador bloqueado, leer localStorage lanza: se juega sin guardar y se dice
 PW.almacenamiento = (() => { try { return window.localStorage; } catch (error) { console.warn('Paperwork: sin almacenamiento', error); return null; } })();
 PW.avisosAlmacen = [];
-PW.almacen = PW.creaAlmacenLocal(SAVE_KEY, PW.almacenamiento, (motivo, error) => { console.warn('Paperwork: guardado', motivo, error); PW.avisosAlmacen.push(motivo); });
+PW.almacen = PW.creaAlmacenLocal(SAVE_KEY, PW.almacenamiento, (motivo, error) => { console.warn('Paperwork: guardado', motivo, error); PW.avisosAlmacen.push(motivo); },
+  () => PW.nube.avisaCambio());   // la cuenta de core sube la partida a la nube (ADR 125)
+PW.nube = PW.creaNube(PW.almacen, CUENTA);
 PW.reloj = PW.creaReloj();
 PW.sonido = PW.creaSonido(PW.almacen);
 PW.retos = PW.creaRetos(PW.almacen, PW.reloj, n => PW.casos.ingresa(n));   // paga por los casos de uso (que se crean justo después)
 PW.casos = PW.creaCasos({ almacen: PW.almacen, reloj: PW.reloj, azar: Math.random, retos: PW.retos });
+// las mejoras de pago (ADR 125): las de la copia de este navegador desde el principio; las de la cuenta, en cuanto contesta
+PW.mejorasPago = PW.creaMejorasPago({
+  almacenamiento: PW.almacenamiento, clave: SAVE_KEY + '-mejoras', cuenta: CUENTA, juego: AJUSTES.id, desarrollo: !!NUCLEO.desarrollo, enLinea: () => navigator.onLine !== false,
+  comprar: (titulo, html, alComprar, producto) => MONEDAS.compraReal(titulo, html, alComprar, producto),
+  alCambiar: claves => { PW.casos.ponMejoras(PW.mejoras.de(claves)); PW.ui.sucio = true; },
+});
+PW.casos.ponMejoras(PW.mejoras.de(PW.mejorasPago.claves()));
 
 PW.principal = (() => {
   const CV = document.getElementById('cv'), CTX = CV.getContext('2d'), UI = document.getElementById('pw-ui');
@@ -129,6 +138,7 @@ PW.principal = (() => {
     window.addEventListener('resize', ajusta);
     PW.arte.precarga();
     bienvenida(PW.casos.arranca().valor.vuelta);
+    PW.mejorasPago.refresca();   // lo que diga la cuenta manda sobre la copia (una compra en otro aparato, un reembolso)
     avisaAlmacen();
     setInterval(avisaAlmacen, 5000);
     PW.botones.engancha(UI);

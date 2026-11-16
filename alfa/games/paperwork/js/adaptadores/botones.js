@@ -42,6 +42,13 @@ PW.botones = (() => {
     toast(cuantos + ': ' + tr('+{g} grapas de oro · {o} de oro', { g: num(v.grapas), o: num(v.oro) })
       + (v.cofres ? ' · ' + tr('{c} cofres', { c: num(v.cofres) }) : '') + solo + (raros ? ' · ' + raros : ''), true);
   }
+  // una mejora de pago (ADR 125): cobra core (MONEDAS.compraReal); al llegar, la cuenta la apunta y el juego la aplica sola
+  function pago(id) {
+    const x = PW.MEJORAS_PAGO.find(m => m.id === id);
+    if (!x) return;
+    const html = `<p>${tr(x.txt, PW.panelesPago.cifras())}</p><p><b>${PW.panelesPago.euros(PW.AJ.mejoras[id].eur)}</b></p>`;
+    PW.mejorasPago.compra(id, tr(x.nombre), html, r => { if (r && (r.prueba || r.real)) { PW.sonido.toca('pop'); toast(tr('¡{n} ya es tuya!', { n: tr(x.nombre) }), true); } });
+  }
   function urgente() {
     const res = PW.casos.entregaUrgente();
     if (cuenta(res, 'pop')) toast(tr('Entregado a tiempo: {n} de oro', { n: PW.txt.num(res.valor.oro) }), true);
@@ -78,6 +85,7 @@ PW.botones = (() => {
     carrera: arg => cuenta(PW.casos.compraCarrera(arg), 'pop'),
     punto: () => cuenta(PW.casos.compraPunto(), 'pop'),
     tienda: arg => cuenta(PW.casos.compraTienda(arg), 'pop'),
+    pago,
     autodespido: arg => cuenta(PW.casos.fijaAutoDespido(+arg)),
     despedir,
     cobrar: arg => { const [p, id] = arg.split(':'); if (PW.retos.cobrar(p, id)) PW.sonido.toca('pop'); },

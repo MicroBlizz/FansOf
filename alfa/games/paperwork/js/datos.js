@@ -161,3 +161,17 @@ PW.CARTAS = [
   { id: 'adelanto', nombre: 'Un adelanto de la nómina', txt: 'Oro en el bolsillo, más cuanto más atascada esté la Trituradora' },
   { id: 'lacre', nombre: 'Un sello de lacre', txt: '+10 % de sello confidencial durante este turno' },
 ];
+// las mejoras de pago (ADR 125): para siempre, guardadas en la cuenta y sin azar. Cifras, claves y productos en PW.AJ.mejoras; los textos
+// llevan {p} (lo que se acorta la espera) y {n} (los huecos de la taquilla), que pone la pantalla con PW.panelesPago.cifras()
+PW.MEJORAS_PAGO = [
+  { id: 'turno', nombre: 'Turno rápido', txt: 'El paquete del sindicato llega un {p} antes, también con los talentos del plan al máximo.' },
+  { id: 'taquilla', nombre: 'Taquilla XL', txt: '{n} paquetes más en la taquilla: aguanta mucho más rato fuera sin perder ninguno.' },
+  { id: 'pack', nombre: 'Las dos mejoras', txt: 'Turno rápido y Taquilla XL juntas, más baratas.' },
+];
+// lo que enseña la cuenta de core al elegir entre la partida de este aparato y la de la nube (adaptadores/nube.js): [qué, de dónde]
+PW.RESUMEN_NUBE = [
+  { nombre: 'Nivel de la Trituradora', de: s => s.c && s.c.trituradora && s.c.trituradora.nivel },
+  { nombre: 'Despidos', de: s => s.c && s.c.despidos },
+  { nombre: 'Indemnización', de: s => s.c && s.c.indemnizacion },
+  { nombre: 'Planta más honda', de: s => s.c && s.c.plantaMax },
+];

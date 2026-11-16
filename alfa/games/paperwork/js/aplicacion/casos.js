@@ -4,7 +4,7 @@
 'use strict';
 PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
   const AJ = PW.AJ, GUARDA_CADA = 10, VUELTA_MIN = 60;   // segundos de juego entre guardados; segundos fuera para cobrar horas extra
-  let e = null, sinGuardar = 0;
+  let e = null, sinGuardar = 0, mejoras = PW.mejoras.NINGUNA;   // las mejoras de pago: de la cuenta, no de la partida (ADR 125)
 
   // los sucesos del motor y de las órdenes que cuentan para los logros
   const AVISOS = {
@@ -43,10 +43,12 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     if (!cargada || !cargada.ok) {
       if (j) almacen.guardaCopia(j);   // un guardado que no se entiende no se pisa sin más: se aparta una copia
       e = PW.partida.nueva(azar);
+      e.m = mejoras;
       guarda();
       return PW.ok({ nueva: true, vuelta: null, error: cargada && cargada.error });
     }
     e = cargada.valor;
+    e.m = mejoras;
     const vuelta = vuelve((reloj.ahora() - (j.t || reloj.ahora())) / 1000);
     guarda();
     return PW.ok({ nueva: false, vuelta });
@@ -106,10 +108,13 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
   }
   // los logros pagan en Indemnización: es lo que se queda entre despidos
   function ingresa(n) { e.c.indemnizacion += Math.max(0, Math.floor(n)); guarda(); }
-  function borra() { e = PW.partida.nueva(azar); guarda(); }
+  function borra() { e = PW.partida.nueva(azar); e.m = mejoras; guarda(); }
+  // las mejoras de pago que tiene la cuenta (PW.mejoras.de): se pueden poner antes de arrancar y cambiar en cualquier momento
+  function ponMejoras(m) { mejoras = m || PW.mejoras.NINGUNA; if (e) e.m = mejoras; }
 
   return {
-    arranca, vuelve, sale, entra, tick, toca, despide, ingresa, borra, guarda,
+    arranca, vuelve, sale, entra, tick, toca, despide, ingresa, borra, guarda, ponMejoras,
+    get mejoras() { return mejoras; },
     get partida() { return e; },
     bonos: B,
     estanteria: () => orden(s => PW.extras.lanzaEstanteria(e, B(), azar, s)),

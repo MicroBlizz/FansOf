@@ -10,6 +10,7 @@ PW.calibrado.jugador = (() => {
   const PERFILES = {
     activo: { nombre: 'Activo (no se va nunca)', juega: Infinity, cada: Infinity },
     hora: { nombre: 'Cada hora (5 min)', juega: 300, cada: 3600 },
+    dosHoras: { nombre: 'Cada 2 horas (5 min)', juega: 300, cada: 7200 },
     dia: { nombre: 'Dos veces al día (15 min)', juega: 900, cada: 43200 },
   };
   const UTILES = ['gafas', 'cafe', 'carrito', 'guantes', 'fundas'];
@@ -80,11 +81,12 @@ PW.calibrado.jugador = (() => {
   }
   // Juega `horas` horas de reloj (contando las de fuera). Resultado: { hitos, serie, partida, perfil }, con
   // hitos = { trituradora: [t de cada nivel], despidos: [{ t, nivel, planta, cobra }], recorridos: [[[t, planta]…]…], vueltas: [{ t, oro, paquetes, cofres }] }
-  function juega({ perfil = 'activo', horas = 6, semilla = 7, estancado = 180, mira = 5, muestra = 60, puertos = PW.calibrado.puertos } = {}) {
+  function juega({ perfil = 'activo', horas = 6, semilla = 7, estancado = 180, mira = 5, muestra = 60, mejoras = [], puertos = PW.calibrado.puertos } = {}) {
     const P = PERFILES[perfil];
     if (!P) return PW.error('perfil-desconocido', { perfil });
     const reloj = puertos.reloj();
     const cs = PW.creaCasos({ almacen: puertos.almacen(), reloj, azar: puertos.azar(semilla), retos: puertos.retos() });
+    cs.ponMejoras(PW.mejoras.de(mejoras));   // las claves de las mejoras de pago con las que juega (ADR 125)
     cs.arranca();
     const j = { t: 0, jugado: 0, ultimaPlanta: 1, desde: 0, serie: [foto(cs.partida, 0)], hitos: { trituradora: [], despidos: [], recorridos: [[]], vueltas: [] } };
     const fin = horas * 3600;

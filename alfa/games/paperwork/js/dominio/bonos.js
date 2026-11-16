@@ -67,8 +67,8 @@ PW.bonos = (() => {
       medidor: 1 + b('medidor'),
       horasExtra: AJ.horasExtra.parte + b('horasExtra'),
       topeDocumento: AJ.mejoraDocumento.max + b('topeDocumento'),
-      sindicatoCada: Math.max(AJ.sindicato.cadaMin, AJ.sindicato.cada - b('sindicatoCada')),
-      sindicatoMax: AJ.sindicato.guardaMax + b('sindicatoMax'),
+      sindicatoCada: PW.mejoras.espera(e.m, Math.max(AJ.sindicato.cadaMin, AJ.sindicato.cada - b('sindicatoCada'))),   // e.m: las mejoras de pago
+      sindicatoMax: PW.mejoras.taquilla(e.m, AJ.sindicato.guardaMax + b('sindicatoMax')),
       grapasPaquete: b('grapasPaquete'),
       precioZona: PW.ZONAS.map((z, i) => 1 + b('precioZona' + i)),   // los monumentos de la tienda
     };

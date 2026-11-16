@@ -1,7 +1,7 @@
 {
- "build": 1214,
+ "build": 1215,
  "hash": "4d7ffb7",
- "fecha": "2026-11-16T22:48:50Z",
+ "fecha": "2026-11-16T22:49:17Z",
  "mensaje": "Pop: cortinilla de duelo en estilo cozy y «haz pop» en vez de «revienta» (tarea #71, ADR 127)",
  "juegos": {
   "boom": "0.4.15",

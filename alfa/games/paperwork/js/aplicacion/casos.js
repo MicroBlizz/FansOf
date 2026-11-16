@@ -130,6 +130,7 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
     abreCofre: () => orden(() => PW.extras.abreCofre(e, azar), 'cofres'),
     usaObjeto: id => orden(() => PW.extras.usaObjeto(e, B(), id), 'objetos'),
     abreCorreo: () => orden(() => PW.extras.abreCorreo(e, B(), azar), 'correos'),
-    abreSindicato: () => orden(() => PW.extras.abreSindicato(e), 'sindicatos'),
+    abreSindicato: () => orden(() => PW.extras.abreSindicato(e, B(), azar), 'sindicatos'),
+    compraPunto: () => orden(() => PW.meritos.compraPunto(e), 'carrera'),
   };
 };

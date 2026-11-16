@@ -69,20 +69,23 @@ PW.extras = (() => {
   }
 
   // ---- paquete del sindicato
-  function avanzaSindicato(e, dt) {
+  // el reloj del paquete: llega uno cada B.sindicatoCada segundos y se guardan hasta B.sindicatoMax
+  function avanzaSindicato(e, B, dt) {
     const s = e.c.sindicato;
-    if (!PW.desbloqueos.tiene(e, 'sindicato') || s.guardados >= AJ.sindicato.guardaMax) return;
-    s.falta -= dt;
-    while (s.falta <= 0 && s.guardados < AJ.sindicato.guardaMax) { s.guardados++; s.falta += AJ.sindicato.cada; }
+    if (!PW.desbloqueos.tiene(e, 'sindicato') || s.guardados >= B.sindicatoMax) return;
+    s.falta = Math.min(s.falta, B.sindicatoCada) - dt;   // si un nodo acaba de acortar la espera, cuenta ya
+    while (s.falta <= 0 && s.guardados < B.sindicatoMax) { s.guardados++; s.falta += B.sindicatoCada; }
   }
-  function abreSindicato(e) {
+  // abrir un paquete: un mérito al azar, sus grapas de oro, oro y, con los cofres abiertos, un cofre.
+  // Resultado: PW.ok({ oro, cofre, merito, nivel, grapas }) o 'sin-paquetes'
+  function abreSindicato(e, B, azar) {
     const s = e.c.sindicato;
     if (!s.guardados) return PW.error('sin-paquetes');
     s.guardados--;
-    const oro = premioOro(e, AJ.sindicato.premioSegundos);
+    const oro = premioOro(e, AJ.sindicato.premioSegundos), cofre = B.abierto.cofres ? 1 : 0;
     e.r.oro += oro;
-    guardaCofre(e);
-    return PW.ok({ oro, cofre: 1 });
+    if (cofre) guardaCofre(e);
+    return PW.ok({ oro, cofre, ...PW.meritos.abre(e, B, azar) });
   }
 
   // ---- horas extra: al volver tras s segundos fuera, se cobra el ritmo de oro a una parte, con tope de horas
@@ -91,7 +94,7 @@ PW.extras = (() => {
     const oro = Math.floor((e.r.ritmoOro || 0) * segundos * B.horasExtra);
     e.r.oro += oro;
     PW.trituradora.pasaEspera(e, s);
-    avanzaSindicato(e, s);
+    avanzaSindicato(e, B, s);
     return PW.ok({ oro, segundos });
   }
 

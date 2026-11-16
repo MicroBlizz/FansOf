@@ -33,7 +33,9 @@ PW.botones = (() => {
   }
   function sindicato() {
     const res = PW.casos.abreSindicato();
-    if (cuenta(res, 'pop')) toast(tr('Paquete del sindicato: {n} de oro y un cofre', { n: PW.txt.num(res.valor.oro) }), true);
+    if (!cuenta(res, 'pop')) return;
+    const v = res.valor, m = PW.MERITOS.find(x => x.id === v.merito);
+    toast(tr('Mérito: {m} (×{v}) · +{g} grapas de oro · {o} de oro', { m: tr(m.nombre), v: v.nivel, g: PW.txt.num(v.grapas), o: PW.txt.num(v.oro) }) + (v.cofre ? ' · ' + tr('un cofre') : ''), true);
   }
   function urgente() {
     const res = PW.casos.entregaUrgente();
@@ -69,6 +71,7 @@ PW.botones = (() => {
     venta: arg => cuenta(PW.casos.fijaVenta(+arg)),
     recuerdo: arg => cuenta(PW.casos.compraRecuerdo(arg), 'pop'),
     carrera: arg => cuenta(PW.casos.compraCarrera(arg), 'pop'),
+    punto: () => cuenta(PW.casos.compraPunto(), 'pop'),
     autodespido: arg => cuenta(PW.casos.fijaAutoDespido(+arg)),
     despedir,
     cobrar: arg => { const [p, id] = arg.split(':'); if (PW.retos.cobrar(p, id)) PW.sonido.toca('pop'); },

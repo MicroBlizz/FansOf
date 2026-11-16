@@ -1,5 +1,5 @@
 // Fans Of Paperwork · dominio · BONOS: junta en un solo objeto todo lo que mejora al jugador (útiles, mejoras de documento, facciones
-// liberadas, Recuerdos, plan de carrera y objetos en uso) y lo convierte en las cifras que usa el resto: lectura, vistazos por segundo,
+// liberadas, Recuerdos, méritos, plan de carrera y objetos en uso) y lo convierte en las cifras que usa el resto: lectura, vistazos por segundo,
 // dureza que quitan los guantes y las herramientas, probabilidades y multiplicadores. Cada fuente suma sus bonos por clave; las claves se
 // suman entre fuentes (+10 % y +15 % = +25 %).
 'use strict';
@@ -14,6 +14,7 @@ PW.bonos = (() => {
     PW.FACCIONES.slice(0, liberadas(e)).forEach(f => suma(acc, f.bono, 1));
     PW.RECUERDOS.forEach(r => suma(acc, r.bono, e.c.recuerdos[r.id] || 0));
     PW.CARRERA.forEach(n => { if (e.c.plan[n.id]) suma(acc, n.bono, 1); });
+    PW.MERITOS.forEach(m => suma(acc, m.bono, e.c.meritos[m.id] || 0));
     PW.OBJETOS.forEach(o => { if ((e.r.activos[o.id] || 0) > 0) suma(acc, o.bono, 1); });
     suma(acc, e.r.bonoCarta, 1);   // lo que dé la carta de recomendación de este turno
     return acc;
@@ -63,6 +64,9 @@ PW.bonos = (() => {
       medidor: 1 + b('medidor'),
       horasExtra: AJ.horasExtra.parte + b('horasExtra'),
       topeDocumento: AJ.mejoraDocumento.max + b('topeDocumento'),
+      sindicatoCada: Math.max(AJ.sindicato.cadaMin, AJ.sindicato.cada - b('sindicatoCada')),
+      sindicatoMax: AJ.sindicato.guardaMax + b('sindicatoMax'),
+      grapasPaquete: b('grapasPaquete'),
     };
   }
   // la dureza que le queda al documento m (en la planta p) con los guantes y la herramienta de su zona

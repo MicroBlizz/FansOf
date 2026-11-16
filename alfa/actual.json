@@ -1,8 +1,8 @@
 {
- "build": 1194,
- "hash": "08b30b5",
- "fecha": "2026-11-15T15:06:55Z",
- "mensaje": "Paperwork 0.5.0: para bajar hay que vaciar la planta entera y encontrar la entrada",
+ "build": 1195,
+ "hash": "9fa703c",
+ "fecha": "2026-11-16T02:59:03Z",
+ "mensaje": "Paperwork 0.6.0: méritos y grapas de oro en el paquete del sindicato",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.5.0",
+  "paperwork": "0.6.0",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

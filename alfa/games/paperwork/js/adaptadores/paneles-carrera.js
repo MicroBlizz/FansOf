@@ -29,6 +29,21 @@ PW.panelesCarrera = (() => {
       return `<div class="pw-recuerdo">${P.icono(`img/icono-${r.id}.png`, '#b06bff')}<b>${tr(r.nombre)}</b><small>${tr(r.txt)} · ${tr('nivel {n}', { n: nivel })}</small>${der}</div>`;
     }).join('') + '</div>';
   }
+  // los méritos: los que trae el paquete del sindicato, cuántas veces se tiene cada uno y lo que suman en total
+  function meritos(e) {
+    const filas = PW.MERITOS.map(m => {
+      const veces = PW.meritos.nivel(e, m.id);
+      return P.fila(P.icono('', veces ? '#ffd23f' : '#555'), tr(m.nombre), tr(m.txt), `<em>×${n(veces)}</em>`);
+    }).join('');
+    return `<h4 class="pw-sub">${tr('Méritos')} · ${n(PW.meritos.total(e))}</h4>`
+      + `<p class="pw-nota">${tr('Cada paquete del sindicato trae un mérito al azar y unas grapas de oro. Los méritos son para toda la carrera, no se pierden con el Despido y no tienen tope: cada uno suma su bono otra vez.')}</p>`
+      + `<p class="pw-nota"><b>${tr('Grapas de oro: {n}', { n: n(e.c.grapas) })}</b> · ${PW.desbloqueos.tiene(e, 'plan') ? tr('Con ellas compras puntos del plan de carrera.') : tr('Guárdalas: cuando se abra el plan de carrera, compran puntos.')}</p>` + filas;
+  }
+  // comprar puntos del plan con grapas de oro (el precio sube con cada uno)
+  function punto(e) {
+    const precio = PW.meritos.precioPunto(e);
+    return `<div class="pw-venta"><b>${tr('Grapas de oro: {n}', { n: n(e.c.grapas) })}</b><div>${P.boton('punto', '', tr('Comprar un punto · {n} grapas', { n: n(precio) }), e.c.grapas >= precio)}</div></div>`;
+  }
   // la fotocopiadora (si se tiene su nodo): qué tipo de documento, de los que ya se han visto, sale el doble
   function fotocopia(e) {
     if (!e.c.plan.fotocopiadora) return '';
@@ -40,7 +55,7 @@ PW.panelesCarrera = (() => {
   function plan(e) {
     const puntos = PW.compras.puntos(e);
     return `<h4 class="pw-sub">${tr('Plan de carrera')} · ${tr('{n} puntos', { n: puntos })}</h4>`
-      + `<p class="pw-nota">${tr('Un punto por cada nivel atascado de la Trituradora y otro cada 10 niveles de tu nivel más alto.')}</p>` + fotocopia(e) + PW.CARRERA.map(c => {
+      + `<p class="pw-nota">${tr('Un punto por cada nivel atascado de la Trituradora, otro cada 10 niveles de tu nivel más alto y los que compres con grapas de oro.')}</p>` + punto(e) + fotocopia(e) + PW.CARRERA.map(c => {
         const hecho = !!e.c.plan[c.id], falta = c.pide && !e.c.plan[c.pide];
         const der = hecho ? `<em>${tr('Hecho')}</em>` : falta ? `<em>${tr('Antes: {n}', { n: tr(PW.CARRERA.find(x => x.id === c.pide).nombre) })}</em>` : P.boton('carrera', c.id, tr('{n} pt', { n: c.coste }), puntos >= c.coste);
         return P.fila(P.icono('', hecho ? '#3ddc84' : '#555'), tr(c.nombre), tr(c.txt), der);
@@ -59,7 +74,8 @@ PW.panelesCarrera = (() => {
   function avisos(e) {
     const puntos = PW.compras.puntos(e);
     const recuerdos = PW.RECUERDOS.filter(r => (e.c.recuerdos[r.id] || 0) < PW.AJ.recuerdo.max && e.c.indemnizacion >= PW.compras.precioRecuerdo(e, r.id)).length;
-    const plan = PW.CARRERA.filter(c => !e.c.plan[c.id] && !(c.pide && !e.c.plan[c.pide]) && puntos >= c.coste).length;
+    const plan = PW.CARRERA.filter(c => !e.c.plan[c.id] && !(c.pide && !e.c.plan[c.pide]) && puntos >= c.coste).length
+      + (PW.desbloqueos.tiene(e, 'plan') && e.c.grapas >= PW.meritos.precioPunto(e) ? 1 : 0);   // un punto que se puede comprar con grapas
     return { despido: 0, recuerdos, plan };
   }
 
@@ -74,5 +90,5 @@ PW.panelesCarrera = (() => {
     return `<div class="pw-texto">${P.boton('sonido', '', PW.sonido.apagado ? tr('Activar el sonido') : tr('Quitar el sonido'))}`
       + `<p>${tr('Versión {v}. Prototipo: las cifras cambiarán.', { v: PW.AJ.version })}</p>${P.boton('borrar', '', tr('Borrar la partida'), true, 'peligro')}</div>`;
   }
-  return { despido, recuerdos, plan, equipo, retos, opciones, avisos };
+  return { despido, recuerdos, meritos, plan, equipo, retos, opciones, avisos };
 })();

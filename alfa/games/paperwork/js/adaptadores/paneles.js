@@ -10,7 +10,7 @@ PW.paneles = (() => {
   const icono = (src, color) => `<span class="pw-ico" style="--c:${color || '#555'}">${src ? `<img src="${src}" alt="" onerror="this.remove()">` : ''}</span>`;
   // los dos niveles del menú y sus pestañas (las de la Trituradora y los cofres se abren desde los botones de acción)
   const TURNO = [['utiles', 'Útiles'], ['documentos', 'Documentos']];
-  const CARRERA = [['despido', 'Despido'], ['recuerdos', 'Recuerdos'], ['plan', 'Plan'], ['equipo', 'Equipo'], ['retos', 'Retos'], ['opciones', '···']];
+  const CARRERA = [['despido', 'Despido'], ['recuerdos', 'Recuerdos'], ['meritos', 'Méritos'], ['plan', 'Plan'], ['equipo', 'Equipo'], ['retos', 'Retos'], ['opciones', '···']];
   const enCarrera = pestana => CARRERA.some(([id]) => id === pestana);
 
   function hud(e, B) {
@@ -34,7 +34,7 @@ PW.paneles = (() => {
     return accion('estanteria', '', e.r.estanteria >= B.recargaEstanteria, carga(e.r.estanteria / B.recargaEstanteria), 'icono-castor', tr('Castor'))
       + accion('pestana', 'trituradora', PW.trituradora.lista(e), 0, 'trituradora', trit)
       + (B.abierto.sellos ? accion('urgente', '', urg.length > 0, carga(plazo / PW.AJ.sellos.urgenteDura), 'icono-sello', urg.length ? `${tr('Urgente')} ${t(plazo)}` : tr('Urgente')) : '')
-      + (B.abierto.sindicato ? accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / PW.AJ.sindicato.cada), 'icono-sindicato', `${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : ''}`) : '')
+      + (B.abierto.sindicato ? accion('sindicato', '', sind.guardados > 0, carga(1 - sind.falta / B.sindicatoCada), 'icono-sindicato', `${tr('Sindicato')} ${sind.guardados ? '×' + sind.guardados : ''}`) : '')
       + (B.abierto.cofres ? accion('pestana', 'cofres', cofres > 0, carga(e.r.medidor / PW.AJ.cofre.medidor), 'icono-cofre', `${tr('Cofres')} ${cofres ? '×' + cofres : ''}`) : '');
   }
   const pestanaDe = (id, txt, activa, globo, clase = '') => `<button class="ol ${clase}${activa === id ? ' activo' : ''}" data-acc="pestana" data-arg="${id}" data-globo="${globo || ''}">${txt}</button>`;

@@ -20,7 +20,7 @@ PW.principal = (() => {
   const PESTANAS = {
     utiles: (e, B) => PW.paneles.utiles(e, B), documentos: (e, B) => PW.paneles.documentos(e, B), trituradora: (e, B) => PW.paneles.trituradora(e, B),
     plantas: (e, B) => PW.panelesTurno.plantas(e, B), jefe: (e, B) => PW.panelesTurno.jefe(e, B),
-    cofres: e => PW.paneles.cofres(e), despido: (e, B) => PW.panelesCarrera.despido(e, B), recuerdos: e => PW.panelesCarrera.recuerdos(e),
+    cofres: e => PW.paneles.cofres(e), despido: (e, B) => PW.panelesCarrera.despido(e, B), recuerdos: e => PW.panelesCarrera.recuerdos(e), meritos: e => PW.panelesCarrera.meritos(e),
     plan: e => PW.panelesCarrera.plan(e), equipo: (e, B) => PW.panelesCarrera.equipo(e, B), retos: () => PW.panelesCarrera.retos(), opciones: () => PW.panelesCarrera.opciones(),
   };
   // el sonido de cada suceso del motor (los que no salen, callan)

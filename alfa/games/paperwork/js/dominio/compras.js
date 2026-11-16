@@ -63,10 +63,11 @@ PW.compras = (() => {
     e.c.recuerdos[id] = (e.c.recuerdos[id] || 0) + 1;
     return PW.ok(e.c.recuerdos[id]);
   }
-  // puntos del plan de carrera: uno por nivel atascado de la Trituradora y uno cada AJ.carreraPuntos.cadaNiveles del nivel más alto
+  // puntos del plan de carrera: uno por nivel atascado de la Trituradora, uno cada AJ.carreraPuntos.cadaNiveles del nivel más alto
+  // y los comprados con grapas de oro (dominio/meritos.js)
   function puntos(e) {
     const P = AJ.carreraPuntos;
-    const ganados = e.c.trituradora.nivel * P.porNivelTrituradora + Math.floor(e.c.nivelMax / P.cadaNiveles);
+    const ganados = e.c.trituradora.nivel * P.porNivelTrituradora + Math.floor(e.c.nivelMax / P.cadaNiveles) + e.c.puntosComprados;
     const gastados = PW.CARRERA.reduce((s, n) => s + (e.c.plan[n.id] ? n.coste : 0), 0);
     return ganados - gastados;
   }

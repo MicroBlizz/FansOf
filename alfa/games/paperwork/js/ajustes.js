@@ -5,7 +5,7 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.5.0',
+  version: '0.6.0',
   // entrada: archivadores que hay que vaciar en una planta para encontrar la entrada a la siguiente (base en la planta 1, y una parte
   // más por cada planta; los bonos de entrada la bajan hasta el mínimo)
   entrada: { base: 24, porPlanta: 0.06, minimo: 0.3 },
@@ -48,7 +48,7 @@ PW.AJ = {
   clasificado: { x2: 0.05, x3: 0 },
   // la Trituradora: lo que le cabe (capacidad) y lo que traga sin enterarse (tragaderas); en un intento come bocadosSeg documentos por segundo:
   // sin munición el atasco vale sinMunicion, con caducados 1 y con expedientes del documento i, 1 + porDocumento · (i + 1)
-  trituradora: { niveles: 10, capacidad0: 80000, capacidadBase: 3.2, tragaderas0: 2, tragaderasBase: 2.6, intento: 30, espera: 1200, premioOro: 200,
+  trituradora: { niveles: 10, capacidad0: 80000, capacidadBase: 3.5, tragaderas0: 2, tragaderasBase: 2.6, intento: 30, espera: 1200, premioOro: 200,
     bocadosSeg: 2, sinMunicion: 0.25, caducado: 1, porDocumento: 0.25 },
   despido: { base: 12, factor: 1.084, desde: 10 },
   recuerdo: { base: 8, factor: 1.6, max: 20 },
@@ -60,7 +60,10 @@ PW.AJ = {
   manias: { directoSeg: 5, directo: 2, renacer: 0.2, heroe: 3, rngMax: 3, apm: 1.5, nostalgia: 2, becarioVel: 0.5, becarioSello: 0.15 },
   cofre: { medidor: 120, guardaMax: 10, duracion: 60 },
   correo: { cadaMin: 35, cadaExtra: 30, vuelo: 7, premioSegundos: 25, cofre: 0.2 },
-  sindicato: { cada: 600, guardaMax: 3, premioSegundos: 90 },
+  // el paquete del sindicato: cada cuánto llega (los nodos del plan lo bajan, con un mínimo) y cuántos se guardan
+  sindicato: { cada: 600, cadaMin: 300, guardaMax: 4, premioSegundos: 90 },
+  // grapas de oro: las que trae cada paquete y lo que cuesta el primer punto del plan de carrera (cada uno, más)
+  grapas: { porPaquete: 2, punto0: 30, puntoFactor: 1.5 },
   horasExtra: { parte: 0.25, topeHoras: 12 },
   carreraPuntos: { porNivelTrituradora: 1, cadaNiveles: 10 },
 };

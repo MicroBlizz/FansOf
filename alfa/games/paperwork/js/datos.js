@@ -32,7 +32,7 @@ PW.DESBLOQUEOS = [
   { id: 'sellos', nivel: 2, nombre: 'Sellos y munición', txt: 'Documentos confidenciales, urgentes y caducados, y elegir qué le echas a la Trituradora' },
   { id: 'cofres', nivel: 2, nombre: 'Cofres', txt: 'Vaciando archivadores salen cofres con objetos' },
   { id: 'plan', nivel: 3, nombre: 'Plan de carrera y retos', txt: 'Puntos de carrera para mejoras permanentes, y misiones diarias y logros' },
-  { id: 'sindicato', nivel: 3, nombre: 'Paquete del sindicato', txt: 'Un regalo cada 10 minutos de juego' },
+  { id: 'sindicato', nivel: 1, nombre: 'Paquete del sindicato', txt: 'Cada 10 minutos, un mérito para toda la carrera y grapas de oro' },
   { id: 'encargos', nivel: 4, nombre: 'Pedidos del CEO y auditorías', txt: 'Encargos con plazo en los correos y archivadores precintados por IAhorro' },
 ];
 // los útiles del líder, que se compran con oro y se pierden con el Despido (las cifras, en AJ.utiles)
@@ -74,6 +74,18 @@ PW.RECUERDOS = [
   { id: 'plano', nombre: 'El plano del archivo', bono: { entrada: 0.04 }, txt: '−4 % de archivadores para encontrar la entrada' },
 ];
 
+// los méritos: los trae el paquete del sindicato, uno al azar cada vez; cada uno suma su bono otra vez, sin tope, y no se pierden nunca
+PW.MERITOS = [
+  { id: 'puntual', nombre: 'Llega puntual', bono: { dano: 0.01 }, txt: '+1 % de lectura' },
+  { id: 'cafe', nombre: 'Hace el café para todos', bono: { vel: 0.01 }, txt: '+1 % de velocidad' },
+  { id: 'cliente', nombre: 'Cliente satisfecho', bono: { precio: 0.01 }, txt: '+1 % de precio de venta' },
+  { id: 'curso', nombre: 'Curso de formación', bono: { xp: 0.01 }, txt: '+1 % de experiencia' },
+  { id: 'castor', nombre: 'Amigo del castor', bono: { estanteria: 0.01 }, txt: '+1 % de fuerza del castor' },
+  { id: 'atasco', nombre: 'Atascador del mes', bono: { trit: 0.01 }, txt: '+1 % de atasco a la Trituradora' },
+  { id: 'antiguedad', nombre: 'Antigüedad', bono: { indemn: 0.01 }, txt: '+1 % de Indemnización' },
+  { id: 'atajo', nombre: 'Se sabe los atajos', bono: { entrada: 0.005 }, txt: '−0,5 % de archivadores para encontrar la entrada' },
+];
+
 // el plan de carrera (el árbol de habilidades): cada nodo cuesta puntos y algunos piden otro antes
 PW.CARRERA = [
   { id: 'auto', nombre: 'Castor en plantilla', coste: 1, pide: null, bono: { autoEstanteria: 1 }, txt: 'El castor vuelca la estantería solo' },
@@ -90,6 +102,12 @@ PW.CARRERA = [
   { id: 'autodespido', nombre: 'Carta de despido firmada', coste: 2, pide: 'auto', bono: {}, txt: 'El equipo se despide solo al llegar al nivel que elijas' },
   { id: 'fotocopiadora', nombre: 'La fotocopiadora', coste: 2, pide: null, bono: {}, txt: 'Elige un tipo de documento: sus archivadores dan el doble' },
   { id: 'dron', nombre: 'Dron de reparto', coste: 2, pide: 'equipo', bono: { drones: 1 }, txt: 'Un dron rebusca en la fila de arriba del pasillo' },
+  { id: 'enlace', nombre: 'Enlace sindical', coste: 1, pide: null, bono: { sindicatoCada: 150 }, txt: 'El paquete del sindicato llega 2,5 minutos antes' },
+  { id: 'delegado', nombre: 'Delegado sindical', coste: 3, pide: 'enlace', bono: { sindicatoCada: 150 }, txt: 'Y otros 2,5 minutos antes (cada 5 minutos)' },
+  { id: 'afiliados', nombre: 'Más afiliados', coste: 1, pide: null, bono: { sindicatoMax: 3 }, txt: 'Se guardan 3 paquetes más' },
+  { id: 'comite', nombre: 'Comité de empresa', coste: 3, pide: 'afiliados', bono: { sindicatoMax: 3 }, txt: 'Y otros 3 más (hasta 10)' },
+  { id: 'cuota', nombre: 'Cuota sindical', coste: 2, pide: null, bono: { grapasPaquete: 1 }, txt: '+1 grapa de oro en cada paquete' },
+  { id: 'caja', nombre: 'Caja de resistencia', coste: 4, pide: 'cuota', bono: { grapasPaquete: 2 }, txt: '+2 grapas de oro más en cada paquete' },
   { id: 'abogado', nombre: 'Abogado laboralista', coste: 3, pide: 'extra', bono: { indemn: 0.25 }, txt: '+25 % de Indemnización' },
 ];
 

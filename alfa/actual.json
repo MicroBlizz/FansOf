@@ -1,8 +1,8 @@
 {
- "build": 1205,
- "hash": "a63c993",
- "fecha": "2026-11-16T18:10:46Z",
- "mensaje": "Tablero: nombre corto y fácil junto al número de cada tarea (SQL 141, tarea #63, ADR 124)",
+ "build": 1206,
+ "hash": "9bff69c",
+ "fecha": "2026-11-16T18:19:50Z",
+ "mensaje": "Fans of Wings 0.1.0: combate aéreo en lonchas apiladas (3D) con tres cámaras; sustituye a Air",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

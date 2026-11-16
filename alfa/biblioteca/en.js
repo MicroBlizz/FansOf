@@ -113,6 +113,7 @@ IDIOMA.add({
   "Acción": "Action",
   "Arcade": "Arcade",
   "Aviones": "Planes",
+  "Lonchas": "Stacked slices",
   "Deportes": "Sports",
   "Hordas": "Hordes",
   "Supervivencia": "Survival",

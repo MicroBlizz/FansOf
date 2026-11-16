@@ -106,6 +106,9 @@
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
     'js/sistema/anuncios.js',      // la capa común de anuncios con premio: AdMob en la app, H5 Games Ads en la web y el nuestro de reserva (tras el flag «anuncios»)
     'js/sistema/medidor-anuncios.js', // las reglas del medidor de anuncios: niveles y multiplicadores de cada acción con anuncio (ADR 123)
+    'js/sistema/medidor-anuncios-casos.js', // el caso de uso de una acción con anuncio, encima de ANUNCIOS.ver (MEDIDOR_ANUNCIOS.crea)
+    'js/sistema/medidor-anuncios-pantalla.js', // la barra del medidor de anuncios (su hoja: core/css/medidor-anuncios.css)
+    'js/sistema/medidor-anuncios-tienda.js', // la oferta «Sin anuncios» de la tienda de un juego (MEDIDOR_ANUNCIOS.creaTienda)
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
     'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
   ];

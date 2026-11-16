@@ -245,4 +245,13 @@ IDIOMA.add({
   "Sin conexión. Comprueba la red y reintenta": "Nessuna connessione. Controlla la rete e riprova",
   "Está tardando más de lo normal": "Ci sta mettendo più del solito",
   "Reintentar": "Riprova",
+  // el medidor de anuncios y su oferta «Sin anuncios» (ADR 123)
+  "NIVEL DE ANUNCIOS": "LIVELLO ANNUNCI",
+  "Nivel {n} de {m}": "Livello {n} di {m}",
+  "Cada anuncio que ves sube la barra. Si recoges un premio sin verlo, baja un poco.": "Ogni annuncio che guardi riempie la barra. Se ritiri un premio senza guardarlo, scende un po'.",
+  "Sin anuncios: siempre en el nivel máximo.": "Senza annunci: sempre al livello massimo.",
+  "Sin anuncios": "Senza annunci",
+  "PARA SIEMPRE": "PER SEMPRE",
+  "Los premios de los anuncios te llegan al momento, sin verlos, y tu nivel de anuncios es siempre el máximo. El tope de cada día sigue igual.": "I premi degli annunci arrivano subito, senza guardarli, e il tuo livello annunci è sempre il massimo. Il limite di ogni giorno resta uguale.",
+  "¿COMPRAR?": "COMPRARE?",
 });

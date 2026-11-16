@@ -1,0 +1,19 @@
+/* Fans Of · la barra del medidor de anuncios (core/js/sistema/medidor-anuncios-pantalla.js, ADR 123).
+   Cada juego cambia los colores con estas variables en su hoja. */
+.med-an { --med-fondo: rgba(255, 255, 255, .14); --med-lleno: #7df3ff; --med-maximo: #ffd24a; --med-raya: #20102c; --med-texto: #fff;
+  display: flex; flex-direction: column; gap: 5px; width: 100%; box-sizing: border-box; color: var(--med-texto); font-weight: 700; }
+.med-an-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 13px; }
+.med-an-cab span { font-size: 11px; font-weight: 900; letter-spacing: .04em; opacity: .85; }
+.med-an-barra { position: relative; height: 14px; border-radius: 99px; background: var(--med-fondo); border: 2px solid var(--med-raya); overflow: hidden; }
+.med-an-barra i { display: block; height: 100%; background: var(--med-lleno); transition: width .5s ease-out; }
+.med-an-barra s { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--med-raya); opacity: .55; }
+.med-an.fija .med-an-barra i { background: var(--med-maximo); }
+.med-an small { font-size: 11px; font-weight: 600; opacity: .8; line-height: 1.25; }
+/* la oferta «Sin anuncios» en la tienda del juego (medidor-anuncios-tienda.js) */
+.med-an-oferta { --med-texto: #fff; --med-boton: #3ddc84; --med-raya: #20102c;
+  display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; color: var(--med-texto); font-weight: 700; }
+.med-an-oferta > div { flex: 1; min-width: 0; }
+.med-an-oferta p { margin: 3px 0 0; font-size: 12px; font-weight: 600; opacity: .85; line-height: 1.25; }
+.med-an-siempre { padding: 1px 7px; border-radius: 6px; background: #ffd24a; color: #20102c; font-size: 10px; font-weight: 900; white-space: nowrap; }
+.med-an-compra { flex: none; padding: 8px 12px; border-radius: 10px; border: 2px solid var(--med-raya); background: var(--med-boton); color: #20102c; font: inherit; font-weight: 900; cursor: pointer; }
+.med-an-oferta em { flex: none; font-style: normal; font-size: 12px; opacity: .8; }

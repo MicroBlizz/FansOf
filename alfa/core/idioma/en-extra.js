@@ -233,5 +233,13 @@ IDIOMA.add({
   "VOLVER A LA LIBRERÍA": "BACK TO THE LIBRARY",
   "Esta es la copia de pruebas de Fans Of. Entra con tu cuenta de probador para jugar.": "This is the Fans Of test copy. Sign in with your tester account to play.",
   "Esta cuenta no tiene acceso a la copia de pruebas. Pídelo a Microblizz.": "This account has no access to the test copy. Ask Microblizz.",
-  "No se ha podido comprobar tu acceso a la copia de pruebas. Revisa la conexión y recarga.": "Your access to the test copy could not be checked. Check your connection and reload."
+  "No se ha podido comprobar tu acceso a la copia de pruebas. Revisa la conexión y recarga.": "Your access to the test copy could not be checked. Check your connection and reload.",
+  // el medidor de anuncios y su oferta «Sin anuncios» (ADR 123)
+  "NIVEL DE ANUNCIOS": "AD LEVEL",
+  "Nivel {n} de {m}": "Level {n} of {m}",
+  "Cada anuncio que ves sube la barra. Si recoges un premio sin verlo, baja un poco.": "Every ad you watch fills the bar. Claiming a reward without watching lowers it a little.",
+  "Sin anuncios: siempre en el nivel máximo.": "No ads: always at the top level.",
+  "Sin anuncios": "No ads",
+  "PARA SIEMPRE": "FOREVER",
+  "Los premios de los anuncios te llegan al momento, sin verlos, y tu nivel de anuncios es siempre el máximo. El tope de cada día sigue igual.": "Ad rewards arrive instantly, without watching, and your ad level is always the highest. The daily limit stays the same.",
 });

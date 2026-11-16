@@ -1,8 +1,8 @@
 {
- "build": 1202,
- "hash": "df8a8f9",
- "fecha": "2026-11-16T16:47:49Z",
- "mensaje": "/gestion → Paperwork → Calibrado: panel para comparar partidas a cámara rápida (tarea #60, ADR 122)",
+ "build": 1203,
+ "hash": "f8ba1bb",
+ "fecha": "2026-11-16T17:40:14Z",
+ "mensaje": "Tablero sencillo: primero en Global, colores y frase por columna, tres grupos en el móvil y «Apuntar idea o fallo» (tarea #63, ADR 124)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

@@ -53,6 +53,8 @@ PW.efectos = (() => {
     'intento-fin': s => cartel(tr('Intento terminado'), '#ffffff', 2, tr('{p} de la Trituradora atascada', { p: PW.txt.pct(s.parte) })),
     'pedido-ok': s => cartel(tr('¡Pedido cumplido!'), '#3ddc84', 2.2, tr('{n} de oro y un cofre', { n: PW.txt.num(s.oro) })),
     'pedido-mal': s => cartel(tr('Pedido sin cumplir'), '#ff4d5e', 2.4, tr('Sanción: {p} menos en tu próximo Despido', { p: PW.txt.pct(s.sancion) })),
+    'expediente-ok': s => cartel(tr('¡Expediente de la semana cumplido!'), '#ffd23f', 2.4, tr('+{g} grapas de oro', { g: PW.txt.num(s.grapas) })),
+    'expediente-fin': () => cartel(tr('Se acabó el plazo del expediente'), '#9aa0a8', 2, tr('Empieza otro')),
     requisa: s => cartel(tr('IAhorro se lleva {n} archivadores', { n: s.n }), '#9aa0a8', 2.2),
     despido: s => cartel(tr('¡DESPEDIDOS!'), '#ff4d5e', 2.5, tr('Indemnización: {n}', { n: PW.txt.num(s.cobra) })),
   };

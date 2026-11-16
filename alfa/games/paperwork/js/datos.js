@@ -34,6 +34,8 @@ PW.DESBLOQUEOS = [
   { id: 'plan', nivel: 3, nombre: 'Plan de carrera y retos', txt: 'Puntos de carrera para mejoras permanentes, y misiones diarias y logros' },
   { id: 'sindicato', nivel: 1, nombre: 'Paquete del sindicato', txt: 'Cada 10 minutos, un mérito para toda la carrera y grapas de oro' },
   { id: 'rarezas', nivel: 4, nombre: 'Méritos raros', txt: 'Los méritos del paquete pueden salir raros, épicos, legendarios o míticos, y valen más' },
+  { id: 'racha', nivel: 3, nombre: 'Racha de correos', txt: 'Abrir correos del CEO seguidos multiplica su premio' },
+  { id: 'expediente', nivel: 5, nombre: 'Expediente de la semana', txt: 'Un encargo de varios días que se cumple jugando y paga grapas de oro' },
   { id: 'encargos', nivel: 4, nombre: 'Pedidos del CEO y auditorías', txt: 'Encargos con plazo en los correos y archivadores precintados por IAhorro' },
 ];
 // los útiles del líder, que se compran con oro y se pierden con el Despido (las cifras, en AJ.utiles)
@@ -122,6 +124,7 @@ PW.CARRERA = [
   { id: 'afiliados', nombre: 'Más afiliados', coste: 1, pide: null, bono: { sindicatoMax: 3 }, txt: 'Se guardan 3 paquetes más' },
   { id: 'comite', nombre: 'Comité de empresa', coste: 3, pide: 'afiliados', bono: { sindicatoMax: 3 }, txt: 'Y otros 3 más (hasta 10)' },
   { id: 'cuota', nombre: 'Cuota sindical', coste: 2, pide: null, bono: { grapasPaquete: 1 }, txt: '+1 grapa de oro en cada paquete' },
+  { id: 'cartero', nombre: 'Cartero de confianza', coste: 2, pide: 'correo', bono: { correoFrecuencia: 0.25 }, txt: 'Los correos del CEO llegan un 25 % más a menudo' },
   { id: 'caja', nombre: 'Caja de resistencia', coste: 4, pide: 'cuota', bono: { grapasPaquete: 2 }, txt: '+2 grapas de oro más en cada paquete' },
   { id: 'abogado', nombre: 'Abogado laboralista', coste: 3, pide: 'extra', bono: { indemn: 0.25 }, txt: '+25 % de Indemnización' },
 ];

@@ -10,12 +10,13 @@ PW.txt = (() => {
     const v = n / d;
     return fmtV(v >= 100 ? Math.floor(v) : Math.floor(v * 10) / 10) + ' ' + tr(s);
   }
-  // segundos en texto: «45 s», «3 min 20 s», «1 h 5 min»
+  // segundos en texto: «45 s», «3 min 20 s», «1 h 5 min», y desde 2 días «2 d 23 h»
   function tiempo(s) {
     s = Math.max(0, Math.ceil(s));
     if (s < 60) return tr('{s} s', { s });
     const m = Math.floor(s / 60), h = Math.floor(m / 60);
     if (!h) return s % 60 ? tr('{m} min {s} s', { m, s: s % 60 }) : tr('{m} min', { m });
+    if (h >= 48) { const d = Math.floor(h / 24); return h % 24 ? tr('{d} d {h} h', { d, h: h % 24 }) : tr('{d} d', { d }); }
     return m % 60 ? tr('{h} h {m} min', { h, m: m % 60 }) : tr('{h} h', { h });
   }
   // segundos en reloj corto, para los botones estrechos: «9:05», «1:02:30»

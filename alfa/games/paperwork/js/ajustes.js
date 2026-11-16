@@ -5,7 +5,7 @@
 // prototipo vive solo en este navegador
 const AJUSTES = { id: '', nombre: 'Fans Of Paperwork', guardado: 'for-paperwork-v1', sinFeedback: true };
 PW.AJ = {
-  version: '0.8.0',
+  version: '0.9.0',
   // entrada: archivadores que hay que vaciar en una planta para encontrar la entrada a la siguiente (base en la planta 1, y una parte
   // más por cada planta; los bonos de entrada la bajan hasta el mínimo)
   entrada: { base: 24, porPlanta: 0.06, minimo: 0.3 },
@@ -60,6 +60,11 @@ PW.AJ = {
   manias: { directoSeg: 5, directo: 2, renacer: 0.2, heroe: 3, rngMax: 3, apm: 1.5, nostalgia: 2, becarioVel: 0.5, becarioSello: 0.15 },
   cofre: { medidor: 120, guardaMax: 10, duracion: 60 },
   correo: { cadaMin: 35, cadaExtra: 30, vuelo: 7, premioSegundos: 25, cofre: 0.2 },
+  // la racha de correos: abrir uno antes de `ventana` segundos desde el anterior sube la racha (hasta `max`); cada punto, +`paso` de premio
+  racha: { ventana: 100, paso: 0.5, max: 3 },
+  // el expediente de la semana: dura `duracion` segundos (fuera también corren), pide los archivadores que el equipo vacía en `horasJuego`
+  // horas a su ritmo de ahora (y al menos `minimo`), y paga `grapasNivel` grapas de oro por nivel de la Trituradora y un cofre
+  expediente: { duracion: 259200, horasJuego: 2, minimo: 150, grapasNivel: 25 },
   // el paquete del sindicato: cada cuánto llega (los nodos del plan lo bajan, con un mínimo) y cuántos se guardan
   sindicato: { cada: 600, cadaMin: 300, guardaMax: 4, premioSegundos: 90 },
   // grapas de oro: las que trae cada paquete y lo que cuesta el primer punto del plan de carrera (cada uno, más)

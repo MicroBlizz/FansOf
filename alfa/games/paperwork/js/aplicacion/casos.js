@@ -10,6 +10,7 @@ PW.creaCasos = ({ almacen, reloj, azar, retos }) => {
   const AVISOS = {
     vacio: () => ['evento', 'archivadores', 1],
     'pedido-ok': () => ['evento', 'pedidos', 1],
+    'expediente-ok': () => ['evento', 'expedientes', 1],
     planta: s => ['maximo', 'planta', s.n],
     nivel: s => ['maximo', 'nivel', s.n],
     trituradora: s => ['maximo', 'trituradora', s.nivel],

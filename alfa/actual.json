@@ -1,8 +1,8 @@
 {
- "build": 1198,
- "hash": "06de960",
- "fecha": "2026-11-16T14:46:48Z",
- "mensaje": "Paperwork 0.8.0: «Mientras no estabas» e hitos por Despidos",
+ "build": 1199,
+ "hash": "001db9d",
+ "fecha": "2026-11-16T14:52:11Z",
+ "mensaje": "Paperwork 0.9.0: racha de correos del CEO y expediente de la semana",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.8.0",
+  "paperwork": "0.9.0",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

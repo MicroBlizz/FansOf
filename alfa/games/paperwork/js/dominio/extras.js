@@ -45,14 +45,15 @@ PW.extras = (() => {
   function gastaActivos(e, dt) { for (const k in e.r.activos) e.r.activos[k] = Math.max(0, e.r.activos[k] - dt); }
 
   // ---- correos del CEO: c.correo.falta = segundos hasta el siguiente; vuela = segundos que le quedan en pantalla
-  function avanzaCorreo(e, dt, azar, sucesos) {
+  function avanzaCorreo(e, B, dt, azar, sucesos) {
     const k = e.c.correo;
+    k.desde += dt;   // lo que ha pasado desde el último correo abierto (para la racha)
     if (k.vuela > 0) { k.vuela = Math.max(0, k.vuela - dt); return; }
     k.falta -= dt;
     if (k.falta > 0) return;
     k.vuela = AJ.correo.vuelo;
     k.x = azar();
-    k.falta = AJ.correo.cadaMin + azar() * AJ.correo.cadaExtra;
+    k.falta = (AJ.correo.cadaMin + azar() * AJ.correo.cadaExtra) / B.correoFrec;
     sucesos.push({ t: 'correo' });
   }
   // tocar el correo en vuelo. Resultado: PW.ok({ oro, cofre, pedido? }) (puede traer un pedido del CEO en vez de premio) o 'sin-correo'
@@ -61,11 +62,19 @@ PW.extras = (() => {
     if (!(k.vuela > 0)) return PW.error('sin-correo');
     k.vuela = 0;
     e.c.totales.correos++;
+    const racha = sigueRacha(e, B);   // cualquier correo abierto sigue la racha; solo el oro se multiplica
     if (azar() < AJ.correo.cofre && B.abierto.cofres) { guardaCofre(e); return PW.ok({ oro: 0, cofre: 1 }); }
     if (B.abierto.encargos && !e.r.pedido && !PW.trituradora.atascando(e) && azar() < AJ.pedido.prob) return PW.ok({ oro: 0, cofre: 0, pedido: PW.encargos.abre(e) });
-    const oro = premioOro(e, AJ.correo.premioSegundos) * B.correos;
+    const oro = Math.floor(premioOro(e, AJ.correo.premioSegundos) * B.correos * (1 + racha * AJ.racha.paso));
     e.r.oro += oro;
-    return PW.ok({ oro, cofre: 0 });
+    return PW.ok(racha ? { oro, cofre: 0, racha } : { oro, cofre: 0 });
+  }
+  // la racha: un correo abierto poco después del anterior la sube (con su desbloqueo); si no, vuelve a cero
+  function sigueRacha(e, B) {
+    const k = e.c.correo, seguido = B.abierto.racha && k.desde <= AJ.racha.ventana;
+    k.racha = seguido ? Math.min(AJ.racha.max, k.racha + 1) : 0;
+    k.desde = 0;
+    return k.racha;
   }
 
   // ---- paquete del sindicato
@@ -116,6 +125,8 @@ PW.extras = (() => {
     PW.trituradora.pasaEspera(e, s);
     const antes = e.c.sindicato.guardados;
     avanzaSindicato(e, B, s);
+    PW.expediente.avanza(e, B, segundos, []);   // fuera no se vacía nada, pero el plazo corre
+    e.c.correo.desde += s;   // irse corta la racha de correos
     return PW.ok({ oro, segundos, paquetes: e.c.sindicato.guardados - antes, cofres: cofresFuera(e, B, segundos) });
   }
   function cofresFuera(e, B, segundos) {

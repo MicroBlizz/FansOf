@@ -62,6 +62,7 @@ PW.bonos = (() => {
       drones: b('drones') + (e.r.temporales || 0),
       trab: AJ.trabajador.parteDelLider * (1 + b('trab')),
       correos: b('correosDobles') ? 2 : 1,
+      correoFrec: 1 + b('correoFrecuencia'),
       medidor: 1 + b('medidor'),
       horasExtra: AJ.horasExtra.parte + b('horasExtra'),
       topeDocumento: AJ.mejoraDocumento.max + b('topeDocumento'),

@@ -34,7 +34,8 @@ PW.motor = (() => {
       PW.equipo.trabajan(e, B, dt, azar, sucesos);
       estanteria(e, B, dt, azar, sucesos);
     }
-    PW.extras.avanzaCorreo(e, dt, azar, sucesos);
+    PW.extras.avanzaCorreo(e, B, dt, azar, sucesos);
+    PW.expediente.avanza(e, B, dt, sucesos);
     PW.extras.avanzaSindicato(e, B, dt);
     PW.extras.gastaActivos(e, dt);
     PW.sellos.avanza(e, B, dt, azar, sucesos);

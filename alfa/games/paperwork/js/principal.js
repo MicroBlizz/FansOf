@@ -104,7 +104,8 @@ PW.principal = (() => {
     if (!PW.botones.cuenta(res, 'pop')) return;
     const p = res.valor.pedido;
     if (p) { toast(tr('Pedido del CEO: vacía {n} archivadores en {t}', { n: p.n, t: PW.txt.tiempo(p.falta) }), true); return; }
-    toast(res.valor.cofre ? tr('El CEO te manda un cofre por error') : tr('Correo del CEO: {n} de oro', { n: PW.txt.num(res.valor.oro) }), true);
+    const racha = res.valor.racha ? ' · ' + tr('racha ×{r}', { r: PW.txt.num(1 + res.valor.racha * PW.AJ.racha.paso) }) : '';
+    toast(res.valor.cofre ? tr('El CEO te manda un cofre por error') : tr('Correo del CEO: {n} de oro', { n: PW.txt.num(res.valor.oro) }) + racha, true);
   }
   function bienvenida(v) {
     if (!v || !(v.oro > 0 || v.paquetes > 0 || v.cofres > 0)) return;

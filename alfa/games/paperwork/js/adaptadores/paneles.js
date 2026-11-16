@@ -93,6 +93,14 @@ PW.paneles = (() => {
     const lee = PW.curvas.trasDureza(B.dano, du), poco = lee < B.dano * 0.5;
     return `<p class="pw-nota${poco ? ' pw-aviso' : ''}">${tr('El papel de esta planta resta {d} a cada vistazo: lees {n}.', { d: n(du), n: n(lee) })}${poco ? ' ' + tr('Tocan guantes.') : ''}</p>`;
   }
+  // el expediente de la semana: lo que lleva, lo que pide, cuánto queda y lo que paga (o nada si aún está cerrado)
+  function expediente(e, B) {
+    const x = e.c.expediente;
+    if (!B.abierto.expediente || !x) return '';
+    const estado = x.cumplido ? tr('Cumplido: el siguiente llega en {t}', { t: PW.txt.tiempo(x.falta) })
+      : tr('{h} de {n} archivadores · quedan {t} · paga {g} grapas de oro y un cofre', { h: n(PW.expediente.hechos(e)), n: n(x.n), t: PW.txt.tiempo(x.falta), g: n(PW.expediente.grapas(e)) });
+    return `<div class="pw-venta pw-expediente" style="--p:${x.cumplido ? 1 : PW.expediente.hechos(e) / x.n}"><b>${tr('Expediente de la semana')}</b><small>${estado}</small></div>`;
+  }
   function utiles(e, B) {
     const filas = utilesVistos(e).map(u => {
       const nivel = e.r.utiles[u.id], max = PW.AJ.utiles[u.id].max, precio = PW.compras.precioUtil(e, u.id);
@@ -106,7 +114,7 @@ PW.paneles = (() => {
       return fila(icono(`img/icono-${H.id}.png`, '#9aa7b8'), `${tr(H.nombre)} · ${tr('nivel {n}', { n: nivel })}`, det, der);
     }).join('');
     const venta = [0, 0.25, 0.5, 0.75, 1].map(p => boton('venta', p, pct(p), true, e.r.venta === p ? 'activo' : '')).join('');
-    return cartas(e) + notaDureza(e, B) + filas + herramientas + `<div class="pw-venta"><b>${tr('Expedientes que se venden solos a la prensa')}</b><div>${venta}</div></div>`;
+    return cartas(e) + expediente(e, B) + notaDureza(e, B) + filas + herramientas + `<div class="pw-venta"><b>${tr('Expedientes que se venden solos a la prensa')}</b><div>${venta}</div></div>`;
   }
   // los montones urgentes (con lo que pagan si se entregan ya) y los caducados guardados
   function montones(e, B) {

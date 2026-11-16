@@ -3,7 +3,7 @@
 // se prueban en Node. El controlador (controlador.js) las pone en la página. Reutiliza las clases de /gestion (caja, cuenta, cab, estado, meta…).
 'use strict';
 TABLERO.vista = (() => {
-  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo', requiere: 'En «Requiere» van números de tarea (#3, 7), como mucho 20' };
+  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', corto: 'El nombre corto tiene que tener como mucho 60 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo', requiere: 'En «Requiere» van números de tarea (#3, 7), como mucho 20' };
   const MENSAJES = {
     'es-de-otro': 'Esa tarea es de otra persona',
     'esta-hecha': 'Esa tarea ya está hecha',
@@ -31,9 +31,12 @@ TABLERO.vista = (() => {
   // Si aún no ha empezado y algún requisito sigue abierto: «Espera a #N», o «Bloqueada» si son varios (el detalle dice cuáles)
   const bloqueo = t => (b => (b.length ? ` <span class="estado tb-bloqueo">${b.length === 1 ? 'Espera a #' + b[0] : 'Bloqueada'}</span>` : ''))(TABLERO.bloqueos(t));
   const avanceGrafo = t => (t.grafo ? (r => ` <span class="estado">${r.pasa}/${r.total} nodos</span>`)(t.grafo.resumen()) : '');
+  // Con nombre corto (SQL 141, Pepins): «#61 Paperwork: cosas de pago» en grande y el título largo debajo, más pequeño; sin él, el título como siempre
+  const cabeza = (t, esc) => (t.corto ? `<div class="cab"><span class="codigo">#${t.id}</span><b class="tb-corto">${esc(t.corto)}</b></div><div class="tb-largo">${esc(t.titulo)}</div>`
+    : `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b></div>`);
   const tonoDe = id => (TABLERO.columna(id) || { tono: 'transparent' }).tono;
   const tarjeta = (t, esc, elegida, conColumna) => `<article class="cuenta tb-tarea${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
-    <div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b></div>
+    ${cabeza(t, esc)}
     <div class="meta">${conColumna ? `<span class="estado tb-donde">${esc(TABLERO.tituloDe(t.estado))}</span> ` : ''}<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.refinado ? ' <span class="estado">con informe</span>' : ''}${avanceGrafo(t)}${bloqueo(t)}</div>
     ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}</article>`;
   // Cabecera de la columna con su color y, debajo, su frase de ayuda (qué significa estar ahí)
@@ -59,7 +62,7 @@ TABLERO.vista = (() => {
   const campo = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<input type="text" name="${nombre}" value="${esc(valor || '')}"${ancho ? ` maxlength="${ancho}"` : ''}></label>`;
   const area = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<textarea name="${nombre}" rows="2" maxlength="${ancho}">${esc(valor || '')}</textarea></label>`;
   const formulario = (v, esc) => `<form class="tb-form" data-id="${v.id || ''}"><div class="cab"><b>${v.id ? 'Editar tarea #' + v.id : 'Nueva tarea (nace en Ideas)'}</b></div>
-    ${campo('titulo', 'Título', v.titulo, esc, 120)}<div class="tb-parecidas" data-parecidas aria-live="polite"></div>${area('descripcion', 'Qué hay que hacer', v.descripcion, esc, 4000)}${area('criterio', 'Está hecho cuando…', v.criterio, esc, 2000)}
+    ${campo('titulo', 'Título', v.titulo, esc, 120)}${campo('corto', 'Nombre corto y fácil (sale en la tarjeta junto al número; si se deja vacío, sale el título)', v.corto, esc, 60)}<div class="tb-parecidas" data-parecidas aria-live="polite"></div>${area('descripcion', 'Qué hay que hacer', v.descripcion, esc, 4000)}${area('criterio', 'Está hecho cuando…', v.criterio, esc, 2000)}
     ${area('refinado', 'Informe de refinado (dudas, choques, qué queda fuera)', v.refinado, esc, 4000)}${v.estado === 'en_curso' ? campo('esperando', 'Esperando a (a quién y qué; se borra al salir de en curso)', v.esperando, esc, 200) : ''}
     <div class="filtros"><label>Juego o área<input type="text" name="juego" value="${esc(v.juego || 'general')}" maxlength="40" list="tb-juegos"></label>
     <label>Responsable<select name="responsable">${opciones([['', 'Sin responsable'], ...Object.entries(TABLERO.RESPONSABLES)], v.responsable || '', esc)}</select></label>
@@ -90,7 +93,7 @@ TABLERO.vista = (() => {
     + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}';
   const ESTILO_MOVIL = '.tb-movil{display:none;gap:10px}.tb-grupos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}'
     + '.tb-grupo{min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:2px solid var(--tono);background:var(--panel);color:var(--texto);border-radius:12px;font-weight:600}'
-    + '.tb-grupo b{font-size:20px}.tb-grupo.activo{background:var(--tono);color:#10202b}.tb-lista-movil{display:grid;gap:8px}.tb-lista-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-donde{font-weight:600}'
+    + '.tb-grupo b{font-size:20px}.tb-grupo.activo{background:var(--tono);color:#10202b}.tb-lista-movil{display:grid;gap:8px}.tb-lista-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-donde{font-weight:600}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'
     + '.tb-rapida{background:#3dbe8b;color:#10202b;border-color:#3dbe8b;font-weight:700}.tb-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tb-tipo{display:flex;gap:6px;align-items:center;border:2px solid var(--acento);border-radius:10px;padding:10px;font-weight:600}.tb-tipo:has(input:checked){background:var(--acento);color:var(--acento-texto)}'
     + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}}';
   return { html, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL };

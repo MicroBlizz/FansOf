@@ -49,7 +49,7 @@ PW.efectos = (() => {
     clasificado: s => numero(R.x + R.ancho / 2, R.y - 10, tr('Clasificado x{n}', { n: s.multi }), '#3ddc84'),
     'urgente-tarde': () => numero(R.x + R.ancho / 2, R.y - 10, tr('Se pasó el plazo'), '#9aa0a8'),
     especialidad: s => cartel(tr('Especialidad en {m}: rango {r}', { m: tr(PW.DOCUMENTOS[s.m].nombre), r: s.rango }), '#b06bff', 2),
-    trituradora: s => { temblor = 1; destello = 0.6; cartel(tr('¡Trituradora atascada!'), '#ff4d5e', 3, PW.FACCIONES[s.nivel] ? tr('{lider} se une al equipo', { lider: PW.FACCIONES[s.nivel].lider }) : ''); abre(s.nivel); },
+    trituradora: s => { temblor = 1; destello = 0.6; cartel(tr('¡Trituradora atascada!'), '#ff4d5e', 3, (PW.FACCIONES[s.nivel] ? tr('{lider} se une al equipo', { lider: PW.FACCIONES[s.nivel].lider }) + ' · ' : '') + tr('+{g} grapas de oro', { g: PW.txt.num(s.grapas) })); abre(s.nivel); },
     'intento-fin': s => cartel(tr('Intento terminado'), '#ffffff', 2, tr('{p} de la Trituradora atascada', { p: PW.txt.pct(s.parte) })),
     'pedido-ok': s => cartel(tr('¡Pedido cumplido!'), '#3ddc84', 2.2, tr('{n} de oro y un cofre', { n: PW.txt.num(s.oro) })),
     'pedido-mal': s => cartel(tr('Pedido sin cumplir'), '#ff4d5e', 2.4, tr('Sanción: {p} menos en tu próximo Despido', { p: PW.txt.pct(s.sancion) })),

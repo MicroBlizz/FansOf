@@ -35,10 +35,12 @@ PW.botones = (() => {
     const res = PW.casos.recogeSindicato();
     if (!cuenta(res, 'pop')) return;
     const v = res.valor, num = PW.txt.num;
-    const meritos = Object.entries(v.meritos).map(([id, k]) => tr(PW.MERITOS.find(x => x.id === id).nombre) + (k > 1 ? ' ×' + k : '')).join(', ');
+    // con un solo paquete se nombra su mérito; con varios, solo las rarezas buenas (el detalle está en la pestaña Méritos)
+    const solo = v.paquetes === 1 ? ' · ' + tr('Mérito: {m}', { m: tr(PW.MERITOS.find(x => x.id === Object.keys(v.meritos)[0]).nombre) }) : '';
+    const raros = PW.RAREZAS.slice(1).filter(r => v.rarezas[r.id]).map(r => tr(r.nombre) + ' ×' + v.rarezas[r.id]).join(', ');
     const cuantos = v.paquetes > 1 ? tr('{p} paquetes', { p: num(v.paquetes) }) : tr('Un paquete');
     toast(cuantos + ': ' + tr('+{g} grapas de oro · {o} de oro', { g: num(v.grapas), o: num(v.oro) })
-      + (v.cofres ? ' · ' + tr('{c} cofres', { c: num(v.cofres) }) : '') + ' · ' + tr('Méritos: {lista}', { lista: meritos }), true);
+      + (v.cofres ? ' · ' + tr('{c} cofres', { c: num(v.cofres) }) : '') + solo + (raros ? ' · ' + raros : ''), true);
   }
   function urgente() {
     const res = PW.casos.entregaUrgente();

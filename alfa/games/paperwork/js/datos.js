@@ -33,6 +33,7 @@ PW.DESBLOQUEOS = [
   { id: 'cofres', nivel: 2, nombre: 'Cofres', txt: 'Vaciando archivadores salen cofres con objetos' },
   { id: 'plan', nivel: 3, nombre: 'Plan de carrera y retos', txt: 'Puntos de carrera para mejoras permanentes, y misiones diarias y logros' },
   { id: 'sindicato', nivel: 1, nombre: 'Paquete del sindicato', txt: 'Cada 10 minutos, un mérito para toda la carrera y grapas de oro' },
+  { id: 'rarezas', nivel: 4, nombre: 'Méritos raros', txt: 'Los méritos del paquete pueden salir raros, épicos, legendarios o míticos, y valen más' },
   { id: 'encargos', nivel: 4, nombre: 'Pedidos del CEO y auditorías', txt: 'Encargos con plazo en los correos y archivadores precintados por IAhorro' },
 ];
 // los útiles del líder, que se compran con oro y se pierden con el Despido (las cifras, en AJ.utiles)
@@ -74,7 +75,15 @@ PW.RECUERDOS = [
   { id: 'plano', nombre: 'El plano del archivo', bono: { entrada: 0.04 }, txt: '−4 % de archivadores para encontrar la entrada' },
 ];
 
-// los méritos: los trae el paquete del sindicato, uno al azar cada vez; cada uno suma su bono otra vez, sin tope, y no se pierden nunca
+// la rareza de un mérito del paquete (abierta al nivel 4 de la Trituradora): peso de cada 100 tiradas y por cuánto multiplica su bono
+PW.RAREZAS = [
+  { id: 'comun', nombre: 'común', peso: 48, vale: 1, color: '#c8c8d0' },
+  { id: 'raro', nombre: 'raro', peso: 30, vale: 2, color: '#4da3ff' },
+  { id: 'epico', nombre: 'épico', peso: 14, vale: 3, color: '#b06cff' },
+  { id: 'legendario', nombre: 'legendario', peso: 7, vale: 5, color: '#ffb02e' },
+  { id: 'mitico', nombre: 'mítico', peso: 1, vale: 10, color: '#ff4d8d' },
+];
+// los méritos: los trae el paquete del sindicato, uno al azar cada vez; cada uno suma su bono por su rareza, sin tope, y no se pierden nunca
 PW.MERITOS = [
   { id: 'puntual', nombre: 'Llega puntual', bono: { dano: 0.01 }, txt: '+1 % de lectura' },
   { id: 'cafe', nombre: 'Hace el café para todos', bono: { vel: 0.01 }, txt: '+1 % de velocidad' },

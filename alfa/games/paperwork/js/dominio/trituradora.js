@@ -65,8 +65,10 @@ PW.trituradora = (() => {
     t.intento = 0;
     t.espera = 0;   // el siguiente nivel se puede intentar ya
     const oro = A.premioOro * t.nivel, libera = PW.FACCIONES[t.nivel];   // el último nivel ya no libera a nadie
+    const grapas = PW.AJ.grapas.porNivel * t.nivel;   // jugar bien también da grapas de oro, no solo esperar paquetes
     e.r.oro += oro;
-    sucesos.push({ t: 'trituradora', nivel: t.nivel, oro, faccion: libera ? libera.fac : null });
+    e.c.grapas += grapas;
+    sucesos.push({ t: 'trituradora', nivel: t.nivel, oro, grapas, faccion: libera ? libera.fac : null });
   }
   // avanza dt segundos: corre el intento en curso (y la espera, siempre)
   function avanza(e, B, dt, sucesos) {

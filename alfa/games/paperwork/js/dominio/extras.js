@@ -88,14 +88,15 @@ PW.extras = (() => {
     return PW.ok({ oro, cofre, ...PW.meritos.abre(e, B, azar) });
   }
   // abrir todos los paquetes guardados de una vez (se entra una vez por hora y se recoge todo).
-  // Resultado: PW.ok({ paquetes, oro, cofres, grapas, meritos: { id: cuántos } }) o 'sin-paquetes'
+  // Resultado: PW.ok({ paquetes, oro, cofres, grapas, meritos: { id: puntos ganados }, rarezas: { rareza: cuántos } }) o 'sin-paquetes'
   function abreTodosSindicato(e, B, azar) {
     if (!e.c.sindicato.guardados) return PW.error('sin-paquetes');
-    const suma = { paquetes: 0, oro: 0, cofres: 0, grapas: 0, meritos: {} };
+    const suma = { paquetes: 0, oro: 0, cofres: 0, grapas: 0, meritos: {}, rarezas: {} };
     while (e.c.sindicato.guardados) {
       const v = abreSindicato(e, B, azar).valor;
       suma.paquetes++; suma.oro += v.oro; suma.cofres += v.cofre; suma.grapas += v.grapas;
-      suma.meritos[v.merito] = (suma.meritos[v.merito] || 0) + 1;
+      suma.meritos[v.merito] = (suma.meritos[v.merito] || 0) + v.puntos;
+      suma.rarezas[v.rareza] = (suma.rarezas[v.rareza] || 0) + 1;
     }
     return PW.ok(suma);
   }

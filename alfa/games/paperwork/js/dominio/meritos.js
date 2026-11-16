@@ -7,17 +7,27 @@ PW.meritos = (() => {
   const AJ = PW.AJ;
   // un mérito al azar, todos igual de probables. Devuelve su id
   const tira = azar => PW.MERITOS[Math.min(PW.MERITOS.length - 1, Math.floor(azar() * PW.MERITOS.length))].id;
-  // cuántas veces se tiene el mérito id
+  // los puntos que se tienen del mérito id
   const nivel = (e, id) => e.c.meritos[id] || 0;
   const total = e => PW.MERITOS.reduce((s, m) => s + nivel(e, m.id), 0);
   // las grapas de oro que trae cada paquete
   const grapasPaquete = B => AJ.grapas.porPaquete + B.grapasPaquete;
-  // un paquete abierto: un mérito al azar y sus grapas. Devuelve { merito, nivel, grapas }
+  // la rareza de la tirada: con los méritos raros cerrados, siempre común; tras (garantía - 1) comunes seguidos, raro o mejor
+  function tiraRareza(e, azar) {
+    if (!PW.desbloqueos.tiene(e, 'rarezas')) return PW.RAREZAS[0];
+    const lista = e.c.sinRaro >= AJ.meritosGarantia - 1 ? PW.RAREZAS.slice(1) : PW.RAREZAS;
+    let r = azar() * lista.reduce((s, x) => s + x.peso, 0);
+    return lista.find(x => (r -= x.peso) < 0) || lista[lista.length - 1];
+  }
+  // un paquete abierto: un mérito al azar con su rareza, y sus grapas. Lo que se tiene de cada mérito son puntos (un común suma 1,
+  // un mítico 10) y su bono es puntos por su +1 %. Devuelve { merito, rareza, puntos, nivel, grapas }
   function abre(e, B, azar) {
-    const id = tira(azar), grapas = grapasPaquete(B);
-    e.c.meritos[id] = nivel(e, id) + 1;
+    const id = tira(azar), rareza = tiraRareza(e, azar), grapas = grapasPaquete(B);
+    e.c.meritos[id] = nivel(e, id) + rareza.vale;
+    e.c.rarezas[rareza.id] = (e.c.rarezas[rareza.id] || 0) + 1;
+    e.c.sinRaro = rareza.vale > 1 ? 0 : e.c.sinRaro + 1;
     e.c.grapas += grapas;
-    return { merito: id, nivel: e.c.meritos[id], grapas };
+    return { merito: id, rareza: rareza.id, puntos: rareza.vale, nivel: e.c.meritos[id], grapas };
   }
   // lo que cuesta en grapas de oro el siguiente punto del plan de carrera (sube con cada uno comprado)
   const precioPunto = e => Math.ceil(AJ.grapas.punto0 * Math.pow(AJ.grapas.puntoFactor, e.c.puntosComprados));
@@ -30,5 +40,5 @@ PW.meritos = (() => {
     e.c.puntosComprados++;
     return PW.ok(e.c.puntosComprados);
   }
-  return { tira, nivel, total, grapasPaquete, abre, precioPunto, compraPunto };
+  return { tira, tiraRareza, nivel, total, grapasPaquete, abre, precioPunto, compraPunto };
 })();

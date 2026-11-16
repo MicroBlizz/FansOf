@@ -37,8 +37,15 @@ PW.panelesCarrera = (() => {
     }).join('');
     return `<h4 class="pw-sub">${tr('Méritos')} · ${n(PW.meritos.total(e))}</h4>`
       + `<p class="pw-nota">${tr('Cada paquete del sindicato trae un mérito al azar y unas grapas de oro. Los méritos son para toda la carrera, no se pierden con el Despido y no tienen tope: cada uno suma su bono otra vez.')}</p>`
-      + taquilla(e, B)
+      + taquilla(e, B) + rarezas(e)
       + `<p class="pw-nota"><b>${tr('Grapas de oro: {n}', { n: n(e.c.grapas) })}</b> · ${PW.desbloqueos.tiene(e, 'plan') ? tr('Con ellas compras puntos del plan de carrera.') : tr('Guárdalas: cuando se abra el plan de carrera, compran puntos.')}</p>` + filas;
+  }
+  // con los méritos raros abiertos: cuántos ha salido de cada rareza y cuánto falta para el raro asegurado
+  function rarezas(e) {
+    if (!PW.desbloqueos.tiene(e, 'rarezas')) return '';
+    const cuenta = PW.RAREZAS.map(r => `<span style="color:${r.color}">${tr(r.nombre)} ×${n(r.vale)}: ${n(e.c.rarezas[r.id] || 0)}</span>`).join(' · ');
+    const falta = PW.AJ.meritosGarantia - e.c.sinRaro;
+    return `<p class="pw-nota">${cuenta}</p><p class="pw-nota">${tr('Un raro o mejor asegurado en {n} paquetes como mucho.', { n: n(falta) })}</p>`;
   }
   // cuántos paquetes hay guardados, cuándo llega el siguiente y cuándo se llena la taquilla (entrar antes de que se llene no pierde nada)
   function taquilla(e, B) {

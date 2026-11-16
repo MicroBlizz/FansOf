@@ -1,8 +1,8 @@
 {
- "build": 1196,
- "hash": "240b339",
- "fecha": "2026-11-16T03:04:57Z",
- "mensaje": "Paperwork 0.6.1: recoger todos los paquetes del sindicato de golpe",
+ "build": 1197,
+ "hash": "2a87575",
+ "fecha": "2026-11-16T03:10:23Z",
+ "mensaje": "Paperwork 0.7.0: méritos con rareza y garantía, y grapas por nivel de la Trituradora",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.6.1",
+  "paperwork": "0.7.0",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

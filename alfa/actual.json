@@ -1,8 +1,8 @@
 {
- "build": 1207,
- "hash": "9a7f491",
- "fecha": "2026-11-16T18:25:28Z",
- "mensaje": "Taxi: deportivo nuevo y botón para cambiar de coche (tarea #64)",
+ "build": 1208,
+ "hash": "fac4b75",
+ "fecha": "2026-11-16T18:25:58Z",
+ "mensaje": "Librería: Air se mantiene junto a Wings (lo pidió Daniel, por si acaso)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

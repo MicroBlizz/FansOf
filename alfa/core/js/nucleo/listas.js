@@ -85,6 +85,7 @@
     'js/sistema/cola.js',          // la cola sin conexión: lo que se manda al servidor cuando hay red (COLA.crea)
     'js/sistema/pagos.js',         // compras con dinero real en la app de Android (Google Play Billing): lo entrega el servidor (productos.entrega = el juego)
     'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web)
+    'js/sistema/derechos.js',      // lo que la cuenta tiene comprado para siempre en un juego ligero, con copia en el navegador (DERECHOS.crea)
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
     'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()

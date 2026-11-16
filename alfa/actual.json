@@ -1,8 +1,8 @@
 {
- "build": 1210,
- "hash": "39d6c50",
- "fecha": "2026-11-16T19:33:02Z",
- "mensaje": "Medidor de anuncios: las reglas del dominio en core (tarea #62, ADR 123, nodo 1)",
+ "build": 1211,
+ "hash": "ed61ea1",
+ "fecha": "2026-11-16T19:47:05Z",
+ "mensaje": "Derechos de la cuenta en core para juegos ligeros (tarea #62, ADR 123, nodo 2)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

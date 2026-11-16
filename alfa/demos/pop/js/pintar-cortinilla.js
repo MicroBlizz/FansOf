@@ -1,11 +1,14 @@
-// Fans of Pop · CORTINILLA (dibujo y manejo): la cortinilla D de los niveles con duelo, jefes y difíciles (ADR 098), cara a cara con el rival y la regla en tres
-// viñetas, pintada en el lienzo encima de la sala. Mientras sale, el nivel espera (tutorial, ayudita y primer turno del rival);
-// solo el botón ¡A JUGAR! la quita (ADR 100). Lo que decide cuándo sale y cómo avanza está en cortinilla.js (puro).
+// Fans of Pop · CORTINILLA (dibujo y manejo): la cortinilla de los niveles con duelo, jefes y difíciles (ADR 098), pintada en el lienzo
+// encima de la sala. Estilo cozy del boceto A que eligió Pepins (16-11-2026, tarea #71): velo rosa sobre el fondo del mundo, cinta con el
+// título, Lola («Tú») y el rival sobre cojines con su nombre, el VS dentro de una burbuja y la regla en la tarjeta «Así se gana».
+// Mientras sale, el nivel espera (tutorial, ayudita y primer turno del rival); solo el botón ¡A JUGAR! la quita (ADR 100).
+// Lo que decide cuándo sale y cómo avanza está en cortinilla.js (puro).
 'use strict';
 const PP_CORT = { activa: false, t: 0, rival: 'ceo', tipo: 'jefe', golpe: false, salida: null, alTerminar: null };
 const ppCortActiva = () => PP_CORT.activa && (PP_PANT.actual === 'sala' || PP_PANT.actual === 'duelo');   // si saliste del nivel a medias, ya no cuenta
 function ppCortEmpieza(d, alTerminar) {
   Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), tipo: PP_CORTINILLA.tipoDe(d), golpe: false, salida: null, alTerminar });
+  ppLolaAparca();   // si Lola estaba hablando, se calla y vuelve al pulsar ¡A JUGAR! (ppEmpiezaNivel)
   ppCortBoton();
   ppSintonia('popCortinilla');   // la presentación: suena una vez (js/cancion-cortinilla.js)
 }
@@ -40,49 +43,83 @@ function ppEnvuelve(c, s, ancho) {
   if (linea) lineas.push(linea);
   return lineas;
 }
-// las tres viñetas: una fila de burbujas (con las que reviento marcadas) o el cartel de ¡PIERDE!
+// la regla en tres filas: su número, unas burbujas de Yoshi de muestra y el texto
 const PP_CORT_PASOS = [
-  { texto: 'Revientas las que quieras de una fila', burbujas: ['p', 'p', 'u', 'u'] },
-  { texto: 'Pulsas ¡LISTO! y le toca a tu rival', burbujas: ['x', 'x', 'u', 'u'] },
-  { texto: 'Pierde quien revienta la última', pierde: true },
+  { texto: 'Haz pop en las que quieras de una fila', color: '#ff8a2a', burbujas: ['b-menta-abajo', 'b-menta-abajo', 'b-menta-arriba'] },
+  { texto: 'Pulsa ¡LISTO! y le toca a tu rival', color: '#4aa8f0', burbujas: ['b-cielo-arriba', 'b-cielo-arriba', 'b-cielo-arriba'] },
+  { texto: 'Quien haga pop en la última, pierde', color: '#ff6eb5', burbujas: ['b-rosa-arriba'] },
 ];
-const PP_CORT_COLOR = { p: '#ff8a2a', u: '#ff7ec0', x: '#4b3a74' };
-function ppCortViñeta(c, p, x, y, w, h, a) {
-  c.save(); c.globalAlpha = a; c.translate((1 - a) * 60, 0);
-  c.fillStyle = '#1d1630'; c.strokeStyle = '#fff'; c.lineWidth = 5; c.beginPath(); c.roundRect(x, y, w, h, 22); c.fill(); c.stroke();
-  if (p.pierde) {
-    c.fillStyle = '#e8422f'; c.beginPath(); c.roundRect(x + 14, y + h / 2 - 26, 112, 52, 14); c.fill();
-    ppTexto(c, tr('¡PIERDE!'), x + 70, y + h / 2 + 1, 26, '#fff', 'center', '#7a1a10');
-  } else {
-    p.burbujas.forEach((k, i) => { const bx = x + 32 + i * 28, by = y + h / 2; c.fillStyle = PP_CORT_COLOR[k]; c.beginPath(); c.arc(bx, by, 12, 0, Math.PI * 2); c.fill(); });
-  }
-  c.font = `700 ${Math.round(28 * PP_LETRA)}px ${PP_FUENTE}`;
-  const lineas = ppEnvuelve(c, tr(p.texto), w - 180);
-  lineas.forEach((l, i) => ppTexto(c, l, x + 150, y + h / 2 + (i - (lineas.length - 1) / 2) * 30, 28, '#fff', 'left', '#1d1630'));
+const PP_CORT_FLOTA = [{ k: 'f-estrellita', x: 52, y: 196, l: 52 }, { k: 'f-corazon', x: 488, y: 186, l: 48 }, { k: 'f-nube', x: 474, y: 436, l: 66 }];
+const PP_CORT_ROSA = '#c43a84';
+// una caja redondeada con relleno, borde y sombra de golosina (como las ventanas de Pop)
+function ppCortCaja(c, x, y, w, h, r, relleno, borde, sombra) {
+  c.fillStyle = sombra; c.beginPath(); c.roundRect(x, y + 7, w, h, r); c.fill();
+  c.fillStyle = relleno; c.strokeStyle = borde; c.lineWidth = 5; c.beginPath(); c.roundRect(x, y, w, h, r); c.fill(); c.stroke();
+}
+function ppCortBurbuja(c, k, x, y, lado) {
+  if (ppDibujaEn(c, k, x, y, lado)) return;
+  c.fillStyle = '#ffb3d9'; c.beginPath(); c.arc(x, y, lado / 2, 0, Math.PI * 2); c.fill();
+}
+function ppCortCinta(c, a) {
+  if (a <= 0.01) return;
+  c.save(); c.globalAlpha = a; c.translate(0, -(1 - a) * 160);
+  const g = c.createLinearGradient(0, 92, 0, 162); g.addColorStop(0, '#ffb3d9'); g.addColorStop(1, '#ff6eb5');
+  ppCortCaja(c, 105, 92, 330, 70, 22, g, '#fff', PP_CORT_ROSA);
+  ppTexto(c, tr(PP_CORT.tipo === 'jefe' ? '¡NIVEL JEFE!' : '¡DUELO!'), 270, 128, 50, '#fff', 'center', PP_CORT_ROSA);
   c.restore();
 }
-// una figura que entra deslizándose desde su lado: el rival (a la derecha) o tú (la burbuja, a la izquierda)
-function ppCortFigura(c, rival, esRival, x, y, a, t) {
-  c.save(); c.globalAlpha = a; c.translate(x + (esRival ? 1 : -1) * (1 - a) * 320, y);
-  if (esRival) ppSlimeRepuestoOImagen(c, rival, 0, 0, 78, t, 1);
-  else {
-    const g = c.createRadialGradient(-22, -22, 6, 0, 0, 74); g.addColorStop(0, '#fff'); g.addColorStop(0.4, '#ffb3d9'); g.addColorStop(1, '#ff6fb5');
-    c.fillStyle = g; c.strokeStyle = '#fff'; c.lineWidth = 7; c.beginPath(); c.arc(0, 0, 70, 0, Math.PI * 2); c.fill(); c.stroke();
-  }
+// cada uno en su cojín, con su nombre debajo: entra deslizándose desde su lado y luego respira despacito
+function ppCortFigura(c, id, nombre, x, lado, a, t) {
+  c.save(); c.globalAlpha = a; c.translate(x + lado * (1 - a) * 320, 0);
+  c.fillStyle = '#ffb3d9'; c.beginPath(); c.ellipse(0, 366, 95, 26, 0, 0, Math.PI * 2); c.fill();
+  const g = c.createRadialGradient(0, 356, 10, 0, 360, 95); g.addColorStop(0, '#fff'); g.addColorStop(1, '#ffd6ea');
+  c.fillStyle = g; c.beginPath(); c.ellipse(0, 360, 95, 26, 0, 0, Math.PI * 2); c.fill();
+  ppSlimeRepuestoOImagen(c, id, 0, 272 + Math.sin(t * 2.4 + lado) * 4, 78, t, 1);
+  c.fillStyle = '#fff'; c.strokeStyle = '#ff9ccf'; c.lineWidth = 4; c.beginPath(); c.roundRect(-95, 394, 190, 40, 20); c.fill(); c.stroke();
+  ppTexto(c, nombre, 0, 415, 30, '#2a1a3a', 'center', '#fff');
   c.restore();
+}
+function ppCortVs(c, escala) {
+  if (escala <= 0.01) return;
+  c.save(); c.translate(270, 262); c.scale(escala, escala);
+  ppCortBurbuja(c, 'b-rosa-arriba', 0, 0, 112);
+  ppTexto(c, 'VS', 0, 2, 58, '#fff', 'center', PP_CORT_ROSA);
+  c.restore();
+}
+function ppCortFlotantes(c, a, t) {
+  if (a <= 0.01) return;
+  c.save(); c.globalAlpha = a * 0.95;
+  PP_CORT_FLOTA.forEach((f, i) => ppCortBurbuja(c, f.k, f.x, f.y + Math.sin(t * 1.6 + i * 2) * 6, f.l));
+  c.restore();
+}
+function ppCortFila(c, p, y, a) {
+  if (a <= 0.01) return;
+  c.save(); c.globalAlpha = a; c.translate((1 - a) * 60, 0);
+  c.fillStyle = p.color; c.beginPath(); c.arc(82, y, 22, 0, Math.PI * 2); c.fill();
+  ppTexto(c, String(PP_CORT_PASOS.indexOf(p) + 1), 82, y + 1, 34, '#fff', 'center', p.color);
+  p.burbujas.forEach((k, i) => ppCortBurbuja(c, k, 133 + i * 31, y, 31));
+  c.font = `600 ${Math.round(30 * PP_LETRA)}px ${PP_FUENTE}`;
+  const lineas = ppEnvuelve(c, tr(p.texto), 470 - 228);
+  lineas.forEach((l, i) => ppTexto(c, l, 228, y + (i - (lineas.length - 1) / 2) * 27, 30, '#2a1a3a', 'left', '#fff8fc'));
+  c.restore();
+}
+// la tarjeta «Así se gana» con las tres filas, que van entrando una a una
+function ppCortTarjeta(c, y, f) {
+  if (f.figuras <= 0.01) return;
+  c.save(); c.globalAlpha = f.figuras; c.translate(0, (1 - f.figuras) * 80);
+  ppCortCaja(c, 34, y, 472, 340, 30, '#fff8fc', '#ff9ccf', 'rgba(196,58,132,0.3)');
+  ppTexto(c, tr('Así se gana'), 270, y + 48, 38, '#e0468f', 'center', '#fff');
+  c.restore();
+  PP_CORT_PASOS.forEach((p, i) => ppCortFila(c, p, y + 118 + i * 86, f.pasos[i] * f.figuras));
 }
 function ppPintaCortinilla(c, t) {
   if (!PP_CORT.activa) return;
-  const f = PP_CORTINILLA.fotograma(PP_CORT.t, PP_CORT.salida), H = PP_V.H, yFig = H * 0.3;
-  c.save();
-  c.fillStyle = `rgba(18,10,36,${0.45 * f.panel})`; c.fillRect(0, 0, 540, H);
-  c.translate(0, -(1 - f.panel) * H);
-  c.fillStyle = '#ff8a2a'; c.beginPath(); c.moveTo(0, 0); c.lineTo(330, 0); c.lineTo(210, H); c.lineTo(0, H); c.fill();
-  c.fillStyle = '#2a1747'; c.beginPath(); c.moveTo(330, 0); c.lineTo(540, 0); c.lineTo(540, H); c.lineTo(210, H); c.fill();
-  c.restore();
-  ppTexto(c, tr(PP_CORT.tipo === 'jefe' ? '¡NIVEL JEFE!' : '¡DUELO!'), 270, H * 0.1, 64, `rgba(42,23,71,${f.etiqueta})`, 'center', `rgba(255,255,255,${f.etiqueta})`);
-  ppCortFigura(c, PP_CORT.rival, false, 130, yFig, f.figuras, t);
-  ppCortFigura(c, PP_CORT.rival, true, 410, yFig, f.figuras, t);
-  if (f.vs > 0.01) { c.save(); c.translate(270, yFig + 20); c.scale(f.vs, f.vs); ppTexto(c, 'VS', 0, 0, 120, '#fff', 'center', '#2a1747'); c.restore(); }
-  PP_CORT_PASOS.forEach((p, i) => { if (f.pasos[i] > 0.01) ppCortViñeta(c, p, 24, H * 0.5 + i * 116, 492, 104, f.pasos[i]); });
+  const f = PP_CORTINILLA.fotograma(PP_CORT.t, PP_CORT.salida), H = PP_V.H;
+  c.fillStyle = `rgba(255,232,243,${0.93 * f.panel})`; c.fillRect(0, 0, 540, H);   // el velo rosa: el fondo del mundo se intuye detrás
+  ppCortFlotantes(c, f.figuras, t);
+  ppCortCinta(c, f.etiqueta);
+  ppCortFigura(c, 'lola', tr('Tú'), 125, -1, f.figuras, t);
+  ppCortFigura(c, PP_CORT.rival, tr(PP_SLIMES[PP_CORT.rival].nombre), 415, 1, f.figuras, t);
+  ppCortVs(c, f.vs);
+  ppCortTarjeta(c, Math.max(470, Math.round(H * 0.49)), f);
 }

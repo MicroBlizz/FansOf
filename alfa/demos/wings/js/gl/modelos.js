@@ -1,6 +1,6 @@
-// Fans of Wings · Modelos en lonchas apiladas, todos dibujados por código: los tres cazas de los Animales Locos, los enemigos de
-// Microblizz (el dron del becario, el bombardero de cajas y SurvivalBot) y la llama de los motores. Cada avión sale de una ficha
-// (fuselaje, cabina, alas, derivas, motores y colores) que cortar() convierte en una rejilla de cubitos muy finos; el morro mira a −Z.
+// Fans of Wings · Modelos en lonchas apiladas. Los aviones que se ven en el juego son los chibi de aviones.js, cortados con
+// maquetas.js. Aquí quedan además GUARDADOS los seis diseños de la primera versión (las fichas «clásicas»: fuselaje, cabina, alas,
+// derivas, motores y colores) para reusarlos en otro sitio con MOD.clasico(id), y la llama de los motores. El morro mira a −Z.
 'use strict';
 var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 (function (A) {
@@ -79,7 +79,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   const huso = (rx, ry, morro, cola) => (t) => { const k = t < morro ? Math.sqrt(t / morro) : t > 0.9 ? cola + (1 - cola) * (1 - t) / 0.1 : 1; return [rx * k, ry * k]; };
   const delta = (max, raiz) => (u) => raiz + (max - raiz) * u;
 
-  // Las fichas. toberas = dónde salen las llamas del fuselaje (en cubitos desde el centro); si hay motores colgados, salen de ellos.
+  // Las fichas clásicas. toberas = dónde salen las llamas del fuselaje (en cubitos desde el centro); si hay motores colgados, salen de ellos.
   const FICHAS = MOD.ficha = {
     bunny: { k: 3, nx: 29, ny: 12, nz: 45, vox: [0.7, 0.55, 0.7], yc: 4, franja: [0.5, 0.56], fus: huso(2.7, 2.6, 0.28, 0.8), cabina: [0.2, 0.36], toberas: [-1.4, 1.4],
       alas: [{ y: 3, t0: 0.36, t1: 0.86, env: delta(13.5, 2), punta: 1.6, franja: [0.5, 0.6] }, { y: 4, t0: 0.2, t1: 0.3, env: delta(5.5, 2.5) }, { y: 3, t0: 0.88, t1: 0.99, env: delta(6.5, 4) }],
@@ -108,14 +108,11 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       derivas: [{ x: 6, y: 7, t0: 0.62, t1: 0.95, alto: (u) => 2 + 5 * u }, { x: 15, y: 7, t0: 0.6, t1: 0.8, alto: () => 2 }],
       pal: { cuerpo: '#4d5564', panza: '#2f3540', lomo: '#e63a2a', morro: '#2f3540', ala: '#5d6676', borde: '#e63a2a', punta: '#ffd23c', deriva: '#2f3540', cristal: '#e63a2a', brillo: '#ffe9a0', marco: '#15171c', tobera: '#15171c' } },
   };
+  // Un modelo clásico, cortado al pedirlo (no se usa en el juego: está guardado para reusarlo).
+  MOD.clasico = (id, sem) => cortar(FICHAS[id], sem || 11);
   // Dónde está cada cosa en metros, para la vista: las toberas (por detrás) y las puntas de las alas.
   const MEDIDAS = {};
-  MOD.medidas = (id) => MEDIDAS[id] || (MEDIDAS[id] = medir(id));
-  function medir(id) {
-    const f = FICHAS[id], ala = f.alas[0], atras = f.nz / 2 * f.vox[2];
-    const colgados = (f.motores || []).flatMap((m) => [-1, 1].map((l) => [l * m.x * f.vox[0], (m.y - f.yc) * f.vox[1], (m.t1 - 0.5) * f.nz * f.vox[2]]));
-    return { toberas: colgados.length ? colgados : f.toberas.map((x) => [x * f.vox[0], 0, atras]), punta: [ala.env(1) * f.vox[0], (ala.y - f.yc) * f.vox[1], (ala.t1 - 0.5) * f.nz * f.vox[2]], largo: f.nz * f.vox[2] };
-  }
+  MOD.medidas = (id) => MEDIDAS[id] || (MEDIDAS[id] = A.maquetas.medidas(A.aviones.dame(id)));
 
   function llama() {
     const A1 = hex('#fff2a0'), B = hex('#ffb02e'), C = hex('#f2541b');
@@ -129,8 +126,8 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // Corta todos los modelos (una vez, al arrancar). La llama tiene su origen en la tobera y crece hacia atrás (+Z).
   MOD.crear = function () {
     let sem = 11;
-    for (const c of A.AJ.cazas) MOD.caza[c.id] = cortar(FICHAS[c.id], sem++);
-    for (const id of ['becario', 'caja', 'jefe']) MOD.enemigo[id] = cortar(FICHAS[id], sem++);
+    for (const c of A.AJ.cazas) MOD.caza[c.id] = A.maquetas.cortar(A.aviones.dame(c.id), sem++);
+    for (const id of ['becario', 'caja', 'jefe']) MOD.enemigo[id] = A.maquetas.cortar(A.aviones.dame(id), sem++);
     MOD.llama = llama();
   };
 })(WINGS);

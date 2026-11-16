@@ -16,7 +16,7 @@ function ppIrA(p) {
   if (p === 'mapa') setTimeout(ppAlLlegarAlCamino, 400);   // regalo diario y pack de bienvenida
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
-    $pp('#pp-record').textContent = hay ? tr('Vas por el nivel {n}', { n: SAVE.run.nivel + 1 }) : SAVE.estrellas ? tr('Récord: {n} estrellas', { n: SAVE.estrellas }) : tr('Revienta burbujas, rescata amigos');
+    $pp('#pp-record').textContent = hay ? tr('Vas por el nivel {n}', { n: SAVE.run.nivel + 1 }) : SAVE.estrellas ? tr('Récord: {n} estrellas', { n: SAVE.estrellas }) : tr('Haz pop, rescata amigos');
     $pp('#pp-seguir').hidden = !hay;
     $pp('#pp-jugar').hidden = hay;   // con partida empezada solo sale SEGUIR; EMPEZAR DE NUEVO está en Opciones (Daniel, 02-11-2026)
     $pp('#pp-jugar').textContent = tr('JUGAR');
@@ -143,11 +143,11 @@ function ppVentanaFin() {
 }
 function ppAyuda() {
   const t = ppAbre(`<h2>${tr('Cómo se juega')}</h2>
-    <p class="pp-sub">${tr('Toca una burbuja: revientan ella y sus vecinas de arriba, abajo y los lados. Lo reventado se queda reventado.')}</p>
-    <p class="pp-sub">${tr('Revienta TODAS antes de que se acaben los toques. Con pocos toques ganas 3 estrellas.')}</p>
+    <p class="pp-sub">${tr('Toca una burbuja: hacen pop ella y sus vecinas de arriba, abajo y los lados. Lo que hace pop se queda hundido.')}</p>
+    <p class="pp-sub">${tr('Haz pop en TODAS antes de que se acaben los toques. Con pocos toques ganas 3 estrellas.')}</p>
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
-    <p class="pp-sub">${tr('Más adelante: las de cereza necesitan tres golpes, las de hielo solo revientan si las tocas a ellas y las conchas, al tocarlas, solo revientan ellas.')}</p>
-    <p class="pp-sub">${tr('Y aún más allá: los cohetes revientan su fila, las burbujeantes un cuadrado de 3x3 y los pétalos su columna.')}</p>
+    <p class="pp-sub">${tr('Más adelante: las de cereza necesitan tres golpes, las de hielo solo hacen pop si las tocas a ellas y las conchas, al tocarlas, solo hacen pop ellas.')}</p>
+    <p class="pp-sub">${tr('Y aún más allá: los cohetes hacen pop en su fila, las burbujeantes en un cuadrado de 3x3 y los pétalos en su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
     <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil, y al ganar el difícil, su pesadilla.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
@@ -201,38 +201,38 @@ function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
    Cada tutorial es una lista de frases. Las que llevan `toque` se cierran solas cuando tocas una burbuja (para que lo hagas
    mientras Lola te lo dice); las demás llevan un botón. Cada tutorial sale una sola vez (SAVE.tuto). */
 const PP_TUTO = {
-  w1n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a reventar burbujas juntos!' },
-         { t: 'Toca la burbuja que señala la manita: revientan ella y sus vecinas de arriba, abajo y los lados.', toque: true }],
-  w1n2: [{ t: '¡Plop! Lo que revientas se queda reventado. Para pasar el nivel, revienta todas.' },
+  w1n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a hacer pop juntos!' },
+         { t: 'Toca la burbuja que señala la manita: hacen pop ella y sus vecinas de arriba, abajo y los lados.', toque: true }],
+  w1n2: [{ t: '¡Plop! Lo que haces pop se queda hundido. Para pasar el nivel, haz pop en todas.' },
          { t: 'Cuantos menos toques uses, más estrellas. Sigue a la manita.', toque: true }],
   w1n3: [{ t: 'Ahora te toca a ti. Arriba ves los toques que te quedan.' },
-         { t: 'Si se acaban antes de reventarlas todas, pierdes un corazón. Truco: toca donde revientes más de golpe.' }],
+         { t: 'Si se acaban antes de hacer pop en todas, pierdes un corazón. Truco: toca donde hagas más pops de golpe.' }],
   amigo: [{ t: '¡Ya tienes un amigo! Mira abajo: cada uno te ayuda a su manera.' }, { t: 'Cuando su barrita se llena, ¡te echa una mano solo!' }],
-  combo: [{ t: '¡COMBO! Si cada toque revienta 3 burbujas o más, el combo crece.' }],
+  combo: [{ t: '¡COMBO! Si cada toque hace pop en 3 burbujas o más, el combo crece.' }],
   dificil: [{ t: 'Este nivel es difícil: los toques van muy justos. ¡Piensa antes de tocar!' }],
   jefe: [{ t: '¡Nivel jefe! Ahora te reta el CEO en persona, y casi nunca se equivoca.' }],
   nimNivel: [{ t: '¡Un nivel duelo! Aquí no hay toques: juegas por turnos contra un rival.' },
-             { t: 'En tu turno revienta las burbujas que quieras, pero todas de la MISMA fila, y pulsa ¡LISTO!. ¡Pierde quien revienta la última!' },
+             { t: 'En tu turno haz pop en las burbujas que quieras, pero todas de la MISMA fila, y pulsa ¡LISTO!. ¡Pierde quien haga pop en la última!' },
              { t: 'Truco: piensa qué le dejas al rival. Si ganas sin un solo error, 3 estrellas.' }],
   monedas: [{ t: '¡Monedas! Las ganas la primera vez que pasas un nivel y con cada estrella nueva. Con 15 estrellas, ¡un cofre!' },
             { t: 'Sirven para llenar los corazones y para hacer sitio a más amigos en el equipo.' }],
   modoPesadilla: [{ t: '¡Pesadilla! Aquí cada toque le da la vuelta a la burbuja y a sus vecinas: las levantadas se hunden… ¡y las hundidas vuelven a subir!' },
                   { t: 'Hay que dejarlas todas hundidas. Piensa antes de tocar: un toque de más lo deshace todo.' }],
   modoDificil: [{ t: 'Modo difícil: el mismo mundo, de noche y con muchos menos toques. ¡Pero da el doble de monedas!' }],
-  duelo: [{ t: '¡Duelo contra el CEO! Por turnos, revienta las burbujas que quieras, pero todas de la MISMA fila.' },
-          { t: 'Cuando acabes tu turno, pulsa ¡LISTO!. Ojo: ¡pierde quien revienta la última burbuja!' }],
+  duelo: [{ t: '¡Duelo contra el CEO! Por turnos, haz pop en las burbujas que quieras, pero todas de la MISMA fila.' },
+          { t: 'Cuando acabes tu turno, pulsa ¡LISTO!. Ojo: ¡pierde quien haga pop en la última burbuja!' }],
   memoria: [{ t: '¡Memoria! Las burbujas se van a hundir en orden, cada una con su nota. ¡Mira y escucha bien!' },
             { t: 'Luego tócalas en el mismo orden. Cada ronda la melodía tiene una burbuja más. ¡No gasta corazones!' }],
-  w3n1: [{ t: '¡Bienvenida a la Heladería!' }, { t: 'Las burbujas con un copo están heladas: sus vecinas no las revientan. ¡Tienes que tocarlas a ellas!' }],
-  w4n1: [{ t: '¡Bienvenida a la Playa!' }, { t: 'Si tocas una burbuja con concha, solo revienta ella, no sus vecinas. Pero las vecinas sí la revientan a ella.' }],
+  w3n1: [{ t: '¡Bienvenida a la Heladería!' }, { t: 'Las burbujas con un copo están heladas: sus vecinas no les hacen pop. ¡Tienes que tocarlas a ellas!' }],
+  w4n1: [{ t: '¡Bienvenida a la Playa!' }, { t: 'Si tocas una burbuja con concha, solo hace pop ella, no sus vecinas. Pero las vecinas sí le hacen pop a ella.' }],
   w5n1: [{ t: '¡Bienvenida a la Feria!' }, { t: 'Las burbujas con nata y cereza son triples: necesitan tres golpes.' }],
   w6n1: [{ t: '¡Bienvenida al Reino de las nubes!' }, { t: 'Aquí está todo mezclado: nata, cerezas, hielo y conchas. ¡Piensa cada toque!' }],
-  w7n1: [{ t: '¡Bienvenida al Bosque de hadas!' }, { t: 'Las burbujas con cohete revientan su fila entera cuando las tocas. ¡Úsalas bien!' }],
-  w8n1: [{ t: '¡Bienvenida al Fondo del mar!' }, { t: 'Las burbujeantes revientan todo el cuadrado de alrededor, también en diagonal.' }],
-  w9n1: [{ t: '¡Bienvenida al Jardín de cerezos!' }, { t: 'Las burbujas con pétalo revientan su columna entera, de arriba abajo.' }],
+  w7n1: [{ t: '¡Bienvenida al Bosque de hadas!' }, { t: 'Las burbujas con cohete hacen pop en su fila entera cuando las tocas. ¡Úsalas bien!' }],
+  w8n1: [{ t: '¡Bienvenida al Fondo del mar!' }, { t: 'Las burbujeantes hacen pop en todo el cuadrado de alrededor, también en diagonal.' }],
+  w9n1: [{ t: '¡Bienvenida al Jardín de cerezos!' }, { t: 'Las burbujas con pétalo hacen pop en su columna entera, de arriba abajo.' }],
   w10n1: [{ t: '¡Bienvenida al Espacio!' }, { t: 'Aquí está todo: cohetes, burbujeantes, pétalos, hielo… y al final te espera el CEO espacial.' }],
   // tutoriales del 31-10-2026 (Daniel: «tutoriales de todo»). Los `encima` salen aunque haya una ventana abierta (tienda, pase…)
-  ayudas: [{ t: '¡Mira abajo: son las ayudas! El MARTILLO revienta del todo la burbuja que toques, sin gastar toque.' },
+  ayudas: [{ t: '¡Mira abajo: son las ayudas! El MARTILLO hace pop del todo en la burbuja que toques, sin gastar toque.' },
            { t: 'La BOMBA da un golpe a un cuadrado de 3 x 3, tampoco gasta toque. Y +3 TOQUES te da tres toques más en el nivel.' },
            { t: 'Se ganan jugando (regalo diario, pase…) y, si no te quedan, se compran con perlas.' }],
   ayudasDuelo: [{ t: 'En los duelos las ayudas son otras: DESHACER vuelve atrás tu última jugada (y la del rival).' },
@@ -254,7 +254,7 @@ const PP_TUTO = {
           { t: 'Si pierdes un corazón, la racha vuelve a cero. ¡Cuídala!', encima: true }],
   equipoLleno: [{ t: '¡Tu equipo está lleno! Elige quién se queda descansando para que entre el nuevo…', encima: true },
                 { t: '…o hazle sitio comprando un hueco más. Los huecos son para siempre.', encima: true }],
-  w2n1: [{ t: '¡Bienvenida a la Pastelería!' }, { t: 'Las burbujas con nata son dobles: el primer golpe les quita la nata y el segundo las revienta.' }],
+  w2n1: [{ t: '¡Bienvenida a la Pastelería!' }, { t: 'Las burbujas con nata son dobles: el primer golpe les quita la nata y el segundo les hace pop.' }],
 };
 const PP_LOLA = { cola: [], actual: null };
 function ppTutorial(k) {
@@ -262,6 +262,11 @@ function ppTutorial(k) {
   SAVE.tuto[k] = true; ppGuarda();
   PP_LOLA.cola.push(...PP_TUTO[k]);
   if (!PP_LOLA.actual && !ppCortActiva()) ppLolaSiguiente();   // con la cortinilla del jefe puesta, Lola espera a que acabe (ppEmpiezaNivel)
+}
+// la cortinilla de duelo tapa la pantalla: lo que Lola estuviera diciendo se guarda para después (Pepins, 16-11-2026, tarea #71)
+function ppLolaAparca() {
+  if (!PP_LOLA.actual) return;
+  PP_LOLA.cola.unshift(PP_LOLA.actual); PP_LOLA.actual = null; $pp('#pp-lola').hidden = true;
 }
 function ppLolaSiguiente() {
   const caja = $pp('#pp-lola'), f = PP_LOLA.cola.shift();

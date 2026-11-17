@@ -21,7 +21,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   UI.ayuda = (est, mas) => (est.tactil ? [[M('TOCA'), M('ELEGIR')]] : UI.teclas(AYUDA_PC.concat(mas || [])));
 
   // ---------- título ----------
-  const OPC_TITULO = { iniciar: ['INICIAR MISIÓN', () => '01'], hangar: ['HANGAR', () => '3 ' + M('CAZAS')], ajustes: ['AJUSTES', () => M('PALANCA') + ' · ' + M('SONIDO')], novedades: ['PARTES Y NOVEDADES', version] };
+  const OPC_TITULO = { iniciar: ['INICIAR MISIÓN', () => '01'], hangar: ['HANGAR', () => A.AJ.cazas.length + ' ' + M('CAZAS')], ajustes: ['AJUSTES', () => M('PALANCA') + ' · ' + M('SONIDO')], novedades: ['PARTES Y NOVEDADES', version] };
   P.titulo = {
     zonas: () => UI.columna(['iniciar', 'hangar', 'ajustes', 'novedades'], 52, 228, Math.min(560, UI.W - 560), 52),
     pintar(g, est, zonas, cursor) {
@@ -48,22 +48,23 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   }
 
   // ---------- hangar ----------
-  const medidasHangar = () => { const lado = Math.min(424, Math.round((UI.W - 72) * 0.34)); return { lado, xd: UI.W - 36 - lado }; };
+  // La lista de cazas encoge sus filas si son más de tres, para que quepa debajo el panel del piloto.
+  const medidasHangar = () => { const lado = Math.min(424, Math.round((UI.W - 72) * 0.34)), n = A.AJ.cazas.length, fila = n > 3 ? 52 : 72; return { lado, xd: UI.W - 36 - lado, fila, yPiloto: 108 + n * (fila + 11) + 4 }; };
   P.hangar = {
     zonas() {
-      const { lado, xd } = medidasHangar();
-      return UI.columna(A.AJ.cazas.map((c) => 'caza:' + c.id), 36, 108, lado, 72)
+      const { lado, xd, fila } = medidasHangar();
+      return UI.columna(A.AJ.cazas.map((c) => 'caza:' + c.id), 36, 108, lado, fila)
         .concat([{ id: 'palanca', x: xd, y: 446, w: lado, h: 62 }, { id: 'despegar', x: xd, y: 562, w: lado, h: 96 }, { id: 'volver', x: UI.W - 236, y: 24, w: 200, h: 46 }]);
     },
     pintar(g, est, zonas, cursor) {
-      const W = UI.W, { lado, xd } = medidasHangar(), c = A.AJ.cazas.find((q) => q.id === est.sel.caza) || A.AJ.cazas[0], z = (id) => zonas.find((q) => q.id === id);
+      const W = UI.W, { lado, xd, yPiloto } = medidasHangar(), c = A.AJ.cazas.find((q) => q.id === est.sel.caza) || A.AJ.cazas[0], z = (id) => zonas.find((q) => q.id === id);
       E.tinte(g, W, 'lado'); E.marco(g, W);
       E.emblema(g, 44, 22, 2.6);
       E.t(g, M('HANGAR 01 // ASIGNACIÓN DE AERONAVE'), 118, 42, 11, C.cian);
       E.t(g, M('BASE LA MADRIGUERA'), 118, 66, 11, C.claro);
       E.linea(g, 44, 88, Math.min(700, W - 320));
       for (const q of A.AJ.cazas) E.opcion(g, z('caza:' + q.id), M(q.nombre), A.AJ.codigos[q.id], q.id === c.id);
-      piloto(g, est, c, 36, 362, lado);
+      piloto(g, est, c, 36, yPiloto, lado);
       ficha(g, c, xd, 100, lado);
       E.boton(g, z('palanca'), M('PALANCA') + ': ' + M(est.sel.normal ? 'NORMAL' : 'AVIÓN'), false, Math.min(15, lado / 26));
       E.franja(g, xd, 532, lado, 9);
@@ -74,14 +75,14 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     },
   };
   function piloto(g, est, c, x, y, w) {
-    const cy = E.panel(g, x, y, w, 300, M('PILOTO ASIGNADO'), '0' + (A.AJ.cazas.indexOf(c) + 1) + '/0' + A.AJ.cazas.length);
+    const cy = E.panel(g, x, y, w, 662 - y, M('PILOTO ASIGNADO'), '0' + (A.AJ.cazas.indexOf(c) + 1) + '/0' + A.AJ.cazas.length);
     E.t(g, E.may(c.piloto), x + 18, cy + 40, Math.min(18, w / 22), C.amb, 'left', C.fondo);
     E.fila(g, x + 18, cy + 76, w - 36, M('DERRIBOS'), String(est.partes.derribos[c.id] || 0).padStart(3, '0'));
     E.fila(g, x + 18, cy + 108, w - 36, M('MISIONES CUMPLIDAS'), est.partes.cumplidas);
-    E.lineas(g, tr(c.texto), w - 36, 11).slice(0, 6).forEach((l, k) => E.t(g, l, x + 18, cy + 148 + k * 22, 11, C.blanco));
+    E.lineas(g, tr(c.texto), w - 36, 11).slice(0, Math.floor((662 - cy - 140) / 22)).forEach((l, k) => E.t(g, l, x + 18, cy + 148 + k * 22, 11, C.blanco));
   }
   function ficha(g, c, x, y, w) {
-    const cy = E.panel(g, x, y, w, 320, M('FICHA TÉCNICA'), A.AJ.codigos[c.id]), max = { vel: 1.3, escudo: 150, misiles: 8, bombas: 12 }, n = Math.max(5, Math.min(10, Math.floor((w - 250) / 18)));
+    const cy = E.panel(g, x, y, w, 320, M('FICHA TÉCNICA'), A.AJ.codigos[c.id]), max = { vel: 1.3, escudo: 180, misiles: 8, bombas: 12 }, n = Math.max(5, Math.min(10, Math.floor((w - 250) / 18)));
     const filas = [['VELOCIDAD', c.vel / max.vel, Math.round(c.vel * 100)], ['ESCUDO', c.escudo / max.escudo, c.escudo], ['MISILES', c.misiles / max.misiles, c.misiles], ['BOMBAS', c.bombas / max.bombas, c.bombas]];
     filas.forEach(([nombre, v, valor], k) => {
       const fy = cy + 42 + k * 38;

@@ -159,4 +159,6 @@ IDIOMA.add({
  "M": "M",
  "Q": "Q",
  "C": "C",
+ "Filete Rosa": "Pink Steak",
+ "La más blindada y la más lenta. FLOTA: con el freno se queda quieta en el aire.": "The most armoured and the slowest. HOVER: with the brake she stays still in mid-air.",
 });

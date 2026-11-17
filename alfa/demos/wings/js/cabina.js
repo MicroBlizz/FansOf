@@ -94,10 +94,10 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 
   // peso = cuánto de la cabina se ve (0 a 1, mientras la cámara entra o sale). mando = la orden del jugador ({ mx, my }).
   A.cabina = function (g, e, peso, W, mando) {
-    const c = A.cabinas[e.caza.id];
+    const cual = e.caza.cabina || e.caza.id, c = A.cabinas[cual];   // un caza sin cabina propia la toma prestada (ajustes.js)
     if (!c) return;
     const idioma = document.documentElement.lang === 'es' ? 'es' : 'en';   // los rótulos van pintados: hay imagen en español y en inglés
-    const fondo = foto('cabina-' + e.caza.id + '-' + idioma), mango = foto('palanca-' + e.caza.id);
+    const fondo = foto('cabina-' + cual + '-' + idioma), mango = foto('palanca-' + cual);
     if (peso <= 0.01 || !fondo || !mango) return;
     g.save(); g.globalAlpha = peso; g.imageSmoothingEnabled = false;
     g.translate(W / 2 - 240 * U, 0); g.scale(U, U);

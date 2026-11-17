@@ -1,8 +1,8 @@
 {
- "build": 1232,
- "hash": "5c8f5c7",
- "fecha": "2026-11-17T17:35:54Z",
- "mensaje": "Wings 0.1.6: fuego de verdad en los reactores, con toberas huecas (#91)",
+ "build": 1233,
+ "hash": "a4489f0",
+ "fecha": "2026-11-17T17:47:07Z",
+ "mensaje": "Wings 0.1.7: cuarto caza, Filete Rosa de la MechaVaca (tipo Harrier), que flota con el freno (#98)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

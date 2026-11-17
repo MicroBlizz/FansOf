@@ -70,7 +70,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     acelerar(j, AJ.aire, caza, dt);
     j.pos = V3.suma(j.pos, V3.escala(j.f, j.vel * dt));
     ortonormal(j);
-    return limites(j, P, dt);
+    return limites(j, P, dt, caza);
   };
 
   // Sin tocar los lados, el caza vuelve poco a poco a nivel (salvo boca abajo o muy inclinado: ahí manda el piloto).
@@ -90,20 +90,21 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // y subir la baja. Al acabarse el turbo, lo que sobra del tope se pierde poco a poco, sin frenazo.
   function acelerar(j, AI, caza, dt) {
     const P = AI.vuelo, T = AI.turbo, F = AI.freno, crucero = P.vel * caza.vel;
-    const quiere = j.conTurbo ? crucero * T.factor : j.conFreno ? Math.max(P.velMin * 1.1, crucero * F.factor) : crucero;
+    const frenado = caza.flota ? 0 : Math.max(P.velMin * 1.1, crucero * F.factor);   // el caza que flota se para del todo
+    const quiere = j.conTurbo ? crucero * T.factor : j.conFreno ? frenado : crucero;
     const respuesta = j.conTurbo ? T.respuesta : j.conFreno ? F.respuesta : 0.5;
     const tope = P.velMax * caza.vel * (j.conTurbo ? T.factor : 1);
     let v = j.vel + (-j.f.y * P.gravedad + (quiere - j.vel) * respuesta) * dt;
     if (v > tope) v = Math.max(tope, Math.min(v, j.vel - T.suelta * dt));
-    j.vel = Math.max(P.velMin * 0.8, v);
+    j.vel = Math.max(caza.flota ? 0 : P.velMin * 0.8, v);
   }
 
-  function limites(j, P, dt) {
+  function limites(j, P, dt, caza) {
     const avisos = [];
     j.avisoT -= dt;
     if (j.pos.y <= 0) { j.pos.y = 0; return ['estrellado']; }
     if (j.pos.y > P.altMax) { j.pos.y = P.altMax; caerMorro(j, P.perdida * dt); avisos.push('alturaMax'); }
-    else if (j.vel < P.velMin) { caerMorro(j, P.perdida * dt); avisos.push('perdida'); }
+    else if (j.vel < P.velMin && !caza.flota) { caerMorro(j, P.perdida * dt); avisos.push('perdida'); }
     else if (j.pos.y < P.altAviso && j.f.y < 0) avisos.push('alturaBaja');
     if (!avisos.length || j.avisoT > 0) return [];
     j.avisoT = P.aviso;

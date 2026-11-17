@@ -1,6 +1,6 @@
-// Fans of Wings · Los seis aviones chibi (cortos, gorditos y con la cabina enorme), montados con las piezas de maquetas.js. Cada uno
+// Fans of Wings · Los siete aviones chibi (cortos, gorditos y con la cabina enorme), montados con las piezas de maquetas.js. Cada uno
 // parte de un avión de verdad y lleva los colores y el emblema de su piloto: Zanahoria Uno (CrazyBunny, tipo Su-27, negro y naranja),
-// Zorra Invisible (SlyFox, tipo F-22), Castor Bombardero (BoomBeaver, tipo A-10), el dron del becario, el bombardero de cajas (un
+// Zorra Invisible (SlyFox, tipo F-22), Castor Bombardero (BoomBeaver, tipo A-10), Filete Rosa (MechaVaca, tipo Harrier, rosa con manchas de vaca), el dron del becario, el bombardero de cajas (un
 // avión de carga) y SurvivalBot (un ala volante). Medidas en unidades: x a los lados, y arriba, z a lo largo con el morro en 0.
 'use strict';
 var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
@@ -9,6 +9,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   const CONEJO = ['XX...XX', 'XX...XX', 'XX...XX', 'XX...XX', 'XXXXXXX', 'X.XXX.X', 'XXXXXXX', 'XXX.XXX', '.XXXXX.'];
   const ZORRO = ['X.....X', 'XX...XX', 'XXX.XXX', 'XXXXXXX', 'X.XXX.X', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
   const CASTOR = ['.X...X.', 'XXXXXXX', 'X.XXX.X', 'XXXXXXX', 'XXX.XXX', '.XXXXX.', '..X.X..', '..X.X..', '.......'];
+  const VACA = ['X.....X', 'XX...XX', '.XXXXX.', 'XXXXXXX', 'X.XXX.X', 'XXXXXXX', '.XXXXX.', '.X.X.X.', '.XXXXX.'];
   // Lo que llevan todos igual.
   const COMUN = { misil: '#f4f4f0', misilpunta: '#e63a2a', emblema: '#ffffff', fuego: '#ff7a1a', luzroja: '#e63a2a', luzverde: '#3fae3a', toma: '#0e0f12', tobera: '#5d6068', pala: '#5d6068', buje: '#ffd23c' };
   const pal = (p) => Object.assign({}, COMUN, p);
@@ -110,6 +111,31 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       pintas: [cinta] };
   }
 
+  // Filete Rosa: tipo Harrier. Morro en punta, cabina de burbuja, dos tomas de aire enormes a los lados, ala alta caída hacia las
+  // puntas, cuatro toberas en los costados (las dos de atrás, encendidas), una sola deriva y el timón de cola también caído. De la
+  // MechaVaca: rosa, con manchas blancas de vaca, dos cuernos junto a la cabina y un cencerro bajo el morro.
+  const MANCHAS = [[2.2, 19, 2.6], [0, 27, 2.2], [8.5, 21, 2.4], [12.5, 25, 1.7], [2.5, 12.5, 1.5], [0, 33.5, 1.6]];   // x, z y radio de cada mancha
+  const PINTADO = { cuerpo: 1, lomo: 1, ala: 1 };
+  const manchas = (p, ax, y, z) => (PINTADO[p] && y > 0.6 && MANCHAS.some(([x, mz, r]) => (ax - x) * (ax - x) + (z - mz) * (z - mz) < r * r) ? 'mancha' : null);
+  function vaca() {
+    const F = [[0, 0, 0, -0.6], [1, 1.1, 1.0, -0.6], [4, 2.2, 2.2, -0.2], [8, 3.0, 3.4, 0.5], [13, 3.6, 4.0, 0.9], [20, 3.6, 3.8, 0.8], [27, 2.8, 2.8, 0.9], [33, 1.6, 1.7, 1.4], [38, 0.8, 0.9, 1.8], [40, 0.3, 0.3, 2]];
+    return { k: 3, ky: 4, u: 0.75, ancho: 18, alto: [-6, 13.5], largo: 41, toberas: [[-4.4, -1.4, 28], [4.4, -1.4, 28]], punta: [16, 1.2, 26],
+      pal: pal({ cuerpo: '#ff6fae', lomo: '#ff8cc0', panza: '#ffd3e6', morro: '#ffc2dc', antirreflejo: '#b84f86', ala: '#ff8cc0', borde: '#ffffff', punta: '#b84f86', franja: '#ffffff',
+        deriva: '#ff6fae', cristal: '#3a6fb8', brillo: '#bfe6ff', marco: '#b84f86', aro: '#ffffff', motor: '#e85a9c', detalle: '#b84f86', cuerno: '#fff3c4', mancha: '#ffffff', cencerro: '#ffd23c' }),
+      piezas: [MQ.cabina(F, 4.5, 14, 0.8, 1.15), MQ.bola(-2.6, 4.2, 0.9, 'cencerro'),
+        MQ.caja(3.0, 3.7, 3.2, 5.0, 10.6, 11.6, 'cuerno'), MQ.caja(3.4, 4.1, 4.6, 6.0, 10.6, 11.6, 'cuerno'),
+        MQ.tubo({ x: 4.3, y: 0.1, r: 3.2, rx: 2.5, z0: 9, z1: 18, labio: 1.3, boca: 2.4, tobera: 0.6, exp: 2.4 }),
+        MQ.tubo({ x: 4.4, y: -1.4, r: 1.3, z0: 17.5, z1: 21, boca: 0, tobera: 2.4 }),
+        MQ.tubo({ x: 4.4, y: -1.4, r: 1.6, z0: 23, z1: 28, boca: 0, tobera: 3.6, fuego: true }),
+        MQ.fuselaje(F, { morro: 2.6, anti: [2.6, 4.6] }),
+        MQ.caja(0.9, 1.9, -3.9, -2.6, 13, 24, 'detalle'), MQ.antena(21, 5.6),
+        MQ.misil(8, 1.1, 16.5, 24, 0.7), MQ.misil(14.8, 0.4, 21.5, 27.5, 0.55), MQ.caja(11.6, 12.3, -0.4, 1.8, 22.5, 26.5, 'detalle'),
+        MQ.ala({ s0: 2.5, s1: 16, le0: 14, te0: 25.5, le1: 23, te1: 28, y: 3.5, g0: 1.3, g1: 0.6, punta: 1.6, diedro: -0.17 }),
+        MQ.ala({ s0: 0.6, s1: 8.5, le0: 33, te0: 38.5, le1: 37, te1: 40.5, y: 2, g0: 0.9, g1: 0.5, punta: 1.2, diedro: -0.15 }),
+        MQ.deriva({ x: 0, y0: 2.4, y1: 12.4, a0: 28.5, b0: 38.5, a1: 35, b1: 39.6, banda: 1.4, emblema: [VACA, 2, 32.6, 9.8] })],
+      pintas: [manchas, luces(15, 24.6)] };
+  }
+
   function jefe() {
     const F = [[0, 0, 0, 0], [1, 2.0, 1.4, 0], [5, 4.5, 3.4, 0.4], [12, 5.5, 4.2, 0.6], [22, 5.0, 3.6, 0.4], [30, 3.5, 2.2, 0.2], [35, 1.5, 1.0, 0]];
     const sierra = (ax) => 6 * Math.abs(((ax / 8.5) % 1) - 0.5);   // el borde de atrás, en dientes de sierra
@@ -123,7 +149,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
         MQ.deriva({ x: 15.5, y0: 0.5, y1: 5, a0: 23.5, b0: 28.5, a1: 26, b1: 29, banda: 1 })] };
   }
 
-  const HACER = { bunny, zorro, castor, becario, caja, jefe }, HECHOS = {};
+  const HACER = { bunny, zorro, castor, vaca, becario, caja, jefe }, HECHOS = {};
   AV.ids = Object.keys(HACER);
   AV.dame = (id) => HECHOS[id] || (HECHOS[id] = HACER[id]());
 })(WINGS);

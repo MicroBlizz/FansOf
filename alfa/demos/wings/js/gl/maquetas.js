@@ -53,6 +53,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 
   // Un ala (o un timón de cola): de la raíz s0 a la punta s1 (media envergadura), con el borde de delante de le0 a le1 y el de
   // atrás de te0 a te1 (o.atras(ax) lo recorta, para dientes de sierra); gruesa en la raíz y afilada en la punta y los bordes.
+  // o.diedro = cuánto sube (o baja, si es negativo) por cada unidad que se aleja de la raíz.
   function zonaAla(o, ax, c, dy) {
     if (o.punta && ax > o.s1 - o.punta) return 'punta';
     if (c < 0.1) return 'borde';
@@ -66,7 +67,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       const s = entre((ax - o.s0) / (o.s1 - o.s0), 0, 1), le = o.le0 + (o.le1 - o.le0) * s;
       const te = o.te0 + (o.te1 - o.te0) * s - (o.atras ? o.atras(ax) : 0), c = (z - le) / Math.max(te - le, 0.001);
       if (c < 0 || c > 1) return null;
-      const g = (g0 + (g1 - g0) * s) * Math.pow(entre(4 * c * (1 - c), 0, 1), 0.35), dy = y - o.y;
+      const g = (g0 + (g1 - g0) * s) * Math.pow(entre(4 * c * (1 - c), 0, 1), 0.35), dy = y - o.y - (o.diedro || 0) * (ax - o.s0);
       if (Math.abs(dy) > Math.max(g / 2, 0.51 / MQ.ky)) return null;
       return zonaAla(o, ax, c, dy);
     };

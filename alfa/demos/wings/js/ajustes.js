@@ -1,4 +1,4 @@
-// Fans of Wings · Ajustes: los tres cazas de los Animales Locos, los enemigos de Microblizz (aire y tierra), armas, tiempos y la misión.
+// Fans of Wings · Ajustes: los cuatro cazas de los Animales Locos, los enemigos de Microblizz (aire y tierra), armas, tiempos y la misión.
 'use strict';
 const AJUSTES = {
   id: 'wings',                  // para core: la partida en la nube lleva este nombre
@@ -20,6 +20,9 @@ WINGS.AJ = Object.freeze({
       fijar: 0.5, sigilo: 0.5, radioBomba: 1, rabia: 0, texto: 'Rápida y sigilosa: a los becarios les cuesta el doble apuntarte.' },
     { id: 'castor', nombre: 'Castor Bombardero', piloto: 'BoomBeaver', color: '#a86a32', vel: 0.8, escudo: 150, misiles: 4, bombas: 12,
       fijar: 0.4, sigilo: 1.2, radioBomba: 1.5, rabia: 0, texto: 'Blindado y lento, con más bombas y explosiones más grandes.' },
+    // flota: con el freno se para del todo en el aire y nunca entra en pérdida (el Harrier despega en vertical); cabina: de quién la toma prestada
+    { id: 'vaca', nombre: 'Filete Rosa', piloto: 'MechaVaca', color: '#ff6fae', vel: 0.75, escudo: 180, misiles: 3, bombas: 8,
+      fijar: 0.6, sigilo: 1.2, radioBomba: 1, rabia: 0, flota: true, cabina: 'castor', texto: 'La más blindada y la más lenta. FLOTA: con el freno se queda quieta en el aire.' },
   ],
   // Combustible de toda la misión, en segundos de vuelo; si se acaba, misión fallida. Los bidones de los enemigos lo recargan
   combustible: { max: 210, aviso: 35 },
@@ -77,5 +80,5 @@ WINGS.AJ = Object.freeze({
   // El rango de una misión cumplida sale de sus puntos totales, como en Ace Combat (ADR 134); una fallida es siempre C
   rangos: [['S', 7500], ['A', 6000], ['B', 4500], ['C', 0]],
   // Adorno fijo del mundo del juego: el código de cada caza y el sector de la misión
-  codigos: { bunny: 'CB-27', zorro: 'SF-22', castor: 'BB-10' }, sector: 'K-7',
+  codigos: { bunny: 'CB-27', zorro: 'SF-22', castor: 'BB-10', vaca: 'MV-08' }, sector: 'K-7',
 });

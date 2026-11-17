@@ -58,8 +58,8 @@ AS.pinta.altar = (() => {
       const bote = G && G.tipo === 'tira' && G.t >= G.para[col] && G.t < G.para[col] + 0.12 ? 4 : 0;   // el golpe al pararse
       asoma(g, P, p, E, col, -1); asoma(g, P, p, E, col, 3);
       for (let f = 0; f < 3; f++) {
-        const l = P.losa(col, f), r = runaVista(p, E, col, f + 1), oro = E.celdasOro.has(col + ',' + f);
-        T.losa(g, l.x, l.y + bote, l.w, l.h, oro ? C.oro : r ? C.piedra : C.piedra2);
+        const l = P.losa(col, f), r = runaVista(p, E, col, f + 1), oro = E.celdasOro.has(col + ',' + f), casi = !G && E.casi.has(col + ',' + f) && Math.floor(E.t * 4) % 2;
+        T.losa(g, l.x, l.y + bote, l.w, l.h, oro ? C.oro : casi ? '#f0b85a' : r ? C.piedra : C.piedra2);
         if (r) runa(g, r, l.x + l.w / 2, l.y + l.h / 2 + bote, 2);
         else tx(g, '?', l.x + l.w / 2, l.y + l.h / 2, { t: 48, col: '#8a7a58', borde: false, ancla: 'c' });
         if (oro) AS.fx.luz(l.x + l.w / 2, l.y + l.h / 2, 70, [255, 215, 90], 0.08);
@@ -75,6 +75,11 @@ AS.pinta.altar = (() => {
     tx(g, sitio ? tr('INVOCAR') : tr('SIN SITIO'), b.x + b.w / 2, y + Math.round(b.h * 0.33), { t: 48, col: vale ? C.crema : '#d8b890', ancla: 'c', max: b.w - 14 });
     if (coste === 0) tx(g, tr('GRATIS'), b.x + b.w / 2, y + Math.round(b.h * 0.7), { col: '#b8ff7a', ancla: 'c' });
     else { D.icono(g, 'moneda', b.x + b.w / 2 - 20, y + Math.round(b.h * 0.7), 1); tx(g, String(coste), b.x + b.w / 2, y + Math.round(b.h * 0.7), { col: llega ? C.oro : '#ff7a6a' }); }
+    if (p.racha >= 2) {   // la racha de invocaciones seguidas con línea, en la esquina del botón
+      const w = 54, x = b.x + b.w - w - 8, yy = y + Math.round(b.h * 0.7) - 18;
+      T.losa(g, x, yy, w, 34, C.oro);
+      tx(g, 'x' + p.racha, x + w / 2, yy + 15, { col: C.tinta, borde: false, ancla: 'c', max: w - 8 });
+    }
     E.zona(b, 'invoca');
   }
   function empujon(g, P, p, E) {

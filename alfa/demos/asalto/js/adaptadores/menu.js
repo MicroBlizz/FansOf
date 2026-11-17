@@ -35,10 +35,16 @@ AS.menu = (() => {
     const donde = tr(ASALTO.zonas[s.zona] ? ASALTO.zonas[s.zona].nombre : '') + ' · ' + tr('oleada {n}', { n: s.oleada });
     return `<button class="as-btn as-verde as-seguir" id="as-seguir-partida" type="button">${tr('SEGUIR LA PARTIDA')}<small>${donde}</small></button>`;
   }
+  // la mejora que queda más cerca, a la vista en el menú
+  function htmlMeta() {
+    const m = casos.metas().mejora;
+    if (!m) return '';
+    return `<p class="as-meta-menu">${tr(m.nombre)}: ${m.plumas >= m.coste ? tr('¡Ya te llegan las plumas!') : tr('Te faltan {n} plumas', { n: m.coste - m.plumas })}</p>`;
+  }
   function pinta() {
     const g = casos.progreso, pend = casos.logrosPendientes().length, s = casos.guardada();
     reparto = s && s.heroes.length ? s.heroes : REPARTO;
-    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}</p>
+    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}</p>${htmlMeta()}
       <div class="as-escena" id="as-escena"></div>${htmlSeguir()}
       <div class="as-zonas">${ASALTO.zonas.map(htmlZona).join('')}</div>
       <div class="as-rejilla">${V.btn('as-m-mejoras', tr('MEJORAS'), 'as-oro')}${V.btn('as-m-equipo', tr('EQUIPO'), 'as-azul')}${V.btn('as-m-herreria', tr('HERRERÍA'), 'as-azul')}
@@ -48,11 +54,13 @@ AS.menu = (() => {
     V.alPulsar('as-m-mejoras', mejoras); V.alPulsar('as-m-equipo', equipo); V.alPulsar('as-m-herreria', herreria);
     V.alPulsar('as-m-logros', logros); V.alPulsar('as-m-tienda', tienda); V.alPulsar('as-m-ajustes', ajustes);
   }
-  function abre() {
+  // ventana: 'mejoras' para abrirlo ya en esa ventana (desde el final de la partida)
+  function abre(ventana) {
     AS.pantalla.sal(); V.cierra();
     caja().hidden = false;
     pinta();
     AS.suena.musica('menu');
+    if (ventana === 'mejoras') mejoras();
   }
   // una ventana del menú: su contenido, el botón de volver y repintar el menú al cerrarla
   function ventana(html) {

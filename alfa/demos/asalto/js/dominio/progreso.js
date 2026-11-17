@@ -129,7 +129,16 @@ AS.progreso = (() => {
     const q = apunta(p, null, { sinFinMax: oleada });
     return oleada > (p.sinFin[zona] || 0) ? copia(q, { sinFin: { ...p.sinFin, [zona]: oleada } }) : q;
   }
+  // las metas de fuera que quedan más cerca, para tenerlas a la vista: la mejora más barata que aún se puede comprar (con las plumas
+  // que hay y lo que cuesta) y el logro sin cumplir al que menos le falta, en proporción. Cada una puede ser null si no queda ninguna.
+  function metas(datos, p) {
+    const mejoras = Object.keys(datos.mejoras).map(id => ({ id, coste: costeMejora(datos, p, id) })).filter(m => m.coste).sort((a, b) => a.coste - b.coste);
+    const logros = datos.logros.filter(l => l.stat && !p.logros[l.id] && !cumple(p, l)).map(l => ({ id: l.id, txt: l.txt, premio: l.premio, va: p.stats[l.stat] || 0, meta: l.meta }))
+      .sort((a, b) => b.va / b.meta - a.va / a.meta);
+    return { mejora: mejoras.length ? { ...mejoras[0], nombre: datos.mejoras[mejoras[0].id].nombre, plumas: p.plumas } : null, logro: logros[0] || null };
+  }
+  const olvidaConsejo = (p, id) => { const consejos = { ...p.consejos }; delete consejos[id]; return copia(p, { consejos }); };
   const consejoVisto = (p, id) => (p.consejos[id] ? p : copia(p, { consejos: { ...p.consejos, [id]: true } }));
   return { nuevo, deJSON, costeMejora, compraMejora, objetoNuevo, statsEquipo, ponObjeto, quitaObjeto, deshaceObjeto, costeHerreria, mejoraObjeto, guardaObjetos, compraCofre,
-    logrosPendientes, cobraLogro, apunta, empiezaPartida, terminaZona, apuntaOleada, consejoVisto };
+    logrosPendientes, cobraLogro, apunta, empiezaPartida, terminaZona, apuntaOleada, metas, consejoVisto, olvidaConsejo };
 })();

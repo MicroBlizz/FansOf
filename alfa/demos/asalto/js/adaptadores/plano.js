@@ -1,6 +1,6 @@
 // Fans of Asalto · ADAPTADORES · El plano de la pantalla de la partida: dónde va cada cosa según el tamaño del lienzo (de 480 a 600 de
 // ancho y de 900 a 1300 de alto; por debajo de 960 todo lo de abajo se aprieta un poco para dejarle sitio a la arena). Arriba el marcador, las oleadas y las clases; en medio la arena; abajo el Altar con el botón de
-// invocar y el banquillo a su derecha, y el botón de luchar. También pasa del campo de batalla (540 x 420) a la pantalla.
+// invocar y el banquillo a su derecha, y el botón de luchar. En lo alto de la arena, la tira de misiones y el pergamino de la guía. También pasa del campo de batalla (540 x 420) a la pantalla.
 'use strict';
 AS.plano = (W, H) => {
   const corto = H < 960, c = H >= 980 ? 88 : corto ? 72 : 76, asoma = corto ? 30 : 34, hueco = 6;   // la losa del Altar, lo que asoman las de arriba y abajo
@@ -16,6 +16,7 @@ AS.plano = (W, H) => {
   const aPantalla = (x, y) => ({ x: Math.round(x * W / C.w), y: Math.round(suelo0 + (y - C.yMin) / (C.yMax - C.yMin) * sueloAlto) });
   return {
     W, H, c, asoma, hueco, arena, aPantalla,
+    misiones: { x: 6, y: ay + 6, w: W - 12, h: 40 }, guia: { x: Math.round(W * 0.475), y: ay + ah - 184, w: W - Math.round(W * 0.475) - 8, h: 176 },
     marcador: { x: 4, y: 4, w: W - 8, h: 50 }, oleadas: { x: 8, y: 58, w: W - 16, h: 32 }, clases: { x: 6, y: 96, w: W - 12, h: 42 },
     altar: { x: 10, y: by, w: altarAncho, h: altarAlto, gx: 10 + 14, gy: by + 14 + asoma },
     invocar: { x: lx, y: by, w: lw, h: inv }, empujon: { x: lx, y: by + inv + 8, w: lw, h: emp },

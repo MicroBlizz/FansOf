@@ -128,3 +128,9 @@ body { background: #0b0816; display: flex; align-items: center; justify-content:
 .as-perg .opt-ver { color: #6a4a2a; opacity: 1; font-size: calc(var(--as-u) * 24); margin: calc(var(--as-u) * 8) 0; }
 #toast, #scr-confirm { font-family: 'Jersey 10', monospace; }
 #toast { font-size: 28px; }
+/* las metas a la vista: la barra de cada misión, mejora o logro, y la línea de la siguiente mejora en el menú */
+.as-barra { height: calc(var(--as-u) * 12); background: var(--as-tinta); margin-top: calc(var(--as-u) * 6); padding: calc(var(--as-u) * 3); }
+.as-barra i { display: block; height: 100%; background: var(--as-oro); }
+.as-metas .as-item span img { height: calc(var(--as-u) * 22); margin: 0 calc(var(--as-u) * 2) 0 calc(var(--as-u) * 6); }
+.as-meta-menu { margin: 0; flex: none; font-size: calc(var(--as-u) * 32); color: var(--as-oro); text-align: center; text-shadow: calc(var(--as-u) * 2) calc(var(--as-u) * 2) 0 var(--as-tinta); }
+.as-corto .as-meta-menu { display: none; }

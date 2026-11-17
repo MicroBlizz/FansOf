@@ -1,5 +1,5 @@
 // Fans of Asalto · ADAPTADORES · Las ventanas de la partida, en pergamino (HTML sobre el lienzo): la ficha de un héroe (con el ascenso
-// a una de sus dos clases), la de una clase, los premios (elegir reliquia, abrir el cofre, el botín del jefe), el final de la partida,
+// a una de sus dos clases), la de una clase, los premios (elegir reliquia, abrir el cofre, el botín del jefe), las misiones con lo siguiente por conseguir, el final de la partida,
 // la pausa y el anuncio de prueba. Cada ventana llama a los casos de uso y se cierra; no decide reglas.
 'use strict';
 AS.ventanas = (() => {
@@ -103,13 +103,36 @@ AS.ventanas = (() => {
     if (pr.tipo === 'reliquia') reliquia(E, sigue); else cofre(E, sigue);
   }
 
+  /* ---------- las metas a la vista: las misiones de la partida y lo siguiente de fuera ---------- */
+  const barra = (va, meta) => `<div class="as-barra"><i style="width:${Math.min(100, Math.round(va / meta * 100))}%"></i></div>`;
+  // la mejora más cercana y el logro al que menos le falta, cada uno con su barra
+  function htmlMetas(E) {
+    const m = E.casos.metas(), M = m.mejora, G = m.logro;
+    const mejora = M ? `<li class="as-item">${ico(ASALTO.mejoras[M.id].icono, 'as-ico2')}<div><b>${tr('Mejora')}: ${tr(M.nombre)}</b><span>${M.plumas >= M.coste ? tr('¡Ya te llegan las plumas!') : tr('Te faltan {n} plumas', { n: M.coste - M.plumas })}</span>${barra(M.plumas, M.coste)}</div></li>` : '';
+    const logro = G ? `<li class="as-item">${ico('trofeo', 'as-ico2')}<div><b>${tr('Logro')}: ${tr(G.txt)}</b><span>${G.va}/${G.meta} · ${ico('pluma')}+${G.premio}</span>${barra(G.va, G.meta)}</div></li>` : '';
+    return mejora || logro ? `<h3>${tr('LO SIGUIENTE')}</h3><ul class="as-lista as-metas">${mejora}${logro}</ul>` : '';
+  }
+  function htmlMision(m) {
+    const d = ASALTO.misiones.lista[m.id];
+    const pie = m.acabada ? `<span>${tr('Hecha del todo')}</span>` : `<span>${m.va}/${m.meta} · ${ico('moneda')}+${m.oro} ${ico('pluma')}+${m.plumas}</span>${barra(m.va, m.meta)}`;
+    return `<li class="as-item">${ico(d.icono, 'as-ico2')}<div><b>${tr(d.txt, { n: m.meta })}</b>${pie}</div></li>`;
+  }
+  function misiones(E) {
+    const p = E.casos.partida;
+    abre(`<h2>${tr('MISIONES')}</h2><p class="as-nota">${tr('Se cobran solas al cumplirlas. Cada una tiene tres escalones, con más premio.')}</p><ul class="as-lista as-metas">${p.misiones.map(htmlMision).join('')}</ul>
+      <p class="as-nota">${tr('Racha: cada invocación seguida con línea da oro extra.')} ${p.racha >= 2 ? tr('Llevas {n}.', { n: p.racha }) : ''}</p>${htmlMetas(E)}` + btn('as-cerrar', tr('CERRAR'), 'as-azul'));
+    alPulsar('as-cerrar', cierra);
+  }
+
   /* ---------- el final de la partida y la pausa ---------- */
   function fin(E) {
     const p = E.casos.partida, c = p.cuenta, gano = p.final === 'victoria', zona = ASALTO.zonas[p.zona], hay = ASALTO.zonas[p.zona + 1];
-    const fila = (txt, v) => `<li><span>${txt}</span><b>${v}</b></li>`;
+    const fila = (txt, v) => `<li><span>${txt}</span><b>${v}</b></li>`, M = E.casos.metas().mejora, llega = M && M.plumas >= M.coste, pend = E.casos.logrosPendientes().length;
     abre(`<h2 class="${gano ? 'as-gana' : 'as-pierde'}">${gano ? tr('¡ZONA CONQUISTADA!') : tr('DERROTA')}</h2><p class="as-nivel">${tr(zona.nombre)}${p.sinFin ? ' · ' + tr('SIN FIN') : ''}</p>
-      <ul class="as-lista as-resumen">${fila(tr('Oleadas superadas'), c.oleadasGanadas)}${fila(tr('Enemigos derrotados'), c.bajas)}${fila(tr('Líneas en el Altar'), c.lineas)}${fila(tr('Nivel más alto'), c.nivelMax)}${fila(tr('Plumas ganadas'), p.plumas)}</ul>
+      <ul class="as-lista as-resumen">${fila(tr('Oleadas superadas'), c.oleadasGanadas)}${fila(tr('Enemigos derrotados'), c.bajas)}${fila(tr('Líneas en el Altar'), c.lineas)}${fila(tr('Nivel más alto'), c.nivelMax)}${fila(tr('Plumas ganadas'), '+' + p.plumas)}</ul>
+      ${htmlMetas(E)}${llega ? btn('as-mejorar', tr('MEJORAR AHORA'), 'as-oro') : ''}${pend ? `<p class="as-nota">${tr('Tienes {n} logros por cobrar en el menú.', { n: pend })}</p>` : ''}
       <div class="as-fila">${btn('as-otra', gano && hay ? tr('SIGUIENTE ZONA') : tr('OTRA VEZ'), 'as-rojo')}${btn('as-menu-ir', tr('MENÚ'), 'as-azul')}</div>`, gano ? 'as-victoria' : '');
+    alPulsar('as-mejorar', () => { cierra(); AS.menu.abre('mejoras'); });
     alPulsar('as-otra', () => { cierra(); AS.menu.entra(gano && hay && !p.sinFin ? p.zona + 1 : p.zona, p.sinFin); });
     alPulsar('as-menu-ir', () => { cierra(); AS.menu.abre(); });
   }
@@ -127,19 +150,20 @@ AS.ventanas = (() => {
     ['gema', 'EMPUJA', 'Una vez por oleada, toca una runa de las que asoman: mueve su columna para completar una línea.'],
     ['yunque', 'ABSORBE', 'Arrastra un héroe sobre otro: el que queda suma los niveles de los dos. Al nivel 5 asciende.'],
     ['corazon', 'DEFIENDE', 'Pulsa ¡A LUCHAR! y que no crucen la empalizada: cada enemigo que pasa te quita una vida.']];
-  function ayuda(alCerrar) {
+  function ayuda(E, alCerrar) {
     const filas = AYUDA.map(([icono, titulo, txt]) => `<li class="as-item">${ico(icono, 'as-ico2')}<div><b>${tr(titulo)}</b><span>${tr(txt)}</span></div></li>`).join('');
-    abre(`<h2>${tr('CÓMO SE JUEGA')}</h2><ul class="as-lista as-ayuda">${filas}</ul>` + btn('as-entendido', tr('ENTENDIDO'), 'as-verde'));
+    abre(`<h2>${tr('CÓMO SE JUEGA')}</h2><ul class="as-lista as-ayuda">${filas}</ul>` + btn('as-entendido', tr('ENTENDIDO'), 'as-verde') + btn('as-otra-guia', tr('VER LA GUÍA OTRA VEZ'), 'as-naranja as-chico'));
     alPulsar('as-entendido', () => { cierra(); if (alCerrar) alCerrar(); });
+    alPulsar('as-otra-guia', () => { E.casos.repiteGuia(); toast(tr('Tu próxima partida nueva en la primera zona será guiada')); });
   }
   function pausa(E) {
     const t = abre(`<h2>${tr('PAUSA')}</h2><div class="as-fila">${btn('as-sigue', tr('SEGUIR'), 'as-verde')}${btn('as-salir', tr('SALIR AL MENÚ'), 'as-azul')}</div>${btn('as-como', tr('CÓMO SE JUEGA'), 'as-naranja as-chico')}<p class="as-nota">${tr('La partida se guarda al empezar cada oleada: puedes salir y seguir luego.')}</p>
       <div id="as-opc"></div>${btn('as-dejar', tr('ABANDONAR LA PARTIDA'), 'as-rojo as-chico')}`);
     ajustes(t.querySelector('#as-opc'), E);
-    alPulsar('as-como', () => ayuda(() => pausa(E)));
+    alPulsar('as-como', () => ayuda(E, () => pausa(E)));
     alPulsar('as-sigue', cierra);
     alPulsar('as-salir', () => { cierra(); AS.menu.abre(); });
     alPulsar('as-dejar', () => confirmBox(tr('¿ABANDONAR?'), tr('Perderás la partida de ahora.'), tr('SÍ, SALIR'), () => { E.casos.abandona(); cierra(); AS.menu.abre(); }));
   }
-  return { abre, cierra, abierta, anuncio, heroe, clase, premios, fin, pausa, ayuda, ajustes, ico, btn, alPulsar };
+  return { abre, cierra, abierta, anuncio, heroe, clase, premios, misiones, fin, pausa, ayuda, ajustes, ico, btn, alPulsar };
 })();

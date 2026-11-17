@@ -44,7 +44,8 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     guarda();
   }
   const zonaAbierta = (zona, sinFin) => !!datos.zonas[zona] && (sinFin ? prog.zonas.includes(zona) : zona === 0 || prog.zonas.includes(zona - 1));
-  const cfgPartida = (zona, sinFin) => ({ zona, sinFin: !!sinFin, mejoras: prog.mejoras, equipo: PR.statsEquipo(datos, prog) });
+  // la primera partida es guiada: en la primera zona, mientras no se haya hecho (o saltado) la guía
+  const cfgPartida = (zona, sinFin) => ({ zona, sinFin: !!sinFin, guiada: zona === 0 && !sinFin && !prog.consejos.guia, mejoras: prog.mejoras, equipo: PR.statsEquipo(datos, prog) });
   // los objetos del botín del jefe: 50 % normal, 35 % raro, 15 % épico
   function botin(n) {
     const lista = Array.from({ length: n }, () => { const r = azar(); return PR.objetoNuevo(datos, azar, idObjeto(), r < 0.5 ? 0 : r < 0.85 ? 1 : 2); });
@@ -60,6 +61,9 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     statsEquipo: () => PR.statsEquipo(datos, prog),
     logrosPendientes: () => PR.logrosPendientes(datos, prog),
     costeMejora: id => PR.costeMejora(datos, prog, id),
+    metas: () => PR.metas(datos, prog),
+    // lo que las últimas acciones han dejado para enseñar (misiones cumplidas)
+    avisos: () => (partida ? partida.recogeAvisos() : []),
     zonaAbierta,
 
     /* ---------- fuera de la partida ---------- */
@@ -73,6 +77,8 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     // plumas de regalo (el anuncio de la Tienda)
     regalaPlumas(n) { prog = PR.apunta(prog, { plumas: n }); guarda(); return AS.ok(prog.plumas); },
     consejoVisto(id) { prog = PR.consejoVisto(prog, id); guarda(); },
+    // volver a ver la partida guiada: la próxima partida nueva de la primera zona la trae
+    repiteGuia() { prog = PR.olvidaConsejo(prog, 'guia'); guarda(); },
     sonido(vol, mus) { prog = { ...prog, vol, mus }; guarda(); },
     borraTodo() { prog = PR.nuevo(); partida = null; batalla = null; almacen.guardaPartida(null); guarda(); },
     // para la partida en la nube: cambiar el progreso entero por el que llega

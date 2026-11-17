@@ -1,12 +1,14 @@
 // Fans of Asalto · ADAPTADORES · La pantalla de la partida mientras se prepara la oleada: lleva el estado de lo que se ve (E), recoge los
 // toques (tocar un botón, arrastrar un héroe a un hueco o sobre otro para absorberlo), llama a los casos de uso y anima el Altar: el
 // giro de las columnas, las líneas que se encienden una a una, los héroes que llegan en su columna de luz y los premios. En cada
-// fotograma pinta todo en el lienzo pequeño y pasa las luces a la capa de luces. La batalla la lleva pantalla-batalla.js.
+// fotograma pinta todo en el lienzo pequeño y pasa las luces a la capa de luces. La batalla la lleva pantalla-batalla.js; la mano de
+// la primera partida guiada, guia.js (que dice qué se puede tocar en cada paso); las misiones, pinta-misiones.js.
 'use strict';
 AS.pantalla = (() => {
   const L = AS.lienzo.L, fx = AS.fx, C = AS.tema.C;
   const E = { casos: null, activa: false, t: 0, P: null, plano: '', zonas: [], oroVisto: 0, vidasRojo: 0, destinoOro: { x: 0, y: 0 }, giro: null, ocultos: new Set(), apariciones: new Map(),
-    celdasOro: new Set(), arrastre: null, toque: null, batalla: null, vel: 1, destellos: new Map(), cartel: null, pista: '', intro: null, tFin: 0, cerrando: false };
+    celdasOro: new Set(), arrastre: null, toque: null, batalla: null, vel: 1, destellos: new Map(), cartel: null, pista: '', intro: null, tFin: 0, cerrando: false,
+    casi: new Set(), cumplidas: [], misionHecha: null, combo: 0, tCombo: 0 };
   E.zona = (r, que, dato) => { E.zonas.push({ x: r.x, y: r.y, w: r.w, h: r.h, que, dato }); };
   const p = () => E.casos.partida;
   const COLOR = { tanque: [90, 160, 255], luchador: [255, 130, 80], asesino: [80, 230, 220], tirador: [140, 240, 110], mago: [255, 200, 90], sanador: [255, 150, 200], brujo: [255, 100, 150], comodin: [255, 240, 200] };
@@ -24,7 +26,7 @@ AS.pantalla = (() => {
 
   /* ---------- el Altar: invocar, empujar y su animación ---------- */
   function lanzaGiro(tipo, res) {
-    E.celdasOro.clear();
+    E.celdasOro.clear(); E.casi.clear();
     for (const l of res.llegados) if (!l.fundido) E.ocultos.add(l.heroe.id);
     if (res.dorado && !res.dorado.fundido) E.ocultos.add(res.dorado.heroe.id);
     E.giro = { tipo, t: 0, res, para: tipo === 'tira' ? [0.45, 0.7, 0.95] : [0, 0, 0], parada: [false, false, false], hechas: 0, t0: tipo === 'tira' ? 1.1 : 0.18 };
@@ -72,11 +74,28 @@ AS.pantalla = (() => {
   const NOMBRE_LINEAS = ['', '', '¡DOBLE!', '¡TRIPLE!', '¡CUÁDRUPLE!', '¡LLUVIA DE LÍNEAS!'];
   function remata(G) {
     const res = G.res, n = res.lineas.length, a = E.P.altar;
+    const oro = res.oroExtra + res.oroRacha;
     if (res.dorado) premioGordo(res);
-    else if (n >= 2) { cartel(tr(NOMBRE_LINEAS[Math.min(n, 5)]), tr('+{n} de oro', { n: res.oroExtra }), C.oro2); AS.suena('premio', n); fx.sacude(4 + n); }
+    else if (n >= 2) { cartel(tr(NOMBRE_LINEAS[Math.min(n, 5)]), tr('+{n} de oro', { n: oro }), C.oro2); AS.suena('premio', n); fx.sacude(4 + n); }
     else if (res.repite) cartel(tr('¡OTRA GRATIS!'), '', C.verde, 1.1);
-    if (res.oroExtra) fx.monedas(a.x + a.w / 2, a.y + a.h / 2, 4 + res.oroExtra, E.destinoOro.x, E.destinoOro.y, () => AS.suena('moneda'));
-    if (!n && G.tipo === 'tira') fx.chispas(a.x + a.w / 2, a.y + a.h / 2, 5, '#b9a77c', 60);
+    else if (n && res.racha >= 2) rachaSube(res, oro);
+    else if (n) fx.sacude(3);
+    if (oro) fx.monedas(a.x + a.w / 2, a.y + a.h / 2, 4 + oro, E.destinoOro.x, E.destinoOro.y, () => AS.suena('moneda'));
+    if (!n && G.tipo === 'tira') casiLinea(a);
+  }
+  // otra invocación seguida con línea: la racha sube y paga
+  function rachaSube(res, oro) {
+    cartel(tr('¡RACHA x{n}!', { n: res.racha }), oro ? tr('+{n} de oro', { n: oro }) : '', C.oro2, 1.1);
+    AS.suena('racha', res.racha); fx.sacude(3 + Math.min(res.racha, 5));
+    for (let i = 0; i < 3; i++) fx.brasas(E.P.invocar.x + E.P.invocar.w * (0.25 + i * 0.25), E.P.invocar.y + 10, 5, '#ffd23a', 16);
+  }
+  // una invocación sin línea: se marca la que se ha quedado a una runa y, si un empujón la completa, se dice
+  function casiLinea(a) {
+    const q = p(), casi = AS.altar.casi(q.altar)[0];
+    fx.chispas(a.x + a.w / 2, a.y + a.h / 2, 5, '#b9a77c', 60);
+    if (!casi) return;
+    for (const [c, f] of casi.celdas) E.casi.add(c + ',' + f);
+    if (q.empujones > 0 && AS.altar.empujonConLinea(q.altar)) { cartel(tr('¡CASI!'), tr('Un empujón la completa'), C.naranja, 1.3); AS.suena('casi'); }
   }
   function avanzaGiro(dt) {
     const G = E.giro, n = G.res.lineas.length;
@@ -114,13 +133,15 @@ AS.pantalla = (() => {
     const z = zonaEn(pt, A.desde);
     if (!z) return;
     if (z.que === 'heroe') absorbe(A.desde, z.dato);
-    else if (z.que === 'hueco') mueve(A.desde, z.dato);
+    else if (z.que === 'hueco' && AS.guia.libre()) mueve(A.desde, z.dato);
   }
   const ACCIONES = {
     invoca, empuja,
     lucha: () => { if (!E.giro) AS.pantallaBatalla.lucha(E); },
-    velocidad: () => { E.vel = E.vel === 1 ? 2 : 1; AS.suena('clic'); },
-    deshace: () => { if (E.casos.deshace().ok) AS.suena('clic'); },
+    velocidad: () => { E.vel = E.vel % 3 + 1; AS.suena('clic'); },
+    deshace: () => { if (AS.guia.libre() && E.casos.deshace().ok) AS.suena('clic'); },
+    misiones: () => { AS.suena('clic'); AS.ventanas.misiones(E); },
+    'salta-guia': () => AS.guia.salta(E),
     pausa: () => { AS.suena('clic'); AS.ventanas.pausa(E); },
     clase: k => { AS.suena('clic'); AS.ventanas.clase(E, k); },
     'ayuda-empujon': () => { E.pistaFija = { txt: tr('Toca una runa que asoma: mueve su columna'), t: 3 }; },
@@ -129,7 +150,7 @@ AS.pantalla = (() => {
   function alBajar(ev) {
     if (!E.activa || AS.ventanas.abierta()) return;
     const pt = AS.lienzo.punto(ev), z = zonaEn(pt), libre = p().fase === 'preparar' && !E.giro && !E.batalla;
-    if (z && z.que === 'heroe' && libre) { const h = AS.equipo.leer(p().equipo, z.dato); if (h) { E.arrastre = { desde: z.dato, h, x: pt.x, y: pt.y, x0: pt.x, y0: pt.y, movido: false }; return; } }
+    if (z && z.que === 'heroe' && libre && AS.guia.permite(E, 'heroe', z.dato)) { const h = AS.equipo.leer(p().equipo, z.dato); if (h) { E.arrastre = { desde: z.dato, h, x: pt.x, y: pt.y, x0: pt.x, y0: pt.y, movido: false }; return; } }
     E.toque = z;
   }
   function alMover(ev) {
@@ -143,22 +164,16 @@ AS.pantalla = (() => {
     if (!E.activa) return;
     const pt = AS.lienzo.punto(ev), A = E.arrastre, t = E.toque;
     E.arrastre = null; E.toque = null;
-    if (A) { if (A.movido) suelta(A, pt); else { AS.suena('clic'); AS.ventanas.heroe(E, A.desde); } return; }
+    if (A) { if (A.movido) suelta(A, pt); else if (AS.guia.libre()) { AS.suena('clic'); AS.ventanas.heroe(E, A.desde); } return; }
     const z = zonaEn(pt);
-    if (t && z && z.que === t.que && ACCIONES[z.que]) ACCIONES[z.que](z.dato);
+    if (t && z && z.que === t.que && ACCIONES[z.que] && AS.guia.permite(E, z.que, z.dato)) ACCIONES[z.que](z.dato);
   }
 
   /* ---------- la pista del pie ---------- */
-  function hayLineaConEmpujon(q) {
-    if (!q.altar || !q.tiradas || !q.empujones) return false;
-    for (let col = 0; col < 3; col++) for (const dir of [1, -1]) {
-      const c = q.altar[col], m = dir === 1 ? ['?', c[0], c[1], c[2], c[3]] : [c[1], c[2], c[3], c[4], '?'];
-      if (AS.altar.lineasDeColumna(q.altar.map((x, j) => (j === col ? m : x)), col).length) return true;
-    }
-    return false;
-  }
+  const hayLineaConEmpujon = q => !!q.altar && q.tiradas > 0 && q.empujones > 0 && !!AS.altar.empujonConLinea(q.altar);
   function pista(q) {
     if (E.pistaFija) return E.pistaFija.txt;
+    if (AS.guia.activa) return AS.guia.pie();   // en la partida guiada habla el pergamino de la mano
     if (E.batalla) return q.proxima.tipo === 'normal' ? tr('Que no crucen la empalizada') : tr('Si pierdes esta, se acaba la partida');
     if (AS.equipo.todos(q.equipo).some(x => AS.heroe.puedeAscender(ASALTO, x.h))) return tr('Toca al héroe de la flecha: asciende');
     if (q.equipo.banquillo.length) return tr('Arrastra un héroe sobre otro');
@@ -174,7 +189,7 @@ AS.pantalla = (() => {
     const oro = p().oro + (E.oroBatalla || 0);
     E.oroVisto += (oro - E.oroVisto) * Math.min(1, dt * 10);
     if (Math.abs(oro - E.oroVisto) < 0.5) E.oroVisto = oro;
-    E.vidasRojo = Math.max(0, E.vidasRojo - dt);
+    E.vidasRojo = Math.max(0, E.vidasRojo - dt); E.tCombo = Math.max(0, E.tCombo - dt);
     if (E.cartel && (E.cartel.t += dt) > E.cartel.vida) E.cartel = null;
     if (E.pistaFija && (E.pistaFija.t -= dt) <= 0) E.pistaFija = null;
   }
@@ -217,14 +232,16 @@ AS.pantalla = (() => {
     E.t += dt; E.zonas.length = 0;
     if (E.giro) avanzaGiro(dt);
     if (E.batalla) AS.pantallaBatalla.avanza(E, dt);
+    if (!E.giro) for (const a of E.casos.avisos()) AS.pinta.misiones.avisa(E, a);   // las misiones recién cumplidas, cuando el Altar ya ha parado
+    AS.guia.avanza(E, dt);
     relojes(dt); fx.avanza(dt);
     E.pista = pista(q);
     const g = L.b, P = E.P, tb = fx.temblor();
     g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false;
     g.fillStyle = C.noche; g.fillRect(0, 0, P.W, P.H);
     g.translate(tb.x, tb.y);
-    AS.pinta.arena(g, P, q, E); AS.pinta.marcador(g, P, q, E); AS.pinta.altar(g, P, q, E);
-    pintaArrastre(g); fx.pinta(g);
+    AS.pinta.arena(g, P, q, E); AS.pinta.marcador(g, P, q, E); AS.pinta.altar(g, P, q, E); AS.pinta.misiones(g, P, q, E, dt);
+    AS.guia.pinta(g, P, E); pintaArrastre(g); fx.pinta(g);
     if (E.intro) AS.pantallaBatalla.pintaIntro(g, P, E);
     pintaCartel(g, P);
     g.setTransform(1, 0, 0, 1, 0, 0);
@@ -233,10 +250,11 @@ AS.pantalla = (() => {
     AS.lienzo.presenta(luces(P, q), { y0: P.arena.y, y1: P.arena.y + P.arena.h, a: E.intro ? 0.88 : jefe ? 0.62 : 0.5 });
   }
   function empieza(casos) {
-    Object.assign(E, { casos, activa: true, giro: null, arrastre: null, toque: null, batalla: null, cartel: null, intro: null, cerrando: false, oroBatalla: 0, pistaFija: null, oroVisto: casos.partida.oro });
-    E.ocultos.clear(); E.apariciones.clear(); E.celdasOro.clear(); E.destellos.clear(); fx.limpia();
+    Object.assign(E, { casos, activa: true, giro: null, arrastre: null, toque: null, batalla: null, cartel: null, intro: null, cerrando: false, oroBatalla: 0, pistaFija: null, oroVisto: casos.partida.oro, misionHecha: null, combo: 0, tCombo: 0 });
+    E.ocultos.clear(); E.apariciones.clear(); E.celdasOro.clear(); E.destellos.clear(); E.casi.clear(); E.cumplidas.length = 0; fx.limpia();
+    AS.guia.empieza(E);
     AS.suena.musica(ASALTO.zonas[casos.partida.zona].musica);
-    if (!casos.progreso.consejos.inicio) AS.ventanas.ayuda(() => casos.consejoVisto('inicio'));   // la primera vez, cómo se juega
+    if (!AS.guia.activa && !casos.progreso.consejos.inicio) AS.ventanas.ayuda(E, () => casos.consejoVisto('inicio'));   // sin guía, la primera vez: cómo se juega
   }
   function sal() { E.activa = false; E.batalla = null; E.giro = null; fx.limpia(); }
   function monta(cv) {

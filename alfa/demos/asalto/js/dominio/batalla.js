@@ -7,7 +7,7 @@
 // y los jefes en batalla-jefes.js.
 'use strict';
 AS.batalla = (() => {
-  const CAMPO = { w: 540, h: 420, linea: 24, yMin: 72, yMax: 404, carga: 330, espera: 2.4 };
+  const CAMPO = { w: 540, h: 420, linea: 24, yMin: 72, yMax: 404, carga: 330, espera: 1.0 };
   // los pies de cada hueco del campo: 0-2 el frente, 3-5 atrás
   const HUECOS = [[190, 120], [190, 240], [190, 360], [80, 120], [80, 240], [80, 360]];
   let ID = 0;

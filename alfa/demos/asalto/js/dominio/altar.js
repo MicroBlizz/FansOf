@@ -1,7 +1,8 @@
 // Fans of Asalto · DOMINIO · El Altar de invocación: 3 columnas de runas. De cada columna se ven 3 runas (las filas 0, 1 y 2) y se
 // asoman la de arriba y la de abajo, que son las que entran con un empujón. Tres runas iguales en línea (3 filas, 3 columnas y 2
 // diagonales: 8 líneas) invocan a un héroe de esa clase; el comodín vale por cualquiera. Aquí solo se tira, se empuja y se cuentan las
-// líneas: qué héroe llega y cuánto cuesta lo decide la partida (partida.js). Todo puro: el azar se le pasa.
+// líneas (y los «casi», el empujón que haría línea, la tirada con línea segura y el Altar de la partida guiada): qué héroe llega y
+// cuánto cuesta lo decide la partida (partida.js). Todo puro: el azar se le pasa.
 'use strict';
 AS.altar = (() => {
   const COMODIN = 'comodin';
@@ -49,11 +50,42 @@ AS.altar = (() => {
     for (let c = 0; c < 3; c++) for (let f = 0; f < 3; f++) todas.push(runa(columnas, c, f));
     return claseDe(todas);
   }
+  // el empujón que haría línea con lo que ya se ve (la runa que entra por el otro lado no se sabe): { col, dir } o null
+  function empujonConLinea(columnas) {
+    for (let col = 0; col < 3; col++) for (const dir of [1, -1]) {
+      const c = columnas[col], movida = dir === 1 ? ['?', c[0], c[1], c[2], c[3]] : [c[1], c[2], c[3], c[4], '?'];
+      if (lineasDeColumna(columnas.map((x, j) => (j === col ? movida : x)), col).length) return { col, dir };
+    }
+    return null;
+  }
+  // los «casi»: líneas a las que solo les falla una runa. [{ id, celdas: las dos que casan, falta: la celda que falla, clase }]
+  function casi(columnas) {
+    const lista = [];
+    for (const l of LINEAS) {
+      const runas = l.celdas.map(([c, f]) => runa(columnas, c, f));
+      if (claseDe(runas)) continue;
+      const k = [0, 1, 2].find(i => claseDe(runas.filter((r, j) => j !== i)));
+      if (k !== undefined) lista.push({ id: l.id, celdas: l.celdas.filter((x, j) => j !== k), falta: l.celdas[k], clase: claseDe(runas.filter((r, j) => j !== k)) });
+    }
+    return lista;
+  }
+  // una tirada con línea segura (la primera de cada partida): si no trae ninguna, una fila entera pasa a ser de una clase
+  function conLinea(columnas, pesos, azar) {
+    if (lineas(columnas).length) return columnas;
+    const clases = { ...pesos };
+    delete clases[COMODIN];
+    const fila = azar.entero(3), clase = azar.pesos(clases);
+    return congela(columnas.map(c => c.map((r, i) => (i === VISIBLE + fila ? clase : r))));
+  }
+  // el Altar de la primera partida guiada: la fila del medio ya es una línea de luchadores y empujar hacia abajo la columna 2
+  // (entra el tanque que asoma arriba) completa la fila de arriba. Ninguna otra línea, para que la mano enseñe una cosa cada vez.
+  const GUIA = [['mago', 'tanque', 'luchador', 'asesino', 'tirador'], ['brujo', 'tanque', 'luchador', 'tirador', 'mago'], ['tanque', 'asesino', 'luchador', 'mago', 'tirador']];
+  const guia = () => congela(GUIA);
   // lo que cuesta la siguiente invocación de la oleada. mods: { rebaja, gratis } (reliquias)
   function coste(reglas, tiradas, mods) {
     const m = mods || {};
     if (m.gratis && tiradas === 0) return 0;
     return Math.max(1, reglas.coste + reglas.subida * tiradas - (m.rebaja || 0));
   }
-  return { COMODIN, LINEAS, tira, empuja, claseDe, lineas, lineasDeColumna, pleno, coste, runa };
+  return { COMODIN, LINEAS, tira, empuja, claseDe, lineas, lineasDeColumna, empujonConLinea, casi, conLinea, guia, pleno, coste, runa };
 })();

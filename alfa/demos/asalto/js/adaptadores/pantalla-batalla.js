@@ -1,6 +1,6 @@
 // Fans of Asalto · ADAPTADORES · La pantalla durante la batalla: sale a luchar (con la entrada del jefe o el aviso de la oleada de
 // élite), hace avanzar la batalla a la velocidad elegida, convierte cada cosa que pasa (B.eventos) en efectos y sonidos (golpes,
-// críticos, muertes con su moneda, los que cruzan, curas, rayos, los golpes del jefe) y, al acabar, cierra la oleada: cartel con el
+// críticos, la carga, muertes con su moneda y su cuenta de bajas seguidas, los que cruzan, curas, rayos, los golpes del jefe) y, al acabar, cierra la oleada: cartel con el
 // resultado y las ventanas de los premios o del final de la partida.
 'use strict';
 AS.pantallaBatalla = (() => {
@@ -12,8 +12,8 @@ AS.pantallaBatalla = (() => {
     const r = E.casos.lucha();
     if (!r.ok) { AS.suena('noVale'); E.pistaFija = { txt: tr('Pon un héroe en el campo'), t: 2 }; return; }
     const ol = E.casos.partida.proxima;
-    Object.assign(E, { batalla: r.valor, tFin: 0, cerrando: false, oroBatalla: 0, arrastre: null, intro: null });
-    E.celdasOro.clear();
+    Object.assign(E, { batalla: r.valor, tFin: 0, cerrando: false, oroBatalla: 0, arrastre: null, intro: null, combo: 0, tCombo: 0 });
+    E.celdasOro.clear(); E.casi.clear();
     if (ol.tipo === 'jefe') { E.intro = { t: 0, dura: 3, jefe: ol.jefe, rugio: false }; AS.suena('jefe'); fx.sacude(6); AS.suena.musica(ASALTO.jefes[ol.jefe].musica); }
     else if (ol.tipo === 'elite') { AS.pantalla.cartel(tr('AUDITORÍA'), tr('Si pierdes esta oleada, se acaba'), C.rojo, 1.8); AS.suena('lucha'); }
     else AS.suena('lucha');
@@ -25,8 +25,9 @@ AS.pantallaBatalla = (() => {
       const s = pos(E, e.x, e.y), alto = e.jefe ? 150 : 80;
       E.destellos.set(e.id, 0.2);
       fx.numero(s.x, s.y - alto, e.d, e.crit ? '#ffd23a' : e.lado === 'heroe' ? '#ff8a7a' : '#ffffff', e.crit ? 48 : 32);
-      fx.chispas(s.x, s.y - alto / 2, e.crit ? 8 : 3, e.crit ? '#ffd23a' : '#fff3d6', e.crit ? 170 : 90, e.crit);
-      if (e.crit) { fx.sacude(4); AS.suena('critico'); fx.luz(s.x, s.y - 40, 90, [255, 220, 120], 0.2); }
+      fx.chispas(s.x, s.y - alto / 2, e.crit ? 12 : 5, e.crit ? '#ffd23a' : '#fff3d6', e.crit ? 200 : 110, e.crit);
+      if (e.crit) { fx.sacude(5); AS.suena('critico'); fx.luz(s.x, s.y - 40, 110, [255, 220, 120], 0.25); fx.onda(s.x, s.y - alto / 2, 44, '#ffd23a'); }
+      else if (e.lado === 'enemigo') fx.luz(s.x, s.y - 40, 60, [255, 240, 200], 0.12);
     },
     ataque(E, e) {
       AS.suena(SON_ATAQUE[e.tipo] || 'espada');
@@ -34,8 +35,9 @@ AS.pantallaBatalla = (() => {
     },
     muere(E, e) {
       const s = pos(E, e.x, e.y);
-      fx.chispas(s.x, s.y - 40, e.jefe ? 60 : 14, e.lado === 'heroe' ? '#8fd0f8' : '#ffd23a', e.jefe ? 320 : 170, true);
+      fx.chispas(s.x, s.y - 40, e.jefe ? 60 : 20, e.lado === 'heroe' ? '#8fd0f8' : '#ffd23a', e.jefe ? 320 : 200, true);
       AS.suena('muere');
+      if (e.lado === 'enemigo' && !e.jefe) baja(E, s);
       if (e.lado === 'enemigo') fx.monedas(s.x, s.y - 40, e.jefe ? 14 : e.elite ? 5 : 1, E.destinoOro.x, E.destinoOro.y, () => { if (E.batalla) E.oroBatalla += ASALTO.partida.oroPorMuerte; AS.suena('moneda'); });
       if (e.jefe) { fx.fogonazo(0.9, '#fff3d6'); fx.sacude(18); fx.frena(0.9); fx.luz(s.x, s.y - 80, 320, [255, 230, 150], 1.2); AS.suena('gordo'); for (let i = 0; i < 6; i++) fx.brasas(s.x, s.y - 60, 10, '#ffd23a', 70); }
       else if (e.elite) { fx.sacude(8); fx.luz(s.x, s.y - 50, 180, [255, 210, 120], 0.5); }
@@ -56,8 +58,13 @@ AS.pantallaBatalla = (() => {
       AS.suena('escudo');
       for (const u of E.batalla.u) if (e.ids.includes(u.id)) { const s = pos(E, u.x, u.y); fx.onda(s.x, s.y - 40, 56, '#8fd0f8'); }
     },
+    // la carga: el grito, el suelo que tiembla y el polvo que levantan
+    carga(E) {
+      AS.suena('carga'); fx.sacude(6); fx.fogonazo(0.15, '#fff3d6');
+      AS.pantalla.cartel(tr('¡A LA CARGA!'), '', C.rojo, 0.7);
+      for (const u of E.batalla.u) if (u.lado === 'heroe' && !u.muerta) { const s = pos(E, u.x, u.y); fx.brasas(s.x, s.y - 8, 6, '#fff3d6', 16); fx.onda(s.x, s.y - 4, 40, '#fff3d6'); }
+    },
     tanda(E) { AS.pantalla.cartel(tr('¡REFUERZOS!'), '', C.sangre, 0.9); AS.suena('aviso'); },
-    carga(E) { AS.suena('carga'); for (const u of E.batalla.u) if (u.lado === 'heroe' && !u.muerta) { const s = pos(E, u.x, u.y); fx.brasas(s.x, s.y - 8, 3, '#fff3d6', 12); } },
     aviso() { AS.suena('aviso'); },
     cae(E, e) {
       fx.sacude(11); fx.fogonazo(0.25, '#ffb04a'); AS.suena('cae');
@@ -66,8 +73,14 @@ AS.pantallaBatalla = (() => {
       else { const s = pos(E, e.x, e.y); fx.columna(s.x, s.y, [255, 90, 70], 180); }
     },
     furia(E) { AS.pantalla.cartel(tr('¡FURIA!'), tr('El jefe pega más rápido'), C.rojo, 1.4); fx.sacude(10); fx.fogonazo(0.4, '#d8402f'); AS.suena('furia'); },
-    fin(E, e) { if (e.fin === 'victoria') { AS.suena('premio', 2); fx.fogonazo(0.3, '#fff3d6'); } else AS.suena('cruza'); },
+    fin(E, e) { if (e.fin === 'victoria') { AS.suena('premio', 2); fx.fogonazo(0.45, '#fff3d6'); fx.frena(0.45); fx.sacude(8); } else AS.suena('cruza'); },
   };
+  // un enemigo cae: su golpe en pantalla y, si caen seguidos, la cuenta (x2, x3…), cada vez más aguda
+  function baja(E, s) {
+    E.combo = (E.tCombo > 0 ? E.combo : 0) + 1; E.tCombo = 1.5;
+    fx.sacude(3 + Math.min(E.combo, 5)); fx.onda(s.x, s.y - 30, 50, '#ffd23a'); fx.luz(s.x, s.y - 40, 120, [255, 215, 90], 0.25);
+    if (E.combo >= 2) { fx.numero(s.x, s.y - 130, 'x' + E.combo, '#ffd23a', E.combo >= 5 ? 64 : 48); AS.suena('combo', E.combo); }
+  }
   function eventos(E) {
     for (const e of E.batalla.eventos.splice(0)) if (EVENTO[e.e]) EVENTO[e.e](E, e);
   }
@@ -92,7 +105,7 @@ AS.pantallaBatalla = (() => {
     if (E.intro) { entrada(E, dt); return; }
     const B = E.batalla, paso = dt * fx.velocidad();
     for (let i = 0; i < E.vel; i++) { E.casos.tic(paso); eventos(E); }
-    if (B.fin && !E.cerrando) { E.tFin += dt; if (E.tFin > 1.5) { E.cerrando = true; cierra(E); } }
+    if (B.fin && !E.cerrando) { E.tFin += dt; if (E.tFin > 1.0) { E.cerrando = true; cierra(E); } }
   }
   // la entrada del jefe: la arena se queda a oscuras con el foco en él, ruge (tiembla todo) y luego entra su nombre
   function entrada(E, dt) {

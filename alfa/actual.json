@@ -1,8 +1,8 @@
 {
- "build": 1222,
- "hash": "894e752",
- "fecha": "2026-11-17T09:14:43Z",
- "mensaje": "Versiones y novedades para publicar: core cambió y salen todos los juegos; Pop 0.5.1 (cortinilla cozy y «haz pop»), Taxi 0.2.16 (deportivo)",
+ "build": 1223,
+ "hash": "424eae6",
+ "fecha": "2026-11-17T09:19:56Z",
+ "mensaje": "Fans of Asalto 0.3.1: primera partida guiada, arranque generoso, rachas, misiones y batallas con más ritmo (tarea #77, ADR 132)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

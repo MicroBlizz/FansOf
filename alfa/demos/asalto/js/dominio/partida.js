@@ -1,12 +1,13 @@
 // Fans of Asalto · DOMINIO · La partida: la raíz de una bajada a la mazmorra. Guarda la zona, la oleada, el oro, las vidas, el Altar,
-// el equipo, las reliquias y los premios por cobrar, y solo cambia por sus métodos: invocar y empujar en el Altar, mover, absorber y
+// el equipo, las reliquias, la racha, las misiones y los premios por cobrar, y solo cambia por sus métodos: invocar y empujar en el Altar, mover, absorber y
 // ascender héroes, salir a luchar, cerrar la oleada con el resultado de la batalla y cobrar los premios. Cada método deja la partida
 // válida y devuelve AS.ok(...) o AS.error('codigo'). Fases: 'preparar' → 'batalla' → ('premio') → 'preparar'… y 'fin'.
 // Pura: el azar se le pasa en cada método que lo necesita. Las cuentas sueltas están en reglas.js.
 'use strict';
 AS.Partida = (() => {
   const LLAVE = Symbol('partida');   // solo las fábricas de este archivo pueden crear una partida
-  const CUENTA = () => ({ lineas: 0, invocados: 0, ascensos: 0, dorados: 0, nivelMax: 1, bajas: 0, oroGanado: 0, oleadasGanadas: 0, jefes: 0 });
+  const CUENTA = () => ({ lineas: 0, invocados: 0, ascensos: 0, dorados: 0, nivelMax: 1, bajas: 0, oroGanado: 0, oleadasGanadas: 0, jefes: 0,
+    tiradas: 0, dobles: 0, rachaMax: 0, absorbidos: 0, limpias: 0 });
   // la clase que más se repite en unas líneas (para el Animal Dorado)
   function masRepetida(lineas) {
     const n = {};
@@ -17,19 +18,21 @@ AS.Partida = (() => {
   class Partida {
     #d; #m; #E; #zona; #sinFin; #n = 0; #fase = 'preparar'; #oro; #vidas; #plumas = 0; #altar = null; #tiradas = 0; #gratis = false; #empujones = 0;
     #equipo; #reliquias = []; #proxima = null; #sigId = 1; #premios = []; #antes = null; #cuenta = CUENTA(); #final = null; #mejoras;
+    #guiada = false; #racha = 0; #misiones = []; #escalones = {}; #avisos = [];
 
     constructor(llave, datos, cfg) {
       if (llave !== LLAVE) throw new Error('La partida se crea con AS.Partida.nueva o AS.Partida.deJSON');
       this.#d = datos; this.#mejoras = { ...(cfg.mejoras || {}) }; this.#m = AS.reglas.mods(datos, cfg.mejoras); this.#E = cfg.equipo || {};
-      this.#zona = cfg.zona; this.#sinFin = !!cfg.sinFin;
+      this.#zona = cfg.zona; this.#sinFin = !!cfg.sinFin; this.#guiada = !!cfg.guiada;
       this.#oro = datos.partida.oro + this.#m.oro; this.#vidas = datos.partida.vidas + this.#m.vidas;
       this.#equipo = AS.equipo.vacio(datos, this.#m.abiertos);
     }
-    // cfg: { zona, sinFin, mejoras: { corazon: 1… }, equipo: { vida: 5… } (el equipo puesto, en %) }
+    // cfg: { zona, sinFin, guiada (la primera partida, con la mano), mejoras: { corazon: 1… }, equipo: { vida: 5… } (el equipo puesto, en %) }
     static nueva(datos, cfg, azar) {
       if (!cfg || !datos.zonas[cfg.zona]) return AS.error('zona-desconocida');
       const p = new Partida(LLAVE, datos, cfg);
       p.#preparaOleada(1, azar);
+      p.#misiones = AS.misiones.elige(datos, azar, p.#guiada);
       p.#llega(null, 1, false, azar);   // nadie empieza con las manos vacías: un héroe común ya en el campo
       return AS.ok(p);
     }
@@ -52,6 +55,9 @@ AS.Partida = (() => {
     get premio() { return this.#premios[0] || null; }
     get final() { return this.#final; }
     get cuenta() { return { ...this.#cuenta }; }
+    get guiada() { return this.#guiada; }
+    get racha() { return this.#racha; }
+    get misiones() { return AS.misiones.estado(this.#d, this.#misiones, this.#escalones, this.#cuenta); }
     get puedeDeshacer() { return !!this.#antes && this.#fase === 'preparar'; }
     get sinergias() { return AS.equipo.sinergias(this.#d, this.#equipo); }
     get coste() {
@@ -89,12 +95,34 @@ AS.Partida = (() => {
       this.#equipo = AS.equipo.pon(this.#equipo, destino.sitio, crecido); this.#apuntaNivel(crecido);
       return { heroe: h, clase, sitio: destino.sitio, fundido: crecido };
     }
-    #paga(lineas, azar) {
+    #paga(lineas, azar, rompe) {
       const A = this.#d.altar, n = lineas.length, llegados = lineas.map(l => this.#llega(l.clase, 1, false, azar));
       let oroExtra = A.premioLineas[Math.min(n, A.premioLineas.length - 1)], dorado = null;
       if (n >= A.dorado.lineas) { dorado = this.#llega(masRepetida(lineas), A.dorado.nivel, true, azar); oroExtra += A.dorado.oro; this.#cuenta.dorados++; }
       this.#oro += oroExtra; this.#cuenta.lineas += n; this.#antes = null;
-      return { lineas, llegados, oroExtra, dorado };
+      if (n >= 2) this.#cuenta.dobles++;
+      return { lineas, llegados, oroExtra, dorado, ...this.#encadena(n > 0, rompe) };
+    }
+    // la racha: cada invocación (o empujón) seguida con línea la sube y da su oro; una invocación sin línea la corta (rompe = false en el empujón)
+    #encadena(hubo, rompe) {
+      const R = this.#d.altar.racha;
+      if (hubo) this.#racha++; else if (rompe !== false) this.#racha = 0;
+      const oroRacha = hubo ? R[Math.min(this.#racha, R.length - 1)] : 0;
+      this.#oro += oroRacha; this.#cuenta.oroGanado += oroRacha;
+      if (this.#racha > this.#cuenta.rachaMax) this.#cuenta.rachaMax = this.#racha;
+      return { racha: this.#racha, oroRacha };
+    }
+    // las misiones que se acaban de cumplir se cobran solas y dejan un aviso para la pantalla
+    #cobraMisiones() {
+      for (let e = this.#pendiente(); e; e = this.#pendiente()) {
+        this.#escalones[e.id] = e.escalon + 1;
+        this.#oro += e.oro; this.#plumas += e.plumas; this.#cuenta.oroGanado += e.oro;
+        this.#avisos.push({ tipo: 'mision', id: e.id, meta: e.meta, oro: e.oro, plumas: e.plumas });
+      }
+    }
+    #pendiente() { return AS.misiones.porCobrar(this.#d, this.#misiones, this.#escalones, this.#cuenta); }
+    // los avisos que han ido dejando las acciones (misiones cumplidas): la pantalla los recoge y se vacían
+    recogeAvisos() { return this.#avisos.splice(0);
     }
     invoca(azar) {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
@@ -102,12 +130,19 @@ AS.Partida = (() => {
       const coste = this.coste;
       if (this.#oro < coste) return AS.error('sin-oro', { coste });
       this.#oro -= coste; this.#gratis = false;
-      this.#altar = AS.altar.tira(AS.reglas.pesos(this.#d, this.#m, this.#reliquias), azar);
+      this.#altar = this.#tirada(azar);
       const primera = this.#tiradas === 0;
-      this.#tiradas++;
+      this.#tiradas++; this.#cuenta.tiradas++;
       const res = this.#paga(AS.altar.lineas(this.#altar), azar);
       if (primera && !res.lineas.length && this.#reliquias.includes('repite')) { this.#gratis = true; res.repite = true; }
+      this.#cobraMisiones();
       return AS.ok({ ...res, columnas: this.#altar, coste });
+    }
+    // las runas de una invocación. La primera de la partida trae línea segura (y en la partida guiada, el Altar de la guía)
+    #tirada(azar) {
+      const pesos = AS.reglas.pesos(this.#d, this.#m, this.#reliquias);
+      if (this.#cuenta.tiradas > 0) return AS.altar.tira(pesos, azar);
+      return this.#guiada ? AS.altar.guia() : AS.altar.conLinea(AS.altar.tira(pesos, azar), pesos, azar);
     }
     // dir 1: la columna baja (entra la runa que asoma arriba); -1: sube
     empuja(col, dir, azar) {
@@ -117,7 +152,9 @@ AS.Partida = (() => {
       const r = AS.altar.empuja(this.#altar, col, dir, AS.reglas.pesos(this.#d, this.#m, this.#reliquias), azar);
       if (!r.ok) return r;
       this.#altar = r.valor; this.#empujones--;
-      return AS.ok({ ...this.#paga(AS.altar.lineasDeColumna(this.#altar, col), azar), columnas: this.#altar, col, dir });
+      const res = this.#paga(AS.altar.lineasDeColumna(this.#altar, col), azar, false);
+      this.#cobraMisiones();
+      return AS.ok({ ...res, columnas: this.#altar, col, dir });
     }
 
     /* ---------- el equipo ---------- */
@@ -132,12 +169,13 @@ AS.Partida = (() => {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
       const r = AS.equipo.absorbe(this.#d, this.#equipo, desde, hasta);
       if (!r.ok) return r;
-      this.#antes = this.#equipo; this.#equipo = r.valor.equipo; this.#apuntaNivel(r.valor.heroe);
+      this.#antes = this.#equipo; this.#equipo = r.valor.equipo; this.#apuntaNivel(r.valor.heroe); this.#cuenta.absorbidos++;
+      this.#cobraMisiones();
       return AS.ok(r.valor.heroe);
     }
     deshace() {
       if (!this.puedeDeshacer) return AS.error('nada-que-deshacer');
-      this.#equipo = this.#antes; this.#antes = null;
+      this.#equipo = this.#antes; this.#antes = null; this.#cuenta.absorbidos = Math.max(0, this.#cuenta.absorbidos - 1);
       return AS.ok(true);
     }
     asciende(sitio, clase) {
@@ -173,6 +211,8 @@ AS.Partida = (() => {
       this.#oro += res.oro; this.#cuenta.bajas += res.bajas; this.#cuenta.oroGanado += res.oro;
       this.#vidas = Math.max(0, this.#vidas - perdidas);
       this.#premios = res.gano ? this.#gana(ol, azar) : [];
+      if (res.gano && !perdidas) this.#cuenta.limpias++;
+      this.#cobraMisiones();
       if (this.#vidas <= 0 || (!res.gano && ol.tipo !== 'normal')) { this.#final = 'derrota'; this.#premios = []; }
       else if (res.gano && ol.tipo === 'jefe' && !this.#sinFin) this.#final = 'victoria';
       if (!this.#final) this.#preparaOleada(this.#n + 1, azar);
@@ -225,7 +265,8 @@ AS.Partida = (() => {
     aJSON() {
       if (this.#fase !== 'preparar') return null;
       return { v: 1, zona: this.#zona, sinFin: this.#sinFin, n: this.#n, oro: this.#oro, vidas: this.#vidas, plumas: this.#plumas, altar: this.#altar, tiradas: this.#tiradas,
-        gratis: this.#gratis, empujones: this.#empujones, equipo: this.#equipo, reliquias: this.#reliquias.slice(), sigId: this.#sigId, cuenta: { ...this.#cuenta }, mejoras: { ...this.#mejoras } };
+        gratis: this.#gratis, empujones: this.#empujones, equipo: this.#equipo, reliquias: this.#reliquias.slice(), sigId: this.#sigId, cuenta: { ...this.#cuenta }, mejoras: { ...this.#mejoras },
+        guiada: this.#guiada, racha: this.#racha, misiones: this.#misiones.slice(), escalones: { ...this.#escalones } };
     }
     #carga(j, azar) {
       const d = this.#d, eq = AS.equipo.deJSON(d, { ...j.equipo, abiertos: this.#m.abiertos });
@@ -238,12 +279,14 @@ AS.Partida = (() => {
       this.#tiradas = Math.floor(j.tiradas) || 0; this.#gratis = !!j.gratis; this.#empujones = Math.max(0, Math.min(Math.floor(j.empujones) || 0, this.#empujones));
       this.#altar = altarValido(d, j.altar);
       for (const k in this.#cuenta) if (num(j.cuenta && j.cuenta[k], 0)) this.#cuenta[k] = Math.floor(j.cuenta[k]);
+      this.#racha = num(j.racha, 0) ? Math.floor(j.racha) : 0; this.#misiones = AS.misiones.valida(d, j.misiones);
+      for (const id of this.#misiones) if (num(j.escalones && j.escalones[id], 0)) this.#escalones[id] = Math.floor(j.escalones[id]);
       return AS.ok(this);
     }
     // de la partida guardada: una partida entera y válida, o un error (nunca una a medias). equipo = el equipo puesto de ahora
     static deJSON(datos, j, equipo, azar) {
       if (!j || j.v !== 1 || !datos.zonas[j.zona]) return AS.error('partida-invalida');
-      return new Partida(LLAVE, datos, { zona: j.zona, sinFin: !!j.sinFin, mejoras: j.mejoras, equipo }).#carga(j, azar);
+      return new Partida(LLAVE, datos, { zona: j.zona, sinFin: !!j.sinFin, guiada: !!j.guiada, mejoras: j.mejoras, equipo }).#carga(j, azar);
     }
   }
   // el Altar guardado vale si son 3 columnas de 5 runas conocidas; si no, se empieza sin tirada

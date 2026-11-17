@@ -31,9 +31,13 @@ AS.suena = (() => {
     asAviso: () => { tone(880, 880, 0.08, 'square', 0.05); tone(880, 880, 0.08, 'square', 0.05, 0.14); },
     asCae: () => { noise(0.45, 0.16, 300); tone(110, 40, 0.4, 'triangle', 0.12); },
     asJefe: () => { tone(70, 50, 1.1, 'sawtooth', 0.12); noise(0.9, 0.1, 240); tone(140, 100, 0.8, 'square', 0.05, 0.2); },
+    asCasi: () => { tone(523, 523, 0.07, 'triangle', 0.06); tone(659, 659, 0.07, 'triangle', 0.06, 0.07); tone(700, 520, 0.16, 'triangle', 0.06, 0.14); },
+    asRacha: n => sube([659, 784, 988, 1175].map(f => f * (1 + Math.min(n, 6) * 0.06)), 'square', 0.05, 0.045),
+    asMision: () => { sube([523, 659, 784, 1046, 1318], 'triangle', 0.08, 0.06); tone(1568, 1568, 0.25, 'sine', 0.06, 0.32); },
+    asCombo: n => { tone(500 + Math.min(n, 10) * 70, 700 + Math.min(n, 10) * 70, 0.07, 'square', 0.05); },
     asFuria: () => { tone(200, 600, 0.3, 'sawtooth', 0.08); noise(0.3, 0.08, 1400, 'bandpass'); },
   });
-  Object.assign(THROTTLE, { asEspada: 45, asFlecha: 45, asMagia: 60, asBomba: 80, asCura: 90, asMuere: 60, asEscudo: 150, asCritico: 80, asMoneda: 40, asGira: 60 });
+  Object.assign(THROTTLE, { asEspada: 45, asFlecha: 45, asMagia: 60, asBomba: 80, asCura: 90, asMuere: 60, asEscudo: 150, asCritico: 80, asMoneda: 40, asGira: 60, asCombo: 50 });
 
   const MUS = { quiere: 'menu' };
   const suena = (nombre, ...a) => { play('as' + nombre[0].toUpperCase() + nombre.slice(1), ...a); };

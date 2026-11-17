@@ -1,6 +1,6 @@
 // Fans of Asalto · AJUSTES: el nombre de la demo para core, la clave de su partida y TODA la calibración (ASALTO): las 7 clases, los
 // héroes, los enemigos y los jefes, el Altar de invocación (los pesos de sus runas, lo que cuesta invocar), el campo y el banquillo,
-// los niveles, las herencias y las ramas del ascenso, las oleadas de cada zona, las reliquias, las mejoras permanentes, el equipo y
+// los niveles, las herencias y las ramas del ascenso, las oleadas de cada zona, las reliquias, las misiones, las mejoras permanentes, el equipo y
 // los logros. Solo datos: las reglas que los usan están en js/dominio/. Los textos van en español; su inglés, en idioma/en*.js.
 'use strict';
 const AJUSTES = {
@@ -25,14 +25,14 @@ const ASALTO = {
   // rareza: 0 común, 1 raro, 2 épico. ataque: 'cuerpo', 'flecha', 'magia' (bola que vuela), 'bomba' (cae en un área) o 'cura'.
   // salto: corre a la retaguardia enemiga al empezar. fila: dónde se coloca solo al llegar ('frente' o 'atras').
   heroes: {
-    'heroe-huron':     { nombre: 'HurónNinja', corto: 'Hurón', clases: ['asesino', 'luchador'], rareza: 0, vida: 85, dano: 15, cada: 0.8, alcance: 34, vel: 60, ataque: 'cuerpo', salto: true, fila: 'frente' },
-    'heroe-bunny':     { nombre: 'CrazyBunny', corto: 'Bunny', clases: ['luchador', 'tanque'], rareza: 0, vida: 120, dano: 14, cada: 1.0, alcance: 36, vel: 46, ataque: 'cuerpo', fila: 'frente' },
-    'heroe-ardilla':   { nombre: 'MadSquirrel', corto: 'Ardilla', clases: ['tirador', 'asesino'], rareza: 0, vida: 70, dano: 12, cada: 0.9, alcance: 190, vel: 40, ataque: 'flecha', fila: 'atras' },
-    'heroe-zorro':     { nombre: 'SlyFox', corto: 'Zorro', clases: ['asesino', 'brujo'], rareza: 1, vida: 90, dano: 22, cada: 0.9, alcance: 34, vel: 62, ataque: 'cuerpo', salto: true, fila: 'frente' },
-    'heroe-castor':    { nombre: 'BoomBeaver', corto: 'Castor', clases: ['tirador', 'mago'], rareza: 1, vida: 80, dano: 18, cada: 1.6, alcance: 170, vel: 38, ataque: 'bomba', area: 46, fila: 'atras' },
-    'heroe-mechavaca': { nombre: 'MechaVaca', corto: 'Vaca', clases: ['tanque', 'luchador'], rareza: 1, vida: 260, dano: 11, cada: 1.3, alcance: 36, vel: 34, ataque: 'cuerpo', fila: 'frente' },
-    'heroe-suricata':  { nombre: 'MeerCat', corto: 'Suricata', clases: ['sanador', 'brujo'], rareza: 2, vida: 90, dano: 16, cada: 1.2, alcance: 170, vel: 36, ataque: 'cura', fila: 'atras' },
-    'heroe-mapache':   { nombre: 'JunkCoon', corto: 'Mapache', clases: ['mago', 'brujo'], rareza: 2, vida: 85, dano: 26, cada: 1.4, alcance: 180, vel: 36, ataque: 'magia', fila: 'atras' },
+    'heroe-huron':     { nombre: 'HurónNinja', clases: ['asesino', 'luchador'], rareza: 0, vida: 85, dano: 15, cada: 0.8, alcance: 34, vel: 60, ataque: 'cuerpo', salto: true, fila: 'frente' },
+    'heroe-bunny':     { nombre: 'CrazyBunny', clases: ['luchador', 'tanque'], rareza: 0, vida: 120, dano: 14, cada: 1.0, alcance: 36, vel: 46, ataque: 'cuerpo', fila: 'frente' },
+    'heroe-ardilla':   { nombre: 'MadSquirrel', clases: ['tirador', 'asesino'], rareza: 0, vida: 70, dano: 12, cada: 0.9, alcance: 190, vel: 40, ataque: 'flecha', fila: 'atras' },
+    'heroe-zorro':     { nombre: 'SlyFox', clases: ['asesino', 'brujo'], rareza: 1, vida: 90, dano: 22, cada: 0.9, alcance: 34, vel: 62, ataque: 'cuerpo', salto: true, fila: 'frente' },
+    'heroe-castor':    { nombre: 'BoomBeaver', clases: ['tirador', 'mago'], rareza: 1, vida: 80, dano: 18, cada: 1.6, alcance: 170, vel: 38, ataque: 'bomba', area: 46, fila: 'atras' },
+    'heroe-mechavaca': { nombre: 'MechaVaca', clases: ['tanque', 'luchador'], rareza: 1, vida: 260, dano: 11, cada: 1.3, alcance: 36, vel: 34, ataque: 'cuerpo', fila: 'frente' },
+    'heroe-suricata':  { nombre: 'MeerCat', clases: ['sanador', 'brujo'], rareza: 2, vida: 90, dano: 16, cada: 1.2, alcance: 170, vel: 36, ataque: 'cura', fila: 'atras' },
+    'heroe-mapache':   { nombre: 'JunkCoon', clases: ['mago', 'brujo'], rareza: 2, vida: 85, dano: 26, cada: 1.4, alcance: 180, vel: 36, ataque: 'magia', fila: 'atras' },
   },
 
   // Los enemigos: los de Microblizz. corre: no se para a pelear, va derecho a cruzar la línea.
@@ -64,6 +64,7 @@ const ASALTO = {
     rareza: [70, 24, 6],            // peso de que el héroe de la clase sea común, raro o épico
     premioLineas: [0, 0, 2, 5, 10, 16],   // oro extra por hacer 0, 1, 2, 3, 4 o 5 líneas de una vez
     dorado: { lineas: 6, nivel: 5, oro: 20 },   // el premio gordo (6 líneas o más de una vez): además, un Animal Dorado
+    racha: [0, 0, 1, 2, 2],         // oro extra por llevar 0, 1, 2, 3 o 4 (o más) invocaciones seguidas con línea
   },
 
   // El campo: 2 columnas (frente y atrás) x 3 filas. Los huecos van numerados: 0-2 el frente (de arriba abajo), 3-5 atrás.
@@ -94,7 +95,7 @@ const ASALTO = {
 
   // La partida: con qué se empieza y lo que da cada cosa.
   partida: {
-    oro: 12, vidas: 5,
+    oro: 18, vidas: 5,
     oroPorMuerte: 1,
     oroOleada: n => 4 + Math.floor(n / 3),   // n = número de oleada
     oroElite: 8, plumasOleada: 2,
@@ -145,6 +146,21 @@ const ASALTO = {
     palanca:   { nombre: 'Palanca', altar: true, txt: '+1 empujón en cada oleada', icono: 'yunque' },
     eco:       { nombre: 'Eco', altar: true, txt: 'Uno de cada cuatro héroes invocados llega ya con nivel 2', icono: 'pluma' },
     interes:   { nombre: 'Caja de ahorros', txt: 'Al empezar cada oleada, +1 de oro por cada 5 que tengas (5 como mucho)', icono: 'reliquia-hucha' },
+  },
+
+  // Las misiones de la partida: salen `cuantas` al empezar (en la partida guiada, las de `guia`). Cada una mira un contador de la
+  // partida (stat) y tiene varios escalones (metas): al llegar a uno se cobra sola (oro y plumas, algo más en cada escalón) y pasa al siguiente.
+  misiones: {
+    cuantas: 3, guia: ['lineas', 'absorbe', 'bajas'], porEscalon: 1,
+    lista: {
+      lineas:  { txt: 'Haz {n} líneas en el Altar', stat: 'lineas', metas: [3, 10, 22], oro: 3, plumas: 2, icono: 'reliquia-dado' },
+      doble:   { txt: 'Haz varias líneas de una vez, {n} veces', stat: 'dobles', metas: [1, 3, 6], oro: 4, plumas: 3, icono: 'gema' },
+      racha:   { txt: 'Encadena {n} invocaciones seguidas con línea', stat: 'rachaMax', metas: [2, 3, 4], oro: 4, plumas: 3, icono: 'trofeo' },
+      absorbe: { txt: 'Absorbe a {n} héroes', stat: 'absorbidos', metas: [1, 5, 12], oro: 3, plumas: 2, icono: 'yunque' },
+      nivel:   { txt: 'Sube un héroe al nivel {n}', stat: 'nivelMax', metas: [3, 5, 8], oro: 3, plumas: 3, icono: 'pluma' },
+      bajas:   { txt: 'Derrota a {n} enemigos', stat: 'bajas', metas: [10, 40, 100], oro: 3, plumas: 2, icono: 'sala-combate' },
+      limpia:  { txt: 'Gana {n} oleadas sin perder vidas', stat: 'limpias', metas: [2, 5, 9], oro: 4, plumas: 3, icono: 'corazon' },
+    },
   },
 
   // Las mejoras permanentes: se compran con plumas en el menú y valen para todas las partidas. coste = plumas de cada nivel.

@@ -38,10 +38,12 @@ TABLERO.Tarea = class Tarea {
     if (motivo) return TABLERO.error(motivo, { id: this.id, estado });
     const abiertos = this.#abiertosAlEntrar(estado);
     if (abiertos.length) return TABLERO.error('requisitos-abiertos', { id: this.id, estado, requisitos: abiertos });   // para todos, no solo Claude
-    const responsable = esClaude && estado === 'en_curso' && !this.#d.responsable ? 'claude' : this.#d.responsable;
     const esperando = estado === 'en_curso' ? this.#d.esperando : null;   // la espera solo tiene sentido en curso, como en el servidor
-    return TABLERO.ok(new Tarea({ ...this.#d, estado, responsable, esperando }));
+    return TABLERO.ok(new Tarea({ ...this.#d, estado, esperando, ...(esClaude && estado === 'en_curso' ? this.#alCogerla() : {}) }));
   }
+
+  // Cuando Claude la empieza: si no tenía responsable pasa a ser suya y, sin «para», trabaja para quien la pidió (como el servidor, SQL 125 y 148)
+  #alCogerla() { return { responsable: this.#d.responsable || 'claude', para: this.#d.para || this.#d.pedida_por || null }; }
 
   // Solo al empezarla (de ideas, refinamiento o pendiente a en curso) se miran los requisitos (TABLERO.bloqueos); volver de revisión para cambios no se bloquea
   #abiertosAlEntrar(estado) { return estado === 'en_curso' ? TABLERO.bloqueos(this.#d) : []; }

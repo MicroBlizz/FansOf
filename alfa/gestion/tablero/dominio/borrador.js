@@ -1,5 +1,5 @@
 // Fans Of · /gestion · TABLERO · dominio · BORRADOR: lo que se escribe en el formulario de una tarea, validado ANTES de ir al servidor. Los límites son los mismos
-// que los checks del SQL del tablero (117, 120 y 141: el nombre corto). Resultado: los datos limpios (textos recortados, responsable vacío = nadie), o 'campo-invalido' con el campo en datos.
+// que los checks del SQL del tablero (117, 120 y 141: el nombre corto). Resultado: los datos limpios (textos recortados, responsable, quién la pidió y para quién vacíos = nadie; ADR 136), o 'campo-invalido' con el campo en datos.
 // `requiere` («#3, 7») sale como lista de números (requisitos.js).
 'use strict';
 TABLERO.LIMITES = Object.freeze({ titulo: [1, 120], corto: [0, 60], descripcion: [0, 4000], criterio: [0, 2000], refinado: [0, 4000], esperando: [0, 200], enlaces: [0, 1000], hilo: [0, 300] });
@@ -14,7 +14,10 @@ TABLERO.borrador = form => {
   if (!/^[a-z0-9-]{1,40}$/.test(juego)) return TABLERO.error('campo-invalido', { campo: 'juego' });
   if (!Object.hasOwn(TABLERO.PRIORIDADES, f.prioridad || 'normal')) return TABLERO.error('campo-invalido', { campo: 'prioridad' });
   if (f.responsable && !Object.hasOwn(TABLERO.RESPONSABLES, f.responsable)) return TABLERO.error('campo-invalido', { campo: 'responsable' });
+  const mal = ['pedida_por', 'para'].find(c => f[c] && !Object.hasOwn(TABLERO.PERSONAS, f[c]));
+  if (mal) return TABLERO.error('campo-invalido', { campo: mal });
   const req = TABLERO.requisitosDelFormulario(f);
   if (!req.ok) return req;
-  return TABLERO.ok({ ...datos, juego, prioridad: f.prioridad || 'normal', responsable: f.responsable || null, ...req.valor });
+  return TABLERO.ok({ ...datos, juego, prioridad: f.prioridad || 'normal', responsable: f.responsable || null,
+    pedida_por: f.pedida_por || null, para: f.responsable === 'claude' ? f.para || null : null, ...req.valor });   // `para` solo si la lleva Claude (SQL 148)
 };

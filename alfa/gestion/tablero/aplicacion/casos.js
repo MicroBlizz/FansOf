@@ -44,10 +44,10 @@ TABLERO.casos = repositorio => {
       const b = TABLERO.borrador(form);
       return b.ok ? enviar(() => repositorio.guardar(b.valor)) : Promise.resolve(b);
     },
-    // «Apuntar idea o fallo» (formulario corto): { tipo: 'idea'|'fallo', titulo, juego }. Nace en Ideas como cualquier tarea; si es un fallo, la descripción lo dice
+    // «Apuntar idea o fallo» (formulario corto): { tipo: 'idea'|'fallo', titulo, juego, pedida_por }. Nace en Ideas como cualquier tarea; si es un fallo, la descripción lo dice
     apuntar(form) {
-      const { tipo, titulo, juego } = form || {};
-      return this.crear({ titulo, juego, descripcion: tipo === 'fallo' ? 'Es un fallo (apuntado con «Apuntar idea o fallo»).' : '' });
+      const { tipo, titulo, juego, pedida_por } = form || {};
+      return this.crear({ titulo, juego, pedida_por, descripcion: tipo === 'fallo' ? 'Es un fallo (apuntado con «Apuntar idea o fallo»).' : '' });
     },
     // `tareas`: las cargadas, para avisar antes de ir al servidor si los requisitos la incluyen a ella o cierran un ciclo, y para no mandarlos si no cambian
     editar(id, form, tareas = []) {

@@ -7,6 +7,6 @@ TABLERO.palabras = consulta => TABLERO.normaliza(consulta).split(/\s+/).filter(B
 TABLERO.coincide = (t, consulta) => {
   const buscadas = TABLERO.palabras(consulta);
   if (!buscadas.length) return true;
-  const texto = TABLERO.normaliza([t.titulo, t.descripcion, t.criterio, t.refinado, t.juego, TABLERO.responsableTexto(t)].join(' '));
+  const texto = TABLERO.normaliza([t.titulo, t.descripcion, t.criterio, t.refinado, t.juego, TABLERO.responsableTexto(t), TABLERO.pidioTexto(t)].join(' '));
   return buscadas.every(p => (/^#\d+$/.test(p) ? p === '#' + t.id : texto.includes(p)));
 };

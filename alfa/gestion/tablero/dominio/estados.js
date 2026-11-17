@@ -19,9 +19,14 @@ TABLERO.GRUPOS_MOVIL = Object.freeze([
 ]);
 TABLERO.PRIORIDADES = Object.freeze({ alta: 0, normal: 1, baja: 2 });   // el número es el peso al ordenar: cuanto menos, antes
 TABLERO.RESPONSABLES = Object.freeze({ arkioner: 'Arkioner', pepins: 'Pepins', claude: 'Claude' });
+// Las personas que piden tareas y para las que trabaja Claude (ADR 136, SQL 148): `pedida_por` y `para` de una tarea
+TABLERO.PERSONAS = Object.freeze({ arkioner: 'Arkioner', pepins: 'Pepins' });
 TABLERO.esEstado = id => TABLERO.COLUMNAS.some(c => c.id === id);
 // el nombre de una columna (el historial viejo puede traer ids que ya no son columnas: salen tal cual) y el de un responsable
 TABLERO.tituloDe = id => (TABLERO.COLUMNAS.find(c => c.id === id) || { titulo: id }).titulo;
-TABLERO.responsableTexto = t => TABLERO.RESPONSABLES[t.responsable] || 'Sin responsable';
+// Si la lleva Claude y se sabe para quién: «Claude para Pepins» (ADR 136)
+TABLERO.responsableTexto = t => (t.responsable === 'claude' && TABLERO.PERSONAS[t.para] ? 'Claude para ' + TABLERO.PERSONAS[t.para]
+  : TABLERO.RESPONSABLES[t.responsable] || 'Sin responsable');
+TABLERO.pidioTexto = t => (TABLERO.PERSONAS[t.pedida_por] ? 'Pidió ' + TABLERO.PERSONAS[t.pedida_por] : '');
 TABLERO.columna = id => TABLERO.COLUMNAS.find(c => c.id === id) || null;
 TABLERO.sinRefinar = id => TABLERO.COLUMNAS.some(c => c.id === id && c.sinRefinar);

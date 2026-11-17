@@ -1,8 +1,8 @@
 {
- "build": 1236,
- "hash": "eb71a13",
- "fecha": "2026-11-17T19:09:05Z",
- "mensaje": "Web: una hoja común para el menú y la paleta (web/estilo/), fuera las tres copias (tarea #87, ADR 135, nodo N1)",
+ "build": 1237,
+ "hash": "325b02e",
+ "fecha": "2026-11-17T19:15:40Z",
+ "mensaje": "Tablero: cada tarea dice quién la pidió y para quién la trabaja Claude, con filtro Persona (tarea #100, ADR 136, SQL 148 y 149)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

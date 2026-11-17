@@ -3,7 +3,7 @@
 // se prueban en Node. El controlador (controlador.js) las pone en la página. Reutiliza las clases de /gestion (caja, cuenta, cab, estado, meta…).
 'use strict';
 TABLERO.vista = (() => {
-  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', corto: 'El nombre corto tiene que tener como mucho 60 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo', requiere: 'En «Requiere» van números de tarea (#3, 7), como mucho 20' };
+  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', corto: 'El nombre corto tiene que tener como mucho 60 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo', pedida_por: 'Quién la pidió: Arkioner o Pepins', para: 'Para quién: Arkioner o Pepins', requiere: 'En «Requiere» van números de tarea (#3, 7), como mucho 20' };
   const MENSAJES = {
     'es-de-otro': 'Esa tarea es de otra persona',
     'esta-hecha': 'Esa tarea ya está hecha',
@@ -34,10 +34,11 @@ TABLERO.vista = (() => {
   // Con nombre corto (SQL 141, Pepins): «#61 Paperwork: cosas de pago» en grande y el título largo debajo, más pequeño; sin él, el título como siempre
   const cabeza = (t, esc) => (t.corto ? `<div class="cab"><span class="codigo">#${t.id}</span><b class="tb-corto">${esc(t.corto)}</b></div><div class="tb-largo">${esc(t.titulo)}</div>`
     : `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b></div>`);
+  const pidio = (t, esc) => (TABLERO.pidioTexto(t) ? ` <span class="estado">${esc(TABLERO.pidioTexto(t))}</span>` : '');   // ADR 136
   const tonoDe = id => (TABLERO.columna(id) || { tono: 'transparent' }).tono;
   const tarjeta = (t, esc, elegida, conColumna) => `<article class="cuenta tb-tarea${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
     ${cabeza(t, esc)}
-    <div class="meta">${conColumna ? `<span class="estado tb-donde">${esc(TABLERO.tituloDe(t.estado))}</span> ` : ''}<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.refinado ? ' <span class="estado">con informe</span>' : ''}${avanceGrafo(t)}${bloqueo(t)}</div>
+    <div class="meta">${conColumna ? `<span class="estado tb-donde">${esc(TABLERO.tituloDe(t.estado))}</span> ` : ''}<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)}${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.refinado ? ' <span class="estado">con informe</span>' : ''}${avanceGrafo(t)}${bloqueo(t)}</div>
     ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}</article>`;
   // Cabecera de la columna con su color y, debajo, su frase de ayuda (qué significa estar ahí)
   const cabecera = (c, esc) => `<h3 class="tb-cab" style="background:${c.tono}">${esc(c.titulo)} <span>${c.tareas.length}</span></h3>${c.ayuda ? `<div class="tb-ayuda">${esc(c.ayuda)}</div>` : ''}`;
@@ -52,20 +53,26 @@ TABLERO.vista = (() => {
   // elegida: el id de la tarea abierta en el panel (su tarjeta se marca); grupo: el grupo del móvil que se ve (ideas por defecto)
   const html = (columnas, esc, elegida = null, grupo = 'ideas') => `<div class="tb-tablero">${columnas.map(c => columna(c, esc, elegida)).join('')}</div>${movil(columnas, esc, elegida, grupo)}`;
 
-  // Los filtros de arriba: tarea nueva, refrescar, la búsqueda (filtra mientras se escribe) y juego y responsable (con «todos»)
+  // Los filtros de arriba: tarea nueva, refrescar, la búsqueda (filtra mientras se escribe), juego, responsable y persona (con «todos»; ADR 136: siempre empieza en Todos)
+  const PERSONAS = [['', 'Todos'], ...Object.entries(TABLERO.PERSONAS)];
   const filtros = (juegos, filtro, esc) => `<div class="filtros"><button type="button" class="tb-rapida" data-rapida>Apuntar idea o fallo</button><button type="button" class="fuerte" data-nueva>Nueva tarea</button><button type="button" data-refrescar>Refrescar</button>
     <input type="search" data-buscar value="${esc(filtro.texto || '')}" placeholder="Buscar: #12, palabras…" aria-label="Buscar tareas">
     <select data-filtro="juego" aria-label="Juego">${opciones([['', 'Todos los juegos'], ...juegos.map(j => [j, j])], filtro.juego || '', esc)}</select>
-    <select data-filtro="responsable" aria-label="Responsable">${opciones([['', 'Todos'], ...Object.entries(TABLERO.RESPONSABLES)], filtro.responsable || '', esc)}</select></div>`;
+    <select data-filtro="responsable" aria-label="Responsable">${opciones([['', 'Todos'], ...Object.entries(TABLERO.RESPONSABLES)], filtro.responsable || '', esc)}</select>
+    <label class="tb-persona">Persona <select data-filtro="persona" aria-label="Persona: lo que pidió, hace o le hace Claude">${opciones(PERSONAS, filtro.persona || '', esc)}</select></label></div>`;
 
   // El formulario de una tarea (nueva si v.id no existe). Cada campo lleva name= para que el controlador lo lea. «Esperando a» solo sale en curso
   const campo = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<input type="text" name="${nombre}" value="${esc(valor || '')}"${ancho ? ` maxlength="${ancho}"` : ''}></label>`;
   const area = (nombre, etiqueta, valor, esc, ancho) => `<label>${etiqueta}<textarea name="${nombre}" rows="2" maxlength="${ancho}">${esc(valor || '')}</textarea></label>`;
+  // «Lo pidió» es obligatorio al crear (ADR 136); al editar una vieja puede quedar sin dato. «Claude trabaja para» solo se guarda si el responsable es Claude
+  const SIN_DATO = [['', 'Sin dato'], ...Object.entries(TABLERO.PERSONAS)];
   const formulario = (v, esc) => `<form class="tb-form" data-id="${v.id || ''}"><div class="cab"><b>${v.id ? 'Editar tarea #' + v.id : 'Nueva tarea (nace en Ideas)'}</b></div>
     ${campo('titulo', 'Título', v.titulo, esc, 120)}${campo('corto', 'Nombre corto y fácil (sale en la tarjeta junto al número; si se deja vacío, sale el título)', v.corto, esc, 60)}<div class="tb-parecidas" data-parecidas aria-live="polite"></div>${area('descripcion', 'Qué hay que hacer', v.descripcion, esc, 4000)}${area('criterio', 'Está hecho cuando…', v.criterio, esc, 2000)}
     ${area('refinado', 'Informe de refinado (dudas, choques, qué queda fuera)', v.refinado, esc, 4000)}${v.estado === 'en_curso' ? campo('esperando', 'Esperando a (a quién y qué; se borra al salir de en curso)', v.esperando, esc, 200) : ''}
     <div class="filtros"><label>Juego o área<input type="text" name="juego" value="${esc(v.juego || 'general')}" maxlength="40" list="tb-juegos"></label>
     <label>Responsable<select name="responsable">${opciones([['', 'Sin responsable'], ...Object.entries(TABLERO.RESPONSABLES)], v.responsable || '', esc)}</select></label>
+    <label>Lo pidió<select name="pedida_por"${v.id ? '' : ' required'}>${opciones(SIN_DATO, v.pedida_por || '', esc)}</select></label>
+    <label>Claude trabaja para<select name="para">${opciones(SIN_DATO, v.para || '', esc)}</select></label>
     <label>Prioridad<select name="prioridad">${opciones(Object.keys(TABLERO.PRIORIDADES).map(p => [p, p]), v.prioridad || 'normal', esc)}</select></label></div>
     ${campo('requiere', 'Requiere (números de tarea: #3, 7; no entra en curso hasta que estén en revisión o hechas)', (v.requiere || []).map(r => '#' + r.id).join(', '), esc, 200)}
     ${campo('hilo', 'Enlace al hilo', v.hilo, esc, 300)}${area('enlaces', 'Otros enlaces (ADR, TODO, PR)', v.enlaces, esc, 1000)}
@@ -76,6 +83,7 @@ TABLERO.vista = (() => {
   const formularioRapido = (juegos, esc) => `<form class="tb-form" data-rapida><div class="cab"><b>Apuntar idea o fallo</b></div>
     <div class="tb-tipos">${tipo('idea', 'Una idea', true)}${tipo('fallo', 'Un fallo', false)}</div>
     <label>Cuéntalo en una frase<input type="text" name="titulo" maxlength="120" required></label><div class="tb-parecidas" data-parecidas aria-live="polite"></div>
+    <label>¿Quién lo pide?<select name="pedida_por" required>${opciones(SIN_DATO, '', esc)}</select></label>
     <label>¿De qué juego?<select name="juego">${opciones([['general', 'General'], ...juegos.filter(j => j !== 'general').map(j => [j, j])], 'general', esc)}</select></label>
     <div class="meta">Lo demás (prioridad, criterio, quién lo hace) se rellena después.</div>
     <div class="filtros"><button type="submit" class="tb-rapida">Guardar en Ideas</button><button type="button" data-cancelar>Cancelar</button></div></form>`;
@@ -90,11 +98,11 @@ TABLERO.vista = (() => {
     + '@media(max-width:1200px){.tb-vista.abierto{grid-template-columns:minmax(0,1fr)}.tb-panel{position:fixed;inset:0 0 0 auto;width:min(420px,100%);max-height:none;z-index:20;border-radius:0;box-shadow:-4px 0 16px rgba(0,0,0,.25)}}'
     + '.tb-barra{height:6px;border:1px solid var(--linea);border-radius:4px;overflow:hidden;background:var(--bg);margin:4px 0}.tb-barra i{display:block;height:100%;background:var(--ok)}.tb-nivel{display:grid;gap:4px;margin-top:6px}.tb-nodo{border-left:3px solid var(--linea);padding-left:6px}.tb-nodo.pasa{border-color:var(--ok)}.tb-nodo.falla,.tb-nodo.bloqueado{border-color:var(--clara)}.tb-nodo.en_curso{border-color:var(--acento)}'
     + '.tb-form{display:grid;gap:8px}.tb-form textarea{font:inherit;color:var(--texto);background:var(--bg);border:1px solid var(--linea);border-radius:5px;padding:7px 9px;width:100%}.tb-form .filtros label{flex:1;min-width:140px}'
-    + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}';
+    + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}.tb-persona{display:flex;gap:4px;align-items:center}';
   const ESTILO_MOVIL = '.tb-movil{display:none;gap:10px}.tb-grupos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}'
     + '.tb-grupo{min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:2px solid var(--tono);background:var(--panel);color:var(--texto);border-radius:12px;font-weight:600}'
     + '.tb-grupo b{font-size:20px}.tb-grupo.activo{background:var(--tono);color:#10202b}.tb-lista-movil{display:grid;gap:8px}.tb-lista-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-donde{font-weight:600}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'
     + '.tb-rapida{background:#3dbe8b;color:#10202b;border-color:#3dbe8b;font-weight:700}.tb-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tb-tipo{display:flex;gap:6px;align-items:center;border:2px solid var(--acento);border-radius:10px;padding:10px;font-weight:600}.tb-tipo:has(input:checked){background:var(--acento);color:var(--acento-texto)}'
     + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}}';
-  return { html, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL };
+  return { html, pidio, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL };
 })();

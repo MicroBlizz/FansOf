@@ -31,7 +31,7 @@ TABLERO.vistaDetalle = (() => {
   const enlazadas = (etiqueta, lista, esc) => (lista && lista.length ? `<div class="meta tb-enlazadas"><b>${etiqueta}:</b> ${lista.map(r => `<button type="button" class="tb-parecida" data-abrir="${r.id}">#${r.id} ${esc(r.titulo)} <span class="meta">${esc(TABLERO.tituloDe(r.estado))}</span></button>`).join(' ')}</div>` : '');
   const fechas = (t, esc, fecha) => [t.creado && 'Creada el ' + fecha(t.creado) + (t.creado_por ? ' por ' + t.creado_por : ''), t.actualizado && 'cambiada el ' + fecha(t.actualizado)]
     .filter(Boolean).map(esc).join(' · ');
-  const etiquetas = (t, esc) => `<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span> <span class="estado">${esc(t.prioridad)}</span>`
+  const etiquetas = (t, esc) => `<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${TABLERO.vista.pidio(t, esc)} <span class="estado">${esc(t.prioridad)}</span>`
     + `${t.alfa ? ` <span class="estado">${esc(t.alfa)}</span>` : ''}`;
   const detalle = (t, esc, fecha = String) => `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
     <div class="meta">${etiquetas(t, esc)}</div>

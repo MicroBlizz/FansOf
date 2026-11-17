@@ -1,8 +1,8 @@
 {
- "build": 1239,
- "hash": "aa21e37",
- "fecha": "2026-11-17T19:20:44Z",
- "mensaje": "Web: sin restos lila con el estilo nuevo, y app-login con las letras de la casa (tarea #87, ADR 135, nodo N3)",
+ "build": 1240,
+ "hash": "9a514bb",
+ "fecha": "2026-11-17T19:26:11Z",
+ "mensaje": "/gestion: sus estilos a gestion.css, sin cambiar de aspecto, y prueba de que todas sus pestañas abren (tarea #87, ADR 135, nodo N4)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

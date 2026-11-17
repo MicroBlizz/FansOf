@@ -19,7 +19,7 @@ function adaptaCal(dt) {
 function bucle(ahora) {
   const real = Math.min(0.5, (ahora - ant) / 1000), dt = Math.min(0.05, real); ant = ahora;
   refresca();
-  if (innerHeight <= innerWidth * 1.1) actualiza(dt);   // en vertical el juego espera
+  if (!HORIZONTAL.deCanto()) actualiza(dt);   // de pie el juego espera (core: HORIZONTAL)
   dibuja(); adaptaCal(real);
   for (const k in PU) delete PU[k]; for (const k in FIJA) delete FIJA[k];
   requestAnimationFrame(bucle);

@@ -25,48 +25,49 @@ body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none
 </head>
 <body>
 <div id="caja"><canvas id="juego" aria-label="Fans of Recruit"></canvas></div>
-<div id="gira">GIRA EL MÓVIL<br>para jugar a lo ancho</div>
+<div id="gira"></div>
 <div id="carga">…</div>
 <script>
 // si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
 window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
 </script>
 <!-- el sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código); no se cambian -->
-<script src="../../core/js/sistema/sonido.js?v=0.1.3"></script>
-<script src="../../core/js/serie/canciones.js?v=0.1.3"></script>
+<script src="../../core/js/sistema/sonido.js?v=0.1.4"></script>
+<script src="../../core/js/serie/canciones.js?v=0.1.4"></script>
 <!-- ?v= es la versión de la demo: súbela al publicar un cambio para que el navegador no mezcle archivos viejos y nuevos -->
-<script src="js/textos.js?v=0.1.3"></script>
-<script src="js/pixel.js?v=0.1.3"></script>
-<script src="js/lona.js?v=0.1.3"></script>
-<script src="js/paleta.js?v=0.1.3"></script>
-<script src="js/letras.js?v=0.1.3"></script>
-<script src="js/audio.js?v=0.1.3"></script>
-<script src="js/heroe.js?v=0.1.3"></script>
-<script src="js/heroe-anim.js?v=0.1.3"></script>
-<script src="js/enemigos.js?v=0.1.3"></script>
-<script src="js/vehiculos.js?v=0.1.3"></script>
-<script src="js/rehenes.js?v=0.1.3"></script>
-<script src="js/efectos.js?v=0.1.3"></script>
-<script src="js/oficina.js?v=0.1.3"></script>
-<script src="js/oficina-2.js?v=0.1.3"></script>
-<script src="js/fondo.js?v=0.1.3"></script>
-<script src="js/fondo-2.js?v=0.1.3"></script>
-<script src="js/marcador.js?v=0.1.3"></script>
-<script src="js/enemigos-anim.js?v=0.1.3"></script>
-<script src="js/jefe.js?v=0.1.3"></script>
-<script src="js/extras.js?v=0.1.3"></script>
-<script src="js/nivel.js?v=0.1.3"></script>
-<script src="js/controles.js?v=0.1.3"></script>
-<script src="js/teclas.js?v=0.1.3"></script>
-<script src="js/chat.js?v=0.1.3"></script>
-<script src="js/juego.js?v=0.1.3"></script>
-<script src="js/jugador.js?v=0.1.3"></script>
-<script src="js/enemigos-ia.js?v=0.1.3"></script>
-<script src="js/jefe-ia.js?v=0.1.3"></script>
-<script src="js/dibujo.js?v=0.1.3"></script>
-<script src="js/pantallas.js?v=0.1.3"></script>
-<script src="js/instalar.js?v=0.1.3"></script>
-<script src="js/opciones.js?v=0.1.3"></script>
-<script src="js/principal.js?v=0.1.3"></script>
+<script src="../../core/js/sistema/horizontal.js?v=0.1.4"></script>
+<script src="js/textos.js?v=0.1.4"></script>
+<script src="js/pixel.js?v=0.1.4"></script>
+<script src="js/lona.js?v=0.1.4"></script>
+<script src="js/paleta.js?v=0.1.4"></script>
+<script src="js/letras.js?v=0.1.4"></script>
+<script src="js/audio.js?v=0.1.4"></script>
+<script src="js/heroe.js?v=0.1.4"></script>
+<script src="js/heroe-anim.js?v=0.1.4"></script>
+<script src="js/enemigos.js?v=0.1.4"></script>
+<script src="js/vehiculos.js?v=0.1.4"></script>
+<script src="js/rehenes.js?v=0.1.4"></script>
+<script src="js/efectos.js?v=0.1.4"></script>
+<script src="js/oficina.js?v=0.1.4"></script>
+<script src="js/oficina-2.js?v=0.1.4"></script>
+<script src="js/fondo.js?v=0.1.4"></script>
+<script src="js/fondo-2.js?v=0.1.4"></script>
+<script src="js/marcador.js?v=0.1.4"></script>
+<script src="js/enemigos-anim.js?v=0.1.4"></script>
+<script src="js/jefe.js?v=0.1.4"></script>
+<script src="js/extras.js?v=0.1.4"></script>
+<script src="js/nivel.js?v=0.1.4"></script>
+<script src="js/controles.js?v=0.1.4"></script>
+<script src="js/teclas.js?v=0.1.4"></script>
+<script src="js/chat.js?v=0.1.4"></script>
+<script src="js/juego.js?v=0.1.4"></script>
+<script src="js/jugador.js?v=0.1.4"></script>
+<script src="js/enemigos-ia.js?v=0.1.4"></script>
+<script src="js/jefe-ia.js?v=0.1.4"></script>
+<script src="js/dibujo.js?v=0.1.4"></script>
+<script src="js/pantallas.js?v=0.1.4"></script>
+<script src="js/instalar.js?v=0.1.4"></script>
+<script src="js/opciones.js?v=0.1.4"></script>
+<script src="js/principal.js?v=0.1.4"></script>
 </body>
 </html>

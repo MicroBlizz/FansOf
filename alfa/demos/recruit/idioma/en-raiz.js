@@ -31,4 +31,6 @@ IDIOMA.add({
   "<b>MÓVIL Y ORDENADOR</b>: palanca y botones en pantalla (mejor con el móvil tumbado) o teclado. Suelta a los fans atados con cinta de obra: te dan armas.": "<b>MOBILE AND DESKTOP</b>: on-screen stick and buttons (best with the phone sideways) or keyboard. Free the fans tied up with construction tape: they hand you weapons.",
   "MÓVIL Y ORDENADOR": "MOBILE AND DESKTOP",
   "Microblizz ha comprado el edificio para cerrarlo. El becario jura que él solo traía el café.": "Microblizz bought the building to shut it down. The intern swears he was only bringing the coffee.",
+  "<b>SE JUEGA CON EL GIRO BLOQUEADO</b>: con el móvil de pie, toca la pantalla y Recruit se pone en pantalla completa y en horizontal él solo, aunque el móvil tenga bloqueado el giro automático. En el iPhone, que no lo permite, el aviso te recuerda quitar el bloqueo de giro.": "<b>PLAYS WITH ROTATION LOCKED</b>: with the phone upright, tap the screen and Recruit goes full screen and landscape by itself, even if auto-rotate is locked. On iPhone, which doesn't allow it, the notice reminds you to turn off rotation lock.",
+  "CrazyBunny pidió trabajar tumbado. Recursos Humanos dijo que no, pero el móvil sí puede.": "CrazyBunny asked to work lying down. HR said no, but the phone can.",
 });

@@ -37,13 +37,9 @@ function pintaMenu(g, ops, y0, alto) {
   });
 }
 function guardaRecord(p) { if (p > AJUSTES.record) { AJUSTES.record = p; guardaAjustes(); } }
-// en el móvil, a pantalla completa y tumbado (si el navegador deja)
+// en el móvil, a pantalla completa y tumbado aunque el giro esté bloqueado (la pieza común de core: HORIZONTAL, ADR 133)
 function pantallaCompleta() {
-  if (!MANDO.tactil || document.fullscreenElement) return;
-  try {
-    const d = document.documentElement, p = d.requestFullscreen && d.requestFullscreen({ navigationUI: 'hide' });
-    if (p && p.then) p.then(() => { try { const q = screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape'); if (q && q.catch) q.catch(() => {}); } catch (_) { /* da igual */ } }).catch(() => {});
-  } catch (_) { /* no se puede: se juega igual */ }
+  if (MANDO.tactil) HORIZONTAL.fijar({ siempre: true });
 }
 
 /* ---------- la carga ---------- */

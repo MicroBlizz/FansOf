@@ -1,8 +1,8 @@
 {
- "build": 1233,
- "hash": "a4489f0",
- "fecha": "2026-11-17T17:47:07Z",
- "mensaje": "Wings 0.1.7: cuarto caza, Filete Rosa de la MechaVaca (tipo Harrier), que flota con el freno (#98)",
+ "build": 1234,
+ "hash": "4adb536",
+ "fecha": "2026-11-17T17:52:50Z",
+ "mensaje": "Beams 0.1.2, Recruit 0.1.4 y Zombies 0.14.2 dejan su copia de pantalla completa y giro y usan HORIZONTAL de core (tarea #81, ADR 133)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

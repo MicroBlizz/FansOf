@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.14.2', real: ["<b>SE JUEGA CON EL GIRO BLOQUEADO</b>: con el móvil de pie, toca la pantalla y Zombies se pone en pantalla completa y en horizontal él solo, aunque el móvil tenga bloqueado el giro automático (también desde el menú, antes de empezar). En el iPhone, que no lo permite, el aviso te recuerda quitar el bloqueo de giro."], joke: ["Los zombis también caminan torcidos, pero ellos tienen excusa."] },
   { v: '0.14.1', real: ['<b>EN EL MÓVIL</b>: los menús (la tele, la ficha de evacuación, la pausa, los carteles y el mapa) se encogen para caber enteros en el móvil tumbado, y ya se puede empezar partida. El cuadro del arma sube junto al reloj para no tapar CORRER, y el tutorial nombra los botones de la pantalla en vez del teclado y el ratón.'],
     joke: ['Microblizz confirma que el juego ya cabe en el móvil. Los fans también: caben en cualquier sitio.'] },
   { v: '0.14.0', real: ['<b>COCHES CON PIEZAS</b>: motor, ruedas, batería, frenos y cristales se gastan al chocar y atropellar. Con una llave inglesa se quitan de los coches rotos y se ponen en el tuyo, y el motor se desmonta en piezas de motor para repararlo. Habilidad nueva: mecánica. Cada coche tiene maletero (24 casillas) y faros (L): de noche iluminan, pero los fans de delante los ven.'],

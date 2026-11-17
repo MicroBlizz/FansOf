@@ -56,6 +56,10 @@ function paso() {
   MANDO.toque = null;
   vigilaMusica();
 }
+// El aviso de abajo con el móvil de pie: las dos frases de HORIZONTAL.lineas() (core), una por línea.
+function pintaGira(caja) {
+  caja.replaceChildren(...HORIZONTAL.lineas().flatMap((t, i) => (i ? [document.createElement('br'), t] : [t.toUpperCase()])));
+}
 function cuadro(ahora) {
   requestAnimationFrame(cuadro);
   let dt = Math.min(100, ahora - antes), n = 0;
@@ -73,6 +77,9 @@ function arranca() {
 }
 
 MANDO.tactil = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+pintaGira(document.getElementById('gira'));
+// con el móvil de pie, un toque en cualquier sitio lo pone en horizontal (aunque el giro esté bloqueado)
+window.addEventListener('pointerup', () => { if (HORIZONTAL.deCanto()) pantallaCompleta(); });
 ajusta();
 window.addEventListener('resize', ajusta);
 window.addEventListener('orientationchange', () => setTimeout(ajusta, 200));

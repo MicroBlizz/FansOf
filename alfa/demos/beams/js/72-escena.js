@@ -22,8 +22,14 @@ function dibuja() {
   if (S.estado === 'tuto') dibujaTuto();
   if (S.estado === 'opciones') dibujaOpciones(); else if (S.estado === 'editaT') dibujaEditaT();
   if (OPC.pant.fps) txt('FPS ' + Math.round(fpsEma) + ' · ' + Q.n, 10, H - 14, 13, '#9cffb0', 'left', { f: 'mini' });
-  if (innerHeight > innerWidth * 1.1) { c.fillStyle = 'rgba(4,7,18,0.94)'; c.fillRect(0, 0, W, H); txt('GIRA EL MÓVIL', W / 2, H / 2 - 20, 56, '#7fe8ff', 'center', { f: 'logo' }); txt('Fans of Beams se juega en horizontal', W / 2, H / 2 + 40, 22, '#ffffff'); }
+  if (HORIZONTAL.deCanto()) dibujaGira();
   c = escC;
+}
+// El aviso con el móvil de pie: las dos frases de HORIZONTAL.lineas() (core), y un toque lo pone en horizontal (pantallaCompleta).
+function dibujaGira() {
+  const [a, b] = HORIZONTAL.lineas();
+  c.fillStyle = 'rgba(4,7,18,0.94)'; c.fillRect(0, 0, W, H);
+  txt(a.toUpperCase(), W / 2, H / 2 - 20, 44, '#7fe8ff', 'center', { f: 'logo' }); txt(b, W / 2, H / 2 + 44, 30, '#ffffff');
 }
 function dibujaEscena() {
   const jugando = S.estado !== 'fin';

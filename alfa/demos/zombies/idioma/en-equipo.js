@@ -9,7 +9,7 @@ IDIOMA.add({
   'Clic derecho en ropa o en una mochila para ponértela. Clic en lo puesto para quitártelo.': 'Right-click clothes or a backpack to wear it. Click what you wear to take it off.',
   'Te falta tela.': 'You need cloth.', 'No llevas nada roto.': 'Nothing you wear is torn.', 'Eso no se pone.': 'You cannot wear that.', 'Te pones: %1.': 'You put on: %1.', 'Has cosido: %1.': 'You sewed: %1.', 'GORRO DE LANA (2 TELAS)': 'WOOLLY HAT (2 CLOTH)',
   // el móvil (0.12.1)
-  'ACCIÓN': 'ACTION', 'AGACHAR': 'CROUCH', 'ATACAR': 'ATTACK', 'EMPUJAR': 'SHOVE', 'CORRER': 'RUN', 'DORMIR': 'SLEEP', 'GIRAR': 'ROTATE', 'Gira el móvil para jugar': 'Turn your phone sideways to play',
+  'ACCIÓN': 'ACTION', 'AGACHAR': 'CROUCH', 'ATACAR': 'ATTACK', 'EMPUJAR': 'SHOVE', 'CORRER': 'RUN', 'DORMIR': 'SLEEP', 'GIRAR': 'ROTATE',
   // las heridas (0.13)
   'Protege la cabeza de los mordiscos': 'Protects your head from bites', 'Protege torso y brazos; sus heridas infectan menos': 'Protects torso and arms; their wounds infect less', 'Protege las piernas de los mordiscos': 'Protects your legs from bites',
   'ARAÑAZO': 'SCRATCH', 'CORTE': 'CUT', 'CORTE PROFUNDO': 'DEEP CUT', 'MORDISCO': 'BITE', 'FRACTURA': 'FRACTURE',

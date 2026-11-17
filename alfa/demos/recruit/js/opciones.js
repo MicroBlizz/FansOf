@@ -10,7 +10,7 @@ function opcLista() {
     ['sonido', tr('SONIDO') + ': ' + siNo(!AJUSTES.mudo)],
     ['musica', tr('MÚSICA') + ': ' + siNo(!AJUSTES.sinMusica)],
     ['teclas', tr('CONTROLES DEL TECLADO')],
-    ['completa', tr('PANTALLA COMPLETA') + ': ' + siNo(!!document.fullscreenElement)],
+    ['completa', tr('PANTALLA COMPLETA') + ': ' + siNo(HORIZONTAL.enCompleta())],
     ['instalar', INSTALAR.yaInstalada() ? tr('YA ESTÁ INSTALADO') : tr('INSTALAR EN EL MÓVIL')],
     ['record', tr('BORRAR RÉCORD')],
     ['volver', tr('VOLVER')],
@@ -18,14 +18,17 @@ function opcLista() {
 }
 function abreOpciones() { OPC.on = true; MENU.sel = 0; play('select'); }
 function avisa(s) { AVISO.s = s; AVISO.t = 600; }
+// Pone o quita la pantalla completa (core: HORIZONTAL); en el móvil, además, la fija en horizontal.
+const SIN_COMPLETA = ['sin-soporte', 'sin-pantalla-completa'];
+function alternaCompleta() {
+  if (HORIZONTAL.enCompleta()) { HORIZONTAL.salir(); return; }
+  HORIZONTAL.fijar({ siempre: true }).then((r) => { if (SIN_COMPLETA.includes(r)) avisa('ESTE NAVEGADOR NO DEJA PONER LA PANTALLA COMPLETA.'); });
+}
 function opcHaz(q) {
   if (q === 'sonido') cambiaSonido();
   else if (q === 'musica') cambiaMusica();
   else if (q === 'teclas') abreTeclas();
-  else if (q === 'completa') {
-    try { if (document.fullscreenElement) document.exitFullscreen(); else { const p = document.documentElement.requestFullscreen({ navigationUI: 'hide' }); if (p && p.catch) p.catch(() => avisa('ESTE NAVEGADOR NO DEJA PONER LA PANTALLA COMPLETA.')); } }
-    catch (_) { avisa('ESTE NAVEGADOR NO DEJA PONER LA PANTALLA COMPLETA.'); }
-  } else if (q === 'instalar') { const s = INSTALAR.instala(); if (s) avisa(s); }
+  else if (q === 'completa') alternaCompleta(); else if (q === 'instalar') { const s = INSTALAR.instala(); if (s) avisa(s); }
   else if (q === 'record') { AJUSTES.record = 0; guardaAjustes(); avisa('RÉCORD BORRADO. COMO SI NUNCA HUBIERAS TRABAJADO AQUÍ.'); }
   else if (q === 'volver') { OPC.on = false; MENU.sel = 0; }
 }

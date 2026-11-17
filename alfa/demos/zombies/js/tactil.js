@@ -23,7 +23,8 @@ function preparaTactil() {
     BOTONES_TACTIL.map(([id, t]) => '<button type="button" class="t-boton" id="' + id + '">' + esc(tr(t)) + '</button>').join('') +
     '';
   document.body.appendChild(m);
-  const g = document.createElement('div'); g.id = 't-gira'; g.innerHTML = '<b>' + esc(tr('Gira el móvil para jugar')) + '</b>'; document.body.appendChild(g);   // encima de todo
+  const g = document.createElement('div'); g.id = 't-gira'; document.body.appendChild(g);   // encima de todo
+  const [l1, l2] = HORIZONTAL.lineas(); g.innerHTML = '<b>' + esc(l1) + '</b><small>' + esc(l2) + '</small>';   // las frases de core (ADR 133)
   for (const b of BOTONES_TACTIL) botonTactil(...b);
   palancaTactil(el('t-palanca'));
   el('zb').addEventListener('pointerdown', tocaHud);   // el arma, la hotbar y el cartel de acción también se tocan
@@ -86,8 +87,8 @@ function entradaTactil(J, ent) {
   if (z) ent.apunta = Math.atan2(z.x - J.x, z.z - J.z);
   return ent;
 }
-// en el móvil, al tocar con la partida empezada se pone a pantalla completa y tumbado (si el navegador deja)
+// en el móvil, al tocar con la partida empezada (o con el móvil de pie, aunque el giro esté bloqueado) se pone a pantalla completa
+// y tumbado, con la pieza común de core (HORIZONTAL, ADR 133)
 function pantallaCompleta() {
-  if (!JUEGO.e || document.fullscreenElement || !document.documentElement.requestFullscreen) return;
-  document.documentElement.requestFullscreen().then(() => (screen.orientation && screen.orientation.lock ? screen.orientation.lock('landscape') : null)).catch(() => {});
+  if (JUEGO.e || HORIZONTAL.deCanto()) HORIZONTAL.fijar({ siempre: true });
 }

@@ -84,6 +84,7 @@ function ptr(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX -
 cv.addEventListener('contextmenu', e => e.preventDefault());
 cv.addEventListener('pointerdown', e => {
   e.preventDefault(); audioInit(); if (e.pointerType === 'touch') TACTIL = true;
+  if (HORIZONTAL.deCanto()) return;   // de pie solo se ve el aviso: el toque lo recoge pantallaCompleta al soltar
   const p = ptr(e); try { cv.setPointerCapture(e.pointerId); } catch (x) { /* sin captura */ }
   if (S.estado === 'editaT') {   // arrastrar un botón
     const B = botonesT(); let mejor = null, dm = 1e9; for (const id in B) { const d = Math.hypot(p.x - B[id].x, p.y - B[id].y); if (d < B[id].r * 1.3 && d < dm) { dm = d; mejor = id; } }
@@ -105,18 +106,21 @@ cv.addEventListener('pointermove', e => {
 function suelta(e) {
   const t = TOQ.get(e.pointerId);
   if (t) { if (t.tipo === 'btn') TH[t.id] = false; if (t.tipo === 'arrastra') guardaOpc(); TOQ.delete(e.pointerId); }
-  if (e.pointerType === 'touch') pantallaCompleta(false);
 }
 cv.addEventListener('pointerup', suelta); cv.addEventListener('pointercancel', suelta);
+// En toda la ventana: con el móvil de pie el lienzo no la ocupa entera y el toque puede caer fuera.
+addEventListener('pointerup', e => { if (e.pointerType === 'touch') pantallaCompleta(false); });
 function tocaUI(p) {
   UI.teclado = false;
   if ((S.estado === 'fin' || S.estado === 'victoria') && S.fin > 0.8) { volverMenu(); return; }
   for (let i = UI.prev.length - 1; i >= 0; i--) { const h = UI.prev[i]; if (p.x >= h.x && p.x <= h.x + h.w && p.y >= h.y && p.y <= h.y + h.h) { h.fn(); return; } }
 }
 let fsPedida = false;
-function pantallaCompleta(forzar) {   // en el navegador del móvil: pantalla completa y horizontal (en la app ya viene así)
-  if (ENAPP) return; const d = document, el = d.documentElement;
-  try { if (!d.fullscreenElement && (forzar || !fsPedida) && el.requestFullscreen) { fsPedida = true; const pr = el.requestFullscreen(); if (pr && pr.then) pr.then(() => { try { screen.orientation.lock('landscape').catch(() => {}); } catch (x) { /* sin bloqueo */ } }).catch(() => {}); } } catch (x) { /* no se puede */ }
+// En el navegador del móvil: pantalla completa y horizontal con la pieza común de core (HORIZONTAL, ADR 133); en la app ya viene así.
+// Se pide sola una vez al jugar; con el móvil de pie, en cada toque (aunque el giro esté bloqueado); y siempre desde Opciones.
+function pantallaCompleta(forzar) {
+  if (ENAPP || !(forzar || !fsPedida || HORIZONTAL.deCanto())) return;
+  fsPedida = true; HORIZONTAL.fijar({ siempre: true });
 }
 let wake = null;
 function pantallaEncendida() { try { if (navigator.wakeLock && !wake) navigator.wakeLock.request('screen').then(w => { wake = w; w.addEventListener('release', () => { wake = null; }); }).catch(() => {}); } catch (x) { /* sin wake lock */ } }

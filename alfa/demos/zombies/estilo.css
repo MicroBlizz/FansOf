@@ -196,8 +196,9 @@ body.tactil .zb-ayuda { display: none; }
 #t-faros { right: calc(418px + env(safe-area-inset-right)); }
 #t-gira { display: none; }
 @media (orientation: portrait) {
-  body.tactil #t-gira { display: grid; place-items: center; position: fixed; inset: 0; z-index: 60; background: rgba(6,8,12,.94); pointer-events: auto; text-align: center; padding: 24px; }
+  body.tactil #t-gira { display: grid; place-items: center; align-content: center; position: fixed; inset: 0; z-index: 60; background: rgba(6,8,12,.94); pointer-events: auto; text-align: center; padding: 24px; }
   body.tactil #t-gira b { font: 22px var(--rk-tit); font-weight: 400; color: var(--rk-naranja); }
+  body.tactil #t-gira small { display: block; margin-top: 14px; font-size: 15px; color: #fff; }
 }
 /* el HUD encogido y en las esquinas, sin tapar los botones */
 body.tactil .zb-necesidades { transform: scale(.55); transform-origin: left top; left: calc(6px + env(safe-area-inset-left)); top: 6px; }

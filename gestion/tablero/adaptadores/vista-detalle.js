@@ -33,7 +33,7 @@ TABLERO.vistaDetalle = (() => {
     .filter(Boolean).map(esc).join(' · ');
   const etiquetas = (t, esc) => `<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span> <span class="estado">${esc(t.prioridad)}</span>`
     + `${t.alfa ? ` <span class="estado">${esc(t.alfa)}</span>` : ''}`;
-  const detalle = (t, esc, fecha = String) => `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>
+  const detalle = (t, esc, fecha = String) => `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
     <div class="meta">${etiquetas(t, esc)}</div>
     ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
     ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${t.refinado ? `<div class="meta tb-informe"><b>Informe de refinado:</b> ${esc(t.refinado)}</div>` : ''}${enlazadas('Requiere', t.requiere, esc)}${enlazadas('Lo necesitan', t.requerida_por, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}

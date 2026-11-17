@@ -1,4 +1,4 @@
-// Fans of Karts · CAOS PRIMORDIAL en el PvP: el contador y el botón de ILIMITADO (la «tienda») de core (ENERGIA, core/js/sistema/energia.js) en HTML encima del lienzo,
+// Fans of Karts · CAOS PRIMORDIAL en el PvP: el contador de core, que al tocarlo abre su sección de la tienda (ENERGIA, core/js/sistema/energia.js) en HTML encima del lienzo,
 // visibles en el menú principal y en las pantallas del PvP. Lo cobra y lo valida el servidor (karts_pvp8_*): aquí solo se pregunta y se enseña. Estando solo en la sala no se gasta nada.
 'use strict';
 const CAJA_ENERGIA = document.createElement('div'); CAJA_ENERGIA.id = 'fok-energia'; CAJA_ENERGIA.className = 'wallet'; CAJA_ENERGIA.hidden = true;
@@ -22,7 +22,7 @@ function energiaVista() {
   if (RELOJ - energiaTic > 1) { energiaTic = RELOJ; energiaPinta(); }
   else if (CAJA_ENERGIA.hidden && energiaHtml) CAJA_ENERGIA.hidden = false;
 }
-// ¿se puede buscar carrera? Sin caos primordial (y sin ilimitado) se enseña el aviso con la oferta y no se entra en la cola
+// ¿se puede buscar carrera? Sin caos primordial (y sin ilimitado) se enseña el aviso (lo que falta y el anuncio que da +1) y no se entra en la cola
 function energiaPermite() {
   if (typeof ENERGIA === 'undefined' || !ENERGIA.sinEnergia()) return true;
   ENERGIA.avisoSin(); return false;

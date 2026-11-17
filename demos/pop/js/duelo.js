@@ -1,6 +1,6 @@
 // Fans of Pop · DUELO contra el CEO (fase 3 de la propuesta, 30-10-2026): el juego de verdad del pop-it, por turnos (es el «Nim»
 // de los matemáticos, versión «pierde quien coge la última»). En tu turno revientas las burbujas que quieras, pero todas de la MISMA
-// fila, y pulsas ¡LISTO!; luego le toca al CEO. Pierde quien revienta la última burbuja.
+// fila, y pulsas ¡LISTO!; luego le toca al CEO. Quien haga pop en la última, pierde burbuja.
 // El CEO sabe la jugada perfecta, pero se equivoca a veces: empieza fallando mucho y, cada vez que le ganas, falla menos
 // (SAVE.duelo.fallo, entre PP_CFG.duelo.fallo[0] y [1]). Cada victoria da monedas, las 5 primeras del día. No gasta corazones.
 // Más adelante (fase 7) será PvP contra otras jugadoras, con el CEO de reserva si no hay nadie en línea.
@@ -98,7 +98,7 @@ function ppDueloFin(res) {
   play(res === 'gana' ? 'ppVictoria' : 'ppDerrota');
   setTimeout(() => {
     const t = ppAbre(`<h2>${res === 'gana' ? tr('¡Has ganado al CEO!') : tr('El CEO gana esta vez')}</h2>
-      <p class="pp-sub">${res === 'gana' ? tr('Le has dejado la última burbuja. Dice que el pop-it estaba amañado.') : tr('Te ha tocado reventar la última burbuja. Se ríe como un villano de oficina.')}</p>
+      <p class="pp-sub">${res === 'gana' ? tr('Le has dejado la última burbuja. Dice que el pop-it estaba amañado.') : tr('Te ha tocado hacer pop en la última burbuja. Se ríe como un villano de oficina.')}</p>
       ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : res === 'gana' ? `<p class="pp-sub">${tr('Hoy ya has ganado todas las monedas del duelo. ¡Vuelve mañana!')}</p>` : ''}
       <p class="pp-sub">${tr('Victorias: {g} · Derrotas: {p}', { g: S.gan, p: S.per })}</p>`);
     t.appendChild(ppBoton(tr('¡OTRO DUELO!'), 'pp-btn', () => { ppCierra(); ppNuevoDuelo(); }));
@@ -131,7 +131,7 @@ function ppPintaDuelo(c, t) {
     c.save(); c.lineWidth = 6; c.strokeStyle = D.turno === 'yo' ? '#ffd64a' : '#8a8aa8'; c.globalAlpha = 0.6 + Math.sin(t * 6) * 0.3;
     c.beginPath(); c.roundRect(g.x - 6, g.y + D.fila * g.celda + 2, g.lado + 12, g.celda - 4, g.celda / 2); c.stroke(); c.restore();
   }
-  ppTexto(c, tr('Revienta en una sola fila. ¡Pierde quien revienta la última!'), 270, g.y + g.lado + 52, 22, '#fff', 'center', '#c43a84');
+  ppTexto(c, tr('Haz pop en una sola fila. ¡Pierde quien haga pop en la última!'), 270, g.y + g.lado + 52, 22, '#fff', 'center', '#c43a84');
   ppPintaEfectos(c, t);
   c.restore();
 }

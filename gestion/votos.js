@@ -27,7 +27,7 @@
     const pista = v.estado === 'pendiente' && nueva ? `<div class="meta">Ya hay una versión posterior desplegada (${esc(act)}): puede que ya esté resuelto.</div>` : '';
     const hecho = v.gestionado ? `<div class="meta">${esc(v.gestionado_por || '')} · ${fecha(v.gestionado)}${v.gestion_nota ? ' · ' + esc(v.gestion_nota) : ''}</div>` : '';
     return `<article class="cuenta${v.estado === 'pendiente' ? '' : ' marcada'}" data-id="${v.id}" data-o="${v.origen}"><div class="cab"><span class="codigo">${esc(v.juego)}</span>${estado}`
-      + `<span class="meta">${v.origen === 'juego' ? 'desde el juego · ' + esc(v.tipo) : v.voto > 0 ? 'biblioteca · SÍ lo recomienda' : 'biblioteca · NO lo recomienda'} · escrito en la versión <b>${esc(v.version || '?')}</b> · ${fecha(v.creado)}${act ? ' · ahora ' + esc(act) : ''}</span></div>`
+      + `<span class="meta">${v.origen === 'juego' ? 'desde el juego · ' + esc(v.tipo) + (v.beta ? ' · <b>beta</b>' : '') : v.voto > 0 ? 'biblioteca · SÍ lo recomienda' : 'biblioteca · NO lo recomienda'} · escrito en la versión <b>${esc(v.version || '?')}</b> · ${fecha(v.creado)}${act ? ' · ahora ' + esc(act) : ''}</span></div>`
       + respuestas(v)
       + `<p style="margin:6px 0;white-space:pre-wrap;overflow-wrap:anywhere">${esc(v.nota)}</p><div class="meta">${v.origen === 'juego' ? (v.contacto ? 'Acepta que le escribamos: ' + esc(v.email || '(sin email)') : 'Sin permiso para contactar · cuenta ' + esc(v.corto)) : esc(v.email || 'cuenta ' + v.corto)}</div>${pista}${hecho}`
       + `<div class="accion"><input type="text" class="g-ver" placeholder="Versión que lo resuelve" maxlength="24" value="${esc(v.resuelto_version || act)}" aria-label="Versión que lo resuelve">`
@@ -40,13 +40,15 @@
   // los comentarios de la biblioteca (votos con nota) y el feedback que mandan desde los juegos, juntos y por fecha
   const todos = () => [...V.votos.filter(v => v.nota).map(v => Object.assign({ origen: 'biblioteca' }, v)),
     ...((F && F.feedback) || []).map(f => Object.assign({ origen: 'juego', nota: f.texto }, f))].sort((a, b) => (a.creado < b.creado ? 1 : -1));
+  // el filtro «quién lo manda»: beta = gente de confianza, sin topes (la marca la pone el servidor al guardar, SQL 127); los comentarios de la biblioteca no la llevan
+  const deQuien = (v, quien) => !quien || (quien === 'beta' ? !!v.beta : !v.beta);
   function pinta() {
     if (!V) return;
-    const juego = $('v-juego').value, ver = $('v-estado').value;
+    const juego = $('v-juego').value, ver = $('v-estado').value, quien = $('v-quien').value;
     $('v-juego').innerHTML = '<option value="">todos los juegos</option>' + [...new Set([...V.juegos.map(j => j.juego), ...((F && F.feedback) || []).map(f => f.juego)])].sort().map(j => `<option value="${esc(j)}"${j === juego ? ' selected' : ''}>${esc(j)}</option>`).join('');
     const fb = (F && F.feedback) || [];
-    $('v-resumen').innerHTML = `<div><b>Desde los juegos</b><span>${fmt(fb.length)} comentarios · ${fmt(fb.filter(f => f.estado === 'pendiente').length)} pendientes · ${fmt(fb.filter(f => f.contacto).length)} aceptan contacto</span></div>` + (V.juegos.length ? V.juegos.map(j => `<div><b>${esc(j.juego)}</b><span>SÍ ${fmt(j.arriba)} · NO ${fmt(j.abajo)} · ${fmt(j.pendientes)} comentarios pendientes de ${fmt(j.notas)}</span></div>`).join('') : '<div><b>Sin votos todavía</b></div>');
-    const L = todos().filter(v => (!juego || v.juego === juego) && (ver === 'todos' || ver === v.estado));
+    $('v-resumen').innerHTML = `<div><b>Desde los juegos</b><span>${fmt(fb.length)} comentarios · ${fmt(fb.filter(f => f.estado === 'pendiente').length)} pendientes · ${fmt(fb.filter(f => f.beta).length)} de beta · ${fmt(fb.filter(f => f.contacto).length)} aceptan contacto</span></div>` + (V.juegos.length ? V.juegos.map(j => `<div><b>${esc(j.juego)}</b><span>SÍ ${fmt(j.arriba)} · NO ${fmt(j.abajo)} · ${fmt(j.pendientes)} comentarios pendientes de ${fmt(j.notas)}</span></div>`).join('') : '<div><b>Sin votos todavía</b></div>');
+    const L = todos().filter(v => (!juego || v.juego === juego) && (ver === 'todos' || ver === v.estado) && deQuien(v, quien));
     $('v-lista').innerHTML = L.length ? L.map(tarjeta).join('') : '<div class="vacio"><b>Nada con ese filtro</b></div>';
     for (const j of new Set(L.map(v => v.juego))) if (!(j in actuales)) versionDe(j).then(() => pinta());
   }
@@ -67,6 +69,6 @@
     } catch (e) { $('v-aviso').textContent = textoError(e); b.disabled = false; }
   };
   GESTION_NAV.seccion({ id: 'votos', pan: 'pan-votos', etiqueta: 'Comentarios', orden: 2, cargar });
-  $('v-juego').onchange = $('v-estado').onchange = pinta; $('v-recargar').onclick = cargar;
+  $('v-juego').onchange = $('v-estado').onchange = $('v-quien').onchange = pinta; $('v-recargar').onclick = cargar;
   $('salir').addEventListener('click', () => { V = F = null; });
 })();

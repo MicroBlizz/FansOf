@@ -6,12 +6,17 @@
 // con un botón para leer qué cambió) y las que añada el juego en AJUSTES.feedbackPreguntas = [{ id: 'mapa', texto: '¿Qué te parece el mapa?', opciones: ['Me gusta', 'Me da igual', 'No me gusta'] }]
 // (id estable en minúsculas; sin «opciones» es una respuesta corta escrita). Se guardan como jsonb {id: respuesta} (servidor/39-feedback-preguntas.sql).
 // Un juego puede quitarla con AJUSTES.sinFeedback = true. Tiene su propio estilo (no depende del CSS de cada juego).
+// Topes y beta tester (ADR 106): las reglas están en feedback-reglas.js (500 caracteres y 3 al día; con rol beta, sin tope y un aviso suave si se alarga).
+// Quien no es beta puede pedirlo desde aquí (pedir_beta, servidor/127), y al dejar el tercer comentario del día se le ofrece con ganas.
 'use strict';
 (() => {
   if (typeof CUENTA === 'undefined' || !CUENTA.activa || (typeof AJUSTES !== 'undefined' && AJUSTES.sinFeedback)) return;
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const TIPOS = [['idea', 'IDEA'], ['fallo', 'FALLO'], ['opinion', 'OPINIÓN']];
   let tipo = 'opinion', enviando = false, estrellas = 0, resp = {};   // estrellas: la nota de 1 a 5 (obligatoria en «OPINIÓN»); resp: lo contestado con botones (lo escrito se lee de los campos)
+  const R = FEEDBACK_REGLAS;
+  let persona = R.trasRespuesta(null, null);   // lo que se sabe de quien escribe: { beta, solicitud, enviadosHoy, topeDia }; lo pone al día cada respuesta del servidor
+  const esBeta = () => persona.beta || persona.solicitud === 'aceptada' || !!(CUENTA.roles && CUENTA.roles.tiene('beta'));
   const OPCIONES = ['Me gusta', 'Me da igual', 'No me gusta'];
   const BASE = [{ id: 'gusta', texto: '¿Qué es lo que más te gusta?' }, { id: 'molesta', texto: '¿Qué es lo que más te molesta?' }];
   const ultima = () => (typeof NEWS !== 'undefined' && NEWS && NEWS.length ? NEWS[0] : null);
@@ -61,6 +66,9 @@
   #fb-ver { position: fixed; left: 0; z-index: 39; width: 30px; display: flex; justify-content: center; pointer-events: none; font: 700 10px/1 system-ui, sans-serif; color: rgba(255, 246, 234, .5); text-shadow: 0 1px 2px #20102c, 0 0 3px #20102c; }
   #fb-ver[hidden] { display: none; }
   #fb-ver span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+  #fb-cuenta { margin-top: 3px; text-align: right; min-height: 1em; }
+  #fb-beta { margin-top: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(255,203,61,.1); font-size: 13px; font-weight: 700; line-height: 1.35; } #fb-beta:empty { display: none; }
+  #fb-beta button { display: block; margin-top: 6px; cursor: pointer; font: 800 13px "Baloo 2", system-ui, sans-serif; padding: 6px 12px; border-radius: 10px; border: 3px solid #20102c; background: linear-gradient(to bottom, #ffdf6b, #ffcb3d); color: #20102c; }
   #fb-aviso { margin-top: 8px; font-size: 13px; font-weight: 800; color: #ffb347; min-height: 1em; }`;
   document.head.appendChild(css);
 
@@ -106,17 +114,54 @@
     c.innerHTML = `<h3 id="fb-titulo">${esc(tr('TU OPINIÓN'))}</h3><p>${esc(tr('Cuéntanos una idea, un fallo o lo que te parezca. Lo leemos nosotros.'))}</p>`
       + `<div id="fb-tipos">${TIPOS.map(([k, n]) => `<button type="button" data-t="${k}" aria-pressed="${k === tipo}">${esc(tr(n))}</button>`).join('')}</div>`
       + preguntasHtml()
-      + `<div class="fb-p"><label for="fb-texto">${esc(tr('Cuéntanos lo que quieras'))}</label><textarea id="fb-texto" maxlength="1000" placeholder="${esc(tr('Escribe aquí'))}"></textarea></div>`
+      + `<div class="fb-p"><label for="fb-texto">${esc(tr('Cuéntanos lo que quieras'))}</label><textarea id="fb-texto" maxlength="${R.topes(esBeta()).texto}" placeholder="${esc(tr('Escribe aquí'))}"></textarea><small id="fb-cuenta"></small></div>`
       + `<div id="fb-contacto"><input type="checkbox" id="fb-check"${conEmail() ? '' : ' disabled'}><div><label for="fb-check">${esc(tr('Podéis escribirme por email para preguntarme por este comentario, hablar del juego o pedirme opinión.'))}</label>`
       + (conEmail() ? `<small style="margin-top:2px">${esc(tr('Usaremos {e}.', { e: CUENTA.email }))}</small>`
         : `<small style="margin-top:2px">${esc(tr('Para eso necesitamos tu email: entra con tu cuenta.'))}</small>${typeof pedirCuenta === 'function' ? `<button type="button" id="fb-entrar">${esc(tr('ENTRAR CON MI CUENTA'))}</button>` : ''}`)
-      + `</div></div><button type="button" id="fb-enviar">${esc(tr('ENVIAR'))}</button><div id="fb-aviso" role="status">${esc(aviso || '')}</div>`
+      + `</div></div><div id="fb-beta">${betaHtml()}</div><button type="button" id="fb-enviar">${esc(tr('ENVIAR'))}</button><div id="fb-aviso" role="status">${esc(aviso || '')}</div>`
       + `<small style="opacity:.7">${esc(verLarga())}</small>`
       + `<small>${esc(tr('Tu email solo lo usamos si marcas la casilla.'))} <a href="${base}privacidad/?lang=${typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es'}" target="_blank" rel="noopener">${esc(tr('Privacidad'))}</a></small>`;
     for (const q of preguntas()) { const i = document.getElementById('fb-q-' + q.id); if (i && resp[q.id]) i.value = resp[q.id]; }
-    document.getElementById('fb-texto').value = texto; if (marcado && conEmail()) document.getElementById('fb-check').checked = true;
+    document.getElementById('fb-texto').value = texto.slice(0, R.topes(esBeta()).texto); if (marcado && conEmail()) document.getElementById('fb-check').checked = true;
+    cuenta();
   }
-  function abrir() { resp = {}; estrellas = 0; pintar(''); fondo.hidden = false; setTimeout(() => { const t = document.getElementById('fb-texto'); if (t) t.focus(); }, 50); }
+  // bajo el texto: lo que queda cuando se acerca el tope y, a quien no tiene tope, el aviso suave de que se alarga
+  function cuenta() {
+    const t = document.getElementById('fb-texto'), c = document.getElementById('fb-cuenta'); if (!t || !c) return;
+    const beta = esBeta(), largo = t.value.length;
+    c.textContent = R.avisoLargo(beta, largo) ? tr('Cuanto más corto, antes lo leemos.') : !beta && R.quedan(beta, largo) <= 100 ? tr('Quedan {n} caracteres.', { n: R.quedan(beta, largo) }) : '';
+  }
+  // el recuadro de beta tester: quien lo es, lo sabe; quien lo ha pedido, que está pendiente; y el resto puede pedirlo
+  const botonBeta = () => `<button type="button" id="fb-pedir-beta">${esc(tr('QUIERO SER BETA TESTER'))}</button>`;
+  function betaHtml() {
+    if (esBeta()) return esc(tr('Eres beta tester: mandas comentarios sin tope. ¡Gracias!'));
+    if (persona.solicitud === 'pendiente') return esc(tr('Tu solicitud de beta tester está pendiente: te avisaremos.'));
+    return R.puedePedir(persona) ? esc(tr('¿Quieres mandarnos más? Los beta tester no tienen tope de comentarios.')) + botonBeta() : '';
+  }
+  let pidiendo = false;   // mientras se pide ser beta no se repinta el recuadro (se llevaría el botón por delante)
+  // el recuadro y, con él, el tope del texto: saber que es beta cambia los dos
+  const pintaBeta = () => {
+    const b = document.getElementById('fb-beta'), t = document.getElementById('fb-texto'); if (!b || pidiendo) return;
+    b.innerHTML = betaHtml(); if (t) { t.maxLength = R.topes(esBeta()).texto; cuenta(); }
+  };
+  // cómo va su solicitud (para no ofrecerla dos veces). Un invitado no tiene; un servidor anterior al SQL 127 no contesta y se queda como «sin pedir»
+  async function miraSolicitud() {
+    if (CUENTA.invitado) return;
+    try { persona = R.trasRespuesta(persona, { solicitud: await CUENTA.rpc('mi_solicitud_beta', {}) }); pintaBeta(); }
+    catch (e) { if (!/Could not find the function|PGRST202|HTTP 404/.test(String(e && e.message))) console.warn('feedback: no se sabe cómo va la solicitud de beta', e); }
+  }
+  async function pedirBeta(boton) {
+    if (!conEmail()) { cerrar(); if (typeof pedirCuenta === 'function') window.pedirCuenta('Entra con tu cuenta para pedir ser beta tester.'); return; }
+    const caja = boton.parentNode; boton.disabled = true; pidiendo = true;
+    const fallo = txt => { let d = caja.querySelector('[data-fallo]'); if (!d) { caja.insertAdjacentHTML('beforeend', '<div data-fallo></div>'); d = caja.querySelector('[data-fallo]'); } d.textContent = txt; };
+    try {
+      const r = await CUENTA.rpc('pedir_beta', {});
+      if (r && r.ok) { persona = R.trasRespuesta(persona, r); caja.textContent = r.beta ? tr('Eres beta tester: mandas comentarios sin tope. ¡Gracias!') : tr('¡Solicitud enviada! Te avisaremos cuando la miremos.'); pidiendo = false; return; }
+      fallo(r && r.motivo === 'cuenta' ? tr('Para pedirlo necesitas una cuenta con el correo confirmado.') : tr('No se ha podido enviar. Prueba otra vez.'));
+    } catch (e) { fallo(tr('No se ha podido enviar. Prueba otra vez.')); }
+    boton.disabled = false; pidiendo = false;
+  }
+  function abrir() { resp = {}; estrellas = 0; pintar(''); fondo.hidden = false; miraSolicitud(); setTimeout(() => { const t = document.getElementById('fb-texto'); if (t) t.focus(); }, 50); }
   async function enviar() {
     if (enviando) return;
     const texto = document.getElementById('fb-texto').value.trim(), aviso = document.getElementById('fb-aviso');
@@ -137,9 +182,12 @@
         if (!/Could not find the function|PGRST202|HTTP 404/.test(String(e && e.message))) throw e;
         r = await CUENTA.rpc('enviar_feedback', Object.assign(datos, { p_texto: (Object.values(textos).join('\n') + (datos.p_texto ? '\n' + datos.p_texto : '')).slice(0, 1000) }));
       }
+      persona = R.trasRespuesta(persona, r);
       if (r && r.ok) {
-        document.getElementById('fb-cuerpo').innerHTML = `<h3 id="fb-titulo">${esc(tr('¡GRACIAS!'))}</h3><p>${esc(tr('Lo hemos recibido. Lo leeremos con cariño.'))}</p><button type="button" id="fb-enviar" data-ok>${esc(tr('CERRAR'))}</button>`;
-      } else { aviso.textContent = r && r.motivo === 'tope' ? tr('Hoy has mandado muchos comentarios. Vuelve mañana.') : tr('No se ha podido enviar. Prueba otra vez.'); document.getElementById('fb-enviar').disabled = false; }
+        // al dejar el tercero del día se ofrece ser beta tester: claramente es alguien activo
+        const oferta = R.ofreceBeta(persona) ? `<div id="fb-beta">${esc(tr('Ya van {n} comentarios hoy: se nota que te importa. ¿Quieres ser beta tester? Los beta tester mandan comentarios sin tope.', { n: persona.enviadosHoy }))}${botonBeta()}</div>` : '';
+        document.getElementById('fb-cuerpo').innerHTML = `<h3 id="fb-titulo">${esc(tr('¡GRACIAS!'))}</h3><p>${esc(tr('Lo hemos recibido. Lo leeremos con cariño.'))}</p>${oferta}<button type="button" id="fb-enviar" data-ok>${esc(tr('CERRAR'))}</button>`;
+      } else { pintaBeta(); aviso.textContent = r && r.motivo === 'tope' ? tr('Hoy has mandado muchos comentarios. Vuelve mañana.') : tr('No se ha podido enviar. Prueba otra vez.'); document.getElementById('fb-enviar').disabled = false; }
     } catch (e) { aviso.textContent = tr('No se ha podido enviar. Prueba otra vez.'); const b = document.getElementById('fb-enviar'); if (b) b.disabled = false; }
     enviando = false;
   }
@@ -150,8 +198,10 @@
     else if (b.dataset.q) { const q = preguntas().find(x => x.id === b.dataset.q), o = q && q.opciones[+b.dataset.o]; if (o) { resp[q.id] = resp[q.id] === o ? '' : o; b.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', resp[q.id] === q.opciones[+x.dataset.o])); } }
     else if (b.id === 'fb-ver-nov') { const n = document.getElementById('fb-novedades'); n.hidden = !n.hidden; }
     else if (b.id === 'fb-enviar') { if (b.hasAttribute('data-ok')) cerrar(); else enviar(); }
+    else if (b.id === 'fb-pedir-beta') pedirBeta(b);
     else if (b.id === 'fb-entrar') { cerrar(); window.pedirCuenta('Entra con tu cuenta para que podamos escribirte si hace falta.'); }
   });
+  fondo.addEventListener('input', e => { if (e.target.id === 'fb-texto') cuenta(); });
   pestana.onclick = abrir;
   if (document.body) iniciar(); else window.addEventListener('DOMContentLoaded', iniciar);
 })();

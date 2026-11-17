@@ -34,7 +34,6 @@
     'js/sistema/cola.js',         // la cola sin conexión: lo que se manda al servidor cuando hay red (COLA.crea)
     'js/sistema/pagos.js',         // compras con dinero real dentro de la app de Android (Google Play Billing); en la web no hace nada
     'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web): lo entrega el mismo servidor
-    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
     'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
@@ -56,6 +55,8 @@
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
+    'js/sistema/etiqueta-prototipo.js', // la etiqueta «PROTOTIPO» del borde izquierdo, que lleva a votar en la ficha (ADR 106)
+    'js/sistema/feedback-reglas.js', // las reglas de los topes del feedback y de la oferta de beta tester (ADR 106)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
@@ -63,6 +64,7 @@
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
+    'js/sistema/promo-reglas.js',  // a quién enseña nuestro anuncio: todos los vivos, más a menudo los más votados (ADR 109)
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
     'js/sistema/anuncios.js',      // la capa común de anuncios con premio: AdMob en la app, H5 Games Ads en la web y el nuestro de reserva (tras el flag «anuncios»)
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
@@ -83,7 +85,7 @@
     'js/sistema/cola.js',          // la cola sin conexión: lo que se manda al servidor cuando hay red (COLA.crea)
     'js/sistema/pagos.js',         // compras con dinero real en la app de Android (Google Play Billing): lo entrega el servidor (productos.entrega = el juego)
     'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web)
-    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
+    'js/sistema/derechos.js',      // lo que la cuenta tiene comprado para siempre en un juego ligero, con copia en el navegador (DERECHOS.crea)
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
     'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()
@@ -91,6 +93,8 @@
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
+    'js/sistema/etiqueta-prototipo.js', // la etiqueta «PROTOTIPO» del borde izquierdo, que lleva a votar en la ficha (ADR 106)
+    'js/sistema/feedback-reglas.js', // las reglas de los topes del feedback y de la oferta de beta tester (ADR 106)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
@@ -98,8 +102,13 @@
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
+    'js/sistema/promo-reglas.js',  // a quién enseña nuestro anuncio: todos los vivos, más a menudo los más votados (ADR 109)
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
     'js/sistema/anuncios.js',      // la capa común de anuncios con premio: AdMob en la app, H5 Games Ads en la web y el nuestro de reserva (tras el flag «anuncios»)
+    'js/sistema/medidor-anuncios.js', // las reglas del medidor de anuncios: niveles y multiplicadores de cada acción con anuncio (ADR 123)
+    'js/sistema/medidor-anuncios-casos.js', // el caso de uso de una acción con anuncio, encima de ANUNCIOS.ver (MEDIDOR_ANUNCIOS.crea)
+    'js/sistema/medidor-anuncios-pantalla.js', // la barra del medidor de anuncios (su hoja: core/css/medidor-anuncios.css)
+    'js/sistema/medidor-anuncios-tienda.js', // la oferta «Sin anuncios» de la tienda de un juego (MEDIDOR_ANUNCIOS.creaTienda)
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
     'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
   ];

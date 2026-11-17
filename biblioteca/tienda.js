@@ -4,7 +4,8 @@
 //   · al tocar una tarjeta se abre su FICHA: capturas grandes, JUGAR, versión, de qué va, lo último y todas sus novedades.
 // Lo que cada tarjeta necesita se escribe en su <section> de index.html:
 //   data-tipo="Prototipo"  data-etiquetas="Acción · Hordas"  data-capturas="survivors-1.jpg survivors-2.jpg"  (y data-horizontal si las capturas son apaisadas; data-alfa si la tarjeta solo va en la alfa)
-//   Solo hay tres tipos: "Juego", "Prototipo" (demos, bocetos y pruebas incluidos) y "En pausa" (con data-pausa="por qué está parado", su inglés en biblioteca/en.js).
+//   Solo hay dos tipos (ADR 104): "Prototipo" (todo lo vivo) y "Archivo" (lo parado, con data-archivo="por qué y cómo queda", su inglés en biblioteca/en.js).
+//   data-favorito marca a mano las de «Nuestros favoritos» (las eligen Arkioner o Pepins). La etiqueta de tipo solo se pinta en el Archivo: en el resto diría lo mismo en todas.
 //   Da igual en qué grupo de index.html se escriba la tarjeta: biblioteca/agrupar.js la coloca según su tipo y si se puede jugar (ADR 102).
 // Las capturas van en biblioteca/capturas/ (partidas de verdad: sin regalo diario, ni novedades, ni menús de opciones).
 // Usa lo que ya tiene la página: esc(), t(), newsLista(), newsHtml(), nuevos(), cerrarNovedades() y la lista ENTRADAS que llena la carga de novedades.
@@ -12,16 +13,12 @@
 const CAPTURAS = 'biblioteca/capturas/';
 document.querySelectorAll('section.game[data-alfa]').forEach(s => { if (!NUCLEO.alfa) s.remove(); });   // data-alfa: tarjeta que solo existe en la copia de pruebas
 const TARJETAS = [...document.querySelectorAll('section.game')];
-// PRÓXIMAMENTE: en la release solo se juegan los juegos abiertos (core/js/proximamente.js). El resto conserva su tarjeta y su ficha, pero sin JUGAR.
-// A qué grupo va cada tarjeta lo decide biblioteca/grupos.js y lo coloca biblioteca/agrupar.js (ADR 102).
-const idDe = s => (s.querySelector('a.play').getAttribute('href').match(/(?:games|demos)\/([^/]+)/) || [])[1];
-const jugable = s => PROXIMAMENTE.jugable(idDe(s));
-for (const s of TARJETAS) if (!jugable(s)) s.dataset.proximamente = '1';
-AGRUPAR.colocar(TARJETAS, jugable);
+// Todo se puede jugar (ADR 106). A qué grupo va cada tarjeta lo decide biblioteca/grupos.js y lo coloca biblioteca/agrupar.js (ADR 102 y 104).
+AGRUPAR.colocar(TARJETAS);
 function datosDe(s) {
   return {
-    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'), cerrado: 'proximamente' in s.dataset, beta: PROXIMAMENTE.enBeta(idDe(s)), apk: s.dataset.apk || '',
-    color: s.style.getPropertyValue('--wc'), tipo: s.dataset.tipo || '', horizontal: 'horizontal' in s.dataset, pausa: s.dataset.pausa || '',
+    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'), apk: s.dataset.apk || '',
+    color: s.style.getPropertyValue('--wc'), tipo: s.dataset.tipo || '', horizontal: 'horizontal' in s.dataset, archivo: s.dataset.archivo || '',
     etiquetas: (s.dataset.etiquetas || '').split('·').map(x => x.trim()).filter(Boolean),
     capturas: (s.dataset.capturas || '').split(/\s+/).filter(Boolean).map(f => CAPTURAS + f),
   };
@@ -32,7 +29,7 @@ const fondo = url => (url ? `background-image:url('${url}')` : '');
 // ---------- las tarjetas ----------
 for (const s of TARJETAS) {
   const d = datosDe(s);
-  s.insertAdjacentHTML('afterbegin', `<div class="cap-img" style="${fondo(d.capturas[0])}"></div>${d.tipo ? `<span class="tipo">${esc(d.tipo)}</span>` : ''}`);
+  s.insertAdjacentHTML('afterbegin', `<div class="cap-img" style="${fondo(d.capturas[0])}"></div>${d.archivo ? `<span class="tipo">${esc(d.tipo)}</span>` : ''}`);
   s.querySelector('h2').insertAdjacentHTML('afterend', etiquetasHtml(d.etiquetas));
   s.tabIndex = 0; s.setAttribute('role', 'button'); s.setAttribute('aria-label', d.nombre);
   s.addEventListener('click', e => { if (GRUPOS.tocaAbreFicha(s, e.target)) abrirFicha(s.id); });
@@ -87,8 +84,6 @@ async function pintarDestacado() {
     if (!s.querySelector('.marca-nuevo')) s.insertAdjacentHTML('beforeend', `<span class="marca-nuevo ol">${esc(t('NUEVO'))}</span>`);
   }
   dest.lista = porFecha.length ? porFecha : nuevosB.length ? nuevosB : [{ tarjeta: 'g-rumble' }];
-  const abierto = j => !document.getElementById(j.tarjeta).dataset.proximamente;   // el destacado enseña primero lo que se puede jugar
-  dest.lista = [...dest.lista.filter(abierto), ...dest.lista.filter(j => !abierto(j))];
   const puntos = document.getElementById('dest-puntos');
   puntos.innerHTML = dest.lista.length > 1
     ? `<button type="button" class="flecha" data-paso="-1" aria-label="${esc(t('Anterior'))}">‹</button>`
@@ -110,7 +105,7 @@ function verDestacado(i, aMano) {
   caja.classList.toggle('horiz', d.horizontal);
   caja.innerHTML = `<div class="fondo" style="${fondo(d.capturas[0])}"></div><div class="cap${d.horizontal ? ' h' : ''}" style="${fondo(d.capturas[0])}"></div>
     <div class="info">${j.texto ? `<span class="dicho ol">${esc(t('¡NUEVO!'))}</span>` : ''}<h3 class="ol">${esc(d.nombre)}</h3><p>${esc(j.texto ? t(j.texto) : d.texto)}</p>${etiquetasHtml(d.etiquetas)}
-    <div class="botones">${d.cerrado ? `<span class="boton ol" style="opacity:.6">${esc(t('PRÓXIMAMENTE'))}</span>` : `<a class="boton ol" href="${esc(d.jugar)}">${esc(t(d.beta ? 'JUGAR BETA' : 'JUGAR'))}</a>`}<button type="button" class="boton sec">${esc(t('VER FICHA'))}</button></div></div>`;
+    <div class="botones"><a class="boton ol" href="${esc(d.jugar)}">${esc(t('JUGAR'))}</a><button type="button" class="boton sec">${esc(t('VER FICHA'))}</button></div></div>`;
   document.querySelectorAll('#dest-puntos .punto').forEach((p, k) => p.classList.toggle('on', k === dest.i));
   clearTimeout(dest.reloj);
   const quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -132,16 +127,15 @@ function abrirFicha(id, desdeHash) {
   ficha.capturas = d.capturas;
   document.getElementById('fi-nombre').textContent = d.nombre;
   document.getElementById('fi-etiq').innerHTML = etiquetasHtml(d.etiquetas);
-  const fj = document.getElementById('fi-jugar');   // en la release, un juego cerrado no se juega
-  if (d.cerrado) { fj.removeAttribute('href'); fj.textContent = t('PRÓXIMAMENTE'); fj.style.cssText = 'opacity:.6;pointer-events:none'; } else { fj.href = d.jugar; fj.textContent = t(d.beta ? 'JUGAR BETA' : 'JUGAR'); fj.style.cssText = ''; }
+  document.getElementById('fi-jugar').href = d.jugar;
   const apk = document.getElementById('fi-apk');   // DESCARGAR APK: solo en la alfa y en los juegos que tienen APK de prueba (release apk-latest del repo público)
   apk.hidden = !(NUCLEO.alfa && d.apk);
   if (d.apk) apk.href = 'https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-' + d.apk + '.apk';
   document.getElementById('fi-ver').textContent = (e && e.ver) || '—';
   document.getElementById('fi-tipo').textContent = d.tipo || '—';
   document.getElementById('fi-texto').textContent = d.texto;
-  document.getElementById('fi-pausa').hidden = !d.pausa;   // EN PAUSA: por qué está parado (y el voto pasa a ser «¿quieres que vuelva?», en votos.js)
-  document.getElementById('fi-pausa-t').textContent = d.pausa ? t(d.pausa) : '';
+  document.getElementById('fi-archivo').hidden = !d.archivo;   // ARCHIVO: por qué está parado (y el voto pasa a ser «¿quieres que vuelva?», en votos.js)
+  document.getElementById('fi-archivo-t').textContent = d.archivo ? t(d.archivo) : '';
   const n = e && e.entries[0];
   document.getElementById('fi-ultimo-t').textContent = n ? t('LO ÚLTIMO') + ' · ' + n.v : t('LO ÚLTIMO');
   document.getElementById('fi-ultimo').innerHTML = n ? newsLista(n.real) + newsLista(n.joke, 'joke') : esc(t('Cargando…'));

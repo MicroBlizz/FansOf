@@ -21,7 +21,7 @@ function pvpBuscar(opc) {
   if (opc && opc.crear) RFP.modoMandado = false;      // una sala nueva tuya: se le manda el modo (y el mapa) al abrirla
   if (!RFRED.esLocal() && !RFRED.conSesion()) { RFP.error = RFRED.errorTexto(new Error('cuenta_no_vinculada')); pvpMuestra('p-pvp'); return; }
   const guardada = rfpSalaGuardada();      // si estabas en una partida abierta, volver no gasta caos primordial
-  if (!guardada && !RFP.amigos && !energiaPermite()) return;      // sin caos primordial: aviso con la oferta del ilimitado
+  if (!guardada && !RFP.amigos && !energiaPermite()) return;      // sin caos primordial: aviso con lo que falta y el anuncio que da +1
   if (RFP.buscando) RFP.buscando.cancelar();
   if (typeof RFS !== 'undefined') RFS.ponerYa();      // lo que llevas puesto llega al servidor antes de entrar: de ahí sale la ropa que ven los demás
   RFP.info = null; pvpMuestra('p-busca');

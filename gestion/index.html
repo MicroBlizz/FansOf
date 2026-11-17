@@ -93,6 +93,25 @@ table.tabla th { color: var(--suave); font-size: 11px; text-transform: uppercase
 .tabla-caja { overflow-x: auto; }
 canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; border-radius: 6px; border: 1px solid var(--linea); image-rendering: pixelated; }
 .vacio b { display: block; color: var(--texto); font-size: 16px; margin-bottom: 4px; }
+/* Paperwork → Calibrado (paperwork/calibrado.js): series 1 y 2 de la paleta validada, en claro y en oscuro */
+:root { --pwc-1: #2a78d6; --pwc-2: #eb6834; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pwc-1: #3987e5; --pwc-2: #d95926; } }
+.pwc-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
+.pwc-form input { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; width: 100%; box-sizing: border-box; }
+.pwc-cambio { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto auto; gap: 8px; align-items: center; margin-top: 6px; }
+.pwc-cambio input { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; min-width: 0; }
+@media (max-width: 560px) { .pwc-cambio { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.pwc-graficas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 8px; }
+.pwc-g { margin: 0; } .pwc-g figcaption { font-weight: 600; font-size: 13px; }
+.pwc-g svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+.pwc-rej { stroke: var(--linea); stroke-width: 1; } .pwc-eje { fill: var(--suave); font-size: 11px; font-variant-numeric: tabular-nums; }
+.pwc-l { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; } .pwc-l1 { stroke: var(--pwc-1); } .pwc-l2 { stroke: var(--pwc-2); stroke-dasharray: 6 3; }
+.pwc-cruz { stroke: var(--suave); stroke-width: 1; }
+.pwc-leyenda { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 13px; }
+.pwc-leyenda i, .pwc-tip i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.pwc-m1 { background: var(--pwc-1); } .pwc-m2 { background: var(--pwc-2); }
+.pwc-tip { position: fixed; z-index: 20; pointer-events: none; display: grid; gap: 2px; background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 6px; padding: 6px 9px; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+.pwc-texto { white-space: pre-wrap; font-family: var(--mono); font-size: 12px; margin: 8px 0 0; }
 </style>
 </head>
 <body>
@@ -129,6 +148,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="caja cifras" id="v-resumen"></div>
       <div class="filtros">
         <select id="v-juego" aria-label="Juego"></select>
+        <select id="v-quien" aria-label="Quién lo manda"><option value="">de cualquiera</option><option value="beta">solo de beta</option><option value="resto">sin los de beta</option></select>
         <select id="v-estado" aria-label="Estado"><option value="pendiente">pendientes</option><option value="resuelto">resueltos</option><option value="descartado">descartados</option><option value="todos">todos</option></select>
         <button id="v-recargar" type="button">Actualizar</button>
       </div>
@@ -198,14 +218,16 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="aviso" id="cd-aviso" role="alert"></div>
       <div class="lista" id="cd-lista"></div>
     </div>
+    <div id="pan-pw-calibrado" hidden></div>
     <div id="pan-roles" hidden>
-      <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>admin</b>: puede entrar en esta página. Se dan por correo: si esa persona aún no ha entrado con Google queda como invitación y el rol se activa solo en su primer inicio de sesión con ese correo (Google o enlace por correo).</div>
+      <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>beta</b>: persona de confianza, manda feedback sin topes (las solicitudes que llegan desde los juegos salen aquí abajo). <b>admin</b>: puede entrar en esta página. Se dan por correo: si esa persona aún no ha entrado con Google queda como invitación y el rol se activa solo en su primer inicio de sesión con ese correo (Google o enlace por correo).</div>
       <form class="filtros" id="r-form">
         <input type="text" id="r-correo" placeholder="correo@gmail.com" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Correo" required style="flex:1 1 220px;width:auto">
         <select id="r-rol" aria-label="Rol"><option value="alfa">alfa</option><option value="beta">beta</option><option value="admin">admin</option></select>
         <button class="fuerte" type="submit">Dar rol</button>
       </form>
       <div class="aviso" id="r-aviso" role="alert"></div>
+      <div class="lista" id="r-solicitudes"></div>
       <div class="lista" id="r-lista"></div>
     </div>
   </section>
@@ -245,6 +267,7 @@ async function abrir() {
   try { datos = await rpc('gestion_datos', { p_token: leerToken() }); }
   catch (e) { guardarToken(''); vista(false); $('g-aviso').style.color = ''; $('g-aviso').textContent = textoError(e); return; }
   vista(true); pinta();
+  document.dispatchEvent(new Event('gestion-abierta'));   // las secciones que enseñan un contador en su pestaña lo piden aquí
 }
 $('recargar').onclick = abrir;
 $('f-ver').onchange = $('f-min').onchange = () => pinta();
@@ -313,6 +336,7 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 </script>
 <script>GESTION_NAV.seccion({ id: 'cuentas', pan: 'pan-cuentas', etiqueta: 'Cuentas', orden: 1 });</script>
 <script src="votos.js"></script>
+<script src="solicitudes-beta.js"></script>
 <script src="roles.js"></script>
 <script src="flags.js"></script>
 <script src="codigos.js"></script>
@@ -324,6 +348,7 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="cola-config.js"></script>
 <script src="cola-estilo.js"></script>
 <script src="cola.js"></script>
+<script src="sql.js"></script>
 <script src="juegos.js"></script>
 <script src="decks.js"></script>
 <script src="../pie.js" defer></script>
@@ -331,6 +356,8 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="reportes-prueba.js"></script>
 <script src="metricas.js"></script>
 <script src="metricas-rouflage.js"></script>
+<script src="paperwork/calibrado-dibujo.js"></script>
+<script src="paperwork/calibrado.js"></script>
 <script src="tablero/tablero.js"></script>
 <script src="tablero/dominio/estados.js"></script>
 <script src="tablero/dominio/requisitos.js"></script>

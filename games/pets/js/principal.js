@@ -1,6 +1,6 @@
 // Fans Of Pets · PRINCIPAL: la composición. Crea los adaptadores (almacén, reloj, sonido), les pasa las reglas y el catálogo a los casos de
 // uso y arranca el lienzo, el bucle de cada fotograma (la escena de cada fase) y el reloj que simula cada pocos segundos.
-// Es el único archivo que conoce todas las piezas. Pets es un prototipo: se juega solo desde la alfa o con ?dev=1 mientras el juego esté en «Próximamente» (core/js/proximamente.js).
+// Es el único archivo que conoce todas las piezas. Pets es un prototipo.
 'use strict';
 PT.almacen = PT.creaAlmacenLocal(SAVE_KEY, localStorage);
 PT.reloj = PT.creaReloj(PT.almacen);

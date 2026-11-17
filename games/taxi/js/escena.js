@@ -49,9 +49,19 @@ const ESCENA = (() => {
     return { geo, color, p, r };
   }
 
-  // --- los coches: taxi, tráfico, policía, rival. Geometría por tipo y color (se reutiliza)
+  // un prisma de GARAJE (perfil lateral estirado a lo ancho) como pieza para `unir`
+  function prisma(color, puntos, ancho) {
+    const d = GARAJE.prisma(puntos, ancho), geo = new T.BufferGeometry();
+    geo.setAttribute('position', new T.BufferAttribute(new Float32Array(d.pos), 3)); geo.setAttribute('normal', new T.BufferAttribute(new Float32Array(d.nor), 3));
+    return { geo, color };
+  }
+  // las piezas que describe GARAJE (datos) pasadas a geometría
+  const FORMAS = { caja: p => caja(p.color, p.p, p.t, p.r), cil: p => cil(p.color, p.p, p.radio, p.alto, [0, 0, Math.PI / 2], p.lados), prisma: p => prisma(p.color, p.puntos, p.ancho) };
+
+  // --- los coches: taxi, deportivo, tráfico, policía, rival. Geometría por tipo y color (se reutiliza)
   function geoCoche(tipo, color) {
     const k = tipo + color; if (cache[k]) return cache[k];
+    if (tipo === 'deportivo') return (cache[k] = unir(GARAJE.piezasDeportivo(color).map(p => FORMAS[p.forma](p))));
     const piezas = [
       caja(color, [0, 0.55, 0], [2, 0.7, 4.3]),
       caja(tipo === 'policia' ? 0xfff6ea : color, [0, 1.15, -0.3], [1.7, 0.6, 2.1]),
@@ -66,6 +76,8 @@ const ESCENA = (() => {
     return (cache[k] = unir(piezas));
   }
   function mallaCoche(tipo, color) { const g = mallaConBorde(geoCoche(tipo, color), 0.07); g.rotation.order = 'YXZ'; escena.add(g); return g; }
+  // el coche del jugador: cambia la malla (el aspecto) por la del coche del garaje que se pida
+  function ponCoche(id) { const c = GARAJE.de(id); if (jugadorMalla) escena.remove(jugadorMalla); jugadorMalla = mallaCoche(c.id, c.color); }
   // --- un pasajero: cuerpo de color de su personaje, cabeza, y su anillo en el suelo
   function geoPasajero(color) {
     const k = 'p' + color; if (cache[k]) return cache[k];
@@ -99,7 +111,7 @@ const ESCENA = (() => {
     const sol = new T.DirectionalLight(0xfff1e0, 1.6); sol.position.set(60, 120, 40); escena.add(sol);
     TROZOS.iniciar(T, escena, { toon, unir, mallaConBorde, caja, cajaAbierta, cil, CONTORNO });
     montaEventos();
-    jugadorMalla = mallaCoche('taxi', 0xffcb3d);
+    ponCoche(SAVE.coche);
     tamaño(); window.addEventListener('resize', tamaño);
   }
   // --- la cámara dentro de un túnel: alrededor solo hay roca, así que no puede salirse del tubo (ni a los lados ni por arriba)
@@ -188,5 +200,5 @@ const ESCENA = (() => {
     if (fps < 45 && res > 0.5) res = Math.max(0.5, res - 0.25); else if (fps > 57 && res < resMax) res = Math.min(resMax, res + 0.25);
     if (res !== antes) render.setPixelRatio(res);
   }
-  return { iniciar, sincroniza, info, captura };
+  return { iniciar, sincroniza, info, captura, ponCoche };
 })();

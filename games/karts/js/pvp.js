@@ -23,7 +23,7 @@ function pvpBuscar(opc = {}) {
   KPVP.error = ''; KPVP.aviso = ''; KPVP.tBusca = 0; KPVP.resultado = null; KPVP.rendido = false; KPVP.info = null; KPVP.copa = null; KPVP.carrera = 0; KPVP.looks = {}; KPVP.charla = [];
   pvpCierraCanal();
   if (!KRED.esLocal() && !KRED.vinculada()) { KPVP.error = KRED.errorTexto(new Error('cuenta_no_vinculada')); ve(opc.crear || opc.codigo ? 'pvp-amigos' : 'pvp'); return; }
-  if (!opc.crear && !opc.codigo && !energiaPermite()) return;      // sin caos primordial: aviso con la oferta del ilimitado (las salas con amigos no gastan)
+  if (!opc.crear && !opc.codigo && !energiaPermite()) return;      // sin caos primordial: aviso con lo que falta y el anuncio que da +1 (las salas con amigos no gastan)
   ve('pvp-busca');
   KPVP.busca = red.buscar(piloto, (info, err) => {
     if (!info) { KPVP.busca = null; KPVP.error = energiaError(err) ? '' : KRED.errorTexto(err); pvpCierraCanal(); ve(opc.crear || opc.codigo ? 'pvp-amigos' : 'pvp'); return; }

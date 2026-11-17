@@ -26,7 +26,8 @@ const HUD = (() => {
         <div class="lado"><button id="b-izq" class="ol" aria-label="${tr('Izquierda')}">◀</button><button id="b-der" class="ol" aria-label="${tr('Derecha')}">▶</button></div>
         <div class="lado"><button id="b-nitro" class="ol">${tr('NITRO')}</button><button id="b-freno" class="ol">${tr('FRENO')}</button><button id="b-gas" class="ol">${tr('GAS')}</button></div>
       </div>
-      <button id="b-accion" class="ol" hidden></button>`;
+      <button id="b-accion" class="ol" hidden></button>
+      <button id="b-coche" tabindex="-1"></button>`;
     pintaLlamas(0); MAPA.montar($('mapa'));
   }
   // las llamas de la búsqueda, dibujadas en canvas con el contorno de la serie
@@ -69,5 +70,7 @@ const HUD = (() => {
     if (t0 !== undefined) { msMuestras.push(performance.now() - t0); if (msMuestras.length > 40) msMuestras.shift(); }   // cuánto JS lleva cada fotograma (sin la GPU)
     ultimoFps += dt; if (ultimoFps > 0.5) { ultimoFps = 0; const f = fpsMuestras.length / fpsMuestras.reduce((a, b) => a + b, 0); $('fps').textContent = Math.round(f); $('medidor').className = f >= 50 ? 'bien' : f >= 28 ? 'justo' : 'mal'; const i = ESCENA.info(), tz = TROZOS.estado(), ms = msMuestras.length ? msMuestras.reduce((a, b) => a + b, 0) / msMuestras.length : 0; $('dibujo').textContent = i.calls + ' ' + tr('dibujos') + ' · ' + (i.tris / 1000).toFixed(0) + 'k · ' + tz.cargados + ' ' + tr('trozos') + ' · JS ' + ms.toFixed(1) + ' ms · ×' + i.res.toFixed(2); }
   }
-  return { montar, pinta, aviso, radio, centro, accion };
+  // el botón de cambiar de coche dice cuál llevas
+  function coche(nombre) { $('b-coche').textContent = tr('COCHE') + ': ' + tr(nombre); }
+  return { montar, pinta, aviso, radio, centro, accion, coche };
 })();

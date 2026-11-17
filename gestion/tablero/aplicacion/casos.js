@@ -1,5 +1,5 @@
 // Fans Of · /gestion · TABLERO · aplicación · CASOS: lo que se le puede pedir al tablero: `cargar` (leerlo y repartirlo en columnas), `crear`, `editar`,
-// `mover` una tarea y buscar las `parecidas` a un título. Habla con el servidor por un PUERTO (`repositorio`), nunca por la red:
+// `mover` una tarea, `apuntar` una idea o un fallo con el formulario corto y buscar las `parecidas` a un título. Habla con el servidor por un PUERTO (`repositorio`), nunca por la red:
 //   { lista() → Promise<json[]>, guardar(tarea) → Promise<{ok, id?, motivo?}>, mover(id, estado, nota) → Promise<{ok, motivo?}>,
 //     parecidas(texto, excluir) → Promise<[{ id, titulo, estado, parecido }]> }
 // `guardar` lleva `requiere` (lista de números) si el formulario los trae. Los adaptadores lo cumplen (adaptadores/repositorio-servidor.js) y los tests le pasan uno en memoria. Antes de ir al servidor, el dominio avisa de lo que
@@ -43,6 +43,11 @@ TABLERO.casos = repositorio => {
     crear(form) {
       const b = TABLERO.borrador(form);
       return b.ok ? enviar(() => repositorio.guardar(b.valor)) : Promise.resolve(b);
+    },
+    // «Apuntar idea o fallo» (formulario corto): { tipo: 'idea'|'fallo', titulo, juego }. Nace en Ideas como cualquier tarea; si es un fallo, la descripción lo dice
+    apuntar(form) {
+      const { tipo, titulo, juego } = form || {};
+      return this.crear({ titulo, juego, descripcion: tipo === 'fallo' ? 'Es un fallo (apuntado con «Apuntar idea o fallo»).' : '' });
     },
     // `tareas`: las cargadas, para avisar antes de ir al servidor si los requisitos la incluyen a ella o cierran un ciclo, y para no mandarlos si no cambian
     editar(id, form, tareas = []) {

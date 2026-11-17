@@ -298,10 +298,10 @@ function ppPintaPortada(c, t, dt) {
     ppTitulo(c, 'FANS OF', 270, 84, 56);
     c.save(); c.imageSmoothingEnabled = PP_LISO; c.translate(270, 208 + bota); c.rotate(Math.sin(t * 1.3) * 0.025);
     c.drawImage(logo, -w / 2, -h / 2, w, h); c.restore();
-    ppTexto(c, tr('Revienta, rescata, repite'), 270, 322, 28, '#fff', 'center', '#e0468f');
+    ppTexto(c, tr('Haz pop, rescata, repite'), 270, 322, 28, '#fff', 'center', '#e0468f');
   } else {
     ppTitulo(c, 'FANS OF', 270, 110, 60);
     ppTitulo(c, 'POP', 270, 190, 110);
-    ppTexto(c, tr('Revienta, rescata, repite'), 270, 258, 28, '#fff', 'center', '#e0468f');
+    ppTexto(c, tr('Haz pop, rescata, repite'), 270, 258, 28, '#fff', 'center', '#e0468f');
   }
 }

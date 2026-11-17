@@ -67,7 +67,7 @@ function ppNimFin(T, gano, soloVentana = false) {
   }
   setTimeout(() => {
     if (!PP_P || PP_P.T !== T || N.fin !== 'pierde') return;
-    const t = ppAbre(`<h2>${tr('¡{n} te ha ganado!', { n: tr(PP_SLIMES[N.rival].nombre) })}</h2><p class="pp-sub">${tr('Te ha tocado reventar la última burbuja. Pierdes un corazón; te quedan {n}.', { n: ppVidas() })}</p>`);
+    const t = ppAbre(`<h2>${tr('¡{n} te ha ganado!', { n: tr(PP_SLIMES[N.rival].nombre) })}</h2><p class="pp-sub">${tr('Te ha tocado hacer pop en la última burbuja. Pierdes un corazón; te quedan {n}.', { n: ppVidas() })}</p>`);
     // como el +5 movimientos de Candy Crush: deshacer tu última jugada y recuperar el corazón
     const n = ppTengo('deshacer'), b = ppBoton('', 'pp-btn', () => ppNimDeshacer(true));
     b.innerHTML = `${tr('DESHACER Y SEGUIR')} · ${n ? tr('tienes {n}', { n }) : ppPerlasHtml(PP_CFG.ayudas.deshacer.perlas, 26)}`;
@@ -89,7 +89,7 @@ function ppMarcadorNim(c, T, t) {
   ppTexto(c, T.titulo || '', 270, 110, 26, '#ffd64a', 'center', '#7a4a8a');   // más abajo: encima va el monedero
   const txt = N.fin ? (N.fin === 'gana' ? tr('¡Ganas!') : tr('¡Gana {n}!', { n: tr(PP_SLIMES[N.rival].nombre) })) : N.turno === 'yo' ? tr('Tu turno') : tr('Piensa {n}…', { n: tr(PP_SLIMES[N.rival].nombre) });
   ppTexto(c, txt, 270, 138, 24, N.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#c43a84');
-  ppTexto(c, tr('Una sola fila por turno · ¡pierde quien revienta la última!'), 270, 164, 18, '#7a4a8a', 'center', '#fff');
+  ppTexto(c, tr('Una sola fila por turno · ¡pierde quien haga pop en la última!'), 270, 164, 18, '#7a4a8a', 'center', '#fff');
 }
 // la fila en la que se está jugando, marcada
 function ppPintaFilaNim(c, T, t) {

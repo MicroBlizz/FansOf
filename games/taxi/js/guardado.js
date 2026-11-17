@@ -1,7 +1,7 @@
 // Fans Of Taxi · GUARDADO: lo que se recuerda en este navegador: dinero, récords de cada evento, sonido. Con cuenta, core la sube a la nube
 // (CUENTA.cambio). Los volúmenes que pide el motor de sonido de core están abajo.
 'use strict';
-const TX_NUEVA = () => ({ v: 1, muted: false, musica: true, dinero: 0, records: {}, viajes: 0, derribos: 0 });
+const TX_NUEVA = () => ({ v: 1, muted: false, musica: true, dinero: 0, records: {}, viajes: 0, derribos: 0, coche: 'taxi' });
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = TX_NUEVA();

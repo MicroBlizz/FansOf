@@ -50,7 +50,7 @@ const PP_CFG = {
   // de pagar por azar (ADR 004). Ver js/potenciadores.js, js/ofertas.js y js/pase.js; la tienda con pestañas en js/tienda.js.
   // AYUDAS (potenciadores): se ganan jugando (regalo diario, pase, cofres de oferta) o se compran con perlas. `nim`: solo en duelos.
   ayudas: {
-    martillo: { perlas: 6, nombre: 'Martillo', texto: 'Revienta del todo la burbuja que toques, sin gastar toque.' },
+    martillo: { perlas: 6, nombre: 'Martillo', texto: 'Hace pop del todo en la burbuja que toques, sin gastar toque.' },
     bomba:    { perlas: 9, nombre: 'Bomba', texto: 'Da un golpe a todas las burbujas de un cuadrado de 3x3, sin gastar toque.' },
     toques3:  { perlas: 6, nombre: '+3 toques', texto: 'Tres toques más en este nivel.' },
     deshacer: { perlas: 5, nombre: 'Deshacer', texto: 'En un duelo, vuelve atrás tu última jugada (y la del rival).', nim: true },
@@ -74,6 +74,9 @@ const PP_CFG = {
   // la ronda 1 y `acelera` menos cada ronda, hasta `pasoMin`. Premio del día: `porRonda` monedas por ronda (solo lo que mejora tu
   // mejor ronda de hoy), hasta `tope` al día. Sin corazones.
   memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60 },
+  // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
+  // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
+  perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },
 };
 // Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
 
@@ -84,33 +87,33 @@ const PP_CFG = {
 //   combo: con qué combo actúa · gratis: toques que no cuentan · pista: burbujas marcadas · premio: toques de 4 y 5 burbujas
 const PP_SLIMES = {
   bunny:   { nombre: 'CrazyBunny', color: '#f6f1ff', color2: '#cfc2ea', pinta: 'orejas',
-             pasiva: 'Zanahoriazo', texto: 'Cada 8 burbujas reventadas salta al tablero y revienta gratis una de la solución.', fx: { salta: 8, golpes: 1 } },
+             pasiva: 'Zanahoriazo', texto: 'Cada 8 pops salta al tablero y hace pop gratis en una de la solución.', fx: { salta: 8, golpes: 1 } },
   becario: { nombre: 'El Becario', color: '#7fc4ff', color2: '#3f86d8', pinta: 'antena',
              pasiva: 'Horas extra', texto: 'Con un COMBO x3, tu siguiente toque no cuenta.', fx: { combo: 3, gratis: 1 } },
   lola:    { nombre: 'Lola', color: '#ffb88a', color2: '#e07a3c', pinta: 'pelo',
              pasiva: 'Chivatazo', texto: 'Al entrar en una sala y con cada COMBO x2 te marca una burbuja de la solución. En cada duelo, una lupa gratis.', fx: { combo: 2, pista: 1 } },
   cofre:   { nombre: 'Caja de botín', color: '#ffd64a', color2: '#c98a12', pinta: 'dientes',
-             pasiva: 'Premio gordo', texto: 'Un toque que revienta 4 burbujas da +1 toque de margen; uno de 5, +1 corazón.', fx: { premio: 1 } },
+             pasiva: 'Premio gordo', texto: 'Un toque que hace pop en 4 burbujas da +1 toque de margen; uno de 5, +1 corazón.', fx: { premio: 1 } },
   ceo:     { nombre: 'El CEO', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata',
-             pasiva: 'Recorte de plantilla', texto: 'Cada 15 burbujas reventadas explota y revienta gratis dos de la solución.', fx: { salta: 15, golpes: 2 } },
+             pasiva: 'Recorte de plantilla', texto: 'Cada 15 pops explota y hace pop gratis en dos de la solución.', fx: { salta: 15, golpes: 2 } },
   // los amigos de los mundos 3 a 6 (30-10-2026, para que los huecos 5.º y 6.º sirvan); `prefiere`: salta antes a las de ese tipo
   copito:  { nombre: 'Copito', color: '#bfe9ff', color2: '#6fb8e8', pinta: '',
-             pasiva: 'Deshielo', texto: 'Cada 10 burbujas reventadas salta a una burbuja de hielo (o de la solución) y la revienta.', fx: { salta: 10, golpes: 1, prefiere: 1 } },
+             pasiva: 'Deshielo', texto: 'Cada 10 pops salta a una burbuja de hielo (o de la solución) y le hace pop.', fx: { salta: 10, golpes: 1, prefiere: 1 } },
   medusa:  { nombre: 'Medusita', color: '#ffc4e6', color2: '#e07ab5', pinta: '',
-             pasiva: 'Cosquillas', texto: 'Cada 12 burbujas reventadas salta a una concha (o a una de la solución) y la revienta.', fx: { salta: 12, golpes: 1, prefiere: 2 } },
+             pasiva: 'Cosquillas', texto: 'Cada 12 pops salta a una concha (o a una de la solución) y le hace pop.', fx: { salta: 12, golpes: 1, prefiere: 2 } },
   algodon: { nombre: 'Algodón', color: '#ffd6f0', color2: '#9fdcff', pinta: '',
-             pasiva: 'Lluvia de azúcar', texto: 'Cada 18 burbujas reventadas llueve azúcar y revienta gratis tres de la solución.', fx: { salta: 18, golpes: 3 } },
+             pasiva: 'Lluvia de azúcar', texto: 'Cada 18 pops llueve azúcar y hace pop gratis en tres de la solución.', fx: { salta: 18, golpes: 3 } },
   nubecita: { nombre: 'Nubecita', color: '#f4f0ff', color2: '#c9b8f0', pinta: '',
              pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque de margen.', fx: { extra: 1 } },
   // mundos 7 a 10 (31-10-2026)
   hada:    { nombre: 'Hadita', color: '#b8f0d0', color2: '#4fc98a', pinta: '',
-             pasiva: 'Polvo de hada', texto: 'Cada 14 burbujas reventadas vuela a un cohete (o a una de la solución) y lo hace estallar.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
+             pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete (o a una de la solución) y lo hace estallar.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
   sirena:  { nombre: 'Sirenita', color: '#9fe8f0', color2: '#3ab0c8', pinta: '',
-             pasiva: 'Ola', texto: 'Cada 12 burbujas reventadas salta a una burbujeante (o a una de la solución) y la revienta.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
+             pasiva: 'Ola', texto: 'Cada 12 pops salta a una burbujeante (o a una de la solución) y le hace pop.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
   maneki:  { nombre: 'Gatito de la suerte', color: '#fff8f0', color2: '#e0c8b0', pinta: '',
              pasiva: 'Fortuna', texto: 'Al ganar un nivel nuevo, la mitad de monedas más.', fx: { monedas: 0.5 } },
   astro:   { nombre: 'Astronauta', color: '#e0d0ff', color2: '#9a80d8', pinta: '',
-             pasiva: 'Lluvia de estrellas', texto: 'Cada 20 burbujas reventadas caen estrellas y revientan gratis cuatro de la solución.', fx: { salta: 20, golpes: 4 } },
+             pasiva: 'Lluvia de estrellas', texto: 'Cada 20 pops caen estrellas y hacen pop gratis en cuatro de la solución.', fx: { salta: 20, golpes: 4 } },
   // el jefe del último mundo (no se rescata)
   ceoespacial: { nombre: 'El CEO espacial', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata', rival: true,
              pasiva: '', texto: '', fx: {} },

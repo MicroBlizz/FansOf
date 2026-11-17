@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b2a55">
+<title>Fans of Wings</title>
+<meta name="description" content="Fans of Wings: combate aéreo arcade en pixel art con volumen. Vuela sobre un mar de islas y nubes hechas de lonchas apiladas, cambia de cámara en pleno vuelo y derriba a la fuerza aérea de Microblizz con los cazas de los Animales Locos.">
+<script src="../../core/js/nucleo.js?v=0.1.2"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/press-start-2p.css')</script>
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<style>
+/* Fans of Wings: dos lienzos a pantalla completa. Abajo el mundo 3D, a pocas líneas y estirado (píxel gordo); encima el HUD. */
+html, body { height: 100%; margin: 0; background: #0b2a55; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#mundo, #hud { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; display: block; touch-action: none; }
+#mundo { image-rendering: pixelated; image-rendering: crisp-edges; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: #ffe14a; font: 12px/1.6 'Press Start 2P', monospace; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<canvas id="mundo" aria-label="Fans of Wings"></canvas>
+<canvas id="hud"></canvas>
+<div id="carga">…</div>
+<div id="toast"></div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Wings guarda en el navegador el caza elegido, la cámara y el récord
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: ['js/mision.js', 'js/vuelo.js', 'js/aire.js', 'js/tierra.js', 'js/gl/motor.js', 'js/gl/maquetas.js', 'js/gl/aviones.js', 'js/gl/modelos.js', 'js/gl/mundo.js', 'js/efectos.js', 'js/vista.js', 'js/sonido.js', 'js/hud.js', 'js/cabinas.js', 'js/cabina.js', 'js/menu.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

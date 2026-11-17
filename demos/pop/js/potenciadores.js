@@ -42,7 +42,7 @@ function ppPulsaAyuda(k) {
   if (k === 'martillo' || k === 'bomba') {
     if (T.parado) return;
     PP_AYUDA.modo = PP_AYUDA.modo === k ? null : k;   // se elige la burbuja con el siguiente toque (otra pulsación, cancela)
-    if (PP_AYUDA.modo) ppFlota(k === 'martillo' ? tr('Toca la burbuja que quieras reventar') : tr('Toca dónde quieres la bomba'), 270, 240, '#ff8a2a');
+    if (PP_AYUDA.modo) ppFlota(k === 'martillo' ? tr('Toca la burbuja en la que quieras hacer pop') : tr('Toca dónde quieres la bomba'), 270, 240, '#ff8a2a');
     ppBarraAyudas(); return;
   }
   if (k === 'toques3') { if (ppGastaAyuda(k)) { T.limite += 3; T.parado = false; ppFlota(tr('+{n} toques', { n: 3 }), 270, 240, '#3a8ee6'); play('ppPremio'); } ppBarraAyudas(); return; }
@@ -125,7 +125,7 @@ function ppNimPista() {
     if (!ppPagaPista(N)) return;
     const sitios = []; for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
     N.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');
-    ppFlota(k === 1 ? tr('Lola: «Revienta 1 más de esta fila»') : tr('Lola: «Revienta {n} más de esta fila»', { n: k }), 270, 240, '#3a8ee6');
+    ppFlota(k === 1 ? tr('Lola: «Haz pop en 1 más de esta fila»') : tr('Lola: «Haz pop en {n} más de esta fila»', { n: k }), 270, 240, '#3a8ee6');
     ppBarraAyudas(); return;
   }
   const j = ppNimGanadora(ppFilasDuelo(T));
@@ -134,7 +134,7 @@ function ppNimPista() {
   const [y, k] = j, sitios = [];
   for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
   N.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');
-  ppFlota(k === 1 ? tr('Lola: «Revienta 1 de esta fila»') : tr('Lola: «Revienta {n} de esta fila»', { n: k }), 270, 240, '#3a8ee6');
+  ppFlota(k === 1 ? tr('Lola: «Haz pop en 1 de esta fila»') : tr('Lola: «Haz pop en {n} de esta fila»', { n: k }), 270, 240, '#3a8ee6');
   ppBarraAyudas();
 }
 /* ---------- antes de empezar (tras fallar ese nivel) ---------- */

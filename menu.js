@@ -10,12 +10,12 @@
   const s = document.currentScript, b = s.dataset.base || '', pagina = s.dataset.pagina || '', conCore = s.dataset.core === '1';   // conCore: la página carga core (portada y lore), que traduce y cambia el idioma
   let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
   const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
-  const EN = { Inicio: 'Home', Novedades: 'News', Biblioteca: 'Library', 'En pausa': 'On hold', Lore: 'Lore', Privacidad: 'Privacy', Condiciones: 'Terms', Entrar: 'Sign in', 'Mi cuenta': 'My account' };
+  const EN = { Inicio: 'Home', Novedades: 'News', Biblioteca: 'Library', Lore: 'Lore', Privacidad: 'Privacy', Condiciones: 'Terms', Entrar: 'Sign in', 'Mi cuenta': 'My account' };
   const t = x => (en && !conCore && EN[x]) || x;   // con core lo traduce la propia página
   const a = (href, txt, extra = '', id = '') => `<a href="${href}"${id ? ` id="${id}"` : ''}${extra}>${t(txt)}</a>`;
   const on = p => (pagina === p ? ' class="on" aria-current="page"' : '');
   s.insertAdjacentHTML('beforebegin', '<nav class="menu" aria-label="Menú">\n  '
-    + a(b + '#inicio', 'Inicio') + a(b + '#novedades', 'Novedades', '', 'abrir-novedades') + a(b + '#biblioteca', 'Biblioteca') + a(b + '#en-pausa', 'En pausa')
+    + a(b + '#inicio', 'Inicio') + a(b + '#novedades', 'Novedades', '', 'abrir-novedades') + a(b + '#biblioteca', 'Biblioteca')
     + a(b + 'lore/', 'Lore', on('lore')) + a(b + 'privacidad/', 'Privacidad', on('privacidad')) + a(b + 'condiciones/', 'Condiciones', on('condiciones'))
     + '\n  <a href="' + b + '#cuenta" id="m-cuenta" class="m-cuenta">' + t('Entrar') + '</a>'
     + '\n  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>\n</nav>');

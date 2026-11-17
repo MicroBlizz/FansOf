@@ -1,5 +1,5 @@
 // Fans of Rouflage · LA TIENDA: paquetes de Acciones (con su precio en euros), ofertas (el Pack de inicio y el pase premium), Acciones a cambio
-// de Gotas (que se ganan jugando) y el Caos primordial ilimitado (el de toda la serie, ENERGIA). Como en el resto de la serie, de momento es DE PRUEBA: no se cobra
+// de Gotas (que se ganan jugando) y el Caos primordial (el de toda la serie, ENERGIA). Como en el resto de la serie, de momento es DE PRUEBA: no se cobra
 // nada y lo que compras se te da (PLAN-TIENDA.md dice qué falta para cobrar de verdad). Va con el armario: solo en la alfa y en desarrollo.
 // Se abre desde el botón TIENDA del título, o sola cuando te faltan Acciones en una compra o en el pase (y VOLVER te devuelve allí).
 // Tres pestañas (ADR 052): DESTACADO (gachapón, conjunto de la semana, ofertas), OBJETOS (todo lo de pago del armario: tienda-objetos.js) y ACCIONES.
@@ -128,7 +128,7 @@ function tiendaPinta() {
     tarjeta((c, w) => pintaMontonAcciones(c, w, TIENDA.acciones.indexOf(pk) + 1), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
     pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, () => tiendaEuros('acciones', TIENDA.acciones.indexOf(pk), tr('{n} Acciones', { n: pk.n }), eurTexto(pk.eur), 'rouflage_acciones_' + pk.n, () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
   tiendaPintaCanje(tarjeta);
-  // el caos primordial ilimitado (el de toda la serie)
+  // el caos primordial (el de toda la serie)
   E('tienda-caos').hidden = typeof ENERGIA === 'undefined';
   tiendaPintaPestanas();      // las pestañas, el destacado y los OBJETOS (tienda-objetos.js)
 }

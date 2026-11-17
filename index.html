@@ -9,12 +9,13 @@
 <link rel="icon" type="image/png" href="core/img/fog-192.png">
 <link rel="apple-touch-icon" href="core/img/fog-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=41604a6">
-<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=41604a6">
-<link rel="stylesheet" href="core/css/base.css?v=41604a6">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=41604a6">
-<link rel="stylesheet" href="novedades/ventana.css?v=41604a6">
-<link rel="stylesheet" href="biblioteca/votos.css?v=41604a6">
+<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=e76f06f">
+<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=e76f06f">
+<link rel="stylesheet" href="core/css/base.css?v=e76f06f">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=e76f06f">
+<link rel="stylesheet" href="novedades/ventana.css?v=e76f06f">
+<link rel="stylesheet" href="biblioteca/votos.css?v=e76f06f">
+<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=e76f06f">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -26,7 +27,7 @@
   main > section:nth-of-type(odd) { --banda: #251538; --sub-a: #1f112f; --sub-b: #2d1a44; }
   main > section:nth-of-type(even) { --banda: #170b26; --sub-a: #120920; --sub-b: #200f35; }
   main > section.sec { padding: 28px 0 34px; }
-  /* La Biblioteca es UNA sección con subsecciones (Juegos, Prototipos, Demos y En pausa): cada lista con su fondo, alternando dos subtonos del color de la propia Biblioteca */
+  /* La Biblioteca es UNA sección con subsecciones (Nuestros favoritos, Prototipos y Archivo): cada lista con su fondo, alternando dos subtonos del color de la propia Biblioteca */
   #biblioteca { padding-bottom: 0; gap: 0; }
   #biblioteca > p.note { margin: 6px 0 20px; }
   .subsec { width: 100%; box-sizing: border-box; padding: 24px 0 30px; background: var(--sub-a); box-shadow: 0 0 0 100vmax var(--sub-a); clip-path: inset(0 -100vmax); }
@@ -78,7 +79,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Fans Of","alternateName":["FansOf","Fans Of Games"],"url":"https://fansof.games/","inLanguage":"es"},{"@type":"Organization","name":"Fans Of Games","alternateName":["MicroBlizz","FansOfGames","FansOf"],"url":"https://fansof.games/","sameAs":["https://x.com/Fans_Of_","https://discord.gg/PztHQhm9c"],"logo":"https://fansof.games/core/img/fog-512.png"}]}</script>
 </head>
 <body>
-<script src="menu.js?v=41604a6" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=e76f06f" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -103,7 +104,7 @@
     <div><div class="fi-caja"><h4 class="ol" id="fi-ultimo-t">LO ÚLTIMO</h4><div id="fi-ultimo"></div></div>
       <div id="fi-capturas"><h4 class="ol">CAPTURAS</h4><div class="fi-tira" id="fi-tira"></div></div></div>
     <div><div class="fi-caja"><h4 class="ol">DE QUÉ VA</h4><p id="fi-texto"></p></div>
-      <div class="fi-caja fi-pausa" id="fi-pausa" hidden><h4 class="ol">EN PAUSA</h4><p id="fi-pausa-t"></p></div>
+      <div class="fi-caja fi-archivo" id="fi-archivo" hidden><h4 class="ol">ARCHIVO</h4><p id="fi-archivo-t"></p></div>
       <div class="fi-caja" id="fi-voto"></div>
       <details class="fi-caja" id="fi-todas"><summary>TODAS LAS NOVEDADES</summary><div id="fi-novedades"></div></details></div>
   </div>
@@ -124,8 +125,8 @@
   <section class="sec" id="biblioteca">
     <h2 class="sec ol">BIBLIOTECA</h2>
     <p class="note">Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
-    <div class="subsec" id="lista-juegos">
-      <h3 class="grupo ol" id="juegos">JUEGA YA</h3>
+    <div class="subsec" id="lista-favoritos">
+      <h3 class="grupo ol" id="favoritos">NUESTROS FAVORITOS</h3>
       <div class="rejilla">
         <section class="game" id="g-rumble" data-apk="rumble" style="--wc: #8a3a12" data-tipo="Prototipo" data-etiquetas="Estrategia · Cartas · PvP" data-capturas="rumble-1.jpg rumble-2.jpg">
           <h2 class="ol">FANS OF RUMBLE</h2>
@@ -139,13 +140,13 @@
           <div class="row"><a class="play ol" href="games/td/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-rouflage" data-apk="rouflage" style="--wc: #7a8c1c" data-tipo="Juego" data-etiquetas="Escondite · Pintura" data-capturas="rouflage-1.jpg rouflage-2.jpg">
+        <section class="game" id="g-rouflage" data-apk="rouflage" style="--wc: #7a8c1c" data-tipo="Prototipo" data-favorito data-etiquetas="Escondite · Pintura" data-capturas="rouflage-1.jpg rouflage-2.jpg">
           <h2 class="ol">FANS OF ROUFLAGE</h2>
           <p>El escondite con pintura: cuélate en la estación de Microblizz, píntate como el suelo con el cuentagotas y el pincel, congélate y que los becarios no te despidan. O coge tú la linterna y encuentra a los cinco colados.</p>
           <div class="row"><a class="play ol" href="games/rouflage/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-karts" data-apk="karts" style="--wc: #b3261e" data-tipo="Juego" data-etiquetas="Carreras · Pixel art" data-capturas="karts-1.jpg karts-2.jpg karts-3.jpg" data-horizontal>
+        <section class="game" id="g-karts" data-apk="karts" style="--wc: #b3261e" data-tipo="Prototipo" data-favorito data-etiquetas="Carreras · Pixel art" data-capturas="karts-1.jpg karts-2.jpg karts-3.jpg" data-horizontal>
           <h2 class="ol">FANS OF KARTS</h2>
           <p>Carreras de karts en pixel art de consola portátil: elige a uno de los seis líderes y corre 16 pistas en 4 mundos (de la playa a la Torre del CEO), con modo copa, saltos, atajos y peligros que caen del cielo. Microblizz ha comprado la carrera: gánasela.</p>
           <div class="row"><a class="play ol" href="games/karts/">JUGAR</a><span class="ver ol" data-ver></span></div>
@@ -235,6 +236,12 @@
           <div class="row"><a class="play ol" href="demos/zombies/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
+        <section class="game" id="g-wings" style="--wc: #2a62c8" data-tipo="Prototipo" data-etiquetas="Acción · Arcade · Aviones · Lonchas" data-capturas="wings-1.jpg wings-2.jpg" data-horizontal>
+          <h2 class="ol">FANS OF WINGS</h2>
+          <p>El prototipo (prueba). Combate aéreo arcade en pixel art con volumen: el mar, las islas, las nubes y los aviones están hechos de lonchas apiladas, y cambias de cámara en pleno vuelo (desde arriba, de persecución o desde la cabina). Despeja el cielo de becarios voladores y bombarderos de cajas sorpresa, esquiva sus disparos, fija blancos y lanza misiles guiados hasta derribar a SurvivalBot. Tres cazas de los Animales Locos con su piloto y su truco: Zanahoria Uno, Zorra Invisible y Castor Bombardero.</p>
+          <div class="row"><a class="play ol" href="demos/wings/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
         <section class="game" id="g-air" style="--wc: #2a62c8" data-tipo="Prototipo" data-etiquetas="Acción · Arcade · Aviones" data-capturas="air-1.jpg air-2.jpg" data-horizontal>
           <h2 class="ol">FANS OF AIR</h2>
           <p>El prototipo (prueba). Combate aéreo arcade en dos fases, como el clásico de NES: primero, desde la cabina, despejas el cielo de becarios voladores y bombarderos de cajas sorpresa (el horizonte se inclina al virar; esquiva sus disparos, fija blancos con la retícula y lanza misiles guiados hasta derribar a SurvivalBot) y después bajas a la base de Microblizz en vista isométrica, volando libre por el mapa con la brújula hacia los objetivos, para bombardear oficinas, servidores y la Torre del CEO entre torretas y tanques. Tres cazas de los Animales Locos con su piloto y su truco: Zanahoria Uno, Zorra Invisible y Castor Bombardero.</p>
@@ -247,9 +254,9 @@
           <div class="row"><a class="play ol" href="demos/auto/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-asalto" style="--wc: #3b3f8a" data-tipo="Prototipo" data-etiquetas="Autobatalla · Mazmorras · Pixel art" data-capturas="asalto-1.jpg asalto-2.jpg">
+        <section class="game" id="g-asalto" style="--wc: #7c4b2a" data-tipo="Prototipo" data-etiquetas="Autobatalla · Mazmorras · Pixel art" data-capturas="asalto-1.jpg asalto-2.jpg">
           <h2 class="ol">FANS OF ASALTO</h2>
-          <p>Microblizz ha convertido sus sótanos en una mazmorra y los Animales Locos bajan a echar al CEO. Compra héroes en la tienda (tantas veces como quieras: cada compra es un muñeco más en la cuadrícula) y combina sus 7 clases para activar sus habilidades mientras luchan solos. Elige tu camino con las flechas, abre cofres, escoge reliquias en los altares y derrota al jefe de cada zona. Fuera, equipa a tu grupo, mejora los objetos en la herrería y cobra los logros.</p>
+          <p>Microblizz ha convertido sus sótanos en una mazmorra y los Animales Locos bajan a echar al CEO. Invoca héroes en el Altar: tres runas iguales en línea traen a uno de esa clase, y un empujón por oleada mueve una columna para completar la jugada. Arrastra a los que sobran sobre los buenos para subirlos de nivel, asciéndelos al nivel 5 y combina sus 7 clases. Después aguanta la oleada: que nadie cruce la empalizada. Jefes gigantes al final de cada zona, reliquias, equipo, mejoras permanentes y modo sin fin.</p>
           <div class="row"><a class="play ol" href="demos/asalto/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
@@ -285,7 +292,7 @@
         </section>
         <section class="game" id="g-pop" style="--wc: #ff6ec7" data-tipo="Prototipo" data-etiquetas="Puzle · Pop-it · Kawaii" data-capturas="pop-1.jpg pop-2.jpg">
           <h2 class="ol">FANS OF POP</h2>
-          <p>¡Pop, pop, pop! Los amigos de Fans Of se han quedado atrapados dentro de las burbujas de un pop-it gigante. Toca una burbuja y revientan ella y sus vecinas: revienta todas antes de que se acaben los toques. Recorre mundo a mundo, del Jardín a la Pastelería y sus burbujas con nata, con un jefe al final de cada uno; Lola te enseña a jugar y cada amigo rescatado te echa una mano. Gana las tres estrellas con el mínimo de toques. Con dibujos lisos o en pixel art, como más te guste.</p>
+          <p>¡Pop, pop, pop! Los amigos de Fans Of se han quedado atrapados dentro de las burbujas de un pop-it gigante. Toca una burbuja y hacen pop ella y sus vecinas: haz pop en todas antes de que se acaben los toques. Recorre mundo a mundo, del Jardín a la Pastelería y sus burbujas con nata, con un jefe al final de cada uno; Lola te enseña a jugar y cada amigo rescatado te echa una mano. Gana las tres estrellas con el mínimo de toques. Con dibujos lisos o en pixel art, como más te guste.</p>
           <div class="row"><a class="play ol" href="demos/pop/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
@@ -323,12 +330,30 @@
           <div class="row"><a class="play ol" href="games/taxi/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-      </div>
-    </div>
-    <div class="subsec" id="lista-demos">
-      <h3 class="grupo ol" id="demos">DEMOS</h3>
-      <p class="note grupo">Bocetos y pruebas cortas de una idea.</p>
-      <div class="rejilla">
+        <section class="game" id="g-pets" style="--wc: #6a3fb8" data-tipo="Prototipo" data-etiquetas="Mascota virtual · Cuidados · Humor de oficina" data-capturas="pets-1.jpg pets-2.jpg">
+          <h2 class="ol">FANS OF PETS</h2>
+          <p>Tu mascota virtual con las criaturas de la serie. Lola te hace una entrevista de trabajo absurda, eliges uno de tres huevos misteriosos y cuidas a la criatura que sale: darle de comer, bañarla, acostarla a su hora y jugar con ella mientras crece de bebé a adulta. Si la cuidas bien, asciende a jefa; si no, te deja su carta de dimisión.</p>
+          <div class="row"><a class="play ol" href="games/pets/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-paperwork" style="--wc: #3a2b52" data-alfa data-tipo="Prototipo" data-etiquetas="Idle · Oficina · Humor de oficina" data-capturas="paperwork-1.jpg paperwork-2.jpg">
+          <h2 class="ol">FANS OF PAPERWORK</h2>
+          <p>Microblizz guarda en el archivo de su Torre el papeleo de los juegos que cancela, y la Trituradora se lo va comiendo. Baja planta a planta con CrazyBunny rebuscando en los archivadores, clasifica lo que encuentres, ponte los guantes cuando el papel se ponga duro, atasca la Trituradora con su propio papeleo para liberar a las demás facciones y, cuando el CEO os despida, vuelve con la Indemnización más fuerte que antes. Tu equipo sigue rebuscando aunque no estés.</p>
+          <div class="row"><a class="play ol" href="games/paperwork/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-chef" style="--wc: #8a4a1a" data-tipo="Prototipo" data-etiquetas="Cocina · Caza · Acción · Pixel art" data-capturas="chef-1.jpg chef-2.jpg">
+          <h2 class="ol">FANS OF CHEF</h2>
+          <p>Somos los cocineros de la cantina de Microblizz. Baja al sótano a cazar comida viva con el cuchillo y la sartén (cebollones monstruosos, gelatinas con mala idea) y cocínala a tiempo para servir las comandas de toda la empresa. Caza y cocina a la vez, sin que te cocinen a ti.</p>
+          <div class="row"><a class="play ol" href="demos/chef/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-rumble-v2" style="--wc: #2f7a4a" data-tipo="Prototipo" data-etiquetas="Estrategia · Cartas · Arte pintado" data-capturas="rumble-v2-1.jpg rumble-v2-2.jpg">
+          <h2 class="ol">FANS OF RUMBLE V2</h2>
+          <p>Fans of Rumble con el arte pintado a mano, como unos dibujos animados en 3D. Las mismas reglas y las mismas cartas: lo que cambia es el dibujo. Ya están pintados los Animales Locos, Microblizz y su campo de batalla; el resto llega personaje a personaje.</p>
+          <div class="row"><a class="play ol" href="demos/rumble-v2/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
         <section class="game" id="g-rumble-3d" style="--wc: #a3325e" data-tipo="Prototipo" data-etiquetas="3D · Misión" data-capturas="rumble-3d-1.jpg rumble-3d-2.jpg">
           <h2 class="ol">FANS OF RUMBLE 3D</h2>
           <p>El boceto (prueba). Fans of Rumble en 3D, como un dibujo animado: una misión corta con CrazyBunny, MadSquirrel, MeerCat y MechaVaca contra SurvivalBot, con comentarista, voces y la música del juego. Y un modo libre para ver si tu móvil aguanta.</p>
@@ -349,26 +374,32 @@
         </section>
       </div>
     </div>
-    <div class="subsec" id="en-pausa">
-      <h3 class="grupo ol">EN PAUSA</h3>
-      <p class="note grupo">Prototipos que hemos parado. Si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.</p>
+    <div class="subsec" id="lista-archivo">
+      <h3 class="grupo ol" id="archivo">ARCHIVO</h3>
+      <p class="note grupo">Prototipos archivados: ya no los mantenemos. Se juegan tal cual están; si quieres que alguno vuelva, vota en su ficha.</p>
       <div class="rejilla">
-        <section class="game" id="g-dark" data-apk="dark" style="--wc: #4a1f7a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
+        <section class="game" id="g-dark" data-apk="dark" style="--wc: #4a1f7a" data-tipo="Archivo" data-archivo="Archivado: ya no lo mantenemos. Se juega tal cual está, sin arreglos. Si quieres que vuelva, vota aquí." data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
           <h2 class="ol">FANS OF DARK</h2>
           <p>Mazmorras en primera persona, como los shooters de los 90. Elige a un Animal Loco (cada uno con su habilidad y su arma), baja con una antorcha a la mazmorra de una facción enemiga, abre cofres, pelea con sus unidades y su líder y sal por un portal antes de que la niebla te alcance. Si mueres pierdes la mochila; lo que sacas con vida se vende o se equipa en el alijo.</p>
           <div class="row"><a class="play ol" href="games/dark/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-island" data-apk="island" style="--wc: #c9741a" data-tipo="En pausa" data-pausa="Ni el 2D ni el 3D quedaron como queríamos y lo dejamos aparcado. Se juega tal cual está: si mucha gente quiere que vuelva, lo rehacemos con otra idea." data-etiquetas="Plataformas · Pixel art · Cooperativo" data-capturas="island-1.jpg island-2.jpg" data-horizontal>
+        <section class="game" id="g-island" data-apk="island" style="--wc: #c9741a" data-tipo="Archivo" data-archivo="Ni el 2D ni el 3D quedaron como queríamos y lo archivamos. Se juega tal cual está, sin arreglos. Si quieres que vuelva, vota aquí." data-etiquetas="Plataformas · Pixel art · Cooperativo" data-capturas="island-1.jpg island-2.jpg" data-horizontal>
           <h2 class="ol">FANS OF ISLAND</h2>
           <p>El prototipo (prueba). Plataformas cooperativo en píxel art, al estilo de los Yoshi’s Island, para 1 o 2 jugadores con CrazyBunny y SlyFox: salta, flota con las orejas, come zanahorias de poder, coge y lanza a tu compañero, rescátalo si se cae y colecciona las 60 zanahorias pequeñas, por un paisaje de acuarela. De momento, un nivel.</p>
           <div class="row"><a class="play ol" href="games/island/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
-        <section class="game" id="g-skate" data-apk="skate" style="--wc: #e8731a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Runner · Talentos" data-capturas="skate-1.jpg skate-2.jpg" data-horizontal>
+        <section class="game" id="g-skate" data-apk="skate" style="--wc: #e8731a" data-tipo="Archivo" data-archivo="Archivado: ya no lo mantenemos. Se juega tal cual está, sin arreglos. Si quieres que vuelva, vota aquí." data-etiquetas="Runner · Talentos" data-capturas="skate-1.jpg skate-2.jpg" data-horizontal>
           <h2 class="ol">FANS OF SKATE</h2>
           <p>El nuevo (prototipo). Carriles horizontales como un runner: CrazyBunny y los líderes sobre sus vehículos, esquivando las olas y los fajos de Microblizz. Con árbol de talentos y campaña de 12 mundos.</p>
           <div class="row"><a class="play ol" href="games/skate/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-rumble-clasico" style="--wc: #8a3a12" data-tipo="Archivo" data-recuerdo data-archivo="Guardado como recuerdo: es Fans of Rumble con los dibujos de siempre, de antes del arte pintado. Se juega tal cual está." data-etiquetas="Estrategia · Cartas · Recuerdo" data-capturas="rumble-clasico-1.jpg rumble-clasico-2.jpg">
+          <h2 class="ol">FANS OF RUMBLE CLÁSICO</h2>
+          <p>Fans of Rumble como era antes del arte pintado: los mismos Animales Locos contra Microblizz, con sus dibujos de siempre y su propia partida guardada.</p>
+          <div class="row"><a class="play ol" href="demos/rumble-clasico/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
       </div>
@@ -395,7 +426,7 @@
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
 <script src="core/js/nucleo.js?v=0"></script>
-<script src="core/js/novedades.js?v=41604a6"></script>
+<script src="core/js/novedades.js?v=e76f06f"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -404,13 +435,14 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=41604a6"></script>
-<script src="core/js/cuenta/dominio/roles.js?v=41604a6"></script>
-<script src="core/js/cuenta/aplicacion/roles-casos.js?v=41604a6"></script>
-<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=41604a6"></script>
-<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=41604a6"></script>
-<script src="core/js/cuenta/roles.js?v=41604a6"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/panic/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'demos/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
+<script src="core/js/sistema/cuenta.js?v=e76f06f"></script>
+<script src="core/js/cuenta/dominio/roles.js?v=e76f06f"></script>
+<script src="core/js/cuenta/aplicacion/roles-casos.js?v=e76f06f"></script>
+<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=e76f06f"></script>
+<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=e76f06f"></script>
+<script src="core/js/cuenta/roles.js?v=e76f06f"></script>
+<script src="core/js/sistema/flags.js?v=e76f06f"></script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/panic/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/wings/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'demos/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js', 'games/paperwork/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -435,17 +467,17 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=41604a6"></script>
-<script src="novedades/lo-nuevo.js?v=41604a6"></script>
-<script src="novedades/ventana.js?v=41604a6"></script>
-<script src="biblioteca/grupos.js?v=41604a6"></script>
-<script src="biblioteca/agrupar.js?v=41604a6"></script>
-<script src="biblioteca/tienda.js?v=41604a6"></script>
-<script src="core/js/sistema/beta.js?v=41604a6"></script>
-<script src="biblioteca/cuenta-web.js?v=41604a6"></script>
-<script src="biblioteca/votos.js?v=41604a6"></script>
-<script src="biblioteca/alfa.js?v=41604a6"></script>
-<script src="core/js/sistema/analitica.js?v=41604a6"></script>
-<script src="pie.js?v=41604a6" defer></script>
+<script src="novedades/lo-nuevo.js?v=e76f06f"></script>
+<script src="novedades/ventana.js?v=e76f06f"></script>
+<script src="biblioteca/grupos.js?v=e76f06f"></script>
+<script src="biblioteca/agrupar.js?v=e76f06f"></script>
+<script src="biblioteca/tienda.js?v=e76f06f"></script>
+<script src="core/js/sistema/beta.js?v=e76f06f"></script>
+<script src="biblioteca/cuenta-web.js?v=e76f06f"></script>
+<script src="biblioteca/votos.js?v=e76f06f"></script>
+<script src="biblioteca/alfa.js?v=e76f06f"></script>
+<script src="biblioteca/portada-nueva.js?v=e76f06f"></script>
+<script src="core/js/sistema/analitica.js?v=e76f06f"></script>
+<script src="pie.js?v=e76f06f" defer></script>
 </body>
 </html>

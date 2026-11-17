@@ -1,11 +1,10 @@
 // Fans Of · NÚCLEO · el entorno: dónde corre la página (la alfa, la app de Android) y si va en modo desarrollo. Una pieza de nucleo.js
 // (tarea #28): solo calcula, con lo que le pasa nucleo.js (la dirección, el almacenamiento y Capacitor), así que se prueba en Node.
-// EL MODO DESARROLLO: en localhost (o con ?dev=1, que se recuerda en este navegador; ?dev=0 lo apaga) se abre lo que está a medias: los juegos
-// cerrados, los flags locales, las compras de prueba. Fuera de localhost y de la alfa (la release) y en la app de Android NUNCA vale: ni ?dev=1
-// ni lo guardado en el navegador, con rol o sin él. El comparador lo apaga a propósito. proximamente.js copia esta regla (tarea #33): si cambia aquí,
-// cambia allí y en su test.
+// EL MODO DESARROLLO: en localhost (o con ?dev=1, que se recuerda en este navegador; ?dev=0 lo apaga) se abre lo que está a medias: los flags
+// locales, las compras de prueba. Fuera de localhost y de la alfa (la release) y en la app de Android NUNCA vale: ni ?dev=1
+// ni lo guardado en el navegador, con rol o sin él. El comparador lo apaga a propósito.
 // EL PANEL DEV (core/js/sistema/desarrollo.js, el botón «DEV») es otra cosa (ADR 096): sale en la alfa y en el modo desarrollo, y en la release y la
-// app de Android solo para una cuenta con el rol «alfa». panelDev(rolRecordado) lo dice; el rol lo lleva CUENTA.roles (core/js/cuenta/, ADR 097) y panel-dev.js decide cuándo se carga. No abre ningún juego cerrado.
+// app de Android solo para una cuenta con el rol «alfa». panelDev(rolRecordado) lo dice; el rol lo lleva CUENTA.roles (core/js/cuenta/, ADR 097) y panel-dev.js decide cuándo se carga.
 'use strict';
 (() => {
   const LOCALES = ['localhost', '127.0.0.1', '[::1]'];

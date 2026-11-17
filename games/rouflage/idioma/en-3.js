@@ -188,7 +188,7 @@ IDIOMA.add({
   "ACCIONES": "SHARES",
   "GOTAS DE PINTURA": "PAINT DROPS",
   "CAOS PRIMORDIAL": "PRIMORDIAL CHAOS",
-  "Caos primordial ilimitado": "Unlimited primordial chaos",
+  "Conseguir caos primordial": "Get primordial chaos",
   "¡Comprado! {c}": "Bought! {c}",
   "(pruebas: no se ha cobrado nada)": "(test: nothing was charged)",
   "una sola vez": "one time only",

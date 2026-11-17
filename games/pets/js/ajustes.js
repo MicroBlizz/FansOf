@@ -1,6 +1,6 @@
 // Fans Of Pets · AJUSTES: el nombre del juego para core y TODAS las cifras del prototipo (huevo, bebé, necesidades, sueño, horario de vida,
 // modos de ritmo, tope de ausencia y efecto de cada cuidado). Se carga antes de lo común. Calibrar Pets es tocar solo este archivo.
-// Prototipo (en «Próximamente» fuera de la alfa y el modo dev): de la entrevista al ascenso a jefe. Diseño: docs/pets/PLAN.md y docs/pets/diseno.md.
+// Prototipo: de la entrevista al ascenso a jefe. Diseño: docs/pets/PLAN.md y docs/pets/diseno.md.
 'use strict';
 const AJUSTES = {
   // sin `id` a propósito: así la cuenta de core queda apagada y la partida del prototipo vive solo en este navegador.

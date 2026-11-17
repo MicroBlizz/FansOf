@@ -13,7 +13,7 @@
 // Hay que cambiarla cada vez que se publica algo, aunque el jugador no vaya a notar nada. Si lo va a notar,
 // además se añade el informe en js/novedades.js del juego.
 //
-// nucleo.js solo ORQUESTA (tarea #28, ADR 095): pide lo primero (Próximamente, la splash y la puerta de carga) y sus piezas de core/js/nucleo/,
+// nucleo.js solo ORQUESTA (tarea #28, ADR 095): pide lo primero (la splash y la puerta de carga) y sus piezas de core/js/nucleo/,
 // y las monta cuando han llegado, antes de que la página siga. Cada pieza hace una cosa y se prueba sola (tests/core/nucleo-*.test.mjs):
 //   listas.js           qué archivos de core carga cada tipo de juego (COMUN, LIGERO), los diccionarios y las hojas comunes
 //   entorno.js          la alfa, la app de Android y el modo desarrollo
@@ -22,23 +22,19 @@
 //   cargador.js         pedir hojas, fuentes y código por la puerta de carga y contarlos para la splash
 //   sin-conexion.js     instalar como app y jugar sin conexión
 // Las piezas se apuntan en NUCLEO_PIEZAS (el único global que añaden) y nucleo.js les pasa lo que usan (la página, el almacenamiento…).
-// El entorno y el idioma van antes que Próximamente (guarda el ?dev= que este lee); las demás, después de la splash y la puerta.
+// El entorno y el idioma van antes que todo; las demás, después de la splash y la puerta.
 'use strict';
 const NUCLEO_PIEZAS = {};
 const NUCLEO = (() => {
   const yo = document.currentScript, CORE = new URL('..', yo.src).href;      // la dirección de core/
   const version = new URL(yo.src).searchParams.get('v') || '0';
   const conV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + version;
-  // LO PRIMERO, antes que proximamente.js: dónde corre la página y en qué idioma. Así el ?dev=1 o ?dev=0 queda guardado antes de que
-  // Próximamente lo lea (allí decide si se juega un juego cerrado) y la página, aunque pase a ser la de Próximamente, ya lleva su idioma en <html lang>
+  // LO PRIMERO: dónde corre la página y en qué idioma, para que el ?dev=1 o ?dev=0 quede guardado y la página lleve su idioma en <html lang> desde el principio
   const ANTES = ['js/nucleo/entorno.js', 'js/nucleo/idioma-eleccion.js'].map(f => conV(CORE + f));
   for (const src of ANTES) document.write('<script src="' + src + '"><\/script>');
   document.write('<script>NUCLEO_PIEZAS.montarPrimero()<\/script>');
-  // en la release solo se juegan los juegos abiertos (ver proximamente.js); si no lo está, la página pasa a ser la de «Próximamente» y se
-  // para ahí (window.stop): no llega a correr nada más de la página, así que nada de aquí abajo tiene que mirarlo
-  document.write('<script src="' + CORE + 'js/proximamente.js"><\/script>');
   // LA SPLASH, lo primero (ADR 091): es la pantalla de carga de los juegos. Se pide aquí, antes que cualquier hoja o script, para que tape la página
-  // desde el primer pintado; splash.js decide si sale (solo en un juego o una demo, ver PROXIMAMENTE.juego). Lo que pide el juego se le cuenta.
+  // desde el primer pintado; splash.js decide si sale (solo en un juego o una demo, SPLASH_REGLAS.enJuego). Lo que pide el juego se le cuenta.
   // Detrás, la puerta de carga (PUERTA_CARGA, ADR 093): las hojas no bloquean el pintado y el código del juego espera a que hayan llegado ellas y la letra.
   // Y luego las piezas, que corren antes de que la página siga: el montaje (el último script escrito) las junta.
   const PRIMEROS = ['js/sistema/splash-reglas.js', 'js/sistema/splash-logo.js', 'js/sistema/splash.js', 'js/sistema/puerta.js'];

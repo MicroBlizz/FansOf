@@ -242,4 +242,9 @@ IDIOMA.add({
   "Sin anuncios": "No ads",
   "PARA SIEMPRE": "FOREVER",
   "Los premios de los anuncios te llegan al momento, sin verlos, y tu nivel de anuncios es siempre el máximo. El tope de cada día sigue igual.": "Ad rewards arrive instantly, without watching, and your ad level is always the highest. The daily limit stays the same.",
+  // HORIZONTAL (core/js/sistema/horizontal.js, ADR 133)
+  "Toca para jugar en horizontal": "Tap to play in landscape",
+  "o gira el móvil": "or turn your phone",
+  "Gira el móvil para jugar": "Turn your phone to play",
+  "Si no cambia, quita el bloqueo de giro": "If nothing changes, turn off rotation lock",
 });

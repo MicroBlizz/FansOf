@@ -91,8 +91,11 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   const conMarcador = () => est.modo === 'juego' || est.modo === 'repeticion' || est.modo === 'final';
   function cambiarVolumen() { S.sonido.siguiente(); sonar(660, 0.08, 'triangle'); guardar(); }
 
+  // Con la pantalla de pie, un toque en cualquier sitio pone la pantalla completa fijada en horizontal (core: HORIZONTAL, ADR 133).
+  function giraConToque() { if (HORIZONTAL.deCanto()) HORIZONTAL.fijar(); }
   function abajo(ev) {
     ev.preventDefault();
+    if (HORIZONTAL.deCanto()) return;   // de pie solo se ve el aviso: el toque lo recoge giraConToque
     const p = aLogico(ev);
     if (dentro(p, UI.zonaAltavoz(conMarcador()))) { cambiarVolumen(); return; }
     if (est.modo !== 'juego') { tocarFuera(p); return; }
@@ -230,7 +233,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const k = CV.width / V.W;
     G.setTransform(k, 0, 0, k, 0, 0);
     G.fillStyle = '#0b1020'; G.fillRect(0, 0, V.W, V.H);
-    if (innerHeight > innerWidth * 1.1) { UI.girar(G); requestAnimationFrame(fotograma); return; }
+    if (HORIZONTAL.deCanto()) { UI.girar(G, HORIZONTAL.lineas()); requestAnimationFrame(fotograma); return; }
     if (!est.e) est.e = S.nuevoPartido(S.AJ, { campo: est.sel.campo });
     if (est.modo === 'juego') { avanzar(dt); if (est.modo === 'repeticion') pintarRepeticion(dt); else pintarJuego(dt); }
     else if (est.modo === 'repeticion') pintarRepeticion(dt);
@@ -256,6 +259,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     V.cargar(imagenes());
     try { await Promise.race([document.fonts.load("12px 'Press Start 2P'"), new Promise((r) => setTimeout(r, 2000))]); } catch (err) { console.warn('Soccer: sin letra propia', err); }
     document.getElementById('carga').hidden = true;
+    addEventListener('pointerdown', giraConToque);   // en toda la ventana: con la pantalla de pie el lienzo puede no ocuparla entera
     CV.addEventListener('pointerdown', abajo); CV.addEventListener('pointermove', mueve);
     addEventListener('pointerup', arriba); addEventListener('pointercancel', arriba);
     addEventListener('keydown', (ev) => tecla(ev, true)); addEventListener('keyup', (ev) => tecla(ev, false));

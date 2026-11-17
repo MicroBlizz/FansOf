@@ -67,8 +67,11 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 
   function cambiaCamara() { const n = VI.cambiaCamara(); S.sonar('camara'); FX.cartel(tr('CÁMARA') + ': ' + tr(NOMBRE_CAMARA[n]), '#ffe14a', 0.9); guardar(); }
 
+  // Con la pantalla de pie, un toque en cualquier sitio pone la pantalla completa fijada en horizontal (core: HORIZONTAL, ADR 133).
+  function giraConToque() { if (HORIZONTAL.deCanto()) HORIZONTAL.fijar(); }
   function abajo(ev) {
     ev.preventDefault();
+    if (HORIZONTAL.deCanto()) return;   // de pie solo se ve el aviso: el toque lo recoge giraConToque
     if (ev.pointerType === 'touch') est.tactil = true;
     const p = aLogico(ev);
     if (est.modo !== 'juego') { tocarFuera(p); return; }
@@ -182,7 +185,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     ritmo.n++; ritmo.t += dt; if (ritmo.t >= 0.5) { ritmo.ips = Math.round(ritmo.n / ritmo.t); ritmo.n = 0; ritmo.t = 0; }
     G.setTransform(est.k, 0, 0, est.k, 0, 0);
     G.clearRect(0, 0, UI.W, 720);
-    if (innerHeight > innerWidth * 1.1) { UI.girar(G); requestAnimationFrame(fotograma); return; }
+    if (HORIZONTAL.deCanto()) { UI.girar(G, HORIZONTAL.lineas()); requestAnimationFrame(fotograma); return; }
     FX.paso(dt);
     if (est.modo === 'juego') avanzar(dt);
     pintarMundo(dt); pintarHud();
@@ -199,6 +202,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     leer(); ajusta(); S.cargar();
     try { await Promise.race([document.fonts.load("12px 'Press Start 2P'"), new Promise((r) => setTimeout(r, 2000))]); } catch (err) { console.warn('Wings: sin letra propia', err); }
     carga.hidden = true;
+    addEventListener('pointerdown', giraConToque);   // en toda la ventana: con la pantalla de pie el lienzo puede no ocuparla entera
     CV.addEventListener('pointerdown', abajo); CV.addEventListener('pointermove', mueve);
     addEventListener('pointerup', arriba); addEventListener('pointercancel', arriba);
     addEventListener('keydown', (ev) => tecla(ev, true)); addEventListener('keyup', (ev) => tecla(ev, false));

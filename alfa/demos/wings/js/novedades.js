@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.4', real: ['<b>SE JUEGA CON EL GIRO BLOQUEADO</b>: si el móvil tiene bloqueado el giro automático, ya no te quedas atascado en «Gira el móvil». Toca la pantalla y Wings se pone en pantalla completa y en horizontal él solo. En el iPhone, que no lo permite, el aviso te recuerda quitar el bloqueo de giro.'],
+    joke: ['El caza se negaba a despegar de lado. Le hemos explicado que la pista también está tumbada.'] },
   { v: '0.1.3', real: ['<b>ARREGLADO EN EL MÓVIL</b>: con el teléfono tumbado y la barra del navegador a la vista, el juego se salía por abajo, el botón de DESPEGAR quedaba tapado y los toques no acertaban. Ahora Wings ocupa justo lo que se ve.'],
     joke: ['La barra del navegador se había sentado encima del botón de despegar. Se le ha pedido amablemente que se aparte.'] },
   { v: '0.1.2', real: ['<b>CABINAS NUEVAS</b>: la cámara de cabina estrena una cabina distinta para cada caza, en pixel art y llena de cacharros. La de Zanahoria Uno es negra y naranja, de relojes de aguja y con una zanahoria colgando; la de Zorra Invisible es roja, con tres pantallas y la cúpula despejada; la de Castor Bombardero es de chapa y madera, con relojes de latón y mordiscos en el panel. Las agujas, el radar y el horizonte funcionan de verdad, y la pata del piloto mueve la palanca cuando giras.'],

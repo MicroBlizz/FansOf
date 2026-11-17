@@ -39,7 +39,6 @@ IDIOMA.add({
  "MISIL": "MISSILE",
  "CÁMARA": "CAMERA",
  "FLECHAS / WASD · ESPACIO: FUEGO · M: MISIL · C: CÁMARA": "ARROWS / WASD · SPACE: FIRE · M: MISSILE · C: CAMERA",
- "Gira el móvil para jugar": "Turn your phone to play",
  "DESDE ARRIBA": "FROM ABOVE",
  "PERSECUCIÓN": "CHASE",
  "CABINA": "COCKPIT",

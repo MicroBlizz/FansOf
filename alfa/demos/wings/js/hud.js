@@ -146,8 +146,10 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     texto(g, etiqueta, b.x, b.y + baja + tam / 2, tam, '#fff');
   }
 
-  UI.girar = function (g) {
+  // El aviso con la pantalla de pie: las dos frases de HORIZONTAL.lineas() (core), la primera grande y la segunda debajo, más pequeña.
+  UI.girar = function (g, lineas) {
     g.fillStyle = '#0b2a55'; g.fillRect(0, 0, UI.W, 720);
-    texto(g, tr('Gira el móvil para jugar'), UI.W / 2, 360, Math.min(22, UI.W / 30), '#fff');
+    texto(g, lineas[0], UI.W / 2, 345, Math.min(22, UI.W / 30), '#fff');
+    texto(g, lineas[1], UI.W / 2, 385, Math.min(14, UI.W / 46), '#ffe14a');
   };
 })(WINGS);

@@ -1,8 +1,8 @@
 {
- "build": 1227,
- "hash": "256e53d",
- "fecha": "2026-11-17T11:21:49Z",
- "mensaje": "Pop 0.5.2: niveles sin repetir en un mundo, pausa arriba a la derecha, monedas y perlas sin montarse, barras de volumen y Pase con colores de Pop, y la tortuga del Fondo del mar",
+ "build": 1228,
+ "hash": "a6407ec",
+ "fecha": "2026-11-17T14:39:04Z",
+ "mensaje": "HORIZONTAL en core: con el móvil de pie, un toque pone la pantalla completa en horizontal aunque el giro esté bloqueado (tarea #81, ADR 133)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

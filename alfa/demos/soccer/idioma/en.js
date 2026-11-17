@@ -51,7 +51,6 @@ IDIOMA.add({
  "Siguiente rival: {e}": "Next opponent: {e}",
  "Hay que ganar para pasar de ronda": "You must win to go through",
  "Toca para seguir": "Tap to continue",
- "Gira el móvil para jugar": "Turn your phone to play",
  // menús
  "Fútbol sin faltas ni árbitro": "Football with no fouls and no referee",
  "Animales Locos, Microblizz, No-Muertos, Ciberpunks y Phony": "Crazy Animals, Microblizz, Undead, Cyberpunks and Phony",

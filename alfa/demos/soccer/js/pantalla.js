@@ -170,8 +170,10 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     g.restore();
   };
 
-  UI.girar = function (g) {
+  // El aviso con la pantalla de pie: las dos frases de HORIZONTAL.lineas() (core), la primera grande y la segunda debajo, más pequeña.
+  UI.girar = function (g, lineas) {
     g.fillStyle = '#0b1020'; g.fillRect(0, 0, 1280, 720);
-    texto(g, tr('Gira el móvil para jugar'), 640, 360, 22, '#fff');
+    texto(g, lineas[0], 640, 330, 40, '#fff');   // grande: con la pantalla de pie el campo de 1280 se ve muy encogido
+    texto(g, lineas[1], 640, 410, 28, '#ffe14a');
   };
 })(SOCCER);

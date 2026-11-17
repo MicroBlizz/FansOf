@@ -254,4 +254,9 @@ IDIOMA.add({
   "PARA SIEMPRE": "PER SEMPRE",
   "Los premios de los anuncios te llegan al momento, sin verlos, y tu nivel de anuncios es siempre el máximo. El tope de cada día sigue igual.": "I premi degli annunci arrivano subito, senza guardarli, e il tuo livello annunci è sempre il massimo. Il limite di ogni giorno resta uguale.",
   "¿COMPRAR?": "COMPRARE?",
+  // HORIZONTAL (core/js/sistema/horizontal.js, ADR 133)
+  "Toca para jugar en horizontal": "Tocca per giocare in orizzontale",
+  "o gira el móvil": "o gira il telefono",
+  "Gira el móvil para jugar": "Gira il telefono per giocare",
+  "Si no cambia, quita el bloqueo de giro": "Se non cambia, togli il blocco della rotazione",
 });

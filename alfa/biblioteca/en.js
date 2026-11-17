@@ -13,6 +13,7 @@ IDIOMA.add({
   "Archivo": "Archive",
   "ARCHIVO": "ARCHIVE",
   "Archivado: ya no lo mantenemos. Se juega tal cual está, sin arreglos. Si quieres que vuelva, vota aquí.": "Archived: we no longer maintain it. You can play it as it is, with no fixes. If you want it back, vote here.",
+  "Lo sustituye Fans of Wings y lo archivamos. Se juega tal cual está, sin arreglos. Si quieres que vuelva, vota aquí.": "Fans of Wings replaces it, so we archived it. You can play it as it is, with no fixes. If you want it back, vote here.",
   "Ni el 2D ni el 3D quedaron como queríamos y lo archivamos. Se juega tal cual está, sin arreglos. Si quieres que vuelva, vota aquí.": "Neither the 2D nor the 3D version turned out the way we wanted, so we archived it. You can play it as it is, with no fixes. If you want it back, vote here.",
   "¿QUIERES QUE VUELVA?": "DO YOU WANT IT BACK?",
   "Quiero que vuelva": "I want it back",

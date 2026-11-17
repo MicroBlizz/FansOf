@@ -1,8 +1,8 @@
 {
- "build": 1228,
- "hash": "a6407ec",
- "fecha": "2026-11-17T14:39:04Z",
- "mensaje": "HORIZONTAL en core: con el móvil de pie, un toque pone la pantalla completa en horizontal aunque el giro esté bloqueado (tarea #81, ADR 133)",
+ "build": 1229,
+ "hash": "e557681",
+ "fecha": "2026-11-17T14:43:47Z",
+ "mensaje": "Air pasa al Archivo: lo sustituye Wings (tarea #88, ADR 126)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

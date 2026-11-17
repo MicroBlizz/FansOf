@@ -77,6 +77,7 @@
 .pw-btn.grande { flex: none; display: block; width: 100%; margin: 6px 0; padding: 12px; font-size: 24px; }
 .pw-btn.peligro { background: var(--danger); }
 .pw-btn.peligro:disabled { background: var(--off); }
+.pw-antes { display: block; font: 800 15px var(--font-ui); color: rgba(255, 255, 255, 0.85); text-shadow: none; text-decoration: line-through 2px; }   /* el precio sin descuento del pack de mejoras */
 .pw-venta { flex: none; padding: 8px 2px; }
 .pw-venta b { display: block; font-size: 16px; color: var(--ink-dim); margin-bottom: 6px; }
 .pw-venta div { display: flex; flex-wrap: wrap; gap: 8px; }

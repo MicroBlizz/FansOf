@@ -46,8 +46,8 @@ PW.botones = (() => {
   function pago(id) {
     const x = PW.MEJORAS_PAGO.find(m => m.id === id);
     if (!x) return;
-    const html = `<p>${tr(x.txt, PW.panelesPago.cifras())}</p><p><b>${PW.panelesPago.euros(PW.AJ.mejoras[id].eur)}</b></p>`;
-    PW.mejorasPago.compra(id, tr(x.nombre), html, r => { if (r && (r.prueba || r.real)) { PW.sonido.toca('pop'); toast(tr('¡{n} ya es tuya!', { n: tr(x.nombre) }), true); } });
+    const html = `<p>${tr(x.txt, PW.panelesPago.cifras())}</p><p><b>${PW.panelesPago.precio(id)}</b></p>`;
+    PW.mejorasPago.compra(id, tr(x.nombre), html, r => { if (r && (r.prueba || r.real)) { PW.sonido.toca('pop'); toast(id === 'pack' ? tr('¡{a} y {b} ya son tuyas!', { a: tr('Turno rápido'), b: tr('Taquilla XL') }) : tr('¡{n} ya es tuya!', { n: tr(x.nombre) }), true); } });
   }
   // lo que ha dado el anuncio de un correo (PW.anuncioCorreo.acepta): si lo cerró, core ya lo ha dicho y aquí no se añade nada
   function anuncio(res) {

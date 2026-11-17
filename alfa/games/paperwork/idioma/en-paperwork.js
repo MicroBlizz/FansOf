@@ -400,6 +400,7 @@ IDIOMA.add({
   "Turno rápido": "Fast shift",
   "El paquete del sindicato llega un {p} antes, también con los talentos del plan al máximo.": "The union parcel arrives {p} sooner, even with the plan talents maxed out.",
   "Taquilla XL": "XL locker",
+  "¡{a} y {b} ya son tuyas!": "{a} and {b} are yours!",
   "{n} paquetes más en la taquilla: aguanta mucho más rato fuera sin perder ninguno.": "{n} more parcels in the locker: you can stay away much longer without losing any.",
   "Las dos mejoras": "Both upgrades",
   "Turno rápido y Taquilla XL juntas, más baratas.": "Fast shift and XL locker together, cheaper.",

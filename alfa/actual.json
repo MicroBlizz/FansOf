@@ -1,8 +1,8 @@
 {
- "build": 1217,
- "hash": "4e9baf6",
- "fecha": "2026-11-16T22:58:39Z",
- "mensaje": "Portada nueva: el aviso amarillo de novedades sin contorno, que no se leía (tarea #69)",
+ "build": 1218,
+ "hash": "73ebfdf",
+ "fecha": "2026-11-17T00:44:21Z",
+ "mensaje": "Paperwork 0.11.1: el pack de mejoras enseña 10,00 € tachado y 8,00 € (tarea #61, ADR 125)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",
@@ -13,7 +13,7 @@
   "jump": "0.3.30",
   "karts": "0.7.29",
   "nova": "0.3.58",
-  "paperwork": "0.11.0",
+  "paperwork": "0.11.1",
   "pets": "0.2.13",
   "ratkov": "0.2.43",
   "rouflage": "0.2.79",

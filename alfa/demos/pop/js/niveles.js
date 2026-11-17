@@ -50,76 +50,7 @@ function ppMundoDe(g) { let m = 0; while (m < PP_MUNDOS.length - 1 && g >= PP_MU
 const ppEsJefe = g => { const [m, l] = ppMundoDe(g); return l === PP_MUNDOS[m].niveles; };
 const ppEsDificil = g => { const [, l] = ppMundoDe(g); return l % 5 === 0 && !ppEsJefe(g); };
 
-// --- formas de tablero ('#' = burbuja, '.' = hueco) ---
-const PP_FORMAS = {
-  3: [['###', '###', '###'], ['.#.', '###', '.#.'], ['#.#', '###', '#.#'], ['##.', '###', '.##']],
-  4: [['####', '####', '####', '####'], ['.##.', '####', '####', '.##.'], ['#..#', '####', '####', '#..#'], ['##.#', '####', '####', '#.##'], ['.##.', '####', '.##.', '.##.']],
-  5: [['.#.#.', '#####', '#####', '.###.', '..#..'],   // corazón
-      ['..#..', '.###.', '#####', '.###.', '..#..'],   // diamante
-      ['.###.', '#####', '#####', '#####', '.###.'],   // flor
-      ['..#..', '#####', '.###.', '##.##', '#...#'],   // estrella
-      ['#####', '#####', '#####', '#####', '#####'],
-      ['#####', '#...#', '#.#.#', '#...#', '#####']],  // marco con centro
-  6: [['######', '######', '######', '######', '######', '######'],
-      ['.####.', '######', '######', '######', '######', '.####.'],   // cojín
-      ['.##.##', '######', '######', '.####.', '..##..', '..##..'],   // corazón grande
-      ['..##..', '.####.', '######', '######', '.####.', '..##..'],   // diamante grande
-      ['##..##', '######', '.####.', '.####.', '######', '##..##'],   // lazo
-      ['######', '#....#', '#.##.#', '#.##.#', '#....#', '######'],   // marco con centro
-      ['.#..#.', '######', '######', '######', '.####.', '..##..']],  // gatito
-};
-// LAS FORMAS DE CADA MUNDO (Daniel, 30-10-2026, con el pop-it de concha de su hija: «en la playa conchas, peces, pelotas… y así con
-// cada mundo»): salen en la mayoría de sus niveles del mismo tamaño, y la primera es la del jefe. La bandeja sigue el borde (bandeja.js).
-const PP_FORMAS_MUNDO = [
-  { 5: [['.#.#.', '#####', '#####', '.###.', '..#..'],          // corazón
-        ['##.##', '#####', '.###.', '#####', '##.##'],          // mariposa
-        ['#.#.#', '#####', '#####', '.###.', '..#..'],          // tulipán
-        ['.###.', '#####', '#####', '#####', '.###.']] },       // flor
-  { 6: [['..##..', '.####.', '######', '######', '.####.', '.####.'],   // magdalena
-        ['.####.', '######', '##..##', '##..##', '######', '.####.'],   // donut
-        ['..##..', '######', '######', '######', '######', '######'],   // tarta con vela
-        ['.#..#.', '######', '######', '######', '.####.', '..##..']] }, // galleta de gatito
-  { 5: [['.###.', '#####', '.###.', '..#..', '..#..'],          // cucurucho pequeño
-        ['.###.', '.###.', '.###.', '.###.', '..#..']],         // polo
-    6: [['.####.', '######', '######', '.####.', '..##..', '..##..'],   // cucurucho de helado
-        ['.####.', '.####.', '.####.', '.####.', '..##..', '..##..'],   // polo
-        ['######', '######', '.####.', '..##..', '..##..', '.####.'],   // copa de helado
-        ['..##..', '.####.', '######', '######', '######', '.####.']] }, // bola de helado
-  { 5: [['.###.', '#####', '#####', '.###.', '.###.'],          // concha pequeña
-        ['#.##.', '#####', '.####', '#####', '#.##.']],         // pez pequeño
-    6: [['.####.', '######', '######', '######', '.####.', '.####.'],   // concha (como el pop-it de la hija de Daniel)
-        ['#.###.', '######', '.#####', '.#####', '######', '#.###.'],   // pez
-        ['.####.', '######', '######', '######', '######', '.####.'],   // pelota de playa
-        ['..##..', '..##..', '######', '.####.', '.####.', '##..##']] }, // estrella de mar
-  { 5: [['.###.', '#####', '#####', '.###.', '..#..']],         // globo pequeño
-    6: [['.####.', '######', '######', '.####.', '..##..', '...#..'],   // globo
-        ['######', '######', '.####.', '..##..', '..##..', '..##..'],   // algodón de azúcar
-        ['#.##.#', '######', '######', '######', '######', '.####.'],   // corona del carrusel
-        ['.####.', '######', '#.##.#', '######', '#.##.#', '######']] }, // noria
-  { 6: [['.##...', '#####.', '######', '######', '######', '.####.'],   // nube
-        ['.####.', '######', '##..##', '##..##', '##..##', '##..##'],   // arcoíris
-        ['..##..', '..##..', '######', '.####.', '.####.', '##..##'],   // estrella
-        ['.###..', '##....', '##....', '##....', '###...', '.####.']] }, // luna,
-  { 5: [['.###.', '#####', '#####', '..#..', '.###.']],         // seta pequeña
-    6: [['.####.', '######', '######', '..##..', '..##..', '.####.'],   // seta
-        ['..##..', '.####.', '######', '######', '.####.', '..##..'],   // hoja
-        ['#.##.#', '######', '.####.', '..##..', '.####.', '.#..#.'],   // hada
-        ['..##..', '.####.', '######', '######', '..##..', '..##..']] }, // árbol
-  { 5: [['#...#', '##.##', '#####', '.###.', '..#..']],         // cola de sirena
-    6: [['.####.', '######', '######', '######', '#.##.#', '#.##.#'],   // pulpo
-        ['..####', '.#####', '######', '######', '.#####', '..####'],   // ballena
-        ['..##..', '######', '..##..', '..##..', '#.##.#', '######'],   // ancla
-        ['.####.', '######', '######', '.####.', '.#..#.', '.#..#.']] }, // medusa
-  { 5: [['.#.#.', '#####', '.###.', '#####', '.#.#.']],         // flor de cerezo pequeña
-    6: [['.#..#.', '######', '.####.', '######', '######', '.#..#.'],   // flor de cerezo
-        ['..##..', '######', '######', '######', '######', '..##..'],   // farolillo
-        ['######', '######', '.####.', '.####.', '..##..', '..##..'],   // abanico
-        ['#....#', '##..##', '######', '######', '######', '.####.']] }, // gatito de la suerte
-  { 6: [['..##..', '.####.', '######', '######', '.####.', '..##..'],   // planeta
-        ['..##..', '.####.', '.####.', '.####.', '######', '#.##.#'],   // cohete
-        ['.###..', '####..', '###...', '###...', '####..', '.####.'],   // luna
-        ['#.....', '##..##', '.#####', '..####', '..####', '...##.']] }, // estrella fugaz
-];
+// --- formas de tablero: PP_FORMAS y PP_FORMAS_MUNDO, en js/formas.js ---
 // --- semilla: cada nivel sale siempre igual ---
 function ppAzar(semilla) { let s = semilla >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 
@@ -207,12 +138,13 @@ function ppMargen(g, dif) {
 // --- el nivel g: forma, burbujas especiales, óptimo y límite de toques ---
 // Se prueban varias formas y repartos de dobles (6, salvo en el tutorial) y se queda la que más se acerca a la curva.
 const PP_CACHE_NIVEL = {};
-function ppConstruye(g, intento, dif = false) {
+function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: una forma concreta (ver ppNivel)
   const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(1000 * (m + 1) + l * 37 + 11 + intento * 7919 + (dif ? 500009 : 0));
   // el tamaño crece a lo largo del mundo, de M.lado[0] a M.lado[1] (en difícil, el grande casi desde el principio)
   const [l0, l1] = M.lado, lado = dif ? (l <= 6 ? Math.max(4, l1 - 1) : l1) : Math.min(l1, l0 + Math.floor((l - 1) * (l1 - l0 + 1) / (M.niveles * 0.75)));
   let mask;
-  if (dif) { const f = ppEsJefe(g) ? [PP_FORMAS[lado][lado === 5 ? (m === 0 ? 3 : 5) : 5]] : PP_FORMAS[lado]; mask = f[Math.floor(az() * f.length)]; }   // jefe difícil: estrella o marco
+  if (forzada && forzada.length === lado) mask = forzada;
+  else if (dif) { const f = ppEsJefe(g) ? [PP_FORMAS[lado][lado === 5 ? (m === 0 ? 3 : 5) : 5]] : PP_FORMAS[lado]; mask = f[Math.floor(az() * f.length)]; }   // jefe difícil: estrella o marco
   else if (m === 0 && l === 1) mask = PP_FORMAS[3][1];                         // la cruz: se revienta entera de un toque
   else if (m === 0 && l === 2) mask = PP_FORMAS[3][0];
   else if (ppEsJefe(g)) mask = (PP_FORMAS_MUNDO[m][lado] || PP_FORMAS[lado])[0];   // jefe: la forma estrella del mundo
@@ -308,16 +240,36 @@ function ppResuelveLO(n, mask, up) {
   piv.forEach((c, r) => { if (filas[r][V]) sol.push(vars[c]); });
   return sol;
 }
+// la huella de un tablero: dos niveles con la misma se ven y se juegan igual
+const ppHuella = d => d.lado + '|' + d.mask.join('') + '|' + d.need.join('') + '|' + (d.esp ? d.esp.join('') : '');
+// las huellas de los niveles de pop-it anteriores del mismo mundo y modo (los duelos y la pesadilla van aparte)
+function ppHuellasAntes(g, dif) {
+  const [m] = ppMundoDe(g), vistas = new Set();
+  for (let k = ppInicioMundo(m); k < g; k++) if (!ppEsNim(k)) vistas.add(ppHuella(ppNivel(k, dif)));
+  return vistas;
+}
+// De los intentos se queda el que más se acerca a la curva, pero NUNCA un tablero que ya ha salido antes en ese mundo (Daniel,
+// 17-11-2026: en el Jardín, sin burbujas especiales, el 1 era igual al 3 y el 2 al 4). Si todos los intentos están repetidos,
+// va probando una a una las formas del mundo, las de siempre y las de reserva (PP_FORMAS_EXTRA) hasta dar con una nueva.
+function ppNivelNuevo(g, dif, vistas) {
+  const [m] = ppMundoDe(g), lado = ppConstruye(g, 0, dif).lado;
+  const formas = [...(PP_FORMAS_MUNDO[m][lado] || []), ...PP_FORMAS[lado], ...(PP_FORMAS_EXTRA[lado] || [])];
+  for (let k = 0; k < formas.length; k++) { const d = ppConstruye(g, k, dif, formas[k]); if (!vistas.has(ppHuella(d))) return d; }
+  return null;
+}
 function ppNivel(g, dif = false) {
   const clave = ppPrefijo(dif) + g;
   if (PP_CACHE_NIVEL[clave]) return PP_CACHE_NIVEL[clave];
   if (ppEsNim(g)) return (PP_CACHE_NIVEL[clave] = ppNivelNim(g, dif));
   if (dif === 2) return (PP_CACHE_NIVEL[clave] = ppNivelPesadilla(g));
-  const obj = ppObjetivo(g, dif), intentos = obj >= 1 ? 1 : 6;
-  let mejor = null;
-  for (let k = 0; k < intentos; k++) { const d = ppConstruye(g, k, dif); if (!mejor || Math.abs(d.pasa - obj) < Math.abs(mejor.pasa - obj)) mejor = d; }
-  PP_CACHE_NIVEL[clave] = mejor;
-  return mejor;
+  const obj = ppObjetivo(g, dif), intentos = obj >= 1 ? 1 : 6, vistas = ppHuellasAntes(g, dif);
+  let mejor = null, repetido = null;
+  for (let k = 0; k < intentos; k++) {
+    const d = ppConstruye(g, k, dif);
+    if (vistas.has(ppHuella(d))) { repetido = repetido || d; continue; }
+    if (!mejor || Math.abs(d.pasa - obj) < Math.abs(mejor.pasa - obj)) mejor = d;
+  }
+  return (PP_CACHE_NIVEL[clave] = mejor || ppNivelNuevo(g, dif, vistas) || repetido);
 }
 // el primer nivel global de un mundo
 function ppInicioMundo(m) { let g = 0; for (let k = 0; k < m; k++) g += PP_MUNDOS[k].niveles; return g; }

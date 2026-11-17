@@ -66,7 +66,7 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-est.pp-on { opacity: 1; filter: none; animation: pp-est 0.35s cubic-bezier(.3, 1.8, .5, 1) both; }
 @keyframes pp-est { from { transform: scale(0) rotate(-40deg); } to { transform: scale(1) rotate(0); } }
 /* el botón de pausa: caramelo azul redondo con sus dos rayitas (dibujadas con CSS, nada de emojis) */
-.pp-redondo { position: absolute; left: 26px; top: 92px; width: 60px; height: 60px; border: 0; border-radius: 50%; display: flex; gap: 7px; align-items: center; justify-content: center; z-index: 20;
+.pp-redondo { position: absolute; right: 26px; top: 30px; width: 60px; height: 60px; border: 0; border-radius: 50%; display: flex; gap: 7px; align-items: center; justify-content: center; z-index: 20;
   background: linear-gradient(180deg, #9fdcff, #4aa8f0); box-shadow: inset 0 0 0 4px #1f6fb8, inset 0 -6px 0 rgba(0, 0, 0, 0.12), 0 5px 0 #1f6fb8, 0 9px 14px rgba(160, 60, 120, 0.25); transition: transform 0.08s; }
 .pp-redondo::before { content: ''; position: absolute; left: 14px; right: 14px; top: 6px; height: 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.6); }
 .pp-redondo span { position: relative; width: 8px; height: 24px; border-radius: 4px; background: #fff; box-shadow: 0 0 0 3px #1f6fb8; }
@@ -136,14 +136,14 @@ img.pp-ico { border-radius: 0; }
 .pp-oferta { color: #ff3a6a; font-size: 34px; }
 .pp-btn2.pp-oferta-btn { --c1: #ffe36e; --c2: #ffb000; --borde: #c27a00; }
 .pp-pase { width: 100%; max-height: 46vh; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
-.pp-pase-fila { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 6px; align-items: stretch; opacity: 0.6; }
+.pp-pase-fila { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 6px; align-items: stretch; opacity: 0.8; }
 .pp-pase-fila.pp-hecho { opacity: 1; }
 .pp-pase-fila i { font-style: normal; font-weight: 700; color: #fff; background: #ff9ccf; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 #pp-ui .pp-pase-premio { position: relative; font: inherit; font-size: 16px; color: #7a3a7a; padding: 6px; border-radius: 14px; border: 3px solid #9fdcff; background: #fff; cursor: default; }
 .pp-pase-premio.pp-premium { border-color: #ffd64a; background: #fff8dc; }
 .pp-pase-premio.pp-listo { cursor: pointer; box-shadow: 0 0 0 4px #4fc964; animation: pp-late 1.4s ease-in-out infinite; }
 .pp-pase-premio.pp-cogido { opacity: 0.4; }
-.pp-pase-premio s { position: absolute; inset: 0; border-radius: 12px; background: rgba(122, 74, 138, 0.35); }
+.pp-pase-premio s { position: absolute; inset: 0; border-radius: 12px; background: repeating-linear-gradient(135deg, rgba(255, 190, 40, 0.34) 0 10px, rgba(255, 226, 120, 0.22) 10px 20px); }   /* premium sin comprar: rayas doradas, nada de gris (Daniel) */
 .pp-semana { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
 .pp-dia { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px; border-radius: 14px; border: 3px solid #ffd1ec; background: #fff; font-size: 15px; }
 .pp-dia.pp-hoy { border-color: #ff8a2a; box-shadow: 0 0 0 3px #ffd64a; }
@@ -162,3 +162,14 @@ img.pp-ico { border-radius: 0; }
 .pp-rfila span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; font-weight: 700; }
 .pp-rfila b { color: #c43a84; }
 .pp-rpuntos { text-align: center; color: #a05a9a; }
+/* el botón ¡A JUGAR! de la cortinilla no asoma por encima de una ventana (la pausa) */
+#pp-ui:has(#pp-modal:not([hidden])) #pp-cort-jugar { visibility: hidden; }
+/* las barras de volumen de core (OPCIONES.sonido) vestidas de Pop: tarjeta clara, nombre que se lee y barra rosa, ni negro ni lila */
+#pp-ui .opt-list { gap: 8px; max-width: none; }
+#pp-ui .opt-row { border: 3px solid #ffb8dc; border-radius: 18px; background: #fff; color: #c43a84; font-size: 20px; padding: 8px 14px; }
+#pp-ui .opt-row input[type="range"] { -webkit-appearance: none; appearance: none; flex: 1; max-width: 250px; height: 34px; margin: 0; background: transparent; cursor: pointer; }
+#pp-ui .opt-row input[type="range"]::-webkit-slider-runnable-track { height: 14px; border-radius: 999px; background: #ffd9ec; box-shadow: inset 0 0 0 3px #ff9ccf; }
+#pp-ui .opt-row input[type="range"]::-moz-range-track { height: 14px; border-radius: 999px; background: #ffd9ec; box-shadow: inset 0 0 0 3px #ff9ccf; }
+#pp-ui .opt-row input[type="range"]::-moz-range-progress { height: 14px; border-radius: 999px; background: #ff6eb5; }
+#pp-ui .opt-row input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 32px; height: 32px; margin-top: -9px; border-radius: 50%; border: 4px solid #c43a84; background: linear-gradient(180deg, #ffb3da, #ff6eb5); box-shadow: 0 3px 0 #c43a84; }
+#pp-ui .opt-row input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 4px solid #c43a84; background: linear-gradient(180deg, #ffb3da, #ff6eb5); box-shadow: 0 3px 0 #c43a84; }

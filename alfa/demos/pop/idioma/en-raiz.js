@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la ficha de Fans of Pop en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.5.2
+  "<b>NIVELES SIN REPETIR</b>: en un mismo mundo ya no salen dos tableros iguales (en el Jardín, el 1 era igual al 3).": "<b>NO MORE REPEATED LEVELS</b>: a world never shows the same board twice (in the Garden, level 1 was the same as level 3).",
+  "<b>MENÚS MÁS PULIDOS</b>: el botón de pausa pasa arriba a la derecha y no tapa nada, las monedas y las perlas ya no se montan, y las barras de volumen y el Pase estrenan colores de Pop.": "<b>TIDIER MENUS</b>: the pause button moves to the top right where it covers nothing, coins and pearls no longer overlap, and the volume sliders and the Pass get proper Pop colours.",
+  "Phony ha encontrado a la tortuga que faltaba en el Fondo del mar. Llevaba dos semanas llegando.": "Phony found the turtle that was missing from Under the Sea. It had been on its way for two weeks.",
   // 0.5.1
   "<b>PRESENTACIÓN DE LOS DUELOS</b>: antes de cada jefe y de cada duelo sale una tarjeta muy mona sobre el fondo del mundo, con Lola contra su rival, una sintonía propia y «Así se gana» paso a paso. Empiezas cuando pulsas ¡A JUGAR!": "<b>DUEL INTROS</b>: before every boss and every duel, a cute card appears over the world's background, with Lola against her rival, its own jingle and a step-by-step «How to win». You start when you press LET'S PLAY!",
   "Ahora se dice <b>«haz pop»</b> en todo el juego.": "The whole game now says <b>«pop it»</b>.",

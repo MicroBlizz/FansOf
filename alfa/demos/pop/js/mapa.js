@@ -61,6 +61,17 @@ function ppFlecha(c, x, y, dir) {
   c.beginPath(); c.moveTo(-8 * dir, -12); c.lineTo(10 * dir, 0); c.lineTo(-8 * dir, 12); c.closePath(); c.fillStyle = '#fff'; c.fill();
   c.restore();
 }
+// varias cuentas (icono y cifra) en fila entre x0 y x1, pegadas a la derecha: si no caben, se encoge la letra en vez de montarse
+function ppPintaCuentas(c, x0, x1, y, cuentas) {
+  let tam = 28, ancho = 0;
+  const mide = () => { c.font = `700 ${Math.round(tam * PP_LETRA)}px ${PP_FUENTE}`; return cuentas.reduce((a, q) => a + tam + 8 + c.measureText(q[1]).width, 0) + (cuentas.length - 1) * 12; };
+  while ((ancho = mide()) > x1 - x0 && tam > 14) tam -= 2;
+  let x = x1 - ancho;
+  for (const [pinta, txt, borde] of cuentas) {
+    pinta(c, x + tam / 2, y, tam + 6); ppTexto(c, txt, x + tam + 6, y + 2, tam, '#fff', 'left', borde);
+    x += tam + 8 + c.measureText(txt).width + 12;
+  }
+}
 function ppPintaMapa(c, t) {
   const P = PP_P, actual = ppMundoActual();
   if (PP_MAPA.m === null || PP_MAPA.m > actual) ppMapaVer(actual, false);
@@ -100,8 +111,9 @@ function ppPintaMapa(c, t) {
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
   ppTitulo(c, tr('Mundo {n}', { n: m + 1 }), 270, 52, 40);
   ppTexto(c, tr(M.nombre) + (pes ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : ''), 270, 92, 28, '#fff', 'center', pes ? '#8a1020' : dif ? '#3a3a9a' : '#c43a84');
-  if (m > 0) { ppFlecha(c, 58, 66, -1); PP_BOTONES_MAPA.push({ x: 58, y: 66, r: 40, f: () => ppMapaVer(m - 1, false) }); }
-  if (m < actual) { ppFlecha(c, 482, 66, 1); PP_BOTONES_MAPA.push({ x: 482, y: 66, r: 40, f: () => ppMapaVer(m + 1, false) }); }
+  if (m > 0) { ppFlecha(c, 126, 66, -1); PP_BOTONES_MAPA.push({ x: 126, y: 66, r: 36, f: () => ppMapaVer(m - 1, false) }); }
+  // las flechas, a los lados del título: en la esquina derecha va el botón de pausa
+  if (m < actual) { ppFlecha(c, 414, 66, 1); PP_BOTONES_MAPA.push({ x: 414, y: 66, r: 36, f: () => ppMapaVer(m + 1, false) }); }
   // el selector FÁCIL · DIFÍCIL · PESADILLA (Daniel, 31-10-2026): cada modo sale cuando se abre; el que está cerrado, con candado gris
   if (ppDifAbierto(m)) {
     const y = 148, modos = [[tr('FÁCIL'), '#ff6eb5', '#c43a84'], [tr('DIFÍCIL'), '#4a54c8', '#2a2a7a'], [tr('PESADILLA'), '#c8323c', '#6a0a14']];
@@ -120,10 +132,8 @@ function ppPintaMapa(c, t) {
   const vidas = ppVidas();
   for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 50 + i * 38, yb + 32, 32, i < vidas);
   if (vidas < PP_CFG.vida) ppTexto(c, tr('+1 en {t}', { t: ppReloj(ppFaltaVida()) }), 34, yb + 64, 22, '#fff', 'left', '#c43a84');
-  ppEstrella(c, 262, yb + 32, 34, true); ppTexto(c, String(P.estrellas), 280, yb + 34, 28, '#fff', 'left', '#7a4a8a');
-  ppMoneda(c, 340, yb + 32, 34); ppTexto(c, String(SAVE.monedas), 358, yb + 34, 28, '#fff', 'left', '#c98a12');
-  // las perlas, con un «+» que abre la tienda
-  ppPerla(c, 432, yb + 32, 34); ppTexto(c, String(SAVE.perlas || 0), 450, yb + 34, 28, '#fff', 'left', '#c43a84');
+  // estrellas, monedas y perlas (con un «+» que abre la tienda): en fila y sin montarse por muchas que haya
+  ppPintaCuentas(c, 228, 478, yb + 32, [[(c2, x, y, s) => ppEstrella(c2, x, y, s, true), String(P.estrellas), '#7a4a8a'], [ppMoneda, String(SAVE.monedas), '#c98a12'], [ppPerla, String(SAVE.perlas || 0), '#c43a84']]);
   c.beginPath(); c.arc(500, yb + 20, 13, 0, Math.PI * 2); c.fillStyle = '#4fc964'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#26924a'; c.stroke();
   c.fillStyle = '#fff'; c.fillRect(494, yb + 18, 12, 4); c.fillRect(498, yb + 14, 4, 12);
   PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: () => ppTienda(null, 'perlas') });

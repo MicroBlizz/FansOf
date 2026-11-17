@@ -151,6 +151,7 @@ function ppCorazon(c, x, y, s, lleno) {
   c.fillStyle = lleno ? '#ff4a6a' : '#3a2a44'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a1030'; c.stroke(); c.restore();
 }
 // monedas y perlas, siempre a la vista mientras juegas (Daniel, 31-10-2026). Empieza en x; devuelve dónde acaba
+// monedas y perlas seguidas, sin montarse (cada cifra ocupa lo que mide)
 function ppPintaMonedero(c, x, y) {
   c.font = `700 ${Math.round(22 * PP_LETRA)}px ${PP_FUENTE}`;
   const m = String(SAVE.monedas || 0), p = String(SAVE.perlas || 0);
@@ -165,14 +166,14 @@ function ppPintaMarcador(c, t) {
   const dano = PP_FX.dano;
   const vidas = ppVidas();
   for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
-  ppPintaMonedero(c, 96, 86);   // bajo los corazones, al lado de la pausa
+  ppPintaMonedero(c, 28, 88);   // bajo los corazones (la pausa va arriba a la derecha: Daniel, 17-11-2026)
   // toques de la sala
   if (P.T && P.T.nim) ppMarcadorNim(c, P.T, t);   // nivel duelo: el rival y de quién es el turno (js/nimnivel.js)
   else if (P.T) {
     const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
-    ppTexto(c, tr('Toques'), 496, 36, 22, '#ffe6f4', 'right');
-    ppTexto(c, `${T.toques} / ${T.limite}`, 496, 66, 40, col, 'right');
-    const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 104, 28, k < est);
+    ppTexto(c, tr('Toques'), 432, 36, 22, '#ffe6f4', 'right');   // a la izquierda del botón de pausa
+    ppTexto(c, `${T.toques} / ${T.limite}`, 432, 66, 40, col, 'right');
+    const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 116, 28, k < est);
     ppTexto(c, T.titulo || '', 270, 118, 34, '#ffd64a', 'center', '#7a4a8a');
     if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques de sobra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');
     else if (T.d && T.d.dificil) ppTexto(c, tr('¡Nivel difícil!'), 270, 150, 22, '#ff6ec7', 'center', '#fff');

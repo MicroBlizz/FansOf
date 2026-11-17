@@ -117,12 +117,12 @@ function ppPintaDuelo(c, t) {
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
   const br = PP_FX.brilla.ceo || 0;
   const rival = D.pvp ? D.pvp.nombre.slice(0, 14) : tr('El CEO');   // contra gente, su apodo y un amigo de gelatina
-  ppSlimeRepuestoOImagen(c, D.pvp ? 'nubecita' : 'ceo', 420, 88 - br * 12, 46, t, 1);
+  ppSlimeRepuestoOImagen(c, D.pvp ? 'nubecita' : 'ceo', 400, 88 - br * 12, 42, t, 1);   // a la izquierda del botón de pausa
   ppSlimeRepuestoOImagen(c, 'lola', 140, 88, 40, t, 1);
   ppTexto(c, tr('Tú'), 140, 146, 26, '#fff', 'center', '#c43a84');
-  ppTexto(c, rival, 420, 146, 22, '#fff', 'center', '#3a3a6a');
-  ppTitulo(c, tr('DUELO'), 270, 58, 44);
-  ppPintaMonedero(c, 360, 36);
+  ppTexto(c, rival, 400, 146, 22, '#fff', 'center', '#3a3a6a');
+  ppTitulo(c, tr('DUELO'), 270, 66, 44);
+  ppPintaMonedero(c, 28, 32);   // arriba a la izquierda: a la derecha va el botón de pausa
   const txt = D.fin ? (D.fin === 'gana' ? tr('¡Ganas!') : D.pvp ? tr('¡Gana {n}!', { n: rival }) : tr('¡Gana el CEO!')) : D.turno === 'yo' ? tr('Tu turno') : D.pvp ? tr('Piensa {n}…', { n: rival }) : tr('Piensa el CEO…');
   ppTexto(c, txt, 270, 118, 32, D.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#7a4a8a');
   ppPintaTablero(c, T, t);

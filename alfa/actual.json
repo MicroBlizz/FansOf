@@ -1,8 +1,8 @@
 {
- "build": 1220,
- "hash": "c2c5980",
- "fecha": "2026-11-17T08:35:23Z",
- "mensaje": "Pop: reglas y catálogo del perfil de jugador, con sus tests (tarea #41, ADR 130, nodos 1 y 4)",
+ "build": 1221,
+ "hash": "d4b3ca5",
+ "fecha": "2026-11-17T08:45:24Z",
+ "mensaje": "Fans of Wings 0.1.2: una cabina distinta por caza, en pixel art, con instrumentos que funcionan y la pata en la palanca (tarea #72, ADR 131)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

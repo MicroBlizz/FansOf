@@ -43,6 +43,10 @@ IDIOMA.add({
  "DESDE ARRIBA": "FROM ABOVE",
  "PERSECUCIÓN": "CHASE",
  "CABINA": "COCKPIT",
+ // la cabina (js/cabina.js y js/cabinas.js)
+ "RBO": "HDG",
+ "E": "E",
+ "MISIL LISTO": "MISSILE LOCK",
  "DESPEJA EL CIELO": "CLEAR THE SKIES",
  "Derriba a la patrulla de Microblizz": "Shoot down the Microblizz patrol",
  "SIN MISILES": "NO MISSILES",

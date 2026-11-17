@@ -126,7 +126,8 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     const mx = joy.dx + T('arrowright', 'd') - T('arrowleft', 'a'), my = (joy.dy + T('arrowdown', 's') - T('arrowup', 'w')) * invierte;
     const especial = est.especial || !!est.pulso;
     est.pulso = false;
-    return { mx: Math.max(-1, Math.min(1, mx)), my: Math.max(-1, Math.min(1, my)), fuego: est.fuego, especial };
+    est.mando = { mx: Math.max(-1, Math.min(1, mx)), my: Math.max(-1, Math.min(1, my)), fuego: est.fuego, especial };   // la cabina la mira para mover la palanca
+    return est.mando;
   }
 
   // ---------- misión ----------
@@ -166,7 +167,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     if (est.modo === 'titulo') { UI.titulo(G, est.t); return; }
     if (est.modo === 'hangar') { UI.hangar(G, A.AJ, est.sel, est.t, est.mejor); UI.texto(G, ritmo.ips + ' ' + tr('imágenes por segundo'), UI.W - 24, 112, 8, '#fff', 'right'); return; }
     if (est.modo === 'final') { UI.final(G, e, est.t, est.record); return; }
-    A.cabina(G, e, VI.pesoCabina, UI.W);
+    A.cabina(G, e, VI.pesoCabina, UI.W, est.mando);
     if (est.t - est.flash < 0.18) { G.fillStyle = 'rgba(255,60,40,' + (0.45 * (1 - (est.t - est.flash) / 0.18)) + ')'; G.fillRect(0, 0, UI.W, 720); }
     UI.hud(G, e, VI.pesoCabina);
     FX.dibujarCarteles(G, UI.texto, UI.W / 2);

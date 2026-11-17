@@ -1,59 +1,109 @@
-// Fans of Wings · La cabina (cámara en primera persona), dibujada por código: el arco de la cúpula y el panel de instrumentos
-// con el radar, el horizonte artificial, dos relojes y la pantalla de datos (altura, velocidad y combustible).
+// Fans of Wings · La cabina (cámara en primera persona). Cada caza tiene la suya: una imagen en pixel art (img/cabina-<caza>-<idioma>.png,
+// con el cristal transparente) y, dibujado encima, lo que se mueve: agujas, horizonte artificial, radar, cifras, barras, misiles y la
+// palanca con la pata del piloto, que se inclina con el mando. Dónde va cada cosa lo dice cabinas.js.
 'use strict';
 var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 (function (A) {
-  const ALTO = 250, Y0 = 720 - ALTO;
+  const U = 720 / 270;                       // un píxel gordo del dibujo, en la pantalla lógica de 720 de alto
+  const LETRA = (n) => n + "px 'Press Start 2P', monospace";
+  const fotos = {}, mano = { giro: 0, baja: 0 };
 
-  function cupula(g, W) {
-    for (const [c, an, a0, a1] of [['#16213a', 40, Math.PI, 2 * Math.PI], ['#2a3b63', 12, Math.PI, 2 * Math.PI], ['#f2702a', 22, 1.22 * Math.PI, 1.34 * Math.PI], ['#f2702a', 22, 1.66 * Math.PI, 1.78 * Math.PI]]) {
-      g.strokeStyle = c; g.lineWidth = an; g.beginPath(); g.ellipse(W / 2, Y0 + 70, W * 0.53, Y0 + 50, 0, a0, a1); g.stroke();
+  // Las imágenes se piden la primera vez que hacen falta; hasta que llegan no se dibuja la cabina.
+  function foto(nombre) {
+    if (!fotos[nombre]) { fotos[nombre] = new Image(); fotos[nombre].src = 'img/' + nombre + '.png'; }
+    const f = fotos[nombre];
+    return f.complete && f.naturalWidth ? f : null;
+  }
+
+  function aguja(g, r, v) {
+    const an = -2.3 + v * 4.6, sx = Math.sin(an), cy = -Math.cos(an);
+    g.lineCap = 'butt';
+    g.strokeStyle = '#000'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(r.x + 0.5, r.y + 0.5); g.lineTo(r.x + 0.5 + sx * (r.r - 3.5), r.y + 0.5 + cy * (r.r - 3.5)); g.stroke();
+    g.strokeStyle = r.color; g.lineWidth = r.r > 11 ? 1.5 : 1; g.beginPath(); g.moveTo(r.x - sx * 2.5, r.y - cy * 2.5); g.lineTo(r.x + sx * (r.r - 3.5), r.y + cy * (r.r - 3.5)); g.stroke();
+    g.fillStyle = '#15161a'; g.beginPath(); g.arc(r.x, r.y, 1.6, 0, 7); g.fill(); g.fillStyle = '#d8dce4'; g.beginPath(); g.arc(r.x, r.y, 1, 0, 7); g.fill();
+  }
+
+  // El horizonte artificial: cielo y tierra que giran con el alabeo y suben o bajan con el cabeceo, y las alitas amarillas fijas.
+  function horizonte(g, h, d) {
+    const w = h.w || h.r, a = h.h || h.r;
+    g.save(); g.beginPath();
+    if (h.r) g.arc(h.x, h.y, h.r, 0, 7); else g.rect(h.x - w, h.y - a, w * 2, a * 2);
+    g.clip(); g.translate(h.x, h.y); g.rotate(-d.alabeo); g.translate(0, d.cabeceo * a * 1.4);
+    const L = w * 4;
+    g.fillStyle = '#2f6fc8'; g.fillRect(-L, -L, L * 2, L); g.fillStyle = '#4f9be0'; g.fillRect(-L, -a * 0.7, L * 2, a * 0.7); g.fillStyle = '#6fb4ee'; g.fillRect(-L, -a * 0.3, L * 2, a * 0.3);
+    g.fillStyle = '#5a3818'; g.fillRect(-L, 0, L * 2, L); g.fillStyle = '#8a5a2c'; g.fillRect(-L, 0, L * 2, a * 0.7); g.fillStyle = '#a8703a'; g.fillRect(-L, 0, L * 2, a * 0.3);
+    g.fillStyle = '#fff'; g.fillRect(-L, -0.6, L * 2, 1.2);
+    for (let k = -4; k <= 4; k++) if (k) { const m = k % 2 ? w * 0.16 : w * 0.3; g.fillRect(-m, k * a * 0.2 - 0.35, m * 2, 0.7); }
+    g.restore();
+    g.fillStyle = '#2a1a00'; g.fillRect(h.x - w * 0.6, h.y - 0.5, w * 0.36, 2); g.fillRect(h.x + w * 0.24, h.y - 0.5, w * 0.36, 2);
+    g.fillStyle = '#ffd23c'; g.fillRect(h.x - w * 0.6, h.y - 0.5, w * 0.36, 1.5); g.fillRect(h.x + w * 0.24, h.y - 0.5, w * 0.36, 1.5);
+    g.fillRect(h.x - w * 0.24, h.y + 1, 1.5, 2.5); g.fillRect(h.x + w * 0.24 - 1.5, h.y + 1, 1.5, 2.5); g.beginPath(); g.arc(h.x, h.y, 1.3, 0, 7); g.fill();
+    if (h.r) { g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 2; g.beginPath(); g.arc(h.x, h.y, h.r - 1, 0, 7); g.stroke(); g.strokeStyle = 'rgba(255,255,255,.7)'; g.lineWidth = 0.8; g.beginPath(); g.arc(h.x, h.y, h.r - 2.5, 3.6, 4.4); g.stroke(); }
+  }
+
+  function texto(g, t, d) {
+    const v = d[t.de];
+    if (v === '') return;
+    const s = (t.et ? tr(t.et) + ' ' : '') + (t.de === 'fijado' ? tr(v) : v), tam = t.tam || 5;
+    g.font = LETRA(tam); g.textAlign = t.al; g.textBaseline = 'alphabetic';
+    if (t.caja) { const x = t.al === 'center' ? t.x - t.caja / 2 : t.x - t.caja + 1.5; g.fillStyle = '#0e0f12'; g.fillRect(x, t.y - tam - 2, t.caja, tam + 4); }
+    g.fillStyle = t.color; g.fillText(s, t.x, t.y);
+  }
+
+  function barra(g, b, d) {
+    const paso = Math.floor((b.w * 2 - 2) / b.n) / 2, n = Math.ceil(d[b.de] * b.n - 0.001);   // mismas medidas que pincel.barra
+    for (let i = 0; i < n; i++) {
+      g.fillStyle = b.color; g.fillRect(b.x + 1 + i * paso, b.y + 1, paso - 1, b.h - 2);
+      g.fillStyle = 'rgba(255,255,255,.5)'; g.fillRect(b.x + 1 + i * paso, b.y + 1, paso - 1, 0.5);
     }
   }
-  function panel(g, W) {
-    g.fillStyle = '#16213a'; g.fillRect(0, Y0, W, ALTO);
-    g.fillStyle = '#1e2c4d'; g.beginPath(); g.moveTo(W * 0.3, Y0); g.lineTo(W * 0.34, Y0 - 24); g.lineTo(W * 0.66, Y0 - 24); g.lineTo(W * 0.7, Y0); g.fill();
-    g.fillStyle = '#2a3b63'; g.fillRect(0, Y0, W, 7);
-    g.fillStyle = '#f2702a'; for (let i = 0; i < 4; i++) g.fillRect(W / 2 - 54 + i * 29, Y0 - 15, 20, 7);
-  }
-  function pantalla(g, x, y, w, h) { g.fillStyle = '#080d1a'; g.fillRect(x - 7, y - 7, w + 14, h + 14); g.fillStyle = '#0c2a17'; g.fillRect(x, y, w, h); }
 
-  function horizonte(g, j, cx, cy, r) {
-    const alabeo = A.vuelo.alabeo(j), cabeceo = Math.asin(Math.max(-1, Math.min(1, j.f.y)));
-    g.fillStyle = '#080d1a'; g.beginPath(); g.arc(cx, cy, r + 12, 0, 7); g.fill();
-    g.save(); g.beginPath(); g.arc(cx, cy, r, 0, 7); g.clip(); g.translate(cx, cy); g.rotate(-alabeo); g.translate(0, cabeceo * r * 1.4);
-    g.fillStyle = '#5aa6e8'; g.fillRect(-r * 3, -r * 5, r * 6, r * 5); g.fillStyle = '#9a6a3a'; g.fillRect(-r * 3, 0, r * 6, r * 5); g.fillStyle = '#fff'; g.fillRect(-r * 3, -2, r * 6, 4);
-    for (let i = -3; i <= 3; i++) if (i) g.fillRect(-r * 0.3, i * r * 0.35 - 1, r * 0.6, 2);
+  // Los misiles que quedan, como misilitos de pie en su caja (los gastados, apagados).
+  function misiles(g, m, e) {
+    const n = e.caza.misiles, paso = m.w / n, an = Math.min(3, paso - 2);
+    for (let i = 0; i < n; i++) {
+      const x = m.x + i * paso + (paso - an) / 2, queda = i < e.misiles;
+      g.fillStyle = queda ? '#f4f4f0' : '#3a3a3a'; g.fillRect(x, m.y + 3, an, m.h - 6); g.fillRect(x - 1, m.y + m.h - 4, an + 2, 2);
+      g.fillStyle = queda ? '#e63a2a' : '#3a3a3a'; g.fillRect(x, m.y + 1, an, 2.5);
+    }
+  }
+
+  function gases(g, q, d) {
+    const n = Math.max(1, Math.round(d.motor * q.n));
+    g.fillStyle = q.color;
+    for (let i = 0; i < n; i++) g.fillRect(q.x, q.y + (q.n - 1 - i) * q.paso, q.w, q.h);
+  }
+
+  // La palanca con la pata: gira sobre su base con el mando a los lados y baja un poco al tirar de ella.
+  function palanca(g, p, img, mando) {
+    mano.giro += ((mando ? mando.mx : 0) * 0.2 - mano.giro) * 0.25; mano.baja += ((mando ? mando.my : 0) * 2.5 - mano.baja) * 0.25;
+    g.save(); g.translate(p.x + p.w / 2, 273); g.rotate(mano.giro);
+    g.drawImage(img, -p.w / 2, p.y - 270 + mano.baja, p.w, p.h);
     g.restore();
-    g.fillStyle = '#ffd23c'; g.fillRect(cx - r * 0.6, cy - 2, r * 0.36, 5); g.fillRect(cx + r * 0.24, cy - 2, r * 0.36, 5); g.fillRect(cx - 3, cy - 3, 6, 6);
-  }
-  function reloj(g, x, y, v) {
-    g.fillStyle = '#080d1a'; g.beginPath(); g.arc(x, y, 28, 0, 7); g.fill(); g.strokeStyle = '#2a3b63'; g.lineWidth = 5; g.stroke();
-    const an = -2.3 + Math.max(0, Math.min(1, v)) * 4.6;
-    g.strokeStyle = '#f2702a'; g.lineWidth = 4; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.sin(an) * 21, y - Math.cos(an) * 21); g.stroke();
-  }
-  function datos(g, e, x, y, w) {
-    const j = e.aire.jugador, C = e.aj.combustible, T = A.ui.texto, P = e.aj.aire.vuelo;
-    T(g, tr('ALT') + ' ' + Math.round(j.pos.y), x + 14, y + 34, 12, j.pos.y < P.altAviso ? '#ff5a3a' : '#6dff8a', 'left');
-    T(g, tr('VEL') + ' ' + Math.round(j.vel * 3.6), x + 14, y + 66, 12, j.vel < P.velMin * 1.1 ? '#ff5a3a' : '#6dff8a', 'left');
-    T(g, tr('COMB') + ' ' + Math.ceil(e.combustible), x + 14, y + 98, 12, e.combustible < C.aviso ? '#ff5a3a' : '#6dff8a', 'left');
-    T(g, tr('MISILES') + ' ' + e.misiles, x + 14, y + 130, 12, '#9fe0ff', 'left');
-    A.ui.barra(g, x + 14, y + 150, w - 28, 12, e.escudo / e.caza.escudo, '#5fe05f');
   }
 
-  // peso = cuánto de la cabina se ve (0 a 1, mientras la cámara entra o sale).
-  A.cabina = function (g, e, peso, W) {
-    if (peso <= 0.01) return;
-    g.save(); g.globalAlpha = peso;
-    cupula(g, W); panel(g, W);
-    const ancho = Math.min(230, W * 0.2), alto = ALTO - 64, y = Y0 + 34, izq = W * 0.5 - 150 - ancho - 96, der = W * 0.5 + 150 + 96;
-    pantalla(g, izq, y, ancho, alto);
-    g.save(); g.beginPath(); g.rect(izq, y, ancho, alto); g.clip(); A.ui.radar(g, e, izq + ancho / 2, y + alto / 2, alto / 2 - 6); g.restore();
-    const j = e.aire.jugador, P = e.aj.aire.vuelo;
-    horizonte(g, j, W / 2, Y0 + ALTO * 0.48, 84);
-    reloj(g, W / 2 - 150, Y0 + 70, j.vel / P.velMax); reloj(g, W / 2 - 150, Y0 + 170, e.combustible / e.aj.combustible.max);
-    reloj(g, W / 2 + 150, Y0 + 70, j.pos.y / P.altMax); reloj(g, W / 2 + 150, Y0 + 170, e.escudo / e.caza.escudo);
-    pantalla(g, der, y, ancho, alto); datos(g, e, der, y, ancho);
+  function instrumentos(g, c, e, d) {
+    horizonte(g, c.horizonte, d);
+    for (const r of c.relojes) aguja(g, r, d[r.de]);
+    g.save(); g.scale(1 / U, 1 / U); A.ui.radar(g, e, c.radar.x * U, c.radar.y * U, c.radar.r * U); g.restore();   // el radar del HUD dibuja en medidas de pantalla
+    for (const b of c.barras) barra(g, b, d);
+    if (c.misiles) misiles(g, c.misiles, e);
+    if (c.gases) gases(g, c.gases, d);
+    for (const t of c.textos) texto(g, t, d);
+  }
+
+  // peso = cuánto de la cabina se ve (0 a 1, mientras la cámara entra o sale). mando = la orden del jugador ({ mx, my }).
+  A.cabina = function (g, e, peso, W, mando) {
+    const c = A.cabinas[e.caza.id];
+    if (!c) return;
+    const idioma = document.documentElement.lang === 'es' ? 'es' : 'en';   // los rótulos van pintados: hay imagen en español y en inglés
+    const fondo = foto('cabina-' + e.caza.id + '-' + idioma), mango = foto('palanca-' + e.caza.id);
+    if (peso <= 0.01 || !fondo || !mango) return;
+    g.save(); g.globalAlpha = peso; g.imageSmoothingEnabled = false;
+    g.translate(W / 2 - 240 * U, 0); g.scale(U, U);
+    g.drawImage(fondo, -75, 0, 630, 270);
+    instrumentos(g, c, e, A.cabinaDatos(e, new Date()));
+    palanca(g, c.palanca, mango, mando);
     g.restore();
   };
 })(WINGS);

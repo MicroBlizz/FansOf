@@ -8,3 +8,5 @@
 #pie-redes { text-align: center; margin: 28px 0 0; padding: 0 16px; font: 700 14px/1.5 var(--font-ui, "Baloo 2", system-ui, sans-serif); color: var(--ink-dim, #cdb9ea); }
 #pie-redes a { color: var(--gold, #ffcf3f); text-decoration: none; }
 main.con-pie { padding-bottom: 0; margin-bottom: 0; }
+/* con el estilo nuevo, la banda es el azul casi negro del contorno */
+html.portada-nueva #pie-fansof, html.portada-nueva #pie-redes { --pie-fondo: #07101f; }

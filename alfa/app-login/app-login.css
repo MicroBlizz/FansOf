@@ -1,0 +1,9 @@
+/* Fans Of · APP-LOGIN (app-login/index.html): la página puente del inicio de sesión de las apps de Android. Se ve un instante: un título, una línea y un botón,
+   con las letras y los colores de la casa (core/css/base.css y estilo/web.css). */
+body { user-select: text; -webkit-user-select: text; touch-action: auto; }
+main { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; text-align: center; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.1; margin: 0; color: var(--ink); }
+p { margin: 0; max-width: 320px; font-weight: 700; color: var(--ink-dim); }
+a.boton { display: inline-block; padding: 12px 26px 8px; border: 3px solid var(--outline); border-radius: 14px; box-shadow: 0 5px 0 var(--outline);
+  background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); font-family: var(--font-display); font-size: 20px; text-decoration: none; }
+a.boton:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }

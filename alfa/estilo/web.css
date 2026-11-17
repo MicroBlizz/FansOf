@@ -4,6 +4,9 @@
    y las piezas nuevas (clase .pn: el logo y la barra de abajo) no se ven.
    El pie va en su hoja, estilo/pie.css (la carga también /gestion). Cada página añade encima su propia hoja (biblioteca/portada.css, lore/lore.css, estilo/texto.css…). */
 
+/* ---------- las tintas de los velos: fondos oscuros medio transparentes (chapas sobre una captura, barras, el zoom); cada regla pone su transparencia ---------- */
+:root { --tinta-fondo: 20, 10, 34; --tinta-panel: 38, 20, 60; --tinta-negra: 8, 4, 14; }
+
 /* ---------- el estilo nuevo: los colores de core pasan a la noche ---------- */
 html:not(.portada-nueva) .pn { display: none !important; }
 html.portada-nueva {
@@ -11,6 +14,7 @@ html.portada-nueva {
   --outline: #07101f; --panel: rgba(20, 37, 74, 0.96); --panel-2: rgba(11, 23, 48, 0.85); --off: #2e4a85; --scrim: rgba(7, 16, 31, 0.9);
   --gold: #ffd23f; --player: #ff8a1f; --player-lite: #ffb04d;
   --pn-votar: #15803d; --pn-votar-sombra: #0e5a2b;
+  --tinta-fondo: 7, 16, 31; --tinta-panel: 20, 37, 74; --tinta-negra: 4, 9, 18;
 }
 html.portada-nueva nav.menu { background: #0b1730; }
 

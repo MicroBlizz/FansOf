@@ -1,3 +1,6 @@
 /* Fans Of · ANDROID (android/index.html): los botones de descarga de los APK de prueba, encima de estilo/texto.css. */
-.apk{display:block;margin:10px 0;padding:14px 16px;border-radius:12px;background:#2a1844;color:#ffd75e;font-weight:800;text-decoration:none}
-.apk span{display:block;color:var(--ink-dim);font-weight:400;font-size:14px}
+.apk { display: block; margin: 10px 0; padding: 14px 16px; border-radius: 12px; background: #2a1844; color: #ffd75e; font-weight: 800; text-decoration: none; }
+.apk span { display: block; color: var(--ink-dim); font-weight: 400; font-size: 14px; }
+/* con el estilo nuevo: botón con el contorno grueso de la casa y los colores de la noche */
+html.portada-nueva .apk { background: var(--tray); color: var(--gold); border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); }
+html.portada-nueva .apk:hover, html.portada-nueva .apk:focus-visible { background: var(--tray-hi); outline: none; }

@@ -212,12 +212,13 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     const caza = A.AJ.cazas.find((c) => c.id === est.sel.caza);
     if (!est.exhib) { est.exhib = A.vuelo.nuevo(A.AJ, caza); VI.reiniciar(); }
     A.vuelo.paso(est.exhib, dt, { mx: 0, my: 0 }, A.AJ, caza);
-    VI.dibujar({ j: est.exhib, cazaId: caza.id, aire: null, orbita: est.t * 0.35 + 2, dt, t: est.t, empuje: 0.4 });
+    VI.dibujar({ j: est.exhib, cazaId: caza.id, aire: null, orbita: est.t * 0.35 + 2, dt, t: est.t, gases: 'crucero' });
   }
   function pintarMundo(dt) {
     if (est.modo === 'titulo' || est.modo === 'hangar' || est.modo === 'novedades') { exhibicion(dt); return; }
-    const e = est.e, j = e.aire.jugador, P = e.aj.aire.vuelo;
-    VI.dibujar({ j, cazaId: e.caza.id, aire: e.aire, orbita: est.modo === 'final' ? est.t * 0.3 : null, dt: est.modo === 'pausa' ? 0 : dt, t: est.modo === 'pausa' ? est.tPausa : est.t, empuje: Math.min(1.3, (j.vel - P.velMin) / (P.velMax - P.velMin)) });
+    const e = est.e, j = e.aire.jugador, quieto = est.modo === 'pausa';
+    VI.dibujar({ j, cazaId: e.caza.id, aire: e.aire, orbita: est.modo === 'final' ? est.t * 0.3 : null, dt: quieto ? 0 : dt, t: quieto ? est.tPausa : est.t,
+      gases: j.conTurbo ? 'turbo' : j.conFreno ? 'freno' : 'crucero' });
   }
   function pintarMenu() { const Z = zonas(); UI.pantallas[pantalla()].pintar(G, est, Z, Math.min(est.cursor, Z.length - 1)); }
   function pintarHud() {

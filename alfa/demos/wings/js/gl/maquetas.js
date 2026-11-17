@@ -96,15 +96,22 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     };
   };
 
-  // Un motor: un tubo a lo largo en |x| = o.x, con la boca oscura delante (o.labio la rodea de color), la tobera detrás y, con
-  // o.fuego, el fondo encendido. o.inclina corta la boca en bisel.
+  // Un motor: un tubo a lo largo en |x| = o.x, con la boca oscura delante (o.labio la rodea de color), la tobera hueca detrás y,
+  // con o.fuego, su fondo encendido. o.inclina corta la boca en bisel.
   function zonaTubo(o, d, z, z0, dy) {
     const tobera = o.tobera === undefined ? 2.6 : o.tobera;
     if (o.labio && d > 0.6 && z < z0 + o.labio) return 'aro';
     if (o.boca !== 0 && z < z0 + (o.boca || 1.2) && d < 0.6) return 'toma';
-    if (z > o.z1 - tobera) return o.fuego && d < 0.3 && z > o.z1 - 1.4 ? 'fuego' : (d < 0.5 ? 'toma' : 'tobera');
+    if (z > o.z1 - tobera) return tobera < 1.5 ? (d < 0.5 ? 'toma' : 'tobera') : zonaTobera(o, d, o.z1 - z, tobera - 0.7);
     if (z > o.z1 - tobera - 0.5) return 'aro';
     return dy < -o.r * 0.35 ? 'panza' : 'motor';
+  }
+  // La tobera es un tubo hueco de verdad: `hondo` unidades de agujero ('hueco' = aquí no hay nada, ni de otra pieza), la pared de
+  // dentro oscura y, en el fondo, el fuego encendido (o negro si el motor no lleva fuego). dentro = lo que falta para la salida.
+  function zonaTobera(o, d, dentro, hondo) {
+    if (d >= 0.5) return d < 0.75 ? 'toma' : 'tobera';
+    if (dentro < hondo) return 'hueco';
+    return o.fuego ? 'fuego' : 'toma';
   }
   MQ.tubo = function (o) {
     const e = o.exp || 3, rx = o.rx || o.r;
@@ -158,7 +165,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     const ax = Math.abs(x);
     let p = null;
     for (let i = 0; i < d.piezas.length && !p; i++) p = d.piezas[i](ax, y, z, x);
-    if (!p) return null;
+    if (!p || p === 'hueco') return null;   // 'hueco': una pieza vacía ese sitio (el interior de una tobera)
     for (const f of d.pintas || []) p = f(p, ax, y, z, x) || p;
     return p;
   };

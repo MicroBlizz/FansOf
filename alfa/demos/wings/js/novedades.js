@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.6', real: ['<b>FUEGO DE VERDAD EN LOS REACTORES</b>: las toberas ahora son huecas y el fuego arde al fondo. Volando normal solo se ve el resplandor de dentro; con el TURBO sale una llama viva, con el centro blanco azulado y el borde naranja, que parpadea y se dobla cuando giras; con el freno se encoge.'],
+    joke: ['Mantenimiento pregunta quién ha estado asando zanahorias dentro de la tobera izquierda. CrazyBunny no hace declaraciones.'] },
   { v: '0.1.5', real: ['<b>MENÚS NUEVOS Y MÁS VELOCIDAD</b>: todos los menús se han rehecho con estilo militar en pixel art (título con briefing y mapa, hangar, ajustes, partes y novedades), hay PAUSA en pleno vuelo y el parte final te pone un RANGO (S, A, B o C) según tus puntos y lo rápido que acabes. Los aviones vuelan un 50 % más rápido, estrenan TURBO (con su medidor, que se gasta y se recarga solo) y FRENO, y la cámara desde arriba enseña el doble de cielo. En el PC: Mayús es el turbo, Q el freno y Esc la pausa.'],
     joke: ['El becario ha preguntado si el turbo también sirve para salir antes de la oficina. Recursos Humanos está estudiando ponerle freno.'] },
   { v: '0.1.4', real: ['<b>SE JUEGA CON EL GIRO BLOQUEADO</b>: si el móvil tiene bloqueado el giro automático, ya no te quedas atascado en «Gira el móvil». Toca la pantalla y Wings se pone en pantalla completa y en horizontal él solo. En el iPhone, que no lo permite, el aviso te recuerda quitar el bloqueo de giro.'],

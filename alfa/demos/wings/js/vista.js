@@ -13,7 +13,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   const COLOR_PREMIO = { misiles: hex('#9fe0ff'), bombas: hex('#ffe14a'), reparacion: hex('#5fe05f'), combustible: hex('#ff8a2a') };
   const BLANCO = [1, 1, 1], BALA = hex('#fff2a0');
 
-  VI.reiniciar = function () { estela[0].length = 0; estela[1].length = 0; VI.golpes = {}; };
+  VI.reiniciar = function () { estela[0].length = 0; estela[1].length = 0; VI.golpes = {}; A.llamas.reiniciar(); };
   VI.cambiaCamara = function () { VI.antes = VI.modo; VI.modo = (VI.modo + 1) % 3; VI.mezcla = 0; return VI.CAMARAS[VI.modo]; };
   VI.ponCamara = function (i) { VI.modo = VI.antes = i; VI.mezcla = 1; };
   VI.evento = function (ev, t) { if (ev.tipo === 'impacto') VI.golpes[ev.id] = t; };
@@ -58,11 +58,15 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // El tamaño al que algo pequeño se sigue viendo: nunca menos que una fracción de su distancia al ojo.
   const visible = (p, base, k) => Math.max(base, V.dist(p, VI.cam.ojo) * (k || 0.004));
 
-  function llamas(id, matriz, fuerza, t) {
-    const largo = fuerza * (1 + Math.sin(t * 47) * 0.14 + Math.sin(t * 31) * 0.08);
-    GL.conNiebla(false);
-    for (const q of MOD.medidas(id).toberas) GL.malla(MOD.llama, M.varias(matriz, M.T(q[0], q[1], q[2]), M.S(1, 1, largo), M.T(0, 0, 4.2)));
-    GL.conNiebla(true);
+  // El fuego de los reactores (llamas.js): el de los enemigos, recto; el tuyo sigue a las toberas y se dobla al girar.
+  const LL = A.llamas;
+  function llamasEnemigo(id, matriz, e, largo, t) {
+    for (const q of MOD.medidas(id).toberas) LL.recta(M.punto(matriz, [q[0], q[1], q[2] - 0.6]), V.por(e.f, -1), largo, 0.9, t);
+  }
+  function llamasMias(esc, matriz, a) {
+    const vel = V.por(a.f, esc.j.vel || 0), atras = V.por(a.f, -1);
+    LL.gases(esc.gases, esc.dt);
+    MOD.medidas(esc.cazaId).toberas.forEach((q, i) => LL.tobera(esc.cazaId + i, M.punto(matriz, [q[0], q[1], q[2] - 2.1]), atras, vel, esc.t, esc.dt));
   }
 
   function apuntaEstela(dt, matriz, id) {
@@ -87,7 +91,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       if (golpe) GL.tinte(2.4, 2.4, 2.4);
       GL.malla(MOD.enemigo[en.tipo], matriz);
       if (golpe) GL.tinte(1, 1, 1);
-      llamas(en.tipo, matriz, en.tipo === 'jefe' ? 2.4 : 1.4, t + en.id);
+      llamasEnemigo(en.tipo, matriz, e, en.tipo === 'jefe' ? 6 : 3, t + en.id);
     }
   }
 
@@ -114,11 +118,11 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     if (esc.aire) enemigos(esc.aire, esc.t);
     if (VI.pesoCabina < 0.6) {
       GL.malla(MOD.caza[esc.cazaId], matriz);
-      llamas(esc.cazaId, matriz, 0.9 + (esc.empuje || 0) * 1.2, esc.t);
+      llamasMias(esc, matriz, a);
       estelaAlLote();
     }
     if (esc.aire) proyectiles(esc.aire, esc.t);
     FX.alLote();
-    GL.conNiebla(false); GL.pintaLote(); GL.conNiebla(true);
+    GL.conNiebla(false); GL.pintaLote(); LL.pintar(); GL.conNiebla(true);
   };
 })(WINGS);

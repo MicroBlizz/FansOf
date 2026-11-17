@@ -1,10 +1,10 @@
 // Fans of Wings · Modelos en lonchas apiladas. Los aviones que se ven en el juego son los chibi de aviones.js, cortados con
 // maquetas.js. Aquí quedan además GUARDADOS los seis diseños de la primera versión (las fichas «clásicas»: fuselaje, cabina, alas,
-// derivas, motores y colores) para reusarlos en otro sitio con MOD.clasico(id), y la llama de los motores. El morro mira a −Z.
+// derivas, motores y colores) para reusarlos en otro sitio con MOD.clasico(id). El morro mira a −Z.
 'use strict';
 var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 (function (A) {
-  const GL = A.gl, hex = GL.hex, MOD = A.modelos = { caza: {}, enemigo: {}, llama: null, ficha: {} };
+  const GL = A.gl, hex = GL.hex, MOD = A.modelos = { caza: {}, enemigo: {}, ficha: {} };
 
   // Cada ficha está en «unidades» (de f.vox metros) y se corta en f.k cubitos por unidad: cuanto mayor k, más lonchas y más finas.
   // Las formas se miden en el centro de cada cubito (X, Y, Z en unidades), así que el fuselaje sale redondo y las alas, afiladas.
@@ -114,20 +114,10 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   const MEDIDAS = {};
   MOD.medidas = (id) => MEDIDAS[id] || (MEDIDAS[id] = A.maquetas.medidas(A.aviones.dame(id)));
 
-  function llama() {
-    const A1 = hex('#fff2a0'), B = hex('#ffb02e'), C = hex('#f2541b');
-    return GL.cubitos(9, 9, 28, { vox: [0.28, 0.28, 0.3], dy: -1.26, color(x, y, z) {
-      const r = Math.hypot(x - 4, y - 4), max = 4.4 * (1 - z / 28);
-      if (r > max) return null;
-      return r < max * 0.4 ? A1 : (z < 15 ? B : C);
-    } });
-  }
-
-  // Corta todos los modelos (una vez, al arrancar). La llama tiene su origen en la tobera y crece hacia atrás (+Z).
+  // Corta todos los modelos (una vez, al arrancar). El fuego de los motores no es un modelo: lo pinta llamas.js.
   MOD.crear = function () {
     let sem = 11;
     for (const c of A.AJ.cazas) MOD.caza[c.id] = A.maquetas.cortar(A.aviones.dame(c.id), sem++);
     for (const id of ['becario', 'caja', 'jefe']) MOD.enemigo[id] = A.maquetas.cortar(A.aviones.dame(id), sem++);
-    MOD.llama = llama();
   };
 })(WINGS);

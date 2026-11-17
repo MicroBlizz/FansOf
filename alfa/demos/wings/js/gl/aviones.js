@@ -10,7 +10,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   const ZORRO = ['X.....X', 'XX...XX', 'XXX.XXX', 'XXXXXXX', 'X.XXX.X', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
   const CASTOR = ['.X...X.', 'XXXXXXX', 'X.XXX.X', 'XXXXXXX', 'XXX.XXX', '.XXXXX.', '..X.X..', '..X.X..', '.......'];
   // Lo que llevan todos igual.
-  const COMUN = { misil: '#f4f4f0', misilpunta: '#e63a2a', emblema: '#ffffff', fuego: '#ffc24a', luzroja: '#e63a2a', luzverde: '#3fae3a', toma: '#0e0f12', tobera: '#5d6068', pala: '#5d6068', buje: '#ffd23c' };
+  const COMUN = { misil: '#f4f4f0', misilpunta: '#e63a2a', emblema: '#ffffff', fuego: '#ff7a1a', luzroja: '#e63a2a', luzverde: '#3fae3a', toma: '#0e0f12', tobera: '#5d6068', pala: '#5d6068', buje: '#ffd23c' };
   const pal = (p) => Object.assign({}, COMUN, p);
   // Retoques de pintura: el emblema del piloto en lo alto de cada ala y las luces de las puntas (roja a un lado, verde al otro).
   const enAla = (bits, x0, z0) => (p, ax, y, z) => (p === 'ala' && MQ.punto(bits, 2, ax - x0, z - z0) ? 'emblema' : null);
@@ -23,7 +23,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
         deriva: '#25272e', cristal: '#b85a0c', brillo: '#ffd98a', marco: '#0e0f12', aro: '#ff8a1c', motor: '#25272e', detalle: '#ff8a1c', galon: '#ff8a1c' }),
       piezas: [MQ.cabina(F, 5.5, 15.8, 0.82, 1.15), MQ.bola(2.2, 4.6, 0.85, 'emblema'), MQ.fuselaje(F, { morro: 3.2, anti: [3.2, 5.6] }),
         MQ.antena(18.5, 5.6), MQ.antena(23, 4.4), MQ.antena(27.5, 3.2), MQ.misil(16.9, -0.2, 23.5, 31, 0.7), MQ.misil(11.8, -1.9, 19, 27, 0.7),
-        MQ.tubo({ x: 4.6, y: -2.6, r: 2.6, rx: 2.7, z0: 15, z1: 37, inclina: 0.8, tobera: 2.8, labio: 0.8, fuego: true }),
+        MQ.tubo({ x: 4.6, y: -2.6, r: 2.6, rx: 2.7, z0: 15, z1: 37, inclina: 0.8, tobera: 4.4, labio: 0.8, fuego: true }),
         MQ.plano([[9, 3], [16, 8.2], [31, 8.2], [34, 6]], { y0: -1.2, y1: 0.7, panza: 0.7, galones: [17.2, 20], pend: 0.6 }),
         MQ.ala({ s0: 7.5, s1: 16.5, le0: 16, te0: 29, le1: 25, te1: 30.5, y: -0.2, g0: 1.2, g1: 0.6, punta: 1.6 }),
         MQ.ala({ s0: 7, s1: 12.5, le0: 30, te0: 37, le1: 34.5, te1: 38.5, y: -0.7, g0: 0.9, g1: 0.5, punta: 1.4 }),
@@ -38,7 +38,6 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     return function (ax, y, z) {
       if (z < 10 || z > 39.5 || y < -1.7 || y > 0.9 || ax > wz(z)[0]) return null;
       if (z < 11.4) return ax > 3.7 && ax < wz(z)[0] - 0.4 && y > -1.3 && y < 0.5 ? 'toma' : null;
-      if (z > 38.4 && ax > 1.6 && ax < 5.2 && y > -1.2 && y < 0.5) return 'fuego';
       return z > 37.4 ? 'tobera' : (z > 36.8 ? 'aro' : null);
     };
   }
@@ -48,7 +47,8 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     return { k: 3, ky: 4, u: 0.85, ancho: 18, alto: [-6, 13], largo: 42, toberas: [[-3.4, -0.3, 39.5], [3.4, -0.3, 39.5]], punta: [16.5, 0, 30],
       pal: pal({ cuerpo: '#d9451c', lomo: '#ef6a3a', panza: '#f4e7d3', morro: '#0e0f12', antirreflejo: '#0e0f12', ala: '#ef6a3a', borde: '#f4e7d3', punta: '#0e0f12', franja: '#f4e7d3',
         deriva: '#d9451c', cristal: '#b85a0c', brillo: '#ffd98a', marco: '#0e0f12', aro: '#f4e7d3', motor: '#d9451c' }),
-      piezas: [MQ.cabina(F, 5.5, 15.5, 0.8, 1.15), MQ.fuselaje(F, { morro: 2.6, anti: [2.6, 5.4], exp: 2.6 }), MQ.misil(11, -1.7, 22, 30, 0.65),
+      piezas: [(ax, y, z) => (z > 36.2 && ax > 1.6 && ax < 5.2 && y > -1.2 && y < 0.5 ? (z > 36.8 ? 'hueco' : 'fuego') : null),   // las toberas huecas con el fondo encendido, antes que el fuselaje
+        MQ.cabina(F, 5.5, 15.5, 0.8, 1.15), MQ.fuselaje(F, { morro: 2.6, anti: [2.6, 5.4], exp: 2.6 }), MQ.misil(11, -1.7, 22, 30, 0.65),
         bocasZorra(W), MQ.plano(W, { y0: -1.7, y1: 0.9, panza: 0.8 }),
         MQ.ala({ s0: 6, s1: 16.5, le0: 14, te0: 33, le1: 27, te1: 30, y: 0, g0: 1.2, g1: 0.6, punta: 1.8, franja: [13.2, 14.2] }),
         MQ.ala({ s0: 5.5, s1: 12.5, le0: 32, te0: 39.5, le1: 37, te1: 41, y: -0.3, g0: 0.9, g1: 0.5, punta: 1.2 }),
@@ -69,7 +69,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       piezas: [MQ.cabina(F, 5.5, 14.5, 0.8, 1.1), MQ.fuselaje(F, { morro: 2.6, anti: [2.6, 5.2] }),
         MQ.misil(8, -2.9, 15, 21.5, 0.95), MQ.misil(12.5, -2.9, 15.5, 22, 0.95), MQ.misil(16.2, -2.9, 16, 22.5, 0.95),
         MQ.ala({ s0: 3, s1: 19.5, le0: 14, te0: 24.5, le1: 16, te1: 23.5, y: -1.2, g0: 1.5, g1: 0.9, punta: 1.8, franja: [14.6, 15.8] }),
-        MQ.tubo({ x: 4.8, y: 3.6, r: 2.4, z0: 23, z1: 34.5, tobera: 2.2, boca: 1 }), MQ.caja(2.4, 4.8, 0.6, 3.4, 25.5, 32, 'cuerpo'),
+        MQ.tubo({ x: 4.8, y: 3.6, r: 2.4, z0: 23, z1: 34.5, tobera: 3.8, boca: 1, fuego: true }), MQ.caja(2.4, 4.8, 0.6, 3.4, 25.5, 32, 'cuerpo'),
         MQ.ala({ s0: 1, s1: 9.8, le0: 34.5, te0: 41.5, le1: 35.5, te1: 41.5, y: 0.6, g0: 1, g1: 0.9 }),
         MQ.deriva({ x: 9.5, y0: 0.4, y1: 8.8, a0: 34.5, b0: 41.5, a1: 36.2, b1: 41.5, banda: 1.2, emblema: [CASTOR, 2, 36.5, 7.2] })],
       pintas: [dientes, enAla(CASTOR, 6.6, 16.2)] };
@@ -117,7 +117,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       pal: pal({ cuerpo: '#4d5564', lomo: '#e63a2a', panza: '#2f3540', morro: '#2f3540', antirreflejo: '#2f3540', ala: '#5d6676', borde: '#e63a2a', punta: '#ffd23c', franja: '#e63a2a',
         deriva: '#2f3540', cristal: '#e63a2a', brillo: '#ffd98a', marco: '#0e0f12', aro: '#e63a2a', motor: '#2f3540', tobera: '#0e0f12' }),
       piezas: [MQ.cabina(F, 4, 14, 0.75, 0.95), MQ.fuselaje(F, { morro: 2 }),
-        MQ.tubo({ x: 9.5, y: 1.3, r: 1.9, rx: 2.6, z0: 13, z1: 32, tobera: 2.2, inclina: -0.8, fuego: true }),
+        MQ.tubo({ x: 9.5, y: 1.3, r: 1.9, rx: 2.6, z0: 13, z1: 32, tobera: 3.2, inclina: -0.8, fuego: true }),
         MQ.misil(15, -1.6, 17, 26, 0.8), MQ.misil(21, -1.2, 22, 30, 0.8),
         MQ.ala({ s0: 3, s1: 28.5, le0: 6, te0: 30, le1: 26, te1: 33, y: 0, g0: 2.4, g1: 0.7, punta: 2.2, franja: [18.5, 19.8], atras: sierra }),
         MQ.deriva({ x: 15.5, y0: 0.5, y1: 5, a0: 23.5, b0: 28.5, a1: 26, b1: 29, banda: 1 })] };

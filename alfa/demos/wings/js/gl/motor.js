@@ -157,17 +157,20 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     [[-1, 1, -1], [1, 1, -1], [1, 1, 1], [-1, 1, 1], 1], [[-1, -1, -1], [1, -1, -1], [1, -1, 1], [-1, -1, 1], 0.58],
     [[1, -1, -1], [1, 1, -1], [1, 1, 1], [1, -1, 1], 0.86], [[-1, -1, -1], [-1, 1, -1], [-1, 1, 1], [-1, -1, 1], 0.68],
     [[-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1], 0.76], [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], 0.92]];
-  GL.cubo = function (c, lado, col) {
+  GL.cubo = function (c, lado, col, liso) {   // liso: todas las caras con el mismo brillo (para lo que da luz, como el fuego)
     const h = lado / 2, D = lote.d;
-    for (const [a, b, e, f, k] of CUBO) for (const v of [a, b, e, a, e, f]) D.push(c[0] + v[0] * h, c[1] + v[1] * h, c[2] + v[2] * h, col[0] * k, col[1] * k, col[2] * k);
+    for (const [a, b, e, f, brillo] of CUBO) { const k = liso ? 1 : brillo; for (const v of [a, b, e, a, e, f]) D.push(c[0] + v[0] * h, c[1] + v[1] * h, c[2] + v[2] * h, col[0] * k, col[1] * k, col[2] * k); }
   };
   GL.cuadro = function (a, b, c, d, col) { for (const v of [a, b, c, a, c, d]) lote.d.push(v[0], v[1], v[2], col[0], col[1], col[2]); };
-  GL.pintaLote = function () {
+  // Pinta lo acumulado. Con `alfa` (0 a 1) lo pinta translúcido y sin tapar lo que venga después (el fuego de los reactores).
+  GL.pintaLote = function (alfa) {
     if (!lote.d.length) return;
     lote.buf = lote.buf || gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, lote.buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lote.d), gl.DYNAMIC_DRAW); atributos();
     gl.uniformMatrix4fv(pMalla.u.uM, false, M.T(0, 0, 0)); gl.uniform1f(pMalla.u.uSombra, 0);
+    if (alfa) { gl.enable(gl.BLEND); gl.blendColor(0, 0, 0, alfa); gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_ALPHA); gl.depthMask(false); }
     gl.drawArrays(gl.TRIANGLES, 0, lote.d.length / 6);
+    if (alfa) { gl.disable(gl.BLEND); gl.depthMask(true); }
     lote.d = [];
   };
 })(WINGS);

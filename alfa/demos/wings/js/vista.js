@@ -29,7 +29,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 
   function camaraDe(modo, a, orbita) {
     if (orbita !== null) return { ojo: V.suma(a.p, [Math.cos(orbita) * 58, 15, Math.sin(orbita) * 58]), mira: a.p, up: ARRIBA, fov: 0.8 };
-    if (modo === 0) return { ojo: [a.p[0], a.p[1] + 300, a.p[2] + 95], mira: a.p, up: ARRIBA, fov: FOV[0] };
+    if (modo === 0) return { ojo: [a.p[0], a.p[1] + 600, a.p[2] + 190], mira: a.p, up: ARRIBA, fov: FOV[0] };   // el doble de lejos que en la 0.1.4
     if (modo === 1) return { ojo: V.suma(V.resta(a.p, V.por(VI.dir, 82)), [0, 24, 0]), mira: V.suma(V.suma(a.p, V.por(a.f, 34)), [0, 6, 0]), up: V.norma(V.suma([0, 0.8, 0], V.por(a.u, 0.2))), fov: FOV[1] };
     const ojo = V.suma(a.p, V.por(a.u, 2));
     return { ojo, mira: V.suma(ojo, V.por(a.f, 20)), up: a.u, fov: FOV[2] };

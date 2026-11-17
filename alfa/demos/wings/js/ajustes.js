@@ -26,8 +26,13 @@ WINGS.AJ = Object.freeze({
   // Fase 1, el aire: vuelo de verdad en 3D (metros). x este, y altura, z norte. El caza va siempre hacia delante; la palanca a los
   // lados lo alabea (inclinado, vira solo) y arriba o abajo lo cabecea; puede dar la vuelta entera y volar boca abajo
   aire: {
-    vuelo: { vel: 120, velMin: 65, velMax: 210, alabeo: 2.4, cabeceo: 1.15, viraje: 0.95, nivelar: 1.4, gravedad: 28,
+    vuelo: { vel: 180, velMin: 98, velMax: 315, alabeo: 2.4, cabeceo: 1.15, viraje: 0.95, nivelar: 1.4, gravedad: 42,
       altInicio: 700, altMax: 2400, altAviso: 220, perdida: 0.9, aviso: 1.6 },   // perdida: lo que cae el morro (rad/s) arriba del todo o lento
+    // El turbo multiplica la velocidad de crucero mientras quede medidor (se vacía en `dura` segundos y se llena solo en `recarga`
+    // al soltarlo); el freno la baja a `factor`. respuesta = lo rápido que el caza coge esa velocidad; suelta = lo que pierde por
+    // segundo al acabarse el turbo, hasta volver a su tope
+    turbo: { factor: 2, dura: 3, recarga: 10, respuesta: 2.2, suelta: 140 },
+    freno: { factor: 2 / 3, respuesta: 1.8 },
     bala: { vel: 700, cada: 0.1, vida: 1.3, dano: 1, radio: 4 },
     misil: { vel: 360, giro: 2.6, vida: 5, dano: 5, radio: 8, cono: 0.13, alcance: 1800 },   // cono: lo centrado que tiene que estar para fijarlo
     tiro: { vel: 300, radio: 16, dano: 10, vida: 6 },   // disparos enemigos (gotas de café, cajas, cartas de despido), apuntan adonde vas a estar
@@ -35,10 +40,10 @@ WINGS.AJ = Object.freeze({
     derribos: 6,                                         // derribos de la misión para que salga el jefe (en el original, de 3 a 9)
     oleada: { maximo: 2, cada: 3.5, cerca: 1300, lejos: 2200 },   // enemigos a la vez, segundos entre apariciones y a qué distancia salen
     enemigos: {
-      becario: { vida: 1, vel: 95, giro: 0.9, radio: 14, puntos: 100, dispara: 2.6, cono: 0.35, alcanceTiro: 1100, tiro: 'cafe', premio: 0.6 },
-      caja:    { vida: 3, vel: 75, giro: 0.6, radio: 22, puntos: 300, dispara: 2.0, cono: 0.45, alcanceTiro: 1200, tiro: 'caja', premio: 1 },
+      becario: { vida: 1, vel: 142, giro: 0.9, radio: 14, puntos: 100, dispara: 2.6, cono: 0.35, alcanceTiro: 1100, tiro: 'cafe', premio: 0.6 },
+      caja:    { vida: 3, vel: 112, giro: 0.6, radio: 22, puntos: 300, dispara: 2.0, cono: 0.45, alcanceTiro: 1200, tiro: 'caja', premio: 1 },
     },
-    jefe: { vida: 30, vel: 85, giro: 0.75, radio: 34, puntos: 2000, dispara: 1.1, rafaga: 3, puntosGolpe: 20, tiro: 'carta', cono: 0.5, alcanceTiro: 1300, premio: 0 },
+    jefe: { vida: 30, vel: 128, giro: 0.75, radio: 34, puntos: 2000, dispara: 1.1, rafaga: 3, puntosGolpe: 20, tiro: 'carta', cono: 0.5, alcanceTiro: 1300, premio: 0 },
     // los premios que sueltan los enemigos derribados: caen en paracaídas y, si pasas cerca, vienen solos hacia ti
     premios: { tipos: [['misiles', 3], ['bombas', 3], ['reparacion', 2], ['combustible', 2]], cae: 12, iman: 380, coger: 40, vida: 25,
       misiles: 2, bombas: 3, bombasExtra: 6, reparacion: 25, combustible: 45 },
@@ -67,5 +72,10 @@ WINGS.AJ = Object.freeze({
     ],
     inicio: { x: 1100, y: 2250, rumbo: -Math.PI / 2 },   // donde empieza el caza (abajo, mirando arriba, con la base de la izquierda cerca)
   },
-  puntos: { escudoRestante: 10, precision: 1500 },   // bonus final: por punto de escudo y por acertar
+  // bonus final: por punto de escudo, por acertar y por acabar rápido (el máximo hasta `hasta` segundos; después pierde `pierde` por segundo)
+  puntos: { escudoRestante: 10, precision: 1500, tiempo: { max: 3000, hasta: 75, pierde: 25 } },
+  // El rango de una misión cumplida sale de sus puntos totales, como en Ace Combat (ADR 134); una fallida es siempre C
+  rangos: [['S', 7500], ['A', 6000], ['B', 4500], ['C', 0]],
+  // Adorno fijo del mundo del juego: el código de cada caza y el sector de la misión
+  codigos: { bunny: 'CB-27', zorro: 'SF-22', castor: 'BB-10' }, sector: 'K-7',
 });

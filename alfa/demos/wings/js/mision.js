@@ -73,14 +73,27 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 
   A.sumar = function (e, puntos) { e.puntos += puntos; };
 
+  // El bonus por acabar rápido: entero hasta `hasta` segundos y después baja cada segundo, hasta cero.
+  A.bonusTiempo = function (AJ, t) {
+    const T = AJ.puntos.tiempo;
+    return Math.max(0, Math.round(T.max - Math.max(0, t - T.hasta) * T.pierde));
+  };
+
+  // El rango de una misión por sus puntos (solo si se cumplió; fallida, siempre el más bajo) y lo que falta para el siguiente.
+  A.rango = function (AJ, puntos, como) {
+    const R = AJ.rangos, i = como === 'cumplida' ? R.findIndex((r) => puntos >= r[1]) : R.length - 1;
+    return { letra: R[i][0], siguiente: i > 0 ? R[i - 1][0] : null, faltan: i > 0 ? Math.max(0, R[i - 1][1] - puntos) : 0 };
+  };
+
   A.terminar = function (e, como, motivo) {
     if (e.fin) return;
     e.finMotivo = motivo || null;
-    const P = e.aj.puntos, precision = e.disparos ? e.aciertos / e.disparos : 0;
-    const bonus = como === 'cumplida' ? Math.round(e.escudo * P.escudoRestante + precision * P.precision) : 0;
-    e.puntos += bonus;
-    e.fin = como; e.finT = 0; e.bonus = bonus; e.precision = precision;
-    e.eventos.push({ tipo: 'fin', como, motivo: e.finMotivo, puntos: e.puntos, bonus });
+    const P = e.aj.puntos, precision = e.disparos ? e.aciertos / e.disparos : 0, bien = como === 'cumplida';
+    const bonus = bien ? Math.round(e.escudo * P.escudoRestante + precision * P.precision) : 0;
+    const bonusTiempo = bien ? A.bonusTiempo(e.aj, e.t) : 0;
+    e.puntos += bonus + bonusTiempo;
+    Object.assign(e, { fin: como, finT: 0, bonus, bonusTiempo, precision, rango: A.rango(e.aj, e.puntos, como) });
+    e.eventos.push({ tipo: 'fin', como, motivo: e.finMotivo, puntos: e.puntos, bonus, rango: e.rango.letra });
   };
 
   A.util = {

@@ -35,7 +35,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   const limita = (v, a, b) => Math.max(a, Math.min(b, v));
 
   VU.nuevo = (AJ, caza) => ({ pos: { x: 0, y: AJ.aire.vuelo.altInicio, z: 0 }, f: { x: 0, y: 0, z: 1 }, u: { x: 0, y: 1, z: 0 },
-    r: { x: 1, y: 0, z: 0 }, vel: AJ.aire.vuelo.vel * caza.vel, avisoT: 0 });
+    r: { x: 1, y: 0, z: 0 }, vel: AJ.aire.vuelo.vel * caza.vel, avisoT: 0, turbo: 1, conTurbo: false, conFreno: false });
 
   VU.alabeo = (j) => Math.atan2(-j.r.y, j.u.y);   // inclinación respecto al horizonte (positivo: ala derecha abajo)
   VU.rumbo = (j) => Math.atan2(j.f.x, j.f.z);     // hacia dónde apunta, visto desde arriba (0 = norte)
@@ -58,14 +58,16 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // El morro hacia el suelo, esté como esté el caza (en pérdida o arriba del todo).
   function caerMorro(j, a) { cabecear(j, -a * (j.u.y >= 0 ? 1 : -1)); }
 
-  // Un paso de vuelo con la orden { mx, my } (−1..1; my > 0 = tirar de la palanca = morro arriba). Devuelve los avisos del paso.
+  // Un paso de vuelo con la orden { mx, my, turbo, freno } (mx y my de −1 a 1; my > 0 = tirar de la palanca = morro arriba).
+  // Devuelve los avisos del paso.
   VU.paso = function (j, dt, o, AJ, caza) {
     const P = AJ.aire.vuelo, k = Math.sqrt(caza.vel), mx = limita(o.mx || 0, -1, 1), my = limita(o.my || 0, -1, 1);
     alabear(j, mx * P.alabeo * k * dt);
     if (Math.abs(mx) < 0.1) nivelar(j, P, dt);
     cabecear(j, my * P.cabeceo * k * dt);
     virar(j, -j.r.y * P.viraje * dt);   // inclinado, vira solo hacia el ala que baja
-    acelerar(j, P, caza, dt);
+    gases(j, o, AJ.aire, dt);
+    acelerar(j, AJ.aire, caza, dt);
     j.pos = V3.suma(j.pos, V3.escala(j.f, j.vel * dt));
     ortonormal(j);
     return limites(j, P, dt);
@@ -74,9 +76,26 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // Sin tocar los lados, el caza vuelve poco a poco a nivel (salvo boca abajo o muy inclinado: ahí manda el piloto).
   function nivelar(j, P, dt) { const a = VU.alabeo(j); if (Math.abs(a) < 1.2) alabear(j, -a * Math.min(1, P.nivelar * dt)); }
 
-  function acelerar(j, P, caza, dt) {
-    const crucero = P.vel * caza.vel;
-    j.vel = limita(j.vel + (-j.f.y * P.gravedad + (crucero - j.vel) * 0.5) * dt, P.velMin * 0.8, P.velMax * caza.vel);
+  // El turbo gasta su medidor (de 1 a 0) mientras se pulsa y queda algo; al soltarlo se llena solo. El freno no gasta nada y
+  // no vale a la vez que el turbo.
+  function gases(j, o, AI, dt) {
+    const T = AI.turbo;
+    j.conTurbo = !!o.turbo && j.turbo > 0;
+    j.conFreno = !!o.freno && !j.conTurbo;
+    if (j.conTurbo) j.turbo = Math.max(0, j.turbo - dt / T.dura);
+    else if (!o.turbo) j.turbo = Math.min(1, j.turbo + dt / T.recarga);
+  }
+
+  // La velocidad va hacia la de crucero (el doble con turbo, menos con freno, nunca tan baja que entre en pérdida); picar la sube
+  // y subir la baja. Al acabarse el turbo, lo que sobra del tope se pierde poco a poco, sin frenazo.
+  function acelerar(j, AI, caza, dt) {
+    const P = AI.vuelo, T = AI.turbo, F = AI.freno, crucero = P.vel * caza.vel;
+    const quiere = j.conTurbo ? crucero * T.factor : j.conFreno ? Math.max(P.velMin * 1.1, crucero * F.factor) : crucero;
+    const respuesta = j.conTurbo ? T.respuesta : j.conFreno ? F.respuesta : 0.5;
+    const tope = P.velMax * caza.vel * (j.conTurbo ? T.factor : 1);
+    let v = j.vel + (-j.f.y * P.gravedad + (quiere - j.vel) * respuesta) * dt;
+    if (v > tope) v = Math.max(tope, Math.min(v, j.vel - T.suelta * dt));
+    j.vel = Math.max(P.velMin * 0.8, v);
   }
 
   function limites(j, P, dt) {

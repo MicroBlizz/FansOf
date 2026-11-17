@@ -1,8 +1,9 @@
 // Fans of Wings · Sonido: los mp3 de Yoshi que hay (audio/) si cargan; lo demás, pitidos sintetizados. Y la vibración del móvil.
+// Con el ajuste SONIDO en NO (S.mudo) no suena nada; la vibración sigue.
 'use strict';
 var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 (function (A) {
-  const S = A.sonido = {}, AUDIO = {};
+  const S = A.sonido = { mudo: false }, AUDIO = {};   // mudo: el ajuste de SONIDO del menú
   let AC = null;
 
   S.cargar = function () {
@@ -36,8 +37,10 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     premio: () => [660, 880, 1100].forEach((f, i) => setTimeout(() => pita(f, 0.08, 'square'), i * 70)),
     premioSuelto: () => pita(880, 0.1, 'triangle', 1.3),
     error: () => pita(160, 0.2, 'sawtooth', 0.6, 0.08),
+    turbo: () => { pita(110, 0.6, 'sawtooth', 3.2, 0.09); pita(60, 0.35, 'square', 2, 0.06); },
   };
   S.sonar = function (n, vol) {
+    if (S.mudo) return;
     const a = AUDIO[n];
     if (a) { try { const c = a.cloneNode(); c.volume = vol || 0.5; c.play().catch(() => {}); return; } catch (err) { console.warn('Wings: sin audio', err); } }
     if (SINTE[n]) SINTE[n]();

@@ -8,10 +8,11 @@
 // Aquí también el reparto de premios común (ppDaPremio) que usan el regalo diario y el pase.
 'use strict';
 /* ---------- premios ---------- */
-// un premio es { monedas, perlas, ayudas: { martillo: 2 }, infinitas: minutos, bandeja: id }
-function ppDaPremio(p) {
+// un premio es { monedas, perlas, ayudas: { martillo: 2 }, infinitas: minutos, bandeja: id }. `origen` = { motivo, clave } dice al servidor de dónde
+// salen sus perlas (el regalo diario y el pase; js/perlas-libro.js); sin él son de una compra de prueba y no van al servidor
+function ppDaPremio(p, origen = null) {
   if (p.monedas) SAVE.monedas += p.monedas;
-  if (p.perlas) SAVE.perlas = (SAVE.perlas || 0) + p.perlas;
+  if (p.perlas) ppPerlas(p.perlas, origen && origen.motivo, origen && origen.clave);
   for (const k in p.ayudas || {}) ppDaAyuda(k, p.ayudas[k]);
   if (p.infinitas) ppDaInfinitas(p.infinitas);
   if (p.bandeja) { SAVE.bandejas = SAVE.bandejas || {}; SAVE.bandejas[p.bandeja] = true; }
@@ -81,7 +82,7 @@ function ppBotonOferta(t, vuelta) {
 function ppBotonInfinitas(t, alComprar) {
   const fila = document.createElement('div'); fila.className = 'pp-fila';
   for (const o of PP_CFG.infinitas) {
-    const b = ppBoton('', 'pp-btn2 pp-rosa', () => { if ((SAVE.perlas || 0) < o.perlas) { ppTienda(() => ppVentanaSinCorazones(), 'perlas'); return; } SAVE.perlas -= o.perlas; ppDaInfinitas(o.min); play('ppPremio'); alComprar(); });
+    const b = ppBoton('', 'pp-btn2 pp-rosa', () => { if (!ppPerlas(-o.perlas, 'infinitas')) { ppTienda(() => ppVentanaSinCorazones(), 'perlas'); return; } ppDaInfinitas(o.min); play('ppPremio'); alComprar(); });
     b.innerHTML = `${ppIcono('i-infinito', 26, '#ff4a6a')}${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })} · ${ppPerlasHtml(o.perlas, 22)}`;
     fila.appendChild(b);
   }
@@ -98,7 +99,7 @@ function ppVentanaHucha() {
     <p class="pp-sub">${tr('Cada nivel nuevo que pasas mete perlas en la hucha. Rómpela y quédatelas todas.')}</p>
     ${puede ? '' : `<p class="pp-sub">${tr('Se puede romper desde {n} perlas.', { n: H.minimo })}</p>`}`);
   if (puede) t.appendChild(ppBoton(tr('ROMPER LA HUCHA · {p}', { p: H.precio }), 'pp-btn', () => ppCompraEuros(tr('Hucha de perlas'), `<p>${tr('{n} perlas por {p}.', { n, p: H.precio })}</p>`, H.id, () => {
-    SAVE.perlas = (SAVE.perlas || 0) + (SAVE.hucha || 0); SAVE.hucha = 0; ppGuarda(); ppCierra(); ppPintaLateral(); ppFlota(tr('+{n} perlas', { n }), 270, 300, '#ff6ec7');
+    ppPerlas(SAVE.hucha || 0); SAVE.hucha = 0; ppGuarda(); ppCierra(); ppPintaLateral(); ppFlota(tr('+{n} perlas', { n }), 270, 300, '#ff6ec7');
   })));
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
 }

@@ -1,8 +1,8 @@
 {
- "build": 1230,
- "hash": "42be90d",
- "fecha": "2026-11-17T17:16:44Z",
- "mensaje": "Wings 0.1.5: menús de estilo militar, pausa, rango de la misión, turbo, freno y cámara de arriba al doble (#90, #92)",
+ "build": 1231,
+ "hash": "6511660",
+ "fecha": "2026-11-17T17:18:42Z",
+ "mensaje": "Pop: pantalla Mi perfil y perlas conectadas al servidor, tras el flag tienda-gemas (tarea #41, n5)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

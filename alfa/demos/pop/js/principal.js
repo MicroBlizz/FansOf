@@ -77,6 +77,8 @@ function ppArranque() {
   $pp('#pp-tienda').onclick = () => { ppCargaSonidos(); play('select'); ppTienda(null, 'ofertas'); };
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };
   $pp('#pp-ranking').onclick = () => { ppCargaSonidos(); play('select'); ppVentanaRanking(); };   // js/ranking.js
+  $pp('#pp-perfil').onclick = () => { ppCargaSonidos(); play('select'); PP_SRV.arranca(); ppVentanaPerfil(); };   // js/pantalla-perfil.js
+  setTimeout(() => { ppPerfilBoton(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: el botón PERFIL y el monedero de perlas del servidor (tarea #41)
   setTimeout(ppSubeMarcas, 3000);   // lo que aún no esté en el ranking mundial
   if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
   ppIrA('titulo');

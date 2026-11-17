@@ -59,7 +59,7 @@ function ppVentanaPase() {
       caja.innerHTML = ppPremioCandyHtml(ppPremioPase(k, premium), 24) + (premium && !P.premium ? '<s></s>' : '');
       caja.onclick = () => {
         if (!puede) return;
-        play('ppPremio'); ppDaPremio(ppPremioPase(k, premium)); (premium ? P.prem : P.gratis)[k] = true; ppGuarda();
+        play('ppPremio'); ppDaPremio(ppPremioPase(k, premium), { motivo: 'pase', clave: `pase:${P.t}:${premium ? 'p' : 'g'}:${k}` }); (premium ? P.prem : P.gratis)[k] = true; ppGuarda();
         const y = lista.scrollTop; ppVentanaPase(); const l = $pp('.pp-pase'); if (l) l.scrollTop = y; ppPintaLateral();
       };
       fila.appendChild(caja);
@@ -88,7 +88,7 @@ function ppVentanaRegalo() {
   });
   t.appendChild(sem);
   if (!cogido) t.appendChild(ppBoton(tr('¡ABRIR!'), 'pp-btn', () => {
-    ppDaPremio(PP_REGALOS[hoy]); SAVE.regaloDia = ppHoy(); ppGuarda(); play('ppVictoria'); ppVibra([20, 30, 20]);
+    ppDaPremio(PP_REGALOS[hoy], { motivo: 'regalo', clave: 'regalo:' + ppHoy() }); SAVE.regaloDia = ppHoy(); ppGuarda(); play('ppVictoria'); ppVibra([20, 30, 20]);
     const t2 = ppAbre(`<h2>${tr('¡Toma!')}</h2><div class="pp-cofre">${ppIcono('i-regalo', 100, '#9cf0a0')}</div>${ppPremioCandyHtml(PP_REGALOS[hoy], 40)}`);
     t2.appendChild(ppBoton(tr('¡GENIAL!'), 'pp-btn', ppCierra)); ppPintaLateral();
   }));

@@ -11,8 +11,8 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   const estado = Object.assign(document.createElement('p'), { textContent: ppDevEstado(), style: 'margin:4px 0;color:#cdb9ea' });
   caja.append(estado);
   let d = fila();
-  boton(d, '+100 perlas', () => { SAVE.perlas = (SAVE.perlas || 0) + 100; });
-  boton(d, '+1000 perlas', () => { SAVE.perlas = (SAVE.perlas || 0) + 1000; });
+  boton(d, '+100 perlas', () => { ppPerlas(100); });
+  boton(d, '+1000 perlas', () => { ppPerlas(1000); });
   boton(d, '+1000 monedas', () => { SAVE.monedas += 1000; });
   boton(d, '+10000 monedas', () => { SAVE.monedas += 10000; });
   d = fila();

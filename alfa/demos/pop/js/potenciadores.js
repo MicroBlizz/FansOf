@@ -14,7 +14,7 @@ function ppDaAyuda(k, n) { SAVE.ayudas = SAVE.ayudas || {}; SAVE.ayudas[k] = ppT
 function ppGastaAyuda(k, vuelta = null) {
   if (ppTengo(k) > 0) { SAVE.ayudas[k]--; ppGuarda(); return true; }
   const precio = PP_CFG.ayudas[k].perlas;
-  if ((SAVE.perlas || 0) >= precio) { SAVE.perlas -= precio; ppGuarda(); return true; }
+  if (ppPerlas(-precio, 'ayuda')) return true;
   ppTienda(vuelta, 'ayudas');
   return false;
 }

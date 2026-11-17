@@ -13,9 +13,11 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 
   // El mundo 3D se pinta a pocas líneas (píxel gordo) y se estira; el HUD, a la resolución de la pantalla.
   function ajusta() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1), asp = Math.max(1, innerWidth / innerHeight), lineas = A.AJ.pantalla.lineas;
+    // Se mide el lienzo tal como se ve (no la ventana): en el móvil, con la barra de direcciones a la vista, la ventana es más alta.
+    const ancho = CV.clientWidth || innerWidth, alto = CV.clientHeight || innerHeight;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), asp = Math.max(1, ancho / alto), lineas = A.AJ.pantalla.lineas;
     A.gl.medida(Math.min(A.AJ.pantalla.anchoMax, Math.round(lineas * asp)), lineas);
-    CV.width = Math.floor(innerWidth * dpr); CV.height = Math.floor(innerHeight * dpr);
+    CV.width = Math.floor(ancho * dpr); CV.height = Math.floor(alto * dpr);
     est.k = CV.height / 720; UI.medida(CV.width / est.k);
   }
 
@@ -60,7 +62,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   const PREMIO = { misiles: 'MISILES', bombas: 'BOMBAS', reparacion: 'REPARACIÓN', combustible: 'COMBUSTIBLE' };
 
   // ---------- entrada ----------
-  const aLogico = (ev) => ({ x: ev.clientX * UI.W / innerWidth, y: ev.clientY * 720 / innerHeight });
+  const aLogico = (ev) => { const r = CV.getBoundingClientRect(); return { x: (ev.clientX - r.left) * UI.W / r.width, y: (ev.clientY - r.top) * 720 / r.height }; };   // el toque, en la pantalla lógica
   const dentro = (p, b) => Math.hypot(p.x - b.x, p.y - b.y) < b.r + 16;
 
   function cambiaCamara() { const n = VI.cambiaCamara(); S.sonar('camara'); FX.cartel(tr('CÁMARA') + ': ' + tr(NOMBRE_CAMARA[n]), '#ffe14a', 0.9); guardar(); }

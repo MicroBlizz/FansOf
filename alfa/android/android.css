@@ -1,0 +1,3 @@
+/* Fans Of · ANDROID (android/index.html): los botones de descarga de los APK de prueba, encima de estilo/texto.css. */
+.apk{display:block;margin:10px 0;padding:14px 16px;border-radius:12px;background:#2a1844;color:#ffd75e;font-weight:800;text-decoration:none}
+.apk span{display:block;color:var(--ink-dim);font-weight:400;font-size:14px}

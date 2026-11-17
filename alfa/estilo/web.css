@@ -1,0 +1,21 @@
+/* Fans Of · LO COMÚN de las páginas de la web (portada, lore, privacidad, condiciones, borrar la cuenta, energía y android): UNA sola hoja (ADR 135).
+   Aquí viven el menú de arriba (lo monta menu.js) y la paleta del estilo nuevo («Arcade nocturno», ADR 128), que cuelga de html.portada-nueva:
+   esa clase solo se pone con el flag «portada-nueva» abierto; sin ella, los colores son los de core/css/base.css.
+   Cada página añade encima su propia hoja (biblioteca/portada.css, lore/lore.css, estilo/texto.css…). */
+
+/* ---------- el estilo nuevo: los colores de core pasan a la noche ---------- */
+html:not(.portada-nueva) .pn { display: none !important; }
+html.portada-nueva {
+  --bg: #0b1730; --bg-2: #13285a; --tray: #14254a; --tray-hi: #2e4a85; --ink: #f4f7ff; --ink-dim: #c9d6f2;
+  --outline: #07101f; --panel: rgba(20, 37, 74, 0.96); --panel-2: rgba(11, 23, 48, 0.85); --off: #2e4a85; --scrim: rgba(7, 16, 31, 0.9);
+  --gold: #ffd23f; --player: #ff8a1f; --player-lite: #ffb04d;
+  --pn-votar: #15803d; --pn-votar-sombra: #0e5a2b;
+}
+html.portada-nueva nav.menu { background: #0b1730; }
+
+/* ---------- el menú de arriba ---------- */
+nav.menu { position: sticky; top: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
+nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
+nav.menu a:hover, nav.menu a:focus-visible, nav.menu a.on { color: var(--gold); outline: none; }
+nav.menu .idiomas { font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+nav.menu .idiomas a { font-family: var(--font-ui); font-size: 13px; }

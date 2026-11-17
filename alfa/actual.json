@@ -1,8 +1,8 @@
 {
- "build": 1235,
- "hash": "7ceb1b5",
- "fecha": "2026-11-17T18:10:12Z",
- "mensaje": "Web: Android ya no sale en blanco en inglés, fuera dos 404 y el menú dice EN (tarea #87)",
+ "build": 1236,
+ "hash": "eb71a13",
+ "fecha": "2026-11-17T19:09:05Z",
+ "mensaje": "Web: una hoja común para el menú y la paleta (web/estilo/), fuera las tres copias (tarea #87, ADR 135, nodo N1)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

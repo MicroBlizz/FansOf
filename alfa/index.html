@@ -9,61 +9,18 @@
 <link rel="icon" type="image/png" href="core/img/fog-192.png">
 <link rel="apple-touch-icon" href="core/img/fog-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=293dd1f">
-<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=293dd1f">
-<link rel="stylesheet" href="core/css/base.css?v=293dd1f">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=293dd1f">
-<link rel="stylesheet" href="novedades/ventana.css?v=293dd1f">
-<link rel="stylesheet" href="biblioteca/votos.css?v=293dd1f">
-<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=293dd1f">
-<style>
-  /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
-  body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
-  html { scroll-behavior: smooth; }
-  main { width: 100%; max-width: 640px; box-sizing: border-box; padding: 0 20px 0; display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; }
-  /* Bandas a todo el ancho, de lila oscuro y lila claro, una por sección (y el pie del color del menú). La sombra y el recorte las sacan a los lados sin tocar la maquetación. */
-  /* Las bandas alternan solas (impar: lila claro, par: lila oscuro) sin importar cuántas secciones haya ni cuál es la última. El pie lleva su propio color, casi negro, más oscuro que los dos lilas. */
-  main > section.hero, main > section.sec { background: var(--banda); box-shadow: 0 0 0 100vmax var(--banda); clip-path: inset(0 -100vmax); box-sizing: border-box; }
-  main > section:nth-of-type(odd) { --banda: #251538; --sub-a: #1f112f; --sub-b: #2d1a44; }
-  main > section:nth-of-type(even) { --banda: #170b26; --sub-a: #120920; --sub-b: #200f35; }
-  main > section.sec { padding: 28px 0 34px; }
-  /* La Biblioteca es UNA sección con subsecciones (Nuestros favoritos, Prototipos y Archivo): cada lista con su fondo, alternando dos subtonos del color de la propia Biblioteca */
-  #biblioteca { padding-bottom: 0; gap: 0; }
-  #biblioteca > p.note { margin: 6px 0 20px; }
-  .subsec { width: 100%; box-sizing: border-box; padding: 24px 0 30px; background: var(--sub-a); box-shadow: 0 0 0 100vmax var(--sub-a); clip-path: inset(0 -100vmax); }
-  .subsec:nth-of-type(even) { background: var(--sub-b); box-shadow: 0 0 0 100vmax var(--sub-b); }
-  /* menú fijo arriba: secciones de la landing y las partes comunes (privacidad, condiciones) */
-  nav.menu { position: fixed; top: 0; left: 0; right: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
-  nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
-  nav.menu a:hover, nav.menu a:focus-visible { color: var(--gold); outline: none; }
-  nav.menu .idiomas { font-family: inherit; font-size: 13px; font-weight: 700; color: var(--ink-dim); }
-  nav.menu .idiomas a { font-family: inherit; font-size: 13px; }
-  section.hero { padding: 96px 0 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  section.hero a.play { text-decoration: none; font-family: var(--font-display); font-size: 22px; padding: 10px 26px 6px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); margin-top: 6px; }
-  /* COMUNIDAD: botones de redes (X y Discord) al final de la portada: contorno grueso de Fans Of, el color de cada marca y su logo */
-  .redes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 4px 0 6px; width: 100%; }
-  .redes a.red { flex: 0 1 220px; min-width: 150px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; box-sizing: border-box; text-decoration: none; font-family: var(--font-display); font-size: 17px; letter-spacing: 0.5px; color: #fff; padding: 9px 14px 6px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); transition: transform .1s, box-shadow .1s; }
-  .redes a.red svg { width: 20px; height: 20px; fill: currentColor; flex: none; margin-top: -3px; }
-  .redes a.red:hover, .redes a.red:focus-visible { transform: translateY(-2px); box-shadow: 0 6px 0 var(--outline); outline: none; }
-  .redes a.red:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
-  .redes a.red-x { background: linear-gradient(to bottom, #2b2b2b, #000); }
-  .redes a.red-discord { background: linear-gradient(to bottom, #6f7cf5, #4752c4); }
-  section.hero a.play:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
-  h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 34px; margin: 18px 0 0; scroll-margin-top: 80px; }
-  section.sec { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; scroll-margin-top: 80px; }
-  .partes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
-  .partes a { flex: 1 1 220px; box-sizing: border-box; color: var(--ink); text-decoration: none; text-align: left; border: 3px solid var(--outline); border-radius: 14px; padding: 12px 14px; background: var(--panel); }
-  .partes a b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--gold); }
-  .partes a span { font-size: 14px; font-weight: 600; color: var(--ink-dim); }
-  h1 { font-family: var(--font-display); font-weight: 400; line-height: 0.9; margin: 0; }
-  h1 .l1 { display: block; font-size: 42px; letter-spacing: 2px; }
-  h1 .l2 { display: block; font-size: 96px; color: var(--player); transform: rotate(-4deg); margin: 10px 0 6px; }
-  p.sub { font-weight: 800; font-size: 18px; color: var(--ink-dim); margin: 0 0 6px; }
-  p.note { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin: 0; max-width: 460px; }
-</style>
+<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=3ddb97e">
+<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=3ddb97e">
+<link rel="stylesheet" href="core/css/base.css?v=3ddb97e">
+<link rel="stylesheet" href="estilo/web.css?v=3ddb97e">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=3ddb97e">
+<link rel="stylesheet" href="novedades/ventana.css?v=3ddb97e">
+<link rel="stylesheet" href="biblioteca/votos.css?v=3ddb97e">
+<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=3ddb97e">
+<link rel="stylesheet" href="biblioteca/portada.css?v=3ddb97e">
 </head>
 <body>
-<script src="menu.js?v=293dd1f" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=3ddb97e" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -410,8 +367,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a1235.7ceb1b5"></script>
-<script src="core/js/novedades.js?v=293dd1f"></script>
+<script src="core/js/nucleo.js?v=0-a1236.eb71a13"></script>
+<script src="core/js/novedades.js?v=3ddb97e"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -420,13 +377,13 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=293dd1f"></script>
-<script src="core/js/cuenta/dominio/roles.js?v=293dd1f"></script>
-<script src="core/js/cuenta/aplicacion/roles-casos.js?v=293dd1f"></script>
-<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=293dd1f"></script>
-<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=293dd1f"></script>
-<script src="core/js/cuenta/roles.js?v=293dd1f"></script>
-<script src="core/js/sistema/flags.js?v=293dd1f"></script>
+<script src="core/js/sistema/cuenta.js?v=3ddb97e"></script>
+<script src="core/js/cuenta/dominio/roles.js?v=3ddb97e"></script>
+<script src="core/js/cuenta/aplicacion/roles-casos.js?v=3ddb97e"></script>
+<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=3ddb97e"></script>
+<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=3ddb97e"></script>
+<script src="core/js/cuenta/roles.js?v=3ddb97e"></script>
+<script src="core/js/sistema/flags.js?v=3ddb97e"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/panic/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'demos/wings/idioma/en-raiz.js', 'demos/air/idioma/en-raiz.js', 'demos/basement/idioma/en-raiz.js', 'demos/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js', 'games/paperwork/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -452,16 +409,16 @@ const fail = id => () => {
 };
 
 </script>
-<script src="novedades/lo-nuevo.js?v=293dd1f"></script>
-<script src="novedades/ventana.js?v=293dd1f"></script>
-<script src="biblioteca/grupos.js?v=293dd1f"></script>
-<script src="biblioteca/agrupar.js?v=293dd1f"></script>
-<script src="biblioteca/tienda.js?v=293dd1f"></script>
-<script src="biblioteca/cuenta-web.js?v=293dd1f"></script>
-<script src="biblioteca/votos.js?v=293dd1f"></script>
-<script src="biblioteca/alfa.js?v=293dd1f"></script>
-<script src="biblioteca/portada-nueva.js?v=293dd1f"></script>
-<script src="core/js/sistema/analitica.js?v=293dd1f"></script>
-<script src="pie.js?v=293dd1f" defer></script>
+<script src="novedades/lo-nuevo.js?v=3ddb97e"></script>
+<script src="novedades/ventana.js?v=3ddb97e"></script>
+<script src="biblioteca/grupos.js?v=3ddb97e"></script>
+<script src="biblioteca/agrupar.js?v=3ddb97e"></script>
+<script src="biblioteca/tienda.js?v=3ddb97e"></script>
+<script src="biblioteca/cuenta-web.js?v=3ddb97e"></script>
+<script src="biblioteca/votos.js?v=3ddb97e"></script>
+<script src="biblioteca/alfa.js?v=3ddb97e"></script>
+<script src="biblioteca/portada-nueva.js?v=3ddb97e"></script>
+<script src="core/js/sistema/analitica.js?v=3ddb97e"></script>
+<script src="pie.js?v=3ddb97e" defer></script>
 </body>
 </html>

@@ -2,8 +2,8 @@
 // Se pone en cada página justo donde va el menú:  <script src="menu.js" data-base="" data-core="1" data-pagina="lore"></script>  (data-base: '' en la portada y '../' en las demás; data-pagina: la que resalta).
 // «Entrar» / «Mi cuenta» (con tu foto de Google, si entraste con Google) sale SIEMPRE, en todas las páginas, para que la cabecera sea la misma. En la portada la llevan biblioteca/cuenta-web.js y votos.js (el modal de la cuenta);
 // en las demás páginas se lee la sesión guardada (localStorage 'fansof-cuenta') solo para pintar el botón, y al pulsarlo se va a la portada (#cuenta), que abre el modal.
-// Pinta el <nav class="menu"> en el sitio del script, de forma síncrona (lo que venga después, como los botones de idioma o «Novedades», ya lo encuentra). El estilo de la barra lo trae cada página
-// (portada y lore en su <style>; las demás, core/css/legal.css). data-core="1" si la página carga core (portada y lore). Novedades abre su ventana en la portada (#novedades).
+// Pinta el <nav class="menu"> en el sitio del script, de forma síncrona (lo que venga después, como los botones de idioma o «Novedades», ya lo encuentra). El estilo de la barra es uno para todas: estilo/web.css (ADR 135).
+// data-core="1" si la página carga core (portada y lore). Novedades abre su ventana en la portada (#novedades).
 // Idioma: si la página trae core (NUCLEO), él lo cambia; si no, la página define window.pagIdioma(v) y aquí se avisa. Sin core, los nombres del menú se traducen con la pequeña lista de abajo.
 'use strict';
 (() => {

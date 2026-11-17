@@ -1,19 +1,10 @@
 /* Fans Of · LA PORTADA NUEVA («Arcade nocturno», tarea #69): azul noche, botones naranja y amarillo, un color por juego y la barra de abajo en el móvil.
-   Todo cuelga de html.portada-nueva, que pone biblioteca/portada-nueva.js solo con el flag «portada-nueva» (abierto en la alfa): sin él, la portada de siempre.
+   La paleta de la noche y el menú común viven en estilo/web.css (ADR 135). Todo cuelga de html.portada-nueva, que pone biblioteca/portada-nueva.js solo con el flag «portada-nueva» (abierto en la alfa): sin él, la portada de siempre.
    Las piezas nuevas llevan la clase .pn y no se ven sin el flag. Letras de la casa (core): Luckiest Guy para los títulos y Baloo 2 para el resto. */
 
-html:not(.portada-nueva) .pn { display: none !important; }
 
-/* ---------- la paleta: los colores de core pasan a la noche ---------- */
-html.portada-nueva {
-  --bg: #0b1730; --bg-2: #13285a; --tray: #14254a; --tray-hi: #2e4a85; --ink: #f4f7ff; --ink-dim: #c9d6f2;
-  --outline: #07101f; --panel: rgba(20, 37, 74, 0.96); --panel-2: rgba(11, 23, 48, 0.85); --off: #2e4a85; --scrim: rgba(7, 16, 31, 0.9);
-  --gold: #ffd23f; --player: #ff8a1f; --player-lite: #ffb04d;
-  --pn-votar: #15803d; --pn-votar-sombra: #0e5a2b;
-}
 html.portada-nueva main > section:nth-of-type(odd) { --banda: #0f1f40; --sub-a: #0c1a36; --sub-b: #12244a; }
 html.portada-nueva main > section:nth-of-type(even) { --banda: #0b1730; --sub-a: #09132a; --sub-b: #0f1f40; }
-html.portada-nueva nav.menu { background: #0b1730; }
 
 /* ---------- el menú: el logo a la izquierda; en el móvil solo logo, cuenta e idioma (lo demás va en la barra de abajo) ---------- */
 html.portada-nueva nav.menu .pn-logo { font-family: var(--font-display); font-size: 24px; color: var(--player); margin-right: auto; letter-spacing: 1px; }

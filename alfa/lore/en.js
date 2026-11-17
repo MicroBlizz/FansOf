@@ -2,6 +2,10 @@
 'use strict';
 IDIOMA.add({
   "Lore": "Lore",
+  // el menú común (menu.js): en esta página lo traduce core
+  "Condiciones": "Terms",
+  "Entrar": "Log in",
+  "Mi cuenta": "My account",
   "LORE": "LORE",
   "La historia de Fans Of en un minuto: quiénes son los buenos, quiénes los malos y por qué todo el mundo grita «¡CAOS!».": "The Fans Of story in one minute: who the good guys are, who the bad guys are, and why everyone keeps shouting «CHAOS!».",
   "La historia": "The story",

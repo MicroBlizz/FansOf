@@ -1,8 +1,8 @@
 {
- "build": 1234,
- "hash": "4adb536",
- "fecha": "2026-11-17T17:52:50Z",
- "mensaje": "Beams 0.1.2, Recruit 0.1.4 y Zombies 0.14.2 dejan su copia de pantalla completa y giro y usan HORIZONTAL de core (tarea #81, ADR 133)",
+ "build": 1235,
+ "hash": "7ceb1b5",
+ "fecha": "2026-11-17T18:10:12Z",
+ "mensaje": "Web: Android ya no sale en blanco en inglés, fuera dos 404 y el menú dice EN (tarea #87)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

@@ -44,6 +44,7 @@ IDIOMA.add({
   "Siguiente": "Next",
   // cuenta, favoritos y votos (biblioteca/cuenta-web.js y votos.js)
   "Entrar": "Log in",
+  "Condiciones": "Terms",
   "ENTRAR": "LOG IN",
   "Mi cuenta": "My account",
   "TU CUENTA": "YOUR ACCOUNT",

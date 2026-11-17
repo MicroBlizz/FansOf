@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.36
+  "<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: a «PROTOTYPE» tag on the edge that takes you to the game's page to vote for it, improvements to the feedback tab and tweaks to the internal systems.",
+  "Microblizz ha metido una carta de PROTOTIPO en el mazo y Phony la ha jugado como si fuera legendaria.": "Microblizz slipped a PROTOTYPE card into the deck and Phony played it as if it were legendary.",
   // 0.2.35
   "<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the loading screen now always clears in time and account roles are read from a single place.",
   "Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse.": "Microblizz switched off the loading screen light and Phony stayed inside to see if it came back on.",

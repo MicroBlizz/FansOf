@@ -1,6 +1,9 @@
 // Fans of Cooking · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.17
+  "<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: a «PROTOTYPE» tag on the edge that takes you to the game's page to vote for it, improvements to the feedback tab and tweaks to the internal systems.",
+  "Microblizz ha puesto la etiqueta de PROTOTIPO en el delantal y Phony la ha confundido con la receta.": "Microblizz put the PROTOTYPE label on the apron and Phony mistook it for the recipe.",
   // 0.2.16
   "<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the loading screen now always clears in time and account roles are read from a single place.",
   "Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse.": "Microblizz switched off the loading screen light and Phony stayed inside to see if it came back on.",

@@ -166,5 +166,11 @@
     "fr-FR": "améliorations internes : l'écran de chargement disparaît toujours à temps et les rôles du compte sont lus à un seul endroit",
     "de-DE": "interne Verbesserungen: Der Ladebildschirm verschwindet immer rechtzeitig und die Kontorollen werden an einer Stelle gelesen",
     "it-IT": "miglioramenti interni: la schermata di caricamento sparisce sempre in tempo e i ruoli dell'account si leggono in un solo posto"
+  },
+  "0.2.80": {
+    "pt-BR": "melhorias internas: uma etiqueta «PROTÓTIPO» na borda que leva à ficha do jogo para votar, melhorias na aba de comentários e ajustes nos sistemas internos",
+    "fr-FR": "améliorations internes : une étiquette « PROTOTYPE » sur le bord qui mène à la fiche du jeu pour voter, des améliorations de l'onglet de commentaires et des retouches aux systèmes internes",
+    "de-DE": "interne Verbesserungen: ein «PROTOTYP»-Etikett am Rand, das zur Seite des Spiels führt, um abzustimmen, Verbesserungen am Feedback-Reiter und Feinschliff an den internen Systemen",
+    "it-IT": "miglioramenti interni: un'etichetta «PROTOTIPO» sul bordo che porta alla scheda del gioco per votarlo, migliorie alla scheda dei commenti e ritocchi ai sistemi interni"
   }
 }

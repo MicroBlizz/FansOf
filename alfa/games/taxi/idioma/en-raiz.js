@@ -2,6 +2,10 @@
 // js/novedades.js (la tarjeta de la librería está en biblioteca/en.js).
 'use strict';
 IDIOMA.add({
+  // 0.2.16
+  "<b>DEPORTIVO NUEVO</b>: con el botón COCHE pasas del taxi a un deportivo bajo y en cuña, y el juego se acuerda de tu elección. Solo cambia el aspecto: se conduce igual.": "<b>NEW SPORTS CAR</b>: the CAR button switches from the taxi to a low, wedge-shaped sports car, and the game remembers your choice. Only the look changes: it drives the same.",
+  "<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: a «PROTOTYPE» tag on the edge that takes you to the game's page to vote for it, improvements to the feedback tab and tweaks to the internal systems.",
+  "Microblizz ha comprado un deportivo para el taxi y Phony ha preguntado si ahora la carrera sale más cara.": "Microblizz bought a sports car for the taxi and Phony asked whether the fare costs more now.",
   // 0.2.15
   "<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the loading screen now always clears in time and account roles are read from a single place.",
   "Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse.": "Microblizz switched off the loading screen light and Phony stayed inside to see if it came back on.",

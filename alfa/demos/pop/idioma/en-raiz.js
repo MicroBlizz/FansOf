@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la ficha de Fans of Pop en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.5.1
+  "<b>PRESENTACIÓN DE LOS DUELOS</b>: antes de cada jefe y de cada duelo sale una tarjeta muy mona sobre el fondo del mundo, con Lola contra su rival, una sintonía propia y «Así se gana» paso a paso. Empiezas cuando pulsas ¡A JUGAR!": "<b>DUEL INTROS</b>: before every boss and every duel, a cute card appears over the world's background, with Lola against her rival, its own jingle and a step-by-step «How to win». You start when you press LET'S PLAY!",
+  "Ahora se dice <b>«haz pop»</b> en todo el juego.": "The whole game now says <b>«pop it»</b>.",
+  "Microblizz ha prohibido decir «revienta» en la oficina y Phony se ha pasado la mañana diciendo «haz pop» a la grapadora.": "Microblizz banned the word «burst» in the office and Phony spent the morning telling the stapler to «pop it».",
   "Microblizz ha llevado el pop-it al Espacio. Phony ha preguntado si allí se oye el ¡pop!": "Microblizz has taken the pop-it to Space. Phony asked whether you can hear the pop up there.",
   "<b>CUATRO MUNDOS MÁS</b>: el Bosque de hadas, el Fondo del mar, el Jardín de cerezos y el Espacio, con burbujas cohete, burbujeantes y pétalos, cuatro amigos nuevos y el CEO espacial de jefe final.": "<b>FOUR MORE WORLDS</b>: the Fairy Forest, Under the Sea, the Cherry Blossom Garden and Space, with rocket, fizzy and petal bubbles, four new friends and the Space CEO as the final boss.",
   "Modo <b>PESADILLA</b> en cada mundo, con el fondo rojo: cada toque le da la vuelta a las burbujas y las hundidas vuelven a subir.": "<b>NIGHTMARE</b> mode in every world, with a red background: every tap flips the bubbles and sunken ones pop back up.",

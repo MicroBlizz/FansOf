@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.173
+  "<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: a «PROTOTYPE» tag on the edge that takes you to the game's page to vote for it, improvements to the feedback tab and tweaks to the internal systems.",
+  "Microblizz ha repartido etiquetas de PROTOTIPO entre las tropas y Phony ha pedido una con rango de general.": "Microblizz handed out PROTOTYPE labels to the troops and Phony asked for one with a general's rank.",
   // 0.9.172
   "<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the loading screen now always clears in time and account roles are read from a single place.",
   "Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse.": "Microblizz switched off the loading screen light and Phony stayed inside to see if it came back on.",

@@ -74,6 +74,9 @@ const PP_CFG = {
   // la ronda 1 y `acelera` menos cada ronda, hasta `pasoMin`. Premio del día: `porRonda` monedas por ronda (solo lo que mejora tu
   // mejor ronda de hoy), hasta `tope` al día. Sin corazones.
   memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60 },
+  // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
+  // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
+  perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },
 };
 // Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
 

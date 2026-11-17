@@ -1,8 +1,8 @@
 {
- "build": 1219,
- "hash": "e6ac4b5",
- "fecha": "2026-11-17T07:31:47Z",
- "mensaje": "Fans of Asalto 0.3.0: rehecho con el Altar de invocación (estilo Slotbound), mazmorra, luces y jefes; ficha, glosario y ADR 129",
+ "build": 1220,
+ "hash": "c2c5980",
+ "fecha": "2026-11-17T08:35:23Z",
+ "mensaje": "Pop: reglas y catálogo del perfil de jugador, con sus tests (tarea #41, ADR 130, nodos 1 y 4)",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

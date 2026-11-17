@@ -113,6 +113,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
 .pwc-tip { position: fixed; z-index: 20; pointer-events: none; display: grid; gap: 2px; background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 6px; padding: 6px 9px; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
 .pwc-texto { white-space: pre-wrap; font-family: var(--mono); font-size: 12px; margin: 8px 0 0; }
 </style>
+<link rel="stylesheet" href="../estilo/pie.css">
 </head>
 <body>
 <main class="pagina">
@@ -351,6 +352,7 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="sql.js"></script>
 <script src="juegos.js"></script>
 <script src="decks.js"></script>
+<script src="../idioma-web.js"></script>
 <script src="../pie.js" defer></script>
 <script src="reportes.js"></script>
 <script src="reportes-prueba.js"></script>

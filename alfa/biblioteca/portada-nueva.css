@@ -1,18 +1,9 @@
-/* Fans Of · LA PORTADA NUEVA («Arcade nocturno», tarea #69): azul noche, botones naranja y amarillo, un color por juego y la barra de abajo en el móvil.
-   La paleta de la noche y el menú común viven en estilo/web.css (ADR 135). Todo cuelga de html.portada-nueva, que pone biblioteca/portada-nueva.js solo con el flag «portada-nueva» (abierto en la alfa): sin él, la portada de siempre.
+/* Fans Of · LA PORTADA NUEVA («Arcade nocturno», tarea #69): azul noche, botones naranja y amarillo, y un color por juego.
+   La paleta de la noche, el menú con su logo y la barra de abajo del móvil viven en estilo/web.css (ADR 135). Todo cuelga de html.portada-nueva, que pone estilo/estilo-nuevo.js solo con el flag «portada-nueva» (abierto en la alfa): sin él, la portada de siempre.
    Las piezas nuevas llevan la clase .pn y no se ven sin el flag. Letras de la casa (core): Luckiest Guy para los títulos y Baloo 2 para el resto. */
-
 
 html.portada-nueva main > section:nth-of-type(odd) { --banda: #0f1f40; --sub-a: #0c1a36; --sub-b: #12244a; }
 html.portada-nueva main > section:nth-of-type(even) { --banda: #0b1730; --sub-a: #09132a; --sub-b: #0f1f40; }
-
-/* ---------- el menú: el logo a la izquierda; en el móvil solo logo, cuenta e idioma (lo demás va en la barra de abajo) ---------- */
-html.portada-nueva nav.menu .pn-logo { font-family: var(--font-display); font-size: 24px; color: var(--player); margin-right: auto; letter-spacing: 1px; }
-@media (max-width: 700px) {
-  html.portada-nueva nav.menu { flex-wrap: nowrap; justify-content: flex-end; gap: 12px; padding-left: 14px; padding-right: 14px; }
-  html.portada-nueva nav.menu > a:not(.pn-logo):not(.m-cuenta) { display: none; }
-  html.portada-nueva nav.menu a.m-cuenta::before, html.portada-nueva nav.menu a.m-cuenta::after { display: none; }
-}
 
 /* ---------- la cabecera: el titular con CrazyBunny en vez del FANS OF gigante ---------- */
 html.portada-nueva section.hero h1, html.portada-nueva section.hero p.sub:first-of-type { display: none; }
@@ -62,20 +53,6 @@ html.portada-nueva .pn-ir-votar { align-self: stretch; text-align: center; text-
   animation: pn-latir 1.4s ease-in-out infinite; }
 html.portada-nueva .pn-ir-votar:focus-visible { outline: 3px solid var(--outline); outline-offset: 3px; }
 @media (min-width: 701px) { html.portada-nueva .pn-ir-votar { align-self: center; min-width: 320px; } }
-
-/* ---------- la barra de abajo (solo en el móvil) ---------- */
-html.portada-nueva .pn-barra { display: none; }
-@media (max-width: 700px) {
-  html.portada-nueva body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
-  html.portada-nueva .pn-barra { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
-    background: var(--tray); border-top: 3px solid var(--outline); padding-bottom: env(safe-area-inset-bottom); }
-  html.portada-nueva .pn-barra a { min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-    color: var(--ink); text-decoration: none; font-weight: 800; font-size: 12px; }
-  html.portada-nueva .pn-barra a[data-pn="votar"] { color: var(--gold); }
-  html.portada-nueva .pn-barra svg { width: 24px; height: 24px; }
-  html.portada-nueva .pn-barra a:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
-  html.portada-nueva #dev-boton { bottom: calc(76px + env(safe-area-inset-bottom)); }   /* el botón DEV (alfa y desarrollo) no tapa la barra */
-}
 
 /* ---------- el movimiento ---------- */
 @keyframes pn-latir { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }

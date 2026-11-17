@@ -1,8 +1,8 @@
 {
- "build": 1241,
- "hash": "2696036",
- "fecha": "2026-11-17T19:31:26Z",
- "mensaje": "Web: la portada en inglés ya no deja etiquetas ni el lema en español (tarea #87, ADR 135, nodo N5)",
+ "build": 1242,
+ "hash": "062b779",
+ "fecha": "2026-11-17T19:37:59Z",
+ "mensaje": "Web: la entrada de la app también toma el estilo nuevo con el flag (tarea #87, ADR 135)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

@@ -1,8 +1,8 @@
 {
- "build": 1240,
- "hash": "9a514bb",
- "fecha": "2026-11-17T19:26:11Z",
- "mensaje": "/gestion: sus estilos a gestion.css, sin cambiar de aspecto, y prueba de que todas sus pestañas abren (tarea #87, ADR 135, nodo N4)",
+ "build": 1241,
+ "hash": "2696036",
+ "fecha": "2026-11-17T19:31:26Z",
+ "mensaje": "Web: la portada en inglés ya no deja etiquetas ni el lema en español (tarea #87, ADR 135, nodo N5)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

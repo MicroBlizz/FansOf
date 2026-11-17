@@ -1,8 +1,8 @@
 {
- "build": 1218,
- "hash": "73ebfdf",
- "fecha": "2026-11-17T00:44:21Z",
- "mensaje": "Paperwork 0.11.1: el pack de mejoras enseña 10,00 € tachado y 8,00 € (tarea #61, ADR 125)",
+ "build": 1219,
+ "hash": "e6ac4b5",
+ "fecha": "2026-11-17T07:31:47Z",
+ "mensaje": "Fans of Asalto 0.3.0: rehecho con el Altar de invocación (estilo Slotbound), mazmorra, luces y jefes; ficha, glosario y ADR 129",
  "juegos": {
   "boom": "0.4.15",
   "cooking": "0.2.16",

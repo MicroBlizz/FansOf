@@ -1,8 +1,8 @@
 {
- "build": 1223,
- "hash": "424eae6",
- "fecha": "2026-11-17T09:19:56Z",
- "mensaje": "Fans of Asalto 0.3.1: primera partida guiada, arranque generoso, rachas, misiones y batallas con más ritmo (tarea #77, ADR 132)",
+ "build": 1224,
+ "hash": "9b1fcc8",
+ "fecha": "2026-11-17T09:49:48Z",
+ "mensaje": "Paperwork: los 5 archivadores que faltaban (código, guiones, bocetos, diseños y máster), ya generados por Yoshi el 15-11",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

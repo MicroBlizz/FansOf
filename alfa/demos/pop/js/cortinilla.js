@@ -12,6 +12,17 @@ const PP_CORTINILLA = Object.freeze((() => {
   const salePara = d => !!(d && d.nim);
   const tipoDe = d => (d.jefe ? 'jefe' : 'duelo');   // el rótulo: «¡NIVEL JEFE!» o «¡DUELO!»
   const rivalDe = d => d.nim.rival;   // 'ceo' o 'ceoespacial'
+  // el panel del jefe en el VS con perfiles (tarea #41, ADR 130): no compra nada, lleva siempre lo mismo. Frase y título son suyos
+  // (no están en el catálogo del jugador); el resto son ids del catálogo. Un rival desconocido lleva lo del CEO.
+  const JEFES = Object.freeze({
+    ceo: Object.freeze({ marco: 'estrellas', fondo: 'feria', frase: 'Aquí mando yo.', titulo: 'CEO de MicroBlizz' }),
+    ceoespacial: Object.freeze({ marco: 'estrellas', fondo: 'espacio', frase: 'En el espacio nadie oye tu pop.', titulo: 'CEO en órbita' }),
+  });
+  function perfilJefe(rival) {
+    const j = JEFES[rival] || JEFES.ceo;
+    return Object.freeze({ perfil: Object.freeze({ personaje: rival, marco: j.marco, fondo: j.fondo, frase: 'jefe', titulo: 'jefe', pegatinas: Object.freeze([]), efecto: 'normal', entrada: 'normal' }),
+      frase: j.frase, titulo: j.titulo });
+  }
   const golpeVs = t => (t < VS.desde ? 0 : t < VS.pico ? lerp(0, VS.escala, (t - VS.desde) / (VS.pico - VS.desde)) : t < VS.asienta ? lerp(VS.escala, 1, (t - VS.pico) / (VS.asienta - VS.pico)) : 1);
   // todo lo que se ve en el segundo t: de 0 (fuera) a 1 (puesto); `vs` es la escala del VS (pasa de 1 al golpearlo).
   // `salida` son los segundos desde que se pulsó el botón (null mientras espera): la cortinilla se queda puesta hasta entonces
@@ -25,5 +36,5 @@ const PP_CORTINILLA = Object.freeze((() => {
   }
   const puedePulsar = t => t >= BOTON[0];
   const terminada = salida => salida !== null && salida >= SALIDA;
-  return { puedePulsar, salePara, tipoDe, rivalDe, fotograma, terminada };
+  return { puedePulsar, salePara, tipoDe, rivalDe, perfilJefe, fotograma, terminada };
 })());

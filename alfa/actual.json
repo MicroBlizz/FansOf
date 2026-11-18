@@ -1,8 +1,8 @@
 {
- "build": 1248,
- "hash": "8f8a0aa",
- "fecha": "2026-11-18T08:22:35Z",
- "mensaje": "Wings: Barcelona más espectacular (tarea #99, boceto de alfa)",
+ "build": 1249,
+ "hash": "5b2822c",
+ "fecha": "2026-11-18T11:09:13Z",
+ "mensaje": "Pop: el VS con un panel por jugador (tu perfil contra el del rival; los jefes, con uno fijo), tras el flag tienda-gemas (tarea #41, ADR 130, nodo n6)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

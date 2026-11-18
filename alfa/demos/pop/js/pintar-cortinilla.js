@@ -4,13 +4,29 @@
 // Mientras sale, el nivel espera (tutorial, ayudita y primer turno del rival); solo el botón ¡A JUGAR! la quita (ADR 100).
 // Lo que decide cuándo sale y cómo avanza está en cortinilla.js (puro).
 'use strict';
-const PP_CORT = { activa: false, t: 0, rival: 'ceo', tipo: 'jefe', golpe: false, salida: null, alTerminar: null };
+// `yo` y `otro`: los paneles del VS con perfiles ({ perfil, cat, nombre }; tarea #41, ADR 130); null con el flag cerrado (Lola fija)
+const PP_CORT = { activa: false, t: 0, rival: 'ceo', tipo: 'jefe', golpe: false, salida: null, alTerminar: null, yo: null, otro: null };
 const ppCortActiva = () => PP_CORT.activa && (PP_PANT.actual === 'sala' || PP_PANT.actual === 'duelo');   // si saliste del nivel a medias, ya no cuenta
-function ppCortEmpieza(d, alTerminar) {
+// `rival` (opcional): el panel de una persona en los duelos contra gente ({ perfil, cat, nombre }); sin él, el del jefe
+function ppCortEmpieza(d, alTerminar, rival = null) {
   Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), tipo: PP_CORTINILLA.tipoDe(d), golpe: false, salida: null, alTerminar });
+  ppCortPaneles(rival);
   ppLolaAparca();   // si Lola estaba hablando, se calla y vuelve al pulsar ¡A JUGAR! (ppEmpiezaNivel)
   ppCortBoton();
   ppSintonia('popCortinilla');   // la presentación: suena una vez (js/cancion-cortinilla.js)
+}
+// los dos paneles del VS: el tuyo (lo que llevas puesto y el nombre de la cuenta) y el del rival (una persona o el jefe)
+function ppCortPaneles(rival) {
+  PP_CORT.yo = PP_CORT.otro = null;
+  if (!ppPerfilActivo()) return;
+  PP_MI.pideNombre();
+  PP_CORT.yo = { perfil: PP_MI.perfil(), cat: PP_MI.cat, get nombre() { return PP_MI.nombre; } };
+  PP_CORT.otro = rival || ppCortPanelJefe(PP_CORT.rival);
+}
+// el jefe: su frase y su título no están en el catálogo del jugador, así que van en un catálogo hecho para él
+function ppCortPanelJefe(id) {
+  const j = PP_CORTINILLA.perfilJefe(id), cat = { ...PP_MI.cat, frase: [{ id: 'jefe', texto: j.frase }], titulo: [{ id: 'jefe', texto: j.titulo }] };
+  return { perfil: j.perfil, cat, nombre: tr((PP_SLIMES[id] || PP_SLIMES.ceo).nombre) };
 }
 // el botón es de DOM (con el estilo de los de Pop): sale cuando acaban las viñetas y se oculta al pulsarlo o al irse la cortinilla
 function ppCortBoton() { const b = $pp('#pp-cort-jugar'); if (b) b.hidden = !(PP_CORT.activa && PP_CORT.salida === null && PP_CORTINILLA.puedePulsar(PP_CORT.t)); }
@@ -79,9 +95,18 @@ function ppCortFigura(c, id, nombre, x, lado, a, t) {
   ppTexto(c, nombre, 0, 415, 30, '#2a1a3a', 'center', '#fff');
   c.restore();
 }
-function ppCortVs(c, escala) {
+// cada panel entra deslizándose desde su lado (como las figuras); el de la derecha respira un poco desfasado
+const PP_CORT_PANEL = Object.freeze({ y: 172, w: 232, h: 290, x: Object.freeze([16, 292]) });
+function ppCortPanel(c, p, lado, a, t) {
+  if (a <= 0.01 || !p) return;
+  const { y, w, h } = PP_CORT_PANEL, x = PP_CORT_PANEL.x[lado < 0 ? 0 : 1];
+  c.save(); c.globalAlpha = a; c.translate(lado * (1 - a) * 320, 0);
+  ppPerfilPanel(c, p.perfil, p.cat, p.nombre, x, y, w, h, t + (lado > 0 ? 1.3 : 0));
+  c.restore();
+}
+function ppCortVs(c, escala, y = 262) {
   if (escala <= 0.01) return;
-  c.save(); c.translate(270, 262); c.scale(escala, escala);
+  c.save(); c.translate(270, y); c.scale(escala, escala);
   ppCortBurbuja(c, 'b-rosa-arriba', 0, 0, 112);
   ppTexto(c, 'VS', 0, 2, 58, '#fff', 'center', PP_CORT_ROSA);
   c.restore();
@@ -118,8 +143,13 @@ function ppPintaCortinilla(c, t) {
   c.fillStyle = `rgba(255,232,243,${0.93 * f.panel})`; c.fillRect(0, 0, 540, H);   // el velo rosa: el fondo del mundo se intuye detrás
   ppCortFlotantes(c, f.figuras, t);
   ppCortCinta(c, f.etiqueta);
-  ppCortFigura(c, 'lola', tr('Tú'), 125, -1, f.figuras, t);
-  ppCortFigura(c, PP_CORT.rival, tr(PP_SLIMES[PP_CORT.rival].nombre), 415, 1, f.figuras, t);
-  ppCortVs(c, f.vs);
+  if (PP_CORT.yo) {   // el VS con perfiles (tarea #41): un panel por jugador y el VS entre los dos
+    ppCortPanel(c, PP_CORT.yo, -1, f.figuras, t); ppCortPanel(c, PP_CORT.otro, 1, f.figuras, t);
+    ppCortVs(c, f.vs, PP_CORT_PANEL.y + PP_CORT_PANEL.h / 2);
+  } else {
+    ppCortFigura(c, 'lola', tr('Tú'), 125, -1, f.figuras, t);
+    ppCortFigura(c, PP_CORT.rival, tr(PP_SLIMES[PP_CORT.rival].nombre), 415, 1, f.figuras, t);
+    ppCortVs(c, f.vs);
+  }
   ppCortTarjeta(c, Math.max(470, Math.round(H * 0.49)), f);
 }

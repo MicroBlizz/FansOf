@@ -50,4 +50,7 @@ IDIOMA.add({
   // efectos y entradas
   "Normal": "Normal", "Confeti": "Confetti", "Burbujitas": "Tiny bubbles",
   "De un salto": "With a jump", "Girando": "Spinning", "En una nube": "On a cloud",
+  // el panel de los jefes en el VS (js/cortinilla.js, perfilJefe)
+  "Aquí mando yo.": "I'm the boss here.", "En el espacio nadie oye tu pop.": "In space, no one can hear you pop.",
+  "CEO de MicroBlizz": "MicroBlizz CEO", "CEO en órbita": "CEO in orbit",
 });

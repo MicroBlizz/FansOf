@@ -92,6 +92,8 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 img.pp-ico { border-radius: 0; }
 .pp-precio { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; white-space: nowrap; }
 .pp-premio { margin: 0; font-weight: 700; font-size: 30px; color: #c98a12; animation: pp-salta 0.5s ease-out both; }
+/* la miniatura del mundo al abrirlo con perlas (tarea #95, js/saltar-jefe-juego.js) */
+.pp-mini-mundo { display: block; margin: 4px auto 8px; width: 240px; height: 135px; border-radius: 18px; box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--pp-rosa); }
 .pp-cofre { display: flex; flex-direction: column; align-items: center; gap: 4px; animation: pp-salta 0.6s 0.2s ease-out both; }
 .pp-btn:disabled, .pp-btn2:disabled { filter: grayscale(0.85) brightness(1.05); opacity: 0.75; cursor: default; }
 @keyframes pp-salta { 0% { transform: scale(0.3); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); } }

@@ -6,7 +6,7 @@
 'use strict';
 let PP_P = null;
 function ppNuevaRuta() {
-  PP_P = { v: 2, equipo: [], carga: {}, estrellas: 0, est: [], nivel: 0, dif: {}, estD: {}, pes: {}, estP: {}, salas: 0, T: null, tipo: null, rescatados: [], fin: null };
+  PP_P = { v: 2, equipo: [], carga: {}, estrellas: 0, est: [], nivel: 0, pendientes: [], dif: {}, estD: {}, pes: {}, estP: {}, salas: 0, T: null, tipo: null, rescatados: [], fin: null };
   SAVE.partidas++; ppGuardaCamino();
 }
 // el camino se guarda entero (sin el tablero abierto) cada vez que cambia: al volver, se sigue en el mismo nivel
@@ -17,11 +17,13 @@ function ppGuardaCamino() {
   ppGuarda();
 }
 // los caminos de antes de los mundos (sin v: 2) no valen: se empieza de nuevo
-function ppSigueCamino() { if (!SAVE.run || SAVE.run.v !== 2) return false; PP_P = Object.assign({ T: null, dif: {}, estD: {}, pes: {}, estP: {} }, JSON.parse(JSON.stringify(SAVE.run))); return true; }
+function ppSigueCamino() { if (!SAVE.run || SAVE.run.v !== 2) return false; PP_P = Object.assign({ T: null, dif: {}, estD: {}, pes: {}, estP: {}, pendientes: [] }, JSON.parse(JSON.stringify(SAVE.run))); return true; }
+// --- el jefe PENDIENTE (tarea #95, js/saltar-jefe.js): PP_P.pendientes = mundos cuyo jefe se saltó pagando perlas; el camino ya va por delante ---
+const ppPendiente = m => PP_SALTO.esPendiente(PP_P.pendientes, m);
 // --- el modo difícil: un mundo se abre en difícil al ganar a su jefe; PP_P.dif[m] = niveles difíciles pasados de ese mundo ---
-const ppDifAbierto = m => PP_P.nivel >= ppInicioMundo(m) + PP_MUNDOS[m].niveles;
-// en qué nivel (dentro del mundo, desde 0) va el camino de ese mundo y modo; PP_MUNDOS[m].niveles = todo pasado
-const ppVaPor = (m, dif) => (dif === 2 ? (PP_P.pes || {})[m] || 0 : dif ? PP_P.dif[m] || 0 : clamp(PP_P.nivel - ppInicioMundo(m), 0, PP_MUNDOS[m].niveles));
+const ppDifAbierto = m => PP_SALTO.difAbierto(PP_P.nivel, ppInicioMundo(m) + PP_MUNDOS[m].niveles, ppPendiente(m));
+// en qué nivel (dentro del mundo, desde 0) va el camino de ese mundo y modo; PP_MUNDOS[m].niveles = todo pasado (con el jefe pendiente, el jefe)
+const ppVaPor = (m, dif) => (dif === 2 ? (PP_P.pes || {})[m] || 0 : dif ? PP_P.dif[m] || 0 : PP_SALTO.vaPor(PP_P.nivel, ppInicioMundo(m), PP_MUNDOS[m].niveles, ppPendiente(m)));
 // la PESADILLA de un mundo se abre al ganar su difícil entero (js/niveles.js, ppNivelPesadilla)
 const ppPesAbierta = m => (PP_P.dif[m] || 0) >= PP_MUNDOS[m].niveles;
 const ppEstDe = dif => (dif === 2 ? (PP_P.estP = PP_P.estP || {}) : dif ? PP_P.estD : PP_P.est);   // el récord de estrellas de ese modo
@@ -150,6 +152,15 @@ function ppSaltaSlime(id, k, golpes) {
     }, dur * 1000);
   });
 }
+// el camino solo avanza si era el siguiente nivel (repitiendo uno ya pasado, no). `saltado`: era un jefe pendiente, que se saltó con
+// perlas (tarea #95, js/saltar-jefe-juego.js): cuenta como nuevo, pero el camino ya iba por delante
+function ppAvanzaCamino(d, g) {
+  if (d.dif === 2) { PP_P.pes = PP_P.pes || {}; if (d.l - 1 !== (PP_P.pes[d.mundo] || 0)) return { nuevo: false }; PP_P.pes[d.mundo] = d.l; return { nuevo: true }; }
+  if (d.dif) { if (d.l - 1 !== (PP_P.dif[d.mundo] || 0)) return { nuevo: false }; PP_P.dif[d.mundo] = d.l; return { nuevo: true }; }
+  if (g === PP_P.nivel) { PP_P.nivel++; return { nuevo: true }; }
+  if (d.jefe && ppGanaPendiente(d.mundo)) return { nuevo: true, saltado: true };
+  return { nuevo: false };
+}
 function ppSalaHecha() {
   const T = PP_P.T, d = T.d, g = d.g; play('ppSala');
   T.estrellas = ppEstrellas(T);
@@ -158,16 +169,12 @@ function ppSalaHecha() {
   T.premio = ppPremioNivel(ppPrefijo(d.dif) + g, T.estrellas, d.jefe, d.dif === 2 ? 3 : d.dif ? 2 : 1);   // difícil, el doble; pesadilla, el triple
   ppBorraFallos(d); ppBarraAyudas(); setTimeout(ppSubeMarcas, 1500);   // estrellas al ranking mundial (js/ranking.js)
   const presos = Object.values(T.slimes);
-  // el camino solo avanza si era el siguiente nivel (repitiendo uno ya pasado, no)
-  let nuevo = false;
-  if (d.dif === 2) { PP_P.pes = PP_P.pes || {}; if (d.l - 1 === (PP_P.pes[d.mundo] || 0)) { PP_P.pes[d.mundo] = d.l; nuevo = true; } }
-  else if (d.dif) { if (d.l - 1 === (PP_P.dif[d.mundo] || 0)) { PP_P.dif[d.mundo] = d.l; nuevo = true; } }
-  else if (g === PP_P.nivel) { PP_P.nivel++; nuevo = true; }
+  const { nuevo, saltado } = ppAvanzaCamino(d, g);
   ppGuardaCamino();
   T.feria = ppFeriaGana(T.estrellas, d.jefe);   // tickets de la Feria del finde: toda victoria, nueva o repetida (js/feria-pantalla.js)
   if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
   if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(d.dif); return; }
-  if (nuevo && d.jefe) { play('ppVictoria'); ppVentanaMundoNuevo(false); return; }
+  if (nuevo && d.jefe) { play('ppVictoria'); ppVentanaMundoNuevo(false, saltado); return; }
   if (presos.length) { play('ppRescate'); ppVentanaRescate(presos); } else ppVentanaSalaHecha();
 }
 // un amigo se une al equipo (si está lleno, `fuera` es el que se va)

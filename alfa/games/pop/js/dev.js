@@ -31,7 +31,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Todas las bandejas', () => { SAVE.bandejas = {}; for (const B of PP_BANDEJAS) SAVE.bandejas[B.id] = true; });
   boton(d, 'Racha x3', () => { SAVE.racha = PP_CFG.racha.max; });
   d = fila();
-  boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; ppGuardaCamino(); });
+  boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; ppGuardaCamino(); });
 } }, { titulo: 'Fans of Pop: fecha de la Feria del finde', pinta(caja) {
   // finge el día moviendo solo la hora que lee la pantalla (ppFeriaAhora en js/feria-pantalla.js); el dominio no se toca
   const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#cdb9ea' });

@@ -109,20 +109,20 @@ function ppVentanaSinToques() {
   t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
 }
-// el jefe de un mundo superado: se abre el siguiente
-// y se abre su modo difícil. `dif`: era el jefe del modo difícil (no se abre nada nuevo)
-function ppVentanaMundoNuevo(dif) {
+// el jefe de un mundo superado: se abre el siguiente y su modo difícil. `dif`: era el jefe del modo difícil (no se abre nada nuevo).
+// `saltado`: era un jefe pendiente (tarea #95): el siguiente ya estaba abierto, no se anuncia otra vez y ¡VAMOS! lleva a su mundo
+function ppVentanaMundoNuevo(dif, saltado = false) {
   const d = PP_P.T.d, M0 = PP_MUNDOS[d.mundo], sig = d.mundo + 1;
   let txt;
   if (dif === 2) txt = tr('¡Has ganado el mundo {n} en PESADILLA! Ni el CEO se lo cree.', { n: d.mundo + 1 });
   else if (dif) txt = tr('¡Has ganado el mundo {n} en difícil! Se abre su PESADILLA: fondo rojo y las burbujas hundidas vuelven a subir.', { n: d.mundo + 1 });
   else {
     txt = tr('Se abre el modo difícil de {nombre}: el mismo mundo, de noche y con muchos menos toques.', { nombre: tr(M0.nombre) });
-    if (sig < PP_MUNDOS.length) txt = tr('Se abre el mundo {n}: {nombre}.', { n: sig + 1, nombre: tr(PP_MUNDOS[sig].nombre) }) + ' ' + txt;
-    else txt += ' ' + tr('¡Pronto llegan más mundos!');   // el último jefe ya no acaba el camino (Daniel, 30-10-2026): sigues en el mapa con todo
+    if (sig < PP_MUNDOS.length && !saltado) txt = tr('Se abre el mundo {n}: {nombre}.', { n: sig + 1, nombre: tr(PP_MUNDOS[sig].nombre) }) + ' ' + txt;
+    else if (!saltado) txt += ' ' + tr('¡Pronto llegan más mundos!');   // el último jefe ya no acaba el camino (Daniel, 30-10-2026): sigues en el mapa con todo
   }
   const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}${ppFeriaLinea(PP_P.T)}<p class="pp-sub">${txt}</p>`);
-  t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(ppMundoActual(), 0); else if (dif === 1) ppMapaVer(d.mundo, 2); ppAlCamino(); }));   // tras el difícil, directo a su pesadilla
+  t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(saltado ? d.mundo : ppMundoActual(), 0); else if (dif === 1) ppMapaVer(d.mundo, 2); ppAlCamino(); }));   // tras el difícil, directo a su pesadilla
 }
 // sin corazones: el reloj del siguiente, o llenarlos con monedas o perlas, o un anuncio (js/tienda.js)
 function ppVentanaSinCorazones() {

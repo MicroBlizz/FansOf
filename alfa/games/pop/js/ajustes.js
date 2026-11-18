@@ -34,6 +34,8 @@ const PP_CFG = {
     hueco: [20, 40, 80],     // el 4.º, el 5.º y el 6.º hueco del equipo (también se pueden pagar con monedas)
     jefe: 3,                 // perlas de regalo al ganar a un jefe por primera vez (la comprada «cae poco a poco jugando»)
   },
+  // SALTAR AL JEFE (tarea #95, ADR 152; Pepins, 18-11-2026): atascado en el jefe del camino normal, abrir el mundo siguiente con perlas
+  saltarJefe: { perlas: 40, fallos: 3 },   // precio fijo y desde el 3.er fallo en ese jefe (js/saltar-jefe.js)
   // los paquetes de perlas con euros (PROVISIONALES: los productos aún no existen en Play ni en el servidor; hasta entonces, la
   // ventana de core dice que llegarán con la app). `id` = el producto en Play Console y en servidor/90 cuando se den de alta.
   packs: [

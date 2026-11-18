@@ -54,6 +54,33 @@ function ppPerla(c, x, y, s) {
   c.beginPath(); c.arc(x, y, s * 0.4, 0, Math.PI * 2); c.fillStyle = '#ffd1ec'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#c43a84'; c.stroke();
   c.beginPath(); c.arc(x - s * 0.12, y - s * 0.12, s * 0.1, 0, Math.PI * 2); c.fillStyle = '#fff'; c.fill();
 }
+// lo que dice un jefe aún sin ganar: «¡JEFE!» debajo o, si lo saltaste con perlas (pendiente, tarea #95), el banderín «¡TE ESPERA!» encima
+function ppEtiquetaJefe(c, m, dif, x, y, r, t) {
+  if (!dif && ppPendiente(m)) ppBanderin(c, x, y - r - 96, t);
+  else ppTexto(c, tr('¡JEFE!'), x, y + r + 12, 26, '#ff8a2a', 'center', '#fff');
+}
+// el banderín naranja «¡TE ESPERA!» sobre un jefe pendiente (tarea #95): un mástil con su tela, que ondea y late
+function ppBanderin(c, x, y, t) {
+  const s = 1 + Math.sin(t * 5) * 0.06, ola = Math.sin(t * 4) * 4;
+  c.save(); c.translate(x, y); c.scale(s, s);
+  c.fillStyle = '#7a4a8a'; c.fillRect(-3, -6, 6, 58);
+  c.beginPath(); c.moveTo(-82, -30); c.quadraticCurveTo(0, -38 + ola, 82, -30); c.lineTo(82, 10); c.quadraticCurveTo(0, 2 + ola, -82, 10); c.closePath();
+  c.fillStyle = '#ff8a2a'; c.fill(); c.lineWidth = 4; c.strokeStyle = '#c2510a'; c.stroke();
+  ppTexto(c, tr('¡TE ESPERA!'), 0, -11 + ola / 2, 24, '#fff', 'center', '#c2510a');
+  c.restore();
+}
+// el «!» naranja que late en la flecha hacia un mundo con el jefe pendiente (izquierda: uno anterior; derecha: uno posterior)
+function ppAvisoFlechas(c, m, t) {
+  const lista = PP_P.pendientes || [], late = 1 + Math.abs(Math.sin(t * 5)) * 0.18;
+  const pinta = x => {
+    c.save(); c.translate(x, 40); c.scale(late, late);
+    c.beginPath(); c.arc(0, 0, 14, 0, Math.PI * 2); c.fillStyle = '#ff8a2a'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#fff'; c.stroke();
+    ppTexto(c, '!', 0, 1, 22, '#fff', 'center', '#c2510a');
+    c.restore();
+  };
+  if (m > 0 && lista.some(k => k < m)) pinta(148);
+  if (lista.some(k => k > m)) pinta(436);
+}
 // un botón redondo de caramelo con una flecha (dibujada, sin emojis)
 function ppFlecha(c, x, y, dir) {
   c.save(); c.translate(x, y);
@@ -101,7 +128,7 @@ function ppPintaMapa(c, t) {
     c.restore();
     // debajo: las estrellas ganadas, o lo que hay en el nivel
     if (hecho) for (let k = 0; k < 3; k++) ppEstrella(c, x - 30 + k * 30, y + r + 10, 26, k < (est[g] || 0));
-    else if (jefe) ppTexto(c, tr('¡JEFE!'), x, y + r + 12, 26, '#ff8a2a', 'center', '#fff');
+    else if (jefe) ppEtiquetaJefe(c, m, dif, x, y, r, t);
     else if (!dif && M.amigos.includes(i + 1)) ppTexto(c, tr('¡Amigo!'), x, y + r + 12, 22, '#ff6ec7', 'center', '#fff');
     else if (dificil) ppTexto(c, tr('Difícil'), x, y + r + 12, 22, '#c43a84', 'center', '#fff');
     if (aqui) ppMano(c, x, y, t);
@@ -114,6 +141,7 @@ function ppPintaMapa(c, t) {
   if (m > 0) { ppFlecha(c, 126, 66, -1); PP_BOTONES_MAPA.push({ x: 126, y: 66, r: 36, f: () => ppMapaVer(m - 1, false) }); }
   // las flechas, a los lados del título: en la esquina derecha va el botón de pausa
   if (m < actual) { ppFlecha(c, 414, 66, 1); PP_BOTONES_MAPA.push({ x: 414, y: 66, r: 36, f: () => ppMapaVer(m + 1, false) }); }
+  ppAvisoFlechas(c, m, t);   // un «!» en la flecha que lleva a un jefe pendiente
   // el selector FÁCIL · DIFÍCIL · PESADILLA (Daniel, 31-10-2026): cada modo sale cuando se abre; el que está cerrado, con candado gris
   if (ppDifAbierto(m)) {
     const y = 148, modos = [[tr('FÁCIL'), '#ff6eb5', '#c43a84'], [tr('DIFÍCIL'), '#4a54c8', '#2a2a7a'], [tr('PESADILLA'), '#c8323c', '#6a0a14']];

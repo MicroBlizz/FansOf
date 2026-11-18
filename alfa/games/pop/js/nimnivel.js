@@ -74,6 +74,7 @@ function ppNimFin(T, gano, soloVentana = false) {
     t.appendChild(b);
     ppBotonOferta(t, () => ppNimFin(T, false, true));   // al acabar con la oferta, vuelve esta ventana
     t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn2 pp-verde', ppOtraVez));
+    ppBotonSaltarJefe(t, T.d);   // atascado en el jefe: abrir el mundo siguiente con perlas (tarea #95, js/saltar-jefe-juego.js)
     t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
   }, soloVentana ? 0 : 900);
 }

@@ -81,6 +81,7 @@ function ppArranque() {
   setTimeout(() => { ppPerfilBoton(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: el botón PERFIL y el monedero de perlas del servidor (tarea #41)
   setTimeout(ppSubeMarcas, 3000);   // lo que aún no esté en el ranking mundial
   if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
+  ppCorazonEnlaceArranca();   // un enlace de corazón de un amigo (?corazon=, js/pantalla-corazones-enlace.js)
   ppIrA('titulo');
   // la portada sale cuando han llegado los dibujos (como mucho 6 s): así no asoman los de repuesto del primer boceto
   PP_ESCENARIO.style.visibility = 'hidden';
@@ -88,5 +89,6 @@ function ppArranque() {
   Promise.race([imagenes, new Promise(ok => setTimeout(ok, 6000))]).then(muestra);
   requestAnimationFrame(ppFotograma);
   setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppPintaLateral(); }, 1000);   // los relojes de las ofertas
+  setInterval(ppBuzonVigila, 5000);   // el buzón de corazones de los amigos: al llegar al camino y cada minuto (js/pantalla-buzon.js)
 }
 ppArranque();

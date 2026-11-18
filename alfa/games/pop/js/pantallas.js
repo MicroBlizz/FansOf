@@ -133,6 +133,7 @@ function ppVentanaSinCorazones() {
   ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
   ppBotonInfinitas(t, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
   ppBotonOferta(t, ppVentanaSinCorazones);
+  ppBotonPedirCorazones(t);   // js/pantalla-corazones.js
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {

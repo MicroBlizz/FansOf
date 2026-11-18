@@ -1,8 +1,8 @@
 {
- "build": 1279,
- "hash": "06478fa",
- "fecha": "2026-11-18T19:21:57Z",
- "mensaje": "Pop 0.6.0: la Feria del finde para todos (Pepins la dio por buena): fuera el flag 'feria-finde' del código y SQL 159 que borra sus filas (con botón), novedades e inglés",
+ "build": 1280,
+ "hash": "8762cda",
+ "fecha": "2026-11-18T19:29:11Z",
+ "mensaje": "Pop: corazones entre amigos (tarea #96, ADR 150): PEDIR A AMIGOS con enlace propio, regalar al abrirlo, buzón con RECOGER hasta 5; tras el flag corazones-amigos (solo alfa)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

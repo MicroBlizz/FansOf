@@ -60,7 +60,7 @@
         boton(tr('CERRAR SESIÓN'), () => confirmBox(tr('¿CERRAR SESIÓN?'), tr('Tu progreso sigue en tu cuenta y en este aparato. Para recuperarlo en otro, usa «Ya tengo cuenta».'), tr('CERRAR SESIÓN'), () => CUENTA.cerrarSesion().then(() => { toast(tr('Sesión cerrada'), true); pintar(); }))),
         boton(tr('BORRAR CUENTA'), () => confirmBox(tr('¿BORRAR TU CUENTA?'), tr('Se borran tu cuenta y tus partidas en la nube, de todos los juegos. Lo que hay en este aparato se queda.') + '<small>' + tr('No se puede deshacer.') + '</small>', tr('BORRAR'), () => CUENTA.borrarCuenta().then(() => { toast(tr('Cuenta borrada'), true); pintar(); }, fallo)), true));
     }
-    const leyes = document.createElement('small'); leyes.innerHTML = '<a href="' + base + 'privacidad/?lang=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Privacidad') + '</a> · <a href="' + base + 'condiciones/?lang=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Condiciones de uso') + '</a>';
+    const leyes = document.createElement('small'); leyes.innerHTML = '<a href="' + base + 'privacidad/?idioma=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Privacidad') + '</a> · <a href="' + base + 'condiciones/?idioma=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Condiciones de uso') + '</a>';
     fila.append(span, fila2, leyes);
   }
   pintar();

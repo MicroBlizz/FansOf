@@ -1,33 +1,32 @@
 // Fans Of · NÚCLEO · la elección del idioma: qué idioma se usa, cambiarlo y tapar la página hasta que esté traducida. Una pieza de nucleo.js (tarea #28).
-// No traduce: eso es core/js/sistema/idioma.js (IDIOMA, tr). Solo calcula con lo que le pasa nucleo.js (almacenamiento, navegador, documento), así que se prueba en Node.
-// EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es', uno de
-// IDIOMAS → ese, y cualquier otro → 'en'. Cambiarlo recarga la página. Un juego que no tenga diccionario de ese idioma (no lo pasa en
-// juego({ idioma })) se juega en inglés; idiomas() dice cuáles ofrece.
+// No traduce: eso es core/js/sistema/idioma.js (IDIOMA, tr). Solo calcula con lo que le pasa nucleo.js (la regla, almacenamiento, navegador,
+// documento), así que se prueba en Node. QUÉ idioma toca lo dice la regla común, core/js/sistema/idioma-regla.js (ADR 143): el que el jugador
+// elija en Opciones (se guarda en este navegador) o, si no ha elegido, el primero de la serie del navegador, y cualquier otro → 'en'.
+// Cambiarlo recarga la página. Un juego que no tenga diccionario de ese idioma (no lo pasa en juego({ idioma })) se juega en inglés;
+// idiomas() dice cuáles ofrece. Los juegos no leen la dirección; las páginas que no son un juego (idiomaSolo) sí: ?idioma= o ?lang= (ADR 144).
 'use strict';
 (() => {
-  const IDIOMAS = Object.freeze(['es', 'en', 'pt', 'fr', 'de', 'it']);
   const VELO_MAX_MS = 8000;   // sin splash, el velo de idioma no tapa más de 8 s
 
-  const elegido = almacen => { try { return almacen.getItem('fansof-idioma') || ''; } catch (e) { return ''; } };
-  function delNavegador(navegador) {
-    const lista = navegador.languages && navegador.languages.length ? navegador.languages : [navegador.language || 'es'];
-    for (const l of lista) { const c = String(l).slice(0, 2).toLowerCase(); if (IDIOMAS.includes(c)) return c; }
-    return 'en';
-  }
+  const leeGuardado = (almacen, clave) => { try { return almacen.getItem(clave) || ''; } catch (e) { return ''; /* sin almacén: decide el navegador */ } };
 
-  // almacen: como localStorage · navegador: { languages, language } · documento: el document · recarga: recargar la página
-  function idiomaEleccion({ almacen, navegador, documento, recarga }) {
-    let idioma = IDIOMAS.includes(elegido(almacen)) ? elegido(almacen) : delNavegador(navegador);
+  // regla: IDIOMA_REGLA · almacen: como localStorage · navegador: { languages, language } · documento: el document · recarga: recargar la página
+  function idiomaEleccion({ regla, almacen, navegador, documento, recarga }) {
+    const guardado = leeGuardado(almacen, regla.CLAVE);
+    const calcula = (ofrecidos, pedido) => regla.elige({ pedido, guardado, navegador, ofrecidos });
+    let idioma = calcula(regla.IDIOMAS, '');
     let idiomas = ['es', 'en'];
     documento.documentElement.lang = idioma;
 
     // dic: los diccionarios del juego por idioma ({ en: [...], pt: [...] }); sin el del idioma elegido, inglés
-    function ajusta(dic) {
-      if (idioma !== 'es' && idioma !== 'en' && !dic[idioma]) { idioma = 'en'; documento.documentElement.lang = idioma; }
-      idiomas = ['es', 'en'].concat(Object.keys(dic).filter(i => i !== 'es' && i !== 'en' && IDIOMAS.includes(i)));
+    // pedido: lo pedido en la dirección; solo lo pasa idiomaSolo (la portada y Lore), los juegos no
+    function ajusta(dic, pedido = '') {
+      idiomas = ['es', 'en'].concat(Object.keys(dic).filter(i => i !== 'es' && i !== 'en' && regla.IDIOMAS.includes(i)));
+      idioma = calcula(idiomas, pedido);
+      documento.documentElement.lang = idioma;
     }
     function elegir(i) {
-      try { if (i) almacen.setItem('fansof-idioma', i); else almacen.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ }
+      try { if (i) almacen.setItem(regla.CLAVE, i); else almacen.removeItem(regla.CLAVE); } catch (e) { /* sin guardar */ }
       recarga();
     }
     // En otro idioma, la página espera tapada a que se traduzca lo que ya hay (después se traduce también lo que el juego escriba). Si la splash
@@ -43,7 +42,6 @@
 
     return { ajusta, elegir, velo, get idioma() { return idioma; }, get idiomas() { return idiomas.slice(); } };
   }
-  idiomaEleccion.IDIOMAS = IDIOMAS;
 
   if (typeof NUCLEO_PIEZAS !== 'undefined') NUCLEO_PIEZAS.idiomaEleccion = idiomaEleccion;
   if (typeof module !== 'undefined') module.exports = idiomaEleccion;

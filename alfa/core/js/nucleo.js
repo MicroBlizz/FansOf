@@ -18,7 +18,7 @@
 //   listas.js           qué archivos de core carga cada tipo de juego (COMUN, LIGERO), los diccionarios y las hojas comunes
 //   entorno.js          la alfa, la app de Android y el modo desarrollo
 //   panel-dev.js        cuándo sale el panel DEV: siempre en la alfa y en desarrollo, y con el rol «alfa» (CUENTA.roles) en la release y la app (ADR 096)
-//   idioma-eleccion.js  qué idioma se usa, cambiarlo y el velo hasta traducir
+//   idioma-eleccion.js  qué idioma se usa (con la regla común, sistema/idioma-regla.js: ADR 143), cambiarlo y el velo hasta traducir
 //   cargador.js         pedir hojas, fuentes y código por la puerta de carga y contarlos para la splash
 //   sin-conexion.js     instalar como app y jugar sin conexión
 // Las piezas se apuntan en NUCLEO_PIEZAS (el único global que añaden) y nucleo.js les pasa lo que usan (la página, el almacenamiento…).
@@ -30,7 +30,10 @@ const NUCLEO = (() => {
   const version = new URL(yo.src).searchParams.get('v') || '0';
   const conV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + version;
   // LO PRIMERO: dónde corre la página y en qué idioma, para que el ?dev=1 o ?dev=0 quede guardado y la página lleve su idioma en <html lang> desde el principio
-  const ANTES = ['js/nucleo/entorno.js', 'js/nucleo/idioma-eleccion.js'].map(f => conV(CORE + f));
+  // La regla del idioma puede venir ya cargada por la página (la web la pone antes de su menú, ADR 144): no se carga dos veces
+  if (typeof IDIOMA_REGLA !== 'undefined') NUCLEO_PIEZAS.idiomaRegla = IDIOMA_REGLA;
+  const REGLA = NUCLEO_PIEZAS.idiomaRegla ? [] : ['js/sistema/idioma-regla.js'];
+  const ANTES = ['js/nucleo/entorno.js', ...REGLA, 'js/nucleo/idioma-eleccion.js'].map(f => conV(CORE + f));
   for (const src of ANTES) document.write('<script src="' + src + '"><\/script>');
   document.write('<script>NUCLEO_PIEZAS.montarPrimero()<\/script>');
   // LA SPLASH, lo primero (ADR 091): es la pantalla de carga de los juegos. Se pide aquí, antes que cualquier hoja o script, para que tape la página
@@ -59,9 +62,9 @@ const NUCLEO = (() => {
   }
   function montarPrimero() {
     if (en) return;
-    exige('entorno', 'idiomaEleccion');
+    exige('entorno', 'idiomaRegla', 'idiomaEleccion');
     const e = NUCLEO_PIEZAS.entorno({ ubicacion: location, almacen: almacen(), capacitor: window.Capacitor });
-    idioma = NUCLEO_PIEZAS.idiomaEleccion({ almacen: almacen(), navegador: navigator, documento: document, recarga: () => location.reload() });
+    idioma = NUCLEO_PIEZAS.idiomaEleccion({ regla: NUCLEO_PIEZAS.idiomaRegla, almacen: almacen(), navegador: navigator, documento: document, recarga: () => location.reload() });
     en = e;   // solo con las dos hechas: si una falla, se vuelve a intentar entera
     Object.assign(nucleo, { nativa: en.nativa, alfa: en.alfa, desarrollo: en.desarrollo, idioma: idioma.idioma, idiomas: idioma.idiomas });
   }
@@ -85,7 +88,7 @@ const NUCLEO = (() => {
     return p;
   }
   Object.assign(NUCLEO_PIEZAS, { montarPrimero, montar });
-  const ajustaIdioma = dic => { p.idioma.ajusta(dic); Object.assign(nucleo, { idioma: p.idioma.idioma, idiomas: p.idioma.idiomas }); };
+  const ajustaIdioma = (dic, pedido) => { p.idioma.ajusta(dic, pedido); Object.assign(nucleo, { idioma: p.idioma.idioma, idiomas: p.idioma.idiomas }); };
   // los diccionarios de lo común y los del juego (dic), si no se juega en español
   function diccionarios(dic) {
     const i = p.idioma.idioma; if (i === 'es') return;
@@ -113,9 +116,10 @@ const NUCLEO = (() => {
     if (p.idioma.idioma !== 'es') veloDeIdioma();
     p.sinConexion({ nucleoSrc: yo.src, core: CORE, pedido: p.carga.pedido, conV });
   }
-  // Una página que no es un juego (la de la raíz) también se traduce: carga idioma.js y los diccionarios de lo común y los que se le den
+  // Una página que no es un juego (la portada y Lore) también se traduce: carga idioma.js y los diccionarios de lo común y los que se le den.
+  // Como el resto de la web (idioma-web.js), atiende a lo pedido en la dirección (?idioma=, o ?lang=): ADR 144.
   function idiomaSolo(dic = {}) {
-    montar(); ajustaIdioma(dic);
+    montar(); ajustaIdioma(dic, NUCLEO_PIEZAS.idiomaRegla.pedido(location.search));
     p.carga.codigo(CORE + 'js/sistema/idioma.js');
     diccionarios(dic);
     p.carga.todoPedido();

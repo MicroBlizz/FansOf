@@ -31,7 +31,7 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) { cerrar(); e.stopImmediatePropagation(); } }, true);
 
   const fallo = e => window.avisar(t('No ha salido bien: {m}', { m: (e && e.message) || '?' }));
-  const leyes = () => `<small class="cuenta-leyes"><a href="${base}privacidad/?lang=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Privacidad'))}</a> · <a href="${base}condiciones/?lang=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Condiciones de uso'))}</a></small>`;
+  const leyes = () => `<small class="cuenta-leyes"><a href="${base}privacidad/?idioma=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Privacidad'))}</a> · <a href="${base}condiciones/?idioma=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Condiciones de uso'))}</a></small>`;
   const boton = (texto, clase, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = fn; return b; };
   let google = false;
 

@@ -120,7 +120,7 @@
         : `<small style="margin-top:2px">${esc(tr('Para eso necesitamos tu email: entra con tu cuenta.'))}</small>${typeof pedirCuenta === 'function' ? `<button type="button" id="fb-entrar">${esc(tr('ENTRAR CON MI CUENTA'))}</button>` : ''}`)
       + `</div></div><div id="fb-beta">${betaHtml()}</div><button type="button" id="fb-enviar">${esc(tr('ENVIAR'))}</button><div id="fb-aviso" role="status">${esc(aviso || '')}</div>`
       + `<small style="opacity:.7">${esc(verLarga())}</small>`
-      + `<small>${esc(tr('Tu email solo lo usamos si marcas la casilla.'))} <a href="${base}privacidad/?lang=${typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es'}" target="_blank" rel="noopener">${esc(tr('Privacidad'))}</a></small>`;
+      + `<small>${esc(tr('Tu email solo lo usamos si marcas la casilla.'))} <a href="${base}privacidad/?idioma=${typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es'}" target="_blank" rel="noopener">${esc(tr('Privacidad'))}</a></small>`;
     for (const q of preguntas()) { const i = document.getElementById('fb-q-' + q.id); if (i && resp[q.id]) i.value = resp[q.id]; }
     document.getElementById('fb-texto').value = texto.slice(0, R.topes(esBeta()).texto); if (marcado && conEmail()) document.getElementById('fb-check').checked = true;
     cuenta();

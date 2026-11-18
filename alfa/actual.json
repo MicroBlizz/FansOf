@@ -1,8 +1,8 @@
 {
- "build": 1253,
- "hash": "87ff236",
- "fecha": "2026-11-18T13:38:08Z",
- "mensaje": "Novedades de la web: Fans of Kingdom en el boletín de juegos nuevos (tarea #117)",
+ "build": 1254,
+ "hash": "766f6dc",
+ "fecha": "2026-11-18T13:52:03Z",
+ "mensaje": "ADR 144, entrega 1: la web y core eligen el idioma con la misma regla pura (core/js/sistema/idioma-regla.js); ?idioma= en la dirección con ?lang= como alias, también en la portada y Lore (idiomaSolo); enlaces de core a ?idioma=. Con el navegador en portugués, la portada y Lore salen enteras en inglés",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

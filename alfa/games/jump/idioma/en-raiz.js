@@ -2,6 +2,8 @@
 // y la entrada más nueva de js/novedades.js.
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos.": "<b>UNDER THE HOOD</b>: the prototypes move to their final home on the site (the old addresses still take you there) and tweaks to the internal systems.",
+  "Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora.": "Microblizz moved all its games to a new folder. The boxes are still in the hallway and nobody knows whose stapler it is.",
   // 0.3.31
   "<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: a «PROTOTYPE» tag on the edge that takes you to the game's page to vote for it, improvements to the feedback tab and tweaks to the internal systems.",
   "Microblizz ha pegado la etiqueta de PROTOTIPO en un tronco y CrazyBunny la ha saltado por si acaso.": "Microblizz stuck the PROTOTYPE label on a log and CrazyBunny jumped over it just in case.",

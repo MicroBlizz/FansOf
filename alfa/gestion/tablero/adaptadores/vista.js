@@ -19,6 +19,12 @@ TABLERO.vista = (() => {
     'ciclo': 'Eso cerraría un círculo de tareas que se esperan entre sí',
     'requisito-no-existe': 'No existen las tareas',
     'requisitos-muchos': 'Como mucho 20 requisitos',
+    'informe-sin-aprobar': 'Para salir de ideas o de refinamiento, el informe de refinado tiene que estar aprobado',
+    'informe-falta': 'Todavía no hay informe de refinado que aprobar',
+    'sin-nota': 'Escribe qué hay que cambiar del informe',
+    'accion': 'Esa acción no existe',
+    'fuera-de-refinamiento': 'El informe solo se aprueba mientras la tarea está en ideas o en refinamiento',
+    'informe-cambiado': 'El informe ha cambiado desde que lo abriste: refresca y vuelve a leerlo',
   };
   const numeros = datos => (datos && Array.isArray(datos.requisitos) && datos.requisitos.length ? ': ' + datos.requisitos.map(n => '#' + n).join(', ') : '');
   const mensaje = (error, datos) => (error === 'campo-invalido' ? CAMPOS[datos && datos.campo] || 'Hay un campo que no vale'
@@ -35,10 +41,13 @@ TABLERO.vista = (() => {
   const cabeza = (t, esc) => (t.corto ? `<div class="cab"><span class="codigo">#${t.id}</span><b class="tb-corto">${esc(t.corto)}</b></div><div class="tb-largo">${esc(t.titulo)}</div>`
     : `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.titulo)}</b></div>`);
   const pidio = (t, esc) => (TABLERO.pidioTexto(t) ? ` <span class="estado">${esc(TABLERO.pidioTexto(t))}</span>` : '');   // ADR 136
+  // El estado del informe, solo antes de pendiente (después siempre está aprobado; ADR 137). «Falta» y «con cambios» se ven en ámbar
+  const informe = (t, esc) => (TABLERO.sinRefinar(t.estado) && TABLERO.informeTexto(t)
+    ? ` <span class="estado${t.informe === 'falta' || t.informe === 'cambios' ? ' tb-bloqueo' : ''}">${esc(TABLERO.informeTexto(t))}</span>` : '');
   const tonoDe = id => (TABLERO.columna(id) || { tono: 'transparent' }).tono;
   const tarjeta = (t, esc, elegida, conColumna) => `<article class="cuenta tb-tarea${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
     ${cabeza(t, esc)}
-    <div class="meta">${conColumna ? `<span class="estado tb-donde">${esc(TABLERO.tituloDe(t.estado))}</span> ` : ''}<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)}${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${t.refinado ? ' <span class="estado">con informe</span>' : ''}${avanceGrafo(t)}${bloqueo(t)}</div>
+    <div class="meta">${conColumna ? `<span class="estado tb-donde">${esc(TABLERO.tituloDe(t.estado))}</span> ` : ''}<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)}${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${informe(t, esc)}${avanceGrafo(t)}${bloqueo(t)}</div>
     ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}</article>`;
   // Cabecera de la columna con su color y, debajo, su frase de ayuda (qué significa estar ahí)
   const cabecera = (c, esc) => `<h3 class="tb-cab" style="background:${c.tono}">${esc(c.titulo)} <span>${c.tareas.length}</span></h3>${c.ayuda ? `<div class="tb-ayuda">${esc(c.ayuda)}</div>` : ''}`;
@@ -56,7 +65,7 @@ TABLERO.vista = (() => {
   // Los filtros de arriba: tarea nueva, refrescar, la búsqueda (filtra mientras se escribe), juego, responsable y persona (con «todos»; ADR 136: siempre empieza en Todos)
   const PERSONAS = [['', 'Todos'], ...Object.entries(TABLERO.PERSONAS)];
   const filtros = (juegos, filtro, esc) => `<div class="filtros"><button type="button" class="tb-rapida" data-rapida>Apuntar idea o fallo</button><button type="button" class="fuerte" data-nueva>Nueva tarea</button><button type="button" data-refrescar>Refrescar</button>
-    <input type="search" data-buscar value="${esc(filtro.texto || '')}" placeholder="Buscar: #12, palabras…" aria-label="Buscar tareas">
+    <input type="search" data-buscar value="${esc(filtro.texto || '')}" placeholder="Buscar: 104, palabras…" aria-label="Buscar tareas">
     <select data-filtro="juego" aria-label="Juego">${opciones([['', 'Todos los juegos'], ...juegos.map(j => [j, j])], filtro.juego || '', esc)}</select>
     <select data-filtro="responsable" aria-label="Responsable">${opciones([['', 'Todos'], ...Object.entries(TABLERO.RESPONSABLES)], filtro.responsable || '', esc)}</select>
     <label class="tb-persona">Persona <select data-filtro="persona" aria-label="Persona: lo que pidió, hace o le hace Claude">${opciones(PERSONAS, filtro.persona || '', esc)}</select></label></div>`;
@@ -98,7 +107,7 @@ TABLERO.vista = (() => {
     + '@media(max-width:1200px){.tb-vista.abierto{grid-template-columns:minmax(0,1fr)}.tb-panel{position:fixed;inset:0 0 0 auto;width:min(420px,100%);max-height:none;z-index:20;border-radius:0;box-shadow:-4px 0 16px rgba(0,0,0,.25)}}'
     + '.tb-barra{height:6px;border:1px solid var(--linea);border-radius:4px;overflow:hidden;background:var(--bg);margin:4px 0}.tb-barra i{display:block;height:100%;background:var(--ok)}.tb-nivel{display:grid;gap:4px;margin-top:6px}.tb-nodo{border-left:3px solid var(--linea);padding-left:6px}.tb-nodo.pasa{border-color:var(--ok)}.tb-nodo.falla,.tb-nodo.bloqueado{border-color:var(--clara)}.tb-nodo.en_curso{border-color:var(--acento)}'
     + '.tb-form{display:grid;gap:8px}.tb-form textarea{font:inherit;color:var(--texto);background:var(--bg);border:1px solid var(--linea);border-radius:5px;padding:7px 9px;width:100%}.tb-form .filtros label{flex:1;min-width:140px}'
-    + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}.tb-persona{display:flex;gap:4px;align-items:center}';
+    + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}.tb-persona{display:flex;gap:4px;align-items:center}.tb-informe-accion{display:flex;flex-wrap:wrap;gap:6px}.tb-informe-accion input{flex:1;min-width:140px}';
   const ESTILO_MOVIL = '.tb-movil{display:none;gap:10px}.tb-grupos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}'
     + '.tb-grupo{min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:2px solid var(--tono);background:var(--panel);color:var(--texto);border-radius:12px;font-weight:600}'
     + '.tb-grupo b{font-size:20px}.tb-grupo.activo{background:var(--tono);color:#10202b}.tb-lista-movil{display:grid;gap:8px}.tb-lista-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-donde{font-weight:600}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'

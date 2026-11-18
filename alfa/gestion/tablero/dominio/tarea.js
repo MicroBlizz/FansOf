@@ -1,6 +1,6 @@
 // Fans Of · /gestion · TABLERO · dominio · TAREA: una tarea del tablero, inmutable. Nace siempre válida (fábrica `desdeJson`, que devuelve un resultado)
 // y sabe a qué columnas puede pasar quien se lo pida (`mueve`). Las mismas reglas las aplica el servidor (_tarea_mover, hoy en servidor/125-tablero-requisitos.sql);
-// aquí sirven para avisar antes de ir a la red. Sin reloj, red ni pantalla.
+// aquí sirven para avisar antes de ir a la red (el informe aprobado para salir de refinamiento: SQL 152, ADR 137). Sin reloj, red ni pantalla.
 'use strict';
 TABLERO.Tarea = class Tarea {
   #d;
@@ -36,6 +36,7 @@ TABLERO.Tarea = class Tarea {
     const esClaude = String(quien).toLowerCase() === 'claude';
     const motivo = esClaude ? this.#motivoClaudeNoPuede(estado, nota) : null;
     if (motivo) return TABLERO.error(motivo, { id: this.id, estado });
+    if (this.#informeSinAprobar(estado)) return TABLERO.error('informe-sin-aprobar', { id: this.id, estado, informe: this.#d.informe });   // para todos
     const abiertos = this.#abiertosAlEntrar(estado);
     if (abiertos.length) return TABLERO.error('requisitos-abiertos', { id: this.id, estado, requisitos: abiertos });   // para todos, no solo Claude
     const esperando = estado === 'en_curso' ? this.#d.esperando : null;   // la espera solo tiene sentido en curso, como en el servidor
@@ -44,6 +45,21 @@ TABLERO.Tarea = class Tarea {
 
   // Cuando Claude la empieza: si no tenía responsable pasa a ser suya y, sin «para», trabaja para quien la pidió (como el servidor, SQL 125 y 148)
   #alCogerla() { return { responsable: this.#d.responsable || 'claude', para: this.#d.para || this.#d.pedida_por || null }; }
+
+  // ADR 137: de ideas o refinamiento a pendiente o en curso solo con el informe aprobado (sin el campo, de un servidor anterior, decide el servidor)
+  #informeSinAprobar(estado) {
+    const sale = TABLERO.sinRefinar(this.#d.estado) && (estado === 'pendiente' || estado === 'en_curso');
+    return sale && this.#d.informe !== undefined && this.#d.informe !== 'aprobado';
+  }
+
+  // Aprobar el informe o pedir cambios (ADR 137), solo en ideas o refinamiento: resultado ok, o 'accion' (desconocida), 'fuera-de-refinamiento',
+  // 'informe-falta' (sin texto) o 'sin-nota' (cambios sin decir cuáles). Como el servidor
+  puedeInforme(accion, nota = '') {
+    if (accion !== 'aprobar' && accion !== 'cambios') return TABLERO.error('accion', { accion });
+    if (!TABLERO.sinRefinar(this.#d.estado)) return TABLERO.error('fuera-de-refinamiento', { id: this.id });
+    if (!String(this.#d.refinado ?? '').trim()) return TABLERO.error('informe-falta', { id: this.id });
+    return accion === 'cambios' && String(nota ?? '').trim() === '' ? TABLERO.error('sin-nota', { id: this.id }) : TABLERO.ok(this);
+  }
 
   // Solo al empezarla (de ideas, refinamiento o pendiente a en curso) se miran los requisitos (TABLERO.bloqueos); volver de revisión para cambios no se bloquea
   #abiertosAlEntrar(estado) { return estado === 'en_curso' ? TABLERO.bloqueos(this.#d) : []; }

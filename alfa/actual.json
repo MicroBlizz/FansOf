@@ -1,8 +1,8 @@
 {
- "build": 1256,
- "hash": "3ce9f4a",
- "fecha": "2026-11-18T15:32:13Z",
- "mensaje": "Pop: en «Mi perfil» solo las perlas que valen para comprar (las del servidor), con aviso si hay de prueba (tarea #41, pedido de Pepins)",
+ "build": 1259,
+ "hash": "7845fcc",
+ "fecha": "2026-11-18T16:37:28Z",
+ "mensaje": "Tablero: buscar un número solo («104» o «#104») enseña esa tarea esté donde esté, saltándose los otros filtros, y avisa si no está cargada (tarea #100)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

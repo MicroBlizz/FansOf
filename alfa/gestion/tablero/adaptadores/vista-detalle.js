@@ -29,6 +29,12 @@ TABLERO.vistaDetalle = (() => {
 
   // «Requiere» y «Lo necesitan»: número, título y columna; cada una abre su detalle (si es una hecha antigua, el controlador avisa de que no está en el tablero)
   const enlazadas = (etiqueta, lista, esc) => (lista && lista.length ? `<div class="meta tb-enlazadas"><b>${etiqueta}:</b> ${lista.map(r => `<button type="button" class="tb-parecida" data-abrir="${r.id}">#${r.id} ${esc(r.titulo)} <span class="meta">${esc(TABLERO.tituloDe(r.estado))}</span></button>`).join(' ')}</div>` : '');
+  // El informe de refinado con su estado (ADR 137): quién y cuándo, la nota de los cambios pedidos y los botones para aprobarlo o pedir cambios
+  const informeEstado = (t, esc, fecha) => (t.informe ? `<div class="meta"><b>${esc(TABLERO.informeTexto(t))}</b>${t.informe_por ? ' · ' + esc(t.informe_por) : ''}${t.informe_cuando ? ' · ' + esc(fecha(t.informe_cuando)) : ''}${t.informe_nota ? ' · ' + esc(t.informe_nota) : ''}</div>` : '');
+  // Los botones, solo en ideas o refinamiento y con texto que aprobar (también si el estado aún dice «falta» porque no se ha rellenado: SQL 153)
+  const botonesInforme = t => (t.informe && String(t.refinado || '').trim() && TABLERO.sinRefinar(t.estado) ? `<div class="accion tb-informe-accion">${t.informe === 'aprobado' ? '' : `<button type="button" class="fuerte" data-informe="aprobar">Aprobar informe</button>`}`
+    + `<input type="text" data-nota-informe maxlength="500" placeholder="Qué cambiar del informe" aria-label="Qué cambiar del informe"><button type="button" data-informe="cambios">Pedir cambios</button></div>` : '');
+  const informe = (t, esc, fecha) => (t.refinado || t.informe ? `<div class="meta tb-informe"><b>Informe de refinado:</b> ${esc(t.refinado || '(vacío)')}</div>${informeEstado(t, esc, fecha)}${botonesInforme(t)}` : '');
   const fechas = (t, esc, fecha) => [t.creado && 'Creada el ' + fecha(t.creado) + (t.creado_por ? ' por ' + t.creado_por : ''), t.actualizado && 'cambiada el ' + fecha(t.actualizado)]
     .filter(Boolean).map(esc).join(' · ');
   const etiquetas = (t, esc) => `<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${TABLERO.vista.pidio(t, esc)} <span class="estado">${esc(t.prioridad)}</span>`
@@ -36,7 +42,7 @@ TABLERO.vistaDetalle = (() => {
   const detalle = (t, esc, fecha = String) => `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
     <div class="meta">${etiquetas(t, esc)}</div>
     ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
-    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${t.refinado ? `<div class="meta tb-informe"><b>Informe de refinado:</b> ${esc(t.refinado)}</div>` : ''}${enlazadas('Requiere', t.requiere, esc)}${enlazadas('Lo necesitan', t.requerida_por, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
+    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${informe(t, esc, fecha)}${enlazadas('Requiere', t.requiere, esc)}${enlazadas('Lo necesitan', t.requerida_por, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
     <div class="meta">${fechas(t, esc, fecha)}</div>
     <div class="accion"><select data-mover="${t.id}" aria-label="Mover a">${TABLERO.vista.opciones(TABLERO.vista.COLUMNAS, t.estado, esc)}</select><button type="button" data-editar="${t.id}">Editar</button></div>
     ${grafoHtml(t, esc, fecha)}${historial(t, esc, fecha)}`;

@@ -27,6 +27,9 @@ TABLERO.tituloDe = id => (TABLERO.COLUMNAS.find(c => c.id === id) || { titulo: i
 // Si la lleva Claude y se sabe para quién: «Claude para Pepins» (ADR 136)
 TABLERO.responsableTexto = t => (t.responsable === 'claude' && TABLERO.PERSONAS[t.para] ? 'Claude para ' + TABLERO.PERSONAS[t.para]
   : TABLERO.RESPONSABLES[t.responsable] || 'Sin responsable');
+// El estado del informe de refinado (ADR 137, SQL 152). Sin el campo (servidor anterior) no se sabe: la tarjeta dice lo de antes («con informe»)
+TABLERO.INFORMES = Object.freeze({ falta: 'Falta informe', por_aprobar: 'Informe por aprobar', cambios: 'Informe con cambios', aprobado: 'Informe aprobado' });
+TABLERO.informeTexto = t => TABLERO.INFORMES[t.informe] || (t.refinado ? 'con informe' : '');
 TABLERO.pidioTexto = t => (TABLERO.PERSONAS[t.pedida_por] ? 'Pidió ' + TABLERO.PERSONAS[t.pedida_por] : '');
 TABLERO.columna = id => TABLERO.COLUMNAS.find(c => c.id === id) || null;
 TABLERO.sinRefinar = id => TABLERO.COLUMNAS.some(c => c.id === id && c.sinRefinar);

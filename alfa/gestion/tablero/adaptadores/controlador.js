@@ -9,7 +9,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
   // (el formulario corto de «Apuntar idea o fallo»); grupo: el de los tres botones del móvil que se ve
-  let grupo = 'ideas', juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null;
+  let grupo = 'ideas', juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
@@ -78,6 +78,14 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     filtro[clave] = valor;
     columnas = casos.repartir(tareas, filtro);
     pintaTablero();
+    avisaNumero();
+  }
+  // Buscando un número que no está cargado (no existe, o se hizo hace más de 14 días), lo dice; al cambiar la búsqueda, el aviso se va
+  function avisaNumero() {
+    const id = TABLERO.idBuscado(filtro.texto), falta = id !== null && !tareaDe(id);
+    if (falta) aviso('La #' + id + ' no está en el tablero: no existe o se hizo hace más de 14 días.');
+    else if (avisoNumero) aviso('');
+    avisoNumero = falta;
   }
   // Al escribir el título en el formulario, tras una pausa, salen las tareas parecidas (también las hechas antiguas) para no duplicar
   // `form` es el formulario donde se escribe: si al volver la respuesta ya no está en la página (se cerró o se abrió otro), no se pinta
@@ -134,6 +142,8 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       if (ev.target.closest('[data-cancelar]')) abre(panel.formulario && panel.formulario.id ? { id: panel.formulario.id } : null);
       const p = ev.target.closest('[data-abrir]');
       if (p) abreParecida(p.dataset.abrir);
+      const inf = ev.target.closest('[data-informe]');
+      if (inf && panel && panel.id) { aviso(''); aplica(casos.informe(tareaDe(panel.id), inf.dataset.informe, (caja.querySelector('[data-nota-informe]') || {}).value)); }
     };
     caja.oninput = ev => { if (ev.target.name === 'titulo') buscaParecidas(ev.target.value, ev.target.form); };
     caja.onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };

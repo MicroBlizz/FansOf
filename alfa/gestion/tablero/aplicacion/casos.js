@@ -1,6 +1,6 @@
 // Fans Of · /gestion · TABLERO · aplicación · CASOS: lo que se le puede pedir al tablero: `cargar` (leerlo y repartirlo en columnas), `crear`, `editar`,
 // `mover` una tarea, `apuntar` una idea o un fallo con el formulario corto y buscar las `parecidas` a un título. Habla con el servidor por un PUERTO (`repositorio`), nunca por la red:
-//   { lista() → Promise<json[]>, guardar(tarea) → Promise<{ok, id?, motivo?}>, mover(id, estado, nota) → Promise<{ok, motivo?}>,
+//   { lista() → Promise<json[]>, guardar(tarea) → Promise<{ok, id?, motivo?}>, mover(id, estado, nota) → Promise<{ok, motivo?}>, informe(id, accion, nota, texto) → Promise<{ok, motivo?}>,
 //     parecidas(texto, excluir) → Promise<[{ id, titulo, estado, parecido }]> }
 // `guardar` lleva `requiere` (lista de números) si el formulario los trae. Los adaptadores lo cumplen (adaptadores/repositorio-servidor.js) y los tests le pasan uno en memoria. Antes de ir al servidor, el dominio avisa de lo que
 // está mal (formulario o movimiento no permitido); un rechazo del servidor llega como el mismo tipo de error, con su motivo. Todo devuelve resultados, no excepciones.
@@ -56,6 +56,13 @@ TABLERO.casos = repositorio => {
       if (!b.ok) return Promise.resolve(b);
       const mal = b.valor.requiere && TABLERO.motivoRequisitos(id, b.valor.requiere, tareas);
       return mal ? Promise.resolve(mal) : enviar(() => repositorio.guardar({ ...b.valor, id }));
+    },
+    // Aprobar el informe o pedir cambios (ADR 137), lo hace una persona desde el detalle: `accion` 'aprobar' o 'cambios' (con nota)
+    informe(tarea, accion, nota) {
+      const t = TABLERO.Tarea.desdeJson(tarea);
+      const p = t.ok ? t.valor.puedeInforme(accion, nota) : t;
+      const conNota = accion === 'cambios' ? String(nota ?? '').trim() || null : null;   // al aprobar no va nota: lo escrito en «qué cambiar» no cuenta
+      return p.ok ? enviar(() => repositorio.informe(tarea.id, accion, conNota, tarea.refinado || '')) : Promise.resolve(p);   // el texto leído: si cambió, no se aprueba
     },
     // `tarea` es el json de la tarea tal como está ahora; el movimiento lo hace una persona (el servidor lo vuelve a comprobar con quien ha entrado)
     mover(tarea, estado, nota) {

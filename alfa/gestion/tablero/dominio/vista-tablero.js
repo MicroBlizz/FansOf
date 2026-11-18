@@ -2,10 +2,14 @@
 // un filtro ({ juego, responsable, persona, texto }), devuelve todas las columnas siempre (aunque vacías), con sus tareas ordenadas por prioridad, luego por el
 // orden dado y al final por antigüedad. El texto se busca con TABLERO.coincide (buscar.js).
 'use strict';
-// Filtro «Persona» (Arkioner, 17-11-2026, ADR 136): lo que esa persona pidió, lo que hace a mano y lo que Claude hace para ella
-TABLERO.esDe = (t, persona) => t.pedida_por === persona || t.responsable === persona || (t.responsable === 'claude' && t.para === persona);
+// Filtro «Persona» (ADR 136; Arkioner, 18-11-2026): a quién está asignada, es decir, lo que hace a mano y lo que Claude hace para ella. Solo si aún
+// no tiene a nadie (sin responsable, o Claude sin «para») cuenta quién la pidió
+TABLERO.asignadaA = t => (t.responsable === 'claude' ? t.para || null : t.responsable || null);
+TABLERO.esDe = (t, persona) => (TABLERO.asignadaA(t) || (t.responsable && t.responsable !== 'claude' ? null : t.pedida_por)) === persona;
+// Un número solo en la búsqueda (TABLERO.idBuscado) enseña esa tarea en su columna aunque los otros filtros la escondieran
 TABLERO.reparte = (tareas, filtro = {}) => {
-  const pasa = t => (!filtro.juego || t.juego === filtro.juego) && (!filtro.responsable || t.responsable === filtro.responsable)
+  const id = TABLERO.idBuscado(filtro.texto);
+  const pasa = id !== null ? t => t.id === id : t => (!filtro.juego || t.juego === filtro.juego) && (!filtro.responsable || t.responsable === filtro.responsable)
     && (!filtro.persona || TABLERO.esDe(t, filtro.persona)) && TABLERO.coincide(t, filtro.texto);
   const antes = (a, b) => (TABLERO.PRIORIDADES[a.prioridad] - TABLERO.PRIORIDADES[b.prioridad]) || (a.orden - b.orden) || (a.id - b.id);
   return TABLERO.COLUMNAS.map(c => ({ id: c.id, titulo: c.titulo, tono: c.tono, ayuda: c.ayuda, tareas: tareas.filter(t => t.estado === c.id && pasa(t)).sort(antes) }));

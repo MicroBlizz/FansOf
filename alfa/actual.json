@@ -1,8 +1,8 @@
 {
- "build": 1269,
- "hash": "bba9840",
- "fecha": "2026-11-18T17:47:41Z",
- "mensaje": "Tablero: reacciones a las tareas como en WhatsApp, con doce iconos de Fans Of (tarea #124, ADR 149, SQL 155)",
+ "build": 1270,
+ "hash": "de593ef",
+ "fecha": "2026-11-18T17:53:58Z",
+ "mensaje": "Rumble: fuera los flags objetos-nuevos, habilidades-nuevas y pvp-salvaje, abiertos para todos desde octubre (tarea #123)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

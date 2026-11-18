@@ -150,7 +150,7 @@ function applyItem(u, it) {
       case 'cartucho_dorado': u.mHp *= pc(0); u.mDmg *= pc(0); u.olvT = (u.olvT || 0) + v[1]; break;
       case 'taza_indie': u.mDmg *= pc(0); u.regen = (u.regen || 0) + v[1] / 100; break;   // v0.9.23
       case 'claqueta_oro': u.mDmg *= pc(0); u.abSplash = Math.max(u.abSplash || 0, v[1] / 100); break;
-      // octubre de 2026 (flag 'objetos-nuevos'): usan efectos que ya tenían las habilidades
+      // octubre de 2026: usan efectos que ya tenían las habilidades
       case 'palo_selfie': u.mRange = (u.mRange || 1) * pc(0); u.mDmg *= pc(1); break;
       case 'cable_hdmi': u.abChain = Math.max(u.abChain || 0, v[0] / 100); break;
       case 'pincho_kebab': u.abVamp = Math.max(u.abVamp || 0, v[0] / 100); break;

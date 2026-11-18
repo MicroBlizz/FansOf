@@ -1,4 +1,4 @@
-// Fans of Rumble · Habilidades locas (octubre de 2026, tras el flag 'habilidades-nuevas'): lo que hacen en la partida. Su dibujo está en 07g-habilidades-locas-dibujo.js.
+// Fans of Rumble · Habilidades locas (octubre de 2026): lo que hacen en la partida. Su dibujo está en 07g-habilidades-locas-dibujo.js.
 // Llamada del CEO, Modo Súper, Wallhack, Ragdoll, Lag, Modo Dios, Bullet Time, Lootbox humana, Spam de emotes, Ping 999, Clipping y Pay to Win.
 // Todo lo que decide la partida usa el azar con semilla (srnd); lo visual, Math.random. Se engancha con una línea en: applyAbility (aplica), onLand (llega),
 // tickExtras (tick), deathExtras (muere), hurt (golpe), acquire/targetable/separate (Clipping), updateGame (update) y resetMatch (reset).

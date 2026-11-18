@@ -1,7 +1,6 @@
 // Fans of Rumble · PvP: la pestaña CONTRA JUGADORES de la Arena (liga, buscar rival), avisos durante la partida y pantalla final
 'use strict';
 const pvpDisponible = () => NUCLEO.flag('pvp-estandar', 'PvP Estándar: abierto a los jugadores como beta (para cerrarlo: fila de la tabla flags con valor false)', true);
-const pvpSalvaje = () => NUCLEO.flag('pvp-salvaje', 'PvP modo Salvaje (habilidades y objetos): sale a los jugadores cuando se quite este flag');
 const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   // ia: segundos de búsqueda tras los que se avisa de que hay poca gente
 const PVP_MODOS = { estandar: ['Estándar', 'Cuentan tu mazo y el nivel y las estrellas de tus cartas. Los objetos y las habilidades no entran.'], salvaje: ['Salvaje', 'Cuenta todo lo que llevas puesto: las habilidades de tus cartas y el equipo de tu líder.'] };
 
@@ -73,9 +72,8 @@ async function pvpClasificacion() {
 }
 function pvpPinta() {
   const f = G.faction, F = FACTIONS[f], buscando = !!PVP_UI.busca, eq = pvpEquipo(PVP_UI.modo), abierta = $('#scr-pvp').classList.contains('fac-abierta');
-  if (!pvpSalvaje()) PVP_UI.modo = 'estandar';   // sin Salvaje abierto, solo Estándar
   arenaTabs('pvp'); $('#scr-pvp').classList.toggle('buscando', buscando);
-  for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; b.hidden = b.dataset.pm === 'salvaje' && !pvpSalvaje(); }
+  for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; }
   $('#pvp-sub').textContent = PVP_MODOS[PVP_UI.modo][1];
   pvpPintaLiga();
   // la facción se elige aquí mismo (botón FACCIÓN): salen todas y las que aún no tienes, en gris
@@ -196,7 +194,6 @@ function pvpShowEnd() {
 }
 
 /* ---------- los botones ---------- */
-pvpSalvaje();   // se apunta en el panel DEV
 hook('cuenta-vuelta', d => { if (d === 'pvp') { toast('¡Cuenta lista! Entrando en PvP', true); pvpPantalla(); } });
 hook('pantalla', id => { if (id === 'scr-pvp' && !PVP_UI.busca) pvpPinta(); });   // al volver del editor de mazo
 for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListener('click', () => { if (PVP_UI.busca) return; PVP_UI.modo = b.dataset.pm; play('select'); pvpPinta(); pvpClasificacion(); });

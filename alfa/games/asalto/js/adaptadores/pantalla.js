@@ -3,7 +3,7 @@
 // eligen dos héroes y una ventana dice qué gana el que se queda antes de confirmar), llama a los casos de uso y anima el Altar: el
 // giro de las columnas, las líneas que se encienden una a una, los héroes que llegan en su columna de luz y los premios. En cada
 // fotograma pinta todo en el lienzo pequeño y pasa las luces a la capa de luces. La batalla la lleva pantalla-batalla.js; la mano de
-// la primera partida guiada, guia.js (que dice qué se puede tocar en cada paso); las misiones, pinta-misiones.js.
+// la primera partida guiada, guia.js (que dice qué se puede tocar en cada paso); los consejos de la primera vez, consejos.js; las misiones, pinta-misiones.js.
 'use strict';
 AS.pantalla = (() => {
   const L = AS.lienzo.L, fx = AS.fx, C = AS.tema.C;
@@ -141,7 +141,7 @@ AS.pantalla = (() => {
     if (!r.ok) { noVale(r.error); return; }
     AS.suena('clic');
   }
-  // el botón UNIR enciende y apaga el modo de unir
+  // el botón UNIR enciende y apaga el modo de unir (se queda encendido después de cada unión hasta que se vuelve a pulsar)
   function modoUnir() {
     const q = p();
     if (E.giro || q.fase !== 'preparar') return;
@@ -154,8 +154,10 @@ AS.pantalla = (() => {
     const r = E.casos.vistaUnion(desde, hasta);
     if (!r.ok) { noVale(r.error); return; }
     AS.suena('clic');
-    AS.ventanas.union(E, r.valor, { si: () => { E.unir = null; absorbe(desde, hasta); }, alReves: () => pideUnion(hasta, desde), no: () => { if (E.unir) E.unir.queda = null; } });
+    AS.ventanas.union(E, r.valor, { si: () => { absorbe(desde, hasta); sigueUniendo(); }, alReves: () => pideUnion(hasta, desde), no: () => { if (E.unir) E.unir.queda = null; } });
   }
+  // tras una unión el modo UNIR sigue encendido, para unir todos los que se quiera seguidos; se apaga solo si ya no quedan dos héroes
+  function sigueUniendo() { E.unir = AS.equipo.todos(p().equipo).length >= 2 ? { queda: null } : null; }
   // con el modo encendido: el primer héroe que se toca es el que se queda; el segundo, el que se une a él
   function eligeUnir(sitio) {
     const U = E.unir;
@@ -192,6 +194,7 @@ AS.pantalla = (() => {
     suerte: () => { if (!E.giro) { AS.suena('clic'); AS.ventanas.suerte(E); } },
     tienda: () => { if (p().fase === 'preparar' && !E.giro) { AS.suena('clic'); AS.ventanas.tienda(E); } },
     'salta-guia': () => AS.guia.salta(E),
+    'vale-consejo': () => AS.consejos.vale(E),
     pausa: () => { AS.suena('clic'); AS.ventanas.pausa(E); },
     clase: k => { AS.suena('clic'); AS.ventanas.clase(E, k); },
     'ayuda-empujon': () => { E.pistaFija = { txt: tr('Toca una runa que asoma: mueve su columna'), t: 3 }; },
@@ -256,7 +259,7 @@ AS.pantalla = (() => {
     if (!E.unir || E.batalla) return;
     for (const z of E.zonas) {
       if (z.que !== 'heroe') continue;
-      if (mismoSitio(z.dato, E.unir.queda)) { AS.guia.marco(g, z, E.t); AS.texto.pinta(g, tr('SE QUEDA'), z.x + z.w / 2, z.y - 12, { col: C.oro, ancla: 'c' }); continue; }
+      if (mismoSitio(z.dato, E.unir.queda)) { AS.franja.marco(g, z, E.t); AS.texto.pinta(g, tr('SE QUEDA'), z.x + z.w / 2, z.y - 12, { col: C.oro, ancla: 'c' }); continue; }
       const n = 18, e = 4;
       for (const [x, y, sx, sy] of [[z.x, z.y, 1, 1], [z.x + z.w, z.y, -1, 1], [z.x, z.y + z.h, 1, -1], [z.x + z.w, z.y + z.h, -1, -1]]) {
         g.fillStyle = C.oro; g.fillRect(Math.min(x, x + sx * n), Math.min(y, y + sy * e), n, e); g.fillRect(Math.min(x, x + sx * e), Math.min(y, y + sy * n), e, n);
@@ -304,7 +307,7 @@ AS.pantalla = (() => {
     g.fillStyle = C.noche; g.fillRect(0, 0, P.W, P.H);
     g.translate(tb.x, tb.y);
     AS.pinta.arena(g, P, q, E); AS.pinta.marcador(g, P, q, E); AS.pinta.altar(g, P, q, E); AS.pinta.misiones(g, P, q, E, dt);
-    pintaUnir(g); AS.guia.pinta(g, P, E); pintaArrastre(g); fx.pinta(g);
+    pintaUnir(g); AS.guia.pinta(g, P, E); AS.consejos.pinta(g, P, E, dt); pintaArrastre(g); fx.pinta(g);
     if (E.intro) AS.pantallaBatalla.pintaIntro(g, P, E);
     pintaCartel(g, P);
     g.setTransform(1, 0, 0, 1, 0, 0);

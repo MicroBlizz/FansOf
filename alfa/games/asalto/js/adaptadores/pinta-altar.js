@@ -49,7 +49,7 @@ AS.pinta.altar = (() => {
     g.restore();
     if (!puede) return;
     flecha(g, l.x + l.w - 16, l.y + l.h / 2, dir);   // hacia dónde se mueve la columna
-    if (gana) AS.fx.luz(l.x + l.w / 2, l.y + l.h / 2, 60, [255, 210, 80], 0.1);
+    if (gana && !AS.guia.activa) AS.fx.luz(l.x + l.w / 2, l.y + l.h / 2, 60, [255, 210, 80], 0.1);   // en la partida guiada ya la marca la guía, sin luz que la tape
     E.zona({ x: l.x, y: l.y - 6, w: l.w, h: l.h + 12 }, 'empuja', { col, dir });
   }
   // una losa del Altar con su runa: en oro si es de una línea, parpadeando si le falta una para serlo, y marcada si el Estallido la rompería

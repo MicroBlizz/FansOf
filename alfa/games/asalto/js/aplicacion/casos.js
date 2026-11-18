@@ -87,7 +87,8 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     regalaPlumas(n) { prog = PR.apunta(prog, { plumas: n }); guarda(); return AS.ok(prog.plumas); },
     consejoVisto(id) { prog = PR.consejoVisto(prog, id); guarda(); },
     // volver a ver la partida guiada: la próxima partida nueva de la primera zona la trae
-    repiteGuia() { prog = PR.olvidaConsejo(prog, 'guia'); guarda(); },
+    // ver la guía otra vez: vuelve la partida guiada y también los consejos de la primera vez (los que empiezan por «c-»)
+    repiteGuia() { for (const id of ['guia', ...Object.keys(prog.consejos).filter(k => k.startsWith('c-'))]) prog = PR.olvidaConsejo(prog, id); guarda(); },
     sonido(vol, mus) { prog = { ...prog, vol, mus }; guarda(); },
     borraTodo() { prog = PR.nuevo(); partida = null; batalla = null; almacen.guardaPartida(null); guarda(); },
     // para la partida en la nube: cambiar el progreso entero por el que llega

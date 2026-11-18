@@ -37,9 +37,9 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     const b = crea('button', 'spy-carta' + (c.elegida ? ' elegida' : '') + (c.apagada ? ' apagada' : '') + (c.senalada ? ' senalada' : ''));
     b.type = 'button';
     b.style.setProperty('--fam', c.color); b.style.setProperty('--fondo', c.fondo);
-    const cabecera = crea('span', 'spy-carta-cab'), dibujo = crea('canvas');
+    const cabecera = crea('span', 'spy-carta-cab'), dibujo = crea('img');
     cabecera.append(crea('i', '', c.corto), crea('b', '', String(c.coste)));
-    S.iconos.carta(dibujo, c.id);
+    Object.assign(dibujo, { src: 'img/cartas/' + c.id + '.jpg', alt: '', draggable: false, width: 360, height: 252 });   // la ilustración de Yoshi
     b.append(cabecera, dibujo, crea('span', 'spy-carta-nombre', c.nombre));
     if (c.ruido) b.append(crea('span', 'spy-carta-ruido', 'Hace ruido'));
     b.addEventListener('click', () => acciones.carta(c.i));

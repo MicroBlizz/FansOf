@@ -96,13 +96,13 @@ body { background: #04070f; }
 .spy-cancelar { flex: none; width: 40px; padding: 11px 0 7px; font-size: 15px; }
 #spy-mano { display: flex; justify-content: center; align-items: stretch; gap: 5px; padding: 14px 6px 0; min-height: 112px; box-sizing: border-box; }
 #spy-mano.llena { gap: 3px; padding-left: 4px; padding-right: 4px; }
-.spy-carta { position: relative; flex: 0 1 70px; min-width: 0; padding: 0; display: flex; flex-direction: column; overflow: hidden; cursor: pointer; border: 3px solid var(--spy-tinta); border-radius: 10px;
-  background: var(--fondo, var(--spy-papel)); color: var(--spy-tinta); box-shadow: 0 4px 0 var(--spy-tinta); transition: transform .12s ease-out; touch-action: manipulation; }
-.spy-carta-cab { display: flex; align-items: center; justify-content: space-between; gap: 2px; padding: 2px 3px 2px 5px; background: var(--fam, var(--spy-cielo)); border-bottom: 2px solid var(--spy-tinta); }
-.spy-carta-cab i { font: 800 9px/1 var(--font-ui); font-style: normal; letter-spacing: .03em; color: #fff; text-shadow: 0 1px 0 var(--spy-tinta), 1px 0 0 var(--spy-tinta), -1px 0 0 var(--spy-tinta), 0 -1px 0 var(--spy-tinta); }
-.spy-carta-cab b { flex: none; display: grid; place-items: center; width: 19px; height: 19px; box-sizing: border-box; padding-top: 2px; border-radius: 50%; border: 2px solid var(--spy-tinta); background: var(--spy-papel); color: var(--spy-tinta); font: 400 13px/1 var(--font-display); }
-.spy-carta canvas { display: block; width: 100%; height: auto; }
-.spy-carta-nombre { flex: 1; display: grid; place-items: center; min-height: 26px; padding: 2px 1px; font: 800 10.5px/1.05 var(--font-ui); text-align: center; overflow-wrap: anywhere; }
+.spy-carta { position: relative; flex: 0 1 72px; min-width: 0; padding: 0; display: flex; flex-direction: column; overflow: hidden; cursor: pointer; border: 3px solid var(--spy-tinta); border-radius: 10px;
+  background: #0b1530; color: #fff; box-shadow: 0 4px 0 var(--spy-tinta), inset 0 0 0 2px var(--fam, var(--spy-cielo)); transition: transform .12s ease-out; touch-action: manipulation; }
+.spy-carta-cab { display: flex; align-items: center; gap: 3px; padding: 2px 3px 2px 2px; background: var(--fam, var(--spy-cielo)); border-bottom: 2px solid var(--spy-tinta); }
+.spy-carta-cab i { order: 2; flex: 1; min-width: 0; font: 800 9px/1 var(--font-ui); font-style: normal; letter-spacing: .03em; text-align: right; color: #fff; text-shadow: 0 1px 0 var(--spy-tinta), 1px 0 0 var(--spy-tinta), -1px 0 0 var(--spy-tinta), 0 -1px 0 var(--spy-tinta); }
+.spy-carta-cab b { order: 1; flex: none; display: grid; place-items: center; width: 21px; height: 21px; box-sizing: border-box; padding-top: 2px; border-radius: 50%; border: 2px solid var(--spy-tinta); background: var(--spy-amarillo); color: var(--spy-tinta); font: 400 14px/1 var(--font-display); }
+.spy-carta img { display: block; width: 100%; height: auto; aspect-ratio: 10 / 7; object-fit: cover; border-bottom: 2px solid var(--spy-tinta); -webkit-user-drag: none; pointer-events: none; }
+.spy-carta-nombre { flex: 1; display: grid; place-items: center; min-height: 26px; padding: 2px 2px; font: 800 10.5px/1.05 var(--font-ui); text-align: center; overflow-wrap: anywhere; color: #fff; }
 #spy-mano.llena .spy-carta-nombre { font-size: 9.5px; letter-spacing: -.01em; }
 .spy-carta-ruido { padding: 3px 0 2px; font: 800 8px/1 var(--font-ui); letter-spacing: .03em; text-transform: uppercase; text-align: center; background: var(--spy-tinta); color: #ffb04a; }
 .spy-carta.elegida { transform: translateY(-12px) rotate(-2deg); box-shadow: 0 6px 0 var(--spy-tinta), 0 0 0 3px var(--spy-amarillo); z-index: 1; }
@@ -158,7 +158,7 @@ body:has(#dev-boton) .spy-turno { padding-left: 58px; }   /* en la alfa y en des
 }
 @media (max-height: 720px) {
   #spy-mano { min-height: 0; padding-top: 12px; }
-  .spy-carta canvas { height: 36px; object-fit: contain; }
+  .spy-carta img { aspect-ratio: 2 / 1; }
   #spy-lola { padding: 4px 7px; margin-bottom: 5px; }
   #spy-lola-cara { width: 38px; height: 38px; }
   #spy-lola-texto { font-size: 12px; }

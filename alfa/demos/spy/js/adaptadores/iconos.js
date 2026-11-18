@@ -1,6 +1,6 @@
-// Fans of Spy · ADAPTADORES · Los dibujos en plano, hechos por código en un lienzo 2D con trazo negro gordo (aire de cómic): la
-// ilustración de cada carta (120 x 84) y las caras (64 x 64) de la barra de turnos (CrazyBunny, el Becario, el vigilante y la cámara) y de Lola.
-// Son provisionales: el arte de verdad lo hará Yoshi cuando el prototipo guste. SPY.iconos.carta(lienzo, id) y .cara(lienzo, tipo).
+// Fans of Spy · ADAPTADORES · Las caras en plano (64 x 64), hechas por código en un lienzo 2D con trazo negro gordo (aire de cómic):
+// las de la barra de turnos (CrazyBunny, el Becario, el vigilante y la cámara) y la de Lola. Son provisionales, hasta que las
+// pinte Yoshi. Las ilustraciones de las cartas ya son suyas (img/cartas/). SPY.iconos.cara(lienzo, tipo).
 'use strict';
 var SPY = globalThis.SPY || (globalThis.SPY = {});
 (function (S) {
@@ -23,22 +23,6 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   function vaho(x, y) { for (const dx of [-9, 0, 9]) { g.beginPath(); g.moveTo(x + dx, y); g.quadraticCurveTo(x + dx - 6, y - 8, x + dx, y - 16); g.stroke(); } }
   function taza(x, y, color) { forma([[x - 16, y - 20], [x + 16, y - 20], [x + 12, y + 20], [x - 12, y + 20]], color); caja(x - 18, y - 26, 36, 8, 3, '#6b3f1d'); }
   function zanahoria(x, y, k) { forma([[x - 14 * k, y - 10 * k], [x + 14 * k, y - 10 * k], [x, y + 34 * k]], NARANJA); forma([[x - 8 * k, y - 10 * k], [x - 12 * k, y - 26 * k], [x, y - 14 * k], [x + 12 * k, y - 26 * k], [x + 8 * k, y - 10 * k]], VERDE); }
-
-  const CARTAS = {
-    puntillas() { for (const [x, y] of [[44, 54], [76, 34]]) { bola(x, y, 10, 17, BLANCO, 0.25); for (const d of [-9, 0, 9]) bola(x + d + 5, y - 23, 3.5, 4.5, BLANCO); } },
-    carrera() { bola(66, 46, 30, 15, NARANJA, -0.2); caja(70, 26, 22, 16, 5, BLANCO); pluma(4); for (const y of [30, 46, 62]) raya(8, y, 30, y); },
-    caja() { for (const x of [48, 70]) bola(x, 22, 6, 16, BLANCO, (x - 59) / 60); caja(30, 30, 60, 44, 4, CARTON); caja(52, 30, 16, 44, 0, '#ecd2a6'); },
-    golpe() { caja(70, 8, 40, 68, 2, '#51628f'); pluma(3); for (const y of [30, 52]) raya(70, y, 110, y); raya(90, 8, 90, 30); raya(84, 52, 84, 76); pluma(); estrella(52, 42, 28, AMARILLO); },
-    cafe() { pluma(4); vaho(60, 22); pluma(); taza(60, 50, BLANCO); },
-    grapadora() { forma([[20, 60], [100, 60], [104, 72], [20, 72]], '#51628f'); forma([[18, 54], [22, 40], [96, 22], [104, 34], [30, 58]], ROJO); bola(26, 56, 6, 6, AMARILLO); },
-    lanzapelotas() { forma([[14, 58], [70, 30], [80, 50], [24, 76]], '#51628f'); caja(8, 56, 22, 22, 4, TINTA); bola(96, 28, 13, 13, AMARILLO); pluma(4); raya(74, 20, 84, 24); raya(78, 44, 88, 42); },
-    maquina() { taza(60, 46, BLANCO); pluma(7); g.strokeStyle = VERDE; raya(60, 34, 60, 56); raya(49, 45, 71, 45); },
-    descanso() { bola(60, 44, 28, 28, BLANCO); pluma(6); raya(60, 44, 60, 26); raya(60, 44, 74, 50); pluma(); bola(36, 16, 8, 8, AMARILLO); bola(84, 16, 8, 8, AMARILLO); },
-    agenda() { caja(34, 10, 56, 66, 5, AZUL); caja(44, 22, 36, 14, 3, BLANCO); pluma(4); for (const y of [20, 34, 48, 62]) raya(28, y, 40, y); },
-    plano() { forma([[16, 20], [44, 12], [76, 22], [104, 12], [104, 64], [76, 74], [44, 64], [16, 72]], BLANCO); pluma(3); raya(44, 12, 44, 64); raya(76, 22, 76, 74); pluma(5); g.strokeStyle = ROJO; g.setLineDash([7, 7]); forma([[26, 56], [50, 38], [70, 52], [94, 30]], null, false); g.setLineDash([]); },
-    carro() { forma([[24, 22], [96, 22], [88, 56], [32, 56]], CARTON); caja(46, 12, 28, 14, 3, BLANCO); for (const x of [40, 80]) bola(x, 66, 9, 9, TINTA); pluma(4); raya(96, 22, 110, 12); },
-    zanahoriazo() { estrella(40, 46, 30, AMARILLO); g.save(); g.translate(72, 34); g.rotate(0.6); zanahoria(0, 0, 1.15); g.restore(); },
-  };
 
   // La cabeza de un Becario: con gorra si es el vigilante.
   function robot(gorra) {
@@ -71,5 +55,5 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     pluma();
     if (tabla[id]) tabla[id]();
   }
-  S.iconos = Object.freeze({ carta: (lienzo, id) => dibuja(lienzo, CARTAS, id, 120, 84), cara: (lienzo, tipo) => dibuja(lienzo, CARAS, tipo, 64, 64) });
+  S.iconos = Object.freeze({ cara: (lienzo, tipo) => dibuja(lienzo, CARAS, tipo, 64, 64) });
 })(SPY);

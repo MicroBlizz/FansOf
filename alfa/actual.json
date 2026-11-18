@@ -1,8 +1,8 @@
 {
- "build": 1277,
- "hash": "0dba60e",
- "fecha": "2026-11-18T19:11:49Z",
- "mensaje": "Pop: abrir el mundo siguiente con perlas al atascarte en un jefe (tarea #95, ADR 152)",
+ "build": 1279,
+ "hash": "06478fa",
+ "fecha": "2026-11-18T19:21:57Z",
+ "mensaje": "Pop 0.6.0: la Feria del finde para todos (Pepins la dio por buena): fuera el flag 'feria-finde' del código y SQL 159 que borra sus filas (con botón), novedades e inglés",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",
@@ -23,7 +23,7 @@
   "panic": "0.1.2",
   "paperwork": "0.11.2",
   "pets": "0.2.15",
-  "pop": "0.5.2",
+  "pop": "0.6.0",
   "ratkov": "0.2.45",
   "rouflage": "0.2.81",
   "rumble": "0.9.174",

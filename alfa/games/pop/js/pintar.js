@@ -15,6 +15,14 @@ const PP_COLORES = ['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila']; 
 const ppSpriteBurbuja = (i, n, arriba) => 'b-' + PP_COLORES[Math.floor(i / n) % PP_COLORES.length] + (arriba === 2 ? '-doble' : arriba ? '-arriba' : '-abajo');
 // la doble (mundo 2) usa su dibujo con nata; si aún no está, la normal
 const ppSpriteArriba = (i, n, up) => (up >= 2 && ppTieneImg(ppSpriteBurbuja(i, n, 2)) ? ppSpriteBurbuja(i, n, 2) : ppSpriteBurbuja(i, n, true));
+// con el estilo del mundo (tarea #110, js/estilo-mundo.js) la burbuja de su mundo (el macaron en la Pastelería), si ya está cargada;
+// la doble y lo que aún no tiene dibujo propio, la de siempre. `up` 0 = hundida.
+function ppSpriteConEstilo(estilo, i, n, up) {
+  const normal = up ? ppSpriteArriba(i, n, up) : ppSpriteBurbuja(i, n, false);
+  if (!estilo || !estilo.burbuja || up >= 2) return normal;
+  const k = ppSpriteDeEstilo(estilo, PP_COLORES[Math.floor(i / n) % PP_COLORES.length], up ? 'arriba' : 'abajo');
+  return ppTieneImg(k) ? k : normal;
+}
 function ppColorBurbuja(i, n, luz = 0) { const [h, s, l] = PP_FILAS[Math.floor(i / n) % PP_FILAS.length]; return `hsl(${h} ${s}% ${Math.min(96, l + luz)}%)`; }
 /* ---------- texto ---------- */
 function ppTexto(c, s, x, y, tam, col = '#fff', alinea = 'center', borde = '#7a3a7a') {
@@ -52,16 +60,16 @@ function ppPintaFondo(c, k, t, noche = false) {
   c.restore();
 }
 /* ---------- una burbuja ---------- */
-function ppBurbuja(c, cx, cy, r, i, n, up, slime, pista, trampa, t) {
-  const [sx, sy, h] = ppAnim(i, up);
+function ppBurbuja(c, cx, cy, r, i, n, up, slime, pista, trampa, t, estilo = null) {
+  const [sx, sy, h] = ppAnim(i, up), arriba = ppSpriteConEstilo(estilo, i, n, up || 1), abajo = ppSpriteConEstilo(estilo, i, n, 0);
   const col = ppColorBurbuja(i, n), oscuro = ppColorBurbuja(i, n, -28), claro = ppColorBurbuja(i, n, 22);
   c.save(); c.translate(cx, cy);
   if (h > 0.05) {
     // la cúpula: sombra, cuerpo con luz arriba a la izquierda, brillo
     const rr = r * (0.85 + 0.15 * h);
     c.save(); c.scale(sx, sy);
-    if (ppTieneImg(ppSpriteArriba(i, n, up))) {
-      ppDibujaEn(c, ppSpriteArriba(i, n, up), 0, -4 * h, rr * 2.3, true);
+    if (ppTieneImg(arriba)) {
+      ppDibujaEn(c, arriba, 0, -4 * h, rr * 2.3, true);
       if (up >= 2 && !ppTieneImg(ppSpriteBurbuja(i, n, 2))) { c.beginPath(); c.arc(0, -4 * h, rr * 1.02, 0, Math.PI * 2); c.lineWidth = 6; c.strokeStyle = '#fff'; c.stroke(); }   // repuesto de la doble: un aro blanco
       if (slime) ppSlimeRepuestoOImagen(c, slime, 0, -4 * h + rr * 0.05, rr * 0.6, t, 1);
       c.restore();
@@ -73,9 +81,9 @@ function ppBurbuja(c, cx, cy, r, i, n, up, slime, pista, trampa, t) {
     c.beginPath(); c.ellipse(-rr * 0.38, -4 * h - rr * 0.45, rr * 0.22, rr * 0.13, -0.6, 0, Math.PI * 2); c.fillStyle = 'rgba(255,255,255,0.75)'; c.fill();
     c.restore();
     }
-  } else if (ppTieneImg(ppSpriteBurbuja(i, n, false))) {
+  } else if (ppTieneImg(abajo)) {
     c.save(); c.scale(sx, 1);
-    ppDibujaEn(c, ppSpriteBurbuja(i, n, false), 0, 0, r * 2.05, true);
+    ppDibujaEn(c, abajo, 0, 0, r * 2.05, true);
     if (slime) ppSlimeRepuestoOImagen(c, slime, 0, r * 0.2, r * 0.5, t, 0.6, 0.55);
     c.restore();
   } else {
@@ -118,11 +126,12 @@ function ppSlimeRepuesto(c, id, cx, cy, r, t, alpha) {
 }
 /* ---------- el tablero de silicona ---------- */
 function ppPintaTablero(c, T, t) {
-  const g = ppGeom(T.n), r = g.celda * 0.4;
+  const g = ppGeom(T.n), r = g.celda * 0.4, estilo = ppEstiloDeTablero(T);
   const ent = PP_FX.entrada, esc = 1 - Math.pow(ent, 2) * 0.6;
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
   // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
-  if ((T.mask && T.mask.some(v => !v)) || ppBandejaActual().filas) ppBandeja(c, T, g);   // con forma o con una bandeja bonita   // con forma (concha, corazón…): la silicona sigue el borde (js/bandeja.js)
+  const bandeja = ppBandejaParaTablero(estilo, ppBandejaActual().id);   // 'comprada', 'material' (la galleta de la Pastelería) o null
+  if ((T.mask && T.mask.some(v => !v)) || bandeja) ppBandeja(c, T, g, bandeja === 'material' ? estilo.material : null);   // con forma, bonita o del mundo (js/bandeja.js)
   else if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
   else {
     c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();
@@ -131,7 +140,8 @@ function ppPintaTablero(c, T, t) {
   for (let i = 0; i < T.up.length; i++) {
     const [cx, cy] = ppCentro(g, i);
     if (T.mask && !T.mask[i]) continue;   // los huecos de la forma (corazón, flor…) no llevan burbuja
-    ppBurbuja(c, cx, cy, r, i, T.n, T.up[i], T.slimes[i] || null, T.pista === i, T.trampas.has(i), t);
+    ppBurbuja(c, cx, cy, r, i, T.n, T.up[i], T.slimes[i] || null, T.pista === i, T.trampas.has(i), t, estilo);
+    if (estilo && estilo.burbuja) ppCaritaEnBurbuja(c, cx, cy, r, i, T, t);   // js/caritas.js
     if (T.up[i] && (T.up[i] === 3 || (T.esp && T.esp[i]))) ppEspecial(c, cx, cy, r, i, T, t);
   }
   if (T.mano && T.pista !== null) { const [mx, my] = ppCentro(g, T.pista); ppMano(c, mx, my, t); }
@@ -159,65 +169,6 @@ function ppPintaMonedero(c, x, y) {
   const x2 = x + 28 + c.measureText(m).width + 18;
   ppPerla(c, x2 + 12, y, 26); ppTexto(c, p, x2 + 28, y + 1, 22, '#fff', 'left', '#c43a84');
 }
-function ppPintaMarcador(c, t) {
-  const P = PP_P;
-  c.fillStyle = 'rgba(255,255,255,0.55)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
-  // corazones
-  const dano = PP_FX.dano;
-  const vidas = ppVidas();
-  for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
-  ppPintaMonedero(c, 28, 88);   // bajo los corazones (la pausa va arriba a la derecha: Daniel, 17-11-2026)
-  // toques de la sala
-  if (P.T && P.T.nim) ppMarcadorNim(c, P.T, t);   // nivel duelo: el rival y de quién es el turno (js/nimnivel.js)
-  else if (P.T) {
-    const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
-    ppTexto(c, tr('Toques'), 432, 36, 22, '#ffe6f4', 'right');   // a la izquierda del botón de pausa
-    ppTexto(c, `${T.toques} / ${T.limite}`, 432, 66, 40, col, 'right');
-    const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 116, 28, k < est);
-    ppTexto(c, T.titulo || '', 270, 118, 34, '#ffd64a', 'center', '#7a4a8a');
-    if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques de sobra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');
-    else if (T.d && T.d.dificil) ppTexto(c, tr('¡Nivel difícil!'), 270, 150, 22, '#ff6ec7', 'center', '#fff');
-  }
-  // el equipo, abajo: cada hueco con su slime, su pasiva y una barra de lo que le falta para actuar
-  const n = P.T ? P.T.n : 3, g = ppGeom(n), y0 = g.y + g.lado + 60;
-  c.fillStyle = 'rgba(255,255,255,0.55)'; c.beginPath(); c.roundRect(20, y0 - 22, 500, 178, 24); c.fill();
-  ppTexto(c, tr('Tu equipo'), 270, y0 - 2, 24, '#ffe6f4');
-  const esc = ppEscalaEquipo();
-  for (let k = 0; k < ppHuecos(); k++) {
-    const [x, y] = ppHuecoEquipo(k, n), id = P.equipo[k], br = id ? PP_FX.brilla[id] || 0 : 0;
-    c.save(); c.translate(x, y); c.scale(esc * (1 + br * 0.25), esc * (1 + br * 0.25));
-    c.beginPath(); c.roundRect(-44, -44, 88, 88, 18); c.fillStyle = br ? `rgba(255,214,74,${0.3 + br * 0.5})` : id ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ff6ec7' : 'rgba(122,74,138,0.35)'; c.stroke();
-    const fuera = id && P.T && P.T.lo;   // en pesadilla los amigos no ayudan: en gris y con el sello de DESPEDIDO encima
-    if (fuera) { c.globalAlpha = 0.5; c.filter = 'grayscale(1)'; }
-    if (id && !PP_FX.vuelos.some(v => v.id === id)) ppSlimeRepuestoOImagen(c, id, 0, -4 - br * 14, 30, t, 1);
-    c.globalAlpha = 1; c.filter = 'none';
-    if (fuera) ppSelloDespedido(c, 0, 0, 92);
-    c.restore();
-    if (!id) continue;
-    const nom = tr(PP_SLIMES[id].pasiva); c.font = `700 ${Math.round(19 * PP_LETRA)}px ${PP_FUENTE}`; const w = c.measureText(nom).width;
-    const cabe = 100 * esc; ppTexto(c, nom, x, y + 62, w > cabe ? Math.floor(19 * cabe / w) : 19, '#fff');   // los nombres largos encogen para no pisar al vecino
-    const fx = PP_SLIMES[id].fx, T = P.T;
-    const parte = P.T && P.T.lo ? null : fx.salta ? (P.carga[id] || 0) / fx.salta : fx.combo && T ? (T.combo % fx.combo) / fx.combo : null;
-    if (parte !== null) {
-      c.fillStyle = '#1a1030'; c.beginPath(); c.roundRect(x - 36, y + 32, 72, 10, 5); c.fill();
-      c.fillStyle = fx.salta ? '#ff6ec7' : '#5be7ff'; c.beginPath(); c.roundRect(x - 36, y + 32, Math.max(10, 72 * parte), 10, 5); c.fill();
-    }
-  }
-}
-// el sello de DESPEDIDO (el tampón rojo de Fans of Rouflage): torcido, con su marco doble, sobre el hueco del amigo
-function ppSelloDespedido(c, x, y, ancho) {
-  c.save(); c.translate(x, y); c.rotate(-0.22); c.scale(ancho / 100, ancho / 100);
-  c.beginPath(); c.roundRect(-48, -18, 96, 36, 6); c.fillStyle = 'rgba(255,240,244,0.88)'; c.fill(); c.lineWidth = 3.6; c.strokeStyle = '#1a1030'; c.stroke();
-  c.lineWidth = 2.6; c.strokeStyle = '#ff4b5c'; c.strokeRect(-43, -13, 86, 26);
-  const txt = tr('DESPEDIDO'); c.font = `700 16px ${PP_FUENTE}`; const w = c.measureText(txt).width;
-  if (w > 78) c.scale(78 / w, 78 / w);
-  c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#ff4b5c'; c.fillText(txt, 0, 1);
-  c.restore();
-}
-// el centro del hueco k del equipo (para pintarlo y para que el slime salga volando desde ahí)
-// con huecos comprados (5 o 6) se juntan y encogen un poco para caber
-const ppEscalaEquipo = () => Math.min(1, 470 / ppHuecos() / 110);
-function ppHuecoEquipo(k, n) { const g = ppGeom(n), y0 = g.y + g.lado + 60, nh = ppHuecos(); return [270 + (k - (nh - 1) / 2) * 110 * ppEscalaEquipo(), y0 + 62]; }
 /* ---------- partículas, saltos y textos flotantes ---------- */
 function ppPintaEfectos(c, t) {
   for (const p of PP_FX.parts) { c.beginPath(); c.arc(p.x, p.y, p.r * (1 - p.t / p.vida), 0, Math.PI * 2); c.fillStyle = p.col; c.fill(); }

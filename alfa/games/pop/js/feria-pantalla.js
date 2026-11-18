@@ -2,9 +2,7 @@
 // sus 10 paradas y Lola marcando por dónde vas, la bienvenida de Lola el viernes, los cofres, la línea «+N para la Feria del finde»
 // de las victorias y la entrega sola de lo no recogido. Las reglas están en el dominio (js/feria.js, PP_FERIA); aquí solo se lee la
 // hora del móvil (ppFeriaAhora, que el panel DEV puede adelantar), el azar de los cofres (Math.random) y la partida guardada (SAVE.feria).
-// Todo tras el flag 'feria-finde': cerrado, no se ve ni se guarda nada.
 'use strict';
-const ppFeriaActiva = () => NUCLEO.flag('feria-finde', 'Pop: Feria del finde (tarea #97, ADR 151)', false);
 // la hora del móvil; en la alfa o en localhost, el panel DEV la puede mover (SAVE.devFeria, en ms) sin tocar el dominio
 const ppFeriaAhora = () => new Date(Date.now() + (ppEsPruebas() ? SAVE.devFeria || 0 : 0));
 // las paradas del camino de feria (en % de la caja), de abajo arriba
@@ -33,7 +31,6 @@ function ppFeriaDa(premio) {
 /* ---------- tras ganar un nivel (js/partida.js) ---------- */
 // toda victoria, nueva o repetida, da tickets mientras la feria está abierta. Devuelve { n, subio } o null
 function ppFeriaGana(estrellas, jefe) {
-  if (!ppFeriaActiva()) return null;
   const v = ppFeriaAlDia();
   if (!v.abierta) return null;
   const n = PP_FERIA.tickets(estrellas, jefe);
@@ -57,7 +54,6 @@ function ppFeriaRelojCorto(ms) {
   return h ? tr('{h}h {m}m', { h, m }) : tr('{m}m', { m });
 }
 function ppFeriaBotonLateral(L) {
-  if (!ppFeriaActiva()) return;
   const v = ppFeriaAlDia(), E = SAVE.feria.estado;
   const aviso = v.abierta && PP_FERIA.pendientes(E).length > 0;
   const b = document.createElement('button'); b.type = 'button';
@@ -157,7 +153,6 @@ function ppVentanaFeriaEntregada() {
 }
 // al llegar al camino (js/pase.js): lo entregado solo y, el primer rato de cada finde, la bienvenida. true si abrió una ventana
 function ppFeriaAlLlegar() {
-  if (!ppFeriaActiva()) return false;
   const v = ppFeriaAlDia();
   if (SAVE.feria.entregados.length) { ppVentanaFeriaEntregada(); return true; }
   if (!v.abierta || SAVE.feria.bienvenida === v.id) return false;

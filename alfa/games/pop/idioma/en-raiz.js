@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Pop en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.6.0
+  "<b>FERIA DEL FINDE</b>: de viernes a domingo, cada nivel que ganes te da tickets (más con tres estrellas o un jefe). Llévalos por el camino de feria con Lola y gana monedas, ayudas, corazones infinitos y dos cofres.": "<b>WEEKEND FAIR</b>: from Friday to Sunday, every level you win gives you tickets (more with three stars or a boss). Take them along the fair path with Lola and win coins, boosters, unlimited hearts and two chests.",
+  "Microblizz ha montado una feria en la oficina. Phony lleva desde el viernes en la noria y dice que el lunes ya baja.": "Microblizz set up a fair in the office. Phony has been on the Ferris wheel since Friday and says he'll come down on Monday.",
   // 0.5.2
   "<b>NIVELES SIN REPETIR</b>: en un mismo mundo ya no salen dos tableros iguales (en el Jardín, el 1 era igual al 3).": "<b>NO MORE REPEATED LEVELS</b>: a world never shows the same board twice (in the Garden, level 1 was the same as level 3).",
   "<b>MENÚS MÁS PULIDOS</b>: el botón de pausa pasa arriba a la derecha y no tapa nada, las monedas y las perlas ya no se montan, y las barras de volumen y el Pase estrenan colores de Pop.": "<b>TIDIER MENUS</b>: the pause button moves to the top right where it covers nothing, coins and pearls no longer overlap, and the volume sliders and the Pass get proper Pop colours.",

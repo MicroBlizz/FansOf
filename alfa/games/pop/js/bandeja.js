@@ -1,6 +1,7 @@
 // Fans of Pop · BANDEJA: la silicona de los tableros con forma (Daniel, 30-10-2026, con el pop-it de concha de su hija): en vez
 // de la bandeja cuadrada de Yoshi, el borde sigue la forma del tablero (concha, corazón, cucurucho…) y cada fila lleva su franja
 // de color pastel, como el juguete de verdad. Se dibuja por código una vez por tablero y se guarda en un lienzo aparte.
+// Con el estilo de un mundo que trae material (tarea #110: la Pastelería), la bandeja de siempre pasa a ser una galleta de mantequilla.
 // Aquí va también lo que llevan encima las burbujas especiales de los mundos 3 a 6 (hielo, concha y cereza).
 'use strict';
 // LAS BANDEJAS BONITAS (Daniel, 30-10-2026, «cosas bonitas» con monedas): solo cambian el color de la silicona, no ayudan a ganar.
@@ -26,43 +27,77 @@ function ppBandejaMuestra(id, px = 30) {
   const B = ppBandejaDe(id), f = B.filas || PP_FILAS.map(([h, s, l]) => [h, s, Math.min(94, l + 20)]);
   return `<span class="pp-muestra" style="width:${px}px;height:${px}px;background:linear-gradient(${f.map(([h, s, l], k) => `hsl(${h} ${s}% ${l}%) ${k * 100 / f.length}% ${(k + 1) * 100 / f.length}%`).join(',')})"></span>`;
 }
-function ppBandeja(c, T, g) {
-  const clave = T.n + ':' + Array.from(T.mask).join('') + ':' + (PP_LISO ? 1 : 0) + ':' + ppBandejaActual().id;
-  if (!T._bandeja || T._bandeja.clave !== clave) T._bandeja = { clave, cv: ppHazBandeja(T, g) };
+// `material` (opcional, el del estilo del mundo: la galleta de la Pastelería) cambia la silicona de franjas por una pieza de galleta
+function ppBandeja(c, T, g, material) {
+  const clave = T.n + ':' + Array.from(T.mask).join('') + ':' + (PP_LISO ? 1 : 0) + ':' + (material ? 'material:' + material.relleno : ppBandejaActual().id);
+  if (!T._bandeja || T._bandeja.clave !== clave) T._bandeja = { clave, cv: ppHazBandeja(T, g, material) };
   const m = 40;
   c.imageSmoothingEnabled = true; c.drawImage(T._bandeja.cv, g.x - m, g.y - m, g.lado + m * 2, g.lado + m * 2);
 }
-function ppHazBandeja(T, g) {
-  const m = 40, esc = 2, n = T.n, cs = g.celda, W = (g.lado + m * 2) * esc;
-  const lienzo = () => { const cv = document.createElement('canvas'); cv.width = W; cv.height = W; const c = cv.getContext('2d'); c.scale(esc, esc); c.translate(m, m); return [cv, c]; };
-  // la mancha de silicona: un círculo por burbuja y un puente entre vecinas (y el hueco entre cuatro), del radio r
-  const mancha = (c, r, color) => {
-    c.fillStyle = color;
-    for (let i = 0; i < n * n; i++) {
-      if (!T.mask[i]) continue;
-      const x = (i % n) * cs + cs / 2, y = Math.floor(i / n) * cs + cs / 2, der = i % n < n - 1 && T.mask[i + 1], aba = i + n < n * n && T.mask[i + n];
-      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
-      if (der) c.fillRect(x, y - r, cs, r * 2);
-      if (aba) c.fillRect(x - r, y, r * 2, cs);
-      if (der && aba && T.mask[i + n + 1]) c.fillRect(x, y, cs, cs);
-    }
-  };
-  const [cv, c] = lienzo();
-  c.save(); c.translate(0, 7); mancha(c, cs * 0.68, 'rgba(122,58,122,0.35)'); c.restore();   // sombra
-  mancha(c, cs * 0.68, '#7a4a8a');                                                             // borde
-  // el relleno: la franja de cada fila (el tono de sus burbujas, más claro), recortado a la forma con una máscara
-  const [mascara, mk] = lienzo(); mancha(mk, cs * 0.6, '#000');
-  const [franjas, fr] = lienzo();
+// un lienzo aparte del tamaño de la bandeja (con su margen m), a escala esc y con el origen en la esquina del tablero
+function ppBandejaLienzo(g, m, esc) {
+  const W = (g.lado + m * 2) * esc, cv = document.createElement('canvas'); cv.width = W; cv.height = W;
+  const c = cv.getContext('2d'); c.scale(esc, esc); c.translate(m, m); return [cv, c];
+}
+// la mancha que sigue la forma: un círculo por burbuja y un puente entre vecinas (y el hueco entre cuatro), del radio r
+function ppBandejaMancha(c, T, cs, r, color) {
+  const n = T.n; c.fillStyle = color;
+  for (let i = 0; i < n * n; i++) {
+    if (!T.mask[i]) continue;
+    const x = (i % n) * cs + cs / 2, y = Math.floor(i / n) * cs + cs / 2, der = i % n < n - 1 && T.mask[i + 1], aba = i + n < n * n && T.mask[i + n];
+    c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    if (der) c.fillRect(x, y - r, cs, r * 2);
+    if (aba) c.fillRect(x - r, y, r * 2, cs);
+    if (der && aba && T.mask[i + n + 1]) c.fillRect(x, y, cs, cs);
+  }
+}
+function ppHazBandeja(T, g, material) {
+  const m = 40, esc = 2, cs = g.celda;
+  const [cv, c] = ppBandejaLienzo(g, m, esc);
+  c.save(); c.translate(0, 7);   // sombra (semitransparente)
+  if (material) { c.globalAlpha = 0.4; ppBandejaMancha(c, T, cs, cs * 0.68, material.sombra); } else ppBandejaMancha(c, T, cs, cs * 0.68, 'rgba(122,58,122,0.35)');
+  c.restore();
+  ppBandejaMancha(c, T, cs, cs * 0.68, material ? material.borde : '#7a4a8a');   // borde
+  // el relleno, recortado a la forma con una máscara: la franja de cada fila o la pieza de galleta
+  const [mascara, mk] = ppBandejaLienzo(g, m, esc); ppBandejaMancha(mk, T, cs, cs * 0.6, '#000');
+  const [relleno, rl] = ppBandejaLienzo(g, m, esc);
+  if (material) ppBandejaGalleta(rl, T, g, m, material); else ppBandejaFranjas(rl, T, g, m);
+  const luz = rl.createLinearGradient(0, -m, 0, g.lado / 2); luz.addColorStop(0, 'rgba(255,255,255,0.35)'); luz.addColorStop(1, 'rgba(255,255,255,0)');
+  rl.fillStyle = luz; rl.fillRect(-m, -m, g.lado + m * 2, g.lado / 2 + m);   // brillo arriba
+  rl.setTransform(1, 0, 0, 1, 0, 0); rl.globalCompositeOperation = 'destination-in'; rl.drawImage(mascara, 0, 0);
+  c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(relleno, 0, 0);
+  return cv;
+}
+// la silicona de siempre: la franja de cada fila (el tono de sus burbujas, más claro) con una rayita entre franjas, como el molde
+function ppBandejaFranjas(fr, T, g, m) {
+  const n = T.n, cs = g.celda;
   for (let y = 0; y < n; y++) {
     const y0 = y ? y * cs : -m, y1 = y === n - 1 ? g.lado + m : (y + 1) * cs;
     fr.fillStyle = ppColorFranja(y); fr.fillRect(-m, y0, g.lado + m * 2, y1 - y0);
-    if (y) { fr.fillStyle = 'rgba(122,74,138,0.25)'; fr.fillRect(-m, y * cs - 1, g.lado + m * 2, 2); }   // la rayita entre franjas, como el molde
+    if (y) { fr.fillStyle = 'rgba(122,74,138,0.25)'; fr.fillRect(-m, y * cs - 1, g.lado + m * 2, 2); }
   }
-  const luz = fr.createLinearGradient(0, -m, 0, g.lado / 2); luz.addColorStop(0, 'rgba(255,255,255,0.35)'); luz.addColorStop(1, 'rgba(255,255,255,0)');
-  fr.fillStyle = luz; fr.fillRect(-m, -m, g.lado + m * 2, g.lado / 2 + m);   // brillo de silicona arriba
-  fr.setTransform(1, 0, 0, 1, 0, 0); fr.globalCompositeOperation = 'destination-in'; fr.drawImage(mascara, 0, 0);
-  c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(franjas, 0, 0);
-  return cv;
+}
+// la galleta de mantequilla: una sola pieza del color del material, un poco más tostada hacia el borde, y una fila de puntitos
+// horneados siguiendo el borde por dentro (en cada lado de una burbuja que no tiene vecina)
+function ppBandejaGalleta(gl, T, g, m, material) {
+  const cs = g.celda;
+  gl.fillStyle = material.relleno; gl.fillRect(-m, -m, g.lado + m * 2, g.lado + m * 2);
+  gl.save(); gl.globalAlpha = 0.18; ppBandejaMancha(gl, T, cs, cs * 0.6, material.borde); gl.globalAlpha = 1;
+  ppBandejaMancha(gl, T, cs, cs * 0.5, material.relleno); gl.restore();   // el tostado: el borde de la pieza, algo más oscuro
+  for (let i = 0; i < T.n * T.n; i++) if (T.mask[i]) ppBandejaPuntitos(gl, T, i, cs, material);
+}
+// los puntitos de un lado de la burbuja i sin vecina (o en el borde del tablero): tres por lado, hundidos (oscuro con un brillo debajo)
+function ppBandejaPuntitos(gl, T, i, cs, material) {
+  const n = T.n, x = (i % n), y = Math.floor(i / n), cx = x * cs + cs / 2, cy = y * cs + cs / 2, d = cs * 0.5, rp = Math.max(1.5, cs * 0.035);
+  const lados = [[0, -1, y > 0], [0, 1, y < n - 1], [-1, 0, x > 0], [1, 0, x < n - 1]];
+  for (const [dx, dy, dentro] of lados) {
+    if (dentro && T.mask[i + dx + dy * n]) continue;   // tiene vecina: ese lado no es borde
+    for (const k of [-1, 0, 1]) {
+      const px = cx + dx * d + (dy ? k * cs / 3 : 0), py = cy + dy * d + (dx ? k * cs / 3 : 0);
+      gl.fillStyle = material.adorno; gl.beginPath(); gl.arc(px, py + rp * 0.6, rp, 0, Math.PI * 2); gl.fill();
+      gl.fillStyle = material.borde; gl.globalAlpha = 0.6; gl.beginPath(); gl.arc(px, py, rp, 0, Math.PI * 2); gl.fill(); gl.globalAlpha = 1;
+    }
+  }
 }
 // lo que llevan encima las burbujas especiales de los mundos 3 a 6 (Yoshi: i-copo, i-concha, i-cereza; si aún no están, un
 // repuesto dibujado): HIELO = escarcha azul con un copo; CONCHA = una concha; TRIPLE = una cereza sobre la nata

@@ -32,3 +32,14 @@ function ppSpriteDeEstilo(estilo, color, estado) {
 function ppEstiloActivo() {
   return NUCLEO.flag('estilo-mundo', 'Pop: burbujas y bandeja propias de cada mundo (tarea #110)', false);
 }
+// El estilo del tablero que se está jugando: el de su mundo (T.d.mundo); un tablero sin nivel (portada, duelos) va como siempre
+function ppEstiloDeTablero(T) {
+  return ppEstiloDe(T && T.d ? T.d.mundo : -1, ppEstiloActivo());
+}
+
+// Qué bandeja lleva el tablero (dominio): `idPuesta` es la bandeja que lleva puesta el jugador. Una comprada manda siempre (la
+// pagó): 'comprada'. Con la de siempre ('arcoiris') y un mundo con material (la galleta de la Pastelería): 'material'. Si no, null.
+function ppBandejaParaTablero(estilo, idPuesta) {
+  if (idPuesta && idPuesta !== 'arcoiris') return 'comprada';
+  return estilo && estilo.material ? 'material' : null;
+}

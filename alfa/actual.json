@@ -1,8 +1,8 @@
 {
- "build": 1255,
- "hash": "a2c2698",
- "fecha": "2026-11-18T14:45:21Z",
- "mensaje": "Spy: receta 3D de Yoshi (Trellis2) y primer modelo de CrazyBunny",
+ "build": 1256,
+ "hash": "3ce9f4a",
+ "fecha": "2026-11-18T15:32:13Z",
+ "mensaje": "Pop: en «Mi perfil» solo las perlas que valen para comprar (las del servidor), con aviso si hay de prueba (tarea #41, pedido de Pepins)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

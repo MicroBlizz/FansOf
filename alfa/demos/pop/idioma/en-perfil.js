@@ -55,4 +55,5 @@ IDIOMA.add({
   "CEO de MicroBlizz": "MicroBlizz CEO", "CEO en órbita": "CEO in orbit",
   // el duelo (js/duelo-adornos.js)
   "Lanzar pegatina": "Throw sticker",
+  "Las perlas de prueba no valen aquí": "Test pearls don't count here",
 });

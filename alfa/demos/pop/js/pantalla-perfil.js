@@ -33,10 +33,16 @@ function ppPfPanel() {
   requestAnimationFrame(() => requestAnimationFrame(pinta));   // cuando ya está en la página
   return cv;
 }
+// las perlas que valen para el perfil (las del servidor, PP_MI.yo().perlas), no el saldo del juego, que suma las de prueba (Pepins,
+// 18-11-2026: veía 5.000 y solo podía gastar 10). Si hay de prueba, un aviso pequeño de que aquí no valen
+function ppPfSaldo(tam) {
+  const valen = PP_MI.yo().perlas, deMas = (SAVE.perlas || 0) > valen;
+  return ppPerlasHtml(valen, tam) + (deMas ? `<br><small class="pp-pf-nota">${tr('Las perlas de prueba no valen aquí')}</small>` : '');
+}
 function ppPfResumen() {
   const P = PP_MI.perfil(), d = (tipo, id) => PP_MI.dato(tipo, id) || {};
   const r = ppPfEl('div', 'pp-pf-resumen', `<p class="pp-sub">${tr('Así te verán en los duelos.')}</p>
-    <p class="pp-pf-saldo">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)}</p>
+    <p class="pp-pf-saldo">${tr('Tienes:')} ${ppPfSaldo(28)}</p>
     <p class="pp-pf-linea"><b>${tr('Efecto')}</b> ${tr(d('efecto', P.efecto).nombre || '')}</p>
     <p class="pp-pf-linea"><b>${tr('Entrada')}</b> ${tr(d('entrada', P.entrada).nombre || '')}</p>`);
   if (!PP_SRV.puedeComprar()) r.insertAdjacentHTML('beforeend', `<p class="pp-pf-nota">${tr('Para comprar hace falta conexión y tu cuenta')}</p>`);
@@ -118,7 +124,7 @@ function ppPerfilConfirma(tipo, id) {
   if (muestra) t.appendChild(muestra);
   if (nombre) t.appendChild(ppPfEl('p', muestra ? 'pp-sub' : 'pp-pf-cita', `<b>${ppEsc(nombre)}</b>`));
   t.appendChild(ppPfEl('p', 'pp-premio', ppPerlasHtml(precio, 36)));
-  t.appendChild(ppPfEl('p', 'pp-sub', `${tr('Tienes:')} ${ppPerlasHtml(PP_SRV.listo() ? tengo : SAVE.perlas || 0, 24)}<br><small>${tr('Precio fijo y sin azar: te llevas justo esto.')}</small>`));
+  t.appendChild(ppPfEl('p', 'pp-sub', `${tr('Tienes:')} ${ppPfSaldo(24)}<br><small>${tr('Precio fijo y sin azar: te llevas justo esto.')}</small>`));
   if (PP_PF.aviso) t.appendChild(ppPfEl('p', 'pp-pf-aviso', ppEsc(PP_PF.aviso)));
   if (!PP_SRV.puedeComprar()) t.appendChild(ppPfEl('p', 'pp-pf-nota', tr('Para comprar hace falta conexión y tu cuenta')));
   else if (tengo < precio) t.appendChild(ppBoton(tr('CONSEGUIR PERLAS'), 'pp-btn', () => ppTienda(() => ppPerfilConfirma(tipo, id), 'perlas')));

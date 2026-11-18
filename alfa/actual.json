@@ -1,8 +1,8 @@
 {
- "build": 1265,
- "hash": "3693a54",
- "fecha": "2026-11-18T17:19:11Z",
- "mensaje": "Tarea #45: enlaces de Kingdom a docs/asalto/ y los MAPA e INDICE regenerados tras el rebase",
+ "build": 1266,
+ "hash": "4f8c1b4",
+ "fecha": "2026-11-18T17:21:55Z",
+ "mensaje": "Tablero: «Ordenar por» (prioridad, más nuevas, último cambio) y la prioridad siempre en la tarjeta (tarea #121, ADR 147)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.0",

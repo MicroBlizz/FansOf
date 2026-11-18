@@ -15,6 +15,7 @@ function ppNuevoDuelo() {
   }
   const T = ppNuevoTablero({ g: 0, lado: n, mask, need, opt: [], limite: 99, amigos: 0, jefe: true }, { equipo: [] });
   PP_DUELO = { T, turno: Math.random() < 0.5 ? 'yo' : 'ceo', fila: null, esta: [], fin: null };
+  ppAdnEmpieza();
   ppCortEmpieza({ nim: { rival: 'ceo' } }, ppDueloEmpieza);   // la cortinilla de duelo (ADR 098); al acabar o saltarla, Lola y el turno del CEO
   ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton();
 }
@@ -28,9 +29,11 @@ function ppDueloEmpieza() {
 // cuántas burbujas levantadas quedan en cada fila
 const ppFilasDuelo = T => { const f = new Array(T.n).fill(0); for (let i = 0; i < T.up.length; i++) if (T.mask[i] && T.up[i]) f[Math.floor(i / T.n)]++; return f; };
 // revienta UNA burbuja del duelo (de quien sea); devuelve true si era la última (y quien la revienta pierde)
-function ppDueloRevienta(i) {
+// `quien`: 'yo', 'rival' (persona) o 'ceo', para su efecto de pop (js/duelo-adornos.js, tarea #41)
+function ppDueloRevienta(i, quien = 'ceo') {
   const T = PP_DUELO.T; T.up[i] = 0; T.pops++;
   ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false });
+  ppAdnPop(T, i, quien);
   return ppFilasDuelo(T).every(v => v === 0);
 }
 // toque de la jugadora
@@ -39,7 +42,7 @@ function ppDueloToque(i) {
   const fila = Math.floor(i / D.T.n);
   if (D.fila !== null && fila !== D.fila) { ppFlota(tr('¡Solo en la misma fila!'), 270, 240, '#ff6ec7'); play('ppDano'); return; }
   D.fila = fila; D.esta.push(i); ppLolaToque();
-  if (ppDueloRevienta(i)) { if (D.pvp) ppPvpManda(D.esta.slice()); ppDueloFin('pierde'); return; }   // contra gente, el rival tiene que verla
+  if (ppDueloRevienta(i, 'yo')) { if (D.pvp) ppPvpManda(D.esta.slice()); ppDueloFin('pierde'); return; }   // contra gente, el rival tiene que verla
   ppDueloBoton();
 }
 function ppDueloListo() {
@@ -109,6 +112,12 @@ function ppSalDuelo() { if (PP_DUELO && PP_DUELO.pvp) ppPvpLimpia(); PP_DUELO = 
 // el botón ¡LISTO! (HTML, debajo del tablero): solo en tu turno y con algo reventado
 function ppDueloBoton() { const b = $pp('#pp-listo'); if (b) b.hidden = !(PP_DUELO && !PP_DUELO.fin && PP_DUELO.turno === 'yo' && PP_DUELO.esta.length); }
 /* ---------- dibujo ---------- */
+// las caras de arriba: con el perfil abierto (tarea #41), los personajes elegidos; si no, Lola contra el CEO o un amigo de gelatina
+function ppDueloCaras(D) {
+  const yo = ppPerfilActivo() ? PP_MI.perfil().personaje : 'lola';
+  if (!D.pvp) return [yo, 'ceo'];
+  return [yo, D.pvp.perfil ? D.pvp.perfil.personaje : 'nubecita'];
+}
 function ppPintaDuelo(c, t) {
   const D = PP_DUELO, T = D.T, g = ppGeom(T.n);
   c.save(); if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 5, rand(-1, 1) * PP_FX.temblor * 5);
@@ -117,8 +126,9 @@ function ppPintaDuelo(c, t) {
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
   const br = PP_FX.brilla.ceo || 0;
   const rival = D.pvp ? D.pvp.nombre.slice(0, 14) : tr('El CEO');   // contra gente, su apodo y un amigo de gelatina
-  ppSlimeRepuestoOImagen(c, D.pvp ? 'nubecita' : 'ceo', 400, 88 - br * 12, 42, t, 1);   // a la izquierda del botón de pausa
-  ppSlimeRepuestoOImagen(c, 'lola', 140, 88, 40, t, 1);
+  const [yo, suyo] = ppDueloCaras(D);
+  ppSlimeRepuestoOImagen(c, suyo, 400, 88 - br * 12, 42, t, 1);   // a la izquierda del botón de pausa
+  ppSlimeRepuestoOImagen(c, yo, 140, 88, 40, t, 1);
   ppTexto(c, tr('Tú'), 140, 146, 26, '#fff', 'center', '#c43a84');
   ppTexto(c, rival, 400, 146, 22, '#fff', 'center', '#3a3a6a');
   ppTitulo(c, tr('DUELO'), 270, 66, 44);
@@ -133,5 +143,6 @@ function ppPintaDuelo(c, t) {
   }
   ppTexto(c, tr('Haz pop en una sola fila. ¡Pierde quien haga pop en la última!'), 270, g.y + g.lado + 52, 22, '#fff', 'center', '#c43a84');
   ppPintaEfectos(c, t);
+  ppAdnPinta(c);   // tu efecto de pop, el del rival y las pegatinas que vuelan (js/duelo-adornos.js)
   c.restore();
 }

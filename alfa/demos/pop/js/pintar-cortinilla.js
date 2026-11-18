@@ -95,13 +95,22 @@ function ppCortFigura(c, id, nombre, x, lado, a, t) {
   ppTexto(c, nombre, 0, 415, 30, '#2a1a3a', 'center', '#fff');
   c.restore();
 }
-// cada panel entra deslizándose desde su lado (como las figuras); el de la derecha respira un poco desfasado
+// cada panel entra desde su lado con la entrada de su perfil (PP_ADORNOS.entrada: normal, de un salto, girando o en una nube; nodo n8);
+// el de la derecha respira un poco desfasado
 const PP_CORT_PANEL = Object.freeze({ y: 172, w: 232, h: 290, x: Object.freeze([16, 292]) });
 function ppCortPanel(c, p, lado, a, t) {
   if (a <= 0.01 || !p) return;
-  const { y, w, h } = PP_CORT_PANEL, x = PP_CORT_PANEL.x[lado < 0 ? 0 : 1];
-  c.save(); c.globalAlpha = a; c.translate(lado * (1 - a) * 320, 0);
-  ppPerfilPanel(c, p.perfil, p.cat, p.nombre, x, y, w, h, t + (lado > 0 ? 1.3 : 0));
+  const { y, w, h } = PP_CORT_PANEL, x = PP_CORT_PANEL.x[lado < 0 ? 0 : 1], e = PP_ADORNOS.entrada(p.perfil.entrada, a);
+  c.save(); c.globalAlpha = Math.min(1, a * 1.6);
+  c.translate(x + w / 2 + lado * e.dx, y + h / 2 + e.dy); c.rotate(lado * e.giro); c.scale(e.escala, e.escala);
+  if (p.perfil.entrada === 'nube') ppCortNube(c, w, h, a);
+  ppPerfilPanel(c, p.perfil, p.cat, p.nombre, -w / 2, -h / 2, w, h, t + (lado > 0 ? 1.3 : 0));
+  c.restore();
+}
+// la nube que trae el panel en la entrada «En una nube»: se deshace al llegar
+function ppCortNube(c, w, h, a) {
+  c.save(); c.globalAlpha = Math.max(0, 1 - a * a) * 0.95; c.fillStyle = '#fff'; c.strokeStyle = '#9fdcff'; c.lineWidth = 4;
+  for (const [x, r] of [[-0.32, 0.2], [0, 0.27], [0.32, 0.2]]) { c.beginPath(); c.arc(x * w, h / 2 + 4, r * w, 0, Math.PI * 2); c.fill(); c.stroke(); }
   c.restore();
 }
 function ppCortVs(c, escala, y = 262) {

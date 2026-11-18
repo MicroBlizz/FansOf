@@ -46,12 +46,12 @@ function ppFotograma(ahora) {
   requestAnimationFrame(ppFotograma);
   const dt = Math.min(0.05, (ahora - PP_ULT) / 1000 || 0.016); PP_ULT = ahora;
   const t = ahora / 1000, c = PP_CTX;
-  ppMusicaBucle();
+  ppMusicaBucle(); ppAdnMira();   // la fila de pegatinas del duelo, solo cuando toca (js/duelo-adornos.js)
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
-  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
+  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); ppAdnAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
   else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
   else ppPintaPortada(c, t, dt);
 }

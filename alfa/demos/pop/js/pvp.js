@@ -101,7 +101,7 @@ function ppPvpEmpieza(s) {
   PP_DUELO = { T, turno: s.datos.empieza === yo.orden ? 'yo' : 'rival', fila: null, esta: [], fin: null,
     pvp: { nombre: (rival && rival.nombre) || tr('Tu rival'), canal: null, perfil: null, espera: [] } };
   PP_DUELO.pvp.canal = PP_PVP.red.canal(m => ppPvpMensaje(m), () => {});
-  ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton();
+  ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton(); ppAdnEmpieza();
   play('ppRescate');
   if (ppPerfilActivo()) ppPvpCortinilla(s, rival); else ppPvpArranca();
 }
@@ -125,6 +125,7 @@ function ppPvpManda(celdas) { const D = PP_DUELO; if (D && D.pvp && D.pvp.canal)
 // la jugada del rival: sus burbujas se revientan una a una
 function ppPvpMensaje(m) {
   const D = PP_DUELO; if (!D || !D.pvp || D.fin || !m) return;
+  if (m.t === 'pegatina') { ppAdnRecibe(m); return; }   // una pegatina que lanza tu rival (js/duelo-adornos.js)
   if (ppCortActiva()) { D.pvp.espera.push(m); return; }   // mientras tú ves la cortinilla, lo del rival espera (ppPvpArranca)
   if (m.t !== 'jugada' || !Array.isArray(m.celdas) || D.turno !== 'rival') return;
   const T = D.T, celdas = m.celdas.filter(i => Number.isInteger(i) && i >= 0 && i < T.up.length && T.mask[i] && T.up[i]);
@@ -132,7 +133,7 @@ function ppPvpMensaje(m) {
   D.fila = Math.floor(celdas[0] / T.n);
   celdas.forEach((i, k) => setTimeout(() => {
     if (PP_DUELO !== D || D.fin) return;
-    if (ppDueloRevienta(i)) { ppDueloFin('gana'); return; }
+    if (ppDueloRevienta(i, 'rival')) { ppDueloFin('gana'); return; }
     if (k === celdas.length - 1) setTimeout(() => { if (PP_DUELO === D && !D.fin) { D.turno = 'yo'; D.fila = null; ppDueloBoton(); play('ppPista'); } }, 400);
   }, 300 * (k + 1)));
 }

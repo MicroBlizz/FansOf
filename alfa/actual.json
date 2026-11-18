@@ -1,8 +1,8 @@
 {
- "build": 1250,
- "hash": "183649d",
- "fecha": "2026-11-18T11:24:26Z",
- "mensaje": "Pop: los duelos contra gente abren con la cortinilla y el perfil de tu rival, comprobado por el servidor (pop_perfil_sala), con prueba de dos clientes; tras el flag tienda-gemas (tarea #41, ADR 130, nodo n7)",
+ "build": 1251,
+ "hash": "d4d19c3",
+ "fecha": "2026-11-18T11:31:53Z",
+ "mensaje": "Pop: pegatinas para lanzar en el duelo, efecto de pop de cada uno (el rival ve el tuyo) y la entrada animada del VS, con la prueba de dos clientes ampliada; tras el flag tienda-gemas (tarea #41, ADR 130, nodo n8)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

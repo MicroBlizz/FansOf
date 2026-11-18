@@ -53,4 +53,6 @@ IDIOMA.add({
   // el panel de los jefes en el VS (js/cortinilla.js, perfilJefe)
   "Aquí mando yo.": "I'm the boss here.", "En el espacio nadie oye tu pop.": "In space, no one can hear you pop.",
   "CEO de MicroBlizz": "MicroBlizz CEO", "CEO en órbita": "CEO in orbit",
+  // el duelo (js/duelo-adornos.js)
+  "Lanzar pegatina": "Throw sticker",
 });

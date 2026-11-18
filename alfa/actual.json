@@ -1,8 +1,8 @@
 {
- "build": 1259,
- "hash": "7845fcc",
- "fecha": "2026-11-18T16:37:28Z",
- "mensaje": "Tablero: buscar un número solo («104» o «#104») enseña esa tarea esté donde esté, saltándose los otros filtros, y avisa si no está cargada (tarea #100)",
+ "build": 1260,
+ "hash": "db10878",
+ "fecha": "2026-11-18T16:40:58Z",
+ "mensaje": "Promo de core: Fans of Kingdom entra en la lista del anuncio, porque sale en la release como los demás prototipos (decisión de Pepins, 18-11-2026; ADR 145 corregido). Arregla tests/core/promo.test.mjs (tarea #117)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

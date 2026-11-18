@@ -35,13 +35,12 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     for (const c of FX.cubos) { const k = c.t / c.vida; A.gl.cubo(c.p, c.tam * (1 - k * k), c.col); }
   };
 
-  // Carteles: entran de golpe, se quedan y se van encogiendo. cx = centro de la pantalla.
-  FX.dibujarCarteles = function (g, texto, cx) {
+  // Carteles: entran de golpe, se quedan y se van encogiendo. cx = centro de la pantalla; pinta(g, cartel) lo dibuja (hud.js).
+  FX.dibujarCarteles = function (g, pinta, cx) {
     for (const c of FX.carteles) {
       const queda = c.dura - c.t, k = c.t < 0.15 ? c.t / 0.15 : queda < 0.3 ? queda / 0.3 : 1;
-      g.save(); g.translate(cx, 150); g.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k); g.globalAlpha = k;
-      texto(g, c.texto, 0, 0, 34, c.color);
-      if (c.sub) texto(g, c.sub, 0, 44, 13, '#fff');
+      g.save(); g.translate(cx, 156); g.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k); g.globalAlpha = k;
+      pinta(g, c);
       g.restore();
     }
     g.globalAlpha = 1;

@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.8', real: ['<b>CABINA PROPIA PARA FILETE ROSA</b>: la MechaVaca ya vuela con su cabina, rosa, con panel de manchas de vaca, cencerro, la foto del prado y su cartón de leche. Además, los carteles de la misión y el aviso de girar el móvil estrenan el estilo militar de los menús.'],
+    joke: ['Mantenimiento recuerda que el cartón de leche de la cabina es decorativo. El de la semana pasada también lo era.'] },
   { v: '0.1.7', real: ['<b>CUARTO CAZA: FILETE ROSA</b>: la MechaVaca estrena un reactor de despegue vertical, rosa, con manchas de vaca, cuernos y cencerro. Es la más blindada y la más lenta, lleva pocos misiles y tiene un truco que nadie más tiene: con el FRENO se queda quieta en el aire.'],
     joke: ['La MechaVaca dice que no está parada, que está pastando. A dos mil metros.'] },
   { v: '0.1.6', real: ['<b>FUEGO DE VERDAD EN LOS REACTORES</b>: las toberas ahora son huecas y el fuego arde al fondo. Volando normal solo se ve el resplandor de dentro; con el TURBO sale una llama viva, con el centro blanco azulado y el borde naranja, que parpadea y se dobla cuando giras; con el freno se encoge.'],

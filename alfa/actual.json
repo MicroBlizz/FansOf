@@ -1,8 +1,8 @@
 {
- "build": 1243,
- "hash": "ccf8831",
- "fecha": "2026-11-18T00:22:33Z",
- "mensaje": "Spy 0.1.0: primer prototipo jugable de Fans of Spy, sigilo por turnos con cartas en 3D (tarea #84, ADR 138)",
+ "build": 1244,
+ "hash": "987447e",
+ "fecha": "2026-11-18T00:47:19Z",
+ "mensaje": "Wings 0.1.8: cabina propia de Filete Rosa, carteles y aviso de girar con el estilo militar, y capturas nuevas de la librería",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

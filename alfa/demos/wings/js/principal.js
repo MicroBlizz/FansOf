@@ -228,7 +228,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       if (est.t - est.flash < 0.18) { G.fillStyle = 'rgba(255,60,40,' + (0.45 * (1 - (est.t - est.flash) / 0.18)) + ')'; G.fillRect(0, 0, UI.W, 720); }
       if (est.modo === 'juego') UI.hud(G, e, VI.pesoCabina);
     }
-    if (est.modo === 'juego') { FX.dibujarCarteles(G, UI.texto, UI.W / 2); UI.mandos(G, joy, est.tactil, e); }
+    if (est.modo === 'juego') { FX.dibujarCarteles(G, UI.cartel, UI.W / 2); UI.mandos(G, joy, est.tactil, e); }
     else pintarMenu();
     E.barrido(G, UI.W);
   }

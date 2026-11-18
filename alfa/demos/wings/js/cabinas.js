@@ -44,6 +44,8 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     },
   };
 
+  A.cabinas.vaca = A.cabinas.castor;   // la cabina de Filete Rosa lleva los instrumentos en el mismo sitio que la del castor (vaca.py)
+
   const entre01 = (v) => Math.max(0, Math.min(1, v));
   const dos = (n) => String(n).padStart(2, '0');
   // Las lecturas de la cabina en este instante. `ahora` es un Date (la hora del reloj del panel).

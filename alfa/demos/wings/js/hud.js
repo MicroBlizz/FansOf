@@ -186,10 +186,25 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     g.fillStyle = C.azul; g.strokeStyle = C.cian; g.lineWidth = 4; g.beginPath(); g.arc(x, y, 30, 0, 7); g.fill(); g.stroke();
   }
 
-  // El aviso con la pantalla de pie: las dos frases de HORIZONTAL.lineas() (core), la primera grande y la segunda debajo, más pequeña.
+  // Un cartel de la misión (centrado en 0, 0): banda oscura con dos líneas cian y franjas de aviso, el texto en su color con sombra
+  // dura y, si lo hay, el subtítulo debajo.
+  UI.cartel = function (g, c) {
+    const s = E.may(c.texto), sub = c.sub ? E.may(c.sub) : '', w = Math.max(E.ancho(g, s, 30), sub ? E.ancho(g, sub, 12) : 0) + 150, h = sub ? 96 : 68;
+    g.fillStyle = 'rgba(6,18,42,.86)'; g.fillRect(-w / 2, -44, w, h);
+    g.fillStyle = C.cian; g.fillRect(-w / 2, -44, w, 3); g.fillRect(-w / 2, -44 + h - 3, w, 3);
+    E.franja(g, -w / 2 + 12, -44 + h / 2 - 5, 40, 9); E.franja(g, w / 2 - 52, -44 + h / 2 - 5, 40, 9);
+    E.t(g, s, 0, 2, 30, c.color, 'center', C.fondo);
+    if (sub) E.t(g, sub, 0, 34, 12, C.blanco, 'center');
+  };
+
+  // El aviso con la pantalla de pie: el emblema y las dos frases de HORIZONTAL.lineas() (core) en un panel, con su franja de aviso.
   UI.girar = function (g, lineas) {
-    g.fillStyle = C.fondo; g.fillRect(0, 0, UI.W, 720);
-    texto(g, lineas[0], UI.W / 2, 345, Math.min(22, UI.W / 30), '#fff');
-    texto(g, lineas[1], UI.W / 2, 385, Math.min(14, UI.W / 46), C.amb);
+    const W = UI.W, w = Math.min(W - 40, 620), x = W / 2 - w / 2, t1 = Math.min(18, (w - 60) / (lineas[0].length + 1)), t2 = Math.min(12, (w - 60) / (lineas[1].length + 1));
+    g.fillStyle = C.fondo; g.fillRect(0, 0, W, 720);
+    E.emblema(g, W / 2 - 60, 150, 5);
+    E.panel(g, x, 300, w, 170, 'FANS OF WINGS');
+    E.t(g, E.may(lineas[0]), W / 2, 380, t1, C.amb, 'center', '#000');
+    E.t(g, E.may(lineas[1]), W / 2, 420, t2, C.claro, 'center');
+    E.franja(g, x, 486, w, 9);
   };
 })(WINGS);

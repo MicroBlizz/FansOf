@@ -20,9 +20,9 @@ WINGS.AJ = Object.freeze({
       fijar: 0.5, sigilo: 0.5, radioBomba: 1, rabia: 0, texto: 'Rápida y sigilosa: a los becarios les cuesta el doble apuntarte.' },
     { id: 'castor', nombre: 'Castor Bombardero', piloto: 'BoomBeaver', color: '#a86a32', vel: 0.8, escudo: 150, misiles: 4, bombas: 12,
       fijar: 0.4, sigilo: 1.2, radioBomba: 1.5, rabia: 0, texto: 'Blindado y lento, con más bombas y explosiones más grandes.' },
-    // flota: con el freno se para del todo en el aire y nunca entra en pérdida (el Harrier despega en vertical); cabina: de quién la toma prestada
+    // flota: con el freno se para del todo en el aire y nunca entra en pérdida (el Harrier despega en vertical)
     { id: 'vaca', nombre: 'Filete Rosa', piloto: 'MechaVaca', color: '#ff6fae', vel: 0.75, escudo: 180, misiles: 3, bombas: 8,
-      fijar: 0.6, sigilo: 1.2, radioBomba: 1, rabia: 0, flota: true, cabina: 'castor', texto: 'La más blindada y la más lenta. FLOTA: con el freno se queda quieta en el aire.' },
+      fijar: 0.6, sigilo: 1.2, radioBomba: 1, rabia: 0, flota: true, texto: 'La más blindada y la más lenta. FLOTA: con el freno se queda quieta en el aire.' },
   ],
   // Combustible de toda la misión, en segundos de vuelo; si se acaba, misión fallida. Los bidones de los enemigos lo recargan
   combustible: { max: 210, aviso: 35 },

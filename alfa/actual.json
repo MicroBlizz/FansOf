@@ -1,8 +1,8 @@
 {
- "build": 1270,
- "hash": "de593ef",
- "fecha": "2026-11-18T17:53:58Z",
- "mensaje": "Rumble: fuera los flags objetos-nuevos, habilidades-nuevas y pvp-salvaje, abiertos para todos desde octubre (tarea #123)",
+ "build": 1271,
+ "hash": "2b18830",
+ "fecha": "2026-11-18T18:28:10Z",
+ "mensaje": "Paperwork 0.11.2: el botón amarillo de la ventana de confirmar (COMPRAR, BORRAR…) se lee bien (tarea #105)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",
@@ -21,7 +21,7 @@
   "merge": "0.1.0",
   "nova": "0.3.59",
   "panic": "0.1.2",
-  "paperwork": "0.11.1",
+  "paperwork": "0.11.2",
   "pets": "0.2.14",
   "pop": "0.5.2",
   "ratkov": "0.2.44",

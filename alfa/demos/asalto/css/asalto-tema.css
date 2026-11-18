@@ -1,0 +1,34 @@
+/* Fans of Asalto · El aire medieval de las ventanas y del menú. Las piezas (marco de piedra y hierro, cintas, sello de lacre) las pinta
+   js/adaptadores/tema.js y llegan aquí como imágenes (--as-marco, --as-cinta…, --as-sello): el estilo vive allí; esto solo las coloca.
+   Piedra y hierro en los marcos, pergamino con lacre en las ventanas, cintas en los títulos y en las dificultades. */
+
+/* los botones: remaches de hierro en las esquinas (los pequeños no llevan: no les caben) */
+.as-btn { background-color: var(--c); background-repeat: no-repeat; background-size: calc(var(--as-u) * 4) calc(var(--as-u) * 4);
+  background-image: linear-gradient(rgba(34, 20, 14, 0.6), rgba(34, 20, 14, 0.6)), linear-gradient(rgba(34, 20, 14, 0.6), rgba(34, 20, 14, 0.6)), linear-gradient(rgba(34, 20, 14, 0.6), rgba(34, 20, 14, 0.6)), linear-gradient(rgba(34, 20, 14, 0.6), rgba(34, 20, 14, 0.6));
+  background-position: left calc(var(--as-u) * 7) top calc(var(--as-u) * 7), right calc(var(--as-u) * 7) top calc(var(--as-u) * 7), left calc(var(--as-u) * 7) bottom calc(var(--as-u) * 12), right calc(var(--as-u) * 7) bottom calc(var(--as-u) * 12); }
+.as-chico, .as-junta .as-btn, .as-enlace { background-image: none; }
+
+/* el título de cada ventana: una cinta roja con su sello de lacre colgando */
+.as-perg h2 { position: relative; display: inline-block; box-sizing: border-box; max-width: 100%; margin: calc(var(--as-u) * 2) 0 calc(var(--as-u) * 6); padding: 0 calc(var(--as-u) * 14) calc(var(--as-u) * 2); color: var(--as-crema); line-height: 0.9;
+  border-style: solid; border-color: transparent; border-width: calc(var(--as-u) * 6) calc(var(--as-u) * 18) calc(var(--as-u) * 14); border-image: var(--as-cinta) 6 18 14 fill / calc(var(--as-u) * 6) calc(var(--as-u) * 18) calc(var(--as-u) * 14) stretch; image-rendering: pixelated;
+  text-shadow: calc(var(--as-u) * 2) calc(var(--as-u) * 2) 0 var(--as-tinta), calc(var(--as-u) * -2) 0 0 var(--as-tinta), 0 calc(var(--as-u) * -2) 0 var(--as-tinta), calc(var(--as-u) * 2) 0 0 var(--as-tinta); }
+.as-perg h2::after { content: ''; position: absolute; right: calc(var(--as-u) * -30); bottom: calc(var(--as-u) * -30); width: calc(var(--as-u) * 44); height: calc(var(--as-u) * 46); background: var(--as-sello) center / contain no-repeat; image-rendering: pixelated; pointer-events: none; }
+.as-ficha h2::after, .as-perg h2 ~ h2::after { display: none; }
+.as-ficha h2 { border: 0; border-image: none; padding: 0; color: #8a1f24; text-shadow: none; }
+/* los apartados: el nombre entre dos filetes de tinta */
+.as-perg h3 { display: flex; align-items: center; gap: calc(var(--as-u) * 10); }
+.as-perg h3::before, .as-perg h3::after { content: ''; flex: 1; height: calc(var(--as-u) * 3); background: #b3915a; box-shadow: 0 calc(var(--as-u) * 3) 0 rgba(124, 75, 42, 0.25); }
+/* las cartas y las filas: un filete de tinta, como dibujadas a pluma */
+.as-lista li, .as-oferta, .as-suerte-runas span { box-shadow: inset 0 0 0 calc(var(--as-u) * 2) rgba(124, 75, 42, 0.45); }
+
+/* la clase de un héroe (su ficha): una banderola con la punta cortada en cola de golondrina */
+.as-chip { padding-right: calc(var(--as-u) * 16); clip-path: polygon(0 0, 100% 0, calc(100% - var(--as-u) * 8) 50%, 100% 100%, 0 100%); }
+
+/* las dificultades de cada zona: una cinta por dificultad (verde, naranja, roja); la elegida, levantada y con brillo de oro; con candado, de madera */
+#as-ui .as-dif { font: inherit; font-size: calc(var(--as-u) * 24); line-height: 1; cursor: pointer; background: none; padding: 0; margin: 0 calc(var(--as-u) * -3); color: var(--as-crema); image-rendering: pixelated; 
+  border-style: solid; border-color: transparent; border-width: calc(var(--as-u) * 6) calc(var(--as-u) * 18) calc(var(--as-u) * 14); border-image: var(--k) 6 18 14 fill / calc(var(--as-u) * 6) calc(var(--as-u) * 18) calc(var(--as-u) * 14) stretch;
+  text-shadow: calc(var(--as-u) * 2) calc(var(--as-u) * 2) 0 var(--as-tinta); }
+.as-d0 { --k: var(--as-cinta-d0); } .as-d1 { --k: var(--as-cinta-d1); } .as-d2 { --k: var(--as-cinta-d2); }
+#as-ui .as-dif.as-on { filter: drop-shadow(0 0 calc(var(--as-u) * 3) #ffd23a); transform: translateY(calc(var(--as-u) * -2)); }
+#as-ui .as-dif.as-no { --k: var(--as-cinta-no); filter: none; }
+#as-ui .as-dif.as-no { color: #c8a878; }

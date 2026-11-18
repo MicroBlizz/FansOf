@@ -1,5 +1,5 @@
 // Fans of Asalto · ADAPTADORES · El menú y las ventanas de fuera de la partida: elegir zona (o seguir la partida guardada, o el modo
-// sin fin de una zona terminada), las mejoras permanentes, el equipo y la mochila, la herrería, los logros, la tienda y los ajustes.
+// sin fin de una zona terminada), la dificultad de cada zona, la máquina de invocar, las mejoras permanentes, el equipo y la mochila, la herrería, los logros, la tienda y los ajustes.
 // Todo lo que cambia algo pasa por los casos de uso. La escena del menú (tu equipo en la mazmorra, a la luz de las antorchas) se pinta
 // en el lienzo, justo en el hueco que le deja la página (#as-escena).
 'use strict';
@@ -8,11 +8,14 @@ AS.menu = (() => {
   // quién sale en la escena del menú si no hay partida a medias (si la hay, sale su equipo)
   const REPARTO = ['heroe-mechavaca', 'heroe-zorro', 'heroe-bunny', 'heroe-mapache', 'heroe-ardilla'].map(tipo => ({ tipo, nivel: 1, dorado: false }));
   let casos = null, t = 0, reparto = REPARTO;
+  const elegida = {};   // la dificultad marcada en cada zona (mientras el menú esté abierto): { zona: 0, 1 o 2 }
   const caja = () => $('#as-menu');
   const pluma = n => `${V.ico('pluma')}${n}`;
 
+  // la dificultad marcada en una zona; si ya no está abierta, la primera
+  const difDe = zona => (casos.dificultadAbierta(zona, elegida[zona] || 0) ? elegida[zona] || 0 : 0);
   function entra(zona, sinFin) {
-    const r = casos.nuevaPartida(zona, sinFin);
+    const r = casos.nuevaPartida(zona, sinFin, sinFin ? 0 : difDe(zona));
     if (!r.ok) { AS.suena('noVale'); toast(tr('Termina antes la zona anterior')); return; }
     caja().hidden = true;
     AS.pantalla.empieza(casos);
@@ -27,12 +30,28 @@ AS.menu = (() => {
     const g = casos.progreso, abierta = casos.zonaAbierta(i, false), hecha = g.zonas.includes(i), record = g.sinFin[i];
     const botones = !abierta ? V.btn('as-zc' + i, tr('CERRADA'), 'as-cerrada as-chico')
       : V.btn('as-z' + i, tr('ENTRAR'), 'as-rojo') + (hecha ? V.btn('as-sf' + i, tr('SIN FIN') + (record ? ' · ' + record : ''), 'as-azul') : '');
-    return `<div class="as-zona${abierta ? '' : ' as-off'}"><div class="as-zt"><b>${tr(z.nombre)}</b><span>${tr('{n} oleadas', { n: z.oleadas })}${hecha ? ' · ' + tr('CONQUISTADA') : ''}</span></div><div class="as-zb">${botones}</div></div>`;
+    return `<div class="as-zona${abierta ? '' : ' as-off'}"><div class="as-zt"><b>${tr(z.nombre)}</b><span>${tr('{n} oleadas', { n: z.oleadas })}${hecha ? ' · ' + tr('CONQUISTADA') : ''}</span></div><div class="as-zb">${botones}</div>${abierta ? htmlDificultades(i) : ''}</div>`;
+  }
+  // las tres dificultades de una zona: la marcada, las abiertas y las que piden superar antes la anterior (con su candado)
+  function htmlDificultades(zona) {
+    const marcada = difDe(zona), D = ASALTO.dificultades, d = D[marcada];
+    const fichas = D.map((x, i) => `<button class="as-dif as-d${i}${i === marcada ? ' as-on' : ''}${casos.dificultadAbierta(zona, i) ? '' : ' as-no'}" data-z="${zona}" data-d="${i}" type="button">${tr(x.nombre)}</button>`).join('');
+    const nota = marcada ? tr('Enemigos +{f} % · plumas x{p}', { f: Math.round((d.fuerza - 1) * 100), p: String(d.plumas).replace('.', ',') }) : tr('La de siempre');
+    return `<div class="as-difs">${fichas}<span>${nota}</span></div>`;
+  }
+  function alPulsarDificultad(b) {
+    const zona = Number(b.dataset.z), d = Number(b.dataset.d);
+    if (!casos.dificultadAbierta(zona, d)) { AS.suena('noVale'); toast(tr('Supera antes esta zona en {dif}', { dif: tr(ASALTO.dificultades[d - 1].nombre) })); return; }
+    elegida[zona] = d; AS.suena('clic'); pinta();
+  }
+  // la máquina con la que se juegan las partidas nuevas, a la vista, con su botón para cambiarla
+  function htmlMaquina() {
+    return `<button class="as-btn as-azul as-maquina" id="as-m-maquina" type="button">${V.ico('altar')}${tr(ASALTO.maquinas[casos.progreso.maquina].nombre)}<small>${tr('CAMBIAR')}</small></button>`;
   }
   function htmlSeguir() {
     const s = casos.guardada();
     if (!s) return '';
-    const donde = tr(ASALTO.zonas[s.zona] ? ASALTO.zonas[s.zona].nombre : '') + ' · ' + tr('oleada {n}', { n: s.oleada });
+    const donde = tr(ASALTO.zonas[s.zona] ? ASALTO.zonas[s.zona].nombre : '') + (s.dificultad ? ' · ' + tr(ASALTO.dificultades[s.dificultad].nombre) : '') + ' · ' + tr('oleada {n}', { n: s.oleada });
     return `<button class="as-btn as-verde as-seguir" id="as-seguir-partida" type="button">${tr('SEGUIR LA PARTIDA')}<small>${donde}</small></button>`;
   }
   // la mejora que queda más cerca, a la vista en el menú
@@ -46,10 +65,11 @@ AS.menu = (() => {
     reparto = s && s.heroes.length ? s.heroes : REPARTO;
     caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}</p>${htmlMeta()}
       <div class="as-escena" id="as-escena"></div>${htmlSeguir()}
-      <div class="as-zonas">${ASALTO.zonas.map(htmlZona).join('')}</div>
+      ${htmlMaquina()}<div class="as-zonas">${ASALTO.zonas.map(htmlZona).join('')}</div>
       <div class="as-rejilla">${V.btn('as-m-mejoras', tr('MEJORAS'), 'as-oro')}${V.btn('as-m-equipo', tr('EQUIPO'), 'as-azul')}${V.btn('as-m-herreria', tr('HERRERÍA'), 'as-azul')}
         ${V.btn('as-m-logros', tr('LOGROS') + (pend ? ' · ' + pend : ''), pend ? 'as-verde' : 'as-azul')}${V.btn('as-m-tienda', tr('TIENDA'), 'as-oro')}${V.btn('as-m-ajustes', tr('AJUSTES'), 'as-azul')}</div>`;
-    V.alPulsar('as-seguir-partida', continua);
+    V.alPulsar('as-seguir-partida', continua); V.alPulsar('as-m-maquina', maquinas);
+    for (const b of caja().querySelectorAll('.as-dif')) b.onclick = () => alPulsarDificultad(b);
     ASALTO.zonas.forEach((z, i) => { V.alPulsar('as-z' + i, () => entra(i, false)); V.alPulsar('as-sf' + i, () => entra(i, true)); V.alPulsar('as-zc' + i, () => toast(tr('Termina antes la zona anterior'))); });
     V.alPulsar('as-m-mejoras', mejoras); V.alPulsar('as-m-equipo', equipo); V.alPulsar('as-m-herreria', herreria);
     V.alPulsar('as-m-logros', logros); V.alPulsar('as-m-tienda', tienda); V.alPulsar('as-m-ajustes', ajustes);
@@ -76,8 +96,35 @@ AS.menu = (() => {
       const m = ASALTO.mejoras[id], n = g.mejoras[id] || 0, coste = casos.costeMejora(id);
       return `<li class="as-item">${V.ico(m.icono, 'as-ico2')}<div><b>${tr(m.nombre)} <small>${n}/${m.coste.length}</small></b><span>${tr(m.txt)}</span></div>${coste ? `<button class="as-btn as-oro as-chico" data-m="${id}" type="button">${pluma(coste)}</button>` : `<span class="as-hecho">${tr('AL MÁXIMO')}</span>`}</li>`;
     }).join('');
-    const el = ventana(`<h2>${tr('MEJORAS')}</h2><p class="as-plumas">${pluma(g.plumas)}</p><p class="as-nota">${tr('Valen para todas las partidas.')}</p><ul class="as-lista">${filas}</ul>`);
+    const el = ventana(`<h2>${tr('MEJORAS')}</h2><p class="as-plumas">${pluma(g.plumas)}</p><p class="as-nota">${tr('Valen para todas las partidas.')}</p><ul class="as-lista">${filas}</ul>
+      <h2>${tr('RAREZAS DE LOS HÉROES')}</h2><p class="as-nota">${tr('Los héroes más raros son más fuertes. Se abren en orden, con plumas y con su zona superada.')}</p><ul class="as-lista">${filasRarezas(g)}</ul>`);
     for (const b of el.querySelectorAll('[data-m]')) b.onclick = () => { if (sinPlumas(casos.compraMejora(b.dataset.m))) AS.suena('absorbe'); mejoras(); };
+    V.alPulsar('as-abre-rareza', () => { if (sinPlumas(casos.abreRareza())) AS.suena('cofre'); mejoras(); });
+  }
+  // las máquinas de invocar: la elegida, las abiertas (con su botón de elegir) y las cerradas (con sus plumas o la zona que piden)
+  function maquinas() {
+    const g = casos.progreso;
+    const filas = Object.keys(ASALTO.maquinas).map(id => {
+      const m = ASALTO.maquinas[id], abierta = casos.maquinaAbierta(id);
+      let fin = `<button class="as-btn as-verde as-chico" data-elige="${id}" type="button">${tr('ELEGIR')}</button>`;
+      if (id === g.maquina) fin = `<span class="as-hecho">${tr('ELEGIDA')}</span>`;
+      else if (!abierta) fin = g.zonas.includes(m.zona) ? `<button class="as-btn as-oro as-chico" data-abre="${id}" type="button">${pluma(m.plumas)}</button>` : `<span class="as-candado">${tr('Supera antes: {zona}', { zona: tr(ASALTO.zonas[m.zona].nombre) })}</span>`;
+      return `<li class="as-item${abierta ? '' : ' as-cerrada'}">${V.ico('altar', 'as-ico2')}<div><b>${tr(m.nombre)}</b><span>${tr(m.txt)}</span></div>${fin}</li>`;
+    }).join('');
+    const el = ventana(`<h2>${tr('MÁQUINAS')}</h2><p class="as-plumas">${pluma(g.plumas)}</p><p class="as-nota">${tr('Elige con cuál invocas. Vale para las partidas nuevas.')}</p><ul class="as-lista">${filas}</ul>`);
+    for (const b of el.querySelectorAll('[data-elige]')) b.onclick = () => { casos.eligeMaquina(b.dataset.elige); AS.suena('clic'); maquinas(); };
+    for (const b of el.querySelectorAll('[data-abre]')) b.onclick = () => { if (sinPlumas(casos.abreMaquina(b.dataset.abre))) AS.suena('cofre'); maquinas(); };
+  }
+  // las 5 rarezas: las abiertas, la siguiente (con su botón de plumas, o la zona que pide) y las que siguen con candado
+  function filasRarezas(g) {
+    const sig = casos.rarezaSiguiente();
+    return ASALTO.rarezas.map((r, i) => {
+      const mas = r.mult > 1 ? tr('+{n} % de vida y de daño', { n: Math.round((r.mult - 1) * 100) }) : tr('La de siempre');
+      let fin = `<span class="as-hecho">${tr('ABIERTA')}</span>`;
+      if (sig && i === sig.i) fin = sig.falta === 'zona' ? `<span class="as-candado">${tr('Supera antes: {zona}', { zona: tr(ASALTO.zonas[r.zona].nombre) })}</span>` : `<button class="as-btn as-oro as-chico" id="as-abre-rareza" type="button">${pluma(r.plumas)}</button>`;
+      else if (i > g.rarezas) fin = `<span class="as-candado">${tr('CERRADA')}</span>`;
+      return `<li class="as-item${i > g.rarezas ? ' as-cerrada' : ''}"><i class="as-rombo as-q${i}"></i><div><b class="as-q${i}">${tr(r.nombre)}</b><span>${mas}</span></div>${fin}</li>`;
+    }).join('');
   }
   const htmlObjeto = o => `${V.ico('equipo-' + o.hueco)}<div><b class="as-r${o.rareza}">${tr(ASALTO.equipo.nombres[o.hueco])}${o.nivel ? ' +' + o.nivel : ''}</b><span>+${o.valor + o.nivel} % ${tr(ASALTO.equipo.stats[o.stat])}</span></div>`;
   function equipo() {

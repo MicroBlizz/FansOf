@@ -1,4 +1,4 @@
-// Fans of Asalto · ADAPTADORES · Pinta lo de arriba de la pantalla de la partida: el marcador (oleada, vidas, oro y el botón de pausa),
+// Fans of Asalto · ADAPTADORES · Pinta lo de arriba de la pantalla de la partida: el marcador (oleada, vidas, oro, esencia y el botón de pausa),
 // la tira de oleadas de la zona (las hechas, la de ahora, las de élite y el jefe) y las clases del equipo con sus puntos.
 'use strict';
 AS.pinta = AS.pinta || {};
@@ -7,16 +7,19 @@ AS.pinta.marcador = (() => {
 
   function cabecera(g, P, p, E) {
     const m = P.marcador;
-    T.tabla(g, m.x, m.y, m.w, m.h);
+    T.marco(g, m.x, m.y, m.w, m.h);
     const titulo = p.sinFin ? tr('OLEADA {n}', { n: p.oleada }) : tr('OLEADA {n}/{de}', { n: p.oleada, de: p.oleadas });
     tx(g, titulo, m.x + 16, m.y + 25, { col: C.crema });
-    const vx = m.x + Math.round(m.w * 0.47);
+    const vx = m.x + Math.round(m.w * 0.41);
     AS.dibujos.icono(g, 'corazon', vx, m.y + 25, 1);
     tx(g, String(p.vidas), vx + 20, m.y + 25, { col: E.vidasRojo > 0 ? '#ff7a6a' : C.crema });
-    const ox = m.x + Math.round(m.w * 0.66);
+    const ox = m.x + Math.round(m.w * 0.56);
     AS.dibujos.icono(g, 'moneda', ox, m.y + 25, 1);
     tx(g, String(Math.round(E.oroVisto)), ox + 20, m.y + 25, { col: C.oro });
     E.destinoOro = { x: ox, y: m.y + 25 };
+    const ex = m.x + Math.round(m.w * 0.74);   // la esencia: la moneda de la tienda
+    AS.dibujos.icono(g, 'gema', ex, m.y + 25, 1);
+    tx(g, String(p.esencia), ex + 20, m.y + 25, { col: C.celeste });
     const b = { x: m.x + m.w - 50, y: m.y + 5, w: 44, h: 40 };
     T.boton(g, b.x, b.y, b.w, b.h + 5, C.naranja);
     g.fillStyle = C.crema; g.fillRect(b.x + 13, b.y + 10, 6, 20); g.fillRect(b.x + 25, b.y + 10, 6, 20);
@@ -40,9 +43,11 @@ AS.pinta.marcador = (() => {
     const w = Math.min(86, Math.floor(r.w / Math.max(4, vivas.length)) - 4);
     vivas.forEach((k, i) => {
       const d = ASALTO.clases[k], x = r.x + i * (w + 4), nivel = s.nivel[k], falta = d.umbral[Math.min(nivel, d.umbral.length - 1)];
-      T.losa(g, x, r.y, w, r.h, nivel ? d.col : C.madera2);
-      AS.dibujos.icono(g, 'clase-' + k, x + 20, r.y + 21, 1);
-      tx(g, s.puntos[k] + '/' + falta, x + 20 + (w - 20) / 2, r.y + 21, { col: nivel ? C.crema : '#c8a878', ancla: 'c', max: w - 40 });
+      // cada clase, con su escudo de armas (a color si está activa) y su cuenta en la placa de al lado
+      T.losa(g, x + 14, r.y + 5, w - 14, r.h - 12, nivel ? d.col : C.madera2);
+      T.escudo(g, x, r.y, 38, r.h, nivel ? T.tono(d.col, 0.35) : C.madera3);
+      AS.dibujos.icono(g, 'clase-' + k, x + 19, r.y + 18, 1);
+      tx(g, s.puntos[k] + '/' + falta, x + 36 + (w - 36) / 2, r.y + 20, { col: nivel ? C.crema : '#c8a878', ancla: 'c' });
       E.zona({ x, y: r.y, w, h: r.h }, 'clase', k);
     });
   }

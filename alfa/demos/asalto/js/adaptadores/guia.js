@@ -1,5 +1,5 @@
 // Fans of Asalto · ADAPTADORES · La primera partida guiada: una mano señala dónde tocar, paso a paso (invocar, el empujón que completa
-// una línea, absorber a un héroe y salir a luchar), con una frase en un pergamino (a la derecha de la arena) y un botón para saltarla. Mientras dura, solo deja
+// una línea, unir a dos héroes con el botón UNIR y salir a luchar), con una frase en un pergamino (a la derecha de la arena) y un botón para saltarla. Mientras dura, solo deja
 // tocar lo que toca en cada paso. El paso sale del estado de la partida (no se guarda aparte), así que si se sale y se vuelve, sigue
 // donde iba. Acaba al terminar la primera oleada, o al saltarla, y lo apunta en los consejos vistos. No decide reglas.
 'use strict';
@@ -9,12 +9,12 @@ AS.guia = (() => {
   const TEXTO = {
     invoca: 'Pulsa INVOCAR: tres runas iguales en línea traen a un héroe',
     empuja: 'Toca la runa que brilla: mueve su columna y completa otra línea',
-    absorbe: 'Arrastra un héroe sobre otro: se juntan y sube de nivel',
+    absorbe: 'Pulsa UNIR y toca a dos héroes: se juntan y sube de nivel',
     lucha: 'Tu equipo está listo. Pulsa ¡A LUCHAR!',
     batalla: 'Luchan solos. Que nadie cruce la empalizada',
   };
   // lo que se puede tocar en cada paso (la pausa y saltar la guía, siempre)
-  const PERMITE = { invoca: ['invoca'], espera: ['invoca'], empuja: ['empuja'], absorbe: ['heroe'], lucha: ['lucha', 'invoca', 'heroe', 'misiones'], batalla: ['velocidad', 'misiones'] };
+  const PERMITE = { invoca: ['invoca'], espera: ['invoca'], empuja: ['empuja'], absorbe: ['unir', 'heroe'], lucha: ['lucha', 'invoca', 'heroe', 'unir', 'tienda', 'misiones'], batalla: ['velocidad', 'misiones'] };
   const ORDEN = ['invoca', 'empuja', 'absorbe', 'lucha'];
 
   function empieza(E) {
@@ -76,13 +76,14 @@ AS.guia = (() => {
     marco(g, r, t);
     mano(g, r.x + r.w / 2, r.y + Math.round(r.h * 0.55) + Math.round(Math.abs(Math.sin(t * 5)) * 10), Math.sin(t * 5) > 0.7);
   }
-  // la mano va de un héroe a otro, una y otra vez: coge, arrastra y suelta
-  function arrastra(g, P, E, t) {
-    const campo = AS.equipo.enCampo(E.casos.partida.equipo);
-    if (campo.length < 2 || (E.arrastre && E.arrastre.movido)) return;
-    const a = P.hueco(campo[campo.length - 1].i), b = P.hueco(campo[0].i), k = Math.min(1, Math.max(0, ((t % 1.8) - 0.3) / 1.0)), e = k * k * (3 - 2 * k);
-    marco(g, { x: b.x - 44, y: b.y - 96, w: 88, h: 104 }, t);
-    mano(g, a.x + (b.x - a.x) * e, a.y - 50 + (b.y - a.y) * e, k > 0 && k < 1);
+  // el paso de unir: la mano señala el botón UNIR y, con el modo encendido, al héroe que toca elegir (primero uno y luego el otro)
+  function une(g, P, E, t) {
+    if (!E.unir) { senala(g, P.unir, t); return; }
+    const campo = AS.equipo.enCampo(E.casos.partida.equipo), q = E.unir.queda;
+    const toca = campo.find(c => !(q && q.donde === 'campo' && q.i === c.i));
+    if (!toca || (E.arrastre && E.arrastre.movido)) return;
+    const s = P.hueco(toca.i);
+    senala(g, { x: s.x - 44, y: s.y - 96, w: 88, h: 104 }, t);
   }
   const OBJETIVO = {
     invoca: P => P.invocar, espera: () => null, lucha: P => P.luchar, batalla: () => null, absorbe: () => null,
@@ -101,11 +102,11 @@ AS.guia = (() => {
   function pinta(g, P, E) {
     if (!G.activa || !ORDEN.includes(G.paso) || AS.ventanas.abierta()) return;
     pergamino(g, P, E);
-    if (G.paso === 'absorbe') { arrastra(g, P, E, G.t); return; }
+    if (G.paso === 'absorbe') { une(g, P, E, G.t); return; }
     const r = OBJETIVO[G.paso](P, E);
     if (r) senala(g, r, G.t);
   }
   // en plena batalla no hay pergamino (taparía la pelea): la frase va en la pista del pie
   const pie = () => (G.paso === 'batalla' ? tr(TEXTO.batalla) : '');
-  return { empieza, avanza, permite, libre, salta, pinta, pie, get activa() { return G.activa; }, get paso() { return G.paso; } };
+  return { empieza, avanza, permite, libre, salta, pinta, pie, marco, get activa() { return G.activa; }, get paso() { return G.paso; } };
 })();

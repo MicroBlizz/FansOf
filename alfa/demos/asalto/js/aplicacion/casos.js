@@ -6,7 +6,7 @@
 AS.creaCasos = ({ datos, almacen, azar }) => {
   const PR = AS.progreso;
   let prog = PR.deJSON(datos, almacen.carga());
-  let partida = null, batalla = null, visto = null, nObjeto = 0;
+  let partida = null, batalla = null, visto = null, nObjeto = 0, cifras = AS.cifras.vacio();   // cifras: las del último combate y las de la partida entera
 
   const guarda = () => { almacen.guarda(prog); };
   // un caso de progreso: si sale bien, el progreso nuevo se queda y se guarda
@@ -26,7 +26,7 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
       { nivelMax: c.nivelMax });
     mira();
     const j = partida.final ? null : partida.aJSON();
-    if (j || partida.final) almacen.guardaPartida(j);
+    if (j || partida.final) almacen.guardaPartida(j && { ...j, cifras });   // las cifras del combate viajan con la partida guardada
     guarda();
   }
   // un caso de la partida: se ejecuta, y si sale bien se apunta lo que haya dejado
@@ -39,13 +39,13 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
   function cierra() {
     const p = partida;
     prog = PR.apuntaOleada(prog, p.zona, p.oleada - (p.final === 'victoria' ? 0 : 1), p.sinFin);
-    if (p.final === 'victoria') prog = PR.terminaZona(prog, p.zona);
+    if (p.final === 'victoria') prog = PR.terminaZona(prog, p.zona, p.dificultad);
     almacen.guardaPartida(null);
     guarda();
   }
   const zonaAbierta = (zona, sinFin) => !!datos.zonas[zona] && (sinFin ? prog.zonas.includes(zona) : zona === 0 || prog.zonas.includes(zona - 1));
   // la primera partida es guiada: en la primera zona, mientras no se haya hecho (o saltado) la guía
-  const cfgPartida = (zona, sinFin) => ({ zona, sinFin: !!sinFin, guiada: zona === 0 && !sinFin && !prog.consejos.guia, mejoras: prog.mejoras, equipo: PR.statsEquipo(datos, prog) });
+  const cfgPartida = (zona, sinFin, dif) => ({ zona, sinFin: !!sinFin, dificultad: dif || 0, guiada: zona === 0 && !sinFin && !prog.consejos.guia, mejoras: prog.mejoras, rarezas: prog.rarezas, equipo: PR.statsEquipo(datos, prog) });
   // los objetos del botín del jefe: 50 % normal, 35 % raro, 15 % épico
   function botin(n) {
     const lista = Array.from({ length: n }, () => { const r = azar(); return PR.objetoNuevo(datos, azar, idObjeto(), r < 0.5 ? 0 : r < 0.85 ? 1 : 2); });
@@ -58,9 +58,18 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     get progreso() { return prog; },
     get partida() { return partida; },
     get batalla() { return batalla; },
+    // las cifras del combate: { ultimo, partida }, cada una { ref del héroe: { tipo, dano, aguante, cura, bajas } }
+    get cifras() { return cifras; },
     statsEquipo: () => PR.statsEquipo(datos, prog),
     logrosPendientes: () => PR.logrosPendientes(datos, prog),
     costeMejora: id => PR.costeMejora(datos, prog, id),
+    rarezaSiguiente: () => PR.rarezaSiguiente(datos, prog),
+    abreRareza: () => conProgreso(PR.abreRareza(datos, prog)),
+    // las máquinas de invocar (se elige una para las partidas nuevas) y las dificultades de cada zona
+    maquinaAbierta: id => PR.maquinaAbierta(datos, prog, id),
+    abreMaquina: id => conProgreso(PR.abreMaquina(datos, prog, id)),
+    eligeMaquina: id => conProgreso(PR.eligeMaquina(datos, prog, id)),
+    dificultadAbierta: (zona, d) => zonaAbierta(zona, false) && PR.dificultadAbierta(datos, prog, zona, d),
     metas: () => PR.metas(datos, prog),
     // lo que las últimas acciones han dejado para enseñar (misiones cumplidas)
     avisos: () => (partida ? partida.recogeAvisos() : []),
@@ -85,11 +94,13 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     cambiaProgreso(j) { prog = PR.deJSON(datos, j); guarda(); },
 
     /* ---------- empezar, seguir y dejar una partida ---------- */
-    nuevaPartida(zona, sinFin) {
+    // dif: la dificultad (0, 1 o 2; sin decir nada, la primera). El modo sin fin va siempre en la primera
+    nuevaPartida(zona, sinFin, dif) {
       if (!zonaAbierta(zona, sinFin)) return AS.error('zona-cerrada');
-      const r = AS.Partida.nueva(datos, cfgPartida(zona, sinFin), azar);
+      if (!sinFin && dif && !PR.dificultadAbierta(datos, prog, zona, dif)) return AS.error('dificultad-cerrada');
+      const cfg = cfgPartida(zona, sinFin, dif), r = AS.Partida.nueva(datos, { ...cfg, maquina: cfg.guiada ? 'altar' : prog.maquina }, azar);   // la partida guiada enseña el Altar de siempre
       if (!r.ok) return r;
-      partida = r.valor; batalla = null; mira();
+      partida = r.valor; batalla = null; cifras = AS.cifras.vacio(); mira();
       prog = PR.empiezaPartida(prog);
       sincroniza();
       return r;
@@ -99,13 +110,13 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     guardada() {
       const j = almacen.cargaPartida();
       if (!j || !j.equipo) return null;
-      return { zona: j.zona, oleada: j.n, sinFin: !!j.sinFin, heroes: (j.equipo.campo || []).filter(Boolean).map(h => ({ tipo: h.tipo, nivel: h.nivel, dorado: !!h.dorado })) };
+      return { zona: j.zona, oleada: j.n, sinFin: !!j.sinFin, dificultad: j.dificultad || 0, heroes: (j.equipo.campo || []).filter(Boolean).map(h => ({ tipo: h.tipo, nivel: h.nivel, dorado: !!h.dorado })) };
     },
     continua() {
       const j = almacen.cargaPartida();
       const r = AS.Partida.deJSON(datos, j, PR.statsEquipo(datos, prog), azar);
       if (!r.ok) { almacen.guardaPartida(null); return r; }
-      partida = r.valor; batalla = null; mira();
+      partida = r.valor; batalla = null; cifras = AS.cifras.deJSON(datos, j.cifras); mira();
       return r;
     },
     // dejar la partida a medias: cuenta hasta donde se llegó
@@ -120,10 +131,25 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     /* ---------- preparar la oleada ---------- */
     invoca: () => conPartida(p => p.invoca(azar)),
     empuja: (col, dir) => conPartida(p => p.empuja(col, dir, azar)),
+    // el Estallido de la segunda máquina: uno por oleada
+    estalla: () => conPartida(p => p.estalla(azar)),
+    // gasta la piedra de destino i de la bolsa: una tirada aparte, gratis y con la rareza subida
+    tiraPiedra: i => conPartida(p => p.tiraPiedra(i, azar)),
     mueve: (desde, hasta) => conPartida(p => p.mueve(desde, hasta)),
+    cambia: (a, b) => conPartida(p => p.cambia(a, b)),
+    // qué ganaría el que se queda si se unen: no cambia ni guarda nada
+    vistaUnion: (desde, hasta) => (partida ? partida.vistaUnion(desde, hasta) : AS.error('sin-partida')),
     absorbe: (desde, hasta) => conPartida(p => p.absorbe(desde, hasta)),
     deshace: () => conPartida(p => p.deshace()),
     asciende: (sitio, clase) => conPartida(p => p.asciende(sitio, clase)),
+
+    /* ---------- la tienda de la partida ---------- */
+    compraObjeto: i => conPartida(p => p.compraObjeto(i)),
+    vendeObjeto: id => conPartida(p => p.vendeObjeto(id)),
+    cambiaOferta: () => conPartida(p => p.cambiaOferta(azar)),
+    // los anuncios opcionales ('oferta', 'esencia' o 'vida'): llamar solo DESPUÉS de verse el anuncio entero
+    puedeAnuncio: tipo => !!partida && partida.puedeAnuncio(tipo),
+    anuncio: tipo => conPartida(p => p.anuncio(tipo, azar)),
 
     /* ---------- la batalla ---------- */
     lucha() {
@@ -140,7 +166,7 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
       const res = AS.batalla.resultado(batalla);
       const r = partida.terminaOleada(res, azar);
       if (!r.ok) return r;
-      batalla = null;
+      batalla = null; cifras = AS.cifras.suma(cifras, res.cifras);
       sincroniza();
       if (partida.fase === 'fin') cierra();
       return AS.ok({ ...r.valor, batalla: res });

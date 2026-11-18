@@ -1,5 +1,6 @@
 // Fans of Asalto · ADAPTADORES · La pantalla de la partida mientras se prepara la oleada: lleva el estado de lo que se ve (E), recoge los
-// toques (tocar un botón, arrastrar un héroe a un hueco o sobre otro para absorberlo), llama a los casos de uso y anima el Altar: el
+// toques (tocar un botón, arrastrar un héroe a un hueco o sobre otro para cambiarle el sitio, y el modo UNIR: se pulsa el botón, se
+// eligen dos héroes y una ventana dice qué gana el que se queda antes de confirmar), llama a los casos de uso y anima el Altar: el
 // giro de las columnas, las líneas que se encienden una a una, los héroes que llegan en su columna de luz y los premios. En cada
 // fotograma pinta todo en el lienzo pequeño y pasa las luces a la capa de luces. La batalla la lleva pantalla-batalla.js; la mano de
 // la primera partida guiada, guia.js (que dice qué se puede tocar en cada paso); las misiones, pinta-misiones.js.
@@ -8,11 +9,11 @@ AS.pantalla = (() => {
   const L = AS.lienzo.L, fx = AS.fx, C = AS.tema.C;
   const E = { casos: null, activa: false, t: 0, P: null, plano: '', zonas: [], oroVisto: 0, vidasRojo: 0, destinoOro: { x: 0, y: 0 }, giro: null, ocultos: new Set(), apariciones: new Map(),
     celdasOro: new Set(), arrastre: null, toque: null, batalla: null, vel: 1, destellos: new Map(), cartel: null, pista: '', intro: null, tFin: 0, cerrando: false,
-    casi: new Set(), cumplidas: [], misionHecha: null, combo: 0, tCombo: 0 };
+    casi: new Set(), cumplidas: [], misionHecha: null, combo: 0, tCombo: 0, unir: null };   // unir: null, o { queda: el sitio del héroe que se queda } con el modo UNIR encendido
   E.zona = (r, que, dato) => { E.zonas.push({ x: r.x, y: r.y, w: r.w, h: r.h, que, dato }); };
   const p = () => E.casos.partida;
   const COLOR = { tanque: [90, 160, 255], luchador: [255, 130, 80], asesino: [80, 230, 220], tirador: [140, 240, 110], mago: [255, 200, 90], sanador: [255, 150, 200], brujo: [255, 100, 150], comodin: [255, 240, 200] };
-  const ERRORES = { 'sin-oro': 'No te llega el oro', 'sin-sitio': 'Sin sitio: absorbe a alguien', 'sin-empujones': 'No te quedan empujones', 'sin-tirada': 'Invoca primero', 'sin-heroes': 'Pon un héroe en el campo',
+  const ERRORES = { 'sin-oro': 'No te llega el oro', 'sin-sitio': 'Sin sitio: une a dos héroes', 'faltan-heroes': 'Hacen falta dos héroes', 'sin-empujones': 'No te quedan empujones', 'sin-estallido': 'Ya has usado el Estallido de esta oleada', 'sin-repetidas': 'No hay runas repetidas que romper', 'sin-tirada': 'Invoca primero', 'sin-piedra': 'No tienes esa piedra', 'sin-heroes': 'Pon un héroe en el campo',
     'hueco-cerrado': 'Ese hueco se abre con mejoras', 'banquillo-lleno': 'El banquillo está lleno' };
 
   function cartel(txt, sub, col, vida) { E.cartel = { txt, sub: sub || '', col: col || C.oro2, t: 0, vida: vida || 1.5 }; }
@@ -39,10 +40,28 @@ AS.pantalla = (() => {
     if (!r.ok) { noVale(r.error); return; }
     lanzaGiro('tira', r.valor);
   }
+  // la tirada de una piedra de destino (la i de la bolsa): gira como una invocación, pero gratis
+  function tiraPiedra(i) {
+    if (E.giro || !AS.guia.libre()) return;
+    const r = E.casos.tiraPiedra(i);
+    if (!r.ok) { noVale(r.error); return; }
+    E.unir = null;
+    lanzaGiro('tira', r.valor);
+  }
   function empuja(d) {
     if (E.giro) return;
     const r = E.casos.empuja(d.col, d.dir);
     if (!r.ok) { noVale(r.error); return; }
+    lanzaGiro('empuja', r.valor);
+  }
+  // el Estallido: revientan las runas de la clase que más se repite y caen nuevas, como un empujón de todas las columnas a la vez
+  function estalla() {
+    if (E.giro || !AS.guia.libre()) return;
+    const r = E.casos.estalla();
+    if (!r.ok) { noVale(r.error); return; }
+    for (const [c, f] of r.valor.rotas) { const l = E.P.losa(c, f), x = l.x + l.w / 2, y = l.y + l.h / 2; fx.chispas(x, y, 12, '#f08a2a', 190, true); fx.onda(x, y, 56, '#ffd23a'); }
+    cartel(tr('¡ESTALLIDO!'), tr(ASALTO.clases[r.valor.clase].nombre), C.naranja, 1.1);
+    fx.fogonazo(0.3, '#ffb060'); fx.sacude(8); AS.suena('premio', 2);
     lanzaGiro('empuja', r.valor);
   }
   // un héroe llega: su columna de luz donde le toca
@@ -77,6 +96,7 @@ AS.pantalla = (() => {
     const oro = res.oroExtra + res.oroRacha;
     if (res.dorado) premioGordo(res);
     else if (n >= 2) { cartel(tr(NOMBRE_LINEAS[Math.min(n, 5)]), tr('+{n} de oro', { n: oro }), C.oro2); AS.suena('premio', n); fx.sacude(4 + n); }
+    else if (res.piedra) cartel(AS.pinta.piedras.nombre(res.piedra), res.llegados.some(l => l.heroe.rareza > 0) ? tr('¡Llega con más rareza!') : '', C.celeste, 1.4);
     else if (res.repite) cartel(tr('¡OTRA GRATIS!'), '', C.verde, 1.1);
     else if (n && res.racha >= 2) rachaSube(res, oro);
     else if (n) fx.sacude(3);
@@ -116,6 +136,32 @@ AS.pantalla = (() => {
     fx.numero(s.x, s.y - 124, tr('NIVEL {n}', { n: r.valor.nivel }), '#ffd23a', 48);
     AS.suena('absorbe');
   }
+  function cambia(a, b) {
+    const r = E.casos.cambia(a, b);
+    if (!r.ok) { noVale(r.error); return; }
+    AS.suena('clic');
+  }
+  // el botón UNIR enciende y apaga el modo de unir
+  function modoUnir() {
+    const q = p();
+    if (E.giro || q.fase !== 'preparar') return;
+    if (E.unir) { E.unir = null; AS.suena('clic'); return; }
+    if (AS.equipo.todos(q.equipo).length < 2) { noVale('faltan-heroes'); return; }
+    E.unir = { queda: null }; AS.suena('clic');
+  }
+  // pide confirmar: el de `hasta` se queda y crece, el de `desde` se une a él. Hasta que no se confirma, no cambia nada
+  function pideUnion(desde, hasta) {
+    const r = E.casos.vistaUnion(desde, hasta);
+    if (!r.ok) { noVale(r.error); return; }
+    AS.suena('clic');
+    AS.ventanas.union(E, r.valor, { si: () => { E.unir = null; absorbe(desde, hasta); }, alReves: () => pideUnion(hasta, desde), no: () => { if (E.unir) E.unir.queda = null; } });
+  }
+  // con el modo encendido: el primer héroe que se toca es el que se queda; el segundo, el que se une a él
+  function eligeUnir(sitio) {
+    const U = E.unir;
+    if (!U.queda || mismoSitio(U.queda, sitio)) { U.queda = U.queda ? null : sitio; AS.suena('clic'); return; }
+    pideUnion(sitio, U.queda);
+  }
   function mueve(desde, hasta) {
     const r = E.casos.mueve(desde, hasta);
     if (!r.ok) { noVale(r.error); return; }
@@ -132,15 +178,19 @@ AS.pantalla = (() => {
   function suelta(A, pt) {
     const z = zonaEn(pt, A.desde);
     if (!z) return;
-    if (z.que === 'heroe') absorbe(A.desde, z.dato);
+    if (z.que === 'heroe') { if (E.unir) pideUnion(A.desde, z.dato); else if (AS.guia.libre()) cambia(A.desde, z.dato); }   // sin el modo UNIR, solo se cambian el sitio
     else if (z.que === 'hueco' && AS.guia.libre()) mueve(A.desde, z.dato);
   }
   const ACCIONES = {
-    invoca, empuja,
-    lucha: () => { if (!E.giro) AS.pantallaBatalla.lucha(E); },
+    invoca, empuja, estalla, unir: modoUnir,
+    lucha: () => { if (!E.giro) { E.unir = null; AS.pantallaBatalla.lucha(E); } },
     velocidad: () => { E.vel = E.vel % 3 + 1; AS.suena('clic'); },
     deshace: () => { if (AS.guia.libre() && E.casos.deshace().ok) AS.suena('clic'); },
     misiones: () => { AS.suena('clic'); AS.ventanas.misiones(E); },
+    cifras: () => { if (!E.giro) { AS.suena('clic'); AS.ventanas.cifras(E); } },
+    piedras: () => { if (!E.giro) { AS.suena('clic'); AS.ventanas.piedras(E); } },
+    suerte: () => { if (!E.giro) { AS.suena('clic'); AS.ventanas.suerte(E); } },
+    tienda: () => { if (p().fase === 'preparar' && !E.giro) { AS.suena('clic'); AS.ventanas.tienda(E); } },
     'salta-guia': () => AS.guia.salta(E),
     pausa: () => { AS.suena('clic'); AS.ventanas.pausa(E); },
     clase: k => { AS.suena('clic'); AS.ventanas.clase(E, k); },
@@ -164,21 +214,22 @@ AS.pantalla = (() => {
     if (!E.activa) return;
     const pt = AS.lienzo.punto(ev), A = E.arrastre, t = E.toque;
     E.arrastre = null; E.toque = null;
-    if (A) { if (A.movido) suelta(A, pt); else if (AS.guia.libre()) { AS.suena('clic'); AS.ventanas.heroe(E, A.desde); } return; }
+    if (A) { if (A.movido) suelta(A, pt); else if (E.unir) eligeUnir(A.desde); else if (AS.guia.libre()) { AS.suena('clic'); AS.ventanas.heroe(E, A.desde); } return; }
     const z = zonaEn(pt);
     if (t && z && z.que === t.que && ACCIONES[z.que] && AS.guia.permite(E, z.que, z.dato)) ACCIONES[z.que](z.dato);
   }
 
   /* ---------- la pista del pie ---------- */
-  const hayLineaConEmpujon = q => !!q.altar && q.tiradas > 0 && q.empujones > 0 && !!AS.altar.empujonConLinea(q.altar);
+  const hayLineaConEmpujon = q => !!q.altar && q.altarVivo && q.empujones > 0 && !!AS.altar.empujonConLinea(q.altar);
   function pista(q) {
     if (E.pistaFija) return E.pistaFija.txt;
     if (AS.guia.activa) return AS.guia.pie();   // en la partida guiada habla el pergamino de la mano
     if (E.batalla) return q.proxima.tipo === 'normal' ? tr('Que no crucen la empalizada') : tr('Si pierdes esta, se acaba la partida');
+    if (E.unir) return E.unir.queda ? tr('Ahora toca al que se une a él') : tr('Toca al héroe que se queda y crece');
     if (AS.equipo.todos(q.equipo).some(x => AS.heroe.puedeAscender(ASALTO, x.h))) return tr('Toca al héroe de la flecha: asciende');
-    if (q.equipo.banquillo.length) return tr('Arrastra un héroe sobre otro');
+    if (q.equipo.banquillo.length) return tr('Pulsa UNIR y junta a dos héroes');
     if (hayLineaConEmpujon(q)) return tr('Toca la runa dorada: ¡hace línea!');
-    if (q.oro < q.coste) return tr('Sin oro. Pulsa ¡A LUCHAR!');
+    if (q.oro < q.coste) return q.estallidos > 0 && q.altarVivo ? tr('Aún te queda el ESTALLIDO') : tr('Sin oro. Pulsa ¡A LUCHAR!');
     return q.cuenta.lineas ? tr('Invoca, ordena tu equipo y a luchar') : tr('Pulsa INVOCAR y busca tres en línea');
   }
 
@@ -197,8 +248,20 @@ AS.pantalla = (() => {
     const A = E.arrastre;
     if (!A || !A.movido) return;
     AS.dibujos.muneco(g, { tipo: A.h.tipo, anim: 'andar', tAnim: E.t, lado: 'heroe', dorado: A.h.dorado, alfa: 0.9 }, A.x, A.y + 40);
-    const z = zonaEn(A, A.desde), txt = z && z.que === 'heroe' ? tr('ABSORBER') : z && z.que === 'hueco' ? tr('MOVER') : '';
+    const z = zonaEn(A, A.desde), txt = z && z.que === 'heroe' ? (E.unir ? tr('UNIR') : tr('CAMBIAR')) : z && z.que === 'hueco' ? tr('MOVER') : '';
     if (txt) AS.texto.pinta(g, txt, A.x, A.y - 90, { col: z.que === 'heroe' ? C.oro : '#b8ff7a', ancla: 'c' });
+  }
+  // con el modo UNIR encendido: unas esquinas de oro en cada héroe que se puede elegir y un marco que late en el que se queda
+  function pintaUnir(g) {
+    if (!E.unir || E.batalla) return;
+    for (const z of E.zonas) {
+      if (z.que !== 'heroe') continue;
+      if (mismoSitio(z.dato, E.unir.queda)) { AS.guia.marco(g, z, E.t); AS.texto.pinta(g, tr('SE QUEDA'), z.x + z.w / 2, z.y - 12, { col: C.oro, ancla: 'c' }); continue; }
+      const n = 18, e = 4;
+      for (const [x, y, sx, sy] of [[z.x, z.y, 1, 1], [z.x + z.w, z.y, -1, 1], [z.x, z.y + z.h, 1, -1], [z.x + z.w, z.y + z.h, -1, -1]]) {
+        g.fillStyle = C.oro; g.fillRect(Math.min(x, x + sx * n), Math.min(y, y + sy * e), n, e); g.fillRect(Math.min(x, x + sx * e), Math.min(y, y + sy * n), e, n);
+      }
+    }
   }
   function pintaCartel(g, P) {
     const c = E.cartel;
@@ -241,7 +304,7 @@ AS.pantalla = (() => {
     g.fillStyle = C.noche; g.fillRect(0, 0, P.W, P.H);
     g.translate(tb.x, tb.y);
     AS.pinta.arena(g, P, q, E); AS.pinta.marcador(g, P, q, E); AS.pinta.altar(g, P, q, E); AS.pinta.misiones(g, P, q, E, dt);
-    AS.guia.pinta(g, P, E); pintaArrastre(g); fx.pinta(g);
+    pintaUnir(g); AS.guia.pinta(g, P, E); pintaArrastre(g); fx.pinta(g);
     if (E.intro) AS.pantallaBatalla.pintaIntro(g, P, E);
     pintaCartel(g, P);
     g.setTransform(1, 0, 0, 1, 0, 0);
@@ -250,7 +313,7 @@ AS.pantalla = (() => {
     AS.lienzo.presenta(luces(P, q), { y0: P.arena.y, y1: P.arena.y + P.arena.h, a: E.intro ? 0.88 : jefe ? 0.62 : 0.5 });
   }
   function empieza(casos) {
-    Object.assign(E, { casos, activa: true, giro: null, arrastre: null, toque: null, batalla: null, cartel: null, intro: null, cerrando: false, oroBatalla: 0, pistaFija: null, oroVisto: casos.partida.oro, misionHecha: null, combo: 0, tCombo: 0 });
+    Object.assign(E, { casos, activa: true, giro: null, arrastre: null, toque: null, batalla: null, cartel: null, intro: null, cerrando: false, unir: null, oroBatalla: 0, pistaFija: null, oroVisto: casos.partida.oro, misionHecha: null, combo: 0, tCombo: 0 });
     E.ocultos.clear(); E.apariciones.clear(); E.celdasOro.clear(); E.destellos.clear(); E.casi.clear(); E.cumplidas.length = 0; fx.limpia();
     AS.guia.empieza(E);
     AS.suena.musica(ASALTO.zonas[casos.partida.zona].musica);
@@ -263,5 +326,5 @@ AS.pantalla = (() => {
     cv.addEventListener('pointerup', alSubir);
     cv.addEventListener('pointercancel', () => { E.arrastre = null; E.toque = null; });
   }
-  return { E, monta, empieza, sal, fotograma, cartel, puntoDe, get activa() { return E.activa; } };
+  return { E, monta, empieza, sal, fotograma, cartel, puntoDe, tiraPiedra, get activa() { return E.activa; } };
 })();

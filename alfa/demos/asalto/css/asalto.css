@@ -48,7 +48,7 @@ body { background: #0b0816; display: flex; align-items: center; justify-content:
 .as-seguir small { display: block; font-size: calc(var(--as-u) * 24); margin-top: calc(var(--as-u) * 2); }
 .as-zonas { width: 100%; display: flex; flex-direction: column; gap: calc(var(--as-u) * 6); }
 .as-zona { box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: calc(var(--as-u) * 4) calc(var(--as-u) * 10); padding: 0 calc(var(--as-u) * 6);
-  border: calc(var(--as-u) * 14) solid transparent; border-image: var(--as-tabla) 14 fill / calc(var(--as-u) * 14) stretch; image-rendering: pixelated; }
+  border: calc(var(--as-u) * 20) solid transparent; border-image: var(--as-marco) 20 / calc(var(--as-u) * 20) stretch; background: var(--as-muro) repeat; background-size: calc(var(--as-u) * 72) calc(var(--as-u) * 32); background-clip: padding-box; image-rendering: pixelated; }
 .as-zt { text-align: left; }
 .as-zt b { display: block; font-weight: 400; font-size: calc(var(--as-u) * 32); color: var(--as-oro); }
 .as-zt span { color: var(--as-crema); font-size: calc(var(--as-u) * 24); }
@@ -77,6 +77,12 @@ body { background: #0b0816; display: flex; align-items: center; justify-content:
 .as-item .as-btn { color: var(--as-crema); }
 .as-hecho { color: #2f7a22; } .as-va { color: #7c4b2a; }
 .as-r1 { color: #1f5fb8; } .as-r2 { color: #b8501c; }
+/* las rarezas de los héroes: Común, Raro, Épico, Legendario y Mítico (el rombo es su gema; con candado, apagada) */
+.as-q0 { color: #5a4a36; } .as-q1 { color: #1f5fb8; } .as-q2 { color: #b8501c; } .as-q3 { color: #a8780a; } .as-q4 { color: #b3202e; }
+.as-rombo { flex: none; width: calc(var(--as-u) * 18); height: calc(var(--as-u) * 18); margin: 0 calc(var(--as-u) * 9); transform: rotate(45deg); background: currentColor; border: calc(var(--as-u) * 3) solid #2b2118; }
+.as-hueco { flex: none; width: calc(var(--as-u) * 40); height: calc(var(--as-u) * 40); border: calc(var(--as-u) * 3) dashed #7c4b2a; box-sizing: border-box; }
+.as-mas { color: #2e7d1e; font-weight: 400; } .as-menos { color: #a8243e; font-weight: 400; }
+.as-cerrada > .as-hueco, .as-cerrada > .as-rombo, .as-cerrada > div { opacity: .5; } .as-item .as-candado { color: #8a1f24; text-align: right; max-width: 40%; }
 .as-resumen li { display: flex; justify-content: space-between; }
 .as-ficha { display: flex; align-items: center; gap: calc(var(--as-u) * 12); text-align: left; }
 .as-ficha h2 { margin: 0; font-size: calc(var(--as-u) * 32); }
@@ -134,3 +140,31 @@ body { background: #0b0816; display: flex; align-items: center; justify-content:
 .as-metas .as-item span img { height: calc(var(--as-u) * 22); margin: 0 calc(var(--as-u) * 2) 0 calc(var(--as-u) * 6); }
 .as-meta-menu { margin: 0; flex: none; font-size: calc(var(--as-u) * 32); color: var(--as-oro); text-align: center; text-shadow: calc(var(--as-u) * 2) calc(var(--as-u) * 2) 0 var(--as-tinta); }
 .as-corto .as-meta-menu { display: none; }
+/* la confirmación de unir dos héroes: el que se une, un más y el que se queda */
+.as-union { display: flex; align-items: flex-start; justify-content: center; gap: calc(var(--as-u) * 14); margin: calc(var(--as-u) * 8) 0; }
+.as-union div { display: flex; flex-direction: column; align-items: center; gap: calc(var(--as-u) * 4); flex: 1; min-width: 0; }
+.as-union small { color: #7c4b2a; }
+.as-union div:last-child small { color: #2e7d1e; }
+.as-union-mas { font-style: normal; font-size: calc(var(--as-u) * 44); color: #8a1f24; align-self: center; }
+.as-resumen em { font-style: normal; }
+/* la tienda de la partida: la esencia, las cartas de la oferta y lo que no se puede comprar */
+.as-esencia { font-style: normal; color: #1f5fb8; white-space: nowrap; }
+.as-esencia img { margin-right: calc(var(--as-u) * 2); }
+.as-carta.as-no { filter: saturate(0.4); opacity: .75; } .as-carta small { color: #8a1f24; display: block; }
+.as-vendido { display: block; text-align: center; opacity: .55; }
+/* las cifras del combate: pestañas pegadas, la que no se mira más apagada (sin perder su color), y cada héroe con su cifra a la derecha */
+.as-junta { gap: calc(var(--as-u) * 6); margin: calc(var(--as-u) * 6) 0; flex-wrap: nowrap; } .as-junta .as-btn { flex: 1; min-width: 0; padding-left: calc(var(--as-u) * 4); padding-right: calc(var(--as-u) * 4); }
+.as-apagado { filter: brightness(0.62) saturate(0.8); }
+.as-cifras .as-item b { display: flex; justify-content: space-between; } .as-cifra { font-style: normal; color: #8a1f24; }
+
+/* las dificultades de cada zona y la máquina elegida (menú) */
+.as-difs { width: 100%; display: flex; align-items: center; gap: calc(var(--as-u) * 6); padding-bottom: calc(var(--as-u) * 2); }
+.as-difs span { margin-left: auto; color: var(--as-crema); font-size: calc(var(--as-u) * 22); text-align: right; }
+.as-maquina { width: 100%; flex: none; display: flex; align-items: center; justify-content: center; gap: calc(var(--as-u) * 6); font-size: calc(var(--as-u) * 30); padding: calc(var(--as-u) * 6) calc(var(--as-u) * 10) calc(var(--as-u) * 12); }
+.as-maquina small { margin-left: calc(var(--as-u) * 10); font-size: calc(var(--as-u) * 22); color: var(--as-oro); }
+/* el panel de probabilidades (ventanas-suerte.js): la línea en grande y las runas en una rejilla de 4 */
+.as-suerte-gorda { margin: 0; font-size: calc(var(--as-u) * 64); line-height: 1; color: #8a1f24; }
+.as-suerte-runas { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(var(--as-u) * 6); }
+.as-suerte-runas span { display: flex; flex-direction: column; align-items: center; padding: calc(var(--as-u) * 4); background: rgba(124, 75, 42, 0.14); }
+.as-suerte-runas img { height: calc(var(--as-u) * 36); } .as-suerte-runas b { font-weight: 400; } .as-suerte-runas small { color: #6a4a2a; font-size: calc(var(--as-u) * 20); }
+.as-suerte .as-item span { display: block; } .as-suerte-cerrada b { color: #6a4a2a; } .as-suerte-cerrada span { color: #8a1f24 !important; }

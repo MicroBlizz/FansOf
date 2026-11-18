@@ -96,7 +96,7 @@ AS.pantallaBatalla = (() => {
     if (v.gano) {
       AS.pantalla.cartel(v.tipo === 'jefe' ? tr('¡JEFE DERROTADO!') : tr('¡OLEADA SUPERADA!'), v.perdidas ? tr('-{n} vidas', { n: v.perdidas }) : '', v.tipo === 'jefe' ? C.oro2 : C.verde, 1.4);
       fx.monedas(E.P.W / 2, E.P.arena.y + E.P.arena.h / 2, 8, E.destinoOro.x, E.destinoOro.y, () => AS.suena('moneda'));
-    } else AS.pantalla.cartel(tr('OLEADA PERDIDA'), tr('-{n} vidas', { n: v.perdidas }), C.sangre, 1.6);
+    } else { AS.pantalla.cartel(tr('OLEADA PERDIDA'), tr('-1 vida · Refuerza y repítela'), C.sangre, 2.2); setTimeout(() => AS.ventanas.perdida(E), 1500); }
     if (v.tipo === 'jefe') AS.suena.musica(ASALTO.zonas[p.zona].musica);
     setTimeout(() => AS.ventanas.premios(E, () => { if (p.final) { AS.suena.sintonia(p.final === 'victoria' ? 'win' : 'lose'); AS.ventanas.fin(E); } }), v.premios.length || p.final ? 1400 : 0);
   }

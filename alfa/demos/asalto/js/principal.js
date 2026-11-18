@@ -17,7 +17,7 @@
   function arranca() {
     const cv = $('#cv'), raiz = document.documentElement.style;
     AS.lienzo.monta(cv); AS.pantalla.monta(cv); AS.menu.monta(casos);
-    raiz.setProperty('--as-perg', `url(${AS.tema.cssPergamino()})`); raiz.setProperty('--as-papel', `url(${AS.tema.cssPapel()})`); raiz.setProperty('--as-tabla', `url(${AS.tema.cssTabla()})`);
+    for (const [k, v] of Object.entries(AS.tema.css())) raiz.setProperty(k, v);   // las piezas del tema, para las ventanas y el menú
     // las letras de píxeles: cada texto se guarda ya dibujado, así que hay que esperar a que lleguen; si llegan tarde, se borra lo guardado
     if (document.fonts) document.fonts.addEventListener('loadingdone', () => AS.texto.limpia());
     const letras = document.fonts ? Promise.race([Promise.all(['32px "Jersey 10"', '64px "Jersey 10"'].map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve();

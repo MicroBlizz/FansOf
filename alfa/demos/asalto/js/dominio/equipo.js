@@ -1,6 +1,6 @@
 // Fans of Asalto · DOMINIO · El equipo del jugador: el campo (6 huecos: 0-2 el frente de arriba abajo, 3-5 atrás; los que no están
 // abiertos no se usan) y el banquillo (los recién llegados que no caben; no pelean). Un sitio es { donde: 'campo' | 'banquillo', i }.
-// Es un valor congelado: recibir, mover, absorber o ascender devuelven otro equipo, o un error con nombre.
+// Es un valor congelado: recibir, mover, cambiar de sitio, absorber o ascender devuelven otro equipo, o un error con nombre.
 'use strict';
 AS.equipo = (() => {
   const congela = e => Object.freeze({ abiertos: e.abiertos, tope: e.tope, campo: Object.freeze(e.campo.slice()), banquillo: Object.freeze(e.banquillo.slice()) });
@@ -46,6 +46,12 @@ AS.equipo = (() => {
     if (e.banquillo.length >= e.tope) return AS.error('banquillo-lleno');
     const n = quita(e, desde); n.banquillo.push(h);
     return AS.ok(congela(n));
+  }
+  // dos héroes se cambian el sitio (campo o banquillo); nadie crece ni desaparece
+  function cambia(e, a, b) {
+    const ha = leer(e, a), hb = leer(e, b);
+    if (!ha || !hb) return AS.error('nadie-ahi');
+    return AS.ok(pon(pon(e, a, hb), b, ha));
   }
   // el de `hasta` absorbe al de `desde` (que desaparece)
   function absorbe(datos, e, desde, hasta) {
@@ -93,5 +99,11 @@ AS.equipo = (() => {
     for (const jh of ((j && j.banquillo) || []).slice(0, e.tope)) { const r = AS.heroe.deJSON(datos, jh); if (!r.ok) return AS.error('equipo-invalido'); banquillo.push(r.valor); }
     return AS.ok(congela({ ...e, campo, banquillo }));
   }
-  return { ABRE, vacio, abierto, leer, enCampo, todos, libres, hayHueco, recibe, mueve, absorbe, pon, sitioDe, asciende, sinergias, deJSON };
+  // un héroe que llega y no cabe: lo absorbe el de su mismo tipo (o, si no hay, el de más nivel). { equipo, sitio, crecido }
+  function funde(datos, eq, h) {
+    const lista = todos(eq).sort((a, b) => b.h.nivel - a.h.nivel), destino = lista.find(x => x.h.tipo === h.tipo) || lista[0];
+    const crecido = AS.heroe.absorbe(datos, destino.h, h).valor;
+    return { equipo: pon(eq, destino.sitio, crecido), sitio: destino.sitio, crecido };
+  }
+  return { ABRE, vacio, abierto, leer, enCampo, todos, libres, hayHueco, recibe, mueve, cambia, absorbe, pon, funde, sitioDe, asciende, sinergias, deJSON };
 })();

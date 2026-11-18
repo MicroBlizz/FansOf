@@ -30,12 +30,12 @@ AS.batalla = (() => {
   // cfg: { datos, heroes: [{ hueco, cifras, ref }] (cifras de AS.poder), oleada (AS.oleadas.genera), nivel: clases activas, reliquias, azar }
   function crea(cfg) {
     const B = { datos: cfg.datos, azar: cfg.azar, t: 0, u: [], proy: [], avisos: [], eventos: [], cola: [], fin: null, tFin: 0, cruzados: 0, bajas: 0, oro: 0,
-      nivel: cfg.nivel || {}, rel: new Set(cfg.reliquias || []), tHab: {}, jefe: null, oleada: cfg.oleada, tanda: 0, carga: false };
+      nivel: cfg.nivel || {}, rel: new Set(cfg.reliquias || []), tHab: {}, jefe: null, oleada: cfg.oleada, tanda: 0, carga: false, cifras: AS.cifras.deBatalla() };
     for (const h of cfg.heroes) {
       const p = HUECOS[h.hueco], u = unidad('heroe', h.cifras.tipo, { ...h.cifras, ref: h.ref }, p[0], p[1]);
       u.cd = 0.3 + B.azar() * 0.5;
       if (B.rel.has('carton')) u.escudo = Math.round(u.max * 0.2);
-      B.u.push(u);
+      B.u.push(u); AS.cifras.alta(B.cifras, u);
     }
     for (const e of cfg.oleada.enemigos) { if (e.tanda === 0) B.u.push(enemigo(B, e)); else B.cola.push(e); }
     return B;
@@ -84,11 +84,11 @@ AS.batalla = (() => {
     if (u.x <= CAMPO.linea) cruza(B, u);
   }
   function estados(B, u, dt) {
-    if (u.tVeneno > 0) { u.tVeneno -= dt; u.vida -= u.veneno * dt; if (u.vida <= 0) { AS.golpes.muere(B, u); return false; } }
+    if (u.tVeneno > 0) { u.tVeneno -= dt; AS.golpes.quita(B, u, u.veneno * dt, u.venenoDe); if (u.vida <= 0) { AS.golpes.muere(B, u, u.venenoDe); return false; } }
     if (u.lento > 0) u.lento -= dt;
     if (u.maldito > 0) u.maldito -= dt;
     const cura = u.regenera + (u.lado === 'heroe' && B.rel.has('tirita') ? 2 : 0);
-    if (cura && u.vida < u.max) u.vida = Math.min(u.max, u.vida + u.max * cura / 100 * dt);
+    if (cura && u.vida < u.max) AS.golpes.sana(B, u, u.max * cura / 100 * dt, u);
     return true;
   }
   function eligeObjetivo(B, u) {
@@ -165,6 +165,6 @@ AS.batalla = (() => {
   }
   // lo que deja la batalla al acabar
   const resultado = B => ({ gano: B.fin === 'victoria', cruzados: B.cruzados, bajas: B.bajas, oro: B.oro, jefe: !!(B.jefe && B.jefe.muerta && !B.jefe.cruzo), duro: B.t,
-    cruzoJefe: !!(B.jefe && B.jefe.cruzo), vivos: vivos(B, 'heroe').length });
+    cruzoJefe: !!(B.jefe && B.jefe.cruzo), vivos: vivos(B, 'heroe').length, cifras: B.cifras.heroes });
   return { CAMPO, HUECOS, crea, avanza, resultado, vivos, rivales, valorClase, masHerido, masCercano, dist, enemigo };
 })();

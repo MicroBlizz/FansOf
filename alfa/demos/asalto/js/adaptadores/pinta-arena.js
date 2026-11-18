@@ -127,7 +127,7 @@ AS.pinta.arena = (() => {
     const j = B.jefe;
     if (!j || j.cruzo) return;
     const A = P.arena, w = A.w - 60, x = A.x + 30, y = A.y + 6, d = ASALTO.jefes[j.tipo];
-    T.tabla(g, x - 14, y - 2, w + 28, 54);
+    T.marco(g, x - 14, y - 2, w + 28, 54);
     T.barra(g, x, y + 28, w, 18, Math.max(0, j.vida / j.max), j.enFuria ? C.naranja : C.rojo, '#3a0e12');
     AS.dibujos.icono(g, 'sala-jefe', x + 12, y + 14, 1);
     tx(g, tr(d.nombre), x + w / 2, y + 14, { col: j.enFuria ? '#ffb04a' : C.crema, ancla: 'c', max: w - 60 });

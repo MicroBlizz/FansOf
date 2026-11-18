@@ -1,6 +1,6 @@
 // Fans Of · /gestion · TABLERO · adaptador · CONTROLADOR: lo que pasa cuando se usa la pestaña. Pone el HTML de vista.js y vista-detalle.js en la página, abre
 // el detalle de una tarea (o el formulario) en el panel de la derecha, filtra mientras se busca, avisa de las tareas parecidas al escribir un título,
-// lee lo escrito, arrastra las tarjetas y le pide cada cosa a los casos de uso
+// lee lo escrito, pone las reacciones (con control-reacciones.js), arrastra las tarjetas y le pide cada cosa a los casos de uso
 // (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js los casos, los ids de sus huecos, `esc`, `fecha` y `textoError`
 // de /gestion; no sabe nada del servidor.
 'use strict';
@@ -9,7 +9,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
   // (el formulario corto de «Apuntar idea o fallo»); vista: la columna elegida con los botones de arriba (null = todas; ADR 147)
-  let vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
+  let yo = null, reac = null, vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
@@ -36,7 +36,8 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     const este = ++pedido, r = await casos.cargar(filtro);
     if (este !== pedido) return;   // llegó otra carga después: esta ya es vieja
     if (!r.ok) { aviso(/does not exist|PGRST202|404/.test(String(r.datos.causa && r.datos.causa.message)) ? 'Faltan los SQL del tablero en Supabase (servidor/117 a 120).' : textoError(r.datos.causa)); return; }
-    ({ tareas, columnas, descartadas, juegos } = r.valor);
+    ({ tareas, columnas, descartadas, juegos, yo } = r.valor);
+    if (r.valor.sinReacciones) aviso('No se han podido leer las reacciones: el tablero sale sin ellas.');
     el(hueco.filtros).innerHTML = TABLERO.vista.filtros(r.valor.juegos, filtro, esc);
     pintaPanel(false);
     pintaTablero();
@@ -103,12 +104,22 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     if (tareaDe(id)) abre({ id: Number(id) });
     else aviso('La #' + id + ' no está en el tablero: se hizo hace más de 14 días.');
   }
+  // Una reacción puesta o quitada: solo cambia esa tarea, sin volver a cargar el tablero entero
+  async function reacciona(t, reaccion) {
+    aviso('');
+    const r = await casos.reaccionar(t, reaccion, yo);
+    if (!r.ok) { avisaError(r); return; }
+    tareas = tareas.map(x => (x.id === r.valor.id ? r.valor : x));
+    columnas = casos.repartir(tareas, filtro);
+    pintaTablero();
+  }
   // pulsar una tarjeta (o Intro sobre ella) abre su detalle; pulsar la que ya está abierta lo cierra
   function conectaTarjetas() {
     const elige = t => abre(panel && panel.id === Number(t.dataset.id) ? null : { id: Number(t.dataset.id) });
     const cambiaVista = b => { vista = b.dataset.ver || null; pintaTablero(); };   // los botones de arriba: «Todas» o una columna
-    el(hueco.lista).onclick = ev => { const b = ev.target.closest('[data-ver]'), t = ev.target.closest('[data-id]'); if (b) cambiaVista(b); else if (t) elige(t); };
-    el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter') { ev.preventDefault(); elige(t); } };
+    reac = TABLERO.controlReacciones({ lista: el(hueco.lista), tareaDe, alElegir: reacciona });   // dejar apretada una tarjeta (ADR 149)
+    el(hueco.lista).onclick = ev => { const b = ev.target.closest('[data-ver]'), t = ev.target.closest('[data-id]'); if (reac.clic(ev)) return; if (b) cambiaVista(b); else if (t) elige(t); };
+    el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter' && !ev.target.closest('[data-barrita]')) { ev.preventDefault(); elige(t); } };
   }
   // Pulsar una caja del grafo marca esa caja y enseña debajo su check y su evidencia; «Ver grande» abre el dibujo a pantalla completa (y vuelve a cerrarlo)
   function eligeNodo(caja) {

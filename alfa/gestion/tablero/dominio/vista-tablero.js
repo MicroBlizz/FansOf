@@ -8,9 +8,8 @@ TABLERO.asignadaA = t => (t.responsable === 'claude' ? t.para || null : t.respon
 TABLERO.esDe = (t, persona) => (TABLERO.asignadaA(t) || (t.responsable && t.responsable !== 'claude' ? null : t.pedida_por)) === persona;
 // «Ordenar por» (Pepins, 18-11-2026, ADR 147): por prioridad (alta arriba; luego el orden a mano y la más antigua), las más nuevas primero o lo último
 // cambiado primero (sin fecha, al final). Un orden que no existe ordena por prioridad
-const porPrioridad = (a, b) => (TABLERO.PRIORIDADES[a.prioridad] - TABLERO.PRIORIDADES[b.prioridad]) || (a.orden - b.orden) || (a.id - b.id);
 TABLERO.ORDENES = Object.freeze({
-  prioridad: porPrioridad,
+  prioridad: (a, b) => (TABLERO.PRIORIDADES[a.prioridad] - TABLERO.PRIORIDADES[b.prioridad]) || (a.orden - b.orden) || (a.id - b.id),
   nuevas: (a, b) => b.id - a.id,
   cambio: (a, b) => String(b.actualizado || '').localeCompare(String(a.actualizado || '')) || (b.id - a.id),
 });

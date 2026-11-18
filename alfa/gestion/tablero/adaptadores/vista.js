@@ -24,6 +24,7 @@ TABLERO.vista = (() => {
     'sin-nota': 'Escribe qué hay que cambiar del informe',
     'accion': 'Esa acción no existe',
     'fuera-de-refinamiento': 'El informe solo se aprueba mientras la tarea está en ideas o en refinamiento',
+    'reaccion': 'Esa reacción no existe',
     'informe-cambiado': 'El informe ha cambiado desde que lo abriste: refresca y vuelve a leerlo',
   };
   const numeros = datos => (datos && Array.isArray(datos.requisitos) && datos.requisitos.length ? ': ' + datos.requisitos.map(n => '#' + n).join(', ') : '');
@@ -48,7 +49,7 @@ TABLERO.vista = (() => {
   const tarjeta = (t, esc, elegida, clase = '', extra = '') => `<article class="cuenta tb-tarea${clase}${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
     ${cabeza(t, esc)}
     <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)} <span class="estado tb-prio-${esc(t.prioridad)}">Prioridad ${esc(t.prioridad)}</span>${informe(t, esc)}${avanceGrafo(t)}${bloqueo(t)}</div>
-    ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}${extra}</article>`;
+    ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}${TABLERO.vistaReacciones.fila(t, esc)}${extra}</article>`;
   // Con una sola columna a la vista (ADR 147; Pepins, 18-11-2026: «muy vacío»), cada tarea es una fila ancha en tres partes: número, título y etiquetas;
   // «Qué hay que hacer»; y «Está hecho cuando…» con su último cambio. Los textos largos se cortan con «…» (el detalle los enseña enteros)
   const trozo = (clase, titulo, texto, esc) => `<div class="tb-trozo ${clase}"><b>${titulo}</b><div class="tb-texto">${texto ? esc(texto) : '<span class="meta">Sin escribir</span>'}</div></div>`;
@@ -126,5 +127,5 @@ TABLERO.vista = (() => {
     + '.tb-rapida{background:#3dbe8b;color:#10202b;border-color:#3dbe8b;font-weight:700}.tb-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tb-tipo{display:flex;gap:6px;align-items:center;border:2px solid var(--acento);border-radius:10px;padding:10px;font-weight:600}.tb-tipo:has(input:checked){background:var(--acento);color:var(--acento-texto)}'
     + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}'
     + '.tb-botones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.tb-ver{min-height:64px;flex-direction:column;justify-content:center;gap:2px;border-radius:12px}.tb-ver b{font-size:20px}.tb-ver[data-ver=""]{display:none}.sin-vista [data-ver="idea"]{background:var(--tono);color:#10202b}}';
-  return { html, pidio, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL };
+  return { html, pidio, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL + TABLERO.vistaReacciones.ESTILO };
 })();

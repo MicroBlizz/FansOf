@@ -52,7 +52,7 @@ TABLERO.vista = (() => {
   // Cabecera de la columna con su color y, debajo, su frase de ayuda (qué significa estar ahí)
   const cabecera = (c, esc) => `<h3 class="tb-cab" style="background:${c.tono}">${esc(c.titulo)} <span>${c.tareas.length}</span></h3>${c.ayuda ? `<div class="tb-ayuda">${esc(c.ayuda)}</div>` : ''}`;
   const columna = (c, esc, elegida) => `<section class="tb-col" data-columna="${c.id}">${cabecera(c, esc)}${c.tareas.map(t => tarjeta(t, esc, elegida)).join('') || '<div class="meta">Vacía</div>'}</section>`;
-  // Los botones de arriba (ADR 147): «Todas» y uno por columna, con su recuento. Al pulsar uno solo se ve esa columna (a lo ancho en el ordenador).
+  // Los botones de arriba (ADR 147): «Todas» y uno por columna, con su recuento. Al pulsar uno solo se ve esa columna, con una tarea por fila a lo ancho.
   // En el móvil (menos de 700 px) no hay «Todas»: sin columna elegida se ve Ideas, y su botón sale marcado
   const boton = (id, titulo, tono, cuantas, activo, esc) => `<button type="button" class="tb-ver${activo ? ' activo' : ''}" data-ver="${id}" style="--tono:${tono}" aria-pressed="${activo}"><b>${cuantas}</b>${esc(titulo)}</button>`;
   const botones = (columnas, vista, esc) => {
@@ -114,7 +114,7 @@ TABLERO.vista = (() => {
     + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}.tb-persona{display:flex;gap:4px;align-items:center}.tb-informe-accion{display:flex;flex-wrap:wrap;gap:6px}.tb-informe-accion input{flex:1;min-width:140px}';
   const ESTILO_MOVIL = '.tb-movil{display:none}.tb-botones{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}'
     + '.tb-ver{min-height:44px;display:flex;align-items:center;gap:6px;border:2px solid var(--tono);background:var(--panel);color:var(--texto);border-radius:10px;font-weight:600;padding:4px 12px}'
-    + '.tb-ver b{font-size:16px}.tb-ver.activo{background:var(--tono);color:#10202b}.tb-tablero.tb-una{grid-template-columns:minmax(0,1fr)}.tb-una .tb-col{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}.tb-una .tb-col>:not(.tb-tarea){grid-column:1/-1}'
+    + '.tb-ver b{font-size:16px}.tb-ver.activo{background:var(--tono);color:#10202b}.tb-tablero.tb-una{grid-template-columns:minmax(0,1fr)}.tb-una .tb-tarea{font-size:15px;padding:10px 12px}'
     + '.tb-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'
     + '.tb-rapida{background:#3dbe8b;color:#10202b;border-color:#3dbe8b;font-weight:700}.tb-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tb-tipo{display:flex;gap:6px;align-items:center;border:2px solid var(--acento);border-radius:10px;padding:10px;font-weight:600}.tb-tipo:has(input:checked){background:var(--acento);color:var(--acento-texto)}'
     + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}'

@@ -1,8 +1,8 @@
 {
- "build": 1262,
- "hash": "9827243",
- "fecha": "2026-11-18T17:07:53Z",
- "mensaje": "Tablero: un botón por columna (móvil y ordenador) para ver solo esa columna (tarea #121, ADR 147)",
+ "build": 1263,
+ "hash": "7ef29d3",
+ "fecha": "2026-11-18T17:08:43Z",
+ "mensaje": "Tablero: al elegir una columna, una tarea por fila a lo ancho (tarea #121, ADR 147)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

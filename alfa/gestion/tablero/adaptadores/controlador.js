@@ -16,7 +16,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const tareaDe = id => tareas.find(t => t.id === Number(id));
 
   const pintaTablero = () => {
-    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, vista) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
+    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, vista, fecha) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
   };
   // El panel se pinta según `panel`; si la tarea abierta ya no está (filtro o borrada), se cierra. El formulario no se repinta al recargar, para no perder lo escrito
   function pintaPanel(conFormulario) {

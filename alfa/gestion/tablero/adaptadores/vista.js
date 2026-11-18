@@ -45,13 +45,18 @@ TABLERO.vista = (() => {
   const informe = (t, esc) => (TABLERO.sinRefinar(t.estado) && TABLERO.informeTexto(t)
     ? ` <span class="estado${t.informe === 'falta' || t.informe === 'cambios' ? ' tb-bloqueo' : ''}">${esc(TABLERO.informeTexto(t))}</span>` : '');
   const tonoDe = id => (TABLERO.columna(id) || { tono: 'transparent' }).tono;
-  const tarjeta = (t, esc, elegida) => `<article class="cuenta tb-tarea${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
+  const tarjeta = (t, esc, elegida, clase = '', extra = '') => `<article class="cuenta tb-tarea${clase}${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
     ${cabeza(t, esc)}
     <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)}${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${informe(t, esc)}${avanceGrafo(t)}${bloqueo(t)}</div>
-    ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}</article>`;
+    ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}${extra}</article>`;
+  // Con una sola columna a la vista (ADR 147; Pepins, 18-11-2026: «muy vacío»), cada tarea es una fila ancha en tres partes: número, título y etiquetas;
+  // «Qué hay que hacer»; y «Está hecho cuando…» con su último cambio. Los textos largos se cortan con «…» (el detalle los enseña enteros)
+  const trozo = (clase, titulo, texto, esc) => `<div class="tb-trozo ${clase}"><b>${titulo}</b><div class="tb-texto">${texto ? esc(texto) : '<span class="meta">Sin escribir</span>'}</div></div>`;
+  const fila = (t, esc, elegida, fecha) => tarjeta(t, esc, elegida, ' tb-fila', trozo('tb-que', 'Qué hay que hacer', t.descripcion, esc) + trozo('tb-cuando', 'Está hecho cuando…', t.criterio, esc)
+    + (t.actualizado && fecha ? `<div class="meta tb-cambio">Último cambio: ${esc(fecha(t.actualizado))}</div>` : ''));
   // Cabecera de la columna con su color y, debajo, su frase de ayuda (qué significa estar ahí)
   const cabecera = (c, esc) => `<h3 class="tb-cab" style="background:${c.tono}">${esc(c.titulo)} <span>${c.tareas.length}</span></h3>${c.ayuda ? `<div class="tb-ayuda">${esc(c.ayuda)}</div>` : ''}`;
-  const columna = (c, esc, elegida) => `<section class="tb-col" data-columna="${c.id}">${cabecera(c, esc)}${c.tareas.map(t => tarjeta(t, esc, elegida)).join('') || '<div class="meta">Vacía</div>'}</section>`;
+  const columna = (c, esc, elegida, fecha, enFilas) => `<section class="tb-col" data-columna="${c.id}">${cabecera(c, esc)}${c.tareas.map(t => (enFilas ? fila(t, esc, elegida, fecha) : tarjeta(t, esc, elegida))).join('') || '<div class="meta">Vacía</div>'}</section>`;
   // Los botones de arriba (ADR 147): «Todas» y uno por columna, con su recuento. Al pulsar uno solo se ve esa columna, con una tarea por fila a lo ancho.
   // En el móvil (menos de 700 px) no hay «Todas»: sin columna elegida se ve Ideas, y su botón sale marcado
   const boton = (id, titulo, tono, cuantas, activo, esc) => `<button type="button" class="tb-ver${activo ? ' activo' : ''}" data-ver="${id}" style="--tono:${tono}" aria-pressed="${activo}"><b>${cuantas}</b>${esc(titulo)}</button>`;
@@ -60,10 +65,10 @@ TABLERO.vista = (() => {
     return `<div class="tb-botones${vista ? '' : ' sin-vista'}">${todas}${columnas.map(c => boton(c.id, c.titulo, c.tono, c.tareas.length, c.id === vista, esc)).join('')}</div>`;
   };
   const movil = (columnas, esc, elegida, vista) => `<div class="tb-movil">${columna(TABLERO.columnasVisibles(columnas, vista || 'idea')[0], esc, elegida)}</div>`;
-  // elegida: el id de la tarea abierta en el panel (su tarjeta se marca); vista: la columna elegida con los botones (null = todas)
-  const html = (columnas, esc, elegida = null, vista = null) => {
-    const visibles = TABLERO.columnasVisibles(columnas, vista);
-    return `${botones(columnas, vista, esc)}<div class="tb-tablero${visibles.length === 1 ? ' tb-una' : ''}">${visibles.map(c => columna(c, esc, elegida)).join('')}</div>${movil(columnas, esc, elegida, vista)}`;
+  // elegida: el id de la tarea abierta en el panel (su tarjeta se marca); vista: la columna elegida con los botones (null = todas); fecha: cómo se escribe una fecha
+  const html = (columnas, esc, elegida = null, vista = null, fecha = null) => {
+    const visibles = TABLERO.columnasVisibles(columnas, vista), una = visibles.length === 1;
+    return `${botones(columnas, vista, esc)}<div class="tb-tablero${una ? ' tb-una' : ''}">${visibles.map(c => columna(c, esc, elegida, fecha, una)).join('')}</div>${movil(columnas, esc, elegida, vista)}`;
   };
 
   // Los filtros de arriba: tarea nueva, refrescar, la búsqueda (filtra mientras se escribe), juego, responsable y persona (con «todos»; ADR 136: siempre empieza en Todos)
@@ -114,7 +119,7 @@ TABLERO.vista = (() => {
     + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}.tb-persona{display:flex;gap:4px;align-items:center}.tb-informe-accion{display:flex;flex-wrap:wrap;gap:6px}.tb-informe-accion input{flex:1;min-width:140px}';
   const ESTILO_MOVIL = '.tb-movil{display:none}.tb-botones{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}'
     + '.tb-ver{min-height:44px;display:flex;align-items:center;gap:6px;border:2px solid var(--tono);background:var(--panel);color:var(--texto);border-radius:10px;font-weight:600;padding:4px 12px}'
-    + '.tb-ver b{font-size:16px}.tb-ver.activo{background:var(--tono);color:#10202b}.tb-tablero.tb-una{grid-template-columns:minmax(0,1fr)}.tb-una .tb-tarea{font-size:15px;padding:10px 12px}'
+    + '.tb-ver b{font-size:16px}.tb-ver.activo{background:var(--tono);color:#10202b}.tb-tablero.tb-una{grid-template-columns:minmax(0,1fr)}.tb-una .tb-tarea{font-size:15px;padding:10px 12px}.tb-fila{display:grid;grid-template-columns:minmax(220px,1.1fr) minmax(0,1.6fr) minmax(0,1.3fr);grid-template-rows:auto auto auto 1fr;column-gap:18px;row-gap:3px}.tb-fila>.cab,.tb-fila>.tb-largo,.tb-fila>.meta,.tb-fila>.tb-espera{grid-column:1}.tb-fila>.tb-trozo{border-left:1px solid var(--linea);padding-left:14px}.tb-fila>.tb-que{grid-column:2;grid-row:1/5}.tb-fila>.tb-cuando{grid-column:3;grid-row:1/4}.tb-fila>.tb-cambio{grid-column:3;grid-row:4;padding-left:15px;align-self:end}.tb-trozo b{font-size:12px;color:var(--suave);text-transform:uppercase;letter-spacing:.03em}.tb-texto{white-space:pre-wrap;line-height:1.4;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}'
     + '.tb-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'
     + '.tb-rapida{background:#3dbe8b;color:#10202b;border-color:#3dbe8b;font-weight:700}.tb-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tb-tipo{display:flex;gap:6px;align-items:center;border:2px solid var(--acento);border-radius:10px;padding:10px;font-weight:600}.tb-tipo:has(input:checked){background:var(--acento);color:var(--acento-texto)}'
     + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}'

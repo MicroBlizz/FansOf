@@ -9,6 +9,8 @@
 'use strict';
 const PP_PVP = { red: null, sala: null, buscando: null, espera: null };
 const PP_PVP_ESPERA = 25;   // segundos buscando rival antes de jugar contra el CEO
+// el perfil del rival para el VS (js/pvp-perfil.js, tarea #41): lo pide al servidor con la cuenta
+const PP_PVP_PERFIL_SRV = PP_PVP_PERFIL.crea({ rpc: (nombre, cuerpo) => CUENTA.rpc(nombre, cuerpo), cat: PP_MI.cat });
 /* ---------- el menú de duelos ---------- */
 function ppVentanaDuelos() {
   const t = ppAbre(`<h2>${tr('Duelos')}</h2><p class="pp-sub">${tr('Por turnos, haz pop en las que quieras de una sola fila. ¡Pierde quien haga pop en la última!')}</p>`);
@@ -87,7 +89,7 @@ function ppPvpSala(s) {
   if (s.estado === 'jugando' && s.datos && s.datos.filas && !(PP_DUELO && PP_DUELO.pvp)) ppPvpEmpieza(s);
   // tu rival se ha ido a mitad del duelo (lleva más de 20 s sin dar señales): ganas
   const D = PP_DUELO;
-  if (D && D.pvp && !D.fin && rival && !rival.vivo) { ppFlota(tr('Tu rival se ha ido'), 270, 240, '#ff8a2a'); ppDueloFin('gana'); }
+  if (D && D.pvp && !D.fin && rival && !rival.vivo) { ppCortCancela(); ppFlota(tr('Tu rival se ha ido'), 270, 240, '#ff8a2a'); ppDueloFin('gana'); }
 }
 function ppPvpEmpieza(s) {
   clearInterval(PP_PVP.espera);
@@ -97,17 +99,34 @@ function ppPvpEmpieza(s) {
   s.datos.filas.forEach((largo, y) => { const x0 = Math.floor((n - largo) / 2); for (let x = x0; x < x0 + largo; x++) { mask[y * n + x] = 1; need[y * n + x] = 1; } });
   const T = ppNuevoTablero({ g: 0, lado: n, mask, need, opt: [], limite: 99, amigos: 0, jefe: true }, { equipo: [] });
   PP_DUELO = { T, turno: s.datos.empieza === yo.orden ? 'yo' : 'rival', fila: null, esta: [], fin: null,
-    pvp: { nombre: (rival && rival.nombre) || tr('Tu rival'), canal: null } };
+    pvp: { nombre: (rival && rival.nombre) || tr('Tu rival'), canal: null, perfil: null, espera: [] } };
   PP_DUELO.pvp.canal = PP_PVP.red.canal(m => ppPvpMensaje(m), () => {});
-  ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton(); ppTutorial('duelo'); ppTutorial('trucoNim');
+  ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton();
   play('ppRescate');
-  ppFlota(PP_DUELO.turno === 'yo' ? tr('¡Empiezas tú!') : tr('Empieza {n}', { n: PP_DUELO.pvp.nombre }), 270, 240, '#ffd64a');
+  if (ppPerfilActivo()) ppPvpCortinilla(s, rival); else ppPvpArranca();
+}
+// con el perfil abierto (tarea #41), el duelo contra gente abre con la cortinilla: tu panel contra el de tu rival. Sale enseguida con lo de
+// serie y, cuando el servidor contesta, se cambia por lo que lleva puesto de verdad
+function ppPvpCortinilla(s, rival) {
+  const D = PP_DUELO, panel = { perfil: PP_PERFIL.inicial(PP_MI.cat), cat: PP_MI.cat, nombre: D.pvp.nombre };
+  D.pvp.perfil = panel.perfil;
+  ppCortEmpieza({ nim: { rival: 'ceo' } }, ppPvpArranca, panel);
+  if (rival) PP_PVP_PERFIL_SRV.rival(s.sala, rival.orden).then(p => { if (PP_DUELO === D) D.pvp.perfil = panel.perfil = p; });
+}
+// empieza de verdad (tras la cortinilla, si la hay): los tutoriales, quién empieza y las jugadas del rival que llegaron mientras tanto
+function ppPvpArranca() {
+  const D = PP_DUELO; if (!D || !D.pvp || D.fin) return;
+  ppTutorial('duelo'); ppTutorial('trucoNim');
+  ppFlota(D.turno === 'yo' ? tr('¡Empiezas tú!') : tr('Empieza {n}', { n: D.pvp.nombre }), 270, 240, '#ffd64a');
+  D.pvp.espera.splice(0).forEach(ppPvpMensaje);
 }
 // tu jugada, al pulsar ¡LISTO! (o al reventar la última, que pierdes)
 function ppPvpManda(celdas) { const D = PP_DUELO; if (D && D.pvp && D.pvp.canal) D.pvp.canal.enviar({ t: 'jugada', celdas }); }
 // la jugada del rival: sus burbujas se revientan una a una
 function ppPvpMensaje(m) {
-  const D = PP_DUELO; if (!D || !D.pvp || D.fin || !m || m.t !== 'jugada' || !Array.isArray(m.celdas) || D.turno !== 'rival') return;
+  const D = PP_DUELO; if (!D || !D.pvp || D.fin || !m) return;
+  if (ppCortActiva()) { D.pvp.espera.push(m); return; }   // mientras tú ves la cortinilla, lo del rival espera (ppPvpArranca)
+  if (m.t !== 'jugada' || !Array.isArray(m.celdas) || D.turno !== 'rival') return;
   const T = D.T, celdas = m.celdas.filter(i => Number.isInteger(i) && i >= 0 && i < T.up.length && T.mask[i] && T.up[i]);
   if (!celdas.length) return;
   D.fila = Math.floor(celdas[0] / T.n);

@@ -1,8 +1,8 @@
 {
- "build": 1249,
- "hash": "5b2822c",
- "fecha": "2026-11-18T11:09:13Z",
- "mensaje": "Pop: el VS con un panel por jugador (tu perfil contra el del rival; los jefes, con uno fijo), tras el flag tienda-gemas (tarea #41, ADR 130, nodo n6)",
+ "build": 1250,
+ "hash": "183649d",
+ "fecha": "2026-11-18T11:24:26Z",
+ "mensaje": "Pop: los duelos contra gente abren con la cortinilla y el perfil de tu rival, comprobado por el servidor (pop_perfil_sala), con prueba de dos clientes; tras el flag tienda-gemas (tarea #41, ADR 130, nodo n7)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

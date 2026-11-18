@@ -67,5 +67,11 @@ const PP_PERFIL = Object.freeze((() => {
     for (const t of TIPOS) p[t === 'pegatina' ? 'pegatinas' : t] = d[CORTO[t]];
     return limpia(p, cat, null);
   }
-  return { TIPOS, PEGATINAS, articulo, reclamo, gratis, loTiene, precio, comprar, inicial, poner, limpia, publico, deRival };
+  // el perfil del rival en un duelo contra gente: de la lista de pop_perfil_sala (servidor/150; [{ orden, perfil }]) el de su orden, ya
+  // comprobado por el servidor pero limpiado igual; si no está o nunca se puso nada, lo de serie (lo gratis)
+  function deSala(lista, orden, cat) {
+    const e = Array.isArray(lista) ? lista.find(x => x && x.orden === orden) : null;
+    return limpia(e && e.perfil, cat, null);
+  }
+  return { TIPOS, PEGATINAS, articulo, reclamo, gratis, loTiene, precio, comprar, inicial, poner, limpia, publico, deRival, deSala };
 })());

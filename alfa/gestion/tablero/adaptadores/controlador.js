@@ -8,15 +8,15 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
-  // (el formulario corto de «Apuntar idea o fallo»); grupo: el de los tres botones del móvil que se ve
-  let grupo = 'ideas', juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
+  // (el formulario corto de «Apuntar idea o fallo»); vista: la columna elegida con los botones de arriba (null = todas; ADR 147)
+  let vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
   const tareaDe = id => tareas.find(t => t.id === Number(id));
 
   const pintaTablero = () => {
-    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, grupo) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
+    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, vista) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
   };
   // El panel se pinta según `panel`; si la tarea abierta ya no está (filtro o borrada), se cierra. El formulario no se repinta al recargar, para no perder lo escrito
   function pintaPanel(conFormulario) {
@@ -106,8 +106,8 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   // pulsar una tarjeta (o Intro sobre ella) abre su detalle; pulsar la que ya está abierta lo cierra
   function conectaTarjetas() {
     const elige = t => abre(panel && panel.id === Number(t.dataset.id) ? null : { id: Number(t.dataset.id) });
-    const cambiaGrupo = b => { grupo = b.dataset.grupo; pintaTablero(); };   // los tres botones del móvil
-    el(hueco.lista).onclick = ev => { const b = ev.target.closest('[data-grupo]'), t = ev.target.closest('[data-id]'); if (b) cambiaGrupo(b); else if (t) elige(t); };
+    const cambiaVista = b => { vista = b.dataset.ver || null; pintaTablero(); };   // los botones de arriba: «Todas» o una columna
+    el(hueco.lista).onclick = ev => { const b = ev.target.closest('[data-ver]'), t = ev.target.closest('[data-id]'); if (b) cambiaVista(b); else if (t) elige(t); };
     el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter') { ev.preventDefault(); elige(t); } };
   }
   // Pulsar una caja del grafo marca esa caja y enseña debajo su check y su evidencia; «Ver grande» abre el dibujo a pantalla completa (y vuelve a cerrarlo)

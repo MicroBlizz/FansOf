@@ -11,12 +11,6 @@ TABLERO.COLUMNAS = Object.freeze([
   Object.freeze({ id: 'en_revision', titulo: 'En revisión', tono: '#56ccf2', ayuda: 'Hecha y en la alfa. Pruébala y dale el visto bueno.' }),
   Object.freeze({ id: 'hecho', titulo: 'Hecho', tono: '#3dbe8b', ayuda: 'Terminada y aprobada.' }),
 ]);
-// En el móvil no caben seis columnas: se ven tres grupos grandes (Pepins, 16-11-2026, ADR 124). Cada columna está en un solo grupo
-TABLERO.GRUPOS_MOVIL = Object.freeze([
-  Object.freeze({ id: 'ideas', titulo: 'Ideas', tono: '#f2994a', columnas: Object.freeze(['idea', 'refinando']) }),
-  Object.freeze({ id: 'revisar', titulo: 'Por revisar', tono: '#4aa3df', columnas: Object.freeze(['pendiente', 'en_curso', 'en_revision']) }),
-  Object.freeze({ id: 'hecho', titulo: 'Hecho', tono: '#3dbe8b', columnas: Object.freeze(['hecho']) }),
-]);
 TABLERO.PRIORIDADES = Object.freeze({ alta: 0, normal: 1, baja: 2 });   // el número es el peso al ordenar: cuanto menos, antes
 TABLERO.RESPONSABLES = Object.freeze({ arkioner: 'Arkioner', pepins: 'Pepins', claude: 'Claude' });
 // Las personas que piden tareas y para las que trabaja Claude (ADR 136, SQL 148): `pedida_por` y `para` de una tarea

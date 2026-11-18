@@ -14,7 +14,7 @@ TABLERO.reparte = (tareas, filtro = {}) => {
   const antes = (a, b) => (TABLERO.PRIORIDADES[a.prioridad] - TABLERO.PRIORIDADES[b.prioridad]) || (a.orden - b.orden) || (a.id - b.id);
   return TABLERO.COLUMNAS.map(c => ({ id: c.id, titulo: c.titulo, tono: c.tono, ayuda: c.ayuda, tareas: tareas.filter(t => t.estado === c.id && pasa(t)).sort(antes) }));
 };
-// Las columnas ya repartidas, juntas en los tres grupos del móvil (TABLERO.GRUPOS_MOVIL): cada grupo lleva sus tareas en el orden de sus columnas
-TABLERO.agrupaMovil = columnas => TABLERO.GRUPOS_MOVIL.map(g => ({ id: g.id, titulo: g.titulo, tono: g.tono,
-  tareas: g.columnas.flatMap(id => (columnas.find(c => c.id === id) || { tareas: [] }).tareas) }));
+// Los botones de arriba (Pepins, 18-11-2026, ADR 147): uno por columna y «Todas». `vista` es el id de la columna elegida o null (todas).
+// Devuelve las columnas que se enseñan; si el id no es una columna, todas
+TABLERO.columnasVisibles = (columnas, vista) => (columnas.some(c => c.id === vista) ? columnas.filter(c => c.id === vista) : columnas);
 TABLERO.juegosDe = tareas => [...new Set(tareas.map(t => t.juego))].sort();

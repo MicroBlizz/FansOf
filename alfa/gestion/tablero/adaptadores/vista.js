@@ -45,22 +45,26 @@ TABLERO.vista = (() => {
   const informe = (t, esc) => (TABLERO.sinRefinar(t.estado) && TABLERO.informeTexto(t)
     ? ` <span class="estado${t.informe === 'falta' || t.informe === 'cambios' ? ' tb-bloqueo' : ''}">${esc(TABLERO.informeTexto(t))}</span>` : '');
   const tonoDe = id => (TABLERO.columna(id) || { tono: 'transparent' }).tono;
-  const tarjeta = (t, esc, elegida, conColumna) => `<article class="cuenta tb-tarea${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
+  const tarjeta = (t, esc, elegida) => `<article class="cuenta tb-tarea${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
     ${cabeza(t, esc)}
-    <div class="meta">${conColumna ? `<span class="estado tb-donde">${esc(TABLERO.tituloDe(t.estado))}</span> ` : ''}<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)}${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${informe(t, esc)}${avanceGrafo(t)}${bloqueo(t)}</div>
+    <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)}${t.prioridad === 'normal' ? '' : ` <span class="estado">${esc(t.prioridad)}</span>`}${informe(t, esc)}${avanceGrafo(t)}${bloqueo(t)}</div>
     ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}</article>`;
   // Cabecera de la columna con su color y, debajo, su frase de ayuda (qué significa estar ahí)
   const cabecera = (c, esc) => `<h3 class="tb-cab" style="background:${c.tono}">${esc(c.titulo)} <span>${c.tareas.length}</span></h3>${c.ayuda ? `<div class="tb-ayuda">${esc(c.ayuda)}</div>` : ''}`;
   const columna = (c, esc, elegida) => `<section class="tb-col" data-columna="${c.id}">${cabecera(c, esc)}${c.tareas.map(t => tarjeta(t, esc, elegida)).join('') || '<div class="meta">Vacía</div>'}</section>`;
-  // En el móvil (menos de 700 px) se ven tres botones grandes (TABLERO.GRUPOS_MOVIL) y la lista del grupo elegido; cada tarjeta dice en qué columna está
-  const botonGrupo = (g, elegido, esc) => `<button type="button" class="tb-grupo${g.id === elegido ? ' activo' : ''}" data-grupo="${g.id}" style="--tono:${g.tono}" aria-pressed="${g.id === elegido}"><b>${g.tareas.length}</b>${esc(g.titulo)}</button>`;
-  const movil = (columnas, esc, elegida, elegido) => {
-    const grupos = TABLERO.agrupaMovil(columnas), g = grupos.find(x => x.id === elegido) || grupos[0];
-    return `<div class="tb-movil"><div class="tb-grupos">${grupos.map(x => botonGrupo(x, g.id, esc)).join('')}</div>
-    <div class="tb-lista-movil">${g.tareas.map(t => tarjeta(t, esc, elegida, true)).join('') || '<div class="meta">Nada ahora mismo</div>'}</div></div>`;
+  // Los botones de arriba (ADR 147): «Todas» y uno por columna, con su recuento. Al pulsar uno solo se ve esa columna (a lo ancho en el ordenador).
+  // En el móvil (menos de 700 px) no hay «Todas»: sin columna elegida se ve Ideas, y su botón sale marcado
+  const boton = (id, titulo, tono, cuantas, activo, esc) => `<button type="button" class="tb-ver${activo ? ' activo' : ''}" data-ver="${id}" style="--tono:${tono}" aria-pressed="${activo}"><b>${cuantas}</b>${esc(titulo)}</button>`;
+  const botones = (columnas, vista, esc) => {
+    const todas = boton('', 'Todas', 'var(--acento)', columnas.reduce((n, c) => n + c.tareas.length, 0), !vista, esc);
+    return `<div class="tb-botones${vista ? '' : ' sin-vista'}">${todas}${columnas.map(c => boton(c.id, c.titulo, c.tono, c.tareas.length, c.id === vista, esc)).join('')}</div>`;
   };
-  // elegida: el id de la tarea abierta en el panel (su tarjeta se marca); grupo: el grupo del móvil que se ve (ideas por defecto)
-  const html = (columnas, esc, elegida = null, grupo = 'ideas') => `<div class="tb-tablero">${columnas.map(c => columna(c, esc, elegida)).join('')}</div>${movil(columnas, esc, elegida, grupo)}`;
+  const movil = (columnas, esc, elegida, vista) => `<div class="tb-movil">${columna(TABLERO.columnasVisibles(columnas, vista || 'idea')[0], esc, elegida)}</div>`;
+  // elegida: el id de la tarea abierta en el panel (su tarjeta se marca); vista: la columna elegida con los botones (null = todas)
+  const html = (columnas, esc, elegida = null, vista = null) => {
+    const visibles = TABLERO.columnasVisibles(columnas, vista);
+    return `${botones(columnas, vista, esc)}<div class="tb-tablero${visibles.length === 1 ? ' tb-una' : ''}">${visibles.map(c => columna(c, esc, elegida)).join('')}</div>${movil(columnas, esc, elegida, vista)}`;
+  };
 
   // Los filtros de arriba: tarea nueva, refrescar, la búsqueda (filtra mientras se escribe), juego, responsable y persona (con «todos»; ADR 136: siempre empieza en Todos)
   const PERSONAS = [['', 'Todos'], ...Object.entries(TABLERO.PERSONAS)];
@@ -108,10 +112,12 @@ TABLERO.vista = (() => {
     + '.tb-barra{height:6px;border:1px solid var(--linea);border-radius:4px;overflow:hidden;background:var(--bg);margin:4px 0}.tb-barra i{display:block;height:100%;background:var(--ok)}.tb-nivel{display:grid;gap:4px;margin-top:6px}.tb-nodo{border-left:3px solid var(--linea);padding-left:6px}.tb-nodo.pasa{border-color:var(--ok)}.tb-nodo.falla,.tb-nodo.bloqueado{border-color:var(--clara)}.tb-nodo.en_curso{border-color:var(--acento)}'
     + '.tb-form{display:grid;gap:8px}.tb-form textarea{font:inherit;color:var(--texto);background:var(--bg);border:1px solid var(--linea);border-radius:5px;padding:7px 9px;width:100%}.tb-form .filtros label{flex:1;min-width:140px}'
     + '.tb-espera{font-size:12px;color:var(--debil);background:var(--debil-fondo);border-radius:4px;padding:2px 6px}.tb-parecidas{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;align-items:baseline}.tb-parecidas:empty{display:none}.tb-parecida{font-size:12px;padding:2px 6px}[data-buscar]{flex:1;min-width:160px;max-width:320px}.tb-informe{white-space:pre-wrap}.tb-tarea .tb-bloqueo{color:var(--debil);background:var(--debil-fondo)}.tb-enlazadas{display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}.tb-persona{display:flex;gap:4px;align-items:center}.tb-informe-accion{display:flex;flex-wrap:wrap;gap:6px}.tb-informe-accion input{flex:1;min-width:140px}';
-  const ESTILO_MOVIL = '.tb-movil{display:none;gap:10px}.tb-grupos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}'
-    + '.tb-grupo{min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:2px solid var(--tono);background:var(--panel);color:var(--texto);border-radius:12px;font-weight:600}'
-    + '.tb-grupo b{font-size:20px}.tb-grupo.activo{background:var(--tono);color:#10202b}.tb-lista-movil{display:grid;gap:8px}.tb-lista-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-donde{font-weight:600}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'
+  const ESTILO_MOVIL = '.tb-movil{display:none}.tb-botones{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}'
+    + '.tb-ver{min-height:44px;display:flex;align-items:center;gap:6px;border:2px solid var(--tono);background:var(--panel);color:var(--texto);border-radius:10px;font-weight:600;padding:4px 12px}'
+    + '.tb-ver b{font-size:16px}.tb-ver.activo{background:var(--tono);color:#10202b}.tb-tablero.tb-una{grid-template-columns:minmax(0,1fr)}.tb-una .tb-col{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}.tb-una .tb-col>:not(.tb-tarea){grid-column:1/-1}'
+    + '.tb-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'
     + '.tb-rapida{background:#3dbe8b;color:#10202b;border-color:#3dbe8b;font-weight:700}.tb-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tb-tipo{display:flex;gap:6px;align-items:center;border:2px solid var(--acento);border-radius:10px;padding:10px;font-weight:600}.tb-tipo:has(input:checked){background:var(--acento);color:var(--acento-texto)}'
-    + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}}';
+    + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}'
+    + '.tb-botones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.tb-ver{min-height:64px;flex-direction:column;justify-content:center;gap:2px;border-radius:12px}.tb-ver b{font-size:20px}.tb-ver[data-ver=""]{display:none}.sin-vista [data-ver="idea"]{background:var(--tono);color:#10202b}}';
   return { html, pidio, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL };
 })();

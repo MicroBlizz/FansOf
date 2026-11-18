@@ -10,6 +10,15 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-11-18-kingdom',
+    fecha: '18 de noviembre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF KINGDOM', tarjeta: 'g-kingdom', enlace: 'demos/kingdom/', texto: 'Prototipo recuperado: el primer Fans of Asalto vuelve con nombre propio. Compra a los Animales Locos, combina sus 7 clases y baja por la mazmorra de Microblizz en batallas automáticas.' },
+      { nombre: 'FANS OF SPY', tarjeta: 'g-spy', enlace: 'demos/spy/', texto: 'Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-11-18',
     fecha: '18 de noviembre de 2026',
     nuevos: [

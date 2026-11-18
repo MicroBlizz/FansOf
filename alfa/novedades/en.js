@@ -2,6 +2,8 @@
 'use strict';
 IDIOMA.add({
   "18 de noviembre de 2026": "18 November 2026",
+  "FANS OF KINGDOM": "FANS OF KINGDOM",
+  "Prototipo recuperado: el primer Fans of Asalto vuelve con nombre propio. Compra a los Animales Locos, combina sus 7 clases y baja por la mazmorra de Microblizz en batallas automáticas.": "Recovered prototype: the first Fans of Asalto is back under its own name. Buy the Crazy Animals, combine their 7 classes and go down the Microblizz dungeon in automatic battles.",
   "FANS OF SPY": "FANS OF SPY",
   "Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.": "New prototype: turn-based stealth with cards, in 3D. Sneak CrazyBunny into the Microblizz tower without the Interns seeing you.",
   "5 de noviembre de 2026": "5 November 2026",

@@ -1,8 +1,8 @@
 {
- "build": 1252,
- "hash": "f9f3035",
- "fecha": "2026-11-18T13:13:26Z",
- "mensaje": "Fans of Kingdom 0.1.0: vuelve el Asalto antiguo (calco de Attack on Dungeon, 9-11-2026) como juego aparte, con su arte de entonces y su propia partida; Asalto sigue siendo el Slotbound (tarea #117, ADR 145)",
+ "build": 1253,
+ "hash": "87ff236",
+ "fecha": "2026-11-18T13:38:08Z",
+ "mensaje": "Novedades de la web: Fans of Kingdom en el boletín de juegos nuevos (tarea #117)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

@@ -1,8 +1,8 @@
 {
- "build": 1254,
- "hash": "766f6dc",
- "fecha": "2026-11-18T13:52:03Z",
- "mensaje": "ADR 144, entrega 1: la web y core eligen el idioma con la misma regla pura (core/js/sistema/idioma-regla.js); ?idioma= en la dirección con ?lang= como alias, también en la portada y Lore (idiomaSolo); enlaces de core a ?idioma=. Con el navegador en portugués, la portada y Lore salen enteras en inglés",
+ "build": 1255,
+ "hash": "a2c2698",
+ "fecha": "2026-11-18T14:45:21Z",
+ "mensaje": "Spy: receta 3D de Yoshi (Trellis2) y primer modelo de CrazyBunny",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

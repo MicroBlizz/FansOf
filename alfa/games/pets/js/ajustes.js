@@ -74,10 +74,10 @@ const PETS = {
   },
   // los minijuegos de cada etapa (docs/pets/minijuegos.md): se abren tal cual (sus demos) y de momento cuentan como jugados al abrirlos
   minijuegos: {
-    bebe: [{ id: 'pop', nombre: 'Fans of Pop', ruta: '../../demos/pop/' }],
-    nino: [{ id: 'merge', nombre: 'Fans of Merge', ruta: '../../demos/merge/' }, { id: 'swipe', nombre: 'Fans of Swipe', ruta: '../../demos/swipe/' }],
-    adolescente: [{ id: 'snakes', nombre: 'Fans of Snakes', ruta: '../../demos/snakes/' }],
-    adulto: [{ id: 'jump', nombre: 'Fans of Jump', ruta: '../jump/' }, { id: 'crush', nombre: 'Fans of Crush', ruta: '../crush/' }, { id: 'goose', nombre: 'Fans of Goose', ruta: '../../demos/goose/' }, { id: 'boom', nombre: 'Fans of Boom', ruta: '../boom/' }],
+    bebe: [{ id: 'pop', nombre: 'Fans of Pop', ruta: '../pop/' }],
+    nino: [{ id: 'merge', nombre: 'Fans of Merge', ruta: '../merge/' }, { id: 'swipe', nombre: 'Fans of Swipe', ruta: '../swipe/' }],
+    adolescente: [{ id: 'snakes', nombre: 'Fans of Snakes', ruta: '../snakes/' }],
+    adulto: [{ id: 'jump', nombre: 'Fans of Jump', ruta: '../jump/' }, { id: 'crush', nombre: 'Fans of Crush', ruta: '../crush/' }, { id: 'goose', nombre: 'Fans of Goose', ruta: '../goose/' }, { id: 'boom', nombre: 'Fans of Boom', ruta: '../boom/' }],
   },
   jugadasDia: 6,                // minijuegos que cuentan al día
   // las chucherías: cuántas al día sin empacho; con empacho (horas) no quiere comida de verdad y duerme peor

@@ -1,2 +1,3 @@
-// Fans of Soccer · Jugar sin conexión. Es el común de core/js/sw.js; este archivo tiene que estar aquí para que valga solo para esta demo.
-importScripts('../../core/js/sw.js?v=' + (new URL(self.location).searchParams.get('v') || '0'));
+// Fans of Soccer vive ahora en games/soccer (ADR 142): este service worker solo borra la copia sin conexión que dejó aquí y se da de baja. Se borra el 18-2-2027.
+'use strict';
+importScripts('../../core/js/mudanza/reglas.js', '../../core/js/mudanza/sw.js');

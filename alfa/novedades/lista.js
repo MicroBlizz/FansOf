@@ -13,8 +13,8 @@ const NOVEDADES_WEB = [
     id: '2026-11-18-kingdom',
     fecha: '18 de noviembre de 2026',
     nuevos: [
-      { nombre: 'FANS OF KINGDOM', tarjeta: 'g-kingdom', enlace: 'demos/kingdom/', texto: 'Prototipo recuperado: el primer Fans of Asalto vuelve con nombre propio. Compra a los Animales Locos, combina sus 7 clases y baja por la mazmorra de Microblizz en batallas automáticas.' },
-      { nombre: 'FANS OF SPY', tarjeta: 'g-spy', enlace: 'demos/spy/', texto: 'Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.' },
+      { nombre: 'FANS OF KINGDOM', tarjeta: 'g-kingdom', enlace: 'games/kingdom/', texto: 'Prototipo recuperado: el primer Fans of Asalto vuelve con nombre propio. Compra a los Animales Locos, combina sus 7 clases y baja por la mazmorra de Microblizz en batallas automáticas.' },
+      { nombre: 'FANS OF SPY', tarjeta: 'g-spy', enlace: 'games/spy/', texto: 'Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.' },
     ],
     otros: [],
   },
@@ -22,7 +22,7 @@ const NOVEDADES_WEB = [
     id: '2026-11-18',
     fecha: '18 de noviembre de 2026',
     nuevos: [
-      { nombre: 'FANS OF SPY', tarjeta: 'g-spy', enlace: 'demos/spy/', texto: 'Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.' },
+      { nombre: 'FANS OF SPY', tarjeta: 'g-spy', enlace: 'games/spy/', texto: 'Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.' },
     ],
     otros: [],
   },
@@ -30,7 +30,7 @@ const NOVEDADES_WEB = [
     id: '2026-11-05',
     fecha: '5 de noviembre de 2026',
     nuevos: [
-      { nombre: 'FANS OF BASEMENT', tarjeta: 'g-basement', enlace: 'demos/basement/', texto: 'Prototipo nuevo: baja por el hueco del ascensor de Microblizz con la grapadora disparando sola, sin quedarte sin café, y sube con la caja llena de botín.' },
+      { nombre: 'FANS OF BASEMENT', tarjeta: 'g-basement', enlace: 'games/basement/', texto: 'Prototipo nuevo: baja por el hueco del ascensor de Microblizz con la grapadora disparando sola, sin quedarte sin café, y sube con la caja llena de botín.' },
     ],
     otros: [],
   },
@@ -46,7 +46,7 @@ const NOVEDADES_WEB = [
     id: '2026-11-01',
     fecha: '1 de noviembre de 2026',
     nuevos: [
-      { nombre: 'FANS OF SHELTER', tarjeta: 'g-shelter', enlace: 'demos/shelter/', texto: 'Prototipo nuevo: de día explora, pica y craftea con CrazyBunny; de noche aguanta la horda con la zanahoria gigante girando sola. Sin botones.' },
+      { nombre: 'FANS OF SHELTER', tarjeta: 'g-shelter', enlace: 'games/shelter/', texto: 'Prototipo nuevo: de día explora, pica y craftea con CrazyBunny; de noche aguanta la horda con la zanahoria gigante girando sola. Sin botones.' },
     ],
     otros: [],
   },
@@ -54,7 +54,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-30',
     fecha: '30 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF POP', tarjeta: 'g-pop', enlace: 'demos/pop/', texto: 'Demo nueva y muy kawaii: haz pop en las burbujas de un pop-it gigante y rescata a los amigos atrapados. Próximamente.' },
+      { nombre: 'FANS OF POP', tarjeta: 'g-pop', enlace: 'games/pop/', texto: 'Demo nueva y muy kawaii: haz pop en las burbujas de un pop-it gigante y rescata a los amigos atrapados. Próximamente.' },
     ],
     otros: [],
   },
@@ -70,7 +70,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-21b',
     fecha: '21 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF SNAKES', tarjeta: 'g-snakes', enlace: 'demos/snakes/', texto: 'Demo nueva: la serpiente de siempre con Frenesí. Roza tu cola para cargarlo y córtatela por monedas; los «?» son locuras.' },
+      { nombre: 'FANS OF SNAKES', tarjeta: 'g-snakes', enlace: 'games/snakes/', texto: 'Demo nueva: la serpiente de siempre con Frenesí. Roza tu cola para cargarlo y córtatela por monedas; los «?» son locuras.' },
     ],
     otros: [],
   },
@@ -78,7 +78,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-21a',
     fecha: '21 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF AUTO', tarjeta: 'g-auto', enlace: 'demos/auto/', texto: 'Demo nueva: el barrio visto desde arriba como en la primera PlayStation. Roba coches, huye de los Moderadores y haz los recados de las tres bandas.' },
+      { nombre: 'FANS OF AUTO', tarjeta: 'g-auto', enlace: 'games/auto/', texto: 'Demo nueva: el barrio visto desde arriba como en la primera PlayStation. Roba coches, huye de los Moderadores y haz los recados de las tres bandas.' },
     ],
     otros: [],
   },
@@ -86,7 +86,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-20c',
     fecha: '20 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF BEAMS', tarjeta: 'g-beams', enlace: 'demos/beams/', texto: 'Demo nueva: el matamarcianos espacial de la serie. Captura naves de Microblizz y conviértelas en tu escolta, tu escudo o tu super rayo.' },
+      { nombre: 'FANS OF BEAMS', tarjeta: 'g-beams', enlace: 'games/beams/', texto: 'Demo nueva: el matamarcianos espacial de la serie. Captura naves de Microblizz y conviértelas en tu escolta, tu escudo o tu super rayo.' },
     ],
     otros: [],
   },
@@ -143,7 +143,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-13b',
     fecha: '13 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF DUNGEONS', tarjeta: 'g-dungeons', enlace: 'demos/dungeons/', texto: 'Roguelike por turnos: sube la Torre de Microblizz con CrazyBunny, CyberMarine o NecroLord. Pixel art nuevo de 32 bits.' },
+      { nombre: 'FANS OF DUNGEONS', tarjeta: 'g-dungeons', enlace: 'games/dungeons/', texto: 'Roguelike por turnos: sube la Torre de Microblizz con CrazyBunny, CyberMarine o NecroLord. Pixel art nuevo de 32 bits.' },
     ],
     otros: [],
   },
@@ -159,7 +159,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-11f',
     fecha: '11 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF RECRUIT', tarjeta: 'g-recruit', enlace: 'demos/recruit/', texto: 'Corre y dispara como en las recreativas: CrazyBunny, la MechaVaca y SurvivalBot en pixel art.' },
+      { nombre: 'FANS OF RECRUIT', tarjeta: 'g-recruit', enlace: 'games/recruit/', texto: 'Corre y dispara como en las recreativas: CrazyBunny, la MechaVaca y SurvivalBot en pixel art.' },
     ],
     otros: [],
   },
@@ -175,14 +175,14 @@ const NOVEDADES_WEB = [
     id: '2026-10-11d',
     fecha: '11 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF RECRUIT', tarjeta: 'g-recruit', enlace: 'demos/recruit/', texto: 'Corre y dispara como en las recreativas: CrazyBunny, la MechaVaca y SurvivalBot en pixel art.' },
+      { nombre: 'FANS OF RECRUIT', tarjeta: 'g-recruit', enlace: 'games/recruit/', texto: 'Corre y dispara como en las recreativas: CrazyBunny, la MechaVaca y SurvivalBot en pixel art.' },
       { nombre: 'FANS OF CRUSH', tarjeta: 'g-crush', enlace: 'games/crush/', texto: 'Tres en raya con los Animales Locos: sube la Escalera Corporativa de Microblizz y despide al jefe de RRHH.' },
       { nombre: 'FANS OF DARK', tarjeta: 'g-dark', enlace: 'games/dark/', texto: 'Mazmorras en 3D: baja con un Animal Loco, llena la mochila y sal por un portal antes de que la niebla te alcance.' },
       { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
       { nombre: 'FANS OF ROUFLAGE', tarjeta: 'g-rouflage', enlace: 'games/rouflage/', texto: 'El escondite con pintura: píntate como el suelo y que los becarios no te despidan.' },
-      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
-      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
-      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'demos/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
+      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'games/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
+      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'games/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
+      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'games/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
     ],
     otros: [
       { nombre: 'TERMINAL SHOCK', tarjeta: 'g-terminal-shock', texto: 'Demo más larga: 13 salas, Zoe y personajes estilo PS1.' },
@@ -196,9 +196,9 @@ const NOVEDADES_WEB = [
       { nombre: 'FANS OF DARK', tarjeta: 'g-dark', enlace: 'games/dark/', texto: 'Mazmorras en 3D: baja con un Animal Loco, llena la mochila y sal por un portal antes de que la niebla te alcance.' },
       { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
       { nombre: 'FANS OF ROUFLAGE', tarjeta: 'g-rouflage', enlace: 'games/rouflage/', texto: 'El escondite con pintura: píntate como el suelo y que los becarios no te despidan.' },
-      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
-      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
-      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'demos/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
+      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'games/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
+      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'games/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
+      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'games/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
     ],
     otros: [
       { nombre: 'TERMINAL SHOCK', tarjeta: 'g-terminal-shock', texto: 'Demo más larga: 13 salas, Zoe y personajes estilo PS1.' },
@@ -211,9 +211,9 @@ const NOVEDADES_WEB = [
       { nombre: 'FANS OF DARK', tarjeta: 'g-dark', enlace: 'games/dark/', texto: 'Mazmorras en 3D: baja con un Animal Loco, llena la mochila y sal por un portal antes de que la niebla te alcance.' },
       { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
       { nombre: 'FANS OF ROUFLAGE', tarjeta: 'g-rouflage', enlace: 'games/rouflage/', texto: 'El escondite con pintura: píntate como el suelo y que los becarios no te despidan.' },
-      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
-      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
-      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'demos/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
+      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'games/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
+      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'games/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
+      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'games/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
     ],
     otros: [
       { nombre: 'TERMINAL SHOCK', tarjeta: 'g-terminal-shock', texto: 'Demo más larga: 13 salas, Zoe y personajes estilo PS1.' },
@@ -224,9 +224,9 @@ const NOVEDADES_WEB = [
     fecha: '10 de octubre de 2026',
     nuevos: [
       { nombre: 'FANS OF ROUFLAGE', tarjeta: 'g-rouflage', enlace: 'games/rouflage/', texto: 'El escondite con pintura: píntate como el suelo y que los becarios no te despidan.' },
-      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
-      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
-      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'demos/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
+      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'games/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
+      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'games/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
+      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'games/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
     ],
     otros: [
       { nombre: 'TERMINAL SHOCK', tarjeta: 'g-terminal-shock', texto: 'Demo más larga: 13 salas, Zoe y personajes estilo PS1.' },
@@ -236,9 +236,9 @@ const NOVEDADES_WEB = [
     id: '2026-10-10',
     fecha: '10 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
-      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
-      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'demos/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
+      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'games/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
+      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'games/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
+      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'games/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
     ],
     otros: [
       { nombre: 'TERMINAL SHOCK', tarjeta: 'g-terminal-shock', texto: 'Demo más larga: 13 salas, Zoe y personajes estilo PS1.' },

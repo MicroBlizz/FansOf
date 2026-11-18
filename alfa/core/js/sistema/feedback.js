@@ -110,7 +110,7 @@
   function pintar(aviso) {
     leerEscritas();
     const c = document.getElementById('fb-cuerpo'), texto = (document.getElementById('fb-texto') || {}).value || '', marcado = !!(document.getElementById('fb-check') || {}).checked;
-    const base = location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '').replace(/[^/]*$/, '');
+    const base = location.pathname.replace(/games\/[^/]*\/.*$/, '').replace(/[^/]*$/, '');
     c.innerHTML = `<h3 id="fb-titulo">${esc(tr('TU OPINIÓN'))}</h3><p>${esc(tr('Cuéntanos una idea, un fallo o lo que te parezca. Lo leemos nosotros.'))}</p>`
       + `<div id="fb-tipos">${TIPOS.map(([k, n]) => `<button type="button" data-t="${k}" aria-pressed="${k === tipo}">${esc(tr(n))}</button>`).join('')}</div>`
       + preguntasHtml()

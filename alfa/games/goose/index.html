@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#07040a">
+<title>Fans of Goose</title>
+<meta name="description" content="Fans of Goose: el Juego de la Oca convertido en un survivors de hordas. Sube por un tablero que se derrumba, desplúmalo todo y llega a la casilla 63.">
+<script src="../../core/js/nucleo.js?v=0.11.0-a1265.3693a54"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/jersey-15.css', '../../core/fuentes/pirata-one.css')</script>
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<style>
+/* Fans of Goose: un solo canvas en vertical, a la resolución real del móvil. El mundo mide 200 de ancho. */
+html, body { height: 100%; margin: 0; background: #07040a; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#caja { position: fixed; inset: 0; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+#juego { display: block; touch-action: none; image-rendering: pixelated; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffd34d; font: 400 22px/1 'Jersey 15', system-ui, sans-serif; }
+#goose-cuenta .opt-row { margin: 0; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="caja"><canvas id="juego" aria-label="Fans of Goose"></canvas></div>
+<div id="carga">…</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Goose lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-4.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js', '../../core/js/sistema/salas.js',
+    'js/guardado.js', 'js/sprites.js', 'js/pixel.js', 'js/pool.js', 'js/efectos.js', 'js/tablero.js', 'js/tematica.js', 'js/mejoras.js', 'js/personajes.js', 'js/aspecto.js', 'js/armas.js', 'js/armas2.js', 'js/armas3.js', 'js/armas4.js', 'js/enemigos.js',
+    'js/dado.js', 'js/escenas.js', 'js/barreras.js', 'js/tierras.js', 'js/minijefes.js', 'js/parca.js', 'js/noches.js', 'js/tierras2.js', 'js/jefes2.js', 'js/caminos.js', 'js/desafios.js', 'js/habilidades.js', 'js/carrera.js', 'js/coop.js', 'js/sonido.js', 'js/partida.js', 'js/dibujo.js', 'js/hud.js', 'js/tutorial.js', 'js/pantallas.js', 'js/tienda.js', 'js/maldicion.js', 'js/contrarreloj.js', 'js/monetiza.js', 'js/pase.js', 'js/dev.js', 'js/amigos.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

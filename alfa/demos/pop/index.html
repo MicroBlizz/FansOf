@@ -2,53 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#1a1030">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fans of Pop</title>
-<meta name="description" content="Fans of Pop: haz pop en las burbujas de un pop-it para liberar a los slimes atrapados y llévalos contigo hasta el jefe. Un roguelike de puzles corto, táctil y relajado.">
-<script src="../../core/js/nucleo.js?v=0.5.2-a1264.5bfa7a5"></script>
-<script>NUCLEO.fuentes('../../core/fuentes/fredoka.css')</script>
-<!-- ?v= es la versión de la demo: súbela al publicar -->
-<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/pop.css')</script>
+<!-- Fans of Pop vive ahora en games/pop (ADR 142). Esta página manda allí a quien llega por la dirección vieja, conservando ?idioma y #, y se borra el 18-2-2027. -->
+<link rel="canonical" href="../../games/pop/">
+<link rel="stylesheet" href="../../core/css/mudanza.css">
+<noscript><meta http-equiv="refresh" content="0; url=../../games/pop/"></noscript>
+<script src="../../core/js/sistema/idioma-regla.js"></script>
+<script src="../../idioma-web.js"></script>
+<script src="../../core/js/mudanza/reglas.js"></script>
+<script src="../../core/js/mudanza/pagina.js"></script>
 </head>
-<body>
-<div id="stage">
-  <canvas id="cv" width="540" height="960" aria-label="Fans of Pop"></canvas>
-  <div id="pp-ui">
-    <section id="pp-titulo">
-      <p class="pp-lema" id="pp-record"></p>
-      <button class="pp-btn pp-enorme" id="pp-seguir" type="button" hidden>SEGUIR</button>
-      <button class="pp-btn pp-enorme" id="pp-jugar" type="button">JUGAR</button>
-      <div class="pp-fila pp-sola">
-        <button class="pp-btn2 pp-oro" id="pp-tienda" type="button">TIENDA</button>
-        <button class="pp-btn2 pp-naranja" id="pp-perfil" type="button" hidden>PERFIL</button>
-      </div>
-      <div class="pp-fila">
-        <button class="pp-btn2 pp-rosa" id="pp-duelo" type="button">DUELOS</button>
-        <button class="pp-btn2 pp-azul" id="pp-memoria" type="button">MEMORIA</button>
-      </div>
-      <div class="pp-fila">
-        <button class="pp-btn2 pp-verde" id="pp-ranking" type="button">RANKING</button>
-        <button class="pp-btn2 pp-azul" id="pp-opciones" type="button">OPCIONES</button>
-      </div>
-    </section>
-    <button id="pp-pausa" class="pp-redondo" type="button" aria-label="Pausa" hidden><span></span><span></span></button>
-    <button id="pp-cort-jugar" class="pp-btn pp-enorme" type="button" hidden>¡A JUGAR!</button>
-    <button id="pp-listo" class="pp-btn" type="button" hidden>¡LISTO!</button>
-    <div id="pp-ayudas" hidden></div>
-    <div id="pp-lateral" hidden></div>
-    <section id="pp-lola" hidden><div id="pp-lola-cara"></div><div class="pp-bocadillo"><b>Lola</b><p id="pp-lola-texto"></p><button class="pp-btn2" id="pp-lola-vale" type="button">¡VALE!</button></div></section>
-    <section id="pp-modal" class="pp-modal" hidden><div class="pp-tarjeta" id="pp-tarjeta"></div></section>
-  </div>
-</div>
-<div id="carga">…</div>
-<script>
-NUCLEO.juego({
-  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Pop lleva su propia partida y sus pantallas
-  antes: ['js/ajustes.js'],
-  idioma: { en: ['idioma/en.js', 'idioma/en-tutos.js', 'idioma/en-perfil.js'] },
-  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/perlas-libro.js', 'js/perlas-servidor.js', 'js/perfil-catalogo.js', 'js/perfil.js', 'js/perfil-juego.js', 'js/sprites.js', 'js/sonidos.js', 'js/cancion-cortinilla.js', 'js/formas.js', 'js/niveles.js', 'js/tablero.js', 'js/monedero.js', 'js/tienda.js', 'js/potenciadores.js', 'js/ofertas.js', 'js/pase.js', 'js/partida.js', 'js/nimnivel.js', 'js/chispas.js', 'js/efectos.js', 'js/estilo-mundo.js', 'js/pintar.js', 'js/cortinilla.js', 'js/adornos-duelo.js', 'js/pintar-cortinilla.js', 'js/bandeja.js', 'js/mapa.js', '../../core/js/sistema/salas.js', 'js/duelo.js', 'js/pvp-perfil.js', 'js/pvp.js', 'js/ranking.js', 'js/memoria.js', 'js/pantallas.js', 'js/pintar-perfil.js', 'js/pantalla-perfil.js', 'js/duelo-adornos.js', 'js/novedades.js', 'js/dev.js', 'js/principal.js'],
-});
-</script>
-</body>
+<body><p><a href="../../games/pop/">Fans of Pop</a></p></body>
 </html>

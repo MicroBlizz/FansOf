@@ -22,7 +22,7 @@
   }
   const edad = () => tr('Para guardar tu cuenta tienes que tener 14 años o más. Si eres menor, pide a tu padre, madre o tutor que lo haga contigo.');
 
-  const ponen = (...b) => b.filter(Boolean), base = location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '');
+  const ponen = (...b) => b.filter(Boolean), base = location.pathname.replace(/games\/[^/]*\/.*$/, '');
   // los botones para guardar o entrar; los usan Opciones y la ventana «necesitas una cuenta» (con la misma lógica)
   function botonesInvitado() {
     return ponen(

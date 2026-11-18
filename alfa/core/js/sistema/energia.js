@@ -46,7 +46,7 @@ const ENERGIA = (() => {
     async seccion(caja) {
       await api.cargar();
       if (!api.activa) { caja.innerHTML = `<p class="small-print">${tr('El caos primordial no está disponible ahora mismo.')}</p>`; return; }
-      const web = location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '') + 'energia/?idioma=' + IDIOMA.actual;
+      const web = location.pathname.replace(/games\/[^/]*\/.*$/, '') + 'energia/?idioma=' + IDIOMA.actual;
       caja.innerHTML = `<div class="pack gift en-sec"><div class="pk-ic">${ICONO(54)}</div><div><div class="pk-name ol">${tr('CAOS PRIMORDIAL')}</div>`
         + `<div class="pk-note" id="en-sec-medidor"></div></div></div>`
         + (libre() ? `<div class="pack gift"><div class="pk-ic">${ICONO(46)}</div><div><div class="pk-name ol">${tr('CAOS PRIMORDIAL ILIMITADO')}</div>`
@@ -80,7 +80,7 @@ const ENERGIA = (() => {
     // al intentar jugar online sin caos primordial: dice cuánto falta y, si hoy quedan, ofrece el anuncio que da +1. El pase gratis se quitó (ADR 106)
     avisoSin() {
       play('deny');
-      const web = location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '') + 'energia/?idioma=' + IDIOMA.actual;
+      const web = location.pathname.replace(/games\/[^/]*\/.*$/, '') + 'energia/?idioma=' + IDIOMA.actual;
       confirmBox(tr('CAOS PRIMORDIAL'), `<p><b>${api.textoSin()}</b></p>` + api.botonAnuncio()
         + `<p>${tr('El caos primordial es la energía del juego online: no es el CAOS de las partidas. Cada partida online gasta 1.')}</p><small><a href="${web}" target="_blank" rel="noopener">${tr('Más información en la web')}</a></small>`,
         '', null, tr('ESPERAR'));

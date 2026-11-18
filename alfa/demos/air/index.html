@@ -1,35 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#0b1020">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fans of Air</title>
-<meta name="description" content="Fans of Air: combate aéreo arcade en dos fases. Despeja el cielo de becarios voladores en falso 3D y bombardea la Torre del CEO en vista cenital con los cazas de los Animales Locos.">
-<script src="../../core/js/nucleo.js?v=0.3.0-a1264.5bfa7a5"></script>
-<script>NUCLEO.fuentes('../../core/fuentes/press-start-2p.css')</script>
-<!-- ?v= es la versión de la demo: súbela al publicar -->
-<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
-<style>
-/* Fans of Air: un solo canvas apaisado (1280x720 lógicos) centrado en la pantalla. */
-html, body { height: 100%; margin: 0; background: #0b1020; overflow: hidden; overscroll-behavior: none; }
-body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
-#juego { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: block; touch-action: none; }
-#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffe14a; font: 12px/1 'Press Start 2P', monospace; }
-[hidden] { display: none !important; }
-</style>
+<!-- Fans of Air vive ahora en games/air (ADR 142). Esta página manda allí a quien llega por la dirección vieja, conservando ?idioma y #, y se borra el 18-2-2027. -->
+<link rel="canonical" href="../../games/air/">
+<link rel="stylesheet" href="../../core/css/mudanza.css">
+<noscript><meta http-equiv="refresh" content="0; url=../../games/air/"></noscript>
+<script src="../../core/js/sistema/idioma-regla.js"></script>
+<script src="../../idioma-web.js"></script>
+<script src="../../core/js/mudanza/reglas.js"></script>
+<script src="../../core/js/mudanza/pagina.js"></script>
 </head>
-<body>
-<canvas id="juego" aria-label="Fans of Air"></canvas>
-<div id="carga">…</div>
-<div id="toast"></div>
-<script>
-NUCLEO.juego({
-  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Air guarda en el navegador el caza elegido y el récord
-  antes: ['js/ajustes.js'],
-  idioma: { en: ['idioma/en.js'] },
-  despues: ['js/mision.js', 'js/vuelo.js', 'js/aire.js', 'js/tierra.js', 'js/efectos.js', 'js/pantalla.js', 'js/cabina.js', 'js/vista-aire.js', 'js/vista-tierra.js', 'js/menu.js', 'js/principal.js'],
-});
-</script>
-</body>
+<body><p><a href="../../games/air/">Fans of Air</a></p></body>
 </html>

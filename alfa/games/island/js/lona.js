@@ -1,4 +1,4 @@
-// Fans of Island · LA LONA (la de Fans of Recruit, demos/recruit/js/lona.js, con los lavados de acuarela al final): utilidades para pintar fondos y efectos píxel a píxel. Tramas de puntos
+// Fans of Island · LA LONA (la de Fans of Recruit, games/recruit/js/lona.js, con los lavados de acuarela al final): utilidades para pintar fondos y efectos píxel a píxel. Tramas de puntos
 // (el «degradado» de las recreativas: dos colores mezclados a cuadritos), franjas, ruido, rayas y un número al azar que
 // siempre sale igual con la misma semilla, para que el decorado no cambie de una vez a otra.
 'use strict';

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#141026">
+<title>Fans of Asalto</title>
+<meta name="description" content="Fans of Asalto: invoca a los Animales Locos en el Altar de 3x3 (tres runas iguales en línea traen a un héroe), únelos para subirlos de nivel, compra objetos con esencia y aguanta las oleadas de Microblizz hasta el jefe.">
+<script src="../../core/js/nucleo.js?v=0.4.0-a1265.3693a54"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/jersey-10.css')</script>
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/asalto.css', 'css/asalto-tema.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="540" height="1170" aria-label="Fans of Asalto"></canvas>
+  <div id="as-ui">
+    <section id="as-menu" hidden></section>
+    <section id="as-modal" class="as-modal" hidden><div class="as-perg" id="as-tarjeta"></div></section>
+    <section id="as-anuncio" class="as-modal as-anuncio" hidden><div class="as-perg"><span class="as-ad-cartel">ANUNCIO</span><p>Un mensaje de nuestros patrocinadores… que somos nosotros.</p><div class="as-ad-barra"><i id="as-ad-barra"></i></div><button class="as-btn as-oro" id="as-ad-ok" type="button" disabled>…</button><br><button class="as-enlace" id="as-ad-no" type="button">Cerrar sin premio</button><small>Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.</small></div></section>
+  </div>
+</div>
+<div id="carga">…</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Asalto lleva su propia partida y sus pantallas
+  antes: ['js/as.js', 'js/ajustes.js', 'js/ajustes-tienda.js', 'js/ajustes-piedras.js', 'js/ajustes-maquinas.js', 'js/ajustes-anuncios.js'],
+  idioma: { en: ['idioma/en.js', 'idioma/en-piedras.js', 'idioma/en-cifras.js', 'idioma/en-maquinas.js', 'idioma/en-suerte.js', 'idioma/en-anuncios.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js',
+    // el dominio: las reglas, sin pantalla
+    'js/dominio/azar.js', 'js/dominio/altar.js', 'js/dominio/heroe.js', 'js/dominio/poder.js', 'js/dominio/equipo.js', 'js/dominio/union.js', 'js/dominio/oleadas.js', 'js/dominio/cifras.js',
+    'js/dominio/batalla.js', 'js/dominio/batalla-golpes.js', 'js/dominio/batalla-jefes.js', 'js/dominio/reglas.js', 'js/dominio/misiones.js', 'js/dominio/tienda.js', 'js/dominio/piedras.js', 'js/dominio/suerte.js', 'js/dominio/anuncios.js', 'js/dominio/guardado.js', 'js/dominio/partida.js', 'js/dominio/progreso.js',
+    // la aplicación: los casos de uso
+    'js/aplicacion/casos.js',
+    // los adaptadores: guardado, sonido, dibujo, luces, pantalla y ventanas
+    'js/adaptadores/almacen.js', 'js/adaptadores/sonidos.js', 'js/adaptadores/sprites-datos.js', 'js/adaptadores/medidas.js', 'js/adaptadores/lienzo.js', 'js/adaptadores/texto.js', 'js/adaptadores/tema.js',
+    'js/adaptadores/dibujos.js', 'js/adaptadores/mazmorra.js', 'js/adaptadores/efectos.js', 'js/adaptadores/plano.js', 'js/adaptadores/pinta-marcador.js', 'js/adaptadores/pinta-arena.js',
+    'js/adaptadores/pinta-tienda.js', 'js/adaptadores/pinta-altar.js', 'js/adaptadores/pinta-piedras.js', 'js/adaptadores/pinta-misiones.js', 'js/adaptadores/ventanas.js', 'js/adaptadores/ventanas-tienda.js', 'js/adaptadores/ventanas-piedras.js', 'js/adaptadores/ventanas-cifras.js', 'js/adaptadores/ventanas-suerte.js', 'js/adaptadores/ventanas-perdida.js', 'js/adaptadores/guia.js', 'js/adaptadores/menu.js', 'js/adaptadores/pantalla-batalla.js', 'js/adaptadores/pantalla.js',
+    'js/novedades.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

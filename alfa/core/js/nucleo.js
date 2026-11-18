@@ -140,4 +140,4 @@ const NUCLEO = (() => {
 })();
 const VERSION = NUCLEO.version;
 // Aviso de derechos en la consola del navegador: el código del navegador se puede leer, pero no es libre; lo que vale es la licencia.
-try { console.info('%cFans Of™%c © 2026 Arkioner y Pepins (MicroBlizz). Todos los derechos reservados: código, textos, personajes, dibujos y música. Licencia: ' + location.origin + location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '') + 'LICENSE · Permisos: fansofmicroblizz@gmail.com', 'font-weight:800;color:#ffb347', ''); } catch (e) { /* sin consola */ }
+try { console.info('%cFans Of™%c © 2026 Arkioner y Pepins (MicroBlizz). Todos los derechos reservados: código, textos, personajes, dibujos y música. Licencia: ' + location.origin + location.pathname.replace(/games\/[^/]*\/.*$/, '') + 'LICENSE · Permisos: fansofmicroblizz@gmail.com', 'font-weight:800;color:#ffb347', ''); } catch (e) { /* sin consola */ }

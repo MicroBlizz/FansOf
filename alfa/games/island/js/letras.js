@@ -1,4 +1,4 @@
-// Fans of Island · LAS LETRAS de píxeles (las de Fans of Recruit, demos/recruit/js/letras.js, copiadas tal cual): la normal (7 de alto, con tildes, ñ, ¿ y ¡), la pequeña del chat (5 de alto) y las
+// Fans of Island · LAS LETRAS de píxeles (las de Fans of Recruit, games/recruit/js/letras.js, copiadas tal cual): la normal (7 de alto, con tildes, ñ, ¿ y ¡), la pequeña del chat (5 de alto) y las
 // cifras gordas del marcador. Se escriben con contorno oscuro y con el color en franjas (claro arriba, oscuro abajo), como
 // los rótulos de las recreativas. La normal y la pequeña son la letra de la serie (la de Fans of Roguelite). Cada texto se
 // dibuja una vez y se guarda.

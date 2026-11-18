@@ -2,47 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#4c56a8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fans of Kingdom</title>
-<meta name="description" content="Fans of Kingdom: compra a los Animales Locos en la tienda (tantas veces como quieras), combina sus 7 clases y baja nivel a nivel por la mazmorra de Microblizz en batallas automáticas hasta el jefe.">
-<script src="../../core/js/nucleo.js?v=0.1.0-a1264.5bfa7a5"></script>
-<script>NUCLEO.fuentes('../../core/fuentes/jersey-10.css')</script>
-<!-- ?v= es la versión de la demo: súbela al publicar -->
-<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/kingdom.css')</script>
+<!-- Fans of Kingdom vive ahora en games/kingdom (ADR 142). Esta página manda allí a quien llega por la dirección vieja, conservando ?idioma y #, y se borra el 18-2-2027. -->
+<link rel="canonical" href="../../games/kingdom/">
+<link rel="stylesheet" href="../../core/css/mudanza.css">
+<noscript><meta http-equiv="refresh" content="0; url=../../games/kingdom/"></noscript>
+<script src="../../core/js/sistema/idioma-regla.js"></script>
+<script src="../../idioma-web.js"></script>
+<script src="../../core/js/mudanza/reglas.js"></script>
+<script src="../../core/js/mudanza/pagina.js"></script>
 </head>
-<body>
-<div id="stage">
-  <canvas id="cv" width="540" height="960" aria-label="Fans of Kingdom"></canvas>
-  <div id="as-ui">
-    <section id="as-titulo">
-      <h1 class="as-logo"><small>FANS OF</small>KINGDOM</h1>
-      <p class="as-lema" id="as-mejor">Baja a la mazmorra de Microblizz</p>
-      <button class="as-btn as-enorme" id="as-jugar" type="button">ENTRAR EN LA MAZMORRA</button>
-      <div class="as-menu">
-        <button class="as-btn2 as-azul" id="as-equipo" type="button">EQUIPO</button>
-        <button class="as-btn2 as-azul" id="as-herreria" type="button">HERRERÍA</button>
-        <button class="as-btn2 as-azul" id="as-logros" type="button">LOGROS</button>
-        <button class="as-btn2 as-azul" id="as-tienda" type="button">TIENDA</button>
-      </div>
-      <div class="as-pie"><span class="as-gemas"><canvas id="as-pluma-ico" width="22" height="22" class="as-pix"></canvas><b id="as-plumas-menu">0</b></span><button class="as-btn2 as-gris" id="as-ajustes" type="button">AJUSTES</button></div>
-    </section>
-    <section id="as-modal" class="as-modal" hidden><div class="as-tarjeta" id="as-tarjeta"></div></section>
-    <section id="as-anuncio" class="as-modal as-anuncio" hidden><div class="as-tarjeta"><span class="as-ad-cartel">ANUNCIO</span><p>Un mensaje de nuestros patrocinadores… que somos nosotros.</p><div class="as-ad-barra"><i id="as-ad-barra"></i></div><button class="as-btn2 as-oro" id="as-ad-ok" type="button" disabled>…</button><button class="as-enlace" id="as-ad-no" type="button">Cerrar sin premio</button><small>Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.</small></div></section>
-    <button id="as-guia" class="as-guia" type="button" hidden><span id="as-guia-cara"></span><span id="as-guia-txt"></span></button>
-  </div>
-</div>
-<div id="carga">…</div>
-<script>
-NUCLEO.juego({
-  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Kingdom lleva su propia partida y sus pantallas
-  antes: ['js/ajustes.js'],
-  idioma: { en: ['idioma/en.js'] },
-  despues: [
-    '../../core/js/serie/canciones.js',
-    'js/guardado.js', 'js/sprites-datos.js', 'js/sprites.js', 'js/iconos.js', 'js/sonidos.js', 'js/combate.js', 'js/partida.js',
-    'js/pintar.js', 'js/pantallas.js', 'js/pantallas-fuera.js', 'js/novedades.js', 'js/principal.js'],
-});
-</script>
-</body>
+<body><p><a href="../../games/kingdom/">Fans of Kingdom</a></p></body>
 </html>

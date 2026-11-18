@@ -1,7 +1,7 @@
-// Fans of Island · PINCEL DE PÍXELES (el de Fans of Recruit, demos/recruit/js/pixel.js, copiado tal cual: cada juego lleva el suyo). Cada dibujo se hace con formas (óvalos, cajas, polígonos, trazos) que se
+// Fans of Island · PINCEL DE PÍXELES (el de Fans of Recruit, games/recruit/js/pixel.js, copiado tal cual: cada juego lleva el suyo). Cada dibujo se hace con formas (óvalos, cajas, polígonos, trazos) que se
 // rellenan píxel a píxel. Cada pieza tiene volumen: la luz viene de arriba a la izquierda y el pincel reparte los 6 tonos de su
 // material (contorno, sombra honda, sombra, base, luz y brillo) en franjas limpias, sin degradados, como se pintaba a mano.
-// Una pieza que se pinta encima de otra le hace sombra. Basado en el pincel de Fans of Roguelite (demos/roguelite/js/pixel.js).
+// Una pieza que se pinta encima de otra le hace sombra. Basado en el pincel de Fans of Roguelite (games/roguelite/js/pixel.js).
 'use strict';
 
 /* ---------- colores ---------- */

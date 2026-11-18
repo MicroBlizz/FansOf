@@ -10,14 +10,13 @@
   async function versionDe(juego) {
     if (juego in actuales) return actuales[juego];
     actuales[juego] = '';
-    for (const dir of ['../games/', '../demos/']) {
-      try {
-        const r = await fetch(dir + encodeURIComponent(juego) + '/index.html', { cache: 'no-cache' }); if (!r.ok) continue;
-        const m = /nucleo\.js\?v=([\d.]+)/.exec(await r.text()); if (m) { actuales[juego] = m[1]; return m[1]; }
-        const n = await fetch(dir + encodeURIComponent(juego) + '/js/novedades.js', { cache: 'no-cache' });   // las demos sin nucleo.js: la primera entrada de novedades
-        const k = n.ok && /v:\s*'([\d.]+)'/.exec(await n.text()); if (k) { actuales[juego] = k[1]; return k[1]; }
-      } catch (e) { /* sin esa carpeta */ }
-    }
+    const dir = '../games/' + encodeURIComponent(juego);   // también los prototipos que eran demos (ADR 142)
+    try {
+      const r = await fetch(dir + '/index.html', { cache: 'no-cache' }); if (!r.ok) return '';
+      const m = /nucleo\.js\?v=([\d.]+)/.exec(await r.text()); if (m) { actuales[juego] = m[1]; return m[1]; }
+      const n = await fetch(dir + '/js/novedades.js', { cache: 'no-cache' });   // los que no cargan nucleo.js: la primera entrada de novedades
+      const k = n.ok && /v:\s*'([\d.]+)'/.exec(await n.text()); if (k) { actuales[juego] = k[1]; return k[1]; }
+    } catch (e) { /* sin esa carpeta */ }
     return '';
   }
   const ESTADOS = { pendiente: 'pendiente', resuelto: 'resuelto', descartado: 'descartado' };

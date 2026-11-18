@@ -2,31 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#5aa63e">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fans of Vikings</title>
-<meta name="description" content="Fans of Vikings: la aldea de los Animales Locos contra Microblizz. Planta, cocina y forja con tus cuatro fans, y súbelos al autobús para asaltar la sede en combates por turnos. Todo en pixel art.">
-<script src="../../core/js/nucleo.js?v=0.1.0-a1264.5bfa7a5"></script>
-<script>NUCLEO.fuentes('../../core/fuentes/pixelify-sans.css')</script>
-<!-- ?v= es la versión de la demo: súbela al publicar -->
-<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/vikings.css')</script>
+<!-- Fans of Vikings vive ahora en games/vikings (ADR 142). Esta página manda allí a quien llega por la dirección vieja, conservando ?idioma y #, y se borra el 18-2-2027. -->
+<link rel="canonical" href="../../games/vikings/">
+<link rel="stylesheet" href="../../core/css/mudanza.css">
+<noscript><meta http-equiv="refresh" content="0; url=../../games/vikings/"></noscript>
+<script src="../../core/js/sistema/idioma-regla.js"></script>
+<script src="../../idioma-web.js"></script>
+<script src="../../core/js/mudanza/reglas.js"></script>
+<script src="../../core/js/mudanza/pagina.js"></script>
 </head>
-<body>
-<div id="stage">
-  <canvas id="cv" width="216" height="420" aria-label="Fans of Vikings"></canvas>
-  <section id="vk-modal" class="vk-modal" hidden><div class="vk-tarjeta" id="vk-tarjeta"></div></section>
-</div>
-<div id="carga">…</div>
-<script>
-NUCLEO.juego({
-  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Vikings lleva su propia partida y sus pantallas
-  antes: ['js/ajustes.js'],
-  idioma: { en: ['idioma/en.js'] },
-  despues: [
-    '../../core/js/serie/canciones.js',
-    'js/guardado.js', 'js/fotos.js', 'js/sprites.js', 'js/aldea.js', 'js/sonidos.js', 'js/combate.js',
-    'js/pintar.js', 'js/paneles.js', 'js/pintar-combate.js', 'js/novedades.js', 'js/principal.js'],
-});
-</script>
-</body>
+<body><p><a href="../../games/vikings/">Fans of Vikings</a></p></body>
 </html>

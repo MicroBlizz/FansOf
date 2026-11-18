@@ -1,8 +1,8 @@
 {
- "build": 1272,
- "hash": "7e2da24",
- "fecha": "2026-11-18T18:37:51Z",
- "mensaje": "Asalto 0.4.1: los botones se hunden al apretarlos, los consejos se cierran al hacer lo que enseñan (ENTENDIDO) y el cofre va bajo el título en ¡BOTÍN! (tarea #77, ADR 148)",
+ "build": 1273,
+ "hash": "9e80c6b",
+ "fecha": "2026-11-18T18:46:15Z",
+ "mensaje": "Spy: CrazyBunny 3D en blanco, como en el concepto (pelo gris azulado blanqueado; traje, gafas, zanahoria y hebilla sin tocar)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

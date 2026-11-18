@@ -245,7 +245,7 @@ function ppPintaSala(c, t) {
   c.save();
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
   ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, T.d ? T.d.dif || 0 : 0);
-  ppPintaTablero(c, T, t);
+  c.save(); c.translate(0, ppFxBote()); ppPintaTablero(c, T, t); c.restore();   // el botecito de la bandeja al tocar (tarea #110)
   if (T.nim) ppPintaFilaNim(c, T, t);
   ppPintaMarcador(c, t);
   ppPintaEfectos(c, t);

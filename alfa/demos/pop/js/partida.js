@@ -120,7 +120,7 @@ function ppTrasToque(T, i, r) {
     play('ppDano'); ppVibra([30, 40, 30]); ppFxDano();
     if (SAVE.vidas <= 0) { T.hecho = true; ppMarcaDentro(false); setTimeout(() => ppSinCorazones(), 500); return; }
   }
-  if (r.hecho) { PP_P.salas++; ppMarcaDentro(false); setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 520); return; }
+  if (r.hecho) { PP_P.salas++; ppMarcaDentro(false); ppFxConfeti(T); setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 520); return; }
   // los que saltan se cargan con cada burbuja reventada (también las que revientan otros amigos: hay reacciones en cadena)
   if (T.lo) return;   // en pesadilla los amigos no saltan
   PP_P.equipo.forEach((id, k) => {

@@ -1,8 +1,8 @@
 {
- "build": 1260,
- "hash": "db10878",
- "fecha": "2026-11-18T16:40:58Z",
- "mensaje": "Promo de core: Fans of Kingdom entra en la lista del anuncio, porque sale en la release como los demás prototipos (decisión de Pepins, 18-11-2026; ADR 145 corregido). Arregla tests/core/promo.test.mjs (tarea #117)",
+ "build": 1261,
+ "hash": "e533672",
+ "fecha": "2026-11-18T16:49:39Z",
+ "mensaje": "Pop: estilo por mundo y vida al hacer pop, tras el flag estilo-mundo (tarea #110, nodos n1 y n6)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

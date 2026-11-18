@@ -1,10 +1,12 @@
 // Fans of Pop · EFECTOS: lo que hace que el pop se SIENTA. Cada burbuja tiene su propia animación de aplastar y estirar
 // (squash & stretch) al cambiar de estado, salen gotitas de gelatina, la pantalla tiembla un pelín, el slime salta fuera
 // de su burbuja al liberarlo y el corazón perdido parpadea. Solo estado y avance; el dibujo está en pintar.js.
+// Con el estilo de mundos abierto (ppEstiloActivo, js/estilo-mundo.js) cada pop suelta además chispas pastel, la bandeja da un
+// botecito y al acabar el nivel llueve confeti: las cuentas están en js/chispas.js (PP_CHISPAS).
 'use strict';
-const PP_FX = { celdas: {}, pulsada: -1, parts: [], temblor: 0, dano: 0, saltos: [], textos: [], entrada: 0, pista: 0, vuelos: [], brilla: {}, combo: null, ondas: [] };
+const PP_FX = { celdas: {}, pulsada: -1, parts: [], temblor: 0, dano: 0, saltos: [], textos: [], entrada: 0, pista: 0, vuelos: [], brilla: {}, combo: null, ondas: [], bote: Infinity };
 function ppFxEntraSala(T) {
-  PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_FX.vuelos = []; PP_FX.ondas = []; PP_FX.combo = null; PP_FX.pulsada = -1; PP_FX.entrada = 1; PP_FX.temblor = 0;
+  PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_FX.vuelos = []; PP_FX.ondas = []; PP_FX.combo = null; PP_FX.pulsada = -1; PP_FX.entrada = 1; PP_FX.temblor = 0; PP_FX.bote = Infinity;
   for (let i = 0; i < T.up.length; i++) PP_FX.celdas[i] = { t: 9, dir: T.up[i] ? 'sube' : 'pop', demora: (i % T.n + Math.floor(i / T.n)) * 0.045 };
   if (T.pista !== null) { PP_FX.pista = 0.6; play('ppPista'); }
 }
@@ -25,6 +27,7 @@ function ppFxToque(T, i, r) {
   r.subes.forEach((j, k) => setTimeout(() => play('ppUnpop', j), 60 + k * 20));
   ppVibra(r.pops.length > 2 ? 18 : 10);
   PP_FX.temblor = Math.max(PP_FX.temblor, 0.25 + 0.08 * r.pops.length);
+  ppFxVida(n, r.pops);
   // gotitas de gelatina desde cada burbuja reventada
   const g = ppGeom(n);
   for (const j of r.pops) {
@@ -37,6 +40,23 @@ function ppFxToque(T, i, r) {
     for (let k = 0; k < 30; k++) { const a = rand(0, Math.PI * 2), v = rand(120, 380); PP_FX.parts.push({ x: 270, y: g.y + g.lado / 2, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 200, r: rand(4, 9), t: 0, vida: rand(0.6, 1.1), col: ['#ff6ec7', '#5be7ff', '#ffd64a', '#9dff6e'][k % 4] }); }
     ppVibra([20, 30, 20, 30, 40]);
   }
+}
+// «vida al hacer pop» (tarea #110): solo con el estilo de mundos abierto; cerrado, no hace nada y todo va como siempre
+function ppFxVidaActiva() { return typeof ppEstiloActivo === 'function' && ppEstiloActivo() === true; }
+// chispas pastel en círculo desde cada burbuja que hace pop y el botecito de la bandeja
+function ppFxVida(n, pops) {
+  if (!ppFxVidaActiva()) return;
+  PP_FX.bote = 0;
+  const g = ppGeom(n);
+  for (const j of pops) { const [cx, cy] = ppCentro(g, j); PP_FX.parts.push(...PP_CHISPAS.chispas(cx, cy, Math.random)); }
+  PP_FX.parts = PP_CHISPAS.recorta(PP_FX.parts);
+}
+// cuánto baja el tablero ahora mismo por el botecito (píxeles de diseño; 0 si no toca): lo usa el dibujo de la sala
+function ppFxBote() { return ppFxVidaActiva() ? PP_CHISPAS.bote(PP_FX.bote) : 0; }
+// lluvia de confeti al superar todas las burbujas del nivel (T es el tablero; hoy cae a lo ancho de la pantalla)
+function ppFxConfeti(T) {
+  if (!T || !ppFxVidaActiva()) return;
+  PP_FX.parts = PP_CHISPAS.recorta(PP_FX.parts.concat(PP_CHISPAS.confeti(540, Math.random)));
 }
 function ppFxDano() { PP_FX.dano = 1; PP_FX.temblor = Math.max(PP_FX.temblor, 0.6); ppFlota(tr('-1 corazón'), 270, 205, '#ff5a5a'); }
 function ppFxCura(n) { ppFlota('+' + n, 270, 205, '#7bff7b'); for (let k = 0; k < 12; k++) PP_FX.parts.push({ x: rand(60, 200), y: 92, vx: rand(-30, 30), vy: rand(-120, -40), r: rand(3, 5), t: 0, vida: 0.8, col: '#7bff7b' }); }
@@ -55,14 +75,19 @@ function ppFxImpacto(T, i, grande) {
   PP_FX.temblor = Math.max(PP_FX.temblor, grande ? 1.2 : 0.7);
   ppVibra(grande ? [40, 30, 60] : 30);
 }
+// las partículas caen con la gravedad de siempre (700) salvo las que traen la suya (p.g: chispas y confeti)
+function ppFxAvanzaParts(dt) {
+  PP_FX.bote += dt;
+  for (const p of PP_FX.parts) { p.t += dt; p.vy += (p.g === undefined ? 700 : p.g) * dt; p.x += p.vx * dt; p.y += p.vy * dt; }
+  PP_FX.parts = PP_FX.parts.filter(p => p.t < p.vida);
+}
 function ppFxAvanza(dt) {
   for (const k in PP_FX.celdas) PP_FX.celdas[k].t += dt;
   PP_FX.temblor = Math.max(0, PP_FX.temblor - dt * 2.2);
   PP_FX.dano = Math.max(0, PP_FX.dano - dt * 1.6);
   PP_FX.entrada = Math.max(0, PP_FX.entrada - dt * 1.4);
   PP_FX.pista = Math.max(0, PP_FX.pista - dt);
-  for (const p of PP_FX.parts) { p.t += dt; p.vy += 700 * dt; p.x += p.vx * dt; p.y += p.vy * dt; }
-  PP_FX.parts = PP_FX.parts.filter(p => p.t < p.vida);
+  ppFxAvanzaParts(dt);
   for (const s of PP_FX.saltos) s.t += dt;
   for (const v of PP_FX.vuelos) v.t += dt;
   PP_FX.vuelos = PP_FX.vuelos.filter(v => v.t < v.dur);

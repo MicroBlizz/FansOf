@@ -1,8 +1,8 @@
 {
- "build": 1251,
- "hash": "d4d19c3",
- "fecha": "2026-11-18T11:31:53Z",
- "mensaje": "Pop: pegatinas para lanzar en el duelo, efecto de pop de cada uno (el rival ve el tuyo) y la entrada animada del VS, con la prueba de dos clientes ampliada; tras el flag tienda-gemas (tarea #41, ADR 130, nodo n8)",
+ "build": 1252,
+ "hash": "f9f3035",
+ "fecha": "2026-11-18T13:13:26Z",
+ "mensaje": "Fans of Kingdom 0.1.0: vuelve el Asalto antiguo (calco de Attack on Dungeon, 9-11-2026) como juego aparte, con su arte de entonces y su propia partida; Asalto sigue siendo el Slotbound (tarea #117, ADR 145)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

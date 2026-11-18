@@ -10,14 +10,14 @@ const PROMO = (() => {
     ['ratkov', 'Fans Of Ratkov', 2], ['jump', 'Fans Of Jump', 2], ['crush', 'Fans Of Crush', 2], ['survivors', 'Fans Of Survivors', 2],
     ['tacticas', 'Fans Of Rumble: Tácticas', 2], ['roguelite', 'Fans Of Roguelite', 2], ['dungeons', 'Fans Of Dungeons', 2],
     ['recruit', 'Fans Of Recruit', 3], ['nova', 'Fans Of Nova', 5], ['shelter', 'Fans Of Shelter', 2], ['soccer', 'Fans Of Soccer', 2],
-    ['basement', 'Fans Of Basement', 2], ['zombies', 'Fans Of Zombies', 2], ['wings', 'Fans Of Wings', 2], ['auto', 'Fans Of Auto', 2],
+    ['basement', 'Fans Of Basement', 2], ['zombies', 'Fans Of Zombies', 2], ['wings', 'Fans Of Wings', 2], ['spy', 'Fans Of Spy', 2], ['auto', 'Fans Of Auto', 2],
     ['asalto', 'Fans Of Asalto', 2], ['goose', 'Fans Of Goose', 2], ['vikings', 'Fans Of Vikings', 2], ['merge', 'Fans Of Merge', 2],
     ['swipe', 'Fans Of Swipe', 2], ['panic', 'Fans Of Panic', 2], ['pop', 'Fans Of Pop', 2], ['snakes', 'Fans Of Snakes', 3],
     ['beams', 'Fans Of Beams', 3], ['decks', 'Fans Of Decks', 2], ['boom', 'Fans Of Boom', 2], ['cooking', 'Fans Of Cooking', 2],
     ['taxi', 'Fans Of Taxi', 2], ['pets', 'Fans Of Pets', 2], ['chef', 'Fans Of Chef', 2], ['rumble-v2', 'Fans Of Rumble V2', 2],
     ['rumble-3d', 'Fans Of Rumble 3D', 2], ['tactics-advance', 'Fans Of Tactics Advance', 2], ['terminal-shock', 'Terminal Shock', 2],
   ].map(([id, nombre, caps, favorito]) => ({ id, nombre, caps, tipo: favorito ? '' : 'PROTOTIPO' }));
-  // los que tienen cartel propio en biblioteca/anuncios/<id>.jpg (el anuncio empieza por él); uno sin cartel empieza por su primera captura (hoy solo le falta a wings)
+  // los que tienen cartel propio en biblioteca/anuncios/<id>.jpg (el anuncio empieza por él); uno sin cartel empieza por su primera captura (hoy les falta a wings y a spy)
   const CARTEL = new Set(['asalto', 'auto', 'basement', 'beams', 'boom', 'chef', 'cooking', 'crush', 'decks', 'dungeons', 'goose', 'jump', 'karts', 'merge',
     'nova', 'panic', 'pets', 'pop', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble', 'rumble-3d', 'rumble-v2', 'shelter', 'snakes', 'soccer', 'survivors', 'swipe',
     'tacticas', 'tactics-advance', 'taxi', 'td', 'terminal-shock', 'vikings', 'zombies']);

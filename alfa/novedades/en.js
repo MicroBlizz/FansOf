@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "18 de noviembre de 2026": "18 November 2026",
+  "FANS OF SPY": "FANS OF SPY",
+  "Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.": "New prototype: turn-based stealth with cards, in 3D. Sneak CrazyBunny into the Microblizz tower without the Interns seeing you.",
   "5 de noviembre de 2026": "5 November 2026",
   "FANS OF BASEMENT": "FANS OF BASEMENT",
   "Prototipo nuevo: baja por el hueco del ascensor de Microblizz con la grapadora disparando sola, sin quedarte sin café, y sube con la caja llena de botín.": "New prototype: dive down the Microblizz elevator shaft with your stapler firing on its own, without running out of coffee, and go up with your box full of loot.",

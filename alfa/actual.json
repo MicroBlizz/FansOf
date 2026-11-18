@@ -1,8 +1,8 @@
 {
- "build": 1242,
- "hash": "062b779",
- "fecha": "2026-11-17T19:37:59Z",
- "mensaje": "Web: la entrada de la app también toma el estilo nuevo con el flag (tarea #87, ADR 135)",
+ "build": 1243,
+ "hash": "ccf8831",
+ "fecha": "2026-11-18T00:22:33Z",
+ "mensaje": "Spy 0.1.0: primer prototipo jugable de Fans of Spy, sigilo por turnos con cartas en 3D (tarea #84, ADR 138)",
  "juegos": {
   "boom": "0.4.16",
   "cooking": "0.2.17",

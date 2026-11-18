@@ -21,9 +21,12 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   UI.ayuda = (est, mas) => (est.tactil ? [[M('TOCA'), M('ELEGIR')]] : UI.teclas(AYUDA_PC.concat(mas || [])));
 
   // ---------- título ----------
-  const OPC_TITULO = { iniciar: ['INICIAR MISIÓN', () => '01'], hangar: ['HANGAR', () => A.AJ.cazas.length + ' ' + M('CAZAS')], ajustes: ['AJUSTES', () => M('PALANCA') + ' · ' + M('SONIDO')], novedades: ['PARTES Y NOVEDADES', version] };
+  const OPC_TITULO = { iniciar: ['INICIAR MISIÓN', () => '01'], hangar: ['HANGAR', () => A.AJ.cazas.length + ' ' + M('CAZAS')], ajustes: ['AJUSTES', () => M('PALANCA') + ' · ' + M('SONIDO')], novedades: ['PARTES Y NOVEDADES', version],
+    barcelona: ['BOCETO: BARCELONA', () => M('ALFA')] };
+  // El boceto de la ciudad (tarea #99) solo sale en la alfa y en desarrollo: es para medir cómo va en el móvil.
+  UI.conBoceto = () => typeof NUCLEO !== 'undefined' && !!(NUCLEO.desarrollo || NUCLEO.alfa);
   P.titulo = {
-    zonas: () => UI.columna(['iniciar', 'hangar', 'ajustes', 'novedades'], 52, 228, Math.min(560, UI.W - 560), 52),
+    zonas: () => UI.columna(['iniciar', 'hangar', 'ajustes', 'novedades'].concat(UI.conBoceto() ? ['barcelona'] : []), 52, 228, Math.min(560, UI.W - 560), 52),
     pintar(g, est, zonas, cursor) {
       const W = UI.W, tam = Math.max(26, Math.min(54, (W - 700) / 13));
       E.tinte(g, W, 'lado'); E.marco(g, W);

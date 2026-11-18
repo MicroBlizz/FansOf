@@ -6,7 +6,8 @@
 var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 (function (A) {
   const GL = A.gl, M = GL.M, hex = GL.hex;
-  const LADO = 16000, MU = A.mundo = { islas: [], nubes: [], LADO };
+  const LADO = 16000, MU = A.mundo = { islas: [], nubes: [], LADO, escenario: 'islas' };
+  let islasGuardadas = null;
   let gl = null, pFondo = null, bufFondo = null, aP = 0;
 
   // ---------- islas ----------
@@ -106,6 +107,15 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     for (let i = 0; i < 520; i++) MU.nubes.push({ x: (rnd() - 0.5) * LADO, z: (rnd() - 0.5) * LADO, y: 200 + rnd() * rnd() * 1500, forma: bancos[Math.floor(rnd() * 6)], giro: Math.floor(rnd() * 4), e: 0.4 + rnd() * 0.5 });
   };
 
+  // El escenario: 'islas' (el de siempre) o 'barcelona' (el boceto de la ciudad, tarea #99: sin islas y con la ciudad, que se corta
+  // la primera vez que se pide).
+  MU.ponEscenario = function (nombre) {
+    if (nombre === MU.escenario) return;
+    if (nombre === 'barcelona') { A.ciudad.crear(); islasGuardadas = MU.islas; MU.islas = []; }
+    else if (islasGuardadas) MU.islas = islasGuardadas;
+    MU.escenario = nombre;
+  };
+
   // Todas las copias de (x, z) del mundo repetido que quedan a menos de `max` del ojo.
   const cerca = MU.cerca = (v, c) => v + LADO * Math.round((c - v) / LADO);
   function copias(x, z, ojo, max, f) {
@@ -135,6 +145,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     const ojo = cam.ojo;
     gl.enable(gl.DEPTH_TEST); gl.depthMask(true); gl.clear(gl.DEPTH_BUFFER_BIT);
     for (const i of MU.islas) copias(i.x, i.z, ojo, 10500, (x, z, d) => GL.malla(d < 2600 * i.e ? i.forma.fina : i.forma.basta, M.varias(M.T(x, 0, z), M.RY(i.giro * Math.PI / 2), M.S(i.e, i.e, i.e))));
+    if (MU.escenario === 'barcelona') A.ciudad.dibujar(cam);
     GL.tinte(1.3, 1.3, 1.32);   // las nubes, más blancas por los lados
     for (const [n, x, z, d] of vistas) GL.malla(d < 1500 ? n.forma.fina : n.forma.basta, M.varias(M.T(x, n.y, z), M.RY(n.giro * Math.PI / 2), M.S(n.e, n.e, n.e)));
     GL.tinte(1, 1, 1);

@@ -167,6 +167,17 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     cintas(g, e);
   };
 
+  // El medidor del boceto de Barcelona (tarea #99, solo alfa): imágenes por segundo ahora, la peor y la media del vuelo, los
+  // triángulos que pinta la ciudad en esta imagen y lo que tardó en cortarse.
+  UI.medidor = function (g, est, ciudad) {
+    const media = est.ipsN ? Math.round(est.ipsSuma / est.ipsN) : est.ips, w = 470, x = UI.W / 2 - w / 2 + 40, y = 74;
+    const color = est.ips >= 50 ? C.verde : est.ips >= 30 ? C.amb : C.rojo;
+    g.fillStyle = 'rgba(6,18,42,.82)'; g.fillRect(x, y, w, 54); g.fillStyle = C.cian; g.fillRect(x, y + 51, w, 3);
+    E.t(g, est.ips + ' IPS', x + 14, y + 36, 16, color, 'left', C.fondo);
+    E.t(g, E.may(tr('MÍNIMO')) + ' ' + (est.ipsMin || '--') + '  ·  ' + E.may(tr('MEDIA')) + ' ' + media, x + 140, y + 24, 9, C.claro);
+    E.t(g, E.may(tr('CIUDAD')) + ' ' + Math.round(ciudad.pintados / 1000) + 'K ' + E.may(tr('TRIÁNGULOS')) + '  ·  ' + E.may(tr('CARGA')) + ' ' + ciudad.ms + ' MS', x + 140, y + 44, 9, C.claro);
+  };
+
   // ---------- mandos y barra de abajo ----------
   const TECLAS = [['WASD', 'VOLAR'], ['ESPACIO', 'CAÑÓN'], ['M', 'MISIL'], ['MAYÚS', 'TURBO'], ['Q', 'FRENO'], ['C', 'CÁMARA'], ['ESC', 'PAUSA']];
   UI.teclas = (lista) => lista.map(([k, t]) => [E.may(tr(k)), E.may(tr(t))]);

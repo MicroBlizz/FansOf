@@ -7,7 +7,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
 (function (A) {
   const CV = document.getElementById('hud'), G = CV.getContext('2d'), VI = A.vista, UI = A.ui, E = A.estilo, FX = A.efectos, S = A.sonido, R = A.gl.R, PASO = 1 / 60;
   const est = { modo: 'titulo', e: null, t: 0, acum: 0, ultimo: 0, fuego: false, especial: false, sel: { caza: 'bunny', normal: false }, mejor: 0, mejorRango: '', record: false, tactil: false, flash: -9, exhib: null, k: 1,
-    cursor: 0, ajustes: false, mudo: false, ips: 0, partes: { misiones: 0, cumplidas: 0, derribos: {} } };
+    cursor: 0, ajustes: false, mudo: false, ips: 0, escenario: 'islas', ipsMin: 0, ipsSuma: 0, ipsN: 0, partes: { misiones: 0, cumplidas: 0, derribos: {} } };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
   const ritmo = { n: 0, t: 0 };   // imágenes por segundo, para ver en el hangar cómo va de fluido el móvil
   const NOMBRE_CAMARA = { arriba: 'DESDE ARRIBA', persecucion: 'PERSECUCIÓN', cabina: 'CABINA' };
@@ -125,7 +125,8 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   function eligeCaza(id) { est.sel.caza = id; est.exhib = null; S.sonar('toque'); guardar(); }
   function pausar() { if (est.modo !== 'juego' || est.e.fin) return; sueltaTodo(); ir('pausa'); }
   const ACCIONES = {
-    iniciar: () => empezar(), despegar: () => empezar(), otra: () => empezar(), reintentar: () => empezar(),
+    iniciar: () => empezar('islas'), despegar: () => empezar('islas'), otra: () => empezar(est.escenario), reintentar: () => empezar(est.escenario),
+    barcelona: () => empezar('barcelona'),
     hangar: () => ir('hangar'), novedades: () => ir('novedades'),
     alHangar: () => { est.exhib = null; ir('hangar'); }, abandonar: () => { est.exhib = null; ir('hangar'); },
     ajustes: () => { est.ajustes = true; est.cursor = 0; S.sonar('toque'); },
@@ -184,13 +185,18 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   }
 
   // ---------- misión ----------
-  function empezar() {
+  // escenario: 'islas' (la misión de siempre) o 'barcelona' (el boceto de la ciudad, solo alfa: sale más bajo para verla y mide el ritmo).
+  function empezar(escenario) {
+    est.escenario = escenario || 'islas';
+    A.mundo.ponEscenario(est.escenario);
     est.e = A.nuevaMision(A.AJ, { caza: est.sel.caza });
+    if (est.escenario === 'barcelona') { est.e.aire.jugador.pos.y = 320; est.ipsMin = 0; est.ipsSuma = 0; est.ipsN = 0; }
     Object.assign(est, { modo: 'juego', ajustes: false, cursor: 0, record: false, pulso: false, acum: 0, conTurbo: false });
     sueltaTodo();
     FX.limpiar(); VI.reiniciar();
     guardar(); S.sonar('toque');
-    FX.cartel(tr('DESPEJA EL CIELO'), '#ffe14a', 2, tr('Derriba a la patrulla de Microblizz'));
+    if (est.escenario === 'barcelona') FX.cartel(tr('BOCETO: BARCELONA'), '#ffe14a', 2.4, tr('Vuela sobre la ciudad y mira el ritmo arriba'));
+    else FX.cartel(tr('DESPEJA EL CIELO'), '#ffe14a', 2, tr('Derriba a la patrulla de Microblizz'));
   }
 
   function simular(dt) {
@@ -210,6 +216,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // El caza que vuela solo detrás de los menús.
   function exhibicion(dt) {
     const caza = A.AJ.cazas.find((c) => c.id === est.sel.caza);
+    if (est.escenario !== 'islas') { est.escenario = 'islas'; A.mundo.ponEscenario('islas'); }   // al salir del boceto de Barcelona, vuelven las islas
     if (!est.exhib) { est.exhib = A.vuelo.nuevo(A.AJ, caza); VI.reiniciar(); }
     A.vuelo.paso(est.exhib, dt, { mx: 0, my: 0 }, A.AJ, caza);
     VI.dibujar({ j: est.exhib, cazaId: caza.id, aire: null, orbita: est.t * 0.35 + 2, dt, t: est.t, gases: 'crucero' });
@@ -230,13 +237,14 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     }
     if (est.modo === 'juego') { FX.dibujarCarteles(G, UI.cartel, UI.W / 2); UI.mandos(G, joy, est.tactil, e); }
     else pintarMenu();
+    if (est.escenario === 'barcelona' && (est.modo === 'juego' || est.modo === 'pausa')) UI.medidor(G, est, A.ciudad);
     E.barrido(G, UI.W);
   }
 
   function fotograma(ahora) {
     const dt = Math.min(0.05, (ahora - (est.ultimo || ahora)) / 1000);
     est.ultimo = ahora; est.t += dt;
-    ritmo.n++; ritmo.t += dt; if (ritmo.t >= 0.5) { est.ips = Math.round(ritmo.n / ritmo.t); ritmo.n = 0; ritmo.t = 0; }
+    ritmo.n++; ritmo.t += dt; if (ritmo.t >= 0.5) { est.ips = Math.round(ritmo.n / ritmo.t); ritmo.n = 0; ritmo.t = 0; apuntaRitmo(); }
     if (est.modo !== 'pausa') est.tPausa = est.t;
     G.setTransform(est.k, 0, 0, est.k, 0, 0);
     G.clearRect(0, 0, UI.W, 720);
@@ -245,6 +253,12 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     if (est.modo === 'juego') avanzar(dt);
     pintarMundo(dt); pintarHud();
     requestAnimationFrame(fotograma);
+  }
+
+  // En el boceto de Barcelona se apuntan el peor ritmo y la media (desde los 2 s de vuelo, cuando ya no pesa la carga).
+  function apuntaRitmo() {
+    if (est.escenario !== 'barcelona' || est.modo !== 'juego' || !est.e || est.e.t < 2) return;
+    est.ipsMin = est.ipsMin ? Math.min(est.ipsMin, est.ips) : est.ips; est.ipsSuma += est.ips; est.ipsN++;
   }
 
   async function arranca() {

@@ -49,9 +49,11 @@ AS.pinta.altar = (() => {
     g.restore();
     if (!puede) return;
     flecha(g, l.x + l.w - 16, l.y + l.h / 2, dir);   // hacia dónde se mueve la columna
-    if (gana && !AS.guia.activa) AS.fx.luz(l.x + l.w / 2, l.y + l.h / 2, 60, [255, 210, 80], 0.1);   // en la partida guiada ya la marca la guía, sin luz que la tape
+    if (gana) luzDeEmpujon(l);
     E.zona({ x: l.x, y: l.y - 6, w: l.w, h: l.h + 12 }, 'empuja', { col, dir });
   }
+  // la luz de la runa que asoma y daría línea; en la partida guiada no, porque ya la marca la guía y la luz la taparía
+  function luzDeEmpujon(l) { if (!AS.guia.activa) AS.fx.luz(l.x + l.w / 2, l.y + l.h / 2, 60, [255, 210, 80], 0.1); }
   // una losa del Altar con su runa: en oro si es de una línea, parpadeando si le falta una para serlo, y marcada si el Estallido la rompería
   function losaRuna(g, P, p, E, col, f, bote, rompe) {
     const l = P.losa(col, f), r = runaVista(p, E, col, f + 1), oro = E.celdasOro.has(col + ',' + f), casi = !E.giro && E.casi.has(col + ',' + f) && Math.floor(E.t * 4) % 2;
@@ -72,9 +74,10 @@ AS.pinta.altar = (() => {
   function invocar(g, P, p, E) {
     const b = P.invocar, sitio = AS.equipo.hayHueco(p.equipo), coste = p.coste, llega = p.oro >= coste;
     const vale = p.fase === 'preparar' && !E.giro && sitio && llega, late = vale ? Math.round(Math.abs(Math.sin(E.t * 4)) * 2) : 0;
-    T.boton(g, b.x, b.y - late, b.w, b.h, vale ? C.naranja : C.madera, !vale);
+    const abajo = E.hunde('invoca', !vale);
+    T.boton(g, b.x, b.y - late, b.w, b.h, vale ? C.naranja : C.madera, abajo);
     if (vale) brillo(g, { x: b.x, y: b.y - late, w: b.w, h: b.h }, E.t, 2.4);
-    const y = b.y - late + (vale ? 0 : 3);
+    const y = b.y - late + (abajo ? 3 : 0);
     tx(g, sitio ? tr('INVOCAR') : tr('SIN SITIO'), b.x + b.w / 2, y + Math.round(b.h * 0.33), { t: 48, col: vale ? C.crema : '#d8b890', ancla: 'c', max: b.w - 14 });
     if (coste === 0) tx(g, tr('GRATIS'), b.x + b.w / 2, y + Math.round(b.h * 0.7), { col: '#b8ff7a', ancla: 'c' });
     else { D.icono(g, 'moneda', b.x + b.w / 2 - 20, y + Math.round(b.h * 0.7), 1); tx(g, String(coste), b.x + b.w / 2, y + Math.round(b.h * 0.7), { col: llega ? C.oro : '#ff7a6a' }); }
@@ -128,31 +131,35 @@ AS.pinta.altar = (() => {
   function unir(g, P, p, E) {
     if (E.batalla) return;
     const b = P.unir, hay = AS.equipo.todos(p.equipo).length >= 2 && p.fase === 'preparar', on = !!E.unir;
-    T.boton(g, b.x, b.y, b.w, b.h, on ? C.oro : hay ? C.verde : C.madera, on || !hay);
+    const abajo = E.hunde('unir', on || !hay);
+    T.boton(g, b.x, b.y, b.w, b.h, on ? C.oro : hay ? C.verde : C.madera, abajo);
     if (on) brillo(g, b, E.t, 1.2);
-    tx(g, on ? tr('CANCELAR') : tr('UNIR'), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (on || !hay ? 3 : 0), { t: on ? 32 : 48, col: on ? C.tinta : C.crema, borde: !on, ancla: 'c', max: b.w - 16 });
+    tx(g, on ? tr('CANCELAR') : tr('UNIR'), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (abajo ? 3 : 0), { t: on ? 32 : 48, col: on ? C.tinta : C.crema, borde: !on, ancla: 'c', max: b.w - 16 });
     E.zona(b, 'unir');
   }
   function luchar(g, P, p, E) {
     const b = E.batalla ? P.fila : P.luchar;
     if (E.batalla) {
-      T.boton(g, b.x, b.y, b.w, b.h, C.azul);
-      tx(g, tr('VELOCIDAD x{n}', { n: E.vel }), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2), { t: 48, col: C.crema, ancla: 'c' });
+      const abajo = E.hunde('velocidad');
+      T.boton(g, b.x, b.y, b.w, b.h, C.azul, abajo);
+      tx(g, tr('VELOCIDAD x{n}', { n: E.vel }), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (abajo ? 3 : 0), { t: 48, col: C.crema, ancla: 'c' });
       E.zona(b, 'velocidad');
       return;
     }
     const vale = p.fase === 'preparar' && !E.giro;
-    T.boton(g, b.x, b.y, b.w, b.h, vale ? C.rojo : C.madera, !vale);
+    const abajo = E.hunde('lucha', !vale);
+    T.boton(g, b.x, b.y, b.w, b.h, vale ? C.rojo : C.madera, abajo);
     if (vale && (p.oro < p.coste || !AS.equipo.hayHueco(p.equipo))) brillo(g, b, E.t, 1.6);   // ya no se puede invocar más: toca luchar
-    tx(g, tr('¡A LUCHAR!'), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (vale ? 0 : 3), { t: 64, col: C.crema, ancla: 'c', max: b.w - 30 });
+    tx(g, tr('¡A LUCHAR!'), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (abajo ? 3 : 0), { t: 64, col: C.crema, ancla: 'c', max: b.w - 30 });
     E.zona(b, 'lucha');
   }
   // el botón de las cifras del combate, a la derecha del pie, cuando ya ha habido algún combate: devuelve el ancho que ocupa
   function cifras(g, P, E) {
     if (E.batalla || !Object.keys(E.casos.cifras.ultimo).length) return 0;
     const b = { x: P.W - 58, y: P.pie - 21, w: 50, h: 44 };
-    T.boton(g, b.x, b.y, b.w, b.h, C.azul);
-    for (const [i, h] of [8, 14, 20].entries()) { g.fillStyle = C.tinta; g.fillRect(b.x + 10 + i * 11, b.y + 30 - h, 10, h + 2); g.fillStyle = C.crema; g.fillRect(b.x + 12 + i * 11, b.y + 32 - h, 6, h - 2); }   // tres barras que suben
+    const hunde = E.hunde('cifras'), k = hunde ? 3 : 0;
+    T.boton(g, b.x, b.y, b.w, b.h, C.azul, hunde);
+    for (const [i, h] of [8, 14, 20].entries()) { g.fillStyle = C.tinta; g.fillRect(b.x + 10 + i * 11, b.y + k + 30 - h, 10, h + 2); g.fillStyle = C.crema; g.fillRect(b.x + 12 + i * 11, b.y + k + 32 - h, 6, h - 2); }   // tres barras que suben
     E.zona(b, 'cifras');
     return b.w + 8;
   }
@@ -160,8 +167,9 @@ AS.pinta.altar = (() => {
   function suerte(g, P, p, E) {
     if (E.batalla || p.guiada) return 0;
     const b = { x: 8, y: P.pie - 21, w: 50, h: 44 };
-    T.boton(g, b.x, b.y, b.w, b.h, C.naranja);
-    tx(g, '%', b.x + b.w / 2, b.y + 18, { t: 48, col: C.crema, ancla: 'c' });
+    const hunde = E.hunde('suerte'), k = hunde ? 3 : 0;
+    T.boton(g, b.x, b.y, b.w, b.h, C.naranja, hunde);
+    tx(g, '%', b.x + b.w / 2, b.y + k + 18, { t: 48, col: C.crema, ancla: 'c' });
     E.zona(b, 'suerte');
     return b.w + 8;
   }
@@ -169,8 +177,9 @@ AS.pinta.altar = (() => {
     const izq = suerte(g, P, p, E), ocupa = Math.max(izq, cifras(g, P, E));
     if (p.puedeDeshacer && !E.batalla) {
       const w = 260, b = { x: Math.round(P.W / 2 - w / 2), y: P.pie - 21, w, h: 44 };
-      T.boton(g, b.x, b.y, b.w, b.h, C.naranja);
-      tx(g, tr('DESHACER'), P.W / 2, b.y + 19, { col: C.crema, ancla: 'c' });
+      const hunde = E.hunde('deshace'), k = hunde ? 3 : 0;
+      T.boton(g, b.x, b.y, b.w, b.h, C.naranja, hunde);
+      tx(g, tr('DESHACER'), P.W / 2, b.y + k + 19, { col: C.crema, ancla: 'c' });
       E.zona(b, 'deshace');
       return;
     }

@@ -110,8 +110,9 @@ AS.tema = (() => {
     g.fillStyle = tono(C.lacre, 0.55); g.fillRect(c - 1, c - 10, 2, 16); g.fillRect(c - 5, c + 1, 10, 2); g.fillRect(c - 2, c + 6, 4, 2);
     g.fillStyle = tono(C.lacre, 0.4); g.fillRect(c - 9, c - 9, 4, 2); g.fillRect(c - 11, c - 7, 2, 3);
   }
-  function pintaBoton(g, w, h, col, hundido) {
-    const y0 = hundido ? 3 : 0, a = h - 5;
+  // hundido: false (normal), true (apagado: más bajo y sin sombra) o 'apretado' (como apagado y algo más oscuro: el dedo lo está pulsando)
+  function pintaBoton(g, w, h, colBase, hundido) {
+    const col = hundido === 'apretado' ? tono(colBase, -0.22) : colBase, y0 = hundido ? 3 : 0, a = h - 5;
     if (!hundido) chafl(g, 1, 5, w - 2, a, 4, 'rgba(10,6,4,0.55)');
     chafl(g, 0, y0, w, a, 4, C.tinta); chafl(g, 2, y0 + 2, w - 4, a - 4, 3, tono(col, -0.3)); chafl(g, 2, y0 + 2, w - 4, a - 9, 3, col);
     g.fillStyle = tono(col, 0.5); g.fillRect(6, y0 + 3, w - 12, 2);
@@ -146,7 +147,7 @@ AS.tema = (() => {
     barrote: (g, x, y, w, h) => pon(g, pieza(`r${R(w)}x${R(h)}`, R(w), R(h), pintaBarrote), x, y),
     escudo: (g, x, y, w, h, col) => pon(g, pieza(`e${R(w)}x${R(h)}${col}`, R(w), R(h), (c, a, b) => pintaEscudo(c, a, b, col)), x, y),
     losa: (g, x, y, w, h, col) => pon(g, pieza(`l${R(w)}x${R(h)}${col || ''}`, R(w), R(h), (c, a, b) => pintaLosa(c, a, b, col || C.piedra)), x, y),
-    boton: (g, x, y, w, h, col, hundido) => pon(g, pieza(`b${R(w)}x${R(h)}${col}${hundido ? 1 : 0}`, R(w), R(h), (c, a, b) => pintaBoton(c, a, b, col, hundido)), x, y),
+    boton: (g, x, y, w, h, col, hundido) => pon(g, pieza(`b${R(w)}x${R(h)}${col}${hundido === 'apretado' ? 2 : hundido ? 1 : 0}`, R(w), R(h), (c, a, b) => pintaBoton(c, a, b, col, hundido)), x, y),
     cinta: (g, x, y, w, h, col) => pon(g, pieza(`c${R(w)}x${R(h)}${col}`, R(w), R(h), (c, a, b) => pintaCinta(c, a, b, col)), x, y),
     // una barra (de vida, de progreso): p de 0 a 1
     barra(g, x, y, w, h, p, col, fondo) {

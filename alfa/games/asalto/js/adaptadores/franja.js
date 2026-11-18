@@ -34,24 +34,25 @@ AS.franja = (() => {
   const heroe = (P, i) => { const s = P.hueco(i); return { x: s.x - 44, y: s.y - 96, w: 88, h: 104 }; };
 
   /* ---------- la franja ---------- */
-  const BW = 110;   // el ancho del botón de la derecha
+  // el ancho del botón de la derecha: lo que pida su texto (a letra 32), y nunca menos de 110
+  const anchoBoton = txt => Math.max(110, AS.texto.ancho(txt, 32) + 28);
   // cuántas líneas ocupa la frase a letra grande (48) en el hueco que le deja el botón
-  const ancho = P => P.W - 12 - BW - 40;
-  const lineas = (P, txt) => AS.texto.parte(txt, 48, ancho(P) - 8).length;
+  const lineas = (P, txt, bw) => AS.texto.parte(txt, 48, P.W - 12 - bw - 48).length;
   // el recuadro de la franja: arriba tapa la tira de misiones; abajo queda justo encima de la tira de la tienda
-  function sitio(P, txt, lado) {
-    const n = lineas(P, txt), h = n <= 2 ? 100 : 64 + n * 36, a = P.arena;   // la letra siempre grande: si hace falta, la franja crece
+  function sitio(P, txt, lado, bw) {
+    const n = lineas(P, txt, bw), h = n <= 2 ? 100 : 64 + n * 36, a = P.arena;   // la letra siempre grande: si hace falta, la franja crece
     return { x: 6, y: lado === 'abajo' ? a.y + a.h - h - 6 : a.y + 6, w: P.W - 12, h, t: n <= 4 ? 48 : 32 };
   }
   // o: { txt (ya traducido), lado: 'arriba' | 'abajo', boton: { txt, col, que }, pasos: { n, total } (opcional) }. Devuelve el recuadro
   function pinta(g, P, E, o) {
-    const r = sitio(P, o.txt, o.lado), b = { x: r.x + r.w - BW - 12, y: r.y + 14, w: BW, h: 46 };
+    const bw = anchoBoton(o.boton.txt), r = sitio(P, o.txt, o.lado, bw), b = { x: r.x + r.w - bw - 12, y: r.y + 14, w: bw, h: 46 };
     const tw = b.x - r.x - 20, cx = r.x + 12 + Math.round(tw / 2);
     T.pergamino(g, r.x, r.y, r.w, r.h);
     E.zona(r, 'franja');   // tapa lo de debajo: tocar la franja no hace nada
     AS.texto.parrafo(g, o.txt, cx, r.y + Math.round(r.h / 2) + 2, { t: r.t, col: C.tinta, borde: false, max: tw - 8 });
-    T.boton(g, b.x, b.y, b.w, b.h, o.boton.col);
-    AS.texto.pinta(g, o.boton.txt, b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2), { col: C.crema, ancla: 'c', max: b.w - 12 });
+    const abajo = E.hunde(o.boton.que);
+    T.boton(g, b.x, b.y, b.w, b.h, o.boton.col, abajo);
+    AS.texto.pinta(g, o.boton.txt, b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (abajo ? 3 : 0), { col: C.crema, ancla: 'c', max: b.w - 12 });
     E.zona(b, o.boton.que);
     if (o.pasos) {   // por qué paso va, en puntos bajo el botón
       const N = o.pasos.total, d0 = b.x + Math.round((b.w - (N * 20 - 8)) / 2);

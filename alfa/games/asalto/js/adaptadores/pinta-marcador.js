@@ -21,8 +21,9 @@ AS.pinta.marcador = (() => {
     AS.dibujos.icono(g, 'gema', ex, m.y + 25, 1);
     tx(g, String(p.esencia), ex + 20, m.y + 25, { col: C.celeste });
     const b = { x: m.x + m.w - 50, y: m.y + 5, w: 44, h: 40 };
-    T.boton(g, b.x, b.y, b.w, b.h + 5, C.naranja);
-    g.fillStyle = C.crema; g.fillRect(b.x + 13, b.y + 10, 6, 20); g.fillRect(b.x + 25, b.y + 10, 6, 20);
+    const hunde = E.hunde('pausa'), k = hunde ? 3 : 0;
+    T.boton(g, b.x, b.y, b.w, b.h + 5, C.naranja, hunde);
+    g.fillStyle = C.crema; g.fillRect(b.x + 13, b.y + k + 10, 6, 20); g.fillRect(b.x + 25, b.y + k + 10, 6, 20);
     E.zona(b, 'pausa');
   }
   // la tira de oleadas: en una zona, todas; en el modo sin fin, las 12 siguientes

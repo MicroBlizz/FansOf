@@ -1,8 +1,8 @@
 {
- "build": 1271,
- "hash": "2b18830",
- "fecha": "2026-11-18T18:28:10Z",
- "mensaje": "Paperwork 0.11.2: el botón amarillo de la ventana de confirmar (COMPRAR, BORRAR…) se lee bien (tarea #105)",
+ "build": 1272,
+ "hash": "7e2da24",
+ "fecha": "2026-11-18T18:37:51Z",
+ "mensaje": "Asalto 0.4.1: los botones se hunden al apretarlos, los consejos se cierran al hacer lo que enseñan (ENTENDIDO) y el cofre va bajo el título en ¡BOTÍN! (tarea #77, ADR 148)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

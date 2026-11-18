@@ -11,6 +11,10 @@ AS.pantalla = (() => {
     celdasOro: new Set(), arrastre: null, toque: null, batalla: null, vel: 1, destellos: new Map(), cartel: null, pista: '', intro: null, tFin: 0, cerrando: false,
     casi: new Set(), cumplidas: [], misionHecha: null, combo: 0, tCombo: 0, unir: null };   // unir: null, o { queda: el sitio del héroe que se queda } con el modo UNIR encendido
   E.zona = (r, que, dato) => { E.zonas.push({ x: r.x, y: r.y, w: r.w, h: r.h, que, dato }); };
+  // ¿está hundido el botón de esta zona? Mientras el dedo lo aprieta y un momento después de soltarlo (para que se vea en un toque rápido)
+  E.pulsado = que => (!!E.toque && E.toque.que === que) || (!!E.soltado && E.soltado.que === que);
+  // cómo se pinta el botón de esa zona: apagado (true), apretado ('apretado') o normal (false); ver AS.tema.boton
+  E.hunde = (que, apagado) => (apagado ? true : E.pulsado(que) ? 'apretado' : false);
   const p = () => E.casos.partida;
   const COLOR = { tanque: [90, 160, 255], luchador: [255, 130, 80], asesino: [80, 230, 220], tirador: [140, 240, 110], mago: [255, 200, 90], sanador: [255, 150, 200], brujo: [255, 100, 150], comodin: [255, 240, 200] };
   const ERRORES = { 'sin-oro': 'No te llega el oro', 'sin-sitio': 'Sin sitio: une a dos héroes', 'faltan-heroes': 'Hacen falta dos héroes', 'sin-empujones': 'No te quedan empujones', 'sin-estallido': 'Ya has usado el Estallido de esta oleada', 'sin-repetidas': 'No hay runas repetidas que romper', 'sin-tirada': 'Invoca primero', 'sin-piedra': 'No tienes esa piedra', 'sin-heroes': 'Pon un héroe en el campo',
@@ -139,7 +143,7 @@ AS.pantalla = (() => {
   function cambia(a, b) {
     const r = E.casos.cambia(a, b);
     if (!r.ok) { noVale(r.error); return; }
-    AS.suena('clic');
+    AS.suena('clic'); AS.consejos.hecho(E, 'mover');
   }
   // el botón UNIR enciende y apaga el modo de unir (se queda encendido después de cada unión hasta que se vuelve a pulsar)
   function modoUnir() {
@@ -167,7 +171,7 @@ AS.pantalla = (() => {
   function mueve(desde, hasta) {
     const r = E.casos.mueve(desde, hasta);
     if (!r.ok) { noVale(r.error); return; }
-    AS.suena('clic');
+    AS.suena('clic'); AS.consejos.hecho(E, 'mover');
   }
   const mismoSitio = (a, b) => a && b && a.donde === b.donde && a.i === b.i;
   function zonaEn(pt, salta) {
@@ -217,9 +221,12 @@ AS.pantalla = (() => {
     if (!E.activa) return;
     const pt = AS.lienzo.punto(ev), A = E.arrastre, t = E.toque;
     E.arrastre = null; E.toque = null;
+    if (t) E.soltado = { que: t.que, t: 0.12 };
     if (A) { if (A.movido) suelta(A, pt); else if (E.unir) eligeUnir(A.desde); else if (AS.guia.libre()) { AS.suena('clic'); AS.ventanas.heroe(E, A.desde); } return; }
     const z = zonaEn(pt);
-    if (t && z && z.que === t.que && ACCIONES[z.que] && AS.guia.permite(E, z.que, z.dato)) ACCIONES[z.que](z.dato);
+    if (!(t && z && z.que === t.que && ACCIONES[z.que] && AS.guia.permite(E, z.que, z.dato))) return;
+    AS.consejos.hecho(E, z.que);   // si el consejo de ahora enseñaba esto, ya está aprendido
+    ACCIONES[z.que](z.dato);
   }
 
   /* ---------- la pista del pie ---------- */
@@ -246,6 +253,7 @@ AS.pantalla = (() => {
     E.vidasRojo = Math.max(0, E.vidasRojo - dt); E.tCombo = Math.max(0, E.tCombo - dt);
     if (E.cartel && (E.cartel.t += dt) > E.cartel.vida) E.cartel = null;
     if (E.pistaFija && (E.pistaFija.t -= dt) <= 0) E.pistaFija = null;
+    if (E.soltado && (E.soltado.t -= dt) <= 0) E.soltado = null;
   }
   function pintaArrastre(g) {
     const A = E.arrastre;

@@ -12,10 +12,10 @@ AS.pinta.tienda = (() => {
     return t.oferta.some(id => id && AS.tienda.precio(ASALTO, id) <= p.esencia && (!lleno || AS.tienda.mio(t, id)));
   }
   function boton(g, b, p, E) {
-    const vale = p.fase === 'preparar' && !E.batalla;
-    T.boton(g, b.x, b.y, b.w, b.h, vale ? C.oro : C.madera, !vale);
+    const vale = p.fase === 'preparar' && !E.batalla, abajo = E.hunde('tienda', !vale);
+    T.boton(g, b.x, b.y, b.w, b.h, vale ? C.oro : C.madera, abajo);
     if (vale && tienta(p) && (E.t % 1.4) < 0.7) { g.fillStyle = C.rojo; g.fillRect(b.x + b.w - 20, b.y + 4, 12, 12); g.fillStyle = C.crema; g.fillRect(b.x + b.w - 16, b.y + 6, 4, 5); g.fillRect(b.x + b.w - 16, b.y + 12, 4, 2); }   // un aviso rojo: ¡hay algo a tu alcance!
-    tx(g, tr('TIENDA'), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (vale ? 0 : 3), { col: vale ? C.tinta : '#c8a878', borde: !vale, ancla: 'c', max: b.w - 16 });
+    tx(g, tr('TIENDA'), b.x + b.w / 2, b.y + Math.round((b.h - 8) / 2) + (abajo ? 3 : 0), { col: vale ? C.tinta : '#c8a878', borde: !vale, ancla: 'c', max: b.w - 16 });
   }
   function hueco(g, r, o) {
     const d = o && ASALTO.objetos[o.id];

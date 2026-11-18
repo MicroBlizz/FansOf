@@ -1,8 +1,8 @@
 {
- "build": 1282,
- "hash": "688b870",
- "fecha": "2026-11-18T21:06:52Z",
- "mensaje": "Vuelta atrás del SQL 161: entregar_compra y gestion_metricas quedan exactamente como están en producción (sin dos comentarios de línea que producción no tiene; el ensayo de Yoshi lo rechazaba). Tarea #120",
+ "build": 1283,
+ "hash": "f6fe3c4",
+ "fecha": "2026-11-18T21:15:09Z",
+ "mensaje": "Pop: Deshacer tras perder un duelo vuelve al último turno desde el que se gana (Lola marca la jugada) y panel DEV para ponerse en el jefe del Jardín. Tarea #95",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

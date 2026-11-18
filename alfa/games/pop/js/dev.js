@@ -37,6 +37,9 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Racha x3', () => { SAVE.racha = PP_CFG.racha.max; });
   d = fila();
   boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; ppGuardaCamino(); });
+  d = fila();
+  boton(d, (SAVE.devCopiaCamino ? '● ' : '') + 'Ponerme en el jefe del Jardín', ppDevAlJefe);
+  boton(d, 'Devolver mi partida', ppDevDevuelve);
 } }, { titulo: 'Fans of Pop: fecha de la Feria del finde', pinta(caja) {
   // finge el día moviendo solo la hora que lee la pantalla (ppFeriaAhora en js/feria-pantalla.js); el dominio no se toca
   const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#cdb9ea' });
@@ -59,5 +62,24 @@ function ppFeriaDevDia(dias, hora) {
 // lo que dice el panel tras pedir perlas: de dónde han salido, o por qué no han llegado
 const ppDevPerlas = (r, n) => (!r.ok ? PROBADOR.texto(r.error) : `+${n} perlas ${r.prueba ? 'de prueba (solo en este navegador)' : 'de verdad (servidor)'}`);
 const ppDevEstado = () => `Perlas ${SAVE.perlas || 0} · Monedas ${SAVE.monedas} · Corazones ${ppVidas()} · Compras de prueba: ${SAVE.devCompras ? 'SÍ' : 'NO'}`;
+// probar «ABRIR MUNDO 2» (tarea #95) sin perder el camino: guarda una copia (solo la primera vez) y deja el camino en el jefe del Jardín, sin fallos
+function ppDevAlJefe() {
+  if (PP_P && PP_P.T) return 'Sal antes del nivel';
+  if (!PP_P && !ppSigueCamino()) ppNuevaRuta();
+  if (!SAVE.devCopiaCamino) { const { T, ...resto } = PP_P; SAVE.devCopiaCamino = JSON.parse(JSON.stringify(resto)); }
+  const g = ppInicioMundo(1) - 1;
+  PP_P.nivel = g; PP_P.pendientes = [];
+  if (SAVE.fallos) delete SAVE.fallos[ppPrefijo(0) + g];
+  ppGuardaCamino();
+  return 'Camino en el jefe del Jardín (copia guardada)';
+}
+// vuelve el camino de la copia; las perlas y lo demás no se tocan
+function ppDevDevuelve() {
+  if (PP_P && PP_P.T) return 'Sal antes del nivel';
+  if (!SAVE.devCopiaCamino) return 'No hay copia guardada';
+  SAVE.run = SAVE.devCopiaCamino; SAVE.devCopiaCamino = null;
+  PP_P = null; ppSigueCamino();
+  return 'Partida devuelta';
+}
 // tras tocar algo en el panel, que se vea ya: la barra de ayudas, los botones del camino y la portada
 function ppRefrescaTodo() { ppBarraAyudas(); ppPintaLateral(); if (PP_PANT.actual === 'titulo') ppIrA('titulo'); }

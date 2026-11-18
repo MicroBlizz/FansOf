@@ -90,17 +90,34 @@ function ppNimFoto(T) { const N = T.nim; N.fotos = N.fotos || []; N.fotos.push({
 function ppNimDeshacer(trasPerder) {
   const T = PP_P && PP_P.T, N = T && T.nim; if (!N) return;
   if (!trasPerder && (N.turno !== 'yo' || N.fin)) return;
-  // en tu turno: la foto de ahora es la del turno en curso; se vuelve a la anterior. Tras perder, a la del último turno tuyo.
-  const fotos = N.fotos || [], destino = trasPerder ? fotos[fotos.length - 1] : fotos[fotos.length - 2];
+  // en tu turno: la foto de ahora es la del turno en curso; se vuelve a la anterior. Tras perder, al último turno tuyo desde el que aún
+  // se podía ganar (js/deshacer-nim.js), y Lola marca gratis la jugada buena: pagar sirve de verdad (Pepins, 18-11-2026)
+  const fotos = N.fotos || [], k = trasPerder ? ppNimVuelta(T) : fotos.length - 2, destino = fotos[k];
   if (!destino) { ppFlota(tr('Aún no hay nada que deshacer'), 270, 240, '#ff6ec7'); return; }
   if (!ppGastaAyuda('deshacer', trasPerder ? () => ppNimFin(T, false, true) : null)) return;
-  if (!trasPerder) fotos.pop();
+  fotos.length = k + 1;
   T.up = Uint8Array.from(destino.up); N.errores = destino.errores; N.fin = null; N.turno = 'yo'; N.fila = null; N.esta = []; N.pistaNim = null;
   T.hecho = false;
   if (trasPerder) { ppCierra(); ppSumaVida(1); ppFxCura(1); ppMarcaDentro(true); }
   PP_FX.celdas = {}; for (let i = 0; i < T.up.length; i++) if (T.mask[i]) PP_FX.celdas[i] = { t: 0, dir: T.up[i] ? 'sube' : 'pop', demora: 0 };
   ppFlota(tr('¡Deshecho!'), 270, 240, '#4fc964'); play('ppCura');
+  if (trasPerder) ppNimMarcaGanadora(T);
   ppNimBoton(); ppBarraAyudas();
+}
+// tras perder: la última foto desde la que se gana (o la última, si no hubiera ninguna)
+function ppNimVuelta(T) {
+  const fotos = T.nim.fotos || [], k = PP_DESHACER.buena(fotos, T.mask, T.n, ppNimGana);
+  return k >= 0 ? k : fotos.length - 1;
+}
+// Lola marca con aros la jugada que gana desde aquí y lo dice (sin cobrar); false si no hay ninguna
+function ppNimMarcaGanadora(T) {
+  const j = ppNimGanadora(ppFilasDuelo(T));
+  if (!j) return false;
+  const [y, k] = j, sitios = [];
+  for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
+  T.nim.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');
+  ppFlota(k === 1 ? tr('Lola: «Haz pop en 1 de esta fila»') : tr('Lola: «Haz pop en {n} de esta fila»', { n: k }), 270, 240, '#3a8ee6');
+  return true;
 }
 // la jugada que gana desde aquí (fila y cuántas), o null si no hay ninguna (vas perdiendo)
 function ppNimGanadora(filas) {
@@ -131,10 +148,7 @@ function ppNimPista() {
   const j = ppNimGanadora(ppFilasDuelo(T));
   if (!j) { ppFlota(tr('Lola: «Ahora no hay jugada segura… ¡a ver si se equivoca!»'), 270, 240, '#ff8a2a'); return; }
   if (!ppPagaPista(N)) return;
-  const [y, k] = j, sitios = [];
-  for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
-  N.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');
-  ppFlota(k === 1 ? tr('Lola: «Haz pop en 1 de esta fila»') : tr('Lola: «Haz pop en {n} de esta fila»', { n: k }), 270, 240, '#3a8ee6');
+  ppNimMarcaGanadora(T);
   ppBarraAyudas();
 }
 /* ---------- antes de empezar (tras fallar ese nivel) ---------- */

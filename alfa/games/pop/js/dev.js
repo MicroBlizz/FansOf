@@ -32,7 +32,25 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Racha x3', () => { SAVE.racha = PP_CFG.racha.max; });
   d = fila();
   boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; ppGuardaCamino(); });
+} }, { titulo: 'Fans of Pop: fecha de la Feria del finde', pinta(caja) {
+  // finge el día moviendo solo la hora que lee la pantalla (ppFeriaAhora en js/feria-pantalla.js); el dominio no se toca
+  const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#cdb9ea' });
+  const pinta = () => { estado.textContent = `Hora de la feria: ${ppFeriaAhora().toLocaleString()} · tickets ${SAVE.feria && SAVE.feria.estado ? SAVE.feria.estado.tickets : '-'}`; };
+  const d = document.createElement('div'); d.className = 'fila';
+  const boton = (txt, f) => d.append(Object.assign(document.createElement('button'), { textContent: txt, onclick: () => { f(); ppGuarda(); ppRefrescaTodo(); pinta(); if (PP_PANT.actual === 'mapa') ppFeriaAlLlegar(); } }));
+  boton('Viernes', () => ppFeriaDevDia(0, 10));
+  boton('Domingo 22:00', () => ppFeriaDevDia(2, 22));
+  boton('Lunes', () => ppFeriaDevDia(3, 10));
+  boton('Hora real', () => { SAVE.devFeria = 0; });
+  boton('+10 tickets', () => { const r = SAVE.feria && SAVE.feria.estado && PP_FERIA.suma(SAVE.feria.estado, 10); if (r && r.ok) SAVE.feria.estado = r.estado; });
+  boton('Borrar la feria', () => { SAVE.feria = null; });
+  caja.append(estado, d); pinta();
 } }];
+// pone la hora de la feria en el día `dias` tras el viernes de este finde (o del siguiente, de lunes a jueves) a las `hora`:00
+function ppFeriaDevDia(dias, hora) {
+  const hoy = new Date(), desdeViernes = (hoy.getDay() + 2) % 7, alViernes = desdeViernes < 3 ? -desdeViernes : 7 - desdeViernes;
+  SAVE.devFeria = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + alViernes + dias, hora) - hoy;
+}
 const ppDevEstado = () => `Perlas ${SAVE.perlas || 0} · Monedas ${SAVE.monedas} · Corazones ${ppVidas()} · Compras de prueba: ${SAVE.devCompras ? 'SÍ' : 'NO'}`;
 // tras tocar algo en el panel, que se vea ya: la barra de ayudas, los botones del camino y la portada
 function ppRefrescaTodo() { ppBarraAyudas(); ppPintaLateral(); if (PP_PANT.actual === 'titulo') ppIrA('titulo'); }

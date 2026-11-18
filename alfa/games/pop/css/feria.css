@@ -1,0 +1,44 @@
+/* Fans of Pop · FERIA DEL FINDE (tarea #97, ADR 151): el ticket dibujado (sin emoji), su botón en el lateral del camino, la ventana
+   «camino de feria» con sus paradas y Lola, y la línea de tickets de las victorias. El código está en js/feria-pantalla.js. */
+
+/* el ticket: un vale dorado con muescas a los lados y un botón rosa en medio */
+.pp-tk { display: inline-block; position: relative; width: 28px; height: 19px; vertical-align: middle; }
+.pp-tk::before { content: ''; position: absolute; inset: 0; border-radius: 4px; background: #ffd64a; box-shadow: inset 0 0 0 2.5px #c27a00;
+  -webkit-mask: radial-gradient(circle at 0 50%, transparent 4px, #000 4.5px) left / 51% 100% no-repeat, radial-gradient(circle at 100% 50%, transparent 4px, #000 4.5px) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle at 0 50%, transparent 4px, #000 4.5px) left / 51% 100% no-repeat, radial-gradient(circle at 100% 50%, transparent 4px, #000 4.5px) right / 51% 100% no-repeat; }
+.pp-tk::after { content: ''; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px; background: #ff6ec7; border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+.pp-tk.pp-tk-grande { width: 58px; height: 40px; margin: 9px 0; filter: drop-shadow(0 3px 0 rgba(196, 58, 132, 0.35)); }
+.pp-tk.pp-tk-grande::before { -webkit-mask-size: 51% 100%; mask-size: 51% 100%; border-radius: 7px; box-shadow: inset 0 0 0 4px #c27a00; }
+.pp-tk.pp-tk-grande::after { width: 14px; height: 14px; margin: -7px; box-shadow: 0 0 0 3px #fff; }
+
+/* el botón del lateral: con la feria cerrada, en gris */
+.pp-lado.pp-lado-feria b { -webkit-text-stroke-color: #c27a00; white-space: nowrap; }
+.pp-lado.pp-apagado { filter: grayscale(0.85); opacity: 0.75; }
+
+/* el reloj de las ventanas */
+.pp-feria-reloj { display: inline-flex; gap: 6px; align-items: center; background: #fff; border-radius: 999px; padding: 3px 14px; font-weight: 700; font-size: 18px;
+  color: #c43a84; box-shadow: inset 0 0 0 3px #ffd1ec; font-variant-numeric: tabular-nums; }
+
+/* el camino de feria: un sendero con 10 paradas y Lola marcando por dónde vas */
+.pp-feria { position: relative; width: 100%; height: 380px; flex: none; }
+.pp-feria svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pp-feria-via { fill: none; stroke: #ffd1ec; stroke-width: 14px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.pp-feria-raya { fill: none; stroke: #ff9ccf; stroke-width: 4px; stroke-dasharray: 6 9; vector-effect: non-scaling-stroke; }
+.pp-parada { position: absolute; width: 74px; margin-left: -37px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.pp-bola { width: 44px; height: 44px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: inset 0 0 0 4px #9fdcff, 0 3px 0 #1f6fb8; }
+.pp-bola .pp-ico { width: 30px !important; height: 30px !important; }
+.pp-parada-cofre .pp-bola { width: 56px; height: 56px; box-shadow: inset 0 0 0 4px #ffd64a, 0 3px 0 #c27a00; }
+.pp-parada-cofre .pp-bola .pp-ico { width: 44px !important; height: 44px !important; }
+.pp-parada.pp-alcanzado .pp-bola { background: #fff8dc; box-shadow: inset 0 0 0 4px #ffd64a, 0 3px 0 #c27a00; }
+.pp-parada.pp-listo { cursor: pointer; }
+.pp-parada.pp-listo .pp-bola { animation: pp-late 1.4s ease-in-out infinite; box-shadow: inset 0 0 0 4px #4fc964, 0 0 0 4px #fff, 0 3px 0 #26924a; }
+.pp-parada.pp-cogido .pp-bola { opacity: 0.45; }
+.pp-parada small { font-size: 13px; font-weight: 700; color: #7a3a7a; background: rgba(255, 255, 255, 0.85); border-radius: 8px; padding: 0 5px; }
+.pp-feria-yo { position: absolute; width: 46px; height: 46px; margin: -46px 0 0 -23px; pointer-events: none; transition: left 0.5s, top 0.5s; }
+.pp-feria-lola { width: 90px; height: 90px; }
+
+/* la línea de las victorias: «+N para la Feria del finde» */
+.pp-gana-tk { display: inline-flex; align-items: center; gap: 6px; background: #fff8dc; border-radius: 999px; padding: 4px 16px; font-weight: 700; font-size: 18px;
+  color: #c27a00; box-shadow: inset 0 0 0 3px #ffd64a; animation: pp-sale 0.6s ease-out; }
+
+@media (prefers-reduced-motion: reduce) { .pp-parada.pp-listo .pp-bola, .pp-gana-tk, .pp-feria-yo { animation: none; transition: none; } }

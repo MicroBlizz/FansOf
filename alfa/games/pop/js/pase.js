@@ -98,6 +98,7 @@ function ppVentanaRegalo() {
 function ppAlLlegarAlCamino() {
   if (PP_PANT.actual !== 'mapa' || !$pp('#pp-modal').hidden) return;   // solo si sigues en el camino (no al entrar en un nivel)
   if (ppMiraBienvenida()) return;
+  if (ppFeriaAlLlegar()) return;   // premios de la feria entregados solos o su bienvenida (js/feria-pantalla.js)
   if (SAVE.regaloDia !== ppHoy() && !PP_PASE_VISTO.regalo) { PP_PASE_VISTO.regalo = true; ppVentanaRegalo(); }
 }
 const PP_PASE_VISTO = { regalo: false };

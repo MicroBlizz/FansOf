@@ -164,6 +164,7 @@ function ppSalaHecha() {
   else if (d.dif) { if (d.l - 1 === (PP_P.dif[d.mundo] || 0)) { PP_P.dif[d.mundo] = d.l; nuevo = true; } }
   else if (g === PP_P.nivel) { PP_P.nivel++; nuevo = true; }
   ppGuardaCamino();
+  T.feria = ppFeriaGana(T.estrellas, d.jefe);   // tickets de la Feria del finde: toda victoria, nueva o repetida (js/feria-pantalla.js)
   if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
   if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(d.dif); return; }
   if (nuevo && d.jefe) { play('ppVictoria'); ppVentanaMundoNuevo(false); return; }

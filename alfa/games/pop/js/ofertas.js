@@ -115,6 +115,7 @@ function ppPintaLateral() {
   };
   boton('i-regalo', '#9cf0a0', tr('Regalo'), ppVentanaRegalo, SAVE.regaloDia !== ppHoy());
   boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio());
+  ppFeriaBotonLateral(L);   // la Feria del finde, con su reloj (js/feria-pantalla.js)
   boton('i-hucha', '#ffd1ec', String(SAVE.hucha || 0), ppVentanaHucha, (SAVE.hucha || 0) >= PP_CFG.hucha.minimo);
   if (ppBienvenidaVisible()) boton('i-perlas', '#ffd1ec', tr('Oferta'), ppVentanaBienvenidaPack, true);
   if (ppAtascoActivo()) boton('i-martillo', '#ffd1ec', ppReloj(SAVE.atasco - Date.now()), ppVentanaAtasco, true);

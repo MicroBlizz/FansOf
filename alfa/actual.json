@@ -1,8 +1,8 @@
 {
- "build": 1275,
- "hash": "fc7a436",
- "fecha": "2026-11-18T18:58:32Z",
- "mensaje": "Release: suben de versión los 15 juegos que solo reciben core (mudanza de los prototipos, tarea #45), con su nota e inglés; Rumble v2 y Clásico al día",
+ "build": 1276,
+ "hash": "235d5ff",
+ "fecha": "2026-11-18T19:07:41Z",
+ "mensaje": "Pop #97: lo que la feria da sola se guarda hasta contarlo (no se pierde si se cierra el juego) y el estado se pone antes de dar los premios; tests de los casos de uso de la pantalla",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

@@ -67,7 +67,7 @@ function ppFichaSlime(id, nuevo = false) {
 }
 /* ---------- rescate: elige qué amigo se une ---------- */
 function ppVentanaRescate(presos) {
-  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}<p class="pp-sub">${presos.length > 1 ? tr('Has rescatado a estos amigos. Elige quién viene contigo:') : tr('¡Has rescatado a un amigo! ¿Viene contigo?')}</p>`, true);
+  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}${ppFeriaLinea(PP_P.T)}<p class="pp-sub">${presos.length > 1 ? tr('Has rescatado a estos amigos. Elige quién viene contigo:') : tr('¡Has rescatado a un amigo! ¿Viene contigo?')}</p>`, true);
   const fila = document.createElement('div'); fila.className = 'pp-fila-slimes';
   for (const id of presos) { const f = ppFichaSlime(id, true); f.onclick = () => { play('select'); ppEligeRescate(id); }; fila.appendChild(f); }
   t.appendChild(fila);
@@ -98,7 +98,7 @@ function ppVentanaBienvenida(id) {
   t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', ppAlCamino));
 }
 function ppVentanaSalaHecha() {
-  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}`);
+  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}${ppFeriaLinea(PP_P.T)}`);
   t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));
   if (PP_P.T.estrellas < 3) t.appendChild(ppBoton(tr('A por 3 estrellas'), 'pp-btn2 pp-azul', ppOtraVez));
 }
@@ -121,7 +121,7 @@ function ppVentanaMundoNuevo(dif) {
     if (sig < PP_MUNDOS.length) txt = tr('Se abre el mundo {n}: {nombre}.', { n: sig + 1, nombre: tr(PP_MUNDOS[sig].nombre) }) + ' ' + txt;
     else txt += ' ' + tr('¡Pronto llegan más mundos!');   // el último jefe ya no acaba el camino (Daniel, 30-10-2026): sigues en el mapa con todo
   }
-  const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}<p class="pp-sub">${txt}</p>`);
+  const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}${ppFeriaLinea(PP_P.T)}<p class="pp-sub">${txt}</p>`);
   t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(ppMundoActual(), 0); else if (dif === 1) ppMapaVer(d.mundo, 2); ppAlCamino(); }));   // tras el difícil, directo a su pesadilla
 }
 // sin corazones: el reloj del siguiente, o llenarlos con monedas o perlas, o un anuncio (js/tienda.js)

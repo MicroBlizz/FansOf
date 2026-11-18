@@ -17,7 +17,7 @@ const ECO_SOMBRA = (() => {
   const id = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
 
   function anota(motivo, v, signo, evento) {   // lo llama ECO
-    if (!activa()) return;
+    if (!activa() || pausada) return;
     est.cola.push({ clave: id(), motivo, oro: signo * (v.gold || 0), gemas: signo * (v.gems || 0), entradas: signo * (v.tickets || 0), evento, t: Date.now() });   // t: la hora del aparato (el servidor la usa para los cobros por tiempo)
     if (est.cola.length > 2000) est.cola.splice(0, est.cola.length - 2000);
     guardar(); clearTimeout(temporizador); temporizador = setTimeout(enviar, ESPERA);
@@ -46,7 +46,16 @@ const ECO_SOMBRA = (() => {
   const apunta = r => { est.servidor = { oro: r.oro, gemas: r.gemas, entradas: r.entradas }; est.local = { oro: SAVE.gold, gemas: SAVE.gems, entradas: SAVE.tickets || 0 }; est.cuando = Date.now(); };
 
   let vuelo = null, ultimoError = null;   // ultimoError: por qué falló el último envío (si el servidor contestó con error, vaciar() lo dice en vez de «sin conexión»)
-  function enviar() { return vuelo || (vuelo = enviarYa().finally(() => { vuelo = null; })); }   // una sola subida a la vez; quien llama espera a que acabe
+  // pausa(true): mientras se resetea una cuenta de probador (probador.js) no se manda nada ni se apunta nada nuevo; la cola se queda como
+  // está. Devuelve una promesa que espera al envío que ya estuviera saliendo: true si ha acabado, false si a los ESPERA ms sigue saliendo.
+  // pausa(false) lo deja como antes y vuelve a programar el envío de lo que haya en la cola
+  let pausada = false;
+  function pausa(si) {
+    pausada = !!si; clearTimeout(temporizador);
+    if (!pausada) { if (est.cola.length) temporizador = setTimeout(enviar, ESPERA); return Promise.resolve(true); }
+    return Promise.race([Promise.resolve(vuelo).then(() => true), new Promise(r => setTimeout(() => r(!vuelo), ESPERA))]);
+  }
+  function enviar() { return pausada ? Promise.resolve() : vuelo || (vuelo = enviarYa().finally(() => { vuelo = null; })); }   // una sola subida a la vez; quien llama espera a que acabe
   async function vaciar() {   // antes de pedir algo al servidor: que sepa todo lo ganado y que la cuenta esté migrada; falla si no hay conexión
     for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && ((est.conciliado === CUENTA.usuario && est.progreso === CUENTA.usuario && est.progreso2 === CUENTA.usuario) || !(AJUSTES.servidor && AJUSTES.servidor.economia)) && !est.cola.length) return; }
     throw ultimoError && ultimoError.estado >= 400 ? ultimoError : new Error('sin_conexion');
@@ -61,6 +70,7 @@ const ECO_SOMBRA = (() => {
     if (typeof updateWallets === 'function') { try { updateWallets(); } catch (x) { /* la pantalla no está lista */ } }
     saveGame();
   }
+  const quedaPorMandar = () => est.cola.length > 0 && !pausada;   // con la pausa puesta, el envío en marcha no sigue con el lote siguiente
   async function enviarYa() {
     if (!activa()) return;
     ultimoError = null;
@@ -88,13 +98,15 @@ const ECO_SOMBRA = (() => {
         await CUENTA.rpc('conciliar_progreso2', () => ({ p_juego: AJUSTES.id, p_save: SAVE }));
         est.progreso2 = usuario; guardar();
       }
-      while (est.cola.length) {
+      while (quedaPorMandar()) {
         const lote = est.cola.slice(0, 200);
         const r = await CUENTA.rpc('anotar', { p_juego: AJUSTES.id, p_movs: lote });
         est.cola = est.cola.slice(lote.length); copiasDelServidor(r.nuevos); adoptar(r); apunta(r); guardar();
       }
     } catch (e) { ultimoError = e; /* sin conexión o sin cuenta aún: se intenta en el próximo cambio, al volver la red o al abrir */ }
   }
+  // tira lo pendiente de mandar sin mandarlo (el reseteo de una cuenta de probador, probador.js): la cuenta sigue migrada y conciliada
+  function olvidaCola() { est.cola = []; clearTimeout(temporizador); guardar(); }
   // texto para mirar en la consola o en el panel DEV
   const informe = () => {
     const s = est.servidor, l = est.local; if (!s) return 'Sin datos del servidor todavía (pendientes: ' + est.cola.length + ').';
@@ -107,5 +119,5 @@ const ECO_SOMBRA = (() => {
     window.addEventListener('online', enviar);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && est.cola.length) enviar(); });
   }
-  return { anota, enviar, vaciar, id, apuntaLocal: apunta, informe, get estado() { return est; } };
+  return { anota, enviar, vaciar, pausa, olvidaCola, id, apuntaLocal: apunta, informe, get estado() { return est; } };
 })();

@@ -36,8 +36,10 @@ const COLA = (() => {
       return enviando;
     }
     function pon(cosa) { op.lista().push(cosa); op.guarda(); return envia(); }
+    // tira lo pendiente sin mandarlo (el reseteo de una cuenta de probador: gancho 'probador-reseteo'). Lo que ya está saliendo no se puede parar
+    function olvida() { op.lista().length = 0; op.guarda(); }
     if (typeof window !== 'undefined' && window.addEventListener) window.addEventListener('online', () => { envia(); });
-    return { pon, envia, get pendientes() { return op.lista().length; } };
+    return { pon, envia, olvida, get pendientes() { return op.lista().length; } };
   }
   return { crea };
 })();

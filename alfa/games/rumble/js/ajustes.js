@@ -18,6 +18,11 @@ const AJUSTES = {
   // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro; nunca al revés).
   // 1 gema «vale» 10 de oro (los packs de antes valían 100 gemas o 1000 de oro por 0,99 €): la tirada pasa de 50 gemas a 500 de oro. La fila `monedas` de flags lo ajusta sin publicar.
   monedas: { ratio: 15, cambio: 40, pasePct: { pase: 29, pasepvp: 100 } },   // la tirada cuesta 750 de oro; cambiar oro por gemas, 40 de oro por gema; pasePct: qué % de lo convertido (oro y tiradas de la pista de pago) se da en gemas, para que la pista devuelva justo el precio del pase (487 de 500; el PvP da 264 de 300 al 100 %). La fila `monedas` de flags lo afina sin publicar   // lo que ya hace el servidor cuando hay cuenta (PLAN-CUENTAS.md, fase 2): el gashapón de habilidades y equipo
+  // qué es de este juego en la partida al resetear una cuenta de probador (ADR 146); lo de core lo clasifica core/js/sistema/probador-partida.js
+  probador: {
+    recursos: ['cards', 'decks', 'starter', 'ads.noAds', 'facItem', 'tutGift'],   // cartas del gashapón y mazos, lo comprado con euros y los regalos de objetos (vuelven a darse)
+    progreso: ['unlocked', 'lastFac', 'camp', 'campF', 'campH', 'campX', 'campM', 'mythPrize', 'mitW', 'mitHist', 'mitPremio', 'rlWeek', 'rlWeekX', 'bossRec', 'bossPay', 'bestBoss', 'tut', 'tips', 'achDone', 'achSeen', 'achV'],
+  },
   guardado: 'for-save-1',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario
   // economía propia (la común está en core/js/sistema/progreso.js: niveles, gashapón, despidos…)
   econ: {

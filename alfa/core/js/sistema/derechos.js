@@ -47,6 +47,8 @@ DERECHOS.crea = ({ almacenamiento, clave, cuenta, juego, desarrollo, vale, alCam
   }
   // borra las compras de prueba (el panel DEV)
   function olvidaPruebas() { copia.prueba = []; cambia(); }
-  return { claves, tiene, refresca, llega, olvidaPruebas };
+  // borra toda la copia, la del servidor y las de prueba (el reseteo de una cuenta de probador: gancho 'probador-reseteo')
+  function olvida() { copia.servidor = []; copia.prueba = []; cambia(); }
+  return { claves, tiene, refresca, llega, olvidaPruebas, olvida };
 };
 if (typeof module !== 'undefined') module.exports = DERECHOS;

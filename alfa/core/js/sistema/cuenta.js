@@ -70,14 +70,24 @@ const CUENTA = (() => {
     const filas = await pedir('/rest/v1/partidas?select=datos,version,cambiado&juego=eq.' + encodeURIComponent(juego), {}, t);
     return filas && filas[0] ? filas[0] : null;
   }
-  async function subir(t, version) {
+  // Toda subida pasa por aquí (la de sincronizar y la de «LA DE ESTE APARATO»): con la pausa puesta no sale ninguna, y la que ya está
+  // saliendo queda en `subiendo` para que pausa(true) pueda esperarla
+  let subiendo = null;
+  function subir(t, version) {
+    if (pausada) return Promise.reject(new Error('pausada'));
+    const esta = subeYa(t, version);
+    const suya = esta.catch(() => { /* el fallo lo trata quien la pidió */ }).finally(() => { if (subiendo === suya) subiendo = null; });
+    subiendo = suya;
+    return esta;
+  }
+  async function subeYa(t, version) {
     const antes = cambios;
     const r = await pedir('/rest/v1/rpc/guardar_partida', { method: 'POST', body: JSON.stringify({ p_juego: juego, p_datos: SAVE, p_version_esperada: version, p_aparato: aparato }) }, t);
     if (r && r.ok) { meta = { version: r.version, pendiente: cambios !== antes }; guardarMeta(); estado = 'al día'; return null; }
     return r;   // choque: alguien subió otra antes
   }
   function usar(nube) {   // la de la nube pasa a ser la de aquí; la página se recarga para que el juego la lea desde el principio
-    if (!nube.datos) return;
+    if (!nube.datos || pausada) return;
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(nube.datos)); } catch (e) { return; }
     meta = { version: nube.version, pendiente: false }; guardarMeta();
     location.reload();
@@ -124,7 +134,27 @@ const CUENTA = (() => {
       no.onclick = () => { if (typeof play === 'function') play('select'); (typeof cerrarConfirmBox === 'function' ? cerrarConfirmBox : () => { document.getElementById('scr-confirm').hidden = true; })(); subir(t, nube.version).catch(() => { /* se intenta otra vez luego */ }); };
     }
   }
-  async function sincronizar(alAbrir) {
+  // pausa(true): no se sube ni se baja la partida hasta pausa(false) o hasta recargar; los cambios se siguen apuntando como pendientes.
+  // La usa el reseteo de una cuenta de probador (probador.js) para que la partida de antes no vuelva a la nube. Devuelve una promesa:
+  // al parar ESPERA a lo que ya esté en marcha (una sincronización o una subida, también la de «LA DE ESTE APARATO»), porque una subida
+  // que ya ha salido no se puede deshacer: tiene que llegar al servidor antes que el reseteo. true si ha quedado todo quieto; false si a
+  // los ESPERA_PAUSA ms sigue saliendo algo (sin red a medias): quien llama decide, y lo normal es no seguir y quitar la pausa.
+  const ESPERA_PAUSA = 10000;
+  let pausada = false, sincronizando = null;
+  function pausa(si) {
+    pausada = !!si;
+    if (!pausada) return Promise.resolve(true);
+    clearTimeout(temporizador);
+    const quieto = Promise.all([sincronizando, subiendo]).then(() => true);
+    return Promise.race([quieto, new Promise(r => setTimeout(() => r(!sincronizando && !subiendo), ESPERA_PAUSA))]);
+  }
+  function sincronizar(alAbrir) {
+    if (pausada) return Promise.resolve();
+    if (sincronizando) return sincronizando;
+    const esta = sincronizaYa(alAbrir).finally(() => { if (sincronizando === esta) sincronizando = null; });
+    return (sincronizando = esta);
+  }
+  async function sincronizaYa(alAbrir) {
     if (!activa || ocupado) return; ocupado = true;
     try {
       const t = await token();
@@ -211,8 +241,14 @@ const CUENTA = (() => {
     clearTimeout(temporizador); temporizador = setTimeout(() => sincronizar(false), ESPERA);
   }
 
+  // con la cuenta ya dentro y antes de sincronizar: si el servidor ha reseteado la cuenta entera (al quitarle el rol alfa, ADR 146), lo de
+  // este navegador se limpia y la página se recarga (probador.js, cuentaReseteada); si no, se sincroniza como siempre
+  async function alEntrar() {
+    if (typeof PROBADOR !== 'undefined' && PROBADOR.cuentaReseteada && await PROBADOR.cuentaReseteada()) return;
+    return sincronizar(true);
+  }
   if (activa) {
-    NUCLEO.alCargar(() => setTimeout(() => deLaDireccion().catch(() => { aviso = tr('No se ha podido entrar. Prueba otra vez.'); }).then(() => { if (aviso && typeof toast === 'function') toast(aviso, true); fire('cuenta'); return sincronizar(true); }), 500));
+    NUCLEO.alCargar(() => setTimeout(() => deLaDireccion().catch(() => { aviso = tr('No se ha podido entrar. Prueba otra vez.'); }).then(() => { if (aviso && typeof toast === 'function') toast(aviso, true); fire('cuenta'); return alEntrar(); }), 500));
     window.addEventListener('online', () => sincronizar(false));
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && meta.pendiente) { clearTimeout(temporizador); sincronizar(false); } });
   }
@@ -232,7 +268,7 @@ const CUENTA = (() => {
   // PERFIL GLOBAL (servidor/36-perfil.sql): el nombre único de la cuenta para todos los juegos. Sin cuenta, sin red o sin esa función → null / no hace nada.
   const perfil = async () => { if (!activa || sesion().invitado !== false) return null; try { return await rpc('perfil_leer', {}); } catch (e) { return null; } };
   const ponNombre = nombre => rpc('perfil_nombre', { p_nombre: nombre });
-  return { activa, cambio, sincronizar, rpc, funcion, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, get roles() { return CUENTA_ROLES.sesion; },   // los roles de la cuenta (ADR 097)
+  return { activa, cambio, sincronizar, pausa, rpc, funcion, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, get roles() { return CUENTA_ROLES.sesion; },   // los roles de la cuenta (ADR 097)
     guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
     get estado() { return estado; }, get version() { return meta.version; }, get pendiente() { return meta.pendiente; },
     get invitado() { return sesion().invitado !== false; }, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; }, get foto() { return sesion().foto || ''; } };

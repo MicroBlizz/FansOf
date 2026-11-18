@@ -4,6 +4,8 @@
 // · PP_SRV: el libro de perlas ya montado con la cuenta, la partida y la cola de core.
 // · ppPerlas(n, motivo, clave): TODA perla que entra (n > 0) o sale (n < 0) del juego pasa por aquí; false si no llegan para gastar.
 //   `motivo` es el del servidor (jefe, regalo, pase; ayuda, seguir, vidas, hueco, infinitas, mundo). Sin motivo son perlas de prueba (panel DEV).
+// · La cuenta de probador (rol alfa, tarea #120, ADR 146): los ganchos 'probador-regalo' (las perlas que suma el servidor) y
+//   'probador-reseteo' (vaciar lo de este móvil tras resetear la cuenta; las reglas, en js/reseteo.js).
 // · PP_MI: el catálogo entero (con los personajes), lo que tengo, lo que llevo puesto y los casos de uso de la pantalla: poner y comprar.
 'use strict';
 const ppPerfilActivo = () => NUCLEO.flag('tienda-gemas', 'Pop: perfil de jugador y perlas en el servidor (tarea #41, ADR 130)', false);
@@ -11,9 +13,25 @@ const PP_SRV = PP_PERLAS.crea({
   cuenta: typeof CUENTA !== 'undefined' ? CUENTA : null, save: () => SAVE, guarda: ppGuarda, cola: COLA, activo: ppPerfilActivo,
   enLinea: () => navigator.onLine !== false, pruebas: () => ppCompraDePrueba(),
   alCambiar: () => { if (typeof ppPerfilRepinta === 'function') ppPerfilRepinta(); },
+  probador: typeof PROBADOR !== 'undefined' ? PROBADOR : null,
 });
 function ppPerlas(n, motivo = null, clave = null) { return PP_SRV.mueve(n, motivo, clave); }
 window.addEventListener('online', () => setTimeout(() => PP_SRV.arranca(), 1500));
+// tras un regalo de probador (lo pida el botón de Pop o el bloque «Probador» del panel DEV): el saldo del servidor, a la vista
+// Si aquí no manda el servidor, devuelve el motivo: core lo enseña en el panel DEV en vez de dar el regalo por visto
+hook('probador-regalo', estado => {
+  if (!PP_SRV.alRegalo(estado)) return 'las perlas del servidor están apagadas en Pop (flag «tienda-gemas» cerrado) o tu monedero de Pop aún no está abierto';
+  if (typeof ppRefrescaTodo === 'function') ppRefrescaTodo();
+});
+// la cuenta ya está reseteada en el servidor y la página va a recargarse: se vacía lo de este móvil (con «todo», core borra además la partida)
+hook('probador-reseteo', que => {
+  const c = PP_RESETEO.cambios(que, PP_NUEVA(), SAVE);
+  if (!c.ok) return;
+  if (c.recursos) PP_SRV.olvida();
+  Object.assign(SAVE, c.pon);
+  for (const k of c.quita) delete SAVE[k];
+  ppGuarda();
+});
 
 const PP_MI = (() => {
   // los personajes: Lola de serie y los amigos rescatables (gratis si ya lo rescataste)

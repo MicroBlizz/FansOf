@@ -2,10 +2,11 @@
 // localhost, o ?dev=1 en la dirección; ?dev=0 lo apaga) y, en la web publicada y la app, solo con el rol «alfa» (ADR 096): ahí sin los flags ni el
 // modo desarrollo, que no actúan fuera de él. Es común: los dos juegos lo tienen igual.
 // Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja), soloDesarrollo? } y pinta lo suyo dentro de `caja`.
+// La de «Probador» (cuentas con rol alfa, ADR 146) solo pinta: lo que hace está en probador.js (PROBADOR).
 // Las de un solo juego van en ese juego: que defina UTILIDADES_JUEGO (una lista igual) y salen aquí, detrás de «Este juego».
 'use strict';
 (() => {
-  let pintaFlags = () => {};
+  let pintaFlags = () => {}, pintaProbador = () => {};
   const CLAVE_DEPURA = 'fansof-idioma-depura';
   const guardado = () => { try { return localStorage.getItem(typeof AJUSTES !== 'undefined' && AJUSTES.guardado); } catch (e) { return null; } };
   const el = (tag, props = {}, ...hijos) => { const e = Object.assign(document.createElement(tag), props); for (const h of hijos) e.append(h); return e; };
@@ -62,6 +63,35 @@
         boton('Cargar la que hay en el recuadro', () => { try { JSON.parse(caja.value); localStorage.setItem(AJUSTES.guardado, caja.value); location.reload(); } catch (e) { aviso('No es un JSON válido'); } }),
         boton('Borrar la partida', () => { if (confirm('¿Borrar la partida de este juego?')) { try { localStorage.removeItem(AJUSTES.guardado); } catch (e) { /* sin guardar */ } location.reload(); } }, { className: 'peligro' })));
       c.append(caja);
+    } },
+    // la cuenta de probador (rol alfa, ADR 146; core/js/sistema/probador.js): solo sale con ese rol y en un juego con id. Se repinta al abrir el panel,
+    // porque el rol llega de fondo. Los botones de moneda, solo si el juego declara moneda comprada (AJUSTES.monedas) o engancha 'probador-regalo'
+    { titulo: 'Probador', pinta(c) {
+      const conMoneda = () => (typeof MONEDAS !== 'undefined' && MONEDAS.activo()) || (typeof HOOKS !== 'undefined' && (HOOKS['probador-regalo'] || []).length > 0);
+      const dice = txt => { panel.hidden = false; aviso(txt); };
+      // toda petición acaba en un aviso: lo que dice el servidor, o que el juego ha fallado al aplicarlo (nunca se queda en «Pidiendo…»)
+      const seguro = async (hazlo, di) => { try { await hazlo(); } catch (e) { console.error('Panel DEV · Probador', e); di(PROBADOR.texto('entrega')); } };
+      const trasRegalo = (r, n, moneda) => (!r.ok ? PROBADOR.texto(r.error)
+        : r.sinMostrar ? 'El servidor ha sumado ' + n + ' de ' + moneda + ', pero este juego no lo enseña todavía: ' + r.sinMostrar : '+' + n + ' ' + moneda);
+      const regala = (n, moneda) => { aviso('Pidiendo al servidor…'); return seguro(async () => aviso(trasRegalo(await PROBADOR.regalo(n), n, moneda)), aviso); };
+      function resetea(que) {   // la confirmación es la ventana del juego (queda debajo del panel: se cierra); sin ella, la del navegador
+        const a = PROBADOR.avisoReseteo(que), hazlo = () => seguro(async () => { const r = await PROBADOR.resetea(que); if (!r.ok) dice(PROBADOR.texto(r.error)); }, dice);
+        if (typeof confirmBox === 'function') { cierra(); confirmBox(a.titulo, a.texto, a.boton, hazlo); } else if (confirm(a.texto)) hazlo();
+      }
+      // el nombre de la moneda: el de MONEDAS si el juego declara AJUSTES.monedas; si solo engancha 'probador-regalo', el de AJUSTES.probador.moneda
+      const nombreMoneda = () => (typeof MONEDAS !== 'undefined' && MONEDAS.activo() ? MONEDAS.nombre('comprada') : (typeof AJUSTES !== 'undefined' && AJUSTES.probador && AJUSTES.probador.moneda) || 'moneda de pago');
+      pintaProbador = () => {
+        const sale = typeof PROBADOR !== 'undefined' && !!PROBADOR.puede && PROBADOR.puede();
+        c.textContent = ''; c.hidden = !sale; if (c.previousElementSibling) c.previousElementSibling.hidden = !sale;
+        if (!sale) return;
+        if (conMoneda()) {
+          const moneda = nombreMoneda();
+          c.append(el('p', { textContent: 'Suma ' + moneda + ' desde el servidor: vale también en la web publicada.' }));
+          c.append(el('div', { className: 'fila' }, ...[100, 1000, 10000].map(n => boton('+' + n + ' ' + moneda, () => regala(n, moneda)))));
+        }
+        c.append(el('p', { textContent: 'Resetear la cuenta en este juego, en el servidor y en este navegador. No se puede deshacer.' }));
+        c.append(el('div', { className: 'fila' }, ...[['recursos', 'Recursos'], ['progreso', 'Progreso'], ['todo', 'Todo']].map(([que, txt]) => boton(txt, () => resetea(que), { className: 'peligro' }))));
+      };
     } },
     { titulo: 'Recursos en la nube (sombra)', pinta(c) {
       const caja = el('textarea', { rows: 3, readOnly: true });
@@ -131,8 +161,9 @@
   const enRelease = !NUCLEO.desarrollo && !NUCLEO.alfa;
   for (const u of UTILIDADES.filter(x => !(enRelease && x.soloDesarrollo))) { caja.append(el('h3', { textContent: u.titulo })); const c = el('div'); try { u.pinta(c); } catch (e) { c.textContent = 'Error: ' + e.message; } caja.append(c); }
   panel.append(caja); panel.addEventListener('click', e => { if (e.target === panel) cierra(); });
-  const abre = el('button', { id: 'dev-boton', textContent: 'DEV', title: 'Utilidades de desarrollo', onclick: () => { panel.hidden = !panel.hidden; if (!panel.hidden) pintaFlags(); } });
+  const abre = el('button', { id: 'dev-boton', textContent: 'DEV', title: 'Utilidades de desarrollo', onclick: () => { panel.hidden = !panel.hidden; if (!panel.hidden) { pintaFlags(); pintaProbador(); } } });
   abre.setAttribute('translate', 'no');
   document.head.append(estilo); document.body.append(abre, panel);
+  pintaProbador();   // ya con su título puesto: sin cuenta de probador, el bloque no se ve
   if (new URLSearchParams(location.search).get('devabrir')) panel.hidden = false;
 })();

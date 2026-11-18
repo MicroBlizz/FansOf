@@ -54,9 +54,14 @@ function tiendaCompra(texto, da) { MONEDAS.recomiendaCuenta(() => tiendaCompraHe
 // lo que cuesta euros: en la app de Android, Google Play (core/js/sistema/pagos.js: el servidor entrega, servidor/91, y el estado vuelve por el gancho 'compra'
 // de servidor-economia.js); en la web con el flag pago-web, Paddle (pagos-web.js, el mismo servidor); si no, como hasta ahora, la compra de prueba del servidor o de la partida local. `producto` = el id en Play Console y en `productos`
 const pagoWeb = () => typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible();   // en la web, Paddle (core/js/sistema/pagos-web.js), tras el flag pago-web
+// con una cuenta de probador (rol alfa, ADR 146) la compra también la lleva core: en la alfa y en localhost no cobra y la entrega el servidor
+const pagoProbador = () => typeof PROBADOR !== 'undefined' && typeof PROBADOR.puede === 'function' && PROBADOR.puede();
 function tiendaEuros(tipo, idx, texto, precio, producto, daLocal) {
-  if ((typeof PAGOS !== 'undefined' && PAGOS.disponible()) || pagoWeb()) return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => { if (r && r.real) { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); } }, producto);
-  return RFS.activo() ? tiendaServidor(tipo, idx, texto) : tiendaCompra(texto, daLocal);
+  const via = RF.Probador.viaEuros({ pago: (typeof PAGOS !== 'undefined' && PAGOS.disponible()) || pagoWeb(), probador: pagoProbador(), servidor: RFS.activo() });
+  // tras la ventana de core: si ya lo entregó el servidor, se celebra; si core cayó en la compra de prueba (ya confirmada en su ventana), se entrega por el camino de prueba de siempre
+  const TRAS = { hecha: () => { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); }, servidor: () => tiendaServidorHecha(tipo, idx, texto), local: () => tiendaCompraHecha(texto, daLocal), nada: () => {} };
+  if (via === 'pago') return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => TRAS[RF.Probador.trasCompra(r, { servidor: RFS.activo() })](), producto);
+  return via === 'servidor' ? tiendaServidor(tipo, idx, texto) : tiendaCompra(texto, daLocal);
 }
 function tiendaCompraHecha(texto, da) { REPORTE.suceso('compra', { donde: 'tienda' }); da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); tiendaSigueCompra(); }
 

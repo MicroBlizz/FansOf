@@ -5,14 +5,19 @@
 //   el monedero está abierto, apunta el movimiento en una cola (core/js/sistema/cola.js) que se manda a `anotar` cuando hay red.
 // · compra(artículo, precio): una cosa del perfil con comprar_fijo. Sin cuenta no se compra (salvo las compras de prueba del panel DEV).
 // · pon(perfil): guarda lo puesto en el móvil y, con cuenta, en el servidor (pop_poner), que comprueba que se tiene.
+// · regala(n): las perlas del panel DEV. Con cuenta de probador (rol alfa, tarea #120, ADR 146) y el monedero abierto las suma el servidor
+//   (PROBADOR.regalo) y son de verdad; si no, son de prueba, como siempre. alRegalo(estado) aplica lo que devuelve (gancho 'probador-regalo').
+// · olvida(): tras resetear los recursos de la cuenta en el servidor (gancho 'probador-reseteo'), vacía la copia de este móvil.
 // Todo va tras el flag 'tienda-gemas' de Pop: con él cerrado nada de esto habla con el servidor y el juego va como antes.
 // Sin globales ni DOM: todo entra por puertos. cuenta (como CUENTA, o null), save() (la partida), guarda(), cola (como COLA), activo()
-// (el flag), enLinea(), pruebas() (¿compras de prueba encendidas?), alCambiar() (repintar) y sello() (un texto distinto cada vez).
+// (el flag), enLinea(), pruebas() (¿compras de prueba encendidas?), alCambiar() (repintar), sello() (un texto distinto cada vez) y
+// probador (como PROBADOR de core, o null: puede() y regalo(n)).
 // Lo guarda en save().srv: { usuario, abierto, gemas, cola, prueba, n, reclamos, reclamosPrueba, puesto }.
-// Los errores son resultados con nombre: sin_cuenta, sin_red, faltan_perlas, tienda_cerrada, no_existe, no_lo_tienes, servidor.
+// Los errores son resultados con nombre: sin_cuenta, sin_red, faltan_perlas, tienda_cerrada, no_existe, no_lo_tienes, servidor; los de
+// regala(), los de PROBADOR (sin_monedero, sin_funcion…) y `datos`.
 'use strict';
 const PP_PERLAS = {};
-PP_PERLAS.crea = ({ cuenta, save, guarda, cola, activo, enLinea = () => true, pruebas = () => false, alCambiar = () => {}, sello = () => Date.now().toString(36) }) => {
+PP_PERLAS.crea = ({ cuenta, save, guarda, cola, activo, enLinea = () => true, pruebas = () => false, alCambiar = () => {}, sello = () => Date.now().toString(36), probador = null }) => {
   const NUEVO = () => ({ usuario: '', abierto: false, gemas: 0, cola: [], prueba: 0, n: 0, reclamos: [], reclamosPrueba: [], puesto: '' });
   const ok = v => Object.freeze({ ok: true, ...v });
   const error = e => Object.freeze({ ok: false, error: e });
@@ -133,6 +138,33 @@ PP_PERLAS.crea = ({ cuenta, save, guarda, cola, activo, enLinea = () => true, pr
     try { await cuenta.rpc('pop_poner', { p_perfil: perfil }); s.puesto = JSON.stringify(perfil); guarda(); return ok({}); }
     catch (e) { return error(nombreError(e)); }
   }
-  return { arranca, mueve, compra, pon, comprados, paraPerfil, puedeComprar, listo, conectado };
+  // ---------- cuenta de probador (rol alfa, ADR 146) ----------
+  // ¿las perlas del panel DEV las suma el servidor? Con cuenta de probador y el monedero abierto; si no, son de prueba
+  const deVerdad = () => !!(probador && probador.puede() && listo());
+  // lo que devuelve el servidor tras un regalo pasa a la copia del móvil; false si aquí no manda el servidor (flag cerrado o monedero sin abrir)
+  function alRegalo(e) {
+    if (!listo() || !e || typeof e.gemas !== 'number') return false;
+    ultimo = null; aplica(e);   // una respuesta de `anotar` que estuviera esperando es anterior al regalo: no puede pisarlo
+    if (S().cola.length) refresca().catch(avisa);   // y si algo sigue saliendo, al acabar se vuelve a pedir el saldo
+    return true;
+  }
+  // las perlas del panel DEV. Si el servidor falla no se suma nada, tampoco de prueba
+  async function regala(n) {
+    if (!Number.isInteger(n) || n < 1) return error('datos');
+    if (!deVerdad()) { mueve(n, null); return ok({ prueba: true }); }
+    await manda();   // lo pendiente, antes: la respuesta de `anotar` no puede llegar después y pisar el saldo del regalo
+    const r = await probador.regalo(n);   // el estado lo aplica el gancho 'probador-regalo' (alRegalo)
+    return r.ok ? ok({ prueba: false }) : error(r.error);
+  }
+  // los recursos de la cuenta se han reseteado en el servidor: fuera las perlas de aquí (las de prueba también), lo pendiente de mandar, lo
+  // comprado y lo puesto. El monedero sigue abierto: al recargar se pide el saldo y manda el servidor
+  function olvida() {
+    const s = S(), sv = save();
+    C.olvida(); ultimo = null;
+    Object.assign(s, NUEVO(), { usuario: s.usuario, abierto: s.abierto });
+    sv.perlas = 0; delete sv.perfil;
+    guarda();
+  }
+  return { arranca, mueve, compra, pon, comprados, paraPerfil, puedeComprar, listo, conectado, deVerdad, regala, alRegalo, olvida };
 };
 if (typeof module !== 'undefined') module.exports = PP_PERLAS;

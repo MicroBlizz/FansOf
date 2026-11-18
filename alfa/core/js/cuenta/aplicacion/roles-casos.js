@@ -37,7 +37,7 @@ CUENTA_ROLES.casos = ({ sesion, servidor, almacen, reloj, publicar }) => {
   //   error 'sin-cuenta' (sin cuenta posible: archivo suelto, iframe…) · 'sin-respuesta' (sin red) · 'cuenta-cambiada' (entró otra mientras se esperaba) · 'rol-invalido'
   async function refrescar(nombres) {
     if (!sesion.activa()) return error('sin-cuenta');
-    const usuario = sesion.usuario(), antes = actuales(), preguntados = Roles.crear(nombres);
+    const usuario = sesion.usuario(), preguntados = Roles.crear(nombres);
     if (!preguntados.ok) return preguntados;
     if (usuario === '') return ok({ roles: Roles.vacio, guardado: false });   // aún no ha entrado nadie (ni de invitado): sin roles, y no hay de quién guardarlo
     let tenidos = [];
@@ -45,7 +45,8 @@ CUENTA_ROLES.casos = ({ sesion, servidor, almacen, reloj, publicar }) => {
       try { tenidos = await servidor.cuales(preguntados.valor.lista); } catch (e) { return error('sin-respuesta'); }
     }
     if (sesion.usuario() !== usuario) return error('cuenta-cambiada');
-    return guarda(usuario, antes, preguntados.valor.lista, tenidos);
+    // lo de antes se mira ahora, con la respuesta ya aquí: si dos preguntan a la vez por roles distintos, el segundo no pisa lo que confirmó el primero
+    return guarda(usuario, actuales(), preguntados.valor.lista, tenidos);
   }
 
   function guarda(usuario, antes, preguntados, tenidos) {

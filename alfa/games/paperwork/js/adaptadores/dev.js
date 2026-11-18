@@ -37,6 +37,8 @@ PW.dev = (() => {
       ['Volver al nivel 0', () => trituradora(0)]]],
     ['Plantas', [['Bajar 1', () => planta(P().r.planta.n + 1)], ['Bajar 10', () => planta(P().r.planta.n + 10)],
       ['A la Sala de servidores', () => planta(PW.AJ.planta.plantasPorZona + 1)], ['Al Almacén', () => planta(PW.AJ.planta.plantasPorZona * 2 + 1)]]],
+    // las compras de prueba son las de este navegador sin cuenta de probador; las de una cuenta de probador las entrega el servidor y se
+    // quitan con «Resetear cuenta» (bloque Probador de core), que también borra estas
     ['Mejoras de pago', [['Olvidar las compras de prueba', () => { PW.mejorasPago.olvidaPruebas(); toast('Compras de prueba olvidadas'); }]]],
   ];
   // la sección en el panel DEV de core: un título y una fila de botones por grupo

@@ -2,19 +2,24 @@
 // El panel DEV de core (core/js/sistema/desarrollo.js) solo existe en la alfa y en localhost, nunca en la web publicada: lo que se
 // toca aquí es solo para probar. Incluye las COMPRAS DE PRUEBA: con ellas encendidas, los packs con euros (ofertas, perlas, hucha y
 // pase) se dan sin cobrar nada (ppCompraDePrueba en js/ofertas.js y js/tienda.js).
+// Las PERLAS de los botones «+100» y «+1000» (tarea #120, ADR 146): con cuenta de probador (rol alfa) y el monedero de Pop abierto las suma
+// el servidor (PP_SRV.regala → PROBADOR.regalo) y son de verdad, las mismas que da el bloque «Probador» de core; sin cuenta, sin rol, sin
+// monedero o con el flag 'tienda-gemas' cerrado son de prueba, solo de este navegador. Si el servidor falla, se avisa y no se suma nada.
 'use strict';
 const ppEsPruebas = () => typeof NUCLEO !== 'undefined' && (NUCLEO.alfa || NUCLEO.desarrollo);
 const ppCompraDePrueba = () => ppEsPruebas() && !!SAVE.devCompras;
 const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja) {
   const fila = () => { const d = document.createElement('div'); d.className = 'fila'; caja.append(d); return d; };
-  const boton = (d, txt, f) => d.append(Object.assign(document.createElement('button'), { textContent: txt, onclick: () => { f(); ppGuarda(); ppRefrescaTodo(); estado.textContent = ppDevEstado(); } }));
+  const boton = (d, txt, f) => d.append(Object.assign(document.createElement('button'), { textContent: txt, onclick: async () => { const aviso = await f(); ppGuarda(); ppRefrescaTodo(); estado.textContent = (aviso ? aviso + ' · ' : '') + ppDevEstado(); } }));
   const estado = Object.assign(document.createElement('p'), { textContent: ppDevEstado(), style: 'margin:4px 0;color:#cdb9ea' });
   caja.append(estado);
   let d = fila();
-  boton(d, '+100 perlas', () => { ppPerlas(100); });
-  boton(d, '+1000 perlas', () => { ppPerlas(1000); });
+  const perlas = n => async () => { estado.textContent = 'Pidiendo las perlas…'; return ppDevPerlas(await PP_SRV.regala(n), n); };
+  boton(d, '+100 perlas', perlas(100));
+  boton(d, '+1000 perlas', perlas(1000));
   boton(d, '+1000 monedas', () => { SAVE.monedas += 1000; });
   boton(d, '+10000 monedas', () => { SAVE.monedas += 10000; });
+  caja.append(Object.assign(document.createElement('p'), { textContent: 'Perlas: con cuenta de probador y el monedero de Pop abierto las suma el servidor y son de verdad (como las del bloque «Probador»); si no, son de prueba y solo valen en este navegador.', style: 'margin:4px 0;color:#cdb9ea' }));
   d = fila();
   boton(d, '+5 de cada ayuda', () => { for (const k in PP_CFG.ayudas) ppDaAyuda(k, 5); });
   boton(d, 'Llenar corazones', () => { SAVE.vidas = PP_CFG.vida; SAVE.vidaT = Date.now(); });
@@ -51,6 +56,8 @@ function ppFeriaDevDia(dias, hora) {
   const hoy = new Date(), desdeViernes = (hoy.getDay() + 2) % 7, alViernes = desdeViernes < 3 ? -desdeViernes : 7 - desdeViernes;
   SAVE.devFeria = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + alViernes + dias, hora) - hoy;
 }
+// lo que dice el panel tras pedir perlas: de dónde han salido, o por qué no han llegado
+const ppDevPerlas = (r, n) => (!r.ok ? PROBADOR.texto(r.error) : `+${n} perlas ${r.prueba ? 'de prueba (solo en este navegador)' : 'de verdad (servidor)'}`);
 const ppDevEstado = () => `Perlas ${SAVE.perlas || 0} · Monedas ${SAVE.monedas} · Corazones ${ppVidas()} · Compras de prueba: ${SAVE.devCompras ? 'SÍ' : 'NO'}`;
 // tras tocar algo en el panel, que se vea ya: la barra de ayudas, los botones del camino y la portada
 function ppRefrescaTodo() { ppBarraAyudas(); ppPintaLateral(); if (PP_PANT.actual === 'titulo') ppIrA('titulo'); }

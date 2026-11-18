@@ -58,4 +58,23 @@ async function gachaTiraServidor(n, gratis, maq = 'ropa') {
   return est.sale.map(s => { const [cat, id] = s.pieza.split(':'); return { cat, it: arItem(cat, id), nuevo: s.nuevo, devuelve: s.devuelve, unidades: s.unidades }; }).filter(x => x.it);
 }
 // una compra con dinero real (Google Play, core/js/sistema/pagos.js) la entrega el servidor (servidor/91): aquí solo se vuelve a pedir el estado y se repinta la tienda
-if (typeof hook === 'function') hook('compra', () => { if (!RFS.activo()) return; RFS.refresca().then(() => { const t = E('p-tienda'); if (t && !t.hidden) { tiendaPinta(); tiendaSigueCompra(); } }); });
+// (también una compra de probador, que no cobra: ADR 146)
+const tiendaAlDia = () => { const t = E('p-tienda'); if (t && !t.hidden) { tiendaPinta(); tiendaSigueCompra(); } };
+if (typeof hook === 'function') hook('compra', () => { if (!RFS.activo()) return; RFS.refresca().then(tiendaAlDia); });
+// LA CUENTA DE PROBADOR (rol alfa, ADR 146; core/js/sistema/probador.js; qué toca cada cosa lo dice RF.Probador, dominio/probador.js)
+// · el regalo de Acciones del panel DEV: el servidor devuelve el estado de la cuenta y se aplica como cualquier otra respuesta suya
+function probadorRegalo(estado) {
+  if (!RFS.activo() || !RF.Probador.esEstado(estado)) return 'Rouflage no está hablando con el servidor en esta página (sin cuenta o con el servidor apagado)';   // core lo dice en el panel DEV
+  RFS.aplica(estado); guardaPartida();
+  if (typeof refrescaHud === 'function') refrescaHud(true);
+  tiendaAlDia();
+}
+// · el reseteo: con el servidor ya reseteado y antes de recargar, se deja de hablar con él, se tira su última respuesta y se limpia la partida
+//   de aquí (lo pendiente de mandar incluido); se guarda ya limpia para que sea esa la que suba core
+function probadorReseteo(que, lugar) {
+  lugar.olvida(RFS.olvida());
+  RF.Probador.limpia(SAVE, que);
+  for (const k of RF.Probador.claves(que)) lugar.olvida(k);
+  guardaPartida();
+}
+if (typeof hook === 'function') { hook('probador-regalo', probadorRegalo); hook('probador-reseteo', probadorReseteo); }

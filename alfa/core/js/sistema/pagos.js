@@ -16,9 +16,10 @@ const PAGOS = (() => {
   };
   const disponible = () => !!plugin() && typeof CUENTA !== 'undefined' && CUENTA.activa && typeof AJUSTES !== 'undefined' && !!AJUSTES.id;
   // tras una compra o al restaurar: el saldo del servidor manda (todo lo pendiente ya se mandó antes de comprar)
-  async function refrescar() {
+  // `dado`: un estado que el servidor acaba de devolver (el regalo de probador): se aplica ese y no se vuelve a preguntar
+  async function refrescar(dado) {
     if (typeof ECO_SOMBRA === 'undefined' || typeof SAVE === 'undefined') return null;
-    const r = await CUENTA.rpc('estado', { p_juego: AJUSTES.id }); if (!r) return null;
+    const r = dado || await CUENTA.rpc('estado', { p_juego: AJUSTES.id }); if (!r) return null;
     SAVE.gold = r.oro; SAVE.gems = r.gemas; SAVE.tickets = r.entradas; ECO_SOMBRA.apuntaLocal(r);
     if (Array.isArray(r.reclamos) && typeof fire === 'function') fire('derechos', r.reclamos);
     if (typeof saveGame === 'function') saveGame();
@@ -29,6 +30,11 @@ const PAGOS = (() => {
   async function verificar(producto, token) {
     const r = await CUENTA.funcion('pagos-play', { juego: AJUSTES.id, producto, token });
     if (!r || !r.ok) throw new Error((r && r.error) || 'pago');
+    return entrega(r);
+  }
+  // lo que el servidor acaba de entregar (por Google Play o por una compra de probador, PROBADOR.compra): el objeto al inventario, el gancho
+  // 'compra' y el saldo del servidor. Devuelve lo que recibe el juego en MONEDAS.compraReal: { real: true, gemas, entradas, derecho, objeto… }
+  async function entrega(r) {
     if (r.objeto && r.objeto.u && typeof SAVE !== 'undefined' && Array.isArray(SAVE.inv) && !SAVE.inv.some(x => x.u === r.objeto.u)) SAVE.inv.push({ u: r.objeto.u, k: r.objeto.k, id: r.objeto.id, q: r.objeto.q });
     if (typeof fire === 'function') fire('compra', r);
     await refrescar().catch(() => { /* sin red justo ahora: el saldo llega en la próxima sincronización */ });
@@ -61,9 +67,9 @@ const PAGOS = (() => {
   const errorTexto = e => {
     const m = String((e && e.message) || e);
     return /cancelad/i.test(m) ? '' : /ya_comprado|ALREADY_OWNED/i.test(m) ? tr('Ya lo tienes') : /pendiente/.test(m) ? tr('Google todavía no ha confirmado el pago: lo recibirás en cuanto lo haga')
-      : /pais/.test(m) ? tr('No se vende en tu país') : /cuenta/.test(m) ? tr('Esa compra se hizo con otra cuenta') : /sin_sesion|sin_conexion|Failed to fetch|NetworkError/i.test(m) ? tr('Necesitas conexión para comprar')
+      : /pais/.test(m) ? tr('No se vende en tu país') : /cuenta_alfa/.test(m) ? tr('Las cuentas de probador no pueden pagar con dinero real; prueba la compra en la alfa.') : /cuenta/.test(m) ? tr('Esa compra se hizo con otra cuenta') : /sin_sesion|sin_conexion|Failed to fetch|NetworkError/i.test(m) ? tr('Necesitas conexión para comprar')
       : /NOT_SUPPORTED|UNAVAILABLE|sin_plugin/i.test(m) ? tr('Google Play no está disponible en este aparato') : tr('No se ha podido completar la compra. Si Google te ha cobrado, lo recibirás en unos minutos.');
   };
   if (typeof hook === 'function') hook('cuenta', () => setTimeout(restaurar, 3000));
-  return { disponible, comprar, verificar, restaurar, refrescar, precios, errorTexto };
+  return { disponible, comprar, verificar, entrega, restaurar, refrescar, precios, errorTexto };
 })();

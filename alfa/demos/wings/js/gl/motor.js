@@ -62,7 +62,16 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   };
 
   // ---------- programas ----------
-  GL.NIEBLA = 'float niebla(float d){ return floor(smoothstep(3000.0,9500.0,d)*12.0)/12.0; } const vec3 BRUMA=vec3(0.78,0.90,0.98);';
+  // La bruma es de cada ambiente (GL.ambiente): de día, azul claro; al atardecer de Barcelona, anaranjada.
+  GL.NIEBLA = 'uniform vec3 uBruma; float niebla(float d){ return floor(smoothstep(3000.0,9500.0,d)*12.0)/12.0; }';
+  // El ambiente: color de la bruma y del cielo alto, tinte del mar, de las nubes y de todo lo que se pinta con mallas, y dónde
+  // está el sol (un vector hacia él, o null si no se ve). GL.ponAmbiente(nombre) lo cambia.
+  const AMBIENTES = {
+    dia: { bruma: [0.78, 0.90, 0.98], cielo: [0.30, 0.57, 0.93], mar: [1, 1, 1], nubes: [1.3, 1.3, 1.32], tinte: [1, 1, 1], sol: null },
+    atardecer: { bruma: [0.99, 0.70, 0.50], cielo: [0.20, 0.27, 0.56], mar: [0.62, 0.60, 0.82], nubes: [1.45, 1.0, 0.85], tinte: [1.08, 0.93, 0.82], sol: [-0.33, 0.12, -0.94] },
+  };
+  GL.ambiente = AMBIENTES.dia;
+  GL.ponAmbiente = (nombre) => { GL.ambiente = AMBIENTES[nombre] || AMBIENTES.dia; };
   GL.programa = function (vs, fs) {
     const p = gl.createProgram();
     for (const [tipo, codigo] of [[gl.VERTEX_SHADER, vs], [gl.FRAGMENT_SHADER, fs]]) {
@@ -86,7 +95,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       'attribute vec3 aPos; attribute vec3 aCol; uniform mat4 uM,uVP; uniform vec3 uOjo; varying vec3 vCol; varying float vD;' +
       'void main(){ vec4 w=uM*vec4(aPos,1.0); vD=distance(w.xyz,uOjo); vCol=aCol; gl_Position=uVP*w; }',
       'precision ' + GL.alta + ' float; varying vec3 vCol; varying float vD; uniform vec3 uTinte; uniform float uSombra,uNiebla;' + GL.NIEBLA +
-      'void main(){ vec3 c = uSombra>0.5 ? vec3(0.07,0.31,0.64) : min(vCol*uTinte,vec3(1.0)); gl_FragColor=vec4(mix(c,BRUMA,niebla(vD)*uNiebla),1.0); }');
+      'void main(){ vec3 c = uSombra>0.5 ? vec3(0.07,0.31,0.64) : min(vCol*uTinte,vec3(1.0)); gl_FragColor=vec4(mix(c,uBruma,niebla(vD)*uNiebla),1.0); }');
     aPos = gl.getAttribLocation(pMalla.p, 'aPos'); aCol = gl.getAttribLocation(pMalla.p, 'aCol');
     gl.disable(gl.CULL_FACE);
     return true;
@@ -96,10 +105,10 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // Empieza a pintar mallas con esta cámara. Después: GL.malla(...) las veces que haga falta.
   GL.empiezaMallas = function (VP, ojo) {
     gl.useProgram(pMalla.p); gl.enableVertexAttribArray(aPos); gl.enableVertexAttribArray(aCol);
-    gl.uniformMatrix4fv(pMalla.u.uVP, false, VP); gl.uniform3fv(pMalla.u.uOjo, ojo);
+    gl.uniformMatrix4fv(pMalla.u.uVP, false, VP); gl.uniform3fv(pMalla.u.uOjo, ojo); gl.uniform3fv(pMalla.u.uBruma, GL.ambiente.bruma);
     GL.tinte(1, 1, 1); gl.uniform1f(pMalla.u.uNiebla, 1);
   };
-  GL.tinte = (r, g, b) => gl.uniform3f(pMalla.u.uTinte, r, g, b);
+  GL.tinte = (r, g, b) => { const t = GL.ambiente.tinte; gl.uniform3f(pMalla.u.uTinte, r * t[0], g * t[1], b * t[2]); };
   GL.conNiebla = (si) => gl.uniform1f(pMalla.u.uNiebla, si ? 1 : 0);
   function atributos() { gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 24, 0); gl.vertexAttribPointer(aCol, 3, gl.FLOAT, false, 24, 12); }
   GL.malla = function (m, matriz, sombra) {

@@ -75,7 +75,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   function programaFondo() {
     return GL.programa(
       'attribute vec2 aP; varying vec2 vN; void main(){ vN=aP; gl_Position=vec4(aP,0.0,1.0); }',
-      'precision ' + GL.alta + ' float; varying vec2 vN; uniform vec3 uOjo,uR,uU,uF; uniform float uTan,uAsp,uT;' + GL.NIEBLA +
+      'precision ' + GL.alta + ' float; varying vec2 vN; uniform vec3 uOjo,uR,uU,uF; uniform vec3 uCielo,uMar,uSol; uniform float uTan,uAsp,uT,uConSol;' + GL.NIEBLA +
       'float h(vec2 p){ p=mod(p,1024.0); return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }' +
       'float vn(vec2 p){ vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1.0,0.0)),f.x),mix(h(i+vec2(0.0,1.0)),h(i+vec2(1.0,1.0)),f.x),f.y); }' +
       'vec3 mar(vec2 p,float t){' +
@@ -89,8 +89,11 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
       ' if(lod<4.0 && h(c2+fase*17.0)>0.985) col=vec3(0.80,0.92,1.0);' +
       ' return col; }' +
       'void main(){ vec3 d=normalize(uF+vN.x*uAsp*uTan*uR+vN.y*uTan*uU); vec3 col;' +
-      ' if(d.y>=-0.0005){ float k=floor(clamp(d.y*1.7,0.0,1.0)*11.0)/11.0; col=mix(BRUMA,vec3(0.30,0.57,0.93),k); }' +
-      ' else { float t=-uOjo.y/d.y; col=mix(mar(uOjo.xz+d.xz*t,t),BRUMA,niebla(t)); }' +
+      ' if(d.y>=-0.0005){ float k=floor(clamp(d.y*1.7,0.0,1.0)*11.0)/11.0; col=mix(uBruma,uCielo,k);' +
+      '  if(uConSol>0.5){ float s=dot(d,uSol);' +                                                                 // el sol bajo y su resplandor en franjas
+      '   if(s>0.9984) col=vec3(1.0,0.95,0.74); else if(s>0.9955) col=vec3(1.0,0.80,0.42);' +
+      '   else col=mix(col,vec3(1.0,0.56,0.30),floor(clamp((s-0.72)/0.28,0.0,1.0)*7.0)/7.0*0.55); } }' +
+      ' else { float t=-uOjo.y/d.y; col=mix(mar(uOjo.xz+d.xz*t,t)*uMar,uBruma,niebla(t)); }' +
       ' gl_FragColor=vec4(col,1.0); }');
   }
 
@@ -113,6 +116,7 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     if (nombre === MU.escenario) return;
     if (nombre === 'barcelona') { A.ciudad.crear(); islasGuardadas = MU.islas; MU.islas = []; }
     else if (islasGuardadas) MU.islas = islasGuardadas;
+    GL.ponAmbiente(nombre === 'barcelona' ? 'atardecer' : 'dia');
     MU.escenario = nombre;
   };
 
@@ -128,9 +132,12 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
   // cam = { ojo, ejes: { s, u, f }, VP, fov, asp }. Deja el programa de mallas puesto y la profundidad encendida.
   MU.dibujar = function (cam, t) {
     const ojo = cam.ojo;
+    MU.t = t;
     gl.disable(gl.DEPTH_TEST); gl.depthMask(false);
     gl.useProgram(pFondo.p); gl.bindBuffer(gl.ARRAY_BUFFER, bufFondo); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 2, gl.FLOAT, false, 0, 0);
     gl.uniform3fv(pFondo.u.uOjo, ojo); gl.uniform3fv(pFondo.u.uR, cam.ejes.s); gl.uniform3fv(pFondo.u.uU, cam.ejes.u); gl.uniform3fv(pFondo.u.uF, cam.ejes.f);
+    const am = GL.ambiente; gl.uniform3fv(pFondo.u.uBruma, am.bruma); gl.uniform3fv(pFondo.u.uCielo, am.cielo); gl.uniform3fv(pFondo.u.uMar, am.mar);
+    gl.uniform1f(pFondo.u.uConSol, am.sol ? 1 : 0); gl.uniform3fv(pFondo.u.uSol, GL.V.norma(am.sol || [0, 1, 0]));
     gl.uniform1f(pFondo.u.uTan, Math.tan(cam.fov / 2)); gl.uniform1f(pFondo.u.uAsp, cam.asp); gl.uniform1f(pFondo.u.uT, t);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
@@ -145,8 +152,8 @@ var WINGS = globalThis.WINGS || (globalThis.WINGS = {});
     const ojo = cam.ojo;
     gl.enable(gl.DEPTH_TEST); gl.depthMask(true); gl.clear(gl.DEPTH_BUFFER_BIT);
     for (const i of MU.islas) copias(i.x, i.z, ojo, 10500, (x, z, d) => GL.malla(d < 2600 * i.e ? i.forma.fina : i.forma.basta, M.varias(M.T(x, 0, z), M.RY(i.giro * Math.PI / 2), M.S(i.e, i.e, i.e))));
-    if (MU.escenario === 'barcelona') A.ciudad.dibujar(cam);
-    GL.tinte(1.3, 1.3, 1.32);   // las nubes, más blancas por los lados
+    if (MU.escenario === 'barcelona') A.ciudad.dibujar(cam, MU.t);
+    GL.tinte(...GL.ambiente.nubes);   // las nubes, más blancas por los lados (rosadas al atardecer)
     for (const [n, x, z, d] of vistas) GL.malla(d < 1500 ? n.forma.fina : n.forma.basta, M.varias(M.T(x, n.y, z), M.RY(n.giro * Math.PI / 2), M.S(n.e, n.e, n.e)));
     GL.tinte(1, 1, 1);
   };

@@ -1,12 +1,11 @@
-// Fans Of · Gashapón animado (tras el flag 'gashapon-nuevo'): la revelación a pantalla completa (la cápsula sale de la máquina, vuela al centro, tiembla más
+// Fans Of · Gashapón animado: la revelación a pantalla completa (la cápsula sale de la máquina, vuela al centro, tiembla más
 // cuanto mejor es y se abre con rayos) y el marco de las máquinas animadas. Cada máquina es un «estilo»: la clásica (gachapon-clasica.js) la usan todos los juegos;
 // un juego puede añadir otro con GACHA_FX.estilo('nombre', {...}) y ponérselo a una máquina suya (MAQUINAS.x.estilo). Ver la clásica como ejemplo.
-// gachapon.js la llama: GACHA_FX.on() dice si está abierta; GACHA_FX.maquina(cv, X, tab) dibuja la máquina; GACHA_FX.tirada(rarezas, X, mostrar) hace la animación
+// gachapon.js la llama: GACHA_FX.maquina(cv, X, tab) dibuja la máquina; GACHA_FX.tirada(rarezas, X, mostrar) hace la animación
 // y al abrirse la cápsula llama a mostrar() (la carta o la cuadrícula de siempre). Tocar la pantalla durante la animación la salta.
 'use strict';
 const GACHA_FX = (() => {
   const TAU = Math.PI * 2;
-  const on = () => NUCLEO.flag('gashapon-nuevo', 'Máquina y animación nuevas del gashapón (bolas que se mueven, cápsula que tiembla y se abre)', false);
   // sonidos propios: la manivela, cada temblor (más agudo cuanto más cerca de abrirse), el suspense, la mejora sorpresa y la apertura
   Object.assign(SFX, {
     gcrank: () => { tone(540, 470, 0.05, 'square', 0.045); noise(0.04, 0.05, 2400, 'bandpass'); },
@@ -223,5 +222,5 @@ const GACHA_FX = (() => {
   }
   // para los estilos: las ayudas de dibujo y las chispas de la máquina
   const util = { TAU, BOLAS, fs, cir, rec, texto, capsula, brillo, ease, easeIn, easeIO, back, lerp, rnd, chispas: (x, y, n, cols, v, tipo) => chispas(M.parts, x, y, n, cols, v, tipo) };
-  return { on, maquina, tirada, estilo: (nombre, e) => { ESTILOS[nombre] = e; }, util };
+  return { maquina, tirada, estilo: (nombre, e) => { ESTILOS[nombre] = e; }, util };
 })();

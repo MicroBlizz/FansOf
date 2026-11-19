@@ -153,7 +153,6 @@
 .tab { font-family: var(--font-display); font-size: 17px; padding: 8px 14px 4px; border-radius: 12px; border: 3px solid var(--outline); background: var(--tray); cursor: pointer; box-shadow: 0 3px 0 var(--outline); }
 .tab[aria-pressed="true"] { background: var(--tray-hi); box-shadow: 0 0 0 3px var(--gold), 0 3px 0 var(--outline); }
 #gacha-cv { width: 270px; height: 300px; display: block; }
-#gacha-cv.shake { animation: gshake 0.12s linear 6; }
 .small-print { font-size: 11px; font-weight: 700; color: var(--ink-dim); margin: 0; max-width: 440px; line-height: 1.3; }
 /* Probabilidades del gashapón: una por línea (v0.9.59) */
 #gacha-odds { width: 100%; max-width: 340px; font-size: 12px; line-height: 1.25; text-align: left; }

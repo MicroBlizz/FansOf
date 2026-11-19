@@ -84,6 +84,7 @@ function ppAbreVictoria(extra = '', ancha = false, titulo, opc = {}) {
   ppVicBarra(T.vicVista ? SAVE.monedas : SAVE.monedas - ganado);   // la barra de arriba, nítida (js/victoria-panel.js)
   ppVictoriaAnima(t, T);
   ppVictoriaBotones(t, T, opc);
+  ppVicEncaja(t);   // que quepa sin la barra de desplazamiento (js/victoria-panel.js)
   return t;
 }
 /* ---------- 0 estrellas: sin toques ---------- */
@@ -111,5 +112,6 @@ function ppAbreDerrota(texto) {
   ppVicFondo(0); ppVicBarra(SAVE.monedas);   // tonos fríos y la barra de arriba (js/victoria-panel.js)
   t.classList.add('pp-gana', 'pp-gana-0');
   ppVictoriaFiesta(t, 0);
+  ppVicEncaja(t);
   return t;
 }

@@ -113,3 +113,18 @@ function ppVicVuela(t, desde, ganado, espera = PP_VIC_VUELO.espera) {
     for (let k = 0; k < n; k++) ppVicMoneda(a, b, k * PP_VIC_VUELO.cada, llega);
   }, espera);
 }
+/* ---------- que quepa sin desplazar ---------- */
+// En una pantalla baja la ventana no cabía y salía la barra gris de desplazamiento (Pepins, 19-11-2026, alfa b1314: «es horrible»;
+// eligió que quepa siempre). Primero se aprieta (.pp-vic-justa: menos huecos, estrellas y letras algo menores) y, si aún no
+// cabe, se encoge entera con zoom (--vic-zoom). Va un fotograma después, cuando ya están los botones que pone cada ventana.
+function ppVicEncaja(t) {
+  requestAnimationFrame(() => {
+    if (!t.isConnected || !t.classList.contains('pp-gana')) return;
+    const m = t.parentElement, cs = getComputedStyle(m);
+    const libre = m.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    t.style.setProperty('--vic-zoom', '1');
+    if (t.scrollHeight <= libre) return;
+    t.classList.add('pp-vic-justa');
+    if (t.scrollHeight > libre) t.style.setProperty('--vic-zoom', String(Math.max(0.6, libre / t.scrollHeight)));
+  });
+}

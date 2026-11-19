@@ -71,6 +71,25 @@
   background: rgba(255, 255, 255, 0.95); padding: 10px 26px; border-radius: 999px; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12); animation: pp-vic-late 1.2s ease-in-out infinite; }
 .pp-fiesta-toques.pp-rapido .pp-fiesta-saltar { opacity: 0; transition: opacity 0.2s; }
 
+/* que quepa sin desplazar (Pepins, 19-11-2026): nunca la barra gris; si no cabe, se aprieta y se encoge (ppVicEncaja) */
+.pp-tarjeta.pp-gana { zoom: var(--vic-zoom, 1); scrollbar-width: none; }
+.pp-tarjeta.pp-gana::-webkit-scrollbar { display: none; }
+.pp-vic-fila-baja { flex-wrap: nowrap; }
+.pp-vic-fila-baja .pp-vic-desglose { font-size: 15px; white-space: nowrap; }
+.pp-vic-fila-baja .pp-vic-tienda { white-space: nowrap; font-size: 16px; padding: 7px 12px; }
+.pp-tarjeta.pp-vic-justa { gap: 7px; padding-top: 0; }
+.pp-vic-justa .pp-vic { padding-top: 4px; }
+.pp-vic-justa .pp-vic .pp-estrellas { height: 112px; }
+.pp-vic-justa .pp-vic .pp-est, .pp-vic-justa .pp-vic .pp-est img { width: 88px; height: 88px; }
+.pp-vic-justa .pp-vic .pp-est:nth-child(2), .pp-vic-justa .pp-vic .pp-est:nth-child(2) img { width: 116px; height: 116px; }
+.pp-tarjeta.pp-vic-justa .pp-vic h2 { font-size: 50px; }
+.pp-vic-justa .pp-vic-panel { gap: 6px; padding: 10px 10px; }
+.pp-vic-justa .pp-vic-dato { padding: 5px 4px 6px; }
+.pp-vic-justa .pp-vic-dato b { font-size: 26px; }
+.pp-vic-justa .pp-vic-slime, .pp-vic-justa .pp-vic-slime > .pp-ico, .pp-vic-justa .pp-vic-slime img { width: 78px !important; height: 78px !important; }
+.pp-vic-justa .pp-vic-extra, .pp-vic-justa .pp-vic-aviso { padding: 6px 8px; }
+.pp-gana.pp-vic-justa > .pp-btn { font-size: 30px; padding-top: 11px; padding-bottom: 12px; }
+
 @media (prefers-reduced-motion: reduce) {
   .pp-vic-slime, .pp-vic-slime *, .pp-fiesta-toques * { animation: none !important; }
 }

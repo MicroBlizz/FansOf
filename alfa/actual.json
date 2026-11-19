@@ -1,8 +1,8 @@
 {
- "build": 1315,
- "hash": "1c1b7eb",
- "fecha": "2026-11-19T17:25:58Z",
- "mensaje": "Pop: tocar un compañero de «Tu equipo» explica lo que hace, con aviso de Lola (tarea #142, cambio de Pepins)",
+ "build": 1316,
+ "hash": "cd718e0",
+ "fecha": "2026-11-19T17:32:25Z",
+ "mensaje": "Pop: la pantalla de victoria siempre cabe sin la barra gris de desplazamiento (se aprieta y, si hace falta, se encoge) (tarea #157, petición de Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

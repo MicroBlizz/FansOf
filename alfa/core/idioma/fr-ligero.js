@@ -279,4 +279,11 @@ IDIOMA.add({
   "RESETEAR": "RÉINITIALISER",
   "El servidor ya lo ha dado, pero el juego ha fallado al aplicarlo. Recarga la página para verlo.": "Le serveur l'a déjà livré, mais le jeu n'a pas réussi à l'appliquer. Recharge la page pour le voir.",
   "La partida todavía se está guardando en la nube. Espera un momento y prueba otra vez.": "La partie est encore en cours de sauvegarde dans le cloud. Attends un instant et réessaie.",
+  // la puerta de adultos antes de pagar (tarea #178, ADR 166): core/js/sistema/puerta-adultos.js
+  "PREGUNTA PARA ADULTOS": "QUESTION POUR LES ADULTES",
+  "Para comprar con dinero real, pide a una persona adulta que conteste:": "Pour acheter avec de l'argent réel, demande à un adulte de répondre :",
+  "¿Cuánto es {a} × {b}?": "Combien font {a} × {b} ?",
+  "Respuesta": "Réponse",
+  "RESPONDER": "RÉPONDRE",
+  "Respuesta incorrecta: no se ha comprado nada.": "Mauvaise réponse : rien n'a été acheté.",
 });

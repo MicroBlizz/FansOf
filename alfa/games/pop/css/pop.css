@@ -73,21 +73,6 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-redondo:active { transform: translateY(4px) scale(0.95); }
 .pp-columna { display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%; margin-top: 6px; }
 .pp-columna .pp-btn, .pp-columna .pp-btn2 { min-width: 280px; }
-/* el tutorial de Lola: abajo, encima del equipo, con su cara a la izquierda y un bocadillo */
-#pp-lola { position: absolute; left: 14px; right: 14px; bottom: 26px; display: flex; align-items: flex-end; gap: 6px; pointer-events: auto; z-index: 40; }
-#pp-ui:has(#pp-lola.pp-espera:not([hidden]))::before { content: ''; position: absolute; inset: 0; z-index: 39; pointer-events: auto; background: rgba(60, 20, 60, 0.32); }   /* tapa y oscurece todo hasta pulsar ¡VALE! */
-#pp-lola.pp-entra { animation: pp-lola 0.35s cubic-bezier(.3, 1.6, .5, 1) both; }
-@keyframes pp-lola { from { transform: translateY(140px); } to { transform: translateY(0); } }
-#pp-lola-cara { flex: none; width: 96px; height: 96px; animation: pp-bota 0.9s ease-in-out infinite; }
-@keyframes pp-bota { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.pp-bocadillo { position: relative; flex: 1; background: #fff; border-radius: 26px; padding: 14px 18px 14px; box-shadow: inset 0 0 0 5px #ff9ccf, 0 8px 0 rgba(196, 58, 132, 0.3); display: flex; flex-direction: column; gap: 8px; }
-.pp-bocadillo::before { content: ''; position: absolute; left: -14px; bottom: 26px; width: 22px; height: 22px; background: #fff; transform: rotate(45deg); box-shadow: -5px 5px 0 0 #ff9ccf; }
-.pp-bocadillo b { font-size: 20px; color: #e0468f; line-height: 1; }
-.pp-bocadillo p { margin: 0; font-size: 20px; font-weight: 500; line-height: 1.3; color: var(--pp-cafe); }
-.pp-bocadillo .pp-btn2 { align-self: flex-end; min-width: 0; font-size: 20px; padding: 9px 22px 10px; --c1: #ffb057; --c2: #ff7a1a; --borde: #c2510a; }
-/* con una ventana abierta (pausa, nivel superado…) Lola espera escondida y vuelve al cerrarla */
-#pp-ui:has(#pp-modal:not([hidden])) #pp-lola { visibility: hidden; }
-#pp-ui:has(#pp-modal:not([hidden])) #pp-lola.pp-encima { visibility: visible; }   /* las que explican esa ventana (tienda, pase…) */
 /* fase 2: monedas, cofres y botones con precio */
 .pp-ico { display: inline-block; vertical-align: middle; border-radius: 50%; object-fit: contain; }
 img.pp-ico { border-radius: 0; }

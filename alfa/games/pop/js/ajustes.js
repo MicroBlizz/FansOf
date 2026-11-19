@@ -44,15 +44,15 @@ const PP_CFG = {
     cosas: {
       equipo:  { nivel: 3, lugar: 'juego' },
       regalo:  { nivel: 3, lugar: 'lateral' },
-      duelos:  { nivel: 5, lugar: 'portada', regalo: { ayudas: { pista: 1 } }, texto: '¡Nuevo en el menú: DUELOS! Reta al CEO o a otra persona. ¡Te regalo una lupa!' },
-      hucha:   { nivel: 6, lugar: 'lateral', regalo: { monedas: 30 }, texto: '¡Nuevo: la hucha! Se llena sola al pasar niveles. ¡Toma 30 monedas!' },
+      duelos:  { nivel: 5, lugar: 'portada', regalo: { ayudas: { pista: 1 } }, texto: '¡Nuevo: DUELOS! Toma una lupa de regalo.' },
+      hucha:   { nivel: 6, lugar: 'lateral', regalo: { monedas: 30 }, texto: '¡Nueva: la hucha! Toma 30 monedas.' },
       oferta:  { nivel: 7, lugar: 'lateral' },
-      memoria: { nivel: 8, lugar: 'portada', regalo: { ayudas: { martillo: 1 } }, texto: '¡Nuevo en el menú: MEMORIA! Repite la melodía de las burbujas, sin gastar corazones. ¡Toma un martillo!' },
-      pase:    { nivel: 9, lugar: 'lateral', regalo: { ayudas: { bomba: 1 } }, texto: '¡Nuevo: el Pase! Cada nivel nuevo te da puntos para sus premios. ¡Toma una bomba!' },
-      ranking: { nivel: 10, lugar: 'portada', regalo: { monedas: 30 }, texto: '¡Nuevo en el menú: RANKING! Compara tus estrellas con las de todo el mundo. ¡Toma 30 monedas!' },
-      feria:   { nivel: 11, lugar: 'lateral', regalo: { monedas: 50 }, texto: '¡Nuevo: la Feria del finde! De viernes a domingo cada nivel da tickets para premios. ¡Toma 50 monedas!' },
-      perfil:  { nivel: 12, lugar: 'portada', regalo: { monedas: 30 }, texto: '¡Nuevo en el menú: PERFIL! Elige tu personaje y tu marco para los duelos. ¡Toma 30 monedas!' },
-      amigos:  { nivel: 12, lugar: 'juego', regalo: { monedas: 30 }, texto: '¡Nuevo: corazones entre amigos! Si te quedas sin corazones, toca uno y pídeselos. ¡Toma 30 monedas!' },
+      memoria: { nivel: 8, lugar: 'portada', regalo: { ayudas: { martillo: 1 } }, texto: '¡Nuevo: MEMORIA! Toma un martillo de regalo.' },
+      pase:    { nivel: 9, lugar: 'lateral', regalo: { ayudas: { bomba: 1 } }, texto: '¡Nuevo: el Pase! Toma una bomba de regalo.' },
+      ranking: { nivel: 10, lugar: 'portada', regalo: { monedas: 30 }, texto: '¡Nuevo: RANKING! Toma 30 monedas.' },
+      feria:   { nivel: 11, lugar: 'lateral', regalo: { monedas: 50 }, texto: '¡Nueva: la Feria del finde! Toma 50 monedas.' },
+      perfil:  { nivel: 12, lugar: 'portada', regalo: { monedas: 30 }, texto: '¡Nuevo: tu PERFIL! Toma 30 monedas.' },
+      amigos:  { nivel: 12, lugar: 'juego', regalo: { monedas: 30 }, texto: '¡Pide corazones a tus amigos! Toma 30 monedas.' },
     },
     seguidos: 3,       // niveles 1 a 3: SIGUIENTE entra directo en el siguiente, sin pasar por el camino
     sinCorazon: 3,     // niveles 1 a 3: quedarte sin toques no cuesta corazón

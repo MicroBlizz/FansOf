@@ -55,5 +55,5 @@ function ppExplicaAbre(k) {
   PP_EXP.k = k; PP_EXP.reloj = setTimeout(ppExplicaCierra, 5000);
 }
 // el aviso de Lola, la primera vez que se ve el equipo en un nivel (lo pide ppTutorialesNivel, js/partida.js)
-PP_TUTO.equipoToca = [{ t: '¡Toca a tus compañeros de abajo para ver qué hace cada uno!' }];
+PP_TUTO.equipoToca = [{ t: '¡Toca a tus compañeros para ver qué hacen!' }];
 function ppExplicaTutorial(d) { if (ppCompanerosActivo() && !d.nim && ppEquipoNivel(d).length) ppTutorial('equipoToca'); }

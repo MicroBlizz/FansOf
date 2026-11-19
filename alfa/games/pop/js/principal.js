@@ -76,6 +76,7 @@ function ppArranque() {
   $pp('#pp-cort-jugar').onclick = ppCortPulsa;
   $pp('#pp-listo').onclick = () => { if (ppCortActiva()) return; play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
+  $pp('#pp-lola-saltar').onclick = () => { play('select'); ppLolaSalta(); };   // «Saltar»: sin consejos (js/lola.js)
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-tienda').onclick = () => { ppCargaSonidos(); play('select'); ppTienda(null, 'ofertas'); };
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };

@@ -122,8 +122,21 @@ const MONEDAS = (() => {
     });
     return true;
   }
+  // Puerta de adultos (tarea #178, ADR 166; core/js/sistema/puerta-adultos.js): con el flag común 'puerta-adultos', antes de toda compra que puede
+  // acabar en un pago (o en su prueba) sale una pregunta para adultos; si se falla, no se abre nada más. Donde no se puede pagar, no sale.
+  const conPuerta = () => typeof NUCLEO !== 'undefined' && typeof NUCLEO.flag === 'function' && typeof PUERTA_ADULTOS !== 'undefined'
+    && NUCLEO.flag('puerta-adultos', 'Pregunta para adultos antes de cada compra con dinero real (tarea #178, ADR 166)');
+  function vaAPagar(producto) {
+    if (!producto) return enDesarrollo();
+    if (typeof PROBADOR !== 'undefined' && PROBADOR.puede && PROBADOR.puede()) return PROBADOR.enPruebas();
+    return (typeof PAGOS !== 'undefined' && PAGOS.disponible()) || (typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible()) || enDesarrollo();
+  }
   function compraReal(titulo, html, alComprar, producto) {
     if (typeof confirmBox !== 'function') return;
+    if (conPuerta() && vaAPagar(producto)) PUERTA_ADULTOS.pide(() => compraSinPuerta(titulo, html, alComprar, producto));
+    else compraSinPuerta(titulo, html, alComprar, producto);
+  }
+  function compraSinPuerta(titulo, html, alComprar, producto) {
     if (producto && compraProbador(titulo, html, alComprar, producto)) return;
     if (producto && typeof PAGOS !== 'undefined' && PAGOS.disponible()) {
       confirmBox(titulo, `${html}<small>${tr('Pago seguro con Google Play. Lo comprado queda en tu cuenta.')}</small>${casillaRenuncia()}`, tr('COMPRAR'), () => recomiendaCuenta(() => {

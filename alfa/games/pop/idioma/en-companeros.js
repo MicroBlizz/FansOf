@@ -142,5 +142,5 @@ IDIOMA.add({
   "La barra azul se llena con los toques seguidos que revientan 3 o más. Actúa con un COMBO x{n}.": "The blue bar fills with taps in a row that pop 3 or more. It acts on a COMBO x{n}.",
   "Sin barra: actúa solo cuando le toca.": "No bar: it acts on its own when its moment comes.",
   "Toca otra vez para cerrar": "Tap again to close",
-  "¡Toca a tus compañeros de abajo para ver qué hace cada uno!": "Tap your buddies below to see what each one does!"
+  "¡Toca a tus compañeros para ver qué hacen!": "Tap your buddies to see what they do!"
 });

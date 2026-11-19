@@ -86,6 +86,7 @@ function ppEmpiezaNivel(T, d, dif, manita) {
   ppTutorialesNivel(d);
   if (T.nim && T.nim.turno === 'espera') ppHabNimPrevia(T);   // Pellizco y Saque de los compañeros de duelo (js/habilidades-duelo.js)
   if (!PP_LOLA.actual && PP_LOLA.cola.length) ppLolaSiguiente();   // lo que esperó a la cortinilla
+  ppLolaMomento();   // si no ha dicho nada, uno de los consejos que esperaban (js/lola.js)
 }
 // lo que explica Lola: el principio de cada mundo, los primeros niveles, el primer difícil y la primera pesadilla
 function ppTutorialesCamino(d, dif) {
@@ -106,6 +107,7 @@ function ppTutorialesNivel(d) {
 // un toque del jugador en la burbuja i del nivel abierto
 function ppToque(i) {
   const T = PP_P.T; if (!T || T.hecho || T.parado) return;
+  T.tocado = true;   // desde aquí Lola no habla hasta que acabe el nivel (js/lola.js)
   if (T.nim) { ppNimToque(i); return; }
   if (ppHabAntesDeToque(T, i)) return;   // Volteo de Pesadilla y la foto para Marcha atrás (js/habilidades-pesadilla.js)
   if (PP_AYUDA.modo) { ppAplicaAyuda(i); return; }   // martillo o bomba

@@ -26,6 +26,7 @@
     'js/serie/miniaturas.js', 'js/serie/miniaturas-armas.js', 'js/serie/miniaturas-cabeza-y-accesorios.js',   // los dibujos de sus miniaturas
     'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
+    'js/sistema/puerta-adultos.js',   // la pregunta para adultos antes de pagar con dinero real (tarea #178, ADR 166); antes de monedas.js
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/probador.js',     // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
     'js/sistema/probador-partida.js',   // qué queda de la partida de core al resetear una cuenta de probador (PROBADOR_PARTIDA) y su gancho
@@ -80,6 +81,7 @@
   const LIGERO = [
     'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js', 'js/sistema/sonido-archivos.js',
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
+    'js/sistema/puerta-adultos.js',   // la pregunta para adultos antes de pagar con dinero real (tarea #178, ADR 166); antes de monedas.js
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/probador.js',      // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
     'js/sistema/cuenta.js',        // la partida en la nube

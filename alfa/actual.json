@@ -1,8 +1,8 @@
 {
- "build": 1326,
- "hash": "9ae0575",
- "fecha": "2026-11-19T18:33:18Z",
- "mensaje": "Portada: quita «gratis» del texto de presentación (y «free» en inglés)",
+ "build": 1327,
+ "hash": "06c16d7",
+ "fecha": "2026-11-19T18:36:27Z",
+ "mensaje": "Pop: Lola habla en un globo corto cada vez y nunca mientras juegas, con «Saltar» y ¡VALE! fijo (tarea #140, cambios de Pepins tras el informe de 5 probadores)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -28,10 +28,13 @@ function ppVictoriaFrase(r) {
 function ppVictoriaDatos(r) {
   return '<div class="pp-vic-datos">' + PP_VICTORIA.datos(r).map(d => `<div class="pp-vic-dato"><small>${tr(PP_VIC_ROTULO[d.clave])}</small><b>${d.valor}</b></div>`).join('') + '</div>';
 }
-// las monedas del nivel (suben contando), el hueco del botón de doblarlas y, si toca, el cofre de siempre
-function ppVictoriaPremio(p) {
+// las monedas del nivel (suben contando) con el compañero celebrando al lado y el hueco del botón de doblarlas; debajo, de dónde
+// salen (nivel y toques de sobra) y «Gastar»; y, si toca, el cofre de siempre (2.ª vuelta, tarea #157)
+function ppVictoriaPremio(T) {
+  const p = T.premio;
   if (!p) return '';
-  const monedas = p.monedas ? `<div class="pp-vic-premio-fila"><p class="pp-premio pp-vic-premio">+<span class="pp-precio">${ppIcono('i-moneda', 40)}<span class="pp-vic-cuenta" data-total="${p.monedas}">0</span></span></p><span class="pp-vic-gastar-hueco"></span></div><div class="pp-vic-doble-hueco"></div>` : '';
+  const monedas = p.monedas ? `<div class="pp-vic-premio-fila">${ppVicSlimeHtml(T, true)}<p class="pp-premio pp-vic-premio">+<span class="pp-precio">${ppIcono('i-moneda', 40)}<span class="pp-vic-cuenta" data-total="${p.monedas}">0</span></span></p><span class="pp-vic-doble-hueco"></span></div>`
+    + `<div class="pp-vic-premio-fila pp-vic-fila-baja">${ppVicDesglose(p)}<span class="pp-vic-gastar-hueco"></span></div>` : '';
   return monedas + ppPremioHtml({ monedas: 0, cofre: p.cofre, perlas: p.perlas });
 }
 // la parte de arriba: rayos, destellos, estrellas, el nivel y la palabra grande
@@ -43,7 +46,7 @@ function ppVictoriaCabeza(clase, estrellas, nivel, palabra) {
 function ppVictoriaHtml(T, titulo) {
   const r = ppVictoriaResumen(T), nota = PP_VICTORIA.nota(T.estrellas);
   return ppVictoriaCabeza(nota, T.estrellas, T.titulo, titulo || tr(PP_VIC_NOTA[nota]))
-    + `<div class="pp-vic-panel">${ppVictoriaDatos(r)}<p class="pp-vic-frase">${ppVictoriaFrase(r)}</p>${ppVictoriaPremio(T.premio)}${ppFeriaLinea(T)}</div>`;
+    + `<div class="pp-vic-panel">${ppVictoriaDatos(r)}<p class="pp-vic-frase">${ppVictoriaFrase(r)}</p>${ppVictoriaPremio(T)}${ppVicExtras(T)}${ppFeriaLinea(T)}</div>`;
 }
 // un número que sube de `desde` a `hasta` en `seg` segundos, esperando `retraso` ms; frena al final
 function ppVicCuenta(el, desde, hasta, seg = PP_VIC_CUENTA, retraso = 500) {
@@ -69,11 +72,16 @@ function ppVictoriaAnima(t, T) {
   if (T.estrellas >= 3) setTimeout(() => play('ppVictoria'), 1250);
   ppVictoriaFiesta(t, T.estrellas);
   ppVicCuenta(cuenta, 0, ganado);
+  ppVicVuela(t, SAVE.monedas - ganado, ganado);   // y vuelan a la barra de arriba (js/victoria-panel.js)
 }
 // abre una ventana de victoria con la cabecera y `extra` debajo (el texto del rescate o del mundo nuevo).
 // `opc.vuelta`: la función que vuelve a abrir esta ventana al salir de la tienda; `opc.mapa`: si lleva el botón de ir al mapa.
 function ppAbreVictoria(extra = '', ancha = false, titulo, opc = {}) {
   const T = PP_P.T, t = ppAbre(ppVictoriaHtml(T, titulo) + extra, ancha);
+  const ganado = T.premio ? (T.premio.monedas || 0) * (T.doblado ? 2 : 1) : 0;
+  if (!T.vicVista) T.vicFondo = ppVicFondo(T.estrellas);   // el mismo fondo al volver de la tienda
+  else ppVicFondoPon(T.vicFondo);
+  ppVicBarra(T.vicVista ? SAVE.monedas : SAVE.monedas - ganado);   // la barra de arriba, nítida (js/victoria-panel.js)
   ppVictoriaAnima(t, T);
   ppVictoriaBotones(t, T, opc);
   return t;
@@ -98,7 +106,9 @@ function ppAbreDerrota(texto) {
   const palabra = p.pct >= 70 ? tr('¡Casi!') : tr('¡Sin toques!');
   const frase = p.pct >= 70 ? tr('¡Te faltaba poquito! A la próxima sale.') : tr('¡Ánimo! Prueba a empezar por otra burbuja.');
   const t = ppAbre(ppVictoriaCabeza('casi', 0, T && T.titulo, palabra)
-    + `<div class="pp-vic-panel"><p class="pp-vic-frase">${frase}</p>${ppDerrotaBarra(T)}<p class="pp-sub">${texto}</p></div>`);
+    + `<div class="pp-vic-panel"><p class="pp-vic-frase">${frase}</p>${ppDerrotaBarra(T)}`
+    + `<div class="pp-vic-premio-fila">${ppVicSlimeHtml(T, false)}<p class="pp-sub">${texto}</p></div>${ppVicRachaPerdida(T)}</div>`);
+  ppVicFondo(0); ppVicBarra(SAVE.monedas);   // tonos fríos y la barra de arriba (js/victoria-panel.js)
   t.classList.add('pp-gana', 'pp-gana-0');
   ppVictoriaFiesta(t, 0);
   return t;

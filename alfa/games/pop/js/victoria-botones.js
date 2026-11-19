@@ -23,6 +23,7 @@ function ppVictoriaDobla(t, T) {
   if (T.doblado) return;
   const m = T.premio.monedas; T.doblado = true; SAVE.monedas += m; ppGuarda(); play('ppPremio');
   ppVicCuenta(t.querySelector('.pp-vic-cuenta'), m, m * 2, 0.6, 0);
+  ppVicVuela(t, SAVE.monedas - m, m, 300);   // las del anuncio también vuelan a la barra (js/victoria-panel.js)
   ppVictoriaDoble(t, T);   // el botón deja sitio a «¡Doblado!»
   ppVictoriaFiesta(t, 2);   // al doblar, otra tanda de confeti
 }
@@ -37,14 +38,17 @@ function ppVictoriaCompartir(T, b) {
   const texto = ppVictoriaTextoCompartir(T);
   play('select');
   if (navigator.share) { navigator.share({ title: 'Fans of Pop', text: texto, url: PP_VIC_WEB }).catch(() => {}); return; }
-  const avisa = msg => { const antes = b.textContent; b.textContent = msg; setTimeout(() => { if (b.isConnected) b.textContent = antes; }, 1800); };
+  const avisa = msg => { const antes = b.innerHTML; b.textContent = msg; setTimeout(() => { if (b.isConnected) b.innerHTML = antes; }, 1800); };
   if (navigator.clipboard) navigator.clipboard.writeText(texto + ' ' + PP_VIC_WEB).then(() => avisa(tr('¡Copiado!')), () => avisa(PP_VIC_WEB));
   else avisa(PP_VIC_WEB);
 }
-// la fila de abajo: compartir y, si toca, al mapa (va siempre la última, CSS order)
-// Compartir, grande y fuera del panel (como en la captura de Pepins: abajo solo Compartir y Siguiente)
+// Compartir, fuera del panel y encima de ¡SIGUIENTE!, del mismo tamaño (Pepins, 19-11-2026, boceto de la 2.ª vuelta): blanco con
+// letra azul y el dibujito de compartir, para que ¡SIGUIENTE! (rosa) siga siendo el que manda
+const PP_VIC_ICONO_COMPARTIR = '<svg class="pp-vic-comp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">'
+  + '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
 function ppVictoriaPie(t, T) {
-  const comp = ppBoton(tr('COMPARTIR'), 'pp-btn pp-vic-compartir', () => ppVictoriaCompartir(T, comp));
+  const comp = ppBoton('', 'pp-btn pp-vic-compartir', () => ppVictoriaCompartir(T, comp));
+  comp.innerHTML = PP_VIC_ICONO_COMPARTIR + `<span>${tr('COMPARTIR')}</span>`;
   t.appendChild(comp);
 }
 // «A por 3 estrellas»: un botoncito junto a la frase, dentro del panel, si te ha faltado alguna

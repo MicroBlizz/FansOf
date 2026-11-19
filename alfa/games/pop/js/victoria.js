@@ -5,7 +5,8 @@
 // Los fondos de cada nota: arriba (c1), abajo (c2), el panel y si va en degradado de arriba abajo (lineal) o en círculo
 const pvFondo = (nombre, c1, c2, panel, lineal = false) => Object.freeze({ nombre, c1, c2, panel, lineal });
 const PP_VIC_FONDOS = Object.freeze([
-  Object.freeze([pvFondo('melocoton', '#ffd8c2', '#f39a86', 'rgba(190, 80, 60, 0.28)'), pvFondo('rosa-suave', '#ffe0ef', '#f59cc6', 'rgba(180, 50, 110, 0.26)')]),
+  // sin toques: tonos fríos (Pepins, 19-11-2026, boceto de la 2.ª vuelta: «derrota en tonos fríos»; antes melocotón, casi naranja)
+  Object.freeze([pvFondo('hielo', '#e3f3ff', '#6fa6dc', 'rgba(30, 80, 150, 0.28)'), pvFondo('turquesa-frio', '#dcfaf6', '#5fb8c8', 'rgba(15, 90, 110, 0.28)')]),
   Object.freeze([pvFondo('cielo-suave', '#d6f0ff', '#7cbdf0', 'rgba(20, 80, 160, 0.26)'), pvFondo('menta-suave', '#d9fbe9', '#7fd6b4', 'rgba(10, 110, 90, 0.26)'),
     pvFondo('crema-rosa', '#fff4dc', '#ffb8d8', 'rgba(180, 60, 110, 0.24)', true)]),
   Object.freeze([pvFondo('rosa-pop', '#ffd7ec', '#ff7cbc', 'rgba(196, 40, 120, 0.30)'), pvFondo('cielo', '#b8e6ff', '#4b9fe6', 'rgba(15, 70, 160, 0.30)'),
@@ -55,6 +56,13 @@ const PP_VICTORIA = Object.freeze({
     const n = Math.max(0, Math.min(3, Math.floor(Number(estrellas) || 0))), lista = PP_VIC_FONDOS[n];
     const k = Math.min(lista.length - 1, Math.max(0, Math.floor((Number(azar) || 0) * lista.length)));
     return lista[k];
+  },
+  // La fiesta de toques sobrantes (Pepins, 19-11-2026, como el «Sugar Crush»): cuántos toques te sobran y cuántas monedas dan.
+  // `cfg` = { porToque, tope } (PP_CFG.sobrantes, js/ajustes.js). Las monedas no pasan del tope, pero la fiesta hace pop con todos.
+  sobrantes(limite, toques, cfg) {
+    const n = Math.max(0, Math.floor(Number(limite) || 0) - Math.max(0, Math.floor(Number(toques) || 0)));
+    const por = Math.max(0, Math.floor(Number(cfg && cfg.porToque) || 0)), tope = Math.max(0, Math.floor(Number(cfg && cfg.tope) || 0));
+    return Object.freeze({ toques: n, monedas: Math.min(tope, n * por) });
   },
   // Las monedas que suben de 0 a `total`: lo que se ve con `k` de 0 (empieza) a 1 (acaba); frena al final y siempre acaba en el total
   cuenta(total, k) {

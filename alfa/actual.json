@@ -1,8 +1,8 @@
 {
- "build": 1309,
- "hash": "4055ec5",
- "fecha": "2026-11-19T15:25:18Z",
- "mensaje": "Gashapón: fuera el flag gashapon-nuevo; la máquina animada en todos los juegos, también TD y Survivors (tarea #123)",
+ "build": 1312,
+ "hash": "f0a6f61",
+ "fecha": "2026-11-19T16:59:27Z",
+ "mensaje": "Pop: pantalla de victoria, 2.ª vuelta (tarea #157): fiesta de toques sobrantes, barra propia, monedas que vuelan, racha y hucha, compañero que celebra, fondo al azar sin naranja y ¡SIGUIENTE! rosa",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

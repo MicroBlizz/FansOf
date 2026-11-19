@@ -7,14 +7,11 @@
    las monedas, y fuera del panel los botones grandes. El velo de detrás toma el color de la nota. */
 .pp-tarjeta.pp-gana { max-width: 470px; max-height: 100%; gap: 12px; padding: 6px 4px 10px; overflow-x: hidden; background: none; box-shadow: none; border: 0;
   animation: pp-vic-entra 0.5s cubic-bezier(.3, 1.6, .5, 1) both; }
-/* el velo va en un ::before con máscara: deja ver la barra de arriba (corazones y monedas), como en la captura */
-#pp-modal:has(.pp-gana) { background: none; isolation: isolate; padding-top: 13%; }
+/* el velo tapa TODO (2.ª vuelta, tarea #157: la cabecera del juego se veía borrosa): sus colores salen al azar entre los de la nota
+   (PP_VICTORIA.fondo, js/victoria-panel.js) y arriba va una barra propia y nítida (css/victoria-panel.css) */
+#pp-modal:has(.pp-gana) { background: none; isolation: isolate; padding-top: 92px; }
 #pp-modal:has(.pp-gana)::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  -webkit-mask: linear-gradient(transparent 0, transparent 11%, #000 15%); mask: linear-gradient(transparent 0, transparent 11%, #000 15%); }
-#pp-modal:has(.pp-gana-3)::before { background: radial-gradient(circle at 50% 30%, rgba(255, 210, 90, 0.95), rgba(255, 120, 40, 0.92) 80%); }
-#pp-modal:has(.pp-gana-2)::before { background: radial-gradient(circle at 50% 30%, rgba(255, 170, 215, 0.95), rgba(230, 70, 150, 0.9) 80%); }
-#pp-modal:has(.pp-gana-1)::before { background: radial-gradient(circle at 50% 30%, rgba(150, 215, 255, 0.95), rgba(40, 130, 220, 0.9) 80%); }
-#pp-modal:has(.pp-gana-0)::before { background: radial-gradient(circle at 50% 30%, rgba(255, 200, 165, 0.95), rgba(235, 120, 80, 0.9) 80%); }
+  background: var(--vic-fondo, radial-gradient(circle at 50% 28%, #ffd7ec, #ff6eb5 85%)); }
 /* 3 estrellas: la ventana tiembla un poco al caer la tercera */
 .pp-tarjeta.pp-gana-3 { animation: pp-vic-entra 0.5s cubic-bezier(.3, 1.6, .5, 1) both, pp-vic-tiembla 0.45s 1.0s ease-in-out both; }
 @keyframes pp-vic-tiembla { 0%, 100% { translate: 0 0; } 20% { translate: -7px 3px; } 40% { translate: 6px -4px; } 60% { translate: -5px 2px; } 80% { translate: 3px -2px; } }
@@ -33,10 +30,7 @@
 .pp-vic-panel { position: relative; z-index: 1; align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px 12px;
   border-radius: 26px; background: rgba(255, 255, 255, 0.22); box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.85), 0 8px 0 rgba(0, 0, 0, 0.1);
   -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); animation: pp-salta 0.45s 1.3s ease-out both; }
-.pp-gana-3 .pp-vic-panel { background: rgba(214, 120, 0, 0.32); }
-.pp-gana-2 .pp-vic-panel { background: rgba(196, 40, 120, 0.3); }
-.pp-gana-1 .pp-vic-panel { background: rgba(20, 90, 190, 0.3); }
-.pp-gana-0 .pp-vic-panel { background: rgba(200, 80, 40, 0.3); }
+.pp-gana .pp-vic-panel { background: var(--vic-panel, rgba(196, 40, 120, 0.3)); }
 .pp-vic-panel .pp-vic-frase, .pp-vic-panel .pp-sub { color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); font-weight: 700; }
 .pp-vic-panel .pp-vic-premio { color: #fff; -webkit-text-stroke: 2px #c27a00; paint-order: stroke fill; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2); }
 .pp-vic-panel .pp-feria, .pp-vic-panel .pp-premios { color: #fff; }
@@ -55,7 +49,7 @@
   animation: pp-gira 14s linear infinite, pp-vic-luz 0.6s ease-out both; }
 .pp-vic-genial .pp-vic-rayos { background: repeating-conic-gradient(rgba(255, 140, 200, 0.45) 0 12deg, transparent 12deg 30deg); }
 .pp-vic-superado .pp-vic-rayos { background: repeating-conic-gradient(rgba(120, 190, 255, 0.4) 0 12deg, transparent 12deg 30deg); animation-duration: 24s, 0.6s; }
-.pp-vic-casi .pp-vic-rayos { background: radial-gradient(circle, rgba(255, 200, 160, 0.5), transparent 60%); animation: pp-vic-luz 0.6s ease-out both; }
+.pp-vic-casi .pp-vic-rayos { background: radial-gradient(circle, rgba(255, 255, 255, 0.45), transparent 60%); animation: pp-vic-luz 0.6s ease-out both; }
 @keyframes pp-vic-luz { from { opacity: 0; } to { opacity: 1; } }
 
 /* los destellos: estrellitas de cuatro puntas que parpadean alrededor de las estrellas */
@@ -95,7 +89,7 @@
 @keyframes pp-vic-dora { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255, 240, 150, 0)); } 50% { transform: scale(1.06); filter: drop-shadow(0 0 14px rgba(255, 240, 150, 1)); } }
 .pp-tarjeta .pp-vic-genial h2 { color: #ff6eb5; text-shadow: 0 5px 0 #c43a84, 0 10px 0 rgba(196, 58, 132, 0.25); }
 .pp-tarjeta .pp-vic-superado h2 { color: #4aa8f0; text-shadow: 0 5px 0 #1f6fb8, 0 10px 0 rgba(47, 111, 192, 0.25); }
-.pp-tarjeta .pp-vic-casi h2 { font-size: 56px; color: #ff8a5c; text-shadow: 0 5px 0 #c2502a, 0 10px 0 rgba(194, 80, 42, 0.2); animation-delay: 0.3s; }
+.pp-tarjeta .pp-vic-casi h2 { font-size: 56px; color: #5ab4e8; text-shadow: 0 5px 0 #2c6aa8, 0 10px 0 rgba(44, 106, 168, 0.2); animation-delay: 0.3s; }   /* tonos fríos (tarea #157) */
 
 /* las casillas de datos */
 .pp-vic-datos { position: relative; display: flex; gap: 8px; justify-content: center; width: 100%; animation: pp-salta 0.45s 1.35s ease-out both; }
@@ -106,8 +100,8 @@
 .pp-vic-frase { position: relative; margin: 0; font-weight: 700; font-size: 18px; color: #c2502a; }
 
 /* sin toques: la barra de lo que llevabas hecho */
-.pp-vic-barra { width: 86%; height: 22px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px #ffd2b8; overflow: hidden; padding: 4px; }
-.pp-vic-barra span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ffb057, #ff7a1a); transform-origin: left; animation: pp-vic-llena 1s 0.5s ease-out both; }
+.pp-vic-barra { width: 86%; height: 22px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px #bfe3ff; overflow: hidden; padding: 4px; }
+.pp-vic-barra span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #7fd6ff, #3a9be8); transform-origin: left; animation: pp-vic-llena 1s 0.5s ease-out both; }
 @keyframes pp-vic-llena { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 /* las monedas y el botón de doblarlas */
@@ -118,9 +112,11 @@
 .pp-vic-x2 { position: relative; z-index: 1; margin-right: 8px; padding: 1px 8px; border-radius: 10px; background: #ffe36e; color: #8a4f00; -webkit-text-stroke: 0; text-shadow: none; font-size: 21px; line-height: 1.1; box-shadow: 0 2px 0 #c27a00; }
 .pp-vic-doblado { font-weight: 700; font-size: 22px; color: #26924a; animation: pp-salta 0.4s ease-out both; }
 
-/* los botones grandes, de lado a lado como en la captura: COMPARTIR verde y ¡SIGUIENTE! naranja */
-.pp-gana > .pp-btn { align-self: stretch; min-width: 0; font-size: 34px; }
-.pp-gana > .pp-vic-compartir { --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }
+/* los botones grandes, de lado a lado y del mismo tamaño (Pepins, 19-11-2026): COMPARTIR blanco con letra azul y, debajo,
+   ¡SIGUIENTE! (o ¡OTRA VEZ!) en rosa */
+.pp-gana > .pp-btn { align-self: stretch; min-width: 0; font-size: 34px; padding-top: 14px; padding-bottom: 15px; --c1: #ffb3d9; --c2: #ff5fa8; --borde: #c43a84; }
+#pp-ui .pp-gana > .pp-vic-compartir { --c1: #ffffff; --c2: #eaf6ff; --borde: #7fb6e6; color: #2c7fd0; text-shadow: none; -webkit-text-stroke: 0; gap: 10px; }
+.pp-vic-comp-ico { width: 30px; height: 30px; flex: none; }
 .pp-gana > .pp-btn2 { align-self: stretch; min-width: 0; }
 
 /* la fiesta: confeti que cae y burbujitas que suben, por encima de todo y sin estorbar los toques */

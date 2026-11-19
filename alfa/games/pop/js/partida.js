@@ -151,7 +151,7 @@ function ppTrasToque(T, i, r) {
     play('ppDano'); ppVibra([30, 40, 30]); ppFxDano();
     if (SAVE.vidas <= 0) { T.hecho = true; ppMarcaDentro(false); setTimeout(() => ppSinCorazones(), 500); return; }
   }
-  if (r.hecho) { PP_P.salas++; ppMarcaDentro(false); ppFxConfeti(T); setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 520); return; }
+  if (r.hecho) { PP_P.salas++; ppMarcaDentro(false); ppFxConfeti(T); setTimeout(() => { if (PP_P && PP_P.T === T) ppFiestaToques(T, ppSalaHecha); }, 520); return; }   // la fiesta de toques sobrantes, antes de la victoria (js/victoria-fiesta.js)
   // los que saltan se cargan con cada burbuja reventada (también las que revientan otros amigos: hay reacciones en cadena)
   if (T.lo) return;   // en pesadilla los amigos no saltan
   ppEquipoNivel(T.d).forEach((id, k) => {
@@ -196,6 +196,7 @@ function ppSalaHecha() {
   const est = ppEstDe(d.dif), antes = est[g] || 0;
   est[g] = Math.max(antes, T.estrellas); PP_P.estrellas += Math.max(0, T.estrellas - antes);
   T.premio = ppPremioNivel(ppPrefijo(d.dif) + g, T.estrellas, d.jefe, d.dif === 2 ? 3 : d.dif ? 2 : 1);   // difícil, el doble; pesadilla, el triple
+  ppFiestaAlPremio(T);   // las monedas de los toques sobrantes (js/victoria-fiesta.js)
   ppHabAlGanar(T);   // Limpieza y Hucha: monedas de más (js/habilidades-niveles.js)
   T.intento = ((SAVE.fallos || {})[ppClaveNivel(d)] || 0) + 1;   // para la pantalla de victoria (js/pantalla-victoria.js)
   ppBorraFallos(d); ppBarraAyudas(); setTimeout(ppSubeMarcas, 1500);   // estrellas al ranking mundial (js/ranking.js)
@@ -204,6 +205,7 @@ function ppSalaHecha() {
   ppGuardaCamino();
   ppPrimerosAlGanar();   // con el flag cerrado, la partida nueva pasa a vieja (js/primeros-pasos-juego.js)
   T.feria = ppFeriaGana(T.estrellas, d.jefe, ppHabTickets(T));   // tickets de la Feria del finde: toda victoria, nueva o repetida (js/feria-pantalla.js); el Feriante, uno más
+  T.antes = { racha: SAVE.racha || 0, hucha: SAVE.hucha || 0, nuevo };   // la pantalla de victoria enseña lo que suman la racha y la hucha
   if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
   ppViasAlGanar(T, nuevo, presos);   // flag `companeros`: rescate, cofre, jefe y duelos dan compañeros (js/companeros-vias.js)
   if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(d.dif); return; }
@@ -225,6 +227,7 @@ function ppRecluta(id, fuera) {
 function ppSinToquesOSeguir(T) { if (ppPrimerosGratis()) { T.hecho = true; ppSinToques(); } else ppOfreceSeguir(T); }
 function ppSinToques() {
   if (ppPrimerosGratis()) { ppMarcaDentro(false); play('ppDano'); ppVentanaSinToquesGratis(); return; }   // niveles 1 a 3 de una partida nueva (tarea #140)
+  PP_P.T.rachaAntes = SAVE.racha || 0;   // para decir en «¡Casi!» si se ha perdido la racha (js/pantalla-victoria.js)
   ppMarcaDentro(false); ppPierdeVida(ppHabSalvaRacha()); ppApuntaFallo(PP_P.T.d); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();   // ppHabSalvaRacha: Racha a salvo (js/habilidades-niveles.js)
   if (SAVE.vidas <= 0) { setTimeout(() => ppSinCorazones(), 400); return; }
   ppVentanaSinToques();

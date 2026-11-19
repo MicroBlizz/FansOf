@@ -1,8 +1,8 @@
 {
- "build": 1318,
- "hash": "e29f1e6",
- "fecha": "2026-11-19T17:38:52Z",
- "mensaje": "Pop: la pausa dura lo que su ventana, y el nivel ya no sale congelado tras una pausa mal cerrada (reporte 28, tarea #110)",
+ "build": 1319,
+ "hash": "d6e9e6c",
+ "fecha": "2026-11-19T17:39:37Z",
+ "mensaje": "Pop: el botón pulsado del Jardín es un hueco oscuro de su color, como el macaron hundido (tarea #110)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -1,8 +1,8 @@
 {
- "build": 1291,
- "hash": "11a2a77",
- "fecha": "2026-11-19T10:38:01Z",
- "mensaje": "Pop: primeros minutos más fáciles, una novedad por nivel en las partidas nuevas (tarea #140, ADR 156)",
+ "build": 1292,
+ "hash": "3dc96c5",
+ "fecha": "2026-11-19T12:34:32Z",
+ "mensaje": "Pop: muestra del botón de silicona con caritas variadas en el Jardín y bandeja con relieve de molde (tarea #110)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.2",

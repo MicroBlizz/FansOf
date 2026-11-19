@@ -27,6 +27,8 @@ const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_FLOTA_NUEVOS, ...Object.keys(PP_SLI
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo', 'b-' + k + '-doble']),
   // las burbujas de macaron de la Pastelería (tarea #110, tras el flag estilo-mundo; herramientas/comfyui/pop/macaron.py)
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['bm-macaron-' + k + '-arriba', 'bm-macaron-' + k + '-abajo']),
+  // el botón de silicona del Jardín, la muestra de las caritas variadas (tarea #110; herramientas/comfyui/pop/boton.py)
+  ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['bm-boton-' + k + '-arriba', 'bm-boton-' + k + '-abajo']),
   // el arte del perfil de jugador: adornos de los marcos, pegatinas y entradas (tarea #41, js/perfil-catalogo.js)
   ...['marco', 'pegatina', 'entrada'].flatMap(t => PP_PERFIL_CAT[t].map(d => d.img).filter(Boolean))];
 // devuelve una promesa que se cumple cuando han llegado todos, con la lista de los que no llegaron ni al segundo intento (vacía si todo

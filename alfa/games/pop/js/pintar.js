@@ -131,7 +131,7 @@ function ppPintaTablero(c, T, t) {
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
   // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
   const bandeja = ppBandejaParaTablero(estilo, ppBandejaActual().id);   // 'comprada', 'material' (la galleta de la Pastelería) o null
-  if ((T.mask && T.mask.some(v => !v)) || bandeja) ppBandeja(c, T, g, bandeja === 'material' ? estilo.material : null);   // con forma, bonita o del mundo (js/bandeja.js)
+  if ((T.mask && T.mask.some(v => !v)) || bandeja) ppBandeja(c, T, g, bandeja === 'material' ? estilo.material : null, !!(estilo && estilo.relieve));   // con forma, bonita o del mundo (js/bandeja.js)
   else if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
   else {
     c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();
@@ -141,7 +141,7 @@ function ppPintaTablero(c, T, t) {
     const [cx, cy] = ppCentro(g, i);
     if (T.mask && !T.mask[i]) continue;   // los huecos de la forma (corazón, flor…) no llevan burbuja
     ppBurbuja(c, cx, cy, r, i, T.n, T.up[i], T.slimes[i] || null, T.pista === i, T.trampas.has(i), t, estilo);
-    if (estilo && estilo.burbuja) ppCaritaEnBurbuja(c, cx, cy, r, i, T, t);   // js/caritas.js
+    if (estilo && estilo.burbuja) ppCaritaEnBurbuja(c, cx, cy, r, i, T, t, estilo.caritas);   // js/caritas.js
     if (T.up[i] && (T.up[i] === 3 || (T.esp && T.esp[i]))) ppEspecial(c, cx, cy, r, i, T, t);
   }
   if (T.mano && T.pista !== null) { const [mx, my] = ppCentro(g, T.pista); ppMano(c, mx, my, t); }

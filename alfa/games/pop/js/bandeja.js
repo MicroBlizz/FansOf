@@ -28,9 +28,10 @@ function ppBandejaMuestra(id, px = 30) {
   return `<span class="pp-muestra" style="width:${px}px;height:${px}px;background:linear-gradient(${f.map(([h, s, l], k) => `hsl(${h} ${s}% ${l}%) ${k * 100 / f.length}% ${(k + 1) * 100 / f.length}%`).join(',')})"></span>`;
 }
 // `material` (opcional, el del estilo del mundo: la galleta de la Pastelería) cambia la silicona de franjas por una pieza de galleta
-function ppBandeja(c, T, g, material) {
-  const clave = T.n + ':' + Array.from(T.mask).join('') + ':' + (PP_LISO ? 1 : 0) + ':' + (material ? 'material:' + material.relleno : ppBandejaActual().id);
-  if (!T._bandeja || T._bandeja.clave !== clave) T._bandeja = { clave, cv: ppHazBandeja(T, g, material) };
+// `relieve` (opcional, del estilo del mundo: el botón del Jardín) le da volumen de molde de silicona (js/bandeja-relieve.js)
+function ppBandeja(c, T, g, material, relieve = false) {
+  const clave = T.n + ':' + Array.from(T.mask).join('') + ':' + (PP_LISO ? 1 : 0) + ':' + (material ? 'material:' + material.relleno : ppBandejaActual().id) + (relieve ? ':relieve' : '');
+  if (!T._bandeja || T._bandeja.clave !== clave) T._bandeja = { clave, cv: ppHazBandeja(T, g, material, relieve) };
   const m = 40;
   c.imageSmoothingEnabled = true; c.drawImage(T._bandeja.cv, g.x - m, g.y - m, g.lado + m * 2, g.lado + m * 2);
 }
@@ -51,13 +52,14 @@ function ppBandejaMancha(c, T, cs, r, color) {
     if (der && aba && T.mask[i + n + 1]) c.fillRect(x, y, cs, cs);
   }
 }
-function ppHazBandeja(T, g, material) {
+function ppHazBandeja(T, g, material, relieve = false) {
   const m = 40, esc = 2, cs = g.celda;
   const [cv, c] = ppBandejaLienzo(g, m, esc);
   c.save(); c.translate(0, 7);   // sombra (semitransparente)
   if (material) { c.globalAlpha = 0.4; ppBandejaMancha(c, T, cs, cs * 0.68, material.sombra); } else ppBandejaMancha(c, T, cs, cs * 0.68, 'rgba(122,58,122,0.35)');
   c.restore();
   ppBandejaMancha(c, T, cs, cs * 0.68, material ? material.borde : '#7a4a8a');   // borde
+  if (relieve) ppBandejaCanto(c, T, cs);   // el canto del molde: grueso por abajo y con luz por arriba
   // el relleno, recortado a la forma con una máscara: la franja de cada fila o la pieza de galleta
   const [mascara, mk] = ppBandejaLienzo(g, m, esc); ppBandejaMancha(mk, T, cs, cs * 0.6, '#000');
   const [relleno, rl] = ppBandejaLienzo(g, m, esc);
@@ -65,7 +67,8 @@ function ppHazBandeja(T, g, material) {
   const luz = rl.createLinearGradient(0, -m, 0, g.lado / 2); luz.addColorStop(0, 'rgba(255,255,255,0.35)'); luz.addColorStop(1, 'rgba(255,255,255,0)');
   rl.fillStyle = luz; rl.fillRect(-m, -m, g.lado + m * 2, g.lado / 2 + m);   // brillo arriba
   rl.setTransform(1, 0, 0, 1, 0, 0); rl.globalCompositeOperation = 'destination-in'; rl.drawImage(mascara, 0, 0);
-  c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(relleno, 0, 0);
+  c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(relleno, 0, 0); c.restore();
+  if (relieve) ppBandejaAsientos(c, T, cs);   // el asiento hundido de cada botón
   return cv;
 }
 // la silicona de siempre: la franja de cada fila (el tono de sus burbujas, más claro) con una rayita entre franjas, como el molde

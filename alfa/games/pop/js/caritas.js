@@ -1,4 +1,4 @@
-// Fans of Pop · las caritas de los macarons (tarea #110): con el estilo del mundo, la burbuja levantada está despierta y parpadea
+// Fans of Pop · las caritas de las burbujas (tarea #110): con el estilo del mundo, la burbuja levantada está despierta y parpadea
 // a su ritmo; la hundida se duerme («u u» y una z que sube). Dominio puro arriba (el tiempo entra como parámetro), dibujo abajo.
 'use strict';
 
@@ -66,17 +66,28 @@ function ppPintaCarita(c, cx, cy, r, cara, abre, t, i = 0) {
   else ppCaritaDormida(c, r, t, i);
   c.restore();
 }
-// la carita de la burbuja i del tablero T, sobre la tapa de arriba del macaron y siguiendo su animación (ppBurbuja)
-function ppCaritaEnBurbuja(c, cx, cy, r, i, T, t) {
+// dónde va la cara según el estilo del mundo (js/estilo-mundo.js): [desplazamiento vertical, radio], en radios de la burbuja.
+// 'tapa' = sobre la tapa de arriba del macaron (visto de lado); 'centro' = en medio del botón (visto desde arriba)
+const PP_CARITA_SITIO = Object.freeze({
+  tapa: Object.freeze({ arriba: [-0.32, 0.55], abajo: [-0.34, 0.48] }),
+  centro: Object.freeze({ arriba: [0.03, 0.74], abajo: [0.08, 0.64] }),
+});
+// la cara ya colocada: variada (una distinta por burbuja y nivel, js/caritas-variadas.js) o la de siempre
+function ppCaritaSegunEstilo(c, y, r, cara, i, T, t, caritas) {
+  if (caritas && caritas.variadas) ppPintaCaraVariada(c, 0, y, r, ppCaraVariada(cara, i, T.d ? T.d.g : 0), ppParpadeo(i, t), t, i);
+  else ppPintaCarita(c, 0, y, r, cara, ppParpadeo(i, t), t, i);
+}
+// la carita de la burbuja i del tablero T, en el sitio que dice el estilo de su mundo y siguiendo su animación (ppBurbuja)
+function ppCaritaEnBurbuja(c, cx, cy, r, i, T, t, caritas = null) {
   const cara = ppCaraDe(T.up[i], !!T.slimes[i], !!(T.esp && T.esp[i]) || T.trampas.has(i));   // la trampa lleva su «!»: sin cara
   if (!cara) return;
-  const [sx, sy, h] = ppAnim(i, T.up[i]);
+  const [sx, sy, h] = ppAnim(i, T.up[i]), sitio = PP_CARITA_SITIO[caritas ? caritas.sitio : 'tapa'];
   c.save(); c.translate(cx, cy);
   if (h > 0.05) {
     const rr = r * (0.85 + 0.15 * h);
-    c.scale(sx, sy); ppPintaCarita(c, 0, -4 * h - rr * 0.32, rr * 0.55, cara, ppParpadeo(i, t), t, i);
+    c.scale(sx, sy); ppCaritaSegunEstilo(c, -4 * h + rr * sitio.arriba[0], rr * sitio.arriba[1], cara, i, T, t, caritas);
   } else {
-    c.scale(sx, 1); ppPintaCarita(c, 0, -r * 0.34, r * 0.48, cara, ppParpadeo(i, t), t, i);
+    c.scale(sx, 1); ppCaritaSegunEstilo(c, r * sitio.abajo[0], r * sitio.abajo[1], cara, i, T, t, caritas);
   }
   c.restore();
 }

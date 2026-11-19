@@ -5,7 +5,7 @@
 const PP_PANT = { actual: 'titulo', pausa: false };
 const $pp = s => document.querySelector(s);
 function ppIrA(p) {
-  PP_PANT.actual = p;
+  PP_PANT.actual = p; PP_PANT.pausa = false;   // cambiar de pantalla acaba con la pausa (reporte 28: si no, el nivel se quedaba congelado)
   if (p !== 'sala' && p !== 'duelo') ppCortCancela();   // salir del nivel durante la cortinilla de un jefe la apaga
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
   $pp('#pp-titulo').hidden = p !== 'titulo';
@@ -31,7 +31,8 @@ function ppIrA(p) {
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
-function ppCierra() { $pp('#pp-modal').hidden = true; }
+// la pausa dura lo que su ventana: se cierre por donde se cierre, el juego sigue (reporte 28, Daniel 19-11-2026)
+function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
 function ppBoton(texto, clase, f) { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = () => { play('select'); f(); }; return b; }
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
 // las estrellas del nivel en HTML (dibujo de Yoshi si está; si no, una estrella recortada con CSS)
@@ -199,7 +200,7 @@ function ppPausa() {
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   col.appendChild(ppFilasSonido());
 }
-function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
+function ppQuitaPausa() { ppCierra(); }   // cerrar la ventana ya acaba con la pausa (ppCierra)
 /* ---------- el tutorial de Lola ----------
    Cada tutorial es una lista de frases. Las que llevan `toque` se cierran solas cuando tocas una burbuja (para que lo hagas
    mientras Lola te lo dice); las demás llevan un botón. Cada tutorial sale una sola vez (SAVE.tuto). */

@@ -1,8 +1,8 @@
 {
- "build": 1317,
- "hash": "77bb45a",
- "fecha": "2026-11-19T17:34:55Z",
- "mensaje": "Pop: el regalito del estreno vuela desde Lola a su contador y lo de detrás se oscurece mientras Lola espera el ¡VALE! (tarea #140, cambios de Pepins)",
+ "build": 1318,
+ "hash": "e29f1e6",
+ "fecha": "2026-11-19T17:38:52Z",
+ "mensaje": "Pop: la pausa dura lo que su ventana, y el nivel ya no sale congelado tras una pausa mal cerrada (reporte 28, tarea #110)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

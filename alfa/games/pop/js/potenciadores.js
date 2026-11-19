@@ -5,7 +5,7 @@
 //   Ni el martillo ni la bomba gastan toque. Tras fallar un nivel, al volver a entrar se ofrece +3 toques antes de empezar.
 // · Duelos (js/nimnivel.js): DESHACER (vuelve al principio de tu turno anterior, antes de la respuesta del rival) y la PISTA DE
 //   LOLA (marca la jugada que gana). Al perder un duelo se ofrece deshacer y recuperar el corazón.
-// La barra de ayudas es HTML (#pp-ayudas), debajo del tablero.
+// La barra de ayudas es HTML (#pp-ayudas), debajo del tablero; en los duelos, grande y donde estaría «Tu equipo» (tarea #129).
 'use strict';
 const PP_AYUDA = { modo: null };   // 'martillo' | 'bomba' mientras se elige la burbuja
 const ppTengo = k => (SAVE.ayudas && SAVE.ayudas[k]) || 0;
@@ -22,16 +22,19 @@ function ppGastaAyuda(k, vuelta = null) {
 function ppBarraAyudas() {
   const b = $pp('#pp-ayudas'), T = PP_P && PP_P.T;
   if (!b) return;
-  const ver = PP_PANT.actual === 'sala' && T && !T.hecho && !(T.d && T.d.tutorial && T.d.mundo === 0);
+  // con la cortinilla del duelo puesta no salen: taparían su tarjeta «Así se gana» (tarea #129); vuelven al pulsar ¡A JUGAR!
+  const ver = PP_PANT.actual === 'sala' && T && !T.hecho && !(T.d && T.d.tutorial && T.d.mundo === 0) && !ppCortActiva();
   b.hidden = !ver; if (!ver) return;
-  const lista = T.nim ? ['deshacer', 'pista'] : ['martillo', 'bomba', 'toques3'];
-  ppTutorial(T.nim ? 'ayudasDuelo' : 'ayudas');
+  const duelo = !!T.nim, lista = duelo ? ['deshacer', 'pista'] : ['martillo', 'bomba', 'toques3'];
+  const ico = duelo ? 88 : 52, perla = duelo ? 28 : 18;
+  b.classList.toggle('pp-duelo', duelo);
+  ppTutorial(duelo ? 'ayudasDuelo' : 'ayudas');
   b.innerHTML = '';
   for (const k of lista) {
     const n = ppTengo(k), bt = document.createElement('button');
     bt.type = 'button'; bt.className = 'pp-ayuda' + (PP_AYUDA.modo === k ? ' pp-activa' : '');
-    const gratis = k === 'pista' && T.nim && ppPistaGratis(T.nim);   // la de Lola
-    bt.innerHTML = `${ppIcono('i-' + k, 52, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasHtml(PP_CFG.ayudas[k].perlas, 18)}</b>`;
+    const gratis = k === 'pista' && duelo && ppPistaGratis(T.nim);   // la de Lola
+    bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasHtml(PP_CFG.ayudas[k].perlas, perla)}</b>`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
     bt.onclick = () => { play('select'); ppPulsaAyuda(k); };
     b.appendChild(bt);

@@ -71,6 +71,7 @@ function ppCortinillaSi(T, d, dif, manita) {
 // lo que pasa al empezar de verdad un nivel (tras la cortinilla del jefe, si la hay)
 function ppEmpiezaNivel(T, d, dif, manita) {
   if (!PP_P || PP_P.T !== T) return;   // saliste del nivel durante la cortinilla
+  ppBarraAyudas();   // las ayudas esperaban a que se quitara la cortinilla
   ppAntesDeEmpezar(T);   // tras fallar este nivel, se ofrece +3 toques (js/potenciadores.js)
   if (T.pista !== null && !manita) ppFxHabilidad('lola');
   // lo que explica Lola: el principio de cada mundo, los primeros niveles, el primer difícil y el primer jefe

@@ -14,6 +14,7 @@ function ppAjusta() {
   PP_V.H = LH; PP_V.sc = w / 540; PP_V.dpr = Math.min(window.devicePixelRatio || 1, 3);
   PP_CV.width = Math.round(w * PP_V.dpr); PP_CV.height = Math.round(h * PP_V.dpr);
   PP_UI.style.height = LH + 'px'; PP_UI.style.transform = `scale(${w / 540})`;
+  const g = ppGeom(3); PP_UI.style.setProperty('--pp-bajo-tablero', g.y + g.lado + 'px');   // el borde de abajo del tablero, para las ayudas de duelo (tarea #129)
 }
 /* ---------- los toques ---------- */
 function ppLogico(e) { const r = PP_CV.getBoundingClientRect(); return [(e.clientX - r.left) / PP_V.sc, (e.clientY - r.top) / PP_V.sc]; }

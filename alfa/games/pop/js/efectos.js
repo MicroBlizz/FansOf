@@ -58,9 +58,12 @@ function ppFxConfeti(T) {
   if (!T || !ppFxVidaActiva()) return;
   PP_FX.parts = PP_CHISPAS.recorta(PP_FX.parts.concat(PP_CHISPAS.confeti(540, Math.random)));
 }
-function ppFxDano() { PP_FX.dano = 1; PP_FX.temblor = Math.max(PP_FX.temblor, 0.6); ppFlota(tr('-1 corazón'), 270, 205, '#ff5a5a'); }
-function ppFxCura(n) { ppFlota('+' + n, 270, 205, '#7bff7b'); for (let k = 0; k < 12; k++) PP_FX.parts.push({ x: rand(60, 200), y: 92, vx: rand(-30, 30), vy: rand(-120, -40), r: rand(3, 5), t: 0, vida: 0.8, col: '#7bff7b' }); }
-function ppFlota(s, x, y, col) { PP_FX.textos.push({ s, x, y, col, t: 0 }); }
+function ppFxDano() { PP_FX.dano = 1; PP_FX.temblor = Math.max(PP_FX.temblor, 0.6); ppFlota(tr('-1 corazón'), 270, 205, '#ff5a5a', false); }
+function ppFxCura(n) { ppFlota('+' + n, 270, 205, '#7bff7b', false); for (let k = 0; k < 12; k++) PP_FX.parts.push({ x: rand(60, 200), y: 92, vx: rand(-30, 30), vy: rand(-120, -40), r: rand(3, 5), t: 0, vida: 0.8, col: '#7bff7b' }); }
+// un texto que flota y se va; en los duelos, más grande y más rato (tarea #129, js/letras-duelo.js). `grande` false: el de siempre
+// (el -1 y el +1 de los corazones, que salen junto a la cabecera y no deben taparla)
+function ppFlota(s, x, y, col, grande = ppEnDuelo()) { PP_FX.textos.push({ s, x, y, col, t: 0, ...ppFlotaEstilo(s, grande) }); }
+const ppEnDuelo = () => PP_PANT.actual === 'duelo' || !!(PP_PANT.actual === 'sala' && PP_P && PP_P.T && PP_P.T.nim);
 // un slime del equipo actúa: su hueco brilla y da un saltito
 function ppFxHabilidad(id) { PP_FX.brilla[id] = 1; }
 // el letrero de COMBO: crece con cada toque bueno seguido
@@ -96,7 +99,7 @@ function ppFxAvanza(dt) {
   for (const k in PP_FX.brilla) PP_FX.brilla[k] = Math.max(0, PP_FX.brilla[k] - dt * 1.8);
   if (PP_FX.combo) { PP_FX.combo.t += dt; if (PP_FX.combo.t > 1.1) PP_FX.combo = null; }
   for (const x of PP_FX.textos) x.t += dt;
-  PP_FX.textos = PP_FX.textos.filter(x => x.t < 1);
+  PP_FX.textos = PP_FX.textos.filter(x => x.t < x.dura);
 }
 // aplastar/estirar: devuelve la escala [sx, sy] y la altura (0 = reventada, 1 = arriba) de una burbuja según su animación
 function ppAnim(i, up) {

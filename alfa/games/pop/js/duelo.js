@@ -123,25 +123,26 @@ function ppPintaDuelo(c, t) {
   c.save(); if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 5, rand(-1, 1) * PP_FX.temblor * 5);
   ppPintaFondo(c, 'fondo-jefe', t);
   // arriba: tú contra el CEO, y de quién es el turno
-  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
+  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, PP_CABECERA_DUELO, 24); c.fill();
   const br = PP_FX.brilla.ceo || 0;
   const rival = D.pvp ? D.pvp.nombre.slice(0, 14) : tr('El CEO');   // contra gente, su apodo y un amigo de gelatina
   const [yo, suyo] = ppDueloCaras(D);
-  ppSlimeRepuestoOImagen(c, suyo, 400, 88 - br * 12, 42, t, 1);   // a la izquierda del botón de pausa
-  ppSlimeRepuestoOImagen(c, yo, 140, 88, 40, t, 1);
-  ppTexto(c, tr('Tú'), 140, 146, 26, '#fff', 'center', '#c43a84');
-  ppTexto(c, rival, 400, 146, 22, '#fff', 'center', '#3a3a6a');
-  ppTitulo(c, tr('DUELO'), 270, 66, 44);
+  // todo más grande (tarea #129): las caras, los nombres y el turno; lo que no cabe en su sitio encoge
+  ppSlimeRepuestoOImagen(c, suyo, 400, 100 - br * 12, 48, t, 1);   // a la izquierda del botón de pausa
+  ppSlimeRepuestoOImagen(c, yo, 130, 100, 46, t, 1);
+  ppTextoCabe(c, tr('Tú'), 130, 164, 30, 150, '#fff', '#c43a84');
+  ppTextoCabe(c, rival, 400, 164, 30, 150, '#fff', '#3a3a6a');
+  ppTitulo(c, tr('DUELO'), 265, 62, 44);
   ppPintaMonedero(c, 28, 32);   // arriba a la izquierda: a la derecha va el botón de pausa
   const txt = D.fin ? (D.fin === 'gana' ? tr('¡Ganas!') : D.pvp ? tr('¡Gana {n}!', { n: rival }) : tr('¡Gana el CEO!')) : D.turno === 'yo' ? tr('Tu turno') : D.pvp ? tr('Piensa {n}…', { n: rival }) : tr('Piensa el CEO…');
-  ppTexto(c, txt, 270, 118, 32, D.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#7a4a8a');
+  ppTextoCabe(c, txt, 265, 126, 40, 165, D.turno === 'yo' ? '#ffd64a' : '#fff', '#7a4a8a');
   ppPintaTablero(c, T, t);
   // la fila en la que estás jugando, marcada
   if (D.fila !== null && !D.fin) {
     c.save(); c.lineWidth = 6; c.strokeStyle = D.turno === 'yo' ? '#ffd64a' : '#8a8aa8'; c.globalAlpha = 0.6 + Math.sin(t * 6) * 0.3;
     c.beginPath(); c.roundRect(g.x - 6, g.y + D.fila * g.celda + 2, g.lado + 12, g.celda - 4, g.celda / 2); c.stroke(); c.restore();
   }
-  ppTexto(c, tr('Haz pop en una sola fila. ¡Pierde quien haga pop en la última!'), 270, g.y + g.lado + 52, 22, '#fff', 'center', '#c43a84');
+  ppReglaDuelo(c, g.y + g.lado + 44, 30, '#fff', '#c43a84');   // en dos líneas y grande (tarea #129; js/nimnivel.js)
   ppPintaEfectos(c, t);
   ppAdnPinta(c);   // tu efecto de pop, el del rival y las pegatinas que vuelan (js/duelo-adornos.js)
   c.restore();

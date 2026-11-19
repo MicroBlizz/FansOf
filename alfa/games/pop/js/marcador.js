@@ -1,5 +1,6 @@
 // Fans of Pop · MARCADOR: la cabecera de la partida (corazones, monedero, toques, estrellas y título) y el panel «Tu equipo» de abajo
-// con los huecos de los amigos. Sale de pintar.js (tarea #110) para dejarlo por debajo de 25 KB.
+// con los huecos de los amigos. Sale de pintar.js (tarea #110) para dejarlo por debajo de 25 KB. En los duelos «Tu equipo» no sale:
+// los amigos no juegan y en su sitio van, grandes, las ayudas de duelo (tarea #129, css/pop.css).
 'use strict';
 
 /* ---------- los toques como burbujitas (tarea #110; solo con el estilo del mundo) ---------- */
@@ -67,16 +68,16 @@ function ppBordeHueco(ocupado, panel) {
 }
 
 function ppPintaMarcador(c, t) {
-  const P = PP_P, panel = ppEstiloDeTablero(P.T).panel, tinta = ppTintaPanel(panel);
-  ppPanelDelMundo(c, 20, 18, 500, 150, panel);
+  const P = PP_P, panel = ppEstiloDeTablero(P.T).panel, tinta = ppTintaPanel(panel), duelo = !!(P.T && P.T.nim);
+  ppPanelDelMundo(c, 20, 18, 500, duelo ? PP_CABECERA_DUELO : 150, panel);
   // corazones
   const dano = PP_FX.dano;
   const vidas = ppVidas();
   for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
   ppPintaMonedero(c, 28, 88);   // bajo los corazones (la pausa va arriba a la derecha: Daniel, 17-11-2026)
   // toques de la sala
-  if (P.T && P.T.nim) ppMarcadorNim(c, P.T, t);   // nivel duelo: el rival y de quién es el turno (js/nimnivel.js)
-  else if (P.T) {
+  if (duelo) { ppMarcadorNim(c, P.T, t); return; }   // nivel duelo: el rival, el turno y la regla (js/nimnivel.js); sin equipo
+  if (P.T) {
     const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
     ppTexto(c, tr('Toques'), 432, 36, 22, tinta.rotulo, 'right', tinta.borde);   // a la izquierda del botón de pausa
     ppPintaToques(c, T, col, panel);

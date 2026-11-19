@@ -15,7 +15,6 @@ IDIOMA.add({
   "¡Gana el CEO!": "The CEO wins!",
   "Tu turno": "Your turn",
   "Piensa el CEO…": "The CEO is thinking…",
-  "Haz pop en una sola fila. ¡Pierde quien haga pop en la última!": "Pop in a single row. Whoever pops the last one loses!",
   "DUELO CONTRA EL CEO": "DUEL THE CEO",
   "Salir del duelo": "Leave the duel",
   "Perlas": "Pearls",
@@ -185,7 +184,8 @@ IDIOMA.add({
   "Te ha tocado hacer pop en la última burbuja. Pierdes un corazón; te quedan {n}.": "You had to pop the last bubble. You lose a heart; {n} left.",
   "¡Gana {n}!": "{n} wins!",
   "Piensa {n}…": "{n} is thinking…",
-  "Una sola fila por turno · ¡pierde quien haga pop en la última!": "One row per turn · whoever pops the last one loses!",
+  "Una sola fila por turno": "One row per turn",
+  "¡Pierde quien haga pop en la última!": "Whoever pops the last one loses!",
   // «copiarnos de Candy Crush»: ayudas, ofertas, hucha, pase, regalo, bandejas y amigos nuevos
   "+3 TOQUES": "+3 TAPS",
   "+3 toques": "+3 taps",

@@ -81,16 +81,22 @@ function ppNimFin(T, gano, soloVentana = false) {
 // el botón ¡LISTO!: solo en tu turno y con algo reventado
 function ppNimBoton() { const T = PP_P && PP_P.T, N = T && T.nim, b = $pp('#pp-listo'); if (b) b.hidden = !(N && !N.fin && N.turno === 'yo' && N.esta.length && PP_PANT.actual === 'sala'); }
 /* ---------- dibujo ---------- */
-// arriba: los corazones (los pinta el marcador), el rival con su nombre y de quién es el turno
+// arriba: los corazones y el monedero (los pinta el marcador), el rival con su nombre, las estrellas, el título, de quién es el turno
+// y la regla en dos líneas. Todo grande (tarea #129); lo que no cabe en su sitio encoge.
 function ppMarcadorNim(c, T, t) {
-  const N = T.nim, br = PP_FX.brilla.rival || 0;
-  ppSlimeRepuestoOImagen(c, N.rival, 400, 62 - br * 12, 30, t, 1);   // a la izquierda del botón de pausa
-  ppTexto(c, tr(PP_SLIMES[N.rival].nombre), 400, 106, 18, '#fff', 'center', '#3a3a6a');
-  for (let k = 0; k < 3; k++) ppEstrella(c, 276 + k * 30, 52, 26, k < ppEstrellas(T));
-  ppTexto(c, T.titulo || '', 236, 112, 26, '#ffd64a', 'center', '#7a4a8a');   // más abajo: encima va el monedero
-  const txt = N.fin ? (N.fin === 'gana' ? tr('¡Ganas!') : tr('¡Gana {n}!', { n: tr(PP_SLIMES[N.rival].nombre) })) : N.turno === 'yo' ? tr('Tu turno') : tr('Piensa {n}…', { n: tr(PP_SLIMES[N.rival].nombre) });
-  ppTexto(c, txt, 270, 138, 24, N.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#c43a84');
-  ppTexto(c, tr('Una sola fila por turno · ¡pierde quien haga pop en la última!'), 270, 164, 18, '#7a4a8a', 'center', '#fff');
+  const N = T.nim, br = PP_FX.brilla.rival || 0, rival = tr(PP_SLIMES[N.rival].nombre);
+  ppSlimeRepuestoOImagen(c, N.rival, 400, 58 - br * 12, 36, t, 1);   // a la izquierda del botón de pausa
+  ppTextoCabe(c, rival, 400, 106, 24, 130, '#fff', '#3a3a6a');
+  for (let k = 0; k < 3; k++) ppEstrella(c, 262 + k * 34, 86, 30, k < ppEstrellas(T));   // entre el monedero y el rival
+  ppTextoCabe(c, T.titulo || '', 145, 134, 34, 230, '#ffd64a', '#7a4a8a');
+  const txt = N.fin ? (N.fin === 'gana' ? tr('¡Ganas!') : tr('¡Gana {n}!', { n: rival })) : N.turno === 'yo' ? tr('Tu turno') : tr('Piensa {n}…', { n: rival });
+  ppTextoCabe(c, txt, 395, 136, 36, 220, N.turno === 'yo' ? '#ffd64a' : '#fff', '#c43a84');
+  ppReglaDuelo(c, 163, 30, '#7a4a8a', '#fff');
+}
+// la regla del duelo en dos líneas (tarea #129): arriba en el camino, debajo del tablero en el duelo de la portada
+function ppReglaDuelo(c, y, tam, col, borde) {
+  ppTextoCabe(c, tr('Una sola fila por turno'), 270, y, tam, 480, col, borde);
+  ppTextoCabe(c, tr('¡Pierde quien haga pop en la última!'), 270, y + Math.round(tam * 0.86), tam, 480, col, borde);
 }
 // la fila en la que se está jugando, marcada
 function ppPintaFilaNim(c, T, t) {

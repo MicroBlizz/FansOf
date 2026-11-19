@@ -121,6 +121,12 @@ img.pp-ico { border-radius: 0; }
 .pp-ayuda b .pp-precio { color: #fff; font-size: 16px; }
 .pp-ayuda.pp-activa { transform: scale(1.12); box-shadow: 0 0 0 6px #ffd64a, 0 5px 0 #e07ab5; }
 .pp-ayuda:active { transform: translateY(4px); box-shadow: 0 1px 0 #e07ab5; }
+/* en los duelos del camino (tarea #129): sin «Tu equipo», DESHACER y PISTA grandes en su sitio, justo bajo el tablero, y ¡LISTO! debajo */
+#pp-ayudas.pp-duelo { top: calc(var(--pp-bajo-tablero, 640px) + 40px); bottom: auto; gap: 48px; }
+#pp-ayudas.pp-duelo .pp-ayuda { width: 118px; height: 118px; border-width: 6px; box-shadow: 0 7px 0 #e07ab5; }
+#pp-ayudas.pp-duelo .pp-ayuda b { right: -12px; bottom: -8px; min-width: 40px; padding: 4px 13px; font-size: 30px; justify-content: center; box-shadow: inset 0 -4px 0 #26924a, 0 0 0 3px #fff; }
+#pp-ayudas.pp-duelo .pp-ayuda b .pp-precio { font-size: 26px; }
+#pp-ui:has(#pp-ayudas.pp-duelo:not([hidden])) #pp-listo { top: calc(var(--pp-bajo-tablero, 640px) + 184px); bottom: auto; }
 #pp-lateral { position: absolute; right: 8px; top: 21%; display: flex; flex-direction: column; gap: 10px; z-index: 20; }
 .pp-lado { position: relative; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 0; border: 0; background: none; padding: 0; cursor: pointer; font: inherit; }
 .pp-lado .pp-ico { width: 58px; height: 58px; filter: drop-shadow(0 3px 0 rgba(196, 58, 132, 0.35)); }

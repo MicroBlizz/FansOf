@@ -237,7 +237,7 @@ const PP_TUTO = {
   ayudas: [{ t: '¡Mira abajo: son las ayudas! El MARTILLO hace pop del todo en la burbuja que toques, sin gastar toque.' },
            { t: 'La BOMBA da un golpe a un cuadrado de 3 x 3, tampoco gasta toque. Y +3 TOQUES te da tres toques más en el nivel.' },
            { t: 'Se ganan jugando (regalo diario, pase…) y, si no te quedan, se compran con perlas.' }],
-  ayudasDuelo: [{ t: 'En los duelos las ayudas son otras: DESHACER vuelve atrás tu última jugada (y la del rival).' },
+  ayudasDuelo: [{ t: '¡Mira debajo del tablero! En los duelos tu equipo descansa y en su sitio van otras ayudas: DESHACER vuelve atrás tu última jugada (y la del rival).' },
                 { t: 'La LUPA te marca la jugada ganadora, también a mitad de turno. Si me llevas en el equipo, ¡te regalo una en cada duelo!' }],
   trucoNim: [{ t: '¡Te cuento mi truco secreto! Parte cada fila en grupos de 4, 2 y 1: una fila de 7 es 4+2+1; una de 5 es 4+1.' },
              { t: 'Al acabar tu turno, cada grupo tiene que quedar por parejas: dos de 4, dos de 2, dos de 1. Si el rival rompe una pareja, tú la vuelves a igualar.' },

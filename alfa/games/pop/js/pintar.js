@@ -188,7 +188,25 @@ function ppPintaEfectos(c, t) {
     ppTexto(c, 'COMBO x' + n, 0, 0, 36 + Math.min(5, n) * 4, ['#5be7ff', '#9dff6e', '#ffd64a', '#ff8a2a', '#ff6ec7'][Math.min(4, n - 2)]);
     c.restore();
   }
-  for (const x of PP_FX.textos) { c.save(); c.globalAlpha = 1 - x.t; ppTexto(c, x.s, x.x, x.y - x.t * 50, 34, x.col); c.restore(); }
+  for (const x of PP_FX.textos) ppPintaFlota(c, x);
+}
+// un texto que flota: sube 50 y se apaga; el grande (en los duelos) se parte en líneas para caber (tarea #129)
+function ppPintaFlota(c, x) {
+  const k = x.t / x.dura, y = x.y - k * 50;
+  c.save(); c.globalAlpha = ppFlotaAlfa(k, x.grande);
+  if (!x.grande) ppTexto(c, x.s, x.x, y, x.tam, x.col);
+  else {
+    c.font = `700 ${Math.round(x.tam * PP_LETRA)}px ${PP_FUENTE}`;
+    const lineas = ppPartirLineas(x.s, PP_FLOTA.anchoDuelo, s => c.measureText(s).width), alto = x.tam * PP_LETRA * 1.15;
+    lineas.forEach((l, j) => ppTexto(c, l, x.x, y + (j - (lineas.length - 1) / 2) * alto, x.tam, x.col));
+  }
+  c.restore();
+}
+// como ppTexto, pero si no cabe en `ancho` la letra encoge (tarea #129)
+function ppTextoCabe(c, s, x, y, tam, ancho, col, borde) {
+  c.font = `700 ${Math.round(tam * PP_LETRA)}px ${PP_FUENTE}`;
+  const w = c.measureText(s).width;
+  ppTexto(c, s, x, y, w > ancho ? Math.floor((tam * ancho) / w) : tam, col, 'center', borde);
 }
 /* ---------- la sala entera ---------- */
 function ppPintaSala(c, t) {

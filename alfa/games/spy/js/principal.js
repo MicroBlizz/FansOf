@@ -79,9 +79,12 @@
     S.creaToques({ lienzo, cam: E.cam, activo: libre, alTocar: pantalla.toca, alMover: () => H.centrar(true), teclas });
     window.enPartida = () => jugando && ventanas.abierta() !== 'final';
     if (NUCLEO.desarrollo) S.depura = { casos, pantalla, ventanas };   // para las pruebas en el navegador (solo en localhost y en la alfa)
-    salir();
-    carga.hidden = true;
-    requestAnimationFrame(cuadro);
+    // Los modelos de Yoshi se descargan mientras sigue el cartel de carga. La carga nunca falla: lo que no llegue se pinta por código.
+    S.cargaModelos.carga().then(() => {
+      salir();
+      carga.hidden = true;
+      requestAnimationFrame(cuadro);
+    });
   }
   arranca();
 })(SPY);

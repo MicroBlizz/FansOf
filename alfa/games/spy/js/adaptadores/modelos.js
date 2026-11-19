@@ -1,8 +1,9 @@
-// Fans of Spy · ADAPTADORES · Los modelos, dibujados por código con las formas de gl/formas.js (el arte de verdad lo hará Yoshi
-// cuando el prototipo guste): CrazyBunny de agente (conejo blanco, traje oscuro, gafas naranjas y la zanahoria en la mano derecha),
-// el Becario (robot blanco con ojos de luz, acreditación y su café en la mano derecha), su patinete, la gorra del vigilante, la
-// cabeza de una cámara, la caja de mudanza, el café abandonado y las marcas de «!» y «?». Todos miran hacia el norte (−z) y se
-// apoyan en el suelo en y = 0. Los brazos y las piernas van aparte, con el origen en su articulación, para poder moverlos al andar.
+// Fans of Spy · ADAPTADORES · Los modelos dibujados por código con las formas de gl/formas.js. Son el respaldo de los de Yoshi
+// (cargamodelos.js): se pintan los que no se hayan podido cargar. CrazyBunny de agente (conejo blanco, traje oscuro, gafas naranjas
+// y la zanahoria en la mano derecha), el Becario (robot blanco con ojos de luz, acreditación y su café en la mano derecha), su
+// patinete, la gorra del vigilante, la cabeza de una cámara, la caja de mudanza, el café abandonado y las marcas de «!» y «?».
+// También los ojos de luz sueltos que se ponen sobre el Becario de Yoshi. Todos miran hacia el norte (−z) y se apoyan en el suelo
+// en y = 0. Los brazos y las piernas van aparte, con el origen en su articulación, para poder moverlos al andar.
 'use strict';
 var SPY = globalThis.SPY || (globalThis.SPY = {});
 (function (S) {
@@ -122,7 +123,13 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     F.caja(b, { x: 0, y: 0, z: 0, sx: 0.06, sy: 0.06, sz: 0.07, color: '#ffffff', emi: 1 });
   });
 
-  // Se hacen una vez, al arrancar (necesitan WebGL ya iniciado).
-  S.modelos = { crear() { Object.assign(S.modelos, { agente: agente(), becario: becario(), camara: camara(), caja: caja(), cafe: cafe(), exclama: exclama(), duda: duda(), orejas: hace((b) => orejas(b, 0)),
+  // Los ojos de luz que se ponen encima del visor del Becario de Yoshi (escena.js los coloca): dicen de qué color está el guardia.
+  const ojosVisor = () => hace((b) => {
+    for (const lado of [-1, 1]) F.caja(b, { x: lado * 0.058, y: 0, z: 0, sx: 0.07, sy: 0.065, sz: 0.02, color: '#ffffff', emi: 1 });
+  });
+
+  // Se hacen una vez, al arrancar (necesitan WebGL ya iniciado). `glb` son los modelos de Yoshi (cargamodelos.js los pone al
+  // cargar): mientras falte uno, se pinta su versión por código.
+  S.modelos = { glb: {}, crear() { Object.assign(S.modelos, { agente: agente(), becario: becario(), camara: camara(), caja: caja(), cafe: cafe(), exclama: exclama(), duda: duda(), orejas: hace((b) => orejas(b, 0)), ojosVisor: ojosVisor(),
     pelota: hace((b) => F.esfera(b, { x: 0, y: 0, z: 0, r: 0.08, color: '#ffd23f', emi: 1, lados: 8, pisos: 5 })) }); } };
 })(SPY);

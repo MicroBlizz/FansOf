@@ -1,8 +1,8 @@
 {
- "build": 1298,
- "hash": "06835cb",
- "fecha": "2026-11-19T13:24:03Z",
- "mensaje": "Pop: pantalla de victoria como la captura de Pepins, con fiesta según las estrellas (tarea #157)",
+ "build": 1299,
+ "hash": "0d20231",
+ "fecha": "2026-11-19T13:25:46Z",
+ "mensaje": "Spy: el parking usa los modelos 3D de Yoshi (agente, Becarios, cámara, caja, coches, cochazo, garita y barrera)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.1",

@@ -1,13 +1,17 @@
-// Fans of Spy · ADAPTADORES · El escenario: convierte el mapa de una planta en UNA malla fija con todo lo que no se mueve: el
-// suelo con sus baldosas y las rayas de las plazas, las paredes de alrededor, los pilares, los coches aparcados (y el cochazo
-// dorado del CEO), la barrera, la garita, los postes de las cámaras y la puerta verde de la meta. También dice dónde cuelgan los
-// focos que hacen los charcos de luz. Todo por código, con las formas de gl/formas.js. Una casilla mide 1; el centro de la
-// casilla (x, y) del mapa está en el punto (x + 0,5, y + 0,5) del suelo.
+// Fans of Spy · ADAPTADORES · El escenario: convierte el mapa de una planta en UNA malla fija con todo lo que no se mueve (el
+// suelo con sus baldosas y las rayas de las plazas, las paredes de alrededor, los pilares, los postes de las cámaras y la puerta
+// verde de la meta) y una lista de «piezas» con modelo de Yoshi que escena.js pinta cada imagen: los coches aparcados (un solo
+// modelo, teñido de un color por casilla), el cochazo del CEO, la barrera y la garita. Si el modelo de una pieza no se pudo
+// cargar, va por código dentro de la malla fija, como antes. También dice dónde cuelgan los focos que hacen los charcos de luz.
+// Una casilla mide 1; el centro de la casilla (x, y) del mapa está en el punto (x + 0,5, y + 0,5) del suelo.
 'use strict';
 var SPY = globalThis.SPY || (globalThis.SPY = {});
 (function (S) {
   const GL = S.gl, M = GL.M, F = S.formas;
   const COCHES = ['#5b6d92', '#8795b3', '#42517a', '#8f5a63', '#4f8088', '#b7bfcd', '#6d7c9b'];
+  // El tinte del coche de Yoshi en cada plaza. Multiplica su textura (azul), así que no hay rojos: son azules, verdes agua,
+  // marinos y grises. El primero (blanco) es el coche tal cual.
+  const TINTES = [[1, 1, 1, 0], [0.62, 1, 0.78, 0], [0.55, 0.6, 0.8, 0], [1, 0.82, 0.62, 0], [0.75, 0.82, 0.9, 0], [0.4, 0.75, 0.75, 0], [0.9, 0.95, 1, 0]].map((c) => new Float32Array(c));
   const PARED = '#2b3350', ZOCALO = '#f2c230', NEGRO = '#11131c', GARITA = '#0e7c8c', LUNA = '#16233d';
   const ALTO = 1.7;
 
@@ -120,7 +124,8 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   }
 
   // Un color de coche que depende solo de su casilla (siempre el mismo en la misma planta).
-  const colorDe = (x, y) => COCHES[(x * 7 + y * 13) % COCHES.length];
+  const indiceDe = (x, y) => (x * 7 + y * 13) % COCHES.length;
+  const colorDe = (x, y) => COCHES[indiceDe(x, y)];
   const PIEZAS = {
     '#': (b, pl, x, y) => pared(b, x, y),
     P: (b, pl, x, y) => pilar(b, x, y),
@@ -130,14 +135,51 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     M: (b, pl, x, y) => puerta(b, x, y),
   };
 
+  // ---------- las piezas con modelo de Yoshi: { modelo, matriz, tinte, tramo } ----------
+  const enCasilla = (x, y, giro) => M.une(M.traslada(x + 0.5, 0, y + 0.5), M.rotaY(giro));
+  // Un coche aparcado (la mitad del revés, mirando al sur) o el cochazo del CEO, sin teñir.
+  function pzCoche(G, x, y, ceo) {
+    if (ceo) return { modelo: 'cochazo', matriz: M.mul(enCasilla(x, y, 0), G.cochazo.ajuste), tinte: null };
+    return { modelo: 'coche', matriz: M.mul(enCasilla(x, y, (x + y) % 2 === 1 ? Math.PI : 0), G.coche.ajuste), tinte: TINTES[indiceDe(x, y)] };
+  }
+  // La barrera estirada a su tramo, con el poste en el extremo que toca la garita (o el izquierdo). El poste del modelo va en su −z.
+  function pzBarrera(G, pl, t) {
+    const derecha = pl.tipo(t.x1, t.y) === 'G', A = S.cargaModelos.AJUSTE.barrera;
+    const ajuste = S.cargaModelos.ajuste(G.barrera.minimo, G.barrera.maximo, { alto: A.alto, fondo: A.fondo, giro: derecha ? -Math.PI / 2 : Math.PI / 2, largo: t.x1 - t.x0 });
+    return { modelo: 'barrera', matriz: M.mul(M.traslada((t.x0 + t.x1) / 2, 0, t.y + 0.5), ajuste), tinte: null };
+  }
+  // La garita estirada a lo largo de su tramo y con el fondo de una casilla. `tramo`: escena.js la pinta medio transparente
+  // cuando hay alguien dentro (el modelo tiene tejado y taparía al vigilante).
+  function pzGarita(G, t) {
+    const A = S.cargaModelos.AJUSTE.garita;
+    const ajuste = S.cargaModelos.ajuste(G.garita.minimo, G.garita.maximo, { alto: A.alto, giro: A.giro, largo: t.x1 - t.x0 - 0.08, fondo: 0.92 });
+    return { modelo: 'garita', matriz: M.mul(M.traslada((t.x0 + t.x1) / 2, 0, t.y + 0.5), ajuste), tinte: null, tramo: t };
+  }
+
+  // Las casillas: lo que tiene modelo cargado va a `piezas`; lo demás, por código a la malla fija.
+  function casillas(b, pl, G, piezas) {
+    for (let y = 0; y < pl.alto; y++) {
+      for (let x = 0; x < pl.ancho; x++) {
+        const t = pl.tipo(x, y);
+        if (t === 'C' && G.coche) piezas.push(pzCoche(G, x, y, false));
+        else if (t === 'X' && G.cochazo) piezas.push(pzCoche(G, x, y, true));
+        else if (PIEZAS[t]) PIEZAS[t](b, pl, x, y);
+      }
+    }
+  }
+  function tramosConModelo(b, pl, G, piezas) {
+    for (const t of tramos(pl, '=')) { if (G.barrera) piezas.push(pzBarrera(G, pl, t)); else barrera(b, pl, t); }
+    for (const t of tramos(pl, 'G')) { if (G.garita) piezas.push(pzGarita(G, t)); else garita(b, t); }
+  }
+
+  // Se construye al abrir la planta por primera vez, ya con los modelos de Yoshi cargados (principal.js espera a la carga).
   function construye(pl) {
-    const b = F.nueva();
+    const b = F.nueva(), piezas = [], G = S.modelos.glb || {};
     suelo(b, pl);
     contorno(b, pl);
-    for (let y = 0; y < pl.alto; y++) for (let x = 0; x < pl.ancho; x++) { const pieza = PIEZAS[pl.tipo(x, y)]; if (pieza) pieza(b, pl, x, y); }
-    for (const t of tramos(pl, '=')) barrera(b, pl, t);
-    for (const t of tramos(pl, 'G')) garita(b, t);
-    return { malla: GL.malla(F.datos(b)), focos: focos(pl) };
+    casillas(b, pl, G, piezas);
+    tramosConModelo(b, pl, G, piezas);
+    return { malla: GL.malla(F.datos(b)), piezas, focos: focos(pl) };
   }
 
   S.escenario = Object.freeze({ construye, tramos });

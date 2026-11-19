@@ -1,8 +1,10 @@
 // Fans of Spy · ADAPTADORES · La escena: pinta una imagen entera del parking a partir de la vista (animacion.js): el escenario fijo,
-// el agente (o su caja de mudanza con las orejas asomando), los Becarios con los ojos del color de su estado y su marca de «!» o
-// «?», las cámaras, los cafés y, por encima, todo lo translúcido: los conos de visión (azul tranquilo, amarillo sospecha, rojo
+// las piezas con modelo de Yoshi (coches, cochazo, barrera y garita, medio transparente si hay alguien dentro), el agente (o su
+// caja de mudanza con las orejas asomando), los Becarios con los ojos del color de su estado y su marca de «!» o «?», las
+// cámaras, los cafés y, por encima, todo lo translúcido: los conos de visión (azul tranquilo, amarillo sospecha, rojo
 // alerta, verde agua las cámaras), hacia dónde mira cada guardia, las casillas a las que se puede ir, el camino elegido (en rojo
-// donde lo verían), el alcance del ruido, las ondas, las sombras y los haces de la meta y de la casilla que señala Lola.
+// donde lo verían), el alcance del ruido, las ondas, las sombras y los haces de la meta y de la casilla que señala Lola. Usa los
+// modelos de Yoshi (S.modelos.glb, cargamodelos.js) y, para el que no se haya cargado, el de código de siempre (modelos.js).
 // E = { planta, mundo, vis, cam, marcas, verConos }.
 'use strict';
 var SPY = globalThis.SPY || (globalThis.SPY = {});
@@ -13,6 +15,7 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   const con = (c, a) => [c[0], c[1], c[2], a];
   const tinte = (c) => { const k = c.join(); if (!tintes.has(k)) tintes.set(k, new Float32Array([c[0], c[1], c[2], 1])); return tintes.get(k); };
   const PERSONAJE = new Float32Array([1, 1, 1, 0.9]);   // los personajes llevan algo de luz propia para destacar en la penumbra
+  const TRANSPARENCIA = 0.35;   // lo que tapa la garita cuando hay alguien dentro (0 = no se ve, 1 = opaca)
   const miran = (g) => g.estado !== 'derribado' && g.estado !== 'cafe';
 
   // La cámara y las luces de esta imagen: los 6 focos más cercanos a donde se mira y un temblor si acaban de pegar al agente.
@@ -24,18 +27,31 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     return { vp: M.mul(cam.vp, tiembla), ojo: cam.ojo, dir: GL.V.norma([-0.45, 0.8, 0.5]), ambiente: [0.4, 0.46, 0.7], niebla: NIEBLA, nieblaD: [cam.dist + 5, cam.dist + 22], focos, grosor: 0.022 };
   }
 
+  // La caja de mudanza (la de Yoshi si está cargada) y las orejas del agente asomando por arriba.
   function pintaCaja(E, a) {
-    const t = E.vis.t;
-    GL.pinta(S.modelos.caja, M.une(M.traslada(a.x, (1 - a.caja) * 1.2, a.z), M.rotaY(a.giro)), PERSONAJE);
-    if (a.caja > 0.9) GL.pinta(S.modelos.orejas, M.une(M.traslada(a.x, 0.45 + Math.sin(t * 5) * 0.012, a.z), M.rotaY(a.giro + Math.sin(t * 1.3) * 0.2)), PERSONAJE);
+    const t = E.vis.t, G = S.modelos.glb.caja, alto = G ? S.cargaModelos.AJUSTE.caja.alto : 0.6;
+    const m = M.une(M.traslada(a.x, (1 - a.caja) * 1.2, a.z), M.rotaY(a.giro));
+    GL.pinta(G ? G.malla : S.modelos.caja, G ? M.mul(m, G.ajuste) : m, PERSONAJE);
+    if (a.caja > 0.9) GL.pinta(S.modelos.orejas, M.une(M.traslada(a.x, alto - 0.15 + Math.sin(t * 5) * 0.012, a.z), M.rotaY(a.giro + Math.sin(t * 1.3) * 0.2)), PERSONAJE);
+  }
+  const AMPLITUD = { anda: 0.55, corre: 0.9, puntillas: 0.3 };
+  // La matriz base del agente (dónde está, hacia dónde mira, el bote al andar, agachado de puntillas, inclinado al correr):
+  // de aquí cuelga todo su cuerpo. La animación de juguete del modelo de Yoshi se hará a partir de esta.
+  function baseAgente(a, t) {
+    const amplitud = AMPLITUD[a.modo] || 0, bote = amplitud ? Math.abs(Math.sin(a.fase)) * 0.045 : Math.sin(t * 2.4) * 0.008;
+    return M.une(M.traslada(a.x, bote, a.z), M.rotaY(a.giro), M.escala(1, a.modo === 'puntillas' ? 0.9 : 1, 1), M.rotaX(a.modo === 'corre' ? -0.22 : 0));
   }
   function pintaAgente(E) {
-    const a = E.vis.agente, mo = S.modelos.agente, t = E.vis.t;
+    const a = E.vis.agente, G = S.modelos.glb.crazybunny;
     if (a.caja > 0.02) pintaCaja(E, a);
     if (a.caja > 0.6) return;
-    const amplitud = { anda: 0.55, corre: 0.9, puntillas: 0.3 }[a.modo] || 0;
-    const zanca = Math.sin(a.fase) * amplitud, bote = amplitud ? Math.abs(Math.sin(a.fase)) * 0.045 : Math.sin(t * 2.4) * 0.008;
-    const base = M.une(M.traslada(a.x, bote, a.z), M.rotaY(a.giro), M.escala(1, a.modo === 'puntillas' ? 0.9 : 1, 1), M.rotaX(a.modo === 'corre' ? -0.22 : 0));
+    const base = baseAgente(a, E.vis.t);
+    if (G) GL.pinta(G.malla, M.mul(base, G.ajuste), PERSONAJE);
+    else pintaAgenteCodigo(base, Math.sin(a.fase) * (AMPLITUD[a.modo] || 0));
+  }
+  // Respaldo: el agente por código, con los brazos y las piernas moviéndose al andar.
+  function pintaAgenteCodigo(base, zanca) {
+    const mo = S.modelos.agente;
     GL.pinta(mo.cuerpo, base, PERSONAJE);
     GL.pinta(mo.brazoI, M.une(base, M.traslada(-mo.hombro[0], mo.hombro[1], 0), M.rotaX(zanca)), PERSONAJE);
     GL.pinta(mo.brazoD, M.une(base, M.traslada(mo.hombro[0], mo.hombro[1], 0), M.rotaX(-zanca * 0.4)), PERSONAJE);
@@ -50,20 +66,36 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     }
   }
 
+  // La matriz base de un guardia (dónde está, el empujón al embestir, subido al patinete, hacia dónde mira, tumbado al caer, más
+  // grande si es vigilante y encogiéndose al desaparecer): de aquí cuelga todo su cuerpo. `alto` es lo que lo sube el patinete
+  // por código (el Becario de Yoshi ya trae el suyo debajo). La animación de juguete del modelo de Yoshi se hará a partir de esta.
+  function baseGuardia(g, alto) {
+    const k = (g.tipo === 'vigilante' ? 1.1 : 1) * (1 - g.fuera), d = R.DIRS[g.dir], empuje = g.embiste * 0.28;
+    return M.une(M.traslada(g.x + d.x * empuje, alto + g.caido * 0.17, g.z + d.y * empuje), M.rotaY(g.giro), M.rotaX(g.caido * Math.PI / 2), M.escala(k, k, k));
+  }
+  // Dónde van, sobre el Becario de Yoshi (ya a su medida), los ojos de luz (en el visor) y la gorra del vigilante (en la cabeza).
+  const VISOR = M.traslada(0, 0.695, -0.205), GORRA = M.une(M.traslada(0, 0.105, -0.02), M.escala(1.05, 1, 1.1));
   function pintaGuardia(E, g) {
     if (g.fuera > 0.97) return;
-    const mo = S.modelos.becario, t = E.vis.t, vigilante = g.tipo === 'vigilante', k = (vigilante ? 1.1 : 1) * (1 - g.fuera);
-    const d = R.DIRS[g.dir], empuje = g.embiste * 0.28, enPatinete = g.patinete && g.caido < 0.5, alto = enPatinete ? 0.075 : 0;
-    const base = M.une(M.traslada(g.x + d.x * empuje, alto + g.caido * 0.17, g.z + d.y * empuje), M.rotaY(g.giro), M.rotaX(g.caido * Math.PI / 2), M.escala(k, k, k));
-    const zanca = g.anda && !g.patinete ? Math.sin(g.fase) * 0.5 : 0;
+    const G = S.modelos.glb.becario, enPatinete = g.patinete && g.caido < 0.5, alto = enPatinete && !G ? 0.075 : 0, d = R.DIRS[g.dir];
+    const base = baseGuardia(g, alto), ojos = tinte(COLOR[g.estado] || COLOR.tranquilo);
+    if (G) {
+      GL.pinta(G.malla, M.mul(base, G.ajuste), PERSONAJE);
+      GL.pinta(S.modelos.ojosVisor, M.mul(base, VISOR), ojos, true);
+      if (g.tipo === 'vigilante') GL.pinta(S.modelos.becario.gorra, M.mul(base, GORRA), PERSONAJE);
+    } else pintaGuardiaCodigo(g, base, ojos, enPatinete);
+    if (g.caido > 0.5) estrellas(g.x - d.x * 0.25, 0.62, g.z - d.y * 0.25, E.vis.t, 1 - g.fuera);
+    pintaSenal(E, g, 1.22 + alto);
+  }
+  // Respaldo: el Becario por código, con sus ojos, su gorra, el brazo y las piernas moviéndose al andar y su patinete aparte.
+  function pintaGuardiaCodigo(g, base, ojos, enPatinete) {
+    const mo = S.modelos.becario, zanca = g.anda && !g.patinete ? Math.sin(g.fase) * 0.5 : 0;
     GL.pinta(mo.cuerpo, base, PERSONAJE);
-    GL.pinta(mo.ojos, base, tinte(COLOR[g.estado] || COLOR.tranquilo), true);
-    if (vigilante) GL.pinta(mo.gorra, base, PERSONAJE);
+    GL.pinta(mo.ojos, base, ojos, true);
+    if (g.tipo === 'vigilante') GL.pinta(mo.gorra, base, PERSONAJE);
     GL.pinta(mo.brazoI, M.une(base, M.traslada(-mo.hombro[0], mo.hombro[1], 0), M.rotaX(zanca)), PERSONAJE);
     for (const s of [-1, 1]) GL.pinta(mo.pierna, M.une(base, M.traslada(s * mo.cadera[0], mo.cadera[1], 0), M.rotaX(-s * zanca)), PERSONAJE);
     if (enPatinete) GL.pinta(mo.patinete, M.une(M.traslada(g.x, 0, g.z), M.rotaY(g.giro)));
-    if (g.caido > 0.5) estrellas(g.x - d.x * 0.25, 0.62, g.z - d.y * 0.25, t, 1 - g.fuera);
-    pintaSenal(E, g, 1.22 + alto);
   }
   // Lo que lleva un guardia encima de la cabeza según su estado: «!» en alerta y «?» si sospecha. Mira siempre a la cámara.
   const SENAL = { alerta: 'exclama', sospecha: 'duda', mira: 'duda' };
@@ -145,16 +177,49 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     for (const s of E.secretos) if (!s.hecho) GL.anillo(s.x + 0.5, s.y + 0.5, 0.52, 0.58 + Math.sin(t * 3) * 0.03, 0.02, [1, 0.82, 0.25, 0.5]);
   }
 
+  // Una cámara de vigilancia en lo alto de su poste. La de Yoshi trae el soporte detrás: se adelanta medio largo para que el
+  // soporte quede en el poste y cuelga un poco más bajo que la cabeza por código (que tiene el origen en su enganche).
+  function pintaCamara(c) {
+    const G = S.modelos.glb.camara, m = M.une(M.traslada(c.x, 1.45, c.z), M.rotaY(c.giro));
+    if (!G) { GL.pinta(S.modelos.camara, m); return; }
+    const largo = (G.maximo[2] - G.minimo[2]) * S.cargaModelos.AJUSTE.camara.alto / (G.maximo[1] - G.minimo[1]);
+    GL.pinta(G.malla, M.une(m, M.traslada(0, -0.3, -largo / 2), G.ajuste));
+  }
+
+  // Las piezas del escenario con modelo de Yoshi (escenario.js). Devuelve las que se han de ver medio transparentes (la garita
+  // con alguien dentro), que se pintan después de todo lo opaco.
+  function pintaPiezas(E) {
+    const transparentes = [];
+    for (const p of E.mundo.piezas) {
+      if (p.tramo && hayDentro(E, p.tramo)) transparentes.push(p);
+      else GL.pinta(S.modelos.glb[p.modelo].malla, p.matriz, p.tinte);
+    }
+    return transparentes;
+  }
+  const hayDentro = (E, t) => [...E.vis.guardias.values()].some((g) => g.fuera < 0.97 && Math.floor(g.z) === t.y && g.x >= t.x0 && g.x < t.x1);
+  // Una pieza medio transparente: mezcla con lo de detrás con un alfa fijo (el sombreador da alfa 1, así que se usa el alfa
+  // constante de WebGL) y sin escribir profundidad, para que se vea quien está dentro. Sin contorno: el borde negro hinchado
+  // se vería como una sombra. Deja WebGL como estaba.
+  function pintaTranslucida(p, alfa) {
+    const gl = GL.gl;
+    gl.enable(gl.BLEND); gl.blendColor(0, 0, 0, alfa); gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_ALPHA);
+    gl.depthMask(false);
+    GL.pinta(S.modelos.glb[p.modelo].malla, p.matriz, p.tinte, true);
+    gl.depthMask(true); gl.disable(gl.BLEND);
+  }
+
   // Pinta la imagen entera.
   function pinta(E) {
     const v = E.vis;
     GL.empieza(luces(E));
     GL.pinta(E.mundo.malla, IDENT);
+    const transparentes = pintaPiezas(E);
     pintaAgente(E);
     for (const g of v.guardias.values()) pintaGuardia(E, g);
-    for (const c of v.camaras.values()) GL.pinta(S.modelos.camara, M.une(M.traslada(c.x, 1.45, c.z), M.rotaY(c.giro)));
+    for (const c of v.camaras.values()) pintaCamara(c);
     for (const o of v.objetos) GL.pinta(S.modelos.cafe, M.traslada(o.x, 0, o.z));
     if (v.bala) { const b = v.bala; GL.pinta(S.modelos.pelota, M.traslada(b.x0 + (b.x1 - b.x0) * b.k, 0.45 + Math.sin(b.k * Math.PI) * 0.3, b.z0 + (b.z1 - b.z0) * b.k), null, true); }
+    for (const p of transparentes) pintaTranslucida(p, TRANSPARENCIA);
     pintaVigias(E);
     pintaMarcas(E);
     pintaSueltos(E);

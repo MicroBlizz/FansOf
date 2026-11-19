@@ -1,8 +1,8 @@
 {
- "build": 1316,
- "hash": "cd718e0",
- "fecha": "2026-11-19T17:32:25Z",
- "mensaje": "Pop: la pantalla de victoria siempre cabe sin la barra gris de desplazamiento (se aprieta y, si hace falta, se encoge) (tarea #157, petición de Pepins)",
+ "build": 1317,
+ "hash": "77bb45a",
+ "fecha": "2026-11-19T17:34:55Z",
+ "mensaje": "Pop: el regalito del estreno vuela desde Lola a su contador y lo de detrás se oscurece mientras Lola espera el ¡VALE! (tarea #140, cambios de Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

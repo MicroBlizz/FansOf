@@ -85,10 +85,10 @@ function ppVicAvisoRacha() {
     + `<small>${n === 1 ? tr('Ahora empiezas los niveles con +1 toque') : tr('Ahora empiezas los niveles con +{n} toques', { n })}</small></div></div>`;
 }
 /* ---------- las monedas que vuelan a la barra ---------- */
-// una moneda que vuela de `a` a `b` (rectángulos de pantalla) en curva; al llegar, `llega()`
-function ppVicMoneda(a, b, retraso, llega) {
+// una moneda (u otro dibujo `ico`, p. ej. el regalo de un estreno) que vuela de `a` a `b` (rectángulos de pantalla) en curva; al llegar, `llega()`
+function ppVicMoneda(a, b, retraso, llega, ico = 'i-moneda') {
   const img = document.createElement('img'), lado = a.width;
-  img.src = (PP_LISO ? 'img-liso' : 'img') + '/i-moneda.png'; img.alt = ''; img.className = 'pp-vic-vuela';
+  img.src = (PP_LISO ? 'img-liso' : 'img') + '/' + ico + '.png'; img.alt = ''; img.className = 'pp-vic-vuela';
   img.style.cssText = `left:${a.left}px;top:${a.top}px;width:${lado}px;height:${lado}px`;
   document.body.appendChild(img);
   const dx = b.left + b.width / 2 - (a.left + lado / 2), dy = b.top + b.height / 2 - (a.top + lado / 2);

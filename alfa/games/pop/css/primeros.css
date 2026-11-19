@@ -14,3 +14,7 @@
   background: url(../img-liso/i-mano.png) center / contain no-repeat; animation: pp-bota 0.7s ease-in-out infinite; pointer-events: none; z-index: 2; }
 .pp-lado.pp-nuevo::before { left: -22px; top: -6px; width: 34px; height: 42px; margin-left: 0; }
 @media (prefers-reduced-motion: reduce) { .pp-nuevo::before { animation: none; } }
+/* el «+1» de la ayuda regalada en un estreno: sale donde cae y sube despacio mientras se va */
+.pp-regalo-mas { position: fixed; z-index: 1000; display: flex; align-items: center; gap: 4px; pointer-events: none; font-family: 'Fredoka', sans-serif; font-size: 30px; color: #fff;
+  -webkit-text-stroke: 5px #c43a84; paint-order: stroke; animation: pp-regalo-sube 1.5s ease-out both; }
+@keyframes pp-regalo-sube { from { transform: translateY(0) scale(0.6); opacity: 0; } 20% { transform: translateY(-10px) scale(1.15); opacity: 1; } to { transform: translateY(-70px) scale(1); opacity: 0; } }

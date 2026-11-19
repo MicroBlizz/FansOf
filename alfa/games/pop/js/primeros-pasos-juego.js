@@ -73,8 +73,10 @@ function ppPrimerosLado(b, cosa) {
 /* ---------- el estreno ---------- */
 // Lola dice algo ya traducido, por encima de lo que haya
 function ppLolaDice(texto) {
-  PP_LOLA.cola.push({ t: texto, ya: true, encima: true });
+  const frase = { t: texto, ya: true, encima: true };
+  PP_LOLA.cola.push(frase);
   if (!PP_LOLA.actual) ppLolaSiguiente();
+  return frase;
 }
 // al llegar al camino: estrena lo que toque (una sola cosa). Devuelve true si ya ha salido algo (y no debe salir otra ventana).
 function ppPrimerosEstreno() {
@@ -88,8 +90,36 @@ function ppPrimerosEstreno() {
   }
   ppGuarda();
   if (!r) return false;
-  ppDaPremio(r.premio);
-  play('ppPremio'); ppPintaLateral();
-  ppLolaDice(tr(r.texto));
+  const dice = ppLolaDice(tr(r.texto));
+  ppPrimerosTrasVale(dice, () => ppPrimerosVuela(r.premio));   // al pulsar ¡VALE!: así se ve la barra de abajo, que Lola tapa
   return true;
+}
+// espera a que Lola deje de decir `frase` (se pulsó ¡VALE! o se cerró) y entonces llama a `f`
+function ppPrimerosTrasVale(frase, f) {
+  const mira = setInterval(() => {
+    const sigue = PP_LOLA.actual === frase || PP_LOLA.cola.includes(frase);   // aún la dice o le toca después
+    if (!sigue) { clearInterval(mira); f(); }
+  }, 200);
+}
+/* ---------- el regalito vuela desde Lola hasta su sitio (Pepins, 19-11-2026) ---------- */
+// un punto del lienzo (coordenadas lógicas) como rectángulo de pantalla de `lado`
+function ppPrimerosRect(x, y, lado) { const r = PP_CV.getBoundingClientRect(), s = PP_V.sc; return { left: r.left + (x - lado / 2) * s, top: r.top + (y - lado / 2) * s, width: lado * s, height: lado * s }; }
+// las monedas van a su contador del mapa (y se suman al llegar); una ayuda, a la barra de abajo, con «+1» y su dibujo
+function ppPrimerosVuela(premio) {
+  const cuenta = (PP_MAPA.cuentas || [])[1];
+  if (!cuenta || PP_PANT.actual !== 'mapa') { ppPrimerosSuma(premio); return; }
+  const desde = ppPrimerosRect(80, PP_V.H - 110, 56);   // de donde estaba Lola (abajo a la izquierda): al pulsar ¡VALE! ya se ha ido
+  const ayuda = Object.keys(premio.ayudas || {})[0], hasta = ayuda ? ppPrimerosRect(270, PP_V.H - 130, 60) : ppPrimerosRect(cuenta.x, cuenta.y, 34);
+  const n = ayuda ? 1 : 6;
+  let llegadas = 0;
+  const llega = () => { if (llegadas++ === 0) { ppPrimerosSuma(premio); if (ayuda) ppPrimerosMasUno(hasta, ayuda); } play('ppPop', llegadas); };
+  for (let k = 0; k < n; k++) ppVicMoneda(desde, hasta, k * 90, llega, ayuda ? 'i-' + ayuda : 'i-moneda');
+}
+function ppPrimerosSuma(premio) { ppDaPremio(premio); play('ppPremio'); ppPintaLateral(); }
+// el «+1» con el dibujo de la ayuda, que sube y se va
+function ppPrimerosMasUno(r, ayuda) {
+  const e = document.createElement('div'); e.className = 'pp-regalo-mas';
+  e.innerHTML = `<b>+1</b>${ppIcono('i-' + ayuda, Math.round(r.width), '#ffd1ec')}`;
+  e.style.left = r.left + 'px'; e.style.top = r.top + 'px';
+  document.body.appendChild(e); setTimeout(() => e.remove(), 1600);
 }

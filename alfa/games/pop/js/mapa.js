@@ -94,7 +94,9 @@ function ppPintaCuentas(c, x0, x1, y, cuentas) {
   const mide = () => { c.font = `700 ${Math.round(tam * PP_LETRA)}px ${PP_FUENTE}`; return cuentas.reduce((a, q) => a + tam + 8 + c.measureText(q[1]).width, 0) + (cuentas.length - 1) * 12; };
   while ((ancho = mide()) > x1 - x0 && tam > 14) tam -= 2;
   let x = x1 - ancho;
+  PP_MAPA.cuentas = [];   // dónde queda cada contador, para que el regalo de un estreno vuele hasta él (js/primeros-pasos-juego.js)
   for (const [pinta, txt, borde] of cuentas) {
+    PP_MAPA.cuentas.push({ x: x + tam / 2, y });
     pinta(c, x + tam / 2, y, tam + 6); ppTexto(c, txt, x + tam + 6, y + 2, tam, '#fff', 'left', borde);
     x += tam + 8 + c.measureText(txt).width + 12;
   }

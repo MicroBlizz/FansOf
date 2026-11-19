@@ -7,6 +7,8 @@
 // mantiene las de antes (dobles con nata, de HIELO que solo revientan si las tocas a ellas, CONCHAS que al tocarlas solo
 // revientan ellas y TRIPLES con cereza), los tableros crecen hasta 6x6 y el margen de toques sobre el mínimo se va comiendo:
 // en los primeros mundos sobran 2 o 3 toques; en los últimos hay que encontrar la solución perfecta o casi (`ppMargen`).
+// AFINADO CON EL ROBOT (tarea #196, ADR 169): 200 partidas simuladas, el límite más cercano a la curva, bienvenida en los dos primeros
+// niveles de cada mundo y nunca un muro (herramientas/pruebas/balance/pop/ lo mide).
 // MODO DIFÍCIL (Daniel, 30-10-2026): al ganar al jefe de un mundo se abre ese mundo en difícil: otros 20 niveles con tableros
 // más grandes desde el principio, menos toques de sobra, más nata (en los mundos que la tienen) y el fondo de noche (`dif`).
 'use strict';
@@ -95,19 +97,20 @@ function ppOptimo(n, mask, need, tope = 80000, esp = null) {
 // cómo juega una jugadora normal: toca donde más revienta (a veces se despista y toca otra que también revienta algo)
 function ppVoraz(n, mask, need, azar, despiste = 0, esp = null) {
   const falta = need.slice(), toques = [], N = n * n;
+  const E = Array.from({ length: N }, (_, t) => (mask[t] ? ppEfecto(n, mask, esp, t) : []));   // lo que revienta cada toque, una vez (tarea #196: el generador simula 200 partidas)
   for (let g = 0; g < 200; g++) {
     let mejor = 0, cands = [];
     const buenas = [];
     for (let t = 0; t < N; t++) {
       if (!mask[t]) continue;
-      let v = 0; for (const j of ppEfecto(n, mask, esp, t)) if (falta[j] > 0) v++;
+      let v = 0; for (const j of E[t]) if (falta[j] > 0) v++;
       if (v > 0) buenas.push(t);
       if (v > mejor) { mejor = v; cands = [t]; } else if (v === mejor && v > 0) cands.push(t);
     }
     if (!mejor) break;
     const lista = azar() < despiste ? buenas : cands;
     const t = lista[Math.floor(azar() * lista.length)];
-    for (const j of ppEfecto(n, mask, esp, t)) if (falta[j] > 0) falta[j]--;
+    for (const j of E[t]) if (falta[j] > 0) falta[j]--;
     toques.push(t);
   }
   return { toques };
@@ -137,6 +140,16 @@ function ppMargen(g, dif) {
 }
 // --- el nivel g: forma, burbujas especiales, óptimo y límite de toques ---
 // Se prueban varias formas y repartos de dobles (6, salvo en el tutorial) y se queda la que más se acerca a la curva.
+// de los límites posibles (los toques de cada partida simulada), el que deja pasar a la jugadora normal con la probabilidad más
+// cercana a la curva `obj`; en un empate, el más generoso
+function ppLimiteCercano(tiradas, obj, pasaCon) {
+  let mejor = tiradas[0];
+  for (const lim of new Set(tiradas)) {
+    const d = Math.abs(pasaCon(lim) - obj), dm = Math.abs(pasaCon(mejor) - obj);
+    if (d < dm || (d === dm && lim > mejor)) mejor = lim;
+  }
+  return mejor;
+}
 const PP_CACHE_NIVEL = {};
 function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: una forma concreta (ver ppNivel)
   const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(1000 * (m + 1) + l * 37 + 11 + intento * 7919 + (dif ? 500009 : 0));
@@ -163,19 +176,25 @@ function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: 
   const hayEsp = esp.some(v => v);
   const espArg = hayEsp ? esp : null;
   const opt = ppOptimo(n, mk, need, 80000, espArg);
-  // el límite: el menor que deja pasar a la jugadora normal con la probabilidad de la curva (40 partidas simuladas)…
-  const tiradas = [];
-  for (let k2 = 0; k2 < 40; k2++) tiradas.push(ppVoraz(n, mk, need, az, 0.25, espArg).toques.length);
-  tiradas.sort((a, b) => a - b);
-  const obj = ppObjetivo(g, dif);
-  let limite = tiradas[Math.min(tiradas.length - 1, Math.ceil(obj * tiradas.length) - 1)];
-  // …y nunca con más margen sobre el mínimo del que marca ppMargen (salvo el tutorial)
-  const tuto = l <= 2 && m === 0 && !dif;
+  // el límite: el que deja pasar a la jugadora normal con la probabilidad más cercana a la curva (PP_CFG.generador.tiradas partidas
+  // simuladas; tarea #196: antes 40 y el primero que llegaba a la curva, y regalaba niveles)…
+  const G = PP_CFG.generador, tiradas = [];
+  for (let k2 = 0; k2 < G.tiradas; k2++) tiradas.push(ppVoraz(n, mk, need, az, 0.25, espArg).toques.length);
+  const obj = ppObjetivo(g, dif), pasaCon = lim => tiradas.filter(t => t <= lim).length / tiradas.length;
+  let limite = ppLimiteCercano(tiradas, obj, pasaCon);
+  // …y nunca con más margen sobre el mínimo del que marca ppMargen, salvo en los dos de entrada de cada mundo, que son de bienvenida
+  // (tarea #196: la curva les pide el 100 % y antes solo se libraban los del Jardín)
+  const tuto = l <= 2 && !dif;
   if (!tuto) limite = Math.min(limite, opt.length + ppMargen(g, dif));
   limite = Math.max(limite, opt.length + (tuto ? 2 : 0));
-  // pero sin muros: si casi nadie lo pasaría, un toque más hasta llegar al suelo (más bajo en los difíciles y los jefes)
-  const suelo = ppEsDificil(g) || ppEsJefe(g) || dif ? 0.15 : 0.25, pasaCon = lim => tiradas.filter(t => t <= lim).length / tiradas.length;
+  // pero sin muros: si casi nadie lo pasaría, un toque más hasta llegar al suelo (más bajo en los difíciles y los jefes)…
+  const suelo = ppEsDificil(g) || ppEsJefe(g) || dif ? 0.15 : 0.25;
   while (pasaCon(limite) < suelo && limite < opt.length + 4) limite++;
+  // …y quien no se despista nunca tiene que poder: tantos toques como su mejor partida (tarea #196: el Difícil 1-04 y el 7-02 no
+  // los pasaba ni la jugadora lista del robot de dificultad)
+  let mejor = Infinity;
+  for (let k2 = 0; k2 < G.listas; k2++) mejor = Math.min(mejor, ppVoraz(n, mk, need, az, 0, espArg).toques.length);
+  limite = Math.max(limite, mejor);
   const pasa = pasaCon(limite);
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: espArg, opt, limite, pasa, amigos: !dif && M.amigos.includes(l) ? 1 : 0,
     jefe: ppEsJefe(g), dificil: ppEsDificil(g), tutorial: !dif && ((m === 0 && l <= 2) || (m > 0 && l === 1)) };

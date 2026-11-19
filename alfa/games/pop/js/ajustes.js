@@ -74,6 +74,9 @@ const PP_CFG = {
   // el ritmo del rival en los niveles con duelo (js/nimnivel.js), en ms: `espera` hasta su primera burbuja y `paso` entre una y otra.
   // Si abre él la partida, sale «¡Empieza …!» y va más despacio para que se vea qué quita (tarea #180)
   rivalNim: { normal: { espera: 380, paso: 380 }, abre: { espera: 1100, paso: 650 } },
+  // el generador de niveles (js/niveles.js, ppConstruye; tarea #196): cuántas partidas simula de la jugadora normal para poner el límite
+  // (antes 40) y cuántas de una que no se despista, para que nunca salga un nivel que ni ella pueda pasar
+  generador: { tiradas: 200, listas: 20 },
   // «COPIARNOS DE CANDY CRUSH» (Daniel, 30-10-2026: «hay que sacar el máximo beneficio monetario»). Todo a precio FIJO: nada
   // de pagar por azar (ADR 004). Ver js/potenciadores.js, js/ofertas.js y js/pase.js; la tienda con pestañas en js/tienda.js.
   // AYUDAS (potenciadores): se ganan jugando (regalo diario, pase, cofres de oferta) o se compran con perlas. `nim`: solo en duelos.

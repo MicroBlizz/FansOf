@@ -73,7 +73,7 @@ function ppNimFin(T, gano, soloVentana = false) {
     const t = ppAbre(`<h2>${tr('¡{n} te ha ganado!', { n: tr(PP_SLIMES[N.rival].nombre) })}</h2><p class="pp-sub">${tr('Te ha tocado hacer pop en la última burbuja. Pierdes un corazón; te quedan {n}.', { n: ppVidas() })}</p>`);
     // como el +5 movimientos de Candy Crush: deshacer tu última jugada y recuperar el corazón
     const n = ppTengo('deshacer'), b = ppBoton('', 'pp-btn', () => ppNimDeshacer(true));
-    b.innerHTML = `${tr('DESHACER Y SEGUIR')} · ${n ? tr('tienes {n}', { n }) : ppPerlasHtml(PP_CFG.ayudas.deshacer.perlas, 26)}`;
+    b.innerHTML = `${tr('DESHACER Y SEGUIR')} · ${n ? tr('tienes {n}', { n }) : ppPerlasPrecioHtml(PP_CFG.ayudas.deshacer.perlas, 26)}`;
     t.appendChild(b);
     ppBotonOferta(t, () => ppNimFin(T, false, true));   // al acabar con la oferta, vuelve esta ventana
     t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn2 pp-verde', ppOtraVez));

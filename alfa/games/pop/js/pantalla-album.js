@@ -125,7 +125,7 @@ function ppAlbBotonCompra(t, id) {
   const v = PP_COMP.INFO[id].via;
   if (v.t !== 'tienda' || typeof ppCompraCompanero !== 'function') return;
   const b = ppBoton('', 'pp-btn pp-cm-comprar', () => ppCompraCompanero(id, () => ppVentanaCompanero(id)));
-  b.innerHTML = `${tr('COMPRAR')} · ${ppPerlasHtml(v.perlas, 28)}`;
+  b.innerHTML = `${tr('COMPRAR')} · ${ppPerlasPrecioHtml(v.perlas, 28)}`;
   t.appendChild(b);
 }
 function ppVentanaCompanero(id) {

@@ -14,12 +14,18 @@ function ppVerAnuncio(sitio, premio, siNo) {
   ANUNCIOS.ver(sitio).then(r => { if (r && r.visto) premio(); else if (siNo) siNo(); }).catch(() => { if (siNo) siNo(); });
 }
 const ppPerlasHtml = (n, px = 30) => `<span class="pp-precio">${ppIcono('i-perla', px, '#ffd1ec')}${n}</span>`;
+// un PRECIO en perlas con sus euros debajo («≈ 0,89 €», tarea #177: las perlas son dinero de verdad). Solo para lo que se paga; los
+// saldos y los premios en perlas van con ppPerlasHtml. Los euros, a lo más caro (js/precios.js)
+function ppPerlasPrecioHtml(n, px = 30) {
+  const e = PP_PRECIOS.enEuros(n, PP_CFG.packs);
+  return e === null ? ppPerlasHtml(n, px) : `<span class="pp-precio-e">${ppPerlasHtml(n, px)}<small class="pp-euros">≈ ${PP_PRECIOS.formato(e)}</small></span>`;
+}
 // un botón que se paga con perlas (si no llegan, abre la tienda en vez de pagar). `vuelta`: la ventana de la que vienes, que la
 // tienda vuelve a abrir al pulsar VOLVER (con las perlas ya compradas). Sin ella, un nivel parado sin toques se quedaba bloqueado.
 // `motivo`: el del servidor para ese gasto (seguir, vidas, hueco; js/perlas-libro.js).
 function ppBotonPerlas(texto, precio, clase, f, vuelta = null, motivo = null) {
   const b = ppBoton('', clase, () => { if (ppPerlas(-precio, motivo)) f(); else ppTienda(vuelta); });
-  b.innerHTML = `${texto} · ${ppPerlasHtml(precio, 28)}`;
+  b.innerHTML = `${texto} · ${ppPerlasPrecioHtml(precio, 28)}`;
   return b;
 }
 /* ---------- sin toques: seguir ---------- */
@@ -63,11 +69,11 @@ function ppTienda(vuelta, pestana) {
   const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); f(); }; caja.appendChild(b); return b; };
   const P = PP_TIENDA_PESTANA;
   if (P === 'ofertas') {
-    if (ppBienvenidaVisible()) tarjeta(`<i>-80 %</i>${ppIcono('i-perlas', 60, '#ffd1ec')}<span>${tr('Pack de bienvenida')}</span><b>${PP_CFG.ofertas.bienvenida.precio}</b>`, ppVentanaBienvenidaPack, 'pp-ancho');
+    if (ppBienvenidaVisible()) tarjeta(`${ppValorEtiqueta(PP_CFG.ofertas.bienvenida)}${ppIcono('i-perlas', 60, '#ffd1ec')}<span>${tr('Pack de bienvenida')}</span><b>${PP_CFG.ofertas.bienvenida.precio}</b>`, ppVentanaBienvenidaPack, 'pp-ancho');
     if (ppAtascoActivo()) tarjeta(`<i>${ppReloj(SAVE.atasco - Date.now())}</i>${ppIcono('i-martillo', 60, '#ffd1ec')}<span>${tr('Oferta para desatascarte')}</span><b>${PP_CFG.ofertas.atasco.precio}</b>`, ppVentanaAtasco, 'pp-ancho');
     tarjeta(`${ppIcono('i-pase', 56, '#ffd64a')}<span>${tr('Pase de Pop')}</span><b>${ppPaseAlDia().premium ? tr('¡Tuyo!') : PP_CFG.pase.precio}</b>`, ppVentanaPase);
     tarjeta(`${ppIcono('i-hucha', 56, '#ffd1ec')}<span>${tr('Hucha')}: ${SAVE.hucha || 0}</span><b>${PP_CFG.hucha.precio}</b>`, ppVentanaHucha);
-    for (const o of PP_CFG.infinitas) tarjeta(`${ppIcono('i-infinito', 50, '#ff4a6a')}<span>${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })}</span>${ppPerlasHtml(o.perlas, 26)}`, () => {
+    for (const o of PP_CFG.infinitas) tarjeta(`${ppIcono('i-infinito', 50, '#ff4a6a')}<span>${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })}</span>${ppPerlasPrecioHtml(o.perlas, 26)}`, () => {
       if (!ppPerlas(-o.perlas, 'infinitas')) { ppTienda(undefined, 'perlas'); return; }
       ppDaInfinitas(o.min); play('ppPremio'); ppTienda(); ppPintaLateral();
     });
@@ -77,8 +83,8 @@ function ppTienda(vuelta, pestana) {
     for (const k in PP_CFG.ayudas) {
       const A = PP_CFG.ayudas[k], tres = Math.round(A.perlas * 3 * PP_CFG.ayudasTres);
       const compra = (n, precio) => { if (!ppPerlas(-precio, 'ayuda')) { ppTienda(undefined, 'perlas'); return; } ppDaAyuda(k, n); play('ppPremio'); ppTienda(); ppBarraAyudas(); };
-      tarjeta(`${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} · ${tr('tienes {n}', { n: ppTengo(k) })}</span><small>${tr(A.texto)}</small>${ppPerlasHtml(A.perlas, 24)}`, () => compra(1, A.perlas));
-      tarjeta(`<i>-20 %</i>${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} x3</span>${ppPerlasHtml(tres, 24)}`, () => compra(3, tres));
+      tarjeta(`${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} · ${tr('tienes {n}', { n: ppTengo(k) })}</span><small>${tr(A.texto)}</small>${ppPerlasPrecioHtml(A.perlas, 24)}`, () => compra(1, A.perlas));
+      tarjeta(`<i>-20 %</i>${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} x3</span>${ppPerlasPrecioHtml(tres, 24)}`, () => compra(3, tres));
     }
   } else {
     for (const B of PP_BANDEJAS) {

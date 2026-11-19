@@ -84,10 +84,11 @@ const PP_CFG = {
   ayudasTres: 0.8,           // el lote de 3 de la misma ayuda, al 80 %
   // CORAZONES INFINITOS por tiempo (con perlas; también vienen en las ofertas y el pase)
   infinitas: [{ min: 30, perlas: 10 }, { min: 60, perlas: 18 }, { min: 120, perlas: 30 }],
-  // OFERTAS con euros (PROVISIONALES, como los packs: los productos aún no existen en Play ni en el servidor)
+  // OFERTAS con euros (PROVISIONALES, como los packs: los productos aún no existen en Play ni en el servidor). Sin precio «antes»
+  // inventado: la ventana dice lo que vale lo que trae, calculado solo (js/precios.js, tarea #177)
   ofertas: {
-    bienvenida: { id: 'pop_pack_bienvenida', precio: '0,99 €', antes: '4,99 €', perlas: 30, ayudas: { martillo: 3, bomba: 3 }, infinitas: 60, desdeNivel: 5 },
-    atasco: { id: 'pop_pack_atasco', precio: '1,99 €', antes: '5,99 €', perlas: 25, ayudas: { martillo: 2, bomba: 2, toques3: 2, deshacer: 2 }, fallos: 3, dura: 30 },
+    bienvenida: { id: 'pop_pack_bienvenida', precio: '0,99 €', perlas: 30, ayudas: { martillo: 3, bomba: 3 }, infinitas: 60, desdeNivel: 5 },
+    atasco: { id: 'pop_pack_atasco', precio: '1,99 €', perlas: 25, ayudas: { martillo: 2, bomba: 2, toques3: 2, deshacer: 2 }, fallos: 3, dura: 30 },
   },
   // la HUCHA de perlas: cada nivel nuevo superado mete perlas; desde `minimo` se puede romper pagando y te las quedas todas
   hucha: { porNivel: 2, porJefe: 6, minimo: 40, max: 150, id: 'pop_hucha', precio: '2,99 €' },

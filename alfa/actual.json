@@ -1,8 +1,8 @@
 {
- "build": 1324,
- "hash": "03a107b",
- "fecha": "2026-11-19T18:15:54Z",
- "mensaje": "Pop: pase completo tras el flag 'pase-nuevo' (tarea #165, ADR 165, Pepins)",
+ "build": 1325,
+ "hash": "1da0a20",
+ "fecha": "2026-11-19T18:30:45Z",
+ "mensaje": "Pop: precios honestos: sin precio tachado ni «-80 %», «Lo que trae vale X €», euros bajo cada precio en perlas y Lola avisa del dinero de verdad (tarea #177, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

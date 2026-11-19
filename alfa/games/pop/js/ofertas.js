@@ -37,12 +37,23 @@ function ppCompraEuros(titulo, html, producto, alComprar, alVolver) {
   if (typeof MONEDAS === 'undefined') return;
   MONEDAS.compraReal(titulo, html, r => { if (r && r.real) { ppGuarda(); if (alVolver) alVolver(); return; } alComprar(); play('ppPremio'); }, producto);   // la de verdad la entrega el servidor
 }
+/* ---------- lo que vale una oferta (tarea #177) ---------- */
+// en vez de un precio tachado que nunca se cobró: lo que vale lo que trae (js/precios.js, siempre a la baja) y su precio
+function ppValorHtml(o) {
+  const v = PP_PRECIOS.valorOferta(o, PP_CFG);
+  return (v === null ? '' : `<p class="pp-sub pp-valor">${tr('Lo que trae vale {e}', { e: PP_PRECIOS.formato(v) })}</p>`) + `<p class="pp-sub"><b class="pp-oferta">${o.precio}</b></p>`;
+}
+// la etiqueta de la tarjeta de la tienda («Vale 6,50 €»); nada si no se puede calcular
+function ppValorEtiqueta(o) {
+  const v = PP_PRECIOS.valorOferta(o, PP_CFG);
+  return v === null ? '' : `<i>${tr('Vale {e}', { e: PP_PRECIOS.formato(v) })}</i>`;
+}
 /* ---------- pack de bienvenida ---------- */
 const ppBienvenidaVisible = () => !SAVE.compras || !SAVE.compras.bienvenida;
 function ppVentanaBienvenidaPack() {
   const o = PP_CFG.ofertas.bienvenida, premio = { perlas: o.perlas, ayudas: o.ayudas, infinitas: o.infinitas };
   const t = ppAbre(`<h2>${tr('¡Pack de bienvenida!')}</h2><p class="pp-sub">${tr('Solo una vez, para empezar a lo grande:')}</p>${ppPremioCandyHtml(premio, 40)}
-    <p class="pp-sub"><s>${o.antes}</s> <b class="pp-oferta">${o.precio}</b></p>`, true);
+    ${ppValorHtml(o)}`, true);
   t.appendChild(ppBoton(tr('¡LO QUIERO!'), 'pp-btn', () => ppCompraEuros(tr('Pack de bienvenida'), ppPremioCandyHtml(premio, 30), o.id, () => {
     ppDaPremio(premio); SAVE.compras = Object.assign(SAVE.compras || {}, { bienvenida: true }); ppGuarda(); ppCierra(); ppPintaLateral();
   })));
@@ -65,7 +76,7 @@ function ppVentanaAtasco(vuelta) {
   const sigue = typeof vuelta === 'function' ? vuelta : ppCierra;
   const o = PP_CFG.ofertas.atasco, premio = { perlas: o.perlas, ayudas: o.ayudas };
   const t = ppAbre(`<h2>${tr('¡Oferta para desatascarte!')}</h2><p class="pp-sub" id="pp-reloj-oferta"></p>${ppPremioCandyHtml(premio, 40)}
-    <p class="pp-sub"><s>${o.antes}</s> <b class="pp-oferta">${o.precio}</b></p>`, true);
+    ${ppValorHtml(o)}`, true);
   const reloj = () => { const el = $pp('#pp-reloj-oferta'); if (!el) { clearInterval(tic); return; } el.textContent = tr('Se acaba en {t}', { t: ppReloj(Math.max(0, SAVE.atasco - Date.now())) }); };
   const tic = setInterval(reloj, 1000); reloj();
   t.appendChild(ppBoton(tr('¡LO QUIERO!'), 'pp-btn', () => ppCompraEuros(tr('Oferta para desatascarte'), ppPremioCandyHtml(premio, 30), o.id, () => {
@@ -85,7 +96,7 @@ function ppBotonInfinitas(t, alComprar) {
   const fila = document.createElement('div'); fila.className = 'pp-fila';
   for (const o of PP_CFG.infinitas) {
     const b = ppBoton('', 'pp-btn2 pp-rosa', () => { if (!ppPerlas(-o.perlas, 'infinitas')) { ppTienda(() => ppVentanaSinCorazones(), 'perlas'); return; } ppDaInfinitas(o.min); play('ppPremio'); alComprar(); });
-    b.innerHTML = `${ppIcono('i-infinito', 26, '#ff4a6a')}${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })} · ${ppPerlasHtml(o.perlas, 22)}`;
+    b.innerHTML = `${ppIcono('i-infinito', 26, '#ff4a6a')}${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })} · ${ppPerlasPrecioHtml(o.perlas, 22)}`;
     fila.appendChild(b);
   }
   t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Corazones infinitos:')}</p>`);

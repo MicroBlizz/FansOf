@@ -16,7 +16,7 @@ function ppBotonSaltarJefe(t, d) {
   const r = ppSaltoOferta(d);
   if (!r.ok) return;
   const b = ppBoton('', 'pp-btn2 pp-rosa', () => ppVentanaAbrirMundo(d));
-  b.innerHTML = `${tr('ABRIR MUNDO {n}', { n: r.siguiente + 1 })} · ${ppPerlasHtml(r.perlas, 26)}`;
+  b.innerHTML = `${tr('ABRIR MUNDO {n}', { n: r.siguiente + 1 })} · ${ppPerlasPrecioHtml(r.perlas, 26)}`;
   t.appendChild(b);
 }
 // la miniatura del mundo: su fondo recortado en apaisado (sin el dibujo aún, un degradado rosa)
@@ -39,7 +39,7 @@ function ppVentanaAbrirMundo(d) {
   t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Pasas al mundo {n} sin ganar a este jefe.', { n: sig + 1 })} ${espera}</p><p class="pp-sub">${tr('Su modo difícil se abre cuando le ganes.')}</p>`);
   if (paga.ok) {
     const b = ppBoton('', 'pp-btn2 pp-verde', () => ppSaltaJefe(d, r));
-    b.innerHTML = `${tr('ABRIR')} · ${ppPerlasHtml(r.perlas, 26)}`;
+    b.innerHTML = `${tr('ABRIR')} · ${ppPerlasPrecioHtml(r.perlas, 26)}`;
     t.appendChild(b);
   } else {
     t.insertAdjacentHTML('beforeend', `<p class="pp-sub"><b>${tr('Te faltan {n} perlas: tienes {x} y cuesta {p}.', { n: paga.faltan, x: SAVE.perlas || 0, p: r.perlas })}</b></p>`);

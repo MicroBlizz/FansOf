@@ -55,7 +55,7 @@ function ppPfResumen() {
 function ppPfEstado(tipo, id) {
   if (PP_MI.puesto(tipo, id)) return `<b class="pp-pf-puesto">${tr('Puesto')}</b>`;
   if (PP_MI.loTengo(tipo, id)) return `<b class="pp-pf-tuyo">${tr(tipo === 'pegatina' ? 'Añadir' : 'Ponerlo')}</b>`;
-  return ppPerlasHtml(PP_MI.precio(tipo, id), 22);
+  return ppPerlasPrecioHtml(PP_MI.precio(tipo, id), 22);
 }
 function ppPfCosa(tipo, d) {
   const b = document.createElement('button'), muestra = ppPerfilMuestra(tipo, d, 76), nombre = ppPfNombre(tipo, d);
@@ -123,7 +123,7 @@ function ppPerfilConfirma(tipo, id) {
   t.classList.add('pp-perfil');
   if (muestra) t.appendChild(muestra);
   if (nombre) t.appendChild(ppPfEl('p', muestra ? 'pp-sub' : 'pp-pf-cita', `<b>${ppEsc(nombre)}</b>`));
-  t.appendChild(ppPfEl('p', 'pp-premio', ppPerlasHtml(precio, 36)));
+  t.appendChild(ppPfEl('p', 'pp-premio', ppPerlasPrecioHtml(precio, 36)));
   t.appendChild(ppPfEl('p', 'pp-sub', `${tr('Tienes:')} ${ppPfSaldo(24)}<br><small>${tr('Precio fijo y sin azar: te llevas justo esto.')}</small>`));
   if (PP_PF.aviso) t.appendChild(ppPfEl('p', 'pp-pf-aviso', ppEsc(PP_PF.aviso)));
   if (!PP_SRV.puedeComprar()) t.appendChild(ppPfEl('p', 'pp-pf-nota', tr('Para comprar hace falta conexión y tu cuenta')));

@@ -34,7 +34,7 @@ function ppBarraAyudas() {
     const n = ppTengo(k), bt = document.createElement('button');
     bt.type = 'button'; bt.className = 'pp-ayuda' + (PP_AYUDA.modo === k ? ' pp-activa' : '');
     const gratis = duelo && ppAyudaGratis(k, T.nim);   // la lupa de Lola o los compañeros de duelo
-    bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasHtml(PP_CFG.ayudas[k].perlas, perla)}</b>`;
+    bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasPrecioHtml(PP_CFG.ayudas[k].perlas, perla)}</b>`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
     bt.onclick = () => { play('select'); ppPulsaAyuda(k); };
     b.appendChild(bt);
@@ -169,7 +169,7 @@ function ppAntesDeEmpezar(T) {
   const t = ppAbre(`<h2>${tr('¿Una ayudita?')}</h2><p class="pp-sub">${tr('Este nivel se te resiste. Empieza con 3 toques más.')}</p>`);
   const n = ppTengo('toques3');
   const b = ppBoton('', 'pp-btn', () => { if (ppGastaAyuda('toques3', () => ppAntesDeEmpezar(T))) { ppCierra(); T.limite += 3; ppFlota(tr('+{n} toques', { n: 3 }), 270, 240, '#3a8ee6'); play('ppPremio'); ppBarraAyudas(); } });
-  b.innerHTML = `${tr('+3 TOQUES')} · ${n ? tr('tienes {n}', { n }) : ppPerlasHtml(PP_CFG.ayudas.toques3.perlas, 26)}`;
+  b.innerHTML = `${tr('+3 TOQUES')} · ${n ? tr('tienes {n}', { n }) : ppPerlasPrecioHtml(PP_CFG.ayudas.toques3.perlas, 26)}`;
   t.appendChild(b);
   t.appendChild(ppBoton(tr('Jugar sin ayuda'), 'pp-btn2 pp-azul', ppCierra));
 }

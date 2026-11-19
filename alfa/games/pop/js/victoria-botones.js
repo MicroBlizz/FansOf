@@ -15,7 +15,12 @@ function ppVictoriaDoble(t, T) {
   const hueco = t.querySelector('.pp-vic-doble-hueco'), m = T.premio && T.premio.monedas;
   if (!hueco || !m || !ppHayAnuncios()) return;
   if (T.doblado) { hueco.innerHTML = `<span class="pp-vic-doblado">${tr('¡Doblado!')}</span>`; return; }
-  const b = ppBoton('', 'pp-btn2 pp-verde pp-vic-doble', () => ppVerAnuncio('pop-doblar', () => ppVictoriaDobla(t, T)));
+  // se apaga al primer toque: un doble toque no abre dos anuncios (tarea #180); si no se ve entero, vuelve a encenderse
+  const b = ppBoton('', 'pp-btn2 pp-verde pp-vic-doble', () => {
+    if (b.disabled) return;
+    b.disabled = true;
+    ppVerAnuncio('pop-doblar', () => ppVictoriaDobla(t, T), () => { b.disabled = false; });
+  });
   b.innerHTML = `<span class="pp-vic-x2">x2</span>${tr('Doblar')}`;
   hueco.appendChild(b);
 }

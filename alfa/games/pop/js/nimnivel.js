@@ -51,13 +51,20 @@ function ppNimRival(T) {
   const sitios = []; for (let x = 0; x < T.n; x++) { const i = fila * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
   sitios.sort(() => Math.random() - 0.5);
   N.fila = fila; PP_FX.brilla.rival = 1;
-  sitios.slice(0, cuantas).forEach((i, k) => setTimeout(() => {
-    if (!PP_P || PP_P.T !== T || N.fin) return;
-    T.up[i] = 0; T.pops++;
-    ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false });
-    if (ppFilasDuelo(T).every(v => v === 0)) { ppNimFin(T, true); return; }   // el rival ha reventado la última: ganas
-    if (k === cuantas - 1) setTimeout(() => { if (PP_P && PP_P.T === T && !N.fin) { N.turno = 'yo'; N.fila = null; ppNimFoto(T); ppNimBoton(); ppBarraAyudas(); } }, 500);
-  }, 380 * (k + 1)));
+  // si abre él la partida (aún no ha reventado nada nadie), lo dice en grande y va más despacio: si no, al leer «Tu turno» ya
+  // faltaban burbujas y parecía que las habías reventado tú (tarea #180)
+  const abre = !T.pops, r = abre ? PP_CFG.rivalNim.abre : PP_CFG.rivalNim.normal;
+  if (abre) ppFlota(tr('¡Empieza {n}!', { n: tr(PP_SLIMES[N.rival].nombre) }), 270, 240, '#ff8a2a');
+  sitios.slice(0, cuantas).forEach((i, k) => setTimeout(() => ppNimRivalPop(T, i, k === cuantas - 1), r.espera + r.paso * k));
+}
+// una burbuja del rival; tras la última de su jugada, te toca
+function ppNimRivalPop(T, i, ultima) {
+  const N = T.nim;
+  if (!PP_P || PP_P.T !== T || N.fin) return;
+  T.up[i] = 0; T.pops++;
+  ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false });
+  if (ppFilasDuelo(T).every(v => v === 0)) { ppNimFin(T, true); return; }   // el rival ha reventado la última: ganas
+  if (ultima) setTimeout(() => { if (PP_P && PP_P.T === T && !N.fin) { N.turno = 'yo'; N.fila = null; ppNimFoto(T); ppNimBoton(); ppBarraAyudas(); } }, 500);
 }
 function ppNimFin(T, gano, soloVentana = false) {
   const N = T.nim;

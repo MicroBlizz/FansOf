@@ -9,6 +9,7 @@
 const ANUNCIOS = (() => {
   const SEG = 15;                // lo que dura nuestro anuncio: como uno de verdad, para medir si la gente está dispuesta a verlo (ADR 106)
   const ESPERA_H5 = 8000;        // si la web no responde en tanto, se da por no cargado
+  const GRACIA_MS = 600;         // lo que la capa del anuncio ignora los toques al salir (un doble toque no la atraviesa)
   const CLAVE_PERMISO = 'fansof-anuncios';   // 'si' | 'no': el permiso para cargar anuncios de Google en la web (nada de Google se carga sin él)
   const abierto = () => NUCLEO.flag('anuncios', 'Anuncios de verdad (AdMob en la app, H5 Games Ads en la web); cerrado, solo el anuncio propio', false);
   const config = () => NUCLEO.configRemota('anuncios') || {};
@@ -64,9 +65,18 @@ const ANUNCIOS = (() => {
   })();
 
   // ---------- pantallas: nuestro anuncio y la pregunta del permiso ----------
+  // la capa no hace caso a los toques de su primer instante (GRACIA_MS): el segundo toque de un doble toque en el botón que la abre
+  // caía en el enlace del anuncio y sacaba al jugador del juego (tarea #180, ADR 167)
+  let abiertaEn = 0;
+  const escudo = ov => ov.addEventListener('click', e => {
+    const pasado = Date.now() - abiertaEn;
+    if (pasado < 0 || pasado >= GRACIA_MS) return;   // con el reloj del sistema cambiado hacia atrás, nunca deja la capa sin responder
+    e.preventDefault(); e.stopPropagation();
+  }, true);
   const capa = html => {
     let ov = document.getElementById('anuncio-capa');
-    if (!ov) { document.body.insertAdjacentHTML('beforeend', '<section id="anuncio-capa" class="en-ad" role="dialog" hidden></section>'); ov = document.getElementById('anuncio-capa'); }
+    if (!ov) { document.body.insertAdjacentHTML('beforeend', '<section id="anuncio-capa" class="en-ad" role="dialog" hidden></section>'); ov = document.getElementById('anuncio-capa'); escudo(ov); }
+    abiertaEn = Date.now();
     ov.setAttribute('aria-label', tr('Anuncio')); ov.innerHTML = html; ov.hidden = false; return ov;
   };
   const cierra = () => { const ov = document.getElementById('anuncio-capa'); if (ov) ov.hidden = true; };

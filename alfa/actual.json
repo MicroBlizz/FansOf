@@ -1,8 +1,8 @@
 {
- "build": 1329,
- "hash": "0541df4",
- "fecha": "2026-11-19T18:37:30Z",
- "mensaje": "Condiciones y caos primordial: quita «gratis»/«free» y aclara que habrá compras opcionales",
+ "build": 1330,
+ "hash": "8c44ecb",
+ "fecha": "2026-11-19T18:44:54Z",
+ "mensaje": "Pop: ningún toque perdido: el rival que abre se anuncia y un doble toque en Doblar ya no saca de Pop (tarea #180, ADR 167, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -4,11 +4,11 @@
 'use strict';
 // Por índice del mundo en PP_MUNDOS (niveles.js): 0 = Jardín, 1 = Pastelería. Un mundo sin entrada se pinta como siempre.
 // `caritas`: dónde va la cara ('tapa' del macaron, visto de lado; 'centro' del botón, visto desde arriba) y si cada burbuja lleva
-// una cara distinta (js/caritas-variadas.js) o todas la misma.
+// una cara distinta (js/caritas-variadas.js) o todas la misma; `tintaPulsada`, el color claro de la cara sobre el botón pulsado.
 const PP_ESTILO_MUNDO = Object.freeze({
   // la muestra del botón de silicona con carita (Daniel, 19-11-2026): cambia la burbuja y la bandeja gana relieve de molde
   // (`relieve`, js/bandeja-relieve.js); los colores de la bandeja y los paneles, los de siempre
-  0: Object.freeze({ burbuja: 'boton', bandeja: null, material: null, panel: null, caritas: Object.freeze({ sitio: 'centro', variadas: true }), relieve: true }),
+  0: Object.freeze({ burbuja: 'boton', bandeja: null, material: null, panel: null, caritas: Object.freeze({ sitio: 'centro', variadas: true, tintaPulsada: '#ffeef3' }), relieve: true }),
   1: Object.freeze({
     burbuja: 'macaron',
     bandeja: 'tablero-galleta',

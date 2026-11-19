@@ -28,9 +28,9 @@ function ppCaraDe(up, conAmigo, especial) {
 }
 
 /* ---------- dibujo ---------- */
-function ppCaritaOjo(c, x, y, r, abre) {
+function ppCaritaOjo(c, x, y, r, abre, color = '#3a1a1a') {
   const alto = r * Math.max(0.12, abre);
-  c.beginPath(); c.ellipse(x, y, r * 0.8, alto, 0, 0, Math.PI * 2); c.fillStyle = '#3a1a1a'; c.fill();
+  c.beginPath(); c.ellipse(x, y, r * 0.8, alto, 0, 0, Math.PI * 2); c.fillStyle = color; c.fill();
   if (abre > 0.5) { c.beginPath(); c.arc(x - r * 0.25, y - alto * 0.4, r * 0.28, 0, Math.PI * 2); c.fillStyle = '#fff'; c.fill(); }
 }
 function ppCaritaColoretes(c, r) {
@@ -74,7 +74,10 @@ const PP_CARITA_SITIO = Object.freeze({
 });
 // la cara ya colocada: variada (una distinta por burbuja y nivel, js/caritas-variadas.js) o la de siempre
 function ppCaritaSegunEstilo(c, y, r, cara, i, T, t, caritas) {
-  if (caritas && caritas.variadas) ppPintaCaraVariada(c, 0, y, r, ppCaraVariada(cara, i, T.d ? T.d.g : 0), ppParpadeo(i, t), t, i);
+  if (caritas && caritas.variadas) {
+    const tinta = cara === 'dormida' && caritas.tintaPulsada ? caritas.tintaPulsada : PP_CARA_TINTA;   // el botón pulsado es oscuro
+    ppPintaCaraVariada(c, 0, y, r, ppCaraVariada(cara, i, T.d ? T.d.g : 0), ppParpadeo(i, t), t, i, tinta);
+  }
   else ppPintaCarita(c, 0, y, r, cara, ppParpadeo(i, t), t, i);
 }
 // la carita de la burbuja i del tablero T, en el sitio que dice el estilo de su mundo y siguiendo su animación (ppBurbuja)

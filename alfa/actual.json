@@ -1,8 +1,8 @@
 {
- "build": 1321,
- "hash": "9dccbd3",
- "fecha": "2026-11-19T17:50:32Z",
- "mensaje": "Pop: botón RECOGER TODO en el pase, con los premios volando a la barra de arriba (tarea #166, Pepins)",
+ "build": 1322,
+ "hash": "e68acca",
+ "fecha": "2026-11-19T17:56:50Z",
+ "mensaje": "Pop: botón pulsado del Jardín muy apagado (tono C) y su carita en claro para que se lea (tarea #110)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

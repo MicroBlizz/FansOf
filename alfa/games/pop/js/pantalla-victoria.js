@@ -82,6 +82,7 @@ function ppAbreVictoria(extra = '', ancha = false, titulo, opc = {}) {
   if (!T.vicVista) T.vicFondo = ppVicFondo(T.estrellas);   // el mismo fondo al volver de la tienda
   else ppVicFondoPon(T.vicFondo);
   ppVicBarra(T.vicVista ? SAVE.monedas : SAVE.monedas - ganado);   // la barra de arriba, nítida (js/victoria-panel.js)
+  ppVicMarcoPon(t.querySelector('.pp-vic-panel'), T);   // el marco del mundo (js/victoria-marco.js)
   ppVictoriaAnima(t, T);
   ppVictoriaBotones(t, T, opc);
   ppVicEncaja(t);   // que quepa sin la barra de desplazamiento (js/victoria-panel.js)
@@ -110,6 +111,7 @@ function ppAbreDerrota(texto) {
     + `<div class="pp-vic-panel"><p class="pp-vic-frase">${frase}</p>${ppDerrotaBarra(T)}`
     + `<div class="pp-vic-premio-fila">${ppVicSlimeHtml(T, false)}<p class="pp-sub">${texto}</p></div>${ppVicRachaPerdida(T)}</div>`);
   ppVicFondo(0); ppVicBarra(SAVE.monedas);   // tonos fríos y la barra de arriba (js/victoria-panel.js)
+  ppVicMarcoPon(t.querySelector('.pp-vic-panel'), T);
   t.classList.add('pp-gana', 'pp-gana-0');
   ppVictoriaFiesta(t, 0);
   ppVicEncaja(t);

@@ -1,8 +1,8 @@
 {
- "build": 1322,
- "hash": "e68acca",
- "fecha": "2026-11-19T17:56:50Z",
- "mensaje": "Pop: botón pulsado del Jardín muy apagado (tono C) y su carita en claro para que se lea (tarea #110)",
+ "build": 1323,
+ "hash": "edb5998",
+ "fecha": "2026-11-19T18:07:40Z",
+ "mensaje": "Pop: el marco del panel de victoria es de su mundo (color, remate y tres adornos), por código a la espera de los de Yoshi (tarea #168)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

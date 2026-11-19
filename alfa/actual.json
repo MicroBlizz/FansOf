@@ -1,8 +1,8 @@
 {
- "build": 1303,
- "hash": "9badafd",
- "fecha": "2026-11-19T14:24:25Z",
- "mensaje": "Tablero: «Qué mirar» en cada tarea (SQL 169, tarea #161, ADR 160)",
+ "build": 1304,
+ "hash": "e526891",
+ "fecha": "2026-11-19T14:31:59Z",
+ "mensaje": "Asalto: el muñeco bota un poco con cada paso al andar",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.2",

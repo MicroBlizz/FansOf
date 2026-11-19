@@ -58,6 +58,10 @@ AS.dibujos = (() => {
     if (u.anim === 'muerte') { const p = Math.min(1, t / 0.5); return { dx: 0, dy: p * 6, giro: -p * 1.4 * hacia }; }
     return { dx: 0, dy: 0, giro: 0 };
   }
+  // el movimiento que se suma a sus fotogramas propios: al andar, el bote del paso (AS.bote, acompasado con los fotogramas)
+  function propio(u, esc) {
+    return { dx: 0, dy: u.anim === 'andar' ? AS.bote(u.tAnim || 0, ANIM.andar.t, esc) : 0, giro: 0 };
+  }
   // la tira con la que se pinta a alguien: los campeones de élite tienen la suya, más grande; si faltara, la normal al doble
   function tiraDe(tipo, elite) {
     if (elite && hay(tipo + '-elite')) return { tipo: tipo + '-elite', esc: 1 };
@@ -116,7 +120,7 @@ AS.dibujos = (() => {
   function muneco(g, u, x, y) {
     if (!hay(u.tipo)) return;
     const { tipo, esc } = tiraYEscala(u), d = tiras()[tipo], w = Math.round(d.w * esc), h = Math.round(d.h * esc);
-    const f = cuadro(tipo, u.anim, u.tAnim || 0, u.dura), m = f.propio ? { dx: 0, dy: 0, giro: 0 } : suplido(u, u.lado === 'heroe' ? 1 : -1);
+    const f = cuadro(tipo, u.anim, u.tAnim || 0, u.dura), m = f.propio ? propio(u, esc) : suplido(u, u.lado === 'heroe' ? 1 : -1);
     const img = u.dorado ? tenida(tipo, '#ffc21a', 0.42) : IMG[tipo], px = Math.round(x + m.dx), py = Math.round(y + m.dy), dy = Math.round(-h + 2 * esc);
     g.save();
     g.globalAlpha = alfaDe(u);

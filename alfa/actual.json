@@ -1,8 +1,8 @@
 {
- "build": 1328,
- "hash": "06c16d7",
- "fecha": "2026-11-19T18:37:00Z",
- "mensaje": "Pop: Lola habla en un globo corto cada vez y nunca mientras juegas, con «Saltar» y ¡VALE! fijo (tarea #140, cambios de Pepins tras el informe de 5 probadores)",
+ "build": 1329,
+ "hash": "0541df4",
+ "fecha": "2026-11-19T18:37:30Z",
+ "mensaje": "Condiciones y caos primordial: quita «gratis»/«free» y aclara que habrá compras opcionales",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

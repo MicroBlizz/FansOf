@@ -1,8 +1,8 @@
 {
- "build": 1284,
- "hash": "15c0f78",
- "fecha": "2026-11-19T00:57:41Z",
- "mensaje": "Gestión: entra sola con la sesión de Google de la web y el botón de la cuenta va directo al tablero (tarea #146)",
+ "build": 1285,
+ "hash": "9262d9e",
+ "fecha": "2026-11-19T01:09:42Z",
+ "mensaje": "Tablero en el móvil: «Todas» es un mapa pequeño de las seis columnas (tarea #147, ADR 147)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

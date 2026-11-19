@@ -59,13 +59,14 @@ TABLERO.vista = (() => {
   const cabecera = (c, esc) => `<h3 class="tb-cab" style="background:${c.tono}">${esc(c.titulo)} <span>${c.tareas.length}</span></h3>${c.ayuda ? `<div class="tb-ayuda">${esc(c.ayuda)}</div>` : ''}`;
   const columna = (c, esc, elegida, fecha, enFilas) => `<section class="tb-col" data-columna="${c.id}">${cabecera(c, esc)}${c.tareas.map(t => (enFilas ? fila(t, esc, elegida, fecha) : tarjeta(t, esc, elegida))).join('') || '<div class="meta">Vacía</div>'}</section>`;
   // Los botones de arriba (ADR 147): «Todas» y uno por columna, con su recuento. Al pulsar uno solo se ve esa columna, con una tarea por fila a lo ancho.
-  // En el móvil (menos de 700 px) no hay «Todas»: sin columna elegida se ve Ideas, y su botón sale marcado
+  // En el móvil (menos de 700 px) «Todas» ocupa una fila arriba y enseña el mapa pequeño de las seis columnas (tarea #147)
   const boton = (id, titulo, tono, cuantas, activo, esc) => `<button type="button" class="tb-ver${activo ? ' activo' : ''}" data-ver="${id}" style="--tono:${tono}" aria-pressed="${activo}"><b>${cuantas}</b>${esc(titulo)}</button>`;
   const botones = (columnas, vista, esc) => {
     const todas = boton('', 'Todas', 'var(--acento)', columnas.reduce((n, c) => n + c.tareas.length, 0), !vista, esc);
-    return `<div class="tb-botones${vista ? '' : ' sin-vista'}">${todas}${columnas.map(c => boton(c.id, c.titulo, c.tono, c.tareas.length, c.id === vista, esc)).join('')}</div>`;
+    return `<div class="tb-botones">${todas}${columnas.map(c => boton(c.id, c.titulo, c.tono, c.tareas.length, c.id === vista, esc)).join('')}</div>`;
   };
-  const movil = (columnas, esc, elegida, vista) => `<div class="tb-movil">${columna(TABLERO.columnasVisibles(columnas, vista || 'idea')[0], esc, elegida)}</div>`;
+  // En el móvil: sin columna elegida («Todas»), el mapa pequeño de las seis (tarea #147); con una, esa columna con sus tarjetas
+  const movil = (columnas, esc, elegida, vista) => `<div class="tb-movil">${vista ? columna(TABLERO.columnasVisibles(columnas, vista)[0], esc, elegida) : TABLERO.vistaMapa.html(columnas, esc, elegida)}</div>`;
   // elegida: el id de la tarea abierta en el panel (su tarjeta se marca); vista: la columna elegida con los botones (null = todas); fecha: cómo se escribe una fecha
   const html = (columnas, esc, elegida = null, vista = null, fecha = null) => {
     const visibles = TABLERO.columnasVisibles(columnas, vista), una = visibles.length === 1;
@@ -126,6 +127,6 @@ TABLERO.vista = (() => {
     + '.tb-movil .tb-tarea{font-size:15px;padding:10px 12px}.tb-corto{font-size:1.1em}.tb-largo{font-size:.9em;color:var(--suave);line-height:1.35}'
     + '.tb-rapida{background:#3dbe8b;color:#10202b;border-color:#3dbe8b;font-weight:700}.tb-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tb-tipo{display:flex;gap:6px;align-items:center;border:2px solid var(--acento);border-radius:10px;padding:10px;font-weight:600}.tb-tipo:has(input:checked){background:var(--acento);color:var(--acento-texto)}'
     + '@media(max-width:700px){.tb-tablero{display:none}.tb-movil{display:grid}.filtros .tb-rapida{flex-basis:100%;min-height:52px;font-size:16px}'
-    + '.tb-botones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.tb-ver{min-height:64px;flex-direction:column;justify-content:center;gap:2px;border-radius:12px}.tb-ver b{font-size:20px}.tb-ver[data-ver=""]{display:none}.sin-vista [data-ver="idea"]{background:var(--tono);color:#10202b}}';
-  return { html, pidio, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL + TABLERO.vistaReacciones.ESTILO };
+    + '.tb-botones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.tb-ver{min-height:64px;flex-direction:column;justify-content:center;gap:2px;border-radius:12px}.tb-ver b{font-size:20px}.tb-ver[data-ver=""]{grid-column:1/-1;min-height:46px;flex-direction:row;gap:8px}}';
+  return { html, pidio, filtros, formulario, formularioRapido, parecidas, mensaje, opciones, COLUMNAS, ESTILO: ESTILO + ESTILO_MOVIL + TABLERO.vistaReacciones.ESTILO + TABLERO.vistaMapa.ESTILO };
 })();

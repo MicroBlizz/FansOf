@@ -1,8 +1,8 @@
 {
- "build": 1295,
- "hash": "f723ddd",
- "fecha": "2026-11-19T13:04:59Z",
- "mensaje": "Spy: modelos 3D aligerados para móvil (25 MB a 7 MB) y lector de .glb sin librerías (aún sin usar)",
+ "build": 1296,
+ "hash": "986e97d",
+ "fecha": "2026-11-19T13:10:42Z",
+ "mensaje": "Spy: el motor pinta mallas con textura (los .glb de Yoshi) con la misma luz de cómic y contorno negro",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.0",

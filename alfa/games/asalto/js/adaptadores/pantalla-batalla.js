@@ -10,6 +10,7 @@ AS.pantallaBatalla = (() => {
 
   function lucha(E) {
     const r = E.casos.lucha();
+    if (!r.ok && r.error === 'elige-carta') { AS.ventanas.leyendas.despertar(E); return; }   // antes, el legendario elige su carta de Despertar
     if (!r.ok) { AS.suena('noVale'); E.pistaFija = { txt: tr('Pon un héroe en el campo'), t: 2 }; return; }
     const ol = E.casos.partida.proxima;
     Object.assign(E, { batalla: r.valor, tFin: 0, cerrando: false, oroBatalla: 0, arrastre: null, intro: null, combo: 0, tCombo: 0 });
@@ -82,7 +83,7 @@ AS.pantallaBatalla = (() => {
     if (E.combo >= 2) { fx.numero(s.x, s.y - 130, 'x' + E.combo, '#ffd23a', E.combo >= 5 ? 64 : 48); AS.suena('combo', E.combo); }
   }
   function eventos(E) {
-    for (const e of E.batalla.eventos.splice(0)) if (EVENTO[e.e]) EVENTO[e.e](E, e);
+    for (const e of E.batalla.eventos.splice(0)) if (!AS.leyendasBatalla.trata(E, e) && EVENTO[e.e]) EVENTO[e.e](E, e);   // los de los legendarios, en leyendas-batalla.js
   }
 
   /* ---------- cerrar la oleada ---------- */

@@ -97,9 +97,10 @@ AS.menu = (() => {
       return `<li class="as-item">${V.ico(m.icono, 'as-ico2')}<div><b>${tr(m.nombre)} <small>${n}/${m.coste.length}</small></b><span>${tr(m.txt)}</span></div>${coste ? `<button class="as-btn as-oro as-chico" data-m="${id}" type="button">${pluma(coste)}</button>` : `<span class="as-hecho">${tr('AL MÁXIMO')}</span>`}</li>`;
     }).join('');
     const el = ventana(`<h2>${tr('MEJORAS')}</h2><p class="as-plumas">${pluma(g.plumas)}</p><p class="as-nota">${tr('Valen para todas las partidas.')}</p><ul class="as-lista">${filas}</ul>
-      <h2>${tr('RAREZAS DE LOS HÉROES')}</h2><p class="as-nota">${tr('Los héroes más raros son más fuertes. Se abren en orden, con plumas y con su zona superada.')}</p><ul class="as-lista">${filasRarezas(g)}</ul>`);
+      <h2>${tr('RAREZAS DE LOS HÉROES')}</h2><p class="as-nota">${tr('Los héroes más raros son más fuertes. Se abren en orden, con plumas y con su zona superada.')}</p><ul class="as-lista">${filasRarezas(g)}</ul>${AS.ventanas.leyendas.dormido(casos)}`);
     for (const b of el.querySelectorAll('[data-m]')) b.onclick = () => { if (sinPlumas(casos.compraMejora(b.dataset.m))) AS.suena('absorbe'); mejoras(); };
     V.alPulsar('as-abre-rareza', () => { if (sinPlumas(casos.abreRareza())) AS.suena('cofre'); mejoras(); });
+    V.alPulsar('as-abre-dormido', () => { if (sinPlumas(casos.abreDormido())) AS.suena('cofre'); mejoras(); });   // el Poder Dormido (tarea #109)
   }
   // las máquinas de invocar: la elegida, las abiertas (con su botón de elegir) y las cerradas (con sus plumas o la zona que piden)
   function maquinas() {

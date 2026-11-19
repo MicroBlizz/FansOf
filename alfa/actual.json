@@ -1,11 +1,11 @@
 {
- "build": 1293,
- "hash": "46dadea",
- "fecha": "2026-11-19T12:47:28Z",
- "mensaje": "Pop: la colección se lee una vez por cambio y p.cofresAbiertos (revisión de código, tarea #142)",
+ "build": 1294,
+ "hash": "82d4b63",
+ "fecha": "2026-11-19T13:01:06Z",
+ "mensaje": "Asalto 0.5.0: legendarios, Despertar y seres secretos (tarea #109, ADR 158)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.4.2",
+  "asalto": "0.5.0",
   "basement": "0.13.0",
   "boom": "0.4.17",
   "chef": "0.4.0",

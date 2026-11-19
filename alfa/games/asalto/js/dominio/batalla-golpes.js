@@ -1,7 +1,8 @@
 // Fans of Asalto · DOMINIO · Los golpes de la batalla: el daño (con esquiva, crítico, defensa, escudo, reflejo, robo de vida, salpicadura
 // y las reliquias que lo cambian), las curas, la muerte, el momento del impacto de cada tipo de ataque (cuerpo a cuerpo, flecha, bola
 // mágica, bomba o cura), los proyectiles en vuelo y las habilidades de las 7 clases, que saltan cada pocos segundos. Cada vida que se quita o se da pasa por `quita` o `sana`, que la apuntan en las cifras del combate (cifras.js).
-// Todo lo que pasa se apunta en B.eventos para que la pantalla lo pinte y lo haga sonar.
+// Todo lo que pasa se apunta en B.eventos para que la pantalla lo pinte y lo haga sonar. Los legendarios (tarea #109) se enganchan
+// aquí con AS.leyendas (batalla-legendarios.js): al contar el golpe, al repartirlo, después de darlo, al atacar, al revivir y al morir.
 'use strict';
 AS.golpes = (() => {
   const BT = () => AS.batalla;
@@ -16,6 +17,7 @@ AS.golpes = (() => {
     const real = Math.min(d, Math.max(0, a.vida));
     a.vida -= d;
     if (a.lado === 'enemigo') CI().apunta(B, de, 'dano', real); else CI().apunta(B, a, 'aguante', real);
+    if (a.leg) AS.leyendas.bastion(B, a);
   }
   // le sube la vida a `a` (sin pasar de su máximo), a nombre de `de` (el que cura)
   function sana(B, a, cant, de) {
@@ -24,11 +26,13 @@ AS.golpes = (() => {
     if (a.lado === 'heroe') CI().apunta(B, de, 'cura', real);
   }
   // de = quien lo ha derrotado (para las cifras)
+  // (un héroe puede revivir: Segunda vida u Oráculo). extra = un señuelo o un minimapache
   function muere(B, u, de) {
-    if (u.muerta) return;
+    if (u.muerta || AS.leyendas.revive(B, u)) return;
     u.muerta = true; u.vida = 0; u.anim = 'muerte'; u.tAnim = 0;
     if (u.lado === 'enemigo') { B.oro += B.datos.partida.oroPorMuerte; B.bajas++; CI().apunta(B, de, 'bajas', 1); }
-    ev(B, { e: 'muere', id: u.id, lado: u.lado, x: u.x, y: u.y, jefe: u.jefe, elite: u.elite });
+    ev(B, { e: 'muere', id: u.id, lado: u.lado, x: u.x, y: u.y, jefe: u.jefe, elite: u.elite, extra: u.extra });
+    AS.leyendas.alMorir(B, u, de);
   }
   // de = quien cura (para las cifras)
   function cura(B, a, cant, de) {
@@ -37,10 +41,13 @@ AS.golpes = (() => {
     sana(B, a, c, de);
     ev(B, { e: 'cura', id: a.id, x: a.x, y: a.y, c });
   }
-  // cuánto quita el golpe antes de la defensa: azar, muerte súbita, crítico, furia y maldición
+  // cuánto quita el golpe antes de la defensa: azar, muerte súbita, crítico, furia y maldición (y lo de los legendarios: L.mult de
+  // más o de menos, L.crit = crítico seguro, L.mata = lo mata de golpe)
   function cuenta(B, de, a, dano) {
-    let d = dano * B.azar.entre(0.9, 1.1) * muerteSubita(B), crit = false;
-    if (de && de.critico && B.azar() < de.critico) { d *= 2 + (de.danoCrit || 0); crit = true; }
+    const L = AS.leyendas.mods(B, de, a);
+    if (L.mata) return { d: Math.ceil(a.vida + a.escudo), crit: true };
+    let d = dano * B.azar.entre(0.9, 1.1) * muerteSubita(B) * L.mult, crit = false;
+    if (L.crit || (de && de.critico && B.azar() < de.critico)) { d *= 2 + (de.danoCrit || 0); crit = true; }
     if (de && de.lado === 'heroe' && B.rel.has('furia') && de.vida < de.max * 0.3) d *= 1.3;
     if (a.maldito > 0) d *= 1.2;
     if (a.defensa) d *= Math.max(0.3, 1 - a.defensa);
@@ -61,17 +68,24 @@ AS.golpes = (() => {
     a.escudo -= q; CI().apunta(B, a, 'aguante', q);
     return d - q;
   }
-  // dana: de pega a `a`. tipoGolpe: 'cuerpo', 'flecha', 'magia'… (para el dibujo); eco = es una salpicadura (no vuelve a salpicar)
+  // el que recibe se encoge (menos si ya está atacando, muriendo o es un jefe)
+  function encoge(a) { if (a.anim !== 'ataque' && a.anim !== 'muerte' && !a.jefe) { a.anim = 'golpe'; a.tAnim = 0; } }
+  function salpica(B, de, a, dano, tipoGolpe) {
+    if (!de || !de.salpica) return;
+    for (const r of BT().rivales(B, de)) if (r !== a && Math.hypot(r.x - a.x, r.y - a.y) < 60) dana(B, de, r, dano * de.salpica / 100, tipoGolpe, true);
+  }
+  // dana: de pega a `a`. tipoGolpe: 'cuerpo', 'flecha', 'magia'… (para el dibujo); eco = es un golpe de rebote (salpicadura, el que
+  // atraviesa, un área de habilidad): no vuelve a salpicar ni a atravesar
   function dana(B, de, a, dano, tipoGolpe, eco) {
     if (!a || a.muerta) return;
     if (a.esquiva && B.azar() < a.esquiva) { ev(B, { e: 'esquiva', id: a.id, x: a.x, y: a.y }); return; }
-    const c = cuenta(B, de, a, dano), d = escuda(B, a, c.d);
+    const c = a.invul > 0 ? { d: 0 } : cuenta(B, de, a, dano), d = escuda(B, a, AS.leyendas.reparte(B, a, c.d));
     if (!d) { ev(B, { e: 'bloqueo', id: a.id, x: a.x, y: a.y }); return; }
     quita(B, a, d, de);
-    if (a.anim !== 'ataque' && a.anim !== 'muerte' && !a.jefe) { a.anim = 'golpe'; a.tAnim = 0; }
+    encoge(a);
     ev(B, { e: 'golpe', id: a.id, lado: a.lado, x: a.x, y: a.y, d, crit: c.crit, tipo: tipoGolpe || 'cuerpo', jefe: a.jefe });
     secuelas(B, de, a, d);
-    if (de && de.salpica && !eco) for (const r of BT().rivales(B, de)) if (r !== a && Math.hypot(r.x - a.x, r.y - a.y) < 60) dana(B, de, r, dano * de.salpica / 100, tipoGolpe, true);
+    if (!eco) { salpica(B, de, a, dano, tipoGolpe); AS.leyendas.trasGolpe(B, de, a, dano, tipoGolpe); }
     if (a.vida <= 0) muere(B, a, de);
   }
   const enArea = (B, u, x, y, radio) => BT().rivales(B, u).filter(r => Math.hypot(r.x - x, r.y - y) < radio);
@@ -82,12 +96,11 @@ AS.golpes = (() => {
       t: -(retraso || 0), dura: t === 'bomba' ? 0.7 : 0.3 + Math.hypot(ob.x - u.x, ob.y - u.y) / 700,
       perfora: t === 'flecha' && u.lado === 'heroe' && B.rel.has('perforar') && u.clases.includes('tirador') });
   }
-  // el momento del golpe de cada ataque
-  function impacto(B, u) {
-    const ob = u.ob; if (!ob) return;
+  // el golpe de un ataque, según su tipo (también lo repite la carta Eco)
+  function golpea(B, u, ob) {
     if (u.ataque === 'cuerpo') {
       const radio = Math.max(u.area, u.torbellino);
-      if (radio) for (const r of enArea(B, u, ob.x, ob.y, radio)) dana(B, u, r, u.dano);
+      if (radio) { for (const r of enArea(B, u, ob.x, ob.y, radio)) dana(B, u, r, u.dano); AS.leyendas.golpeDeArea(B, u, ob.x, ob.y); }
       else dana(B, u, ob, u.dano);
       ev(B, { e: 'ataque', tipo: 'cuerpo', id: u.id, x: ob.x, y: ob.y, radio });
     } else if (u.ataque === 'cura') {
@@ -101,6 +114,12 @@ AS.golpes = (() => {
       ev(B, { e: 'ataque', tipo: u.ataque, id: u.id, x: u.x, y: u.y });
     }
   }
+  // el momento del golpe de cada ataque
+  function impacto(B, u) {
+    const ob = u.ob; if (!ob) return;
+    golpea(B, u, ob);
+    AS.leyendas.alAtacar(B, u, ob);
+  }
 
   function llega(B, p) {
     const ob = p.ob, tx = ob.x, ty = ob.y;
@@ -108,6 +127,7 @@ AS.golpes = (() => {
     if (p.area) {
       for (const r of enArea(B, p.de, tx, ty, p.area)) dana(B, p.de, r, p.dano, 'magia');
       ev(B, { e: 'onda', x: tx, y: ty, radio: p.area, tipo: p.tipo });
+      AS.leyendas.golpeDeArea(B, p.de, tx, ty);
       return;
     }
     dana(B, p.de, ob, p.dano, p.tipo);
@@ -164,5 +184,5 @@ AS.golpes = (() => {
       ev(B, { e: 'habilidad', clase: k, ids: suyos.map(u => u.id) });
     }
   }
-  return { dana, cura, muere, quita, sana, impacto, proyectiles, habilidades, enArea };
+  return { dana, cura, muere, quita, sana, impacto, golpea, dispara, proyectiles, habilidades, enArea };
 })();

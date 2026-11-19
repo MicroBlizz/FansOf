@@ -3,8 +3,8 @@
 // anda hasta tenerlo a tiro y ataca; los que «corren» van derechos a cruzar la línea de la izquierda, y cruzarla quita una vida.
 // Los héroes AGUANTAN en su sitio hasta que el enemigo se acerca (la línea de carga) o pasa un momento: entonces cargan.
 // La batalla no dibuja ni suena: apunta lo que pasa en B.eventos y la pantalla lo recoge. El azar se le pasa (B.azar).
-// Aquí: crear la batalla y sus unidades, moverlas, elegir objetivo y decidir cuándo acaba. Los golpes están en batalla-golpes.js
-// y los jefes en batalla-jefes.js.
+// Aquí: crear la batalla y sus unidades, moverlas, elegir objetivo y decidir cuándo acaba. Los golpes están en batalla-golpes.js,
+// los jefes en batalla-jefes.js y lo que hacen los legendarios (tarea #109) en batalla-legendarios.js.
 'use strict';
 AS.batalla = (() => {
   const CAMPO = { w: 540, h: 420, linea: 24, yMin: 72, yMax: 404, carga: 330, espera: 1.0 };
@@ -12,13 +12,21 @@ AS.batalla = (() => {
   const HUECOS = [[190, 120], [190, 240], [190, 360], [80, 120], [80, 240], [80, 360]];
   let ID = 0;
 
+  // lo que lleva cada unidad si sus cifras no lo dicen (con || : un 0 o un vacío de las cifras se queda en esto)
+  const BASE = () => ({ area: 0, defensa: 0, critico: 0, danoCrit: 0, reflejo: 0, esquiva: 0, salpica: 0, regenera: 0, roba: 0, torbellino: 0, dobleTiro: 0,
+    curaArea: 0, maldice: 0, clases: [], escala: 1, nivel: 0, ref: null, rama: null, improntas: [], cumbres: [], habilidades: [], cartas: [], serClave: null });
+  const MARCAS = ['provoca', 'salto', 'corre', 'jefe', 'elite', 'dorado', 'legendario'];
+  // el estado de la unidad en la batalla. Los de los legendarios (batalla-legendarios.js): aturdido, invisible, invul y muralla son
+  // segundos que quedan; extra = señuelo o minimapache (no cuenta para perder); leg = lo suyo si es legendario (si no, null)
+  const ESTADO = () => ({ cd: 0.4, anim: 'reposo', tAnim: 0, dura: 0.4, golpeYa: false, escudo: 0, veneno: 0, tVeneno: 0, lento: 0, maldito: 0, muerta: false, cruzo: false,
+    ob: null, curaA: null, aturdido: 0, invisible: 0, invul: 0, muralla: 0, vence: 0, estandarte: 0, extra: false, leg: null });
   function unidad(lado, tipo, c, x, y) {
-    return { id: ++ID, lado, tipo, x, y, max: c.vida, vida: c.vida, dano: c.dano, cada: c.cada, alcance: c.alcance, vel: c.vel, area: c.area || 0, ataque: c.ataque,
-      defensa: c.defensa || 0, critico: c.critico || 0, danoCrit: c.danoCrit || 0, reflejo: c.reflejo || 0, esquiva: c.esquiva || 0, salpica: c.salpica || 0,
-      regenera: c.regenera || 0, roba: c.roba || 0, provoca: !!c.provoca, torbellino: c.torbellino || 0, dobleTiro: c.dobleTiro || 0, curaArea: c.curaArea || 0, maldice: c.maldice || 0,
-      clases: c.clases || [], salto: !!c.salto, corre: !!c.corre, jefe: !!c.jefe, elite: !!c.elite, escala: c.escala || 1, radio: c.jefe ? 40 : c.elite ? 22 : 15, dorado: !!c.dorado, nivel: c.nivel || 0, ref: c.ref || null,
-      rama: c.rama || null, improntas: c.improntas || [],
-      cd: 0.4, anim: 'reposo', tAnim: 0, dura: 0.4, golpeYa: false, escudo: 0, veneno: 0, tVeneno: 0, lento: 0, maldito: 0, muerta: false, cruzo: false, ob: null, curaA: null };
+    const u = { id: ++ID, lado, tipo, x, y, max: c.vida, vida: c.vida, dano: c.dano, cada: c.cada, alcance: c.alcance, vel: c.vel, ataque: c.ataque,
+      radio: c.jefe ? 40 : c.elite ? 22 : 15, ...ESTADO() };
+    const base = BASE();
+    for (const k in base) u[k] = c[k] || base[k];
+    for (const k of MARCAS) u[k] = !!c[k];
+    return u;
   }
   function enemigo(B, e) {
     const jefe = e.jefe ? B.datos.jefes[e.tipo] : null, d = jefe || B.datos.enemigos[e.tipo];
@@ -31,7 +39,8 @@ AS.batalla = (() => {
   // cfg: { datos, heroes: [{ hueco, cifras, ref }] (cifras de AS.poder), oleada (AS.oleadas.genera), nivel: clases activas, reliquias, azar }
   function crea(cfg) {
     const B = { datos: cfg.datos, azar: cfg.azar, t: 0, u: [], proy: [], avisos: [], eventos: [], cola: [], fin: null, tFin: 0, cruzados: 0, bajas: 0, oro: 0,
-      nivel: cfg.nivel || {}, rel: new Set(cfg.reliquias || []), tHab: {}, jefe: null, oleada: cfg.oleada, tanda: 0, carga: false, cifras: AS.cifras.deBatalla() };
+      nivel: cfg.nivel || {}, rel: new Set(cfg.reliquias || []), tHab: {}, jefe: null, oleada: cfg.oleada, tanda: 0, carga: false, cifras: AS.cifras.deBatalla(),
+      cosecha: 0, fuegos: [], hayLeg: false, malojo: false };
     for (const h of cfg.heroes) {
       const p = HUECOS[h.hueco], u = unidad('heroe', h.cifras.tipo, { ...h.cifras, ref: h.ref }, p[0], p[1]);
       u.cd = 0.3 + B.azar() * 0.5;
@@ -39,10 +48,13 @@ AS.batalla = (() => {
       B.u.push(u); AS.cifras.alta(B.cifras, u);
     }
     for (const e of cfg.oleada.enemigos) { if (e.tanda === 0) B.u.push(enemigo(B, e)); else B.cola.push(e); }
+    AS.leyendas.empieza(B);
     return B;
   }
 
   const vivos = (B, lado) => B.u.filter(u => !u.muerta && u.lado === lado);
+  // los héroes que cuentan para ganar o perder (sin señuelos ni minimapaches)
+  const cuentan = B => vivos(B, 'heroe').filter(u => !u.extra);
   const rivales = (B, u) => vivos(B, u.lado === 'heroe' ? 'enemigo' : 'heroe');
   const valorClase = (B, k) => (B.nivel[k] ? B.datos.clases[k].v[B.nivel[k] - 1] : 0);
   const dist = (a, b) => Math.hypot(b.x - a.x, (b.y - a.y) * 1.3);
@@ -52,9 +64,10 @@ AS.batalla = (() => {
     return mejor;
   }
   // a quién ataca: el asesino va a por el de más atrás; los enemigos, al guardián que provoca si lo tienen cerca; los tiradores, al que
-  // corre hacia la línea; el resto, al más cercano
+  // corre hacia la línea; el resto, al más cercano. Los legendarios pueden esconderse (invisible) u obligar a ir a por ellos (muralla)
   function objetivo(B, u) {
-    const lista = rivales(B, u);
+    const lista = AS.leyendas.visibles(B, u, rivales(B, u)), forzado = AS.leyendas.forzado(B, u, lista);
+    if (forzado) return forzado;
     if (!lista.length) return null;
     if (u.salto) return lista.reduce((a, b) => ((u.lado === 'heroe' ? b.x > a.x : b.x < a.x) ? b : a));
     if (u.lado === 'enemigo') { const g = masCercano(u, lista.filter(r => r.provoca && dist(u, r) < 150)); if (g) return g; }
@@ -90,6 +103,7 @@ AS.batalla = (() => {
     if (u.maldito > 0) u.maldito -= dt;
     const cura = u.regenera + (u.lado === 'heroe' && B.rel.has('tirita') ? 2 : 0);
     if (cura && u.vida < u.max) AS.golpes.sana(B, u, u.max * cura / 100 * dt, u);
+    if (u.aturdido > 0) { u.aturdido -= dt; return false; }   // aturdido: ni anda ni ataca
     return true;
   }
   function eligeObjetivo(B, u) {
@@ -109,18 +123,24 @@ AS.batalla = (() => {
     if (!u.golpeYa && u.tAnim >= u.dura * 0.6) { u.golpeYa = true; AS.golpes.impacto(B, u); }
     if (u.tAnim >= u.dura) { u.anim = 'reposo'; u.tAnim = 0; }
   }
+  // si aún no lo tiene a tiro (su alcance más lo que abultan los dos: a un jefe, grande, se le pega desde más lejos), va hacia él
+  // (o, si es un héroe antes de la carga, aguanta): devuelve true si no lo tenía a tiro
+  function acercate(B, u, ob, dt, freno) {
+    if (Math.hypot(ob.x - u.x, ob.y - u.y) <= u.alcance + u.radio + ob.radio - 30) return false;
+    if (u.lado === 'heroe' && !B.carga) quieto(u); else anda(u, ob.x, ob.y, dt, (u.salto ? 2.6 : 1) * freno);
+    return true;
+  }
   function avanzaUnidad(B, u, dt) {
     u.tAnim += dt;
     if (u.muerta || !estados(B, u, dt)) return;
     if (u.anim === 'ataque') { atacando(B, u); return; }
     if (u.anim === 'golpe' && u.tAnim < 0.22) return;
     const freno = u.lento > 0 ? 0.6 : 1;
-    u.cd -= dt * freno;
+    u.cd -= dt * freno * AS.leyendas.prisa(B, u);
     if (u.corre) { haciaLaLinea(B, u, dt, freno); return; }
     const ob = eligeObjetivo(B, u);
     if (!ob) { if (u.lado === 'enemigo') haciaLaLinea(B, u, dt, freno); else quieto(u); return; }
-    // a tiro: su alcance más lo que abultan los dos (un jefe es grande y se le pega desde más lejos)
-    if (Math.hypot(ob.x - u.x, ob.y - u.y) > u.alcance + u.radio + ob.radio - 30) { if (u.lado === 'heroe' && !B.carga) quieto(u); else anda(u, ob.x, ob.y, dt, (u.salto ? 2.6 : 1) * freno); return; }
+    if (acercate(B, u, ob, dt, freno)) return;
     u.salto = false;
     if (u.anim === 'andar') quieto(u);
     if (u.cd <= 0) { u.cd = u.cada; u.anim = 'ataque'; u.tAnim = 0; u.dura = Math.min(0.5, Math.max(0.3, u.cada * 0.5)); u.golpeYa = false; }
@@ -149,7 +169,7 @@ AS.batalla = (() => {
     if (!B.fin) {
       const quedan = vivos(B, 'enemigo').length + B.cola.length;
       if (!quedan) B.fin = 'victoria';
-      else if (!vivos(B, 'heroe').length || B.t > B.datos.partida.limiteCombate) B.fin = 'derrota';
+      else if (!cuentan(B).length || B.t > B.datos.partida.limiteCombate) B.fin = 'derrota';
     }
     if (B.fin) B.eventos.push({ e: 'fin', fin: B.fin });
   }
@@ -159,6 +179,7 @@ AS.batalla = (() => {
     entraTanda(B); miraCarga(B);
     for (const u of B.u) avanzaUnidad(B, u, dt);
     AS.golpes.habilidades(B, dt);
+    AS.leyendas.avanza(B, dt);
     if (B.jefe) { if (B.jefe.muerta) B.avisos = []; else AS.jefes.avanza(B, B.jefe, dt); }
     separa(B, dt);
     AS.golpes.proyectiles(B, dt);
@@ -166,6 +187,6 @@ AS.batalla = (() => {
   }
   // lo que deja la batalla al acabar
   const resultado = B => ({ gano: B.fin === 'victoria', cruzados: B.cruzados, bajas: B.bajas, oro: B.oro, jefe: !!(B.jefe && B.jefe.muerta && !B.jefe.cruzo), duro: B.t,
-    cruzoJefe: !!(B.jefe && B.jefe.cruzo), vivos: vivos(B, 'heroe').length, cifras: B.cifras.heroes });
-  return { CAMPO, HUECOS, crea, avanza, resultado, vivos, rivales, valorClase, masHerido, masCercano, dist, enemigo };
+    cruzoJefe: !!(B.jefe && B.jefe.cruzo), vivos: cuentan(B).length, cifras: B.cifras.heroes });
+  return { CAMPO, HUECOS, crea, avanza, resultado, vivos, rivales, valorClase, masHerido, masCercano, dist, enemigo, unidad };
 })();

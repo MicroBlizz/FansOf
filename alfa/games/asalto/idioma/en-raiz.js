@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "<b>Legendarios</b>: un héroe ascendido que llega al nivel 12 se hace legendario, con el poder cumbre de su rama y una <b>habilidad única</b> solo suya (16 en total).": "<b>Legendaries</b>: an ascended hero that reaches level 12 becomes legendary, with the peak power of its branch and a <b>unique ability</b> of its own (16 in all).",
+  "<b>Despertar</b>: a los niveles 16, 22 y 30 tu legendario elige 1 carta entre 3 para toda la partida. Se abre en MEJORAS con plumas (Poder Dormido).": "<b>Awakening</b>: at levels 16, 22 and 30 your legendary picks 1 card out of 3 for the whole run. Unlock it in UPGRADES with feathers (Dormant Power).",
+  "<b>Seres secretos</b>: en las partidas largas, une dos legendarios de distinto animal y nace un ser nuevo con los poderes de los dos. Hay 28 por descubrir.": "<b>Secret beings</b>: in long runs, merge two legendaries of different animals and a new being is born with the powers of both. There are 28 to discover.",
+  "Microblizz lo llama «fusión de departamentos». Al conejo y a la vaca nadie les preguntó.": "Microblizz calls it a \"department merger\". Nobody asked the rabbit or the cow.",
   "<b>Héroes superiores</b>: al ascender, cada héroe cambia de dibujo a la versión de su rama (16 en total), más grande, con detalles dorados y animaciones nuevas al andar, atacar, recibir y caer.": "<b>Superior heroes</b>: when they ascend, each hero changes into the art of its branch (16 in all), bigger, with golden details and new animations for walking, attacking, getting hit and falling.",
   "Un destello marca el ascenso, y a su lado giran los <b>emblemas</b> de sus improntas (hasta 3).": "A flash marks the ascension, and the <b>emblems</b> of its imprints (up to 3) spin around it.",
   "Microblizz llama a esto «plan de carrera»: mismo sueldo, pero ahora con hombreras doradas.": "Microblizz calls this a \"career plan\": same salary, but now with golden shoulder pads.",

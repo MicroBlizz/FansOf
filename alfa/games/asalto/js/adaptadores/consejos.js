@@ -1,6 +1,6 @@
 // Fans of Asalto · ADAPTADORES · Los consejos: la primera vez que algo aparece en la partida (las misiones, las clases, la esencia para
-// la tienda, una misión de piedra, una piedra para usar, la racha, el banquillo, mover héroes, las improntas y el ascenso), sale la
-// franja con una frase sencilla y la mano señalándolo. Uno cada vez y solo con el equipo en preparación; no corta el juego (se puede
+// la tienda, una misión de piedra, una piedra para usar, la racha, el banquillo, mover héroes, las improntas, el ascenso, el primer
+// legendario y su primer Despertar), sale la franja con una frase sencilla y la mano señalándolo. Uno cada vez y solo con el equipo en preparación; no corta el juego (se puede
 // seguir tocando todo). Se cierra solo al hacer lo que enseña (`hecho`: los toques que lo cumplen) o con ENTENDIDO, y se apunta en los
 // consejos vistos para no repetirlo. Después de la partida guiada.
 'use strict';
@@ -12,6 +12,11 @@ AS.consejos = (() => {
   // cada consejo: qué toques lo dan por aprendido (`hecho`), cuándo sale (devuelve qué señalar, o null) y su frase. En este orden:
   // si hay dos a la vez, sale antes el primero
   const LISTA = [
+    // tarea #109: el primer legendario y el primer Despertar (sale cuando no hay ventana delante: tras su cartel, o tras cerrar con LUEGO)
+    { id: 'c-legendario', hecho: [], txt: 'Legendario: más fuerte y con un poder propio',
+      donde: (q, P) => enHeroe(P, heroeQue(q, h => AS.legendario.es(ASALTO, h))) },
+    { id: 'c-despertar', hecho: ['despertar'], txt: 'Tócalo y elige una carta: le dura toda la partida',
+      donde: (q, P) => (q.despertar.oferta ? enHeroe(P, heroeQue(q, h => h.id === q.despertar.oferta.id)) : null) },
     { id: 'c-misiones', hecho: ['misiones'], txt: 'Cumple estas misiones y ganas oro y plumas',
       donde: (q, P) => (q.misiones.length ? { r: AS.pinta.misiones.reparto(P, q.misiones.length).misiones, lado: 'abajo', fx: 0.5 } : null) },
     { id: 'c-clases', hecho: ['clase'], txt: 'Cada héroe suma a sus clases: más puntos, más poder',
@@ -35,7 +40,7 @@ AS.consejos = (() => {
   ];
   const S = { ahora: null, t: 0, tapa: null };   // tapa: el recuadro de la franja si está arriba (las cintas de misión van debajo)
   // ¿se puede enseñar un consejo ahora? Con el equipo en preparación, sin guía, sin ventanas ni carteles y sin nada a medias
-  const toca = E => !AS.guia.activa && E.casos.partida.fase === 'preparar' && !E.batalla && !E.giro && !E.intro && !E.cartel && !E.arrastre && !AS.ventanas.abierta();
+  const toca = E => !AS.guia.activa && E.casos.partida.fase === 'preparar' && !E.batalla && !E.giro && !E.intro && !E.cartel && !E.arrastre && !AS.ventanas.abierta() && !AS.ventanas.leyendas.ocupada();
   function busca(E, P) {
     const q = E.casos.partida, vistos = E.casos.progreso.consejos;
     for (const c of LISTA) {

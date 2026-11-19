@@ -1,11 +1,11 @@
 // Fans of Asalto · ADAPTADORES · Pinta la arena. Mientras se prepara la oleada: los huecos del campo, los héroes en su sitio (con su
 // nivel y la flecha de «puede ascender») y los enemigos que van a venir esperando a la derecha. En la batalla: los avisos de los
 // golpes del jefe en el suelo, las unidades de la batalla (por orden de fondo a frente), sus barras de vida, los proyectiles y la
-// barra del jefe. Los héroes miran a la derecha y los enemigos a la izquierda: no se voltea ningún dibujo.
+// barra del jefe. Lo de los legendarios (fuego en el suelo, brillos, lo que cae del cielo) lo pinta leyendas-batalla.js. Los héroes miran a la derecha y los enemigos a la izquierda: no se voltea ningún dibujo.
 'use strict';
 AS.pinta = AS.pinta || {};
 AS.pinta.arena = (() => {
-  const T = AS.tema, C = T.C, D = AS.dibujos, tx = AS.texto.pinta, elipse = T.elipse;
+  const T = AS.tema, C = T.C, D = AS.dibujos, tx = AS.texto.pinta, elipse = T.elipse, LB = AS.leyendasBatalla;
   const semilla = id => { let n = 0; for (const ch of String(id)) n = (n * 31 + ch.charCodeAt(0)) % 997; return n; };
 
   function insignia(g, h, x, y) {
@@ -40,6 +40,13 @@ AS.pinta.arena = (() => {
       E.zona({ x: s.x - 50, y: s.y - 90, w: 100, h: 110 }, 'hueco', { donde: 'campo', i });
     }
   }
+  // lo grande que se ve un héroe fuera de la batalla: el ser y la carta Gigante lo agrandan (lo mismo que su unidad en la batalla)
+  function escalaDe(h) {
+    const L = ASALTO.legendarios;
+    return (h.ser ? L.ser.escala : 1) * (h.cartas && h.cartas.includes('gigante') ? L.efectos.gigante.escala : 1);
+  }
+  // el legendario que espera a elegir su carta de Despertar lleva también la flecha: tocarlo abre la ventana
+  const despierta = (p, h) => !!(p.despertar.oferta && p.despertar.oferta.id === h.id);
   function heroes(g, P, p, E) {
     const lista = AS.equipo.enCampo(p.equipo).sort((a, b) => P.hueco(a.i).y - P.hueco(b.i).y);
     for (const { h, i } of lista) {
@@ -49,11 +56,11 @@ AS.pinta.arena = (() => {
       const llega = E.apariciones.get(h.id), k = llega === undefined ? 1 : Math.min(1, llega / 0.3);
       const brilla = E.arrastre && E.arrastre.movido && E.arrastre.h.id !== h.id;
       if (brilla) { g.fillStyle = 'rgba(255,210,58,0.35)'; g.fillRect(s.x - 46, s.y - 96, 92, 110); }
-      const aspecto = AS.aspecto.deHeroe(ASALTO, h), brillo = E.ascensos.get(h.id) || 0;
-      D.muneco(g, { tipo: h.tipo, aspecto, anim: 'reposo', tAnim: E.t + semilla(h.id) * 0.1, lado: 'heroe', dorado: h.dorado, alfa: k, destello: brillo, id: semilla(h.id) }, s.x, s.y - Math.round((1 - k) * (1 - k) * 60));
-      const alto = D.alto(D.cual(aspecto, h.tipo));
+      const aspecto = AS.aspecto.deHeroe(ASALTO, h), brillo = E.ascensos.get(h.id) || 0, escala = escalaDe(h);
+      D.muneco(g, { tipo: h.tipo, aspecto, anim: 'reposo', tAnim: E.t + semilla(h.id) * 0.1, lado: 'heroe', dorado: h.dorado, alfa: k, destello: brillo, id: semilla(h.id), escala }, s.x, s.y - Math.round((1 - k) * (1 - k) * 60));
+      const alto = D.alto(D.cual(aspecto, h.tipo), false, escala);
       insignia(g, h, s.x - 50, s.y - alto - 4);
-      if (AS.heroe.puedeAscender(ASALTO, h)) flecha(g, s.x + 26, s.y - alto - 22, E.t);
+      if (AS.heroe.puedeAscender(ASALTO, h) || despierta(p, h)) flecha(g, s.x + 26, s.y - alto - 22, E.t);
     }
   }
   function esperando(g, P, p, E) {
@@ -90,6 +97,19 @@ AS.pinta.arena = (() => {
     T.barra(g, x, y, w, 8, u.vida / u.max, u.lado === 'heroe' ? C.verde : C.rojo);
     if (u.escudo > 0) { g.fillStyle = C.celeste; g.fillRect(Math.round(x) + 2, y - 3, Math.max(2, Math.round((w - 4) * Math.min(1, u.escudo / u.max))), 3); }
   }
+  // la postura con la que se pinta: la suya, o la de la entrada del jefe (todos quietos y el jefe rugiendo)
+  function pose(E, u) {
+    if (!E.intro) return u;
+    const ruge = u.jefe && E.intro.t > 0.55 && E.intro.t < 1.25;
+    return ruge ? { anim: 'ataque', tAnim: E.intro.t - 0.55, dura: 0.7 } : { anim: 'reposo', tAnim: E.t, dura: 0.4 };
+  }
+  // el veneno y la maldición: dos marcas de color sobre su cabeza
+  function marcas(g, u, s, alto) {
+    if (u.tVeneno > 0) { g.fillStyle = '#7ad84a'; g.fillRect(s.x + 16, s.y - alto - 20, 6, 6); g.fillRect(s.x + 24, s.y - alto - 14, 4, 4); }
+    if (u.maldito > 0) { g.fillStyle = '#b22e54'; g.fillRect(s.x - 24, s.y - alto - 20, 6, 6); }
+  }
+  // cómo se ve: el aspecto de los héroes (con su grado de legendario o de ser, tarea #109) y su escala
+  const vista = u => (u.lado === 'heroe' ? { aspecto: AS.aspecto.de(u.tipo, u.rama, u.improntas, { legendario: u.legendario, ser: u.serClave }), escala: u.escala } : { aspecto: null, escala: 1 });
   function unidades(g, P, B, E) {
     const orden = B.u.filter(u => !u.cruzo).sort((a, b) => a.y - b.y);
     for (const u of orden) {
@@ -97,14 +117,13 @@ AS.pinta.arena = (() => {
       if (alfa <= 0) continue;
       const s = P.aPantalla(u.x, u.y);
       if (u.jefe && u.enFuria) { g.fillStyle = `rgba(216,64,47,${0.2 + Math.abs(Math.sin(E.t * 8)) * 0.15})`; g.beginPath(); g.ellipse(s.x, s.y, 80, 30, 0, 0, Math.PI * 2); g.fill(); }
-      const ruge = E.intro && u.jefe && E.intro.t > 0.55 && E.intro.t < 1.25, pose = ruge ? { anim: 'ataque', tAnim: E.intro.t - 0.55, dura: 0.7 } : E.intro ? { anim: 'reposo', tAnim: E.t, dura: 0.4 } : u;
-      const aspecto = u.lado === 'heroe' ? AS.aspecto.de(u.tipo, u.rama, u.improntas) : null;
-      D.muneco(g, { tipo: u.tipo, aspecto, elite: u.elite, anim: pose.anim, tAnim: pose.tAnim, dura: pose.dura, lado: u.lado, alfa, destello: (E.destellos.get(u.id) || 0) * 5, dorado: u.dorado, id: u.id }, s.x, s.y);
+      const po = pose(E, u), { aspecto, escala } = vista(u);
+      D.muneco(g, { tipo: u.tipo, aspecto, elite: u.elite, anim: po.anim, tAnim: po.tAnim, dura: po.dura, lado: u.lado, alfa: alfa * LB.transparencia(u), destello: (E.destellos.get(u.id) || 0) * 5, dorado: u.dorado, id: u.id, escala }, s.x, s.y);
       if (u.muerta) continue;
-      const alto = aspecto ? D.alto(D.cual(aspecto, u.tipo)) : D.alto(u.tipo, u.elite);
+      const alto = aspecto ? D.alto(D.cual(aspecto, u.tipo), false, escala) : D.alto(u.tipo, u.elite);
+      LB.brillo(g, u, s, alto, E.t);
       barra(g, u, s, alto);
-      if (u.tVeneno > 0) { g.fillStyle = '#7ad84a'; g.fillRect(s.x + 16, s.y - alto - 20, 6, 6); g.fillRect(s.x + 24, s.y - alto - 14, 4, 4); }
-      if (u.maldito > 0) { g.fillStyle = '#b22e54'; g.fillRect(s.x - 24, s.y - alto - 20, 6, 6); }
+      marcas(g, u, s, alto);
     }
   }
   const PROY = { flecha: ['#7c4b2a', '#fff3d6'], magia: ['#f08a2a', '#ffd23a'], bomba: ['#22140e', '#d8402f'], sombra: ['#8a1f4a', '#ff7ab0'], dardo: ['#3f9a3a', '#b8ff7a'] };
@@ -136,7 +155,7 @@ AS.pinta.arena = (() => {
   }
   function batalla(g, P, E) {
     const B = E.batalla;
-    avisos(g, P, B, E.t); unidades(g, P, B, E); proyectiles(g, P, B); barraJefe(g, P, B);
+    avisos(g, P, B, E.t); LB.suelo(g, P, B, E.t); unidades(g, P, B, E); proyectiles(g, P, B); LB.encima(g, P, E); barraJefe(g, P, B);
   }
   return (g, P, p, E) => {
     const A = P.arena, tema = ASALTO.zonas[p.zona].tema;

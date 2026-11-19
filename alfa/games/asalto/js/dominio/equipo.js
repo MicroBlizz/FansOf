@@ -53,11 +53,12 @@ AS.equipo = (() => {
     if (!ha || !hb) return AS.error('nadie-ahi');
     return AS.ok(pon(pon(e, a, hb), b, ha));
   }
-  // el de `hasta` absorbe al de `desde` (que desaparece)
+  // el de `hasta` absorbe al de `desde` (que desaparece); si los dos son legendarios de distinto tipo, forman un ser secreto (AS.legendario.une)
   function absorbe(datos, e, desde, hasta) {
     const a = leer(e, desde), b = leer(e, hasta);
     if (!a || !b) return AS.error('nadie-ahi');
-    const r = AS.heroe.absorbe(datos, b, a);
+    const ser = AS.legendario.une(datos, b, a);
+    const r = ser.ok ? ser : AS.heroe.absorbe(datos, b, a);
     if (!r.ok) return r;
     // primero se coloca al que queda y luego se quita al absorbido (si los dos son del banquillo, el índice se corrige)
     const n = { ...e, campo: e.campo.slice(), banquillo: e.banquillo.slice() };

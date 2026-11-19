@@ -1,5 +1,6 @@
 // Fans of Asalto · DOMINIO · El poder de un héroe en la batalla: sus cifras de base (ajustes), por su nivel y su rareza, sus herencias, la rama de
-// su ascenso, el equipo puesto (en % para todos), las reliquias de la partida, los objetos de la tienda y las clases activas del campo. Devuelve las cifras ya
+// su ascenso, el equipo puesto (en % para todos), las reliquias de la partida, los objetos de la tienda, las clases activas del campo y, si es legendario,
+// lo suyo (conLegendario). Devuelve las cifras ya
 // hechas con las que la batalla crea su unidad. Puro: solo cuentas.
 'use strict';
 AS.poder = (() => {
@@ -52,6 +53,19 @@ AS.poder = (() => {
     if (cl.includes('luchador')) m.dano *= 1 + v('luchador') / 100;
     if (cl.includes('tirador')) m.prisa *= 1 + v('tirador') / 100;
   }
+  // tarea #109: lo que da ser legendario (efectos en batalla-legendarios.js). La cumbre de cada rama que tiene (la suya; un ser, las de
+  // sus dos padres), sus habilidades y sus cartas. Un ser es más grande y fuerte; Bastión da reflejo, Gigante vida y escala, Sed robo de vida
+  function conLegendario(datos, h, m) {
+    if (!AS.legendario.es(datos, h)) return null;
+    const L = datos.legendarios, E = L.efectos, info = AS.legendario.datosDe(datos, h);
+    const ser = !!h.ser, cumbres = ser ? info.cumbres : [h.rama].filter(Boolean), habilidades = ser ? info.habilidades : (info ? [info.habilidad] : []);
+    let escala = ser ? L.ser.escala : 1;
+    if (ser) { m.vida *= L.ser.mult; m.dano *= L.ser.mult; }
+    if (cumbres.includes('tanque')) m.reflejo += E.bastion.reflejo;
+    if (h.cartas.includes('gigante')) { m.vida *= E.gigante.vida; escala *= E.gigante.escala; }
+    if (h.cartas.includes('sed')) m.roba += E.sed;
+    return { legendario: true, serClave: ser ? h.ser.clave : null, cumbres: Object.freeze(cumbres), habilidades: Object.freeze(habilidades), cartas: Object.freeze(h.cartas.slice()), escala };
+  }
   // ctx: { equipo: { vida: 5, ataque: 2… } en %, reliquias: ['zelote'…], objetos: [{ id, nivel }] (los de la tienda), nivel: { tanque: 1… } (las clases activas) }
   function deHeroe(datos, h, ctx) {
     const d = datos.heroes[h.tipo], cl = d.clases, m = base(), c = ctx || {};
@@ -65,11 +79,13 @@ AS.poder = (() => {
     for (const r of (c.reliquias || [])) if (RELIQUIA[r]) RELIQUIA[r](m, cl);
     conObjetos(datos, m, cl, c.objetos);
     conClases(datos, m, cl, c.nivel);
+    const leg = conLegendario(datos, h, m);
     return Object.freeze({
       tipo: h.tipo, vida: Math.round(d.vida * m.vida * h.cifras.vida), dano: d.dano * m.dano * h.cifras.dano, cada: d.cada / m.prisa, alcance: d.alcance, vel: d.vel * m.paso,
       area: Math.max(d.area || 0, m.estalla || 0), ataque: d.ataque, salto: !!d.salto, clases: cl, rama: h.rama, improntas: Object.freeze(AS.heroe.improntas(datos, h)), dorado: h.dorado, nivel: h.nivel, rareza: h.rareza,
       defensa: Math.min(0.7, m.defensa), critico: m.critico, danoCrit: m.danoCrit, reflejo: m.reflejo, esquiva: m.esquiva, salpica: m.salpica, regenera: m.regenera, roba: m.roba,
       provoca: !!m.provoca, torbellino: m.torbellino || 0, dobleTiro: m.dobleTiro || 0, curaArea: m.curaArea || 0, maldice: m.maldice || 0,
+      ...leg,
     });
   }
   return { deHeroe };

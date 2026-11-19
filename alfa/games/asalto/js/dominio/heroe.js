@@ -3,9 +3,19 @@
 // sus herencias), la rama que eligió al ascender y si es un Animal Dorado. Es un valor congelado: absorber o ascender devuelve otro.
 // Las reglas: el que absorbe suma los niveles del absorbido, se queda con la rareza más alta de los dos y gana una marca de su clase principal (más las marcas que ya traía);
 // con nivel 5 o más puede ascender a una de sus dos clases, una sola vez.
+// Tarea #109: si es legendario (dominio/legendario.js) lleva también sus cartas de Despertar (`cartas`), la marca `legendario` y, si
+// salió de unir dos legendarios, `ser` ({ clave, padres }). La carta «hambre» dobla el nivel que suma al absorber y «hueco» da un hueco más.
 'use strict';
 AS.heroe = (() => {
-  const congela = h => { Object.freeze(h.marcas); Object.freeze(h.cifras); return Object.freeze(h); };
+  const congela = h => {
+    Object.freeze(h.marcas); Object.freeze(h.cifras); Object.freeze(h.cartas);
+    if (h.ser) { Object.freeze(h.ser.padres); Object.freeze(h.ser); }
+    return Object.freeze(h);
+  };
+  // el mismo héroe con estos campos cambiados (otro valor congelado); lo usa también dominio/legendario.js
+  const con = (h, cambios) => congela({ ...h, cifras: { ...h.cifras }, marcas: { ...h.marcas }, cartas: h.cartas.slice(), ...cambios });
+  const tiene = (h, carta) => h.cartas.includes(carta);
+  const juntaCartas = (a, b) => [...a, ...b.filter(c => !a.includes(c))];
   const SIN_CIFRAS = () => ({ vida: 1, dano: 1 });
   // una cifra propia vale si está dentro del margen de los ajustes (con margen 10: de 0,9 a 1,1)
   const cifraVale = (datos, v) => Number.isFinite(v) && Math.abs(v - 1) <= datos.niveles.margen / 100 + 1e-9;
@@ -14,25 +24,33 @@ AS.heroe = (() => {
     if (!datos.heroes[tipo]) return AS.error('heroe-desconocido', { tipo });
     if (!(nivel >= 1)) return AS.error('nivel-invalido', { nivel });
     if (!Number.isInteger(rareza) || !datos.rarezas[rareza]) return AS.error('rareza-desconocida', { rareza });
-    return AS.ok(congela({ id, tipo, nivel: Math.floor(nivel), rareza, cifras: SIN_CIFRAS(), marcas: {}, rama: null, dorado: !!dorado }));
+    return AS.ok(congela({ id, tipo, nivel: Math.floor(nivel), rareza, cifras: SIN_CIFRAS(), marcas: {}, rama: null, dorado: !!dorado, cartas: [], legendario: false, ser: null }));
   }
   // el mismo héroe con sus cifras propias: { vida, dano }, cada una un multiplicador dentro del margen
   function conCifras(datos, h, cifras) {
     if (!cifras || !cifraVale(datos, cifras.vida) || !cifraVale(datos, cifras.dano)) return AS.error('cifras-fuera-de-margen');
-    return AS.ok(congela({ ...h, marcas: { ...h.marcas }, cifras: { vida: cifras.vida, dano: cifras.dano } }));
+    return AS.ok(con(h, { cifras: { vida: cifras.vida, dano: cifras.dano } }));
   }
   const clases = (datos, h) => datos.heroes[h.tipo].clases;
-  // el que queda: suma niveles y marcas (una de la clase principal del absorbido, más las que este traía)
+  // el que queda: suma niveles (el doble con la carta «hambre»), marcas (una de la clase principal del absorbido, más las que este traía)
+  // y cartas de Despertar (sin repetir)
   function absorbe(datos, h, otro) {
     if (h.id === otro.id) return AS.error('a-si-mismo');
     const marcas = { ...h.marcas };
     for (const k in otro.marcas) marcas[k] = (marcas[k] || 0) + otro.marcas[k];
     const principal = clases(datos, otro)[0];
     marcas[principal] = (marcas[principal] || 0) + 1;
-    return AS.ok(congela({ ...h, cifras: { ...h.cifras }, nivel: h.nivel + otro.nivel, rareza: Math.max(h.rareza, otro.rareza), marcas, dorado: h.dorado || otro.dorado }));
+    const nivel = h.nivel + otro.nivel * (tiene(h, 'hambre') ? 2 : 1);
+    return AS.ok(con(h, { nivel, rareza: Math.max(h.rareza, otro.rareza), marcas, dorado: h.dorado || otro.dorado, cartas: juntaCartas(h.cartas, otro.cartas) }));
   }
-  // cuántos huecos de impronta tiene abiertos por su nivel (1, 2 al nivel 5 y 3 al nivel 10)
-  const huecos = (datos, h) => datos.niveles.huecos.filter(n => h.nivel >= n).length;
+  // cuántos huecos de impronta tiene abiertos por su nivel (1, 2 al nivel 5 y 3 al nivel 10), más uno con la carta «hueco»
+  const huecos = (datos, h) => datos.niveles.huecos.filter(n => h.nivel >= n).length + (tiene(h, 'hueco') ? 1 : 0);
+  // el mismo héroe con una carta de Despertar más
+  function conCarta(datos, h, carta) {
+    if (!datos.legendarios.cartas[carta]) return AS.error('carta-desconocida', { carta });
+    if (tiene(h, carta)) return AS.error('carta-repetida', { carta });
+    return AS.ok(con(h, { cartas: [...h.cartas, carta] }));
+  }
   // sus improntas: las clases grabadas en sus huecos, por orden de llegada (la primera clase que absorbió, la segunda…)
   const improntas = (datos, h) => Object.keys(h.marcas).slice(0, huecos(datos, h));
   // los grados de cada herencia: { clase: grado }. Solo cuentan las clases que tienen hueco
@@ -46,7 +64,7 @@ AS.heroe = (() => {
     if (h.rama) return AS.error('ya-ascendido');
     if (h.nivel < datos.niveles.ascenso) return AS.error('nivel-bajo', { hace_falta: datos.niveles.ascenso });
     if (!clases(datos, h).includes(clase)) return AS.error('clase-ajena', { clase });
-    return AS.ok(congela({ ...h, cifras: { ...h.cifras }, marcas: { ...h.marcas }, rama: clase }));
+    return AS.ok(con(h, { rama: clase }));
   }
   // los puntos de clase que da en el campo: 1 a cada una de sus dos clases y 2 a la de su rama
   function puntos(datos, h) {
@@ -66,12 +84,25 @@ AS.heroe = (() => {
     for (const k in (j.marcas || {})) if (datos.clases[k] && j.marcas[k] > 0) marcas[k] = Math.floor(j.marcas[k]);
     return marcas;
   }
+  // las cartas que existen, sin repetir; un ser cuya clave y padres existen (si no, ninguno)
+  function cartasGuardadas(datos, j) {
+    const cartas = Array.isArray(j.cartas) ? j.cartas : [];
+    return cartas.filter((c, i) => typeof c === 'string' && datos.legendarios.cartas[c] && cartas.indexOf(c) === i);
+  }
+  function serGuardado(datos, j) {
+    const L = datos.legendarios, s = j.ser;
+    if (!s || typeof s.clave !== 'string' || !L.seres[s.clave] || !Array.isArray(s.padres) || s.padres.length !== 2) return null;
+    if (!s.padres.every(p => typeof p === 'string' && L.lista[p])) return null;
+    return { clave: s.clave, padres: s.padres.slice() };
+  }
+  // legendario solo si lo es de verdad: un ser, o ascendido y con el nivel de legendario
+  const legendarioGuardado = (datos, j, rama, ser) => !!ser || (j.legendario === true && !!rama && j.nivel >= datos.legendarios.nivel);
   function deJSON(datos, j) {
     if (!j) return AS.error('heroe-desconocido', { tipo: undefined });
     const r = crea(datos, j.id, j.tipo, j.nivel, j.dorado, rarezaGuardada(datos, j));
     if (!r.ok) return r;
-    const rama = j.rama && clases(datos, r.valor).includes(j.rama) ? j.rama : null;
-    return AS.ok(congela({ ...r.valor, cifras: cifrasGuardadas(datos, j), marcas: marcasGuardadas(datos, j), rama }));
+    const rama = j.rama && clases(datos, r.valor).includes(j.rama) ? j.rama : null, ser = serGuardado(datos, j);
+    return AS.ok(con(r.valor, { cifras: cifrasGuardadas(datos, j), marcas: marcasGuardadas(datos, j), rama, cartas: cartasGuardadas(datos, j), ser, legendario: legendarioGuardado(datos, j, rama, ser) }));
   }
-  return { crea, conCifras, clases, absorbe, huecos, improntas, herencias, puedeAscender, asciende, puntos, deJSON };
+  return { crea, con, conCifras, conCarta, tiene, clases, absorbe, huecos, improntas, herencias, puedeAscender, asciende, puntos, deJSON };
 })();

@@ -45,13 +45,46 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
   }
   const zonaAbierta = (zona, sinFin) => !!datos.zonas[zona] && (sinFin ? prog.zonas.includes(zona) : zona === 0 || prog.zonas.includes(zona - 1));
   // la primera partida es guiada: en la primera zona, mientras no se haya hecho (o saltado) la guía
-  const cfgPartida = (zona, sinFin, dif) => ({ zona, sinFin: !!sinFin, dificultad: dif || 0, guiada: zona === 0 && !sinFin && !prog.consejos.guia, mejoras: prog.mejoras, rarezas: prog.rarezas, equipo: PR.statsEquipo(datos, prog) });
+  const cfgPartida = (zona, sinFin, dif) => ({ zona, sinFin: !!sinFin, dificultad: dif || 0, guiada: zona === 0 && !sinFin && !prog.consejos.guia, mejoras: prog.mejoras, rarezas: prog.rarezas, despertar: prog.dormido, equipo: PR.statsEquipo(datos, prog) });
   // los objetos del botín del jefe: 50 % normal, 35 % raro, 15 % épico
   function botin(n) {
     const lista = Array.from({ length: n }, () => { const r = azar(); return PR.objetoNuevo(datos, azar, idObjeto(), r < 0.5 ? 0 : r < 0.85 ? 1 : 2); });
     const g = PR.guardaObjetos(datos, prog, lista);
     prog = g.p;
     return { objetos: lista, fuera: g.fuera };
+  }
+
+  // la oferta de cartas del Despertar abierta, con lo que la pantalla enseña (null si no hay)
+  function ofertaDeCartas() {
+    const o = partida && partida.despertar.oferta;
+    if (!o) return null;
+    const L = datos.legendarios, x = AS.equipo.todos(partida.equipo).find(t => t.h.id === o.id), info = AS.legendario.datosDe(datos, x.h);
+    return { id: o.id, sitio: x.sitio, nombre: info ? info.nombre : '', cambiada: o.cambiada, puedeCambiar: partida.puedeAnuncio('cartas'),
+      cartas: o.cartas.map(id => ({ id, nombre: L.cartas[id].nombre, txt: L.cartas[id].txt })) };
+  }
+
+  /* ---------- SOLO PARA PRUEBAS (panel DEV): rehacen la partida desde su guardado con unos héroes cambiados ---------- */
+  // el héroe guardado, ya legendario: con el nivel de legendario como poco, ascendido a su primera clase si no lo estaba y marcado.
+  // tipo (opcional): antes se convierte en ese Animal Loco, para probar las parejas de seres (conejo + vaca…)
+  function legendarioDePrueba(jh, tipo) {
+    const t = datos.heroes[tipo] ? tipo : jh.tipo, rama = t === jh.tipo && jh.rama ? jh.rama : datos.heroes[t].clases[0];
+    return { ...jh, tipo: t, rama, nivel: Math.max(jh.nivel, datos.legendarios.nivel), legendario: true };
+  }
+  // cambios: [{ sitio, tipo }]. La partida se guarda y se vuelve a cargar con esos héroes hechos legendarios
+  function devCambia(cambios) {
+    if (!partida) return AS.error('sin-partida');
+    const j = partida.aJSON() && JSON.parse(JSON.stringify(partida.aJSON()));
+    if (!j) return AS.error('ahora-no');
+    for (const { sitio, tipo } of cambios) {
+      const lista = sitio.donde === 'campo' ? j.equipo.campo : j.equipo.banquillo;
+      if (!lista[sitio.i]) return AS.error('nadie-ahi');
+      lista[sitio.i] = legendarioDePrueba(lista[sitio.i], tipo);
+    }
+    const r = AS.Partida.deJSON(datos, j, PR.statsEquipo(datos, prog), azar);
+    if (!r.ok) return r;
+    partida = r.valor;
+    sincroniza();
+    return AS.ok(partida);
   }
 
   return {
@@ -65,6 +98,9 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     costeMejora: id => PR.costeMejora(datos, prog, id),
     rarezaSiguiente: () => PR.rarezaSiguiente(datos, prog),
     abreRareza: () => conProgreso(PR.abreRareza(datos, prog)),
+    // el Poder Dormido: abre con plumas los Despertares I, II y III de los legendarios (para las partidas nuevas)
+    dormidoSiguiente: () => PR.dormidoSiguiente(datos, prog),
+    abreDormido: () => conProgreso(PR.abreDormido(datos, prog)),
     // las máquinas de invocar (se elige una para las partidas nuevas) y las dificultades de cada zona
     maquinaAbierta: id => PR.maquinaAbierta(datos, prog, id),
     abreMaquina: id => conProgreso(PR.abreMaquina(datos, prog, id)),
@@ -140,9 +176,22 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     cambia: (a, b) => conPartida(p => p.cambia(a, b)),
     // qué ganaría el que se queda si se unen: no cambia ni guarda nada
     vistaUnion: (desde, hasta) => (partida ? partida.vistaUnion(desde, hasta) : AS.error('sin-partida')),
-    absorbe: (desde, hasta) => conPartida(p => p.absorbe(desde, hasta)),
+    absorbe: (desde, hasta) => conPartida(p => p.absorbe(desde, hasta, azar)),
     deshace: () => conPartida(p => p.deshace()),
-    asciende: (sitio, clase) => conPartida(p => p.asciende(sitio, clase)),
+    asciende: (sitio, clase) => conPartida(p => p.asciende(sitio, clase, azar)),
+
+    /* ---------- el Despertar de los legendarios: mientras haya oferta de cartas no se lucha ---------- */
+    oferta: ofertaDeCartas,
+    eligeCarta: carta => conPartida(p => p.eligeCarta(carta, azar)),
+    // otras 3 cartas con anuncio (una vez por oferta): llamar solo DESPUÉS de verse el anuncio entero. Es el anuncio 'cartas'
+    cambiaCartas: () => conPartida(p => p.anuncio('cartas', azar)),
+    // SOLO PARA PRUEBAS (panel DEV): el héroe de ese sitio, legendario al instante; y un ser uniendo dos (tipos: [el de desde, el de
+    // hasta], opcional: por defecto se quedan los suyos; para conejo + vaca, ['heroe-bunny', 'heroe-mechavaca'])
+    devLegendario: (sitio, tipo) => devCambia([{ sitio, tipo }]),
+    devSer(desde, hasta, tipos = []) {
+      const r = devCambia([{ sitio: desde, tipo: tipos[0] }, { sitio: hasta, tipo: tipos[1] }]);
+      return r.ok ? conPartida(p => p.absorbe(desde, hasta, azar)) : r;
+    },
 
     /* ---------- la tienda de la partida ---------- */
     compraObjeto: i => conPartida(p => p.compraObjeto(i)),
@@ -164,7 +213,7 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     tic(dt) { if (batalla) AS.batalla.avanza(batalla, dt); return batalla; },
     terminaOleada() {
       if (!partida || !batalla || !batalla.fin) return AS.error('batalla-sin-acabar');
-      const res = AS.batalla.resultado(batalla);
+      const res = { cosecha: batalla.cosecha || 0, ...AS.batalla.resultado(batalla) };   // la esencia de la carta «Cosecha» (B.cosecha)
       const r = partida.terminaOleada(res, azar);
       if (!r.ok) return r;
       batalla = null; cifras = AS.cifras.suma(cifras, res.cifras);

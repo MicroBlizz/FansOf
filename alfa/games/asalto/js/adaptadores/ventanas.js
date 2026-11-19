@@ -57,12 +57,12 @@ AS.ventanas = (() => {
   }
   function heroe(E, sitio) {
     const p = E.casos.partida, h = AS.equipo.leer(p.equipo, sitio);
-    if (!h) return;
+    if (!h || AS.ventanas.leyendas.abreSiEspera(E, h)) return;   // el legendario que espera su carta de Despertar abre esa ventana
     const cifras = AS.poder.deHeroe(ASALTO, h, { ...p.contexto, nivel: p.sinergias.nivel });
     const puede = AS.heroe.puedeAscender(ASALTO, h) && p.fase === 'preparar';
     const ramas = puede ? `<h3>${tr('ASCIENDE: ELIGE UNA CLASE')}</h3>` + ASALTO.heroes[h.tipo].clases.map(k => `<button class="as-carta" data-rama="${k}" type="button" style="--c:${ASALTO.clases[k].col}">${ico('clase-' + k, 'as-ico2')}<b>${tr(ASALTO.ramas[k].titulo)}</b><span>${tr(ASALTO.ramas[k].txt)}</span></button>`).join('')
       : h.rama ? `<p class="as-nota">${tr(ASALTO.ramas[h.rama].txt)}</p>` : `<p class="as-nota">${tr('Al nivel {n} podrá ascender a una de sus dos clases.', { n: ASALTO.niveles.ascenso })}</p>`;
-    const t = abre(htmlHeroe(h, cifras) + ramas + btn('as-cerrar', tr('CERRAR'), 'as-azul'));
+    const t = abre(htmlHeroe(h, cifras) + ramas + AS.ventanas.leyendas.camino(h, p.despertar.abiertos) + btn('as-cerrar', tr('CERRAR'), 'as-azul'));
     alPulsar('as-cerrar', cierra);
     for (const b of t.querySelectorAll('[data-rama]')) b.onclick = () => {
       const r = E.casos.asciende(sitio, b.dataset.rama);

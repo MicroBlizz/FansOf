@@ -63,8 +63,30 @@ AS.dibujos = (() => {
     if (elite && hay(tipo + '-elite')) return { tipo: tipo + '-elite', esc: 1 };
     return { tipo, esc: elite ? 2 : 1 };
   }
-  // la tira que se ve de un héroe: la de su aspecto (AS.aspecto: la superior si ha ascendido) si está cargada; si no, la de su tipo
-  const cual = (aspecto, tipo) => (aspecto && hay(aspecto.tira) ? aspecto.tira : tipo);
+  // la tira que se ve de un héroe: la de su aspecto (AS.aspecto: la superior si ha ascendido, la de legendario o la de ser) si está
+  // cargada; si no, su respaldo (la superior: mientras no llegue el dibujo del legendario o del ser); y si tampoco, la de su tipo
+  function cual(aspecto, tipo) {
+    if (!aspecto) return tipo;
+    if (hay(aspecto.tira)) return aspecto.tira;
+    return aspecto.respaldo && hay(aspecto.respaldo) ? aspecto.respaldo : tipo;
+  }
+  // los legendarios y los seres (tarea #109), hasta que llegue su dibujo: un aura que late detrás (dorada; la del ser, de dos colores)
+  // y unos destellos que giran a su alrededor. En píxeles, sin suavizar
+  const AURA = { legendario: ['#ffd23a', '#fff3d6'], ser: ['#ff7a1a', '#5ae0ff'] };
+  function aura(g, aspecto, w, h, t) {
+    const col = AURA[aspecto.ser ? 'ser' : 'legendario'], k = 0.5 + Math.sin(t * 4) * 0.5, cy = -h * 0.42, base = g.globalAlpha;
+    for (let i = 3; i >= 1; i--) {
+      g.globalAlpha = base * (0.3 + k * 0.2) * (4 - i) / 3;
+      g.fillStyle = col[i % 2 ? 0 : 1];
+      const rx = Math.round(w * (0.26 + i * 0.07) + k * 3), ry = Math.round(h * (0.3 + i * 0.07) + k * 3);
+      for (let y = -ry; y <= ry; y += 3) { const a = Math.round(rx * Math.sqrt(1 - (y * y) / (ry * ry))); g.fillRect(-a, Math.round(cy + y), a * 2, 3); }
+    }
+    g.globalAlpha = base;
+    for (let i = 0; i < 4; i++) {   // los destellos: cruces de píxeles que giran
+      const a = t * 2 + i * Math.PI / 2, x = Math.round(Math.cos(a) * w * 0.42), y = Math.round(cy + Math.sin(a) * h * 0.36), n = (i + Math.floor(t * 6)) % 3 === 0 ? 4 : 2;
+      g.fillStyle = col[i % 2]; g.fillRect(x - n, y - 1, n * 2, 2); g.fillRect(x - 1, y - n, 2, n * 2);
+    }
+  }
   // los emblemas de sus improntas: giran despacio a su alrededor a media altura, pequeños (20 px) y con un halo del color de la clase
   function emblemas(g, lista, x, y, w, h, t) {
     const n = lista.length, L = 20;
@@ -76,35 +98,50 @@ AS.dibujos = (() => {
       if (im) { g.imageSmoothingEnabled = false; g.drawImage(im, ex - L / 2, ey - L / 2, L, L); }
     });
   }
-  // pinta un muñeco con los pies en (x, y). u: { tipo, aspecto (AS.aspecto, de los héroes), elite, anim, tAnim, dura, lado, alfa, destello (0-1), dorado, id }
-  function muneco(g, u, x, y) {
-    if (!hay(u.tipo)) return;
-    const visto = cual(u.aspecto, u.tipo), { tipo, esc } = visto === u.tipo ? tiraDe(u.tipo, u.elite) : { tipo: visto, esc: 1 };
-    const d = tiras()[tipo], w = d.w * esc, h = d.h * esc;
-    const f = cuadro(tipo, u.anim, u.tAnim || 0, u.dura), m = f.propio ? { dx: 0, dy: 0, giro: 0 } : suplido(u, u.lado === 'heroe' ? 1 : -1);
-    const img = u.dorado ? tenida(tipo, '#ffc21a', 0.42) : IMG[tipo];
-    g.save();
-    g.globalAlpha = u.alfa === undefined ? 1 : u.alfa;
-    g.translate(Math.round(x + m.dx), Math.round(y + m.dy));
-    g.fillStyle = 'rgba(8,4,12,0.4)';   // la sombra, a píxel
+  // la tira con la que se pinta y a qué escala: la de su aspecto o la suya (con la de élite), por la escala propia (seres, Gigante, minimapaches)
+  function tiraYEscala(u) {
+    const visto = cual(u.aspecto, u.tipo), t = visto === u.tipo ? tiraDe(u.tipo, u.elite) : { tipo: visto, esc: 1 };
+    return { tipo: t.tipo, esc: t.esc * (u.escala || 1) };
+  }
+  // la sombra en el suelo, a píxel
+  function sombra(g, w, esc) {
+    g.fillStyle = 'rgba(8,4,12,0.4)';
     const rx = Math.round(w * 0.3), ry = Math.max(3, Math.round(4 * esc));
     for (let i = -ry; i <= ry; i++) { const a = Math.round(rx * Math.sqrt(1 - (i * i) / (ry * ry + 0.01))); g.fillRect(-a, i - 1, a * 2, 1); }
+  }
+  const alfaDe = u => (u.alfa === undefined ? 1 : u.alfa);
+  const vivo = u => u.anim !== 'muerte';
+  // pinta un muñeco con los pies en (x, y). u: { tipo, aspecto (AS.aspecto, de los héroes), elite, anim, tAnim, dura, lado, alfa, destello (0-1), dorado, id,
+  // escala (la de los seres, Gigante y los minimapaches; sin ella, 1) }
+  function muneco(g, u, x, y) {
+    if (!hay(u.tipo)) return;
+    const { tipo, esc } = tiraYEscala(u), d = tiras()[tipo], w = Math.round(d.w * esc), h = Math.round(d.h * esc);
+    const f = cuadro(tipo, u.anim, u.tAnim || 0, u.dura), m = f.propio ? { dx: 0, dy: 0, giro: 0 } : suplido(u, u.lado === 'heroe' ? 1 : -1);
+    const img = u.dorado ? tenida(tipo, '#ffc21a', 0.42) : IMG[tipo], px = Math.round(x + m.dx), py = Math.round(y + m.dy), dy = Math.round(-h + 2 * esc);
+    g.save();
+    g.globalAlpha = alfaDe(u);
+    g.translate(px, py);
+    sombra(g, w, esc);
+    if (u.aspecto && u.aspecto.legendario && vivo(u)) aura(g, u.aspecto, w, h, performance.now() / 1000 + (u.id || 0) * 0.3);
     if (m.giro) g.rotate(m.giro);
     g.imageSmoothingEnabled = false;
-    g.drawImage(img, f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), -h + 2 * esc, w, h);
-    if (u.destello > 0) { g.globalAlpha *= Math.min(1, u.destello); g.drawImage(tenida(tipo, '#ffffff', 1), f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), -h + 2 * esc, w, h); }
+    g.drawImage(img, f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), dy, w, h);
+    if (u.destello > 0) { g.globalAlpha *= Math.min(1, u.destello); g.drawImage(tenida(tipo, '#ffffff', 1), f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), dy, w, h); }
     g.restore();
-    if (u.aspecto && u.aspecto.emblemas.length && u.anim !== 'muerte') {
-      g.save(); g.globalAlpha = u.alfa === undefined ? 1 : u.alfa;
-      emblemas(g, u.aspecto.emblemas, Math.round(x + m.dx), Math.round(y + m.dy), w, h, (u.tAnim || 0) + (u.id || 0));
-      g.restore();
-    }
+    conEmblemas(g, u, px, py, w, h);
   }
-  // lo que mide de alto su fotograma (el dibujo deja un poco de aire arriba)
-  function alto(tipo, elite) {
+  // los emblemas de sus improntas, si los tiene y no está cayendo
+  function conEmblemas(g, u, x, y, w, h) {
+    if (!u.aspecto || !u.aspecto.emblemas.length || !vivo(u)) return;
+    g.save(); g.globalAlpha = alfaDe(u);
+    emblemas(g, u.aspecto.emblemas, x, y, w, h, (u.tAnim || 0) + (u.id || 0));
+    g.restore();
+  }
+  // lo que mide de alto su fotograma (el dibujo deja un poco de aire arriba); escala: la suya, si no es 1
+  function alto(tipo, elite, escala) {
     if (!hay(tipo)) return 80;
     const t = tiraDe(tipo, elite);
-    return tiras()[t.tipo].h * t.esc;
+    return Math.round(tiras()[t.tipo].h * t.esc * (escala || 1));
   }
   const anchoDe = tipo => (hay(tipo) ? tiras()[tipo].w : 60);
   // dónde está de verdad el dibujo dentro de su primer fotograma (la tira deja sitio alrededor para los golpes): { x, y, w, h }

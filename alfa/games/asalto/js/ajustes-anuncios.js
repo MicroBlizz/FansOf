@@ -3,9 +3,11 @@
 'use strict';
 // oferta: cambiar la oferta de la tienda gratis, una vez por oferta (la de cada dos oleadas).
 // esencia: cantidad = la esencia que da, una vez por oleada.
+// cartas: otras 3 cartas de Despertar para el legendario (tarea #109), una vez por oferta de cartas.
 // vida: tras perder una oleada normal, devuelve la vida perdida antes de repetirla; veces = cuántas por partida.
 ASALTO.anuncios = {
   oferta: {},
   esencia: { cantidad: 1 },
   vida: { veces: 1 },
+  cartas: {},
 };

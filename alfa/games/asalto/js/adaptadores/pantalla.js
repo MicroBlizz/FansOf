@@ -236,6 +236,7 @@ AS.pantalla = (() => {
     if (AS.guia.activa) return AS.guia.pie();   // en la partida guiada habla el pergamino de la mano
     if (E.batalla) return q.proxima.tipo === 'normal' ? tr('Que no crucen la empalizada') : tr('Si pierdes esta, se acaba la partida');
     if (E.unir) return E.unir.queda ? tr('Ahora toca al que se une a él') : tr('Toca al héroe que se queda y crece');
+    if (q.despertar.oferta) return tr('Toca a tu legendario: elige su carta');
     if (AS.equipo.todos(q.equipo).some(x => AS.heroe.puedeAscender(ASALTO, x.h))) return tr('Toca al héroe de la flecha: asciende');
     if (q.equipo.banquillo.length) return tr('Pulsa UNIR y junta a dos héroes');
     if (hayLineaConEmpujon(q)) return tr('Toca la runa dorada: ¡hace línea!');
@@ -307,7 +308,7 @@ AS.pantalla = (() => {
     E.t += dt; E.zonas.length = 0;
     if (E.giro) avanzaGiro(dt);
     if (E.batalla) AS.pantallaBatalla.avanza(E, dt);
-    if (!E.giro) for (const a of E.casos.avisos()) AS.pinta.misiones.avisa(E, a);   // las misiones recién cumplidas, cuando el Altar ya ha parado
+    if (!E.giro) for (const a of E.casos.avisos()) if (!AS.ventanas.leyendas.avisa(E, a)) AS.pinta.misiones.avisa(E, a);   // legendarios y seres; misiones recién cumplidas, con el Altar ya parado
     AS.guia.avanza(E, dt);
     relojes(dt); fx.avanza(dt);
     E.pista = pista(q);

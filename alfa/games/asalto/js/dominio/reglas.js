@@ -73,5 +73,16 @@ AS.reglas = (() => {
     return P.oroOleada(oleada.n) + (oleada.tipo === 'elite' ? P.oroElite : 0) + (reliquias.includes('hucha') ? 3 : 0);
   }
   const interes = (reliquias, oro) => (reliquias.includes('interes') ? Math.min(5, Math.floor(oro / 5)) : 0);
-  return { mods, pesos, heroeDe, cifrasDe, probRarezas, rarezaDe, empujones, estallidos, plumasDe, premiosDe, vidasPerdidas, premios, tresReliquias, oroDeGanar, interes };
+  // el héroe que llega del Altar. llegada: { clase (sin clase, el del arranque: Común), nivel, dorado, piedra (sube su rareza) };
+  // primero: si es el primero de la partida (le suma la mejora «veterano»); id: lo pone la partida
+  function heroeNuevo(datos, m, reliquias, primero, id, llegada, azar) {
+    const { clase, dorado, piedra } = llegada;
+    let niv = llegada.nivel;
+    if (!dorado && primero) niv += m.veterano;
+    if (!dorado && reliquias.includes('eco') && azar() < 0.25) niv += 1;
+    const tipo = heroeDe(datos, clase, m, azar), base = clase ? rarezaDe(datos, m, azar) : 0;
+    const rareza = piedra ? AS.piedras.rareza(datos, m.rarezas, base, piedra) : base;
+    return AS.heroe.conCifras(datos, AS.heroe.crea(datos, id, tipo, niv, dorado, rareza).valor, cifrasDe(datos, azar)).valor;
+  }
+  return { mods, pesos, heroeDe, cifrasDe, heroeNuevo, probRarezas, rarezaDe, empujones, estallidos, plumasDe, premiosDe, vidasPerdidas, premios, tresReliquias, oroDeGanar, interes };
 })();

@@ -1,12 +1,12 @@
 // Fans of Asalto · DOMINIO · El progreso de fuera de la partida, lo que se guarda para siempre: las plumas, las mejoras permanentes, el
 // equipo puesto y la mochila, las zonas terminadas, los récords del modo sin fin, los contadores de los logros y cuáles se han cobrado,
-// las rarezas de héroe abiertas, las máquinas de invocar abiertas y la elegida, las dificultades superadas de cada zona, el sonido y los consejos vistos. Es un objeto de datos plano (el que se guarda tal cual); cada función devuelve otro nuevo y válido,
+// las rarezas de héroe abiertas, las máquinas de invocar abiertas y la elegida, los Despertares abiertos (el Poder Dormido), las dificultades superadas de cada zona, el sonido y los consejos vistos. Es un objeto de datos plano (el que se guarda tal cual); cada función devuelve otro nuevo y válido,
 // o un error con nombre. deJSON arregla lo que venga del almacén: una partida antigua (v2, de cuando el juego era otro) conserva sus
 // plumas, su equipo, sus zonas y sus logros; y la mejora «Llamada rara» de la 0.3.1 (que ya no existe) se convierte en rarezas abiertas.
 'use strict';
 AS.progreso = (() => {
   const STATS = () => ({ oroTotal: 0, enemigos: 0, jefes: 0, lineas: 0, nivelMax: 0, ascensos: 0, dorados: 0, sinFinMax: 0 });
-  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, vol: 1, mus: 0.5 });
+  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, dormido: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, vol: 1, mus: 0.5 });
   const entero = (v, min = 0) => (Number.isFinite(v) && v >= min ? Math.floor(v) : min);
   const copia = (p, cambios) => ({ ...p, ...cambios });
 
@@ -43,6 +43,7 @@ AS.progreso = (() => {
   function leeCompras(datos, j, p) {
     for (const k in datos.mejoras) { const n = entero(j.mejoras && j.mejoras[k]); if (n) p.mejoras[k] = Math.min(n, datos.mejoras[k].coste.length); }
     p.rarezas = rarezasGuardadas(datos, j);
+    p.dormido = Math.min(datos.legendarios.dormido.length, entero(j.dormido));
     p.maquinas = lista(j.maquinas).filter((id, i, l) => datos.maquinas[id] && datos.maquinas[id].plumas && l.indexOf(id) === i);
     if (maquinaAbierta(datos, p, j.maquina)) p.maquina = j.maquina;
   }
@@ -68,6 +69,21 @@ AS.progreso = (() => {
     if (s.falta === 'zona') return AS.error('zona-sin-superar', { zona: s.zona });
     if (s.falta === 'plumas') return AS.error('sin-plumas', { coste: s.plumas });
     return AS.ok(copia(p, { plumas: p.plumas - s.plumas, rarezas: s.i }));
+  }
+
+  /* ---------- el Poder Dormido: abre con plumas los Despertares I, II y III de los legendarios (tarea #109) ---------- */
+  // el siguiente por abrir: { i (1 a 3), plumas, falta: null | 'plumas' }, o null si están los 3
+  function dormidoSiguiente(datos, p) {
+    const plumas = datos.legendarios.dormido[p.dormido];
+    if (!plumas) return null;
+    return { i: p.dormido + 1, plumas, falta: p.plumas < plumas ? 'plumas' : null };
+  }
+  // abrir el siguiente: van en orden y cada uno cuesta sus plumas
+  function abreDormido(datos, p) {
+    const s = dormidoSiguiente(datos, p);
+    if (!s) return AS.error('al-maximo');
+    if (s.falta) return AS.error('sin-plumas', { coste: s.plumas });
+    return AS.ok(copia(p, { plumas: p.plumas - s.plumas, dormido: s.i }));
   }
 
   /* ---------- las máquinas de invocar ---------- */
@@ -207,6 +223,6 @@ AS.progreso = (() => {
   }
   const olvidaConsejo = (p, id) => { const consejos = { ...p.consejos }; delete consejos[id]; return copia(p, { consejos }); };
   const consejoVisto = (p, id) => (p.consejos[id] ? p : copia(p, { consejos: { ...p.consejos, [id]: true } }));
-  return { nuevo, deJSON, rarezaSiguiente, abreRareza, maquinaAbierta, abreMaquina, eligeMaquina, superadas, dificultadAbierta, costeMejora, compraMejora, objetoNuevo, statsEquipo, ponObjeto, quitaObjeto, deshaceObjeto, costeHerreria, mejoraObjeto, guardaObjetos, compraCofre,
+  return { nuevo, deJSON, rarezaSiguiente, abreRareza, dormidoSiguiente, abreDormido, maquinaAbierta, abreMaquina, eligeMaquina, superadas, dificultadAbierta, costeMejora, compraMejora, objetoNuevo, statsEquipo, ponObjeto, quitaObjeto, deshaceObjeto, costeHerreria, mejoraObjeto, guardaObjetos, compraCofre,
     logrosPendientes, cobraLogro, apunta, empiezaPartida, terminaZona, apuntaOleada, metas, consejoVisto, olvidaConsejo };
 })();

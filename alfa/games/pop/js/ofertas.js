@@ -48,7 +48,7 @@ function ppVentanaBienvenidaPack() {
 }
 // sale sola una vez, al volver al camino desde el nivel en que toca
 function ppMiraBienvenida() {
-  if (!PP_P || !ppBienvenidaVisible() || SAVE.vistoBienvenida || PP_P.nivel < PP_CFG.ofertas.bienvenida.desdeNivel) return false;
+  if (!PP_P || !ppBienvenidaVisible() || !ppPrimerosVe('oferta') || SAVE.vistoBienvenida || PP_P.nivel < PP_CFG.ofertas.bienvenida.desdeNivel) return false;
   SAVE.vistoBienvenida = true; ppGuarda(); ppVentanaBienvenidaPack(); return true;
 }
 /* ---------- oferta de atasco ---------- */
@@ -112,12 +112,15 @@ function ppPintaLateral() {
   const boton = (ico, col, texto, f, aviso) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-lado' + (aviso ? ' pp-aviso' : '');
     b.innerHTML = `${ppIcono(ico, 58, col)}<b>${texto}</b>`; b.onclick = () => { play('select'); f(); }; L.appendChild(b);
+    return b;
   };
-  boton('i-regalo', '#9cf0a0', tr('Regalo'), ppVentanaRegalo, SAVE.regaloDia !== ppHoy());
-  boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio());
+  // partida nueva (tarea #140): lo que aún no toca sale apagado, con candado y su nivel (js/primeros-pasos-juego.js)
+  ppPrimerosLado(boton('i-regalo', '#9cf0a0', tr('Regalo'), ppVentanaRegalo, SAVE.regaloDia !== ppHoy() && ppPrimerosVe('regalo')), 'regalo');
+  ppPrimerosLado(boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio() && ppPrimerosVe('pase')), 'pase');
   ppFeriaBotonLateral(L);   // la Feria del finde, con su reloj (js/feria-pantalla.js)
-  boton('i-hucha', '#ffd1ec', String(SAVE.hucha || 0), ppVentanaHucha, (SAVE.hucha || 0) >= PP_CFG.hucha.minimo);
-  if (ppBienvenidaVisible()) boton('i-perlas', '#ffd1ec', tr('Oferta'), ppVentanaBienvenidaPack, true);
+  ppPrimerosLado(L.lastChild, 'feria');
+  ppPrimerosLado(boton('i-hucha', '#ffd1ec', String(SAVE.hucha || 0), ppVentanaHucha, (SAVE.hucha || 0) >= PP_CFG.hucha.minimo && ppPrimerosVe('hucha')), 'hucha');
+  if (ppBienvenidaVisible() && ppPrimerosVe('oferta')) boton('i-perlas', '#ffd1ec', tr('Oferta'), ppVentanaBienvenidaPack, true);
   if (ppAtascoActivo()) boton('i-martillo', '#ffd1ec', ppReloj(SAVE.atasco - Date.now()), ppVentanaAtasco, true);
   if (ppInfinitas()) boton('i-infinito', '#ff4a6a', ppReloj(SAVE.infinitas - Date.now()), () => {}, false);
 }

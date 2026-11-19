@@ -97,8 +97,9 @@ function ppVentanaRegalo() {
 // al llegar al camino: el regalo del día si no se ha abierto (una vez por sesión) o el pack de bienvenida cuando toca
 function ppAlLlegarAlCamino() {
   if (PP_PANT.actual !== 'mapa' || !$pp('#pp-modal').hidden) return;   // solo si sigues en el camino (no al entrar en un nivel)
+  if (ppPrimerosEstreno()) return;   // partida nueva: Lola estrena lo que se acaba de abrir (js/primeros-pasos-juego.js, tarea #140)
   if (ppMiraBienvenida()) return;
-  if (ppFeriaAlLlegar()) return;   // premios de la feria entregados solos o su bienvenida (js/feria-pantalla.js)
-  if (SAVE.regaloDia !== ppHoy() && !PP_PASE_VISTO.regalo) { PP_PASE_VISTO.regalo = true; ppVentanaRegalo(); }
+  if (ppPrimerosVe('feria') && ppFeriaAlLlegar()) return;   // premios de la feria entregados solos o su bienvenida (js/feria-pantalla.js)
+  if (SAVE.regaloDia !== ppHoy() && !PP_PASE_VISTO.regalo && ppPrimerosVe('regalo')) { PP_PASE_VISTO.regalo = true; ppVentanaRegalo(); }
 }
 const PP_PASE_VISTO = { regalo: false };

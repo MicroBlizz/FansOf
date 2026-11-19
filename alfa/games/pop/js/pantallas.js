@@ -26,6 +26,7 @@ function ppIrA(p) {
     $pp('#pp-ranking').textContent = tr('RANKING');
     $pp('#pp-opciones').textContent = tr('OPCIONES');
     ppPerfilBoton();   // PERFIL, solo con su flag abierto (js/pantalla-perfil.js)
+    ppPrimerosPortada();   // #140
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
@@ -99,7 +100,7 @@ function ppVentanaBienvenida(id) {
 }
 function ppVentanaSalaHecha() {
   const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}${ppFeriaLinea(PP_P.T)}`);
-  t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));
+  t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppPrimerosSiguiente));   // #140
   if (PP_P.T.estrellas < 3) t.appendChild(ppBoton(tr('A por 3 estrellas'), 'pp-btn2 pp-azul', ppOtraVez));
 }
 // sin toques: se ha perdido un corazón (partida.js) y se repite el nivel o se vuelve al camino
@@ -260,7 +261,7 @@ const PP_TUTO = {
 };
 const PP_LOLA = { cola: [], actual: null };
 function ppTutorial(k) {
-  if (!PP_TUTO[k] || SAVE.tuto[k]) return;
+  if (!PP_TUTO[k] || SAVE.tuto[k] || ppPrimerosEspera(k)) return;   // #140
   SAVE.tuto[k] = true; ppGuarda();
   PP_LOLA.cola.push(...PP_TUTO[k]);
   if (!PP_LOLA.actual && !ppCortActiva()) ppLolaSiguiente();   // con la cortinilla del jefe puesta, Lola espera a que acabe (ppEmpiezaNivel)
@@ -275,7 +276,7 @@ function ppLolaSiguiente() {
   PP_LOLA.actual = f || null;
   if (!f) { caja.hidden = true; return; }
   const cara = $pp('#pp-lola-cara'); cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92));
-  $pp('#pp-lola-texto').textContent = tr(f.t);
+  $pp('#pp-lola-texto').textContent = f.ya ? f.t : tr(f.t);   // ya: traducido
   $pp('#pp-lola-vale').hidden = !!f.toque;
   caja.classList.toggle('pp-encima', !!f.encima);   // las de las ventanas salen por encima de ellas
   caja.hidden = false; caja.classList.remove('pp-entra'); void caja.offsetWidth; caja.classList.add('pp-entra');

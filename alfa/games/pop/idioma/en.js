@@ -371,7 +371,7 @@ IDIOMA.add({
   "Lola: «Haz pop en 1 más de esta fila»": "Lola: \"Pop 1 more from this row\"",
   "Lola: «Haz pop en {n} más de esta fila»": "Lola: \"Pop {n} more from this row\"",
   "GRATIS": "FREE",
-  "Al entrar en una sala y con cada COMBO x2 te marca una burbuja de la solución. En cada duelo, una lupa gratis.": "When you enter a room and with every COMBO x2, marks a bubble from the solution. One free hint in every duel.",
+  "Al empezar cada nivel te señala una burbuja buena, y otra cada 2 combos. En cada duelo, una lupa gratis.": "At the start of every level she points out a good bubble, and another every 2 combos. One free magnifier in every duel.",
   "¡NIVEL JEFE!": "BOSS LEVEL!",
   "Haz pop en las que quieras de una fila": "Pop as many as you like from one row",
   "Pulsa ¡LISTO! y le toca a tu rival": "Press DONE! and it's your rival's turn",

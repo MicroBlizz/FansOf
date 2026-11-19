@@ -23,7 +23,7 @@ function ppBarraAyudas() {
   const b = $pp('#pp-ayudas'), T = PP_P && PP_P.T;
   if (!b) return;
   // con la cortinilla del duelo puesta no salen: taparían su tarjeta «Así se gana» (tarea #129); vuelven al pulsar ¡A JUGAR!
-  const ver = PP_PANT.actual === 'sala' && T && !T.hecho && !(T.d && T.d.tutorial && T.d.mundo === 0) && !ppCortActiva();
+  const ver = PP_PANT.actual === 'sala' && T && !T.hecho && !(T.d && T.d.tutorial && T.d.mundo === 0) && !ppCortActiva() && ppPrimerosAyudas(T);   // partida nueva: desde el nivel 4 (tarea #140)
   b.hidden = !ver; if (!ver) return;
   const duelo = !!T.nim, lista = duelo ? ['deshacer', 'pista'] : ['martillo', 'bomba', 'toques3'];
   const ico = duelo ? 88 : 52, perla = duelo ? 28 : 18;

@@ -60,6 +60,7 @@ function ppEmpieza(seguir) {
   ppCargaSonidos(); play('select');
   PP_PORTADA.T = null; PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_MAPA.m = null;
   if (!(seguir && ppSigueCamino())) ppNuevaRuta();
+  if (PP_PRIMEROS.directo(ppPrimeros()) && ppVidas() > 0) { ppEntra(); return; }   // partida nueva: JUGAR entra directo en el nivel 1 (tarea #140)
   ppIrA('mapa');
 }
 function ppArranque() {
@@ -69,17 +70,17 @@ function ppArranque() {
   window.addEventListener('resize', ppAjusta);
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
-  $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)
-  $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevaMemoria(); };
+  $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('duelos')) return; PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)
+  $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('memoria')) return; PP_P = null; ppNuevaMemoria(); };
   $pp('#pp-cort-jugar').onclick = ppCortPulsa;
   $pp('#pp-listo').onclick = () => { if (ppCortActiva()) return; play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-tienda').onclick = () => { ppCargaSonidos(); play('select'); ppTienda(null, 'ofertas'); };
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };
-  $pp('#pp-ranking').onclick = () => { ppCargaSonidos(); play('select'); ppVentanaRanking(); };   // js/ranking.js
-  $pp('#pp-perfil').onclick = () => { ppCargaSonidos(); play('select'); PP_SRV.arranca(); ppVentanaPerfil(); };   // js/pantalla-perfil.js
-  setTimeout(() => { ppPerfilBoton(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: el botón PERFIL y el monedero de perlas del servidor (tarea #41)
+  $pp('#pp-ranking').onclick = () => { ppCargaSonidos(); play('select'); if (ppPrimerosToca('ranking')) ppVentanaRanking(); };   // js/ranking.js
+  $pp('#pp-perfil').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('perfil')) return; PP_SRV.arranca(); ppVentanaPerfil(); };   // js/pantalla-perfil.js
+  setTimeout(() => { ppPerfilBoton(); if (PP_PANT.actual === 'titulo') ppPrimerosPortada(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: el botón PERFIL y el monedero de perlas del servidor (tarea #41)
   setTimeout(ppSubeMarcas, 3000);   // lo que aún no esté en el ranking mundial
   if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
   ppCorazonEnlaceArranca();   // un enlace de corazón de un amigo (?corazon=, js/pantalla-corazones-enlace.js)

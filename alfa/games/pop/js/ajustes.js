@@ -36,6 +36,28 @@ const PP_CFG = {
   },
   // SALTAR AL JEFE (tarea #95, ADR 152; Pepins, 18-11-2026): atascado en el jefe del camino normal, abrir el mundo siguiente con perlas
   saltarJefe: { perlas: 40, fallos: 3 },   // precio fijo y desde el 3.er fallo en ese jefe (js/saltar-jefe.js)
+  // PRIMEROS PASOS (tarea #140; Pepins, 19-11-2026): en una partida nueva cada cosa se abre al GANAR su nivel (1 = el primero) y Lola la
+  // estrena con un regalito pequeño (monedas o una ayuda, nunca perlas). La tienda y las opciones, siempre. `texto`: lo que dice Lola al
+  // estrenarla (sin texto, la estrena su propia ventana: el regalo diario y la oferta; el equipo, el primer rescate). Reglas: js/primeros-pasos.js
+  primeros: {
+    cosas: {
+      equipo:  { nivel: 3, lugar: 'juego' },
+      regalo:  { nivel: 3, lugar: 'lateral' },
+      duelos:  { nivel: 5, lugar: 'portada', regalo: { ayudas: { pista: 1 } }, texto: '¡Nuevo en el menú: DUELOS! Reta al CEO o a otra persona. ¡Te regalo una lupa!' },
+      hucha:   { nivel: 6, lugar: 'lateral', regalo: { monedas: 30 }, texto: '¡Nuevo: la hucha! Se llena sola al pasar niveles. ¡Toma 30 monedas!' },
+      oferta:  { nivel: 7, lugar: 'lateral' },
+      memoria: { nivel: 8, lugar: 'portada', regalo: { ayudas: { martillo: 1 } }, texto: '¡Nuevo en el menú: MEMORIA! Repite la melodía de las burbujas, sin gastar corazones. ¡Toma un martillo!' },
+      pase:    { nivel: 9, lugar: 'lateral', regalo: { ayudas: { bomba: 1 } }, texto: '¡Nuevo: el Pase! Cada nivel nuevo te da puntos para sus premios. ¡Toma una bomba!' },
+      ranking: { nivel: 10, lugar: 'portada', regalo: { monedas: 30 }, texto: '¡Nuevo en el menú: RANKING! Compara tus estrellas con las de todo el mundo. ¡Toma 30 monedas!' },
+      feria:   { nivel: 11, lugar: 'lateral', regalo: { monedas: 50 }, texto: '¡Nuevo: la Feria del finde! De viernes a domingo cada nivel da tickets para premios. ¡Toma 50 monedas!' },
+      perfil:  { nivel: 12, lugar: 'portada', regalo: { monedas: 30 }, texto: '¡Nuevo en el menú: PERFIL! Elige tu personaje y tu marco para los duelos. ¡Toma 30 monedas!' },
+      amigos:  { nivel: 12, lugar: 'juego', regalo: { monedas: 30 }, texto: '¡Nuevo: corazones entre amigos! Si te quedas sin corazones, toca uno y pídeselos. ¡Toma 30 monedas!' },
+    },
+    seguidos: 3,       // niveles 1 a 3: SIGUIENTE entra directo en el siguiente, sin pasar por el camino
+    sinCorazon: 3,     // niveles 1 a 3: quedarte sin toques no cuesta corazón
+    ayudasDesde: 4,    // la barra de ayudas de los niveles normales sale desde el nivel 4
+    tutos: { ayudasDuelo: 10, trucoNim: 15 },   // Lola espera a ese nivel para explicarlo (el primer duelo es el 5: solo cómo se juega)
+  },
   // los paquetes de perlas con euros (PROVISIONALES: los productos aún no existen en Play ni en el servidor; hasta entonces, la
   // ventana de core dice que llegarán con la app). `id` = el producto en Play Console y en servidor/90 cuando se den de alta.
   packs: [
@@ -93,7 +115,7 @@ const PP_SLIMES = {
   becario: { nombre: 'El Becario', color: '#7fc4ff', color2: '#3f86d8', pinta: 'antena',
              pasiva: 'Horas extra', texto: 'Con un COMBO x3, tu siguiente toque no cuenta.', fx: { combo: 3, gratis: 1 } },
   lola:    { nombre: 'Lola', color: '#ffb88a', color2: '#e07a3c', pinta: 'pelo',
-             pasiva: 'Chivatazo', texto: 'Al entrar en una sala y con cada COMBO x2 te marca una burbuja de la solución. En cada duelo, una lupa gratis.', fx: { combo: 2, pista: 1 } },
+             pasiva: 'Chivatazo', texto: 'Al empezar cada nivel te señala una burbuja buena, y otra cada 2 combos. En cada duelo, una lupa gratis.', fx: { combo: 2, pista: 1 } },
   cofre:   { nombre: 'Caja de botín', color: '#ffd64a', color2: '#c98a12', pinta: 'dientes',
              pasiva: 'Premio gordo', texto: 'Un toque que hace pop en 4 burbujas da +1 toque de margen; uno de 5, +1 corazón.', fx: { premio: 1 } },
   ceo:     { nombre: 'El CEO', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata',

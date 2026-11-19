@@ -86,6 +86,7 @@ function ppPintaMarcador(c, t) {
     if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques de sobra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');
     else if (T.d && T.d.dificil) ppTexto(c, tr('¡Nivel difícil!'), 270, 150, 22, '#ff6ec7', 'center', '#fff');
   }
+  if (!P.equipo.length && !ppPrimerosVe('equipo')) return;   // partida nueva: el panel sale con el primer amigo (tarea #140)
   // el equipo, abajo: cada hueco con su slime, su pasiva y una barra de lo que le falta para actuar
   const n = P.T ? P.T.n : 3, g = ppGeom(n), y0 = g.y + g.lado + 60;
   ppPanelDelMundo(c, 20, y0 - 22, 500, 178, panel);

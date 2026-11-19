@@ -158,9 +158,9 @@ function ppPintaMapa(c, t) {
   const yb = PP_V.H - 176;
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, yb, 500, 136, 24); c.fill();
   const vidas = ppVidas();
-  ppPintaAvisoBuzon(c, 56, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)
+  if (ppPrimerosVe('amigos')) ppPintaAvisoBuzon(c, 56, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)
   for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 50 + i * 38, yb + 32, 32, i < vidas);
-  ppBotonesPedirMapa(vidas, 50, 38, yb + 32);   // pedir a amigos tocando un corazón (js/pantalla-corazones.js)
+  if (ppPrimerosVe('amigos')) ppBotonesPedirMapa(vidas, 50, 38, yb + 32);   // pedir a amigos tocando un corazón (js/pantalla-corazones.js)
   if (vidas < PP_CFG.vida) ppTexto(c, tr('+1 en {t}', { t: ppReloj(ppFaltaVida()) }), 34, yb + 64, 22, '#fff', 'left', '#c43a84');
   // estrellas, monedas y perlas (con un «+» que abre la tienda): en fila y sin montarse por muchas que haya
   ppPintaCuentas(c, 228, 478, yb + 32, [[(c2, x, y, s) => ppEstrella(c2, x, y, s, true), String(P.estrellas), '#7a4a8a'], [ppMoneda, String(SAVE.monedas), '#c98a12'], [ppPerla, String(SAVE.perlas || 0), '#c43a84']]);

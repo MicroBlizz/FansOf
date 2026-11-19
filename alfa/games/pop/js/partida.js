@@ -114,7 +114,7 @@ function ppToque(i) {
   }
   // sin toques: ya no se puede tocar, pero se espera a los amigos que estén saltando (pueden acabarlo ellos); luego se ofrece
   // seguir (anuncio o perlas, js/tienda.js) o rendirse y perder el corazón
-  if (T.toques >= T.limite && T.gratis === 0) { T.parado = true; setTimeout(() => { if (PP_P && PP_P.T === T && !T.hecho) ppOfreceSeguir(T); }, 800); }
+  if (T.toques >= T.limite && T.gratis === 0) { T.parado = true; setTimeout(() => { if (PP_P && PP_P.T === T && !T.hecho) ppSinToquesOSeguir(T); }, 800); }
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel
 function ppTrasToque(T, i, r) {
@@ -172,6 +172,7 @@ function ppSalaHecha() {
   const presos = Object.values(T.slimes);
   const { nuevo, saltado } = ppAvanzaCamino(d, g);
   ppGuardaCamino();
+  ppPrimerosAlGanar();   // con el flag cerrado, la partida nueva pasa a vieja (js/primeros-pasos-juego.js)
   T.feria = ppFeriaGana(T.estrellas, d.jefe);   // tickets de la Feria del finde: toda victoria, nueva o repetida (js/feria-pantalla.js)
   if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
   if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(d.dif); return; }
@@ -187,7 +188,10 @@ function ppRecluta(id, fuera) {
   return true;
 }
 // sin toques y quedan burbujas: se pierde un corazón (vuelven solos, uno cada 30 minutos) y se repite el nivel
+// sin toques: en los niveles gratis se repite sin más; si no, se ofrece seguir (anuncio o perlas, js/tienda.js)
+function ppSinToquesOSeguir(T) { if (ppPrimerosGratis()) { T.hecho = true; ppSinToques(); } else ppOfreceSeguir(T); }
 function ppSinToques() {
+  if (ppPrimerosGratis()) { ppMarcaDentro(false); play('ppDano'); ppVentanaSinToquesGratis(); return; }   // niveles 1 a 3 de una partida nueva (tarea #140)
   ppMarcaDentro(false); ppPierdeVida(); ppApuntaFallo(PP_P.T.d); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
   if (SAVE.vidas <= 0) { setTimeout(() => ppSinCorazones(), 400); return; }
   ppVentanaSinToques();
@@ -197,7 +201,7 @@ function ppSinCorazones() { play('ppDerrota'); ppVentanaSinCorazones(); }
 // repetir el nivel que se acaba de jugar
 function ppOtraVez() { const d = PP_P.T && PP_P.T.d; ppCierra(); if (d) ppEntra(d.g, d.dif); else ppEntra(); }
 // salir de un nivel a medias (pausa): si ya habías tocado, cuesta un corazón
-function ppSalNivel() { const T = PP_P.T; if (T) { T.hecho = true; if (SAVE.dentro) { ppMarcaDentro(false); ppPierdeVida(); } } }
+function ppSalNivel() { const T = PP_P.T; if (T) { T.hecho = true; if (SAVE.dentro) { ppMarcaDentro(false); if (!ppPrimerosGratis()) ppPierdeVida(); } } }
 function ppTermina(victoria) {
   PP_P.fin = victoria ? 'victoria' : 'derrota';
   if (victoria) SAVE.victorias++;

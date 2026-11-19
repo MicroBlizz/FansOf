@@ -64,6 +64,8 @@ Object.assign(SFX, {
   ppRescate: () => { ppSilbato(1046, 1568, 0.07, 0, 0.1); ppSilbato(1175, 1760, 0.07, 0.1, 0.1); ppArpegio(8, 3, 0.05, 0.07, 1); },
   // nivel superado: caja de música subiendo
   ppSala: () => ppArpegio(5, 4, 0.09, 0.11),
+  // pantalla de victoria: una campanita por estrella, cada una más aguda, al compás de cómo caen (css/victoria.css)
+  ppEstrellas: (n = 3) => { for (let k = 0; k < n; k++) ppCampana(PP_NOTAS[7 + k * 2], 0.45 + k * 0.28, 0.13, 0.45); },
   // pierdes un corazón: un «oh-oh» blandito de dos notas que bajan, con un vibrato tierno
   ppDano: () => { ppSilbato(880, 784, 0.12, 0, 0.12, 8); ppSilbato(698, 587, 0.2, 0.15, 0.12, 10); },
   // ganar al CEO: melodía de caja de música

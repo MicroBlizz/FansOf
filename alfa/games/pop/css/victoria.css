@@ -1,0 +1,147 @@
+/* Fans of Pop · PANTALLA DE VICTORIA (Pepins, 19-11-2026: «más grande, más cozy, más destellos, que sea una fiesta conseguir 3
+   estrellas, y para 1, 2 o 0 también hay que hacer algo»). Cada nota tiene su ambiente: 3 estrellas, oro, confeti y destellos;
+   2, rosa y algo de confeti; 1, cielo tranquilo con unos destellos; 0 (sin toques), melocotón suave con burbujitas.
+   El código está en js/pantalla-victoria.js y js/victoria-botones.js. */
+
+/* la ventana: SIN caja (como la captura de Pepins): las estrellas y la nota flotan sobre el fondo, debajo un panel con los datos y
+   las monedas, y fuera del panel los botones grandes. El velo de detrás toma el color de la nota. */
+.pp-tarjeta.pp-gana { max-width: 470px; max-height: 100%; gap: 12px; padding: 6px 4px 10px; overflow-x: hidden; background: none; box-shadow: none; border: 0;
+  animation: pp-vic-entra 0.5s cubic-bezier(.3, 1.6, .5, 1) both; }
+/* el velo va en un ::before con máscara: deja ver la barra de arriba (corazones y monedas), como en la captura */
+#pp-modal:has(.pp-gana) { background: none; isolation: isolate; padding-top: 13%; }
+#pp-modal:has(.pp-gana)::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  -webkit-mask: linear-gradient(transparent 0, transparent 11%, #000 15%); mask: linear-gradient(transparent 0, transparent 11%, #000 15%); }
+#pp-modal:has(.pp-gana-3)::before { background: radial-gradient(circle at 50% 30%, rgba(255, 210, 90, 0.95), rgba(255, 120, 40, 0.92) 80%); }
+#pp-modal:has(.pp-gana-2)::before { background: radial-gradient(circle at 50% 30%, rgba(255, 170, 215, 0.95), rgba(230, 70, 150, 0.9) 80%); }
+#pp-modal:has(.pp-gana-1)::before { background: radial-gradient(circle at 50% 30%, rgba(150, 215, 255, 0.95), rgba(40, 130, 220, 0.9) 80%); }
+#pp-modal:has(.pp-gana-0)::before { background: radial-gradient(circle at 50% 30%, rgba(255, 200, 165, 0.95), rgba(235, 120, 80, 0.9) 80%); }
+/* 3 estrellas: la ventana tiembla un poco al caer la tercera */
+.pp-tarjeta.pp-gana-3 { animation: pp-vic-entra 0.5s cubic-bezier(.3, 1.6, .5, 1) both, pp-vic-tiembla 0.45s 1.0s ease-in-out both; }
+@keyframes pp-vic-tiembla { 0%, 100% { translate: 0 0; } 20% { translate: -7px 3px; } 40% { translate: 6px -4px; } 60% { translate: -5px 2px; } 80% { translate: 3px -2px; } }
+.pp-quieta, .pp-quieta * { animation-delay: 0s !important; animation-duration: 0.01s !important; }
+@keyframes pp-vic-entra { from { transform: scale(0.5) translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+/* el orden de arriba abajo: cabecera, panel, lo que añada cada ventana (texto del rescate, slimes), compartir, siguiente, el resto, mapa */
+.pp-gana > * { order: 3; }
+.pp-gana > .pp-vic { order: 0; }
+.pp-gana > .pp-vic-panel { order: 1; }
+.pp-gana > .pp-vic-compartir { order: 4; }
+.pp-gana > .pp-btn:not(.pp-vic-compartir) { order: 5; }
+.pp-gana > .pp-btn2 { order: 6; }
+@keyframes pp-vic-late { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+/* el panel: crema translúcido con borde blanco */
+.pp-vic-panel { position: relative; z-index: 1; align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px 12px;
+  border-radius: 26px; background: rgba(255, 255, 255, 0.22); box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.85), 0 8px 0 rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); animation: pp-salta 0.45s 1.3s ease-out both; }
+.pp-gana-3 .pp-vic-panel { background: rgba(214, 120, 0, 0.32); }
+.pp-gana-2 .pp-vic-panel { background: rgba(196, 40, 120, 0.3); }
+.pp-gana-1 .pp-vic-panel { background: rgba(20, 90, 190, 0.3); }
+.pp-gana-0 .pp-vic-panel { background: rgba(200, 80, 40, 0.3); }
+.pp-vic-panel .pp-vic-frase, .pp-vic-panel .pp-sub { color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); font-weight: 700; }
+.pp-vic-panel .pp-vic-premio { color: #fff; -webkit-text-stroke: 2px #c27a00; paint-order: stroke fill; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2); }
+.pp-vic-panel .pp-feria, .pp-vic-panel .pp-premios { color: #fff; }
+/* «A por 3 estrellas», pequeño dentro del panel */
+#pp-ui .pp-tarjeta .pp-vic-otra { border: 0; border-radius: 999px; padding: 6px 16px; font-size: 17px; color: #c43a84; background: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15); cursor: pointer; }
+.pp-gana .pp-sub { color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); font-weight: 700; }
+.pp-vic-tienda { border: 0; border-radius: 999px; padding: 8px 16px; font: inherit; font-weight: 700; font-size: 18px; color: #8a4f00; cursor: pointer;
+  background: linear-gradient(180deg, #ffe36e, #ffb000); box-shadow: 0 4px 0 #c27a00; animation: pp-vic-late 1.6s 2.4s ease-in-out infinite; }
+.pp-vic-tienda:active { transform: translateY(3px); box-shadow: 0 1px 0 #c27a00; }
+
+/* cabecera: rayos, destellos, estrellas y nota */
+.pp-vic { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 34px; }
+.pp-vic-rayos { position: absolute; left: 50%; top: 78px; width: 600px; height: 600px; margin: -300px; border-radius: 50%; pointer-events: none;
+  background: repeating-conic-gradient(rgba(255, 214, 74, 0.55) 0 12deg, transparent 12deg 30deg);
+  -webkit-mask: radial-gradient(circle, #000 18%, transparent 62%); mask: radial-gradient(circle, #000 18%, transparent 62%);
+  animation: pp-gira 14s linear infinite, pp-vic-luz 0.6s ease-out both; }
+.pp-vic-genial .pp-vic-rayos { background: repeating-conic-gradient(rgba(255, 140, 200, 0.45) 0 12deg, transparent 12deg 30deg); }
+.pp-vic-superado .pp-vic-rayos { background: repeating-conic-gradient(rgba(120, 190, 255, 0.4) 0 12deg, transparent 12deg 30deg); animation-duration: 24s, 0.6s; }
+.pp-vic-casi .pp-vic-rayos { background: radial-gradient(circle, rgba(255, 200, 160, 0.5), transparent 60%); animation: pp-vic-luz 0.6s ease-out both; }
+@keyframes pp-vic-luz { from { opacity: 0; } to { opacity: 1; } }
+
+/* los destellos: estrellitas de cuatro puntas que parpadean alrededor de las estrellas */
+.pp-vic-brillos { position: absolute; inset: 0 0 auto 0; height: 230px; pointer-events: none; z-index: 2; }
+.pp-vic-brillos i { position: absolute; width: var(--tam); height: var(--tam); background: #fff;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  filter: drop-shadow(0 0 6px #ffe36e); opacity: 0; animation: pp-vic-brilla 1.4s ease-in-out infinite, pp-vic-luz 0.01s both; }
+@keyframes pp-vic-brilla { 0%, 100% { transform: scale(0) rotate(0); opacity: 0; } 50% { transform: scale(1) rotate(45deg); opacity: 1; } }
+
+/* las estrellas: grandes, en arco (la del medio más alta y más grande) y con brillo */
+.pp-vic .pp-estrellas { position: relative; gap: 0; align-items: flex-end; height: 150px; z-index: 1; }
+.pp-vic .pp-est, .pp-vic .pp-est img { width: 116px; height: 116px; }
+.pp-vic .pp-est { margin: 0 -6px; }
+.pp-vic .pp-est:nth-child(1) { transform: rotate(-14deg); }
+.pp-vic .pp-est:nth-child(3) { transform: rotate(14deg); }
+.pp-vic .pp-est:nth-child(2), .pp-vic .pp-est:nth-child(2) img { width: 150px; height: 150px; }
+.pp-vic .pp-est:nth-child(2) { margin-bottom: 16px; z-index: 1; }
+.pp-gana-3 .pp-vic .pp-est, .pp-gana-3 .pp-vic .pp-est img { width: 128px; height: 128px; }
+.pp-gana-3 .pp-vic .pp-est:nth-child(2), .pp-gana-3 .pp-vic .pp-est:nth-child(2) img { width: 168px; height: 168px; }
+.pp-gana-3 .pp-vic .pp-estrellas { height: 170px; }
+/* la estrella que falta: hueco blanco que se mueve un poco, para que apetezca ir a por ella */
+.pp-vic .pp-est:not(.pp-on) { opacity: 0.55; filter: grayscale(1) brightness(1.6) drop-shadow(0 3px 0 rgba(180, 120, 160, 0.35)); animation: pp-vic-falta 2.2s 1.6s ease-in-out infinite; }
+@keyframes pp-vic-falta { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
+.pp-vic .pp-est.pp-on { filter: drop-shadow(0 5px 0 rgba(194, 122, 0, 0.45)) drop-shadow(0 0 16px rgba(255, 230, 120, 0.95)); animation: pp-vic-est 0.5s cubic-bezier(.3, 1.9, .5, 1) both; }
+.pp-vic .pp-est:nth-child(1).pp-on { animation-name: pp-vic-est-izq; animation-delay: 0.35s !important; }
+.pp-vic .pp-est:nth-child(2).pp-on { animation-delay: 0.63s !important; }
+.pp-vic .pp-est:nth-child(3).pp-on { animation-name: pp-vic-est-der; animation-delay: 0.91s !important; }
+.pp-gana-3 .pp-vic .pp-est.pp-on img { animation: pp-vic-late 1.2s 1.6s ease-in-out infinite; }
+@keyframes pp-vic-est { 0% { transform: scale(0) rotate(-60deg); opacity: 0; } 60% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes pp-vic-est-izq { 0% { transform: scale(0) rotate(-80deg); opacity: 0; } 60% { transform: scale(1.3) rotate(-14deg); opacity: 1; } 100% { transform: scale(1) rotate(-14deg); } }
+@keyframes pp-vic-est-der { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 60% { transform: scale(1.3) rotate(14deg); opacity: 1; } 100% { transform: scale(1) rotate(14deg); } }
+
+.pp-vic-nivel { position: relative; margin: 0; font-weight: 700; font-size: 20px; color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); letter-spacing: 1px; text-transform: uppercase; }
+.pp-tarjeta .pp-vic h2 { position: relative; margin: 0; font-size: 64px; color: #ffb21e; -webkit-text-stroke: 3px #fff; paint-order: stroke fill;
+  text-shadow: 0 5px 0 #c27a00, 0 10px 0 rgba(194, 122, 0, 0.25); animation: pp-salta 0.5s 1.15s ease-out both; }
+.pp-gana-3 .pp-vic h2 { animation: pp-salta 0.5s 1.15s ease-out both, pp-vic-dora 1.6s 1.7s ease-in-out infinite; }
+@keyframes pp-vic-dora { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255, 240, 150, 0)); } 50% { transform: scale(1.06); filter: drop-shadow(0 0 14px rgba(255, 240, 150, 1)); } }
+.pp-tarjeta .pp-vic-genial h2 { color: #ff6eb5; text-shadow: 0 5px 0 #c43a84, 0 10px 0 rgba(196, 58, 132, 0.25); }
+.pp-tarjeta .pp-vic-superado h2 { color: #4aa8f0; text-shadow: 0 5px 0 #1f6fb8, 0 10px 0 rgba(47, 111, 192, 0.25); }
+.pp-tarjeta .pp-vic-casi h2 { font-size: 56px; color: #ff8a5c; text-shadow: 0 5px 0 #c2502a, 0 10px 0 rgba(194, 80, 42, 0.2); animation-delay: 0.3s; }
+
+/* las casillas de datos */
+.pp-vic-datos { position: relative; display: flex; gap: 8px; justify-content: center; width: 100%; animation: pp-salta 0.45s 1.35s ease-out both; }
+.pp-vic-dato { flex: 1 1 0; max-width: 104px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px 9px; border-radius: 18px;
+  background: #fff; box-shadow: inset 0 0 0 3px #ffd1ec, 0 4px 0 rgba(196, 58, 132, 0.18); }
+.pp-vic-dato small { font-weight: 700; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; color: #b46aa0; }
+.pp-vic-dato b { font-size: 30px; line-height: 1; color: #7a3a7a; }
+.pp-vic-frase { position: relative; margin: 0; font-weight: 700; font-size: 18px; color: #c2502a; }
+
+/* sin toques: la barra de lo que llevabas hecho */
+.pp-vic-barra { width: 86%; height: 22px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px #ffd2b8; overflow: hidden; padding: 4px; }
+.pp-vic-barra span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ffb057, #ff7a1a); transform-origin: left; animation: pp-vic-llena 1s 0.5s ease-out both; }
+@keyframes pp-vic-llena { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* las monedas y el botón de doblarlas */
+.pp-vic-premio-fila { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.pp-vic-premio { position: relative; font-size: 42px; animation: none; }
+.pp-vic-cuenta { display: inline-block; min-width: 2ch; text-align: left; }
+.pp-tarjeta .pp-vic-doble { min-width: 0; font-size: 20px; padding: 9px 16px 10px; animation: pp-vic-late 1.4s 2.2s ease-in-out infinite; }
+.pp-vic-x2 { position: relative; z-index: 1; margin-right: 8px; padding: 1px 8px; border-radius: 10px; background: #ffe36e; color: #8a4f00; -webkit-text-stroke: 0; text-shadow: none; font-size: 21px; line-height: 1.1; box-shadow: 0 2px 0 #c27a00; }
+.pp-vic-doblado { font-weight: 700; font-size: 22px; color: #26924a; animation: pp-salta 0.4s ease-out both; }
+
+/* los botones grandes, de lado a lado como en la captura: COMPARTIR verde y ¡SIGUIENTE! naranja */
+.pp-gana > .pp-btn { align-self: stretch; min-width: 0; font-size: 34px; }
+.pp-gana > .pp-vic-compartir { --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }
+.pp-gana > .pp-btn2 { align-self: stretch; min-width: 0; }
+
+/* la fiesta: confeti que cae y burbujitas que suben, por encima de todo y sin estorbar los toques */
+.pp-vic-fiesta { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; }
+.pp-vic-confeti { position: absolute; top: -20px; width: var(--tam); height: calc(var(--tam) * 0.55); border-radius: 3px; opacity: 0;
+  animation-name: pp-vic-cae; animation-timing-function: cubic-bezier(.25, .6, .5, 1); animation-fill-mode: both; }
+@keyframes pp-vic-cae { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 85% { opacity: 1; } 100% { transform: translate(var(--dx), 105vh) rotate(var(--giro)); opacity: 0; } }
+.pp-vic-burbuja { position: absolute; bottom: -40px; width: calc(var(--tam) * 2.4); height: calc(var(--tam) * 2.4); border-radius: 50%; opacity: 0;
+  box-shadow: inset -4px -4px 0 rgba(255, 180, 210, 0.5), inset 3px 3px 0 #fff; animation-name: pp-vic-sube; animation-timing-function: ease-in-out; animation-fill-mode: both; }
+@keyframes pp-vic-sube { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(var(--dx), -70vh); opacity: 0; } }
+
+@media (max-height: 760px) {
+  .pp-gana > .pp-btn { font-size: 28px; }
+  .pp-vic .pp-estrellas { height: 118px; }
+  .pp-vic .pp-est, .pp-vic .pp-est img { width: 90px; height: 90px; }
+  .pp-vic .pp-est:nth-child(2), .pp-vic .pp-est:nth-child(2) img { width: 118px; height: 118px; }
+  .pp-tarjeta .pp-vic h2 { font-size: 50px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-gana, .pp-gana *, .pp-vic-fiesta { animation: none !important; }
+  .pp-vic-fiesta, .pp-vic-brillos { display: none; }
+}
+/* «Gastar monedas» con letra marrón, que se lea sobre el dorado; y «A por 3 estrellas» en rosa, para no confundirlo con el mapa */
+#pp-ui .pp-tarjeta .pp-vic-tienda { color: #7a4200; -webkit-text-stroke: 0; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }

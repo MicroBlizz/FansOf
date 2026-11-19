@@ -27,7 +27,7 @@ const ppPrimerosAyudas = T => !T.d || PP_PRIMEROS.verAyudas(PP_CFG.primeros, ppP
 const ppPrimerosEspera = k => PP_PRIMEROS.tutoEspera(PP_CFG.primeros, ppPrimeros(), k, ppPrimerosG());
 // sin toques en los niveles gratis: se repite sin perder corazón (lo llama ppSinToques)
 function ppVentanaSinToquesGratis() {
-  const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('Se te han acabado los toques. ¡Tranquilidad! En los primeros niveles no pierdes corazones.')}</p>`);
+  const t = ppAbreDerrota(tr('¡Tranquilidad! En los primeros niveles no pierdes corazones.'));   // js/pantalla-victoria.js
   t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
 }

@@ -197,6 +197,7 @@ function ppSalaHecha() {
   est[g] = Math.max(antes, T.estrellas); PP_P.estrellas += Math.max(0, T.estrellas - antes);
   T.premio = ppPremioNivel(ppPrefijo(d.dif) + g, T.estrellas, d.jefe, d.dif === 2 ? 3 : d.dif ? 2 : 1);   // difícil, el doble; pesadilla, el triple
   ppHabAlGanar(T);   // Limpieza y Hucha: monedas de más (js/habilidades-niveles.js)
+  T.intento = ((SAVE.fallos || {})[ppClaveNivel(d)] || 0) + 1;   // para la pantalla de victoria (js/pantalla-victoria.js)
   ppBorraFallos(d); ppBarraAyudas(); setTimeout(ppSubeMarcas, 1500);   // estrellas al ranking mundial (js/ranking.js)
   const presos = Object.values(T.slimes);
   const { nuevo, saltado } = ppAvanzaCamino(d, g);

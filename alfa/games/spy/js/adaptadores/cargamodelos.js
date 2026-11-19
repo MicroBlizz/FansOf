@@ -10,18 +10,21 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   const M = S.gl.M;
   // alto: lo que mide de pie en el juego; giro: el que lo pone mirando al norte (todos los de Yoshi miran hacia +z).
   // Las alturas salen de los modelos por código: agente ~1,1 con las orejas, Becario ~1 (con su patinete), caja de mudanza 0,6,
-  // coche ~0,45 (así mide 0,9 de largo, como el de antes), la cabeza de la cámara ~0,35. Garita y barrera se estiran a su tramo.
+  // los coches algo más grandes que los de código, la cabeza de la cámara ~0,35. Garita y barrera se estiran a su tramo.
   const AJUSTE = Object.freeze({
     crazybunny: { alto: 1.1, giro: Math.PI },
     becario: { alto: 1, giro: Math.PI },
     camara: { alto: 0.36, giro: Math.PI },
     caja: { alto: 0.58, giro: Math.PI },
-    coche: { alto: 0.45, giro: Math.PI },
-    cochazo: { alto: 0.44, giro: Math.PI },
+    coche: { alto: 0.6, giro: Math.PI },      // más grandes que los de código (Daniel, 19-11-2026): ~1,2 de largo, llenan su plaza
+    cochazo: { alto: 0.6, giro: Math.PI },
     garita: { alto: 1.4, giro: 0 },
     barrera: { alto: 0.85, giro: 0, fondo: 0.26 },   // el giro depende de qué lado esté la garita (escenario.js)
   });
   const NOMBRES = Object.keys(AJUSTE);
+  // Tope de cada descarga: con mala cobertura un fetch puede quedarse parado sin dar error; al pasar este tiempo se corta y ese
+  // modelo sale por código, para que el cartel de carga no se quede para siempre.
+  const TOPE_MS = 15000;
 
   // La matriz que pasa el modelo de su caja [minimo, maximo] a la del juego: centrado en x y z, apoyado en y = 0, girado `giro`
   // alrededor del eje vertical y escalado para medir `alto`. Con `largo` (en x, ya girado) o `fondo` (en z) se estira a esa medida
@@ -40,12 +43,13 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   // por código de siempre para ese modelo.
   async function uno(nombre) {
     try {
-      const r = await fetch('modelos/' + nombre + '.glb');
+      const r = await fetch('modelos/' + nombre + '.glb', { signal: AbortSignal.timeout(TOPE_MS) });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const g = S.glb.lee(await r.arrayBuffer());
       if (!g.imagen) throw new Error('el modelo no trae textura');
       const imagen = await createImageBitmap(new Blob([g.imagen.datos], { type: g.imagen.tipo }));
       const malla = S.gl.mallaGlb(S.gl.empaquetaGlb(g), imagen);
+      imagen.close();   // ya está en la GPU: se suelta la copia de memoria
       return { malla, minimo: g.minimo, maximo: g.maximo, ajuste: ajuste(g.minimo, g.maximo, AJUSTE[nombre]) };
     } catch (e) {
       console.warn('Spy: no se pudo cargar el modelo «' + nombre + '»; se usa el dibujado por código.', e);

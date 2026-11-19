@@ -1,8 +1,8 @@
 {
- "build": 1300,
- "hash": "b229b46",
- "fecha": "2026-11-19T13:48:39Z",
- "mensaje": "Asalto 0.5.2: en el móvil en vertical, lienzo de 600 de ancho que llena la pantalla (tarea #133, ADR 159)",
+ "build": 1301,
+ "hash": "a292afe",
+ "fecha": "2026-11-19T13:53:34Z",
+ "mensaje": "Spy 0.2.0: coches más grandes, tope de 15 s por descarga de modelo, documentación (ADR 159, ficha, glosario) y novedades",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.2",
@@ -33,7 +33,7 @@
   "skate": "0.1.27",
   "snakes": "0.2.1",
   "soccer": "0.1.1",
-  "spy": "0.1.1",
+  "spy": "0.2.0",
   "survivors": "0.1.87",
   "swipe": "0.2.0",
   "tacticas": "0.1.71",

@@ -12,7 +12,7 @@ SPY.congela = function congela(o) {
   return o;
 };
 SPY.AJ = SPY.congela({
-  version: '0.1.1',
+  version: '0.2.0',
   // El turno del agente. Cada carta suma su coste al contador del agente: cuanto más gasta, más tarda en volver a jugar.
   turno: {
     cartas: 2,               // cartas por turno (3 más adelante, con nivel)

@@ -36,18 +36,22 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   }
   const AMPLITUD = { anda: 0.55, corre: 0.9, puntillas: 0.3 };
   // La matriz base del agente (dónde está, hacia dónde mira, el bote al andar, agachado de puntillas, inclinado al correr):
-  // de aquí cuelga todo su cuerpo. La animación de juguete del modelo de Yoshi se hará a partir de esta.
+  // de aquí cuelga todo su cuerpo. Es la del respaldo por código; el modelo de Yoshi usa baseJuguete.
   function baseAgente(a, t) {
     const amplitud = AMPLITUD[a.modo] || 0, bote = amplitud ? Math.abs(Math.sin(a.fase)) * 0.045 : Math.sin(t * 2.4) * 0.008;
     return M.une(M.traslada(a.x, bote, a.z), M.rotaY(a.giro), M.escala(1, a.modo === 'puntillas' ? 0.9 : 1, 1), M.rotaX(a.modo === 'corre' ? -0.22 : 0));
+  }
+  // La matriz de un modelo de Yoshi movido como figura de juguete (juguete.js): en su casilla, girado hacia donde mira, con su
+  // saltito, balanceo, inclinación y aplastado (el aplastado sale desde los pies, que están en y = 0).
+  function baseJuguete(x, y, z, giro, j) {
+    return M.une(M.traslada(x, y + j.bote, z), M.rotaY(giro), M.rotaZ(j.balanceo), M.rotaX(j.inclina), M.escala(j.ancho, j.alto, j.ancho));
   }
   function pintaAgente(E) {
     const a = E.vis.agente, G = S.modelos.glb.crazybunny;
     if (a.caja > 0.02) pintaCaja(E, a);
     if (a.caja > 0.6) return;
-    const base = baseAgente(a, E.vis.t);
-    if (G) GL.pinta(G.malla, M.mul(base, G.ajuste), PERSONAJE);
-    else pintaAgenteCodigo(base, Math.sin(a.fase) * (AMPLITUD[a.modo] || 0));
+    if (G) GL.pinta(G.malla, M.mul(baseJuguete(a.x, 0, a.z, a.giro, S.juguete.agente(a.modo, a.fase, E.vis.t)), G.ajuste), PERSONAJE);
+    else pintaAgenteCodigo(baseAgente(a, E.vis.t), Math.sin(a.fase) * (AMPLITUD[a.modo] || 0));
   }
   // Respaldo: el agente por código, con los brazos y las piernas moviéndose al andar.
   function pintaAgenteCodigo(base, zanca) {
@@ -68,7 +72,7 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
 
   // La matriz base de un guardia (dónde está, el empujón al embestir, subido al patinete, hacia dónde mira, tumbado al caer, más
   // grande si es vigilante y encogiéndose al desaparecer): de aquí cuelga todo su cuerpo. `alto` es lo que lo sube el patinete
-  // por código (el Becario de Yoshi ya trae el suyo debajo). La animación de juguete del modelo de Yoshi se hará a partir de esta.
+  // por código (el Becario de Yoshi ya trae el suyo debajo). Con el modelo de Yoshi se le añade el vaivén de juguete.
   function baseGuardia(g, alto) {
     const k = (g.tipo === 'vigilante' ? 1.1 : 1) * (1 - g.fuera), d = R.DIRS[g.dir], empuje = g.embiste * 0.28;
     return M.une(M.traslada(g.x + d.x * empuje, alto + g.caido * 0.17, g.z + d.y * empuje), M.rotaY(g.giro), M.rotaX(g.caido * Math.PI / 2), M.escala(k, k, k));
@@ -78,8 +82,12 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   function pintaGuardia(E, g) {
     if (g.fuera > 0.97) return;
     const G = S.modelos.glb.becario, enPatinete = g.patinete && g.caido < 0.5, alto = enPatinete && !G ? 0.075 : 0, d = R.DIRS[g.dir];
-    const base = baseGuardia(g, alto), ojos = tinte(COLOR[g.estado] || COLOR.tranquilo);
+    const ojos = tinte(COLOR[g.estado] || COLOR.tranquilo);
+    let base = baseGuardia(g, alto);
     if (G) {
+      // Figura de juguete: el vaivén va debajo de la base (caída, tamaño), así se tumba y encoge igual que antes.
+      const j = S.juguete.guardia(g.anda && g.caido < 0.5, g.fase, E.vis.t);
+      base = M.mul(base, M.une(M.traslada(0, j.bote, 0), M.rotaZ(j.balanceo), M.rotaX(j.inclina), M.escala(j.ancho, j.alto, j.ancho)));
       GL.pinta(G.malla, M.mul(base, G.ajuste), PERSONAJE);
       GL.pinta(S.modelos.ojosVisor, M.mul(base, VISOR), ojos, true);
       if (g.tipo === 'vigilante') GL.pinta(S.modelos.becario.gorra, M.mul(base, GORRA), PERSONAJE);

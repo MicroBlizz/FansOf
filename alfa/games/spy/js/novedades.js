@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.0', real: ['<b>MODELOS 3D DE VERDAD</b>: CrazyBunny, los Becarios, las cámaras, la caja de mudanza, los coches, la garita, la barrera y el cochazo del CEO estrenan modelos 3D con su dibujo, con el mismo trazo de cómic. Ahora se mueven como figuras de juguete: dan saltitos al andar, se agachan de puntillas y se inclinan al correr. Y si el vigilante está en la garita, la garita se vuelve medio transparente para que lo veas.'],
+    joke: ['Microblizz ha sustituido a sus Becarios de cajas de cartón por figuras de vinilo. Recursos Humanos dice que «cobran lo mismo».'] },
   { v: '0.1.1', real: ['<b>CARTAS ILUSTRADAS</b>: las 13 cartas estrenan ilustración de verdad, con CrazyBunny y los Becarios en acción, y un marco nuevo con el coste bien a la vista.'],
     joke: ['El departamento de Arte de Microblizz ha tardado una noche en ilustrar 13 cartas. El de Compras lleva tres meses eligiendo la máquina de café.'] },
   { v: '0.1.0', real: ['<b>PRIMER PROTOTIPO</b>: sigilo por turnos con cartas, en 3D con aire de cómic. Cuela a CrazyBunny en el parking de la torre de Microblizz: cada carta tiene un coste y, cuanto más gastas, más se mueven los Becarios antes de que te vuelva a tocar. Mira en el suelo lo que ve cada guardia, escóndete en la caja de mudanza, distráelos con un golpe en la pared o con un café, y llega a la puerta verde sin que salte la alerta. Trae el tutorial del parking, guiado por Lola por radio, y una misión de prueba con el mazo de 20 cartas, alerta, guardias que se pueden derribar y nota de la C a la S.'],

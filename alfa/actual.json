@@ -1,11 +1,11 @@
 {
- "build": 1296,
- "hash": "986e97d",
- "fecha": "2026-11-19T13:10:42Z",
- "mensaje": "Spy: el motor pinta mallas con textura (los .glb de Yoshi) con la misma luz de cómic y contorno negro",
+ "build": 1297,
+ "hash": "89a35c7",
+ "fecha": "2026-11-19T13:15:55Z",
+ "mensaje": "Asalto 0.5.1: las reliquias se ven en su tira bajo la arena y al tocarlas dicen qué hacen (tarea #158, aviso 26)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.5.0",
+  "asalto": "0.5.1",
   "basement": "0.13.0",
   "boom": "0.4.17",
   "chef": "0.4.0",

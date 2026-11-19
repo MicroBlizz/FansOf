@@ -1,6 +1,10 @@
 // Fans of Asalto · Inglés: los textos de esta demo (los comunes de la serie están en core/idioma). Una frase por línea.
 'use strict';
 IDIOMA.add({
+  "RELIQUIAS": "RELICS",
+  "Aún no tienes reliquias": "No relics yet",
+  "TUS RELIQUIAS": "YOUR RELICS",
+  "Valen hasta el final de la partida.": "They last until the end of the run.",
  "Termina antes la zona anterior": "Finish the previous zone first",
  "La partida guardada ya no vale": "The saved run is no longer valid",
  "CERRADA": "LOCKED",

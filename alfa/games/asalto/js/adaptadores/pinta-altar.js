@@ -197,7 +197,7 @@ AS.pinta.altar = (() => {
     g.fillStyle = C.tinta; g.fillRect(0, y0, P.W, 4); g.fillStyle = C.oro2; g.fillRect(0, y0 + 4, P.W, 2);
     T.marco(g, a.x, a.y, a.w, a.h);
     reja(g, P);
-    AS.pinta.tienda(g, P, p, E);
+    AS.pinta.tienda(g, P, p, E); AS.pinta.reliquias(g, P, p, E);
     columnas(g, P, p, E); invocar(g, P, p, E); empujon(g, P, p, E); banquillo(g, P, p, E); unir(g, P, p, E); luchar(g, P, p, E); pie(g, P, p, E);
   };
 })();

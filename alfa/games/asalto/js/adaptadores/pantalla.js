@@ -197,6 +197,7 @@ AS.pantalla = (() => {
     piedras: () => { if (!E.giro) { AS.suena('clic'); AS.ventanas.piedras(E); } },
     suerte: () => { if (!E.giro) { AS.suena('clic'); AS.ventanas.suerte(E); } },
     tienda: () => { if (p().fase === 'preparar' && !E.giro) { AS.suena('clic'); AS.ventanas.tienda(E); } },
+    reliquias: () => { if (p().fase === 'preparar' && !E.giro) { AS.suena('clic'); AS.ventanas.reliquias(E); } },
     'salta-guia': () => AS.guia.salta(E),
     'vale-consejo': () => AS.consejos.vale(E),
     pausa: () => { AS.suena('clic'); AS.ventanas.pausa(E); },

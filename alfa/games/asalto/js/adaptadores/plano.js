@@ -7,7 +7,8 @@ AS.plano = (W, H) => {
   const lu = corto ? 68 : 80, pieAlto = corto ? 40 : 46;                 // el botón de luchar y la franja de la pista
   const rejilla = c * 3 + hueco * 2, altarAlto = rejilla + asoma * 2 + 28, altarAncho = rejilla + 28;
   const oh = corto ? 44 : 50;                                            // la tira de la tienda y sus objetos, bajo la arena
-  const abajo = 8 + oh + 6 + altarAlto + 10 + lu + pieAlto, ay = 144, ah = H - ay - abajo, by = ay + ah + 8 + oh + 6;
+  const rh = corto ? 30 : 34;                                            // la tira de las reliquias, entre la arena y la tienda (tarea #158)
+  const abajo = 6 + rh + 4 + oh + 6 + altarAlto + 10 + lu + pieAlto, ay = 144, ah = H - ay - abajo, by = ay + ah + 6 + rh + 4 + oh + 6;
   const lx = 10 + altarAncho + 8, lw = W - lx - 10, inv = c >= 88 ? 96 : 84, emp = c >= 88 ? 40 : 34;
   const uw = Math.round(W * 0.3);   // el ancho del botón UNIR
   const bq = Math.floor((altarAlto - inv - emp - 16 - 8) / 3);
@@ -20,7 +21,8 @@ AS.plano = (W, H) => {
     W, H, c, asoma, hueco, arena, aPantalla,
     misiones: { x: 6, y: ay + 6, w: W - 12, h: 40 }, guia: { x: 6, y: ay + 6, w: W - 12, h: 100 },
     marcador: { x: 4, y: 4, w: W - 8, h: 50 }, oleadas: { x: 8, y: 58, w: W - 16, h: 32 }, clases: { x: 6, y: 96, w: W - 12, h: 42 },
-    objetos: { x: 10, y: ay + ah + 8, w: W - 20, h: oh },
+    reliquias: { x: 10, y: ay + ah + 6, w: W - 20, h: rh },
+    objetos: { x: 10, y: ay + ah + 6 + rh + 4, w: W - 20, h: oh },
     altar: { x: 10, y: by, w: altarAncho, h: altarAlto, gx: 10 + 14, gy: by + 14 + asoma },
     invocar: { x: lx, y: by, w: lw, h: inv }, empujon: { x: lx, y: by + inv + 8, w: lw, h: emp },
     // con el Altar del Estallido, la losa del empujón se parte en dos: los empujones que quedan (pequeña, a la izquierda) y el botón del Estallido

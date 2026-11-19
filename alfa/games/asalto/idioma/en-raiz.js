@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "Las <b>reliquias</b> que eliges se ven ahora abajo a la izquierda de la arena. Tócalas para ver qué hace cada una.": "The <b>relics</b> you pick now show at the bottom left of the arena. Tap them to see what each one does.",
+  "Microblizz ha puesto una vitrina para las reliquias. La llave la tiene Recursos Humanos.": "Microblizz put up a display case for the relics. HR has the key.",
   "<b>Legendarios</b>: un héroe ascendido que llega al nivel 12 se hace legendario, con el poder cumbre de su rama y una <b>habilidad única</b> solo suya (16 en total).": "<b>Legendaries</b>: an ascended hero that reaches level 12 becomes legendary, with the peak power of its branch and a <b>unique ability</b> of its own (16 in all).",
   "<b>Despertar</b>: a los niveles 16, 22 y 30 tu legendario elige 1 carta entre 3 para toda la partida. Se abre en MEJORAS con plumas (Poder Dormido).": "<b>Awakening</b>: at levels 16, 22 and 30 your legendary picks 1 card out of 3 for the whole run. Unlock it in UPGRADES with feathers (Dormant Power).",
   "<b>Seres secretos</b>: en las partidas largas, une dos legendarios de distinto animal y nace un ser nuevo con los poderes de los dos. Hay 28 por descubrir.": "<b>Secret beings</b>: in long runs, merge two legendaries of different animals and a new being is born with the powers of both. There are 28 to discover.",

@@ -127,6 +127,7 @@
   </section>
 </main>
 <script src="nav.js"></script>
+<script src="entrada-web.js"></script>
 <script>
 'use strict';
 const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co';
@@ -155,7 +156,7 @@ function vista(panel) {
   $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel;
   $('sub').textContent = panel ? '' : 'Acceso restringido.';
 }
-$('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } guardarToken(''); datos = null; vista(false); };
+$('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } guardarToken(''); GESTION_ENTRADA.alSalir(sessionStorage); datos = null; vista(false); };
 
 async function abrir() {
   try { datos = await rpc('gestion_datos', { p_token: leerToken() }); }
@@ -209,24 +210,35 @@ $('lista').onclick = async ev => {
 };
 
 // Entrada con Google: la sesión de Google solo se usa en esta carga para pedir el token de gestión; no se guarda.
-const volver = () => location.origin + location.pathname;
+const volver = () => location.origin + location.pathname + location.search;
 $('g-boton').onclick = () => { location.href = SERVIDOR + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(volver()); };
+// Pide el token de gestión con una sesión de Google (la que vuelve de Google o la que ya tiene la web). Devuelve el token, '' si la cuenta no es admin, o lanza
+async function tokenConGoogle(t) {
+  const r = await fetch(SERVIDOR + '/rest/v1/rpc/gestion_entrar_google', { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
+  const x = await r.text(); let j = null; try { j = x ? JSON.parse(x) : null; } catch (e) { /* no era JSON */ }
+  if (!r.ok) throw new Error('No se ha podido comprobar el acceso (' + ((j && j.message) || r.status) + ').');
+  return j || '';
+}
 async function volverDeGoogle() {
   const h = new URLSearchParams(location.hash.replace(/^#/, ''));
   const t = h.get('access_token');
   if (!t && !h.get('error_description')) return false;
-  history.replaceState(null, '', location.pathname);
+  history.replaceState(null, '', location.pathname + location.search);
   if (!t) { $('g-aviso').textContent = 'Google no ha dejado entrar: ' + h.get('error_description'); return false; }
   try {
-    const r = await fetch(SERVIDOR + '/rest/v1/rpc/gestion_entrar_google', { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
-    const x = await r.text(); let j = null; try { j = x ? JSON.parse(x) : null; } catch (e) { /* no era JSON */ }
-    if (!r.ok) { $('g-aviso').textContent = 'No se ha podido comprobar el acceso (' + ((j && j.message) || r.status) + ').'; return false; }
+    const j = await tokenConGoogle(t);
     if (!j) { $('g-aviso').textContent = 'Esta cuenta de Google no tiene el rol de administración.'; return false; }
-    guardarToken(j); await abrir(); return true;
-  } catch (e) { $('g-aviso').textContent = textoError(e); return false; }
+    guardarToken(j); GESTION_ENTRADA.alEntrar(sessionStorage); await abrir(); return true;
+  } catch (e) { $('g-aviso').textContent = /comprobar/.test(e.message) ? e.message : textoError(e); return false; }
+}
+// Entrar sola con la sesión que ya tiene la web (tarea #146): si no hay, no es admin o falla, se queda la pantalla de entrar sin aviso
+async function entrarConLaWeb() {
+  const t = GESTION_ENTRADA.tokenParaEntrar({ local: localStorage, sesion: sessionStorage, ahora: Date.now() });
+  if (!t) return false;
+  try { const j = await tokenConGoogle(t); if (!j) return false; guardarToken(j); await abrir(); return true; } catch (e) { return false; }
 }
 
-volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vista(false); } });
+volverDeGoogle().then(async hecho => { if (hecho) return; if (leerToken()) abrir(); else if (!(await entrarConLaWeb())) vista(false); });
 </script>
 <script>GESTION_NAV.seccion({ id: 'cuentas', pan: 'pan-cuentas', etiqueta: 'Cuentas', orden: 1 });</script>
 <script src="votos.js"></script>

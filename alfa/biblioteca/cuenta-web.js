@@ -55,7 +55,7 @@
     const fila = document.createElement('div'); fila.className = 'cuenta-botones cuenta-roles';
     const enlace = (txt, href) => { const a = document.createElement('a'); a.className = 'boton sec'; a.href = href; a.textContent = txt; fila.append(a); };
     if (alfa) enlace(t('IR A LA ALFA'), base + 'alfa/');
-    if (admin) enlace(t('IR A GESTIÓN'), base + 'gestion/');
+    if (admin) enlace(t('IR A GESTIÓN'), base + 'gestion/?seccion=tablero');   // directo al tablero; /gestion entra sola con esta misma sesión (tarea #146)
     if (alfa || beta || admin) { enlace(t('BETA EN ANDROID'), 'https://play.google.com/apps/internaltest/4699431656758562735'); fila.lastChild.target = '_blank'; fila.lastChild.rel = 'noopener'; }   // Prueba interna de Play: solo la ven los de la lista de testers
     const leyesEl = donde.querySelector('.cuenta-leyes'); leyesEl ? leyesEl.before(fila) : donde.append(fila);
   }

@@ -1,8 +1,8 @@
 {
- "build": 1283,
- "hash": "f6fe3c4",
- "fecha": "2026-11-18T21:15:09Z",
- "mensaje": "Pop: Deshacer tras perder un duelo vuelve al último turno desde el que se gana (Lola marca la jugada) y panel DEV para ponerse en el jefe del Jardín. Tarea #95",
+ "build": 1284,
+ "hash": "15c0f78",
+ "fecha": "2026-11-19T00:57:41Z",
+ "mensaje": "Gestión: entra sola con la sesión de Google de la web y el botón de la cuenta va directo al tablero (tarea #146)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.1",

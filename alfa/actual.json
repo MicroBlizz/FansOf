@@ -1,8 +1,8 @@
 {
- "build": 1286,
- "hash": "c69d10d",
- "fecha": "2026-11-19T08:44:49Z",
- "mensaje": "Asalto 0.4.2: los 16 héroes superiores con sus 17 posturas de Yoshi (tarea #85)",
+ "build": 1287,
+ "hash": "a1621c1",
+ "fecha": "2026-11-19T08:45:47Z",
+ "mensaje": "Pop: arte nuevo del perfil de jugador de Yoshi y 6 pegatinas de duelo (tarea #41, n11, ADR 130)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.2",

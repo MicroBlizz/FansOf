@@ -26,7 +26,9 @@ const PP_FLOTA_NUEVOS = [...new Set(Object.values(PP_FLOTA_MUNDO).flat())].filte
 const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_FLOTA_NUEVOS, ...Object.keys(PP_SLIMES).map(k => 'sl-' + k), 'fondo-jardin', 'fondo-pasteleria', 'fondo-heladeria', 'fondo-playa', 'fondo-feria', 'fondo-nubes', 'fondo-bosque', 'fondo-mar', 'fondo-sakura', 'fondo-espacio', 'i-cohete', 'i-burbujas', 'i-petalo', 'fondo-jefe', 'tablero', 'i-copo', 'i-concha', 'i-cereza', 'i-martillo', 'i-bomba', 'i-toques3', 'i-deshacer', 'i-pista', 'i-hucha', 'i-infinito', 'i-pase', 'i-racha', 'i-regalo', 'i-vida', 'i-mano', 'i-estrella', 'i-moneda', 'i-cofre', 'i-perla', 'i-perlas', 'logo-pop',
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo', 'b-' + k + '-doble']),
   // las burbujas de macaron de la Pastelería (tarea #110, tras el flag estilo-mundo; herramientas/comfyui/pop/macaron.py)
-  ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['bm-macaron-' + k + '-arriba', 'bm-macaron-' + k + '-abajo'])];
+  ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['bm-macaron-' + k + '-arriba', 'bm-macaron-' + k + '-abajo']),
+  // el arte del perfil de jugador: adornos de los marcos, pegatinas y entradas (tarea #41, js/perfil-catalogo.js)
+  ...['marco', 'pegatina', 'entrada'].flatMap(t => PP_PERFIL_CAT[t].map(d => d.img).filter(Boolean))];
 // devuelve una promesa que se cumple cuando han llegado todos (o han fallado): la portada no se enseña hasta entonces, para que no se
 // vean un momento los dibujos de repuesto del primer boceto (Daniel, 31-10-2026)
 function ppCargaImagenes() {

@@ -1,6 +1,7 @@
 // Fans of Pop · EL DIBUJO DEL PERFIL DE JUGADOR (tarea #41, ADR 130): el panel que se ve en «Mi perfil» y en el VS de los duelos (fondo,
 // marco, personaje, frase, nombre, título y pegatinas) y las muestras pequeñas de cada cosa del catálogo para la pantalla de elegir.
-// Mientras Yoshi no pinte el arte nuevo, los marcos, los efectos y las entradas se dibujan por código (js/perfil-catalogo.js).
+// Los adornos de los marcos y lo que acompaña a las entradas son dibujos de Yoshi (`img` en js/perfil-catalogo.js; si aún no han llegado, el
+// repuesto dibujado por código). Los efectos de pop siguen por código hasta la tarea #110.
 // Solo dibuja: no sabe de perlas ni de servidor. Recibe un perfil ya limpio (PP_PERFIL.limpia) y el catálogo (PP_MI.cat).
 'use strict';
 const PP_PF_TINTA = '#7a3a7a';
@@ -28,6 +29,7 @@ function ppPfMarco(c, marco, x, y, w, h, r, grosor) {
   if (marco && marco.adorno) {
     const s = grosor * 2.6, col = cols[cols.length - 1], m = grosor * 0.4;
     for (const [ax, ay] of [[x + m, y + m], [x + w - m, y + m], [x + m, y + h - m], [x + w - m, y + h - m], [x, y + h / 2], [x + w, y + h / 2]]) {
+      if (marco.img && ppDibujaEn(c, marco.img, ax, ay, s * 1.15, true)) continue;   // el adorno de Yoshi
       c.fillStyle = '#fff'; c.beginPath(); c.arc(ax, ay, s * 0.52, 0, Math.PI * 2); c.fill();
       ppPfAdorno(c, marco.adorno, ax, ay, s, col);
     }
@@ -81,6 +83,12 @@ function ppPerfilPanel(c, P, cat, nombre, x, y, w, h, t = 0) {
   ppPfMarco(c, de('marco', P.marco), x, y, w, h, r, g);
 }
 /* ---------- las muestras del catálogo (un lienzo cuadrado por cosa) ---------- */
+// dónde va el dibujo de cada entrada en su muestra: [x, y, lado] en partes del lienzo (Lola está en 0.56, 0.54)
+const PP_PF_ENTRADA_MUESTRA = Object.freeze({ nube: [0.56, 0.8, 0.62], salto: [0.56, 0.8, 0.42], giro: [0.56, 0.54, 0.8] });
+function ppPfMuestraEntrada(c, d, L) {
+  const [x, y, l] = PP_PF_ENTRADA_MUESTRA[d.id] || [0.5, 0.5, 0.5];
+  ppDibujaEn(c, d.img, L * x, L * y, L * l, true);
+}
 const PP_PF_MUESTRAS = {
   personaje: (c, d, L) => ppSlimeRepuestoOImagen(c, d.id, L / 2, L / 2, L * 0.4, 0, 1),
   pegatina: (c, d, L) => { ppDibujaEn(c, d.img, L / 2, L / 2, L * 0.86, true); },
@@ -104,7 +112,8 @@ const PP_PF_MUESTRAS = {
     else if (d.id === 'giro') c.arc(L * 0.56, L * 0.54, L * 0.36, Math.PI * 0.9, Math.PI * 2.3);
     else if (d.id !== 'nube') { c.moveTo(L * 0.06, L * 0.6); c.lineTo(L * 0.3, L * 0.6); }
     c.stroke(); c.setLineDash([]);
-    if (d.id === 'nube') { c.fillStyle = '#fff'; c.strokeStyle = '#9fdcff'; c.lineWidth = 3; for (const [x, y, r] of [[0.36, 0.8, 0.13], [0.56, 0.84, 0.16], [0.74, 0.8, 0.12]]) { c.beginPath(); c.arc(L * x, L * y, L * r, 0, Math.PI * 2); c.fill(); c.stroke(); } }
+    if (d.img && PP_IMG[d.img]) ppPfMuestraEntrada(c, d, L);   // el dibujo de Yoshi: la nube debajo, el polvo al caer, las estrellitas al girar
+    else if (d.id === 'nube') { c.fillStyle = '#fff'; c.strokeStyle = '#9fdcff'; c.lineWidth = 3; for (const [x, y, r] of [[0.36, 0.8, 0.13], [0.56, 0.84, 0.16], [0.74, 0.8, 0.12]]) { c.beginPath(); c.arc(L * x, L * y, L * r, 0, Math.PI * 2); c.fill(); c.stroke(); } }
     ppSlimeRepuestoOImagen(c, 'lola', L * 0.56, L * 0.54, L * 0.25, 0, 1);
   },
 };

@@ -104,11 +104,20 @@ function ppCortPanel(c, p, lado, a, t) {
   c.save(); c.globalAlpha = Math.min(1, a * 1.6);
   c.translate(x + w / 2 + lado * e.dx, y + h / 2 + e.dy); c.rotate(lado * e.giro); c.scale(e.escala, e.escala);
   if (p.perfil.entrada === 'nube') ppCortNube(c, w, h, a);
+  if (p.perfil.entrada === 'giro') ppCortEntradaImg(c, 'en-estrellitas', 0, 0, w * 1.25, 1 - a);   // la estela mientras gira
   ppPerfilPanel(c, p.perfil, p.cat, p.nombre, -w / 2, -h / 2, w, h, t + (lado > 0 ? 1.3 : 0));
+  if (p.perfil.entrada === 'salto') ppCortEntradaImg(c, 'en-polvo', 0, h / 2, w * 0.8, Math.max(0, 1 - Math.abs(a - 0.9) * 10));   // el polvo al caer
   c.restore();
 }
-// la nube que trae el panel en la entrada «En una nube»: se deshace al llegar
+// un dibujo de Yoshi de la entrada (js/perfil-catalogo.js) con su transparencia propia, no la del panel (que aún está apareciendo al
+// empezar y dejaría la nube casi invisible); nada si aún no ha llegado
+function ppCortEntradaImg(c, k, x, y, lado, alfa) {
+  if (alfa <= 0.01 || !PP_IMG[k]) return;
+  c.save(); c.globalAlpha = Math.min(1, alfa); ppDibujaEn(c, k, x, y, lado, true); c.restore();
+}
+// la nube que trae el panel en la entrada «En una nube»: se deshace al llegar (la de Yoshi; si no ha llegado, tres círculos)
 function ppCortNube(c, w, h, a) {
+  if (PP_IMG['en-nube']) { ppCortEntradaImg(c, 'en-nube', 0, h / 2 + 4, w * 1.3, Math.max(0, 1 - a * a) * 0.95); return; }
   c.save(); c.globalAlpha = Math.max(0, 1 - a * a) * 0.95; c.fillStyle = '#fff'; c.strokeStyle = '#9fdcff'; c.lineWidth = 4;
   for (const [x, r] of [[-0.32, 0.2], [0, 0.27], [0.32, 0.2]]) { c.beginPath(); c.arc(x * w, h / 2 + 4, r * w, 0, Math.PI * 2); c.fill(); c.stroke(); }
   c.restore();

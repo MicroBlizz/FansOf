@@ -1,8 +1,8 @@
 {
- "build": 1304,
- "hash": "e526891",
- "fecha": "2026-11-19T14:31:59Z",
- "mensaje": "Asalto: el muñeco bota un poco con cada paso al andar",
+ "build": 1305,
+ "hash": "2c08991",
+ "fecha": "2026-11-19T14:38:27Z",
+ "mensaje": "/gestion: barra de cuatro botones (Tablero, Juegos, Jugadores, Ajustes) y los 46 juegos en una lista con buscador (tarea #162, ADR 161)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.2",

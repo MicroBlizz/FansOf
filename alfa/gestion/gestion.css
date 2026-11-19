@@ -77,9 +77,19 @@ details { min-width: 0; }
 summary { cursor: pointer; color: var(--suave); }
 pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; overflow-x: auto; font: 12px/1.45 var(--mono); }
 .vacio { background: var(--panel); border: 1px dashed var(--linea); border-radius: 6px; padding: 28px 16px; text-align: center; color: var(--suave); }
-.menu { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 2px solid var(--linea); padding-bottom: 10px; }
-.menu button.activa { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); font-weight: 700; }
-.menu .sep { width: 1px; background: var(--linea); margin-inline: 4px; }
+.menu { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; border-bottom: 2px solid var(--linea); padding-bottom: 10px; }
+.menu button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border: 2px solid var(--acento); background: var(--panel); color: var(--texto); border-radius: 12px; font-weight: 700; }
+.menu button.activa { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); }
+#tabs button { border: 2px solid var(--acento); border-radius: 10px; min-height: 40px; font-weight: 600; }
+#tabs button.activa { background: var(--ok-fondo); color: var(--ok); border-color: var(--ok); }
+#tabs .nav-volver { border-color: #56ccf2; color: var(--texto); }
+.nav-juego { align-self: center; font-size: 17px; margin-inline: 6px; flex-basis: 100%; }
+@media (max-width: 700px) {
+  #vista-panel { padding-bottom: 84px; }
+  .menu { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; margin: 0; padding: 6px 4px calc(10px + env(safe-area-inset-bottom)); gap: 0; background: var(--panel); border-top: 1px solid var(--linea); border-bottom: 0; }
+  .menu button { flex-direction: column; gap: 3px; min-height: 58px; border: 0; background: transparent; font-size: 12px; border-radius: 10px; }
+  .menu button.activa { background: transparent; color: var(--acento); }
+}
 table.tabla { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13px; }
 table.tabla th, table.tabla td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--linea); white-space: nowrap; }
 table.tabla th:first-child, table.tabla td:first-child { text-align: left; }

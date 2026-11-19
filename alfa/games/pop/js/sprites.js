@@ -29,20 +29,22 @@ const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_FLOTA_NUEVOS, ...Object.keys(PP_SLI
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['bm-macaron-' + k + '-arriba', 'bm-macaron-' + k + '-abajo']),
   // el arte del perfil de jugador: adornos de los marcos, pegatinas y entradas (tarea #41, js/perfil-catalogo.js)
   ...['marco', 'pegatina', 'entrada'].flatMap(t => PP_PERFIL_CAT[t].map(d => d.img).filter(Boolean))];
-// devuelve una promesa que se cumple cuando han llegado todos (o han fallado): la portada no se enseña hasta entonces, para que no se
-// vean un momento los dibujos de repuesto del primer boceto (Daniel, 31-10-2026)
-function ppCargaImagenes() {
-  let faltan = PP_LISTA_IMG.length, listo;
-  const promesa = new Promise(ok => { listo = ok; });
-  const una = () => { if (--faltan <= 0) listo(); };
-  for (const k of PP_LISTA_IMG) {
-    const im = new Image();
-    const liso = PP_LISO;
-    im.onload = () => { if (liso === PP_LISO) PP_IMG[k] = /^b-.*-abajo$/.test(k) && !liso ? ppHundida(im) : im; una(); };   // las lisas ya vienen hundidas (preparar_liso.py)
-    im.onerror = una;
-    im.src = (PP_LISO ? 'img-liso/' : 'img/') + k + '.png?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0');
-  }
-  return promesa;
+// devuelve una promesa que se cumple cuando han llegado todos, con la lista de los que no llegaron ni al segundo intento (vacía si todo
+// fue bien). La splash de core no se va hasta entonces (NUCLEO.listo en principal.js), sin tope de tiempo: así no se ven los dibujos de
+// repuesto del primer boceto (Daniel, 31-10-2026; tarea #130). `nueva` crea cada imagen (los tests pasan una de mentira).
+function ppCargaImagenes(nueva = () => new Image()) {
+  const v = typeof VERSION !== 'undefined' ? VERSION : '0';
+  const una = k => ppCargaUna(k, (PP_LISO ? 'img-liso/' : 'img/') + k + '.png?v=' + v, nueva);
+  return Promise.all(PP_LISTA_IMG.map(una)).then(llegados => PP_LISTA_IMG.filter((k, i) => !llegados[i]));
+}
+// un dibujo: si falla se pide una vez más al cabo de 1 s (en el móvil a veces se corta la red un momento) y se cumple con true si llegó, false si no
+function ppCargaUna(k, src, nueva, intento = 1) {
+  return new Promise(ok => {
+    const im = nueva();
+    im.onload = () => { PP_IMG[k] = /^b-.*-abajo$/.test(k) && !PP_LISO ? ppHundida(im) : im; ok(true); };   // las lisas ya vienen hundidas (preparar_liso.py)
+    im.onerror = () => (intento < 2 ? setTimeout(() => ok(ppCargaUna(k, src + '&otra=' + intento, nueva, intento + 1)), 1000) : ok(false));
+    im.src = src;
+  });
 }
 // la burbuja reventada tiene que verse HUNDIDA de un vistazo (si no, un niño no distingue cuáles faltan): se oscurece entera
 // y lleva una sombra por dentro arriba a la izquierda y luz abajo a la derecha, como un hueco en la silicona

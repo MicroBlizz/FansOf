@@ -83,10 +83,15 @@ function ppArranque() {
   if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
   ppCorazonEnlaceArranca();   // un enlace de corazón de un amigo (?corazon=, js/pantalla-corazones-enlace.js)
   ppIrA('titulo');
-  // la portada sale cuando han llegado los dibujos (como mucho 6 s): así no asoman los de repuesto del primer boceto
+  // la portada sale cuando han llegado todos los dibujos, sin tope de tiempo: hasta entonces la tapa la splash de core (esperaListo en
+  // index.html, ADR 091), y así no asoman los de repuesto del primer boceto. Si alguno no llega ni al segundo intento, la splash se queda
+  // con «No se ha podido cargar» y su botón «Reintentar» (tarea #130)
   PP_ESCENARIO.style.visibility = 'hidden';
-  const muestra = () => { PP_ESCENARIO.style.visibility = ''; const carga = $pp('#carga'); if (carga) carga.remove(); };
-  Promise.race([imagenes, new Promise(ok => setTimeout(ok, 6000))]).then(muestra);
+  imagenes.then(faltan => {
+    PP_ESCENARIO.style.visibility = ''; const carga = $pp('#carga'); if (carga) carga.remove();
+    if (!faltan.length) NUCLEO.listo();
+    else if (typeof SPLASH !== 'undefined') SPLASH.falla('pop/img-liso/' + faltan[0] + '.png');
+  });
   requestAnimationFrame(ppFotograma);
   setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppPintaLateral(); }, 1000);   // los relojes de las ofertas
   setInterval(ppBuzonVigila, 5000);   // el buzón de corazones de los amigos: al llegar al camino y cada minuto (js/pantalla-buzon.js)

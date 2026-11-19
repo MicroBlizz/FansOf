@@ -23,11 +23,13 @@ function ppBotonPerlas(texto, precio, clase, f, vuelta = null, motivo = null) {
   return b;
 }
 /* ---------- sin toques: seguir ---------- */
+// la pregunta con las burbujas que quedan, en singular si es una (tarea #135)
+const ppTextoQuedan = n => (n === 1 ? tr('¡Te queda 1 burbuja! ¿Sigues?') : tr('¡Te quedan {n} burbujas! ¿Sigues?', { n }));
 // T.parado ya está puesto (partida.js); el corazón aún no se ha perdido. `T.seguido`: cuántas veces se ha pagado en este intento.
 function ppOfreceSeguir(T) {
   const quedan = T.up.reduce((a, v, i) => a + (T.mask[i] && v > 0 ? 1 : 0), 0);
   const precio = PP_CFG.perlas.seguir[Math.min(T.seguido || 0, PP_CFG.perlas.seguir.length - 1)];
-  const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('¡Te quedan {n} burbujas! ¿Sigues?', { n: quedan })}</p><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 26)}</p>`);
+  const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${ppTextoQuedan(quedan)}</p><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 26)}</p>`);
   const sigue = n => { ppCierra(); T.limite += n; T.parado = false; T.seguido = (T.seguido || 0) + 1; ppFlota(tr('+{n} toques', { n }), 270, 240, '#3a8ee6'); play('ppPremio'); };
   t.appendChild(ppBotonPerlas(tr('+{n} TOQUES', { n: PP_CFG.perlas.toquesSeguir }), precio, 'pp-btn', () => sigue(PP_CFG.perlas.toquesSeguir), () => ppOfreceSeguir(T), 'seguir'));
   if (ppHayAnuncios() && !T.anuncio) t.appendChild(ppBoton(tr('VER ANUNCIO: +{n} TOQUES', { n: PP_CFG.anuncio.toques }), 'pp-btn2 pp-verde', () => { T.anuncio = true; ppVerAnuncio('pop-toques', () => sigue(PP_CFG.anuncio.toques), () => ppOfreceSeguir(T)); }));

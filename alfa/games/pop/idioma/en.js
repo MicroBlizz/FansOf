@@ -24,6 +24,7 @@ IDIOMA.add({
   "¡Duelo contra el CEO! Por turnos, haz pop en las burbujas que quieras, pero todas de la MISMA fila.": "Duel against the CEO! Take turns popping as many bubbles as you like, but all from the SAME row.",
   "Cuando acabes tu turno, pulsa ¡LISTO!. Ojo: ¡pierde quien haga pop en la última burbuja!": "When your turn is over, press DONE!. Careful: whoever pops the last bubble loses!",
   "¡Te quedan {n} burbujas! ¿Sigues?": "Only {n} bubbles left! Keep going?",
+  "¡Te queda 1 burbuja! ¿Sigues?": "Only 1 bubble left! Keep going?",
   "+{n} toques": "+{n} taps",
   "+{n} TOQUES": "+{n} TAPS",
   "VER ANUNCIO: +{n} TOQUES": "WATCH AD: +{n} TAPS",

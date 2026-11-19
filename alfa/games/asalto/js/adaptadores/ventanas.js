@@ -38,7 +38,7 @@ AS.ventanas = (() => {
     const d = ASALTO.heroes[h.tipo], her = AS.heroe.herencias(ASALTO, h);
     const titulo = h.rama ? ' · ' + tr(ASALTO.ramas[h.rama].titulo) : '';
     const clases = d.clases.map(k => `<span class="as-chip" style="--c:${ASALTO.clases[k].col}">${ico('clase-' + k)}${tr(ASALTO.clases[k].nombre)}${h.rama === k ? ' x2' : ''}</span>`).join('');
-    return `<div class="as-ficha"><i class="as-retrato as-pix${h.dorado ? ' as-dorado' : ''}" style="${D.cssRetrato(h.tipo, 2)}"></i><div><h2>${d.nombre}${titulo}</h2><p class="as-nivel"><b class="as-q${h.rareza}">${tr(ASALTO.rarezas[h.rareza].nombre)}</b> · ${tr('Nivel {n}', { n: h.nivel })}${h.dorado ? ' · ' + tr('Animal Dorado') : ''}</p><p>${clases}</p></div></div>
+    return `<div class="as-ficha"><i class="as-retrato as-pix${h.dorado ? ' as-dorado' : ''}" style="${D.cssRetrato(D.cual(AS.aspecto.deHeroe(ASALTO, h), h.tipo), 2)}"></i><div><h2>${d.nombre}${titulo}</h2><p class="as-nivel"><b class="as-q${h.rareza}">${tr(ASALTO.rarezas[h.rareza].nombre)}</b> · ${tr('Nivel {n}', { n: h.nivel })}${h.dorado ? ' · ' + tr('Animal Dorado') : ''}</p><p>${clases}</p></div></div>
       <p class="as-cifras">${ico('corazon')}${cifras.vida} &nbsp; ${ico('equipo-arma')}${Math.round(cifras.dano)} &nbsp; ${tr('cada {s} s', { s: cifras.cada.toFixed(2) })}</p>
       <p class="as-nota">${tr('De nacimiento:')} ${propia(h.cifras.vida)} ${tr('de vida')} · ${propia(h.cifras.dano)} ${tr('de daño')}</p>
       <h3>${tr('IMPRONTAS')}</h3><ul class="as-lista">${htmlImprontas(h, her)}</ul><p class="as-nota">${tr('Al unir a un héroe, su clase se graba en un hueco libre. Cada 2 de la misma clase suben su efecto.')}</p>`;
@@ -69,6 +69,7 @@ AS.ventanas = (() => {
       cierra();
       if (!r.ok) return;
       const s = AS.pantalla.puntoDe(sitio);
+      AS.pantalla.E.ascensos.set(h.id, 1);   // destello blanco que se apaga y deja ver su dibujo superior
       fx.columna(s.x, s.y, [255, 230, 140], 320); fx.onda(s.x, s.y - 40, 90, '#ffd23a'); fx.brasas(s.x, s.y - 20, 24, '#ffd23a', 40); fx.fogonazo(0.35, '#ffe9a0'); fx.sacude(6);
       AS.pantalla.cartel(tr('¡ASCENSO!'), ASALTO.heroes[h.tipo].nombre + ' · ' + tr(ASALTO.ramas[b.dataset.rama].titulo), '#c8901c', 1.6);
       AS.suena('asciende');
@@ -78,7 +79,7 @@ AS.ventanas = (() => {
   const IMPRONTA = { nueva: 'Graba la impronta de {clase} en un hueco libre', sube: 'Su impronta de {clase} sube: {efecto}',
     suma: 'Una marca más de {clase}: le falta otra para subir', guardada: 'No le queda hueco para {clase}: se guarda hasta que abra otro' };
   function caraUnion(h, pie) {
-    return `<div><i class="as-retrato as-pix${h.dorado ? ' as-dorado' : ''}" style="${D.cssRetrato(h.tipo, 2)}"></i><b>${ASALTO.heroes[h.tipo].nombre}</b><span class="as-q${h.rareza}">${tr(ASALTO.rarezas[h.rareza].nombre)} · ${tr('Nivel {n}', { n: h.nivel })}</span><small>${pie}</small></div>`;
+    return `<div><i class="as-retrato as-pix${h.dorado ? ' as-dorado' : ''}" style="${D.cssRetrato(D.cual(AS.aspecto.deHeroe(ASALTO, h), h.tipo), 2)}"></i><b>${ASALTO.heroes[h.tipo].nombre}</b><span class="as-q${h.rareza}">${tr(ASALTO.rarezas[h.rareza].nombre)} · ${tr('Nivel {n}', { n: h.nivel })}</span><small>${pie}</small></div>`;
   }
   // lo que gana además de nivel, vida y daño: su impronta y, si toca, rareza, hueco nuevo, ascenso o dorado
   function extrasUnion(v) {

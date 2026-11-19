@@ -121,7 +121,7 @@ AS.pinta.altar = (() => {
       if (!h) { if (i === p.equipo.banquillo.length) tx(g, tr('BANQUILLO'), b.x + b.w / 2, b.y + b.h / 2, { col: '#c8a878', ancla: 'c', max: b.w - 12 }); E.zona(b, 'hueco', sitio); return; }
       E.zona(b, 'heroe', sitio);
       if (E.ocultos.has(h.id) || (E.arrastre && E.arrastre.h.id === h.id && E.arrastre.movido)) return;
-      D.busto(g, h.tipo, { x: b.x + 4, y: b.y + 4, w: Math.round(b.w * 0.58), h: b.h - 9 }, h.dorado);
+      D.busto(g, D.cual(AS.aspecto.deHeroe(ASALTO, h), h.tipo), { x: b.x + 4, y: b.y + 4, w: Math.round(b.w * 0.58), h: b.h - 9 }, h.dorado);
       ASALTO.heroes[h.tipo].clases.forEach((k, j) => D.icono(g, 'clase-' + k, b.x + b.w - 58 + j * 34, b.y + b.h - 22, 1));   // sus dos clases
       T.losa(g, b.x + b.w - 40, b.y + 5, 34, 30, h.rama ? C.oro : C.crema);
       tx(g, String(h.nivel), b.x + b.w - 23, b.y + 20, { col: C.tinta, borde: false, ancla: 'c', max: 28 });

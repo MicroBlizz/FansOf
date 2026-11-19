@@ -49,8 +49,9 @@ AS.pinta.arena = (() => {
       const llega = E.apariciones.get(h.id), k = llega === undefined ? 1 : Math.min(1, llega / 0.3);
       const brilla = E.arrastre && E.arrastre.movido && E.arrastre.h.id !== h.id;
       if (brilla) { g.fillStyle = 'rgba(255,210,58,0.35)'; g.fillRect(s.x - 46, s.y - 96, 92, 110); }
-      D.muneco(g, { tipo: h.tipo, anim: 'reposo', tAnim: E.t + semilla(h.id) * 0.1, lado: 'heroe', dorado: h.dorado, alfa: k, id: semilla(h.id) }, s.x, s.y - Math.round((1 - k) * (1 - k) * 60));
-      const alto = D.alto(h.tipo);
+      const aspecto = AS.aspecto.deHeroe(ASALTO, h), brillo = E.ascensos.get(h.id) || 0;
+      D.muneco(g, { tipo: h.tipo, aspecto, anim: 'reposo', tAnim: E.t + semilla(h.id) * 0.1, lado: 'heroe', dorado: h.dorado, alfa: k, destello: brillo, id: semilla(h.id) }, s.x, s.y - Math.round((1 - k) * (1 - k) * 60));
+      const alto = D.alto(D.cual(aspecto, h.tipo));
       insignia(g, h, s.x - 50, s.y - alto - 4);
       if (AS.heroe.puedeAscender(ASALTO, h)) flecha(g, s.x + 26, s.y - alto - 22, E.t);
     }
@@ -97,9 +98,10 @@ AS.pinta.arena = (() => {
       const s = P.aPantalla(u.x, u.y);
       if (u.jefe && u.enFuria) { g.fillStyle = `rgba(216,64,47,${0.2 + Math.abs(Math.sin(E.t * 8)) * 0.15})`; g.beginPath(); g.ellipse(s.x, s.y, 80, 30, 0, 0, Math.PI * 2); g.fill(); }
       const ruge = E.intro && u.jefe && E.intro.t > 0.55 && E.intro.t < 1.25, pose = ruge ? { anim: 'ataque', tAnim: E.intro.t - 0.55, dura: 0.7 } : E.intro ? { anim: 'reposo', tAnim: E.t, dura: 0.4 } : u;
-      D.muneco(g, { tipo: u.tipo, elite: u.elite, anim: pose.anim, tAnim: pose.tAnim, dura: pose.dura, lado: u.lado, alfa, destello: (E.destellos.get(u.id) || 0) * 5, dorado: u.dorado, id: u.id }, s.x, s.y);
+      const aspecto = u.lado === 'heroe' ? AS.aspecto.de(u.tipo, u.rama, u.improntas) : null;
+      D.muneco(g, { tipo: u.tipo, aspecto, elite: u.elite, anim: pose.anim, tAnim: pose.tAnim, dura: pose.dura, lado: u.lado, alfa, destello: (E.destellos.get(u.id) || 0) * 5, dorado: u.dorado, id: u.id }, s.x, s.y);
       if (u.muerta) continue;
-      const alto = D.alto(u.tipo, u.elite);
+      const alto = aspecto ? D.alto(D.cual(aspecto, u.tipo)) : D.alto(u.tipo, u.elite);
       barra(g, u, s, alto);
       if (u.tVeneno > 0) { g.fillStyle = '#7ad84a'; g.fillRect(s.x + 16, s.y - alto - 20, 6, 6); g.fillRect(s.x + 24, s.y - alto - 14, 4, 4); }
       if (u.maldito > 0) { g.fillStyle = '#b22e54'; g.fillRect(s.x - 24, s.y - alto - 20, 6, 6); }

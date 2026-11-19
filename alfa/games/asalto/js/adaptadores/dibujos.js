@@ -6,13 +6,15 @@
 AS.dibujos = (() => {
   const IMG = {}, TINTE = {}, CAJAS = {};
   const ANIM = {
-    reposo: { f: ['reposo-1', 'reposo-2'], t: 0.45, bucle: true },
+    reposo: { f: ['reposo-1', 'reposo-2', 'reposo-3'], t: 0.45, bucle: true },
     andar: { f: ['andar-1', 'andar-2', 'andar-3', 'andar-4'], t: 0.12, bucle: true },
-    ataque: { f: ['ataque-1', 'ataque-2', 'ataque-3', 'ataque-4'], t: 0, bucle: false },   // su ritmo lo pone la duración del ataque
-    golpe: { f: ['golpe-1'], t: 0.22, bucle: false },
+    ataque: { f: ['ataque-1', 'ataque-2', 'ataque-3', 'ataque-4', 'ataque-5', 'ataque-6'], t: 0, bucle: false },   // su ritmo lo pone la duración del ataque
+    golpe: { f: ['golpe-1', 'golpe-2'], t: 0.22, bucle: false },
     muerte: { f: ['muerte-1', 'muerte-2'], t: 0.22, bucle: false },
   };
-  const tiras = () => AS.DIBUJOS.tiras;
+  // las tiras de los personajes y las de los héroes superiores (tarea #85), que traen más posturas: cada tira anima con las que tenga
+  let TODAS = null;
+  const tiras = () => TODAS || (TODAS = { ...AS.DIBUJOS.tiras, ...((AS.SUPERIORES && AS.SUPERIORES.tiras) || {}) });
 
   function carga(listo) {
     const nombres = [...Object.keys(tiras()), ...AS.DIBUJOS.fondos, ...AS.DIBUJOS.iconos.map(n => 'icono-' + n)];
@@ -35,12 +37,14 @@ AS.dibujos = (() => {
     c.drawImage(im, 0, 0); c.globalCompositeOperation = 'source-atop'; c.globalAlpha = fuerza; c.fillStyle = color; c.fillRect(0, 0, cv.width, cv.height);
     return (TINTE[clave] = cv);
   }
+  // el fotograma de la animación en ese momento, entre las posturas que tiene su tira (sin ninguna, el primero y se mueve por código)
   function cuadro(tipo, anim, tiempo, dura) {
-    const d = tiras()[tipo], a = ANIM[anim] || ANIM.reposo, paso = a.t || (dura || 0.4) / a.f.length;
+    const d = tiras()[tipo], a = ANIM[anim] || ANIM.reposo, f = a.f.filter(k => d.f.includes(k));
+    if (!f.length) return { i: 0, propio: false };
+    const paso = a.t || (dura || 0.4) / f.length;
     let i = Math.floor(tiempo / paso);
-    i = a.bucle ? i % a.f.length : Math.min(a.f.length - 1, i);
-    const j = d.f.indexOf(a.f[i]);
-    return { i: j >= 0 ? j : 0, propio: j >= 0 };
+    i = a.bucle ? i % f.length : Math.min(f.length - 1, i);
+    return { i: d.f.indexOf(f[i]), propio: true };
   }
   // el movimiento por código cuando falta el fotograma propio: { dx, dy, giro }
   function suplido(u, hacia) {
@@ -59,10 +63,24 @@ AS.dibujos = (() => {
     if (elite && hay(tipo + '-elite')) return { tipo: tipo + '-elite', esc: 1 };
     return { tipo, esc: elite ? 2 : 1 };
   }
-  // pinta un muñeco con los pies en (x, y). u: { tipo, elite, anim, tAnim, dura, lado, alfa, destello (0-1), dorado, id }
+  // la tira que se ve de un héroe: la de su aspecto (AS.aspecto: la superior si ha ascendido) si está cargada; si no, la de su tipo
+  const cual = (aspecto, tipo) => (aspecto && hay(aspecto.tira) ? aspecto.tira : tipo);
+  // los emblemas de sus improntas: giran despacio a su alrededor a media altura, pequeños (20 px) y con un halo del color de la clase
+  function emblemas(g, lista, x, y, w, h, t) {
+    const n = lista.length, L = 20;
+    lista.forEach((k, i) => {
+      const a = t * 1.6 + i * Math.PI * 2 / n, ex = Math.round(x + Math.cos(a) * w * 0.48), ey = Math.round(y - h * 0.42 + Math.sin(a) * 10);
+      const im = IMG['icono-clase-' + k];
+      g.fillStyle = ASALTO.clases[k].col; g.globalAlpha *= 0.35;
+      g.beginPath(); g.arc(ex, ey, 12, 0, Math.PI * 2); g.fill(); g.globalAlpha /= 0.35;
+      if (im) { g.imageSmoothingEnabled = false; g.drawImage(im, ex - L / 2, ey - L / 2, L, L); }
+    });
+  }
+  // pinta un muñeco con los pies en (x, y). u: { tipo, aspecto (AS.aspecto, de los héroes), elite, anim, tAnim, dura, lado, alfa, destello (0-1), dorado, id }
   function muneco(g, u, x, y) {
     if (!hay(u.tipo)) return;
-    const { tipo, esc } = tiraDe(u.tipo, u.elite), d = tiras()[tipo], w = d.w * esc, h = d.h * esc;
+    const visto = cual(u.aspecto, u.tipo), { tipo, esc } = visto === u.tipo ? tiraDe(u.tipo, u.elite) : { tipo: visto, esc: 1 };
+    const d = tiras()[tipo], w = d.w * esc, h = d.h * esc;
     const f = cuadro(tipo, u.anim, u.tAnim || 0, u.dura), m = f.propio ? { dx: 0, dy: 0, giro: 0 } : suplido(u, u.lado === 'heroe' ? 1 : -1);
     const img = u.dorado ? tenida(tipo, '#ffc21a', 0.42) : IMG[tipo];
     g.save();
@@ -76,6 +94,11 @@ AS.dibujos = (() => {
     g.drawImage(img, f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), -h + 2 * esc, w, h);
     if (u.destello > 0) { g.globalAlpha *= Math.min(1, u.destello); g.drawImage(tenida(tipo, '#ffffff', 1), f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), -h + 2 * esc, w, h); }
     g.restore();
+    if (u.aspecto && u.aspecto.emblemas.length && u.anim !== 'muerte') {
+      g.save(); g.globalAlpha = u.alfa === undefined ? 1 : u.alfa;
+      emblemas(g, u.aspecto.emblemas, Math.round(x + m.dx), Math.round(y + m.dy), w, h, (u.tAnim || 0) + (u.id || 0));
+      g.restore();
+    }
   }
   // lo que mide de alto su fotograma (el dibujo deja un poco de aire arriba)
   function alto(tipo, elite) {
@@ -122,5 +145,5 @@ AS.dibujos = (() => {
     const u = n => `calc(var(--as-u) * ${n * (k || 1)})`;
     return `background-image:url(img/${tipo}.png?v=${NUCLEO.version});width:${u(d.w)};height:${u(d.h)};background-size:${u(d.w * d.f.length)} ${u(d.h)};background-position:${u(-d.w * (fotograma || 0))} 0`;
   }
-  return { carga, hay, muneco, alto, anchoDe, caja, busto, icono, fondo, rutaIcono, cssRetrato };
+  return { carga, hay, cual, muneco, alto, anchoDe, caja, busto, icono, fondo, rutaIcono, cssRetrato };
 })();

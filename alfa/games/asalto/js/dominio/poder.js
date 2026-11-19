@@ -67,7 +67,7 @@ AS.poder = (() => {
     conClases(datos, m, cl, c.nivel);
     return Object.freeze({
       tipo: h.tipo, vida: Math.round(d.vida * m.vida * h.cifras.vida), dano: d.dano * m.dano * h.cifras.dano, cada: d.cada / m.prisa, alcance: d.alcance, vel: d.vel * m.paso,
-      area: Math.max(d.area || 0, m.estalla || 0), ataque: d.ataque, salto: !!d.salto, clases: cl, rama: h.rama, dorado: h.dorado, nivel: h.nivel, rareza: h.rareza,
+      area: Math.max(d.area || 0, m.estalla || 0), ataque: d.ataque, salto: !!d.salto, clases: cl, rama: h.rama, improntas: Object.freeze(AS.heroe.improntas(datos, h)), dorado: h.dorado, nivel: h.nivel, rareza: h.rareza,
       defensa: Math.min(0.7, m.defensa), critico: m.critico, danoCrit: m.danoCrit, reflejo: m.reflejo, esquiva: m.esquiva, salpica: m.salpica, regenera: m.regenera, roba: m.roba,
       provoca: !!m.provoca, torbellino: m.torbellino || 0, dobleTiro: m.dobleTiro || 0, curaArea: m.curaArea || 0, maldice: m.maldice || 0,
     });

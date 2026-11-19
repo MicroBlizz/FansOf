@@ -8,7 +8,7 @@
 AS.pantalla = (() => {
   const L = AS.lienzo.L, fx = AS.fx, C = AS.tema.C;
   const E = { casos: null, activa: false, t: 0, P: null, plano: '', zonas: [], oroVisto: 0, vidasRojo: 0, destinoOro: { x: 0, y: 0 }, giro: null, ocultos: new Set(), apariciones: new Map(),
-    celdasOro: new Set(), arrastre: null, toque: null, batalla: null, vel: 1, destellos: new Map(), cartel: null, pista: '', intro: null, tFin: 0, cerrando: false,
+    celdasOro: new Set(), arrastre: null, toque: null, batalla: null, vel: 1, destellos: new Map(), ascensos: new Map(), cartel: null, pista: '', intro: null, tFin: 0, cerrando: false,
     casi: new Set(), cumplidas: [], misionHecha: null, combo: 0, tCombo: 0, unir: null };   // unir: null, o { queda: el sitio del héroe que se queda } con el modo UNIR encendido
   E.zona = (r, que, dato) => { E.zonas.push({ x: r.x, y: r.y, w: r.w, h: r.h, que, dato }); };
   // ¿está hundido el botón de esta zona? Mientras el dedo lo aprieta y un momento después de soltarlo (para que se vea en un toque rápido)
@@ -247,6 +247,7 @@ AS.pantalla = (() => {
   function relojes(dt) {
     for (const [k, v] of E.apariciones) { if (v + dt > 0.3) E.apariciones.delete(k); else E.apariciones.set(k, v + dt); }
     for (const [k, v] of E.destellos) { if (v - dt <= 0) E.destellos.delete(k); else E.destellos.set(k, v - dt); }
+    for (const [k, v] of E.ascensos) { if (v - dt <= 0) E.ascensos.delete(k); else E.ascensos.set(k, v - dt); }
     const oro = p().oro + (E.oroBatalla || 0);
     E.oroVisto += (oro - E.oroVisto) * Math.min(1, dt * 10);
     if (Math.abs(oro - E.oroVisto) < 0.5) E.oroVisto = oro;
@@ -258,7 +259,7 @@ AS.pantalla = (() => {
   function pintaArrastre(g) {
     const A = E.arrastre;
     if (!A || !A.movido) return;
-    AS.dibujos.muneco(g, { tipo: A.h.tipo, anim: 'andar', tAnim: E.t, lado: 'heroe', dorado: A.h.dorado, alfa: 0.9 }, A.x, A.y + 40);
+    AS.dibujos.muneco(g, { tipo: A.h.tipo, aspecto: AS.aspecto.deHeroe(ASALTO, A.h), anim: 'andar', tAnim: E.t, lado: 'heroe', dorado: A.h.dorado, alfa: 0.9 }, A.x, A.y + 40);
     const z = zonaEn(A, A.desde), txt = z && z.que === 'heroe' ? (E.unir ? tr('UNIR') : tr('CAMBIAR')) : z && z.que === 'hueco' ? tr('MOVER') : '';
     if (txt) AS.texto.pinta(g, txt, A.x, A.y - 90, { col: z.que === 'heroe' ? C.oro : '#b8ff7a', ancla: 'c' });
   }
@@ -325,7 +326,7 @@ AS.pantalla = (() => {
   }
   function empieza(casos) {
     Object.assign(E, { casos, activa: true, giro: null, arrastre: null, toque: null, batalla: null, cartel: null, intro: null, cerrando: false, unir: null, oroBatalla: 0, pistaFija: null, oroVisto: casos.partida.oro, misionHecha: null, combo: 0, tCombo: 0 });
-    E.ocultos.clear(); E.apariciones.clear(); E.celdasOro.clear(); E.destellos.clear(); E.casi.clear(); E.cumplidas.length = 0; fx.limpia();
+    E.ocultos.clear(); E.apariciones.clear(); E.celdasOro.clear(); E.destellos.clear(); E.ascensos.clear(); E.casi.clear(); E.cumplidas.length = 0; fx.limpia();
     AS.guia.empieza(E);
     AS.suena.musica(ASALTO.zonas[casos.partida.zona].musica);
     if (!AS.guia.activa && !casos.progreso.consejos.inicio) AS.ventanas.ayuda(E, () => casos.consejoVisto('inicio'));   // sin guía, la primera vez: cómo se juega

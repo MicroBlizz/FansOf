@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "<b>Héroes superiores</b>: al ascender, cada héroe cambia de dibujo a la versión de su rama (16 en total), más grande, con detalles dorados y animaciones nuevas al andar, atacar, recibir y caer.": "<b>Superior heroes</b>: when they ascend, each hero changes into the art of its branch (16 in all), bigger, with golden details and new animations for walking, attacking, getting hit and falling.",
+  "Un destello marca el ascenso, y a su lado giran los <b>emblemas</b> de sus improntas (hasta 3).": "A flash marks the ascension, and the <b>emblems</b> of its imprints (up to 3) spin around it.",
+  "Microblizz llama a esto «plan de carrera»: mismo sueldo, pero ahora con hombreras doradas.": "Microblizz calls this a \"career plan\": same salary, but now with golden shoulder pads.",
   "<b>Tutorial más claro</b>: la guía habla en letra grande en una franja de lado a lado, con frases sencillas que dicen qué ganas, y la mano señala sin tapar el botón.": "<b>Clearer tutorial</b>: the guide speaks in big letters on a full-width banner, with simple sentences that say what you get, and the hand points without covering the button.",
   "<b>Consejos de la primera vez</b>: misiones, clases, tienda, piedras, racha, banquillo y ascenso se explican cuando aparecen. Y el botón <b>UNIR</b> se queda encendido para unir seguidos.": "<b>First-time tips</b>: missions, classes, shop, stones, streak, bench and ascension are explained when they first show up. And the <b>MERGE</b> button stays on so you can merge in a row.",
   "Recursos Humanos ha cambiado el manual de 300 páginas por una mano que señala. La productividad ha subido un 400 %.": "HR replaced the 300-page manual with a pointing hand. Productivity is up 400%.",

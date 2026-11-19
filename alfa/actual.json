@@ -1,11 +1,11 @@
 {
- "build": 1285,
- "hash": "9262d9e",
- "fecha": "2026-11-19T01:09:42Z",
- "mensaje": "Tablero en el móvil: «Todas» es un mapa pequeño de las seis columnas (tarea #147, ADR 147)",
+ "build": 1286,
+ "hash": "c69d10d",
+ "fecha": "2026-11-19T08:44:49Z",
+ "mensaje": "Asalto 0.4.2: los 16 héroes superiores con sus 17 posturas de Yoshi (tarea #85)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.4.1",
+  "asalto": "0.4.2",
   "basement": "0.13.0",
   "boom": "0.4.17",
   "chef": "0.4.0",

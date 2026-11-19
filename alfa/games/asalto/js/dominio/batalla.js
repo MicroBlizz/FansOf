@@ -17,6 +17,7 @@ AS.batalla = (() => {
       defensa: c.defensa || 0, critico: c.critico || 0, danoCrit: c.danoCrit || 0, reflejo: c.reflejo || 0, esquiva: c.esquiva || 0, salpica: c.salpica || 0,
       regenera: c.regenera || 0, roba: c.roba || 0, provoca: !!c.provoca, torbellino: c.torbellino || 0, dobleTiro: c.dobleTiro || 0, curaArea: c.curaArea || 0, maldice: c.maldice || 0,
       clases: c.clases || [], salto: !!c.salto, corre: !!c.corre, jefe: !!c.jefe, elite: !!c.elite, escala: c.escala || 1, radio: c.jefe ? 40 : c.elite ? 22 : 15, dorado: !!c.dorado, nivel: c.nivel || 0, ref: c.ref || null,
+      rama: c.rama || null, improntas: c.improntas || [],
       cd: 0.4, anim: 'reposo', tAnim: 0, dura: 0.4, golpeYa: false, escudo: 0, veneno: 0, tVeneno: 0, lento: 0, maldito: 0, muerta: false, cruzo: false, ob: null, curaA: null };
   }
   function enemigo(B, e) {

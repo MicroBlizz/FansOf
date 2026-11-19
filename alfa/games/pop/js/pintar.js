@@ -107,7 +107,7 @@ function ppSlimeRepuestoOImagen(c, id, cx, cy, r, t, alpha = 1, aplastado = 1) {
   c.restore();
 }
 function ppSlimeRepuesto(c, id, cx, cy, r, t, alpha) {
-  const d = PP_SLIMES[id], w = 1 + Math.sin(t * 4 + r) * 0.05;
+  const d = ppSlimeDe(id), w = 1 + Math.sin(t * 4 + r) * 0.05;
   c.save(); c.globalAlpha = alpha; c.translate(cx, cy); c.scale(w, 2 - w);
   c.beginPath(); c.moveTo(-r, r * 0.55); c.quadraticCurveTo(-r * 1.05, -r * 0.6, 0, -r * 0.8); c.quadraticCurveTo(r * 1.05, -r * 0.6, r, r * 0.55); c.quadraticCurveTo(0, r * 0.95, -r, r * 0.55);
   c.fillStyle = d.color; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a1030'; c.stroke();

@@ -10,7 +10,7 @@ const PP_PF_ERRORES = {
   sin_cuenta: 'Para comprar hace falta conexión y tu cuenta', tienda_cerrada: 'La tienda del perfil está cerrada ahora mismo', no_lo_tienes: 'Eso todavía no es tuyo',
 };
 const ppPfError = e => tr(PP_PF_ERRORES[e] || 'No se ha podido. Prueba otra vez.');
-const ppPfNombre = (tipo, d) => (tipo === 'personaje' ? tr(PP_SLIMES[d.id].nombre) : d.texto ? tr(d.texto) : d.nombre ? tr(d.nombre) : '');
+const ppPfNombre = (tipo, d) => (tipo === 'personaje' ? tr(ppSlimeDe(d.id).nombre) : d.texto ? tr(d.texto) : d.nombre ? tr(d.nombre) : '');
 const ppPfEl = (etiqueta, clase, html = '') => { const e = document.createElement(etiqueta); e.className = clase; e.innerHTML = html; return e; };
 const ppPfAbierta = () => !$pp('#pp-modal').hidden && $pp('#pp-tarjeta').classList.contains('pp-perfil');
 // el botón del menú: solo con el flag abierto
@@ -94,7 +94,7 @@ function ppVentanaPerfil(tab) {
   }
   t.appendChild(tabs);
   const lista = ppPfEl('div', 'pp-pf-lista' + (PP_PF.tab === 'frase' || PP_PF.tab === 'titulo' ? ' pp-pf-ancha' : ''));
-  for (const d of PP_MI.cat[PP_PF.tab]) lista.appendChild(ppPfCosa(PP_PF.tab, d));
+  for (const d of PP_MI.cat[PP_PF.tab]) if (!d.coleccion || PP_MI.loTengo(PP_PF.tab, d.id)) lista.appendChild(ppPfCosa(PP_PF.tab, d));   // los del álbum, solo si los tienes (tarea #142)
   t.appendChild(lista);
   if (PP_PF.tab === 'pegatina') t.appendChild(ppPfEl('p', 'pp-sub', `<small>${tr('Llevas {n} de {t} pegatinas para lanzar en el duelo.', { n: PP_MI.perfil().pegatinas.length, t: PP_PERFIL.PEGATINAS })}</small>`));
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));

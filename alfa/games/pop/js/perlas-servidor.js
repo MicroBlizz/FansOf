@@ -28,7 +28,8 @@ PP_PERLAS.crea = ({ cuenta, save, guarda, cola, activo, enLinea = () => true, pr
   }
   const conectado = () => !!(activo() && cuenta && cuenta.activa && cuenta.usuario);
   const listo = () => conectado() && S().abierto && S().usuario === cuenta.usuario;
-  const esPerfil = c => typeof c === 'string' && c.startsWith('fijo:perfil:');
+  // lo comprado que guarda el móvil: lo del perfil y, desde la tarea #142, los compañeros del álbum ('fijo:companero:<id>')
+  const esPerfil = c => typeof c === 'string' && (c.startsWith('fijo:perfil:') || c.startsWith('fijo:companero:'));
   const avisa = e => console.warn('Pop: el servidor de perlas no responde', e);
   // un fallo que no se arregla reintentando (lo rechaza el servidor); sin red o con el servidor caído se reintenta
   const definitivo = e => { const n = e && e.estado; return n >= 400 && n < 500 && n !== 401 && n !== 408 && n !== 429; };

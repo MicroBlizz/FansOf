@@ -33,18 +33,19 @@ function ppBarraAyudas() {
   for (const k of lista) {
     const n = ppTengo(k), bt = document.createElement('button');
     bt.type = 'button'; bt.className = 'pp-ayuda' + (PP_AYUDA.modo === k ? ' pp-activa' : '');
-    const gratis = k === 'pista' && duelo && ppPistaGratis(T.nim);   // la de Lola
+    const gratis = duelo && ppAyudaGratis(k, T.nim);   // la lupa de Lola o los compañeros de duelo
     bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasHtml(PP_CFG.ayudas[k].perlas, perla)}</b>`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
     bt.onclick = () => { play('select'); ppPulsaAyuda(k); };
     b.appendChild(bt);
   }
+  ppHabBotones(b, T);   // los compañeros de Pesadilla con botón (js/habilidades-pesadilla.js)
 }
 function ppPulsaAyuda(k) {
   const T = PP_P && PP_P.T; if (!T || T.hecho || ppCortActiva()) return;   // con la cortinilla del jefe puesta, las ayudas esperan
   if (k === 'martillo' || k === 'bomba') {
     if (T.parado) return;
-    PP_AYUDA.modo = PP_AYUDA.modo === k ? null : k;   // se elige la burbuja con el siguiente toque (otra pulsación, cancela)
+    PP_AYUDA.modo = PP_AYUDA.modo === k ? null : k; T.habModo = null;   // se elige la burbuja con el siguiente toque (otra pulsación, cancela)
     if (PP_AYUDA.modo) ppFlota(k === 'martillo' ? tr('Toca la burbuja en la que quieras hacer pop') : tr('Toca dónde quieres la bomba'), 270, 240, '#ff8a2a');
     ppBarraAyudas(); return;
   }
@@ -97,7 +98,7 @@ function ppNimDeshacer(trasPerder) {
   // se podía ganar (js/deshacer-nim.js), y Lola marca gratis la jugada buena: pagar sirve de verdad (Pepins, 18-11-2026)
   const fotos = N.fotos || [], k = trasPerder ? ppNimVuelta(T) : fotos.length - 2, destino = fotos[k];
   if (!destino) { ppFlota(tr('Aún no hay nada que deshacer'), 270, 240, '#ff6ec7'); return; }
-  if (!ppGastaAyuda('deshacer', trasPerder ? () => ppNimFin(T, false, true) : null)) return;
+  if (!ppPagaDeshacer(T, trasPerder)) return;
   fotos.length = k + 1;
   T.up = Uint8Array.from(destino.up); N.errores = destino.errores; N.fin = null; N.turno = 'yo'; N.fila = null; N.esta = []; N.pistaNim = null;
   T.hecho = false;
@@ -106,6 +107,11 @@ function ppNimDeshacer(trasPerder) {
   ppFlota(tr('¡Deshecho!'), 270, 240, '#4fc964'); play('ppCura');
   if (trasPerder) ppNimMarcaGanadora(T);
   ppNimBoton(); ppBarraAyudas();
+}
+// pagar el deshacer: gratis una vez por duelo con Otra vez del equipo de Duelos (en tu turno, no tras perder: js/habilidades-duelo.js)
+function ppPagaDeshacer(T, trasPerder) {
+  if (!trasPerder && ppHabDDeshazGratis(T.nim)) { T.nim.deshazGratis = true; return true; }
+  return ppGastaAyuda('deshacer', trasPerder ? () => ppNimFin(T, false, true) : null);
 }
 // tras perder: la última foto desde la que se gana (o la última, si no hubiera ninguna)
 function ppNimVuelta(T) {
@@ -131,7 +137,9 @@ function ppNimGanadora(filas) {
   return null;
 }
 // Lola en el equipo da UNA lupa gratis en cada duelo (Daniel, 31-10-2026: «los duelos se me hacen muy difíciles»)
-const ppPistaGratis = N => ppEnEquipo('lola') && !N.pistaGratis;
+// (con el flag `companeros` abierto, en vez de Lola, la Lupa del equipo de Duelos: js/habilidades-duelo.js)
+const ppPistaGratis = N => (ppEnEquipo('lola') || ppHabDTiene('dPista')) && !N.pistaGratis;
+const ppAyudaGratis = (k, N) => (k === 'pista' ? ppPistaGratis(N) : k === 'deshacer' && ppHabDDeshazGratis(N));
 function ppPagaPista(N) { if (ppPistaGratis(N)) { N.pistaGratis = true; return true; } return ppGastaAyuda('pista'); }
 function ppNimPista() {
   const T = PP_P && PP_P.T, N = T && T.nim; if (!N || N.turno !== 'yo' || N.fin) return;

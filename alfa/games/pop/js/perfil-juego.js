@@ -12,7 +12,7 @@ const ppPerfilActivo = () => NUCLEO.flag('tienda-gemas', 'Pop: perfil de jugador
 const PP_SRV = PP_PERLAS.crea({
   cuenta: typeof CUENTA !== 'undefined' ? CUENTA : null, save: () => SAVE, guarda: ppGuarda, cola: COLA, activo: ppPerfilActivo,
   enLinea: () => navigator.onLine !== false, pruebas: () => ppCompraDePrueba(),
-  alCambiar: () => { if (typeof ppPerfilRepinta === 'function') ppPerfilRepinta(); },
+  alCambiar: () => { if (typeof ppColeIgualaCompras === 'function') ppColeIgualaCompras(); if (typeof ppPerfilRepinta === 'function') ppPerfilRepinta(); },   // los compañeros comprados, a la colección (tarea #142)
   probador: typeof PROBADOR !== 'undefined' ? PROBADOR : null,
 });
 function ppPerlas(n, motivo = null, clave = null) { return PP_SRV.mueve(n, motivo, clave); }
@@ -34,8 +34,10 @@ hook('probador-reseteo', que => {
 });
 
 const PP_MI = (() => {
-  // los personajes: Lola de serie y los amigos rescatables (gratis si ya lo rescataste)
-  const cat = Object.freeze({ ...PP_PERFIL_CAT, personaje: Object.freeze([{ id: 'lola', serie: true }, ...PP_SLIME_IDS.filter(id => id !== 'lola').map(id => ({ id }))]) });
+  // los personajes: Lola de serie y los amigos rescatables (gratis si ya lo rescataste). Los Animales del álbum (tarea #142) van marcados
+  // `coleccion`: no se venden en el perfil; se ponen solo si los tienes (están en SAVE.vistos) y así el VS sabe pintar el del rival
+  const nuevos = typeof PP_COMP === 'undefined' ? [] : Object.keys(PP_COMP.NUEVOS).map(id => ({ id, coleccion: true }));
+  const cat = Object.freeze({ ...PP_PERFIL_CAT, personaje: Object.freeze([{ id: 'lola', serie: true }, ...PP_SLIME_IDS.filter(id => id !== 'lola').map(id => ({ id })), ...nuevos]) });
   const yo = () => ({ comprados: PP_SRV.comprados(), rescatados: SAVE.vistos || {}, perlas: PP_SRV.paraPerfil() });
   const perfil = () => PP_PERFIL.limpia(SAVE.perfil, cat, yo());
   const dato = (tipo, id) => (cat[tipo] || []).find(x => x.id === id) || null;

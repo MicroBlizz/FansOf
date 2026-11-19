@@ -1,8 +1,8 @@
 {
- "build": 1292,
- "hash": "3dc96c5",
- "fecha": "2026-11-19T12:34:32Z",
- "mensaje": "Pop: muestra del botón de silicona con caritas variadas en el Jardín y bandeja con relieve de molde (tarea #110)",
+ "build": 1293,
+ "hash": "46dadea",
+ "fecha": "2026-11-19T12:47:28Z",
+ "mensaje": "Pop: la colección se lee una vez por cambio y p.cofresAbiertos (revisión de código, tarea #142)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.4.2",

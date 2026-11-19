@@ -4,7 +4,8 @@
 // revienta la última. Empieza quien tiene la posición ganadora (siempre tú, o el rival primero si la de salida es perdedora),
 // así que con juego perfecto siempre se puede ganar. El rival juega perfecto (ppNimJugada de duelo.js) salvo cuando se
 // despista (`fallo`). Estrellas: 3 sin errores, 2 con uno, 1 con más (un error = dejarle al rival una posición ganadora).
-// Perder cuesta un corazón, como quedarse sin toques. Los amigos no actúan en los duelos.
+// Perder cuesta un corazón, como quedarse sin toques. Los amigos de siempre no actúan en los duelos; con el flag `companeros`, el
+// equipo de Duelos sí (js/habilidades-duelo.js).
 'use strict';
 // ¿gana quien mueve ahora? (Nim «pierde quien coge la última»): si todas las filas tienen 0 o 1, gana con un número par de filas;
 // si no, gana si el XOR de las filas no es 0
@@ -16,13 +17,15 @@ function ppNimGana(filas) {
 }
 function ppNimEmpieza(T) {
   const d = T.d;
-  T.nim = { rival: d.nim.rival, fallo: d.nim.fallo, turno: 'yo', fila: null, esta: [], errores: 0, fin: null, fotos: [], pistaNim: null };
-  if (!ppNimGana(ppFilasDuelo(T))) { T.nim.turno = 'rival'; setTimeout(() => ppNimRival(T), 1300); }
+  T.nim = { rival: d.nim.rival, fallo: ppHabDFallo(d.nim.fallo), turno: 'yo', fila: null, esta: [], errores: 0, fin: null, fotos: [], pistaNim: null };
+  if (ppHabDPrevia()) T.nim.turno = 'espera';   // Pellizco y Saque del equipo de Duelos, al empezar el nivel (ppEmpiezaNivel, js/habilidades-duelo.js)
+  else if (!ppNimGana(ppFilasDuelo(T))) { T.nim.turno = 'rival'; setTimeout(() => ppNimRival(T), 1300); }
   else ppNimFoto(T);   // la foto de cada turno tuyo, para DESHACER (js/potenciadores.js)
   ppNimBoton();
 }
 function ppNimToque(i) {
   const T = PP_P.T, N = T.nim;
+  if (ppHabDQuitaToque(N, i)) return;   // el Pellizco antes del primer turno (js/habilidades-duelo.js)
   if (N.fin || N.turno !== 'yo' || i < 0 || !T.mask[i] || !T.up[i]) return;
   const fila = Math.floor(i / T.n);
   if (N.fila !== null && fila !== N.fila) { ppFlota(tr('¡Solo en la misma fila!'), 270, 240, '#ff6ec7'); play('ppDano'); return; }

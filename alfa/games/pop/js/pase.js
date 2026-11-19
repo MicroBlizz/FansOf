@@ -31,6 +31,12 @@ function ppPremioPase(k, premium) {
   if (k % 3 === 0) return { ayudas: { [['bomba', 'martillo', 'toques3', 'deshacer', 'pista'][(k / 3) % 5]]: 2 } };
   return { perlas: 3 + Math.floor(k / 10) };
 }
+// el premio de un escalón tal como se ve y se da: con el flag `companeros`, el de siempre más su compañero (la Suricata en el gratis;
+// la Luciérnaga y el Caballito de mar en el premium; js/companeros-datos.js, VIAS). Con el flag cerrado, el de siempre
+function ppPremioPaseCon(k, premium) {
+  const p = ppPremioPase(k, premium), id = ppCompanerosActivo() ? PP_COLE.delPase(k, premium) : null;
+  return id ? { ...p, companero: id } : p;
+}
 function ppPaseHayPremio() {
   const P = ppPaseAlDia(), e = ppEscalon();
   for (let k = 1; k <= e; k++) if (!P.gratis[k] || (P.premium && !P.prem[k])) return true;
@@ -56,10 +62,10 @@ function ppVentanaPase() {
       const caja = document.createElement('button'); caja.type = 'button';
       const cogido = premium ? P.prem[k] : P.gratis[k], puede = k <= e && !cogido && (!premium || P.premium);
       caja.className = 'pp-pase-premio' + (premium ? ' pp-premium' : '') + (cogido ? ' pp-cogido' : '') + (puede ? ' pp-listo' : '');
-      caja.innerHTML = ppPremioCandyHtml(ppPremioPase(k, premium), 24) + (premium && !P.premium ? '<s></s>' : '');
+      caja.innerHTML = ppPremioCandyHtml(ppPremioPaseCon(k, premium), 24) + (premium && !P.premium ? '<s></s>' : '');
       caja.onclick = () => {
         if (!puede) return;
-        play('ppPremio'); ppDaPremio(ppPremioPase(k, premium), { motivo: 'pase', clave: `pase:${P.t}:${premium ? 'p' : 'g'}:${k}` }); (premium ? P.prem : P.gratis)[k] = true; ppGuarda();
+        play('ppPremio'); ppDaPremio(ppPremioPaseCon(k, premium), { motivo: 'pase', clave: `pase:${P.t}:${premium ? 'p' : 'g'}:${k}` }); (premium ? P.prem : P.gratis)[k] = true; ppGuarda();
         const y = lista.scrollTop; ppVentanaPase(); const l = $pp('.pp-pase'); if (l) l.scrollTop = y; ppPintaLateral();
       };
       fila.appendChild(caja);

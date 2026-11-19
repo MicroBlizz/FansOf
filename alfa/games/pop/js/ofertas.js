@@ -16,6 +16,7 @@ function ppDaPremio(p, origen = null) {
   for (const k in p.ayudas || {}) ppDaAyuda(k, p.ayudas[k]);
   if (p.infinitas) ppDaInfinitas(p.infinitas);
   if (p.bandeja) { SAVE.bandejas = SAVE.bandejas || {}; SAVE.bandejas[p.bandeja] = true; }
+  if (p.companero) ppViaGana(p.companero);   // solo llega con el flag `companeros` (pase y Feria: js/companeros-vias.js)
   ppGuarda();
 }
 // el premio en HTML (iconos de Yoshi y cantidades)
@@ -26,6 +27,7 @@ function ppPremioCandyHtml(p, px = 30) {
   for (const k in p.ayudas || {}) h.push(`<span class="pp-precio">${ppIcono('i-' + k, px, '#ffd1ec')}x${p.ayudas[k]}</span>`);
   if (p.infinitas) h.push(`<span class="pp-precio">${ppIcono('i-infinito', px, '#ff4a6a')}${p.infinitas >= 60 ? tr('{n} h', { n: p.infinitas / 60 }) : tr('{n} min', { n: p.infinitas })}</span>`);
   if (p.bandeja) h.push(`<span class="pp-precio">${ppBandejaMuestra(p.bandeja, px)}${tr(ppBandejaDe(p.bandeja).nombre)}</span>`);
+  if (p.companero) h.push(ppViaPremioHtml(p.companero, px));
   return `<span class="pp-premios">${h.join(' ')}</span>`;
 }
 /* ---------- compras con euros ---------- */

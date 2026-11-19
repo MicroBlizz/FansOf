@@ -29,13 +29,18 @@ const ppPesAbierta = m => (PP_P.dif[m] || 0) >= PP_MUNDOS[m].niveles;
 const ppEstDe = dif => (dif === 2 ? (PP_P.estP = PP_P.estP || {}) : dif ? PP_P.estD : PP_P.est);   // el récord de estrellas de ese modo
 // el mundo en el que está el camino ahora
 const ppMundoActual = () => ppMundoDe(Math.min(PP_P.nivel, PP_TOTAL_NIVELES - 1))[0];
-// lo del equipo que cuenta al crear el tablero
-function ppFx() {
+// el equipo que ayuda en el nivel `d`: con el flag `companeros` cerrado, el del camino en todos los niveles (como siempre; cada
+// habilidad mira luego si actúa en pesadilla o en duelos); abierto, el de su modo (js/coleccion-juego.js, tarea #142)
+const ppEquipoNivel = d => (ppCompanerosActivo() ? ppEquipoDe(ppModoDeNivel(d)) : PP_P ? PP_P.equipo : []);
+// lo del equipo que cuenta al crear el tablero del nivel `d` (`equipo`: los del camino, que no salen atrapados)
+function ppFx(d) {
   const fx = { pista: 0, equipo: PP_P ? PP_P.equipo : [] };
-  for (const id of fx.equipo) if (PP_SLIMES[id].fx.pista) fx.pista += PP_SLIMES[id].fx.pista;
+  for (const id of ppEquipoNivel(d)) if (ppFxDe(id).pista) fx.pista += ppFxDe(id).pista;
+  if (ppCompanerosActivo()) fx.atrapables = PP_COLE.atrapables(ppCole());   // atrapados: los de rescate que aún no tienes (tarea #142)
   return fx;
 }
-const ppEnEquipo = id => !!PP_P && PP_P.equipo.includes(id);
+// ¿está en el equipo que ayuda en el nivel que se juega ahora?
+const ppEnEquipo = id => !!PP_P && ppEquipoNivel(PP_P.T && PP_P.T.d).includes(id);
 // entrar en un nivel (`g` global; sin nada, el siguiente del camino normal). Sin corazones no se entra.
 function ppEntra(g = PP_P.nivel, dif = false) {
   if (g >= PP_TOTAL_NIVELES) return;
@@ -45,14 +50,11 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   ppCortCancela();
   PP_P.tipo = d.jefe ? 'jefe' : 'sala';
   // en PESADILLA los amigos descansan (Daniel, 31-10-2026: «con los ayudantes es muy fácil»): ni pista de Lola, ni saltos, ni toques extra
-  const T = PP_P.T = ppNuevoTablero(d, d.lo ? { pista: 0, equipo: PP_P.equipo } : ppFx());
-  T.titulo = (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif === 2 ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : '');
+  const T = PP_P.T = ppNuevoTablero(d, d.lo ? { pista: 0, equipo: PP_P.equipo } : ppFx(d));
+  T.titulo = ppTituloNivel(d, g, dif);
   if (d.nim) ppNimEmpieza(T);   // nivel difícil o jefe: duelo por turnos contra el rival del mundo (js/nimnivel.js)
-  else {
-    // la racha de victorias y Nubecita dan toques de margen al empezar (js/pase.js, PP_SLIMES)
-    const extra = (SAVE.racha || 0) + (ppEnEquipo('nubecita') ? PP_SLIMES.nubecita.fx.extra : 0);
-    if (extra && !d.tutorial && !d.lo) { T.limite += extra; T.extra = extra; }
-  }
+  else ppMargenAlEmpezar(T, d);
+  ppHabEntraNivel(T, d);   // lo que hacen al empezar los compañeros de Niveles y de Pesadilla (flag `companeros`, js/habilidades-*.js)
   PP_AYUDA.modo = null;
   const manita = !dif && d.mundo === 0 && d.l <= 2;   // en los dos primeros niveles la manita señala qué tocar
   if (manita) { T.mano = true; T.pista = [...T.sol][0]; }
@@ -60,9 +62,15 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   ppIrA('sala');
   ppFxEntraSala(T);
   ppBarraAyudas();
-  if (d.lo && PP_P.equipo.length) ppFlota(tr('En Pesadilla tus amigos descansan'), 270, 240, '#ff8a8a');
+  if (d.lo && ppHabDescansan()) ppFlota(tr('En Pesadilla tus amigos descansan'), 270, 240, '#ff8a8a');
   if (T.extra) ppFlota(tr('+{n} toques de racha y amigos', { n: T.extra }), 270, 240, '#ff8a2a');
   if (!PP_CORTINILLA.salePara(d)) ppEmpiezaNivel(T, d, dif, manita);
+}
+const ppTituloNivel = (d, g, dif) => (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif === 2 ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : '');
+// la racha de victorias y Nubecita dan toques de margen al empezar un nivel de pop-it (js/pase.js, PP_SLIMES); en pesadilla, no
+function ppMargenAlEmpezar(T, d) {
+  const extra = (SAVE.racha || 0) + (ppEnEquipo('nubecita') ? ppFxDe('nubecita').extra : 0);
+  if (extra && !d.tutorial && !d.lo) { T.limite += extra; T.extra = extra; }
 }
 // un nivel con duelo abre con su cortinilla (ADR 098): el nivel espera a que se pulse su botón ¡A JUGAR! (ADR 100)
 function ppCortinillaSi(T, d, dif, manita) {
@@ -74,47 +82,67 @@ function ppEmpiezaNivel(T, d, dif, manita) {
   ppBarraAyudas();   // las ayudas esperaban a que se quitara la cortinilla
   ppAntesDeEmpezar(T);   // tras fallar este nivel, se ofrece +3 toques (js/potenciadores.js)
   if (T.pista !== null && !manita) ppFxHabilidad('lola');
-  // lo que explica Lola: el principio de cada mundo, los primeros niveles, el primer difícil y el primer jefe
+  ppTutorialesCamino(d, dif);
+  ppTutorialesNivel(d);
+  if (T.nim && T.nim.turno === 'espera') ppHabNimPrevia(T);   // Pellizco y Saque de los compañeros de duelo (js/habilidades-duelo.js)
+  if (!PP_LOLA.actual && PP_LOLA.cola.length) ppLolaSiguiente();   // lo que esperó a la cortinilla
+}
+// lo que explica Lola: el principio de cada mundo, los primeros niveles, el primer difícil y la primera pesadilla
+function ppTutorialesCamino(d, dif) {
   if (!dif && d.mundo === 0 && d.l <= 3) ppTutorial('w1n' + d.l);
   if (!dif && d.mundo > 0 && d.l === 1) ppTutorial('w' + (d.mundo + 1) + 'n1');
   if (dif === 2) ppTutorial('modoPesadilla'); else if (dif) ppTutorial('modoDificil');
-  if (dif === 2 && PP_P.equipo.length) ppTutorial('despedidos');
+  if (dif === 2 && ppHabDescansan()) ppTutorial('despedidos');
+}
+// y según el nivel: el primer duelo, el primer jefe, el equipo y las monedas
+function ppTutorialesNivel(d) {
   if (d.nim) ppTutorial('nimNivel'); if (d.nim) ppTutorial('trucoNim');
   else if (d.dificil) ppTutorial('dificil');
   if (d.jefe) ppTutorial('jefe');
   if (PP_P.equipo.length) ppTutorial('amigo');
   if (SAVE.monedas > 0) ppTutorial('monedas');
-  if (!PP_LOLA.actual && PP_LOLA.cola.length) ppLolaSiguiente();   // lo que esperó a la cortinilla
 }
 // un toque del jugador en la burbuja i del nivel abierto
 function ppToque(i) {
   const T = PP_P.T; if (!T || T.hecho || T.parado) return;
   if (T.nim) { ppNimToque(i); return; }
+  if (ppHabAntesDeToque(T, i)) return;   // Volteo de Pesadilla y la foto para Marcha atrás (js/habilidades-pesadilla.js)
   if (PP_AYUDA.modo) { ppAplicaAyuda(i); return; }   // martillo o bomba
   const r = ppToca(T, i); if (!r) return;
   ppMarcaDentro(true);   // desde el primer toque, salir a medias cuesta un corazón
   ppLolaToque();
   ppFxToque(T, i, r);
-  if (T.mano) { const s = [...T.sol]; T.pista = s.length ? s[0] : null; }   // la manita pasa a la siguiente
+  ppManitaSigue(T);
   if (r.libre) ppFlota(tr('¡Gratis!'), 270, 240, '#3a8ee6');
   const bueno = r.golpes >= 3;   // un toque que revienta (o resquebraja) 3 o más
   if (T.combo >= 2 && bueno) { ppFxCombo(T.combo); if (!SAVE.tuto.combo) ppTutorial('combo'); }
   ppTrasToque(T, i, r);
   if (T.hecho) return;
-  // los combos
-  if (T.combo > 0 && bueno && !T.lo) {
-    if (ppEnEquipo('becario') && T.combo % PP_SLIMES.becario.fx.combo === 0) { T.gratis += PP_SLIMES.becario.fx.gratis; ppFxHabilidad('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
-    if (ppEnEquipo('lola') && T.combo % PP_SLIMES.lola.fx.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); play('ppPista'); } }
-  }
-  // el premio gordo de la Caja de botín (antes de mirar si te has quedado sin toques: un +1 te puede salvar)
-  if (ppEnEquipo('cofre') && r.pops.length >= 4 && !T.lo) {
-    ppFxHabilidad('cofre'); play('ppPremio');
-    if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO GORDO!'), 270, 275, '#ff8a2a'); }
-    else { T.limite++; ppFlota(tr('+1 toque'), 270, 275, '#ff8a2a'); }
-  }
-  // sin toques: ya no se puede tocar, pero se espera a los amigos que estén saltando (pueden acabarlo ellos); luego se ofrece
-  // seguir (anuncio o perlas, js/tienda.js) o rendirse y perder el corazón
-  if (T.toques >= T.limite && T.gratis === 0) { T.parado = true; setTimeout(() => { if (PP_P && PP_P.T === T && !T.hecho) ppSinToquesOSeguir(T); }, 800); }
+  if (T.combo > 0 && bueno && !T.lo) ppCombosEquipo(T);
+  ppPremioGordo(T, r);   // antes de mirar si te has quedado sin toques: un +1 te puede salvar
+  ppHabPrimerToque(T);   // Buen comienzo (js/habilidades-niveles.js)
+  ppMiraSinToques(T);
+}
+// sin toques: ya no se puede tocar, pero se espera a los amigos que estén saltando (pueden acabarlo ellos); luego se ofrece
+// seguir (anuncio o perlas, js/tienda.js) o rendirse y perder el corazón. Antes, Al rescate da sus toques (una vez por nivel)
+function ppMiraSinToques(T) {
+  if (T.toques < T.limite || T.gratis !== 0 || ppHabRescata(T)) return;
+  T.parado = true; setTimeout(() => { if (PP_P && PP_P.T === T && !T.hecho) ppSinToquesOSeguir(T); }, 800);
+}
+// la manita de los primeros niveles pasa a la siguiente de la solución
+function ppManitaSigue(T) { if (T.mano) { const s = [...T.sol]; T.pista = s.length ? s[0] : null; } }
+// los combos: Horas extra (el siguiente toque gratis) y el Chivatazo de Lola (una de la solución)
+function ppCombosEquipo(T) {
+  const becario = ppFxDe('becario'), lola = ppFxDe('lola');
+  if (ppEnEquipo('becario') && T.combo % becario.combo === 0) { T.gratis += becario.gratis; ppFxHabilidad('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
+  if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); play('ppPista'); } }
+}
+// el premio gordo de la Caja de botín: un toque de 4 da +1 toque; uno de 5, +1 corazón (si falta alguno)
+function ppPremioGordo(T, r) {
+  if (!ppEnEquipo('cofre') || r.pops.length < 4 || T.lo) return;
+  ppFxHabilidad('cofre'); play('ppPremio');
+  if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO GORDO!'), 270, 275, '#ff8a2a'); }
+  else { T.limite++; ppFlota(tr('+1 toque'), 270, 275, '#ff8a2a'); }
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel
 function ppTrasToque(T, i, r) {
@@ -126,15 +154,15 @@ function ppTrasToque(T, i, r) {
   if (r.hecho) { PP_P.salas++; ppMarcaDentro(false); ppFxConfeti(T); setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 520); return; }
   // los que saltan se cargan con cada burbuja reventada (también las que revientan otros amigos: hay reacciones en cadena)
   if (T.lo) return;   // en pesadilla los amigos no saltan
-  PP_P.equipo.forEach((id, k) => {
-    const fx = PP_SLIMES[id].fx; if (!fx.salta) return;
+  ppEquipoNivel(T.d).forEach((id, k) => {
+    const fx = ppFxDe(id); if (!fx.salta) return;
     PP_P.carga[id] = (PP_P.carga[id] || 0) + r.pops.length;
     if (PP_P.carga[id] >= fx.salta) { PP_P.carga[id] -= fx.salta; ppSaltaSlime(id, k, fx.golpes); }
   });
 }
 // un amigo salta desde su hueco del equipo y revienta gratis burbujas de la solución
 function ppSaltaSlime(id, k, golpes) {
-  const T = PP_P.T, pref = PP_SLIMES[id].fx.prefiere;
+  const T = PP_P.T, pref = ppFxDe(id).prefiere;
   // Copito y Medusita van antes a las de hielo o a las conchas que sigan arriba; los demás, a burbujas de la solución
   const suyas = pref && T.esp ? [...T.up.keys()].filter(i => T.up[i] && T.esp[i] === pref) : [];
   const objetivos = (suyas.length ? suyas : [...T.sol]).sort(() => Math.random() - 0.5).slice(0, golpes);
@@ -148,7 +176,7 @@ function ppSaltaSlime(id, k, golpes) {
       let j = i; if (!T.up[j] || (!suyas.includes(j) && !T.sol.has(j))) { const s = [...T.sol]; if (!s.length) return; j = s[0]; }   // si ya no hace falta esa, otra de la solución
       const r = ppToca(T, j, true); if (!r) return;
       ppFxToque(T, j, r); ppFxImpacto(T, j, id === 'ceo');
-      if (T.mano) { const s = [...T.sol]; T.pista = s.length ? s[0] : null; }
+      ppManitaSigue(T);
       ppTrasToque(T, j, r);
     }, dur * 1000);
   });
@@ -168,16 +196,20 @@ function ppSalaHecha() {
   const est = ppEstDe(d.dif), antes = est[g] || 0;
   est[g] = Math.max(antes, T.estrellas); PP_P.estrellas += Math.max(0, T.estrellas - antes);
   T.premio = ppPremioNivel(ppPrefijo(d.dif) + g, T.estrellas, d.jefe, d.dif === 2 ? 3 : d.dif ? 2 : 1);   // difícil, el doble; pesadilla, el triple
+  ppHabAlGanar(T);   // Limpieza y Hucha: monedas de más (js/habilidades-niveles.js)
   ppBorraFallos(d); ppBarraAyudas(); setTimeout(ppSubeMarcas, 1500);   // estrellas al ranking mundial (js/ranking.js)
   const presos = Object.values(T.slimes);
   const { nuevo, saltado } = ppAvanzaCamino(d, g);
   ppGuardaCamino();
   ppPrimerosAlGanar();   // con el flag cerrado, la partida nueva pasa a vieja (js/primeros-pasos-juego.js)
-  T.feria = ppFeriaGana(T.estrellas, d.jefe);   // tickets de la Feria del finde: toda victoria, nueva o repetida (js/feria-pantalla.js)
+  T.feria = ppFeriaGana(T.estrellas, d.jefe, ppHabTickets(T));   // tickets de la Feria del finde: toda victoria, nueva o repetida (js/feria-pantalla.js); el Feriante, uno más
   if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
+  ppViasAlGanar(T, nuevo, presos);   // flag `companeros`: rescate, cofre, jefe y duelos dan compañeros (js/companeros-vias.js)
   if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(d.dif); return; }
   if (nuevo && d.jefe) { play('ppVictoria'); ppVentanaMundoNuevo(false, saltado); return; }
-  if (presos.length) { play('ppRescate'); ppVentanaRescate(presos); } else ppVentanaSalaHecha();
+  if (!presos.length) { ppVentanaSalaHecha(); return; }
+  play('ppRescate');
+  if (T.rescates) ppVentanaRescateCole(T.rescates); else ppVentanaRescate(presos);   // con el flag, ya están en la colección
 }
 // un amigo se une al equipo (si está lleno, `fuera` es el que se va)
 function ppRecluta(id, fuera) {
@@ -192,7 +224,7 @@ function ppRecluta(id, fuera) {
 function ppSinToquesOSeguir(T) { if (ppPrimerosGratis()) { T.hecho = true; ppSinToques(); } else ppOfreceSeguir(T); }
 function ppSinToques() {
   if (ppPrimerosGratis()) { ppMarcaDentro(false); play('ppDano'); ppVentanaSinToquesGratis(); return; }   // niveles 1 a 3 de una partida nueva (tarea #140)
-  ppMarcaDentro(false); ppPierdeVida(); ppApuntaFallo(PP_P.T.d); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
+  ppMarcaDentro(false); ppPierdeVida(ppHabSalvaRacha()); ppApuntaFallo(PP_P.T.d); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();   // ppHabSalvaRacha: Racha a salvo (js/habilidades-niveles.js)
   if (SAVE.vidas <= 0) { setTimeout(() => ppSinCorazones(), 400); return; }
   ppVentanaSinToques();
 }

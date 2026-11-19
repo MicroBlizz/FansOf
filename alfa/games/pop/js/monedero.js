@@ -20,8 +20,9 @@ const ppReloj = ms => { const s = Math.ceil(ms / 1000), h = Math.floor(s / 3600)
 // corazones infinitos: hasta cuándo (SAVE.infinitas, ms); se compran con perlas o vienen en ofertas y en el pase
 const ppInfinitas = () => (SAVE.infinitas || 0) > Date.now();
 function ppDaInfinitas(min) { SAVE.infinitas = Math.max(Date.now(), SAVE.infinitas || 0) + min * 60000; ppGuarda(); }
-function ppPierdeVida() {
-  SAVE.racha = 0;   // perder un corazón corta la racha (js/pase.js)
+// `guardaRacha`: la racha sigue (Racha a salvo de los compañeros, js/habilidades-niveles.js)
+function ppPierdeVida(guardaRacha = false) {
+  if (!guardaRacha) SAVE.racha = 0;   // perder un corazón corta la racha (js/pase.js)
   if (ppInfinitas()) { ppGuarda(); return; }
   const lleno = ppVidas() >= PP_CFG.vida;
   SAVE.vidas = Math.max(0, SAVE.vidas - 1);
@@ -48,9 +49,10 @@ function ppPremioNivel(clave, estrellas, jefe, x = 1) {
   if (estrellas > antes) { p.monedas += (estrellas - antes) * PP_CFG.monedas.estrella * x; SAVE.mejor[clave] = estrellas; }
   else if (nuevo) SAVE.mejor[clave] = estrellas;
   const total = Object.values(SAVE.mejor).reduce((a, b) => a + b, 0);
-  while (Math.floor(total / PP_CFG.cofreCada) > SAVE.cofres) { SAVE.cofres++; p.cofre += PP_CFG.cofre[0] + Math.floor(Math.random() * (PP_CFG.cofre[1] - PP_CFG.cofre[0] + 1)); }
+  // `p.cofresAbiertos`: cuántos cofres de estrellas se han abierto ahora (con el flag `companeros`, cada uno da un compañero: js/companeros-vias.js)
+  while (Math.floor(total / PP_CFG.cofreCada) > SAVE.cofres) { SAVE.cofres++; p.cofresAbiertos = (p.cofresAbiertos || 0) + 1; p.cofre += PP_CFG.cofre[0] + Math.floor(Math.random() * (PP_CFG.cofre[1] - PP_CFG.cofre[0] + 1)); }
   if (nuevo && jefe) { p.cofre += PP_CFG.cofreJefe * x; p.perlas = PP_CFG.perlas.jefe; ppPerlas(p.perlas, 'jefe', 'jefe:' + clave); }
-  if (p.monedas && typeof ppEnEquipo === 'function' && ppEnEquipo('maneki')) p.monedas = Math.round(p.monedas * (1 + PP_SLIMES.maneki.fx.monedas));   // el Gatito de la suerte
+  if (p.monedas && typeof ppEnEquipo === 'function' && ppEnEquipo('maneki')) p.monedas = Math.round(p.monedas * (1 + ppFxDe('maneki').monedas));   // el Gatito de la suerte
   SAVE.monedas += p.monedas + p.cofre; ppGuarda();
   return p;
 }

@@ -91,21 +91,21 @@ function ppPintaMarcador(c, t) {
   const n = P.T ? P.T.n : 3, g = ppGeom(n), y0 = g.y + g.lado + 60;
   ppPanelDelMundo(c, 20, y0 - 22, 500, 178, panel);
   ppTexto(c, tr('Tu equipo'), 270, y0 - 2, 24, tinta.rotulo, 'center', tinta.borde);
-  const esc = ppEscalaEquipo();
-  for (let k = 0; k < ppHuecos(); k++) {
-    const [x, y] = ppHuecoEquipo(k, n), id = P.equipo[k], br = id ? PP_FX.brilla[id] || 0 : 0;
+  const esc = ppEscalaEquipo(), eq = ppEquipoNivel(P.T && P.T.d);   // el equipo del modo del nivel (flag `companeros`; cerrado, el del camino)
+  for (let k = 0; k < ppHuecosNivel(); k++) {
+    const [x, y] = ppHuecoEquipo(k, n), id = eq[k], br = id ? PP_FX.brilla[id] || 0 : 0;
     c.save(); c.translate(x, y); c.scale(esc * (1 + br * 0.25), esc * (1 + br * 0.25));
     c.beginPath(); c.roundRect(-44, -44, 88, 88, 18); c.fillStyle = br ? `rgba(255,214,74,${0.3 + br * 0.5})` : id ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = ppBordeHueco(!!id, panel); c.stroke();
-    const fuera = id && P.T && P.T.lo;   // en pesadilla los amigos no ayudan: en gris y con el sello de DESPEDIDO encima
+    const fuera = id && P.T && P.T.lo && ppHabDescansan();   // en pesadilla los amigos no ayudan: en gris y con el sello de DESPEDIDO encima
     if (fuera) { c.globalAlpha = 0.5; c.filter = 'grayscale(1)'; }
     if (id && !PP_FX.vuelos.some(v => v.id === id)) ppSlimeRepuestoOImagen(c, id, 0, -4 - br * 14, 30, t, 1);
     c.globalAlpha = 1; c.filter = 'none';
     if (fuera) ppSelloDespedido(c, 0, 0, 92);
     c.restore();
     if (!id) continue;
-    const nom = tr(PP_SLIMES[id].pasiva); c.font = `700 ${Math.round(19 * PP_LETRA)}px ${PP_FUENTE}`; const w = c.measureText(nom).width;
+    const nom = tr(ppSlimeDe(id).pasiva); c.font = `700 ${Math.round(19 * PP_LETRA)}px ${PP_FUENTE}`; const w = c.measureText(nom).width;
     const cabe = 100 * esc; ppTexto(c, nom, x, y + 62, w > cabe ? Math.floor(19 * cabe / w) : 19, '#fff');   // los nombres largos encogen para no pisar al vecino
-    const fx = PP_SLIMES[id].fx, T = P.T;
+    const fx = ppFxDe(id), T = P.T;
     const parte = P.T && P.T.lo ? null : fx.salta ? (P.carga[id] || 0) / fx.salta : fx.combo && T ? (T.combo % fx.combo) / fx.combo : null;
     if (parte !== null) {
       c.fillStyle = '#1a1030'; c.beginPath(); c.roundRect(x - 36, y + 32, 72, 10, 5); c.fill();
@@ -125,5 +125,5 @@ function ppSelloDespedido(c, x, y, ancho) {
 }
 // el centro del hueco k del equipo (para pintarlo y para que el slime salga volando desde ahí)
 // con huecos comprados (5 o 6) se juntan y encogen un poco para caber
-const ppEscalaEquipo = () => Math.min(1, 470 / ppHuecos() / 110);
-function ppHuecoEquipo(k, n) { const g = ppGeom(n), y0 = g.y + g.lado + 60, nh = ppHuecos(); return [270 + (k - (nh - 1) / 2) * 110 * ppEscalaEquipo(), y0 + 62]; }
+const ppEscalaEquipo = () => Math.min(1, 470 / ppHuecosNivel() / 110);
+function ppHuecoEquipo(k, n) { const g = ppGeom(n), y0 = g.y + g.lado + 60, nh = ppHuecosNivel(); return [270 + (k - (nh - 1) / 2) * 110 * ppEscalaEquipo(), y0 + 62]; }

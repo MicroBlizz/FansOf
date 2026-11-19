@@ -24,7 +24,8 @@ function ppDueloEmpieza() {
   if (!PP_DUELO || PP_PANT.actual !== 'duelo') return;
   ppTutorial('duelo'); ppTutorial('trucoNim');
   if (!PP_LOLA.actual && PP_LOLA.cola.length) ppLolaSiguiente();
-  if (PP_DUELO.turno === 'ceo') setTimeout(ppTurnoCeo, 1100);
+  if (ppHabDPrevia()) ppHabCeoPrevia(PP_DUELO);   // Pellizco y Saque del equipo de Duelos (js/habilidades-duelo.js)
+  else if (PP_DUELO.turno === 'ceo') setTimeout(ppTurnoCeo, 1100);
 }
 // cuántas burbujas levantadas quedan en cada fila
 const ppFilasDuelo = T => { const f = new Array(T.n).fill(0); for (let i = 0; i < T.up.length; i++) if (T.mask[i] && T.up[i]) f[Math.floor(i / T.n)]++; return f; };
@@ -38,7 +39,8 @@ function ppDueloRevienta(i, quien = 'ceo') {
 }
 // toque de la jugadora
 function ppDueloToque(i) {
-  const D = PP_DUELO; if (!D || D.fin || D.turno !== 'yo' || i < 0 || !D.T.mask[i] || !D.T.up[i]) return;
+  const D = PP_DUELO; if (ppHabDQuitaToque(D, i)) return;   // el Pellizco antes del primer turno (js/habilidades-duelo.js)
+  if (!D || D.fin || D.turno !== 'yo' || i < 0 || !D.T.mask[i] || !D.T.up[i]) return;
   const fila = Math.floor(i / D.T.n);
   if (D.fila !== null && fila !== D.fila) { ppFlota(tr('¡Solo en la misma fila!'), 270, 240, '#ff6ec7'); play('ppDano'); return; }
   D.fila = fila; D.esta.push(i); ppLolaToque();
@@ -66,7 +68,7 @@ function ppTurnoCeo() {
   const D = PP_DUELO; if (!D || D.fin || PP_PANT.actual !== 'duelo') return;
   if (ppCortActiva()) { setTimeout(ppTurnoCeo, 120); return; }
   if (PP_PANT.pausa) { setTimeout(ppTurnoCeo, 500); return; }
-  const T = D.T, [fila, cuantas] = ppNimJugada(ppFilasDuelo(T), SAVE.duelo.fallo);
+  const T = D.T, [fila, cuantas] = ppNimJugada(ppFilasDuelo(T), ppHabDFallo(SAVE.duelo.fallo));   // con el Despiste del equipo, falla más
   const sitios = []; for (let x = 0; x < T.n; x++) { const i = fila * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
   sitios.sort(() => Math.random() - 0.5);
   D.fila = fila; ppFxHabilidad('ceo');
@@ -95,8 +97,9 @@ function ppDueloFin(res) {
     }, 900);
     return;
   }
-  if (res === 'gana') { S.gan++; S.fallo = Math.max(poco, S.fallo - PP_CFG.duelo.paso); if (S.hoy < PP_CFG.duelo.premiosDia) { S.hoy++; monedas = PP_CFG.duelo.premio; SAVE.monedas += monedas; } }
+  if (res === 'gana') { S.gan++; S.fallo = Math.max(poco, S.fallo - PP_CFG.duelo.paso); if (S.hoy < PP_CFG.duelo.premiosDia) { S.hoy++; monedas = PP_CFG.duelo.premio; SAVE.monedas += monedas; } monedas += ppHabDMonedas(); }   // la Hucha del equipo de Duelos
   else { S.per++; S.fallo = Math.min(mucho, S.fallo + PP_CFG.duelo.paso / 2); }
+  if (res === 'gana') ppViaDuelo(false);   // flag `companeros`: cuenta para Patito y Zorrito (el CEO del menú no cuenta como jefe)
   ppGuarda(); ppSubeMarcas();
   play(res === 'gana' ? 'ppVictoria' : 'ppDerrota');
   setTimeout(() => {

@@ -80,7 +80,8 @@ function ppArranque() {
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };
   $pp('#pp-ranking').onclick = () => { ppCargaSonidos(); play('select'); if (ppPrimerosToca('ranking')) ppVentanaRanking(); };   // js/ranking.js
   $pp('#pp-perfil').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('perfil')) return; PP_SRV.arranca(); ppVentanaPerfil(); };   // js/pantalla-perfil.js
-  setTimeout(() => { ppPerfilBoton(); if (PP_PANT.actual === 'titulo') ppPrimerosPortada(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: el botón PERFIL y el monedero de perlas del servidor (tarea #41)
+  $pp('#pp-companeros').onclick = () => { ppCargaSonidos(); play('select'); ppVentanaCompaneros('album'); };   // js/pantalla-album.js (tarea #142)
+  setTimeout(() => { ppPerfilBoton(); ppCompanerosBoton(); if (PP_PANT.actual === 'titulo') ppPrimerosPortada(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: los botones PERFIL y COMPAÑEROS y el monedero de perlas del servidor (tareas #41 y #142)
   setTimeout(ppSubeMarcas, 3000);   // lo que aún no esté en el ranking mundial
   if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
   ppCorazonEnlaceArranca();   // un enlace de corazón de un amigo (?corazon=, js/pantalla-corazones-enlace.js)

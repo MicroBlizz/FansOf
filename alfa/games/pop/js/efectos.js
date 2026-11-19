@@ -31,7 +31,7 @@ function ppFxToque(T, i, r) {
   // gotitas de gelatina desde cada burbuja reventada
   const g = ppGeom(n);
   for (const j of r.pops) {
-    const [cx, cy] = ppCentro(g, j), col = T.slimes[j] ? PP_SLIMES[T.slimes[j]].color : null;
+    const [cx, cy] = ppCentro(g, j), col = T.slimes[j] ? ppSlimeDe(T.slimes[j]).color : null;   // ppSlimeDe: también los Animales atrapados (tarea #142)
     for (let k = 0; k < 7; k++) { const a = rand(0, Math.PI * 2), v = rand(90, 260); PP_FX.parts.push({ x: cx, y: cy, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 120, r: rand(3, 7), t: 0, vida: rand(0.35, 0.6), col: col || ppColorBurbuja(j, n, 0) }); }
   }
   if (r.hecho) {

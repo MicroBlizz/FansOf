@@ -27,6 +27,7 @@ function ppIrA(p) {
     $pp('#pp-opciones').textContent = tr('OPCIONES');
     ppPerfilBoton();   // PERFIL, solo con su flag abierto (js/pantalla-perfil.js)
     ppPrimerosPortada();   // #140
+    ppCompanerosBoton();   // COMPAÑEROS, solo con el flag companeros (js/pantalla-album.js)
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
@@ -61,7 +62,7 @@ function ppBotonPrecio(texto, precio, clase, f) {
 }
 // la tarjeta de un amigo (dibujo + nombre + lo que hace)
 function ppFichaSlime(id, nuevo = false) {
-  const d = PP_SLIMES[id], el = document.createElement('div'); el.className = 'pp-slime' + (nuevo ? ' pp-nuevo' : '');
+  const d = ppSlimeDe(id), el = document.createElement('div'); el.className = 'pp-slime' + (nuevo ? ' pp-nuevo' : '');
   el.appendChild(ppMiniatura('sl-' + id, 84));
   el.insertAdjacentHTML('beforeend', `<b>${tr(d.nombre)}</b><i>${tr(d.pasiva)}</i><span>${tr(d.texto)}</span>`);
   return el;
@@ -80,7 +81,7 @@ function ppEligeRescate(id) {
   if (PP_P.equipo.length < ppHuecos()) { ppRecluta(id); ppVentanaBienvenida(id); return; }
   // el equipo está lleno: hay que dejar a uno… o comprar un hueco más con monedas (Daniel, 30-10-2026)
   const precio = ppPrecioHueco();
-  const t = ppAbre(`<h2>${tr('Equipo lleno')}</h2><p class="pp-sub">${tr('¿Quién se queda descansando para que venga {n}?', { n: tr(PP_SLIMES[id].nombre) })}</p>`, true);
+  const t = ppAbre(`<h2>${tr('Equipo lleno')}</h2><p class="pp-sub">${tr('¿Quién se queda descansando para que venga {n}?', { n: tr(ppSlimeDe(id).nombre) })}</p>`, true);
   ppTutorial('equipoLleno');
   const fila = document.createElement('div'); fila.className = 'pp-fila-slimes';
   for (const k of PP_P.equipo) { const f = ppFichaSlime(k); f.onclick = () => { play('select'); ppRecluta(id, k); ppVentanaBienvenida(id); }; fila.appendChild(f); }
@@ -93,7 +94,7 @@ function ppEligeRescate(id) {
   t.appendChild(ppBoton(tr('Mejor no'), 'pp-btn2 pp-azul', ppAlCamino));
 }
 function ppVentanaBienvenida(id) {
-  const d = PP_SLIMES[id];
+  const d = ppSlimeDe(id);
   const t = ppAbre(`<h2>${tr('¡{n} viene contigo!', { n: tr(d.nombre) })}</h2>`);
   t.appendChild(ppFichaSlime(id, true));
   t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', ppAlCamino));

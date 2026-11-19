@@ -23,17 +23,25 @@ function ppFeriaAlDia() {
 }
 // da un premio de un tramo (un cofre se abre aquí, con azar: solo se gana jugando, ADR 004) y devuelve lo que se dio
 function ppFeriaDa(premio) {
-  const p = premio.cofre ? PP_FERIA.abreCofre(premio.cofre, Math.random).premio : premio;
+  const base = premio.cofre ? PP_FERIA.abreCofre(premio.cofre, Math.random).premio : premio, id = ppFeriaCompanero(premio);
+  const p = id ? { ...base, companero: id } : base;
   ppDaPremio(p);
   return p;
+}
+// con el flag `companeros`, el compañero que da además un tramo (la Mariquita y la Mariposa; js/companeros-datos.js, VIAS); si no, null.
+// `premio` es el objeto del propio tramo (PP_FERIA.coge y alDia devuelven los de PP_FERIA.TRAMOS), y por él se sabe qué tramo es
+function ppFeriaCompanero(premio) {
+  if (!ppCompanerosActivo()) return null;
+  return PP_COLE.deFeria(PP_FERIA.TRAMOS.findIndex(t => t.premio === premio));
 }
 
 /* ---------- tras ganar un nivel (js/partida.js) ---------- */
 // toda victoria, nueva o repetida, da tickets mientras la feria está abierta. Devuelve { n, subio } o null
-function ppFeriaGana(estrellas, jefe) {
+// `extra`: tickets de más (el Feriante de los compañeros, js/habilidades-niveles.js)
+function ppFeriaGana(estrellas, jefe, extra = 0) {
   const v = ppFeriaAlDia();
   if (!v.abierta) return null;
-  const n = PP_FERIA.tickets(estrellas, jefe);
+  const n = PP_FERIA.tickets(estrellas, jefe) + extra;
   const r = PP_FERIA.suma(SAVE.feria.estado, n);
   if (!r.ok) return null;
   SAVE.feria.estado = r.estado; ppGuarda();
@@ -83,6 +91,8 @@ function ppFeriaFaltan(E) {
 }
 // el icono de una parada: el cofre, la moneda, el infinito o la primera ayuda
 function ppFeriaIcono(p, px) {
+  const id = ppFeriaCompanero(p);
+  if (id) return ppViaDibujoHtml(id, px + 10);   // el tramo con compañero lo enseña a él (flag `companeros`)
   if (p.cofre) return ppIcono('i-cofre', px + 10, '#ff9ccf');
   if (p.monedas) return ppIcono('i-moneda', px);
   if (p.infinitas) return ppIcono('i-infinito', px, '#ff4a6a');

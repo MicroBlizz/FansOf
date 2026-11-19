@@ -278,7 +278,8 @@ function ppLolaSiguiente() {
   const cara = $pp('#pp-lola-cara'); cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92));
   $pp('#pp-lola-texto').textContent = f.ya ? f.t : tr(f.t);   // ya: traducido
   $pp('#pp-lola-vale').hidden = !!f.toque;
-  caja.classList.toggle('pp-encima', !!f.encima);   // las de las ventanas salen por encima de ellas
+  // con ¡VALE! no se puede tocar nada más hasta pulsarlo (Pepins, 19-11-2026: así sabes que lo has leído); sale encima de las ventanas
+  caja.classList.toggle('pp-encima', !!f.encima || !f.toque); caja.classList.toggle('pp-espera', !f.toque);
   caja.hidden = false; caja.classList.remove('pp-entra'); void caja.offsetWidth; caja.classList.add('pp-entra');
   play('ppPista');
 }

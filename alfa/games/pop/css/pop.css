@@ -75,6 +75,7 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-columna .pp-btn, .pp-columna .pp-btn2 { min-width: 280px; }
 /* el tutorial de Lola: abajo, encima del equipo, con su cara a la izquierda y un bocadillo */
 #pp-lola { position: absolute; left: 14px; right: 14px; bottom: 26px; display: flex; align-items: flex-end; gap: 6px; pointer-events: auto; z-index: 40; }
+#pp-ui:has(#pp-lola.pp-espera:not([hidden]))::before { content: ''; position: absolute; inset: 0; z-index: 39; pointer-events: auto; }   /* tapa todo hasta pulsar ¡VALE! */
 #pp-lola.pp-entra { animation: pp-lola 0.35s cubic-bezier(.3, 1.6, .5, 1) both; }
 @keyframes pp-lola { from { transform: translateY(140px); } to { transform: translateY(0); } }
 #pp-lola-cara { flex: none; width: 96px; height: 96px; animation: pp-bota 0.9s ease-in-out infinite; }

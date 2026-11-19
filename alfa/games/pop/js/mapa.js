@@ -156,7 +156,9 @@ function ppPintaMapa(c, t) {
   }
   // abajo: corazones (con el reloj del siguiente), estrellas, monedas y el equipo
   const yb = PP_V.H - 176;
-  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, yb, 500, 136, 24); c.fill();
+  // sin amigos, la barra es más baja y sin huecos vacíos (Pepins, 19-11-2026: «¿por qué tanto hueco?»); opaca, para que no se vea el camino detrás
+  const conEquipo = P.equipo.length > 0;
+  c.fillStyle = 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(20, yb, 500, conEquipo ? 136 : 84, 24); c.fill();
   const vidas = ppVidas();
   if (ppPrimerosVe('amigos')) ppPintaAvisoBuzon(c, 56, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)
   for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 50 + i * 38, yb + 32, 32, i < vidas);
@@ -167,7 +169,7 @@ function ppPintaMapa(c, t) {
   c.beginPath(); c.arc(500, yb + 20, 13, 0, Math.PI * 2); c.fillStyle = '#4fc964'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#26924a'; c.stroke();
   c.fillStyle = '#fff'; c.fillRect(494, yb + 18, 12, 4); c.fillRect(498, yb + 14, 4, 12);
   PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: () => ppTienda(null, 'perlas') });
-  const nh = ppHuecos();
+  const nh = conEquipo ? ppHuecos() : 0;
   for (let k = 0; k < nh; k++) {
     const x = 270 + (k - (nh - 1) / 2) * 62, y = yb + 100, id = P.equipo[k];
     c.beginPath(); c.arc(x, y, 26, 0, Math.PI * 2); c.fillStyle = id ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ff6ec7' : 'rgba(122,74,138,0.3)'; c.stroke();

@@ -1,8 +1,8 @@
 {
- "build": 1313,
- "hash": "2dcf545",
- "fecha": "2026-11-19T17:02:06Z",
- "mensaje": "Pop: el macaron pulsado de la Pastelería se distingue del levantado, con un hueco oscuro en la tapa (tarea #110)",
+ "build": 1314,
+ "hash": "0279bd5",
+ "fecha": "2026-11-19T17:05:25Z",
+ "mensaje": "Pop: Lola no deja tocar nada hasta pulsar ¡VALE!, «Gastar monedas» abre Bandejas y la barra del mapa sin huecos vacíos (tarea #140, cambios de Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

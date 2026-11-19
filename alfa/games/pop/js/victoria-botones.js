@@ -8,7 +8,7 @@ const PP_VIC_CONFETI = ['#ffd64a', '#ff6eb5', '#6ad1ff', '#7be08a', '#ffa64d', '
 // «Gastar monedas»: al lado del premio, un atajo dorado a la tienda (para que destaque)
 function ppVictoriaTienda(t, opc) {
   const hueco = t.querySelector('.pp-vic-gastar-hueco'); if (!hueco) return;
-  hueco.appendChild(ppBoton(tr('Gastar monedas') + ' ›', 'pp-vic-tienda', () => ppTienda(opc.vuelta || null)));
+  hueco.appendChild(ppBoton(tr('Gastar monedas') + ' ›', 'pp-vic-tienda', () => ppTienda(opc.vuelta || null, 'bandejas')));   // lo que se compra con monedas (Pepins, 19-11-2026)
 }
 // doblar las monedas del nivel viendo un anuncio (una vez por nivel ganado)
 function ppVictoriaDoble(t, T) {

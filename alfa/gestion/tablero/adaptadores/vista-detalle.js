@@ -1,5 +1,5 @@
 // Fans Of · /gestion · TABLERO · adaptador · VISTA DEL DETALLE: el HTML del panel de la derecha con todo lo de una tarea (qué, criterio, a quién espera,
-// informe de refinado, requisitos, enlaces, fechas, mover y editar, la foto del grafo y el historial), para seguir viendo el tablero mientras se van abriendo tareas. Funciones puras como vista.js
+// informe de refinado, requisitos, enlaces, fechas, mover y editar, la foto del grafo y el historial; si te toca revisarla, arriba «Probar» y «Qué mirar» y abajo los botones de revisar), para seguir viendo el tablero mientras se van abriendo tareas. Funciones puras como vista.js
 // (reciben `esc` y `fecha`), de la que usa `opciones` y `COLUMNAS`; se prueban en Node.
 'use strict';
 TABLERO.vistaDetalle = (() => {
@@ -39,12 +39,20 @@ TABLERO.vistaDetalle = (() => {
     .filter(Boolean).map(esc).join(' · ');
   const etiquetas = (t, esc) => `<span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${TABLERO.vista.pidio(t, esc)} <span class="estado">${esc(t.prioridad)}</span>`
     + `${t.alfa ? ` <span class="estado">${esc(t.alfa)}</span>` : ''}`;
-  const detalle = (t, esc, fecha = String) => `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
-    <div class="meta">${etiquetas(t, esc)}</div>
-    ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
-    ${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${informe(t, esc, fecha)}${enlazadas('Requiere', t.requiere, esc)}${enlazadas('Lo necesitan', t.requerida_por, esc)}${linea('Enlaces', t.enlaces, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
+  // «Enlaces» con sus direcciones pulsables (tarea #161)
+  const enlaces = (t, esc) => (t.enlaces ? `<div class="meta tb-informe"><b>Enlaces:</b> ${TABLERO.vistaRevisar.enlazado(t.enlaces, esc)}</div>` : '');
+  const cuerpo = (t, esc, fecha) => `${linea('Qué', t.descripcion, esc)}${linea('Hecho cuando', t.criterio, esc)}${informe(t, esc, fecha)}${enlazadas('Requiere', t.requiere, esc)}${enlazadas('Lo necesitan', t.requerida_por, esc)}${enlaces(t, esc)}${t.hilo ? `<div class="meta"><b>Hilo:</b> ${enlace(t.hilo, esc)}</div>` : ''}
     <div class="meta">${fechas(t, esc, fecha)}</div>
     <div class="accion"><select data-mover="${t.id}" aria-label="Mover a">${TABLERO.vista.opciones(TABLERO.vista.COLUMNAS, t.estado, esc)}</select><button type="button" data-editar="${t.id}">Editar</button></div>
     ${grafoHtml(t, esc, fecha)}${historial(t, esc, fecha)}`;
+  // Si te toca revisarla (tarea #161): arriba «Probar» y «Qué mirar», lo demás plegado, y abajo «Pedir cambios» y «Dar por buena»
+  const revisando = (t, esc, fecha, yo) => `${TABLERO.vistaRevisar.probar(t, esc, true)}${TABLERO.vistaRevisar.queMirar(t, esc)}
+    <details class="tb-mas"><summary>Qué se hizo, enlaces e historial</summary>${cuerpo(t, esc, fecha)}</details>${TABLERO.vistaRevisar.barra(t, yo)}`;
+  // yo: quién mira (para revisar); cambios: true si se está escribiendo qué cambiar (la hoja de «Pedir cambios» ocupa el panel)
+  const detalle = (t, esc, fecha = String, yo = null, cambios = false) => (cambios && TABLERO.puedoRevisar(t, yo) ? TABLERO.vistaRevisar.hoja(t, esc)
+    : `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
+    <div class="meta">${etiquetas(t, esc)}</div>
+    ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
+    ${TABLERO.puedoRevisar(t, yo) ? revisando(t, esc, fecha, yo) : (t.estado === 'en_revision' ? TABLERO.vistaRevisar.probar(t, esc, true) : '') + cuerpo(t, esc, fecha)}`);
   return { detalle, nodoInfo: nodoHtml };
 })();

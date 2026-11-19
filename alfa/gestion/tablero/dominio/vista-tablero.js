@@ -1,5 +1,5 @@
 // Fans Of · /gestion · TABLERO · dominio · VISTATABLERO: cómo se reparten las tareas en las columnas y cómo se filtran. Función pura: recibe tareas y
-// un filtro ({ juego, responsable, persona, texto, orden }), devuelve todas las columnas siempre (aunque vacías), con sus tareas ordenadas según `orden`
+// un filtro ({ juego, responsable, persona, bandeja y yo (la caja de «Te toca» elegida y quién mira; revisar.js), texto, orden }), devuelve todas las columnas siempre (aunque vacías), con sus tareas ordenadas según `orden`
 // (TABLERO.ORDENES; por defecto, prioridad, luego el orden dado y al final antigüedad). El texto se busca con TABLERO.coincide (buscar.js).
 'use strict';
 // Filtro «Persona» (ADR 136; Arkioner, 18-11-2026): a quién está asignada, es decir, lo que hace a mano y lo que Claude hace para ella. Solo si aún
@@ -18,7 +18,7 @@ TABLERO.TEXTO_ORDEN = Object.freeze({ prioridad: 'Prioridad', nuevas: 'Más nuev
 TABLERO.reparte = (tareas, filtro = {}) => {
   const id = TABLERO.idBuscado(filtro.texto);
   const pasa = id !== null ? t => t.id === id : t => (!filtro.juego || t.juego === filtro.juego) && (!filtro.responsable || t.responsable === filtro.responsable)
-    && (!filtro.persona || TABLERO.esDe(t, filtro.persona)) && TABLERO.coincide(t, filtro.texto);
+    && (!filtro.persona || TABLERO.esDe(t, filtro.persona)) && TABLERO.enBandeja(t, filtro.bandeja, filtro.yo) && TABLERO.coincide(t, filtro.texto);
   const antes = TABLERO.ORDENES[filtro.orden] || TABLERO.ORDENES.prioridad;
   return TABLERO.COLUMNAS.map(c => ({ id: c.id, titulo: c.titulo, tono: c.tono, ayuda: c.ayuda, tareas: tareas.filter(t => t.estado === c.id && pasa(t)).sort(antes) }));
 };

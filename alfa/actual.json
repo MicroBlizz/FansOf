@@ -1,8 +1,8 @@
 {
- "build": 1301,
- "hash": "a292afe",
- "fecha": "2026-11-19T13:53:34Z",
- "mensaje": "Spy 0.2.0: coches más grandes, tope de 15 s por descarga de modelo, documentación (ADR 159, ficha, glosario) y novedades",
+ "build": 1302,
+ "hash": "cc43606",
+ "fecha": "2026-11-19T14:06:24Z",
+ "mensaje": "Tablero: revisar en un toque — Probar en la alfa, enlaces pulsables, bandeja «Te toca», Dar por buena y Pedir cambios (tarea #161, ADR 160)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.2",

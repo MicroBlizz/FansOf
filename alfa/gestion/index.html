@@ -76,7 +76,8 @@
     </div>
     <div id="pan-tablero" hidden>
       <style id="tb-estilo"></style>
-      <div class="caja ayuda"><b>Tablero.</b> Lo comprometido, en seis columnas: <b>ideas</b> (lluvia de ideas), <b>en refinamiento</b> (se acuerda qué hacer, sus criterios, dudas y choques), <b>pendiente</b> (refinada y lista, por prioridad), en curso, en revisión y hecho. <b>Nueva tarea</b> nace en ideas y, al escribir el título, avisa de las parecidas. Pulsa una tarjeta para ver su detalle a la derecha, donde se mueve y se <b>edita</b>; también se mueve arrastrándola. <b>Buscar</b> filtra mientras escribes y <b>Refrescar</b> trae lo último. Claude saca una tarea de ideas o refinamiento solo con vuestra aprobación, la deja en revisión al subirla y solo una persona la pasa a hecho. Una tarea con <b>requisitos</b> («Espera a #N») no entra en curso hasta que estén en revisión o hechos. Detalle: docs/gestion/TABLERO.md.</div>
+      <div id="tb-te-toca"></div>
+      <details class="caja ayuda tb-como"><summary><b>Cómo funciona el tablero</b></summary>Lo comprometido, en seis columnas: <b>ideas</b> (lluvia de ideas), <b>en refinamiento</b> (se acuerda qué hacer, sus criterios, dudas y choques), <b>pendiente</b> (refinada y lista, por prioridad), en curso, en revisión y hecho. <b>Nueva tarea</b> nace en ideas y, al escribir el título, avisa de las parecidas. Pulsa una tarjeta para ver su detalle a la derecha, donde se mueve y se <b>edita</b>; también se mueve arrastrándola. <b>Buscar</b> filtra mientras escribes y <b>Refrescar</b> trae lo último. Claude saca una tarea de ideas o refinamiento solo con vuestra aprobación, la deja en revisión al subirla y solo una persona la pasa a hecho. Una tarea con <b>requisitos</b> («Espera a #N») no entra en curso hasta que estén en revisión o hechos. Detalle: docs/gestion/TABLERO.md.</details>
       <div class="aviso" id="tb-aviso" role="alert"></div>
       <div id="tb-filtros"></div>
       <datalist id="tb-juegos"></datalist>
@@ -276,10 +277,12 @@ volverDeGoogle().then(async hecho => { if (hecho) return; if (leerToken()) abrir
 <script src="tablero/dominio/buscar.js"></script>
 <script src="tablero/dominio/vista-tablero.js"></script>
 <script src="tablero/dominio/reacciones.js"></script>
+<script src="tablero/dominio/revisar.js"></script>
 <script src="tablero/aplicacion/casos.js"></script>
 <script src="tablero/adaptadores/repositorio-servidor.js"></script>
 <script src="tablero/adaptadores/vista-reacciones.js"></script>
 <script src="tablero/adaptadores/vista-mapa.js"></script>
+<script src="tablero/adaptadores/vista-revisar.js"></script>
 <script src="tablero/adaptadores/vista.js"></script>
 <script src="tablero/adaptadores/vista-grafo.js"></script>
 <script src="tablero/adaptadores/vista-detalle.js"></script>

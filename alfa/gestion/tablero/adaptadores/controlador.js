@@ -16,7 +16,8 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const tareaDe = id => tareas.find(t => t.id === Number(id));
 
   const pintaTablero = () => {
-    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, vista, fecha) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
+    el(hueco.bandeja).innerHTML = TABLERO.vistaRevisar.bandeja(TABLERO.bandeja(tareas, yo), yo, filtro.bandeja, esc);   // «Te toca», lo primero (tarea #161)
+    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, vista, fecha, yo) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
   };
   // El panel se pinta según `panel`; si la tarea abierta ya no está (filtro o borrada), se cierra. El formulario no se repinta al recargar, para no perder lo escrito
   function pintaPanel(conFormulario) {
@@ -24,7 +25,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     if (panel && panel.id && !t) panel = null;
     el(hueco.vista).classList.toggle('abierto', !!panel);
     caja.hidden = !panel;
-    if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha);
+    if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha, yo, !!panel.cambios);
     else if (panel && conFormulario) { caja.innerHTML = panel.rapida ? TABLERO.vista.formularioRapido(juegos, esc) : TABLERO.vista.formulario(panel.formulario, esc); caja.querySelector('input[name=titulo]').focus(); }
     else if (!panel) caja.innerHTML = '';
   }
@@ -37,6 +38,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     if (este !== pedido) return;   // llegó otra carga después: esta ya es vieja
     if (!r.ok) { aviso(/does not exist|PGRST202|404/.test(String(r.datos.causa && r.datos.causa.message)) ? 'Faltan los SQL del tablero en Supabase (servidor/117 a 120).' : textoError(r.datos.causa)); return; }
     ({ tareas, columnas, descartadas, juegos, yo } = r.valor);
+    filtro.yo = yo;   // la bandeja «Te toca» filtra por quien mira (tarea #161)
     if (r.valor.sinReacciones) aviso('No se han podido leer las reacciones: el tablero sale sin ellas.');
     el(hueco.filtros).innerHTML = TABLERO.vista.filtros(r.valor.juegos, filtro, esc);
     pintaPanel(false);
@@ -54,7 +56,27 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       if (!r.ok) avisaError(r);
     } finally { ocupado = false; }
   }
-  const mueve = (id, estado) => (tareaDe(id).estado === estado ? Promise.resolve() : aplica(casos.mover(tareaDe(id), estado)));
+  const mueve = (id, estado, nota) => (tareaDe(id).estado === estado ? Promise.resolve() : aplica(casos.mover(tareaDe(id), estado, nota)));
+  // «Dar por buena» (tarea #161): el primer toque pide confirmar («Toca otra vez») durante 3 s; el segundo la pasa a Hecho con su nota
+  function daPorBuena(boton) {
+    if (!boton.classList.contains('listo')) {
+      boton.classList.add('listo');
+      boton.textContent = 'Toca otra vez';
+      setTimeout(() => { if (boton.isConnected) { boton.classList.remove('listo'); boton.textContent = 'Dar por buena'; } }, 3000);
+      return;
+    }
+    aviso('');
+    mueve(boton.dataset.buena, 'hecho', 'Dada por buena desde el tablero');
+  }
+  // «Pedir cambios»: la frase es obligatoria; la tarea vuelve a En curso con ella en la nota y el panel enseña su detalle
+  function pideCambios(f) {
+    const nota = String(new FormData(f).get('nota') || '').trim();
+    if (!nota) { aviso('Escribe qué hay que cambiar'); return; }
+    aviso('');
+    const id = Number(f.dataset.cambios);
+    panel = { id };
+    mueve(id, 'en_curso', 'Cambios pedidos: ' + nota);
+  }
   // al guardar, el panel enseña el detalle de la tarea guardada
   const guarda = f => {
     const id = Number(f.dataset.id), form = leeFormulario(f);
@@ -117,9 +139,22 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   function conectaTarjetas() {
     const elige = t => abre(panel && panel.id === Number(t.dataset.id) ? null : { id: Number(t.dataset.id) });
     const cambiaVista = b => { vista = b.dataset.ver || null; pintaTablero(); };   // los botones de arriba: «Todas» o una columna
+    el(hueco.bandeja).onclick = ev => { const caja = ev.target.closest('[data-bandeja]'); if (caja) eligeBandeja(caja.dataset.bandeja); };
     reac = TABLERO.controlReacciones({ lista: el(hueco.lista), tareaDe, alElegir: reacciona });   // dejar apretada una tarjeta (ADR 149)
-    el(hueco.lista).onclick = ev => { const b = ev.target.closest('[data-ver]'), t = ev.target.closest('[data-id]'); if (reac.clic(ev)) return; if (b) cambiaVista(b); else if (t) elige(t); };
+    el(hueco.lista).onclick = ev => {
+      const b = ev.target.closest('[data-ver]'), t = ev.target.closest('[data-id]'), buena = ev.target.closest('[data-buena]');
+      if (reac.clic(ev) || ev.target.closest('[data-probar]')) return;   // «Probar» es un enlace: se abre sin abrir el detalle
+      if (buena) daPorBuena(buena);
+      else if (b) cambiaVista(b);
+      else if (t) elige(t);
+    };
     el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter' && !ev.target.closest('[data-barrita]')) { ev.preventDefault(); elige(t); } };
+  }
+  // Una caja de «Te toca» (tarea #161): enseña solo esas tareas, en su columna; tocar la misma (o «Ver todo») lo quita
+  function eligeBandeja(id) {
+    const b = id && id !== filtro.bandeja ? TABLERO.bandejaDe(id) : null;
+    vista = b ? b.columna : null;
+    refiltra('bandeja', b ? b.id : '');
   }
   // Pulsar una caja del grafo marca esa caja y enseña debajo su check y su evidencia; «Ver grande» abre el dibujo a pantalla completa (y vuelve a cerrarlo)
   function eligeNodo(caja) {
@@ -155,11 +190,20 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       if (p) abreParecida(p.dataset.abrir);
       const inf = ev.target.closest('[data-informe]');
       if (inf && panel && panel.id) { aviso(''); aplica(casos.informe(tareaDe(panel.id), inf.dataset.informe, (caja.querySelector('[data-nota-informe]') || {}).value)); }
+      clicRevisar(ev, caja);
     };
     caja.oninput = ev => { if (ev.target.name === 'titulo') buscaParecidas(ev.target.value, ev.target.form); };
     caja.onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };
-    caja.onsubmit = ev => { ev.preventDefault(); aviso(''); guarda(ev.target); };
+    caja.onsubmit = ev => { ev.preventDefault(); aviso(''); if ('cambios' in ev.target.dataset) pideCambios(ev.target); else guarda(ev.target); };
     el(hueco.vista).onkeydown = ev => { if (ev.key === 'Escape' && !cierraGrande() && panel && panel.id) cierra(); };
+  }
+  // Los botones de revisar del detalle (tarea #161): dar por buena, abrir o cerrar la hoja de «Pedir cambios» y sus atajos (empiezan la frase)
+  function clicRevisar(ev, caja) {
+    const buena = ev.target.closest('[data-buena]'), pedir = ev.target.closest('[data-pedir-cambios]'), atajo = ev.target.closest('[data-atajo]');
+    if (buena) daPorBuena(buena);
+    if (pedir) abre({ id: Number(pedir.dataset.pedirCambios), cambios: true });
+    if (ev.target.closest('[data-no-cambios]') && panel) abre({ id: panel.id });
+    if (atajo) { const nota = caja.querySelector('textarea[name=nota]'); nota.value = atajo.dataset.atajo + (nota.value ? '. ' + nota.value : ': '); nota.focus(); }
   }
   // arrastrar una tarjeta a otra columna es lo mismo que elegirla en el desplegable del detalle
   function conectaArrastre() {

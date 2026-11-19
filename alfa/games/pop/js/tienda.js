@@ -83,6 +83,7 @@ function ppTienda(vuelta, pestana) {
   } else {
     for (const B of PP_BANDEJAS) {
       const tiene = ppTieneBandeja(B.id), puesta = ppBandejaActual().id === B.id;
+      if (B.temporada && !tiene) continue;   // las de temporada del pase solo salen si ya la tienes (tarea #165)
       if (B.precio === null && !tiene) { tarjeta(`${ppBandejaMuestra(B.id, 56)}<span>${tr(B.nombre)}</span><small>${tr('Solo con el pase')}</small>`, ppVentanaPase); continue; }
       tarjeta(`${ppBandejaMuestra(B.id, 56)}<span>${tr(B.nombre)}</span><b>${puesta ? tr('Puesta') : tiene ? tr('Ponerla') : ''}</b>${!tiene ? ppMonedasHtml(B.precio, 24) : ''}`, () => {
         if (!tiene) { if (!ppCobra(B.precio)) { ppFlota(tr('Te faltan monedas'), 270, 300, '#ff6ec7'); return; } SAVE.bandejas = Object.assign(SAVE.bandejas || {}, { [B.id]: true }); play('ppPremio'); }

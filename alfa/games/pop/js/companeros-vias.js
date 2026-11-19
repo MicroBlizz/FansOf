@@ -65,7 +65,7 @@ function ppViaDuelo(jefe) {
 // ya no hay que elegir ni echar a nadie: si su equipo estaba lleno, se le pone desde Mi equipo
 function ppVentanaRescateCole(rescates) {
   const T = PP_P.T;
-  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(T.estrellas)}${ppPremioHtml(T.premio)}${ppFeriaLinea(T)}`, true);
+  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(T.estrellas)}${ppPremioHtml(T.premio)}${ppFeriaLinea(T)}${ppPaseLinea(T)}`, true);
   const fila = document.createElement('div'); fila.className = 'pp-fila-slimes';
   for (const x of rescates) fila.appendChild(ppFichaSlime(x.id, true));
   t.insertAdjacentHTML('beforeend', rescates.map(x => `<p class="pp-sub"><b>${tr('¡{n} se une a tu colección!', { n: tr(ppSlimeDe(x.id).nombre) })}</b></p>`).join(''));

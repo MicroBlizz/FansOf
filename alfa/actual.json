@@ -1,8 +1,8 @@
 {
- "build": 1323,
- "hash": "edb5998",
- "fecha": "2026-11-19T18:07:40Z",
- "mensaje": "Pop: el marco del panel de victoria es de su mundo (color, remate y tres adornos), por código a la espera de los de Yoshi (tarea #168)",
+ "build": 1324,
+ "hash": "03a107b",
+ "fecha": "2026-11-19T18:15:54Z",
+ "mensaje": "Pop: pase completo tras el flag 'pase-nuevo' (tarea #165, ADR 165, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

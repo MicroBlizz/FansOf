@@ -46,7 +46,7 @@ function ppVictoriaCabeza(clase, estrellas, nivel, palabra) {
 function ppVictoriaHtml(T, titulo) {
   const r = ppVictoriaResumen(T), nota = PP_VICTORIA.nota(T.estrellas);
   return ppVictoriaCabeza(nota, T.estrellas, T.titulo, titulo || tr(PP_VIC_NOTA[nota]))
-    + `<div class="pp-vic-panel">${ppVictoriaDatos(r)}<p class="pp-vic-frase">${ppVictoriaFrase(r)}</p>${ppVictoriaPremio(T)}${ppVicExtras(T)}${ppFeriaLinea(T)}</div>`;
+    + `<div class="pp-vic-panel">${ppVictoriaDatos(r)}<p class="pp-vic-frase">${ppVictoriaFrase(r)}</p>${ppVictoriaPremio(T)}${ppVicExtras(T)}${ppFeriaLinea(T)}${ppPaseLinea(T)}</div>`;
 }
 // un número que sube de `desde` a `hasta` en `seg` segundos, esperando `retraso` ms; frena al final
 function ppVicCuenta(el, desde, hasta, seg = PP_VIC_CUENTA, retraso = 500) {

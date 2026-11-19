@@ -118,7 +118,7 @@ function ppPintaLateral() {
   };
   // partida nueva (tarea #140): lo que aún no toca sale apagado, con candado y su nivel (js/primeros-pasos-juego.js)
   ppPrimerosLado(boton('i-regalo', '#9cf0a0', tr('Regalo'), ppVentanaRegalo, SAVE.regaloDia !== ppHoy() && ppPrimerosVe('regalo')), 'regalo');
-  ppPrimerosLado(boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio() && ppPrimerosVe('pase')), 'pase');
+  ppPrimerosLado(ppPaseLado(boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio() && ppPrimerosVe('pase'))), 'pase');   // con el flag 'pase-nuevo', anillo y escalón (js/pase-pantalla.js)
   ppFeriaBotonLateral(L);   // la Feria del finde, con su reloj (js/feria-pantalla.js)
   ppPrimerosLado(L.lastChild, 'feria');
   ppPrimerosLado(boton('i-hucha', '#ffd1ec', String(SAVE.hucha || 0), ppVentanaHucha, (SAVE.hucha || 0) >= PP_CFG.hucha.minimo && ppPrimerosVe('hucha')), 'hucha');

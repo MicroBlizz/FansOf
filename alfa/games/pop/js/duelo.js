@@ -80,6 +80,7 @@ function ppTurnoCeo() {
 }
 function ppDueloFin(res) {
   const D = PP_DUELO; if (D.fin) return; D.fin = res; ppDueloBoton();
+  if (res === 'gana') ppPaseDuelo();   // flag 'pase-nuevo': puntos y misión, una vez por duelo (js/pase-nuevo.js)
   const S = SAVE.duelo, [mucho, poco] = PP_CFG.duelo.fallo;
   if (S.dia !== ppHoy()) { S.dia = ppHoy(); S.hoy = 0; }
   let monedas = 0;

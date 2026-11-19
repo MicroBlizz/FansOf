@@ -21,7 +21,8 @@ function ppPaseAlDia() {
   if (!SAVE.pase || SAVE.pase.t !== ppTemporada()) SAVE.pase = { t: ppTemporada(), puntos: 0, premium: false, gratis: {}, prem: {} };
   return SAVE.pase;
 }
-const ppEscalon = () => Math.min(PP_CFG.pase.escalones, Math.floor(ppPaseAlDia().puntos / PP_CFG.pase.puntos));
+// el escalón: con el flag 'pase-nuevo', de los puntos nuevos (js/pase-nuevo.js); si no, el de siempre (uno cada 3 puntos)
+const ppEscalon = () => (ppPaseNuevo() ? PP_PASE_R.escalon(ppPasePuntos()) : Math.min(PP_CFG.pase.escalones, Math.floor(ppPaseAlDia().puntos / PP_CFG.pase.puntos)));
 // los premios de cada escalón (k desde 1). El gratis: monedas y alguna ayuda; el premium: perlas, ayudas, corazones infinitos y,
 // al final, una bandeja que solo da el pase
 function ppPremioPase(k, premium) {
@@ -34,13 +35,16 @@ function ppPremioPase(k, premium) {
 // el premio de un escalón tal como se ve y se da: con el flag `companeros`, el de siempre más su compañero (la Suricata en el gratis;
 // la Luciérnaga y el Caballito de mar en el premium; js/companeros-datos.js, VIAS). Con el flag cerrado, el de siempre
 function ppPremioPaseCon(k, premium) {
+  if (ppPaseNuevo()) return ppPremioPaseNuevo(k, premium);   // los del tema del mes (js/pase-nuevo.js)
   const p = ppPremioPase(k, premium), id = ppCompanerosActivo() ? PP_COLE.delPase(k, premium) : null;
   return id ? { ...p, companero: id } : p;
 }
-const ppPaseListos = () => PP_PASE_R.listos(ppPaseAlDia(), ppEscalon());   // reglas en js/pase-reglas.js
+// los premios por recoger (reglas en js/pase-reglas.js); con el flag 'pase-nuevo', también los escalones extra ({ extra: true })
+const ppPaseListos = () => [...PP_PASE_R.listos(ppPaseAlDia(), ppEscalon()), ...(ppPaseNuevo() ? ppPaseExtrasListos() : [])];
 const ppPaseHayPremio = () => ppPaseListos().length > 0;
 // entrega un premio del pase (con su clave, para que el servidor no cobre dos veces sus perlas) y lo marca cogido
-function ppPaseEntrega(k, premium) {
+function ppPaseEntrega(k, premium, extra) {
+  if (extra) { ppPaseEntregaExtra(); return; }   // un escalón extra (js/pase-nuevo.js)
   const P = ppPaseAlDia();
   ppDaPremio(ppPremioPaseCon(k, premium), { motivo: 'pase', clave: PP_PASE_R.clave(P.t, premium, k) });
   (premium ? P.prem : P.gratis)[k] = true;
@@ -76,6 +80,7 @@ function ppPaseCaja(P, e, k, premium) {
   return caja;
 }
 function ppVentanaPase(repinta = false) {
+  if (ppPaseNuevo()) { ppVentanaPaseNueva(repinta); return; }   // el pase completo (js/pase-pantalla.js, tarea #165)
   if (!repinta) ppTutorial('pase');
   const P = ppPaseAlDia(), e = ppEscalon(), C = PP_CFG.pase, desde = { monedas: SAVE.monedas, perlas: SAVE.perlas || 0 };
   const t = ppAbre(ppPaseCabecera(P, e), true);
@@ -99,11 +104,12 @@ function ppVentanaPase(repinta = false) {
 /* ---------- recoger (uno o todos, tarea #166) ---------- */
 // entrega los premios `lista` ([{ k, premium }]) y los hace volar a la barra de arriba; los números suben al llegar
 function ppPaseRecoge(lista) {
-  const listos = ppPaseListos().filter(p => lista.some(q => q.k === p.k && q.premium === p.premium));
+  const listos = ppPaseListos().filter(p => lista.some(q => q.k === p.k && q.premium === p.premium && !q.extra === !p.extra));
   if (!listos.length) return;
   const antes = { monedas: SAVE.monedas, perlas: SAVE.perlas || 0 };
-  const iconos = listos.flatMap(p => [...document.querySelectorAll(`.pp-pase-premio[data-k="${p.k}"][data-p="${p.premium ? 'p' : 'g'}"] .pp-ico`)]).filter(ppPaseSeVe);
-  for (const p of listos) ppPaseEntrega(p.k, p.premium);
+  const sel = p => (p.extra ? '.pp-pase-extra .pp-ico' : `.pp-pase-premio[data-k="${p.k}"][data-p="${p.premium ? 'p' : 'g'}"] .pp-ico`);
+  const iconos = [...new Set(listos.flatMap(p => [...document.querySelectorAll(sel(p))]))].filter(ppPaseSeVe);
+  for (const p of listos) ppPaseEntrega(p.k, p.premium, p.extra);
   ppGuarda(); play('ppPremio'); ppVibra([20, 30, 20]);
   document.querySelectorAll('.pp-pase-todo, .pp-pase-premio.pp-listo').forEach(b => { b.disabled = true; b.classList.remove('pp-listo'); });
   ppPaseVuela(iconos, antes, ppPaseRepinta);

@@ -206,6 +206,7 @@ function ppSalaHecha() {
   ppGuardaCamino();
   ppPrimerosAlGanar();   // con el flag cerrado, la partida nueva pasa a vieja (js/primeros-pasos-juego.js)
   T.feria = ppFeriaGana(T.estrellas, d.jefe, ppHabTickets(T));   // tickets de la Feria del finde: toda victoria, nueva o repetida (js/feria-pantalla.js); el Feriante, uno más
+  T.pase = ppPaseGana(nuevo, T.estrellas, T.feria ? T.feria.n : 0);   // flag 'pase-nuevo': puntos por toda victoria y sus tickets (js/pase-nuevo.js)
   T.antes = { racha: SAVE.racha || 0, hucha: SAVE.hucha || 0, nuevo };   // la pantalla de victoria enseña lo que suman la racha y la hucha
   if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
   ppViasAlGanar(T, nuevo, presos);   // flag `companeros`: rescate, cofre, jefe y duelos dan compañeros (js/companeros-vias.js)

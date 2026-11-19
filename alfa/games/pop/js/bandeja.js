@@ -16,6 +16,19 @@ const PP_BANDEJAS = [
   { id: 'lavanda', nombre: 'Lavanda', precio: 600, filas: [[270, 60, 76], [290, 55, 82]] },
   { id: 'chuche', nombre: 'Chuche', precio: 800, filas: [[345, 85, 72], [195, 85, 72], [52, 95, 70], [130, 65, 70]] },
   { id: 'dorada', nombre: 'Dorada', precio: null, filas: [[45, 95, 62], [40, 90, 72]] },   // solo con el pase
+  // las de temporada: solo con el Pase dorado de su mes (js/pase-temas.js, tarea #165); en la tienda salen solo si la tienes
+  { id: 'escarcha', nombre: 'Escarcha', precio: null, temporada: true, filas: [[200, 90, 82], [190, 70, 88]] },
+  { id: 'corazones', nombre: 'Corazones', precio: null, temporada: true, filas: [[340, 90, 78], [350, 85, 84]] },
+  { id: 'brote', nombre: 'Brote', precio: null, temporada: true, filas: [[120, 60, 74], [95, 70, 78]] },
+  { id: 'charco', nombre: 'Charco', precio: null, temporada: true, filas: [[205, 85, 70], [185, 75, 78]] },
+  { id: 'petalo', nombre: 'Pétalo', precio: null, temporada: true, filas: [[325, 90, 82], [55, 95, 80]] },
+  { id: 'helado', nombre: 'Helado', precio: null, temporada: true, filas: [[48, 95, 80], [340, 85, 84], [160, 60, 80]] },
+  { id: 'ola', nombre: 'Ola', precio: null, temporada: true, filas: [[175, 70, 68], [190, 80, 78]] },
+  { id: 'farolillo', nombre: 'Farolillo', precio: null, temporada: true, filas: [[30, 95, 66], [5, 85, 72]] },
+  { id: 'pupitre', nombre: 'Pupitre', precio: null, temporada: true, filas: [[45, 90, 72], [30, 60, 66]] },
+  { id: 'hojas', nombre: 'Hojas', precio: null, temporada: true, filas: [[25, 85, 64], [40, 90, 70], [10, 75, 66]] },
+  { id: 'calabaza', nombre: 'Calabaza', precio: null, temporada: true, filas: [[28, 95, 62], [100, 45, 60]] },
+  { id: 'nieve', nombre: 'Nieve', precio: null, temporada: true, filas: [[0, 80, 66], [140, 55, 62], [200, 30, 92]] },
 ];
 const ppBandejaDe = id => PP_BANDEJAS.find(b => b.id === id) || PP_BANDEJAS[0];
 const ppBandejaActual = () => ppBandejaDe(SAVE.bandeja || 'arcoiris');

@@ -93,7 +93,8 @@ const PP_CFG = {
   hucha: { porNivel: 2, porJefe: 6, minimo: 40, max: 150, id: 'pop_hucha', precio: '2,99 €' },
   // el PASE de temporada (un mes): puntos al ganar niveles (1, y 1 más con 3 estrellas); cada `puntos` puntos, un escalón con su
   // premio gratis y su premio premium (el premium se compra una vez por temporada)
-  pase: { id: 'pop_pase', precio: '4,99 €', escalones: 30, puntos: 3 },
+  pase: { id: 'pop_pase', precio: '4,99 €', escalones: 30, puntos: 3,
+    plus: { id: 'pop_pase_plus', precio: '9,99 €' } },   // Dorado+ (flag 'pase-nuevo', tarea #165): el mismo pase y salta 10 escalones
   racha: { max: 3 },         // RACHA: cada nivel nuevo seguido sin perder un corazón da +1 toque al empezar los siguientes (hasta 3)
   // MEMORIA (js/memoria.js, fase 4): el «Simón dice» del pop-it. Tablero de 3x3; cada burbuja de la melodía dura `paso` segundos en
   // la ronda 1 y `acelera` menos cada ronda, hasta `pasoMin`. Premio del día: `porRonda` monedas por ronda (solo lo que mejora tu

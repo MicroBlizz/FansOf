@@ -1,0 +1,39 @@
+/* Fans of Pop · PASE NUEVO (tarea #165, ADR 165; boceto aprobado por Pepins el 19-11-2026): el tema del mes (--tema1 y --tema2 los pone
+   js/pase-pantalla.js), la barra, el Pase dorado que destaca (oro y coral, nada de lila ni gris), las misiones, SOLO ESTE MES, los
+   escalones extra y el botón del lado del camino con su anillo. */
+.pp-tarjeta.pp-pase-nuevo { background: linear-gradient(180deg, var(--tema1, #ffd1ec), #fff 38%); }
+.pp-pase-tema { margin: 0; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tema2, #c43a84); }
+.pp-tarjeta.pp-pase-nuevo h2 { margin: 0; }
+.pp-pase-barra { position: relative; width: 100%; height: 26px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px var(--tema2, #c43a84); overflow: hidden; }
+.pp-pase-barra span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #9cf0a0, #4fc964); }
+.pp-pase-barra b { position: relative; display: block; text-align: center; line-height: 26px; font-size: 15px; color: #7a3a7a; }
+.pp-pase-dorado { position: relative; overflow: hidden; width: 100%; display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 18px;
+  background: linear-gradient(135deg, #ffd64a, #ffe98a 45%, #ff7a5a); box-shadow: inset 0 0 0 3px #c27a00; color: #5a2a1a; text-align: left; }
+.pp-pase-dorado::after { content: ''; position: absolute; top: -40%; left: -40%; width: 26%; height: 180%; background: rgba(255, 255, 255, 0.55); transform: rotate(20deg); animation: pp-pase-brillo 2.6s infinite; pointer-events: none; }
+@keyframes pp-pase-brillo { 0% { left: -40%; } 60%, 100% { left: 130%; } }
+.pp-pase-dorado b { display: block; font-size: 20px; }
+.pp-pase-dorado small { display: block; font-weight: 700; font-size: 13px; }
+.pp-pase-compra { display: flex; flex-direction: column; gap: 6px; flex: none; }
+#pp-ui .pp-pase-compra .pp-btn2 { min-width: 0; width: auto; font-size: 17px; padding: 6px 12px; white-space: nowrap; }
+.pp-pase-dorado > div:first-child { flex: 1; min-width: 0; }
+.pp-pase-mis { width: 100%; display: flex; flex-direction: column; gap: 4px; background: #fff; border-radius: 16px; padding: 8px 10px; box-shadow: inset 0 0 0 3px #9fdcff; }
+.pp-pase-mis-tit { margin: 0; font-weight: 700; color: #1f6fb8; text-align: left; }
+.pp-pase-mis-tit small { color: #7a3a7a; }
+.pp-pase-mision { display: flex; align-items: center; gap: 8px; font-size: 15px; color: #7a3a7a; text-align: left; }
+.pp-pase-mision span { flex: 1; min-width: 0; }
+.pp-pase-mision i { font-style: normal; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pp-pase-mision em { font-style: normal; font-weight: 700; color: #26924a; }
+#pp-ui .pp-pase-mision .pp-btn2 { min-width: 0; width: auto; font-size: 14px; padding: 3px 10px; }
+.pp-pase-mision.pp-cogido { opacity: 0.6; }
+#pp-ui .pp-pase-premio .pp-pase-solo { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); white-space: nowrap; font-style: normal; font-size: 10px; font-weight: 700;
+  color: #fff; background: #ff5f57; border-radius: 8px; padding: 0 6px; box-shadow: 0 0 0 2px #fff; z-index: 2; }   /* por encima de la fila de abajo */
+#pp-ui .pp-pase-extra { font: inherit; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; padding: 8px; border-radius: 14px;
+  border: 3px dashed #ffb000; background: #fff8dc; color: #7a3a7a; cursor: default; }
+#pp-ui .pp-pase-extra.pp-listo { cursor: pointer; border-style: solid; box-shadow: 0 0 0 4px #4fc964; animation: pp-late 1.4s ease-in-out infinite; }
+.pp-pase-extra small { width: 100%; font-weight: 700; }
+/* el botón del lado: anillo con lo que falta para el siguiente escalón y cuántos premios esperan */
+.pp-lado.pp-lado-pase .pp-ico { border-radius: 50%; background: conic-gradient(#4fc964 var(--av, 0%), rgba(255, 255, 255, 0.85) 0); padding: 4px; }
+.pp-lado.pp-lado-pase[data-n]::after { content: attr(data-n); width: auto; min-width: 22px; height: 22px; padding: 0 4px; top: -2px; right: 2px; display: flex; align-items: center;
+  justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .pp-pase-dorado::after, #pp-ui .pp-pase-extra.pp-listo { animation: none; } }
+.pp-pase-hoy { margin: 0; font-size: 13px; font-weight: 700; color: #7a3a7a; }

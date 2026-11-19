@@ -1,8 +1,8 @@
 {
- "build": 1306,
- "hash": "ced299e",
- "fecha": "2026-11-19T14:48:19Z",
- "mensaje": "Tablero: colores tipo semáforo, uno por columna, y botones y bandeja en el color de su columna; «Urgente» con rayo (tarea #163, ADR 162)",
+ "build": 1307,
+ "hash": "a19a311",
+ "fecha": "2026-11-19T14:58:35Z",
+ "mensaje": "Pop: colores de fondo de la victoria por nota, al azar (solo las reglas y sus tests; la pantalla aún no los usa) (tarea #157)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.2",

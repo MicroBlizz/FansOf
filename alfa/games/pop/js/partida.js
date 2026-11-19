@@ -100,6 +100,7 @@ function ppTutorialesNivel(d) {
   else if (d.dificil) ppTutorial('dificil');
   if (d.jefe) ppTutorial('jefe');
   if (PP_P.equipo.length) ppTutorial('amigo');
+  ppExplicaTutorial(d);   // flag `companeros`: tocar el equipo explica lo que hace (js/equipo-explica.js)
   if (SAVE.monedas > 0) ppTutorial('monedas');
 }
 // un toque del jugador en la burbuja i del nivel abierto

@@ -1,8 +1,8 @@
 {
- "build": 1314,
- "hash": "0279bd5",
- "fecha": "2026-11-19T17:05:25Z",
- "mensaje": "Pop: Lola no deja tocar nada hasta pulsar ¡VALE!, «Gastar monedas» abre Bandejas y la barra del mapa sin huecos vacíos (tarea #140, cambios de Pepins)",
+ "build": 1315,
+ "hash": "1c1b7eb",
+ "fecha": "2026-11-19T17:25:58Z",
+ "mensaje": "Pop: tocar un compañero de «Tu equipo» explica lo que hace, con aviso de Lola (tarea #142, cambio de Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -23,6 +23,7 @@ PP_CV.addEventListener('pointerdown', e => {
   if (!$pp('#pp-modal').hidden) return;
   ppCargaSonidos();
   const [lx, ly] = ppLogico(e);
+  if (ppExplicaToque(lx, ly)) return;   // un compañero de «Tu equipo»: su bocadillo (js/equipo-explica.js); si no, lo cierra
   if (PP_PANT.actual === 'titulo') { ppPortadaToque(lx, ly); return; }
   if (ppCortActiva()) return;   // la cortinilla de duelo solo se quita con su botón (ADR 100)
   if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }

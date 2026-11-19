@@ -135,5 +135,12 @@ IDIOMA.add({
   "+1 {n} repetido": "+1 {n} duplicate",
   "+1 {n} repetido · +{m} monedas": "+1 {n} duplicate · +{m} coins",
   "¡{n} se une a tu colección!": "{n} joins your collection!",
-  "Tu equipo está lleno: lo puedes poner cuando quieras desde Mi equipo.": "Your team is full: you can add them any time from My team."
+  "Tu equipo está lleno: lo puedes poner cuando quieras desde Mi equipo.": "Your team is full: you can add them any time from My team.",
+  "Ya te ha ayudado en este nivel.": "Already helped you in this level.",
+  "Te ayuda una vez en cada nivel de Pesadilla.": "Helps you once in every Nightmare level.",
+  "La barra rosa se llena con cada burbuja que revientas. Le faltan {n} pops para saltar.": "The pink bar fills with every bubble you pop. {n} more pops until it jumps in.",
+  "La barra azul se llena con los toques seguidos que revientan 3 o más. Actúa con un COMBO x{n}.": "The blue bar fills with taps in a row that pop 3 or more. It acts on a COMBO x{n}.",
+  "Sin barra: actúa solo cuando le toca.": "No bar: it acts on its own when its moment comes.",
+  "Toca otra vez para cerrar": "Tap again to close",
+  "¡Toca a tus compañeros de abajo para ver qué hace cada uno!": "Tap your buddies below to see what each one does!"
 });

@@ -1,5 +1,5 @@
 // Fans of Asalto · ADAPTADORES · Lo que se ve de los LEGENDARIOS fuera de la batalla (tarea #109), en las ventanas de pergamino:
-// la pantalla «¡NACE UN LEGENDARIO!» y la de «¡SER SECRETO!» (al aviso de la partida: destello y columna de luz donde está, y luego su
+// la pantalla «¡NACE UN LEGENDARIO!», la de «¡SER SECRETO!» y la de «¡NACE UN DIOS!» (tarea #156; al aviso de la partida: destello y columna de luz donde está, y luego su
 // cartel con su nombre y sus poderes), la ventana del DESPERTAR (3 cartas, se toca una y se confirma; otras 3 con anuncio), el camino del
 // héroe en su ficha (Superior, Legendario y los tres Despertares) y las filas del Poder Dormido en las mejoras del menú.
 // Llama a los casos de uso y enseña lo que devuelven: no decide reglas.
@@ -14,15 +14,21 @@ AS.ventanas.leyendas = (() => {
   const poder = (icono, titulo, txt) => `<div class="as-ley-poder">${icono}<div><b>${titulo}</b><span>${txt}</span></div></div>`;
   const cumbre = rama => poder(ico('clase-' + rama, 'as-ico2'), tr(L().cumbres[rama].nombre), tr(L().cumbres[rama].txt));
 
-  /* ---------- nace un legendario, nace un ser: primero la luz en el campo, luego su cartel ---------- */
-  function luz(E, a, ser) {
-    const s = AS.pantalla.puntoDe(a.sitio);
-    AS.pantalla.E.ascensos.set(a.id, 1.4);
-    const cols = ser ? [[255, 90, 210], [90, 224, 255]] : [[255, 215, 90], [255, 243, 214]];
-    for (const c of cols) fx.columna(s.x, s.y, c, 760);
-    fx.onda(s.x, s.y - 40, 130, ser ? '#ff7a1a' : '#ffd23a'); fx.onda(s.x, s.y - 40, 90, ser ? '#5ae0ff' : '#fff3d6');
-    for (let i = 0; i < 4; i++) fx.brasas(s.x, s.y - 20 - i * 30, 12, ser ? '#5ae0ff' : '#ffd23a', 50);
-    fx.fogonazo(ser ? 0.9 : 0.7, '#fff3d6'); fx.sacude(ser ? 16 : 12);
+  /* ---------- nace un legendario, un ser o un dios: primero la luz en el campo, luego su cartel ---------- */
+  // los colores de su luz: las columnas, las dos ondas, las brasas, el fogonazo y cuánto tiembla (el dios, más de todo y en blanco y oro)
+  const LUZ = {
+    legendario: { cols: [[255, 215, 90], [255, 243, 214]], ondas: ['#ffd23a', '#fff3d6'], brasas: '#ffd23a', fogonazo: 0.7, sacude: 12 },
+    ser: { cols: [[255, 90, 210], [90, 224, 255]], ondas: ['#ff7a1a', '#5ae0ff'], brasas: '#5ae0ff', fogonazo: 0.9, sacude: 16 },
+    dios: { cols: [[255, 255, 255], [255, 215, 90], [255, 243, 214], [255, 255, 255]], ondas: ['#ffffff', '#ffd23a', '#fff3d6', '#ffd23a'], brasas: '#ffffff', fogonazo: 1, sacude: 22 },
+  };
+  function luz(E, a) {
+    const s = AS.pantalla.puntoDe(a.sitio), L = LUZ[a.tipo] || LUZ.legendario, dios = a.tipo === 'dios';
+    AS.pantalla.E.ascensos.set(a.id, dios ? 2 : 1.4);
+    for (const c of L.cols) fx.columna(s.x, s.y, c, dios ? 1100 : 760);
+    L.ondas.forEach((c, i) => fx.onda(s.x, s.y - 40, 130 - i * 40 + (dios ? 120 : 0), c));
+    for (let i = 0; i < (dios ? 8 : 4); i++) fx.brasas(s.x, s.y - 20 - i * 30, 12, i % 2 && dios ? '#ffd23a' : L.brasas, 50);
+    if (dios) for (let i = 0; i < 6; i++) fx.columna(s.x + (i - 2.5) * 70, s.y, [255, 235, 160], 900);   // los rayos que bajan del cielo
+    fx.fogonazo(L.fogonazo, dios ? '#ffffff' : '#fff3d6'); fx.sacude(L.sacude);
     AS.suena('gordo');
   }
   function htmlNace(h) {
@@ -38,13 +44,22 @@ AS.ventanas.leyendas = (() => {
       <h3>${tr('SUS DOS HABILIDADES')}</h3>${lista.map(x => poder('', tr(x.nombre), tr(x.txt))).join('')}
       <h3>${tr('SUS PODERES CUMBRE')}</h3>${d.cumbres.map(cumbre).join('')}`;
   }
+  // el dios: su nombre, de qué dos legendarios nace y su poder divino
+  function htmlDios(h) {
+    const d = LG.datosDe(ASALTO, h), padres = ASALTO.dioses.lista[h.dios].padres.map(k => tr(L().lista[k].nombre));
+    return `<h2>${tr('¡NACE UN DIOS!')}</h2><div class="as-ley-cara as-ley-dios">${retrato(h, 3)}</div><p class="as-ley-nombre">${tr(d.nombre)}</p>
+      <p class="as-nota">${tr('Nace de {a} y {b}', { a: padres[0], b: padres[1] })}</p>
+      <h3>${tr('PODER DIVINO')}</h3>${poder('', tr('Solo suyo'), tr(d.txt))}`;
+  }
+  const CARTEL = { legendario: { html: htmlNace, clase: '', son: 'premio' }, ser: { html: htmlSer, clase: ' as-ley-de-ser', son: 'asciende' },
+    dios: { html: htmlDios, clase: ' as-ley-de-dios', son: 'asciende' } };
   function cartel(E, a) {
     const x = heroeDe(E, a.id);
     if (!x) { S.mostrando = false; sigue(E); return; }
-    const ser = a.tipo === 'ser', modal = $('#as-modal');
+    const c = CARTEL[a.tipo] || CARTEL.legendario, modal = $('#as-modal');
     modal.classList.add('as-modal-luz');
-    V.abre((ser ? htmlSer(x.h) : htmlNace(x.h)) + btn('as-ley-seguir', tr('¡VAMOS!'), 'as-oro as-enorme'), 'as-leyenda' + (ser ? ' as-ley-de-ser' : ''));
-    AS.suena(ser ? 'asciende' : 'premio', 3);
+    V.abre(c.html(x.h) + btn('as-ley-seguir', tr('¡VAMOS!'), 'as-oro as-enorme'), 'as-leyenda' + c.clase);
+    AS.suena(c.son, 3);
     V.alPulsar('as-ley-seguir', () => { modal.classList.remove('as-modal-luz'); V.cierra(); S.mostrando = false; sigue(E); });
   }
   // enseña el siguiente aviso de la cola cuando no haya otra ventana delante
@@ -53,12 +68,12 @@ AS.ventanas.leyendas = (() => {
     if (V.abierta()) { S.espera = true; setTimeout(() => { S.espera = false; sigue(E); }, 400); return; }
     const a = S.cola.shift();
     S.mostrando = true;
-    luz(E, a, a.tipo === 'ser');
-    setTimeout(() => cartel(E, a), 900);
+    luz(E, a);
+    setTimeout(() => cartel(E, a), a.tipo === 'dios' ? 1300 : 900);
   }
-  // un aviso de la partida: si es de un legendario o de un ser, a la cola (devuelve true); si no, no es suyo
+  // un aviso de la partida: si es de un legendario, un ser o un dios, a la cola (devuelve true); si no, no es suyo
   function avisa(E, a) {
-    if (a.tipo !== 'legendario' && a.tipo !== 'ser') return false;
+    if (!CARTEL[a.tipo]) return false;
     S.cola.push(a);
     sigue(E);
     return true;
@@ -119,6 +134,7 @@ AS.ventanas.leyendas = (() => {
   function htmlPoderes(h) {
     if (!LG.es(ASALTO, h)) return '';
     const d = LG.datosDe(ASALTO, h);
+    if (h.dios) return poder('', tr('Poder divino'), tr(d.txt));
     if (h.ser) return h.ser.padres.map(k => poder('', tr(L().lista[k].nombre), tr(L().lista[k].txt))).join('') + d.cumbres.map(cumbre).join('');
     return cumbre(h.rama) + poder('', tr('Habilidad única'), tr(d.txt));
   }

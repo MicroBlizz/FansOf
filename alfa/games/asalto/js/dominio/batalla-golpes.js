@@ -2,7 +2,8 @@
 // y las reliquias que lo cambian), las curas, la muerte, el momento del impacto de cada tipo de ataque (cuerpo a cuerpo, flecha, bola
 // mágica, bomba o cura), los proyectiles en vuelo y las habilidades de las 7 clases, que saltan cada pocos segundos. Cada vida que se quita o se da pasa por `quita` o `sana`, que la apuntan en las cifras del combate (cifras.js).
 // Todo lo que pasa se apunta en B.eventos para que la pantalla lo pinte y lo haga sonar. Los legendarios (tarea #109) se enganchan
-// aquí con AS.leyendas (batalla-legendarios.js): al contar el golpe, al repartirlo, después de darlo, al atacar, al revivir y al morir.
+// aquí con AS.leyendas (batalla-legendarios.js): al contar el golpe, al repartirlo, después de darlo, al atacar, al revivir y al morir;
+// y los dioses (tarea #156) con AS.dioses (batalla-dioses.js): al contar el golpe, después de darlo, al ir a morir y al morir.
 'use strict';
 AS.golpes = (() => {
   const BT = () => AS.batalla;
@@ -28,11 +29,12 @@ AS.golpes = (() => {
   // de = quien lo ha derrotado (para las cifras)
   // (un héroe puede revivir: Segunda vida u Oráculo). extra = un señuelo o un minimapache
   function muere(B, u, de) {
-    if (u.muerta || AS.leyendas.revive(B, u)) return;
+    if (u.muerta || AS.dioses.aguanta(B, u) || AS.leyendas.revive(B, u)) return;
     u.muerta = true; u.vida = 0; u.anim = 'muerte'; u.tAnim = 0;
     if (u.lado === 'enemigo') { B.oro += B.datos.partida.oroPorMuerte; B.bajas++; CI().apunta(B, de, 'bajas', 1); }
     ev(B, { e: 'muere', id: u.id, lado: u.lado, x: u.x, y: u.y, jefe: u.jefe, elite: u.elite, extra: u.extra });
     AS.leyendas.alMorir(B, u, de);
+    AS.dioses.alMorir(B, u);
   }
   // de = quien cura (para las cifras)
   function cura(B, a, cant, de) {
@@ -46,7 +48,7 @@ AS.golpes = (() => {
   function cuenta(B, de, a, dano) {
     const L = AS.leyendas.mods(B, de, a);
     if (L.mata) return { d: Math.ceil(a.vida + a.escudo), crit: true };
-    let d = dano * B.azar.entre(0.9, 1.1) * muerteSubita(B) * L.mult, crit = false;
+    let d = dano * B.azar.entre(0.9, 1.1) * muerteSubita(B) * L.mult * AS.dioses.mult(B, de), crit = false;
     if (L.crit || (de && de.critico && B.azar() < de.critico)) { d *= 2 + (de.danoCrit || 0); crit = true; }
     if (de && de.lado === 'heroe' && B.rel.has('furia') && de.vida < de.max * 0.3) d *= 1.3;
     if (a.maldito > 0) d *= 1.2;
@@ -85,7 +87,7 @@ AS.golpes = (() => {
     encoge(a);
     ev(B, { e: 'golpe', id: a.id, lado: a.lado, x: a.x, y: a.y, d, crit: c.crit, tipo: tipoGolpe || 'cuerpo', jefe: a.jefe });
     secuelas(B, de, a, d);
-    if (!eco) { salpica(B, de, a, dano, tipoGolpe); AS.leyendas.trasGolpe(B, de, a, dano, tipoGolpe); }
+    if (!eco) { salpica(B, de, a, dano, tipoGolpe); AS.leyendas.trasGolpe(B, de, a, dano, tipoGolpe); AS.dioses.trasGolpe(B, de, a, dano, tipoGolpe); }
     if (a.vida <= 0) muere(B, a, de);
   }
   const enArea = (B, u, x, y, radio) => BT().rivales(B, u).filter(r => Math.hypot(r.x - x, r.y - y) < radio);

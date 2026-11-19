@@ -5,6 +5,7 @@
 // con nivel 5 o más puede ascender a una de sus dos clases, una sola vez.
 // Tarea #109: si es legendario (dominio/legendario.js) lleva también sus cartas de Despertar (`cartas`), la marca `legendario` y, si
 // salió de unir dos legendarios, `ser` ({ clave, padres }). La carta «hambre» dobla el nivel que suma al absorber y «hueco» da un hueco más.
+// Tarea #156: si salió de unir la pareja de legendarios de un dios, `dios` es su id (ajustes-dioses.js); si no, null.
 'use strict';
 AS.heroe = (() => {
   const congela = h => {
@@ -24,7 +25,7 @@ AS.heroe = (() => {
     if (!datos.heroes[tipo]) return AS.error('heroe-desconocido', { tipo });
     if (!(nivel >= 1)) return AS.error('nivel-invalido', { nivel });
     if (!Number.isInteger(rareza) || !datos.rarezas[rareza]) return AS.error('rareza-desconocida', { rareza });
-    return AS.ok(congela({ id, tipo, nivel: Math.floor(nivel), rareza, cifras: SIN_CIFRAS(), marcas: {}, rama: null, dorado: !!dorado, cartas: [], legendario: false, ser: null }));
+    return AS.ok(congela({ id, tipo, nivel: Math.floor(nivel), rareza, cifras: SIN_CIFRAS(), marcas: {}, rama: null, dorado: !!dorado, cartas: [], legendario: false, ser: null, dios: null }));
   }
   // el mismo héroe con sus cifras propias: { vida, dano }, cada una un multiplicador dentro del margen
   function conCifras(datos, h, cifras) {
@@ -95,14 +96,17 @@ AS.heroe = (() => {
     if (!s.padres.every(p => typeof p === 'string' && L.lista[p])) return null;
     return { clave: s.clave, padres: s.padres.slice() };
   }
-  // legendario solo si lo es de verdad: un ser, o ascendido y con el nivel de legendario
-  const legendarioGuardado = (datos, j, rama, ser) => !!ser || (j.legendario === true && !!rama && j.nivel >= datos.legendarios.nivel);
+  // un dios que existe (si no, ninguno)
+  const diosGuardado = (datos, j) => (typeof j.dios === 'string' && datos.dioses && Object.hasOwn(datos.dioses.lista, j.dios) ? j.dios : null);
+  // legendario solo si lo es de verdad: un ser o un dios, o ascendido y con el nivel de legendario
+  const legendarioGuardado = (datos, j, rama, ser, dios) => !!ser || !!dios || (j.legendario === true && !!rama && j.nivel >= datos.legendarios.nivel);
   function deJSON(datos, j) {
     if (!j) return AS.error('heroe-desconocido', { tipo: undefined });
     const r = crea(datos, j.id, j.tipo, j.nivel, j.dorado, rarezaGuardada(datos, j));
     if (!r.ok) return r;
-    const rama = j.rama && clases(datos, r.valor).includes(j.rama) ? j.rama : null, ser = serGuardado(datos, j);
-    return AS.ok(con(r.valor, { cifras: cifrasGuardadas(datos, j), marcas: marcasGuardadas(datos, j), rama, cartas: cartasGuardadas(datos, j), ser, legendario: legendarioGuardado(datos, j, rama, ser) }));
+    const rama = j.rama && clases(datos, r.valor).includes(j.rama) ? j.rama : null, ser = serGuardado(datos, j), dios = diosGuardado(datos, j);
+    return AS.ok(con(r.valor, { cifras: cifrasGuardadas(datos, j), marcas: marcasGuardadas(datos, j), rama, cartas: cartasGuardadas(datos, j), ser, dios,
+      legendario: legendarioGuardado(datos, j, rama, ser, dios) }));
   }
   return { crea, con, conCifras, conCarta, tiene, clases, absorbe, huecos, improntas, herencias, puedeAscender, asciende, puntos, deJSON };
 })();

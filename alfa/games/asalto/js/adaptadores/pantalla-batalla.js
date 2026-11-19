@@ -5,7 +5,7 @@
 'use strict';
 AS.pantallaBatalla = (() => {
   const fx = AS.fx, C = AS.tema.C;
-  const SON_ATAQUE = { cuerpo: 'espada', flecha: 'flecha', magia: 'magia', bomba: 'flecha', cura: 'cura' };
+  const SON_ATAQUE = { cuerpo: 'espada', flecha: 'flecha', magia: 'magia', bomba: 'flecha', cura: 'cura', moneda: 'moneda' };
   const pos = (E, x, y) => E.P.aPantalla(x, y);
 
   function lucha(E) {

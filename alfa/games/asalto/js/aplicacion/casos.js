@@ -65,20 +65,22 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
 
   /* ---------- SOLO PARA PRUEBAS (panel DEV): rehacen la partida desde su guardado con unos héroes cambiados ---------- */
   // el héroe guardado, ya legendario: con el nivel de legendario como poco, ascendido a su primera clase si no lo estaba y marcado.
-  // tipo (opcional): antes se convierte en ese Animal Loco, para probar las parejas de seres (conejo + vaca…)
-  function legendarioDePrueba(jh, tipo) {
-    const t = datos.heroes[tipo] ? tipo : jh.tipo, rama = t === jh.tipo && jh.rama ? jh.rama : datos.heroes[t].clases[0];
-    return { ...jh, tipo: t, rama, nivel: Math.max(jh.nivel, datos.legendarios.nivel), legendario: true };
+  // tipo (opcional): antes se convierte en ese Animal Loco, para probar las parejas de seres (conejo + vaca…); rama (opcional, tarea
+  // #156): asciende a esa clase si es suya, para probar las parejas de los dioses (conejo luchador + vaca luchadora…)
+  function legendarioDePrueba(jh, tipo, rama) {
+    const t = datos.heroes[tipo] ? tipo : jh.tipo, clases = datos.heroes[t].clases;
+    const suya = clases.includes(rama) ? rama : t === jh.tipo && jh.rama ? jh.rama : clases[0];
+    return { ...jh, tipo: t, rama: suya, nivel: Math.max(jh.nivel, datos.legendarios.nivel), legendario: true };
   }
-  // cambios: [{ sitio, tipo }]. La partida se guarda y se vuelve a cargar con esos héroes hechos legendarios
+  // cambios: [{ sitio, tipo, rama }]. La partida se guarda y se vuelve a cargar con esos héroes hechos legendarios
   function devCambia(cambios) {
     if (!partida) return AS.error('sin-partida');
     const j = partida.aJSON() && JSON.parse(JSON.stringify(partida.aJSON()));
     if (!j) return AS.error('ahora-no');
-    for (const { sitio, tipo } of cambios) {
+    for (const { sitio, tipo, rama } of cambios) {
       const lista = sitio.donde === 'campo' ? j.equipo.campo : j.equipo.banquillo;
       if (!lista[sitio.i]) return AS.error('nadie-ahi');
-      lista[sitio.i] = legendarioDePrueba(lista[sitio.i], tipo);
+      lista[sitio.i] = legendarioDePrueba(lista[sitio.i], tipo, rama);
     }
     const r = AS.Partida.deJSON(datos, j, PR.statsEquipo(datos, prog), azar);
     if (!r.ok) return r;
@@ -186,10 +188,11 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     // otras 3 cartas con anuncio (una vez por oferta): llamar solo DESPUÉS de verse el anuncio entero. Es el anuncio 'cartas'
     cambiaCartas: () => conPartida(p => p.anuncio('cartas', azar)),
     // SOLO PARA PRUEBAS (panel DEV): el héroe de ese sitio, legendario al instante; y un ser uniendo dos (tipos: [el de desde, el de
-    // hasta], opcional: por defecto se quedan los suyos; para conejo + vaca, ['heroe-bunny', 'heroe-mechavaca'])
+    // hasta], opcional: por defecto se quedan los suyos; para conejo + vaca, ['heroe-bunny', 'heroe-mechavaca']). ramas (opcional, igual
+    // que tipos): para un dios, la pareja exacta; para el Gran Jefe Supremo, tipos conejo y vaca y ramas ['luchador', 'luchador']
     devLegendario: (sitio, tipo) => devCambia([{ sitio, tipo }]),
-    devSer(desde, hasta, tipos = []) {
-      const r = devCambia([{ sitio: desde, tipo: tipos[0] }, { sitio: hasta, tipo: tipos[1] }]);
+    devSer(desde, hasta, tipos = [], ramas = []) {
+      const r = devCambia([{ sitio: desde, tipo: tipos[0], rama: ramas[0] }, { sitio: hasta, tipo: tipos[1], rama: ramas[1] }]);
       return r.ok ? conPartida(p => p.absorbe(desde, hasta, azar)) : r;
     },
 

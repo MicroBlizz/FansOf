@@ -2,7 +2,7 @@
 // (dominio/batalla-legendarios.js, la lista está en su cabecera) en efectos y sonidos: meteoritos y cometas que caen del cielo, la lluvia
 // de bellotas, el fuego en el suelo, la explosión del Juicio, la embestida, el brillo del invulnerable, el que revive, los señuelos y los
 // minimapaches, y un cartel corto con el nombre del poder o de la carta que acaba de saltar. Dibujo provisional por código, en píxeles.
-// pantalla-batalla.js le pasa cada evento (trata) y pinta-arena.js le pide lo que va en el suelo, el brillo de cada uno y lo de encima.
+// Los eventos 'divino' de los dioses (tarea #156) los pasa a dioses-batalla.js. pantalla-batalla.js le pasa cada evento (trata) y pinta-arena.js le pide lo que va en el suelo, el brillo de cada uno y lo de encima.
 'use strict';
 AS.leyendasBatalla = (() => {
   const fx = AS.fx, T = AS.tema, C = T.C, L = () => ASALTO.legendarios;
@@ -10,7 +10,7 @@ AS.leyendasBatalla = (() => {
   const HABILIDAD = { sombra: 'Sombra', abanico: 'Abanico', salto: 'Salto real', muralla: 'Muralla', bellotas: 'Mil bellotas', sinaviso: 'Sin aviso',
     guadana: 'Guadaña', enganos: 'Nueve engaños', fuego: 'Fuego', juicio: 'Juicio final', fortaleza: 'Fortaleza', embestida: 'Embestida',
     vidente: 'Visión', malojo: 'Mal de ojo', cometa: 'Cometa', chatarra: 'Chatarra' };
-  const COLOR = { cumbre: '#c8901c', habilidad: '#8a1f24', carta: '#3f8ae8' };
+  const COLOR = { cumbre: '#c8901c', habilidad: '#8a1f24', carta: '#3f8ae8', divino: '#a8780a' };
   const S = { B: null, t: 0, carteles: [], caidas: [], ultimo: new Map() };
   const pos = (E, e) => E.P.aPantalla(e.x, e.y);
   const escala = E => E.P.W / 540;
@@ -55,6 +55,8 @@ AS.leyendasBatalla = (() => {
     habilidad(E, e) { cartel(E, e, tr(HABILIDAD[e.hab] || e.hab), 'habilidad'); if (HAB[e.hab]) HAB[e.hab](E, e); },
     carta(E, e) { cartel(E, e, tr(L().cartas[e.carta].nombre), 'carta'); },
     meteorito, cometa, bellotas,
+    // los dioses (tarea #156): los pinta dioses-batalla.js, con el cartel y lo que cae del cielo de aquí
+    divino(E, e) { AS.diosesBatalla.trata(E, e, { cartel, cae, revienta }); },
     revive(E, e) {
       const s = pos(E, e);
       fx.columna(s.x, s.y, [150, 255, 150], 260); fx.brasas(s.x, s.y - 30, 16, '#b8ff7a', 26); fx.numero(s.x, s.y - 140, tr('¡REVIVE!'), '#b8ff7a', 48);

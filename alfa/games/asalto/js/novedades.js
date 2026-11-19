@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.6.0', real: ["<b>Dioses</b>: hay 16 parejas secretas de legendarios que, al unirse, no dan un ser: dan un <b>dios</b> con un poder divino. ¿Las encontrarás todas?"], joke: ["Microblizz ha creado un departamento divino. De momento, solo tiene jefes."] },
   { v: '0.5.2', real: ["En el móvil, Asalto <b>llena la pantalla de lado a lado</b>: la arena es más grande y los héroes ya no van apretados. Se ve igual en la app y en Chrome."], joke: ["Microblizz ha ampliado la mazmorra. El alquiler, también."] },
   { v: '0.5.1', real: ["Las <b>reliquias</b> que eliges se ven ahora abajo a la izquierda de la arena. Tócalas para ver qué hace cada una."], joke: ["Microblizz ha puesto una vitrina para las reliquias. La llave la tiene Recursos Humanos."] },
   { v: '0.5.0', real: ["<b>Legendarios</b>: un héroe ascendido que llega al nivel 12 se hace legendario, con el poder cumbre de su rama y una <b>habilidad única</b> solo suya (16 en total).", "<b>Despertar</b>: a los niveles 16, 22 y 30 tu legendario elige 1 carta entre 3 para toda la partida. Se abre en MEJORAS con plumas (Poder Dormido).", "<b>Seres secretos</b>: en las partidas largas, une dos legendarios de distinto animal y nace un ser nuevo con los poderes de los dos. Hay 28 por descubrir."], joke: ["Microblizz lo llama «fusión de departamentos». Al conejo y a la vaca nadie les preguntó."] },

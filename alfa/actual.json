@@ -1,11 +1,11 @@
 {
- "build": 1307,
- "hash": "a19a311",
- "fecha": "2026-11-19T14:58:35Z",
- "mensaje": "Pop: colores de fondo de la victoria por nota, al azar (solo las reglas y sus tests; la pantalla aún no los usa) (tarea #157)",
+ "build": 1308,
+ "hash": "94761cd",
+ "fecha": "2026-11-19T15:18:14Z",
+ "mensaje": "Asalto 0.6.0: los 16 dioses (tarea #156, ADR 163)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.5.2",
+  "asalto": "0.6.0",
   "basement": "0.13.0",
   "boom": "0.4.17",
   "chef": "0.4.0",

@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "<b>Dioses</b>: hay 16 parejas secretas de legendarios que, al unirse, no dan un ser: dan un <b>dios</b> con un poder divino. ¿Las encontrarás todas?": "<b>Gods</b>: there are 16 secret pairs of legendaries that, when merged, do not make a being: they make a <b>god</b> with a divine power. Can you find them all?",
+  "Microblizz ha creado un departamento divino. De momento, solo tiene jefes.": "Microblizz has created a divine department. So far, it only has bosses.",
   "En el móvil, Asalto <b>llena la pantalla de lado a lado</b>: la arena es más grande y los héroes ya no van apretados. Se ve igual en la app y en Chrome.": "On mobile, Asalto now <b>fills the screen edge to edge</b>: the arena is bigger and the heroes are no longer squeezed. It looks the same in the app and in Chrome.",
   "Microblizz ha ampliado la mazmorra. El alquiler, también.": "Microblizz has enlarged the dungeon. And the rent.",
   "Las <b>reliquias</b> que eliges se ven ahora abajo a la izquierda de la arena. Tócalas para ver qué hace cada una.": "The <b>relics</b> you pick now show at the bottom left of the arena. Tap them to see what each one does.",

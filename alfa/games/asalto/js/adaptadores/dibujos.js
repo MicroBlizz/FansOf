@@ -76,9 +76,22 @@ AS.dibujos = (() => {
   }
   // los legendarios y los seres (tarea #109), hasta que llegue su dibujo: un aura que late detrás (dorada; la del ser, de dos colores)
   // y unos destellos que giran a su alrededor. En píxeles, sin suavizar
-  const AURA = { legendario: ['#ffd23a', '#fff3d6'], ser: ['#ff7a1a', '#5ae0ff'] };
+  const AURA = { legendario: ['#ffd23a', '#fff3d6'], ser: ['#ff7a1a', '#5ae0ff'], dios: ['#ffffff', '#ffd23a'] };
+  // tarea #156: el dios, hasta que llegue su dibujo (tira «dios-<id>»), lleva detrás rayos de luz blancos y dorados que giran, además
+  // del aura (blanca y dorada) y los destellos
+  function rayos(g, w, h, t) {
+    const cy = -h * 0.42, base = g.globalAlpha, largo = Math.max(w, h) * 0.85;
+    for (let i = 0; i < 12; i++) {
+      const a = t * 0.6 + i * Math.PI / 6, k = 0.5 + 0.5 * Math.sin(t * 5 + i), ancho = i % 2 ? 4 : 7;
+      g.globalAlpha = base * (0.25 + k * 0.35);
+      g.fillStyle = i % 2 ? '#ffd23a' : '#ffffff';
+      for (let r = w * 0.2; r < largo * (0.75 + k * 0.25); r += 6) g.fillRect(Math.round(Math.cos(a) * r) - ancho / 2, Math.round(cy + Math.sin(a) * r) - ancho / 2, ancho, ancho);
+    }
+    g.globalAlpha = base;
+  }
   function aura(g, aspecto, w, h, t) {
-    const col = AURA[aspecto.ser ? 'ser' : 'legendario'], k = 0.5 + Math.sin(t * 4) * 0.5, cy = -h * 0.42, base = g.globalAlpha;
+    if (aspecto.dios) rayos(g, w, h, t);
+    const col = AURA[aspecto.dios ? 'dios' : aspecto.ser ? 'ser' : 'legendario'], k = 0.5 + Math.sin(t * 4) * 0.5, cy = -h * 0.42, base = g.globalAlpha;
     for (let i = 3; i >= 1; i--) {
       g.globalAlpha = base * (0.3 + k * 0.2) * (4 - i) / 3;
       g.fillStyle = col[i % 2 ? 0 : 1];

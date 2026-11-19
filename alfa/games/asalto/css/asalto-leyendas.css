@@ -1,5 +1,5 @@
 /* Fans of Asalto · Las ventanas de los LEGENDARIOS (tarea #109; js/adaptadores/ventanas-leyendas.js): el cartel de «¡NACE UN LEGENDARIO!»
-   y el de «¡SER SECRETO!» con su columna de luz detrás, las cartas del Despertar, el camino del héroe en su ficha y el Poder Dormido.
+   , el de «¡SER SECRETO!» y el de «¡NACE UN DIOS!» (tarea #156) con su columna de luz detrás, las cartas del Despertar, el camino del héroe en su ficha y el Poder Dormido.
    Mismo aire que las demás: pergamino con borde de oro, todo en --as-u y a píxel (anillos de color sólido, sin degradados suaves). */
 
 /* la columna de luz detrás del cartel: dos haces de oro que laten a saltos (la del ser, rosa y celeste) */
@@ -21,6 +21,25 @@
 .as-ley-cara { display: flex; justify-content: center; margin: calc(var(--as-u) * 4) auto 0; padding: calc(var(--as-u) * 6); width: max-content;
   background: radial-gradient(closest-side, rgba(255, 243, 214, 0.9) 0 40%, rgba(255, 210, 58, 0.7) 40% 62%, rgba(200, 144, 28, 0.45) 62% 82%, transparent 82%); animation: as-late 0.9s steps(3) infinite; }
 .as-ley-ser { background: radial-gradient(closest-side, rgba(255, 243, 214, 0.9) 0 36%, rgba(255, 90, 210, 0.6) 36% 60%, rgba(90, 224, 255, 0.55) 60% 82%, transparent 82%); }
+
+/* tarea #156, «¡NACE UN DIOS!»: más luz que el ser, en blanco y oro. Haz más ancho y blanco, triple marco de oro y blanco que late
+   más deprisa, nombre en oro brillante y rayos que giran a saltos detrás de su cara */
+.as-modal-luz:has(.as-ley-de-dios)::before { width: calc(var(--as-u) * 360);
+  background: linear-gradient(90deg, transparent 0 6%, rgba(255, 210, 58, 0.35) 6% 22%, rgba(255, 255, 255, 0.8) 22% 78%, rgba(255, 210, 58, 0.35) 78% 94%, transparent 94%);
+  animation: as-dios-haz 0.6s steps(3) infinite; }
+@keyframes as-dios-haz { 50% { width: calc(var(--as-u) * 480); opacity: 0.85; } }
+.as-ley-de-dios { box-shadow: 0 0 0 calc(var(--as-u) * 4) var(--as-tinta), 0 0 0 calc(var(--as-u) * 8) #ffd23a, 0 0 0 calc(var(--as-u) * 12) #ffffff, 0 0 0 calc(var(--as-u) * 16) #ffd23a;
+  animation: as-dios-marco 0.5s steps(2) infinite; }
+@keyframes as-dios-marco { 50% { filter: brightness(1.18); } }
+.as-ley-de-dios h2 { color: #a8780a; text-shadow: calc(var(--as-u) * 3) calc(var(--as-u) * 3) 0 var(--as-tinta); }
+.as-ley-de-dios .as-ley-nombre { color: #b8860b; text-shadow: calc(var(--as-u) * 2) calc(var(--as-u) * 2) 0 var(--as-tinta), 0 0 calc(var(--as-u) * 8) #ffffff; }
+.as-ley-dios { position: relative; isolation: isolate; padding: calc(var(--as-u) * 14);
+  background: radial-gradient(closest-side, #ffffff 0 34%, rgba(255, 243, 214, 0.95) 34% 50%, rgba(255, 210, 58, 0.85) 50% 68%, rgba(255, 255, 255, 0.6) 68% 84%, transparent 84%); }
+.as-ley-dios::before { content: ''; position: absolute; inset: calc(var(--as-u) * -30); z-index: -1; pointer-events: none;
+  background: repeating-conic-gradient(rgba(255, 210, 58, 0.75) 0 10deg, transparent 10deg 20deg, rgba(255, 255, 255, 0.85) 20deg 30deg, transparent 30deg 45deg);
+  -webkit-mask: radial-gradient(closest-side, #000 0 72%, transparent 72%); mask: radial-gradient(closest-side, #000 0 72%, transparent 72%);
+  animation: as-dios-gira 3s steps(12) infinite; }
+@keyframes as-dios-gira { to { transform: rotate(360deg); } }
 
 /* un poder (cumbre o habilidad): su icono, su nombre y lo que hace */
 .as-ley-poder { display: flex; align-items: center; gap: calc(var(--as-u) * 10); text-align: left; padding: calc(var(--as-u) * 8) calc(var(--as-u) * 10); margin: calc(var(--as-u) * 6) 0;

@@ -3,7 +3,8 @@
 // tope (uno en la partida normal, dos en la larga) y deja un aviso; y si un legendario tiene un Despertar por elegir (solo los abiertos
 // con plumas fuera de la partida: el Poder Dormido), se abre UNA oferta de 3 cartas. Mientras hay oferta no se lucha.
 // El estado es un valor congelado: { abiertos: Despertares abiertos (0 a 3), oferta: null | { id del héroe, cartas, cambiada } }.
-// Avisos para la pantalla: { tipo: 'legendario', id, sitio, clave } y { tipo: 'ser', id, sitio, clave }. Puro: el azar se pasa.
+// Avisos para la pantalla: { tipo: 'legendario', id, sitio, clave }, { tipo: 'ser', id, sitio, clave } y (tarea #156)
+// { tipo: 'dios', id, sitio, clave: id del dios }. Puro: el azar se pasa.
 'use strict';
 AS.despertar = (() => {
   const LG = AS.legendario;
@@ -45,8 +46,11 @@ AS.despertar = (() => {
     const n = nacen(datos, equipo, esLarga), estado = abre(datos, n.equipo, s, azar);
     return { equipo: n.equipo, estado, avisos: n.avisos, cambio: n.avisos.length > 0 || estado !== s };
   }
-  // el aviso de un ser recién nacido al unir (antes: el que se quedaba, tal como era; heroe: el que ha quedado)
-  const avisoSer = (antes, heroe, sitio) => (heroe.ser && !(antes && antes.ser) ? [{ tipo: 'ser', id: heroe.id, sitio, clave: heroe.ser.clave }] : []);
+  // el aviso de un ser o de un dios recién nacido al unir (antes: el que se quedaba, tal como era; heroe: el que ha quedado)
+  function avisoSer(antes, heroe, sitio) {
+    if (heroe.dios && !(antes && antes.dios)) return [{ tipo: 'dios', id: heroe.id, sitio, clave: heroe.dios }];
+    return heroe.ser && !(antes && antes.ser) ? [{ tipo: 'ser', id: heroe.id, sitio, clave: heroe.ser.clave }] : [];
+  }
   // por qué no se puede luchar (o null)
   const bloquea = s => (s.oferta ? 'elige-carta' : null);
 

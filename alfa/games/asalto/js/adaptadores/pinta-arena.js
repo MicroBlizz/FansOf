@@ -40,10 +40,10 @@ AS.pinta.arena = (() => {
       E.zona({ x: s.x - 50, y: s.y - 90, w: 100, h: 110 }, 'hueco', { donde: 'campo', i });
     }
   }
-  // lo grande que se ve un héroe fuera de la batalla: el ser y la carta Gigante lo agrandan (lo mismo que su unidad en la batalla)
+  // lo grande que se ve un héroe fuera de la batalla: el dios (tarea #156), el ser y la carta Gigante lo agrandan (lo mismo que su unidad en la batalla)
   function escalaDe(h) {
-    const L = ASALTO.legendarios;
-    return (h.ser ? L.ser.escala : 1) * (h.cartas && h.cartas.includes('gigante') ? L.efectos.gigante.escala : 1);
+    const L = ASALTO.legendarios, grado = h.dios ? ASALTO.dioses.escala : h.ser ? L.ser.escala : 1;
+    return grado * (h.cartas && h.cartas.includes('gigante') ? L.efectos.gigante.escala : 1);
   }
   // el legendario que espera a elegir su carta de Despertar lleva también la flecha: tocarlo abre la ventana
   const despierta = (p, h) => !!(p.despertar.oferta && p.despertar.oferta.id === h.id);
@@ -109,7 +109,7 @@ AS.pinta.arena = (() => {
     if (u.maldito > 0) { g.fillStyle = '#b22e54'; g.fillRect(s.x - 24, s.y - alto - 20, 6, 6); }
   }
   // cómo se ve: el aspecto de los héroes (con su grado de legendario o de ser, tarea #109) y su escala
-  const vista = u => (u.lado === 'heroe' ? { aspecto: AS.aspecto.de(u.tipo, u.rama, u.improntas, { legendario: u.legendario, ser: u.serClave }), escala: u.escala } : { aspecto: null, escala: 1 });
+  const vista = u => (u.lado === 'heroe' ? { aspecto: AS.aspecto.de(u.tipo, u.rama, u.improntas, { legendario: u.legendario, ser: u.serClave, dios: u.dios }), escala: u.escala } : { aspecto: null, escala: 1 });
   function unidades(g, P, B, E) {
     const orden = B.u.filter(u => !u.cruzo).sort((a, b) => a.y - b.y);
     for (const u of orden) {
@@ -126,7 +126,8 @@ AS.pinta.arena = (() => {
       marcas(g, u, s, alto);
     }
   }
-  const PROY = { flecha: ['#7c4b2a', '#fff3d6'], magia: ['#f08a2a', '#ffd23a'], bomba: ['#22140e', '#d8402f'], sombra: ['#8a1f4a', '#ff7ab0'], dardo: ['#3f9a3a', '#b8ff7a'] };
+  const PROY = { flecha: ['#7c4b2a', '#fff3d6'], magia: ['#f08a2a', '#ffd23a'], bomba: ['#22140e', '#d8402f'], sombra: ['#8a1f4a', '#ff7ab0'], dardo: ['#3f9a3a', '#b8ff7a'],
+    moneda: ['#a8780a', '#ffe14a'] };   // moneda: la del dios «paga» (tarea #156)
   function proyectiles(g, P, B) {
     for (const p of B.proy) {
       if (p.t < 0) continue;

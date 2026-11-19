@@ -9,16 +9,25 @@ AS.poder = (() => {
     vida: (m, v) => { m.vida *= 1 + v; }, dano: (m, v) => { m.dano *= 1 + v; }, critico: (m, v) => { m.critico += v; }, prisa: (m, v) => { m.prisa *= 1 + v; },
     salpica: (m, v) => { m.salpica += v; }, regenera: (m, v) => { m.regenera += v * 100; }, roba: (m, v) => { m.roba += v; },
   };
-  // lo que da cada rama del ascenso
-  const RAMA = {
-    tanque: m => { m.vida *= 1.4; m.provoca = true; },
-    luchador: m => { m.torbellino = 56; },
-    asesino: m => { m.critico += 0.25; m.danoCrit += 1; },
-    tirador: m => { m.dobleTiro = 0.6; },
-    mago: m => { m.estalla = 64; },
-    sanador: m => { m.curaArea = 0.5; },
-    brujo: m => { m.maldice = 4; },
-  };
+  // lo que da cada rama del ascenso (su bonus: la vida, en tanto de más; lo demás se suma)
+  const BONO_RAMA = Object.freeze({ tanque: { vida: 0.4 }, luchador: { torbellino: 56 }, asesino: { critico: 0.25, danoCrit: 1 }, tirador: { dobleTiro: 0.6 },
+    mago: { estalla: 64 }, sanador: { curaArea: 0.5 }, brujo: { maldice: 4 } });
+  function conRama(m, rama) {
+    const b = BONO_RAMA[rama];
+    for (const k in b) { if (k === 'vida') m.vida *= 1 + b.vida; else m[k] = (m[k] || 0) + b[k]; }
+    if (rama === 'tanque') m.provoca = true;
+  }
+  // tarea #156, el dios «direccion»: el bonus de rama de una unidad de la batalla, ya hecha, otra vez (`veces` = 2: el doble de su bonus).
+  // La vida pasa de ×(1 + bono) a ×(1 + veces·bono) y lo que se suma se suma (veces − 1) veces más; el mago, un área `veces` más grande
+  function doblaRama(u, veces) {
+    const b = BONO_RAMA[u.rama], extra = veces - 1;
+    if (!b || extra <= 0) return;
+    for (const k in b) {
+      if (k === 'vida') { const f = (1 + veces * b.vida) / (1 + b.vida); u.max = Math.round(u.max * f); u.vida = Math.round(u.vida * f); }
+      else if (k === 'estalla') u.area = Math.max(u.area, b.estalla * veces);
+      else u[k] += b[k] * extra;
+    }
+  }
   // las reliquias que cambian las cifras de un héroe; cada una mira sus clases
   const RELIQUIA = {
     coraza: m => { m.vida *= 1.25; }, zelote: m => { m.dano *= 1.1; }, botas: m => { m.paso *= 1.35; },
@@ -54,17 +63,23 @@ AS.poder = (() => {
     if (cl.includes('tirador')) m.prisa *= 1 + v('tirador') / 100;
   }
   // tarea #109: lo que da ser legendario (efectos en batalla-legendarios.js). La cumbre de cada rama que tiene (la suya; un ser, las de
-  // sus dos padres), sus habilidades y sus cartas. Un ser es más grande y fuerte; Bastión da reflejo, Gigante vida y escala, Sed robo de vida
+  // sus dos padres), sus habilidades y sus cartas. Un ser es más grande y fuerte; Bastión da reflejo, Gigante vida y escala, Sed robo de vida.
+  // Tarea #156: un dios no tiene cumbres ni habilidades (solo su poder divino, `dios`: batalla-dioses.js) y es aún más grande y fuerte
+  function grado(datos, h, info) {
+    if (h.dios) return { cumbres: [], habilidades: [], escala: datos.dioses.escala, mult: datos.dioses.mult };
+    if (h.ser) return { cumbres: info.cumbres, habilidades: info.habilidades, escala: datos.legendarios.ser.escala, mult: datos.legendarios.ser.mult };
+    return { cumbres: [h.rama].filter(Boolean), habilidades: info ? [info.habilidad] : [], escala: 1, mult: 1 };
+  }
   function conLegendario(datos, h, m) {
     if (!AS.legendario.es(datos, h)) return null;
-    const L = datos.legendarios, E = L.efectos, info = AS.legendario.datosDe(datos, h);
-    const ser = !!h.ser, cumbres = ser ? info.cumbres : [h.rama].filter(Boolean), habilidades = ser ? info.habilidades : (info ? [info.habilidad] : []);
-    let escala = ser ? L.ser.escala : 1;
-    if (ser) { m.vida *= L.ser.mult; m.dano *= L.ser.mult; }
-    if (cumbres.includes('tanque')) m.reflejo += E.bastion.reflejo;
+    const E = datos.legendarios.efectos, gr = grado(datos, h, AS.legendario.datosDe(datos, h));
+    let escala = gr.escala;
+    m.vida *= gr.mult; m.dano *= gr.mult;
+    if (gr.cumbres.includes('tanque')) m.reflejo += E.bastion.reflejo;
     if (h.cartas.includes('gigante')) { m.vida *= E.gigante.vida; escala *= E.gigante.escala; }
     if (h.cartas.includes('sed')) m.roba += E.sed;
-    return { legendario: true, serClave: ser ? h.ser.clave : null, cumbres: Object.freeze(cumbres), habilidades: Object.freeze(habilidades), cartas: Object.freeze(h.cartas.slice()), escala };
+    return { legendario: true, serClave: h.ser ? h.ser.clave : null, dios: h.dios || null, cumbres: Object.freeze(gr.cumbres.slice()), habilidades: Object.freeze(gr.habilidades.slice()),
+      cartas: Object.freeze(h.cartas.slice()), escala };
   }
   // ctx: { equipo: { vida: 5, ataque: 2… } en %, reliquias: ['zelote'…], objetos: [{ id, nivel }] (los de la tienda), nivel: { tanque: 1… } (las clases activas) }
   function deHeroe(datos, h, ctx) {
@@ -74,7 +89,7 @@ AS.poder = (() => {
     m.vida *= fuerza; m.dano *= fuerza;
     const g = AS.heroe.herencias(datos, h);
     for (const k in g) { const her = datos.herencias[k]; HERENCIA[her.stat](m, her.v * g[k] / 100); }
-    if (h.rama) RAMA[h.rama](m);
+    if (h.rama) conRama(m, h.rama);
     conEquipo(m, c.equipo);
     for (const r of (c.reliquias || [])) if (RELIQUIA[r]) RELIQUIA[r](m, cl);
     conObjetos(datos, m, cl, c.objetos);
@@ -88,5 +103,5 @@ AS.poder = (() => {
       ...leg,
     });
   }
-  return { deHeroe };
+  return { deHeroe, doblaRama };
 })();

@@ -4,7 +4,8 @@
 // Los héroes AGUANTAN en su sitio hasta que el enemigo se acerca (la línea de carga) o pasa un momento: entonces cargan.
 // La batalla no dibuja ni suena: apunta lo que pasa en B.eventos y la pantalla lo recoge. El azar se le pasa (B.azar).
 // Aquí: crear la batalla y sus unidades, moverlas, elegir objetivo y decidir cuándo acaba. Los golpes están en batalla-golpes.js,
-// los jefes en batalla-jefes.js y lo que hacen los legendarios (tarea #109) en batalla-legendarios.js.
+// los jefes en batalla-jefes.js, lo que hacen los legendarios (tarea #109) en batalla-legendarios.js y los dioses (tarea #156) en
+// batalla-dioses.js.
 'use strict';
 AS.batalla = (() => {
   const CAMPO = { w: 540, h: 420, linea: 24, yMin: 72, yMax: 404, carga: 330, espera: 1.0 };
@@ -14,7 +15,7 @@ AS.batalla = (() => {
 
   // lo que lleva cada unidad si sus cifras no lo dicen (con || : un 0 o un vacío de las cifras se queda en esto)
   const BASE = () => ({ area: 0, defensa: 0, critico: 0, danoCrit: 0, reflejo: 0, esquiva: 0, salpica: 0, regenera: 0, roba: 0, torbellino: 0, dobleTiro: 0,
-    curaArea: 0, maldice: 0, clases: [], escala: 1, nivel: 0, ref: null, rama: null, improntas: [], cumbres: [], habilidades: [], cartas: [], serClave: null });
+    curaArea: 0, maldice: 0, clases: [], escala: 1, nivel: 0, ref: null, rama: null, improntas: [], cumbres: [], habilidades: [], cartas: [], serClave: null, dios: null });
   const MARCAS = ['provoca', 'salto', 'corre', 'jefe', 'elite', 'dorado', 'legendario'];
   // el estado de la unidad en la batalla. Los de los legendarios (batalla-legendarios.js): aturdido, invisible, invul y muralla son
   // segundos que quedan; extra = señuelo o minimapache (no cuenta para perder); leg = lo suyo si es legendario (si no, null)
@@ -40,7 +41,7 @@ AS.batalla = (() => {
   function crea(cfg) {
     const B = { datos: cfg.datos, azar: cfg.azar, t: 0, u: [], proy: [], avisos: [], eventos: [], cola: [], fin: null, tFin: 0, cruzados: 0, bajas: 0, oro: 0,
       nivel: cfg.nivel || {}, rel: new Set(cfg.reliquias || []), tHab: {}, jefe: null, oleada: cfg.oleada, tanda: 0, carga: false, cifras: AS.cifras.deBatalla(),
-      cosecha: 0, fuegos: [], hayLeg: false, malojo: false };
+      cosecha: 0, fuegos: [], hayLeg: false, malojo: false, hayDios: false, oroDios: 0 };
     for (const h of cfg.heroes) {
       const p = HUECOS[h.hueco], u = unidad('heroe', h.cifras.tipo, { ...h.cifras, ref: h.ref }, p[0], p[1]);
       u.cd = 0.3 + B.azar() * 0.5;
@@ -48,6 +49,7 @@ AS.batalla = (() => {
       B.u.push(u); AS.cifras.alta(B.cifras, u);
     }
     for (const e of cfg.oleada.enemigos) { if (e.tanda === 0) B.u.push(enemigo(B, e)); else B.cola.push(e); }
+    AS.dioses.empieza(B);
     AS.leyendas.empieza(B);
     return B;
   }
@@ -135,7 +137,7 @@ AS.batalla = (() => {
     if (u.muerta || !estados(B, u, dt)) return;
     if (u.anim === 'ataque') { atacando(B, u); return; }
     if (u.anim === 'golpe' && u.tAnim < 0.22) return;
-    const freno = u.lento > 0 ? 0.6 : 1;
+    const freno = (u.lento > 0 ? 0.6 : 1) * AS.dioses.freno(B, u);
     u.cd -= dt * freno * AS.leyendas.prisa(B, u);
     if (u.corre) { haciaLaLinea(B, u, dt, freno); return; }
     const ob = eligeObjetivo(B, u);
@@ -180,13 +182,15 @@ AS.batalla = (() => {
     for (const u of B.u) avanzaUnidad(B, u, dt);
     AS.golpes.habilidades(B, dt);
     AS.leyendas.avanza(B, dt);
+    AS.dioses.avanza(B, dt);
     if (B.jefe) { if (B.jefe.muerta) B.avisos = []; else AS.jefes.avanza(B, B.jefe, dt); }
     separa(B, dt);
     AS.golpes.proyectiles(B, dt);
     miraFin(B);
+    if (B.fin) AS.dioses.acaba(B);   // solo una vez: con la batalla acabada, avanza ya no llega aquí
   }
-  // lo que deja la batalla al acabar
-  const resultado = B => ({ gano: B.fin === 'victoria', cruzados: B.cruzados, bajas: B.bajas, oro: B.oro, jefe: !!(B.jefe && B.jefe.muerta && !B.jefe.cruzo), duro: B.t,
+  // lo que deja la batalla al acabar (el oro, con el de más de los dioses: B.oroDios)
+  const resultado = B => ({ gano: B.fin === 'victoria', cruzados: B.cruzados, bajas: B.bajas, oro: B.oro + B.oroDios, jefe: !!(B.jefe && B.jefe.muerta && !B.jefe.cruzo), duro: B.t,
     cruzoJefe: !!(B.jefe && B.jefe.cruzo), vivos: cuentan(B).length, cifras: B.cifras.heroes });
   return { CAMPO, HUECOS, crea, avanza, resultado, vivos, rivales, valorClase, masHerido, masCercano, dist, enemigo, unidad };
 })();

@@ -43,8 +43,8 @@ function ppEstrellasHtml(n, total = 3) {
 }
 // un icono de Yoshi en HTML (moneda, cofre…); si aún no está, una bolita de color
 function ppIcono(k, px, col = '#ffd64a') {
-  return PP_IMG[k] ? `<img class="pp-ico" src="${PP_LISO ? 'img-liso' : 'img'}/${k}.png" alt="" style="width:${px}px;height:${px}px${PP_LISO ? ';image-rendering:auto' : ''}">`
-    : `<span class="pp-ico" style="width:${px}px;height:${px}px;background:${col}"></span>`;
+  return PP_IMG[k] ? `<img class="pp-ico" data-i="${k}" src="${PP_LISO ? 'img-liso' : 'img'}/${k}.png" alt="" style="width:${px}px;height:${px}px${PP_LISO ? ';image-rendering:auto' : ''}">`
+    : `<span class="pp-ico" data-i="${k}" style="width:${px}px;height:${px}px;background:${col}"></span>`;
 }
 const ppMonedasHtml = (n, px = 30) => `<span class="pp-precio">${ppIcono('i-moneda', px)}${n}</span>`;
 // lo ganado en el nivel: monedas y, si toca, un cofre

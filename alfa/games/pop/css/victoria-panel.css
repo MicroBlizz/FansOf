@@ -6,7 +6,7 @@
 .pp-vic-arriba { position: absolute; left: 14px; right: 14px; top: 14px; height: 66px; z-index: 6; display: flex; align-items: center; justify-content: space-between;
   gap: 8px; padding: 0 16px; border-radius: 33px; background: #fff; box-shadow: inset 0 0 0 4px #ffd1ec, 0 5px 0 rgba(0, 0, 0, 0.12); pointer-events: none;
   animation: pp-vic-baja 0.35s ease-out both; }
-#pp-modal:not(:has(.pp-gana)) .pp-vic-arriba { display: none; }
+#pp-modal:not(:has(.pp-gana, .pp-pase-ventana)) .pp-vic-arriba { display: none; }   /* victoria y pase (RECOGER TODO, tarea #166) */
 @keyframes pp-vic-baja { from { transform: translateY(-90px); } to { transform: none; } }
 .pp-vic-vidas { display: flex; }
 .pp-vic-vida { display: inline-flex; margin-right: -4px; }

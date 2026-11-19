@@ -1,8 +1,8 @@
 {
- "build": 1320,
- "hash": "646001f",
- "fecha": "2026-11-19T17:42:14Z",
- "mensaje": "Pop: el botón pulsado del Jardín queda mate, sin brillos (tarea #110)",
+ "build": 1321,
+ "hash": "9dccbd3",
+ "fecha": "2026-11-19T17:50:32Z",
+ "mensaje": "Pop: botón RECOGER TODO en el pase, con los premios volando a la barra de arriba (tarea #166, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

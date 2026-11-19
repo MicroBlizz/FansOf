@@ -25,7 +25,7 @@ function ppVicCorazones() {
 function ppVicBarraHtml(monedas) {
   return `<div class="pp-vic-arriba"><div class="pp-vic-vidas">${ppVicCorazones()}</div>`
     + `<div class="pp-vic-caja pp-vic-caja-mon">${ppIcono('i-moneda', 44)}<b class="pp-vic-mon">${monedas}</b></div>`
-    + `<div class="pp-vic-caja">${ppIcono('i-perla', 44, '#ffd1ec')}<b>${SAVE.perlas || 0}</b></div></div>`;
+    + `<div class="pp-vic-caja pp-vic-caja-per">${ppIcono('i-perla', 44, '#ffd1ec')}<b class="pp-vic-per">${SAVE.perlas || 0}</b></div></div>`;
 }
 // la barra va en la ventana (#pp-modal), fuera de la tarjeta, para que no se mueva con ella; se cambia en cada victoria
 function ppVicBarra(monedas) {
@@ -87,9 +87,15 @@ function ppVicAvisoRacha() {
 /* ---------- las monedas que vuelan a la barra ---------- */
 // una moneda (u otro dibujo `ico`, p. ej. el regalo de un estreno) que vuela de `a` a `b` (rectángulos de pantalla) en curva; al llegar, `llega()`
 function ppVicMoneda(a, b, retraso, llega, ico = 'i-moneda') {
-  const img = document.createElement('img'), lado = a.width;
-  img.src = (PP_LISO ? 'img-liso' : 'img') + '/' + ico + '.png'; img.alt = ''; img.className = 'pp-vic-vuela';
-  img.style.cssText = `left:${a.left}px;top:${a.top}px;width:${lado}px;height:${lado}px`;
+  const img = document.createElement('img');
+  img.src = (PP_LISO ? 'img-liso' : 'img') + '/' + ico + '.png'; img.alt = '';
+  ppVicVuelaNodo(img, a, b, retraso, llega);
+}
+// lo mismo con cualquier icono (`nodo`, que se copia si está en la página): también lo usa RECOGER TODO del pase (js/pase.js)
+function ppVicVuelaNodo(nodo, a, b, retraso, llega) {
+  const img = nodo.isConnected ? nodo.cloneNode(true) : nodo, lado = a.width;
+  img.classList.add('pp-vic-vuela');
+  Object.assign(img.style, { left: a.left + 'px', top: a.top + 'px', width: lado + 'px', height: lado + 'px', margin: '0' });   // sin pisar su color (bolita)
   document.body.appendChild(img);
   const dx = b.left + b.width / 2 - (a.left + lado / 2), dy = b.top + b.height / 2 - (a.top + lado / 2);
   const anim = img.animate([{ transform: 'translate(0, 0) scale(1)', opacity: 1 },

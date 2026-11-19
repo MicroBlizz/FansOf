@@ -37,45 +37,102 @@ function ppPremioPaseCon(k, premium) {
   const p = ppPremioPase(k, premium), id = ppCompanerosActivo() ? PP_COLE.delPase(k, premium) : null;
   return id ? { ...p, companero: id } : p;
 }
-function ppPaseHayPremio() {
-  const P = ppPaseAlDia(), e = ppEscalon();
-  for (let k = 1; k <= e; k++) if (!P.gratis[k] || (P.premium && !P.prem[k])) return true;
-  return false;
+const ppPaseListos = () => PP_PASE_R.listos(ppPaseAlDia(), ppEscalon());   // reglas en js/pase-reglas.js
+const ppPaseHayPremio = () => ppPaseListos().length > 0;
+// entrega un premio del pase (con su clave, para que el servidor no cobre dos veces sus perlas) y lo marca cogido
+function ppPaseEntrega(k, premium) {
+  const P = ppPaseAlDia();
+  ppDaPremio(ppPremioPaseCon(k, premium), { motivo: 'pase', clave: PP_PASE_R.clave(P.t, premium, k) });
+  (premium ? P.prem : P.gratis)[k] = true;
 }
-function ppVentanaPase() {
-  ppTutorial('pase');
-  const P = ppPaseAlDia(), e = ppEscalon(), C = PP_CFG.pase, falta = C.puntos - (P.puntos % C.puntos);
+// vuelve a pintar la ventana sin mover la lista
+function ppPaseRepinta() {
+  ppPintaLateral();
+  if ($pp('#pp-modal').hidden || !$pp('#pp-tarjeta.pp-pase-ventana')) return;   // la cerraste mientras volaban: no se vuelve a abrir
+  const l = $pp('.pp-pase'), y = l ? l.scrollTop : 0;
+  ppVentanaPase(true); const l2 = $pp('.pp-pase'); if (l2) l2.scrollTop = y; ppPintaLateral();
+}
+function ppPaseCabecera(P, e) {
+  const C = PP_CFG.pase, falta = C.puntos - (P.puntos % C.puntos);
   const finMes = new Date(); finMes.setMonth(finMes.getMonth() + 1, 1); finMes.setHours(0, 0, 0, 0);
-  const t = ppAbre(`<h2>${tr('Pase de Pop')}</h2>
+  return `<h2>${tr('Pase de Pop')}</h2>
     <p class="pp-sub">${tr('Escalón {e} de {t}', { e, t: C.escalones })} · ${e < C.escalones ? tr('faltan {n} puntos para el siguiente', { n: falta }) : tr('¡pase completo!')}</p>
-    <p class="pp-sub"><small>${tr('Ganas puntos al pasar niveles nuevos (uno más con 3 estrellas). Se renueva en {d} días.', { d: Math.ceil((finMes - Date.now()) / 86400000) })}</small></p>`, true);
-  if (!P.premium) {
-    const b = ppBoton('', 'pp-btn', () => ppCompraEuros(tr('Pase de Pop'), `<p>${tr('Desbloquea todos los premios premium de esta temporada.')}</p>`, C.id, () => { ppPaseAlDia().premium = true; ppGuarda(); ppVentanaPase(); ppPintaLateral(); }));
-    b.innerHTML = `${ppIcono('i-pase', 30, '#ffd64a')} ${tr('DESBLOQUEAR PREMIUM · {p}', { p: C.precio })}`;
-    t.appendChild(b);
-  }
+    <p class="pp-sub"><small>${tr('Ganas puntos al pasar niveles nuevos (uno más con 3 estrellas). Se renueva en {d} días.', { d: Math.ceil((finMes - Date.now()) / 86400000) })}</small></p>`;
+}
+function ppPaseBotonPremium(t) {
+  const C = PP_CFG.pase;
+  const b = ppBoton('', 'pp-btn', () => ppCompraEuros(tr('Pase de Pop'), `<p>${tr('Desbloquea todos los premios premium de esta temporada.')}</p>`, C.id, () => { ppPaseAlDia().premium = true; ppGuarda(); ppVentanaPase(); ppPintaLateral(); }));
+  b.innerHTML = `${ppIcono('i-pase', 30, '#ffd64a')} ${tr('DESBLOQUEAR PREMIUM · {p}', { p: C.precio })}`;
+  t.appendChild(b);
+}
+// la caja de un premio (gratis o dorado) del escalón k
+function ppPaseCaja(P, e, k, premium) {
+  const caja = document.createElement('button'); caja.type = 'button';
+  const cogido = premium ? P.prem[k] : P.gratis[k], puede = k <= e && !cogido && (!premium || P.premium);
+  caja.className = 'pp-pase-premio' + (premium ? ' pp-premium' : '') + (cogido ? ' pp-cogido' : '') + (puede ? ' pp-listo' : '');
+  caja.dataset.k = k; caja.dataset.p = premium ? 'p' : 'g';
+  caja.innerHTML = ppPremioCandyHtml(ppPremioPaseCon(k, premium), 24) + (premium && !P.premium ? '<s></s>' : '');
+  caja.onclick = () => ppPaseRecoge([{ k, premium }]);
+  return caja;
+}
+function ppVentanaPase(repinta = false) {
+  if (!repinta) ppTutorial('pase');
+  const P = ppPaseAlDia(), e = ppEscalon(), C = PP_CFG.pase, desde = { monedas: SAVE.monedas, perlas: SAVE.perlas || 0 };
+  const t = ppAbre(ppPaseCabecera(P, e), true);
+  t.classList.add('pp-pase-ventana');
+  ppVicBarra(desde.monedas);   // la barra de arriba (corazones, monedas y perlas), la misma de la victoria (js/victoria-panel.js)
+  if (!P.premium) ppPaseBotonPremium(t);
+  const n = ppPaseListos().length, todo = ppBoton(n ? tr('RECOGER TODO ({n})', { n }) : tr('Nada que recoger'), 'pp-btn2 pp-verde pp-pase-todo', () => ppPaseRecoge(ppPaseListos()));
+  todo.disabled = !n; t.appendChild(todo);
   const lista = document.createElement('div'); lista.className = 'pp-pase';
   for (let k = 1; k <= C.escalones; k++) {
     const fila = document.createElement('div'); fila.className = 'pp-pase-fila' + (k <= e ? ' pp-hecho' : '');
     fila.innerHTML = `<i>${k}</i>`;
-    for (const premium of [false, true]) {
-      const caja = document.createElement('button'); caja.type = 'button';
-      const cogido = premium ? P.prem[k] : P.gratis[k], puede = k <= e && !cogido && (!premium || P.premium);
-      caja.className = 'pp-pase-premio' + (premium ? ' pp-premium' : '') + (cogido ? ' pp-cogido' : '') + (puede ? ' pp-listo' : '');
-      caja.innerHTML = ppPremioCandyHtml(ppPremioPaseCon(k, premium), 24) + (premium && !P.premium ? '<s></s>' : '');
-      caja.onclick = () => {
-        if (!puede) return;
-        play('ppPremio'); ppDaPremio(ppPremioPaseCon(k, premium), { motivo: 'pase', clave: `pase:${P.t}:${premium ? 'p' : 'g'}:${k}` }); (premium ? P.prem : P.gratis)[k] = true; ppGuarda();
-        const y = lista.scrollTop; ppVentanaPase(); const l = $pp('.pp-pase'); if (l) l.scrollTop = y; ppPintaLateral();
-      };
-      fila.appendChild(caja);
-    }
+    fila.append(ppPaseCaja(P, e, k, false), ppPaseCaja(P, e, k, true));
     lista.appendChild(fila);
   }
   t.appendChild(lista);
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
   // abre por el primer premio que se puede recoger (o por donde vas)
-  setTimeout(() => { const l = $pp('.pp-pase'), f = l && (l.querySelector('.pp-listo') || l.children[Math.max(0, e - 1)]); if (l && f) l.scrollTop = f.offsetTop - l.offsetTop - 10; }, 0);
+  if (!repinta) setTimeout(() => { const l = $pp('.pp-pase'), f = l && (l.querySelector('.pp-listo') || l.children[Math.max(0, e - 1)]); if (l && f) l.scrollTop = f.offsetTop - l.offsetTop - 10; }, 0);
+}
+/* ---------- recoger (uno o todos, tarea #166) ---------- */
+// entrega los premios `lista` ([{ k, premium }]) y los hace volar a la barra de arriba; los números suben al llegar
+function ppPaseRecoge(lista) {
+  const listos = ppPaseListos().filter(p => lista.some(q => q.k === p.k && q.premium === p.premium));
+  if (!listos.length) return;
+  const antes = { monedas: SAVE.monedas, perlas: SAVE.perlas || 0 };
+  const iconos = listos.flatMap(p => [...document.querySelectorAll(`.pp-pase-premio[data-k="${p.k}"][data-p="${p.premium ? 'p' : 'g'}"] .pp-ico`)]).filter(ppPaseSeVe);
+  for (const p of listos) ppPaseEntrega(p.k, p.premium);
+  ppGuarda(); play('ppPremio'); ppVibra([20, 30, 20]);
+  document.querySelectorAll('.pp-pase-todo, .pp-pase-premio.pp-listo').forEach(b => { b.disabled = true; b.classList.remove('pp-listo'); });
+  ppPaseVuela(iconos, antes, ppPaseRepinta);
+}
+// solo vuelan los iconos que se ven en la lista (los de las filas de fuera saldrían de debajo de la ventana)
+function ppPaseSeVe(i) {
+  const l = i.closest('.pp-pase'), a = i.getBoundingClientRect(), b = l ? l.getBoundingClientRect() : a;
+  return a.bottom > b.top && a.top < b.bottom;
+}
+// cada icono vuela a su sitio de la barra (monedas, perlas o, lo demás, al centro); al final, `fin()`
+function ppPaseVuela(iconos, antes, fin) {
+  const barra = $pp('#pp-modal .pp-vic-arriba'), vuelan = iconos.slice(0, PP_PASE_VUELO.max);
+  if (!barra || !vuelan.length) { fin(); return; }
+  const destino = i => barra.querySelector(i.dataset.i === 'i-moneda' ? '.pp-vic-caja-mon .pp-ico' : i.dataset.i === 'i-perla' ? '.pp-vic-caja-per .pp-ico' : '.pp-vic-vidas') || barra;
+  let llegadas = 0;
+  const llega = () => {
+    llegadas++; play('ppPop', llegadas);
+    if (llegadas === 1) ppPaseCuentas(antes, vuelan.length);
+    if (llegadas === vuelan.length) setTimeout(fin, 350);
+  };
+  vuelan.forEach((i, n) => ppVicVuelaNodo(i, i.getBoundingClientRect(), destino(i).getBoundingClientRect(), n * PP_PASE_VUELO.cada, llega));
+}
+const PP_PASE_VUELO = Object.freeze({ max: 16, cada: 70 });   // cuántos iconos vuelan como mucho y cada cuántos ms sale uno
+// los números de la barra suben de lo que había a lo que hay mientras llegan los iconos
+function ppPaseCuentas(antes, n) {
+  const seg = (n * PP_PASE_VUELO.cada + 300) / 1000;
+  ppVicCuenta($pp('#pp-modal .pp-vic-mon'), antes.monedas, SAVE.monedas, seg, 0);
+  ppVicCuenta($pp('#pp-modal .pp-vic-per'), antes.perlas, SAVE.perlas || 0, seg, 0);
+  document.querySelectorAll('#pp-modal .pp-vic-caja').forEach(c => { c.classList.remove('pp-brilla'); void c.offsetWidth; c.classList.add('pp-brilla'); });
 }
 /* ---------- regalo diario ---------- */
 // el día de la semana (lunes = 0) decide el regalo; el domingo, el más gordo

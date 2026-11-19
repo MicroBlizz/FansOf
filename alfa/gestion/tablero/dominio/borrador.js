@@ -1,8 +1,8 @@
 // Fans Of · /gestion · TABLERO · dominio · BORRADOR: lo que se escribe en el formulario de una tarea, validado ANTES de ir al servidor. Los límites son los mismos
-// que los checks del SQL del tablero (117, 120 y 141: el nombre corto). Resultado: los datos limpios (textos recortados, responsable, quién la pidió y para quién vacíos = nadie; ADR 136), o 'campo-invalido' con el campo en datos.
+// que los checks del SQL del tablero (117, 120, 141: el nombre corto, y 169: qué mirar). Resultado: los datos limpios (textos recortados, responsable, quién la pidió y para quién vacíos = nadie; ADR 136), o 'campo-invalido' con el campo en datos.
 // `requiere` («#3, 7») sale como lista de números (requisitos.js).
 'use strict';
-TABLERO.LIMITES = Object.freeze({ titulo: [1, 120], corto: [0, 60], descripcion: [0, 4000], criterio: [0, 2000], refinado: [0, 4000], esperando: [0, 200], enlaces: [0, 1000], hilo: [0, 300] });
+TABLERO.LIMITES = Object.freeze({ titulo: [1, 120], corto: [0, 60], descripcion: [0, 4000], criterio: [0, 2000], refinado: [0, 4000], esperando: [0, 200], enlaces: [0, 1000], hilo: [0, 300], que_mirar: [0, 1500] });
 TABLERO.borrador = form => {
   const f = form || {}, datos = {};
   for (const [campo, [min, max]] of Object.entries(TABLERO.LIMITES)) {

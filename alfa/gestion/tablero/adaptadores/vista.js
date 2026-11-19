@@ -3,7 +3,7 @@
 // se prueban en Node. El controlador (controlador.js) las pone en la página. Reutiliza las clases de /gestion (caja, cuenta, cab, estado, meta…).
 'use strict';
 TABLERO.vista = (() => {
-  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', corto: 'El nombre corto tiene que tener como mucho 60 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo', pedida_por: 'Quién la pidió: Arkioner o Pepins', para: 'Para quién: Arkioner o Pepins', requiere: 'En «Requiere» van números de tarea (#3, 7), como mucho 20' };
+  const CAMPOS = { titulo: 'El título tiene que tener de 1 a 120 letras', corto: 'El nombre corto tiene que tener como mucho 60 letras', juego: 'El juego solo lleva minúsculas, números y guiones', descripcion: 'La descripción es demasiado larga', criterio: 'El criterio es demasiado largo', refinado: 'El informe de refinado es demasiado largo', esperando: 'Lo de «esperando a» tiene que ser corto (200 letras)', enlaces: 'Los enlaces son demasiado largos', hilo: 'El enlace al hilo es demasiado largo', que_mirar: '«Qué mirar» es demasiado largo (1500 letras)', pedida_por: 'Quién la pidió: Arkioner o Pepins', para: 'Para quién: Arkioner o Pepins', requiere: 'En «Requiere» van números de tarea (#3, 7), como mucho 20' };
   const MENSAJES = {
     'es-de-otro': 'Esa tarea es de otra persona',
     'esta-hecha': 'Esa tarea ya está hecha',
@@ -98,7 +98,7 @@ TABLERO.vista = (() => {
     <label>Claude trabaja para<select name="para">${opciones(SIN_DATO, v.para || '', esc)}</select></label>
     <label>Prioridad<select name="prioridad">${opciones(Object.keys(TABLERO.PRIORIDADES).map(p => [p, p]), v.prioridad || 'normal', esc)}</select></label></div>
     ${campo('requiere', 'Requiere (números de tarea: #3, 7; no entra en curso hasta que estén en revisión o hechas)', (v.requiere || []).map(r => '#' + r.id).join(', '), esc, 200)}
-    ${campo('hilo', 'Enlace al hilo', v.hilo, esc, 300)}${area('enlaces', 'Otros enlaces (ADR, TODO, PR)', v.enlaces, esc, 1000)}
+    ${campo('hilo', 'Enlace al hilo', v.hilo, esc, 300)}${area('enlaces', 'Otros enlaces (ADR, TODO, PR)', v.enlaces, esc, 1000)}${area('que_mirar', 'Qué mirar al revisar (un paso por línea)', v.que_mirar, esc, 1500)}
     <div class="filtros"><button type="submit" class="fuerte">Guardar</button><button type="button" data-cancelar>Cancelar</button></div></form>`;
 
   // El formulario corto de «Apuntar idea o fallo» (Pepins, tarea #63): qué es, una frase y el juego. Lo demás se rellena después con Editar

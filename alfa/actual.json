@@ -1,8 +1,8 @@
 {
- "build": 1302,
- "hash": "cc43606",
- "fecha": "2026-11-19T14:06:24Z",
- "mensaje": "Tablero: revisar en un toque — Probar en la alfa, enlaces pulsables, bandeja «Te toca», Dar por buena y Pedir cambios (tarea #161, ADR 160)",
+ "build": 1303,
+ "hash": "9badafd",
+ "fecha": "2026-11-19T14:24:25Z",
+ "mensaje": "Tablero: «Qué mirar» en cada tarea (SQL 169, tarea #161, ADR 160)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.5.2",

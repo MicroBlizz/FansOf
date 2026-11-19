@@ -1,6 +1,7 @@
 // Fans Of · /gestion · TABLERO · dominio · REVISAR (tarea #161, ADR 160): lo que hace falta para revisar en un toque, sin pantalla ni red.
 // - El enlace para probar una tarea en la alfa a partir de su juego (solo si el juego tiene página en web/games; un test compara la lista con las carpetas).
 // - Los trozos de un texto con enlaces (texto suelto y direcciones https), para que la vista los haga pulsables.
+// Cada caja lleva el color de la columna de donde salen sus tareas (tarea #163: colores tipo semáforo).
 // - La bandeja «Te toca»: lo que espera a quien mira (por revisar, te preguntan, informes por aprobar).
 // - Si quien mira puede dar por buena una tarea o pedir cambios (está en revisión y es suya).
 'use strict';
@@ -34,9 +35,9 @@ TABLERO.puedoRevisar = (t, yo) => !!yo && t.estado === 'en_revision' && TABLERO.
 const meNombra = (t, yo) => !!t.esperando && TABLERO.normaliza(t.esperando).includes(TABLERO.normaliza(TABLERO.nombreDe(yo)));
 // Las tres cajas de la bandeja, con la columna que enseñan al pulsarlas (null: «Todas», porque un informe puede estar en ideas o en refinamiento)
 TABLERO.BANDEJAS = Object.freeze([
-  Object.freeze({ id: 'revisar', titulo: 'por revisar', columna: 'en_revision', tono: '#56ccf2', es: (t, yo) => TABLERO.puedoRevisar(t, yo) }),
-  Object.freeze({ id: 'preguntan', titulo: 'te preguntan', columna: 'en_curso', tono: '#f2c94c', es: (t, yo) => t.estado === 'en_curso' && meNombra(t, yo) }),
-  Object.freeze({ id: 'informes', titulo: 'informes por aprobar', columna: null, tono: '#f2994a', es: (t, yo) => TABLERO.sinRefinar(t.estado) && t.informe === 'por_aprobar' && TABLERO.esDe(t, yo) }),
+  Object.freeze({ id: 'revisar', titulo: 'por revisar', columna: 'en_revision', tono: '#ef4444', es: (t, yo) => TABLERO.puedoRevisar(t, yo) }),
+  Object.freeze({ id: 'preguntan', titulo: 'te preguntan', columna: 'en_curso', tono: '#3b82f6', es: (t, yo) => t.estado === 'en_curso' && meNombra(t, yo) }),
+  Object.freeze({ id: 'informes', titulo: 'informes por aprobar', columna: null, tono: '#ff9f1c', es: (t, yo) => TABLERO.sinRefinar(t.estado) && t.informe === 'por_aprobar' && TABLERO.esDe(t, yo) }),
 ]);
 TABLERO.bandejaDe = id => TABLERO.BANDEJAS.find(b => b.id === id) || null;
 // ¿Está la tarea en esa bandeja para quien mira? Sin bandeja elegida, todas pasan

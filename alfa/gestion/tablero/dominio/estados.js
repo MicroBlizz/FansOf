@@ -4,12 +4,12 @@
 'use strict';
 // `ayuda`: la frase que sale bajo el título de la columna; `tono`: su color (cabecera y marca de la tarjeta). Pepins, 16-11-2026, tarea #63
 TABLERO.COLUMNAS = Object.freeze([
-  Object.freeze({ id: 'idea', titulo: 'Ideas', sinRefinar: true, tono: '#f2994a', ayuda: 'Se nos ha ocurrido. Nadie la está haciendo.' }),
-  Object.freeze({ id: 'refinando', titulo: 'En refinamiento', sinRefinar: true, tono: '#f2c94c', ayuda: 'Estamos decidiendo cómo hacerla.' }),
+  Object.freeze({ id: 'idea', titulo: 'Ideas', sinRefinar: true, tono: '#22c55e', ayuda: 'Se nos ha ocurrido. Nadie la está haciendo.' }),
+  Object.freeze({ id: 'refinando', titulo: 'En refinamiento', sinRefinar: true, tono: '#ff9f1c', ayuda: 'Estamos decidiendo cómo hacerla.' }),
   Object.freeze({ id: 'pendiente', titulo: 'Pendiente', tono: '#2ec4b6', ayuda: 'Aprobada, esperando a que alguien empiece.' }),
-  Object.freeze({ id: 'en_curso', titulo: 'En curso', tono: '#4aa3df', ayuda: 'Alguien está trabajando en ella.' }),
-  Object.freeze({ id: 'en_revision', titulo: 'En revisión', tono: '#56ccf2', ayuda: 'Hecha y en la alfa. Pruébala y dale el visto bueno.' }),
-  Object.freeze({ id: 'hecho', titulo: 'Hecho', tono: '#3dbe8b', ayuda: 'Terminada y aprobada.' }),
+  Object.freeze({ id: 'en_curso', titulo: 'En curso', tono: '#3b82f6', ayuda: 'Alguien está trabajando en ella.' }),
+  Object.freeze({ id: 'en_revision', titulo: 'En revisión', tono: '#ef4444', ayuda: 'Hecha y en la alfa. Pruébala y dale el visto bueno.' }),
+  Object.freeze({ id: 'hecho', titulo: 'Hecho', tono: '#ffd23f', ayuda: 'Terminada y aprobada.' }),
 ]);
 TABLERO.PRIORIDADES = Object.freeze({ alta: 0, normal: 1, baja: 2 });   // el número es el peso al ordenar: cuanto menos, antes
 TABLERO.RESPONSABLES = Object.freeze({ arkioner: 'Arkioner', pepins: 'Pepins', claude: 'Claude' });

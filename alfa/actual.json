@@ -1,11 +1,11 @@
 {
- "build": 1299,
- "hash": "0d20231",
- "fecha": "2026-11-19T13:25:46Z",
- "mensaje": "Spy: el parking usa los modelos 3D de Yoshi (agente, Becarios, cámara, caja, coches, cochazo, garita y barrera)",
+ "build": 1300,
+ "hash": "b229b46",
+ "fecha": "2026-11-19T13:48:39Z",
+ "mensaje": "Asalto 0.5.2: en el móvil en vertical, lienzo de 600 de ancho que llena la pantalla (tarea #133, ADR 159)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.5.1",
+  "asalto": "0.5.2",
   "basement": "0.13.0",
   "boom": "0.4.17",
   "chef": "0.4.0",

@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "En el móvil, Asalto <b>llena la pantalla de lado a lado</b>: la arena es más grande y los héroes ya no van apretados. Se ve igual en la app y en Chrome.": "On mobile, Asalto now <b>fills the screen edge to edge</b>: the arena is bigger and the heroes are no longer squeezed. It looks the same in the app and in Chrome.",
+  "Microblizz ha ampliado la mazmorra. El alquiler, también.": "Microblizz has enlarged the dungeon. And the rent.",
   "Las <b>reliquias</b> que eliges se ven ahora abajo a la izquierda de la arena. Tócalas para ver qué hace cada una.": "The <b>relics</b> you pick now show at the bottom left of the arena. Tap them to see what each one does.",
   "Microblizz ha puesto una vitrina para las reliquias. La llave la tiene Recursos Humanos.": "Microblizz put up a display case for the relics. HR has the key.",
   "<b>Legendarios</b>: un héroe ascendido que llega al nivel 12 se hace legendario, con el poder cumbre de su rama y una <b>habilidad única</b> solo suya (16 en total).": "<b>Legendaries</b>: an ascended hero that reaches level 12 becomes legendary, with the peak power of its branch and a <b>unique ability</b> of its own (16 in all).",

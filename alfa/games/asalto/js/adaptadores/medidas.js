@@ -24,6 +24,13 @@ AS.medidas = (() => {
     H = Math.min(H, MAX.h);
     return { k: Math.min(pw / W, ph / H), W, H, entero: false };
   }
+  // en el móvil en vertical (tarea #133): lienzo de 600 de ancho, con la forma de la pantalla, ampliado con decimales hasta llenarla de
+  // lado a lado. Con el zoom entero salía un lienzo de 480 (x3) y todo se veía muy junto; así se ve igual en la app y en Chrome
+  const VERTICAL = 1.4;
+  function movil(pw, ph) {
+    const W = MAX.w, H = entre(Math.round(W * ph / pw), MIN.h, MAX.h);
+    return { k: Math.min(pw / W, ph / H), W, H, entero: false };
+  }
   // pw, ph: los píxeles reales de la pantalla. Devuelve { k: el zoom, W, H: el lienzo pequeño, entero: si el zoom es entero }
-  return (pw, ph) => entero(pw, ph) || ajustado(pw, ph);
+  return (pw, ph) => (ph / pw >= VERTICAL ? movil(pw, ph) : entero(pw, ph) || ajustado(pw, ph));
 })();

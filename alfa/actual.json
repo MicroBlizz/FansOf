@@ -1,8 +1,8 @@
 {
- "build": 1372,
- "hash": "bf8f96c",
- "fecha": "2026-11-20T17:20:57Z",
- "mensaje": "Pop: la splash ya no dice «No se ha podido cargar» cuando todos los dibujos han llegado (fallo de 35c8e0ee9: faltaba mirar que faltara alguno)",
+ "build": 1373,
+ "hash": "0b45f4e",
+ "fecha": "2026-11-20T18:23:13Z",
+ "mensaje": "Pinball 0.2.5: vuelven el zorro y la suricata dibujados por código, con la cápsula hueca (#114, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -23,7 +23,7 @@
   "panic": "0.1.2",
   "paperwork": "0.11.2",
   "pets": "0.2.15",
-  "pinball": "0.2.4",
+  "pinball": "0.2.5",
   "pop": "0.6.0",
   "ratkov": "0.2.45",
   "rouflage": "0.2.81",

@@ -1,8 +1,8 @@
 {
- "build": 1331,
- "hash": "21065ec",
- "fecha": "2026-11-19T19:22:34Z",
- "mensaje": "Pop: generador afinado con el robot: 200 partidas, límite más cercano a la curva, bienvenida en los dos primeros niveles de cada mundo y sin muros (tarea #196, ADR 169, Pepins)",
+ "build": 1332,
+ "hash": "e17728f",
+ "fecha": "2026-11-20T00:27:46Z",
+ "mensaje": "Tiny Fans: esqueleto del prototipo por capas (página, ajustes, dominio y adaptadores vacíos pero cargables, tests) con su ficha, especificación y ADR 170 (tarea #138, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -39,6 +39,7 @@
   "tacticas": "0.1.71",
   "taxi": "0.2.17",
   "td": "0.13.103",
+  "tiny": "0.1.0",
   "vikings": "0.1.0",
   "wings": "0.1.8",
   "zombies": "0.14.2"

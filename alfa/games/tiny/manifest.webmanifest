@@ -1,0 +1,13 @@
+{
+  "name": "Tiny Fans",
+  "short_name": "Tiny Fans",
+  "description": "Becarios encogidos que sobreviven en la moqueta de la oficina (prototipo).",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3e2c2",
+  "theme_color": "#f3e2c2",
+  "icons": []
+}

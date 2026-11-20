@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#f3e2c2">
+<title>Tiny Fans</title>
+<meta name="description" content="Tiny Fans: becarios encogidos que sobreviven en la moqueta de la oficina. Prototipo en desarrollo.">
+<meta name="robots" content="noindex">
+<script src="../../core/js/nucleo.js?v=0.1.0-a1332.e17728f"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/pixelify-sans.css', '../../core/fuentes/jersey-10.css', '../../core/fuentes/fredoka.css')</script>
+<!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
+<script>NUCLEO.estilos('../../core/css/base.css', 'css/tiny.css')</script>
+</head>
+<body>
+<div id="tn-escenario">
+  <canvas id="tn-lienzo" aria-label="Tiny Fans"></canvas>
+  <div id="tn-capa"></div>
+</div>
+<div id="tn-carga">TINY FANS</div>
+<script>
+NUCLEO.juego({
+  esperaListo: true,   // la splash de core espera a NUCLEO.listo(), que js/principal.js llama al quitar la pantalla de carga (ADR 091)
+  ligero: true,        // solo la cuenta, el idioma y el sonido de core: Tiny lleva su partida y sus pantallas (prototipo solo para la alfa)
+  antes: ['js/tn.js', 'js/ajustes.js', 'js/ajustes/vista.js', 'js/ajustes/interfaz.js', 'js/ajustes/mapa.js', 'js/ajustes/expedicion.js', 'js/ajustes/nido.js',
+    'js/ajustes/asalto.js', 'js/ajustes/metas.js', 'js/ajustes/modelos.js', 'js/ajustes/efectos.js', 'js/ajustes/sonido.js'],
+  idioma: { en: ['idioma/en-base.js'] },
+  despues: [
+    // por capas (docs/calidad/ARQUITECTURA.md): datos, dominio, casos de uso, adaptadores y la composición. Contrato: docs/guia/juegos/tiny/README.md
+    'js/three.min.js', 'js/textos.js',
+    'js/dominio/azar.js', 'js/dominio/mapa.js', 'js/dominio/becario.js', 'js/dominio/bichos.js', 'js/dominio/botin.js', 'js/dominio/combate.js', 'js/dominio/mejoras.js',
+    'js/dominio/gigante.js', 'js/dominio/mundo.js', 'js/dominio/expedicion.js', 'js/dominio/nido-rejilla.js', 'js/dominio/nido-recetas.js', 'js/dominio/nido-camino.js',
+    'js/dominio/nido.js', 'js/dominio/asalto-trampas.js', 'js/dominio/asalto.js', 'js/dominio/partida.js',
+    'js/aplicacion/eventos.js', 'js/aplicacion/sesion.js', 'js/aplicacion/bucle.js', 'js/aplicacion/casos-expedicion.js', 'js/aplicacion/casos-nido.js',
+    'js/aplicacion/casos-asalto.js', 'js/aplicacion/metas.js',
+    'js/adaptadores/dom.js', 'js/adaptadores/almacen-local.js', 'js/adaptadores/reloj.js', 'js/adaptadores/sonido.js', 'js/adaptadores/iconos.js',
+    'js/adaptadores/vista3d-pixel.js', 'js/adaptadores/vista3d-camara.js', 'js/adaptadores/vista3d.js', 'js/adaptadores/entrada.js', 'js/adaptadores/piezas3d.js',
+    'js/adaptadores/modelos-becario.js', 'js/adaptadores/modelos-bichos.js', 'js/adaptadores/modelos-gigante.js', 'js/adaptadores/modelos-objetos.js',
+    'js/adaptadores/modelos-parada.js', 'js/adaptadores/modelos-nido.js', 'js/adaptadores/efectos3d.js',
+    'js/adaptadores/hud-barra.js', 'js/adaptadores/hud-mejoras.js', 'js/adaptadores/hud-resumen.js', 'js/adaptadores/hud.js', 'js/adaptadores/ventanas.js',
+    'js/adaptadores/bocadillos.js', 'js/adaptadores/guia.js',
+    'js/adaptadores/pantallas.js', 'js/adaptadores/pantalla-provisional.js', 'js/adaptadores/pantalla-nido.js', 'js/adaptadores/pantalla-expedicion.js',
+    'js/adaptadores/pantalla-asalto.js', 'js/adaptadores/dev.js',
+    'js/principal.js'],
+});
+</script>
+</body>
+</html>

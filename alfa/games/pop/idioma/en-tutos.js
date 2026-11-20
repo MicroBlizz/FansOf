@@ -5,7 +5,7 @@ IDIOMA.add({
   "¿Empezar de nuevo?": "Start over?",
   "SÍ, DE NUEVO": "YES, START OVER",
   "NO, VOLVER": "NO, GO BACK",
-  "Vuelves al nivel 1 y pierdes el camino y el equipo. Tus monedas, perlas y ayudas se quedan.": "You go back to level 1 and lose your path and team. Your coins, pearls and boosters stay.",
+  "Vuelves al nivel 1, sin camino ni equipo. Guardas monedas, perlas y ayudas.": "You go back to level 1, with no path or team. You keep coins, pearls and boosters.",
   // el letrero cuando el rival abre un nivel con duelo (tarea #180, js/nimnivel.js)
   "¡Empieza {n}!": "{n} goes first!",
 });

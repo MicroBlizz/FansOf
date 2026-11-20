@@ -61,7 +61,7 @@ function ppPaseCabecera(P, e) {
   const finMes = new Date(); finMes.setMonth(finMes.getMonth() + 1, 1); finMes.setHours(0, 0, 0, 0);
   return `<h2>${tr('Pase de Pop')}</h2>
     <p class="pp-sub">${tr('Escalón {e} de {t}', { e, t: C.escalones })} · ${e < C.escalones ? tr('faltan {n} puntos para el siguiente', { n: falta }) : tr('¡pase completo!')}</p>
-    <p class="pp-sub"><small>${tr('Ganas puntos al pasar niveles nuevos (uno más con 3 estrellas). Se renueva en {d} días.', { d: Math.ceil((finMes - Date.now()) / 86400000) })}</small></p>`;
+    <p class="pp-sub"><small>${tr('Pasa niveles nuevos para ganar puntos. Se renueva en {d} días.', { d: Math.ceil((finMes - Date.now()) / 86400000) })}</small></p>`;
 }
 function ppPaseBotonPremium(t) {
   const C = PP_CFG.pase;

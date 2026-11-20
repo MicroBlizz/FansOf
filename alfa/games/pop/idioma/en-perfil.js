@@ -66,7 +66,7 @@ IDIOMA.add({
   "Los corazones entre amigos no están disponibles ahora": "Hearts between friends aren't available right now",
   "Ya le regalaste uno hoy. ¡Mañana puedes otra vez!": "You already gifted one today. You can again tomorrow!",
   "Hoy ya le han regalado 5 corazones. ¡Prueba mañana!": "They've already been gifted 5 hearts today. Try tomorrow!",
-  "Este es tu enlace: pásaselo a tus amigos para que te regalen corazones.": "This is your link: send it to your friends so they can gift you hearts.",
+  "Pasa este enlace a tus amigos y te regalan corazones.": "Send this link to your friends and they gift you hearts.",
   "Este enlace no vale.": "This link isn't valid.",
   "Alguien": "Someone",
   "{nombre} te pide un corazón": "{nombre} is asking for a heart",

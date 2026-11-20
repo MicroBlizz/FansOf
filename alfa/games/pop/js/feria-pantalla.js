@@ -78,7 +78,7 @@ function ppVentanaFeria() {
   const E = SAVE.feria.estado, ultima = v.cierraEn < 3 * 3600000;
   const t = ppAbre(`<h2>${tr('Feria del finde')}</h2>
     <span class="pp-feria-reloj">${ultima ? tr('¡Última hora! Acaba en {t}', { t: ppFeriaRelojCorto(v.cierraEn) }) : tr('Acaba en {t}', { t: ppFeriaRelojCorto(v.cierraEn) })}</span>
-    <p class="pp-sub">${tr('Gana niveles para sumar tickets {tk}: 1 por nivel, 2 con tres estrellas y 3 un jefe.', { tk: ppTicketHtml() })}</p>`, true);
+    <p class="pp-sub">${tr('Tickets {tk}: 1 por nivel, 2 con 3 estrellas, 3 por jefe.', { tk: ppTicketHtml() })}</p>`, true);
   t.appendChild(ppFeriaCamino(E));
   t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppFeriaFaltan(E)}</p>`);
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { ppCierra(); ppPintaLateral(); }));
@@ -144,13 +144,13 @@ function ppVentanaFeriaCofre(cual, dado) {
 /* ---------- cerrada, bienvenida y entrega ---------- */
 function ppVentanaFeriaCerrada() {
   const v = PP_FERIA.ventana(ppFeriaAhora());
-  const t = ppAbre(`<h2>${tr('La feria vuelve el viernes')}</h2><p class="pp-sub">${tr('La Feria del finde abre cada viernes y cierra el domingo a medianoche.')}</p>
+  const t = ppAbre(`<h2>${tr('La feria vuelve el viernes')}</h2><p class="pp-sub">${tr('La Feria abre el viernes y cierra el domingo.')}</p>
     <span class="pp-feria-reloj">${tr('Abre en {t}', { t: ppFeriaRelojCorto(v.abreEn) })}</span>`);
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
 }
 function ppVentanaFeriaBienvenida(v) {
   const t = ppAbre(`<div class="pp-feria-lola"></div><h2>${tr('¡Ha llegado la Feria del finde!')}</h2>
-    <p class="pp-sub">${tr('Hasta el domingo a medianoche, cada nivel que ganes te da tickets {tk}. Júntalos y gana monedas, ayudas, corazones infinitos y dos cofres.', { tk: ppTicketHtml() })}</p>
+    <p class="pp-sub">${tr('Cada nivel ganado te da tickets {tk}. Júntalos y gana premios.', { tk: ppTicketHtml() })}</p>
     <span class="pp-feria-reloj">${tr('Acaba en {t}', { t: ppFeriaRelojCorto(v.cierraEn) })}</span>`);
   $pp('.pp-feria-lola').appendChild(ppMiniatura('sl-lola', 90));
   t.appendChild(ppBoton(tr('¡A JUGAR!'), 'pp-btn', ppCierra));

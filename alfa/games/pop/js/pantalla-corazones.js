@@ -17,7 +17,7 @@ const PP_CORAZON_AVISO = {
   sin_red: () => tr('Sin conexión: prueba otra vez en un rato'), sin_sesion: () => tr('Para pedir corazones hace falta tu cuenta'),
   cerrado: () => tr('Los corazones entre amigos no están disponibles ahora'), servidor: () => tr('No se ha podido. Prueba otra vez.'),
   ya_hoy: () => tr('Ya le regalaste uno hoy. ¡Mañana puedes otra vez!'), tope: () => tr('Hoy ya le han regalado 5 corazones. ¡Prueba mañana!'),
-  propio: () => tr('Este es tu enlace: pásaselo a tus amigos para que te regalen corazones.'), no_existe: () => tr('Este enlace no vale.'),
+  propio: () => tr('Pasa este enlace a tus amigos y te regalan corazones.'), no_existe: () => tr('Este enlace no vale.'),
 };
 const ppCorazonAviso = motivo => (PP_CORAZON_AVISO[motivo] || PP_CORAZON_AVISO.servidor)();
 // el enlace propio, pedido por adelantado al abrir una ventana con PEDIR A AMIGOS: así el toque comparte sin esperar al servidor

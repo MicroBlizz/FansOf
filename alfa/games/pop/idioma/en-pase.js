@@ -10,7 +10,7 @@ IDIOMA.add({
   "¡Tienes el Pase dorado!": "You have the Golden Pass!",
   "Todos los premios dorados son tuyos.": "All the golden rewards are yours.",
   "PASE DORADO": "GOLDEN PASS",
-  "60 premios más, con la bandeja {b} y un compañero que solo salen este mes": "60 more rewards, with the {b} tray and a buddy you can only get this month",
+  "60 premios más: la bandeja {b} y un compañero de este mes": "60 more rewards: the {b} tray and a buddy from this month",
   "Hoy, jugando: {n} de {t} puntos (las misiones, aparte)": "Today, from playing: {n} of {t} points (missions on top)",
   "Pase: tope de hoy alcanzado. ¡Mañana más!": "Pass: today's limit reached. More tomorrow!",
   "Dorado+ {p}": "Golden+ {p}",

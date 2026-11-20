@@ -13,7 +13,7 @@ const PP_PVP_ESPERA = 25;   // segundos buscando rival antes de jugar contra el 
 const PP_PVP_PERFIL_SRV = PP_PVP_PERFIL.crea({ rpc: (nombre, cuerpo) => CUENTA.rpc(nombre, cuerpo), cat: PP_MI.cat });
 /* ---------- el menú de duelos ---------- */
 function ppVentanaDuelos() {
-  const t = ppAbre(`<h2>${tr('Duelos')}</h2><p class="pp-sub">${tr('Por turnos, haz pop en las que quieras de una sola fila. ¡Pierde quien haga pop en la última!')}</p>`);
+  const t = ppAbre(`<h2>${tr('Duelos')}</h2><p class="pp-sub">${tr('Por turnos, haz pop en las que quieras de una fila. ¡Pierde quien haga la última!')}</p>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
   col.appendChild(ppBoton(tr('CONTRA EL CEO'), 'pp-btn', () => { ppCierra(); ppNuevoDuelo(); }));
   col.appendChild(ppBoton(tr('RIVAL AL AZAR'), 'pp-btn2 pp-rosa', ppPvpBuscar));

@@ -16,7 +16,7 @@ function ppPaseCabeceraNueva(e, pts, tema) {
 function ppPaseDorado(t, P, tema) {
   const d = document.createElement('div'); d.className = 'pp-pase-dorado';
   if (P.premium) { d.innerHTML = `<b>${tr('¡Tienes el Pase dorado!')}</b><small>${tr('Todos los premios dorados son tuyos.')}</small>`; t.appendChild(d); return; }
-  d.innerHTML = `<div><b>${tr('PASE DORADO')}</b><small>${tr('60 premios más, con la bandeja {b} y un compañero que solo salen este mes', { b: tr(ppBandejaDe(tema.bandeja).nombre) })}</small></div>`;
+  d.innerHTML = `<div><b>${tr('PASE DORADO')}</b><small>${tr('60 premios más: la bandeja {b} y un compañero de este mes', { b: tr(ppBandejaDe(tema.bandeja).nombre) })}</small></div>`;
   const botones = document.createElement('div'); botones.className = 'pp-pase-compra';
   botones.append(ppBoton(PP_CFG.pase.precio, 'pp-btn2 pp-naranja', () => ppPaseCompra(false)),
     ppBoton(tr('Dorado+ {p}', { p: PP_CFG.pase.plus.precio }), 'pp-btn2 pp-rosa', () => ppPaseCompra(true)));

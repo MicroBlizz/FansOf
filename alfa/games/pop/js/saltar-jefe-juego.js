@@ -35,7 +35,7 @@ function ppVentanaAbrirMundo(d) {
   const sig = r.siguiente, paga = PP_SALTO.paga(SAVE.perlas || 0, r.perlas);
   const t = ppAbre(`<h2>${ppConArt(sig, '¿Abrir la {mundo}?', '¿Abrir el {mundo}?')}</h2>`);
   t.appendChild(ppMiniMundo(sig));
-  const espera = ppConArt(d.mundo, 'Se queda esperándote en la {mundo}: vuelve a por él cuando quieras.', 'Se queda esperándote en el {mundo}: vuelve a por él cuando quieras.');
+  const espera = ppConArt(d.mundo, 'Te espera en la {mundo}: vuelve cuando quieras.', 'Te espera en el {mundo}: vuelve cuando quieras.');
   t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Pasas al mundo {n} sin ganar a este jefe.', { n: sig + 1 })} ${espera}</p><p class="pp-sub">${tr('Su modo difícil se abre cuando le ganes.')}</p>`);
   if (paga.ok) {
     const b = ppBoton('', 'pp-btn2 pp-verde', () => ppSaltaJefe(d, r));

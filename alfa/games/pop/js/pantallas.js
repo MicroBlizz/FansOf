@@ -134,7 +134,7 @@ function ppVentanaSinCorazones() {
 }
 function ppVentanaFin() {
   const P = PP_P;
-  const t = ppAbre(`<h2>${tr('¡VICTORIA!')}</h2><p class="pp-sub">${tr('¡Plop! Has superado todos los mundos que hay de momento. ¡Pronto llegan más!')}</p><p class="pp-sub"><b>${tr('Estrellas: {n}', { n: P.estrellas })}</b>${P.estrellas >= (SAVE.estrellas || 0) && P.estrellas ? ' · ' + tr('¡Nuevo récord!') : ' · ' + tr('Récord: {n}', { n: SAVE.estrellas || 0 })}</p>`, true);
+  const t = ppAbre(`<h2>${tr('¡VICTORIA!')}</h2><p class="pp-sub">${tr('¡Plop! Has ganado todos los mundos. ¡Pronto habrá más!')}</p><p class="pp-sub"><b>${tr('Estrellas: {n}', { n: P.estrellas })}</b>${P.estrellas >= (SAVE.estrellas || 0) && P.estrellas ? ' · ' + tr('¡Nuevo récord!') : ' · ' + tr('Récord: {n}', { n: SAVE.estrellas || 0 })}</p>`, true);
   if (P.rescatados.length) { t.insertAdjacentHTML('beforeend', `<p class="pp-sub"><b>${tr('Rescatados')}</b></p>`); const fila = document.createElement('div'); fila.className = 'pp-fila-slimes pp-mini'; for (const id of P.rescatados) fila.appendChild(ppFichaSlime(id)); t.appendChild(fila); }
   t.appendChild(ppBoton(tr('JUGAR OTRA VEZ'), 'pp-btn', () => { ppCierra(); ppNuevaRuta(); ppIrA('mapa'); }));
   t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-volver', () => { ppCierra(); PP_P = null; ppIrA('titulo'); }));
@@ -144,10 +144,10 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Toca una burbuja: ella y sus vecinas hacen pop y se hunden.')}</p>
     <p class="pp-sub">${tr('Haz pop en TODAS antes de quedarte sin toques.')}</p>
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
-    <p class="pp-sub">${tr('Más adelante: las de cereza necesitan tres golpes, las de hielo solo hacen pop si las tocas a ellas y las conchas, al tocarlas, solo hacen pop ellas.')}</p>
-    <p class="pp-sub">${tr('Y aún más allá: los cohetes hacen pop en su fila, las burbujeantes en un cuadrado de 3x3 y los pétalos en su columna.')}</p>
+    <p class="pp-sub">${tr('Más adelante: la cereza pide tres golpes. El hielo, solo si lo tocas. La concha hace pop sin sus vecinas.')}</p>
+    <p class="pp-sub">${tr('Y luego: el cohete vacía su fila. La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
-    <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos.')}</p>`, true);
+    <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos. Gana al jefe y se abre el difícil.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
 // las dos barras de volumen de core (OPCIONES.sonido): efectos y música por separado, en Opciones y en la pausa
@@ -171,7 +171,7 @@ function ppOpciones() {
 }
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {
-  const t = ppAbre(`<h2>${tr('¿Empezar de nuevo?')}</h2><p class="pp-sub">${tr('Vuelves al nivel 1 y pierdes el camino y el equipo. Tus monedas, perlas y ayudas se quedan.')}</p>`);
+  const t = ppAbre(`<h2>${tr('¿Empezar de nuevo?')}</h2><p class="pp-sub">${tr('Vuelves al nivel 1, sin camino ni equipo. Guardas monedas, perlas y ayudas.')}</p>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
   col.appendChild(ppBoton(tr('SÍ, DE NUEVO'), 'pp-btn2 pp-sec', () => { ppCierra(); ppEmpieza(false); }));
   col.appendChild(ppBoton(tr('NO, VOLVER'), 'pp-btn', ppOpciones));

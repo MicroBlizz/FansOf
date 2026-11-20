@@ -19,7 +19,7 @@ function ppHabEntraPesadilla(T, d) {
 function ppHabAlEmpezarLO(T, fx) {
   if (fx.pCalma) { T.limite += fx.pCalma; return tr('+{n} toques extra', { n: fx.pCalma }); }
   if (fx.pGratis) { T.gratis += fx.pGratis; return tr('Tu primer toque no cuenta'); }
-  if (fx.pPista) { ppPista(T); return T.pista === null ? null : tr('Te marca una de la solución'); }
+  if (fx.pPista) { ppPista(T); return T.pista === null ? null : tr('Te marca una burbuja buena'); }
   return null;
 }
 // ¿queda alguien en el equipo con esta habilidad sin usar?
@@ -72,7 +72,7 @@ function ppHabEligeVolteo(id) {
 }
 function ppHabVoltea(T, i) {
   const id = T.habModo, r = PP_HAB.voltea(T.up, T.mask, i, up => ppResuelveLO(T.n, T.mask, up));
-  if (!r.ok) { if (r.error === 'sin_solucion') ppFlota(tr('Esa no: el nivel se quedaría sin solución'), 270, 240, '#ff6ec7'); return; }
+  if (!r.ok) { if (r.error === 'sin_solucion') ppFlota(tr('Esa no: así no se podría ganar'), 270, 240, '#ff6ec7'); return; }
   T.habModo = null; T.habP.usados[id] = true;
   T.up = r.up; T.sol = r.sol; if (!r.sube) T.pops++;
   T.hecho = ppResuelto(T);

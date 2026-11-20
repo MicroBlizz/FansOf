@@ -1,8 +1,8 @@
 {
- "build": 1376,
- "hash": "c082306",
- "fecha": "2026-11-20T19:12:28Z",
- "mensaje": "Pop: la tienda y sus ventanas nunca sacan barra de lado: el aviso «Vale X €» ya no se sale de la tarjeta (tarea #254, Pepins)",
+ "build": 1377,
+ "hash": "526cb5a",
+ "fecha": "2026-11-20T19:21:05Z",
+ "mensaje": "Pop: al unirse un companero, la victoria usa la pantalla nueva (fondo, monedas que vuelan, Doblar, COMPARTIR) con el companero dentro (tarea #261, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -61,19 +61,22 @@ function ppViaDuelo(jefe) {
   for (const id of r.nuevos) ppViaAviso(id, { nuevo: true, sobra: 0 });
 }
 
-/* ---------- la ventana del rescate con el flag (la de siempre, js/pantallas.js, sigue igual con el flag cerrado) ---------- */
-// ya no hay que elegir ni echar a nadie: si su equipo estaba lleno, se le pone desde Mi equipo
+/* ---------- la ventana del rescate con el flag: la pantalla de victoria de siempre (tarea #261) ---------- */
+// Es la misma que un nivel normal (js/pantalla-victoria.js: fondo de color, monedas que vuelan, Doblar, COMPARTIR, TIENDA) y, dentro del
+// panel, el compañero nuevo. Ya no hay que elegir ni echar a nadie: si su equipo estaba lleno, se le pone desde Mi equipo
 function ppVentanaRescateCole(rescates) {
-  const T = PP_P.T;
-  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(T.estrellas)}${ppPremioHtml(T.premio)}${ppFeriaLinea(T)}${ppPaseLinea(T)}`, true);
+  const t = ppAbreVictoria('', false, undefined, { vuelta: () => ppVentanaRescateCole(rescates) });
+  const panel = t.querySelector('.pp-vic-panel') || t;
+  panel.insertAdjacentHTML('beforeend', rescates.map(x => `<p class="pp-sub"><b>${tr('¡{n} se une a tu colección!', { n: tr(ppSlimeDe(x.id).nombre) })}</b></p>`).join(''));
   const fila = document.createElement('div'); fila.className = 'pp-fila-slimes';
   for (const x of rescates) fila.appendChild(ppFichaSlime(x.id, true));
-  t.insertAdjacentHTML('beforeend', rescates.map(x => `<p class="pp-sub"><b>${tr('¡{n} se une a tu colección!', { n: tr(ppSlimeDe(x.id).nombre) })}</b></p>`).join(''));
-  t.appendChild(fila);
+  panel.appendChild(fila);
   const fuera = rescates.find(x => !x.enEquipo);
-  if (fuera) {
-    t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Equipo lleno: cámbialo cuando quieras en Mi equipo.')}</p>`);
-    t.appendChild(ppBoton(tr('MI EQUIPO'), 'pp-btn2 pp-menta', () => { ppAlCamino(); PP_ALB.modo = PP_COLE.modoDe(fuera.id); ppVentanaCompaneros('equipo'); }));
-  }
-  t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));
+  if (fuera) ppRescateEquipoLleno(panel, fuera);
+  t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppPrimerosSiguiente));
+}
+// el aviso de «Equipo lleno» con el botón que lleva a Mi equipo (se va al camino y abre la pestaña de su modo)
+function ppRescateEquipoLleno(panel, fuera) {
+  panel.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Equipo lleno: cámbialo cuando quieras en Mi equipo.')}</p>`);
+  panel.appendChild(ppBoton(tr('MI EQUIPO'), 'pp-btn2 pp-menta', () => { ppAlCamino(); PP_ALB.modo = PP_COLE.modoDe(fuera.id); ppVentanaCompaneros('equipo'); }));
 }

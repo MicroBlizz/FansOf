@@ -30,6 +30,9 @@ function ppPierdeVida(guardaRacha = false) {
   ppGuarda();
 }
 function ppSumaVida(n) { ppVidas(); SAVE.vidas = Math.min(PP_CFG.vida, SAVE.vidas + n); ppGuarda(); }
+// los corazones que ya ha dado hoy la Caja de botín (tarea #236): solo da PP_CFG.cofreVidasDia al día; el contador se pone a cero cada día
+function ppCofreVidasHoy() { if (SAVE.cofreDia !== ppHoy()) { SAVE.cofreDia = ppHoy(); SAVE.cofreHoy = 0; } return SAVE.cofreHoy; }
+const ppCofreDaVida = () => ppVidas() < PP_CFG.vida && ppCofreVidasHoy() < PP_CFG.cofreVidasDia;
 // --- monedas ---
 function ppCobra(precio) { if (SAVE.monedas < precio) return false; SAVE.monedas -= precio; ppGuarda(); return true; }
 function ppLlenaVidas() { if (ppVidas() >= PP_CFG.vida || !ppCobra(PP_CFG.precioVidas)) return false; SAVE.vidas = PP_CFG.vida; SAVE.vidaT = Date.now(); ppGuarda(); return true; }

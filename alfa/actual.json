@@ -1,8 +1,8 @@
 {
- "build": 1356,
- "hash": "04f6665",
- "fecha": "2026-11-20T16:22:56Z",
- "mensaje": "Pinball 0.2.1: cápsula hueca y maceta de Yoshi, y preparar.py para colocar el arte al tamaño del juego (#114)",
+ "build": 1357,
+ "hash": "50b9a6b",
+ "fecha": "2026-11-20T16:40:06Z",
+ "mensaje": "Pop: el Cofre del tesoro solo da 3 corazones al día con un toque de 5; pasado el tope da +1 toque (tarea #236, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

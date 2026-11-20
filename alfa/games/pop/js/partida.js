@@ -140,11 +140,11 @@ function ppCombosEquipo(T) {
   if (ppEnEquipo('becario') && T.combo % becario.combo === 0) { T.gratis += becario.gratis; ppFxHabilidad('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
   if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); play('ppPista'); } }
 }
-// el premio gordo de la Caja de botín: un toque de 4 da +1 toque; uno de 5, +1 corazón (si falta alguno)
+// el premio gordo de la Caja de botín: un toque de 4 da +1 toque; uno de 5, +1 corazón (si falta alguno y hoy no ha dado ya 3: tarea #236)
 function ppPremioGordo(T, r) {
   if (!ppEnEquipo('cofre') || r.pops.length < 4 || T.lo) return;
   ppFxHabilidad('cofre'); play('ppPremio');
-  if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
+  if (r.pops.length >= 5 && ppCofreDaVida()) { SAVE.cofreHoy++; ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
   else { T.limite++; ppFlota(ppTextoMasToque(PP_SLIMES.cofre.nombre), 270, 275, '#ff8a2a'); }   // con su motivo (tarea #182)
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel

@@ -17,7 +17,7 @@ function ppHabEntraPesadilla(T, d) {
 }
 // lo que hace uno al empezar (y el texto que sale), o null si el suyo es de botón
 function ppHabAlEmpezarLO(T, fx) {
-  if (fx.pCalma) { T.limite += fx.pCalma; return tr('+{n} toques de margen', { n: fx.pCalma }); }
+  if (fx.pCalma) { T.limite += fx.pCalma; return tr('+{n} toques extra', { n: fx.pCalma }); }
   if (fx.pGratis) { T.gratis += fx.pGratis; return tr('Tu primer toque no cuenta'); }
   if (fx.pPista) { ppPista(T); return T.pista === null ? null : tr('Te marca una de la solución'); }
   return null;

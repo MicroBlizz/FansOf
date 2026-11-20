@@ -1,8 +1,8 @@
 {
- "build": 1352,
- "hash": "e049923",
- "fecha": "2026-11-20T13:12:35Z",
- "mensaje": "Pop: textos sin dar por hecho si quien juega es chico o chica: Maestría en burbujas, Mandamás del pop-it, ¡Que gane el más pop!, participantes y ¡abre tú el ranking! (tarea #193, Pepins)",
+ "build": 1353,
+ "hash": "64b14f3",
+ "fecha": "2026-11-20T14:10:49Z",
+ "mensaje": "Pop: palabras que entienda un niño: victorias seguidas, toques extra, Cofre del tesoro, Premio doble, Doble con vídeo y frases de unas 8 palabras (tarea #250, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

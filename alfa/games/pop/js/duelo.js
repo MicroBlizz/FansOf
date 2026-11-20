@@ -106,7 +106,7 @@ function ppDueloFin(res) {
   setTimeout(() => {
     const t = ppAbre(`<h2>${res === 'gana' ? tr('¡Has ganado al CEO!') : tr('El CEO gana esta vez')}</h2>
       <p class="pp-sub">${res === 'gana' ? tr('Le has dejado la última burbuja. Dice que el pop-it estaba amañado.') : tr('Te ha tocado hacer pop en la última burbuja. Se ríe como un villano de oficina.')}</p>
-      ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : res === 'gana' ? `<p class="pp-sub">${tr('Hoy ya has ganado todas las monedas del duelo. ¡Vuelve mañana!')}</p>` : ''}
+      ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : res === 'gana' ? `<p class="pp-sub">${tr('Hoy ya tienes todas las monedas del duelo. ¡Vuelve mañana!')}</p>` : ''}
       <p class="pp-sub">${tr('Victorias: {g} · Derrotas: {p}', { g: S.gan, p: S.per })}</p>`);
     t.appendChild(ppBoton(tr('¡OTRO DUELO!'), 'pp-btn', () => { ppCierra(); ppNuevoDuelo(); }));
     t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); ppSalDuelo(); }));

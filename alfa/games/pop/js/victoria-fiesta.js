@@ -22,7 +22,7 @@ function ppFiestaCapa(T, s) {
   const capa = document.createElement('div');
   capa.className = 'pp-fiesta-toques';
   const sub = s.monedas ? (s.monedas === 1 ? tr('+1 moneda') : tr('+{n} monedas', { n: s.monedas })) : '';
-  capa.innerHTML = `<p class="pp-fiesta-cartel">${tr('¡Toques de sobra!')}</p>${sub ? `<p class="pp-fiesta-sub">${sub}</p>` : ''}`
+  capa.innerHTML = `<p class="pp-fiesta-cartel">${tr('¡Toques extra!')}</p>${sub ? `<p class="pp-fiesta-sub">${sub}</p>` : ''}`
     + `<p class="pp-fiesta-saltar">${tr('Toca para saltar')}</p>`;
   capa.onpointerdown = () => { if (T.fiesta) T.fiesta.rapido = true; capa.classList.add('pp-rapido'); };
   $pp('#pp-ui').appendChild(capa);

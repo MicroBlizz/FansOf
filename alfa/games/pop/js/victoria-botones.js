@@ -7,7 +7,7 @@ const PP_VIC_WEB = 'https://fansof.games/games/pop/';
 const PP_VIC_CONFETI = ['#ffd64a', '#ff6eb5', '#6ad1ff', '#7be08a', '#ffa64d', '#fff3a8'];
 // lo que pone «Doblar» (tarea #187): x2, la palabra y lo que ganas de más con su moneda, más la luz que lo cruza (css/victoria.css)
 const ppVictoriaDobleHtml = m => `<i class="pp-vic-doble-luz" aria-hidden="true"></i><span class="pp-vic-x2">x2</span>`
-  + `<span class="pp-vic-doble-txt">${tr('Doblar')}</span><span class="pp-vic-doble-mas">+${ppMonedasHtml(m, 26)}</span>`;
+  + `<span class="pp-vic-doble-txt">${tr('Doble con vídeo')}</span><span class="pp-vic-doble-mas">+${ppMonedasHtml(m, 26)}</span>`;
 // doblar las monedas del nivel viendo un anuncio (una vez por nivel ganado); grande y a lo ancho del panel
 function ppVictoriaDoble(t, T) {
   const hueco = t.querySelector('.pp-vic-doble-hueco'), m = T.premio && T.premio.monedas;

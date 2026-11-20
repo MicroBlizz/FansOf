@@ -7,7 +7,7 @@
 // Las reglas, en js/victoria.js.
 'use strict';
 const PP_VIC_NOTA = { perfecto: '¡Perfecto!', genial: '¡Genial!', superado: '¡Superado!' };
-const PP_VIC_ROTULO = { toques: 'Toques', minimo: 'Mínimo', errores: 'Errores', tiempo: 'Tiempo', intento: 'Intento' };
+const PP_VIC_ROTULO = { toques: 'Toques', minimo: 'Mejor marca', errores: 'Errores', tiempo: 'Tiempo', intento: 'Vez' };
 const PP_VIC_CUENTA = 0.8;   // segundos que tardan las monedas en subir
 // el reloj del nivel: solo corre mientras se puede jugar (ni con la cortinilla, ni con Lola hablando, ni con una ventana, ni en pausa)
 function ppVictoriaReloj(T, dt) {
@@ -20,7 +20,7 @@ function ppVictoriaResumen(T) {
 }
 function ppVictoriaFrase(r) {
   const f = PP_VICTORIA.frase(r);
-  if (f.clave === 'minimo') return tr('¡Con el mínimo de toques!');
+  if (f.clave === 'minimo') return tr('¡Con los toques justos!');
   if (f.clave === 'limpio') return tr('¡Ni un solo error!');
   if (f.clave === 'sinErrores') return tr('Las 3 estrellas: sin ningún error');
   return f.n === 1 ? tr('Las 3 estrellas: en 1 toque') : tr('Las 3 estrellas: en {n} toques', { n: f.n });

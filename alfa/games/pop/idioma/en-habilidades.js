@@ -4,8 +4,8 @@
 'use strict';
 IDIOMA.add({
   "¡Al rescate! +{n} toques": "To the rescue! +{n} taps",
-  "¡Tu racha está a salvo!": "Your streak is safe!",
-  "+{n} toques de margen": "+{n} spare taps",
+  "¡Victorias seguidas a salvo!": "Winning run safe!",
+  "+{n} toques extra": "+{n} extra taps",
   "Tu primer toque no cuenta": "Your first tap is free",
   "Te marca una de la solución": "Marks one of the solution",
   "Toca la burbuja a la que quieras dar la vuelta": "Tap the bubble you want to flip",

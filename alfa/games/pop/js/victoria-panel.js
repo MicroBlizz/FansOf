@@ -48,7 +48,7 @@ function ppVicDesglose(p) {
   if (!p || !p.monedas) return '';
   const base = p.monedas - (p.sobran || 0);
   const partes = [tr('Nivel +{n}', { n: base })];
-  if (p.sobran) partes.push(tr('Toques de sobra +{n}', { n: p.sobran }));
+  if (p.sobran) partes.push(tr('Toques extra +{n}', { n: p.sobran }));
   return `<span class="pp-vic-desglose">${partes.join(' · ')}</span>`;
 }
 function ppVicRacha(a) {
@@ -57,7 +57,7 @@ function ppVicRacha(a) {
   let pips = '';
   for (let k = 0; k < max; k++) pips += `<i class="${k < n ? 'pp-on' : ''}${a.nuevo && k === n - 1 && n > a.racha ? ' pp-vic-nueva' : ''}"></i>`;
   const txt = !n ? '' : n === 1 ? tr('+1 toque al empezar') : tr('+{n} toques al empezar', { n });
-  return `<div class="pp-vic-extra">${ppIcono('i-racha', 50, '#ff9a4a')}<div><b>${tr('Racha')}</b><span class="pp-vic-pips">${pips}</span><small>${txt}</small></div></div>`;
+  return `<div class="pp-vic-extra">${ppIcono('i-racha', 50, '#ff9a4a')}<div><b>${tr('Victorias seguidas')}</b><span class="pp-vic-pips">${pips}</span><small>${txt}</small></div></div>`;
 }
 function ppVicHucha(a) {
   if (typeof ppPrimerosVe === 'function' && !ppPrimerosVe('hucha')) return '';
@@ -78,8 +78,8 @@ function ppVicRachaPerdida(T) {
   if (!antes || ahora >= antes) return '';   // sin racha, o a salvo (Racha a salvo): nada que decir
   // la racha baja un escalón (tarea #186): si aún queda, se dice cuánto; si era de 1, se ha ido
   const [titulo, pie] = ahora > 0
-    ? [tr('Tu racha baja un escalón'), ppTextoRacha(ahora)]
-    : [tr('Has perdido tu racha'), tr('Pasa niveles sin perder corazones para recuperarla')];
+    ? [tr('Bajan tus victorias seguidas'), ppTextoRacha(ahora)]
+    : [tr('Se acabaron las victorias seguidas'), tr('Gana sin perder corazones para recuperarlas')];
   return `<div class="pp-vic-aviso">${ppIcono('i-racha', 50, '#ff9a4a')}<div><b>${titulo}</b><small>${pie}</small></div></div>`;
 }
 const ppTextoRacha = n => (n === 1 ? tr('Ahora empiezas los niveles con +1 toque') : tr('Ahora empiezas los niveles con +{n} toques', { n }));

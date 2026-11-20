@@ -72,7 +72,7 @@ function ppVentanaRescateCole(rescates) {
   t.appendChild(fila);
   const fuera = rescates.find(x => !x.enEquipo);
   if (fuera) {
-    t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Tu equipo está lleno: lo puedes poner cuando quieras desde Mi equipo.')}</p>`);
+    t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Equipo lleno: cámbialo cuando quieras en Mi equipo.')}</p>`);
     t.appendChild(ppBoton(tr('MI EQUIPO'), 'pp-btn2 pp-menta', () => { ppAlCamino(); PP_ALB.modo = PP_COLE.modoDe(fuera.id); ppVentanaCompaneros('equipo'); }));
   }
   t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));

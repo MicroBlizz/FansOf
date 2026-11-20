@@ -129,8 +129,8 @@ const PP_SLIMES = {
              pasiva: 'Horas extra', texto: 'Con un COMBO x3, tu siguiente toque no cuenta.', fx: { combo: 3, gratis: 1 } },
   lola:    { nombre: 'Lola', color: '#ffb88a', color2: '#e07a3c', pinta: 'pelo',
              pasiva: 'Chivatazo', texto: 'Al empezar cada nivel te señala una burbuja buena, y otra cada 2 combos. En cada duelo, una lupa gratis.', fx: { combo: 2, pista: 1 } },
-  cofre:   { nombre: 'Caja de botín', color: '#ffd64a', color2: '#c98a12', pinta: 'dientes',
-             pasiva: 'Premio gordo', texto: 'Un toque que hace pop en 4 burbujas da +1 toque de margen; uno de 5, +1 corazón.', fx: { premio: 1 } },
+  cofre:   { nombre: 'Cofre del tesoro', color: '#ffd64a', color2: '#c98a12', pinta: 'dientes',
+             pasiva: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón.', fx: { premio: 1 } },
   ceo:     { nombre: 'El CEO', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata',
              pasiva: 'Recorte de plantilla', texto: 'Cada 15 pops explota y hace pop gratis en dos de la solución.', fx: { salta: 15, golpes: 2 } },
   // los amigos de los mundos 3 a 6 (30-10-2026, para que los huecos 5.º y 6.º sirvan); `prefiere`: salta antes a las de ese tipo
@@ -141,7 +141,7 @@ const PP_SLIMES = {
   algodon: { nombre: 'Algodón', color: '#ffd6f0', color2: '#9fdcff', pinta: '',
              pasiva: 'Lluvia de azúcar', texto: 'Cada 18 pops llueve azúcar y hace pop gratis en tres de la solución.', fx: { salta: 18, golpes: 3 } },
   nubecita: { nombre: 'Nubecita', color: '#f4f0ff', color2: '#c9b8f0', pinta: '',
-             pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque de margen.', fx: { extra: 1 } },
+             pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque extra.', fx: { extra: 1 } },
   // mundos 7 a 10 (31-10-2026)
   hada:    { nombre: 'Hadita', color: '#b8f0d0', color2: '#4fc98a', pinta: '',
              pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete (o a una de la solución) y lo hace estallar.', fx: { salta: 14, golpes: 1, prefiere: 3 } },

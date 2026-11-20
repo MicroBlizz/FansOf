@@ -112,9 +112,9 @@ function ppVentanaMundoNuevo(dif, saltado = false) {
   const d = PP_P.T.d, M0 = PP_MUNDOS[d.mundo], sig = d.mundo + 1;
   let txt;
   if (dif === 2) txt = tr('¡Has ganado el mundo {n} en PESADILLA! Ni el CEO se lo cree.', { n: d.mundo + 1 });
-  else if (dif) txt = tr('¡Has ganado el mundo {n} en difícil! Se abre su PESADILLA: fondo rojo y las burbujas hundidas vuelven a subir.', { n: d.mundo + 1 });
+  else if (dif) txt = tr('¡Mundo {n} ganado en difícil! Se abre su PESADILLA: fondo rojo.', { n: d.mundo + 1 });
   else {
-    txt = tr('Se abre el modo difícil de {nombre}: el mismo mundo, de noche y con muchos menos toques.', { nombre: tr(M0.nombre) });
+    txt = tr('Se abre el difícil de {nombre}: de noche y con menos toques.', { nombre: tr(M0.nombre) });
     if (sig < PP_MUNDOS.length && !saltado) txt = tr('Se abre el mundo {n}: {nombre}.', { n: sig + 1, nombre: tr(PP_MUNDOS[sig].nombre) }) + ' ' + txt;
     else if (!saltado) txt += ' ' + tr('¡Pronto llegan más mundos!');   // el último jefe ya no acaba el camino (Daniel, 30-10-2026): sigues en el mapa con todo
   }
@@ -141,13 +141,13 @@ function ppVentanaFin() {
 }
 function ppAyuda() {
   const t = ppAbre(`<h2>${tr('Cómo se juega')}</h2>
-    <p class="pp-sub">${tr('Toca una burbuja: hacen pop ella y sus vecinas de arriba, abajo y los lados. Lo que hace pop se queda hundido.')}</p>
-    <p class="pp-sub">${tr('Haz pop en TODAS antes de que se acaben los toques. Con pocos toques ganas 3 estrellas.')}</p>
+    <p class="pp-sub">${tr('Toca una burbuja: ella y sus vecinas hacen pop y se hunden.')}</p>
+    <p class="pp-sub">${tr('Haz pop en TODAS antes de quedarte sin toques.')}</p>
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
     <p class="pp-sub">${tr('Más adelante: las de cereza necesitan tres golpes, las de hielo solo hacen pop si las tocas a ellas y las conchas, al tocarlas, solo hacen pop ellas.')}</p>
     <p class="pp-sub">${tr('Y aún más allá: los cohetes hacen pop en su fila, las burbujeantes en un cuadrado de 3x3 y los pétalos en su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
-    <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil, y al ganar el difícil, su pesadilla.')}</p>`, true);
+    <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
 // las dos barras de volumen de core (OPCIONES.sonido): efectos y música por separado, en Opciones y en la pausa

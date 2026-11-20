@@ -9,8 +9,8 @@ const PP_EXPLICA = Object.freeze({
   // Devuelve { texto (clave de tr), datos (para tr), barra: 'rosa' | 'azul' | null }
   cuando(fx, c) {
     if (c.lo) return { texto: c.usado ? 'Ya te ha ayudado en este nivel.' : 'Te ayuda una vez en cada nivel de Pesadilla.', datos: {}, barra: null };
-    if (fx.salta) return { texto: 'La barra rosa se llena con cada burbuja que revientas. Le faltan {n} pops para saltar.', datos: { n: Math.max(1, fx.salta - (c.carga || 0)) }, barra: 'rosa' };
-    if (fx.combo) return { texto: 'La barra azul se llena con los toques seguidos que revientan 3 o más. Actúa con un COMBO x{n}.', datos: { n: fx.combo }, barra: 'azul' };
+    if (fx.salta) return { texto: 'La barra rosa se llena con cada pop. Faltan {n} para saltar.', datos: { n: Math.max(1, fx.salta - (c.carga || 0)) }, barra: 'rosa' };
+    if (fx.combo) return { texto: 'La barra azul sube con toques de 3 o más pops. Actúa con COMBO x{n}.', datos: { n: fx.combo }, barra: 'azul' };
     return { texto: 'Sin barra: actúa solo cuando le toca.', datos: {}, barra: null };
   },
 });

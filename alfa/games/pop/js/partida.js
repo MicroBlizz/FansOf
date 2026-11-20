@@ -63,7 +63,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   ppFxEntraSala(T);
   ppBarraAyudas();
   if (d.lo && ppHabDescansan()) ppFlota(tr('En Pesadilla tus amigos descansan'), 270, 240, '#ff8a8a');
-  if (T.extra) ppFlota(tr('+{n} toques de racha y amigos', { n: T.extra }), 270, 240, '#ff8a2a');
+  if (T.extra) ppFlota(tr('+{n} toques extra', { n: T.extra }), 270, 240, '#ff8a2a');
   if (!PP_CORTINILLA.salePara(d)) ppEmpiezaNivel(T, d, dif, manita);
 }
 const ppTituloNivel = (d, g, dif) => (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif === 2 ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : '');
@@ -144,7 +144,7 @@ function ppCombosEquipo(T) {
 function ppPremioGordo(T, r) {
   if (!ppEnEquipo('cofre') || r.pops.length < 4 || T.lo) return;
   ppFxHabilidad('cofre'); play('ppPremio');
-  if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO GORDO!'), 270, 275, '#ff8a2a'); }
+  if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
   else { T.limite++; ppFlota(tr('+1 toque'), 270, 275, '#ff8a2a'); }
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel

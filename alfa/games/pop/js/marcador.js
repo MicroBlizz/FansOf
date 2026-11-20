@@ -83,7 +83,7 @@ function ppPintaMarcador(c, t) {
     ppPintaToques(c, T, col, panel);
     const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 116, 28, k < est);
     ppTexto(c, T.titulo || '', 270, 118, 34, '#ffd64a', 'center', tinta.titulo);
-    if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques de sobra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');
+    if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques extra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');
     else if (T.d && T.d.dificil) ppTexto(c, tr('¡Nivel difícil!'), 270, 150, 22, '#ff6ec7', 'center', '#fff');
   }
   if (!P.equipo.length && !ppPrimerosVe('equipo')) return;   // partida nueva: el panel sale con el primer amigo (tarea #140)

@@ -50,7 +50,7 @@ function ppHabSalvaRacha() {
   if (!r.salva) return false;
   SAVE.rachaSalva = r.usado;
   const id = ppHabQuien(T.d, 'racha'); if (id) ppFxHabilidad(id);
-  ppFlota(tr('¡Tu racha está a salvo!'), 270, 275, '#ff8a2a');
+  ppFlota(tr('¡Victorias seguidas a salvo!'), 270, 275, '#ff8a2a');
   return true;
 }
 // el Feriante: tickets de la Feria de más al ganar con 3 estrellas

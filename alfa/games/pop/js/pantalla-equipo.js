@@ -4,9 +4,9 @@
 // abren con monedas y, en Niveles, también con perlas (como el hueco de antes, motivo 'hueco'). Reglas en js/coleccion.js.
 'use strict';
 const PP_EQ_EXPLICA = Object.freeze({
-  N: 'Te ayudan en los niveles normales y difíciles. {s} casillas de serie y hasta {t}.',
-  P: 'En Pesadilla cada uno ayuda una sola vez por nivel. {s} de serie y hasta {t}.',
-  D: 'Solo contra la máquina (el CEO, los jefes y los rivales del camino); contra gente el duelo es limpio. {s} de serie y hasta {t}.',
+  N: 'Ayudan en niveles normales y difíciles. {s} de serie, hasta {t}.',
+  P: 'En Pesadilla ayudan una vez por nivel. {s} de serie, hasta {t}.',
+  D: 'Solo contra la máquina. {s} de serie, hasta {t}.',
 });
 function ppEqModos() {
   const fila = ppPfEl('div', 'pp-cm-modos');

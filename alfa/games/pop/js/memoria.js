@@ -89,7 +89,7 @@ function ppMemFin(mala) {
     if (nuevo && rondas > 0) play('ppVictoria');
     const t = ppAbre(`<h2>${nuevo && rondas > 0 ? tr('¡Récord nuevo!') : tr('¡Uy, esa no era!')}</h2>
       <p class="pp-sub">${rondas === 1 ? tr('Has repetido 1 melodía.') : tr('Has repetido {n} melodías.', { n: rondas })}</p>
-      ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : cobra(S.hoy) >= C.tope ? `<p class="pp-sub">${tr('Hoy ya has ganado todas las monedas de Memoria. ¡Vuelve mañana!')}</p>` : rondas ? `<p class="pp-sub">${tr('Supera tu mejor ronda de hoy ({n}) para ganar más monedas.', { n: S.hoy })}</p>` : ''}
+      ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : cobra(S.hoy) >= C.tope ? `<p class="pp-sub">${tr('Hoy ya tienes todas las monedas de Memoria. ¡Vuelve mañana!')}</p>` : rondas ? `<p class="pp-sub">${tr('Supera tu mejor ronda de hoy ({n}) para ganar más monedas.', { n: S.hoy })}</p>` : ''}
       <p class="pp-sub">${tr('Tu récord: {n}', { n: S.record })}</p>`);
     t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', () => { ppCierra(); ppNuevaMemoria(); }));
     t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); ppSalMemoria(); }));

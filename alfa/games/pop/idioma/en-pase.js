@@ -48,6 +48,8 @@ IDIOMA.add({
   "Otoño de gelatina": "Jelly Autumn",
   "Calabazas dulces": "Sweet Pumpkins",
   "Navidad de gelatina": "Jelly Christmas",
+  "y 10 escalones ya": "and 10 steps now",
+  "DORADO": "GOLDEN",
   "Escarcha": "Frost",
   "Corazones": "Hearts",
   "Brote": "Sprout",

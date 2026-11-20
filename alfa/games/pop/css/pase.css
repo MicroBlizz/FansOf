@@ -1,47 +1,94 @@
-/* Fans of Pop · PASE NUEVO (tarea #165, ADR 165; boceto aprobado por Pepins el 19-11-2026): el tema del mes (--tema1 y --tema2 los pone
-   js/pase-pantalla.js), la barra, el Pase dorado que destaca (oro y coral, nada de lila ni gris), las misiones, SOLO ESTE MES, los
-   escalones extra y el botón del lado del camino con su anillo. */
-.pp-tarjeta.pp-pase-nuevo { background: linear-gradient(180deg, var(--tema1, #ffd1ec), #fff 38%); }
+/* Fans of Pop · PASE NUEVO (tarea #165, ADR 165; rehecho con el boceto C «Escaparate y carril» que eligió Pepins el 20-11-2026): el
+   escaparate del tema del mes (--tema1 y --tema2 los pone js/pase-pantalla.js) con lo que solo da este mes y los botones de compra, la
+   barra del escalón, el carril horizontal (gratis en turquesa, dorado en oro), las misiones como tarjetas y VOLVER y RECOGER TODO fijos
+   abajo. Nada de lila ni gris. Al final, el botón del lado del camino y el premio final del pase de siempre. */
+.pp-tarjeta.pp-pase-nuevo { gap: 10px; padding: 18px 16px 0; background: linear-gradient(180deg, var(--tema1, #ffd1ec), var(--pp-crema) 30%); }
 .pp-pase-tema { margin: 0; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tema2, #c43a84); }
-.pp-tarjeta.pp-pase-nuevo h2 { margin: 0; }
-.pp-pase-barra { position: relative; width: 100%; height: 26px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px var(--tema2, #c43a84); overflow: hidden; }
-.pp-pase-barra span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #9cf0a0, #4fc964); }
-.pp-pase-barra b { position: relative; display: block; text-align: center; line-height: 26px; font-size: 15px; color: #7a3a7a; }
-.pp-pase-dorado { position: relative; overflow: hidden; width: 100%; display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 18px;
-  background: linear-gradient(135deg, #ffd64a, #ffe98a 45%, #ff7a5a); box-shadow: inset 0 0 0 3px #c27a00; color: #5a2a1a; text-align: left; }
-.pp-pase-dorado::after { content: ''; position: absolute; top: -40%; left: -40%; width: 26%; height: 180%; background: rgba(255, 255, 255, 0.55); transform: rotate(20deg); animation: pp-pase-brillo 2.6s infinite; pointer-events: none; }
+/* ---------- el escaparate ---------- */
+.pp-pase-hero { position: relative; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; gap: 8px 10px; padding: 14px 14px 12px; border-radius: 22px;
+  background: radial-gradient(circle at 78% 30%, #fff3b0, var(--tema1, #ffa860) 52%, var(--tema2, #e0601a)); box-shadow: inset 0 0 0 4px #fff, 0 6px 0 rgba(160, 60, 30, 0.25); text-align: left; overflow: hidden; }
+.pp-pase-hero::after { content: ''; position: absolute; top: -40%; left: -40%; width: 22%; height: 180%; background: rgba(255, 255, 255, 0.4); transform: rotate(20deg); animation: pp-pase-brillo 3.2s infinite; pointer-events: none; }
 @keyframes pp-pase-brillo { 0% { left: -40%; } 60%, 100% { left: 130%; } }
-.pp-pase-dorado b { display: block; font-size: 20px; }
-.pp-pase-dorado small { display: block; font-weight: 700; font-size: 13px; }
-.pp-pase-compra { display: flex; flex-direction: column; gap: 6px; flex: none; }
-#pp-ui .pp-pase-compra .pp-btn2 { min-width: 0; width: auto; font-size: 17px; padding: 6px 12px; white-space: nowrap; }
-.pp-pase-dorado > div:first-child { flex: 1; min-width: 0; }
-.pp-pase-mis { width: 100%; display: flex; flex-direction: column; gap: 4px; background: #fff; border-radius: 16px; padding: 8px 10px; box-shadow: inset 0 0 0 3px #9fdcff; }
-.pp-pase-mis-tit { margin: 0; font-weight: 700; color: #1f6fb8; text-align: left; }
-.pp-pase-mis-tit small { color: #7a3a7a; }
-.pp-pase-mision { display: flex; align-items: center; gap: 8px; font-size: 15px; color: #7a3a7a; text-align: left; }
-.pp-pase-mision span { flex: 1; min-width: 0; }
-.pp-pase-mision i { font-style: normal; font-weight: 700; font-variant-numeric: tabular-nums; }
-.pp-pase-mision em { font-style: normal; font-weight: 700; color: #26924a; }
-#pp-ui .pp-pase-mision .pp-btn2 { min-width: 0; width: auto; font-size: 14px; padding: 3px 10px; }
-.pp-pase-mision.pp-cogido { opacity: 0.6; }
-#pp-ui .pp-pase-premio .pp-pase-solo { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); white-space: nowrap; font-style: normal; font-size: 10px; font-weight: 700;
-  color: #fff; background: #ff5f57; border-radius: 8px; padding: 0 6px; box-shadow: 0 0 0 2px #fff; z-index: 2; }   /* por encima de la fila de abajo */
-#pp-ui .pp-pase-extra { font: inherit; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; padding: 8px; border-radius: 14px;
-  border: 3px dashed #ffb000; background: #fff8dc; color: #7a3a7a; cursor: default; }
+.pp-pase-hero-txt { align-self: start; color: #fff; }
+.pp-pase-hero .pp-pase-tema { color: #fff; text-shadow: 0 2px 0 var(--tema2, #c43a84); }
+.pp-tarjeta.pp-pase-nuevo .pp-pase-hero h2 { margin: 2px 0 6px; font-size: 40px; line-height: 1.02; color: #fff; text-shadow: 0 3px 0 var(--tema2, #c43a84), 0 0 2px var(--tema2, #c43a84); }
+.pp-pase-dias { display: inline-block; padding: 2px 10px; border-radius: 999px; background: #fff; color: var(--tema2, #c43a84); font-weight: 700; font-size: 16px; }
+.pp-pase-vitrinas { display: flex; gap: 8px; align-items: flex-start; }
+.pp-pase-vitrina { position: relative; width: 112px; min-height: 120px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 8px 4px 16px;
+  border-radius: 18px; background: rgba(255, 255, 255, 0.9); box-shadow: inset 0 0 0 4px var(--pp-pago2); color: #7a3a7a; font-weight: 700; font-size: 15px; }
+.pp-pase-vitrina + .pp-pase-vitrina { margin-top: 34px; }
+.pp-pase-vitrina .pp-premios { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.pp-pase-vitrina .pp-precio { display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.05; }
+.pp-pase-compra { grid-column: 1 / -1; display: flex; gap: 8px; position: relative; z-index: 1; }
+#pp-ui .pp-pase-compra .pp-btn2 { min-width: 0; padding: 8px 10px; font-size: 22px; flex-direction: column; line-height: 1.05; }
+#pp-ui .pp-pase-compra .pp-btn2 small { font-size: 16px; }
+#pp-ui .pp-pase-compra .pp-pase-oro { flex: 3; font-size: 24px; }
+#pp-ui .pp-pase-compra .pp-pase-plus { flex: 2; --c1: var(--pp-prin1); --c2: var(--pp-prin2); --borde: var(--pp-prin-b); }   /* el Dorado+ en rosa chicle: se distingue del dorado y también vende */
+.pp-pase-aviso { margin: 0; flex: 1; padding: 8px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 3px var(--pp-pago2); color: #8a4a00; font-weight: 700; font-size: 18px; text-align: center; }
+/* ---------- la barra del escalón ---------- */
+.pp-pase-eje { width: 100%; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: center; text-align: left; }
+.pp-pase-eje > b { font-size: 18px; color: var(--tema2, #c43a84); white-space: nowrap; }
+.pp-pase-barra { position: relative; height: 26px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px var(--tema2, #c43a84); overflow: hidden; }
+.pp-pase-barra > span { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--tema1, #ffa860), var(--tema2, #e0601a)); }
+.pp-pase-barra > i { position: relative; display: block; font-style: normal; text-align: center; line-height: 26px; font-size: 15px; font-weight: 700; color: #5a2a1a; font-variant-numeric: tabular-nums; }
+.pp-pase-eje small { grid-column: 1 / -1; font-size: 14px; font-weight: 700; color: #7a3a7a; }
+.pp-pase-eje .pp-pase-completo { font-size: 16px; color: #26924a; }
+/* ---------- el carril ---------- */
+.pp-pase-carril { position: relative; width: 100%; display: flex; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 8px 2px 14px; box-sizing: border-box; scroll-snap-type: x proximity; scroll-padding-left: 48px; overscroll-behavior-x: contain; }   /* al encajar, no bajo GRATIS y DORADO */
+.pp-pase-col { position: relative; flex: 0 0 96px; display: grid; grid-template-rows: 92px 40px 92px; gap: 0; scroll-snap-align: start; }
+.pp-pase-col::before { content: ''; position: absolute; left: -6px; right: 0; top: 92px; margin-top: 16px; height: 8px; border-radius: 4px; background: #ffd1ec; }
+.pp-pase-col.pp-hecho::before { background: var(--tema2, #e0601a); }
+.pp-pase-n { position: relative; z-index: 1; align-self: center; justify-self: center; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-style: normal; font-weight: 700; font-size: 16px; color: #7a3a7a; background: #fff; box-shadow: 0 0 0 3px #ffb0d4; }
+.pp-pase-col.pp-hecho .pp-pase-n { color: #fff; background: var(--tema2, #e0601a); box-shadow: 0 0 0 3px #fff; }
+.pp-pase-col.pp-aqui .pp-pase-n { width: 38px; height: 38px; color: var(--tema2, #e0601a); box-shadow: 0 0 0 4px var(--tema2, #e0601a), 0 0 0 8px rgba(255, 255, 255, 0.8); }
+#pp-ui .pp-pase-carril .pp-pase-premio { display: flex; align-items: center; justify-content: center; padding: 4px; font-size: 15px; border-color: var(--pp-sec1); }
+#pp-ui .pp-pase-carril .pp-pase-premio.pp-premium { border-color: var(--pp-pago2); background: linear-gradient(#fff8d8, #ffe58a); }
+.pp-pase-carril .pp-pase-premio .pp-premios { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.pp-pase-carril .pp-pase-premio .pp-precio { display: flex; flex-direction: column; align-items: center; line-height: 1.05; }
+/* el dorado sin comprar: además de las rayas doradas, un candado dibujado */
+.pp-pase-carril .pp-pase-premio s::after { content: ''; position: absolute; right: -2px; top: -4px; width: 26px; height: 26px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 9V6a4 4 0 0 1 8 0v3' stroke='%238a4a00' stroke-width='2.4' fill='none'/%3E%3Crect x='3.5' y='9' width='13' height='9' rx='2.5' fill='%23ffb800' stroke='%238a4a00' stroke-width='2'/%3E%3C/svg%3E") center / contain no-repeat; }
+.pp-pase-etiquetas { position: sticky; left: -2px; z-index: 3; flex-basis: 40px; background: var(--pp-crema); border-radius: 0 14px 14px 0; box-shadow: 6px 0 8px -4px rgba(160, 60, 120, 0.25); }
+.pp-pase-etiquetas::before { display: none; }
+.pp-pase-etiquetas b { writing-mode: vertical-rl; transform: rotate(180deg); align-self: stretch; justify-self: center; display: flex; align-items: center; justify-content: center;
+  width: 30px; border-radius: 12px; font-size: 15px; letter-spacing: 0.08em; }
+.pp-pase-et-g { grid-row: 1; background: var(--pp-sec2); color: #fff; }
+.pp-pase-et-d { grid-row: 3; background: var(--pp-pago2); color: #6a3a00; }
+#pp-ui .pp-pase-premio .pp-pase-solo, .pp-pase-vitrina .pp-pase-solo { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); white-space: nowrap; font-style: normal; font-size: 11px; font-weight: 700;
+  color: #fff; background: #ff5f57; border-radius: 8px; padding: 0 6px; box-shadow: 0 0 0 2px #fff; z-index: 2; }
+#pp-ui .pp-pase-extra { font: inherit; flex: 0 0 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px; border-radius: 16px;
+  border: 3px dashed var(--pp-pago2); background: #fff8dc; color: #7a3a7a; cursor: default; }
 #pp-ui .pp-pase-extra.pp-listo { cursor: pointer; border-style: solid; box-shadow: 0 0 0 4px #4fc964; animation: pp-late 1.4s ease-in-out infinite; }
-.pp-pase-extra small { width: 100%; font-weight: 700; }
-/* el botón del lado: anillo con lo que falta para el siguiente escalón y cuántos premios esperan */
+.pp-pase-extra small { font-weight: 700; font-size: 14px; }
+/* ---------- las misiones ---------- */
+.pp-pase-mis { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+.pp-pase-mis-tit { margin: 0; display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 19px; color: #7a3a7a; }
+.pp-pase-mis-tit small { font-size: 15px; color: var(--pp-sec-b); }
+.pp-pase-mis-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pp-pase-mision { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 4px; min-height: 140px; padding: 8px 6px; box-sizing: border-box;
+  border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 3px var(--pp-sec1); color: #7a3a7a; font-size: 16px; font-weight: 600; line-height: 1.15; }
+.pp-pase-mision.pp-listo { box-shadow: inset 0 0 0 4px #4fc964; }
+.pp-pase-mision i { font-style: normal; font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; }
+.pp-pase-mision em { font-style: normal; font-weight: 700; color: #26924a; }
+#pp-ui .pp-pase-mision .pp-btn2 { min-width: 0; width: 100%; min-height: 52px; font-size: 18px; padding: 4px 6px; }
+.pp-pase-mision.pp-cogido { opacity: 0.6; }
+/* ---------- VOLVER y RECOGER TODO, fijos abajo de la ventana ---------- */
+.pp-pase-pie { position: sticky; bottom: 0; z-index: 4; width: calc(100% + 32px); box-sizing: border-box; display: flex; gap: 10px; padding: 12px 16px 18px; margin-top: auto;
+  background: linear-gradient(rgba(255, 243, 250, 0), var(--pp-crema) 30%); }
+#pp-ui .pp-pase-pie .pp-btn2 { min-width: 0; }
+#pp-ui .pp-pase-pie .pp-azul { flex: 0 0 150px; }
+#pp-ui .pp-pase-pie .pp-pase-todo { flex: 1; font-size: 22px; }
+/* ---------- el botón del lado: anillo con lo que falta para el siguiente escalón y cuántos premios esperan ---------- */
 .pp-lado.pp-lado-pase .pp-ico { border-radius: 50%; background: conic-gradient(#4fc964 var(--av, 0%), rgba(255, 255, 255, 0.85) 0); padding: 4px; }
 .pp-lado.pp-lado-pase[data-n]::after { content: attr(data-n); width: auto; min-width: 22px; height: 22px; padding: 0 4px; top: -2px; right: 2px; display: flex; align-items: center;
   justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
-@media (prefers-reduced-motion: reduce) { .pp-pase-dorado::after, #pp-ui .pp-pase-extra.pp-listo { animation: none; } }
-.pp-pase-hoy { margin: 0; font-size: 13px; font-weight: 700; color: #7a3a7a; }
+@media (prefers-reduced-motion: reduce) { .pp-pase-hero::after, #pp-ui .pp-pase-extra.pp-listo { animation: none; } }
 /* tarea #187: bajo el botón del lado, los puntos que faltan para el próximo premio (verde, como el anillo); con candado no sale */
 .pp-lado .pp-lado-falta { position: relative; z-index: 1; margin-top: 1px; padding: 0 6px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 2px #4fc964;
   color: #26924a; font-weight: 700; font-size: 12px; line-height: 16px; white-space: nowrap; }
 .pp-lado.pp-cerrado .pp-lado-falta { display: none; }
-/* arriba de la ventana del pase, el premio final (gratis y dorado del último escalón) mientras no llegas a él */
+/* el pase de siempre (flag cerrado): arriba de la ventana, el premio final (gratis y dorado del último escalón) mientras no llegas a él */
 .pp-pase-final { width: 100%; display: grid; grid-template-columns: auto 1fr 1fr; gap: 6px; align-items: stretch; padding: 6px; border-radius: 16px;
   background: #fff; box-shadow: inset 0 0 0 3px #ffb000; }
 .pp-pase-final > b { display: flex; flex-direction: column; justify-content: center; font-size: 15px; line-height: 1.1; color: #c27a00; text-align: left; }

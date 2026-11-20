@@ -1,8 +1,8 @@
 {
- "build": 1387,
- "hash": "5cf7d4d",
- "fecha": "2026-11-20T22:03:15Z",
- "mensaje": "Pop: las ayudas suben justo bajo el tablero, más grandes y con su nombre, y ¡A JUGAR! va pegado bajo «Así se gana», lejos de la barra de gestos (tarea #269, Pepins, boceto A)",
+ "build": 1388,
+ "hash": "7b2c8a8",
+ "fecha": "2026-11-20T22:05:26Z",
+ "mensaje": "Pop: el pase rehecho como escaparate y carril: arriba lo que solo da este mes con PASE DORADO y Dorado+, el camino en horizontal (gratis arriba, dorado abajo), misiones en tarjetas y VOLVER y RECOGER TODO fijos abajo (tarea #165, reporte 32, ADR 185, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

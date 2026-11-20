@@ -53,8 +53,9 @@ function ppPaseEntrega(k, premium, extra) {
 function ppPaseRepinta() {
   ppPintaLateral();
   if ($pp('#pp-modal').hidden || !$pp('#pp-tarjeta.pp-pase-ventana')) return;   // la cerraste mientras volaban: no se vuelve a abrir
-  const l = $pp('.pp-pase'), y = l ? l.scrollTop : 0;
-  ppVentanaPase(true); const l2 = $pp('.pp-pase'); if (l2) l2.scrollTop = y; ppPintaLateral();
+  const LISTA = '.pp-pase, .pp-pase-carril', t = $pp('#pp-tarjeta'), l = $pp(LISTA);
+  const y = { t: t.scrollTop, top: l ? l.scrollTop : 0, left: l ? l.scrollLeft : 0 };   // la lista (o el carril del pase nuevo) y la ventana
+  ppVentanaPase(true); const l2 = $pp(LISTA); if (l2) { l2.scrollTop = y.top; l2.scrollLeft = y.left; } t.scrollTop = y.t; ppPintaLateral();
 }
 function ppPaseCabecera(P, e) {
   const C = PP_CFG.pase, falta = C.puntos - (P.puntos % C.puntos);
@@ -70,13 +71,13 @@ function ppPaseBotonPremium(t) {
   b.innerHTML = `${ppIcono('i-pase', 30, '#ffd64a')} ${tr('DESBLOQUEAR PREMIUM · {p}', { p: C.precio })}`;
   t.appendChild(b);
 }
-// la caja de un premio (gratis o dorado) del escalón k
-function ppPaseCaja(P, e, k, premium) {
+// la caja de un premio (gratis o dorado) del escalón k (`px`: el tamaño de sus iconos)
+function ppPaseCaja(P, e, k, premium, px = 24) {
   const caja = document.createElement('button'); caja.type = 'button';
   const cogido = premium ? P.prem[k] : P.gratis[k], puede = k <= e && !cogido && (!premium || P.premium);
   caja.className = 'pp-pase-premio' + (premium ? ' pp-premium' : '') + (cogido ? ' pp-cogido' : '') + (puede ? ' pp-listo' : '');
   caja.dataset.k = k; caja.dataset.p = premium ? 'p' : 'g';
-  caja.innerHTML = ppPremioCandyHtml(ppPremioPaseCon(k, premium), 24) + (premium && !P.premium ? '<s></s>' : '');
+  caja.innerHTML = ppPremioCandyHtml(ppPremioPaseCon(k, premium), px) + (premium && !P.premium ? '<s></s>' : '');
   caja.onclick = () => ppPaseRecoge([{ k, premium }]);
   return caja;
 }
@@ -113,13 +114,13 @@ function ppPaseRecoge(lista) {
   const iconos = [...new Set(listos.flatMap(p => [...document.querySelectorAll(sel(p))]))].filter(ppPaseSeVe);
   for (const p of listos) ppPaseEntrega(p.k, p.premium, p.extra);
   ppGuarda(); play('ppPremio'); ppVibra([20, 30, 20]);
-  document.querySelectorAll('.pp-pase-todo, .pp-pase-premio.pp-listo').forEach(b => { b.disabled = true; b.classList.remove('pp-listo'); });
+  document.querySelectorAll('.pp-pase-todo, .pp-pase-premio.pp-listo, .pp-pase-extra.pp-listo').forEach(b => { b.disabled = true; b.classList.remove('pp-listo'); });
   ppPaseVuela(iconos, antes, ppPaseRepinta);
 }
-// solo vuelan los iconos que se ven en la lista (los de las filas de fuera saldrían de debajo de la ventana)
+// solo vuelan los iconos que se ven en la lista o en el carril (los de fuera saldrían de debajo de la ventana)
 function ppPaseSeVe(i) {
-  const l = i.closest('.pp-pase'), a = i.getBoundingClientRect(), b = l ? l.getBoundingClientRect() : a;
-  return a.bottom > b.top && a.top < b.bottom;
+  const l = i.closest('.pp-pase, .pp-pase-carril'), a = i.getBoundingClientRect(), b = l ? l.getBoundingClientRect() : a;
+  return a.bottom > b.top && a.top < b.bottom && a.right > b.left && a.left < b.right;
 }
 // cada icono vuela a su sitio de la barra (monedas, perlas o, lo demás, al centro); al final, `fin()`
 function ppPaseVuela(iconos, antes, fin) {

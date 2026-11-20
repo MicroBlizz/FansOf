@@ -15,7 +15,7 @@ const PP_COMP = (() => {
     burbuja: f({ modo: 'N', nombre: 'Ola', texto: 'Salta antes a las burbujeantes.' }),
     horas: f({ modo: 'N', nombre: 'Horas extra', texto: 'Con un COMBO x3, el siguiente toque no cuenta.' }),
     chivato: f({ modo: 'N', nombre: 'Chivatazo', texto: 'Con un COMBO x2 te marca una burbuja buena.' }),
-    gordo: f({ modo: 'N', nombre: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (hasta 3 al día).' }),
+    gordo: f({ modo: 'N', nombre: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).' }),
     cielo: f({ modo: 'N', nombre: 'Cielo despejado', texto: '+1 toque extra al empezar el nivel.' }),
     fortuna: f({ modo: 'N', nombre: 'Fortuna', texto: 'Al ganar un nivel nuevo, la mitad de monedas más.' }),
     estrella: f({ modo: 'N', nombre: 'Imán de estrellas', texto: 'La 3.ª estrella pide un toque menos.' }),

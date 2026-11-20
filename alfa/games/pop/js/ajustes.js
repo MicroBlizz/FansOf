@@ -135,7 +135,7 @@ const PP_SLIMES = {
   lola:    { nombre: 'Lola', color: '#ffb88a', color2: '#e07a3c', pinta: 'pelo',
              pasiva: 'Chivatazo', texto: 'Al empezar te marca una burbuja buena, y otra cada 2 combos. En duelos, una lupa gratis.', fx: { combo: 2, pista: 1 } },
   cofre:   { nombre: 'Cofre del tesoro', color: '#ffd64a', color2: '#c98a12', pinta: 'dientes',
-             pasiva: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (hasta 3 al día).', fx: { premio: 1 } },
+             pasiva: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).', fx: { premio: 1 } },
   ceo:     { nombre: 'El CEO', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata',
              pasiva: 'Recorte de plantilla', texto: 'Cada 15 pops explota y hace pop en dos burbujas buenas.', fx: { salta: 15, golpes: 2 } },
   // los amigos de los mundos 3 a 6 (30-10-2026, para que los huecos 5.º y 6.º sirvan); `prefiere`: salta antes a las de ese tipo

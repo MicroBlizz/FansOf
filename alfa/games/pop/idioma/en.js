@@ -57,7 +57,7 @@ IDIOMA.add({
  "Con un COMBO x3, tu siguiente toque no cuenta.": "On a COMBO x3, your next tap is free.",
  "Chivatazo": "Snitch",
  "Premio doble": "Double prize",
- "Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (hasta 3 al día).": "With 4 pops in one tap, +1 tap. With 5, +1 heart (up to 3 a day).",
+ "Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).": "With 4 pops in one tap, +1 tap. With 5, +1 heart (up to 3 times a day).",
  "Recorte de plantilla": "Layoffs",
  "Cada 15 pops explota y hace pop en dos burbujas buenas.": "Every 15 pops it explodes and pops two good bubbles.",
  "¡Gratis!": "Free!",

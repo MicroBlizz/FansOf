@@ -1,8 +1,8 @@
 {
- "build": 1383,
- "hash": "dc77011",
- "fecha": "2026-11-20T19:42:35Z",
- "mensaje": "Toys 0.2.0: tutorial guiado, tres minijuegos de bonus y vitrina con dorados y raros (tarea #259, Pepins)",
+ "build": 1384,
+ "hash": "e657b76",
+ "fecha": "2026-11-20T19:48:36Z",
+ "mensaje": "Pop: el Cofre del tesoro dice «máximo 3 veces al día» en vez de «hasta 3 al día», con su inglés (tarea #236, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

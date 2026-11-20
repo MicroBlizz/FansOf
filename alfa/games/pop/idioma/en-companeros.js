@@ -95,7 +95,7 @@ IDIOMA.add({
   "Chivatazo": "Snitch",
   "Con un COMBO x2 te marca una burbuja buena.": "With a x2 COMBO it marks a good bubble.",
   "Premio doble": "Double prize",
-  "Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (hasta 3 al día).": "With 4 pops in one tap, +1 tap. With 5, +1 heart (up to 3 a day).",
+  "Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).": "With 4 pops in one tap, +1 tap. With 5, +1 heart (up to 3 times a day).",
   "+1 toque extra al empezar el nivel.": "+1 extra tap when the level starts.",
   "Fortuna": "Fortune",
   "Imán de estrellas": "Star Magnet",

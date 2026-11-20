@@ -61,5 +61,12 @@ const PP_PRECIOS = (() => {
     const p = perlaBarata(packs);
     return p === null ? null : Math.floor(perlas * p * 10 + 1e-9) / 10;
   }
-  return Object.freeze({ valorPerlas, euros, perlaCara, perlaBarata, enEuros, ofertaEnPerlas, valorOferta, formato, mejorValor, lote, packQueLlega });
+  // tarea #266 · el «+N %» de un pack: cuántas perlas de más trae por el mismo dinero frente al pack más caro por perla (el de 10),
+  // redondeado hacia abajo para no exagerar nunca; 0 si no trae más o no se puede calcular
+  function extra(p, packs) {
+    const cara = perlaCara(packs), precio = euros(p && p.precio);
+    if (cara === null || precio === null) return 0;
+    return Math.max(0, Math.floor((p.perlas * cara / precio - 1) * 100 + 1e-9));
+  }
+  return Object.freeze({ extra, valorPerlas, euros, perlaCara, perlaBarata, enEuros, ofertaEnPerlas, valorOferta, formato, mejorValor, lote, packQueLlega });
 })();

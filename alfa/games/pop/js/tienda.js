@@ -80,7 +80,7 @@ function ppTienda(vuelta, pestana) {
   t.appendChild(tabs); t.classList.add('pp-tienda');   // el mismo alto en todas las pestañas (css/pop.css, tarea #185)
   const caja = document.createElement('div'); caja.className = 'pp-packs'; t.appendChild(caja);
   const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); f(); }; caja.appendChild(b); return b; };
-  (PP_TIENDA_PESTANAS[PP_TIENDA_PESTANA] || ppTiendaOfertas)(tarjeta);   // lo de cada pestaña: js/tienda-venta.js (tarea #187)
+  (PP_TIENDA_PESTANAS[PP_TIENDA_PESTANA] || ppTiendaOfertas)(tarjeta, caja);   // lo de cada pestaña: js/tienda-venta.js (tarea #187) y js/tienda-perlas.js (#266)
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppCierra(); if (v) v(); }));
 }
 // `alAcabar`: lo que se hace cuando llegan las perlas (por defecto, repintar la tienda; tarea #187: «comprar solo lo que falta»)

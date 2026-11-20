@@ -1,5 +1,6 @@
 // Fans of Pop · TIENDA QUE VENDE (tarea #187, Pepins 20-11-2026, de las mejoras de la probadora experta en cobrar): lo que hay
-// dentro de cada pestaña de la tienda (ppTienda, js/tienda.js), el pack de «Sin toques» y «comprar solo lo que falta».
+// dentro de cada pestaña de la tienda (ppTienda, js/tienda.js; la de Perlas, en js/tienda-perlas.js), el pack de «Sin toques» y
+// «comprar solo lo que falta».
 // Todo honesto (tarea #177): nada tachado ni «-80 %»; MEJOR VALOR es el pack más barato por perla (js/precios.js) y RECOMENDADO,
 // nuestra opinión (PP_CFG.packs[].recomendado); el «Vale X €» de cada pack sale de PP_PRECIOS.valorOferta, siempre a la baja.
 'use strict';
@@ -23,18 +24,6 @@ function ppTiendaInfinitas(tarjeta) {
       ppDaInfinitas(o.min); play('ppPremio'); ppTienda(); ppPintaLateral();
     };
     tarjeta(`${ppIcono('i-infinito', 50, '#ff4a6a')}<span>${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })}</span>${ppPerlasPrecioHtml(o.perlas, 26)}`, compra);
-  }
-}
-// la cinta de un pack: MEJOR VALOR (un dato) gana a RECOMENDADO (una opinión)
-function ppCintaPack(p, mejor) {
-  if (p.id === mejor) return `<em class="pp-cinta pp-cinta-oro">${tr('MEJOR VALOR')}</em>`;
-  return p.recomendado ? `<em class="pp-cinta">${tr('RECOMENDADO')}</em>` : '';
-}
-function ppTiendaPerlas(tarjeta) {
-  const mejor = PP_PRECIOS.mejorValor(PP_CFG.packs);
-  for (const p of PP_CFG.packs) {
-    const destaca = p.id === mejor || p.recomendado;
-    tarjeta(`${ppCintaPack(p, mejor)}${p.extra ? `<i>${p.extra}</i>` : ''}${ppPerlasHtml(p.perlas, 34)}<b>${p.precio}</b>`, () => ppCompraPack(p), destaca ? 'pp-pack-destaca' : '');
   }
 }
 function ppTiendaAyudas(tarjeta) {

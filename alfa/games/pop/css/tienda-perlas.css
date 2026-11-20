@@ -1,0 +1,21 @@
+/* Fans of Pop · la pestaña Perlas de la tienda (tarea #266, js/tienda-perlas.js): rejilla de 6 columnas para que quepan 3 packs por
+   fila, 2 tarjetas a medias o 1 a lo ancho; títulos de sección; precios en dorado (lo de pago, ADR 176). Nada lila ni gris. */
+.pp-packs.pp-packs-perlas { grid-template-columns: repeat(6, 1fr); gap: 16px 8px; }
+.pp-packs-perlas .pp-pack { grid-column: span 2; padding: 14px 4px 10px; gap: 4px; min-width: 0; }
+.pp-packs-perlas .pp-pack.pp-medio { grid-column: span 3; }
+.pp-packs-perlas .pp-pack.pp-ancho { grid-column: 1 / -1; padding-top: 18px; }
+.pp-packs-perlas .pp-pack b { font-size: 20px; color: #6a3500; background: linear-gradient(180deg, var(--pp-pago1), var(--pp-pago2)); border: 2px solid var(--pp-pago-b); padding: 3px 12px; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.12); white-space: nowrap; }
+.pp-packs-perlas .pp-pack small { font-size: 13px; }
+.pp-packs-perlas .pp-pack .pp-precio { font-size: 26px; }
+.pp-packs-perlas .pp-cinta { font-size: 11px; padding: 1px 7px; }
+.pp-tienda-sec { grid-column: 1 / -1; margin: 6px 2px -4px; font-weight: 700; font-size: 21px; color: #c43a84; text-align: left; }
+.pp-tienda-sec:first-child { margin-top: 0; }
+.pp-tienda-sec small { font-weight: 400; font-size: 14px; color: #a05a9a; }
+/* lo que trae un lote o el pack de arriba: iconos pequeños que se reparten en varias líneas si no caben */
+.pp-packs-perlas .pp-premios { gap: 2px 8px; font-size: 16px; }
+.pp-packs-perlas .pp-lote .pp-premios .pp-precio { font-size: 15px; gap: 1px; }
+.pp-packs-perlas .pp-para-ti .pp-premios .pp-precio { font-size: 20px; }
+.pp-pack.pp-para-ti { background: linear-gradient(180deg, #fff6c8, #ffd6ec); border-color: #ff8a2a; box-shadow: 0 5px 0 #c2510a, 0 0 14px rgba(255, 196, 0, 0.55); }
+/* la barra de progreso de la hucha y del pase (un span: el <i> de .pp-pack es la etiqueta de la esquina) */
+.pp-tienda-barra { display: block; width: 86%; height: 14px; border: 2px solid #ff9ccf; border-radius: 9px; background: #ffe0f0; overflow: hidden; }
+.pp-tienda-barra span { display: block; height: 100%; background: linear-gradient(90deg, #ff9ccf, #ff4f9a); }

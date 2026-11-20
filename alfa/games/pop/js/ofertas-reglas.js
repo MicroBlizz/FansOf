@@ -4,6 +4,7 @@
 // · Una oferta con `horas` dura eso desde la primera vez que sale y después ya no se ve nunca más. Sin `horas` no caduca.
 // · Lo que ya se compró no se ve.
 // · El segundo pack (con `mundo`, índice desde 0) sale cuando el camino llega a ese mundo.
+// · El lote de hoy (tarea #266) va por turnos, uno cada día.
 // Lo que guarda y pinta está en js/ofertas.js.
 'use strict';
 const PP_OFERTAS_R = (() => {
@@ -25,5 +26,12 @@ const PP_OFERTAS_R = (() => {
   const llegaMundo = (oferta, mundo) => Boolean(oferta) && Number.isInteger(oferta.mundo) && mundo >= oferta.mundo;
   // la oferta de un mundo: se ve si el camino ya llegó a él y además se ve por lo demás
   const visibleMundo = e => llegaMundo(e.oferta, e.mundo) && visible(e);
-  return Object.freeze({ desde, duracion, queda, visible, llegaMundo, visibleMundo });
+  // tarea #266 · el LOTE DE HOY: cada día (`dia`, número de días desde 1970) toca el siguiente de la lista, el mismo para todos ese
+  // día y sin azar; null sin lotes. No es más barato: solo se enseña primero
+  function loteDeHoy(lotes, dia) {
+    const n = (lotes || []).length;
+    if (!n || !Number.isInteger(dia)) return null;
+    return lotes[((dia % n) + n) % n];
+  }
+  return Object.freeze({ desde, duracion, queda, visible, llegaMundo, visibleMundo, loteDeHoy });
 })();

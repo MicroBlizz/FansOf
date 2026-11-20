@@ -25,6 +25,7 @@ function ppIrA(p) {
     ppPerfilBoton();   // PERFIL, solo con su flag abierto (js/pantalla-perfil.js)
     ppPrimerosPortada();   // #140
     ppCompanerosBoton();   // COMPAÑEROS, solo con el flag companeros (js/pantalla-album.js)
+    ppAmigosBoton();   // AMIGOS, solo con el flag amigos (js/pantalla-amigos.js)
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }

@@ -42,23 +42,28 @@ function ppPvpBuscar() {
     .catch(e => { if (PP_PVP.red === red) { ppPvpLimpia(); ppPvpError(e); } });
 }
 /* ---------- retar a un amigo ---------- */
-function ppPvpCrear() {
+// abre una sala nueva de 2 y, cuando está creada, llama a alCrear(s); lo usa también el reto desde Amigos (js/amigos-reto.js)
+function ppPvpAbreSala(alCrear) {
   if (!ppPvpPuede()) return;
   ppPvpLimpia();
   const red = PP_PVP.red = SALAS.red('pop');
   red.seguir(ppPvpSala);
-  red.crear(2, {}).then(s => {
-    if (PP_PVP.red !== red) return;
-    const enlace = SALAS.enlace(s.codigo);
+  red.crear(2, {}).then(s => { if (PP_PVP.red === red) alCrear(s); })
+    .catch(e => { if (PP_PVP.red === red) { ppPvpLimpia(); ppPvpError(e); } });
+}
+// pasa el código o el enlace de la sala por donde el móvil deje (compartir o portapapeles)
+function ppPvpComparte(s) {
+  const enlace = SALAS.enlace(s.codigo), txt = tr('¡Te reto a un duelo de burbujas en Fans of Pop! Código: {c}', { c: s.codigo });
+  if (navigator.share) navigator.share({ title: 'Fans of Pop', text: txt, url: enlace }).catch(() => {});
+  else if (navigator.clipboard) navigator.clipboard.writeText(txt + ' ' + enlace).then(() => ppFlota(tr('¡Enlace copiado!'), 270, 300, '#4fc964'));
+}
+function ppPvpCrear() {
+  ppPvpAbreSala(s => {
     const t = ppAbre(`<h2>${tr('Reta a un amigo')}</h2><p class="pp-sub">${tr('Pásale este código o el enlace:')}</p><p class="pp-codigo">${s.codigo}</p>
       <p class="pp-sub" id="pp-pvp-estado">${tr('Esperando a tu amigo…')}</p>`);
-    t.appendChild(ppBoton(tr('COMPARTIR ENLACE'), 'pp-btn', () => {
-      const txt = tr('¡Te reto a un duelo de burbujas en Fans of Pop! Código: {c}', { c: s.codigo });
-      if (navigator.share) navigator.share({ title: 'Fans of Pop', text: txt, url: enlace }).catch(() => {});
-      else if (navigator.clipboard) navigator.clipboard.writeText(txt + ' ' + enlace).then(() => ppFlota(tr('¡Enlace copiado!'), 270, 300, '#4fc964'));
-    }));
+    t.appendChild(ppBoton(tr('COMPARTIR ENLACE'), 'pp-btn', () => ppPvpComparte(s)));
     t.appendChild(ppBoton(tr('CANCELAR'), 'pp-btn2 pp-azul', () => { ppPvpLimpia(); ppVentanaDuelos(); }));
-  }).catch(e => { if (PP_PVP.red === red) { ppPvpLimpia(); ppPvpError(e); } });
+  });
 }
 function ppPvpPideCodigo() {
   const t = ppAbre(`<h2>${tr('Tengo un código')}</h2><p class="pp-sub">${tr('Escribe las 4 letras que te ha pasado tu amigo:')}</p>
@@ -101,6 +106,7 @@ function ppPvpEmpieza(s) {
   PP_DUELO = { T, turno: s.datos.empieza === yo.orden ? 'yo' : 'rival', fila: null, esta: [], fin: null,
     pvp: { nombre: (rival && rival.nombre) || tr('Tu rival'), canal: null, perfil: null, espera: [] } };
   PP_DUELO.pvp.canal = PP_PVP.red.canal(m => ppPvpMensaje(m), () => {});
+  if (typeof ppAmigosConocido === 'function') ppAmigosConocido(s);   // sugeridos de la pestaña Amigos (js/amigos-reto.js)
   ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton(); ppAdnEmpieza();
   play('ppRescate');
   if (ppPerfilActivo()) ppPvpCortinilla(s, rival); else ppPvpArranca();

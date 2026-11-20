@@ -1,0 +1,83 @@
+/* Fans of Pop · PESTAÑA AMIGOS (tarea #145, ADR 189; boceto B «Regalos arriba»): el botón AMIGOS de la barra y su globito, la ventana
+   (regalos arriba, tus amigos, de tus duelos y los dos botones fijos abajo), la hoja de un amigo y las ventanas de Lola, el regalo y las gracias.
+   Todo en la capa #pp-ui de 540 px de ancho: 72 aquí son 48 px de verdad en un móvil de 360 (pop.css). Nada de lila ni de gris. */
+/* ---------- la barra de la portada ---------- */
+svg.pp-barra-ico .pp-cor { fill: #ff6eb5; }
+#pp-ui .pp-barra-b .pp-am-globo { position: absolute; top: -10px; right: -2px; min-width: 36px; height: 36px; padding: 0 7px; box-sizing: border-box; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center; background: #ff4f9a; color: #fff; font-style: normal; font-weight: 700; font-size: 22px; box-shadow: 0 0 0 4px #fff; }
+/* con seis botones a la vista (AMIGOS, COMPAÑEROS y PERFIL abiertos) los nombres y los dibujos encogen un poco para caber */
+.pp-barra:has(> :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden])) { gap: 4px; padding: 6px 4px; }
+.pp-barra:has(> :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden])) .pp-barra-b b { font-size: 11.5px; letter-spacing: -0.4px; }
+.pp-barra:has(> :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden]) ~ :not([hidden])) .pp-barra-ico { width: 46px; height: 46px; }
+/* ---------- las ventanas de Amigos ---------- */
+.pp-am { gap: 10px; }
+.pp-am .pp-rg-premio { margin: 0 auto; }
+.pp-am .pp-rg-premio:empty { display: none; }
+.pp-am-ico { width: 34px; height: 34px; flex: none; fill: #fff; stroke: #3a1a4a; stroke-width: 4; stroke-linejoin: round; }
+.pp-am-ico .pp-am-rosa { fill: #ff4f9a; }
+.pp-tarjeta.pp-am-lista { height: 94%; align-items: stretch; text-align: left; padding-bottom: 0; }
+.pp-am-cab { display: flex; align-items: center; gap: 10px; }
+.pp-am-cab h2 { flex: 1; margin: 0; text-align: center; }
+#pp-ui .pp-btn2.pp-am-atras { min-width: 72px; width: 72px; min-height: 72px; height: 72px; padding: 0; border-radius: 50%; flex: none; }
+.pp-am-atras .pp-am-ico { stroke: #fff; width: 38px; height: 38px; }
+.pp-am-vidas { display: inline-flex; align-items: center; gap: 4px; flex: none; background: #fff; border: 4px solid #ff9ccf; border-radius: 18px; padding: 2px 10px; font-size: 24px; }
+.pp-am-vidas.pp-am-sube { animation: pp-am-sube 0.6s ease-out 2; }
+@keyframes pp-am-sube { 50% { transform: scale(1.25); border-color: #ff4f9a; } }
+.pp-am-bloque { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.pp-am-sec { margin: 4px 2px 0; font-size: 24px; color: #c43a84; }
+.pp-am-vacio, .pp-am-aviso { margin: 0; font-size: 20px; text-align: center; line-height: 1.3; }
+.pp-am-aviso { background: #fff; border: 3px dashed #ff9ccf; border-radius: 16px; padding: 10px; }
+.pp-am-tope { margin: 0; font-size: 19px; text-align: center; line-height: 1.3; }
+/* los regalos para ti: una tira de sobres (Lola la primera, en dorado) y RECOGER TODO */
+.pp-am-pila { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 8px; }
+#pp-ui .pp-am-sobre { flex: none; width: 118px; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 2px; padding: 8px 4px;
+  font: inherit; font-size: 20px; color: var(--pp-cafe); background: #fff; border: 4px solid #f2b6d4; border-radius: 20px; cursor: pointer; }
+#pp-ui .pp-am-sobre:active { transform: scale(0.95); }
+#pp-ui .pp-am-sobre.pp-am-lola { border-color: #ffb800; background: #fffbe6; }
+.pp-am-sobre b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pp-ui .pp-btn2.pp-am-todo { width: 100%; min-width: 0; font-size: 28px; }
+/* una fila: el personaje, el nombre y por dónde va, y su botón */
+.pp-am-fila { display: flex; align-items: center; gap: 8px; background: #fff; border: 4px solid #f2b6d4; border-radius: 22px; padding: 6px 8px; }
+.pp-am-fila.pp-am-lola { border-color: #ffb800; background: #fffbe6; }
+.pp-am-fila.pp-am-tocada { border-color: #ff4f9a; background: #fff0f7; }
+#pp-ui .pp-am-quien { flex: 1; min-width: 0; min-height: 72px; display: flex; align-items: center; gap: 10px; padding: 0; font: inherit; color: inherit; text-align: left; background: none; border: 0; cursor: pointer; }
+.pp-am-cara { flex: none; }
+.pp-am-nom { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pp-am-nom b { font-size: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-am-nom small { font-size: 18px; line-height: 1.2; }
+#pp-ui .pp-btn2.pp-am-mini { min-width: 84px; min-height: 72px; padding: 0 12px; flex: none; }
+#pp-ui .pp-btn2.pp-am-mini.pp-am-texto { font-size: 21px; padding: 0 14px; }
+.pp-am-hecho { flex: none; min-width: 100px; min-height: 60px; display: inline-flex; align-items: center; justify-content: center; padding: 0 8px; box-sizing: border-box;
+  border-radius: 999px; border: 4px solid #22b8b0; color: #11807a; background: #fff; font-weight: 700; font-size: 18px; }
+.pp-am-hecho.pp-am-lleno { border-color: #3f8ff0; color: #1d5fb0; }
+/* las gracias que te han llegado */
+.pp-am-gracias { display: flex; flex-direction: column; gap: 6px; }
+.pp-am-gracias p { margin: 0; padding: 8px 12px; font-size: 20px; font-weight: 700; color: #11807a; background: #e6fffb; border: 3px solid #22b8b0; border-radius: 16px; }
+/* abajo y fijos: INVITAR y A TODOS, o la hoja del amigo tocado */
+.pp-am-pie { position: sticky; bottom: 0; z-index: 2; margin-top: auto; display: flex; flex-wrap: wrap; gap: 12px; padding: 14px 4px 20px; background: var(--pp-crema);
+  border-radius: 22px 22px 0 0; box-shadow: 0 -8px 12px -6px rgba(196, 58, 132, 0.25); }
+#pp-ui .pp-am-pie > .pp-btn, #pp-ui .pp-am-pie > .pp-btn2 { flex: 1 1 0; min-width: 0; font-size: 26px; padding: 12px 10px; gap: 6px; }
+.pp-am-pie .pp-cz-enlace { flex-basis: 100%; }
+.pp-am-estado { flex-basis: 100%; margin: 0; font-size: 19px; font-weight: 700; text-align: center; color: #b8236a; }
+.pp-am-estado:empty { display: none; }
+.pp-am-pie-suelto { position: static; width: 100%; padding: 0; background: none; box-shadow: none; justify-content: center; }
+#pp-ui .pp-am-pie-suelto > .pp-btn { flex: 0 1 auto; font-size: 26px; }
+#pp-ui .pp-am .pp-btn.pp-pago { min-width: 340px; }   /* ABRIR, el dorado: más ancho que lo de al lado */
+.pp-am-hoja { border-top: 5px solid #ff4f9a; border-radius: 28px 28px 0 0; padding: 12px 6px 20px; }
+.pp-am-hoja h4 { flex-basis: 100%; margin: 0; text-align: center; font-size: 30px; color: #c43a84; }
+.pp-am-hoja .pp-am-tope { flex-basis: 100%; }
+.pp-am-dos { flex-basis: 100%; display: flex; gap: 10px; }
+.pp-am-dos > * { flex: 1 1 0; }
+#pp-ui .pp-am-dos .pp-btn, #pp-ui .pp-am-dos .pp-btn2 { min-width: 0; min-height: 76px; font-size: 24px; padding: 10px 8px; gap: 6px; }
+#pp-ui .pp-am-quitar { min-height: 76px; font: inherit; font-weight: 700; font-size: 21px; color: #b8236a; background: #fff; border: 4px solid #ff4f9a; border-radius: 999px; cursor: pointer; }
+.pp-am-pregunta { flex-basis: 100%; margin: 0; text-align: center; font-size: 23px; font-weight: 700; }
+.pp-am-con-hoja .pp-am-bloque, .pp-am-con-hoja .pp-am-gracias { opacity: 0.45; }
+/* el regalo de un amigo: las frases ya hechas, para el pulgar */
+.pp-am-frases { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+#pp-ui .pp-am-frase { min-height: 72px; padding: 6px 16px; font: inherit; font-weight: 700; font-size: 21px; color: #11807a; background: #fff; border: 4px solid #22b8b0; border-radius: 20px; cursor: pointer; }
+#pp-ui .pp-am-frase.pp-on { background: #d8fbf7; box-shadow: 0 0 0 4px #8eeee4; }
+#pp-ui .pp-btn2.pp-am-ancho { min-width: 300px; }
+/* el enlace de amigo */
+.pp-am-columna { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.pp-am-icono-grande { color: #11807a; }
+.pp-am-icono-grande svg { width: 120px; height: 120px; }

@@ -83,11 +83,13 @@ function ppArranque() {
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };
   $pp('#pp-ranking').onclick = () => { ppCargaSonidos(); play('select'); if (ppPrimerosToca('ranking')) ppVentanaRanking(); };   // js/ranking.js
   $pp('#pp-perfil').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('perfil')) return; PP_SRV.arranca(); ppVentanaPerfil(); };   // js/pantalla-perfil.js
+  $pp('#pp-amigos').onclick = () => { ppCargaSonidos(); play('select'); ppAmigosAbre(); };   // js/pantalla-amigos-ventana.js (tarea #145)
   $pp('#pp-companeros').onclick = () => { ppCargaSonidos(); play('select'); ppVentanaCompaneros('album'); };   // js/pantalla-album.js (tarea #142)
-  setTimeout(() => { ppPerfilBoton(); ppCompanerosBoton(); if (PP_PANT.actual === 'titulo') ppPrimerosPortada(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: los botones PERFIL y COMPAÑEROS y el monedero de perlas del servidor (tareas #41 y #142)
+  setTimeout(() => { ppPerfilBoton(); ppCompanerosBoton(); ppAmigosBoton(); if (PP_PANT.actual === 'titulo') ppPrimerosPortada(); PP_SRV.arranca(); }, 2500);   // con los flags ya leídos: los botones PERFIL, COMPAÑEROS y AMIGOS y el monedero de perlas del servidor (tareas #41 y #142)
   setTimeout(ppSubeMarcas, 3000);   // lo que aún no esté en el ranking mundial
   if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
   ppCorazonEnlaceArranca();   // un enlace de corazón de un amigo (?corazon=, js/pantalla-corazones-enlace.js)
+  ppAmigosEnlaceArranca();   // un enlace de amigo (?amigo=, js/pantalla-amigos-regalos.js)
   ppIrA('titulo');
   // la portada sale cuando han llegado todos los dibujos, sin tope de tiempo: hasta entonces la tapa la splash de core (esperaListo en
   // index.html, ADR 091), y así no asoman los de repuesto del primer boceto. Si alguno no llega ni al segundo intento, la splash se queda
@@ -102,5 +104,6 @@ function ppArranque() {
   requestAnimationFrame(ppFotograma);
   setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) { ppPintaLateral(); ppPintaCaminoAyudas(); } }, 1000);   // los relojes de las ofertas y cuántas ayudas tienes
   setInterval(ppBuzonVigila, 5000);   // el buzón de corazones de los amigos: al llegar al camino y cada minuto (js/pantalla-buzon.js)
+  setInterval(ppAmigosVigila, 5000);   // la pestaña Amigos: en la portada o el camino, al llegar y cada 45 s (js/pantalla-amigos.js)
 }
 ppArranque();

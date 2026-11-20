@@ -3,7 +3,7 @@
 // La lee también herramientas/idioma_claves.py (LIGERO).
 'use strict';
 (() => {
-  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js', 'idioma/en-tienda-gemas.js'],
+  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js', 'idioma/en-tienda-gemas.js', 'idioma/en-amigos.js'],
     pt: ['idioma/pt-ligero.js'], fr: ['idioma/fr-ligero.js'], de: ['idioma/de-ligero.js'], it: ['idioma/it-ligero.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...], pt: [...] } }). De momento solo el inglés cubre todo lo común: los demás idiomas llevan lo que usan los juegos ligeros (*-ligero.js) y un juego solo los ofrece si tiene su diccionario
 
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.

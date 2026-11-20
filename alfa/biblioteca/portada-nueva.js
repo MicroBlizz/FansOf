@@ -1,6 +1,6 @@
 // Fans Of · LA PORTADA NUEVA («Arcade nocturno», tarea #69): las piezas del rediseño que solo tiene la portada, tras el flag «portada-nueva» (servidor/143: abierto solo en la alfa).
 // La clase «portada-nueva» de <html> la pone estilo/estilo-nuevo.js y el logo y la barra de abajo los monta menu.js, para todas las páginas (ADR 135). Aquí se añade:
-//   · el titular «Microblizz lo ha comprado todo» con CrazyBunny en la cabecera (el pintado de Fans of Rumble, animado; tocarlo le hace lanzar la zanahoria),
+//   · el titular «Microblizz lo ha comprado todo» en la cabecera (sin CrazyBunny: Pepins lo quitó el 21-11-2026),
 //   · el bloque «Tú decides cuál terminamos» alrededor de LOS MÁS PEDIDOS (agrupar.js lo crea cuando contesta el servidor), con su botón IR A VOTAR,
 //   · y lo que la barra de abajo hace distinto en la portada («Votar» y «Novedades»).
 // Las piezas llevan la clase «pn»: sin el flag no se ven (estilo/web.css), así que cerrarlo devuelve la portada de siempre sin recargar.
@@ -15,12 +15,7 @@
     if (!hero || hero.querySelector('.pn-titular')) return;
     hero.querySelector('h1').insertAdjacentHTML('afterend', `<div class="pn pn-titular">
       <div class="pn-textos"><p class="pn-grito ol" role="heading" aria-level="1">${esc(t('MICROBLIZZ LO HA'))} <span>${esc(t('COMPRADO TODO.'))}</span></p>
-      <p class="pn-lema">${esc(t('Elige cómo pararle los pies.'))}</p></div>
-      <button type="button" class="pn-bunny" aria-label="CrazyBunny"></button></div>`);
-    // CrazyBunny (el pintado de Fans of Rumble) respira en bucle; al tocarlo lanza la zanahoria una vez y vuelve
-    const bunny = hero.querySelector('.pn-bunny');
-    bunny.addEventListener('click', () => { bunny.classList.remove('ataca'); void bunny.offsetWidth; bunny.classList.add('ataca'); });
-    bunny.addEventListener('animationend', e => { if (e.animationName === 'pn-ataque') bunny.classList.remove('ataca'); });
+      <p class="pn-lema">${esc(t('Elige cómo pararle los pies.'))}</p></div></div>`);
   }
   // la barra de abajo la monta menu.js para todas las páginas; aquí, lo que solo sabe la portada: a dónde lleva «Votar» y la ventana de novedades
   function barra() {

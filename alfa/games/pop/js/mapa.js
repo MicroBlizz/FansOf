@@ -136,6 +136,7 @@ function ppPintaMapa(c, t) {
     if (aqui) ppMano(c, x, y, t);
     if (i <= va) PP_NODOS_MAPA.push({ x, y, r: r + 26, g, dif });
   }
+  ppPintaAmigosMapa(c, m, dif, t);   // las caras de los amigos junto a su nivel, solo en fácil y con el flag abierto (js/mapa-amigos.js)
   // arriba: el mundo, con flechas a los otros mundos abiertos, y el interruptor normal / difícil
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
   ppTitulo(c, tr('Mundo {n}', { n: m + 1 }), 270, 52, 40);

@@ -1,8 +1,8 @@
 {
- "build": 1373,
- "hash": "0b45f4e",
- "fecha": "2026-11-20T18:23:13Z",
- "mensaje": "Pinball 0.2.5: vuelven el zorro y la suricata dibujados por código, con la cápsula hueca (#114, Pepins)",
+ "build": 1374,
+ "hash": "dc432b5",
+ "fecha": "2026-11-20T19:01:18Z",
+ "mensaje": "Pop: barras de desplazamiento finas y rosas, sin flechas, en la tienda y el resto de ventanas con scroll (Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

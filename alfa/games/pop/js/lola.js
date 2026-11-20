@@ -11,7 +11,7 @@
 'use strict';
 const PP_TUTO = {
   w1n1: [{ t: '¡Hola, soy Lola! Toca donde señala la manita.', toque: true }],
-  w1n2: [{ t: '¡Haz pop en todas las burbujas!', toque: true }],
+  w1n2: [{ t: '¡Haz pop! Caen también las de al lado.', toque: true }],   // por qué se hunden las demás (tarea #182)
   w1n3: [{ t: 'Arriba ves los toques que te quedan.' }],
   amigo: [{ t: '¡Tienes un amigo! Te ayuda cuando llena su barrita.' }],
   combo: [{ t: '¡Combo! Haz pop en 3 o más de un toque.' }],

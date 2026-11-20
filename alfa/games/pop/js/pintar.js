@@ -224,8 +224,21 @@ function ppPintaSala(c, t) {
 /* ---------- la portada: un pop-it de muestra que se revienta solo ---------- */
 // Daniel (30-10-2026): además de reventarse solo, se puede tocar. Tu dedo hace pop (o vuelve a subir una reventada, como un
 // pop-it de verdad) y, mientras juegas con él, el automático descansa un poco.
-const PP_PORTADA = { T: null, prox: 0 };
-const PP_PORTADA_ESC = 0.62, PP_PORTADA_CAMBIA = 14;
+const PP_PORTADA = { T: null, prox: 0, esc: 0.62, cy: 0 };
+const PP_PORTADA_ESC = 0.62, PP_PORTADA_CAMBIA = 14, PP_PORTADA_MEDIO = 260, PP_PORTADA_LOGO = 345;   // medio alto de la bandeja con su marco; el pie del logo
+// Regla (dominio): dónde va el pop-it de la portada (su centro `cy` en el lienzo) y a qué escala. Va en `defecto` a la escala `base`
+// si así no pisa la pastilla de debajo («Vas por el nivel X», que empieza en `tope`); si la pisaría (pantallas anchas, con el lienzo
+// más bajo), encoge y se centra en el hueco entre el logo (`arriba`) y la pastilla (tarea #185). `medio`: su medio alto sin escalar.
+function ppCajaPortada(base, defecto, medio, arriba, tope) {
+  if (!(tope > arriba) || defecto + base * medio <= tope) return { cy: defecto, esc: base };
+  const esc = Math.min(base, (tope - arriba) / (2 * medio));
+  return { cy: tope - esc * medio, esc };
+}
+// el borde de arriba de la pastilla, en unidades del lienzo (0 si no se ve)
+function ppTopePastilla() {
+  const p = $pp('#pp-record'); if (!p || !p.offsetParent) return 0;
+  return (p.getBoundingClientRect().top - PP_CV.getBoundingClientRect().top) / PP_V.sc;
+}
 // un pop-it de muestra con una forma al azar de las de los mundos (y alguna de las generales), sin repetir la anterior
 function ppTableroPortada() {
   const todas = [];
@@ -240,7 +253,7 @@ function ppTableroPortada() {
 // del punto tocado (coordenadas del lienzo) a la burbuja del pop-it de la portada; -1 si no hay
 function ppPortadaCelda(lx, ly) {
   const T = PP_PORTADA.T; if (!T) return -1;
-  const bx = (lx - 270) / PP_PORTADA_ESC + 270, by = (ly - PP_V.H * 0.46) / PP_PORTADA_ESC + ppGeom(3).y + 220;
+  const e = PP_PORTADA.esc, bx = (lx - 270) / e + 270, by = (ly - PP_PORTADA.cy) / e + ppGeom(3).y + 220;
   const i = ppCeldaEn(ppGeom(T.n), bx, by);
   return i >= 0 && T.mask[i] ? i : -1;
 }
@@ -260,7 +273,9 @@ function ppPintaPortada(c, t, dt) {
   PP_PORTADA.prox -= dt;
   if (PP_PORTADA.prox <= 0) { const T = PP_PORTADA.T, i = Math.floor(Math.random() * T.up.length); const r = ppToca(T, i); if (r) ppFxToque(T, i, r); T.hecho = false; T.toques = 0; PP_PORTADA.prox = rand(0.6, 1.2); }
   ppFxAvanza(dt);
-  c.save(); c.translate(270, PP_V.H * 0.46); c.scale(PP_PORTADA_ESC, PP_PORTADA_ESC); c.translate(-270, -(ppGeom(3).y + 220)); ppPintaTablero(c, PP_PORTADA.T, t); ppPintaEfectos(c, t); c.restore();
+  const { cy, esc } = ppCajaPortada(PP_PORTADA_ESC, PP_V.H * 0.46, PP_PORTADA_MEDIO, PP_PORTADA_LOGO, ppTopePastilla() - 8);
+  PP_PORTADA.cy = cy; PP_PORTADA.esc = esc;   // también para los toques (ppPortadaCelda)
+  c.save(); c.translate(270, cy); c.scale(esc, esc); c.translate(-270, -(ppGeom(3).y + 220)); ppPintaTablero(c, PP_PORTADA.T, t); ppPintaEfectos(c, t); c.restore();
   // «POP» es el logo de Yoshi con letras de pop-it (Daniel eligió la semilla 9, 30-10-2026); si aún no ha cargado, en letra
   const logo = PP_IMG['logo-pop'];
   if (logo) {

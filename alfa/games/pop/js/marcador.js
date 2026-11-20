@@ -39,13 +39,23 @@ function ppBurbujita(c, x, y, r, [h, s, l], queda, borde) {
   if (queda) { c.beginPath(); c.ellipse(x - r * 0.35, y - r * 0.45, r * 0.32, r * 0.2, -0.5, 0, Math.PI * 2); c.fillStyle = 'rgba(255,255,255,0.85)'; c.fill(); }
   c.restore();
 }
-// Los toques: burbujitas con el panel del mundo (si caben); si no, el número de siempre
-function ppPintaToques(c, T, col, panel) {
-  const reparto = panel ? ppToquesEnBurbujitas(T.limite, T.toques) : null;
+// Regla (dominio): el contador dice los toques que QUEDAN, no «usados / límite» (tarea #182, Pepins: «Toques 6/20» no se entendía).
+// Nunca menos de 0. Con burbujitas el rótulo lleva la cifra («Quedan 5»); con el número, el rótulo es «Quedan» y la cifra va grande debajo.
+const ppToquesQuedan = (limite, toques) => Math.max(0, limite - toques);
+function ppRotuloToques(limite, toques, burbujitas) {
+  return burbujitas ? tr('Quedan {n}', { n: ppToquesQuedan(limite, toques) }) : tr('Quedan');
+}
+// lo que se dice al sumar un toque, con quién lo da (tarea #182): «+1 toque: Caja de botín»
+const ppTextoMasToque = quien => tr('+1 toque: {quien}', { quien: tr(quien) });
+// Los toques, en todos los mundos (Pepins eligió el boceto C, 20-11-2026, tarea #182): «Quedan 6» y debajo las burbujitas, que se
+// hunden al gastarse; con más de 20 (no caben), «Quedan» y la cifra grande. Sin el panel del mundo, el contorno es el de la tinta de siempre
+function ppPintaToques(c, T, col, panel, tinta) {
+  const reparto = ppToquesEnBurbujitas(T.limite, T.toques), burbujitas = reparto.modo === 'burbujitas';
+  ppTexto(c, ppRotuloToques(T.limite, T.toques, burbujitas), 432, 34, burbujitas ? 28 : 22, tinta.rotulo, 'right', tinta.borde);   // a la izquierda del botón de pausa
   // con el último toque (o ninguno) el contorno avisa en el color del número de siempre, como avisaba el número
   const aviso = T.limite - T.toques <= 1;
-  if (reparto && reparto.modo === 'burbujitas') ppPintaToquesBurbujitas(c, reparto.filas, 432, 58, aviso ? '#ff8a2a' : panel.borde);
-  else ppTexto(c, `${T.toques} / ${T.limite}`, 432, 66, 40, col, 'right');
+  if (burbujitas) ppPintaToquesBurbujitas(c, reparto.filas, 432, 60, aviso ? '#ff8a2a' : panel ? panel.borde : tinta.borde);
+  else ppTexto(c, String(ppToquesQuedan(T.limite, T.toques)), 432, 70, 52, col, 'right', tinta.borde);
 }
 
 /* ---------- los paneles con el color del mundo ---------- */
@@ -79,8 +89,7 @@ function ppPintaMarcador(c, t) {
   if (duelo) { ppMarcadorNim(c, P.T, t); return; }   // nivel duelo: el rival, el turno y la regla (js/nimnivel.js); sin equipo
   if (P.T) {
     const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
-    ppTexto(c, tr('Toques'), 432, 36, 22, tinta.rotulo, 'right', tinta.borde);   // a la izquierda del botón de pausa
-    ppPintaToques(c, T, col, panel);
+    ppPintaToques(c, T, col, panel, tinta);
     const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 116, 28, k < est);
     ppTexto(c, T.titulo || '', 270, 118, 34, '#ffd64a', 'center', tinta.titulo);
     if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques extra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');

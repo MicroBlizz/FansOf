@@ -6,7 +6,9 @@
 // la de jefe con el CEO y la sintonía de ganar.
 'use strict';
 function ppCargaSonidos() { /* ya no hay archivos: todo se hace por código */ }
-function ppVibra(ms) { if (SAVE.sinVibrar) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* sin vibración */ } }
+// el navegador no deja vibrar hasta el primer toque en la página (y lo avisa en la consola): hasta entonces no se intenta (tarea #185)
+const ppPuedeVibrar = nav => !!(nav && nav.vibrate) && (!nav.userActivation || nav.userActivation.hasBeenActive);
+function ppVibra(ms) { if (SAVE.sinVibrar || !ppPuedeVibrar(navigator)) return; try { navigator.vibrate(ms); } catch (e) { /* sin vibración */ } }
 // EL PLOP (hecho a mano, no con Yoshi: la IA no sabe hacer sonidos tan cortos). Una gotita kawaii: un tono que SUBE muy rápido
 // y se apaga en menos de una décima (como una burbuja de agua), un clic suave delante (la «p») y un brillito agudo encima.
 function ppPlop(nota = 1) {

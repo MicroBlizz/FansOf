@@ -2,7 +2,7 @@
 'use strict';
 IDIOMA.add({
   "¡Hola, soy Lola! Toca donde señala la manita.": "Hi, I'm Lola! Tap where the hand points.",
-  "¡Haz pop en todas las burbujas!": "Pop all the bubbles!",
+  "¡Haz pop! Caen también las de al lado.": "Pop! The ones next to it go too.",
   "Arriba ves los toques que te quedan.": "Up top you see the taps you have left.",
   "¡Tienes un amigo! Te ayuda cuando llena su barrita.": "You've got a buddy! They help when their bar fills up.",
   "¡Combo! Haz pop en 3 o más de un toque.": "Combo! Pop 3 or more with one tap.",

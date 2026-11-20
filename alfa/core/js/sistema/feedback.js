@@ -85,7 +85,7 @@
   fondo.innerHTML = '<div id="fb-caja" role="dialog" aria-modal="true" aria-labelledby="fb-titulo"><button type="button" id="fb-x" aria-label="X">✕</button><div id="fb-cuerpo"></div></div>';
   const mostrar = () => { pestana.hidden = !!(typeof enPartida === 'function' && enPartida()); ver.hidden = pestana.hidden; };
   const ponerEtiqueta = () => { const t = tr('Enviar comentarios'); pestana.title = t + ' · ' + verLarga(); pestana.setAttribute('aria-label', t); };
-  const colocar = () => { const st = document.getElementById('stage'); const x = st ? Math.max(0, st.getBoundingClientRect().left) + 'px' : '0'; pestana.style.left = ver.style.left = x; ver.style.bottom = 'calc(30% - ' + (verCorta.length * 6 + 6) + 'px)'; };
+  const colocar = () => { const st = document.getElementById('stage'); const x = ETIQUETA_PROTOTIPO.borde(st ? st.getBoundingClientRect().left : 0) + 'px'; pestana.style.left = ver.style.left = x; ver.style.bottom = 'calc(30% - ' + (verCorta.length * 6 + 6) + 'px)'; };
   function iniciar() {
     document.body.append(pestana, ver, fondo); ponerEtiqueta(); colocar(); mostrar();
     window.addEventListener('resize', colocar); setInterval(() => { mostrar(); colocar(); }, 1500);

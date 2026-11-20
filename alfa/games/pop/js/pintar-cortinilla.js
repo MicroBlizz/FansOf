@@ -1,7 +1,8 @@
 // Fans of Pop · CORTINILLA (dibujo y manejo): la cortinilla de los niveles con duelo, jefes y difíciles (ADR 098), pintada en el lienzo
 // encima de la sala. Estilo cozy del boceto A que eligió Pepins (16-11-2026, tarea #71): velo rosa sobre el fondo del mundo, cinta con el
 // título, Lola («Tú») y el rival sobre cojines con su nombre, el VS dentro de una burbuja y la regla en la tarjeta «Así se gana».
-// Mientras sale, el nivel espera (tutorial, ayudita y primer turno del rival); solo el botón ¡A JUGAR! la quita (ADR 100).
+// Mientras sale, el nivel espera (tutorial, ayudita y primer turno del rival); solo el botón ¡A JUGAR! la quita (ADR 100); un toque fuera
+// del botón la completa (tarea #181).
 // Lo que decide cuándo sale y cómo avanza está en cortinilla.js (puro).
 'use strict';
 // `yo` y `otro`: los paneles del VS con perfiles ({ perfil, cat, nombre }; tarea #41, ADR 130); null con el flag cerrado (Lola fija)
@@ -34,6 +35,11 @@ function ppCortPulsa() {
   if (!ppCortActiva() || PP_CORT.salida !== null || !PP_CORTINILLA.puedePulsar(PP_CORT.t)) return;
   PP_CORT.salida = 0; play('select'); ppCortBoton();
 }
+// un toque fuera del botón la completa al momento: todo puesto y ¡A JUGAR! a la vista (tarea #181); no empieza el duelo
+function ppCortCompleta() {
+  if (!ppCortActiva() || PP_CORT.salida !== null) return;
+  PP_CORT.t = PP_CORTINILLA.completa(PP_CORT.t); ppCortBoton();
+}
 // entrar en otro nivel apaga la cortinilla que quedara abierta sin su callback
 const ppCortCancela = () => { PP_CORT.activa = false; PP_CORT.alTerminar = null; ppCortBoton(); ppSintoniaCorta('popCortinilla'); };
 function ppCortTermina() {
@@ -42,8 +48,10 @@ function ppCortTermina() {
   const sigue = PP_CORT.alTerminar; PP_CORT.alTerminar = null;
   if (sigue) sigue();
 }
-function ppCortAvanza(dt) {
+// `real`: los segundos de verdad desde la imagen anterior (la cortinilla va por reloj, tarea #181)
+function ppCortAvanza(real) {
   if (!PP_CORT.activa) return;
+  const dt = PP_CORTINILLA.paso(real);
   PP_CORT.t += dt; if (PP_CORT.salida !== null) PP_CORT.salida += dt;
   ppCortBoton();
   if (PP_CORTINILLA.fotograma(PP_CORT.t).golpe && !PP_CORT.golpe) { PP_CORT.golpe = true; ppBoing(0.5); ppVibra(25); }

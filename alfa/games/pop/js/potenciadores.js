@@ -15,7 +15,7 @@ function ppGastaAyuda(k, vuelta = null) {
   if (ppTengo(k) > 0) { SAVE.ayudas[k]--; ppGuarda(); return true; }
   const precio = PP_CFG.ayudas[k].perlas;
   if (ppPerlas(-precio, 'ayuda')) return true;
-  ppTienda(vuelta, 'ayudas');
+  ppFaltanPerlas(precio, () => { ppCierra(); if (vuelta) vuelta(); ppBarraAyudas(); }, vuelta);   // «Te faltan N perlas» con el pack que llega (js/tienda-venta.js, tarea #185); luego se vuelve a tocar la ayuda
   return false;
 }
 /* ---------- la barra ---------- */

@@ -25,11 +25,10 @@ PP_CV.addEventListener('pointerdown', e => {
   const [lx, ly] = ppLogico(e);
   if (ppExplicaToque(lx, ly)) return;   // un compañero de «Tu equipo»: su bocadillo (js/equipo-explica.js); si no, lo cierra
   if (PP_PANT.actual === 'titulo') { ppPortadaToque(lx, ly); return; }
-  if (ppCortActiva()) return;   // la cortinilla de duelo solo se quita con su botón (ADR 100)
+  if (ppCortActiva()) { ppCortCompleta(); return; }   // la cortinilla de duelo solo se quita con su botón (ADR 100); un toque la completa (#181)
   if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }
   if (PP_PANT.actual === 'memoria' && PP_MEM) { ppMemToque(ppCeldaEn(ppGeom(PP_MEM.T.n), lx, ly)); return; }
   if (!PP_P) return;
-  if (ppCortActiva()) return;   // la cortinilla del jefe solo se quita con su botón (ADR 100)
   if (PP_PANT.actual === 'sala' && PP_P.T) {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
     if (i >= 0) ppToque(i);
@@ -46,14 +45,14 @@ document.addEventListener('keydown', e => {
 let PP_ULT = 0;
 function ppFotograma(ahora) {
   requestAnimationFrame(ppFotograma);
-  const dt = Math.min(0.05, (ahora - PP_ULT) / 1000 || 0.016); PP_ULT = ahora;
+  const real = (ahora - PP_ULT) / 1000 || 0.016, dt = Math.min(0.05, real); PP_ULT = ahora;   // la cortinilla va por reloj (`real`, tarea #181)
   const t = ahora / 1000, c = PP_CTX;
   ppMusicaBucle(); ppAdnMira();   // la fila de pegatinas del duelo, solo cuando toca (js/duelo-adornos.js)
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
-  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); ppVictoriaReloj(PP_P.T, dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)
+  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppVictoriaReloj(PP_P.T, dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
-  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(dt); ppAdnAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
+  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppAdnAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
   else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
   else ppPintaPortada(c, t, dt);
 }
@@ -65,7 +64,7 @@ function ppEmpieza(seguir) {
   ppIrA('mapa');
 }
 function ppArranque() {
-  ppRevisaDentro();   // si se cerró el juego a media partida (después de tocar), se pierde ese corazón
+  const salio = ppRevisaDentro();   // si se cerró el juego a media partida (después de tocar), se pierde ese corazón
   const imagenes = ppCargaImagenes();
   ppAjusta();
   window.addEventListener('resize', ppAjusta);
@@ -95,6 +94,7 @@ function ppArranque() {
   imagenes.then(faltan => {
     PP_ESCENARIO.style.visibility = ''; const carga = $pp('#carga'); if (carga) carga.remove();
     if (!faltan.length) NUCLEO.listo();
+    if (salio) ppVentanaSalioAMedias();   // y se dice por qué falta un corazón (tarea #185)
     else if (typeof SPLASH !== 'undefined') SPLASH.falla('pop/img-liso/' + faltan[0] + '.png');
   });
   requestAnimationFrame(ppFotograma);

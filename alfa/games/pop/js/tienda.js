@@ -67,7 +67,7 @@ function ppTienda(vuelta, pestana) {
     if (k === 'perlas') b.insertAdjacentHTML('afterbegin', ppIcono('i-perla', 20, '#ffd1ec'));   // la que más se compra, en dorado (tarea #187)
     b.onclick = () => { play('select'); ppTienda(undefined, k); }; tabs.appendChild(b);
   }
-  t.appendChild(tabs);
+  t.appendChild(tabs); t.classList.add('pp-tienda');   // el mismo alto en todas las pestañas (css/pop.css, tarea #185)
   const caja = document.createElement('div'); caja.className = 'pp-packs'; t.appendChild(caja);
   const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); f(); }; caja.appendChild(b); return b; };
   (PP_TIENDA_PESTANAS[PP_TIENDA_PESTANA] || ppTiendaOfertas)(tarjeta);   // lo de cada pestaña: js/tienda-venta.js (tarea #187)

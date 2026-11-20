@@ -28,6 +28,11 @@ function ppIrA(p) {
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
 // la pausa dura lo que su ventana: se cierre por donde se cierre, el juego sigue (reporte 28, Daniel 19-11-2026)
+// al volver tras cerrar el juego a medias: el corazón se pierde igual (si no, recargar sería un reintento gratis), pero se dice (tarea #185)
+function ppVentanaSalioAMedias() {
+  const t = ppAbre(`<h2>${tr('¡Saliste a medias!')}</h2><p class="pp-sub">${tr('Cerraste el juego en mitad de un nivel y has perdido un corazón.')}</p>`);
+  t.appendChild(ppBoton(tr('¡VALE!'), 'pp-btn', ppCierra));
+}
 function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
 function ppBoton(texto, clase, f) { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = () => { play('select'); f(); }; return b; }
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };

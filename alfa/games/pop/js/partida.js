@@ -145,7 +145,7 @@ function ppPremioGordo(T, r) {
   if (!ppEnEquipo('cofre') || r.pops.length < 4 || T.lo) return;
   ppFxHabilidad('cofre'); play('ppPremio');
   if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
-  else { T.limite++; ppFlota(tr('+1 toque'), 270, 275, '#ff8a2a'); }
+  else { T.limite++; ppFlota(ppTextoMasToque(PP_SLIMES.cofre.nombre), 270, 275, '#ff8a2a'); }   // con su motivo (tarea #182)
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel
 function ppTrasToque(T, i, r) {

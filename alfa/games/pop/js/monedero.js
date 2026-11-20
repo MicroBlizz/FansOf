@@ -57,5 +57,8 @@ function ppPremioNivel(clave, estrellas, jefe, x = 1) {
   return p;
 }
 // --- salir a media partida cuesta un corazón (si ya has tocado algo), también cerrando el juego: así no se esquiva perder ---
-function ppMarcaDentro(si) { if (!!SAVE.dentro === si) return; SAVE.dentro = si; ppGuarda(); }
-function ppRevisaDentro() { if (SAVE.dentro) { SAVE.dentro = false; ppPierdeVida(); } }
+// en los niveles gratis de una partida nueva (1 a 3, js/primeros-pasos-juego.js) salir no cuesta, así que tampoco se marca: recargar ahí
+// no quita el corazón ni lo avisa (tarea #185)
+function ppMarcaDentro(si) { si = si && !ppPrimerosGratis(); if (!!SAVE.dentro === si) return; SAVE.dentro = si; ppGuarda(); }
+// al abrir el juego: true si se cerró a media partida y ha costado un corazón (entonces se avisa: tarea #185); con infinitos no cuesta
+function ppRevisaDentro() { if (!SAVE.dentro) return false; SAVE.dentro = false; const cuesta = !ppInfinitas(); ppPierdeVida(); return cuesta; }

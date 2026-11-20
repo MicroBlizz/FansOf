@@ -131,6 +131,10 @@ img.pp-ico { border-radius: 0; }
 .pp-lado b { margin-top: -6px; font-size: 16px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; }
 .pp-lado.pp-aviso::after { content: ''; position: absolute; top: 2px; right: 6px; width: 16px; height: 16px; border-radius: 50%; background: #ff3a5a; box-shadow: 0 0 0 3px #fff; animation: pp-late 1.2s ease-in-out infinite; }
 .pp-tabs { display: flex; gap: 6px; width: 100%; }
+/* la tienda tiene el mismo alto en todas las pestañas (lo que no cabe se desliza) y tapa el menú de detrás (tarea #185) */
+.pp-tarjeta.pp-tienda { height: 94%; }
+.pp-tienda .pp-packs { flex: 1 1 auto; min-height: 0; overflow-y: auto; align-content: start; }
+.pp-modal:has(.pp-tienda) { background: rgba(255, 180, 220, 0.88); }
 #pp-ui .pp-tab { flex: 1; font: inherit; font-size: 19px; font-weight: 700; padding: 8px 4px; border-radius: 14px 14px 6px 6px; border: 3px solid #ff9ccf; background: #fff; color: #c43a84; cursor: pointer; }
 #pp-ui .pp-tab.pp-on { background: linear-gradient(180deg, #ffb057, #ff7a1a); border-color: #c2510a; color: #fff; }
 .pp-pack span { font-size: 19px; font-weight: 700; color: #7a3a7a; }

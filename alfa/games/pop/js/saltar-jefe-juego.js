@@ -51,7 +51,7 @@ function ppVentanaAbrirMundo(d) {
 function ppSaltaJefe(d, r) {
   const s = PP_SALTO.salta({ nivel: PP_P.nivel, pendientes: PP_P.pendientes }, d.mundo, ppInicioMundo(r.siguiente));
   if (!s.ok) { ppAlCamino(); return; }
-  if (!ppPerlas(-r.perlas, 'mundo')) { ppTienda(() => ppVentanaAbrirMundo(d), 'perlas'); return; }   // no llegaban de verdad (lo pendiente con el servidor): a la tienda, que vuelve aquí
+  if (!ppPerlas(-r.perlas, 'mundo')) { ppFaltanPerlas(r.perlas, () => ppSaltaJefe(d, r), () => ppVentanaAbrirMundo(d)); return; }   // no llegaban de verdad (lo pendiente con el servidor): a la tienda, que vuelve aquí
   PP_P.nivel = s.nivel; PP_P.pendientes = [...s.pendientes];
   ppGuardaCamino(); play('ppVictoria');
   ppVentanaMundoAbierto(r.siguiente);

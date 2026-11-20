@@ -132,7 +132,8 @@ function ppVentanaAtasco(vuelta) {
 function ppBotonInfinitas(t, alComprar) {
   const fila = document.createElement('div'); fila.className = 'pp-fila';
   for (const o of PP_CFG.infinitas) {
-    const b = ppBoton('', 'pp-btn2 pp-rosa', () => { if (!ppPerlas(-o.perlas, 'infinitas')) { ppTienda(() => ppVentanaSinCorazones(), 'perlas'); return; } ppDaInfinitas(o.min); play('ppPremio'); alComprar(); });
+    const compra = () => { if (!ppPerlas(-o.perlas, 'infinitas')) { ppFaltanPerlas(o.perlas, compra, () => ppVentanaSinCorazones()); return; } ppDaInfinitas(o.min); play('ppPremio'); alComprar(); };   // sin perlas: el pack que llega (tarea #185)
+    const b = ppBoton('', 'pp-btn2 pp-rosa', compra);
     b.innerHTML = `${ppIcono('i-infinito', 26, '#ff4a6a')}${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })} · ${ppPerlasPrecioHtml(o.perlas, 22)}`;
     fila.appendChild(b);
   }

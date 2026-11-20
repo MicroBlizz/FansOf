@@ -77,10 +77,13 @@
 .pp-vic-fila-baja { flex-wrap: nowrap; }
 .pp-vic-fila-baja .pp-vic-desglose { font-size: 15px; white-space: nowrap; }
 .pp-tarjeta.pp-vic-justa { gap: 7px; padding-top: 0; }
-.pp-vic-justa .pp-vic { padding-top: 4px; }
-.pp-vic-justa .pp-vic .pp-estrellas { height: 112px; }
+/* la fila tiene el alto de la estrella del medio con su arco (116 + 12) y arriba queda sitio para su saltito: la ventana recorta lo que
+   sale por encima (reporte 34, tarea #268: con 112 px la del medio se cortaba) */
+.pp-vic-justa .pp-vic { padding-top: 12px; }
+.pp-vic-justa .pp-vic .pp-estrellas { height: 128px; }
 .pp-vic-justa .pp-vic .pp-est, .pp-vic-justa .pp-vic .pp-est img { width: 88px; height: 88px; }
 .pp-vic-justa .pp-vic .pp-est:nth-child(2), .pp-vic-justa .pp-vic .pp-est:nth-child(2) img { width: 116px; height: 116px; }
+.pp-vic-justa .pp-vic .pp-est:nth-child(2) { margin-bottom: 12px; }
 .pp-tarjeta.pp-vic-justa .pp-vic h2 { font-size: 50px; }
 .pp-vic-justa .pp-vic-panel { gap: 6px; padding: 10px 10px; }
 .pp-vic-justa .pp-vic-dato { padding: 5px 4px 6px; }

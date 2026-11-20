@@ -1,8 +1,8 @@
 {
- "build": 1392,
- "hash": "6aaa052",
- "fecha": "2026-11-20T23:29:47Z",
- "mensaje": "Pop: lo que compras en la tienda sale en abanico y vuela al «Tienes:», y la hucha se rompe de un martillazo (tarea #270, Pepins, boceto B y hucha 2)",
+ "build": 1393,
+ "hash": "5a81543",
+ "fecha": "2026-11-20T23:33:02Z",
+ "mensaje": "Pop: la tienda no salta arriba al comprar, las estrellas de la victoria no se cortan y la Hadita es blanca (tarea #268, reportes 31, 34 y 37, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -1,7 +1,7 @@
 {
- "build": 1369,
+ "build": 1371,
  "hash": "5d87dbb",
- "fecha": "2026-11-20T17:13:25Z",
+ "fecha": "2026-11-20T17:13:54Z",
  "mensaje": "Cola de /gestion: lo que corre en Yoshi ya no sale como GitHub cuando el workflow pide solo su etiqueta (tarea #230, ADR 172)",
  "juegos": {
   "air": "0.3.0",

@@ -43,7 +43,7 @@ AJUSTES.bichos = TN.congela({
   radio: 0.4,                   // (partida) lo que ocupa un bicho para chocar con los muebles
   persigue: 8,                  // (partida) te persigue si estás a menos de 8 unidades
   rodea: { desde: 2.5, radio: 0.7 },   // (partida) a menos de 2,5 las hormigas buscan su hueco alrededor del becario
-  muerde: { alcance: 0.95, cada: 1.3, primero: 0.4 },   // (partida) distancia de mordisco, segundos entre dos y espera al tocar
+  muerde: { alcance: 0.95, cada: 1.3, primero: 0.4, entreMordiscos: 0.6 },   // (probadores) entreMordiscos: un enjambre muerde por turnos, no todos a la vez   // (partida) distancia de mordisco, segundos entre dos y espera al tocar
   despierta: { desde: 17, hasta: 22 },   // (decisión, P3) un punto dormido despierta con el becario a esta distancia: nacen fuera de pantalla
   tope: 28,                     // (probadores) bichos despiertos a la vez; si se pasa, la oleada espera
   // (cuaderno) cada minuto fuera sale un 25 % más de bichos: está ya dentro de la tabla de oleadas (P3, x1; 1,25; 1,56; 1,95; 2,44)
@@ -87,7 +87,7 @@ AJUSTES.trucos = TN.congela({        // (cuaderno) solo en la expedición, nunca
   vista: { ancho: 4.5, alto: 10, segundos: 1 },   // (partida) «visto»: 1 s dentro de lo que enseña la pantalla alrededor del becario
   calientan: { segundos: 30, velocidad: 0.6, esperaAtaque: 1.2 },   // los primeros 30 s van torpes; (P3) cuánto
   // (probadores) la primera salida de una partida: tres montones de cartón a la vista del nido y ningún bicho a menos de `sinBichosA`
-  primeraSalida: { sinBichosA: 15, botin: [{ material: 'carton', cantidad: 5, x: 7.5, z: 2.5 }, { material: 'carton', cantidad: 5, x: 3, z: 9 }, { material: 'grapas', cantidad: 4, x: 10.5, z: 7.5 }] },
+  primeraSalida: { sinBichosA: 11, botin: [{ material: 'carton', cantidad: 5, x: 7.5, z: 2.5 }, { material: 'carton', cantidad: 5, x: 3, z: 9 }, { material: 'grapas', cantidad: 4, x: 10.5, z: 7.5 }] },
   seAdapta: { caidasSeguidas: 2, menosBichos: 0.25 },             // tras 2 caídas seguidas, un 25 % menos de bichos
 });
 AJUSTES.botin = TN.congela({

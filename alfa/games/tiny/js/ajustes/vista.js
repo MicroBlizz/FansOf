@@ -8,7 +8,7 @@ AJUSTES.vista = TN.congela({
   encuadres: {
     juego: { alto: 20, az: -0.6, el: 0.7 },        // (panel) 20 unidades de alto: el becario ocupa cerca del 10 %
     ras: { alto: 20, az: -0.6, el: 0.45 },          // (cuaderno + panel) al aparecer el gigante solo baja la inclinación: no acerca ni quita el control
-    construir: { alto: 15, az: -0.12, el: 0.95 },  // el nido entero cabe a lo ancho
+    construir: { alto: 16, az: 0, el: 0.95 },  // el nido entero cabe a lo ancho
     nido: { alto: 16, az: -0.1, el: 0.8 },        // el nido en vivo, algo más lejos
     asalto: { alto: 17, az: 0, el: 0.95 },      // el nido rival, de 8x8 casillas de 1,5   // (cuaderno) en el modo construir la cámara se acerca
   },

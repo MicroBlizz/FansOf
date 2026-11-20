@@ -5,7 +5,7 @@
 (() => {
   let escena = null, piezas = null, arriba = null, paleta = null, construyendo = false, elegida = 'pared-carton', ultima = '', t = 0, becario = null, oyentes = [];
   const R = () => AJUSTES.nido, casos = () => TN.casosNido;
-  const PORQUE = { 'sin-materiales': 'Te faltan materiales: sal a por más', 'camino-tapiado': '¡Tapas el camino al almacén!', 'tope-de-trampas': 'Ya tienes todas las trampas', 'casilla-ocupada': 'Ahí ya hay algo',
+  const PORQUE = { 'sin-materiales': 'Te faltan materiales', 'camino-tapiado': '¡Tapas el camino al almacén!', 'tope-de-trampas': 'Ya tienes todas las trampas', 'casilla-ocupada': 'Ahí ya hay algo',
     'almacen-fijo': 'El almacén no se mueve', 'casilla-vacia': '', 'fuera-de-rejilla': '' };
   const centro = (col, fila) => TN.vista.aPantalla(col + .5, 1, fila + .5);
   // vuelve a poner en la escena las piezas del nido
@@ -89,7 +89,7 @@
         TN.eventos.oye('meta-cumplida', () => TN.bocadillos.dice(tr('¡Meta cumplida!'), { x: TN.capa().clientWidth / 2, y: 240 }, 1.8, 'bueno'))];
       TN.capa().addEventListener('pointerdown', alBajar); TN.capa().addEventListener('pointermove', alMover);
       const vacio = !casos().nido.piezas.length && !Object.values(casos().nido.almacen).some(c => c > 0);
-      setTimeout(() => { if (TN.pantallas.actual !== 'nido') return; if (vacio) { TN.guia.olvida('nido-vacio'); TN.guia.dice('nido-vacio', 'Sal de expedición a por materiales para tu nido', 7); } else empuja(); }, 50);
+      setTimeout(() => { if (TN.pantallas.actual !== 'nido') return; if (vacio && TN.diario.disponible) { TN.guia.olvida('paquete'); TN.guia.dice('paquete', 'Abre el paquete del día: trae cartón', 7); } else if (vacio) { TN.guia.olvida('nido-vacio'); TN.guia.dice('nido-vacio', 'Sal de expedición a por materiales para tu nido', 7); } else empuja(); }, 50);
       TN.vista.encuadre('nido', 0, true); TN.vista.sigue(R().columnas / 2, R().filas / 2 + .6, true);
     },
     sale() {

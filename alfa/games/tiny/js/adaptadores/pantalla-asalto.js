@@ -48,7 +48,7 @@
       TN.hud.monta(TN.capa(), { usaPila() {} });
       salir = TN.crea('button', { type: 'button', className: 'tn-boton tn-salir', textContent: tr('Irme'), onclick: () => casos().abandona() }); TN.capa().append(salir);
       oyentes = [TN.eventos.oye(Object.keys(AL), e => AL[e.tipo](e))];
-      TN.guia.dice('asalto', 'Rompe paredes, coge el botín del almacén y sal', 5);
+      setTimeout(() => { TN.guia.olvida('asalto'); TN.guia.dice('asalto', 'Sigue la flecha: coge el botín y sal', 6); }, 60);
       TN.vista.encuadre('asalto', 0, true); TN.vista.sigue(r.valor.becario.x, r.valor.becario.z, true);
     },
     sale() {
@@ -66,7 +66,7 @@
       for (const m of piezas.values()) { if (m.userData.anima) m.userData.anima(t); m.rotation.z = m.userData.golpe > t ? .08 : 0; }
       TN.efectos.pinta(dt); TN.vista.sigue(becario.position.x, becario.position.z); TN.vista.pinta(escena, dt);
       TN.hud.pinta({ bateria: b.bateria, bateriaMax: b.max, baja: b.bateria < AJUSTES.becario.bateriaBaja, unidades: f.mochila.unidades, tope: f.mochila.tope * AJUSTES.mochila.porHueco,
-        voltios: f.cogiendo, meta: 1, pilas: 0, cuenta: f.quedan, nido: f.cogido ? destino.entrada : destino.almacen, caida: null }, TN.vista);
+        voltios: f.cogiendo, meta: 1, pilas: 0, cuenta: f.quedan, nido: f.cogido ? destino.entrada : destino.almacen, caida: null, marca: true }, TN.vista);
     },
     estado: () => { const f = casos().foto(); return f ? { fase: f.fase, fin: f.fin, quedan: f.quedan, becario: f.becario, cogido: f.cogido, piezas: f.piezas.length } : {}; },
   });

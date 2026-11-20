@@ -111,3 +111,6 @@ html, body { margin: 0; height: 100%; background: var(--tn-fondo); overflow: hid
 .tn-resumen .tn-botin li:nth-child(2) { animation-delay: .15s; } .tn-resumen .tn-botin li:nth-child(3) { animation-delay: .3s; } .tn-resumen .tn-botin li:nth-child(4) { animation-delay: .45s; } .tn-resumen .tn-botin li:nth-child(5) { animation-delay: .6s; }
 @keyframes tn-entra { from { opacity: 0; transform: scale(.6) translateY(10px); } }
 @media (prefers-reduced-motion: reduce) { .tn-paquete, .tn-boton.tn-llama, .tn-resumen .tn-botin li { animation: none; } }
+.tn-guia.tn-baja { top: auto; bottom: calc(196px + env(safe-area-inset-bottom)); }
+.tn-marca .tn-flecha-nido { color: var(--tn-amarillo); }
+.tn-bocadillo { max-width: 230px; white-space: normal; text-align: center; }

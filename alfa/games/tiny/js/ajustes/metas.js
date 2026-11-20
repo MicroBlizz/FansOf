@@ -3,7 +3,7 @@
 'use strict';
 // (probadores) el paquete de mensajería: uno al día; la racha de días seguidos elige el regalo (da la vuelta al llegar al final)
 AJUSTES.diario = TN.congela({
-  regalos: [{ carton: 10, grapas: 4 }, { carton: 8, migas: 8, pilas: 1 }, { plastico: 8, grapas: 6 }, { carton: 12, plastico: 6, pilas: 1 }, { carton: 15, grapas: 10, migas: 10, plastico: 10, pilas: 2 }],
+  regalos: [{ carton: 20, grapas: 4 }, { carton: 8, migas: 8, pilas: 1 }, { plastico: 8, grapas: 6 }, { carton: 12, plastico: 6, pilas: 1 }, { carton: 15, grapas: 10, migas: 10, plastico: 10, pilas: 2 }],
 });
 AJUSTES.metas = TN.congela({
   lista: [

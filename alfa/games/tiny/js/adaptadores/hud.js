@@ -7,10 +7,11 @@ TN.hud = (() => {
   const pct = (a, b) => Math.max(0, Math.min(100, b ? a / b * 100 : 0)).toFixed(0) + '%';
   function flecha(clase) { const f = TN.crea('div', { className: 'tn-flecha tn-flecha-' + clase }); f.innerHTML = TN.iconos.svg('flecha', 40); caja.append(f); return f; }
   // coloca una flecha en el borde, apuntando a un punto que queda fuera de la vista
-  function apunta(f, p, w, h) {
+  function apunta(f, p, w, h, marca) {
     const m = AJUSTES.interfaz.flechaMargen, dx = p.x - w / 2, dy = p.y - h / 2;
     const dentro = p.x > m && p.x < w - m && p.y > m + 60 && p.y < h - m;
-    f.hidden = dentro; if (dentro) return;
+    f.hidden = dentro && !marca; if (dentro && !marca) return;
+    if (dentro) { f.style.transform = `translate(${(p.x - 20).toFixed(0)}px, ${(p.y - 84 + Math.sin(performance.now() / 160) * 5).toFixed(0)}px) rotate(1.571rad)`; return; }   // a la vista: encima, señalando
     const k = Math.min((w / 2 - m) / Math.abs(dx || 1e-6), (h / 2 - m - 40) / Math.abs(dy || 1e-6));
     f.style.transform = `translate(${(w / 2 + dx * k - 20).toFixed(0)}px, ${(h / 2 + dy * k - 20).toFixed(0)}px) rotate(${Math.atan2(dy, dx).toFixed(2)}rad)`;
   }
@@ -41,7 +42,8 @@ TN.hud = (() => {
       n.cuenta.hidden = d.cuenta === undefined;
       if (d.cuenta !== undefined) { const s = Math.max(0, Math.ceil(d.cuenta)); n.cuenta.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); n.cuenta.classList.toggle('tn-prisa', s <= 20); }
       const w = caja.clientWidth, h = caja.clientHeight;
-      [d.nido, d.caida].forEach((p, i) => { if (!p) { flechas[i].hidden = true; return; } apunta(flechas[i], vista.aPantalla(p.x, 0, p.z), w, h); });
+      caja.classList.toggle('tn-marca', !!d.marca);
+      [d.nido, d.caida].forEach((p, i) => { if (!p) { flechas[i].hidden = true; return; } apunta(flechas[i], vista.aPantalla(p.x, 0, p.z), w, h, d.marca); });
     },
     // un destello rojo al recibir un golpe
     golpe() { if (!caja) return; const d = TN.crea('div', { className: 'tn-destello' }); caja.append(d); setTimeout(() => d.remove(), 260); },

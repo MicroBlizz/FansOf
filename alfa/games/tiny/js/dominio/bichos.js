@@ -4,6 +4,7 @@
 'use strict';
 TN.Bichos = class Bichos {
   #lista = []; #sig = 1;
+  #turno = 0;
 
   // lista: [{ clase, x, z, grupo?, tela? }], dormidos hasta que el becario se acerca
   static nuevos(reglas, lista) {
@@ -81,11 +82,12 @@ TN.Bichos = class Bichos {
   // los mordiscos de este paso: [{ bicho, clase, x, z, dano, perdonado }]. aSalvo: el becario está en el felpudo (no muerden)
   muerden(reglas, dt, t, bx, bz, aSalvo) {
     const fuera = [];
+    this.#turno -= dt;   // muerden por turnos: entre un mordisco y el siguiente (de quien sea) pasa un mínimo
     for (const b of this.#lista) {
       if (!b.despierto) continue;
       this.#mira(reglas, b, dt, bx, bz);
       const m = this.#muerde(reglas, b, dt, t, Math.hypot(b.x - bx, b.z - bz) < reglas.bichos.muerde.alcance && !aSalvo);
-      if (m) fuera.push(m);
+      if (m) { fuera.push(m); this.#turno = reglas.bichos.muerde.entreMordiscos; }
     }
     return fuera;
   }
@@ -101,7 +103,7 @@ TN.Bichos = class Bichos {
     if (toca && !b.toca) b.espera = Math.max(b.espera, t < cal.segundos ? cal.esperaAtaque : m.primero);
     b.toca = toca;
     b.espera -= dt;
-    if (!toca || b.espera > 0) return null;
+    if (!toca || b.espera > 0 || this.#turno > 0) return null;
     b.espera = m.cada;
     const perdonado = reglas.trucos.primerMordiscoGratis && b.visto < reglas.trucos.vista.segundos;
     b.visto = Math.max(b.visto, reglas.trucos.vista.segundos);   // ya lo ha visto: el siguiente sí da

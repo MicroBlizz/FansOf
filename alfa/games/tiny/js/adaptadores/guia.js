@@ -8,7 +8,7 @@ TN.guia = (() => {
     if (dichas.has(clave)) return;
     dichas.add(clave);
     if (cartel) cartel.remove();
-    cartel = TN.crea('div', { className: 'tn-guia' + (urgente ? ' tn-urgente' : ''), textContent: tr(texto) });
+    cartel = TN.crea('div', { className: 'tn-guia' + (urgente ? ' tn-urgente' : '') + (TN.pantallas.actual === 'nido' ? ' tn-baja' : ''), textContent: tr(texto) });
     TN.capa().append(cartel);
     clearTimeout(reloj); reloj = setTimeout(() => { if (cartel) cartel.remove(); cartel = null; }, segundos * 1000);
   }

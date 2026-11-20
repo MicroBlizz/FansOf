@@ -26,7 +26,7 @@ IDIOMA.add({
   "¡A casa! Te queda poca batería": "Go home! Your battery is low", "¡Sal de la sombra!": "Get out of the shadow!",
   // nido
   "Construir": "Build", "Listo": "Done", "¡A por la mochila!": "Get the backpack!", "Quitar": "Remove",
-  "Te faltan materiales: sal a por más": "Not enough materials: go out for more", "Sal de expedición a por materiales para tu nido": "Go on an expedition to get materials for your nest", "¡Tapas el camino al almacén!": "You are blocking the way to storage!", "Ya tienes todas las trampas": "You already have every trap",
+  "Te faltan materiales": "Not enough materials", "Sal de expedición a por materiales para tu nido": "Go on an expedition to get materials for your nest", "¡Tapas el camino al almacén!": "You are blocking the way to storage!", "Ya tienes todas las trampas": "You already have every trap",
   "Ahí ya hay algo": "Something is already there", "El almacén no se mueve": "Storage cannot be moved",
   "Paquete del día": "Daily parcel", "Mensajería interna": "Internal mail", "Día {n}": "Day {n}", "¡Gracias!": "Thanks!",
   "Mañana llega otro. Si vienes varios días seguidos, el paquete es mejor.": "Another one arrives tomorrow. Come several days in a row and the parcel gets better.",
@@ -37,7 +37,7 @@ IDIOMA.add({
   "Pon 4 paredes de plástico": "Place 4 plastic walls", "Vuelve de un asalto con botín": "Come back from a raid with loot",
   // asalto
   "Irme": "Leave", "¡Trampa!": "Trap!", "¡Botín!": "Loot!", "Nido vacío": "Empty nest",
-  "¡Lo tienes! Sal por donde entraste": "Got it! Leave the way you came in", "Rompe paredes, coge el botín del almacén y sal": "Break walls, grab the loot from storage and get out",
+  "¡Lo tienes! Sal por donde entraste": "Got it! Leave the way you came in", "Sigue la flecha: coge el botín y sal": "Follow the arrow: grab the loot and get out", "Abre el paquete del día: trae cartón": "Open the daily parcel: it brings cardboard",
   "Se acabó el tiempo": "Time is up", "Te has quedado sin batería": "You ran out of battery", "Te has ido con las manos vacías": "You left empty-handed",
   "Ya te lo llevaste todo. Vuelve de 1 expedición con botín y se habrá llenado otra vez.": "You already took everything. Come back from 1 expedition with loot and it will be full again.",
   "Ya te lo llevaste todo. Vuelve de {n} expediciones con botín y se habrá llenado otra vez.": "You already took everything. Come back from {n} expeditions with loot and it will be full again.",

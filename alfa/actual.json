@@ -1,8 +1,8 @@
 {
- "build": 1382,
- "hash": "034d7c0",
- "fecha": "2026-11-20T19:39:41Z",
- "mensaje": "Pop: en «¡Sin toques!» la racha se recuerda sin «Ahora» (Tu racha: +N toques al empezar cada nivel) (tarea #186, Pepins)",
+ "build": 1383,
+ "hash": "dc77011",
+ "fecha": "2026-11-20T19:42:35Z",
+ "mensaje": "Toys 0.2.0: tutorial guiado, tres minijuegos de bonus y vitrina con dorados y raros (tarea #259, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -41,7 +41,7 @@
   "taxi": "0.2.17",
   "td": "0.13.103",
   "tiny": "0.1.0",
-  "toys": "0.1.1",
+  "toys": "0.2.0",
   "vikings": "0.1.0",
   "wings": "0.1.8",
   "zombies": "0.14.2"

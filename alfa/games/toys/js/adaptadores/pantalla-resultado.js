@@ -29,6 +29,20 @@
     ...Object.keys(GASTOS).filter(k => r.gastos[k]).map(k => C('li', {}, C('span', { textContent: tr(GASTOS[k]) }), C('b', { textContent: `-${r.gastos[k]}` }))),
     r.liquidacion ? C('li', { className: 'ty-a-favor' }, C('span', { textContent: tr('Liquidación') }), C('b', { textContent: `+${r.liquidacion}` })) : null);
 
+  // lo que dio el minijuego del mes (si no se saltó)
+  const bonus = r => {
+    if (!r.bonus) return null;
+    const def = TY.MINIJUEGOS[r.bonus.tipo], e = TY.Minijuegos.efecto(r.bonus, AJUSTES), n = Math.round((def.clave === 'unidades' ? e.unidades : e[def.clave] - 1) * 100);
+    return C('div', { className: 'ty-bonus' }, C('small', { textContent: tr(def.nombre) + ' · ' + Math.round(r.bonus.nota * 100) + '%' }), C('b', { textContent: tr(def.premio, { n }) }));
+  };
+
+  // lo nuevo que entra en la vitrina con este mes
+  const piezas = r => (r.coleccion || []).map(h => {
+    const j = TY.TODOS.find(x => x.id === h.id);
+    return C('div', { className: `ty-nueva ${h.tipo === 'oro' ? 'ty-es-oro' : 'ty-es-raro'}` }, TY.icono(j.id, 48),
+      C('div', {}, C('small', { textContent: tr(h.tipo === 'oro' ? 'Edición dorada' : 'Juguete raro') }), C('b', { textContent: tr(j.nombre) }), C('span', { textContent: tr('Guardado en la vitrina') })));
+  });
+
   const voces = (r, nombre) => {
     const v = r.voces, F = TY.FRASES;
     return C('div', { className: 'ty-voces' },
@@ -59,6 +73,7 @@
     TY.sonido.suena(r.beneficio >= 0 ? 'suma' : 'pierde'); await TY.cuenta(beneficio, Math.abs(r.beneficio), 500);
     beneficio.textContent = (r.beneficio >= 0 ? '+' : '-') + Math.abs(r.beneficio);
     for (let i = 5; i < bloques.length; i++) await sale(i, 300);
+    if (r.coleccion && r.coleccion.length) TY.sonido.suena('hallazgo');
     if (r.cierre) { TY.sonido.suena(r.cierre.pasa ? 'meta' : 'despido'); if (r.cierre.pasa) TY.fondo.celebra(); }
   };
 
@@ -70,7 +85,7 @@
       C('div', { className: 'ty-cabeza' }, TY.icono(j.id, 64), C('div', {}, C('h2', { textContent: nombre }), C('p', { textContent: tr('Ventas de {mes}', { mes: tr(TY.TEXTOS.meses[p.mes]) }) }))),
       cuenta.caja, porque(r), gastos(r),
       C('div', { className: `ty-beneficio ${r.beneficio >= 0 ? 'ty-gana' : 'ty-pierde'}` }, C('small', { textContent: tr('Beneficio del mes') }), beneficio),
-      voces(r, nombre), cierre(r.cierre),
+      voces(r, nombre), bonus(r), ...piezas(r), cierre(r.cierre),
       C('button', { className: 'ty-boton ty-principal', id: 'ty-seguir', textContent: textoSeguir(p, r.cierre), onclick: sigue }),
     ].filter(Boolean);
     desfila(bloques, r, cuenta.total, beneficio);

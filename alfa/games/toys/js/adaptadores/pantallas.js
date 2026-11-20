@@ -8,10 +8,12 @@ TY.pantallas = (() => {
   return {
     registra(nombre, monta) { registro[nombre] = monta; },
     ve(nombre) {
+      if (TY.minijuegoPara) TY.minijuegoPara();   // un minijuego a medias se para al cambiar de pantalla
       actual = nombre;
       const capa = TY.capa();
       capa.dataset.pantalla = nombre;
       capa.replaceChildren(registro[nombre]());
+      if (TY.tutorial) TY.tutorial.alMostrar(nombre);
     },
     sigue() { const p = TY.sesion.partida; this.ve(p ? DE_FASE[p.fase] : 'inicio'); },
     get actual() { return actual; },

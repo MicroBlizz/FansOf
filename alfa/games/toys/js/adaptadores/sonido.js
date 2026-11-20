@@ -16,6 +16,9 @@ TY.sonido = (() => {
     meta: () => { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, f, .13, 'triangle', .18, i * .09)); },
     despido: () => { [392, 330, 262, 196].forEach((f, i) => tone(f, f * .9, .22, 'sawtooth', .16, i * .17)); },
     noticia: () => { tone(700, 700, .07, 'square', .12); tone(700, 700, .07, 'square', .12, .12); },
+    pop: () => tone(900, 1400, .05, 'square', .1),                                  // un acierto en un minijuego
+    golpe: () => { tone(160, 80, .12, 'sawtooth', .16); },                          // un fallo, o el golpe de la prensa
+    hallazgo: () => { [784, 988, 1175, 1568].forEach((f, i) => tone(f, f, .1, 'triangle', .17, i * .08)); },   // algo nuevo en la vitrina
   };
   return {
     nombres: () => Object.keys(SONIDOS),

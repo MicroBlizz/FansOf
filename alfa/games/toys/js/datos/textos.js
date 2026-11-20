@@ -7,5 +7,5 @@ TY.TEXTOS = TY.congela({
   cantidades: { nada: 'Nada', poca: 'Poca', media: 'Media', mucha: 'Mucha' },
   precios: { barato: 'Barato', normal: 'Normal', caro: 'Caro' },
   publicidad: { nada: 'Nada', redes: 'Redes', tele: 'Tele' },
-  factores: { precio: 'Precio', publicidad: 'Publicidad', temporada: 'Temporada', moda: 'De moda', empresa: 'Mejoras y noticias', resaca: 'Resaca del anuncio' },
+  factores: { precio: 'Precio', publicidad: 'Publicidad', temporada: 'Temporada', moda: 'De moda', empresa: 'Mejoras y noticias', resaca: 'Resaca del anuncio', minijuego: 'Minijuego' },
 });

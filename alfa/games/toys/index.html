@@ -7,10 +7,10 @@
 <title>Fans of Toys</title>
 <meta name="description" content="Fans of Toys: lleva la fábrica de juguetes de Microblizz durante un año fiscal. Prototipo en desarrollo.">
 <meta name="robots" content="noindex">
-<script src="../../core/js/nucleo.js?v=0.1.1-a1382.034d7c0"></script>
+<script src="../../core/js/nucleo.js?v=0.2.0-a1383.dc77011"></script>
 <script>NUCLEO.fuentes('../../core/fuentes/pixelify-sans.css', '../../core/fuentes/jersey-10.css', '../../core/fuentes/fredoka.css')</script>
 <!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
-<script>NUCLEO.estilos('../../core/css/base.css', 'css/toys.css')</script>
+<script>NUCLEO.estilos('../../core/css/base.css', 'css/toys.css', 'css/extras.css')</script>
 </head>
 <body>
 <div id="ty-escenario">
@@ -23,16 +23,17 @@ NUCLEO.juego({
   esperaListo: true,   // la splash de core espera a NUCLEO.listo(), que js/principal.js llama al quitar la pantalla de carga (ADR 091)
   ligero: true,        // solo la cuenta, el idioma y el sonido de core: Toys lleva su partida y sus pantallas (prototipo solo para la alfa)
   antes: ['js/ty.js', 'js/ajustes.js'],
-  idioma: { en: ['idioma/en.js', 'idioma/en-noticias.js', 'idioma/en-frases.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-noticias.js', 'idioma/en-frases.js', 'idioma/en-extras.js'] },
   despues: [
     // por capas (docs/calidad/ARQUITECTURA.md): datos, dominio, aplicación, adaptadores y la composición. Contrato: docs/guia/juegos/toys/README.md
-    'js/datos/textos.js', 'js/datos/juguetes.js', 'js/datos/mejoras.js', 'js/datos/noticias.js', 'js/datos/frases.js',
-    'js/dominio/azar.js', 'js/dominio/reglas.js', 'js/dominio/mercado.js', 'js/dominio/noticias.js', 'js/dominio/partida.js',
+    'js/datos/textos.js', 'js/datos/juguetes.js', 'js/datos/raros.js', 'js/datos/minijuegos.js', 'js/datos/tutorial.js', 'js/datos/mejoras.js', 'js/datos/noticias.js', 'js/datos/frases.js',
+    'js/dominio/azar.js', 'js/dominio/reglas.js', 'js/dominio/minijuegos.js', 'js/dominio/coleccion.js', 'js/dominio/mercado.js', 'js/dominio/noticias.js', 'js/dominio/partida.js',
     'js/aplicacion/sesion.js',
     '../../core/js/serie/canciones.js',   // las canciones de la serie: la música del prototipo
     'js/adaptadores/dom.js', 'js/adaptadores/almacen-local.js', 'js/adaptadores/sonido.js', 'js/adaptadores/iconos-datos.js', 'js/adaptadores/iconos.js',
     'js/adaptadores/fondo.js', 'js/adaptadores/pantallas.js', 'js/adaptadores/hud.js', 'js/adaptadores/pantalla-inicio.js', 'js/adaptadores/pantalla-mejora.js',
-    'js/adaptadores/pantalla-noticia.js', 'js/adaptadores/pantalla-fabrica.js', 'js/adaptadores/pantalla-resultado.js', 'js/adaptadores/pantalla-fin.js',
+    'js/adaptadores/pantalla-noticia.js', 'js/adaptadores/pantalla-fabrica.js', 'js/adaptadores/pantalla-minijuego.js', 'js/adaptadores/minijuego-calidad.js',
+    'js/adaptadores/minijuego-prensa.js', 'js/adaptadores/minijuego-likes.js', 'js/adaptadores/pantalla-resultado.js', 'js/adaptadores/pantalla-vitrina.js', 'js/adaptadores/tutorial.js', 'js/adaptadores/pantalla-fin.js',
     'js/adaptadores/dev.js',
     'js/principal.js'],
 });

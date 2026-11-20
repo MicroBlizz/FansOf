@@ -28,5 +28,14 @@ AJUSTES.cantidades = TY.congela({ nada: { lote: 0 }, poca: { lote: 0.6 }, media:
 AJUSTES.precios = TY.congela({ barato: { precio: 0.75, demanda: 1.5 }, normal: { precio: 1, demanda: 1 }, caro: { precio: 1.35, demanda: 0.6 } });
 AJUSTES.publicidad = TY.congela({ nada: { coste: 0, demanda: 1 }, redes: { coste: 40, demanda: 1.3 }, tele: { coste: 130, demanda: 1.7 } });   // el coste se multiplica por el trimestre
 AJUSTES.lujo = TY.congela({ molde: 200, precio: 22 });   // desde qué molde un juguete es «de coleccionista» y desde qué precio es «caro»
+// los minijuegos del mes: uno por mes, rotando; la nota (0 a 1) que saques da un bonus de hasta esto
+AJUSTES.minijuegos = TY.congela({
+  orden: ['calidad', 'prensa', 'likes'],
+  calidad: { precio: 0.12 },      // la nota máxima sube el precio de venta un 12 %
+  prensa: { unidades: 0.25 },     // y regala hasta un 25 % más de unidades fabricadas
+  likes: { demanda: 0.25 },       // y sube hasta un 25 % la demanda
+});
+// la vitrina: la edición dorada llega al vender `oroVentas` veces la demanda normal del juguete en un año; el raro sale a veces desde `raroDesde`
+AJUSTES.coleccion = TY.congela({ oroVentas: 3, raroProb: 0.18, raroDesde: 1 });
 // lo que se va abriendo de una partida a otra: el nivel es el trimestre más lejano al que se ha llegado (0 a 4)
 AJUSTES.nivelMaximo = 4;

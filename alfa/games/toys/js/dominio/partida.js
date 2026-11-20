@@ -14,12 +14,18 @@ TY.creaJuego = ctx => {
 
   // tres juguetes del mes; se repite el sorteo si con el dinero que hay no se puede fabricar ninguno
   const ofertaJuguetes = (partida, azar) => {
-    const todos = disponibles(ctx.juguetes, partida.nivel);
+    const todos = disponibles(ctx.juguetes, partida.nivel).filter(j => !j.raro);
     for (let intento = 0; intento < 6; intento++) {
       const oferta = azar.varios(todos, R.ofertaJuguetes).map(j => j.id);
       if (oferta.some(id => (partida.stock[id] || 0) > 0 || TY.Mercado.plan(partida, { juguete: id, ...ELECCION_MINIMA }, ficha(partida), ctx).puede)) return oferta;
     }
     return todos.slice().sort((a, b) => a.molde - b.molde).slice(0, R.ofertaJuguetes).map(j => j.id);
+  };
+
+  // a veces sale, de más, un juguete raro de edición limitada
+  const conRaro = (p, azar) => {
+    const C = ctx.reglas.coleccion, raros = disponibles(ctx.juguetes, p.nivel).filter(j => j.raro);
+    return p.mes < C.raroDesde || !raros.length || !azar.pasa(C.raroProb) ? p : { ...p, oferta: [...p.oferta, azar.elige(raros).id] };
   };
 
   const abreMes = (anterior, mes) => conAzar(anterior, azar => {
@@ -29,6 +35,7 @@ TY.creaJuego = ctx => {
       beneficioTrimestre: estrena ? 0 : anterior.beneficioTrimestre };
     if (estrena) p.moda = azar.elige([...new Set(disponibles(ctx.juguetes, p.nivel).map(j => j.franquicia))]);
     p.oferta = ofertaJuguetes(p, azar);
+    p = conRaro(p, azar);
     const noticia = TY.Noticias.sortea(p, azar, ctx);
     if (!noticia) return p;
     p.noticia = { id: noticia.id };
@@ -48,9 +55,9 @@ TY.creaJuego = ctx => {
       ceo: { tono: r.beneficio > 0 ? 'bien' : 'mal', frase: indice(F.ceo.bien) } };
   };
 
-  const cuentas = (partida, eleccion, azar) => {
-    const f = ficha(partida), plan = TY.Mercado.plan(partida, eleccion, f, ctx), j = plan.juguete;
-    const d = TY.Mercado.demanda(partida, j, eleccion, f, azar, ctx);
+  const cuentas = (partida, eleccion, azar, bonus) => {
+    const f = ficha(partida), plan = TY.Mercado.plan(partida, eleccion, f, ctx, bonus), j = plan.juguete;
+    const d = TY.Mercado.demanda(partida, j, eleccion, f, azar, ctx, bonus);
     const vendidas = Math.min(d.unidades, plan.disponibles), sobran = plan.disponibles - vendidas;
     const liquidacion = Math.round(sobran * j.coste * f.liquidacion);
     const stock = { ...partida.stock, [j.id]: f.liquidacion > 0 ? 0 : sobran };
@@ -58,7 +65,7 @@ TY.creaJuego = ctx => {
     const gastos = { produccion: plan.produccion, molde: plan.molde, publicidad: plan.publicidad, almacen, multa: partida.multaMes };
     const ingresos = vendidas * plan.precio;
     const beneficio = ingresos + liquidacion - Object.values(gastos).reduce((n, g) => n + g, 0);
-    return { stock, resultado: { juguete: j.id, eleccion, unidades: plan.unidades, disponibles: plan.disponibles, demanda: d.unidades, vendidas, sobrantes: sobran,
+    return { stock, resultado: { juguete: j.id, eleccion, unidades: plan.unidades, extra: plan.extra, disponibles: plan.disponibles, demanda: d.unidades, vendidas, sobrantes: sobran,
       precio: plan.precio, ingresos, liquidacion, gastos, beneficio, factores: d.factores, suerte: d.suerte, anuncioFallido: d.anuncioFallido } };
   };
 
@@ -74,13 +81,14 @@ TY.creaJuego = ctx => {
   return {
     ficha,
     plan: (partida, eleccion) => TY.Mercado.plan(partida, eleccion, ficha(partida), ctx),
+    minijuego: partida => TY.Minijuegos.tipoDelMes(partida, ctx.reglas),
     meta: partida => R.metas[TY.Mercado.trimestre(partida, ctx.reglas)],
     trimestre: partida => TY.Mercado.trimestre(partida, ctx.reglas),
 
     nueva({ semilla, nivel = 0 }) {
       const base = { v: 1, azar: semilla >>> 0, nivel: Math.max(0, Math.min(ctx.reglas.nivelMaximo, nivel | 0)), fase: 'director', mes: -1, dinero: R.dineroInicial,
         stock: {}, moldes: [], mejoras: [], moda: null, oferta: [], ofertaMejoras: [], noticia: null, noticiaAnterior: null, efectosMes: {}, juguetePremiado: null,
-        multaMes: 0, resaca: 1, resacaSiguiente: 1, beneficioTrimestre: 0, beneficioTotal: 0, historial: [], ultimo: null, fin: null };
+        multaMes: 0, resaca: 1, resacaSiguiente: 1, beneficioTrimestre: 0, beneficioTotal: 0, historial: [], ultimo: null, fin: null, ventas: {}, oro: [] };
       return conAzar(base, azar => ({ ...base, ofertaMejoras: ofertaMejoras(base, azar) }));
     },
 
@@ -101,17 +109,21 @@ TY.creaJuego = ctx => {
       }));
     },
 
-    produce(partida, eleccion) {
+    // `bonus` (opcional): { tipo, nota } del minijuego del mes; null o sin él, el mes se juega sin bonus
+    produce(partida, eleccion, bonus) {
       if (partida.fase !== 'fabrica') return TY.error('fuera-de-fase', { fase: partida.fase });
       if (!eleccionValida(partida, eleccion)) return TY.error('eleccion-no-valida', { eleccion });
+      const premio = TY.Minijuegos.valida(bonus, ctx.reglas);
+      if (!premio.ok) return premio;
       if (!TY.Mercado.plan(partida, eleccion, ficha(partida), ctx).puede) return TY.error('sin-dinero');
       return TY.ok(conAzar(partida, azar => {
-        const { stock, resultado } = cuentas(partida, eleccion, azar);
-        const p = { ...partida, fase: 'resultado', stock, dinero: partida.dinero + resultado.beneficio,
+        const { stock, resultado } = cuentas(partida, eleccion, azar, premio.valor);
+        const hallazgos = TY.Coleccion.hallazgos(partida, resultado, ctx.juguetes.find(x => x.id === resultado.juguete), ctx.reglas);
+        const p = { ...partida, fase: 'resultado', stock, dinero: partida.dinero + resultado.beneficio, ventas: hallazgos.ventas, oro: hallazgos.oro,
           moldes: resultado.unidades ? [...new Set([...partida.moldes, resultado.juguete])] : partida.moldes,
           beneficioTrimestre: partida.beneficioTrimestre + resultado.beneficio, beneficioTotal: partida.beneficioTotal + resultado.beneficio,
           historial: [...partida.historial, resultado.beneficio] };
-        return { ...p, ultimo: { ...resultado, voces: voces(resultado, eleccion, azar), cierre: cierre(p) } };
+        return { ...p, ultimo: { ...resultado, bonus: premio.valor, coleccion: hallazgos.lista, voces: voces(resultado, eleccion, azar), cierre: cierre(p) } };
       }));
     },
 

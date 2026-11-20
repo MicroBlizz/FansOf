@@ -4,7 +4,7 @@
 (() => {
   const C = TY.crea;
   const ctx = () => ({ reglas: AJUSTES, juguetes: TY.JUGUETES });
-  const juguete = id => TY.JUGUETES.find(j => j.id === id);
+  const juguete = id => TY.TODOS.find(j => j.id === id);
   // lo que se suele vender con esa jugada, sin contar la suerte
   const prevision = (p, e) => Math.round(TY.Mercado.factores(p, juguete(e.juguete), e, TY.juego.ficha(p), ctx()).reduce((n, f) => n * f.x, juguete(e.juguete).demanda));
   // el primer juguete que se puede fabricar con lo que hay
@@ -12,15 +12,18 @@
 
   const cartaJuguete = (p, e, id, elige) => {
     const j = juguete(id), stock = p.stock[id] || 0, pagado = p.moldes.includes(id);
+    const dorado = TY.sesion.datos.coleccion.oro.includes(id);
     const sellos = [
+      j.raro ? C('span', { className: 'ty-sello ty-s-raro', textContent: tr('Edición limitada') }) : null,
+      dorado ? C('span', { className: 'ty-sello ty-s-oro', textContent: tr('Dorada') }) : null,
       j.franquicia === p.moda ? C('span', { className: 'ty-sello ty-s-moda', textContent: tr('De moda') }) : null,
       p.juguetePremiado && p.juguetePremiado.id === id ? C('span', { className: 'ty-sello ty-s-fiebre', textContent: tr('Fiebre') }) : null,
       stock ? C('span', { className: 'ty-sello ty-s-stock', textContent: tr('Almacén: {n}', { n: stock }) }) : null];
-    return C('button', { className: `ty-carta ty-juguete${e.juguete === id ? ' ty-elegida' : ''}`, onclick: () => elige(id) },
+    return C('button', { className: `ty-carta ty-juguete${e.juguete === id ? ' ty-elegida' : ''}${j.raro ? ' ty-raro' : ''}${dorado ? ' ty-es-oro' : ''}`, onclick: () => elige(id) },
       TY.icono(id, 56), C('h3', { textContent: tr(j.nombre) }),
       C('p', { className: 'ty-dato', textContent: tr('Hacerlo: {n}', { n: j.coste }) }),
       C('p', { className: 'ty-dato', textContent: tr('Se vende a: {n}', { n: j.precio }) }),
-      C('p', { className: `ty-dato ${pagado ? 'ty-pagado' : 'ty-molde'}`, textContent: pagado ? tr('Molde pagado') : tr('Molde: {n}', { n: j.molde }) }),
+      C('p', { className: `ty-dato ${pagado || j.raro ? 'ty-pagado' : 'ty-molde'}`, textContent: j.raro ? tr('Sin molde') : pagado ? tr('Molde pagado') : tr('Molde: {n}', { n: j.molde }) }),
       C('div', { className: 'ty-sellos' }, ...sellos));
   };
 
@@ -60,7 +63,9 @@
   TY.pantallas.registra('fabrica', () => {
     const p = TY.sesion.partida, e = { juguete: preferido(p), cantidad: 'media', precio: 'normal', publicidad: 'nada' };
     const raiz = C('section', { className: 'ty-pantalla ty-fabrica' });
+    // con algo que fabricar, antes sale el minijuego del mes (que se puede saltar); sin nada, el mes pasa directo
     const produce = () => {
+      if (e.cantidad !== 'nada' && TY.juego.plan(p, e).puede) { TY.jugada = { ...e }; TY.sonido.suena('boton'); return TY.pantallas.ve('minijuego'); }
       const r = TY.sesion.produce(e);
       if (!r.ok) return TY.sonido.suena('pierde');
       TY.sonido.suena('produce'); TY.pantallas.sigue();

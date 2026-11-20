@@ -9,7 +9,8 @@
   }));
   TY.icono = (id, px = 48) => {
     const c = lienzo(px);
-    pinta(c.getContext('2d'), TY.DIBUJOS[id] || TY.DIBUJOS.caja, TY.DIBUJOS.PALETA);
+    const raro = TY.RAROS.find(r => r.id === id);   // un raro se dibuja como su juguete normal
+    pinta(c.getContext('2d'), TY.DIBUJOS[raro ? raro.base : id] || TY.DIBUJOS.caja, TY.DIBUJOS.PALETA);
     return c;
   };
 

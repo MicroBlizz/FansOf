@@ -1,8 +1,8 @@
 {
- "build": 1378,
- "hash": "4f89871",
- "fecha": "2026-11-20T19:24:05Z",
- "mensaje": "Pop: regalo diario nuevo: caja con halo, premio de hoy en burbuja, barra de la semana y tira de 7 dias (tarea #262, Pepins)",
+ "build": 1379,
+ "hash": "05f9b15",
+ "fecha": "2026-11-20T19:30:47Z",
+ "mensaje": "Pop: regalo diario con calendario en cuadricula (mezcla de A y B) y el dibujo de la caja ya no es transparente (tarea #262, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

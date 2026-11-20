@@ -60,13 +60,23 @@ function ppVicCuenta(el, desde, hasta, seg = PP_VIC_CUENTA, retraso = 500) {
   };
   el.textContent = desde; requestAnimationFrame(paso);
 }
+// Al volver de la Tienda (u Opciones o pausa) la ventana se dibuja otra vez: lo de entrada se salta hasta el final y lo que se repite (el
+// compañero que brinca, el botón que late, los destellos) sigue a su ritmo de siempre, sin esperar su retraso (tarea #261: acortar la
+// duración con CSS lo aceleraba 100 veces)
+function ppVictoriaQuieta(t) {
+  void t.offsetWidth;   // que las animaciones ya existan
+  for (const a of t.getAnimations({ subtree: true })) {
+    const c = a.effect.getComputedTiming();
+    if (c.iterations === Infinity) a.currentTime = c.delay; else a.finish();
+  }
+}
 // Lo que se mueve al abrir la ventana `t`: una campanita por estrella, la fiesta y las monedas subiendo.
 // Al volver de la tienda (`T.vicVista`) ya no se repite: se ve todo como quedó.
 function ppVictoriaAnima(t, T) {
   t.classList.add('pp-gana', 'pp-gana-' + Math.max(0, Math.min(3, T.estrellas || 0)));
   const cuenta = t.querySelector('.pp-vic-cuenta');
   const ganado = T.premio ? (T.premio.monedas || 0) * (T.doblado ? 2 : 1) : 0;
-  if (T.vicVista) { t.classList.add('pp-quieta'); if (cuenta) cuenta.textContent = ganado; return; }
+  if (T.vicVista) { ppVictoriaQuieta(t); if (cuenta) cuenta.textContent = ganado; return; }
   T.vicVista = true;
   play('ppEstrellas', T.estrellas);
   if (T.estrellas >= 3) setTimeout(() => play('ppVictoria'), 1250);

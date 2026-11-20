@@ -15,7 +15,7 @@
 /* 3 estrellas: la ventana tiembla un poco al caer la tercera */
 .pp-tarjeta.pp-gana-3 { animation: pp-vic-entra 0.5s cubic-bezier(.3, 1.6, .5, 1) both, pp-vic-tiembla 0.45s 1.0s ease-in-out both; }
 @keyframes pp-vic-tiembla { 0%, 100% { translate: 0 0; } 20% { translate: -7px 3px; } 40% { translate: 6px -4px; } 60% { translate: -5px 2px; } 80% { translate: 3px -2px; } }
-.pp-quieta, .pp-quieta * { animation-delay: 0s !important; animation-duration: 0.01s !important; }
+/* al volver de la Tienda (.pp-quieta) lo de entrada se salta con JS (ppVictoriaQuieta, js/pantalla-victoria.js): acortar aqui la duracion aceleraba 100 veces las animaciones que se repiten (tarea #261) */
 @keyframes pp-vic-entra { from { transform: scale(0.5) translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
 /* el orden de arriba abajo: cabecera, panel, lo que añada cada ventana (texto del rescate, slimes), siguiente, el resto y el pie (compartir y tienda) */
 .pp-gana > * { order: 3; }
@@ -111,7 +111,7 @@
 .pp-vic-doblado { font-weight: 700; font-size: 22px; color: var(--pp-pago-b); animation: pp-salta 0.4s ease-out both; }
 /* «Doblar» grande y a lo ancho, en su propia línea bajo el +n (tarea #187): x2, Doblar y lo que ganas de más, con un halo dorado que
    late y una luz que lo cruza; sin tocar ¡SIGUIENTE!, que sigue fuera del panel */
-.pp-vic-doble-hueco:not(:empty) { flex-basis: 100%; display: flex; justify-content: center; }
+.pp-vic-doble-hueco:not(:empty) { flex-basis: 100%; display: flex; justify-content: center; padding: 8px 0 14px; }   /* aire para que el latido (escala 1,08) y el halo no pisen lo de abajo (tarea #261) */
 .pp-tarjeta .pp-vic-doble:disabled { animation: none; }
 .pp-vic-doble-mas { position: relative; z-index: 1; display: inline-flex; color: #fff; }
 .pp-vic-doble-txt { position: relative; z-index: 1; }

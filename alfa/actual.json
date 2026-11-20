@@ -1,8 +1,8 @@
 {
- "build": 1380,
- "hash": "ca53f88",
- "fecha": "2026-11-20T19:34:47Z",
- "mensaje": "Pop: la caja del regalo diario, retocada: menta lisa y opaca, sin motas ni transparencias (tarea #262, Pepins)",
+ "build": 1381,
+ "hash": "555d4bc",
+ "fecha": "2026-11-20T19:35:42Z",
+ "mensaje": "Pop: la victoria ya no se acelera al volver de la Tienda (la causa era acortar la duracion con CSS) y el boton de Doblar no pisa el desglose (tarea #261, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

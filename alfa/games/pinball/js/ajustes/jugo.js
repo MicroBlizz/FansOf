@@ -26,5 +26,8 @@ AJUSTES.guia = PB.congela({
 });
 AJUSTES.sonido = PB.congela({
   volumen: 0.8,
+  musica: 0.3,                  // (partida) la música, respecto a los efectos
+  canciones: { menu: 'menu', mesa: 'gamer', jefe: 'boss' },   // canciones de la serie (core/js/serie/canciones.js)
+  prisaCaos: 1.25,              // (partida) la música va más deprisa durante el CAOS
   freno: { golpe: 35, pala: 50, seta: 45, rompe: 40, empujon: 200 },   // (MOVIL) ms mínimos entre dos iguales
 });

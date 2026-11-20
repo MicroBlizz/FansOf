@@ -1,6 +1,7 @@
 // Fans of Pinball · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.4', real: ["Ya tiene <b>música</b>: la de espera de Microblizz en los menús, una con ritmo en la mesa, la del jefe cuando aparece SurvivalBot y más deprisa durante el CAOS. Se apaga con el botón de sonido de la pausa."], joke: ["Mantenimiento confirma que el hilo musical de la Torre llega hasta la sala de máquinas del pinball. Nadie sabe apagarlo."] },
   { v: '0.2.3', real: ["<b>MACETA ROTA NUEVA</b>: al romper una maceta ahora se ve hecha pedazos, con la tierra por el suelo."], joke: ["Mantenimiento recuerda que las macetas son de cerámica corporativa y que cada trozo cuenta como inventario."] },
   { v: '0.2.2', real: ["<b>ZORRO Y SURICATA NUEVOS</b> dentro de la cápsula: más claros y con más color. El conejo sigue con su dibujo provisional mientras buscamos uno que se lea bien tan pequeño."], joke: ["SlyFox ha pedido que conste en acta que él cabía en la cápsula «perfectamente» y que la cola no cuenta."] },
   { v: '0.2.1', real: ["<b>CÁPSULA Y MACETA NUEVAS</b>: los dos primeros dibujos definitivos. La cápsula ya es de cristal de verdad, hueca, para ver bien a tu criatura dentro. El resto del arte sigue siendo provisional."], joke: ["Microblizz ha comprado las cápsulas al por mayor y avisa de que «transparente» no significa «con ventilación»."] },

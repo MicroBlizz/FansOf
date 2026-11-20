@@ -2,6 +2,8 @@
 // sin archivos), con freno por efecto (muchos choques no saturan) y el tono que sube con el combo (★3: +1 semitono por paso, tope 12);
 // el golpe fuerte lleva su sonido grave. Vibración con navigator.vibrate dentro de try, una cada 60 ms como mucho (★6), y los dos
 // interruptores guardados en la partida (opciones.sonido y opciones.vibracion). Al ocultarse la página, el audio se suspende.
+// La música son las canciones de la serie (core/js/serie/canciones.js, como en los demás prototipos): la de espera de Microblizz en los menús,
+// «gamer» en la mesa, la del jefe con SurvivalBot y más deprisa durante el CAOS. El interruptor de sonido la apaga también.
 // Las cuatro funciones sueltas del final son las que pide por su nombre el motor de sonido de core (como en Tiny).
 'use strict';
 PB.creaSonido = ({ sesion, reglas, jugo }) => {
@@ -61,5 +63,13 @@ PB.creaSonido = ({ sesion, reglas, jugo }) => {
 };
 function sonidoApagado() { return Boolean(PB.sonido && PB.sonido.apagado); }
 function volGeneral() { return sonidoApagado() ? 0 : AJUSTES.sonido.volumen; }
-function volMusica() { return 0; }
-function musicUpdate() { /* el prototipo no tiene música */ }
+function volMusica() { return AJUSTES.sonido.musica; }
+// qué canción toca: la llama principal.js cada poco
+function musicUpdate() {
+  if (typeof AC === 'undefined' || !AC || !M.bus || typeof TRACKS === 'undefined') return;
+  const e = PB.pantallas.estado(), C = AJUSTES.sonido.canciones;
+  const enMesa = e.pantalla === 'partida' && !e.fin && e.fase !== 'fin';
+  const quiere = !enMesa ? C.menu : e.jefe ? C.jefe : C.mesa;
+  if (M.name !== quiere && TRACKS[quiere]) musicSet(quiere);
+  M.tmT = enMesa && e.caos ? AJUSTES.sonido.prisaCaos : 1;
+}

@@ -33,5 +33,6 @@ TY.arranca = () => {
     requestAnimationFrame(fotograma);
   };
   requestAnimationFrame(fotograma);
+  setInterval(() => { try { musicUpdate(); } catch (e) { console.error(e); } }, 300);   // la música nunca debe parar el juego
 };
 TY.arranca();

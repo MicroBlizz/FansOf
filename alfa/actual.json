@@ -1,8 +1,8 @@
 {
- "build": 1368,
- "hash": "4849b48",
- "fecha": "2026-11-20T17:12:44Z",
- "mensaje": "Spy 0.3.0: caras, bocadillos, texturas del parking, sonidos y música de Yoshi, con el respaldo de código (tarea #84, Pepins)",
+ "build": 1369,
+ "hash": "5d87dbb",
+ "fecha": "2026-11-20T17:13:25Z",
+ "mensaje": "Cola de /gestion: lo que corre en Yoshi ya no sale como GitHub cuando el workflow pide solo su etiqueta (tarea #230, ADR 172)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -23,7 +23,7 @@
   "panic": "0.1.2",
   "paperwork": "0.11.2",
   "pets": "0.2.15",
-  "pinball": "0.2.3",
+  "pinball": "0.2.4",
   "pop": "0.6.0",
   "ratkov": "0.2.45",
   "rouflage": "0.2.81",
@@ -41,7 +41,7 @@
   "taxi": "0.2.17",
   "td": "0.13.103",
   "tiny": "0.1.0",
-  "toys": "0.1.0",
+  "toys": "0.1.1",
   "vikings": "0.1.0",
   "wings": "0.1.8",
   "zombies": "0.14.2"

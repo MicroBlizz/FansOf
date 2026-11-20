@@ -25,6 +25,13 @@ const COLA_MEDIDA = (() => {
   // El `name` de un run es su run-name («Generar [imagen]: Logo»), no el del workflow: el workflow se identifica por su archivo.
   const etiquetaWf = r => { const f = String(r.path || '').split('/').pop().replace(/\.ya?ml$/, '').replace(/-/g, ' '); return f ? f[0].toUpperCase() + f.slice(1) : String(r.name); };
   const esGenerar = r => String(r.path || '').endsWith('generar-recurso.yml');
+  /** El carril (runner) de un trabajo por las etiquetas de su runs-on: 'github' si son de GitHub (ubuntu-…, windows-…, macos-…) y si no la de Yoshi.
+   *  Desde el ADR 172 los workflows de Yoshi piden solo su etiqueta (`yoshi-smoke-test`), sin `self-hosted`: no basta con buscar `self-hosted`. */
+  const ALOJADA = /^(ubuntu|windows|macos)-/;
+  function carrilDe(L) {
+    const propia = L.find(l => l !== 'self-hosted' && !ALOJADA.test(l));
+    return propia || (L.includes('self-hosted') ? 'self-hosted' : 'github');
+  }
   function duracionRun(jobs) {
     const ok = jobs.filter(j => j.conclusion === 'success' && j.started_at && j.completed_at); if (!ok.length) return null;
     return Math.max(1, Math.round((Math.max(...ok.map(j => ms(j.completed_at))) - Math.min(...ok.map(j => ms(j.started_at)))) / 1000));
@@ -59,5 +66,5 @@ const COLA_MEDIDA = (() => {
     const o = [...d].sort((a, b) => a - b), med = o[Math.floor(o.length / 2)], ok = d.filter(x => x <= Math.max(3 * med, med + 600));
     return { seg: Math.round(ok.reduce((a, b) => a + b, 0) / ok.length), n: ok.length };
   }
-  return { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, mediaFiable, sinMedia, duracionRun, duracionPaso, cadencias, mediaCadencia };
+  return { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, mediaFiable, sinMedia, carrilDe, duracionRun, duracionPaso, cadencias, mediaCadencia };
 })();

@@ -137,7 +137,7 @@
       piezas.hud.pinta(f, cam.y / K() + techo);
       if (typeof RENDIMIENTO !== 'undefined' && RENDIMIENTO.dato) { RENDIMIENTO.dato('bolas', f.bolas.length); RENDIMIENTO.dato('particulas', a.particulas.vivas); }
     },
-    estado: () => ({ fase: p ? p.fase : '', planta: foto ? foto.planta : 0, espera, enPausa, fin }),
+    estado: () => ({ fase: p ? p.fase : '', planta: foto ? foto.planta : 0, espera, enPausa, fin, jefe: Boolean(foto && foto.jefe), caos: Boolean(foto && foto.caos.activo) }),
   });
   // lo que otros piden a la partida: el primer toque, la franja del marcador y la pausa (botón, salir de la app o un salto largo)
   PB.partidaEnMesa = {

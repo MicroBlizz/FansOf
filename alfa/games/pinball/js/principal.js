@@ -66,6 +66,7 @@ PB.arranca = () => {
     PB.quitaCarga();
     const fotograma = ms => { app.bucle.fotograma(ms); requestAnimationFrame(fotograma); };
     requestAnimationFrame(fotograma);
+    setInterval(() => { try { musicUpdate(); } catch (e) { console.error(e); } }, 300);   // la música nunca debe parar el juego
   });
 };
 PB.arranca();

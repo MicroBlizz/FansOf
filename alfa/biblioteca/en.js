@@ -217,6 +217,11 @@ IDIOMA.add({
   "TÚ DECIDES CUÁL TERMINAMOS": "YOU DECIDE WHICH ONE WE FINISH",
   "Juega los prototipos y vota en su ficha: lo que más pedís es en lo que nos centramos.": "Play the prototypes and vote on their page: what you ask for most is what we focus on.",
   "IR A VOTAR": "GO VOTE",
+  // «Apóyanos»: el enlace del menú y la franja de la portada (menu.js y biblioteca/portada-nueva.js, tarea #291)
+  "Apóyanos": "Support us",
+  "APÓYANOS": "SUPPORT US",
+  "Ayúdanos a pararle los pies a Microblizz.": "Help us stop Microblizz.",
+  "VER CÓMO": "SEE HOW",
   // el catálogo con buscador y orden de la portada nueva (biblioteca/portada-catalogo.js, tarea #277)
   "TODOS LOS JUEGOS": "ALL GAMES",
   "Buscar juego o etiqueta": "Search a game or tag",

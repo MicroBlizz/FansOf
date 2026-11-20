@@ -33,6 +33,7 @@ nav.menu a.m-cuenta::after { margin-left: 8px; }
 nav.menu a.m-cuenta .m-foto { order: -1; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--outline); object-fit: cover; }
 
 /* ---------- el menú del estilo nuevo: el logo a la izquierda; en el móvil solo logo, cuenta e idioma (lo demás va en la barra de abajo) ---------- */
+html.portada-nueva nav.menu .pn-apoya { color: var(--gold); }   /* «Apóyanos» destaca en el menú (tarea #291) */
 html.portada-nueva nav.menu .pn-logo { font-family: var(--font-display); font-size: 24px; color: var(--player); margin-right: auto; letter-spacing: 1px; }
 @media (max-width: 700px) {
   html.portada-nueva nav.menu { flex-wrap: nowrap; justify-content: flex-end; gap: 12px; padding-left: 14px; padding-right: 14px; }

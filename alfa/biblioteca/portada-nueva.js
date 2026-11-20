@@ -2,6 +2,7 @@
 // La clase «portada-nueva» de <html> la pone estilo/estilo-nuevo.js y el logo y la barra de abajo los monta menu.js, para todas las páginas (ADR 135). Aquí se añade:
 //   · el titular «Microblizz lo ha comprado todo» en la cabecera (sin CrazyBunny: Pepins lo quitó el 21-11-2026),
 //   · el bloque «Tú decides cuál terminamos» alrededor de LOS MÁS PEDIDOS (agrupar.js lo crea cuando contesta el servidor), con su botón IR A VOTAR,
+//   · la franja «Apóyanos» bajo la biblioteca, que lleva a la página de donaciones apoyanos/ (tarea #291),
 //   · y lo que la barra de abajo hace distinto en la portada («Votar» y «Novedades»).
 // Las piezas llevan la clase «pn»: sin el flag no se ven (estilo/web.css), así que cerrarlo devuelve la portada de siempre sin recargar.
 // Usa lo que ya hay en la página: t(), esc(), ESTILO_NUEVO, NUCLEO.alCambiarFlags y abrirNovedades() (novedades/ventana.js).
@@ -42,11 +43,18 @@
     ojo.observe(bib, { childList: true });
   }
 
+  // APÓYANOS: una franja llamativa entre la biblioteca y lo legal; en el móvil es la forma de llegar a la página (el menú de arriba no enseña enlaces)
+  function franjaApoyo() {
+    const antes = document.getElementById('legal'); if (!antes || document.querySelector('.pn-apoyanos')) return;
+    antes.insertAdjacentHTML('beforebegin', `<a class="pn pn-apoyanos" href="apoyanos/"><span class="pn-apoyanos-t ol">${esc(t('APÓYANOS'))}</span>
+      <span class="pn-apoyanos-p">${esc(t('Ayúdanos a pararle los pies a Microblizz.'))}</span><span class="pn-apoyanos-b">${esc(t('VER CÓMO'))}</span></a>`);
+  }
+
   let montada = false;
   function aplicar() {
     if (!ESTILO_NUEVO.activo() || montada) return;
     montada = true;
-    titular(); barra(); esperarVotar();
+    titular(); barra(); esperarVotar(); franjaApoyo();
   }
   aplicar();
   NUCLEO.alCambiarFlags(aplicar);   // los flags de la base llegan de fondo (y cada 5 minutos): abrir o cerrar se nota sin recargar

@@ -1,8 +1,8 @@
 {
- "build": 1395,
- "hash": "1dd33b5",
- "fecha": "2026-11-20T23:43:29Z",
- "mensaje": "Portada nueva: fuera CrazyBunny de la cabecera (ni animado ni quieto) y su imagen; el titular queda solo (tarea #277, Pepins)",
+ "build": 1396,
+ "hash": "a72ad35",
+ "fecha": "2026-11-20T23:58:14Z",
+ "mensaje": "Web: página Apóyanos de donaciones con el botón DONAR apagado («Muy pronto») hasta conectar el pago; enlace en el menú y franja en la portada, solo con el estilo nuevo (tarea #291, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

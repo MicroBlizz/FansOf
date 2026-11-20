@@ -1,17 +1,17 @@
-// Fans Of · MENÚ de las páginas de la web (portada, lore, privacidad, condiciones, borrar la cuenta, energía y android): UNA sola fuente, para que sea el mismo en todas.
+// Fans Of · MENÚ de las páginas de la web (portada, lore, privacidad, condiciones, borrar la cuenta, energía, android y apóyanos): UNA sola fuente, para que sea el mismo en todas.
 // Se pone en cada página justo donde va el menú, detrás de idioma-web.js:  <script src="menu.js" data-base="" data-core="1" data-pagina="lore"></script>
 //   data-base: '' en la portada y '../' en las demás · data-pagina: la que resalta · data-core="1": la página traduce con core (portada y lore).
 // Pinta, de forma síncrona (lo que venga después ya lo encuentra):
 //   · el <nav class="menu"> de arriba, con «Entrar» / «Mi cuenta» (con tu foto de Google) y los idiomas. En la portada la cuenta la llevan
 //     biblioteca/cuenta-web.js y votos.js; en las demás se lee la sesión guardada ('fansof-cuenta') solo para pintar el botón, y al pulsarlo se va a la portada (#cuenta);
-//   · las piezas del estilo nuevo (clase «pn»: solo se ven con html.portada-nueva, ADR 128 y 135): el logo del menú y la barra de abajo del móvil.
+//   · las piezas del estilo nuevo (clase «pn»: solo se ven con html.portada-nueva, ADR 128 y 135): el logo del menú, el enlace «Apóyanos» (tarea #291) y la barra de abajo del móvil.
 // El aspecto, todo en estilo/web.css. Novedades abre su ventana en la portada (#novedades).
 // Idioma: con core lo cambia él (NUCLEO.elegirIdioma, lo engancha la página); sin core se avisa a window.pagIdioma(v) y los nombres salen de la lista de abajo.
 'use strict';
 (() => {
   const s = document.currentScript, b = s.dataset.base || '', pagina = s.dataset.pagina || '', conCore = s.dataset.core === '1';
   const EN = { Inicio: 'Home', Novedades: 'News', Biblioteca: 'Library', Lore: 'Lore', Privacidad: 'Privacy', Condiciones: 'Terms', Entrar: 'Log in', 'Mi cuenta': 'My account',
-    Juegos: 'Games', Votar: 'Vote', Accesos: 'Shortcuts' };
+    Juegos: 'Games', Votar: 'Vote', Accesos: 'Shortcuts', 'Apóyanos': 'Support us' };
   const en = IDIOMA_WEB.elegido() === 'en';
   const t = x => (en && !conCore && EN[x]) || x;   // con core lo traduce la propia página
   const ICONOS = {   // trazos sencillos con el contorno de Fans Of: nada de emojis
@@ -30,6 +30,7 @@
     + `<a class="pn pn-logo ol" href="${b}#inicio" translate="no">FANS OF</a>`
     + a(b + '#inicio', 'Inicio') + a(b + '#novedades', 'Novedades', '', 'abrir-novedades') + a(b + '#biblioteca', 'Biblioteca')
     + a(b + 'lore/', 'Lore', on('lore')) + a(b + 'privacidad/', 'Privacidad', on('privacidad')) + a(b + 'condiciones/', 'Condiciones', on('condiciones'))
+    + `<a class="pn pn-apoya${pagina === 'apoyanos' ? ' on" aria-current="page' : ''}" href="${b}apoyanos/">${t('Apóyanos')}</a>`
     + '\n  <a href="' + b + '#cuenta" id="m-cuenta" class="m-cuenta">' + t('Entrar') + '</a>'
     + '\n  <span class="idiomas"><a href="#" data-idioma="es" translate="no">ES</a> · <a href="#" data-idioma="en" translate="no">EN</a> · <a href="#" data-idioma="">Auto</a></span>\n</nav>';
   // la barra de abajo del móvil: en la portada, «Votar» y «Novedades» las afina biblioteca/portada-nueva.js (el bloque de votar, la ventana)

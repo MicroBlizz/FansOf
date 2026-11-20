@@ -4,6 +4,7 @@ IDIOMA.add({
   "Lore": "Lore",
   // el menú común (menu.js): en esta página lo traduce core
   "Condiciones": "Terms",
+  "Apóyanos": "Support us",
   "Entrar": "Log in",
   "Mi cuenta": "My account",
   "Juegos": "Games",

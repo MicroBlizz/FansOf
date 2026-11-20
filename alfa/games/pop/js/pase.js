@@ -146,6 +146,7 @@ function ppPaseCuentas(antes, n) {
 // al llegar al camino: el regalo del día si no se ha abierto (una vez por sesión) o el pack de bienvenida cuando toca
 function ppAlLlegarAlCamino() {
   if (PP_PANT.actual !== 'mapa' || !$pp('#pp-modal').hidden) return;   // solo si sigues en el camino (no al entrar en un nivel)
+  if (ppMiraPresentacion()) return;   // un mundo nuevo: primero su presentación; al cerrarla se vuelve aquí (js/mundo-presenta-juego.js, tarea #272)
   if (ppPrimerosEstreno()) { ppCuentaAlEstrenar(); return; }   // Lola estrena algo: la invitación a crear cuenta espera a que acabe (js/cuenta-invitacion-juego.js, tarea #155)
   if (ppCuentaAlLlegar()) return;   // la invitación a crear cuenta, si toca (tarea #155)
   if (ppMiraBienvenida()) return;

@@ -1,0 +1,32 @@
+/* Fans of Pop · LA PRESENTACIÓN DE UN MUNDO NUEVO (tarea #272, boceto A; js/mundo-presenta-juego.js): cartel a pantalla completa con
+   el fondo del mundo, el nombre grande, la fila de los mundos, Lola y dos tarjetas (LO NUEVO y AL FINAL). Un toque la cierra.
+   En la capa #pp-ui de 540 x 960. Encima del camino y de su barra (20-30); Lola (40) puede hablar encima. Nada de lila ni de gris. */
+#pp-presenta { position: absolute; inset: 0; z-index: 35; pointer-events: auto; overflow: hidden; cursor: pointer; text-align: center;
+  background: linear-gradient(#ffe6f4, #c8f0ff); }
+#pp-presenta[hidden] { display: none; }
+#pp-presenta.pp-entra { animation: pp-pre-entra 0.4s ease-out both; }
+@keyframes pp-pre-entra { from { opacity: 0; transform: scale(1.06); } to { opacity: 1; transform: none; } }
+.pp-pre-fondo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.pp-pre-fondo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 210, 236, 0.55)); }
+.pp-pre-cab, .pp-pre-lola, .pp-pre-tarjetas, .pp-pre-toca { position: absolute; left: 24px; right: 24px; }
+.pp-pre-cab { top: 70px; }
+#pp-presenta .pp-pre-cab h2, .pp-pre-n, .pp-pre-va, .pp-pre-toca { margin: 0; color: #fff; -webkit-text-stroke: 8px #c43a84; paint-order: stroke; font-weight: 700; }
+.pp-pre-n { font-size: 38px; }
+#pp-presenta .pp-pre-cab h2 { font-size: 72px; line-height: 1.05; -webkit-text-stroke-width: 12px; }
+.pp-pre-va { font-size: 26px; margin-top: 10px; -webkit-text-stroke-width: 6px; }
+.pp-pre-tira { display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 24px; }
+.pp-pre-tira span { width: 28px; height: 28px; border-radius: 50%; box-sizing: border-box; background: rgba(255, 255, 255, 0.55); border: 3px solid #fff; }
+.pp-pre-tira .pp-pre-hecho { background: #ffcf3a; border-color: #c27a00; }
+.pp-pre-tira .pp-pre-aqui { width: 46px; height: 46px; background: #ff4f9a; border: 5px solid #fff; box-shadow: 0 0 0 6px rgba(255, 79, 154, 0.35); animation: pp-late 1.2s ease-in-out infinite; }
+.pp-pre-lola { top: 420px; display: flex; justify-content: center; }
+.pp-pre-lola .pp-ico { width: 170px !important; height: 170px !important; animation: pp-bota 0.9s ease-in-out infinite; }
+.pp-pre-tarjetas { top: 610px; display: flex; flex-direction: column; gap: 14px; }
+.pp-pre-tarjeta { display: flex; gap: 14px; align-items: center; text-align: left; background: #fff; border-radius: 30px; padding: 14px 18px;
+  border: 5px solid #8eeee4; box-shadow: 0 6px 0 #22b8b0; }
+.pp-pre-tarjeta .pp-ico { flex: none; }
+.pp-pre-tarjeta b { display: block; color: #11807a; font-size: 22px; letter-spacing: 1px; }
+.pp-pre-tarjeta span { display: block; font-size: 24px; line-height: 1.2; color: #7a4a8a; }
+.pp-pre-tarjeta.pp-pre-jefe { border-color: #ffe36e; box-shadow: 0 6px 0 #ffb800; }
+.pp-pre-tarjeta.pp-pre-jefe b { color: #c27a00; }
+.pp-pre-toca { bottom: 30px; font-size: 28px; -webkit-text-stroke: 6px #7a4a8a; animation: pp-pre-parpadea 1.2s ease-in-out infinite; }
+@keyframes pp-pre-parpadea { 50% { opacity: 0.45; } }

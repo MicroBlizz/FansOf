@@ -1,8 +1,8 @@
 {
- "build": 1388,
- "hash": "7b2c8a8",
- "fecha": "2026-11-20T22:05:26Z",
- "mensaje": "Pop: el pase rehecho como escaparate y carril: arriba lo que solo da este mes con PASE DORADO y Dorado+, el camino en horizontal (gratis arriba, dorado abajo), misiones en tarjetas y VOLVER y RECOGER TODO fijos abajo (tarea #165, reporte 32, ADR 185, Pepins)",
+ "build": 1389,
+ "hash": "081ced6",
+ "fecha": "2026-11-20T22:29:44Z",
+ "mensaje": "Pop: al llegar por primera vez a un mundo nuevo, un cartel a pantalla completa con su nombre, «mundo N de 10», lo nuevo y el jefe (se quita con un toque y vuelve tocando el título), y el camino ya no tiene botón de pausa (tarea #272, reporte 38, boceto A, ADR 186, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

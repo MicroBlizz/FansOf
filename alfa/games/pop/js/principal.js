@@ -39,7 +39,7 @@ PP_CV.addEventListener('pointerdown', e => {
 PP_CV.addEventListener('pointermove', e => { if (PP_PANT.actual === 'mapa') { const [lx, ly] = ppLogico(e); ppMapaMueve(lx, ly); } });
 window.addEventListener('pointerup', () => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppMapaArriba(); else PP_MAPA.toque = null; });
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || PP_PANT.actual === 'titulo') return;
+  if (e.key !== 'Escape' || PP_PANT.actual === 'titulo' || PP_PANT.actual === 'mapa') return;   // en el camino no hay pausa (tarea #272)
   if (PP_PANT.pausa) ppQuitaPausa(); else ppPausa();   // Esc abre y cierra la pausa (las demás ventanas se cierran con sus botones)
 });
 /* ---------- el bucle ---------- */

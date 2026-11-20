@@ -2,7 +2,7 @@
 // se resetea en el servidor (servidor/162), para que al recargar no vuelva nada de lo de antes. Funciones puras: sin SAVE, red ni dibujo.
 // · recursos: lo que se tiene y lo comprado. Monedas, corazones, huecos, ayudas, bandejas, hucha, corazones infinitos, los packs ya
 //   comprados y el pase premium. Las perlas, lo comprado del perfil y lo puesto los vacía PP_PERLAS.olvida (js/perlas-servidor.js).
-// · progreso: el camino a medias, los niveles y sus estrellas, los amigos rescatados, los tutoriales vistos, Memoria, la racha, el pase y los primeros pasos
+// · progreso: el camino a medias, los niveles y sus estrellas, los amigos rescatados, los tutoriales vistos, Memoria, la racha, el pase, los primeros pasos y los mundos presentados (tarea #272)
 //   (la partida vuelve a ser nueva: tarea #140).
 // · todo: las dos cosas.
 // No se tocan los duelos (el servidor tampoco: ni puntos ni PvP), el volumen y demás opciones, ni los cupos del día (regalo y anuncios).
@@ -11,7 +11,7 @@
 const PP_RESETEO = Object.freeze((() => {
   const QUE = Object.freeze(['recursos', 'progreso', 'todo']);
   const RECURSOS = Object.freeze(['monedas', 'vidas', 'vidaT', 'huecos', 'ayudas', 'bandejas', 'bandeja', 'hucha', 'infinitas', 'compras']);
-  const PROGRESO = Object.freeze(['record', 'victorias', 'partidas', 'vistos', 'estrellas', 'tuto', 'run', 'mejor', 'cofres', 'dentro', 'memoria', 'fallos', 'racha', 'pase', 'primeros', 'estrenos', 'cole']);
+  const PROGRESO = Object.freeze(['record', 'victorias', 'partidas', 'vistos', 'estrellas', 'tuto', 'run', 'mejor', 'cofres', 'dentro', 'memoria', 'fallos', 'racha', 'pase', 'primeros', 'estrenos', 'cole', 'mundos']);
   const QUITA_PROGRESO = Object.freeze(['marcasSubidas']);   // las marcas del ranking ya subidas: el servidor las ha puesto a cero
   // `nueva`: una partida recién creada (PP_NUEVA()); `partida`: la de ahora (solo se lee). Devuelve qué campos poner y cuáles quitar
   function cambios(que, nueva, partida) {

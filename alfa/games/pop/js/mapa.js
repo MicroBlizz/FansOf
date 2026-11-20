@@ -140,8 +140,9 @@ function ppPintaMapa(c, t) {
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
   ppTitulo(c, tr('Mundo {n}', { n: m + 1 }), 270, 52, 40);
   ppTexto(c, tr(M.nombre) + (pes ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : ''), 270, 92, 28, '#fff', 'center', pes ? '#8a1020' : dif ? '#3a3a9a' : '#c43a84');
+  PP_BOTONES_MAPA.push({ x: 270, y: 66, r: 48, f: () => ppPresentaMundo(m) });   // radio 48: solo la tarjeta del título, sin pisar el selector de dificultad. Tocar el título vuelve a enseñar la presentación del mundo (tarea #272)
   if (m > 0) { ppFlecha(c, 126, 66, -1); PP_BOTONES_MAPA.push({ x: 126, y: 66, r: 36, f: () => ppMapaVer(m - 1, false) }); }
-  // las flechas, a los lados del título: en la esquina derecha va el botón de pausa
+  // las flechas, a los lados del título (la esquina derecha queda libre: el camino ya no tiene pausa, tarea #272)
   if (m < actual) { ppFlecha(c, 414, 66, 1); PP_BOTONES_MAPA.push({ x: 414, y: 66, r: 36, f: () => ppMapaVer(m + 1, false) }); }
   ppAvisoFlechas(c, m, t);   // un «!» en la flecha que lleva a un jefe pendiente
   // el selector FÁCIL · DIFÍCIL · PESADILLA (Daniel, 31-10-2026): cada modo sale cuando se abre; el que está cerrado, con candado gris

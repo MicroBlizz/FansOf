@@ -17,7 +17,7 @@ const ppPerlasHtml = (n, px = 30) => `<span class="pp-precio">${ppIcono('i-perla
 // un PRECIO en perlas con sus euros debajo («≈ 0,89 €», tarea #177: las perlas son dinero de verdad). Solo para lo que se paga; los
 // saldos y los premios en perlas van con ppPerlasHtml. Los euros, a lo más caro (js/precios.js)
 function ppPerlasPrecioHtml(n, px = 30) {
-  const e = PP_PRECIOS.enEuros(n, PP_CFG.packs);
+  const e = ppVentaCerrada() ? null : PP_PRECIOS.enEuros(n, PP_CFG.packs);   // un menor ve solo perlas, sin euros (tarea #254)
   return e === null ? ppPerlasHtml(n, px) : `<span class="pp-precio-e">${ppPerlasHtml(n, px)}<small class="pp-euros">≈ ${PP_PRECIOS.formato(e)}</small></span>`;
 }
 // un botón que se paga con perlas (si no llegan, ofrece el pack más pequeño que llega y, al comprarlo, paga; tarea #187,

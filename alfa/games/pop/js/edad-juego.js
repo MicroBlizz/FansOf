@@ -5,7 +5,8 @@
 // · ppVentaCerrada(): para esconder las ofertas con euros, la hucha de pago, el pase de pago y la pestaña Perlas a quien dijo ser menor.
 'use strict';
 let PP_EDAD_SALTADA = false;   // «Ahora no»: esta sesión se trata como menor, sin guardar nada (la próxima vez se vuelve a preguntar)
-const ppEdadDecide = () => PP_EDAD.decide(SAVE.edad, PP_EDAD_SALTADA);
+// en la app de Android (NUCLEO.nativa) no se pregunta: ahí protegen Family Link y, más adelante, la API Age Signals de Google (ADR 181)
+const ppEdadDecide = () => NUCLEO.nativa ? 'vende' : PP_EDAD.decide(SAVE.edad, PP_EDAD_SALTADA);
 const ppVentaCerrada = () => ppEdadDecide() === 'cierra';
 function ppAntesDeVender(siVende, alNo) {
   const d = ppEdadDecide();

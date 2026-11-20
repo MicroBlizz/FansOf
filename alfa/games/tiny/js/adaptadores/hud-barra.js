@@ -1,8 +1,19 @@
-// Tiny Fans · adaptador · BARRA DE ABAJO: Nido, Asaltos (rojo) y Expedición (naranja, más grande, en el centro). Dueño: N6 (interfaz).
-// ARCHIVO-INTERFAZ: lo deja N1 vacío pero cargable; su dueño lo rellena sin cambiar los nombres que expone. Contrato: docs/guia/juegos/tiny/README.md.
+// Tiny Fans · adaptador · BARRA DEL NIDO: los botones grandes de abajo en la pantalla del nido. «Expedición» es el naranja; «Asaltos»
+// no existe hasta que se abre (nada en gris); con una mochila caída, el botón de salir avisa en rojo.
 'use strict';
-TN.hudBarra = {
-  // datos: { actual: id de pantalla, asaltoAbierto, mochilaCaida }; alIr(id) cuando se pulsa un botón
-  monta(capa, datos, alIr) {},
-  desmonta() {},
-};
+TN.hudBarra = (() => {
+  let caja = null;
+  return {
+    // datos: { asaltoAbierto, mochilaCaida, construyendo }; alIr(id): 'expedicion' | 'asalto' | 'construir'
+    monta(capa, datos, alIr) {
+      this.desmonta();
+      const boton = (id, texto, clase) => TN.crea('button', { type: 'button', className: 'tn-boton ' + clase, onclick: () => alIr(id) }, TN.iconos.nodo(id, 30), TN.crea('span', { textContent: tr(texto) }));
+      caja = TN.crea('nav', { className: 'tn-barra-nido' },
+        boton('construir', datos.construyendo ? 'Listo' : 'Construir', datos.construyendo ? 'tn-verde' : ''),
+        boton('expedicion', datos.mochilaCaida ? '¡A por la mochila!' : 'Expedición', 'tn-principal' + (datos.mochilaCaida ? ' tn-rescate' : '')),
+        ...(datos.asaltoAbierto ? [boton('asalto', 'Asaltos', 'tn-asalto')] : []));
+      capa.append(caja);
+    },
+    desmonta() { if (caja) caja.remove(); caja = null; },
+  };
+})();

@@ -1,8 +1,8 @@
 {
- "build": 1332,
- "hash": "e17728f",
- "fecha": "2026-11-20T00:27:46Z",
- "mensaje": "Tiny Fans: esqueleto del prototipo por capas (página, ajustes, dominio y adaptadores vacíos pero cargables, tests) con su ficha, especificación y ADR 170 (tarea #138, Pepins)",
+ "build": 1333,
+ "hash": "5f5eea9",
+ "fecha": "2026-11-20T00:47:45Z",
+ "mensaje": "Tiny Fans: prototipo jugable (expedición, nido con construir y asalto) con motor 3D pixelado del boceto 4, reglas con 69 tests, interfaz, sonido por código, guía y metas (tarea #138, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

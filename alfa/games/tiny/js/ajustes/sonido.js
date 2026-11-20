@@ -3,5 +3,5 @@
 'use strict';
 AJUSTES.sonido = TN.congela({
   volumen: 1,
-  vibra: { 'bateria-baja': 60, pisoton: 120 },   // (cuaderno) vibración corta, en milisegundos; se puede apagar
+  vibra: { 'bateria-baja': 60, pisoton: 120, mordisco: 30, 'gigante-pisa': 80, trampa: 60 },   // (cuaderno) vibración corta, en milisegundos; se puede apagar
 });

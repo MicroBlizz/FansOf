@@ -3,7 +3,7 @@
 'use strict';
 TN.$ = selector => document.querySelector(selector);
 TN.esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-// TN.crea('button', { className: 'tn-boton', textContent: tr('Salir'), onclick: fn }, hijo1, hijo2…)
+// TN.crea('button', { className: 'tn-boton', textContent: tr('Vale'), onclick: fn }, hijo1, hijo2…)
 TN.crea = (etiqueta, props = {}, ...hijos) => {
   const e = Object.assign(document.createElement(etiqueta), props);
   e.append(...hijos);

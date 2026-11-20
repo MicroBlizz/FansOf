@@ -15,16 +15,23 @@ TN.dev = (() => {
   }
   const estado = () => ({ ...TN.pantallas.estado(), pasos: TN.bucle.pasos, enPausa: TN.bucle.enPausa, partida: TN.sesion.partida.aJson() });
   const ve = (id, datos) => TN.pantallas.ve(id, datos);
+  // materiales de sobra para probar el nido, y el asalto abierto sin tener que volver con botín
+  function regala(n = 50) {
+    const p = TN.sesion.partida, r = TN.Nido.desdeJson(AJUSTES, p.nido), nido = r.ok ? r.valor : TN.Nido.nuevo(AJUSTES);
+    nido.guarda({ carton: n, grapas: n, migas: n, plastico: n, pilas: 5 }); p.ponNido(nido.aJson()); TN.sesion.guarda();
+    return ve(TN.pantallas.actual);
+  }
+  function abreAsalto() { TN.sesion.partida.anotaVuelta(true, 1); TN.sesion.guarda(); return ve(TN.pantallas.actual); }
   function reinicia() { TN.sesion.reinicia(); return ve(AJUSTES.pantallas.inicial); }
   // la sección del panel DEV: saltar a cada pantalla, el tiempo y la partida; detrás, los botones de cada módulo
   function panel(caja) {
     const fijos = [...TN.pantallas.ids().map(id => ['Ir a: ' + id, () => ve(id)]), ['+1 s', () => avanza(1)], ['+10 s', () => avanza(10)],
-      ['Reanudar', () => TN.bucle.reanuda()], ['+1 h de reloj', () => TN.reloj.adelanta(1)], ['Partida nueva', reinicia]];
+      ['Reanudar', () => TN.bucle.reanuda()], ['+1 h de reloj', () => TN.reloj.adelanta(1)], ['Partida nueva', reinicia], ['+50 materiales', () => regala()], ['Abrir asalto', abreAsalto]];
     const fila = TN.crea('div', { className: 'fila' });
     for (const [texto, fn] of fijos.concat(botones)) fila.append(TN.crea('button', { type: 'button', textContent: texto, onclick: fn }));
     caja.append(fila);
   }
-  return { boton, avanza, estado, ve, reinicia, reanuda: () => TN.bucle.reanuda(), pausa: () => TN.bucle.pausa(), panel };
+  return { boton, avanza, estado, ve, reinicia, regala, abreAsalto, reanuda: () => TN.bucle.reanuda(), pausa: () => TN.bucle.pausa(), panel };
 })();
 // el nombre que busca el panel DEV de core (core/js/sistema/desarrollo.js): es suyo, no un global nuevo del juego
 const UTILIDADES_JUEGO = NUCLEO.desarrollo ? [{ titulo: 'Tiny Fans', pinta: caja => TN.dev.panel(caja) }] : [];

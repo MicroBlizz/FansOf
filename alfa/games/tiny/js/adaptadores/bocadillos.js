@@ -1,9 +1,16 @@
-// Tiny Fans · adaptador · BOCADILLOS de cómic para lo que dice el becario: salen pegados a un punto de la pantalla y se van solos.
-// Dueño: N6 (interfaz).
-// ARCHIVO-INTERFAZ: lo deja N1 vacío pero cargable; su dueño lo rellena sin cambiar los nombres que expone. Contrato: docs/guia/juegos/tiny/README.md.
+// Tiny Fans · adaptador · BOCADILLOS: textos cortos que salen sobre el mundo y se van solos (lo que dice el becario, «+3», «¡Llena!»).
+// No estorban a los toques.
 'use strict';
-TN.bocadillos = {
-  // punto: { x, y } en píxeles de CSS dentro de #tn-escenario (vista.aPantalla); segundos: lo que dura
-  dice(texto, punto, segundos) {},
-  limpia() {},
-};
+TN.bocadillos = (() => {
+  const vivos = new Set();
+  return {
+    // punto: { x, y } en píxeles de CSS dentro de #tn-escenario (vista.aPantalla); clase: 'bueno' | 'malo' | '' ; segundos: lo que dura
+    dice(texto, punto, segundos = 1.2, clase = '') {
+      const b = TN.crea('div', { className: 'tn-bocadillo ' + clase, textContent: texto });
+      b.style.left = punto.x + 'px'; b.style.top = punto.y + 'px'; b.style.animationDuration = segundos + 's';
+      TN.capa().append(b); vivos.add(b);
+      setTimeout(() => { b.remove(); vivos.delete(b); }, segundos * 1000);
+    },
+    limpia() { for (const b of vivos) b.remove(); vivos.clear(); },
+  };
+})();

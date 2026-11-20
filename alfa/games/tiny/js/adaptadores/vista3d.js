@@ -1,24 +1,44 @@
 // Tiny Fans · adaptador · VISTA 3D: el motor gráfico del boceto 4 con Three.js r128 (global THREE). Pinta una escena en una textura pequeña
 // y la amplía con píxel entero; la cámara es ortográfica, no gira, va anclada a la rejilla de píxeles y sigue un punto. Un solo lienzo
-// y un solo motor para todas las pantallas: cada pantalla trae su escena. Dueño: N2 (motor gráfico).
-// ARCHIVO-INTERFAZ: lo deja N1 vacío pero cargable; su dueño lo rellena sin cambiar los nombres que expone. Contrato: docs/guia/juegos/tiny/README.md.
+// y un solo motor para todas las pantallas: cada pantalla trae su escena. Sin WebGL, `lista` es false y todo lo demás no hace nada.
 'use strict';
-TN.creaVista = (lienzo, reglas) => ({
-  lista: false,                       // true cuando hay WebGL y el motor está montado
-  // ajusta el lienzo y la textura al tamaño de la pantalla
-  tamano() {},
-  // una escena nueva (THREE.Scene) con el cielo, la niebla y las luces del boceto 4; null sin WebGL
-  escena() { return null; },
-  // pinta esa escena con la cámara actual. dt: segundos desde el pintado anterior
-  pinta(escena, dt) {},
-  // el punto del suelo que sigue la cámara (salto: true para ir de golpe)
-  sigue(x, z, salto) {},
-  // cambia de encuadre ('juego', 'ras' o 'construir', de reglas.vista.encuadres); con segundos, vuelve solo al anterior
-  encuadre(nombre, segundos) {},
-  // un punto del mundo en píxeles de CSS dentro de #tn-escenario: { x, y, visible }
-  aPantalla(x, y, z) { return { x: 0, y: 0, visible: false }; },
-  // un toque (píxeles de CSS dentro de #tn-escenario) en el punto del suelo que señala: { x, z }
-  deToque(px, py) { return { x: 0, z: 0 }; },
-  // un vector de pantalla (x a la derecha, y hacia ARRIBA) en dirección del suelo, en ejes del mundo y del mismo largo: { x, z }
-  aSuelo(vx, vy) { return { x: vx, z: -vy }; },
-});
+TN.creaVista = (lienzo, reglas) => {
+  const T = THREE, V = reglas.vista, caja = lienzo.parentElement;
+  let renderer = null;
+  try { renderer = new T.WebGLRenderer({ canvas: lienzo, antialias: false, powerPreference: 'low-power' }); } catch (e) { renderer = null; }   // sin WebGL: el juego avisa (lista = false)
+  if (!renderer) return { lista: false, tamano() {}, escena: () => null, pinta() {}, sigue() {}, encuadre() {}, aPantalla: () => ({ x: 0, y: 0, visible: false }), deToque: () => ({ x: 0, z: 0 }), aSuelo: (x, y) => ({ x, z: -y }) };
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.BasicShadowMap;
+  const pixel = TN.vistaPixel.crea(renderer, V.lejos), camara = TN.vistaCamara.crea(V, V.lejos);
+  let dpr = 1;
+  camara.encuadre('juego', 0, true);
+  const medidas = () => [caja.clientWidth || 1, caja.clientHeight || 1];
+  return {
+    lista: true,
+    tamano() {
+      const [w, h] = medidas();
+      dpr = Math.min(window.devicePixelRatio || 1, 3); renderer.setPixelRatio(dpr); renderer.setSize(w, h, false);
+      pixel.tamano(Math.floor(w * dpr), Math.floor(h * dpr), V.anchoPixeles);
+    },
+    // una escena nueva con el cielo, la niebla y las luces del boceto 4. El sol sigue a la cámara para que las sombras lleguen a todo el mapa
+    escena() {
+      const e = new T.Scene();
+      e.background = new T.Color(V.cielo); e.fog = new T.Fog(V.cielo, 96, 168);
+      e.add(new T.AmbientLight(0xb6b0ea, .52)); e.add(new T.HemisphereLight(0xfff1dc, 0x8f9bd6, .12));
+      const sol = new T.DirectionalLight(0xffe2b8, .56); sol.castShadow = true; sol.shadow.mapSize.set(1024, 1024); sol.shadow.bias = -.0008; sol.shadow.normalBias = .03;
+      Object.assign(sol.shadow.camera, { left: -22, right: 22, top: 22, bottom: -22, near: 1, far: 90 }); sol.shadow.camera.updateProjectionMatrix();
+      e.add(sol); e.add(sol.target); e.userData.sol = sol;
+      return e;
+    },
+    pinta(escena, dt) {
+      if (!escena) return;
+      const sub = camara.paso(Math.min(.05, dt || 0), pixel.ancho, pixel.alto, pixel.escala, dpr), c = camara.centro, sol = escena.userData.sol;
+      if (sol) { sol.position.set(c.x - 22, 30, c.z + 16); sol.target.position.set(c.x, 0, c.z); sol.target.updateMatrixWorld(); }
+      pixel.pinta(escena, camara.camara, sub.x, sub.y);
+    },
+    sigue: (x, z, salto) => camara.sigue(x, z, salto),
+    encuadre: (nombre, segundos, salto) => camara.encuadre(nombre, segundos, salto),
+    aPantalla(x, y, z) { const [w, h] = medidas(); return camara.aPantalla(x, y, z, w, h); },
+    deToque(px, py) { const [w, h] = medidas(); return camara.deToque(px, py, w, h); },
+    aSuelo: (vx, vy) => camara.aSuelo(vx, vy),
+  };
+};

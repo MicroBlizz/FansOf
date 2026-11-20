@@ -1,8 +1,8 @@
 {
- "build": 1335,
- "hash": "88d5816",
- "fecha": "2026-11-20T01:17:54Z",
- "mensaje": "Tiny Fans: arreglos de los dos probadores (botín al pasar, sin voltios en el nido, la salida a medias deja la mochila en el suelo, muebles que no tapan, asalto recto con flecha y paredes bajas, mordiscos más lentos) (tarea #138, Pepins)",
+ "build": 1336,
+ "hash": "cc3846c",
+ "fecha": "2026-11-20T03:29:55Z",
+ "mensaje": "Tablero: «tiny» en la lista de juegos con página de Revisar (el test de las carpetas de web/games volvía a estar en rojo desde Tiny Fans, #138)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

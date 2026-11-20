@@ -1,4 +1,4 @@
-// Fans of Pop · BANDEJA: la silicona de los tableros con forma (Daniel, 30-10-2026, con el pop-it de concha de su hija): en vez
+// Fans of Pop · BANDEJA: la silicona de los tableros con forma (Daniel, 30-10-2026): en vez
 // de la bandeja cuadrada de Yoshi, el borde sigue la forma del tablero (concha, corazón, cucurucho…) y cada fila lleva su franja
 // de color pastel, como el juguete de verdad. Se dibuja por código una vez por tablero y se guarda en un lienzo aparte.
 // Con el estilo de un mundo que trae material (tarea #110: la Pastelería), la bandeja de siempre pasa a ser una galleta de mantequilla.

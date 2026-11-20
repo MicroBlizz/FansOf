@@ -34,6 +34,7 @@ function ppPremioCandyHtml(p, px = 30) {
 /* ---------- compras con euros ---------- */
 // `alVolver` (opcional): lo que se abre cuando acaba la compra de verdad, que entrega el servidor (p. ej. la ventana de perder)
 function ppCompraEuros(titulo, html, producto, alComprar, alVolver) {
+  if (ppEdadDecide() !== 'vende') { ppAntesDeVender(() => ppCompraEuros(titulo, html, producto, alComprar, alVolver)); return; }   // tarea #254: menores, no
   if (ppCompraDePrueba()) { alComprar(); play('ppPremio'); ppFlota(tr('Compra de prueba'), 270, 300, '#4fc964'); return; }   // panel DEV (js/dev.js): sin cobrar
   if (typeof MONEDAS === 'undefined') return;
   MONEDAS.compraReal(titulo, html, r => { if (r && r.real) { ppGuarda(); if (alVolver) alVolver(); return; } alComprar(); play('ppPremio'); }, producto);   // la de verdad la entrega el servidor
@@ -96,14 +97,16 @@ const ppVentanaBienvenidaPack = () => ppVentanaPackReloj('bienvenida', tr('¡Pac
 // sale sola una vez, al volver al camino desde el nivel en que toca
 function ppMiraBienvenida() {
   if (!PP_P || !ppBienvenidaVisible() || !ppPrimerosVe('oferta') || SAVE.vistoBienvenida || PP_P.nivel < PP_CFG.ofertas.bienvenida.desdeNivel) return false;
-  SAVE.vistoBienvenida = true; ppGuarda(); ppVentanaBienvenidaPack(); return true;
+  if (ppVentaCerrada()) return false;
+  SAVE.vistoBienvenida = true; ppGuarda(); ppAntesDeVender(ppVentanaBienvenidaPack, ppPintaLateral); return true;
 }
 /* ---------- segundo pack, al llegar al mundo 2 ---------- */
 const ppVentanaPackMundo2 = () => ppVentanaPackReloj('mundo2', tr('¡Pack del mundo 2!'), tr('Para seguir a lo grande en el nuevo mundo, solo una vez:'), tr('Pack del mundo 2'));
 // sale sola una vez, al volver al camino cuando ya se ha llegado al mundo 2
 function ppMiraPackMundo2() {
   if (!ppPackMundo2Visible() || SAVE.vistoMundo2) return false;
-  SAVE.vistoMundo2 = true; ppGuarda(); ppVentanaPackMundo2(); return true;
+  if (ppVentaCerrada()) return false;
+  SAVE.vistoMundo2 = true; ppGuarda(); ppAntesDeVender(ppVentanaPackMundo2, ppPintaLateral); return true;
 }
 /* ---------- oferta de atasco ---------- */
 // tarea #186: la oferta ya no salta sola ni lleva reloj. Tras varios fallos seguidos en un nivel, Lola REGALA una ayuda (una vez al día);
@@ -133,7 +136,7 @@ function ppBotonInfinitas(t, alComprar) {
   const fila = document.createElement('div'); fila.className = 'pp-fila';
   for (const o of PP_CFG.infinitas) {
     const compra = () => { if (!ppPerlas(-o.perlas, 'infinitas')) { ppFaltanPerlas(o.perlas, compra, () => ppVentanaSinCorazones()); return; } ppDaInfinitas(o.min); play('ppPremio'); alComprar(); };   // sin perlas: el pack que llega (tarea #185)
-    const b = ppBoton('', 'pp-btn2 pp-rosa', compra);
+    const b = ppBoton('', 'pp-btn2 pp-pago', compra);   // dorado: se paga con perlas (tarea #246)
     b.innerHTML = `${ppIcono('i-infinito', 26, '#ff4a6a')}${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })} · ${ppPerlasPrecioHtml(o.perlas, 22)}`;
     fila.appendChild(b);
   }
@@ -142,12 +145,18 @@ function ppBotonInfinitas(t, alComprar) {
 }
 /* ---------- la hucha ---------- */
 function ppMeteHucha(jefe) { const H = PP_CFG.hucha; SAVE.hucha = Math.min(H.max, (SAVE.hucha || 0) + (jefe ? H.porJefe : H.porNivel)); ppGuarda(); }
+// «las perlas que hay dentro valen X €» (a la baja, js/precios.js); nada si no se puede calcular
+function ppHuchaValor(n) {
+  const v = PP_PRECIOS.valorPerlas(n, PP_CFG.packs);
+  return v === null || v <= 0 ? '' : ` ${tr('Las {n} perlas de dentro valen {e} en la tienda.', { n, e: PP_PRECIOS.formato(v) })}`;
+}
 function ppVentanaHucha() {
   ppTutorial('hucha');
   const H = PP_CFG.hucha, n = SAVE.hucha || 0, puede = n >= H.minimo;
   const t = ppAbre(`<h2>${tr('Hucha de perlas')}</h2><div class="pp-cofre">${ppIcono('i-hucha', 110, '#ffd1ec')}</div>
     <p class="pp-premio">${ppPerlasHtml(n, 36)} <small>/ ${H.max}</small></p>
     <p class="pp-sub">${tr('Cada nivel nuevo que pasas mete perlas en la hucha. Rómpela y quédatelas todas.')}</p>
+    <p class="pp-sub"><b>${tr('Se abre pagando {p}.', { p: H.precio })}</b>${ppHuchaValor(n)}</p>
     ${puede ? '' : `<p class="pp-sub">${tr('Se puede romper desde {n} perlas.', { n: H.minimo })}</p>`}`);
   if (puede) t.appendChild(ppBoton(tr('ROMPER LA HUCHA · {p}', { p: H.precio }), 'pp-btn', () => ppCompraEuros(tr('Hucha de perlas'), `<p>${tr('{n} perlas por {p}.', { n, p: H.precio })}</p>`, H.id, () => {
     ppPerlas(SAVE.hucha || 0); SAVE.hucha = 0; ppGuarda(); ppCierra(); ppPintaLateral(); ppFlota(tr('+{n} perlas', { n }), 270, 300, '#ff6ec7');
@@ -158,7 +167,7 @@ function ppVentanaHucha() {
 // el botón de un pack con reloj: salir en el lado ya es salir, así que aquí empieza a contar
 function ppBotonPackReloj(boton, k, ico, abre) {
   ppOfertaArranca(k);
-  boton(ico, '#ffd1ec', ppOfertaReloj(k) || tr('Oferta'), abre, true);
+  boton(ico, '#ffd1ec', ppOfertaReloj(k) || tr('Oferta'), () => ppAntesDeVender(abre, ppPintaLateral), true);   // sin saber la edad, primero se pregunta (tarea #254)
 }
 // HTML (#pp-lateral), a la derecha del camino: regalo diario, pase, hucha y las ofertas que estén abiertas
 function ppPintaLateral() {
@@ -175,6 +184,7 @@ function ppPintaLateral() {
   ppPrimerosLado(ppPaseLado(boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio() && ppPrimerosVe('pase'))), 'pase');   // con el flag 'pase-nuevo', anillo y escalón (js/pase-pantalla.js)
   ppFeriaBotonLateral(L);   // la Feria del finde, con su reloj (js/feria-pantalla.js)
   ppPrimerosLado(L.lastChild, 'feria');
+  if (ppVentaCerrada()) { if (ppInfinitas()) boton('i-infinito', '#ff4a6a', ppReloj(SAVE.infinitas - Date.now()), () => {}, false); return; }   // menor: ni hucha ni ofertas con euros (tarea #254)
   ppPrimerosLado(boton('i-hucha', '#ffd1ec', String(SAVE.hucha || 0), ppVentanaHucha, (SAVE.hucha || 0) >= PP_CFG.hucha.minimo && ppPrimerosVe('hucha')), 'hucha');
   if (ppBienvenidaVisible() && ppPrimerosVe('oferta')) ppBotonPackReloj(boton, 'bienvenida', 'i-perlas', ppVentanaBienvenidaPack);
   if (ppPackMundo2Visible()) ppBotonPackReloj(boton, 'mundo2', 'i-regalo', ppVentanaPackMundo2);

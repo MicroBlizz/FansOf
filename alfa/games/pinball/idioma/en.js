@@ -56,6 +56,8 @@ IDIOMA.add({
   "¡JunkCoon se une a tu equipo!": "JunkCoon joins your team!", "Capítulo 2: Cementerio de juegos, pronto": "Chapter 2: Game Graveyard, coming soon",
   "¡Misión!": "Mission!", "La semana cierra en {d} d {h} h": "The week closes in {d} d {h} h",
   // novedades (js/novedades.js): las entradas más nuevas
+  "<b>MACETA ROTA NUEVA</b>: al romper una maceta ahora se ve hecha pedazos, con la tierra por el suelo.": "<b>NEW BROKEN POT</b>: when you smash a flower pot it now shows in pieces, with the soil all over the floor.",
+  "Mantenimiento recuerda que las macetas son de cerámica corporativa y que cada trozo cuenta como inventario.": "Maintenance reminds everyone that the pots are corporate ceramics and every shard counts as inventory.",
   "<b>ZORRO Y SURICATA NUEVOS</b> dentro de la cápsula: más claros y con más color. El conejo sigue con su dibujo provisional mientras buscamos uno que se lea bien tan pequeño.": "<b>NEW FOX AND MEERKAT</b> inside the capsule: clearer and more colourful. The rabbit keeps its temporary drawing while we find one that reads well at such a small size.",
   "SlyFox ha pedido que conste en acta que él cabía en la cápsula «perfectamente» y que la cola no cuenta.": "SlyFox asked for the record to show he fit in the capsule “perfectly” and that the tail does not count.",
   "<b>CÁPSULA Y MACETA NUEVAS</b>: los dos primeros dibujos definitivos. La cápsula ya es de cristal de verdad, hueca, para ver bien a tu criatura dentro. El resto del arte sigue siendo provisional.": "<b>NEW CAPSULE AND FLOWER POT</b>: the first two final drawings. The capsule is now real glass, hollow, so you can see your creature inside. The rest of the art is still temporary.",

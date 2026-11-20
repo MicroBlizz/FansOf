@@ -53,24 +53,26 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
 
   // La textura de la imagen ya decodificada (ImageBitmap o HTMLImageElement). Sin mipmaps ni repetición, para que valga
   // cualquier medida (no solo potencias de dos), y sin voltear la Y: la UV de glTF ya tiene el origen arriba.
-  function textura(gl, imagen) {
+  function textura(gl, imagen, repite) {
     const t = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, t);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imagen);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const borde = repite ? gl.REPEAT : gl.CLAMP_TO_EDGE;   // repetir solo vale con medidas potencia de 2 (las texturas del escenario son de 512)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, borde); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, borde);
+    if (repite) { gl.generateMipmap(gl.TEXTURE_2D); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); }   // el suelo se ve lejos y de lado: sin mipmaps centellea
     return t;
   }
 
   // Una malla con textura lista para GL.pinta, a partir de empaquetaGlb y de la imagen del modelo ya decodificada.
-  GL.mallaGlb = function (empaquetado, imagen) {
+  GL.mallaGlb = function (empaquetado, imagen, repite) {
     const gl = GL.gl;
     if (!gl) throw new Error('Spy: mallaGlb: el motor 3D no está arrancado');
     const tipo = tipoIndice(gl, empaquetado.indices);
     const buf = gl.createBuffer(), bufIndices = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, empaquetado.datos, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufIndices); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, empaquetado.indices, gl.STATIC_DRAW);
-    return { buf, bufIndices, n: empaquetado.indices.length, tipoIndice: tipo, textura: textura(gl, imagen), porVertice: POR_VERTICE };
+    return { buf, bufIndices, n: empaquetado.indices.length, tipoIndice: tipo, textura: textura(gl, imagen, repite), porVertice: POR_VERTICE };
   };
 })(SPY);

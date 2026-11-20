@@ -12,6 +12,8 @@ const PP_NUEVA = () => ({ v: 1, record: 0, victorias: 0, partidas: 0, vistos: {}
   ayudas: {}, fallos: {}, racha: 0, hucha: 0, pase: null, regaloDia: '', infinitas: 0, atasco: 0, atascoDia: '', compras: {}, vistoBienvenida: false, bandeja: 'arcoiris', bandejas: {},
   feria: null,       // la Feria del finde (js/feria-pantalla.js): { estado (de PP_FERIA), bienvenida: id del finde ya saludado, entregados: premios dados solos aún sin contar }
   primeros: 'nueva', estrenos: {},   // primeros pasos (js/primeros-pasos-juego.js, tarea #140): 'nueva' desde que existen; lo ya estrenado
+  edad: '',          // 'menor' o 'adulto' (nunca el año): la pregunta de js/edad-juego.js, tarea #254; '' = aún no se sabe
+  cuentaInv: 0,      // la invitación a crear cuenta (js/cuenta-invitacion-juego.js, tarea #155): 0 sin ver, 1 vista, 2 recordada
   cole: null });   // la colección de compañeros (tarea #142, js/coleccion-juego.js), creada la primera vez con el flag companeros
 const PP_VOL = VOLUMEN.crear({ musicaBase: 0.3 });   // la mezcla de Pop: la música a la mitad suena a 0,15
 const SAVE = (() => {

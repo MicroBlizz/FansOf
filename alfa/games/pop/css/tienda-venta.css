@@ -10,3 +10,7 @@
 .pp-pack-sin-trae { display: inline-flex; align-items: center; gap: 4px; }
 .pp-pack-sin-trae small { font-size: 15px; margin-left: 6px; color: #6a3500; }
 @media (prefers-reduced-motion: reduce) { .pp-btn2.pp-pack-sin { animation: none; } }
+/* «Sin corazones» (tarea #246): «Más opciones» despliega una caja con llenar con monedas, los infinitos y pedir a amigos */
+.pp-plegado { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; padding: 4px 0 6px; border-radius: 22px; background: rgba(34, 184, 176, 0.1); }
+.pp-plegado[hidden] { display: none; }
+.pp-btn2.pp-mas.pp-abierto { transform: translateY(3px); }

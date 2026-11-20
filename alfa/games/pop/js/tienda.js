@@ -1,7 +1,7 @@
 // Fans of Pop · TIENDA (fase 3, 30-10-2026: «la monetización de Candy Crush»): las PERLAS, la moneda de pago (como sus lingotes
 // de oro), y los ANUNCIOS con premio. Todo voluntario y a precio fijo; nada con azar se paga (ADR 004).
 // · Sin toques: ver un anuncio (+3 toques, una vez por intento), +5 toques con perlas (cada vez más caro) o rendirse (−1 corazón).
-// · Sin corazones: el reloj, llenarlos con monedas o con perlas, o ver un anuncio (+1 corazón, 3 al día).
+// · Sin corazones: el reloj, un anuncio (+1 corazón, 3 al día) o llenarlos con perlas; lo demás, plegado en «Más opciones».
 // · La tienda de perlas: los paquetes con euros pasan por la ventana de compra de core (MONEDAS.compraReal: Google Play en la app,
 //   Paddle en la web cuando se abra; hasta que existan los productos, avisa de que llegarán con la app). Los anuncios los pone la
 //   capa común (ANUNCIOS.ver: AdMob, H5 o el nuestro de reserva); como en Swipe, de momento solo en la alfa y en desarrollo.
@@ -45,24 +45,34 @@ function ppOfreceSeguir(T) {
   if (ppHayAnuncios() && !T.anuncio) t.appendChild(ppBoton(tr('VER ANUNCIO: +{n} TOQUES', { n: PP_CFG.anuncio.toques }), 'pp-btn2 pp-verde', () => { T.anuncio = true; ppVerAnuncio('pop-toques', () => sigue(PP_CFG.anuncio.toques), () => ppOfreceSeguir(T)); }));
   t.appendChild(ppBoton(tr('Rendirse'), 'pp-btn2 pp-azul', () => { ppCierra(); T.hecho = true; ppSinToques(); }));
 }
-/* ---------- sin corazones ---------- */
-function ppBotonesSinCorazones(t, alLlenar, vuelta = null) {
-  t.appendChild(ppBotonPrecio(tr('LLENAR'), PP_CFG.precioVidas, 'pp-btn', () => { if (ppLlenaVidas()) alLlenar(); }));
-  t.appendChild(ppBotonPerlas(tr('LLENAR'), PP_CFG.perlas.vidas, 'pp-btn2 pp-rosa', () => { SAVE.vidas = PP_CFG.vida; SAVE.vidaT = Date.now(); ppGuarda(); alLlenar(); }, vuelta, 'vidas'));
-  if (ppHayAnuncios() && ppAnunciosHoy() < PP_CFG.anuncio.vidasDia)
-    t.appendChild(ppBoton(tr('VER ANUNCIO: +1 CORAZÓN ({n} hoy)', { n: PP_CFG.anuncio.vidasDia - ppAnunciosHoy() }), 'pp-btn2 pp-verde', () => ppVerAnuncio('pop-vida', () => { SAVE.anunciosHoy++; ppSumaVida(1); alLlenar(); })));
+/* ---------- sin corazones (tarea #246, opción B de Pepins: primero lo gratis) ---------- */
+// qué va en el botón rosa grande: el anuncio si hay y quedan hoy; si no, llenar con monedas si llegan; si tampoco, ninguno (y lo
+// único grande es el dorado de perlas)
+const ppSinCorazonesPrincipal = (hayAnuncio, monedas, precio) => (hayAnuncio ? 'anuncio' : monedas >= precio ? 'monedas' : null);
+// en `t`: el rosa (lo gratis) y el dorado (llenar con perlas, con sus euros). En `mas` (la caja de «Más opciones»): llenar con
+// monedas cuando no es el rosa
+function ppBotonesSinCorazones(t, mas, alLlenar, vuelta = null) {
+  const quedan = PP_CFG.anuncio.vidasDia - ppAnunciosHoy();
+  const prin = ppSinCorazonesPrincipal(ppHayAnuncios() && quedan > 0, SAVE.monedas, PP_CFG.precioVidas);
+  if (prin === 'anuncio') t.appendChild(ppBoton(tr('VER ANUNCIO: +1 CORAZÓN ({n} hoy)', { n: quedan }), 'pp-btn', () => ppVerAnuncio('pop-vida', () => { SAVE.anunciosHoy++; ppSumaVida(1); alLlenar(); })));
+  const monedas = ppBotonPrecio(tr('LLENAR'), PP_CFG.precioVidas, prin === 'monedas' ? 'pp-btn' : 'pp-btn2 pp-sec', () => { if (ppLlenaVidas()) alLlenar(); });
+  if (prin === 'monedas') t.appendChild(monedas);
+  t.appendChild(ppBotonPerlas(tr('LLENAR'), PP_CFG.perlas.vidas, 'pp-btn2 pp-pago', () => { SAVE.vidas = PP_CFG.vida; SAVE.vidaT = Date.now(); ppGuarda(); alLlenar(); }, vuelta, 'vidas'));
+  if (prin !== 'monedas') mas.appendChild(monedas);
 }
 /* ---------- la tienda (con pestañas, como Candy Crush) ---------- */
 // OFERTAS (pack de bienvenida, la de atasco, la hucha y el pase) · PERLAS (los paquetes con euros) · AYUDAS (con perlas, sueltas o
 // de 3 en 3 más baratas) · BANDEJAS (las bonitas, con monedas). `vuelta`: la ventana a la que vuelve VOLVER (null: solo se cierra).
 let PP_TIENDA_VUELTA = null, PP_TIENDA_PESTANA = 'ofertas';
 function ppTienda(vuelta, pestana) {
+  if (ppEdadDecide() === 'pregunta') { const sigue = () => ppTienda(vuelta, pestana); ppEdadPide(sigue, sigue); return; }   // la primera vez, la edad (tarea #254)
   ppTutorial('tienda');
   if (vuelta !== undefined) PP_TIENDA_VUELTA = vuelta;   // sin decir nada (al cambiar de pestaña) se mantiene
   if (pestana) PP_TIENDA_PESTANA = pestana;
+  if (ppVentaCerrada() && PP_TIENDA_PESTANA === 'perlas') PP_TIENDA_PESTANA = 'ayudas';   // un menor no ve los packs con euros
   const t = ppAbre(`<h2>${tr('Tienda')}</h2><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)} · ${ppMonedasHtml(SAVE.monedas, 28)}</p>`, true);
   const tabs = document.createElement('div'); tabs.className = 'pp-tabs';
-  for (const [k, txt] of [['ofertas', tr('Ofertas')], ['perlas', tr('Perlas')], ['ayudas', tr('Ayudas')], ['bandejas', tr('Bandejas')]]) {
+  for (const [k, txt] of [['ofertas', tr('Ofertas')], ['perlas', tr('Perlas')], ['ayudas', tr('Ayudas')], ['bandejas', tr('Bandejas')]].filter(([k]) => !(k === 'perlas' && ppVentaCerrada()))) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-tab' + (PP_TIENDA_PESTANA === k ? ' pp-on' : '') + (k === 'perlas' ? ' pp-tab-perlas' : ''); b.textContent = txt;
     if (k === 'perlas') b.insertAdjacentHTML('afterbegin', ppIcono('i-perla', 20, '#ffd1ec'));   // la que más se compra, en dorado (tarea #187)
     b.onclick = () => { play('select'); ppTienda(undefined, k); }; tabs.appendChild(b);
@@ -75,6 +85,7 @@ function ppTienda(vuelta, pestana) {
 }
 // `alAcabar`: lo que se hace cuando llegan las perlas (por defecto, repintar la tienda; tarea #187: «comprar solo lo que falta»)
 function ppCompraPack(p, alAcabar = () => ppTienda()) {
+  if (ppEdadDecide() !== 'vende') { ppAntesDeVender(() => ppCompraPack(p, alAcabar)); return; }   // tarea #254: menores, no
   if (ppCompraDePrueba()) { ppPerlas(p.perlas); play('ppPremio'); alAcabar(); return; }   // panel DEV (js/dev.js): sin cobrar
   if (typeof MONEDAS === 'undefined') return;
   MONEDAS.compraReal(tr('{n} perlas', { n: p.perlas }), `<p>${tr('{n} perlas por {p}.', { n: p.perlas, p: p.precio })}</p>`, r => {

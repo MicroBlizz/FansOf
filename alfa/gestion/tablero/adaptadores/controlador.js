@@ -40,6 +40,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     ({ tareas, columnas, descartadas, juegos, yo } = r.valor);
     filtro.yo = yo;   // la bandeja «Te toca» filtra por quien mira (tarea #161)
     if (r.valor.sinReacciones) aviso('No se han podido leer las reacciones: el tablero sale sin ellas.');
+    if (r.valor.sinMirados) aviso('No se han podido leer los pasos ya mirados: las casillas de «Qué mirar» salen vacías.');
     el(hueco.filtros).innerHTML = TABLERO.vista.filtros(r.valor.juegos, filtro, esc);
     pintaPanel(false);
     pintaTablero();
@@ -135,6 +136,21 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     columnas = casos.repartir(tareas, filtro);
     pintaTablero();
   }
+  // Una casilla de «Qué mirar» marcada o desmarcada (ADR 182): se guarda en el servidor sin repintar el detalle (no se cierra lo desplegado) y se ponen al
+  // día la cuenta de arriba y la tarjeta. Si no se guarda, la casilla vuelve a como estaba y se dice por qué
+  async function marcaPaso(casilla) {
+    const t = panel && panel.id ? tareaDe(panel.id) : null, paso = casilla.dataset.paso, mirado = casilla.checked;   // lo de este toque, por si llega otro antes de la respuesta
+    if (!t) { casilla.checked = !mirado; return; }
+    aviso('');
+    const r = await casos.mirar(t, paso, mirado);
+    if (!r.ok) { casilla.checked = !mirado; avisaError(r); return; }
+    tareas = tareas.map(x => (x.id === t.id ? TABLERO.conPasoMirado(x, paso, mirado) : x));
+    columnas = casos.repartir(tareas, filtro);
+    casilla.closest('.tb-paso').classList.toggle('mirado', mirado);
+    const c = casilla.closest('.tb-que-mirar').querySelector('[data-cuenta-mirados]');   // la de su panel, aunque ya se haya abierto otro
+    if (c) c.textContent = TABLERO.vistaRevisar.cuenta(tareaDe(t.id));
+    pintaTablero();
+  }
   // pulsar una tarjeta (o Intro sobre ella) abre su detalle; pulsar la que ya está abierta lo cierra
   function conectaTarjetas() {
     const elige = t => abre(panel && panel.id === Number(t.dataset.id) ? null : { id: Number(t.dataset.id) });
@@ -193,7 +209,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       clicRevisar(ev, caja);
     };
     caja.oninput = ev => { if (ev.target.name === 'titulo') buscaParecidas(ev.target.value, ev.target.form); };
-    caja.onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };
+    caja.onchange = ev => { const s = ev.target.closest('[data-mover]'), p = ev.target.closest('[data-paso]'); if (s) mueve(s.dataset.mover, s.value); if (p) marcaPaso(p); };
     caja.onsubmit = ev => { ev.preventDefault(); aviso(''); if ('cambios' in ev.target.dataset) pideCambios(ev.target); else guarda(ev.target); };
     el(hueco.vista).onkeydown = ev => { if (ev.key === 'Escape' && !cierraGrande() && panel && panel.id) cierra(); };
   }

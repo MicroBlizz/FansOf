@@ -131,8 +131,16 @@ const MONEDAS = (() => {
     if (typeof PROBADOR !== 'undefined' && PROBADOR.puede && PROBADOR.puede()) return PROBADOR.enPruebas();
     return (typeof PAGOS !== 'undefined' && PAGOS.disponible()) || (typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible()) || enDesarrollo();
   }
+  // Un juego puede exigir cuenta antes de comprar (tarea #155): responde al hook 'compra-exige-cuenta' con el motivo (texto en español; vacío = no exige).
+  // Si el jugador es invitado sale la ventana de cuenta (cuenta-pantalla.js) y no se abre nada más; al volver con la cuenta, el juego retoma ('cuenta-vuelta' 'compra').
+  function exigeCuenta() {
+    if (typeof fire !== 'function' || typeof window.pedirCuenta !== 'function') return false;
+    const motivo = fire('compra-exige-cuenta');
+    return !!motivo && window.pedirCuenta(motivo, 'compra', { titulo: 'PRIMERO, TU CUENTA', cancelar: 'VOLVER' });
+  }
   function compraReal(titulo, html, alComprar, producto) {
     if (typeof confirmBox !== 'function') return;
+    if (exigeCuenta()) return;
     if (conPuerta() && vaAPagar(producto)) PUERTA_ADULTOS.pide(() => compraSinPuerta(titulo, html, alComprar, producto));
     else compraSinPuerta(titulo, html, alComprar, producto);
   }

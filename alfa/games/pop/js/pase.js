@@ -64,6 +64,7 @@ function ppPaseCabecera(P, e) {
     <p class="pp-sub"><small>${tr('Pasa niveles nuevos para ganar puntos. Se renueva en {d} días.', { d: Math.ceil((finMes - Date.now()) / 86400000) })}</small></p>`;
 }
 function ppPaseBotonPremium(t) {
+  if (ppVentaCerrada()) return;   // un menor no ve el pase de pago (tarea #254)
   const C = PP_CFG.pase;
   const b = ppBoton('', 'pp-btn', () => ppCompraEuros(tr('Pase de Pop'), `<p>${tr('Desbloquea todos los premios premium de esta temporada.')}</p>`, C.id, () => { ppPaseAlDia().premium = true; ppGuarda(); ppVentanaPase(); ppPintaLateral(); }));
   b.innerHTML = `${ppIcono('i-pase', 30, '#ffd64a')} ${tr('DESBLOQUEAR PREMIUM · {p}', { p: C.precio })}`;
@@ -167,7 +168,8 @@ function ppVentanaRegalo() {
 // al llegar al camino: el regalo del día si no se ha abierto (una vez por sesión) o el pack de bienvenida cuando toca
 function ppAlLlegarAlCamino() {
   if (PP_PANT.actual !== 'mapa' || !$pp('#pp-modal').hidden) return;   // solo si sigues en el camino (no al entrar en un nivel)
-  if (ppPrimerosEstreno()) return;   // partida nueva: Lola estrena lo que se acaba de abrir (js/primeros-pasos-juego.js, tarea #140)
+  if (ppPrimerosEstreno()) { ppCuentaAlEstrenar(); return; }   // Lola estrena algo: la invitación a crear cuenta espera a que acabe (js/cuenta-invitacion-juego.js, tarea #155)
+  if (ppCuentaAlLlegar()) return;   // la invitación a crear cuenta, si toca (tarea #155)
   if (ppMiraBienvenida()) return;
   if (ppMiraPackMundo2()) return;   // el segundo pack, al llegar al mundo 2 (js/ofertas.js, tarea #187)
   if (ppPrimerosVe('feria') && ppFeriaAlLlegar()) return;   // premios de la feria entregados solos o su bienvenida (js/feria-pantalla.js)

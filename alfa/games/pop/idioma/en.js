@@ -181,6 +181,7 @@ IDIOMA.add({
   "Cielo despejado": "Clear Skies",
   "Copito": "Snowflake",
   "Corazones infinitos:": "Unlimited hearts:",
+  "Más opciones": "More options",
   "Cosquillas": "Tickles",
   "DESBLOQUEAR PREMIUM · {p}": "UNLOCK PREMIUM · {p}",
   "DESHACER Y SEGUIR": "UNDO AND CONTINUE",

@@ -1,6 +1,7 @@
-// Fans of Spy · ADAPTADORES · Las caras en plano (64 x 64), hechas por código en un lienzo 2D con trazo negro gordo (aire de cómic):
-// las de la barra de turnos (CrazyBunny, el Becario, el vigilante y la cámara) y la de Lola. Son provisionales, hasta que las
-// pinte Yoshi. Las ilustraciones de las cartas ya son suyas (img/cartas/). SPY.iconos.cara(lienzo, tipo).
+// Fans of Spy · ADAPTADORES · Las caras de la barra de turnos (CrazyBunny, el Becario, el vigilante y la cámara) y la de Lola.
+// Son ilustraciones de Yoshi (img/caras/, webp con fondo transparente), recortadas a la cabeza cuando el dibujo es de cuerpo entero.
+// Hasta que llega la imagen (o si no llega) se ven las de repuesto, hechas por código en un lienzo 2D con trazo negro gordo.
+// Las ilustraciones de las cartas también son suyas (img/cartas/). SPY.iconos.cara(lienzo, tipo).
 'use strict';
 var SPY = globalThis.SPY || (globalThis.SPY = {});
 (function (S) {
@@ -48,12 +49,31 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     camara() { caja(12, 22, 34, 22, 5, METAL); forma([[46, 26], [58, 20], [58, 46], [46, 40]], '#0c1020'); bola(20, 30, 3.5, 3.5, ROJO); raya(26, 44, 26, 56); raya(16, 56, 36, 56); },
   };
 
-  function dibuja(lienzo, tabla, id, ancho, alto) {
-    lienzo.width = ancho; lienzo.height = alto;
-    g = lienzo.getContext('2d');
-    g.clearRect(0, 0, ancho, alto);
-    pluma();
-    if (tabla[id]) tabla[id]();
+  // Las ilustraciones de Yoshi. Recorte: la parte del dibujo (en fracciones de su ancho) que se ve dentro del círculo.
+  const RECORTE = { agente: [0.19, 0.0, 0.62], becario: [0.19, 0.0, 0.62], vigilante: [0.19, 0.0, 0.62], camara: [0.05, 0.05, 0.9], lola: [0.05, 0.05, 0.9] };
+  const IMAGEN = {}, PINTADOS = new Map();   // tipo -> imagen lista; lienzo -> tipo (para repintar los que esperaban)
+  function carga(tipo) {
+    const img = new Image();
+    img.onload = () => {
+      IMAGEN[tipo] = img;
+      for (const [lienzo, t] of PINTADOS) { if (!lienzo.isConnected) PINTADOS.delete(lienzo); else if (t === tipo) dibuja(lienzo, t); }   // los que ya no están en pantalla se olvidan
+    };
+    img.onerror = () => { IMAGEN[tipo] = null; };   // sin imagen: se queda la de código
+    img.src = 'img/caras/' + tipo + '.webp?v=' + SPY.AJ.version;
   }
-  S.iconos = Object.freeze({ cara: (lienzo, tipo) => dibuja(lienzo, CARAS, tipo, 64, 64) });
+  for (const t of Object.keys(RECORTE)) carga(t);
+
+  function dibuja(lienzo, tipo) {
+    const ancho = 96;
+    lienzo.width = ancho; lienzo.height = ancho;
+    g = lienzo.getContext('2d');
+    g.clearRect(0, 0, ancho, ancho);
+    const img = IMAGEN[tipo];
+    if (img) { const r = RECORTE[tipo], lado = r[2] * img.naturalWidth; g.drawImage(img, r[0] * img.naturalWidth, r[1] * img.naturalHeight, lado, lado, 0, 0, ancho, ancho); return; }
+    g.save(); g.scale(ancho / 64, ancho / 64);
+    pluma();
+    if (CARAS[tipo]) CARAS[tipo]();
+    g.restore();
+  }
+  S.iconos = Object.freeze({ cara: (lienzo, tipo) => { PINTADOS.set(lienzo, tipo); dibuja(lienzo, tipo); } });
 })(SPY);

@@ -1,5 +1,5 @@
 // Fans of Spy · ADAPTADORES · Los modelos de Yoshi (.glb, figuras de vinilo de una pieza con su textura): al arrancar los descarga
-// los 8 a la vez, los lee (gl/glb.js), decodifica su imagen y hace sus mallas con textura (gl/texturas.js). Cada .glb viene en las
+// los 8 a la vez (y con ellos las 3 texturas del parking), los lee (gl/glb.js), decodifica su imagen y hace sus mallas con textura (gl/texturas.js). Cada .glb viene en las
 // medidas propias del generador (tamaño y origen cualesquiera, de frente hacia +z); la tabla AJUSTE dice solo la altura que debe
 // tener en el juego (una casilla mide 1) y el giro para que mire al norte (−z), y `ajuste` saca de su caja (mínimo y máximo) la
 // matriz que lo deja de ese alto, mirando al norte, centrado en x y z y apoyado en y = 0. Lo que no se pueda cargar se queda sin
@@ -59,7 +59,7 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
 
   // Los 8 a la vez. Nunca falla: deja en S.modelos.glb los que se cargaron (los que no, sin poner). Devuelve cuántos cargó.
   async function carga() {
-    const hechos = await Promise.all(NOMBRES.map(uno));
+    const [hechos] = await Promise.all([Promise.all(NOMBRES.map(uno)), S.texturasEscenario.carga()]);
     const glb = {};
     NOMBRES.forEach((n, i) => { if (hechos[i]) glb[n] = hechos[i]; });
     S.modelos.glb = Object.freeze(glb);

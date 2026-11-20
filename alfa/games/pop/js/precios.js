@@ -56,5 +56,10 @@ const PP_PRECIOS = (() => {
     const l = (packs || []).filter(p => p.perlas >= faltan).sort((a, b) => a.perlas - b.perlas);
     return l.length ? l[0] : null;
   }
-  return Object.freeze({ euros, perlaCara, perlaBarata, enEuros, ofertaEnPerlas, valorOferta, formato, mejorValor, lote, packQueLlega });
+  // n perlas en euros al pack MÁS BARATO por perla y a la baja (múltiplo de 0,10): lo que valen, nunca más; null sin packs
+  function valorPerlas(perlas, packs) {
+    const p = perlaBarata(packs);
+    return p === null ? null : Math.floor(perlas * p * 10 + 1e-9) / 10;
+  }
+  return Object.freeze({ valorPerlas, euros, perlaCara, perlaBarata, enEuros, ofertaEnPerlas, valorOferta, formato, mejorValor, lote, packQueLlega });
 })();

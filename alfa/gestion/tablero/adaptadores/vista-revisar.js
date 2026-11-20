@@ -18,9 +18,11 @@ TABLERO.vistaRevisar = (() => {
   const urgente = t => (t.prioridad === 'alta' ? ` <span class="tb-urgente">${rayo}Urgente</span>` : '');
   const buena = t => `<button type="button" class="tb-buena" data-buena="${t.id}">Dar por buena</button>`;
   // Debajo de la tarjeta: «Probar» si hay juego y «Dar por buena» si es tuya y está en revisión. Nada si no hay ninguno
+  // y, si ya has marcado algún paso de «Qué mirar» (ADR 182), cuántos llevas
+  const llevas = (t, yo) => (TABLERO.puedoRevisar(t, yo) && TABLERO.cuentaMirados(t).mirados ? `<div class="meta tb-llevas">Mirado ${cuenta(t)}</div>` : '');
   const tarjeta = (t, yo, esc) => {
     const botones = (t.estado === 'en_revision' ? probar(t, esc) : '') + (TABLERO.puedoRevisar(t, yo) ? buena(t) : '');
-    return botones ? `<div class="tb-revisar">${botones}</div>` : '';
+    return llevas(t, yo) + (botones ? `<div class="tb-revisar">${botones}</div>` : '');
   };
   // La bandeja «Te toca» (arriba del tablero): una caja por tipo con su cifra; la elegida sale marcada y otro toque la quita
   const caja = (b, elegida, esc) => `<button type="button" class="tb-caja${b.id === elegida ? ' activo' : ''}" data-bandeja="${b.id}" style="--tono:${b.tono}" aria-pressed="${b.id === elegida}"><b>${b.cuantas}</b>${esc(b.titulo)}</button>`;
@@ -36,10 +38,14 @@ TABLERO.vistaRevisar = (() => {
     <div class="tb-atajos">${ATAJOS.map(a => `<button type="button" data-atajo="${esc(a)}">${esc(a)}</button>`).join('')}</div>
     <button type="submit" class="tb-enviar">Enviar y devolver a En curso</button></form>`;
 
-  // «Qué mirar»: los pasos que deja Claude al subir (uno por línea), con una casilla para ir marcando (solo en esta pantalla, no se guarda)
-  const pasos = texto => String(texto || '').split('\n').map(l => l.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim()).filter(Boolean);
-  const queMirar = (t, esc) => (pasos(t.que_mirar).length ? `<div class="tb-que-mirar"><b>Qué mirar</b>${pasos(t.que_mirar)
-    .map(p => `<label class="tb-paso"><input type="checkbox">${enlazado(p, esc)}</label>`).join('')}</div>` : '');
+  // «Qué mirar»: los pasos que deja Claude al subir (uno por línea), con una casilla para ir marcando. Lo marcado se guarda por persona (ADR 182) y
+  // arriba dice cuántos llevas (el controlador lo pone al día al marcar, en [data-cuenta-mirados])
+  const cuenta = t => { const c = TABLERO.cuentaMirados(t); return `${c.mirados} de ${c.total}`; };
+  const paso = (p, esc) => `<label class="tb-paso${p.mirado ? ' mirado' : ''}"><input type="checkbox" data-paso="${esc(p.texto)}"${p.mirado ? ' checked' : ''}>${enlazado(p.texto, esc)}</label>`;
+  const queMirar = (t, esc) => {
+    const pasos = TABLERO.pasosConMarca(t);
+    return pasos.length ? `<div class="tb-que-mirar"><b>Qué mirar <span class="tb-cuenta" data-cuenta-mirados>${cuenta(t)}</span></b>${pasos.map(p => paso(p, esc)).join('')}</div>` : '';
+  };
 
   const ESTILO = '.tb-revisar{display:flex;gap:8px;margin-top:6px}.tb-revisar>*{flex:1;white-space:nowrap}'
     + '.tb-probar{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border-radius:10px;border:3px solid #ef4444;background:#fff;color:#7f1414;font-weight:800;text-decoration:none;padding:0 12px}.tb-probar:hover{background:#ffe4e4;color:#7f1414}.tb-probar.grande{min-height:56px;font-size:18px;border-radius:14px}'
@@ -48,9 +54,9 @@ TABLERO.vistaRevisar = (() => {
     + '.tb-barra-revisar{position:sticky;bottom:-8px;display:flex;gap:10px;padding:10px 0;background:var(--panel);border-top:1px solid var(--linea)}.tb-barra-revisar>*{flex:1;min-height:54px;font-size:16px;border-radius:14px}.tb-barra-revisar .tb-buena{flex:1.3}'
     + '.tb-bandeja{margin-bottom:10px;padding:12px;border-radius:14px;border:2px solid #ef4444;background:color-mix(in srgb,#ef4444 12%,var(--panel));display:grid;gap:8px}.tb-bandeja-titulo{font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px}.tb-bandeja-titulo button{margin-left:auto;text-transform:none}'
     + '.tb-cajas{display:flex;gap:10px}.tb-caja{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:64px;border:2px solid var(--tono);border-radius:12px;background:var(--panel);color:var(--texto);font-weight:700;padding:8px 12px;text-align:left}.tb-caja b{font-size:24px;line-height:1}.tb-caja.activo{background:var(--tono);color:#10202b}'
-    + '.tb-que-mirar{border:2px solid #ef4444;border-radius:12px;padding:10px 12px;display:grid;gap:6px}.tb-que-mirar b{font-size:12px;letter-spacing:.04em;text-transform:uppercase}.tb-paso{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.35}.tb-paso input{width:22px;height:22px;margin:0;flex:none;accent-color:#ffd23f}.tb-mas>summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}.tb-mas{display:grid;gap:8px;border:1px solid var(--linea);border-radius:12px;padding:0 12px 8px}.tb-mas>summary::after{content:"+";margin-left:auto;font-size:20px;color:var(--acento)}.tb-mas[open]>summary::after{content:"−"}.tb-como>summary{cursor:pointer;min-height:32px}'
+    + '.tb-que-mirar{border:2px solid #ef4444;border-radius:12px;padding:10px 12px;display:grid;gap:6px}.tb-que-mirar b{font-size:12px;letter-spacing:.04em;text-transform:uppercase}.tb-paso{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.35}.tb-paso input{width:22px;height:22px;margin:0;flex:none;accent-color:#ffd23f}.tb-paso.mirado{opacity:.6}.tb-cuenta{float:right;font-weight:700;letter-spacing:0;text-transform:none}.tb-llevas{margin-top:4px}.tb-mas>summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}.tb-mas{display:grid;gap:8px;border:1px solid var(--linea);border-radius:12px;padding:0 12px 8px}.tb-mas>summary::after{content:"+";margin-left:auto;font-size:20px;color:var(--acento)}.tb-mas[open]>summary::after{content:"−"}.tb-como>summary{cursor:pointer;min-height:32px}'
     + '.tb-hoja textarea{font-size:16px;border:2px solid #3b82f6}.tb-atajos{display:flex;flex-wrap:wrap;gap:8px}.tb-atajos button{min-height:40px;border-radius:20px;border:2px solid #3b82f6;background:transparent;color:var(--texto);font-weight:700;padding:0 14px}.tb-enviar{min-height:54px;border-radius:14px;border:0;background:#3b82f6;color:#fff;font-weight:800;font-size:16px}'
     + '.tb-urgente{display:inline-flex;align-items:center;gap:3px;background:#fff;color:#111;border:2px solid #111;border-radius:8px;padding:1px 7px;font-size:12px;font-weight:800;white-space:nowrap}'
     + '@media(max-width:700px){.tb-cajas{gap:8px}.tb-caja{padding:8px 10px;font-size:13px}.tb-panel{width:100%}}';
-  return { enlazado, probar, tarjeta, bandeja, barra, hoja, queMirar, urgente, rayo, ESTILO };
+  return { enlazado, probar, tarjeta, bandeja, barra, hoja, queMirar, cuenta, urgente, rayo, ESTILO };
 })();

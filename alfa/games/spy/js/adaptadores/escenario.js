@@ -179,7 +179,7 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     contorno(b, pl);
     casillas(b, pl, G, piezas);
     tramosConModelo(b, pl, G, piezas);
-    return { malla: GL.malla(F.datos(b)), piezas, focos: focos(pl) };
+    return { malla: GL.malla(F.datos(b)), piezas, focos: focos(pl), texturadas: S.texturasEscenario.construye(pl) };
   }
 
   S.escenario = Object.freeze({ construye, tramos });

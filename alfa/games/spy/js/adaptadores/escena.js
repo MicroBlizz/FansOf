@@ -107,9 +107,13 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   }
   // Lo que lleva un guardia encima de la cabeza según su estado: «!» en alerta y «?» si sospecha. Mira siempre a la cámara.
   const SENAL = { alerta: 'exclama', sospecha: 'duda', mira: 'duda' };
+  // Con los bocadillos de Yoshi (senales.js) cargados se apuntan para pintarlos en 2D encima de la imagen; si no, el modelo por código.
+  const TIPO_SENAL = { alerta: 'alerta', sospecha: 'duda', mira: 'duda' }, senales = [];
   function pintaSenal(E, g, alto) {
+    const y = alto + Math.sin(E.vis.t * 6) * 0.03, tipo = TIPO_SENAL[g.estado];
+    if (tipo && S.senales.disponible(tipo)) { senales.push({ x: g.x, y: y + 0.22, z: g.z, tipo, tamano: 1.3 }); return; }
     const modelo = S.modelos[SENAL[g.estado]];
-    if (modelo) GL.pinta(modelo, M.une(M.traslada(g.x, alto + Math.sin(E.vis.t * 6) * 0.03, g.z), M.rotaY(E.cam.giro), M.escala(1.25, 1.25, 1.25)), tinte(COLOR[g.estado]));
+    if (modelo) GL.pinta(modelo, M.une(M.traslada(g.x, y, g.z), M.rotaY(E.cam.giro), M.escala(1.25, 1.25, 1.25)), tinte(COLOR[g.estado]));
   }
 
   // Lo que ve un vigía tal como está en pantalla (se guarda mientras no cambie de casilla ni de dirección).
@@ -220,7 +224,9 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
   function pinta(E) {
     const v = E.vis;
     GL.empieza(luces(E));
+    senales.length = 0;
     GL.pinta(E.mundo.malla, IDENT);
+    for (const m of E.mundo.texturadas) GL.pinta(m, IDENT, null, true);   // suelo, plazas y pared de Yoshi, encima del suelo de color
     const transparentes = pintaPiezas(E);
     pintaAgente(E);
     for (const g of v.guardias.values()) pintaGuardia(E, g);
@@ -232,6 +238,7 @@ var SPY = globalThis.SPY || (globalThis.SPY = {});
     pintaMarcas(E);
     pintaSueltos(E);
     GL.pintaLote();
+    S.senales.pinta(senales);
   }
 
   S.escena = Object.freeze({ pinta, COLOR });

@@ -36,6 +36,12 @@ function ppVentanaSalioAMedias() {
 function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
 function ppBoton(texto, clase, f) { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = () => { play('select'); f(); }; return b; }
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
+// un botón turquesa que despliega y pliega una caja con lo menos usado (tarea #246). Se mete en la caja y luego se ponen los dos
+function ppPlegado(texto) {
+  const caja = document.createElement('div'); caja.className = 'pp-plegado'; caja.hidden = true;
+  const boton = ppBoton(texto, 'pp-btn2 pp-sec pp-mas', () => { caja.hidden = !caja.hidden; boton.classList.toggle('pp-abierto', !caja.hidden); });
+  return { boton, caja };
+}
 // las estrellas del nivel en HTML (dibujo de Yoshi si está; si no, una estrella recortada con CSS)
 function ppEstrellasHtml(n, total = 3) {
   let h = '<div class="pp-estrellas">';
@@ -132,9 +138,12 @@ function ppVentanaSinCorazones() {
   ppTutorial('sinCorazones');
   const reloj = () => { const el = $pp('#pp-reloj'); if (!el) { clearInterval(tic); return; } el.textContent = ppVidas() > 0 ? tr('¡Ya tienes corazones!') : tr('El siguiente corazón llega en {t}', { t: ppReloj(ppFaltaVida()) }); };
   const tic = setInterval(reloj, 1000); reloj();
-  ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
-  ppBotonInfinitas(t, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
-  ppBotonPedirCorazones(t);   // js/pantalla-corazones.js
+  // tarea #246: un rosa (lo gratis), el dorado de perlas y lo demás plegado en «Más opciones»
+  const mas = ppPlegado(tr('Más opciones'));
+  ppBotonesSinCorazones(t, mas.caja, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
+  ppBotonInfinitas(mas.caja, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
+  ppBotonPedirCorazones(mas.caja);   // js/pantalla-corazones.js
+  t.append(mas.boton, mas.caja);
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-volver', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {

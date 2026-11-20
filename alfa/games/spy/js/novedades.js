@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.3.0', real: ['<b>CARAS, SONIDOS Y PARKING DE YOSHI</b>: la barra de turnos y Lola estrenan caras ilustradas, las vidas son zanahorias, los guardias sueltan un bocadillo de cómic con «!» o «?», el suelo y las paredes del parking tienen textura de hormigón con su banda de peligro, y todos los efectos y la música de sigilo son grabaciones nuevas.'],
+    joke: ['Microblizz ha cambiado los pitidos del sistema de seguridad por «sonido de ambiente». Los Becarios siguen sin saber si es una alarma o la cafetera.'] },
   { v: '0.2.0', real: ['<b>MODELOS 3D DE VERDAD</b>: CrazyBunny, los Becarios, las cámaras, la caja de mudanza, los coches, la garita, la barrera y el cochazo del CEO estrenan modelos 3D con su dibujo, con el mismo trazo de cómic. Ahora se mueven como figuras de juguete: dan saltitos al andar, se agachan de puntillas y se inclinan al correr. Y si el vigilante está en la garita, la garita se vuelve medio transparente para que lo veas.'],
     joke: ['Microblizz ha sustituido a sus Becarios de cajas de cartón por figuras de vinilo. Recursos Humanos dice que «cobran lo mismo».'] },
   { v: '0.1.1', real: ['<b>CARTAS ILUSTRADAS</b>: las 13 cartas estrenan ilustración de verdad, con CrazyBunny y los Becarios en acción, y un marco nuevo con el coste bien a la vista.'],

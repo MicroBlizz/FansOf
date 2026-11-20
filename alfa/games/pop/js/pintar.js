@@ -9,9 +9,9 @@ const PP_LETRA = 0.74;   // Fredoka es más ancha que la letra pixelada de antes
 function ppGeom(n) { const lado = 440, x = 50, y = Math.round(PP_V.H / 2 - lado / 2 - 40); return { n, x, y, lado, celda: lado / n }; }
 function ppCentro(g, i) { const x = i % g.n, y = (i - x) / g.n; return [g.x + (x + 0.5) * g.celda, g.y + (y + 0.5) * g.celda]; }
 function ppCeldaEn(g, lx, ly) { if (lx < g.x || ly < g.y || lx >= g.x + g.lado || ly >= g.y + g.lado) return -1; return Math.floor((ly - g.y) / g.celda) * g.n + Math.floor((lx - g.x) / g.celda); }
-// los colores del juguete: una fila de cada color
-const PP_FILAS = [[345, 85, 70], [25, 95, 62], [52, 95, 60], [130, 65, 55], [195, 85, 58], [270, 70, 68]];
-const PP_COLORES = ['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'];   // el mismo orden, para los dibujos de Yoshi
+// los colores de las filas (paleta «Chuche», Pepins 20-11-2026, tarea #260: propia de Fans Of, sin lila): una fila de cada color
+const PP_FILAS = [[345, 85, 70], [175, 70, 52], [48, 95, 60], [140, 60, 52], [25, 95, 62], [215, 80, 64]];
+const PP_COLORES = ['rosa', 'cielo', 'amarillo', 'menta', 'melocoton', 'azul'];   // el mismo orden que PP_FILAS, para los dibujos de burbuja
 const ppSpriteBurbuja = (i, n, arriba) => 'b-' + PP_COLORES[Math.floor(i / n) % PP_COLORES.length] + (arriba === 2 ? '-doble' : arriba ? '-arriba' : '-abajo');
 // la doble (mundo 2) usa su dibujo con nata; si aún no está, la normal
 const ppSpriteArriba = (i, n, up) => (up >= 2 && ppTieneImg(ppSpriteBurbuja(i, n, 2)) ? ppSpriteBurbuja(i, n, 2) : ppSpriteBurbuja(i, n, true));

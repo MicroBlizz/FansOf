@@ -19,7 +19,7 @@ const PP_FORMAS = {
       ['######', '#....#', '#.##.#', '#.##.#', '#....#', '######'],   // marco con centro
       ['.#..#.', '######', '######', '######', '.####.', '..##..']],  // gatito
 };
-// LAS FORMAS DE CADA MUNDO (Daniel, 30-10-2026, con el pop-it de concha de su hija: «en la playa conchas, peces, pelotas… y así con
+// LAS FORMAS DE CADA MUNDO (Daniel, 30-10-2026: «en la playa conchas, peces, pelotas… y así con
 // cada mundo»): salen en la mayoría de sus niveles del mismo tamaño, y la primera es la del jefe. La bandeja sigue el borde (bandeja.js).
 const PP_FORMAS_MUNDO = [
   { 5: [['.#.#.', '#####', '#####', '.###.', '..#..'],          // corazón
@@ -38,7 +38,7 @@ const PP_FORMAS_MUNDO = [
         ['..##..', '.####.', '######', '######', '######', '.####.']] }, // bola de helado
   { 5: [['.###.', '#####', '#####', '.###.', '.###.'],          // concha pequeña
         ['#.##.', '#####', '.####', '#####', '#.##.']],         // pez pequeño
-    6: [['.####.', '######', '######', '######', '.####.', '.####.'],   // concha (como el pop-it de la hija de Daniel)
+    6: [['#.##.#', '######', '######', '.####.', '.####.', '..##..'],   // concha de vieira (abanico con muescas y punta abajo)
         ['#.###.', '######', '.#####', '.#####', '######', '#.###.'],   // pez
         ['.####.', '######', '######', '######', '######', '.####.'],   // pelota de playa
         ['..##..', '..##..', '######', '.####.', '.####.', '##..##']] }, // estrella de mar

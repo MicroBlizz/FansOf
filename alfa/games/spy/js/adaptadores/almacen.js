@@ -17,7 +17,7 @@ SPY.almacen = (() => {
     guarda(progreso) { Object.assign(SAVE, JSON.parse(JSON.stringify(progreso))); escribe(); },
     // el sonido: encendido (efectos a tope) o apagado (todo a cero)
     conSonido: () => SAVE.vol > 0,
-    ponSonido(si) { SAVE.vol = si ? 1 : 0; SAVE.mus = si ? 0.5 : 0; escribe(); applyVolume(); },   // applyVolume (core) sube o baja el altavoz en el momento
+    ponSonido(si) { SAVE.vol = si ? 1 : 0; SAVE.mus = si ? 0.5 : 0; escribe(); applyVolume(); SPY.musica.actualiza(); },   // applyVolume (core) sube o baja el altavoz en el momento; la música se pone al día
   };
 })();
 // lo que pide el motor de sonido de core
@@ -25,4 +25,4 @@ const SPY_VOL = VOLUMEN.crear({ musicaBase: 0.3 });
 function sonidoApagado() { return SPY_VOL.apagado(SAVE); }
 function volGeneral() { return SPY_VOL.general(SAVE); }
 function volMusica() { return SPY_VOL.musica(SAVE); }
-function musicUpdate() { /* el prototipo aún no tiene música: la hará Yoshi */ }
+function musicUpdate() { SPY.musica.actualiza(); }   // la música es un mp3 en bucle de Yoshi (sonido.js), no la de código de core

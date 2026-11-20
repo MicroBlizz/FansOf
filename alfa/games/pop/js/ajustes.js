@@ -41,6 +41,8 @@ const PP_CFG = {
   // PRIMEROS PASOS (tarea #140; Pepins, 19-11-2026): en una partida nueva cada cosa se abre al GANAR su nivel (1 = el primero) y Lola la
   // estrena con un regalito pequeño (monedas o una ayuda, nunca perlas). La tienda y las opciones, siempre. `texto`: lo que dice Lola al
   // estrenarla (sin texto, la estrena su propia ventana: el regalo diario y la oferta; el equipo, el primer rescate). Reglas: js/primeros-pasos.js
+  // CUENTA (tarea #155; Pepins, 20-11-2026): Lola invita a crearla al ganar el nivel `primera` y, si dijeron «más tarde», una vez más en `recuerdo`.
+  cuenta: { primera: 5, recuerdo: 10 },
   primeros: {
     cosas: {
       equipo:  { nivel: 3, lugar: 'juego' },
@@ -102,6 +104,8 @@ const PP_CFG = {
       regalo: { ayudas: { martillo: 1 }, texto: '¡Un martillo de regalo! Hace pop sin gastar toque.' } },   // sin reloj ni salir solo: tras 3 fallos Lola regala esto (tarea #186)
   },
   // la HUCHA de perlas: cada nivel nuevo superado mete perlas; desde `minimo` se puede romper pagando y te las quedas todas
+  // la EDAD (tarea #254, js/edad.js): a quien no llega a esta edad no se le enseñan ofertas con euros. Se pregunta solo el año, así que ante la duda es menor
+  edad: { mayor: 18 },
   hucha: { porNivel: 2, porJefe: 6, minimo: 40, max: 150, id: 'pop_hucha', precio: '2,99 €' },
   // el PASE de temporada (un mes): puntos al ganar niveles (1, y 1 más con 3 estrellas); cada `puntos` puntos, un escalón con su
   // premio gratis y su premio premium (el premium se compra una vez por temporada)

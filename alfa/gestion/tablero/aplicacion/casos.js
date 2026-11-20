@@ -2,8 +2,9 @@
 // `mover` una tarea, `apuntar` una idea o un fallo con el formulario corto y buscar las `parecidas` a un título. Habla con el servidor por un PUERTO (`repositorio`), nunca por la red:
 //   { lista() → Promise<json[]>, guardar(tarea) → Promise<{ok, id?, motivo?}>, mover(id, estado, nota) → Promise<{ok, motivo?}>, informe(id, accion, nota, texto) → Promise<{ok, motivo?}>,
 //     parecidas(texto, excluir) → Promise<[{ id, titulo, estado, parecido }]>,
-//     reacciones() → Promise<{ quien, reacciones: [{ tarea, quien, reaccion, cuando }] }>, reaccionar(id, reaccion) → Promise<{ok, reacciones?, motivo?}> }
-// reacciones y reaccionar (SQL 155) son opcionales: sin ellas, el tablero carga igual y sin reacciones
+//     reacciones() → Promise<{ quien, reacciones: [{ tarea, quien, reaccion, cuando }] }>, reaccionar(id, reaccion) → Promise<{ok, reacciones?, motivo?}>,
+//     mirados() → Promise<{ quien, mirados: [{ tarea, paso, cuando }] }>, mirar(id, paso, mirado) → Promise<{ok, motivo?}> }
+// reacciones y reaccionar (SQL 155) y mirados y mirar (SQL 177) son opcionales: sin ellas, el tablero carga igual, sin reacciones o sin casillas guardadas
 // `guardar` lleva `requiere` (lista de números) si el formulario los trae. Los adaptadores lo cumplen (adaptadores/repositorio-servidor.js) y los tests le pasan uno en memoria. Antes de ir al servidor, el dominio avisa de lo que
 // está mal (formulario o movimiento no permitido); un rechazo del servidor llega como el mismo tipo de error, con su motivo. Todo devuelve resultados, no excepciones.
 'use strict';
@@ -26,6 +27,14 @@ TABLERO.casos = repositorio => {
       return { lista: (r && r.reacciones) || [], yo: (r && r.quien) || null, falla: false };
     } catch (e) { return { lista: [], yo: null, falla: true, causa: e }; }
   }
+  // Los pasos de «Qué mirar» ya marcados por quien mira (SQL 177, ADR 182): tampoco son imprescindibles; sin ellos, las casillas salen vacías
+  async function leeMirados() {
+    if (!repositorio.mirados) return { lista: [], falla: false };
+    try {
+      const r = await repositorio.mirados();
+      return { lista: (r && r.mirados) || [], falla: false };
+    } catch (e) { return { lista: [], falla: true, causa: e }; }
+  }
   async function enviar(llamada) {
     try { return aResultado(await llamada()); } catch (e) { return TABLERO.error('sin-servidor', { causa: e }); }
   }
@@ -36,15 +45,23 @@ TABLERO.casos = repositorio => {
       try { json = await repositorio.lista(); } catch (e) { return TABLERO.error('sin-servidor', { causa: e }); }
       if (!Array.isArray(json)) return TABLERO.error('sin-servidor', { causa: new Error('respuesta-inesperada') });
       const lectura = json.map(TABLERO.Tarea.desdeJson);
-      const reac = await leeReacciones();
-      const tareas = TABLERO.conReacciones(lectura.filter(r => r.ok).map(r => conGrafo(r.valor.aJson())), reac.lista, reac.yo);
-      return TABLERO.ok({ columnas: TABLERO.reparte(tareas, filtro), juegos: TABLERO.juegosDe(tareas), tareas, descartadas: lectura.length - tareas.length, yo: reac.yo, sinReacciones: reac.falla });
+      const [reac, mir] = await Promise.all([leeReacciones(), leeMirados()]);
+      const tareas = TABLERO.conMirados(TABLERO.conReacciones(lectura.filter(r => r.ok).map(r => conGrafo(r.valor.aJson())), reac.lista, reac.yo), mir.lista);
+      return TABLERO.ok({ columnas: TABLERO.reparte(tareas, filtro), juegos: TABLERO.juegosDe(tareas), tareas, descartadas: lectura.length - tareas.length, yo: reac.yo,
+        sinReacciones: reac.falla, sinMirados: mir.falla });
     },
     // Poner, cambiar o quitar (si es la misma) la reacción de quien mira a una tarea (ADR 149). Resultado: la tarea con sus reacciones nuevas, o el error
     async reaccionar(tarea, reaccion, yo) {
       if (!TABLERO.esReaccion(reaccion)) return TABLERO.error('reaccion');
       const r = await enviar(() => repositorio.reaccionar(tarea.id, reaccion));
       return r.ok ? TABLERO.ok({ ...tarea, reacciones: TABLERO.limpiaReacciones(r.valor.reacciones, yo) }) : r;
+    },
+    // Marcar o desmarcar un paso de «Qué mirar» (ADR 182). Resultado: la tarea con sus pasos mirados al día (los calcula aquí, así dos toques seguidos
+    // no se pisan aunque las respuestas lleguen cambiadas de orden), o el error
+    async mirar(tarea, paso, mirado) {
+      if (!TABLERO.esPaso(paso) || typeof mirado !== 'boolean') return TABLERO.error('datos');
+      const r = await enviar(() => repositorio.mirar(tarea.id, paso, mirado));
+      return r.ok ? TABLERO.ok(TABLERO.conPasoMirado(tarea, paso, mirado)) : r;
     },
     // Repartir otra vez las tareas ya cargadas con otro filtro (juego, responsable o texto), sin ir al servidor
     repartir: (tareas, filtro) => TABLERO.reparte(tareas, filtro),

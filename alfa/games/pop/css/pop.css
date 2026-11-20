@@ -49,7 +49,7 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-lema { margin: 0 0 6px; font-weight: 700; font-size: 22px; color: #c43a84; background: rgba(255, 255, 255, 0.9); border-radius: 999px; box-shadow: 0 0 0 4px #ff9ccf; padding: 9px 22px 10px; text-align: center; }
 /* ventanas de gelatina */
 .pp-modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 18px; box-sizing: border-box; background: rgba(255, 180, 220, 0.45); pointer-events: auto; z-index: 30; }
-.pp-tarjeta { width: 100%; max-width: 430px; max-height: 94%; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+.pp-tarjeta { width: 100%; max-width: 430px; max-height: 94%; overflow: auto; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
   background: var(--pp-crema); padding: 24px 20px 22px; box-sizing: border-box; border-radius: 28px; box-shadow: inset 0 0 0 6px #ff9ccf, inset 0 0 0 10px #fff, inset 0 0 0 13px #ffd1ec, 0 10px 0 rgba(196, 58, 132, 0.3);
   animation: pp-sale 0.22s steps(5); }
 .pp-tarjeta.pp-ancha { max-width: 504px; }
@@ -100,7 +100,7 @@ img.pp-ico { border-radius: 0; }
 .pp-pack { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px 12px; border: 4px solid #ff9ccf; border-radius: 22px;
   background: linear-gradient(180deg, #fff, #ffe6f4); font: inherit; font-size: 26px; color: #7a3a7a; cursor: pointer; box-shadow: 0 5px 0 #e07ab5; }
 .pp-pack b { font-size: 22px; color: #fff; background: #4fc964; border-radius: 999px; padding: 3px 14px; box-shadow: inset 0 -3px 0 #26924a; }
-.pp-pack i { position: absolute; top: -10px; right: -6px; font-style: normal; font-weight: 700; font-size: 16px; color: #fff; background: #ff6eb5; border-radius: 999px; padding: 2px 8px; }
+.pp-pack i { position: absolute; top: -10px; right: 4px; font-style: normal; font-weight: 700; font-size: 16px; color: #fff; background: #ff6eb5; border-radius: 999px; padding: 2px 8px; }
 .pp-pack:active { transform: translateY(4px); box-shadow: 0 1px 0 #e07ab5; }
 /* el botón ¡LISTO! del duelo, debajo del tablero */
 #pp-listo { position: absolute; left: 50%; bottom: 13%; transform: translateX(-50%); z-index: 30; min-width: 240px; }
@@ -133,7 +133,7 @@ img.pp-ico { border-radius: 0; }
 .pp-tabs { display: flex; gap: 6px; width: 100%; }
 /* la tienda tiene el mismo alto en todas las pestañas (lo que no cabe se desliza) y tapa el menú de detrás (tarea #185) */
 .pp-tarjeta.pp-tienda { height: 94%; }
-.pp-tienda .pp-packs { flex: 1 1 auto; min-height: 0; overflow-y: auto; align-content: start; }
+.pp-tienda .pp-packs { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; align-content: start; }   /* nunca barra de lado: se adapta al ancho del móvil */
 .pp-modal:has(.pp-tienda) { background: rgba(255, 180, 220, 0.88); }
 #pp-ui .pp-tab { flex: 1; font: inherit; font-size: 19px; font-weight: 700; padding: 8px 4px; border-radius: 14px 14px 6px 6px; border: 3px solid #ff9ccf; background: #fff; color: #c43a84; cursor: pointer; }
 #pp-ui .pp-tab.pp-on { background: linear-gradient(180deg, #ffb057, #ff7a1a); border-color: #c2510a; color: #fff; }

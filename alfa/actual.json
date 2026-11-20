@@ -1,8 +1,8 @@
 {
- "build": 1375,
- "hash": "5d578af",
- "fecha": "2026-11-20T19:11:04Z",
- "mensaje": "Pop: un menor no ve ningun euro (ni el ≈ X €) y en la app de Google Play no se pregunta la edad (ADR 181, tarea #254, Pepins)",
+ "build": 1376,
+ "hash": "c082306",
+ "fecha": "2026-11-20T19:12:28Z",
+ "mensaje": "Pop: la tienda y sus ventanas nunca sacan barra de lado: el aviso «Vale X €» ya no se sale de la tarjeta (tarea #254, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

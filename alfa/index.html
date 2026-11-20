@@ -9,21 +9,21 @@
 <link rel="icon" type="image/png" href="core/img/fog-192.png">
 <link rel="apple-touch-icon" href="core/img/fog-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=209feae">
-<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=209feae">
-<link rel="stylesheet" href="core/css/base.css?v=209feae">
-<link rel="stylesheet" href="estilo/web.css?v=209feae">
-<link rel="stylesheet" href="estilo/pie.css?v=209feae">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=209feae">
-<link rel="stylesheet" href="novedades/ventana.css?v=209feae">
-<link rel="stylesheet" href="biblioteca/votos.css?v=209feae">
-<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=209feae">
-<link rel="stylesheet" href="biblioteca/portada.css?v=209feae">
+<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=e223e8b">
+<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=e223e8b">
+<link rel="stylesheet" href="core/css/base.css?v=e223e8b">
+<link rel="stylesheet" href="estilo/web.css?v=e223e8b">
+<link rel="stylesheet" href="estilo/pie.css?v=e223e8b">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=e223e8b">
+<link rel="stylesheet" href="novedades/ventana.css?v=e223e8b">
+<link rel="stylesheet" href="biblioteca/votos.css?v=e223e8b">
+<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=e223e8b">
+<link rel="stylesheet" href="biblioteca/portada.css?v=e223e8b">
 </head>
 <body>
-<script src="core/js/sistema/idioma-regla.js?v=209feae"></script>
-<script src="idioma-web.js?v=209feae"></script>
-<script src="menu.js?v=209feae" data-base="" data-core="1" data-pagina=""></script>
+<script src="core/js/sistema/idioma-regla.js?v=e223e8b"></script>
+<script src="idioma-web.js?v=e223e8b"></script>
+<script src="menu.js?v=e223e8b" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -298,6 +298,12 @@
           <div class="row"><a class="play ol" href="games/tiny/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
+        <section class="game" id="g-toys" style="--wc: #124a44" data-alfa data-tipo="Prototipo" data-etiquetas="Roguelike · Gestión · Humor de oficina · Oficina" data-capturas="toys-1.jpg toys-2.jpg">
+          <h2 class="ol">FANS OF TOYS</h2>
+          <p>Microblizz ha descubierto que los muñecos dan más dinero que los juegos, y te pone a ti al frente de la fábrica. Cada mes eliges qué juguete fabricar, cuántos, a qué precio y si lo anuncias. Cada trimestre el consejo pide una meta de beneficio que sube: si llegas, fichas a un ejecutivo que cambia las reglas; si no, despedido. Con noticias basadas en casos reales, reseñas de clientes y el chat de los fans.</p>
+          <div class="row"><a class="play ol" href="games/toys/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
         <section class="game" id="g-pinball" style="--wc: #135fcd" data-alfa data-tipo="Prototipo" data-etiquetas="Pinball · Roguelike · Criaturas · Pixel art · Oficina" data-capturas="pinball-1.jpg pinball-2.jpg">
           <h2 class="ol">FANS OF PINBALL</h2>
           <p>En la Torre de Microblizz la bola eres tú: tu criatura va hecha un ovillo dentro de una cápsula de gashapon. Toca a cada lado para golpear con las palas, revienta macetas, cajas y cofres, quítate de encima a los becarios y llena la barra de CAOS para soltar al equipo entero a la vez. Abre la escalera antes de que se acabe el reloj, elige 1 de 3 mejoras y sube planta a planta hasta SurvivalBot, el jefe de la planta 10.</p>
@@ -394,8 +400,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a1357.50b9a6b"></script>
-<script src="core/js/novedades.js?v=209feae"></script>
+<script src="core/js/nucleo.js?v=0-a1358.02316a8"></script>
+<script src="core/js/novedades.js?v=e223e8b"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -404,14 +410,14 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=209feae"></script>
-<script src="core/js/cuenta/dominio/roles.js?v=209feae"></script>
-<script src="core/js/cuenta/aplicacion/roles-casos.js?v=209feae"></script>
-<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=209feae"></script>
-<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=209feae"></script>
-<script src="core/js/cuenta/roles.js?v=209feae"></script>
-<script src="core/js/sistema/flags.js?v=209feae"></script>
-<script src="estilo/estilo-nuevo.js?v=209feae"></script>
+<script src="core/js/sistema/cuenta.js?v=e223e8b"></script>
+<script src="core/js/cuenta/dominio/roles.js?v=e223e8b"></script>
+<script src="core/js/cuenta/aplicacion/roles-casos.js?v=e223e8b"></script>
+<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=e223e8b"></script>
+<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=e223e8b"></script>
+<script src="core/js/cuenta/roles.js?v=e223e8b"></script>
+<script src="core/js/sistema/flags.js?v=e223e8b"></script>
+<script src="estilo/estilo-nuevo.js?v=e223e8b"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'games/beams/idioma/en-raiz.js', 'games/snakes/idioma/en-raiz.js', 'games/merge/idioma/en-raiz.js', 'games/swipe/idioma/en-raiz.js', 'games/pop/idioma/en-raiz.js', 'games/panic/idioma/en-raiz.js', 'games/vikings/idioma/en-raiz.js', 'games/goose/idioma/en-raiz.js', 'games/asalto/idioma/en-raiz.js', 'games/kingdom/idioma/en-raiz.js', 'games/auto/idioma/en-raiz.js', 'games/shelter/idioma/en-raiz.js', 'games/soccer/idioma/en-raiz.js', 'games/wings/idioma/en-raiz.js', 'games/spy/idioma/en-raiz.js', 'games/air/idioma/en-raiz.js', 'games/basement/idioma/en-raiz.js', 'games/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'games/rumble-3d/idioma/en-raiz.js', 'games/roguelite/idioma/en-raiz.js', 'games/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'games/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'games/recruit/idioma/en-raiz.js', 'games/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js', 'games/paperwork/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -437,16 +443,16 @@ const fail = id => () => {
 };
 
 </script>
-<script src="novedades/lo-nuevo.js?v=209feae"></script>
-<script src="novedades/ventana.js?v=209feae"></script>
-<script src="biblioteca/grupos.js?v=209feae"></script>
-<script src="biblioteca/agrupar.js?v=209feae"></script>
-<script src="biblioteca/tienda.js?v=209feae"></script>
-<script src="biblioteca/cuenta-web.js?v=209feae"></script>
-<script src="biblioteca/votos.js?v=209feae"></script>
-<script src="biblioteca/alfa.js?v=209feae"></script>
-<script src="biblioteca/portada-nueva.js?v=209feae"></script>
-<script src="core/js/sistema/analitica.js?v=209feae"></script>
-<script src="pie.js?v=209feae" defer></script>
+<script src="novedades/lo-nuevo.js?v=e223e8b"></script>
+<script src="novedades/ventana.js?v=e223e8b"></script>
+<script src="biblioteca/grupos.js?v=e223e8b"></script>
+<script src="biblioteca/agrupar.js?v=e223e8b"></script>
+<script src="biblioteca/tienda.js?v=e223e8b"></script>
+<script src="biblioteca/cuenta-web.js?v=e223e8b"></script>
+<script src="biblioteca/votos.js?v=e223e8b"></script>
+<script src="biblioteca/alfa.js?v=e223e8b"></script>
+<script src="biblioteca/portada-nueva.js?v=e223e8b"></script>
+<script src="core/js/sistema/analitica.js?v=e223e8b"></script>
+<script src="pie.js?v=e223e8b" defer></script>
 </body>
 </html>

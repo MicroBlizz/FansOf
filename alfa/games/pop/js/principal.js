@@ -76,6 +76,7 @@ function ppArranque() {
   $pp('#pp-listo').onclick = () => { if (ppCortActiva()) return; play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-lola-saltar').onclick = () => { play('select'); ppLolaSalta(); };   // «Saltar»: sin consejos (js/lola.js)
+  PP_UI.addEventListener('pointerdown', e => { if (e.target === PP_UI) ppLolaSacude(); });   // un toque en lo oscuro (la capa de css/lola.css): ¡VALE! salta (tarea #248)
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-tienda').onclick = () => { ppCargaSonidos(); play('select'); ppTienda(null, 'ofertas'); };
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };

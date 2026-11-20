@@ -1,0 +1,141 @@
+/* Fans of Toys · estilos del prototipo. Aire de mesa de cartas en una pantalla antigua: tapete que se mueve, rayas de tubo, cartas
+   crema con borde gordo y letras de píxel. Colores en variables --ty-…; botones naranja, azul, rojo, verde y amarillo: nada de lila
+   ni de gris. Móvil vertical primero: una columna de 440 px como mucho. */
+:root {
+  --ty-tapete: #124a44; --ty-tinta: #1b1320; --ty-crema: #fff4dc; --ty-papel: #ffe9b8; --ty-panel: #0d2f2b; --ty-naranja: #ff8a1f; --ty-naranja-oscuro: #c9560a;
+  --ty-rojo: #e2452f; --ty-rojo-oscuro: #9c2414; --ty-verde: #4fae3c; --ty-verde-oscuro: #2f7d32; --ty-amarillo: #ffd23f; --ty-azul: #2f8fd8; --ty-azul-oscuro: #1c5fa8;
+  --ty-titulo: 'Jersey 10', 'Pixelify Sans', sans-serif; --ty-cifra: 'Jersey 10', monospace; --ty-texto: 'Fredoka', sans-serif;
+}
+html, body { margin: 0; height: 100%; background: #061a18; overflow: hidden; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+#ty-escenario { position: fixed; inset: 0; margin: 0 auto; max-width: 440px; overflow: hidden; background: var(--ty-tapete); }
+#ty-fondo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+/* las rayas del tubo y las esquinas oscuras, por encima de todo y sin estorbar al dedo */
+#ty-escenario::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .13) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .38) 100%); }
+#ty-capa { position: absolute; inset: 0; font-family: var(--ty-texto); color: var(--ty-crema); }
+#ty-carga { position: fixed; inset: 0; display: grid; place-items: center; background: var(--ty-tapete); color: var(--ty-crema); font: 400 52px var(--ty-titulo); letter-spacing: 2px; z-index: 5; }
+.ty-icono { image-rendering: pixelated; display: block; flex: none; }
+.ty-pantalla { position: absolute; inset: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; overscroll-behavior: contain;
+  padding: calc(8px + env(safe-area-inset-top)) 10px calc(12px + env(safe-area-inset-bottom)); }
+.ty-pantalla p, .ty-pantalla h1, .ty-pantalla h2, .ty-pantalla h3, .ty-pantalla ul, .ty-pantalla ol, .ty-pantalla blockquote { margin: 0; }
+.ty-oculto { visibility: hidden; }
+
+/* botones */
+.ty-boton { min-height: 54px; padding: 8px 18px; border: 3px solid var(--ty-tinta); border-radius: 12px; background: var(--ty-crema); color: var(--ty-tinta);
+  font: 400 29px var(--ty-titulo); text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 0 var(--ty-tinta); cursor: pointer; }
+.ty-boton:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ty-tinta); }
+.ty-boton.ty-principal { background: var(--ty-naranja); color: #fff; text-shadow: 0 2px 0 var(--ty-naranja-oscuro); }
+.ty-boton.ty-azul { background: var(--ty-azul); color: #fff; text-shadow: 0 2px 0 var(--ty-azul-oscuro); }
+.ty-boton:disabled { background: var(--ty-rojo-oscuro); color: var(--ty-papel); text-shadow: none; opacity: .85; }
+.ty-botones { display: flex; flex-direction: column; gap: 12px; }
+
+/* marcadores */
+.ty-hud { display: flex; flex-direction: column; gap: 5px; flex: none; }
+.ty-hud-fila { display: flex; gap: 6px; align-items: center; }
+.ty-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: var(--ty-panel); border: 3px solid var(--ty-tinta); border-radius: 10px; font: 400 25px/1 var(--ty-cifra); letter-spacing: 1px; }
+.ty-chip small { font-size: 19px; color: var(--ty-amarillo); }
+.ty-mes { text-transform: uppercase; } .ty-dinero { margin-left: auto; color: var(--ty-amarillo); } .ty-dinero b { font-weight: 400; }
+.ty-salir { min-height: 36px; padding: 2px 10px; border: 3px solid var(--ty-tinta); border-radius: 10px; background: var(--ty-rojo); color: #fff; font: 400 19px var(--ty-titulo); text-transform: uppercase; }
+.ty-meta { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; padding: 4px 10px 6px; background: var(--ty-panel); border: 3px solid var(--ty-tinta); border-radius: 10px; }
+.ty-meta span { font: 600 13px var(--ty-texto); text-transform: uppercase; letter-spacing: .5px; } .ty-meta b { font: 400 24px/1 var(--ty-cifra); color: var(--ty-amarillo); }
+.ty-barra { grid-column: 1 / -1; height: 12px; background: #06201d; border: 2px solid var(--ty-tinta); border-radius: 7px; overflow: hidden; display: block; }
+.ty-barra i { display: block; height: 100%; background: var(--ty-naranja); transition: width .3s; } .ty-barra i.ty-llena { background: var(--ty-verde); }
+.ty-equipo { min-height: 34px; flex-wrap: wrap; }
+.ty-fichaje { padding: 0; border: 3px solid var(--ty-tinta); border-radius: 8px; background: var(--ty-papel); overflow: hidden; line-height: 0; }
+.ty-moda { margin-left: auto; font-size: 19px; background: var(--ty-verde-oscuro); }
+.ty-aviso { position: absolute; left: 12px; right: 12px; bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 6; padding: 10px 14px; background: var(--ty-tinta); color: var(--ty-crema);
+  border: 3px solid var(--ty-amarillo); border-radius: 12px; font: 500 15px/1.3 var(--ty-texto); display: flex; flex-direction: column; gap: 2px; }
+.ty-aviso b { font: 400 22px var(--ty-titulo); color: var(--ty-amarillo); }
+
+/* cartas */
+.ty-carta { background: var(--ty-crema); color: var(--ty-tinta); border: 3px solid var(--ty-tinta); border-radius: 12px; box-shadow: 0 5px 0 rgba(0, 0, 0, .45); font-family: var(--ty-texto); }
+.ty-carta h3 { font: 400 21px/1.05 var(--ty-titulo); }
+.ty-titulo { font: 400 41px var(--ty-titulo); text-transform: uppercase; letter-spacing: 2px; text-align: center; text-shadow: 0 3px 0 var(--ty-tinta); margin-top: 6px !important; }
+.ty-sub { text-align: center; font: 500 15px/1.3 var(--ty-texto); }
+
+/* inicio */
+.ty-inicio { justify-content: center; gap: 14px; text-align: center; }
+.ty-escaparate { display: flex; justify-content: center; gap: 8px; }
+.ty-escaparate canvas { animation: ty-bota 1.6s ease-in-out infinite alternate; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .4)); }
+@keyframes ty-bota { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-8px) rotate(4deg); } }
+.ty-logo { font-family: var(--ty-titulo); font-weight: 400; line-height: .9; text-transform: uppercase; text-shadow: 0 4px 0 var(--ty-tinta); }
+.ty-logo span { display: block; font-size: 44px; letter-spacing: 6px; color: var(--ty-amarillo); } .ty-logo b { display: block; font-weight: 400; font-size: 120px; letter-spacing: 4px; color: var(--ty-crema); }
+.ty-lema { font: 500 16px/1.3 var(--ty-texto); } .ty-record { font: 400 22px var(--ty-cifra); color: var(--ty-amarillo); }
+.ty-ayuda { text-align: left; padding: 10px 12px 10px 30px !important; background: rgba(6, 26, 24, .78); border: 3px solid var(--ty-tinta); border-radius: 12px; font: 500 14px/1.3 var(--ty-texto); display: flex; flex-direction: column; gap: 5px; }
+.ty-nota { font: 500 12px var(--ty-texto); opacity: .8; }
+
+/* mejoras */
+.ty-carta-mejora { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; padding: 10px 12px; }
+.ty-carta-mejora canvas { border: 3px solid var(--ty-tinta); border-radius: 8px; background: var(--ty-papel); }
+.ty-carta-mejora h3 { font-size: 26px; margin-bottom: 3px !important; } .ty-carta-mejora p { font: 500 14px/1.25 var(--ty-texto); }
+.ty-fichar { grid-column: 1 / -1; min-height: 46px; }
+
+/* noticia */
+.ty-periodico { padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--ty-papel); margin-top: 6px; }
+.ty-cabecera { font: 400 18px var(--ty-titulo); text-transform: uppercase; letter-spacing: 2px; color: var(--ty-rojo); border-bottom: 3px solid var(--ty-tinta); padding-bottom: 4px; }
+.ty-periodico h2 { font: 400 36px/1 var(--ty-titulo); } .ty-periodico p { font: 500 16px/1.3 var(--ty-texto); }
+.ty-real { font-size: 13px !important; padding: 6px 8px; background: var(--ty-crema); border: 2px dashed var(--ty-tinta); border-radius: 8px; }
+.ty-noticia .ty-botones { margin-top: 8px; }
+.ty-banda { display: flex; flex-direction: column; gap: 1px; text-align: left; padding: 5px 10px; background: var(--ty-papel); color: var(--ty-tinta); border: 3px solid var(--ty-tinta); border-radius: 10px; font: 500 13px/1.2 var(--ty-texto); flex: none; }
+.ty-banda b { font: 400 19px var(--ty-titulo); color: var(--ty-rojo-oscuro); text-transform: uppercase; }
+
+/* fábrica */
+.ty-mano { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding-top: 8px; flex: none; }
+.ty-juguete { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px 5px; text-align: center; cursor: pointer; transition: transform .12s; min-width: 0; }
+.ty-juguete h3 { min-height: 34px; display: grid; place-items: center; font-size: 19px; line-height: .9; }
+.ty-juguete.ty-elegida { transform: translateY(-8px); background: #fff; border-color: var(--ty-naranja); box-shadow: 0 0 0 3px var(--ty-tinta), 0 9px 0 rgba(0, 0, 0, .5); }
+.ty-dato { font: 400 19px/1 var(--ty-cifra); } .ty-molde { color: var(--ty-rojo-oscuro); } .ty-pagado { color: var(--ty-verde-oscuro); }
+.ty-sellos { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; min-height: 18px; }
+.ty-sello { padding: 1px 6px; border: 2px solid var(--ty-tinta); border-radius: 7px; font: 400 15px var(--ty-titulo); text-transform: uppercase; color: var(--ty-tinta); }
+.ty-s-moda { background: var(--ty-verde); color: #fff; } .ty-s-fiebre { background: var(--ty-rojo); color: #fff; } .ty-s-stock { background: var(--ty-amarillo); }
+.ty-fila { display: grid; grid-template-columns: 78px repeat(4, 1fr); gap: 5px; align-items: stretch; flex: none; }
+.ty-f-precio, .ty-f-publicidad { grid-template-columns: 78px repeat(3, 1fr); }
+.ty-rotulo { align-self: center; font: 400 18px var(--ty-titulo); text-transform: uppercase; letter-spacing: .5px; text-shadow: 0 2px 0 var(--ty-tinta); }
+.ty-opcion { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; padding: 2px; border: 3px solid var(--ty-tinta); border-radius: 10px;
+  background: var(--ty-crema); color: var(--ty-tinta); box-shadow: 0 4px 0 var(--ty-tinta); cursor: pointer; }
+.ty-opcion b { font: 400 19px var(--ty-titulo); text-transform: uppercase; } .ty-opcion small { font: 400 20px/1 var(--ty-cifra); }
+.ty-opcion.ty-elegida { background: var(--ty-amarillo); transform: translateY(3px); box-shadow: 0 1px 0 var(--ty-tinta); }
+.ty-f-cantidad .ty-opcion.ty-elegida { background: var(--ty-azul); color: #fff; } .ty-f-precio .ty-opcion.ty-elegida { background: var(--ty-rojo); color: #fff; }
+.ty-opcion.ty-no-llega small { color: var(--ty-rojo); text-decoration: line-through; } .ty-opcion.ty-elegida.ty-no-llega small { color: #fff; }
+.ty-resumen { padding: 7px 10px; background: rgba(6, 26, 24, .82); border: 3px solid var(--ty-tinta); border-radius: 10px; font: 500 14px/1.3 var(--ty-texto); display: flex; flex-direction: column; gap: 2px; flex: none; }
+.ty-gasto { color: #ff9c8c; font: 400 22px/1 var(--ty-cifra); } .ty-prevision { color: var(--ty-amarillo); } .ty-pista { color: #9ff0c8; }
+.ty-producir { margin-top: auto; flex: none; min-height: 60px; font-size: 34px; }
+
+/* resultado */
+.ty-resultado { gap: 9px; }
+.ty-cabeza { display: flex; align-items: center; gap: 12px; padding: 4px 6px; } .ty-cabeza canvas { filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .4)); }
+.ty-cabeza h2 { font: 400 29px/1.05 var(--ty-titulo); text-shadow: 0 2px 0 var(--ty-tinta); } .ty-cabeza p { font: 400 21px var(--ty-cifra); color: var(--ty-amarillo); }
+.ty-cuenta { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.ty-ficha { display: flex; flex-direction: column; align-items: center; min-width: 74px; padding: 4px 8px 2px; border: 3px solid var(--ty-tinta); border-radius: 10px; box-shadow: 0 4px 0 var(--ty-tinta); color: #fff; }
+.ty-ficha small { font: 400 15px var(--ty-titulo); text-transform: uppercase; letter-spacing: 1px; } .ty-ficha b { font: 400 38px/1 var(--ty-cifra); }
+.ty-ficha.ty-azul { background: var(--ty-azul); } .ty-ficha.ty-roja { background: var(--ty-rojo); } .ty-ficha.ty-total { background: var(--ty-tinta); color: var(--ty-amarillo); min-width: 96px; }
+.ty-por { font: 400 32px var(--ty-cifra); text-shadow: 0 2px 0 var(--ty-tinta); }
+.ty-porque { text-align: center; font: 500 14px/1.3 var(--ty-texto); display: flex; flex-direction: column; gap: 5px; }
+.ty-factores { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+.ty-factor { padding: 1px 8px; border: 2px solid var(--ty-tinta); border-radius: 8px; font: 400 19px/1.1 var(--ty-cifra); color: #fff; }
+.ty-sube { background: var(--ty-verde-oscuro); } .ty-baja { background: var(--ty-rojo-oscuro); } .ty-fallo { color: #ff9c8c; }
+.ty-gastos { list-style: none; padding: 6px 12px !important; background: rgba(6, 26, 24, .82); border: 3px solid var(--ty-tinta); border-radius: 10px; }
+.ty-gastos li { display: flex; justify-content: space-between; font: 500 14px/1.5 var(--ty-texto); } .ty-gastos b { font: 400 22px/1 var(--ty-cifra); color: #ff9c8c; } .ty-gastos .ty-a-favor b { color: #9ff0c8; }
+.ty-beneficio { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px; border: 3px solid var(--ty-tinta); border-radius: 12px; box-shadow: 0 5px 0 var(--ty-tinta); color: #fff; }
+.ty-beneficio small { font: 400 21px var(--ty-titulo); text-transform: uppercase; letter-spacing: 1px; } .ty-beneficio b { font: 400 44px/1 var(--ty-cifra); }
+.ty-gana { background: var(--ty-verde); } .ty-pierde { background: var(--ty-rojo); }
+.ty-voces { display: flex; flex-direction: column; gap: 6px; }
+.ty-resena { padding: 8px 12px; background: var(--ty-crema); color: var(--ty-tinta); border: 3px solid var(--ty-tinta); border-radius: 12px; font: 500 15px/1.25 var(--ty-texto); }
+.ty-resena cite { display: block; margin-top: 2px; font: 400 15px var(--ty-titulo); text-transform: uppercase; color: var(--ty-naranja-oscuro); font-style: normal; }
+.ty-chat { padding: 6px 10px; background: var(--ty-tinta); border: 3px solid var(--ty-azul); border-radius: 12px; font: 500 13px/1.3 var(--ty-texto); }
+.ty-chat small { font: 400 15px var(--ty-titulo); text-transform: uppercase; color: var(--ty-azul); letter-spacing: 1px; } .ty-chat b { color: var(--ty-amarillo); }
+.ty-ceo { padding: 6px 10px; background: var(--ty-papel); color: var(--ty-tinta); border: 3px solid var(--ty-tinta); border-radius: 12px; font: 500 14px/1.25 var(--ty-texto); } .ty-ceo b { font: 400 19px var(--ty-titulo); }
+.ty-cierre { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 8px 14px; border: 3px solid var(--ty-tinta); border-radius: 12px; color: #fff; }
+.ty-cierre small { font: 400 18px var(--ty-titulo); text-transform: uppercase; } .ty-cierre b { font: 400 30px/1 var(--ty-cifra); } .ty-cierre span { grid-column: 1 / -1; font: 400 33px var(--ty-titulo); text-transform: uppercase; }
+.ty-pasa { background: var(--ty-verde-oscuro); } .ty-no-pasa { background: var(--ty-rojo-oscuro); }
+.ty-resultado .ty-boton { flex: none; margin-top: 4px; }
+
+/* fin */
+.ty-fin { justify-content: center; gap: 14px; text-align: center; }
+.ty-sello-grande { align-self: center; padding: 6px 22px; border: 6px solid currentColor; border-radius: 14px; font: 400 63px var(--ty-titulo); text-transform: uppercase; letter-spacing: 3px; transform: rotate(-6deg); background: rgba(6, 26, 24, .7); }
+.ty-fin-pierde .ty-sello-grande { color: #ff6a52; } .ty-fin-gana .ty-sello-grande { color: var(--ty-amarillo); }
+.ty-cifras { list-style: none; padding: 8px 14px !important; background: rgba(6, 26, 24, .82); border: 3px solid var(--ty-tinta); border-radius: 12px; }
+.ty-cifras li { display: flex; justify-content: space-between; align-items: center; font: 500 15px/1.6 var(--ty-texto); } .ty-cifras b { font: 400 30px/1 var(--ty-cifra); color: var(--ty-amarillo); }
+.ty-nuevo-record span { color: #9ff0c8; font-weight: 700; }
+.ty-vertedero { font: 500 14px/1.3 var(--ty-texto); color: var(--ty-papel); }
+.ty-nuevos { padding: 10px 14px; } .ty-nuevos h3 { font-size: 24px; color: var(--ty-naranja-oscuro); text-transform: uppercase; margin-bottom: 4px !important; } .ty-nuevos p { font: 600 15px var(--ty-texto); }

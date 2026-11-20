@@ -1,8 +1,8 @@
 {
- "build": 1357,
- "hash": "50b9a6b",
- "fecha": "2026-11-20T16:40:06Z",
- "mensaje": "Pop: el Cofre del tesoro solo da 3 corazones al día con un toque de 5; pasado el tope da +1 toque (tarea #236, Pepins)",
+ "build": 1358,
+ "hash": "02316a8",
+ "fecha": "2026-11-20T16:45:12Z",
+ "mensaje": "Fans of Toys 0.1.0: prototipo jugable del roguelike de año fiscal (tarea #259)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -41,6 +41,7 @@
   "taxi": "0.2.17",
   "td": "0.13.103",
   "tiny": "0.1.0",
+  "toys": "0.1.0",
   "vikings": "0.1.0",
   "wings": "0.1.8",
   "zombies": "0.14.2"

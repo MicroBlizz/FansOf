@@ -10,7 +10,7 @@ TABLERO.ALFA = 'https://fansof.games/alfa/games/';
 TABLERO.JUEGOS_WEB = Object.freeze(['air', 'asalto', 'auto', 'basement', 'beams', 'boom', 'chef', 'cooking', 'crush', 'dark', 'decks', 'dungeons', 'goose', 'island',
   'jump', 'karts', 'kingdom', 'merge', 'nova', 'panic', 'paperwork', 'pets', 'pinball', 'pop', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble-3d', 'rumble-clasico',
   'rumble-v2', 'rumble', 'shelter', 'skate', 'snakes', 'soccer', 'spy', 'survivors', 'swipe', 'tacticas', 'tactics-advance', 'taxi', 'td', 'terminal-shock', 'tiny',
-  'vikings', 'wings', 'zombies']);
+  'toys', 'vikings', 'wings', 'zombies']);
 // La dirección del juego en la alfa, o null si la tarea no es de un juego con página (core, web, gestion, general, una idea sin carpeta…)
 TABLERO.enlaceAlfa = juego => (TABLERO.JUEGOS_WEB.includes(juego) ? TABLERO.ALFA + juego + '/' : null);
 

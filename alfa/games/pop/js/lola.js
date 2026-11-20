@@ -36,7 +36,7 @@ const PP_TUTO = {
   ayudasDuelo: [{ t: 'Deshacer vuelve atrás. La lupa te da la jugada buena.' }],
   trucoNim: [{ t: 'Truco: deja al rival filas iguales, por parejas.' }],
   despedidos: [{ t: 'En pesadilla tus amigos no ayudan. ¡Solo tú!' }],
-  tienda: [{ t: 'Las perlas cuestan dinero de verdad. Si eres menor, pide permiso.', encima: true }],   // precios honestos (tarea #177)
+  tienda: [{ t: 'Las perlas cuestan dinero de verdad. Si eres menor, pide permiso.', encima: true, bloquea: true }],   // precios honestos (tarea #177): este sí se lee antes de tocar
   sinCorazones: [{ t: 'Vuelve un corazón cada 30 minutos. ¡O llénalos aquí!', encima: true }],
   regalo: [{ t: '¡Un regalo cada día! El del domingo es el mejor.', encima: true }],
   pase: [{ t: 'Pasa niveles nuevos y sube escalones con premio.', encima: true }],
@@ -44,6 +44,17 @@ const PP_TUTO = {
   racha: [{ t: 'Gana sin fallar y empiezas con más toques.', encima: true }],
   equipoLleno: [{ t: 'Equipo lleno: elige quién descansa o compra un hueco.', encima: true }],
 };
+// ¿este globo deja la pantalla oscura y sin responder hasta pulsar ¡VALE!? (tarea #248, Pepins 20-11-2026: ¡ABRIR! del regalo no respondía)
+// Los consejos que explican una ventana (`encima`) solo informan: no bloquean, y el botón de la ventana funciona al primer toque.
+// Siguen bloqueando la manita (`toque`, no lleva ¡VALE!), los que traen regalo y los que marcan `bloquea` (la tienda, que habla de dinero).
+const ppLolaBloquea = f => !f.toque && (!f.encima || !!f.bloquea);
+// un toque en lo oscuro (no responde nada): el ¡VALE! salta para que se vea qué hay que pulsar (tarea #248)
+function ppLolaSacude() {
+  const caja = $pp('#pp-lola'), vale = $pp('#pp-lola-vale');
+  if (!PP_LOLA.actual || caja.hidden || !ppLolaBloquea(PP_LOLA.actual)) return false;
+  vale.classList.remove('pp-sacude'); void vale.offsetWidth; vale.classList.add('pp-sacude');
+  return true;
+}
 // cola: lo que dice ahora y después; espera: consejos que salieron a mitad de un nivel o con Lola ocupada (se dicen en el siguiente momento libre)
 const PP_LOLA = { cola: [], actual: null, espera: [] };
 // ¿se está jugando un nivel ya empezado? (desde el primer toque hasta que acaba)
@@ -77,7 +88,7 @@ function ppLolaSiguiente() {
   $pp('#pp-lola-vale').textContent = tr('¡VALE!'); $pp('#pp-lola-vale').hidden = !!f.toque;
   const saltar = $pp('#pp-lola-saltar'); saltar.textContent = tr('Saltar'); saltar.hidden = !!f.ya;   // los estrenos traen regalo: no se saltan
   // con ¡VALE! no se puede tocar nada más hasta pulsarlo (Pepins, 19-11-2026: así sabes que lo has leído); sale encima de las ventanas
-  caja.classList.toggle('pp-encima', !!f.encima || !f.toque); caja.classList.toggle('pp-espera', !f.toque);
+  caja.classList.toggle('pp-encima', !!f.encima || !f.toque); caja.classList.toggle('pp-espera', ppLolaBloquea(f));
   caja.hidden = false; caja.classList.remove('pp-entra'); void caja.offsetWidth; caja.classList.add('pp-entra');
   play('ppPista');
 }

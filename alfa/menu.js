@@ -34,7 +34,7 @@
     + '\n  <span class="idiomas"><a href="#" data-idioma="es" translate="no">ES</a> · <a href="#" data-idioma="en" translate="no">EN</a> · <a href="#" data-idioma="">Auto</a></span>\n</nav>';
   // la barra de abajo del móvil: en la portada, «Votar» y «Novedades» las afina biblioteca/portada-nueva.js (el bloque de votar, la ventana)
   const abajo = `<nav class="pn pn-barra" aria-label="${t('Accesos')}">`
-    + deBarra(b + '#inicio', 'inicio', 'Inicio') + deBarra(b + '#biblioteca', 'juegos', 'Juegos') + deBarra(b + '#prototipos', 'votar', 'Votar')
+    + deBarra(b + '#inicio', 'inicio', 'Inicio') + deBarra(b + '#biblioteca', 'juegos', 'Juegos') + deBarra(b + '#catalogo', 'votar', 'Votar')
     + deBarra(b + '#novedades', 'novedades', 'Novedades') + deBarra(b + 'lore/', 'lore', 'Lore') + '</nav>';
   s.insertAdjacentHTML('beforebegin', arriba + '\n' + abajo);
 

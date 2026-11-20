@@ -1,8 +1,8 @@
 {
- "build": 1390,
- "hash": "9f34192",
- "fecha": "2026-11-20T23:06:34Z",
- "mensaje": "Rally: juego nuevo Fans of Rally, rally de recreativa con coches, árboles y rocas en lonchas pintadas y cámara inclinada; campeonato de tres tramos con tiempo y rivales de Microblizz, contrarreloj con fantasma, choques entre coches y contra el paisaje, música reaprovechada de Rouflage, Nova y core (tarea #278, ADR 187, Pepins)",
+ "build": 1391,
+ "hash": "573ee5d",
+ "fecha": "2026-11-20T23:12:41Z",
+ "mensaje": "Portada: la decisión del catálogo con buscador pasa a ser el ADR 188 (el 186 y el 187 los cogieron Pop y Rally a la vez) (tarea #277)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

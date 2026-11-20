@@ -1,0 +1,70 @@
+/* Fans Of · LA PORTADA NUEVA · el catálogo con buscador y orden, la fila de NOVEDADES y LOS MÁS PEDIDOS en fila (tarea #277, ADR 188).
+   Todo cuelga de html.portada-nueva (flag «portada-nueva», solo en la alfa): sin él, la portada de siempre. Lo pinta biblioteca/portada-catalogo.js.
+   Con el flag, los grupos de siempre (Nuestros favoritos y Prototipos) se esconden: sus juegos salen todos en la rejilla del catálogo. El Archivo sigue igual. */
+
+html.portada-nueva #lista-favoritos, html.portada-nueva #lista-prototipos { display: none; }
+html.portada-nueva .pn-catalogo [hidden], html.portada-nueva .pn-fila[hidden], html.portada-nueva .pn-hoja[hidden], html.portada-nueva .pn-velo[hidden] { display: none !important; }
+
+/* ---------- las tarjetas pequeñas: la captura de fondo, el nombre encima y JUGAR abajo ---------- */
+html.portada-nueva .pn-mini { position: relative; display: flex; flex-direction: column; border: 3px solid var(--outline); border-radius: 16px; overflow: hidden;
+  background: var(--wc, var(--tray)); cursor: pointer; text-align: left; box-shadow: 0 4px 0 var(--outline); }
+html.portada-nueva .pn-mini:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+html.portada-nueva .pn-mini-img { position: relative; aspect-ratio: 3 / 4; background: var(--wc) center / cover no-repeat; }
+html.portada-nueva .pn-mini-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(var(--tinta-negra), .88)); }
+html.portada-nueva .pn-mini-n { position: absolute; left: 8px; right: 8px; bottom: 24px; z-index: 1; font-size: 17px; line-height: 1.05; color: #fff; }
+html.portada-nueva .pn-mini-e { position: absolute; left: 8px; right: 8px; bottom: 5px; z-index: 1; font-weight: 800; font-size: 12px; color: var(--gold);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.portada-nueva .pn-sello { position: absolute; top: 6px; left: 6px; z-index: 1; font-family: var(--font-display); font-size: 12px; padding: 3px 8px 1px;
+  border: 2px solid var(--outline); border-radius: 8px; }
+html.portada-nueva .pn-sello-nuevo { background: var(--gold); color: var(--outline); }
+html.portada-nueva .pn-sello-fav { background: var(--player); color: #fff; }
+html.portada-nueva .pn-puntos { position: absolute; top: 6px; right: 6px; z-index: 1; background: rgba(var(--tinta-fondo), .8); color: #fff; border-radius: 10px;
+  padding: 1px 7px; font-weight: 800; font-size: 12px; }
+html.portada-nueva .pn-mini-jugar { display: block; text-align: center; text-decoration: none; background: var(--player); color: #fff; border-top: 3px solid var(--outline);
+  padding: 9px 4px 6px; font-size: 17px; }
+
+/* ---------- NOVEDADES y LOS MÁS PEDIDOS: filas que se deslizan de lado ---------- */
+html.portada-nueva .pn-fila { margin-top: 18px; text-align: left; align-self: stretch; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }   /* sin esto, la fila larga estira la página en el móvil */
+html.portada-nueva .pn-fila > h3.grupo { margin: 0 0 8px; text-align: left; }
+html.portada-nueva .pn-carril, html.portada-nueva #mas-pedidos .rejilla { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 2px 2px 10px; margin: 0 -2px; scrollbar-width: none; overscroll-behavior-x: contain; }
+html.portada-nueva .pn-carril::-webkit-scrollbar, html.portada-nueva #mas-pedidos .rejilla::-webkit-scrollbar { display: none; }
+html.portada-nueva .pn-carril > .pn-mini { flex: none; width: 138px; scroll-snap-align: start; }
+html.portada-nueva #mas-pedidos .rejilla > .game { flex: none; width: 250px; scroll-snap-align: start; }
+
+/* ---------- TODOS LOS JUEGOS: la barra fija y la rejilla ---------- */
+html.portada-nueva .pn-catalogo { margin-top: 26px; }
+html.portada-nueva .pn-buscador { position: sticky; top: var(--pn-menu-alto, 62px); z-index: 4; display: flex; gap: 8px; padding: 8px 0;
+  background: var(--banda, var(--bg)); }
+html.portada-nueva .pn-busca { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 14px; background: #fff;
+  border: 3px solid var(--outline); border-radius: 24px; }
+html.portada-nueva .pn-busca input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 700 16px var(--font-ui); color: var(--outline); }
+html.portada-nueva .pn-busca:focus-within { box-shadow: 0 0 0 3px var(--gold); }
+html.portada-nueva .pn-lupa { position: relative; flex: none; width: 15px; height: 15px; border: 3px solid var(--outline); border-radius: 50%; margin-right: 4px; }
+html.portada-nueva .pn-lupa::after { content: ''; position: absolute; width: 3px; height: 8px; right: -5px; bottom: -7px; background: var(--outline); border-radius: 2px; transform: rotate(-45deg); }
+html.portada-nueva .pn-ordenar { flex: none; display: flex; align-items: center; gap: 7px; height: 48px; padding: 4px 14px 0; background: var(--player); color: #fff;
+  border: 3px solid var(--outline); border-radius: 24px; font-size: 15px; cursor: pointer; white-space: nowrap; }
+html.portada-nueva .pn-flecha { width: 0; height: 0; margin-bottom: 4px; border: 6px solid transparent; border-top: 8px solid #fff; border-bottom: 0; }
+html.portada-nueva .pn-etiquetas { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: none; }
+html.portada-nueva .pn-etiquetas::-webkit-scrollbar { display: none; }
+html.portada-nueva .pn-etiqueta { flex: none; min-height: 40px; padding: 4px 14px 2px; border: 3px solid var(--outline); border-radius: 20px; background: var(--enemy);
+  color: #fff; font: 800 14px var(--font-ui); cursor: pointer; }
+html.portada-nueva .pn-etiqueta.on { background: var(--gold); color: var(--outline); }
+html.portada-nueva .pn-cuenta { margin: 2px 2px 8px; text-align: left; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+html.portada-nueva .pn-rejilla { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+html.portada-nueva .pn-vacio { margin: 18px 4px; font-weight: 800; color: var(--ink-dim); }
+@media (min-width: 701px) { html.portada-nueva .pn-rejilla { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; } }
+
+/* ---------- la hoja de ORDENAR, desde abajo y encima de la barra del móvil ---------- */
+html.portada-nueva .pn-velo { position: fixed; inset: 0; z-index: 20; background: rgba(var(--tinta-negra), .6); }
+html.portada-nueva .pn-hoja { position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; max-width: 560px; margin: 0 auto; box-sizing: border-box;
+  padding: 12px 14px calc(22px + env(safe-area-inset-bottom)); background: var(--bg-2); border-top: 4px solid var(--gold); border-radius: 22px 22px 0 0; text-align: left; }
+html.portada-nueva .pn-asa { width: 50px; height: 5px; border-radius: 3px; background: var(--tray-hi); margin: 0 auto 10px; }
+html.portada-nueva .pn-hoja-t { font-size: 22px; margin: 0 4px 10px; color: #fff; }
+html.portada-nueva .pn-op { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; margin-bottom: 8px; padding: 10px 12px; text-align: left;
+  background: var(--tray); color: #fff; border: 3px solid var(--outline); border-radius: 14px; font: 800 17px var(--font-ui); cursor: pointer; }
+html.portada-nueva .pn-op small { display: block; font-weight: 600; font-size: 13px; opacity: .85; }
+html.portada-nueva .pn-op.on { background: var(--gold); color: var(--outline); }
+html.portada-nueva .pn-punto { flex: none; width: 20px; height: 20px; border: 3px solid currentColor; border-radius: 50%; box-sizing: border-box; }
+html.portada-nueva .pn-op.on .pn-punto { background: var(--outline); }
+html.portada-nueva .pn-hoja-nota { margin: 4px 4px 0; font-size: 13px; color: var(--ink-dim); }

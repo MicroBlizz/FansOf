@@ -7,8 +7,8 @@
 // Usa lo que ya hay en la página: t(), esc(), ESTILO_NUEVO, NUCLEO.alCambiarFlags y abrirNovedades() (novedades/ventana.js).
 'use strict';
 (() => {
-  // a dónde lleva «Votar»: al bloque de los más pedidos si ya ha llegado; si no, a los prototipos (el hash los despliega, agrupar.js)
-  const sitioVotar = () => (document.getElementById('mas-pedidos') ? '#mas-pedidos' : '#prototipos');
+  // a dónde lleva «Votar»: al bloque de los más pedidos si ya ha llegado; si no, al catálogo de todos los juegos (portada-catalogo.js, tarea #277)
+  const sitioVotar = () => (document.getElementById('mas-pedidos') ? '#mas-pedidos' : '#catalogo');
 
   function titular() {
     const hero = document.getElementById('inicio');
@@ -37,7 +37,7 @@
     if (!sec || sec.querySelector('.pn-votar')) return !!sec;
     sec.insertAdjacentHTML('afterbegin', `<div class="pn pn-votar"><p class="pn-votar-t">${esc(t('TÚ DECIDES CUÁL TERMINAMOS'))}</p>
       <p class="pn-votar-p">${esc(t('Juega los prototipos y vota en su ficha: lo que más pedís es en lo que nos centramos.'))}</p></div>`);
-    sec.insertAdjacentHTML('beforeend', `<a class="pn pn-ir-votar ol" href="#prototipos">${esc(t('IR A VOTAR'))}</a>`);
+    sec.insertAdjacentHTML('beforeend', `<a class="pn pn-ir-votar ol" href="#catalogo">${esc(t('IR A VOTAR'))}</a>`);
     return true;
   }
   function esperarVotar() {

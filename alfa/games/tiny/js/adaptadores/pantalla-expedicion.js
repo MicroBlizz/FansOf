@@ -36,7 +36,17 @@
     sincroniza('bolitas', f.bolitas, (m, e) => { suave(m, e, .6); m.userData.anima(t); });
     sincroniza('gigante', f.gigante, (m, e) => { m.userData.disco.material.opacity = .25 + .4 * (1 - Math.min(1, e.falta / AJUSTES.gigante.aviso)); });
     sincroniza('caida', f.mochilaCaida ? [{ id: 1, ...f.mochilaCaida }] : [], m => m.userData.anima(t));
-    parada.userData.anima(t, dt);
+    parada.userData.anima(t, dt); agacha(b);
+  }
+  // un mueble alto que taparía al becario (queda entre él y la cámara) se encoge mientras esté detrás, para no perderlo de vista
+  function agacha(b) {
+    const lejos = TN.vista.aSuelo(0, 1), lado = TN.vista.aSuelo(1, 0);
+    for (const { grupo, m } of parada.userData.muebles) {
+      const alto = Math.min(m.alto || 4, 60); if (alto < 2.5) continue;
+      const ext = m.radio || Math.max(m.ancho, m.fondo) / 2, dx = b.x - m.x, dz = b.z - m.z, fondo = dx * lejos.x + dz * lejos.z, ancho = Math.abs(dx * lado.x + dz * lado.z);
+      const tapa = fondo > -ext && fondo < ext + alto * 1.3 && ancho < ext + 1.5;
+      grupo.scale.y += ((tapa ? Math.max(.06, 1.2 / alto) : 1) - grupo.scale.y) * .2;
+    }
   }
   const datosHud = f => ({ bateria: f.becario.bateria, bateriaMax: f.becario.max, baja: f.becario.baja, unidades: f.mochila.unidades, tope: f.mochila.tope * f.mochila.porHueco,
     voltios: f.voltios.tiene, meta: f.voltios.meta, pilas: f.mochila.pilas, nido: f.becario.enNido ? null : f.mapa.nido, caida: f.mochilaCaida });
@@ -45,8 +55,8 @@
   const AL = {
     dispara(e) { mira = Math.atan2(e.ax - e.x, e.az - e.z); dispara = t + .18; },
     'golpe-bicho'(e) { const m = grupos.bichos.get(e.bicho); if (m) m.userData.golpe = t + .1; },
-    mordisco: e => TN.bocadillos.dice('-' + Math.round(e.dano), sobre(becario.position.x, becario.position.z), .8, 'malo'),
-    pisoton: e => TN.bocadillos.dice('-' + Math.round(e.dano), sobre(becario.position.x, becario.position.z), 1, 'malo'),
+    mordisco: e => (TN.hud.golpe(), TN.bocadillos.dice('-' + Math.round(e.dano), sobre(becario.position.x, becario.position.z), .8, 'malo')),
+    pisoton: e => (TN.hud.golpe(), TN.bocadillos.dice('-' + Math.round(e.dano), sobre(becario.position.x, becario.position.z), 1, 'malo')),
     recoge: e => TN.bocadillos.dice('+' + e.cantidad + ' ' + tr(TN.textos.materiales[e.material]), sobre(e.x, e.z), 1.2, 'bueno'),
     'mochila-llena': e => TN.bocadillos.dice(tr('¡Mochila llena!'), sobre(e.x, e.z), 1.4, 'malo'),
     'mochila-recuperada': e => TN.bocadillos.dice(tr('¡Mochila recuperada!') + ' +' + e.unidades, sobre(e.x, e.z), 1.6, 'bueno'),
@@ -57,8 +67,11 @@
   };
   function resumen() {
     const fin = casos().foto().fin, meta = TN.metas && TN.metas.actual();
+    // si con lo que hay en el almacén ya se puede poner la pieza de la meta, el botón grande manda a construir
+    const dato = meta && AJUSTES.metas.lista.find(m => m.id === meta.id), pieza = dato && dato.cuenta.pieza;
+    const construir = fin.tipo === 'vuelve' && !!pieza && !Object.keys(TN.recetas.falta(AJUSTES, pieza, TN.casosNido.nido.almacen)).length;
     TN.hudMejoras.cierra();
-    TN.hudResumen.abre({ motivo: fin.tipo, botin: fin.tipo === 'vuelve' ? fin.botin : {}, unidades: fin.unidades, segundos: fin.segundos, meta: meta && meta.texto ? meta : null }, {
+    TN.hudResumen.abre({ motivo: fin.tipo, botin: fin.tipo === 'vuelve' ? fin.botin : {}, unidades: fin.unidades, segundos: fin.segundos, meta: meta && meta.texto ? meta : null, construir }, {
       otra: () => TN.pantallas.ve('expedicion'), nido: () => TN.pantallas.ve('nido') });
   }
   TN.pantallas.registra({
@@ -81,6 +94,7 @@
     },
     sale() {
       for (const f of oyentes) f(); oyentes = [];
+      casos().abandona(true);   // irse a medias no borra el botín: la mochila se queda en el suelo
       TN.hud.desmonta(); TN.hudMejoras.cierra(); TN.hudResumen.cierra(); TN.bocadillos.limpia(); TN.efectos.desmonta();
       escena = parada = becario = grupos = null;
     },

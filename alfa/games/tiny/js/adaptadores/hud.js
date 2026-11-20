@@ -43,6 +43,8 @@ TN.hud = (() => {
       const w = caja.clientWidth, h = caja.clientHeight;
       [d.nido, d.caida].forEach((p, i) => { if (!p) { flechas[i].hidden = true; return; } apunta(flechas[i], vista.aPantalla(p.x, 0, p.z), w, h); });
     },
+    // un destello rojo al recibir un golpe
+    golpe() { if (!caja) return; const d = TN.crea('div', { className: 'tn-destello' }); caja.append(d); setTimeout(() => d.remove(), 260); },
     desmonta() { if (caja) caja.remove(); caja = null; n = {}; flechas = []; },
   };
 })();

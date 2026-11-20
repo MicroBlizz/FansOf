@@ -93,7 +93,11 @@ html, body { margin: 0; height: 100%; background: var(--tn-fondo); overflow: hid
 .tn-pieza.tn-elegida { background: var(--tn-amarillo); transform: translateY(-6px); }
 .tn-coste { display: flex; align-items: center; gap: 2px; font: 400 20px/1 var(--tn-cifra); } .tn-coste em { display: flex; align-items: center; font-style: normal; }
 /* la guía del primer minuto: bajo los marcadores, sin tapar el tercio de abajo */
-.tn-guia { position: absolute; left: 50%; top: calc(112px + env(safe-area-inset-top)); transform: translateX(-50%); max-width: 88%; padding: 8px 16px; background: var(--tn-crema);
+.tn-guia { position: absolute; left: 50%; top: calc(152px + env(safe-area-inset-top)); transform: translateX(-50%); max-width: 88%; padding: 8px 16px; background: var(--tn-crema);
   border: 3px solid var(--tn-borde); border-radius: 14px; box-shadow: 0 4px 0 var(--tn-borde); font: 600 18px var(--tn-texto); text-align: center; pointer-events: none; z-index: 2; }
 .tn-guia.tn-urgente { background: var(--tn-rojo); color: #fff; }
 .tn-salir { position: absolute; left: 12px; top: 56%; min-height: 48px; padding: 6px 14px; font-size: 16px; }
+.tn-destello { position: absolute; inset: 0; background: rgba(226, 69, 47, .38); animation: tn-fuera .26s ease-out forwards; }
+@keyframes tn-fuera { to { opacity: 0; } }
+.tn-salir[hidden] { display: none; }
+#tn-escenario, #tn-escenario * { touch-action: none; -webkit-tap-highlight-color: transparent; }

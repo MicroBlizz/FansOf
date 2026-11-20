@@ -42,6 +42,7 @@ TN.arranca = () => {
   TN.compone();
   window.enPartida = () => TN.pantallas.enPartida();   // core pregunta con este nombre si se está jugando (esconde su etiqueta y su aviso)
   window.addEventListener('resize', () => TN.vista.tamano());
+  window.addEventListener('pagehide', () => { TN.casosExpedicion.abandona(true); });   // cerrar o recargar a media salida: la mochila queda en el suelo
   TN.vista.tamano();
   TN.pantallas.ve(AJUSTES.pantallas.inicial);
   TN.quitaCarga();

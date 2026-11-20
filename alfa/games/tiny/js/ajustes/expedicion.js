@@ -43,9 +43,9 @@ AJUSTES.bichos = TN.congela({
   radio: 0.4,                   // (partida) lo que ocupa un bicho para chocar con los muebles
   persigue: 8,                  // (partida) te persigue si estás a menos de 8 unidades
   rodea: { desde: 2.5, radio: 0.7 },   // (partida) a menos de 2,5 las hormigas buscan su hueco alrededor del becario
-  muerde: { alcance: 0.95, cada: 1, primero: 0.3 },   // (partida) distancia de mordisco, segundos entre dos y espera al tocar
+  muerde: { alcance: 0.95, cada: 1.3, primero: 0.4 },   // (partida) distancia de mordisco, segundos entre dos y espera al tocar
   despierta: { desde: 17, hasta: 22 },   // (decisión, P3) un punto dormido despierta con el becario a esta distancia: nacen fuera de pantalla
-  tope: 32,                     // (decisión, P3) bichos despiertos a la vez; si se pasa, la oleada espera
+  tope: 28,                     // (probadores) bichos despiertos a la vez; si se pasa, la oleada espera
   // (cuaderno) cada minuto fuera sale un 25 % más de bichos: está ya dentro de la tabla de oleadas (P3, x1; 1,25; 1,56; 1,95; 2,44)
   masPorMinuto: 0.25,
   // (decisión, P3) oleada cazadora cada 20 s: nace a 18 del becario por el lado contrario al nido (desde los 2 min, por cualquier lado)
@@ -92,8 +92,8 @@ AJUSTES.botin = TN.congela({
   // (cuaderno) cinco materiales: blancos (comunes) y verdes
   materiales: { carton: 'blanco', grapas: 'blanco', migas: 'blanco', plastico: 'verde', pilas: 'verde' },
   expedicionBuena: [60, 100],        // (cuaderno) una expedición buena trae de 60 a 100 unidades (con 8 huecos, de 60 a 80)
-  recoge: 1.2,                       // (partida) se coge estando a menos de esto
-  coge: 2,                           // (decisión) segundos encima de un montón para cogerlo
+  recoge: 1.5,                       // (probadores) se coge estando a menos de esto
+  coge: 0.8,                         // (probadores) segundos cerca de un montón para cogerlo: basta pasar por encima despacio
   // (P3 + P4) los montones de cada zona: cuántos, de cuánto y de qué (pesos o lista fija); las pilas van de una en una
   reparto: [
     { donde: 'cerca', montones: 8, cantidad: 3, pesos: { carton: 0.4, grapas: 0.45, migas: 0.15 }, pilas: 1 },

@@ -1,8 +1,8 @@
 {
- "build": 1334,
- "hash": "47b8d8a",
- "fecha": "2026-11-20T00:49:50Z",
- "mensaje": "Tiny Fans: smoke-test propio (nido, construir, una expedición con piloto, resultado y asalto) (tarea #138, Pepins)",
+ "build": 1335,
+ "hash": "88d5816",
+ "fecha": "2026-11-20T01:17:54Z",
+ "mensaje": "Tiny Fans: arreglos de los dos probadores (botín al pasar, sin voltios en el nido, la salida a medias deja la mochila en el suelo, muebles que no tapan, asalto recto con flecha y paredes bajas, mordiscos más lentos) (tarea #138, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

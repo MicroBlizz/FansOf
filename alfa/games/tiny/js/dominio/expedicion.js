@@ -155,7 +155,7 @@ TN.Expedicion = class Expedicion {
   // la grapadora: una ráfaga cada `cada` segundos si hay a quién, con tantas grapas como diga la grapa doble
   #dispara(ev) {
     this.#recarga -= this.#dt;
-    if (this.#recarga > 0) return;
+    if (this.#recarga > 0 || this.#enNido) return;   // dentro del nido no se dispara: ahí no se ganan voltios gratis
     const b = this.#becario, blancos = TN.combate.objetivos(this.#r, b.x, b.z, this.#bichos.blancos, this.#mejoras.grapas);
     if (!blancos.length) return;
     this.#recarga = this.#r.arma.grapadora.cada;
@@ -236,6 +236,14 @@ TN.Expedicion = class Expedicion {
     ev.push(tipo === 'vuelve' ? { tipo, botin: { ...this.#fin.botin }, unidades, segundos } : { tipo, x: b.x, z: b.z, unidades, segundos });
   }
 
+  // dejar la salida a medias (cerrar el juego, cambiar de pantalla): cuenta como caer donde esté, así la mochila se puede rescatar.
+  // Resultado: ok(eventos) o error('expedicion-terminada')
+  abandona() {
+    if (this.#fase === 'terminada') return TN.error('expedicion-terminada');
+    const ev = [];
+    this.#termina('cae', ev);
+    return TN.ok(ev);
+  }
   // elegir una de las mejoras ofrecidas. Resultado: ok(eventos) o error('no-toca' | 'mejora-desconocida')
   eligeMejora(id) {
     if (this.#fase !== 'mejora') return TN.error('no-toca');

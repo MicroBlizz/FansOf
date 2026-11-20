@@ -2,18 +2,20 @@
 // almacén, coger lo que quepa y salir por donde se entró. Si el nido abandonado aún está vacío, lo dice y vuelve al nido.
 'use strict';
 (() => {
-  let escena = null, becario = null, piezas = null, oyentes = [], t = 0, salir = null;
+  let escena = null, becario = null, piezas = null, oyentes = [], t = 0, salir = null, destino = {};
   const casos = () => TN.casosAsalto;
   const FALLA = { tiempo: 'Se acabó el tiempo', bateria: 'Te has quedado sin batería', abandona: 'Te has ido con las manos vacías' };
   function monta(f) {
     const k = f.casilla, suelo = TN.modelos.sueloNido(f.columnas, f.filas);
+    escena.add(TN.modelos.moqueta(90, -.75));
     suelo.scale.setScalar(k); suelo.position.set(-f.columnas * k / 2, 0, -f.filas * k / 2); escena.add(suelo);
     for (const p of f.piezas) {
       if (p.pieza === 'entrada') { TN.piezas3d.disco(escena, 0xff8a1f, k * .45, p.x, p.z, .7); continue; }
-      const m = TN.modelos.pieza(p.pieza === 'puerta-plastico' ? 'puerta' : p.pieza); m.scale.set(k, p.clase === 'pared' ? k * .5 : k, k); m.position.set(p.x, 0, p.z); escena.add(m);   // paredes bajas: que no tapen el pasillo piezas.set(p.col + ',' + p.fila, m);
+      const m = TN.modelos.pieza(p.pieza === 'puerta-plastico' ? 'puerta' : p.pieza); m.scale.set(k, p.clase === 'pared' ? k * .22 : (p.clase === 'puerta' ? k * .45 : k), k); m.position.set(p.x, 0, p.z); escena.add(m);   // paredes bajas: que no tapen el pasillo piezas.set(p.col + ',' + p.fila, m);
     }
     const e = f.piezas.find(p => p.pieza === 'entrada'), a = f.piezas.find(p => p.pieza === 'almacen');
     if (a) TN.piezas3d.aro(escena, 0xffd23f, k * .55, a.x, a.z);
+    destino = { almacen: a ? { x: a.x, z: a.z } : null, entrada: { x: f.becario.x, z: f.becario.z } };
     if (!e) TN.piezas3d.disco(escena, 0xff8a1f, k * .45, f.becario.x, f.becario.z, .7);
     becario = TN.modelos.becario(); becario.scale.setScalar(1.05); becario.position.set(f.becario.x, 0, f.becario.z); escena.add(becario);
   }
@@ -21,12 +23,13 @@
   const AL = {
     rompe(e) { const m = piezas.get(e.col + ',' + e.fila); if (m) { escena.remove(m); piezas.delete(e.col + ',' + e.fila); } },
     'golpe-pieza'(e) { const m = piezas.get(e.col + ',' + e.fila); if (m) m.userData.golpe = t + .1; },
-    trampa: e => TN.bocadillos.dice(e.dano ? '-' + Math.round(e.dano) : tr('¡Trampa!'), sobre(), .9, 'malo'),
+    trampa: e => { TN.hud.golpe(); TN.bocadillos.dice(e.dano ? '-' + Math.round(e.dano) : tr('¡Trampa!'), sobre(), .9, 'malo'); },
     'asalto-coge': e => { TN.bocadillos.dice(tr('¡Botín!') + ' +' + e.unidades, sobre(), 1.6, 'bueno'); TN.guia.dice('asalto-sal', '¡Lo tienes! Sal por donde entraste', 5, true); },
     'asalto-sale': () => resumen(), 'asalto-falla': () => resumen(),
   };
   function resumen() {
     const fin = casos().foto().fin;
+    if (salir) salir.hidden = true;
     TN.hudResumen.abre({ motivo: fin.tipo === 'sale' ? 'asalto-sale' : 'asalto-falla', botin: fin.botin, unidades: fin.unidades, segundos: fin.segundos, aviso: tr(FALLA[fin.motivo] || '') },
       { otra: () => TN.pantallas.ve('expedicion'), nido: () => TN.pantallas.ve('nido') });
   }
@@ -63,7 +66,7 @@
       for (const m of piezas.values()) { if (m.userData.anima) m.userData.anima(t); m.rotation.z = m.userData.golpe > t ? .08 : 0; }
       TN.efectos.pinta(dt); TN.vista.sigue(becario.position.x, becario.position.z); TN.vista.pinta(escena, dt);
       TN.hud.pinta({ bateria: b.bateria, bateriaMax: b.max, baja: b.bateria < AJUSTES.becario.bateriaBaja, unidades: f.mochila.unidades, tope: f.mochila.tope * AJUSTES.mochila.porHueco,
-        voltios: f.cogiendo, meta: 1, pilas: 0, cuenta: f.quedan, nido: null, caida: null }, TN.vista);
+        voltios: f.cogiendo, meta: 1, pilas: 0, cuenta: f.quedan, nido: f.cogido ? destino.entrada : destino.almacen, caida: null }, TN.vista);
     },
     estado: () => { const f = casos().foto(); return f ? { fase: f.fase, fin: f.fin, quedan: f.quedan, becario: f.becario, cogido: f.cogido, piezas: f.piezas.length } : {}; },
   });

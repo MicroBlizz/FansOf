@@ -59,6 +59,8 @@
     for (let i = 0; i < largo - 1; i += 1) P.caja(pu, 0x2b2118, i % 4 ? .4 : .8, .02, .08, -ancho / 2 + .5, .57, -largo / 2 + i + .5);
     g.add(pu);
   }
+  // un suelo de moqueta suelto (lo que se ve alrededor del nido por dentro y del nido abandonado)
+  TN.modelos.moqueta = (lado, y) => { const g = P.grupo(); P.suelo(g, texturas().moqueta, lado, lado, 0, 0, y || 0, 3); return g; };
   // toda la parada con los datos del mapa. Devuelve el grupo; grupo.userData.anima(t, dt) mueve el café
   TN.modelos.parada = mapa => {
     const g = P.grupo(), L = mapa.lado, H = L / 2, tx = texturas(), vivos = [];
@@ -70,7 +72,11 @@
     for (const p of mapa.puentes || []) puente(g, p, mapa.rio);
     for (const t of mapa.telas || []) { const tela = TN.modelos.tela(t.radio); tela.position.set(t.x, 0, t.z); g.add(tela); }
     for (const s of mapa.sitios || []) P.aro(g, 0xffd23f, s.radio, s.x, s.z);
-    for (const m of mapa.muebles) g.add(TN.modelos.mueble(m));
+    g.userData.muebles = mapa.muebles.map(m => { const grupo = TN.modelos.mueble(m); g.add(grupo); return { grupo, m }; });
+    // decorado que no estorba, a la vista del nido: un camino de notas adhesivas hacia fuera y clips sueltos
+    const notas = [0xffe98a, 0x9bd67a, 0xff8a1f, 0x7cc4f2];
+    for (let i = 0; i < 14; i++) { const a = i * 2.4, d = 7 + (i % 5) * 3.2; P.caja(g, notas[i % 4], 1.25, .05, 1.25, mapa.nido.x + Math.cos(a) * d, .03, mapa.nido.z + Math.sin(a) * d, [0, a, 0]); }
+    for (let i = 0; i < 8; i++) { const a = i * 1.7 + .6, d = 10 + (i % 3) * 5; P.palo(g, 0x7cc4f2, .08, mapa.nido.x + Math.cos(a) * d, .06, mapa.nido.z + Math.sin(a) * d, mapa.nido.x + Math.cos(a) * d + .9, .06, mapa.nido.z + Math.sin(a) * d + .5); }
     // las franjas de sol de la persiana, repetidas por toda la moqueta
     const franja = new T.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: .08, depthWrite: false, blending: T.AdditiveBlending });
     for (let i = -8; i <= 8; i++) { const f = new T.Mesh(new T.PlaneGeometry(L * 1.6, 1.3), franja); f.rotation.set(-Math.PI / 2, 0, .62); f.position.set(i * 1.2, .09, i * 7.5); g.add(f); }

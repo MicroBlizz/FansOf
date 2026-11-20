@@ -46,6 +46,13 @@ TN.creaCasosExpedicion = ({ reglas, sesion, reloj, eventos }) => {
       if (foto.fin) termina(foto);
       return anuncia(lista);
     },
+    // dejarla a medias: la mochila se queda en el suelo, como al caer. callado: sin anunciar (al cerrar la página)
+    abandona(callado) {
+      if (!exp || cerrada) return TN.error('sin-expedicion');
+      const r = exp.abandona();
+      if (r.ok) { termina(exp.foto()); if (!callado) anuncia(r.valor); }
+      return r;
+    },
     foto: () => (exp ? exp.foto() : null),
     eligeMejora(id) { if (!exp) return TN.error('sin-expedicion'); const r = exp.eligeMejora(id); if (r.ok) anuncia(r.valor); return r; },
     usaPila() { if (!exp) return TN.error('sin-expedicion'); const r = exp.usaPila(); if (r.ok) anuncia(r.valor); return r; },

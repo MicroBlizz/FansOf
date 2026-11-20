@@ -5,7 +5,7 @@
 (() => {
   let escena = null, piezas = null, arriba = null, paleta = null, construyendo = false, elegida = 'pared-carton', ultima = '', t = 0, becario = null, oyentes = [];
   const R = () => AJUSTES.nido, casos = () => TN.casosNido;
-  const PORQUE = { 'sin-materiales': 'Te faltan materiales', 'camino-tapiado': '¡Tapas el camino al almacén!', 'tope-de-trampas': 'Ya tienes todas las trampas', 'casilla-ocupada': 'Ahí ya hay algo',
+  const PORQUE = { 'sin-materiales': 'Te faltan materiales: sal a por más', 'camino-tapiado': '¡Tapas el camino al almacén!', 'tope-de-trampas': 'Ya tienes todas las trampas', 'casilla-ocupada': 'Ahí ya hay algo',
     'almacen-fijo': 'El almacén no se mueve', 'casilla-vacia': '', 'fuera-de-rejilla': '' };
   const centro = (col, fila) => TN.vista.aPantalla(col + .5, 1, fila + .5);
   // vuelve a poner en la escena las piezas del nido
@@ -57,7 +57,7 @@
       construyendo = false; t = 0; piezas = new Map();
       escena = TN.vista.escena();
       if (escena) {
-        escena.add(TN.modelos.sueloNido(R().columnas, R().filas));
+        escena.add(TN.modelos.sueloNido(R().columnas, R().filas)); escena.add(TN.modelos.moqueta(90, -.62));
         TN.piezas3d.caja(escena, 0xff8a1f, .9, .06, .5, R().entrada.col + .5, .03, R().entrada.fila + 1.3);   // el felpudo de la entrada
         becario = TN.modelos.becario(); becario.scale.setScalar(.75); becario.position.set(R().entrada.col + .5, 0, R().entrada.fila + .5); becario.rotation.y = Math.PI; escena.add(becario);
         pintaPiezas();
@@ -65,8 +65,10 @@
       arriba = TN.crea('header', { className: 'tn-nido-arriba' }); TN.capa().append(arriba);
       pintaArriba(); barra();
       oyentes = [TN.eventos.oye(['pieza-puesta', 'pieza-quitada', 'meta-cumplida'], () => { pintaPiezas(); pintaArriba(); }),
-        TN.eventos.oye('meta-cumplida', () => TN.bocadillos.dice(tr('¡Meta cumplida!'), { x: TN.capa().clientWidth / 2, y: 150 }, 1.8, 'bueno'))];
+        TN.eventos.oye('meta-cumplida', () => TN.bocadillos.dice(tr('¡Meta cumplida!'), { x: TN.capa().clientWidth / 2, y: 240 }, 1.8, 'bueno'))];
       TN.capa().addEventListener('pointerdown', alBajar); TN.capa().addEventListener('pointermove', alMover);
+      const vacio = !casos().nido.piezas.length && !Object.values(casos().nido.almacen).some(c => c > 0);
+      if (vacio) setTimeout(() => { if (TN.pantallas.actual !== 'nido') return; TN.guia.olvida('nido-vacio'); TN.guia.dice('nido-vacio', 'Sal de expedición a por materiales para tu nido', 7); }, 50);
       TN.vista.encuadre('nido', 0, true); TN.vista.sigue(R().columnas / 2, R().filas / 2 + .6, true);
     },
     sale() {

@@ -1,0 +1,9 @@
+/* Fans of Pop · lo que compras vuela al «Tienes:» y la hucha se rompe (tarea #270, js/tienda-vuelo.js). Los iconos que vuelan usan
+   .pp-vic-vuela (css/victoria-panel.css). Solo transform y opacity, para ir a 60 fps en el móvil. */
+.pp-tienes { display: inline-flex; vertical-align: middle; }
+/* una ayuda o los corazones que no estaban en «Tienes:» entran con un saltito */
+.pp-tienes-entra { animation: pp-tienes-entra 0.35s ease-out both; }
+@keyframes pp-tienes-entra { from { transform: scale(0); } 70% { transform: scale(1.25); } to { transform: scale(1); } }
+/* al llegar cada icono, el dibujo de su sitio da un botecito y brilla en dorado */
+.pp-tienes-brilla .pp-ico { animation: pp-vic-recibe 0.25s ease-out; }
+.pp-tienes-brilla .pp-tienes-n { color: #e89a00; }

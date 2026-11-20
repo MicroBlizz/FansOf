@@ -153,13 +153,16 @@ function ppHuchaValor(n) {
 function ppVentanaHucha() {
   ppTutorial('hucha');
   const H = PP_CFG.hucha, n = SAVE.hucha || 0, puede = n >= H.minimo;
-  const t = ppAbre(`<h2>${tr('Hucha de perlas')}</h2><div class="pp-cofre">${ppIcono('i-hucha', 110, '#ffd1ec')}</div>
-    <p class="pp-premio">${ppPerlasHtml(n, 36)} <small>/ ${H.max}</small></p>
+  const t = ppAbre(`<h2>${tr('Hucha de perlas')}</h2><p class="pp-sub">${tr('Tienes:')} ${ppTienesHtml('perlas', 'i-perla', '#ffd1ec', SAVE.perlas || 0)}</p>
+    <div class="pp-cofre">${ppIcono('i-hucha', 110, '#ffd1ec')}</div>
+    <p class="pp-premio"><span class="pp-precio">${ppIcono('i-perla', 36, '#ffd1ec')}<span class="pp-hucha-dentro">${n}</span></span> <small>/ ${H.max}</small></p>
     <p class="pp-sub">${tr('Cada nivel nuevo que pasas mete perlas en la hucha. Rómpela y quédatelas todas.')}</p>
     <p class="pp-sub"><b>${tr('Se abre pagando {p}.', { p: H.precio })}</b>${ppHuchaValor(n)}</p>
     ${puede ? '' : `<p class="pp-sub">${tr('Se puede romper desde {n} perlas.', { n: H.minimo })}</p>`}`);
   if (puede) t.appendChild(ppBoton(tr('ROMPER LA HUCHA · {p}', { p: H.precio }), 'pp-btn', () => ppCompraEuros(tr('Hucha de perlas'), `<p>${tr('{n} perlas por {p}.', { n, p: H.precio })}</p>`, H.id, () => {
-    ppPerlas(SAVE.hucha || 0); SAVE.hucha = 0; ppGuarda(); ppCierra(); ppPintaLateral(); ppFlota(tr('+{n} perlas', { n }), 270, 300, '#ff6ec7');
+    const dentro = SAVE.hucha || 0, antes = SAVE.perlas || 0;
+    ppPerlas(dentro); SAVE.hucha = 0; ppGuarda();
+    ppHuchaRompe(t, dentro, antes, () => { ppCierra(); ppPintaLateral(); });   // el martillazo y las perlas volando (js/tienda-vuelo.js, tarea #270)
   })));
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
 }

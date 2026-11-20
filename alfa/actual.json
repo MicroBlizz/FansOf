@@ -1,8 +1,8 @@
 {
- "build": 1391,
- "hash": "573ee5d",
- "fecha": "2026-11-20T23:12:41Z",
- "mensaje": "Portada: la decisión del catálogo con buscador pasa a ser el ADR 188 (el 186 y el 187 los cogieron Pop y Rally a la vez) (tarea #277)",
+ "build": 1392,
+ "hash": "6aaa052",
+ "fecha": "2026-11-20T23:29:47Z",
+ "mensaje": "Pop: lo que compras en la tienda sale en abanico y vuela al «Tienes:», y la hucha se rompe de un martillazo (tarea #270, Pepins, boceto B y hucha 2)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

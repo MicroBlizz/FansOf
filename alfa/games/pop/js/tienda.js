@@ -67,10 +67,10 @@ let PP_TIENDA_VUELTA = null, PP_TIENDA_PESTANA = 'ofertas';
 function ppTienda(vuelta, pestana) {
   if (ppEdadDecide() === 'pregunta') { const sigue = () => ppTienda(vuelta, pestana); ppEdadPide(sigue, sigue); return; }   // la primera vez, la edad (tarea #254)
   ppTutorial('tienda');
-  if (vuelta !== undefined) PP_TIENDA_VUELTA = vuelta;   // sin decir nada (al cambiar de pestaña) se mantiene
+  if (vuelta !== undefined) { PP_TIENDA_VUELTA = vuelta; ppTiendaOlvida(); }   // sin decir nada (al cambiar de pestaña o al repintar tras comprar) se mantiene
   if (pestana) PP_TIENDA_PESTANA = pestana;
   if (ppVentaCerrada() && PP_TIENDA_PESTANA === 'perlas') PP_TIENDA_PESTANA = 'ayudas';   // un menor no ve los packs con euros
-  const t = ppAbre(`<h2>${tr('Tienda')}</h2><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)} · ${ppMonedasHtml(SAVE.monedas, 28)}</p>`, true);
+  const t = ppAbre(`<h2>${tr('Tienda')}</h2><p class="pp-sub pp-tienda-tienes">${ppTiendaTienesHtml()}</p>`, true);   // a donde vuela lo comprado (js/tienda-vuelo.js, tarea #270)
   const tabs = document.createElement('div'); tabs.className = 'pp-tabs';
   for (const [k, txt] of [['ofertas', tr('Ofertas')], ['perlas', tr('Perlas')], ['ayudas', tr('Ayudas')], ['bandejas', tr('Bandejas')]].filter(([k]) => !(k === 'perlas' && ppVentaCerrada()))) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-tab' + (PP_TIENDA_PESTANA === k ? ' pp-on' : '') + (k === 'perlas' ? ' pp-tab-perlas' : ''); b.textContent = txt;
@@ -79,9 +79,10 @@ function ppTienda(vuelta, pestana) {
   }
   t.appendChild(tabs); t.classList.add('pp-tienda');   // el mismo alto en todas las pestañas (css/pop.css, tarea #185)
   const caja = document.createElement('div'); caja.className = 'pp-packs'; t.appendChild(caja);
-  const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); f(); }; caja.appendChild(b); return b; };
+  const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); ppTiendaToque(b); f(); }; caja.appendChild(b); return b; };
   (PP_TIENDA_PESTANAS[PP_TIENDA_PESTANA] || ppTiendaOfertas)(tarjeta, caja);   // lo de cada pestaña: js/tienda-venta.js (tarea #187) y js/tienda-perlas.js (#266)
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppCierra(); if (v) v(); }));
+  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppTiendaOlvida(); ppCierra(); if (v) v(); }));
+  ppTiendaVuela(t);   // si vienes de comprar, lo ganado vuela al «Tienes:» (tarea #270)
 }
 // `alAcabar`: lo que se hace cuando llegan las perlas (por defecto, repintar la tienda; tarea #187: «comprar solo lo que falta»)
 function ppCompraPack(p, alAcabar = () => ppTienda()) {

@@ -1,8 +1,8 @@
 {
- "build": 1355,
- "hash": "bb2aafa",
- "fecha": "2026-11-20T16:19:34Z",
- "mensaje": "Pop: el contador de toques es igual en todos los mundos: «Quedan 6» y las burbujitas debajo; con más de 20, la cifra (tarea #182, boceto C de Pepins)",
+ "build": 1356,
+ "hash": "04f6665",
+ "fecha": "2026-11-20T16:22:56Z",
+ "mensaje": "Pinball 0.2.1: cápsula hueca y maceta de Yoshi, y preparar.py para colocar el arte al tamaño del juego (#114)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -23,7 +23,7 @@
   "panic": "0.1.2",
   "paperwork": "0.11.2",
   "pets": "0.2.15",
-  "pinball": "0.2.0",
+  "pinball": "0.2.1",
   "pop": "0.6.0",
   "ratkov": "0.2.45",
   "rouflage": "0.2.81",

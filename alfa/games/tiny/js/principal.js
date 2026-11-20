@@ -17,6 +17,7 @@ TN.compone = () => {
   TN.casosNido = TN.creaCasosNido(puertos);
   TN.casosAsalto = TN.creaCasosAsalto(puertos);
   TN.metas = TN.creaMetas(puertos);
+  TN.diario = TN.creaDiario(puertos);
   TN.bucle = TN.creaBucle({
     reglas: AJUSTES.simulacion,
     // el joystick da un vector de pantalla y la vista lo pasa a los ejes del mundo: el dominio solo ve { mx, mz }

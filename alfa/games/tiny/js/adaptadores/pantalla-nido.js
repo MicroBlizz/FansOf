@@ -21,7 +21,28 @@
     const a = casos().nido.almacen, meta = TN.metas.actual();
     arriba.replaceChildren(
       TN.crea('div', { className: 'tn-almacen' }, ...Object.keys(TN.textos.materiales).map(m => TN.crea('span', {}, TN.iconos.nodo(m, 28), TN.crea('b', { textContent: a[m] || 0 })))),
-      meta ? TN.crea('div', { className: 'tn-meta' }, TN.crea('span', { textContent: meta.texto }), TN.crea('b', { textContent: meta.tiene + '/' + meta.pide })) : TN.crea('div', { className: 'tn-meta', textContent: tr('¡Nido completo! Sal a por más.') }));
+      meta ? TN.crea('div', { className: 'tn-meta' }, TN.crea('span', { textContent: meta.texto }), TN.crea('b', { textContent: meta.tiene + '/' + meta.pide })) : TN.crea('div', { className: 'tn-meta', textContent: tr('¡Nido completo! Sal a por más.') }),
+      paquete());
+  }
+  // el paquete del día: un botón amarillo mientras no se haya abierto hoy (después no hay nada: nada en gris)
+  function paquete() {
+    if (!TN.diario.disponible) return '';
+    return TN.crea('button', { type: 'button', className: 'tn-paquete tn-toca', onclick: abrePaquete }, TN.iconos.nodo('paquete', 34), TN.crea('span', { textContent: tr('Paquete del día') }));
+  }
+  function abrePaquete() {
+    const r = TN.diario.abre(); if (!r.ok) return;
+    const lista = TN.crea('ul', { className: 'tn-botin' }, ...Object.entries(r.valor.regalo).map(([m, c]) => TN.crea('li', {}, TN.iconos.nodo(m, 34), TN.crea('b', { textContent: '+' + c }), TN.crea('span', { textContent: tr(TN.textos.materiales[m]) }))));
+    TN.ventanas.abre({ clase: 'hoja', titulo: tr('Mensajería interna'), sello: tr('Día {n}', { n: r.valor.racha }),
+      cuerpo: TN.crea('div', { className: 'tn-regalo' }, lista, TN.crea('p', { textContent: tr('Mañana llega otro. Si vienes varios días seguidos, el paquete es mejor.') })), botones: [{ texto: tr('¡Gracias!') }] });
+    pintaArriba(); empuja();
+  }
+  // si ya alcanza para la pieza de la meta y aún no está construyendo, lo dice y hace latir el botón de construir
+  function empuja() {
+    const m = TN.metas.actual(), dato = m && AJUSTES.metas.lista.find(x => x.id === m.id), pieza = dato && dato.cuenta.pieza;
+    const puede = !construyendo && !!pieza && !Object.keys(TN.recetas.falta(AJUSTES, pieza, casos().nido.almacen)).length;
+    const boton = document.querySelector('.tn-barra-nido .tn-boton');
+    if (boton) boton.classList.toggle('tn-llama', puede);
+    if (puede && casos().nido.piezas.length < 2) { TN.guia.olvida('construye'); TN.guia.dice('construye', 'Pulsa CONSTRUIR y pinta paredes con el dedo', 7); }
   }
   const cuesta = pieza => Object.entries(R().piezas[pieza].cuesta).map(([m, c]) => TN.crea('em', {}, TN.iconos.nodo(m, 18), String(c)));
   function pintaPaleta() {
@@ -38,7 +59,7 @@
     TN.hudBarra.monta(TN.capa(), { asaltoAbierto: p.asaltoAbierto, mochilaCaida: !!p.mochilaCaida(TN.reloj.ahora(), AJUSTES.mochila.caidaHoras * 3600000), construyendo }, id => {
       TN.sonido.toca('boton');
       if (id !== 'construir') return TN.pantallas.ve(id);
-      construyendo = !construyendo; TN.vista.encuadre(construyendo ? 'construir' : 'nido'); barra(); pintaPaleta();
+      construyendo = !construyendo; TN.vista.encuadre(construyendo ? 'construir' : 'nido'); barra(); pintaPaleta(); TN.guia.limpia(); empuja();
     });
   }
   // un dedo sobre una casilla en modo construir: pone la pieza elegida o quita la que haya
@@ -68,7 +89,7 @@
         TN.eventos.oye('meta-cumplida', () => TN.bocadillos.dice(tr('¡Meta cumplida!'), { x: TN.capa().clientWidth / 2, y: 240 }, 1.8, 'bueno'))];
       TN.capa().addEventListener('pointerdown', alBajar); TN.capa().addEventListener('pointermove', alMover);
       const vacio = !casos().nido.piezas.length && !Object.values(casos().nido.almacen).some(c => c > 0);
-      if (vacio) setTimeout(() => { if (TN.pantallas.actual !== 'nido') return; TN.guia.olvida('nido-vacio'); TN.guia.dice('nido-vacio', 'Sal de expedición a por materiales para tu nido', 7); }, 50);
+      setTimeout(() => { if (TN.pantallas.actual !== 'nido') return; if (vacio) { TN.guia.olvida('nido-vacio'); TN.guia.dice('nido-vacio', 'Sal de expedición a por materiales para tu nido', 7); } else empuja(); }, 50);
       TN.vista.encuadre('nido', 0, true); TN.vista.sigue(R().columnas / 2, R().filas / 2 + .6, true);
     },
     sale() {

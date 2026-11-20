@@ -101,3 +101,13 @@ html, body { margin: 0; height: 100%; background: var(--tn-fondo); overflow: hid
 @keyframes tn-fuera { to { opacity: 0; } }
 .tn-salir[hidden] { display: none; }
 #tn-escenario, #tn-escenario * { touch-action: none; -webkit-tap-highlight-color: transparent; }
+/* el paquete del día, el empujón a construir y el botín que va apareciendo en el resultado */
+.tn-paquete { pointer-events: auto; align-self: flex-end; display: flex; align-items: center; gap: 6px; min-height: 52px; padding: 4px 14px 4px 8px; background: var(--tn-amarillo);
+  border: 3px solid var(--tn-borde); border-radius: 14px; box-shadow: 0 4px 0 var(--tn-borde); color: var(--tn-tinta); font: 700 17px var(--tn-titulo); text-transform: uppercase; animation: tn-bota 1.2s infinite; }
+.tn-regalo { display: flex; flex-direction: column; gap: 10px; align-items: center; } .tn-regalo .tn-botin { border-width: 3px; }
+.tn-boton.tn-llama { animation: tn-bota .9s infinite; background: var(--tn-verde); color: #fff; }
+@keyframes tn-bota { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.tn-resumen .tn-botin li { animation: tn-entra .35s backwards; }
+.tn-resumen .tn-botin li:nth-child(2) { animation-delay: .15s; } .tn-resumen .tn-botin li:nth-child(3) { animation-delay: .3s; } .tn-resumen .tn-botin li:nth-child(4) { animation-delay: .45s; } .tn-resumen .tn-botin li:nth-child(5) { animation-delay: .6s; }
+@keyframes tn-entra { from { opacity: 0; transform: scale(.6) translateY(10px); } }
+@media (prefers-reduced-motion: reduce) { .tn-paquete, .tn-boton.tn-llama, .tn-resumen .tn-botin li { animation: none; } }

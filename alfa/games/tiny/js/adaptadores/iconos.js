@@ -25,6 +25,7 @@ TN.iconos = (() => {
     sonido: `<path d="M5 12h5l6-5v16l-6-5H5z" fill="#ffd23f" ${S}/><path d="M20 11a6 6 0 0 1 0 8M23 8a10 10 0 0 1 0 14" fill="none" ${S}/>`,
     silencio: `<path d="M5 12h5l6-5v16l-6-5H5z" fill="#ffd23f" ${S}/><path d="M20 11l6 8M26 11l-6 8" fill="none" ${S}/>`,
     cerrar: `<path d="M8 8l14 14M22 8 8 22" fill="none" stroke="${T}" stroke-width="4" stroke-linecap="round"/>`,
+    paquete: `<rect x="4" y="10" width="22" height="16" rx="2" fill="#c9a063" ${S}/><path d="M4 15h22M15 10v16" fill="none" stroke="#e2452f" stroke-width="3"/><path d="M15 10c-6-8-10 0 0 0 10 0 6-8 0 0" fill="#e2452f" ${S}/>`,
     papelera: `<path d="M7 10h16l-2 16H9z" fill="#e2452f" ${S}/><path d="M5 10h20M12 6h6" fill="none" ${S}/>`,
   };
   for (const n of ['pared-carton', 'pared-plastico', 'puerta', 'chinchetas', 'almacen', 'ratonera', 'pegamento', 'ventilador']) DIBUJOS[n] = ({

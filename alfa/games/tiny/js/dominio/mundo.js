@@ -13,6 +13,12 @@ TN.mundo = {
     return { bichos, botin, gigante: TN.mundo.gigante(reglas, azar), oleadas: 1 - menos };
   },
 
+  // el escenario de la PRIMERA salida de una partida: el mismo sorteo, sin bichos cerca del nido y con unos montones fijos a la vista
+  primera(reglas, semilla, datos = {}) {
+    const esc = TN.mundo.genera(reglas, semilla, datos), p = reglas.trucos.primeraSalida, n = reglas.mapa.nido;
+    return { ...esc, bichos: esc.bichos.filter(b => Math.hypot(b.x - n.x, b.z - n.z) >= p.sinBichosA), botin: p.botin.map(b => ({ ...b })).concat(esc.botin) };
+  },
+
   // un punto libre al azar en una zona ('cerca', 'medio', 'lejos' o un sitio señalado), o null si no lo encuentra
   punto(reglas, azar, donde, radio = 1) {
     for (let i = 0; i < 40; i++) {

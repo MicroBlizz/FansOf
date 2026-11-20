@@ -31,7 +31,9 @@ TN.creaCasosExpedicion = ({ reglas, sesion, reloj, eventos }) => {
     // empieza una salida (escenario y semilla: solo en pruebas). Resultado: ok(foto) o el error del dominio
     sale(datos = {}) {
       const p = sesion.partida, n = nido(), pilas = n.almacen.pilas > 0 ? 1 : 0;
-      const r = TN.Expedicion.nueva(reglas, { semilla: datos.semilla === undefined ? reloj.semilla() : datos.semilla, escenario: datos.escenario,
+      const semilla = datos.semilla === undefined ? reloj.semilla() : datos.semilla;
+      const escenario = datos.escenario || (p.contadores.salidas === 0 ? TN.mundo.primera(reglas, semilla, { caidasSeguidas: 0 }) : undefined);
+      const r = TN.Expedicion.nueva(reglas, { semilla, escenario,
         mochilaCaida: p.mochilaCaida(reloj.ahora(), reglas.mochila.caidaHoras * HORA), pilas, caidasSeguidas: p.contadores.caidasSeguidas });
       if (!r.ok) return r;
       if (pilas) { n.saca({ pilas }); p.ponNido(n.aJson()); }

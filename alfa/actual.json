@@ -1,8 +1,8 @@
 {
- "build": 1336,
- "hash": "cc3846c",
- "fecha": "2026-11-20T03:29:55Z",
- "mensaje": "Tablero: «tiny» en la lista de juegos con página de Revisar (el test de las carpetas de web/games volvía a estar en rojo desde Tiny Fans, #138)",
+ "build": 1337,
+ "hash": "4f5350e",
+ "fecha": "2026-11-20T07:06:51Z",
+ "mensaje": "Tiny Fans: segunda tanda para subir la nota (primera salida guiada, paquete del día, más metas, decorado por la moqueta, resultado animado) y tarjeta solo alfa en la biblioteca con capturas y novedades; boceto 4 y modelos de Yoshi apuntados en BOCETOS.md (tarea #138, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -59,6 +59,25 @@
     for (let i = 0; i < largo - 1; i += 1) P.caja(pu, 0x2b2118, i % 4 ? .4 : .8, .02, .08, -ancho / 2 + .5, .57, -largo / 2 + i + .5);
     g.add(pu);
   }
+  // cosas pequeñas y bajas tiradas por toda la moqueta (no estorban ni tapan): notas, clips, lápices, gomas, monedas, migas y manchas
+  const COSAS = [
+    (g, x, z, a) => P.caja(g, [0xffe98a, 0x9bd67a, 0xff8a1f, 0x7cc4f2, 0xf2a0a0][Math.floor(a * 7) % 5], 1.3, .05, 1.3, x, .03, z, [0, a, 0]),
+    (g, x, z, a) => { const c = Math.cos(a), s = Math.sin(a); P.palo(g, 0xb9c9d6, .07, x - c * .5, .05, z - s * .5, x + c * .5, .05, z + s * .5); P.palo(g, 0xb9c9d6, .07, x + c * .5, .05, z + s * .5, x + c * .3 - s * .2, .05, z + s * .3 + c * .2); },
+    (g, x, z, a) => { const l = P.grupo(); l.position.set(x, .14, z); l.rotation.y = a; P.caja(l, 0xf5b800, .26, .26, 2.6, 0, 0, 0); P.caja(l, 0xf2a0a0, .27, .27, .3, 0, 0, -1.4); P.cono(l, 0xe8cfa0, .15, .4, 0, 0, 1.5, [Math.PI / 2, 0, 0]); g.add(l); },
+    (g, x, z, a) => P.caja(g, 0xf2a0a0, .9, .32, .5, x, .16, z, [0, a, 0]),
+    (g, x, z) => P.cilindro(g, 0xf2c94c, .5, .5, .07, x, .04, z, null, 12),
+    (g, x, z, a) => { for (let i = 0; i < 3; i++) P.bola(g, 0xd9a55a, .13, .1, .13, x + Math.cos(a + i * 2) * .3, .08, z + Math.sin(a + i * 2) * .3); },
+    (g, x, z) => P.disco(g, 0x6b3f1f, 1.1, x, z, .28),
+    (g, x, z, a) => { P.cilindro(g, [0xe2452f, 0x2f8fd8, 0x4fae3c][Math.floor(a * 5) % 3], .26, .26, .08, x, .04, z, null, 10); P.cono(g, 0xb9c9d6, .06, .3, x, .2, z); },
+  ];
+  function decora(g, mapa) {
+    semilla = 99; const l = mapa.limite - 2;
+    for (let i = 0; i < 230; i++) {
+      const x = (rnd() * 2 - 1) * l, z = (rnd() * 2 - 1) * l, a = rnd() * 6.28, cual = (rnd() * COSAS.length) | 0;
+      if (Math.hypot(x - mapa.nido.x, z - mapa.nido.z) < mapa.nido.radio + 1.5 || TN.mapa.choca(AJUSTES, x, z, 1.4) || TN.mapa.enRio(AJUSTES, x, z)) continue;
+      COSAS[cual](g, x, z, a);
+    }
+  }
   // un suelo de moqueta suelto (lo que se ve alrededor del nido por dentro y del nido abandonado)
   TN.modelos.moqueta = (lado, y) => { const g = P.grupo(); P.suelo(g, texturas().moqueta, lado, lado, 0, 0, y || 0, 3); return g; };
   // toda la parada con los datos del mapa. Devuelve el grupo; grupo.userData.anima(t, dt) mueve el café
@@ -77,6 +96,7 @@
     const notas = [0xffe98a, 0x9bd67a, 0xff8a1f, 0x7cc4f2];
     for (let i = 0; i < 14; i++) { const a = i * 2.4, d = 7 + (i % 5) * 3.2; P.caja(g, notas[i % 4], 1.25, .05, 1.25, mapa.nido.x + Math.cos(a) * d, .03, mapa.nido.z + Math.sin(a) * d, [0, a, 0]); }
     for (let i = 0; i < 8; i++) { const a = i * 1.7 + .6, d = 10 + (i % 3) * 5; P.palo(g, 0x7cc4f2, .08, mapa.nido.x + Math.cos(a) * d, .06, mapa.nido.z + Math.sin(a) * d, mapa.nido.x + Math.cos(a) * d + .9, .06, mapa.nido.z + Math.sin(a) * d + .5); }
+    decora(g, mapa);
     // las franjas de sol de la persiana, repetidas por toda la moqueta
     const franja = new T.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: .08, depthWrite: false, blending: T.AdditiveBlending });
     for (let i = -8; i <= 8; i++) { const f = new T.Mesh(new T.PlaneGeometry(L * 1.6, 1.3), franja); f.rotation.set(-Math.PI / 2, 0, .62); f.position.set(i * 1.2, .09, i * 7.5); g.add(f); }

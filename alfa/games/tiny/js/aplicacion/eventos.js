@@ -46,6 +46,7 @@ TN.EVENTOS = TN.congela({
   pantalla: ['de', 'a'],
   'meta-avanza': ['meta', 'tiene', 'pide'],
   'meta-cumplida': ['meta'],
+  'regalo-diario': ['regalo', 'racha'],
 });
 // lo que le falta a un evento para valer: '' si está bien
 TN.eventoMal = e => {

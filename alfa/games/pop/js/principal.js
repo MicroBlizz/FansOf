@@ -96,7 +96,7 @@ function ppArranque() {
     PP_ESCENARIO.style.visibility = ''; const carga = $pp('#carga'); if (carga) carga.remove();
     if (!faltan.length) NUCLEO.listo();
     if (salio) ppVentanaSalioAMedias();   // y se dice por qué falta un corazón (tarea #185)
-    else if (typeof SPLASH !== 'undefined') SPLASH.falla('pop/img-liso/' + faltan[0] + '.png');
+    else if (faltan.length && typeof SPLASH !== 'undefined') SPLASH.falla('pop/img-liso/' + faltan[0] + '.png');
   });
   requestAnimationFrame(ppFotograma);
   setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppPintaLateral(); }, 1000);   // los relojes de las ofertas

@@ -1,0 +1,13 @@
+{
+  "name": "Fans of Rally",
+  "short_name": "Fans of Rally",
+  "description": "Rally de recreativa con los Animales Locos y coches en lonchas apiladas (prototipo).",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#c9560a",
+  "theme_color": "#c9560a",
+  "icons": []
+}

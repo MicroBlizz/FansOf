@@ -1,0 +1,5 @@
+// Fans of Rally · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
+'use strict';
+const NEWS = [
+  { v: '0.1.0', real: ["<b>PRIMER PROTOTIPO</b>, solo en la alfa: rally de recreativa con los Animales Locos. Coches, árboles, rocas y cactus hechos de <b>lonchas apiladas</b> (hojas pintadas una encima de otra) con la cámara inclinada. <b>Campeonato</b> de tres tramos (desierto, bosque y montaña) contra los coches de empresa de Microblizz, con tiempo que se gana en cada control, y <b>contrarreloj</b> con el fantasma de tu mejor vuelta. Cada suelo agarra distinto: asfalto, tierra, barro y nieve. Música reaprovechada de otros juegos de la serie."], joke: ["Contabilidad ha preguntado si el coche de empresa se puede desgravar como «material de oficina». Dice que tiene volante, que es casi un ratón."] },
+];

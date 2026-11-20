@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#c9560a">
+<title>Fans of Rally</title>
+<meta name="description" content="Fans of Rally: rally de recreativa con los Animales Locos y coches hechos de lonchas apiladas. Prototipo en desarrollo.">
+<meta name="robots" content="noindex">
+<script src="../../core/js/nucleo.js?v=0.1.0-a1390.9f34192"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/pixelify-sans.css', '../../core/fuentes/jersey-10.css', '../../core/fuentes/fredoka.css')</script>
+<!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
+<script>NUCLEO.estilos('../../core/css/base.css', 'css/rally.css')</script>
+</head>
+<body>
+<div id="ra-escenario">
+  <canvas id="ra-lienzo" aria-hidden="true"></canvas>
+  <div id="ra-hud" hidden>
+    <div class="ra-arriba">
+      <div class="ra-caja ra-tiempo-caja"><span id="ra-tiempo-titulo">TIEMPO</span><b id="ra-tiempo">0</b></div>
+      <div class="ra-caja"><span data-tr>VUELTA</span><b id="ra-vuelta">1/2</b></div>
+      <div class="ra-caja ra-puesto-caja"><span class="ra-solo-campeonato" data-tr>PUESTO</span><span class="ra-solo-contrarreloj" data-tr>ESTA VUELTA</span><b id="ra-puesto">6/6</b></div>
+      <button id="ra-boton-pausa" class="ra-pausa" aria-label="Pausa"><i></i><i></i></button>
+    </div>
+    <canvas id="ra-mapa" width="120" height="120"></canvas>
+    <div id="ra-cuenta" hidden></div>
+    <div id="ra-aviso" hidden></div>
+    <div id="ra-copiloto" hidden></div>
+    <div class="ra-velocimetro"><b id="ra-velocidad">0</b><span>KM/H</span></div>
+    <div class="ra-mandos">
+      <button class="ra-mando ra-izq" data-mando="izq" aria-label="Izquierda"><i></i></button>
+      <button class="ra-mando ra-der" data-mando="der" aria-label="Derecha"><i></i></button>
+      <button class="ra-mando ra-freno" data-mando="freno"><span data-tr>FRENO</span></button>
+    </div>
+  </div>
+  <div id="ra-menu"></div>
+  <div id="ra-pausa" hidden></div>
+</div>
+<div id="ra-carga">FANS OF RALLY</div>
+<script>
+NUCLEO.juego({
+  esperaListo: true,   // la splash de core espera a NUCLEO.listo(), que js/principal.js llama al quitar la pantalla de carga (ADR 091)
+  ligero: true,        // solo la cuenta, el idioma y el sonido de core: Rally lleva sus récords y sus pantallas (prototipo solo para la alfa)
+  antes: ['js/ra.js', 'js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    // por capas (docs/calidad/ARQUITECTURA.md): datos, dominio, aplicación, adaptadores y la composición. Contrato: docs/guia/juegos/rally/README.md
+    'js/datos/pilotos.js', 'js/datos/tramos.js', 'js/datos/textos.js',
+    'js/dominio/pista.js', 'js/dominio/coche.js', 'js/dominio/ia.js', 'js/dominio/copiloto.js', 'js/dominio/fantasma.js', 'js/dominio/paisaje.js', 'js/dominio/carrera.js',
+    'js/aplicacion/sesion.js',
+    '../../core/js/serie/canciones.js', 'js/musica.js',   // las canciones de la serie y las reaprovechadas de Rouflage y Nova
+    'js/adaptadores/almacen-local.js', 'js/adaptadores/hojas.js', 'js/adaptadores/suelo.js', 'js/adaptadores/vista.js', 'js/adaptadores/hud.js',
+    'js/adaptadores/controles.js', 'js/adaptadores/sonido.js', 'js/adaptadores/juego.js', 'js/adaptadores/pantallas.js',
+    'js/principal.js'],
+});
+</script>
+</body>
+</html>

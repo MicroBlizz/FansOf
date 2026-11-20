@@ -1,8 +1,8 @@
 {
- "build": 1389,
- "hash": "081ced6",
- "fecha": "2026-11-20T22:29:44Z",
- "mensaje": "Pop: al llegar por primera vez a un mundo nuevo, un cartel a pantalla completa con su nombre, «mundo N de 10», lo nuevo y el jefe (se quita con un toque y vuelve tocando el título), y el camino ya no tiene botón de pausa (tarea #272, reporte 38, boceto A, ADR 186, Pepins)",
+ "build": 1390,
+ "hash": "9f34192",
+ "fecha": "2026-11-20T23:06:34Z",
+ "mensaje": "Rally: juego nuevo Fans of Rally, rally de recreativa con coches, árboles y rocas en lonchas pintadas y cámara inclinada; campeonato de tres tramos con tiempo y rivales de Microblizz, contrarreloj con fantasma, choques entre coches y contra el paisaje, música reaprovechada de Rouflage, Nova y core (tarea #278, ADR 187, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -25,6 +25,7 @@
   "pets": "0.2.15",
   "pinball": "0.2.5",
   "pop": "0.6.0",
+  "rally": "0.1.0",
   "ratkov": "0.2.45",
   "rouflage": "0.2.81",
   "rumble": "0.9.174",

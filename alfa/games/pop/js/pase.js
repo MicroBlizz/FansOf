@@ -86,6 +86,7 @@ function ppVentanaPase(repinta = false) {
   const t = ppAbre(ppPaseCabecera(P, e), true);
   t.classList.add('pp-pase-ventana');
   ppVicBarra(desde.monedas);   // la barra de arriba (corazones, monedas y perlas), la misma de la victoria (js/victoria-panel.js)
+  ppPaseFinal(t, P, e, C.escalones);   // el premio final, arriba (js/pase-pantalla.js)
   if (!P.premium) ppPaseBotonPremium(t);
   const n = ppPaseListos().length, todo = ppBoton(n ? tr('RECOGER TODO ({n})', { n }) : tr('Nada que recoger'), 'pp-btn2 pp-verde pp-pase-todo', () => ppPaseRecoge(ppPaseListos()));
   todo.disabled = !n; t.appendChild(todo);
@@ -168,6 +169,7 @@ function ppAlLlegarAlCamino() {
   if (PP_PANT.actual !== 'mapa' || !$pp('#pp-modal').hidden) return;   // solo si sigues en el camino (no al entrar en un nivel)
   if (ppPrimerosEstreno()) return;   // partida nueva: Lola estrena lo que se acaba de abrir (js/primeros-pasos-juego.js, tarea #140)
   if (ppMiraBienvenida()) return;
+  if (ppMiraPackMundo2()) return;   // el segundo pack, al llegar al mundo 2 (js/ofertas.js, tarea #187)
   if (ppPrimerosVe('feria') && ppFeriaAlLlegar()) return;   // premios de la feria entregados solos o su bienvenida (js/feria-pantalla.js)
   if (SAVE.regaloDia !== ppHoy() && !PP_PASE_VISTO.regalo && ppPrimerosVe('regalo')) { PP_PASE_VISTO.regalo = true; ppVentanaRegalo(); }
 }

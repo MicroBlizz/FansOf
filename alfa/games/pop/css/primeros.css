@@ -2,8 +2,10 @@
 /* los botones de la portada: un velo blanco encima de su color (el candado, que va dentro, sigue nítido) */
 .pp-btn2.pp-cerrado { background: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)), linear-gradient(180deg, var(--c1) 0%, var(--c2) 100%);
   box-shadow: inset 0 0 0 4px var(--borde), 0 3px 0 0 var(--borde); color: rgba(255, 255, 255, 0.9); }
-/* los iconos del lado del camino: el dibujo y su rótulo, a media luz */
-.pp-lado.pp-cerrado > .pp-ico, .pp-lado.pp-cerrado > b, .pp-lado.pp-cerrado > :not(.pp-candado) { opacity: 0.55; }
+/* los iconos del lado del camino: el dibujo y su rótulo, a media luz pero OPACOS (reporte 29, 20-11-2026: con opacity se veía el camino
+   a través del regalo); el velo blanco sale de bajar el contraste y subir el brillo, que deja el mismo color, aclarado */
+.pp-lado.pp-cerrado > :not(.pp-candado) { filter: contrast(0.55) brightness(1.4); }
+.pp-lado.pp-cerrado > .pp-ico { filter: contrast(0.55) brightness(1.4) drop-shadow(0 3px 0 rgba(196, 58, 132, 0.2)); }
 .pp-candado { position: absolute; top: -12px; right: -8px; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px 2px 6px; border-radius: 99px;
   background: #fff; border: 2px solid #c43a84; color: #c43a84; font-size: 13px; line-height: 1.1; white-space: nowrap; text-shadow: none; -webkit-text-stroke: 0; pointer-events: none; z-index: 3; }
 .pp-candado i { position: relative; width: 10px; height: 8px; margin-top: 4px; border-radius: 2px; background: currentColor; }

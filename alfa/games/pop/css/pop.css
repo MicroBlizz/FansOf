@@ -12,9 +12,18 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 #pp-ui button:focus-visible { outline: 4px solid #ffd84a; outline-offset: 3px; }
 [hidden] { display: none !important; }
 /* botones de caramelo (Daniel, 30-10-2026: kawaii): píldora redonda, gominola con brillo arriba, borde de su color (no negro),
-   sombra blandita debajo y un saltito al pulsar. El principal naranja; los demás verde, azul y rosa. Nada de morado en botones. */
-.pp-btn, .pp-btn2 { --c1: #ffb057; --c2: #ff7a1a; --borde: #c2510a; position: relative; display: inline-flex; align-items: center; justify-content: center;
-  border: 0; border-radius: 999px; padding: 14px 36px 15px; font-size: 30px; line-height: 1; min-width: 250px; letter-spacing: 0.5px; color: #fff;
+   sombra blandita debajo y un saltito al pulsar. Nada de morado ni gris en botones.
+   SISTEMA DE BOTONES (tarea #143, ADR 176; paleta «Chuche» elegida por Daniel): cuatro papeles, un color fijo cada uno en todos los mundos
+   - principal (.pp-btn): lo siguiente, uno por pantalla; rosa chicle y el más alto
+   - pago (.pp-pago): tienda, pase, doblar, ofertas; dorado
+   - secundario (.pp-btn2 / .pp-sec): ir a otra pantalla u opciones; turquesa
+   - volver (.pp-volver): volver, cerrar, salir; azul
+   Altos: la capa #pp-ui mide 540 de ancho y en un móvil de 375 px se ve al 69 %, así que 70 aquí son 48 px de verdad (lo mínimo para
+   el pulgar, docs/calidad/PULIR.md) y 84 son unos 58 px (el principal). */
+:root { --pp-prin1: #ff9cc8; --pp-prin2: #ff4f9a; --pp-prin-b: #b8236a; --pp-pago1: #ffe36e; --pp-pago2: #ffb800; --pp-pago-b: #c27a00;
+  --pp-sec1: #8eeee4; --pp-sec2: #22b8b0; --pp-sec-b: #11807a; --pp-vol1: #a6d0ff; --pp-vol2: #3f8ff0; --pp-vol-b: #1d5fb0; --pp-toque: 70px; --pp-toque-prin: 84px; }
+.pp-btn, .pp-btn2 { --c1: var(--pp-prin1); --c2: var(--pp-prin2); --borde: var(--pp-prin-b); position: relative; display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 999px; padding: 14px 36px 15px; font-size: 30px; line-height: 1; min-width: 250px; min-height: var(--pp-toque-prin); box-sizing: border-box; letter-spacing: 0.5px; color: #fff;
   background: linear-gradient(180deg, var(--c1) 0%, var(--c2) 100%);
   box-shadow: inset 0 0 0 4px var(--borde), inset 0 -7px 0 0 rgba(0, 0, 0, 0.12), 0 7px 0 0 var(--borde), 0 12px 18px rgba(160, 60, 120, 0.25);
   text-shadow: 0 2px 0 var(--borde), 2px 0 0 var(--borde), -2px 0 0 var(--borde), 0 -2px 0 var(--borde), 2px 2px 0 var(--borde), -2px 2px 0 var(--borde);
@@ -22,11 +31,13 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 /* el brillo de gominola */
 .pp-btn::before, .pp-btn2::before { content: ''; position: absolute; left: 14%; right: 14%; top: 6px; height: 34%; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.1)); pointer-events: none; }
 .pp-btn::after, .pp-btn2::after { content: ''; position: absolute; right: 12%; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: #fff; pointer-events: none; }
-.pp-btn2 { --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; font-size: 24px; padding: 11px 24px 12px; min-width: 190px; }
-.pp-btn2.pp-verde { --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }
-.pp-btn2.pp-azul { --c1: #9fdcff; --c2: #4aa8f0; --borde: #1f6fb8; }
-.pp-btn2.pp-rosa { --c1: #ffb3d9; --c2: #ff6eb5; --borde: #c43a84; }
-.pp-btn2.pp-oro { --c1: #ffe36e; --c2: #ffb000; --borde: #c27a00; min-width: 260px; }   /* la TIENDA de la portada: dorada, para que destaque */
+.pp-btn2 { --c1: var(--pp-sec1); --c2: var(--pp-sec2); --borde: var(--pp-sec-b); font-size: 24px; padding: 11px 24px 12px; min-width: 190px; min-height: var(--pp-toque); }
+/* los nombres de color viejos (pp-verde, pp-rosa, pp-naranja, pp-menta, pp-azul, pp-oro) siguen valiendo y ya pintan su papel: se cambian
+   por pp-sec, pp-volver y pp-pago al tocar cada pantalla (tarea #143) */
+.pp-btn2.pp-sec, .pp-btn2.pp-verde, .pp-btn2.pp-rosa, .pp-btn2.pp-naranja, .pp-btn2.pp-menta { --c1: var(--pp-sec1); --c2: var(--pp-sec2); --borde: var(--pp-sec-b); }
+.pp-volver, .pp-btn2.pp-azul { --c1: var(--pp-vol1); --c2: var(--pp-vol2); --borde: var(--pp-vol-b); }
+.pp-pago, .pp-btn2.pp-oro { --c1: var(--pp-pago1); --c2: var(--pp-pago2); --borde: var(--pp-pago-b); }
+.pp-btn2.pp-oro { min-width: 260px; }   /* los dorados de siempre, anchos para que destaquen */
 .pp-btn2 .pp-ico { margin-right: 8px; }
 .pp-btn:active, .pp-btn2:active { transform: translateY(5px) scale(0.97); box-shadow: inset 0 0 0 4px var(--borde), inset 0 -5px 0 0 rgba(0, 0, 0, 0.12), 0 2px 0 0 var(--borde), 0 4px 8px rgba(160, 60, 120, 0.2); }
 .pp-enorme { font-size: 46px; padding: 20px 64px 22px; animation: pp-late 1.4s ease-in-out infinite; }
@@ -65,8 +76,9 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-est:empty { background: #ffd64a; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
 .pp-est.pp-on { opacity: 1; filter: none; animation: pp-est 0.35s cubic-bezier(.3, 1.8, .5, 1) both; }
 @keyframes pp-est { from { transform: scale(0) rotate(-40deg); } to { transform: scale(1) rotate(0); } }
-/* el botón de pausa: caramelo azul redondo con sus dos rayitas (dibujadas con CSS, nada de emojis) */
-.pp-redondo { position: absolute; right: 26px; top: 30px; width: 60px; height: 60px; border: 0; border-radius: 50%; display: flex; gap: 7px; align-items: center; justify-content: center; z-index: 20;
+/* el botón de pausa: caramelo azul redondo con sus dos rayitas (dibujadas con CSS, nada de emojis); 70 para el pulgar (tarea #143) y
+   con el mismo centro que cuando medía 60, para no acercarse al contador de toques */
+.pp-redondo { position: absolute; right: 21px; top: 25px; width: var(--pp-toque); height: var(--pp-toque); border: 0; border-radius: 50%; display: flex; gap: 7px; align-items: center; justify-content: center; z-index: 20;
   background: linear-gradient(180deg, #9fdcff, #4aa8f0); box-shadow: inset 0 0 0 4px #1f6fb8, inset 0 -6px 0 rgba(0, 0, 0, 0.12), 0 5px 0 #1f6fb8, 0 9px 14px rgba(160, 60, 120, 0.25); transition: transform 0.08s; }
 .pp-redondo::before { content: ''; position: absolute; left: 14px; right: 14px; top: 6px; height: 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.6); }
 .pp-redondo span { position: relative; width: 8px; height: 24px; border-radius: 4px; background: #fff; box-shadow: 0 0 0 3px #1f6fb8; }
@@ -81,7 +93,7 @@ img.pp-ico { border-radius: 0; }
 /* la miniatura del mundo al abrirlo con perlas (tarea #95, js/saltar-jefe-juego.js) */
 .pp-mini-mundo { display: block; margin: 4px auto 8px; width: 240px; height: 135px; border-radius: 18px; box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--pp-rosa); }
 .pp-cofre { display: flex; flex-direction: column; align-items: center; gap: 4px; animation: pp-salta 0.6s 0.2s ease-out both; }
-.pp-btn:disabled, .pp-btn2:disabled { filter: grayscale(0.85) brightness(1.05); opacity: 0.75; cursor: default; }
+.pp-btn:disabled, .pp-btn2:disabled { opacity: 0.55; cursor: default; }   /* apagado, pero de su color: nada de gris (Daniel) */
 @keyframes pp-salta { 0% { transform: scale(0.3); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); } }
 /* fase 3: la tienda de perlas */
 .pp-packs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
@@ -128,7 +140,7 @@ img.pp-ico { border-radius: 0; }
 .pp-muestra { display: inline-block; border-radius: 12px; border: 3px solid #7a4a8a; vertical-align: middle; }
 .pp-premios { display: inline-flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; font-weight: 700; color: #7a3a7a; }
 .pp-oferta { color: #ff3a6a; font-size: 34px; }
-.pp-btn2.pp-oferta-btn { --c1: #ffe36e; --c2: #ffb000; --borde: #c27a00; }
+.pp-btn2.pp-oferta-btn { --c1: var(--pp-pago1); --c2: var(--pp-pago2); --borde: var(--pp-pago-b); }
 .pp-pase { width: 100%; max-height: 46vh; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
 .pp-pase-fila { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 6px; align-items: stretch; opacity: 0.8; }
 .pp-pase-fila.pp-hecho { opacity: 1; }
@@ -168,8 +180,6 @@ img.pp-ico { border-radius: 0; }
 #pp-ui .opt-row input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 32px; height: 32px; margin-top: -9px; border-radius: 50%; border: 4px solid #c43a84; background: linear-gradient(180deg, #ffb3da, #ff6eb5); box-shadow: 0 3px 0 #c43a84; }
 #pp-ui .opt-row input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 4px solid #c43a84; background: linear-gradient(180deg, #ffb3da, #ff6eb5); box-shadow: 0 3px 0 #c43a84; }
 /* MI PERFIL (tarea #41; js/pantalla-perfil.js): el botón del menú, el panel de arriba, las pestañas en dos filas y la lista de cosas */
-.pp-btn2.pp-naranja { --c1: #ffb98a; --c2: #ff7a3d; --borde: #c2460a; }
-.pp-fila.pp-sola .pp-oro { min-width: 260px; }
 .pp-pf-arriba { display: flex; gap: 12px; align-items: center; width: 100%; }
 .pp-pf-panel { flex: none; }
 .pp-pf-resumen { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; align-items: center; color: #7a3a7a; }
@@ -209,4 +219,4 @@ img.pp-ico { border-radius: 0; }
 .pp-tarjeta.pp-pase-ventana { margin-top: 74px; }
 .pp-tarjeta.pp-pase-ventana .pp-pase { max-height: 40vh; }
 .pp-pase-todo { width: 100%; animation: pp-late 1.4s ease-in-out infinite; }
-.pp-pase-todo.pp-btn2:disabled { animation: none; filter: none; opacity: 0.6; }   /* apagado, pero verde: nada de gris (Daniel) */
+.pp-pase-todo.pp-btn2:disabled { animation: none; opacity: 0.6; }   /* apagado, pero de su color: nada de gris (Daniel) */

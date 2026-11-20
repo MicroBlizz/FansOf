@@ -15,7 +15,6 @@ IDIOMA.add({
   "Las 3 estrellas: en {n} toques": "3 stars: in {n} taps",
   "Las 3 estrellas: en 1 toque": "3 stars: in 1 tap",
   "Doblar": "Double it",
-  "Gastar monedas": "Spend coins",
   "¡Doblado!": "Doubled!",
   "¡Copiado!": "Copied!",
   "{nivel} de Fans of Pop: {est} en {n} toques ({t}). ¿Me superas?": "{nivel} in Fans of Pop: {est} in {n} taps ({t}). Can you beat me?",
@@ -38,7 +37,7 @@ IDIOMA.add({
   "{a} / {b} perlas": "{a} / {b} pearls",
   "Has perdido tu racha": "You lost your streak",
   "Pasa niveles sin perder corazones para recuperarla": "Clear levels without losing hearts to win it back",
-  "¡No te rindas, perderás tu racha!": "Don't give up, you'll lose your streak!",
+  "Tu racha baja un escalón": "Your streak drops one step",
   "Ahora empiezas los niveles con +{n} toques": "You now start levels with +{n} taps",
   "Ahora empiezas los niveles con +1 toque": "You now start levels with +1 tap",
 });

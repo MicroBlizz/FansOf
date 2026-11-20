@@ -39,10 +39,10 @@ function ppVentanaRanking(tab) {
   const unidad = { estrellas: tr('estrellas'), dificil: tr('estrellas'), memoria: tr('rondas'), duelos: tr('victorias') }[PP_RANK.tab];
   const pinta = d => {
     if (!caja.isConnected) return;
-    if (!d.lista.length) { caja.innerHTML = `<p class="pp-sub">${tr('Todavía no hay nadie: ¡sé la primera!')}</p>`; return; }
+    if (!d.lista.length) { caja.innerHTML = `<p class="pp-sub">${tr('Todavía no hay nadie: ¡abre tú el ranking!')}</p>`; return; }
     const fila = f => `<div class="pp-rfila${f.yo ? ' pp-yo' : ''}"><i class="pp-p${Math.min(4, f.puesto)}">${f.puesto}</i><span>${ppEsc(f.nombre || '')}</span><b>${Number(f.puntos).toLocaleString()}</b></div>`;
     caja.innerHTML = d.lista.map(fila).join('') + (d.yo && d.yo.puesto > 50 ? `<div class="pp-rpuntos">…</div>${fila(d.yo)}` : '')
-      + `<p class="pp-sub"><small>${d.yo ? '' : tr('Juega para salir aquí.') + ' '}${tr('{n} jugadoras · en {u}', { n: d.total, u: unidad })}</small></p>`;
+      + `<p class="pp-sub"><small>${d.yo ? '' : tr('Juega para salir aquí.') + ' '}${tr('{n} participantes · en {u}', { n: d.total, u: unidad })}</small></p>`;
   };
   if (!ppHayRanking()) { caja.innerHTML = `<p class="pp-sub">${tr('El ranking necesita conexión.')}</p>`; return; }
   const k = PP_RANK.tab;

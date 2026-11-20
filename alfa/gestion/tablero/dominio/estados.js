@@ -15,13 +15,8 @@ TABLERO.PRIORIDADES = Object.freeze({ alta: 0, normal: 1, baja: 2 });   // el n�
 // Las personas del equipo: quién pide una tarea (`pedida_por`, ADR 136) y quién es su responsable (ADR 154: Claude ayuda, pero no es responsable)
 TABLERO.PERSONAS = Object.freeze({ arkioner: 'Arkioner', pepins: 'Pepins' });
 TABLERO.RESPONSABLES = TABLERO.PERSONAS;
-// De quién es una tarea: 'arkioner', 'pepins' o null. Transición del ADR 154: hasta que el servidor convierta las tareas viejas pueden llegar con
-// responsable 'claude'; esas son de su `para`, si no de quien la pidió y, si tampoco, de Arkioner. Es el único sitio que lee `para`
-TABLERO.responsableDe = t => {
-  if (Object.hasOwn(TABLERO.PERSONAS, t.responsable)) return t.responsable;
-  if (t.responsable !== 'claude') return null;
-  return [t.para, t.pedida_por].find(p => Object.hasOwn(TABLERO.PERSONAS, p)) || 'arkioner';
-};
+// De quién es una tarea: 'arkioner', 'pepins' o null (sin responsable, o un valor que no es una persona)
+TABLERO.responsableDe = t => (Object.hasOwn(TABLERO.PERSONAS, t.responsable) ? t.responsable : null);
 // Quien escribe como hilo de Claude (ADR 154) dice para quién trabaja: «Claude para Arkioner» o «Claude para Pepins», en cualquier mayúscula.
 // Devuelve null si no es un hilo (es una persona), la persona ('arkioner' o 'pepins'), o '' si es Claude sin decir para quién (o para alguien que no existe)
 TABLERO.hiloPara = quien => {
@@ -33,7 +28,7 @@ TABLERO.hiloPara = quien => {
 TABLERO.esEstado = id => TABLERO.COLUMNAS.some(c => c.id === id);
 // el nombre de una columna (el historial viejo puede traer ids que ya no son columnas: salen tal cual) y el de un responsable
 TABLERO.tituloDe = id => (TABLERO.COLUMNAS.find(c => c.id === id) || { titulo: id }).titulo;
-// Solo la persona (ADR 154: sin «Claude para …» ni «con Claude»), también en las tareas viejas de Claude
+// Solo la persona (ADR 154: sin «Claude para …» ni «con Claude»)
 TABLERO.responsableTexto = t => TABLERO.RESPONSABLES[TABLERO.responsableDe(t)] || 'Sin responsable';
 // El estado del informe de refinado (ADR 137, SQL 152). Sin el campo (servidor anterior) no se sabe: la tarjeta dice lo de antes («con informe»)
 TABLERO.INFORMES = Object.freeze({ falta: 'Falta informe', por_aprobar: 'Informe por aprobar', cambios: 'Informe con cambios', aprobado: 'Informe aprobado' });

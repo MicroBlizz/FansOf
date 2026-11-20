@@ -1,0 +1,13 @@
+{
+  "name": "Fans of Pinball",
+  "short_name": "Pinball",
+  "description": "Un pinball de dos pisos donde la bola es tu criatura (prototipo).",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05182d",
+  "theme_color": "#05182d",
+  "icons": []
+}

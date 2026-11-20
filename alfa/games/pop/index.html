@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#1a1030">
 <title>Fans of Pop</title>
 <meta name="description" content="Fans of Pop: haz pop en las burbujas de un pop-it para liberar a los slimes atrapados y llévalos contigo hasta el jefe. Un roguelike de puzles corto, táctil y relajado.">
-<script src="../../core/js/nucleo.js?v=0.6.0-a1339.6ba984c"></script>
+<script src="../../core/js/nucleo.js?v=0.6.0-a1352.e049923"></script>
 <script>NUCLEO.fuentes('../../core/fuentes/fredoka.css')</script>
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/pop.css', 'css/feria.css', 'css/primeros.css', 'css/companeros.css', 'css/victoria.css', 'css/victoria-panel.css', 'css/victoria-marco.css', 'css/pase.css', 'css/precios.css', 'css/lola.css')</script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/pop.css', 'css/feria.css', 'css/primeros.css', 'css/companeros.css', 'css/victoria.css', 'css/victoria-panel.css', 'css/victoria-marco.css', 'css/pase.css', 'css/precios.css', 'css/tienda-venta.css', 'css/lola.css', 'css/portada.css')</script>
 </head>
 <body>
 <div id="stage">
@@ -19,21 +19,17 @@
       <p class="pp-lema" id="pp-record"></p>
       <button class="pp-btn pp-enorme" id="pp-seguir" type="button" hidden>SEGUIR</button>
       <button class="pp-btn pp-enorme" id="pp-jugar" type="button">JUGAR</button>
-      <div class="pp-fila pp-sola">
-        <button class="pp-btn2 pp-oro" id="pp-tienda" type="button">TIENDA</button>
-        <button class="pp-btn2 pp-naranja" id="pp-perfil" type="button" hidden>PERFIL</button>
-      </div>
-      <div class="pp-fila" hidden>
-        <button class="pp-btn2 pp-menta" id="pp-companeros" type="button" hidden>COMPAÑEROS</button>
-      </div>
       <div class="pp-fila">
-        <button class="pp-btn2 pp-rosa" id="pp-duelo" type="button">DUELOS</button>
-        <button class="pp-btn2 pp-azul" id="pp-memoria" type="button">MEMORIA</button>
+        <button class="pp-btn2 pp-sec" id="pp-memoria" type="button">MEMORIA</button>
+        <button class="pp-btn2 pp-sec" id="pp-ranking" type="button">RANKING</button>
       </div>
-      <div class="pp-fila">
-        <button class="pp-btn2 pp-verde" id="pp-ranking" type="button">RANKING</button>
-        <button class="pp-btn2 pp-azul" id="pp-opciones" type="button">OPCIONES</button>
-      </div>
+      <nav class="pp-barra" aria-label="Menú">
+        <button class="pp-barra-b pp-pago" id="pp-tienda" type="button">TIENDA</button>
+        <button class="pp-barra-b" id="pp-companeros" type="button" hidden>COMPAÑEROS</button>
+        <button class="pp-barra-b" id="pp-perfil" type="button" hidden>PERFIL</button>
+        <button class="pp-barra-b" id="pp-duelo" type="button">DUELOS</button>
+        <button class="pp-barra-b" id="pp-opciones" type="button">OPCIONES</button>
+      </nav>
     </section>
     <button id="pp-pausa" class="pp-redondo" type="button" aria-label="Pausa" hidden><span></span><span></span></button>
     <button id="pp-cort-jugar" class="pp-btn pp-enorme" type="button" hidden>¡A JUGAR!</button>
@@ -50,8 +46,8 @@ NUCLEO.juego({
   esperaListo: true,   // la splash de core espera también a NUCLEO.listo(), que js/principal.js llama al tener todos los dibujos (ADR 091, tarea #130)
   ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Pop lleva su propia partida y sus pantallas
   antes: ['js/ajustes.js'],
-  idioma: { en: ['idioma/en.js', 'idioma/en-tutos.js', 'idioma/en-perfil.js', 'idioma/en-feria.js', 'idioma/en-saltar-jefe.js', 'idioma/en-primeros.js', 'idioma/en-lola.js', 'idioma/en-companeros.js', 'idioma/en-habilidades.js', 'idioma/en-victoria.js', 'idioma/en-pase.js', 'idioma/en-precios.js'] },
-  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/companeros-datos.js', 'js/coleccion.js', 'js/coleccion-juego.js', 'js/habilidades.js', 'js/companeros-vista.js', 'js/perlas-libro.js', 'js/perlas-servidor.js', 'js/reseteo.js', 'js/perfil-catalogo.js', 'js/perfil.js', 'js/perfil-juego.js', 'js/coleccion-tienda.js', 'js/corazones-buzon.js', 'js/corazones-servidor.js', 'js/corazones-vista.js', 'js/sprites.js', 'js/sonidos.js', 'js/cancion-cortinilla.js', 'js/formas.js', 'js/niveles.js', 'js/tablero.js', 'js/monedero.js', 'js/precios.js', 'js/tienda.js', 'js/deshacer-nim.js', 'js/potenciadores.js', 'js/ofertas.js', 'js/pase-reglas.js', 'js/pase-temas.js', '../../core/js/sistema/retos-ligero.js', 'js/pase.js', 'js/pase-nuevo.js', 'js/pase-pantalla.js', 'js/feria.js', 'js/feria-pantalla.js', 'js/saltar-jefe.js', 'js/primeros-pasos.js', 'js/partida.js', 'js/letras-duelo.js', 'js/habilidades-niveles.js', 'js/habilidades-pesadilla.js', 'js/habilidades-duelo.js', 'js/nimnivel.js', 'js/chispas.js', 'js/efectos.js', 'js/estilo-mundo.js', 'js/caritas.js', 'js/caritas-variadas.js', 'js/pintar.js', 'js/marcador.js', 'js/cortinilla.js', 'js/adornos-duelo.js', 'js/pintar-cortinilla.js', 'js/bandeja.js', 'js/bandeja-relieve.js', 'js/mapa.js', '../../core/js/sistema/salas.js', 'js/duelo.js', 'js/pvp-perfil.js', 'js/pvp.js', 'js/ranking.js', 'js/memoria.js', 'js/pantallas.js', 'js/lola.js', 'js/equipo-explica.js', 'js/victoria.js', 'js/pantalla-victoria.js', 'js/victoria-botones.js', 'js/victoria-panel.js', 'js/victoria-marco.js', 'js/victoria-fiesta.js', 'js/saltar-jefe-juego.js', 'js/pintar-perfil.js', 'js/pantalla-perfil.js', 'js/pintar-companero.js', 'js/pantalla-album.js', 'js/pantalla-equipo.js', 'js/companeros-vias.js', 'js/pantalla-corazones.js', 'js/pantalla-corazones-enlace.js', 'js/pantalla-buzon.js', 'js/primeros-pasos-juego.js', 'js/duelo-adornos.js', 'js/novedades.js', 'js/dev.js', 'js/principal.js'],
+  idioma: { en: ['idioma/en.js', 'idioma/en-tutos.js', 'idioma/en-perfil.js', 'idioma/en-feria.js', 'idioma/en-saltar-jefe.js', 'idioma/en-primeros.js', 'idioma/en-lola.js', 'idioma/en-companeros.js', 'idioma/en-habilidades.js', 'idioma/en-victoria.js', 'idioma/en-pase.js', 'idioma/en-precios.js', 'idioma/en-tienda.js'] },
+  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/companeros-datos.js', 'js/coleccion.js', 'js/coleccion-juego.js', 'js/habilidades.js', 'js/presion.js', 'js/companeros-vista.js', 'js/perlas-libro.js', 'js/perlas-servidor.js', 'js/reseteo.js', 'js/perfil-catalogo.js', 'js/perfil.js', 'js/perfil-juego.js', 'js/coleccion-tienda.js', 'js/corazones-buzon.js', 'js/corazones-servidor.js', 'js/corazones-vista.js', 'js/sprites.js', 'js/sonidos.js', 'js/cancion-cortinilla.js', 'js/formas.js', 'js/niveles.js', 'js/tablero.js', 'js/monedero.js', 'js/precios.js', 'js/tienda.js', 'js/tienda-venta.js', 'js/deshacer-nim.js', 'js/potenciadores.js', 'js/ofertas-reglas.js', 'js/ofertas.js', 'js/pase-reglas.js', 'js/pase-temas.js', '../../core/js/sistema/retos-ligero.js', 'js/pase.js', 'js/pase-nuevo.js', 'js/pase-pantalla.js', 'js/feria.js', 'js/feria-pantalla.js', 'js/saltar-jefe.js', 'js/primeros-pasos.js', 'js/partida.js', 'js/letras-duelo.js', 'js/habilidades-niveles.js', 'js/habilidades-pesadilla.js', 'js/habilidades-duelo.js', 'js/nimnivel.js', 'js/chispas.js', 'js/efectos.js', 'js/estilo-mundo.js', 'js/caritas.js', 'js/caritas-variadas.js', 'js/pintar.js', 'js/marcador.js', 'js/cortinilla.js', 'js/adornos-duelo.js', 'js/pintar-cortinilla.js', 'js/bandeja.js', 'js/bandejas-lujo.js', 'js/bandeja-relieve.js', 'js/mapa.js', '../../core/js/sistema/salas.js', 'js/duelo.js', 'js/pvp-perfil.js', 'js/pvp.js', 'js/ranking.js', 'js/memoria.js', 'js/pantallas.js', 'js/portada-barra.js', 'js/lola.js', 'js/equipo-explica.js', 'js/victoria.js', 'js/pantalla-victoria.js', 'js/victoria-botones.js', 'js/victoria-panel.js', 'js/victoria-marco.js', 'js/victoria-fiesta.js', 'js/saltar-jefe-juego.js', 'js/pintar-perfil.js', 'js/pantalla-perfil.js', 'js/pintar-companero.js', 'js/pantalla-album.js', 'js/pantalla-equipo.js', 'js/companeros-vias.js', 'js/pantalla-corazones.js', 'js/pantalla-corazones-enlace.js', 'js/pantalla-buzon.js', 'js/primeros-pasos-juego.js', 'js/duelo-adornos.js', 'js/novedades.js', 'js/dev.js', 'js/principal.js'],
 });
 </script>
 </body>

@@ -3,7 +3,7 @@
 // fila, y pulsas ¡LISTO!; luego le toca al CEO. Quien haga pop en la última, pierde burbuja.
 // El CEO sabe la jugada perfecta, pero se equivoca a veces: empieza fallando mucho y, cada vez que le ganas, falla menos
 // (SAVE.duelo.fallo, entre PP_CFG.duelo.fallo[0] y [1]). Cada victoria da monedas, las 5 primeras del día. No gasta corazones.
-// Más adelante (fase 7) será PvP contra otras jugadoras, con el CEO de reserva si no hay nadie en línea.
+// Más adelante (fase 7) será PvP contra otra gente, con el CEO de reserva si no hay nadie en línea.
 'use strict';
 let PP_DUELO = null;   // { T, turno: 'yo' | 'ceo', fila, esta: [], fin: null | 'gana' | 'pierde', ultimo }
 // un tablero de 6 filas de largos al azar (de 1 a 6), centradas: el arcoíris del pop-it
@@ -37,7 +37,7 @@ function ppDueloRevienta(i, quien = 'ceo') {
   ppAdnPop(T, i, quien);
   return ppFilasDuelo(T).every(v => v === 0);
 }
-// toque de la jugadora
+// toque de quien juega
 function ppDueloToque(i) {
   const D = PP_DUELO; if (ppHabDQuitaToque(D, i)) return;   // el Pellizco antes del primer turno (js/habilidades-duelo.js)
   if (!D || D.fin || D.turno !== 'yo' || i < 0 || !D.T.mask[i] || !D.T.up[i]) return;

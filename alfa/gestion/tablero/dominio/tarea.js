@@ -9,14 +9,13 @@ TABLERO.Tarea = class Tarea {
 
   constructor(datos) { this.#d = Object.freeze({ ...datos }); Object.freeze(this); }
 
-  // Resultado: la tarea, o 'tarea-invalida' (sin id, título, estado o prioridad que existan). El responsable es siempre una persona o nadie: una tarea
-  // vieja de Claude llega ya como de su persona (TABLERO.responsableDe, ADR 154) y el campo `para` se queda fuera
+  // Resultado: la tarea, o 'tarea-invalida' (sin id, título, estado o prioridad que existan). El responsable es siempre una persona o nadie
+  // (TABLERO.responsableDe, ADR 154)
   static desdeJson(j) {
     const valida = j && Number.isInteger(j.id) && typeof j.titulo === 'string' && j.titulo !== ''
       && TABLERO.esEstado(j.estado) && Object.hasOwn(TABLERO.PRIORIDADES, j.prioridad);
     if (!valida) return TABLERO.error('tarea-invalida', { id: j && j.id });
     const d = { orden: 0, juego: 'general', esperando: null, ...j, responsable: TABLERO.responsableDe(j), requiere: Tarea.#lista(j.requiere), requerida_por: Tarea.#lista(j.requerida_por) };
-    delete d.para;
     return TABLERO.ok(new Tarea(d));
   }
 

@@ -29,7 +29,7 @@ const PP_CFG = {
   cofreJefe: 100,            // y uno grande, de 100, al ganar a un jefe por primera vez
   // fase 3 (30-10-2026, «como Candy Crush»): las PERLAS, la moneda de pago (js/tienda.js). Precios fijos, sin azar.
   perlas: {
-    seguir: [9, 15, 20],     // +5 toques al quedarte sin toques: cada vez más caro en el mismo intento
+    seguir: 9,               // +5 toques al quedarte sin toques: precio fijo, nunca sube en el mismo intento (tarea #186)
     toquesSeguir: 5,
     vidas: 12,               // llenar los corazones
     hueco: [20, 40, 80],     // el 4.º, el 5.º y el 6.º hueco del equipo (también se pueden pagar con monedas)
@@ -64,7 +64,7 @@ const PP_CFG = {
   packs: [
     { id: 'pop_perlas_10', perlas: 10, precio: '0,99 €' },
     { id: 'pop_perlas_50', perlas: 50, precio: '4,49 €', extra: '+10 %' },
-    { id: 'pop_perlas_120', perlas: 120, precio: '9,99 €', extra: '+20 %' },
+    { id: 'pop_perlas_120', perlas: 120, precio: '9,99 €', extra: '+20 %', recomendado: true },   // cinta RECOMENDADO (opinión nuestra; MEJOR VALOR se calcula: js/precios.js, tarea #187)
     { id: 'pop_perlas_300', perlas: 300, precio: '21,99 €', extra: '+35 %' },
   ],
   // ver un anuncio (siempre porque tú quieres, nunca en mitad del juego sin pedirlo)
@@ -74,7 +74,7 @@ const PP_CFG = {
   // el ritmo del rival en los niveles con duelo (js/nimnivel.js), en ms: `espera` hasta su primera burbuja y `paso` entre una y otra.
   // Si abre él la partida, sale «¡Empieza …!» y va más despacio para que se vea qué quita (tarea #180)
   rivalNim: { normal: { espera: 380, paso: 380 }, abre: { espera: 1100, paso: 650 } },
-  // el generador de niveles (js/niveles.js, ppConstruye; tarea #196): cuántas partidas simula de la jugadora normal para poner el límite
+  // el generador de niveles (js/niveles.js, ppConstruye; tarea #196): cuántas partidas simula de quien juega normal para poner el límite
   // (antes 40) y cuántas de una que no se despista, para que nunca salga un nivel que ni ella pueda pasar
   generador: { tiradas: 200, listas: 20 },
   // «COPIARNOS DE CANDY CRUSH» (Daniel, 30-10-2026: «hay que sacar el máximo beneficio monetario»). Todo a precio FIJO: nada
@@ -93,8 +93,12 @@ const PP_CFG = {
   // OFERTAS con euros (PROVISIONALES, como los packs: los productos aún no existen en Play ni en el servidor). Sin precio «antes»
   // inventado: la ventana dice lo que vale lo que trae, calculado solo (js/precios.js, tarea #177)
   ofertas: {
-    bienvenida: { id: 'pop_pack_bienvenida', precio: '0,99 €', perlas: 30, ayudas: { martillo: 3, bomba: 3 }, infinitas: 60, desdeNivel: 5 },
-    atasco: { id: 'pop_pack_atasco', precio: '1,99 €', perlas: 25, ayudas: { martillo: 2, bomba: 2, toques3: 2, deshacer: 2 }, fallos: 3, dura: 30 },
+    bienvenida: { id: 'pop_pack_bienvenida', precio: '0,99 €', perlas: 30, ayudas: { martillo: 3, bomba: 3 }, infinitas: 60, desdeNivel: 5, horas: 48 },   // `horas`: dura eso desde que sale y luego desaparece de verdad (tarea #187)
+    // tarea #187: el pack de «Sin toques» (una vez por intento, debajo de +5 toques) y el segundo pack, al abrir el mundo 2 (48 h, una vez)
+    sinToques: { id: 'pop_pack_sin_atascos', precio: '0,99 €', ayudas: { martillo: 1, bomba: 1, toques3: 1 } },
+    mundo2: { id: 'pop_pack_mundo2', precio: '1,99 €', perlas: 40, ayudas: { martillo: 2, bomba: 2 }, infinitas: 60, mundo: 1, horas: 48 },
+    atasco: { id: 'pop_pack_atasco', precio: '1,99 €', perlas: 25, ayudas: { martillo: 2, bomba: 2, toques3: 2, deshacer: 2 }, fallos: 3,
+      regalo: { ayudas: { martillo: 1 }, texto: '¡Un martillo de regalo! Hace pop sin gastar toque.' } },   // sin reloj ni salir solo: tras 3 fallos Lola regala esto (tarea #186)
   },
   // la HUCHA de perlas: cada nivel nuevo superado mete perlas; desde `minimo` se puede romper pagando y te las quedas todas
   hucha: { porNivel: 2, porJefe: 6, minimo: 40, max: 150, id: 'pop_hucha', precio: '2,99 €' },

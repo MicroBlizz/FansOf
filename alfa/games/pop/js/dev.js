@@ -27,8 +27,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Infinitos 1 h', () => ppDaInfinitas(60));
   d = fila();
   boton(d, (SAVE.devCompras ? '● ' : '') + 'Compras con euros DE PRUEBA', () => { SAVE.devCompras = !SAVE.devCompras; caja.innerHTML = ''; UTILIDADES_JUEGO[0].pinta(caja); });
-  boton(d, 'Volver a ver las ofertas', () => { SAVE.compras = {}; SAVE.vistoBienvenida = false; SAVE.atasco = 0; SAVE.atascoDia = ''; SAVE.regaloDia = ''; if (typeof PP_PASE_VISTO !== 'undefined') PP_PASE_VISTO.regalo = false; });
-  boton(d, 'Abrir oferta de atasco', () => { SAVE.atasco = Date.now() + PP_CFG.ofertas.atasco.dura * 60000; SAVE.atascoDia = ppHoy(); });
+  boton(d, 'Volver a ver las ofertas', () => { SAVE.compras = {}; SAVE.vistoBienvenida = false; SAVE.atascoDia = ''; SAVE.regaloDia = ''; if (typeof PP_PASE_VISTO !== 'undefined') PP_PASE_VISTO.regalo = false; });
   d = fila();
   boton(d, 'Hucha llena', () => { SAVE.hucha = PP_CFG.hucha.max; });
   boton(d, 'Pase: +30 puntos', () => { ppPaseAlDia().puntos += 30; });

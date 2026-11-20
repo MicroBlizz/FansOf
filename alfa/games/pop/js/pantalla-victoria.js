@@ -29,12 +29,12 @@ function ppVictoriaDatos(r) {
   return '<div class="pp-vic-datos">' + PP_VICTORIA.datos(r).map(d => `<div class="pp-vic-dato"><small>${tr(PP_VIC_ROTULO[d.clave])}</small><b>${d.valor}</b></div>`).join('') + '</div>';
 }
 // las monedas del nivel (suben contando) con el compañero celebrando al lado y el hueco del botón de doblarlas; debajo, de dónde
-// salen (nivel y toques de sobra) y «Gastar»; y, si toca, el cofre de siempre (2.ª vuelta, tarea #157)
+// salen (nivel y toques de sobra); y, si toca, el cofre de siempre (2.ª vuelta, tarea #157)
 function ppVictoriaPremio(T) {
   const p = T.premio;
   if (!p) return '';
   const monedas = p.monedas ? `<div class="pp-vic-premio-fila">${ppVicSlimeHtml(T, true)}<p class="pp-premio pp-vic-premio">+<span class="pp-precio">${ppIcono('i-moneda', 40)}<span class="pp-vic-cuenta" data-total="${p.monedas}">0</span></span></p><span class="pp-vic-doble-hueco"></span></div>`
-    + `<div class="pp-vic-premio-fila pp-vic-fila-baja">${ppVicDesglose(p)}<span class="pp-vic-gastar-hueco"></span></div>` : '';
+    + `<div class="pp-vic-premio-fila pp-vic-fila-baja">${ppVicDesglose(p)}</div>` : '';
   return monedas + ppPremioHtml({ monedas: 0, cofre: p.cofre, perlas: p.perlas });
 }
 // la parte de arriba: rayos, destellos, estrellas, el nivel y la palabra grande

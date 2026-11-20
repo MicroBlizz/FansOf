@@ -29,6 +29,13 @@ const PP_PASE_R = (() => {
   const escalon = puntos => Math.min(CFG.escalones, Math.floor(puntos / CFG.porEscalon));
   const extras = puntos => Math.max(0, Math.floor(puntos / CFG.porEscalon) - CFG.escalones);
   const falta = puntos => CFG.porEscalon - (puntos % CFG.porEscalon);
+  // los puntos que faltan para el próximo premio (cada escalón da uno), para el botón del lado del camino; null si ya no queda ninguno.
+  // `ultimo`: el último escalón con premio (en el pase nuevo no hay: tras el 60 siguen los extra). Vale para el pase de siempre
+  // pasándole sus cifras (un escalón cada 3 puntos, 30 escalones)
+  function faltaPremio(puntos, porEscalon = CFG.porEscalon, ultimo = Infinity) {
+    const p = Math.max(0, Math.floor(puntos || 0)), paso = Math.max(1, Math.floor(porEscalon || 1));
+    return Math.floor(p / paso) >= ultimo ? null : paso - (p % paso);
+  }
   // los puntos de ganar un nivel: nuevo 2 (+1 con tres estrellas) o repetido 1, más 1 por cada ticket de la Feria que dio
   const deNivel = (nuevo, estrellas, tickets = 0) => (nuevo ? CFG.puntos.nuevo + (estrellas === 3 ? CFG.puntos.tresEstrellas : 0) : CFG.puntos.repetido)
     + Math.max(0, tickets || 0) * CFG.puntos.ticket;
@@ -70,5 +77,5 @@ const PP_PASE_R = (() => {
   }
   // los dorados que solo salen ese mes (la etiqueta SOLO ESTE MES)
   const exclusivo = (k, premium) => premium && (k === BANDEJA || k === CFG.escalones);
-  return f({ CFG, listos, clave, claveExtra, escalon, extras, falta, deNivel, suma, conTope, deCompra, extrasListos, premioExtra, desdeViejos, gratis, dorado, exclusivo });
+  return f({ CFG, listos, clave, claveExtra, escalon, extras, falta, faltaPremio, deNivel, suma, conTope, deCompra, extrasListos, premioExtra, desdeViejos, gratis, dorado, exclusivo });
 })();

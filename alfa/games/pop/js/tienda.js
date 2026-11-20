@@ -20,26 +20,28 @@ function ppPerlasPrecioHtml(n, px = 30) {
   const e = PP_PRECIOS.enEuros(n, PP_CFG.packs);
   return e === null ? ppPerlasHtml(n, px) : `<span class="pp-precio-e">${ppPerlasHtml(n, px)}<small class="pp-euros">≈ ${PP_PRECIOS.formato(e)}</small></span>`;
 }
-// un botón que se paga con perlas (si no llegan, abre la tienda en vez de pagar). `vuelta`: la ventana de la que vienes, que la
-// tienda vuelve a abrir al pulsar VOLVER (con las perlas ya compradas). Sin ella, un nivel parado sin toques se quedaba bloqueado.
-// `motivo`: el del servidor para ese gasto (seguir, vidas, hueco; js/perlas-libro.js).
+// un botón que se paga con perlas (si no llegan, ofrece el pack más pequeño que llega y, al comprarlo, paga; tarea #187,
+// js/tienda-venta.js). `vuelta`: la ventana de la que vienes, que se vuelve a abrir al decir «Ahora no» o VOLVER. Sin ella, un
+// nivel parado sin toques se quedaba bloqueado. `motivo`: el del servidor para ese gasto (seguir, vidas, hueco; js/perlas-libro.js).
 function ppBotonPerlas(texto, precio, clase, f, vuelta = null, motivo = null) {
-  const b = ppBoton('', clase, () => { if (ppPerlas(-precio, motivo)) f(); else ppTienda(vuelta); });
+  const paga = () => { if (ppPerlas(-precio, motivo)) f(); else ppFaltanPerlas(precio, paga, vuelta); };
+  const b = ppBoton('', clase, paga);
   b.innerHTML = `${texto} · ${ppPerlasPrecioHtml(precio, 28)}`;
   return b;
 }
 /* ---------- sin toques: seguir ---------- */
 // la pregunta con las burbujas que quedan, en singular si es una (tarea #135)
 const ppTextoQuedan = n => (n === 1 ? tr('¡Te queda 1 burbuja! ¿Sigues?') : tr('¡Te quedan {n} burbujas! ¿Sigues?', { n }));
-// T.parado ya está puesto (partida.js); el corazón aún no se ha perdido. `T.seguido`: cuántas veces se ha pagado en este intento.
+// T.parado ya está puesto (partida.js); el corazón aún no se ha perdido.
 function ppOfreceSeguir(T) {
   const quedan = T.up.reduce((a, v, i) => a + (T.mask[i] && v > 0 ? 1 : 0), 0);
-  const precio = PP_CFG.perlas.seguir[Math.min(T.seguido || 0, PP_CFG.perlas.seguir.length - 1)];
-  // con racha, el aviso de que rendirse la corta (tarea #157, como Candy Crush): js/victoria-panel.js
+  const precio = PP_CFG.perlas.seguir;   // fijo: no sube en el mismo intento (tarea #186)
+  // con racha, una línea suave con lo que te da (sin avisar de pérdidas, tarea #186): js/victoria-panel.js
   const racha = (SAVE.racha || 0) > 0 ? ppVicAvisoRacha() : '';
   const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${ppTextoQuedan(quedan)}</p>${racha}<p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 26)}</p>`);
-  const sigue = n => { ppCierra(); T.limite += n; T.parado = false; T.seguido = (T.seguido || 0) + 1; ppFlota(tr('+{n} toques', { n }), 270, 240, '#3a8ee6'); play('ppPremio'); };
+  const sigue = n => { ppCierra(); T.limite += n; T.parado = false; ppFlota(tr('+{n} toques', { n }), 270, 240, '#3a8ee6'); play('ppPremio'); };
   t.appendChild(ppBotonPerlas(tr('+{n} TOQUES', { n: PP_CFG.perlas.toquesSeguir }), precio, 'pp-btn', () => sigue(PP_CFG.perlas.toquesSeguir), () => ppOfreceSeguir(T), 'seguir'));
+  ppBotonPackSinToques(t, T, sigue);   // tarea #187: Martillo + Bomba + 3 toques por euros (js/tienda-venta.js)
   if (ppHayAnuncios() && !T.anuncio) t.appendChild(ppBoton(tr('VER ANUNCIO: +{n} TOQUES', { n: PP_CFG.anuncio.toques }), 'pp-btn2 pp-verde', () => { T.anuncio = true; ppVerAnuncio('pop-toques', () => sigue(PP_CFG.anuncio.toques), () => ppOfreceSeguir(T)); }));
   t.appendChild(ppBoton(tr('Rendirse'), 'pp-btn2 pp-azul', () => { ppCierra(); T.hecho = true; ppSinToques(); }));
 }
@@ -61,49 +63,22 @@ function ppTienda(vuelta, pestana) {
   const t = ppAbre(`<h2>${tr('Tienda')}</h2><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)} · ${ppMonedasHtml(SAVE.monedas, 28)}</p>`, true);
   const tabs = document.createElement('div'); tabs.className = 'pp-tabs';
   for (const [k, txt] of [['ofertas', tr('Ofertas')], ['perlas', tr('Perlas')], ['ayudas', tr('Ayudas')], ['bandejas', tr('Bandejas')]]) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-tab' + (PP_TIENDA_PESTANA === k ? ' pp-on' : ''); b.textContent = txt;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-tab' + (PP_TIENDA_PESTANA === k ? ' pp-on' : '') + (k === 'perlas' ? ' pp-tab-perlas' : ''); b.textContent = txt;
+    if (k === 'perlas') b.insertAdjacentHTML('afterbegin', ppIcono('i-perla', 20, '#ffd1ec'));   // la que más se compra, en dorado (tarea #187)
     b.onclick = () => { play('select'); ppTienda(undefined, k); }; tabs.appendChild(b);
   }
   t.appendChild(tabs);
   const caja = document.createElement('div'); caja.className = 'pp-packs'; t.appendChild(caja);
   const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); f(); }; caja.appendChild(b); return b; };
-  const P = PP_TIENDA_PESTANA;
-  if (P === 'ofertas') {
-    if (ppBienvenidaVisible()) tarjeta(`${ppValorEtiqueta(PP_CFG.ofertas.bienvenida)}${ppIcono('i-perlas', 60, '#ffd1ec')}<span>${tr('Pack de bienvenida')}</span><b>${PP_CFG.ofertas.bienvenida.precio}</b>`, ppVentanaBienvenidaPack, 'pp-ancho');
-    if (ppAtascoActivo()) tarjeta(`<i>${ppReloj(SAVE.atasco - Date.now())}</i>${ppIcono('i-martillo', 60, '#ffd1ec')}<span>${tr('Oferta para desatascarte')}</span><b>${PP_CFG.ofertas.atasco.precio}</b>`, ppVentanaAtasco, 'pp-ancho');
-    tarjeta(`${ppIcono('i-pase', 56, '#ffd64a')}<span>${tr('Pase de Pop')}</span><b>${ppPaseAlDia().premium ? tr('¡Tuyo!') : PP_CFG.pase.precio}</b>`, ppVentanaPase);
-    tarjeta(`${ppIcono('i-hucha', 56, '#ffd1ec')}<span>${tr('Hucha')}: ${SAVE.hucha || 0}</span><b>${PP_CFG.hucha.precio}</b>`, ppVentanaHucha);
-    for (const o of PP_CFG.infinitas) tarjeta(`${ppIcono('i-infinito', 50, '#ff4a6a')}<span>${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })}</span>${ppPerlasPrecioHtml(o.perlas, 26)}`, () => {
-      if (!ppPerlas(-o.perlas, 'infinitas')) { ppTienda(undefined, 'perlas'); return; }
-      ppDaInfinitas(o.min); play('ppPremio'); ppTienda(); ppPintaLateral();
-    });
-  } else if (P === 'perlas') {
-    for (const p of PP_CFG.packs) tarjeta(`${p.extra ? `<i>${p.extra}</i>` : ''}${ppPerlasHtml(p.perlas, 34)}<b>${p.precio}</b>`, () => ppCompraPack(p));
-  } else if (P === 'ayudas') {
-    for (const k in PP_CFG.ayudas) {
-      const A = PP_CFG.ayudas[k], tres = Math.round(A.perlas * 3 * PP_CFG.ayudasTres);
-      const compra = (n, precio) => { if (!ppPerlas(-precio, 'ayuda')) { ppTienda(undefined, 'perlas'); return; } ppDaAyuda(k, n); play('ppPremio'); ppTienda(); ppBarraAyudas(); };
-      tarjeta(`${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} · ${tr('tienes {n}', { n: ppTengo(k) })}</span><small>${tr(A.texto)}</small>${ppPerlasPrecioHtml(A.perlas, 24)}`, () => compra(1, A.perlas));
-      tarjeta(`<i>-20 %</i>${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} x3</span>${ppPerlasPrecioHtml(tres, 24)}`, () => compra(3, tres));
-    }
-  } else {
-    for (const B of PP_BANDEJAS) {
-      const tiene = ppTieneBandeja(B.id), puesta = ppBandejaActual().id === B.id;
-      if (B.temporada && !tiene) continue;   // las de temporada del pase solo salen si ya la tienes (tarea #165)
-      if (B.precio === null && !tiene) { tarjeta(`${ppBandejaMuestra(B.id, 56)}<span>${tr(B.nombre)}</span><small>${tr('Solo con el pase')}</small>`, ppVentanaPase); continue; }
-      tarjeta(`${ppBandejaMuestra(B.id, 56)}<span>${tr(B.nombre)}</span><b>${puesta ? tr('Puesta') : tiene ? tr('Ponerla') : ''}</b>${!tiene ? ppMonedasHtml(B.precio, 24) : ''}`, () => {
-        if (!tiene) { if (!ppCobra(B.precio)) { ppFlota(tr('Te faltan monedas'), 270, 300, '#ff6ec7'); return; } SAVE.bandejas = Object.assign(SAVE.bandejas || {}, { [B.id]: true }); play('ppPremio'); }
-        SAVE.bandeja = B.id; ppGuarda(); ppTienda();
-      }, puesta ? 'pp-puesta' : '');
-    }
-  }
+  (PP_TIENDA_PESTANAS[PP_TIENDA_PESTANA] || ppTiendaOfertas)(tarjeta);   // lo de cada pestaña: js/tienda-venta.js (tarea #187)
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppCierra(); if (v) v(); }));
 }
-function ppCompraPack(p) {
-  if (ppCompraDePrueba()) { ppPerlas(p.perlas); play('ppPremio'); ppTienda(); return; }   // panel DEV (js/dev.js): sin cobrar
+// `alAcabar`: lo que se hace cuando llegan las perlas (por defecto, repintar la tienda; tarea #187: «comprar solo lo que falta»)
+function ppCompraPack(p, alAcabar = () => ppTienda()) {
+  if (ppCompraDePrueba()) { ppPerlas(p.perlas); play('ppPremio'); alAcabar(); return; }   // panel DEV (js/dev.js): sin cobrar
   if (typeof MONEDAS === 'undefined') return;
   MONEDAS.compraReal(tr('{n} perlas', { n: p.perlas }), `<p>${tr('{n} perlas por {p}.', { n: p.perlas, p: p.precio })}</p>`, r => {
-    if (r && r.real) { PP_SRV.arranca().then(() => ppTienda()); return; }   // la de verdad la entrega el servidor: se le pide el saldo
-    ppPerlas(p.perlas); play('ppPremio'); ppTienda();   // compra de prueba (desarrollo)
+    if (r && r.real) { PP_SRV.arranca().then(alAcabar); return; }   // la de verdad la entrega el servidor: se le pide el saldo
+    ppPerlas(p.perlas); play('ppPremio'); alAcabar();   // compra de prueba (desarrollo)
   }, p.id);
 }

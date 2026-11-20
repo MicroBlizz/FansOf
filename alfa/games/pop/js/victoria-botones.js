@@ -1,27 +1,25 @@
 // Fans of Pop · PANTALLA DE VICTORIA, los botones y la fiesta (Pepins, 19-11-2026: «más opciones, lo de compartir y tal, más
-// destellos, que sea una fiesta»). «Gastar monedas» (a la tienda), doblar las monedas viendo un anuncio,
+// destellos, que sea una fiesta»). La tienda, doblar las monedas viendo un anuncio,
 // compartir el resultado e ir al mapa; y el confeti, los destellos y las burbujitas, que salen según las estrellas
 // (PP_VICTORIA.fiesta, js/victoria.js). La ventana, en js/pantalla-victoria.js.
 'use strict';
 const PP_VIC_WEB = 'https://fansof.games/games/pop/';
 const PP_VIC_CONFETI = ['#ffd64a', '#ff6eb5', '#6ad1ff', '#7be08a', '#ffa64d', '#fff3a8'];
-// «Gastar monedas»: al lado del premio, un atajo dorado a la tienda (para que destaque)
-function ppVictoriaTienda(t, opc) {
-  const hueco = t.querySelector('.pp-vic-gastar-hueco'); if (!hueco) return;
-  hueco.appendChild(ppBoton(tr('Gastar monedas') + ' ›', 'pp-vic-tienda', () => ppTienda(opc.vuelta || null, 'bandejas')));   // lo que se compra con monedas (Pepins, 19-11-2026)
-}
-// doblar las monedas del nivel viendo un anuncio (una vez por nivel ganado)
+// lo que pone «Doblar» (tarea #187): x2, la palabra y lo que ganas de más con su moneda, más la luz que lo cruza (css/victoria.css)
+const ppVictoriaDobleHtml = m => `<i class="pp-vic-doble-luz" aria-hidden="true"></i><span class="pp-vic-x2">x2</span>`
+  + `<span class="pp-vic-doble-txt">${tr('Doblar')}</span><span class="pp-vic-doble-mas">+${ppMonedasHtml(m, 26)}</span>`;
+// doblar las monedas del nivel viendo un anuncio (una vez por nivel ganado); grande y a lo ancho del panel
 function ppVictoriaDoble(t, T) {
   const hueco = t.querySelector('.pp-vic-doble-hueco'), m = T.premio && T.premio.monedas;
   if (!hueco || !m || !ppHayAnuncios()) return;
   if (T.doblado) { hueco.innerHTML = `<span class="pp-vic-doblado">${tr('¡Doblado!')}</span>`; return; }
   // se apaga al primer toque: un doble toque no abre dos anuncios (tarea #180); si no se ve entero, vuelve a encenderse
-  const b = ppBoton('', 'pp-btn2 pp-verde pp-vic-doble', () => {
+  const b = ppBoton('', 'pp-btn2 pp-pago pp-vic-doble', () => {   // dorado: es un premio de más (tarea #143)
     if (b.disabled) return;
     b.disabled = true;
     ppVerAnuncio('pop-doblar', () => ppVictoriaDobla(t, T), () => { b.disabled = false; });
   });
-  b.innerHTML = `<span class="pp-vic-x2">x2</span>${tr('Doblar')}`;
+  b.innerHTML = ppVictoriaDobleHtml(m);
   hueco.appendChild(b);
 }
 function ppVictoriaDobla(t, T) {
@@ -47,14 +45,16 @@ function ppVictoriaCompartir(T, b) {
   if (navigator.clipboard) navigator.clipboard.writeText(texto + ' ' + PP_VIC_WEB).then(() => avisa(tr('¡Copiado!')), () => avisa(PP_VIC_WEB));
   else avisa(PP_VIC_WEB);
 }
-// Compartir, fuera del panel y encima de ¡SIGUIENTE!, del mismo tamaño (Pepins, 19-11-2026, boceto de la 2.ª vuelta): blanco con
-// letra azul y el dibujito de compartir, para que ¡SIGUIENTE! (rosa) siga siendo el que manda
+// el pie, debajo de ¡SIGUIENTE! y separado de él (tarea #143, Pepins 20-11-2026): una fila con COMPARTIR (secundario, con su
+// dibujito) y TIENDA (pago, dorado; abre las bandejas, lo que se compra con monedas). ¡SIGUIENTE! queda solo y es el que manda
 const PP_VIC_ICONO_COMPARTIR = '<svg class="pp-vic-comp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">'
   + '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
-function ppVictoriaPie(t, T) {
-  const comp = ppBoton('', 'pp-btn pp-vic-compartir', () => ppVictoriaCompartir(T, comp));
+function ppVictoriaPie(t, T, opc) {
+  const fila = document.createElement('div'); fila.className = 'pp-vic-pie';
+  const comp = ppBoton('', 'pp-btn2 pp-sec pp-vic-compartir', () => ppVictoriaCompartir(T, comp));
   comp.innerHTML = PP_VIC_ICONO_COMPARTIR + `<span>${tr('COMPARTIR')}</span>`;
-  t.appendChild(comp);
+  fila.append(comp, ppBoton(tr('TIENDA'), 'pp-btn2 pp-pago', () => ppTienda(opc.vuelta || null, 'bandejas')));
+  t.appendChild(fila);
 }
 // «A por 3 estrellas»: un botoncito junto a la frase, dentro del panel, si te ha faltado alguna
 function ppVictoriaOtraVez(t, T, opc) {
@@ -63,10 +63,9 @@ function ppVictoriaOtraVez(t, T, opc) {
   frase.insertAdjacentElement('afterend', ppBoton(tr('A por 3 estrellas') + ' ›', 'pp-vic-otra', ppOtraVez));
 }
 function ppVictoriaBotones(t, T, opc) {
-  ppVictoriaTienda(t, opc);
   ppVictoriaDoble(t, T);
   ppVictoriaOtraVez(t, T, opc);
-  ppVictoriaPie(t, T);
+  ppVictoriaPie(t, T, opc);
 }
 /* ---------- la fiesta ---------- */
 const ppVicAzar = (a, b) => a + Math.random() * (b - a);   // solo para el adorno: dónde cae cada trocito

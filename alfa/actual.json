@@ -1,8 +1,8 @@
 {
- "build": 1339,
- "hash": "6ba984c",
- "fecha": "2026-11-20T08:36:08Z",
- "mensaje": "Workflows de Yoshi a GitHub con una variable por runner, Yoshi por defecto (tarea #230, ADR 172)",
+ "build": 1352,
+ "hash": "e049923",
+ "fecha": "2026-11-20T13:12:35Z",
+ "mensaje": "Pop: textos sin dar por hecho si quien juega es chico o chica: Maestría en burbujas, Mandamás del pop-it, ¡Que gane el más pop!, participantes y ¡abre tú el ranking! (tarea #193, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -23,6 +23,7 @@
   "panic": "0.1.2",
   "paperwork": "0.11.2",
   "pets": "0.2.15",
+  "pinball": "0.2.0",
   "pop": "0.6.0",
   "ratkov": "0.2.45",
   "rouflage": "0.2.81",

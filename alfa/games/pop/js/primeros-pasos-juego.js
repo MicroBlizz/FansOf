@@ -29,7 +29,7 @@ const ppPrimerosEspera = k => PP_PRIMEROS.tutoEspera(PP_CFG.primeros, ppPrimeros
 function ppVentanaSinToquesGratis() {
   const t = ppAbreDerrota(tr('¡Tranquilidad! En los primeros niveles no pierdes corazones.'));   // js/pantalla-victoria.js
   t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
-  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
+  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-volver', ppAlCamino));
 }
 // el botón SIGUIENTE de «¡Nivel superado!»: en los niveles 1 y 2 de una partida nueva, directo al siguiente; si no, al camino
 function ppPrimerosSiguiente() {

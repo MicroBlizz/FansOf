@@ -82,7 +82,6 @@ function ppNimFin(T, gano, soloVentana = false) {
     const n = ppTengo('deshacer'), b = ppBoton('', 'pp-btn', () => ppNimDeshacer(true));
     b.innerHTML = `${tr('DESHACER Y SEGUIR')} · ${n ? tr('tienes {n}', { n }) : ppPerlasPrecioHtml(PP_CFG.ayudas.deshacer.perlas, 26)}`;
     t.appendChild(b);
-    ppBotonOferta(t, () => ppNimFin(T, false, true));   // al acabar con la oferta, vuelve esta ventana
     t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn2 pp-verde', ppOtraVez));
     ppBotonSaltarJefe(t, T.d);   // atascado en el jefe: abrir el mundo siguiente con perlas (tarea #95, js/saltar-jefe-juego.js)
     t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));

@@ -74,16 +74,17 @@ function ppVicExtras(T) {
 // en «¡Casi!»: si al perder el corazón se ha ido la racha, se dice
 function ppVicRachaPerdida(T) {
   const antes = T && T.rachaAntes;
-  if (!antes || (SAVE.racha || 0) > 0) return '';
-  return `<div class="pp-vic-aviso">${ppIcono('i-racha', 50, '#ff9a4a')}<div><b>${tr('Has perdido tu racha')}</b>`
-    + `<small>${tr('Pasa niveles sin perder corazones para recuperarla')}</small></div></div>`;
+  const ahora = SAVE.racha || 0;
+  if (!antes || ahora >= antes) return '';   // sin racha, o a salvo (Racha a salvo): nada que decir
+  // la racha baja un escalón (tarea #186): si aún queda, se dice cuánto; si era de 1, se ha ido
+  const [titulo, pie] = ahora > 0
+    ? [tr('Tu racha baja un escalón'), ppTextoRacha(ahora)]
+    : [tr('Has perdido tu racha'), tr('Pasa niveles sin perder corazones para recuperarla')];
+  return `<div class="pp-vic-aviso">${ppIcono('i-racha', 50, '#ff9a4a')}<div><b>${titulo}</b><small>${pie}</small></div></div>`;
 }
-// en la ventana de «¡Sin toques!» (js/tienda.js), antes de rendirse: lo que se pierde
-function ppVicAvisoRacha() {
-  const n = SAVE.racha || 0;
-  return `<div class="pp-vic-aviso">${ppIcono('i-racha', 50, '#ff9a4a')}<div><b>${tr('¡No te rindas, perderás tu racha!')}</b>`
-    + `<small>${n === 1 ? tr('Ahora empiezas los niveles con +1 toque') : tr('Ahora empiezas los niveles con +{n} toques', { n })}</small></div></div>`;
-}
+const ppTextoRacha = n => (n === 1 ? tr('Ahora empiezas los niveles con +1 toque') : tr('Ahora empiezas los niveles con +{n} toques', { n }));
+// en la ventana de «¡Sin toques!» (js/tienda.js): una línea con lo que te da la racha, sin avisar de lo que se pierde (tarea #186)
+function ppVicAvisoRacha() { return `<p class="pp-sub">${ppTextoRacha(SAVE.racha || 0)}</p>`; }
 /* ---------- las monedas que vuelan a la barra ---------- */
 // una moneda (u otro dibujo `ico`, p. ej. el regalo de un estreno) que vuela de `a` a `b` (rectángulos de pantalla) en curva; al llegar, `llega()`
 function ppVicMoneda(a, b, retraso, llega, ico = 'i-moneda') {

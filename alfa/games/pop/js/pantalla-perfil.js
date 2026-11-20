@@ -16,8 +16,7 @@ const ppPfAbierta = () => !$pp('#pp-modal').hidden && $pp('#pp-tarjeta').classLi
 // el botón del menú: solo con el flag abierto
 function ppPerfilBoton() {
   const b = $pp('#pp-perfil'); if (!b) return;
-  b.hidden = !ppPerfilActivo(); b.textContent = tr('PERFIL');
-  b.parentElement.classList.toggle('pp-sola', b.hidden);
+  b.hidden = !ppPerfilActivo(); ppBarraBoton('#pp-perfil', 'perfil', tr('PERFIL'));   // en la barra de la portada (js/portada-barra.js)
 }
 /* ---------- el panel de arriba, animado mientras la ventana está abierta ---------- */
 function ppPfPanel() {

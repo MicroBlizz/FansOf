@@ -7,15 +7,14 @@
 // igualmente solo sale si tiene encendido «Datos de partida anónimos» (DATOS.activo()).
 // Servidor: enviar_reporte_prueba (servidor/98-reportes-prueba.sql). Se lee y se comenta en /gestion → <juego> → Reportes de prueba.
 //
-// Para los juegos (todo opcional; sin nada, el botón sale solo y manda captura del lienzo y fps):
-//   REPORTE.activar({ datos: () => ({ x, z, zona… }), captura: () => 'data:image/jpeg;base64,…' | null })
+// Para los juegos (todo opcional; sin nada, el botón sale solo y manda la captura de la página entera, lo que ve el jugador, y fps):
+//   REPORTE.activar({ datos: () => ({ x, z, zona… }), captura: () => 'data:image/jpeg;base64,…' | null | Promise })
 //   REPORTE.traza({ … }) una vez por segundo, con lo que interese seguir (si no, se apuntan los fps).
 //   REPORTE.suceso('habilidad', { id: 'dron' }) apunta lo que ha pasado, en orden (los últimos 100; ver caja-negra.js): viaja en datos.sucesos.
 'use strict';
 const REPORTE = (() => {
   const tr_ = typeof tr === 'function' ? tr : s => s;
   const MUESTRAS = 60;
-  const ANCHO_CAPTURA = 720;
 
   let juego = {};            // lo que aporta el juego: { datos, captura }
   let boton = null, ventana = null;
@@ -58,19 +57,13 @@ const REPORTE = (() => {
     requestAnimationFrame(paso);
   }
   function guarda(lista, muestra) { lista.push(muestra); if (lista.length > MUESTRAS) lista.shift(); }
-  // la captura por defecto: el lienzo más grande de la página, reducido (un lienzo WebGL sin preserveDrawingBuffer puede salir negro:
-  // esos juegos pasan su propia captura)
-  function capturaLienzo() {
-    const lienzos = [...document.querySelectorAll('canvas')].filter(c => c.width > 0 && c.height > 0);
-    if (!lienzos.length) return null;
-    const mayor = lienzos.reduce((a, b) => (a.width * a.height >= b.width * b.height ? a : b));
-    const escala = Math.min(1, ANCHO_CAPTURA / mayor.width), c = document.createElement('canvas');
-    c.width = Math.round(mayor.width * escala); c.height = Math.round(mayor.height * escala);
-    c.getContext('2d').drawImage(mayor, 0, 0, c.width, c.height);
-    return c.toDataURL('image/jpeg', 0.6);
-  }
-  function captura() {
-    try { return juego.captura ? juego.captura() : capturaLienzo(); } catch (e) { return null; }
+  // la captura: lo que ve el jugador, la página entera (core/js/sistema/captura-pantalla.js); sin el botón «!» ni la ventana del reporte.
+  // Un juego con lienzo WebGL sin preserveDrawingBuffer (sale negro) pasa su propia captura.
+  async function captura() {
+    try {
+      if (juego.captura) return await juego.captura();
+      return typeof CAPTURA_PANTALLA !== 'undefined' ? await CAPTURA_PANTALLA.foto({ excluir: ['rp-boton', 'rp-fondo'] }) : null;
+    } catch (e) { console.error('Captura del reporte: ' + (e && e.message)); return null; }
   }
 
   // --- la ventana
@@ -80,9 +73,14 @@ const REPORTE = (() => {
     if (!datosPermitidos()) return tr_('Para reportar, activa «Datos de partida anónimos» en Opciones.');
     return '';
   }
-  function abre() {
+  let capturando = false;
+  async function abre() {
+    if (ventana || capturando) return;
+    capturando = true; if (boton) boton.textContent = '…';   // la foto tarda un momento: se hace antes de abrir la ventana, para que no salga en ella
+    const imagen = await captura();
+    capturando = false; if (boton) boton.textContent = '!';
     if (ventana) return;
-    const imagen = captura(), bloqueo = aviso();
+    const bloqueo = aviso();
     ventana = document.createElement('div'); ventana.id = 'rp-fondo';
     ventana.innerHTML = `<div id="rp-caja" role="dialog">
       <h3>${esc(tr_('Reportar una situación'))}</h3>

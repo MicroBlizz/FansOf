@@ -65,6 +65,7 @@ function ppVentanaPaseNueva(repinta) {
   t.classList.add('pp-pase-ventana', 'pp-pase-nuevo');
   t.style.setProperty('--tema1', tema.color); t.style.setProperty('--tema2', tema.color2);
   ppVicBarra(SAVE.monedas);   // la barra de arriba de la victoria (js/victoria-panel.js)
+  ppPaseFinal(t, P, e, PP_PASE_R.CFG.escalones);
   ppPaseDorado(t, P, tema);
   const n = ppPaseListos().length, todo = ppBoton(n ? tr('RECOGER TODO ({n})', { n }) : tr('Nada que recoger'), 'pp-btn2 pp-verde pp-pase-todo', () => ppPaseRecoge(ppPaseListos()));
   todo.disabled = !n; t.appendChild(todo);
@@ -74,12 +75,29 @@ function ppVentanaPaseNueva(repinta) {
   if (!repinta) setTimeout(() => { const l = $pp('.pp-pase'), f = l && (l.querySelector('.pp-listo') || l.children[Math.max(0, e - 1)]); if (l && f) l.scrollTop = f.offsetTop - l.offsetTop - 10; }, 0);
 }
 // el botón del lado del camino: escalón, anillo con lo que falta y cuántos premios esperan (js/ofertas.js, ppPintaLateral)
+// Con los dos pases, debajo, cuántos puntos faltan para el próximo premio (tarea #187)
 function ppPaseLado(b) {
-  if (!b || !ppPaseNuevo()) return b;
+  if (!b) return b;
+  const falta = ppPaseFaltaPremio();
+  if (falta !== null) b.insertAdjacentHTML('beforeend', `<small class="pp-lado-falta">${tr('a {n} pts', { n: falta })}</small>`);
+  if (!ppPaseNuevo()) return b;
   const pts = ppPasePuntos(), C = PP_PASE_R.CFG, n = ppPaseListos().length;
   b.classList.add('pp-lado-pase');
   b.style.setProperty('--av', Math.round(100 * (C.porEscalon - PP_PASE_R.falta(pts)) / C.porEscalon) + '%');
   b.querySelector('b').textContent = tr('Esc. {e}', { e: ppEscalon() });
   if (n) b.dataset.n = n;
   return b;
+}
+// los puntos que faltan para el próximo premio: los del pase nuevo o los del de siempre (null con el de siempre completo)
+const ppPaseFaltaPremio = () => (ppPaseNuevo() ? PP_PASE_R.faltaPremio(ppPasePuntos())
+  : PP_PASE_R.faltaPremio(ppPaseAlDia().puntos, PP_CFG.pase.puntos, PP_CFG.pase.escalones));
+// arriba de la ventana, el premio final (el gratis y el dorado del último escalón) mientras no llegas a él: abajo de la lista no se ve.
+// Cajas sin data-k: RECOGER y el vuelo de iconos (js/pase.js, ppPaseRecoge) no las tocan
+function ppPaseFinal(t, P, e, total) {
+  if (e >= total) return;
+  const caja = premium => `<div class="pp-pase-premio${premium ? ' pp-premium' : ''}">${ppPremioCandyHtml(ppPremioPaseCon(total, premium), 24)}`
+    + `${premium && !P.premium ? '<s></s>' : ''}${PP_PASE_R.exclusivo(total, premium) ? `<em class="pp-pase-solo">${tr('SOLO ESTE MES')}</em>` : ''}</div>`;
+  const d = document.createElement('div'); d.className = 'pp-pase-final';
+  d.innerHTML = `<b>${tr('Premio final')}<small>${tr('Esc. {e}', { e: total })}</small></b>${caja(false)}${caja(true)}`;
+  t.appendChild(d);
 }

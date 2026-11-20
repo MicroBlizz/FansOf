@@ -93,6 +93,6 @@ function ppLolaSalta() {
 // el botón de Opciones: consejos de Lola sí o no
 function ppBotonConsejos() {
   const texto = () => (SAVE.sinConsejos ? tr('CONSEJOS DE LOLA: NO') : tr('CONSEJOS DE LOLA: SÍ'));
-  const b = ppBoton(texto(), 'pp-btn2 pp-verde', () => { SAVE.sinConsejos = !SAVE.sinConsejos; ppGuarda(); b.textContent = texto(); });
+  const b = ppBoton(texto(), 'pp-btn2 pp-sec', () => { SAVE.sinConsejos = !SAVE.sinConsejos; ppGuarda(); b.textContent = texto(); });
   return b;
 }

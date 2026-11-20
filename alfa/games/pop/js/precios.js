@@ -40,5 +40,21 @@ const PP_PRECIOS = (() => {
   }
   // 0.9 → '0,90 €'
   const formato = n => n.toFixed(2).replace('.', ',') + ' €';
-  return Object.freeze({ euros, perlaCara, perlaBarata, enEuros, ofertaEnPerlas, valorOferta, formato });
+  // tarea #187 · el pack de MEJOR VALOR es un dato, no una opinión: el más barato por perla (su id; null sin packs válidos)
+  function mejorValor(packs) {
+    const b = perlaBarata(packs);
+    const p = b === null ? null : (packs || []).find(x => euros(x.precio) / x.perlas === b);
+    return p ? p.id : null;
+  }
+  // un lote de n de la misma cosa al `factor` del precio: lo que cuesta y las perlas que ahorras frente a n sueltas
+  function lote(precio, n, factor) {
+    const total = Math.round(precio * n * factor);
+    return { precio: total, ahorro: precio * n - total };
+  }
+  // «comprar solo lo que falta»: el pack más pequeño que cubre las perlas que faltan (null si ninguno llega)
+  function packQueLlega(faltan, packs) {
+    const l = (packs || []).filter(p => p.perlas >= faltan).sort((a, b) => a.perlas - b.perlas);
+    return l.length ? l[0] : null;
+  }
+  return Object.freeze({ euros, perlaCara, perlaBarata, enEuros, ofertaEnPerlas, valorOferta, formato, mejorValor, lote, packQueLlega });
 })();

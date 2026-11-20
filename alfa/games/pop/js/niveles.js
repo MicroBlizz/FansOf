@@ -1,6 +1,6 @@
 // Fans of Pop · NIVELES: los MUNDOS (fase 1 de la propuesta, 30-10-2026) y el GENERADOR de sus niveles. Cada nivel sale siempre
 // igual (semilla = mundo y nivel), con una forma de tablero kawaii, sus burbujas dobles (mundo 2) y su límite de toques, que
-// se calcula SOLO: se juega el nivel por dentro muchas veces como lo haría una jugadora normal y se deja el margen justo
+// se calcula SOLO: se juega el nivel por dentro muchas veces como lo haría quien juega normal y se deja el margen justo
 // para que lo pase con la probabilidad que marca la curva de dificultad (dientes de sierra: uno difícil cada 5, luego respiro).
 // También el «óptimo»: el mínimo de toques posible (las 3 estrellas), buscado de verdad, no adivinado.
 // MUNDOS 3 A 6 (fase 5, 30-10-2026, «que la dificultad vaya en aumento tipo Candy Crush»): cada mundo trae una burbuja nueva y
@@ -94,7 +94,7 @@ function ppOptimo(n, mask, need, tope = 80000, esp = null) {
   }
   return [];
 }
-// cómo juega una jugadora normal: toca donde más revienta (a veces se despista y toca otra que también revienta algo)
+// cómo juega quien juega normal: toca donde más revienta (a veces se despista y toca otra que también revienta algo)
 function ppVoraz(n, mask, need, azar, despiste = 0, esp = null) {
   const falta = need.slice(), toques = [], N = n * n;
   const E = Array.from({ length: N }, (_, t) => (mask[t] ? ppEfecto(n, mask, esp, t) : []));   // lo que revienta cada toque, una vez (tarea #196: el generador simula 200 partidas)
@@ -115,7 +115,7 @@ function ppVoraz(n, mask, need, azar, despiste = 0, esp = null) {
   }
   return { toques };
 }
-// --- la curva: con qué probabilidad debe pasar el nivel una jugadora normal ---
+// --- la curva: con qué probabilidad debe pasar el nivel quien juega normal ---
 function ppObjetivo(g, dif = false) {
   const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m];
   if (l <= 2 && !dif) return 1;                                // tutorial
@@ -140,7 +140,7 @@ function ppMargen(g, dif) {
 }
 // --- el nivel g: forma, burbujas especiales, óptimo y límite de toques ---
 // Se prueban varias formas y repartos de dobles (6, salvo en el tutorial) y se queda la que más se acerca a la curva.
-// de los límites posibles (los toques de cada partida simulada), el que deja pasar a la jugadora normal con la probabilidad más
+// de los límites posibles (los toques de cada partida simulada), el que deja pasar a quien juega normal con la probabilidad más
 // cercana a la curva `obj`; en un empate, el más generoso
 function ppLimiteCercano(tiradas, obj, pasaCon) {
   let mejor = tiradas[0];
@@ -176,7 +176,7 @@ function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: 
   const hayEsp = esp.some(v => v);
   const espArg = hayEsp ? esp : null;
   const opt = ppOptimo(n, mk, need, 80000, espArg);
-  // el límite: el que deja pasar a la jugadora normal con la probabilidad más cercana a la curva (PP_CFG.generador.tiradas partidas
+  // el límite: el que deja pasar a quien juega normal con la probabilidad más cercana a la curva (PP_CFG.generador.tiradas partidas
   // simuladas; tarea #196: antes 40 y el primero que llegaba a la curva, y regalaba niveles)…
   const G = PP_CFG.generador, tiradas = [];
   for (let k2 = 0; k2 < G.tiradas; k2++) tiradas.push(ppVoraz(n, mk, need, az, 0.25, espArg).toques.length);
@@ -191,7 +191,7 @@ function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: 
   const suelo = ppEsDificil(g) || ppEsJefe(g) || dif ? 0.15 : 0.25;
   while (pasaCon(limite) < suelo && limite < opt.length + 4) limite++;
   // …y quien no se despista nunca tiene que poder: tantos toques como su mejor partida (tarea #196: el Difícil 1-04 y el 7-02 no
-  // los pasaba ni la jugadora lista del robot de dificultad)
+  // los pasaba ni el perfil listo del robot de dificultad)
   let mejor = Infinity;
   for (let k2 = 0; k2 < G.listas; k2++) mejor = Math.min(mejor, ppVoraz(n, mk, need, az, 0, espArg).toques.length);
   limite = Math.max(limite, mejor);

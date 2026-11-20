@@ -22,7 +22,7 @@ const ppInfinitas = () => (SAVE.infinitas || 0) > Date.now();
 function ppDaInfinitas(min) { SAVE.infinitas = Math.max(Date.now(), SAVE.infinitas || 0) + min * 60000; ppGuarda(); }
 // `guardaRacha`: la racha sigue (Racha a salvo de los compañeros, js/habilidades-niveles.js)
 function ppPierdeVida(guardaRacha = false) {
-  if (!guardaRacha) SAVE.racha = 0;   // perder un corazón corta la racha (js/pase.js)
+  if (!guardaRacha) SAVE.racha = PP_PRESION.bajaRacha(SAVE.racha);   // perder un corazón baja la racha un escalón (js/presion.js, tarea #186)
   if (ppInfinitas()) { ppGuarda(); return; }
   const lleno = ppVidas() >= PP_CFG.vida;
   SAVE.vidas = Math.max(0, SAVE.vidas - 1);

@@ -29,6 +29,11 @@ const PP_BANDEJAS = [
   { id: 'hojas', nombre: 'Hojas', precio: null, temporada: true, filas: [[25, 85, 64], [40, 90, 70], [10, 75, 66]] },
   { id: 'calabaza', nombre: 'Calabaza', precio: null, temporada: true, filas: [[28, 95, 62], [100, 45, 60]] },
   { id: 'nieve', nombre: 'Nieve', precio: null, temporada: true, filas: [[0, 80, 66], [140, 55, 62], [200, 30, 92]] },
+  // las DE LUJO (tarea #187): con euros, a precio fijo y sin azar; solo estética. `euros` es lo que se enseña y `producto`, el
+  // producto de la tienda (PROVISIONALES, como los packs: aún no existen en Play ni en el servidor). `lujo`: el reflejo nacarado.
+  { id: 'nacar', nombre: 'Nácar', precio: null, euros: '1,99 €', producto: 'pop_bandeja_nacar', lujo: true, filas: [[20, 85, 90], [180, 60, 88], [340, 75, 90]] },
+  { id: 'galaxia', nombre: 'Galaxia', precio: null, euros: '1,99 €', producto: 'pop_bandeja_galaxia', lujo: true, filas: [[220, 75, 42], [195, 85, 50], [230, 65, 34]] },
+  { id: 'aurora', nombre: 'Aurora', precio: null, euros: '1,99 €', producto: 'pop_bandeja_aurora', lujo: true, filas: [[150, 70, 60], [175, 75, 62], [335, 80, 72]] },
 ];
 const ppBandejaDe = id => PP_BANDEJAS.find(b => b.id === id) || PP_BANDEJAS[0];
 const ppBandejaActual = () => ppBandejaDe(SAVE.bandeja || 'arcoiris');
@@ -38,7 +43,15 @@ function ppColorFranja(y) { const B = ppBandejaActual(); const [h, s, l] = B.fil
 // una muestra pequeña en HTML (las franjas de colores)
 function ppBandejaMuestra(id, px = 30) {
   const B = ppBandejaDe(id), f = B.filas || PP_FILAS.map(([h, s, l]) => [h, s, Math.min(94, l + 20)]);
-  return `<span class="pp-muestra" style="width:${px}px;height:${px}px;background:linear-gradient(${f.map(([h, s, l], k) => `hsl(${h} ${s}% ${l}%) ${k * 100 / f.length}% ${(k + 1) * 100 / f.length}%`).join(',')})"></span>`;
+  const reflejo = B.lujo ? `${PP_REFLEJO_CSS},` : '';
+  return `<span class="pp-muestra" style="width:${px}px;height:${px}px;background:${reflejo}linear-gradient(${f.map(([h, s, l], k) => `hsl(${h} ${s}% ${l}%) ${k * 100 / f.length}% ${(k + 1) * 100 / f.length}%`).join(',')})"></span>`;
+}
+// el reflejo nacarado de las bandejas de lujo: unas franjas de luz en diagonal (en la muestra y sobre la silicona)
+const PP_REFLEJO_CSS = 'linear-gradient(135deg,rgba(255,255,255,0) 30%,rgba(255,255,255,0.55) 45%,rgba(255,255,255,0) 60%)';
+function ppBandejaReflejo(rl, g, m) {
+  const W = g.lado + m * 2, luz = rl.createLinearGradient(-m, -m, g.lado + m, g.lado + m);
+  for (const [k, a] of [[0, 0], [0.3, 0], [0.42, 0.45], [0.5, 0.15], [0.62, 0.4], [0.75, 0], [1, 0]]) luz.addColorStop(k, `rgba(255,255,255,${a})`);
+  rl.fillStyle = luz; rl.fillRect(-m, -m, W, W);
 }
 // `material` (opcional, el del estilo del mundo: la galleta de la Pastelería) cambia la silicona de franjas por una pieza de galleta
 // `relieve` (opcional, del estilo del mundo: el botón del Jardín) le da volumen de molde de silicona (js/bandeja-relieve.js)
@@ -77,6 +90,7 @@ function ppHazBandeja(T, g, material, relieve = false) {
   const [mascara, mk] = ppBandejaLienzo(g, m, esc); ppBandejaMancha(mk, T, cs, cs * 0.6, '#000');
   const [relleno, rl] = ppBandejaLienzo(g, m, esc);
   if (material) ppBandejaGalleta(rl, T, g, m, material); else ppBandejaFranjas(rl, T, g, m);
+  if (!material && ppBandejaActual().lujo) ppBandejaReflejo(rl, g, m);   // el nacarado de las de lujo
   const luz = rl.createLinearGradient(0, -m, 0, g.lado / 2); luz.addColorStop(0, 'rgba(255,255,255,0.35)'); luz.addColorStop(1, 'rgba(255,255,255,0)');
   rl.fillStyle = luz; rl.fillRect(-m, -m, g.lado + m * 2, g.lado / 2 + m);   // brillo arriba
   rl.setTransform(1, 0, 0, 1, 0, 0); rl.globalCompositeOperation = 'destination-in'; rl.drawImage(mascara, 0, 0);

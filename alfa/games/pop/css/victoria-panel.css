@@ -38,7 +38,7 @@
   background: #7cc8ff; box-shadow: inset -2px -2px 0 rgba(255, 255, 255, 0.6); animation: pp-vic-lagrima 1.8s 0.8s ease-in infinite; }
 @keyframes pp-vic-lagrima { 0% { transform: translateY(0); opacity: 1; } 80% { transform: translateY(18px); opacity: 1; } 100% { transform: translateY(22px); opacity: 0; } }
 
-/* de dónde salen las monedas, junto a «Gastar monedas» */
+/* de dónde salen las monedas */
 .pp-vic-fila-baja { gap: 10px; }
 .pp-vic-desglose { font-weight: 700; font-size: 17px; color: #8a4f00; background: rgba(255, 255, 255, 0.92); border-radius: 14px; padding: 5px 12px; }
 
@@ -76,7 +76,6 @@
 .pp-tarjeta.pp-gana::-webkit-scrollbar { display: none; }
 .pp-vic-fila-baja { flex-wrap: nowrap; }
 .pp-vic-fila-baja .pp-vic-desglose { font-size: 15px; white-space: nowrap; }
-.pp-vic-fila-baja .pp-vic-tienda { white-space: nowrap; font-size: 16px; padding: 7px 12px; }
 .pp-tarjeta.pp-vic-justa { gap: 7px; padding-top: 0; }
 .pp-vic-justa .pp-vic { padding-top: 4px; }
 .pp-vic-justa .pp-vic .pp-estrellas { height: 112px; }

@@ -3,7 +3,7 @@
 // melodía va un poco más deprisa. Un fallo acaba la partida.
 // Se juega gratis (no gasta corazones) y guarda el récord (SAVE.memoria.record). Premio diario en monedas según la ronda a la que
 // llegues (PP_CFG.memoria): cada día se cobra solo lo que mejora tu mejor ronda de HOY, así repetir no da monedas sin fin.
-// La lista de récords con otras jugadoras llegará cuando haya servidor para ello.
+// La lista de récords con otra gente llegará cuando haya servidor para ello.
 // El reloj de la melodía avanza con el bucle (ppMemAvanza), no con setTimeout: así la pausa la congela de verdad.
 'use strict';
 let PP_MEM = null;   // { T, sec: [], paso, fase: 'mira' | 'toca' | 'bien' | 'fin', reloj, sigue, luces: {i: segundos}, brillos: {i: 0..1} }

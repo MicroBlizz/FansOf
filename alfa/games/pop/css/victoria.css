@@ -17,13 +17,13 @@
 @keyframes pp-vic-tiembla { 0%, 100% { translate: 0 0; } 20% { translate: -7px 3px; } 40% { translate: 6px -4px; } 60% { translate: -5px 2px; } 80% { translate: 3px -2px; } }
 .pp-quieta, .pp-quieta * { animation-delay: 0s !important; animation-duration: 0.01s !important; }
 @keyframes pp-vic-entra { from { transform: scale(0.5) translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
-/* el orden de arriba abajo: cabecera, panel, lo que añada cada ventana (texto del rescate, slimes), compartir, siguiente, el resto, mapa */
+/* el orden de arriba abajo: cabecera, panel, lo que añada cada ventana (texto del rescate, slimes), siguiente, el resto y el pie (compartir y tienda) */
 .pp-gana > * { order: 3; }
 .pp-gana > .pp-vic { order: 0; }
 .pp-gana > .pp-vic-panel { order: 1; }
-.pp-gana > .pp-vic-compartir { order: 4; }
-.pp-gana > .pp-btn:not(.pp-vic-compartir) { order: 5; }
+.pp-gana > .pp-btn { order: 5; }
 .pp-gana > .pp-btn2 { order: 6; }
+.pp-gana > .pp-vic-pie { order: 7; }
 @keyframes pp-vic-late { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
 /* el panel: crema translúcido con borde blanco */
@@ -35,11 +35,8 @@
 .pp-vic-panel .pp-vic-premio { color: #fff; -webkit-text-stroke: 2px #c27a00; paint-order: stroke fill; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2); }
 .pp-vic-panel .pp-feria, .pp-vic-panel .pp-premios { color: #fff; }
 /* «A por 3 estrellas», pequeño dentro del panel */
-#pp-ui .pp-tarjeta .pp-vic-otra { border: 0; border-radius: 999px; padding: 6px 16px; font-size: 17px; color: #c43a84; background: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15); cursor: pointer; }
+#pp-ui .pp-tarjeta .pp-vic-otra { border: 0; border-radius: 999px; min-height: var(--pp-toque); padding: 6px 20px; font-size: 17px; color: #c43a84; background: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15); cursor: pointer; }
 .pp-gana .pp-sub { color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); font-weight: 700; }
-.pp-vic-tienda { border: 0; border-radius: 999px; padding: 8px 16px; font: inherit; font-weight: 700; font-size: 18px; color: #8a4f00; cursor: pointer;
-  background: linear-gradient(180deg, #ffe36e, #ffb000); box-shadow: 0 4px 0 #c27a00; animation: pp-vic-late 1.6s 2.4s ease-in-out infinite; }
-.pp-vic-tienda:active { transform: translateY(3px); box-shadow: 0 1px 0 #c27a00; }
 
 /* cabecera: rayos, destellos, estrellas y nota */
 .pp-vic { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 34px; }
@@ -108,14 +105,26 @@
 .pp-vic-premio-fila { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
 .pp-vic-premio { position: relative; font-size: 42px; animation: none; }
 .pp-vic-cuenta { display: inline-block; min-width: 2ch; text-align: left; }
-.pp-tarjeta .pp-vic-doble { min-width: 0; font-size: 20px; padding: 9px 16px 10px; animation: pp-vic-late 1.4s 2.2s ease-in-out infinite; }
-.pp-vic-x2 { position: relative; z-index: 1; margin-right: 8px; padding: 1px 8px; border-radius: 10px; background: #ffe36e; color: #8a4f00; -webkit-text-stroke: 0; text-shadow: none; font-size: 21px; line-height: 1.1; box-shadow: 0 2px 0 #c27a00; }
-.pp-vic-doblado { font-weight: 700; font-size: 22px; color: #26924a; animation: pp-salta 0.4s ease-out both; }
+.pp-tarjeta .pp-vic-doble { width: min(100%, 330px); min-width: 0; gap: 8px; font-size: 26px; padding: 12px 18px 13px; overflow: hidden;
+  animation: pp-vic-late 1.4s 2.2s ease-in-out infinite, pp-vic-halo 1.4s 2.2s ease-in-out infinite; }
+.pp-vic-x2 { position: relative; z-index: 1; margin-right: 8px; padding: 1px 8px; border-radius: 10px; background: #fff; color: #b8236a; -webkit-text-stroke: 0; text-shadow: none; font-size: 21px; line-height: 1.1; box-shadow: 0 2px 0 #c27a00; }
+.pp-vic-doblado { font-weight: 700; font-size: 22px; color: var(--pp-pago-b); animation: pp-salta 0.4s ease-out both; }
+/* «Doblar» grande y a lo ancho, en su propia línea bajo el +n (tarea #187): x2, Doblar y lo que ganas de más, con un halo dorado que
+   late y una luz que lo cruza; sin tocar ¡SIGUIENTE!, que sigue fuera del panel */
+.pp-vic-doble-hueco:not(:empty) { flex-basis: 100%; display: flex; justify-content: center; }
+.pp-tarjeta .pp-vic-doble:disabled { animation: none; }
+.pp-vic-doble-mas { position: relative; z-index: 1; display: inline-flex; color: #fff; }
+.pp-vic-doble-txt { position: relative; z-index: 1; }
+.pp-vic-doble-luz { position: absolute; top: -20%; bottom: -20%; left: -40%; width: 28%; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+  transform: skewX(-20deg); pointer-events: none; animation: pp-vic-cruza 2.8s 2.6s ease-in-out infinite both; }
+@keyframes pp-vic-halo { 0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 227, 110, 0)); } 50% { filter: drop-shadow(0 0 12px rgba(255, 227, 110, 0.95)); } }
+@keyframes pp-vic-cruza { 0% { left: -40%; } 45%, 100% { left: 120%; } }
 
-/* los botones grandes, de lado a lado y del mismo tamaño (Pepins, 19-11-2026): COMPARTIR blanco con letra azul y, debajo,
-   ¡SIGUIENTE! (o ¡OTRA VEZ!) en rosa */
-.pp-gana > .pp-btn { align-self: stretch; min-width: 0; font-size: 34px; padding-top: 14px; padding-bottom: 15px; --c1: #ffb3d9; --c2: #ff5fa8; --borde: #c43a84; }
-#pp-ui .pp-gana > .pp-vic-compartir { --c1: #ffffff; --c2: #eaf6ff; --borde: #7fb6e6; color: #2c7fd0; text-shadow: none; -webkit-text-stroke: 0; gap: 10px; }
+/* el botón principal, de lado a lado: ¡SIGUIENTE! (o ¡OTRA VEZ!), en el rosa de los principales (pop.css, tarea #143) */
+.pp-gana > .pp-btn { align-self: stretch; min-width: 0; font-size: 34px; padding-top: 14px; padding-bottom: 15px; }
+/* el pie: COMPARTIR y TIENDA, iguales y separados de ¡SIGUIENTE! por un hueco (que no se pulsen sin querer) */
+.pp-vic-pie { align-self: stretch; display: flex; gap: 14px; margin-top: 10px; }
+.pp-vic-pie > .pp-btn2 { flex: 1 1 0; min-width: 0; font-size: 22px; padding-left: 10px; padding-right: 10px; gap: 8px; }
 .pp-vic-comp-ico { width: 30px; height: 30px; flex: none; }
 .pp-gana > .pp-btn2 { align-self: stretch; min-width: 0; }
 
@@ -139,5 +148,3 @@
   .pp-gana, .pp-gana *, .pp-vic-fiesta { animation: none !important; }
   .pp-vic-fiesta, .pp-vic-brillos { display: none; }
 }
-/* «Gastar monedas» con letra marrón, que se lea sobre el dorado; y «A por 3 estrellas» en rosa, para no confundirlo con el mapa */
-#pp-ui .pp-tarjeta .pp-vic-tienda { color: #7a4200; -webkit-text-stroke: 0; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }

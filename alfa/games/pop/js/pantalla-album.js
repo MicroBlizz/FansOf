@@ -14,11 +14,10 @@ const ppAlbError = e => tr(PP_ALB_ERRORES[e] || 'No se ha podido. Prueba otra ve
 const ppAlbAbierta = () => !$pp('#pp-modal').hidden && $pp('#pp-tarjeta').classList.contains('pp-comp');
 // la inicial del modo en el idioma de cada uno (N/P/D en español; L/N/D en inglés): sin claves de una sola letra
 const ppAlbInicial = m => tr(PP_ALB_MODOS[m]).charAt(0).toUpperCase();
-// el botón del menú: solo con el flag abierto (tiene su propia fila, que se esconde con él)
+// el botón del menú: solo con el flag abierto
 function ppCompanerosBoton() {
   const b = $pp('#pp-companeros'); if (!b) return;
-  b.hidden = !ppCompanerosActivo(); b.textContent = tr('COMPAÑEROS');
-  b.parentElement.hidden = b.hidden;
+  b.hidden = !ppCompanerosActivo(); ppBarraBoton('#pp-companeros', 'companeros', tr('COMPAÑEROS'));   // en la barra de la portada (js/portada-barra.js)
 }
 /* ---------- lo de arriba: saldo y pestañas ---------- */
 function ppAlbSaldo() {

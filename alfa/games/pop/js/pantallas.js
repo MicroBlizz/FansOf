@@ -20,11 +20,7 @@ function ppIrA(p) {
     $pp('#pp-seguir').hidden = !hay;
     $pp('#pp-jugar').hidden = hay;   // con partida empezada solo sale SEGUIR; EMPEZAR DE NUEVO está en Opciones (Daniel, 02-11-2026)
     $pp('#pp-jugar').textContent = tr('JUGAR');
-    $pp('#pp-tienda').innerHTML = `<img class="pp-ico" src="${PP_LISO ? 'img-liso' : 'img'}/i-perlas.png" alt="" style="width:34px;height:34px${PP_LISO ? ';image-rendering:auto' : ''}">${tr('TIENDA')}`;   // la imagen directa: en la portada aún no han cargado los dibujos
-    $pp('#pp-duelo').textContent = tr('DUELOS');
-    $pp('#pp-memoria').textContent = tr('MEMORIA');
-    $pp('#pp-ranking').textContent = tr('RANKING');
-    $pp('#pp-opciones').textContent = tr('OPCIONES');
+    ppBarraRotulos();   // la barra de iconos y la fila de Memoria y Ranking (js/portada-barra.js, tarea #143)
     ppPerfilBoton();   // PERFIL, solo con su flag abierto (js/pantalla-perfil.js)
     ppPrimerosPortada();   // #140
     ppCompanerosBoton();   // COMPAÑEROS, solo con el flag companeros (js/pantalla-album.js)
@@ -76,7 +72,7 @@ function ppVentanaRescate(presos) {
   t.appendChild(fila);
   if (presos.length === 1) t.appendChild(ppBoton(tr('¡QUE VENGA!'), 'pp-btn', () => ppEligeRescate(presos[0])));
   else t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Toca una ficha para elegir.')}</p>`);
-  t.appendChild(ppBoton(tr('Seguir sin nadie'), 'pp-btn2 pp-azul', ppAlCamino));
+  t.appendChild(ppBoton(tr('Seguir sin nadie'), 'pp-btn2 pp-volver', ppAlCamino));
 }
 function ppEligeRescate(id) {
   if (PP_P.equipo.length < ppHuecos()) { ppRecluta(id); ppVentanaBienvenida(id); return; }
@@ -90,9 +86,9 @@ function ppEligeRescate(id) {
   if (precio !== null) {
     t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('O hazle sitio: un hueco más en el equipo, para siempre.')} ${tr('Tienes:')} ${ppMonedasHtml(SAVE.monedas, 26)}</p>`);
     t.appendChild(ppBotonPrecio(tr('HUECO MÁS'), precio, 'pp-btn', () => { if (ppCompraHueco()) { play('ppPremio'); ppRecluta(id); ppVentanaBienvenida(id); } }));
-    t.appendChild(ppBotonPerlas(tr('HUECO MÁS'), PP_CFG.perlas.hueco[SAVE.huecos || 0], 'pp-btn2 pp-rosa', () => { SAVE.huecos = (SAVE.huecos || 0) + 1; ppGuarda(); play('ppPremio'); ppRecluta(id); ppVentanaBienvenida(id); }, () => ppEligeRescate(id), 'hueco'));
+    t.appendChild(ppBotonPerlas(tr('HUECO MÁS'), PP_CFG.perlas.hueco[SAVE.huecos || 0], 'pp-btn2 pp-pago', () => { SAVE.huecos = (SAVE.huecos || 0) + 1; ppGuarda(); play('ppPremio'); ppRecluta(id); ppVentanaBienvenida(id); }, () => ppEligeRescate(id), 'hueco'));
   }
-  t.appendChild(ppBoton(tr('Mejor no'), 'pp-btn2 pp-azul', ppAlCamino));
+  t.appendChild(ppBoton(tr('Mejor no'), 'pp-btn2 pp-volver', ppAlCamino));
 }
 function ppVentanaBienvenida(id) {
   const d = ppSlimeDe(id);
@@ -107,9 +103,8 @@ function ppVentanaSalaHecha() {
 // sin toques: se ha perdido un corazón (partida.js) y se repite el nivel o se vuelve al camino
 function ppVentanaSinToques() {
   const t = ppAbreDerrota(tr('Pierdes un corazón; te quedan {n}.', { n: SAVE.vidas }));   // ¡Casi! y cuánto faltaba (js/pantalla-victoria.js)
-  ppBotonOferta(t, ppVentanaSinToques);   // la oferta de atasco, si está activa (js/ofertas.js); al acabar, vuelve aquí
   t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
-  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
+  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-volver', ppAlCamino));
 }
 // el jefe de un mundo superado: se abre el siguiente y su modo difícil. `dif`: era el jefe del modo difícil (no se abre nada nuevo).
 // `saltado`: era un jefe pendiente (tarea #95): el siguiente ya estaba abierto, no se anuncia otra vez y ¡VAMOS! lleva a su mundo
@@ -134,16 +129,15 @@ function ppVentanaSinCorazones() {
   const tic = setInterval(reloj, 1000); reloj();
   ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
   ppBotonInfinitas(t, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
-  ppBotonOferta(t, ppVentanaSinCorazones);
   ppBotonPedirCorazones(t);   // js/pantalla-corazones.js
-  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppAlCamino(); }));
+  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-volver', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {
   const P = PP_P;
   const t = ppAbre(`<h2>${tr('¡VICTORIA!')}</h2><p class="pp-sub">${tr('¡Plop! Has superado todos los mundos que hay de momento. ¡Pronto llegan más!')}</p><p class="pp-sub"><b>${tr('Estrellas: {n}', { n: P.estrellas })}</b>${P.estrellas >= (SAVE.estrellas || 0) && P.estrellas ? ' · ' + tr('¡Nuevo récord!') : ' · ' + tr('Récord: {n}', { n: SAVE.estrellas || 0 })}</p>`, true);
   if (P.rescatados.length) { t.insertAdjacentHTML('beforeend', `<p class="pp-sub"><b>${tr('Rescatados')}</b></p>`); const fila = document.createElement('div'); fila.className = 'pp-fila-slimes pp-mini'; for (const id of P.rescatados) fila.appendChild(ppFichaSlime(id)); t.appendChild(fila); }
   t.appendChild(ppBoton(tr('JUGAR OTRA VEZ'), 'pp-btn', () => { ppCierra(); ppNuevaRuta(); ppIrA('mapa'); }));
-  t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); PP_P = null; ppIrA('titulo'); }));
+  t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-volver', () => { ppCierra(); PP_P = null; ppIrA('titulo'); }));
 }
 function ppAyuda() {
   const t = ppAbre(`<h2>${tr('Cómo se juega')}</h2>
@@ -167,19 +161,19 @@ function ppFilasSonido() {
 function ppOpciones() {
   const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
-  col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-verde', ppAyuda));
+  col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-sec', ppAyuda));
   col.appendChild(ppFilasSonido());
-  const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
+  const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-sec', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
   col.appendChild(vib);
   col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
-  if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-rosa', ppConfirmaDeNuevo));
-  col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn', ppCierra));
+  if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
+  col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-volver', ppCierra));
 }
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {
   const t = ppAbre(`<h2>${tr('¿Empezar de nuevo?')}</h2><p class="pp-sub">${tr('Vuelves al nivel 1 y pierdes el camino y el equipo. Tus monedas, perlas y ayudas se quedan.')}</p>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
-  col.appendChild(ppBoton(tr('SÍ, DE NUEVO'), 'pp-btn2 pp-rosa', () => { ppCierra(); ppEmpieza(false); }));
+  col.appendChild(ppBoton(tr('SÍ, DE NUEVO'), 'pp-btn2 pp-sec', () => { ppCierra(); ppEmpieza(false); }));
   col.appendChild(ppBoton(tr('NO, VOLVER'), 'pp-btn', ppOpciones));
 }
 /* ---------- la pausa ----------
@@ -192,13 +186,13 @@ function ppPausa() {
   const t = ppAbre(`<h2>${tr('Pausa')}</h2>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
   col.appendChild(ppBoton(tr('SEGUIR'), 'pp-btn', ppQuitaPausa));
-  if (PP_PANT.actual === 'memoria') col.appendChild(ppBoton(tr('Salir de Memoria'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalMemoria(); }));
-  if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalDuelo(); }));
-  if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-rosa', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
+  if (PP_PANT.actual === 'memoria') col.appendChild(ppBoton(tr('Salir de Memoria'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalMemoria(); }));
+  if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalDuelo(); }));
+  if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-pago', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
   if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Si sales ahora pierdes un corazón.')}</p>`);
-  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
-  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
+  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
+  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   col.appendChild(ppFilasSonido());
 }
 function ppQuitaPausa() { ppCierra(); }   // cerrar la ventana ya acaba con la pausa (ppCierra)

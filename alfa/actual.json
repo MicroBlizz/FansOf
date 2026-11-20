@@ -1,8 +1,8 @@
 {
- "build": 1338,
- "hash": "8a64320",
- "fecha": "2026-11-20T07:25:18Z",
- "mensaje": "Tiny Fans: arreglos del tercer probador (mordiscos por turnos, flecha y frase en el asalto, paquete que llega para la primera meta, una sola ayuda en el nido, avisos dentro de la pantalla) (tarea #138, Pepins)",
+ "build": 1339,
+ "hash": "6ba984c",
+ "fecha": "2026-11-20T08:36:08Z",
+ "mensaje": "Workflows de Yoshi a GitHub con una variable por runner, Yoshi por defecto (tarea #230, ADR 172)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

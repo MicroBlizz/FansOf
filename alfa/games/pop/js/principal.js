@@ -99,7 +99,7 @@ function ppArranque() {
     else if (faltan.length && typeof SPLASH !== 'undefined') SPLASH.falla('pop/img-liso/' + faltan[0] + '.png');
   });
   requestAnimationFrame(ppFotograma);
-  setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppPintaLateral(); }, 1000);   // los relojes de las ofertas
+  setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) { ppPintaLateral(); ppPintaCaminoAyudas(); } }, 1000);   // los relojes de las ofertas y cuántas ayudas tienes
   setInterval(ppBuzonVigila, 5000);   // el buzón de corazones de los amigos: al llegar al camino y cada minuto (js/pantalla-buzon.js)
 }
 ppArranque();

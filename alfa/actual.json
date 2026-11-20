@@ -1,8 +1,8 @@
 {
- "build": 1385,
- "hash": "931f01d",
- "fecha": "2026-11-20T19:58:31Z",
- "mensaje": "Pop: la pestaña Perlas de la tienda, llena y por secciones: Para ti, 6 packs, 3 lotes y la hucha y el pase a medias (tarea #266, Pepins, boceto C, ADR 184)",
+ "build": 1386,
+ "hash": "284550b",
+ "fecha": "2026-11-20T20:12:03Z",
+ "mensaje": "Pop: en el camino, las ayudas a la vista en una columna a la izquierda y abajo una barra fija INICIO, EQUIPO y TIENDA (tarea #267, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

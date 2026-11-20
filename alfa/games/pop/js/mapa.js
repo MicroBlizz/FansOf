@@ -157,9 +157,9 @@ function ppPintaMapa(c, t) {
     });
   }
   // abajo: corazones (con el reloj del siguiente), estrellas, monedas y el equipo
-  const yb = PP_V.H - 176;
+  // encima de la barra fija INICIO · EQUIPO · TIENDA (js/camino-barra.js, tarea #267)
+  const conEquipo = P.equipo.length > 0, yb = PP_V.H - 126 - (conEquipo ? 136 : 84);
   // sin amigos, la barra es más baja y sin huecos vacíos (Pepins, 19-11-2026: «¿por qué tanto hueco?»); opaca, para que no se vea el camino detrás
-  const conEquipo = P.equipo.length > 0;
   c.fillStyle = 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(20, yb, 500, conEquipo ? 136 : 84, 24); c.fill();
   const vidas = ppVidas();
   if (ppPrimerosVe('amigos')) ppPintaAvisoBuzon(c, 56, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)

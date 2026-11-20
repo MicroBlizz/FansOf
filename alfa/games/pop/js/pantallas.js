@@ -12,7 +12,7 @@ function ppIrA(p) {
   if (p !== 'sala' && p !== 'duelo' && p !== 'memoria') ppLolaCierra();
   if (p !== 'duelo' && p !== 'sala') $pp('#pp-listo').hidden = true;
   $pp('#pp-pausa').hidden = p === 'titulo';
-  ppBarraAyudas(); ppPintaLateral();   // la barra de ayudas en los niveles y los botones del lado en el camino
+  ppBarraAyudas(); ppPintaLateral(); ppPintaCamino();   // la barra de ayudas en los niveles; en el camino, los botones de los lados y la barra de abajo (js/camino-barra.js)
   if (p === 'mapa') setTimeout(ppAlLlegarAlCamino, 400);   // regalo diario y pack de bienvenida
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);

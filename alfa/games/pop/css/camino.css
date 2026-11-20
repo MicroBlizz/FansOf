@@ -1,0 +1,21 @@
+/* Fans of Pop · LOS BOTONES HTML DEL CAMINO (tarea #267, js/camino-barra.js): la columna de ayudas a la izquierda y la barra fija de
+   abajo (INICIO azul, EQUIPO turquesa, TIENDA dorada; ADR 176). En la capa #pp-ui de 540: 70 aquí son 48 px de verdad en un móvil de 375.
+   Nada de lila ni de gris. */
+#pp-camino-barra { position: absolute; left: 12px; right: 12px; bottom: 10px; width: auto; margin: 0; z-index: 20; pointer-events: auto; }
+#pp-camino-barra[hidden], #pp-camino-ayudas[hidden] { display: none; }
+#pp-ui #pp-camino-barra .pp-barra-b { min-height: 92px; }
+#pp-camino-barra .pp-barra-ico { width: 46px; height: 46px; }
+#pp-ui .pp-barra-b.pp-volver { --c1: var(--pp-vol1); --c2: var(--pp-vol2); --borde: var(--pp-vol-b); }
+#pp-ui .pp-barra-b[hidden] { display: none; }
+/* la columna: espejo del lateral de la derecha (#pp-lateral, pop.css) */
+#pp-camino-ayudas { position: absolute; left: 6px; top: 21%; display: flex; flex-direction: column; gap: 8px; z-index: 20; }
+#pp-ui .pp-cam-ayuda { position: relative; width: 74px; display: flex; flex-direction: column; align-items: center; border: 0; background: none; padding: 0; color: #fff; }
+.pp-cam-bola { position: relative; width: 70px; height: 70px; border-radius: 50%; border: 4px solid #ff9ccf; background: radial-gradient(circle at 35% 30%, #fff, #ffe6f4);
+  box-shadow: 0 4px 0 #e07ab5; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.pp-cam-ayuda:active .pp-cam-bola { transform: translateY(3px); box-shadow: 0 1px 0 #e07ab5; }
+.pp-cam-bola em { position: absolute; top: 4px; left: 4px; font-style: normal; font-weight: 700; font-size: 16px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; }
+.pp-cam-n { position: absolute; right: -8px; bottom: -4px; min-width: 28px; height: 28px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #ff4f9a;
+  box-shadow: 0 0 0 3px #fff; font-style: normal; font-weight: 700; font-size: 18px; color: #fff; display: flex; align-items: center; justify-content: center; }
+.pp-cam-n.pp-cam-precio { background: linear-gradient(var(--pp-pago1), var(--pp-pago2)); color: #6a3c00; font-size: 15px; padding: 0 5px; }
+.pp-cam-n .pp-precio { color: #6a3c00; display: inline-flex; align-items: center; gap: 1px; }
+.pp-cam-ayuda b { margin-top: 2px; font-size: 15px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; white-space: nowrap; }

@@ -5,6 +5,7 @@
 // los dibujos, en un cuadro de 48: relleno blanco y contorno del color del botón (currentColor, que pone css/portada.css)
 const PP_BARRA_ICONOS = Object.freeze({
   companeros: '<circle cx="17" cy="27" r="11"/><circle cx="32" cy="22" r="11"/><circle cx="29" cy="21" r="1.6" class="pp-ojo"/><circle cx="35" cy="21" r="1.6" class="pp-ojo"/><circle cx="14" cy="26" r="1.6" class="pp-ojo"/><circle cx="20" cy="26" r="1.6" class="pp-ojo"/>',
+  inicio: '<path d="M24 6 4 23h6v19h11V31h6v11h11V23h6z"/>',   // la casa de INICIO, en la barra del camino (js/camino-barra.js)
   perfil: '<circle cx="24" cy="17" r="10"/><path d="M8 42c1-10 8-14 16-14s15 4 16 14z"/>',
   duelo: '<path d="M27 4 11 27h11l-4 17 19-25H26z"/>',
   opciones: '<circle cx="24" cy="24" r="14" fill="none" stroke-width="9" stroke-dasharray="5.5 5.5" class="pp-dientes"/><circle cx="24" cy="24" r="12"/><circle cx="24" cy="24" r="4.5" class="pp-ojo"/>',

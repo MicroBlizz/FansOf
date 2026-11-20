@@ -40,4 +40,6 @@ IDIOMA.add({
   "Bajan tus victorias seguidas": "Your winning run goes down",
   "Ahora empiezas los niveles con +{n} toques": "You now start levels with +{n} taps",
   "Ahora empiezas los niveles con +1 toque": "You now start levels with +1 tap",
+  "Tu racha: +{n} toques al empezar cada nivel": "Your streak: +{n} taps at the start of each level",
+  "Tu racha: +1 toque al empezar cada nivel": "Your streak: +1 tap at the start of each level",
 });

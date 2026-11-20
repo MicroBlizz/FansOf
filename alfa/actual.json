@@ -1,8 +1,8 @@
 {
- "build": 1381,
- "hash": "555d4bc",
- "fecha": "2026-11-20T19:35:42Z",
- "mensaje": "Pop: la victoria ya no se acelera al volver de la Tienda (la causa era acortar la duracion con CSS) y el boton de Doblar no pisa el desglose (tarea #261, Pepins)",
+ "build": 1382,
+ "hash": "034d7c0",
+ "fecha": "2026-11-20T19:39:41Z",
+ "mensaje": "Pop: en «¡Sin toques!» la racha se recuerda sin «Ahora» (Tu racha: +N toques al empezar cada nivel) (tarea #186, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

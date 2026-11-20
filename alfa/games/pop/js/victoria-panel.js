@@ -84,7 +84,11 @@ function ppVicRachaPerdida(T) {
 }
 const ppTextoRacha = n => (n === 1 ? tr('Ahora empiezas los niveles con +1 toque') : tr('Ahora empiezas los niveles con +{n} toques', { n }));
 // en la ventana de «¡Sin toques!» (js/tienda.js): una línea con lo que te da la racha, sin avisar de lo que se pierde (tarea #186)
-function ppVicAvisoRacha() { return `<p class="pp-sub">${ppTextoRacha(SAVE.racha || 0)}</p>`; }
+// sin «Ahora»: aquí no ha cambiado nada, solo se recuerda lo que da la racha (Pepins, 20-11-2026)
+function ppVicAvisoRacha() {
+  const n = SAVE.racha || 0;
+  return `<p class="pp-sub">${n === 1 ? tr('Tu racha: +1 toque al empezar cada nivel') : tr('Tu racha: +{n} toques al empezar cada nivel', { n })}</p>`;
+}
 /* ---------- las monedas que vuelan a la barra ---------- */
 // una moneda (u otro dibujo `ico`, p. ej. el regalo de un estreno) que vuela de `a` a `b` (rectángulos de pantalla) en curva; al llegar, `llega()`
 function ppVicMoneda(a, b, retraso, llega, ico = 'i-moneda') {

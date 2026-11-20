@@ -247,7 +247,6 @@ IDIOMA.add({
   "¡Pack de bienvenida!": "Welcome pack!",
   "¡Toma!": "Here you go!",
   "¡Tuyo!": "Yours!",
-  "¡Uno cada día! El del domingo es el más gordo.": "One every day! Sunday's is the biggest.",
   "¡pase completo!": "pass complete!",
   "¿Una ayudita?": "A little help?",
   "Ahora no": "Not now",

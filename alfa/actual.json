@@ -1,8 +1,8 @@
 {
- "build": 1377,
- "hash": "526cb5a",
- "fecha": "2026-11-20T19:21:05Z",
- "mensaje": "Pop: al unirse un companero, la victoria usa la pantalla nueva (fondo, monedas que vuelan, Doblar, COMPARTIR) con el companero dentro (tarea #261, Pepins)",
+ "build": 1378,
+ "hash": "4f89871",
+ "fecha": "2026-11-20T19:24:05Z",
+ "mensaje": "Pop: regalo diario nuevo: caja con halo, premio de hoy en burbuja, barra de la semana y tira de 7 dias (tarea #262, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -1,7 +1,8 @@
 // Fans of Pop · Inglés: el Pase de Pop nuevo (tareas #165 y #166): RECOGER TODO, la pantalla nueva, los temas del mes, sus bandejas
-// y las misiones (js/pase.js, js/pase-pantalla.js, js/pase-nuevo.js, js/pase-temas.js y js/bandeja.js).
+// y las misiones y el regalo diario (js/regalo.js, js/pase.js, js/pase-pantalla.js, js/pase-nuevo.js, js/pase-temas.js y js/bandeja.js).
 'use strict';
 IDIOMA.add({
+  "Día {n} de 7: el domingo, el más gordo": "Day {n} of 7: Sunday's is the biggest",
   "RECOGER TODO ({n})": "COLLECT ALL ({n})",
   "Nada que recoger": "Nothing to collect",
   "¡Pase completo! Sigue jugando: escalones extra": "Pass complete! Keep playing: bonus steps",

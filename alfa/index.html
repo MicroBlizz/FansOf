@@ -9,21 +9,21 @@
 <link rel="icon" type="image/png" href="core/img/fog-192.png">
 <link rel="apple-touch-icon" href="core/img/fog-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=cefbe3b">
-<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=cefbe3b">
-<link rel="stylesheet" href="core/css/base.css?v=cefbe3b">
-<link rel="stylesheet" href="estilo/web.css?v=cefbe3b">
-<link rel="stylesheet" href="estilo/pie.css?v=cefbe3b">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=cefbe3b">
-<link rel="stylesheet" href="novedades/ventana.css?v=cefbe3b">
-<link rel="stylesheet" href="biblioteca/votos.css?v=cefbe3b">
-<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=cefbe3b">
-<link rel="stylesheet" href="biblioteca/portada.css?v=cefbe3b">
+<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=4080fc6">
+<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=4080fc6">
+<link rel="stylesheet" href="core/css/base.css?v=4080fc6">
+<link rel="stylesheet" href="estilo/web.css?v=4080fc6">
+<link rel="stylesheet" href="estilo/pie.css?v=4080fc6">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=4080fc6">
+<link rel="stylesheet" href="novedades/ventana.css?v=4080fc6">
+<link rel="stylesheet" href="biblioteca/votos.css?v=4080fc6">
+<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=4080fc6">
+<link rel="stylesheet" href="biblioteca/portada.css?v=4080fc6">
 </head>
 <body>
-<script src="core/js/sistema/idioma-regla.js?v=cefbe3b"></script>
-<script src="idioma-web.js?v=cefbe3b"></script>
-<script src="menu.js?v=cefbe3b" data-base="" data-core="1" data-pagina=""></script>
+<script src="core/js/sistema/idioma-regla.js?v=4080fc6"></script>
+<script src="idioma-web.js?v=4080fc6"></script>
+<script src="menu.js?v=4080fc6" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -400,8 +400,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a1377.526cb5a"></script>
-<script src="core/js/novedades.js?v=cefbe3b"></script>
+<script src="core/js/nucleo.js?v=0-a1378.4f89871"></script>
+<script src="core/js/novedades.js?v=4080fc6"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -410,14 +410,14 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=cefbe3b"></script>
-<script src="core/js/cuenta/dominio/roles.js?v=cefbe3b"></script>
-<script src="core/js/cuenta/aplicacion/roles-casos.js?v=cefbe3b"></script>
-<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=cefbe3b"></script>
-<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=cefbe3b"></script>
-<script src="core/js/cuenta/roles.js?v=cefbe3b"></script>
-<script src="core/js/sistema/flags.js?v=cefbe3b"></script>
-<script src="estilo/estilo-nuevo.js?v=cefbe3b"></script>
+<script src="core/js/sistema/cuenta.js?v=4080fc6"></script>
+<script src="core/js/cuenta/dominio/roles.js?v=4080fc6"></script>
+<script src="core/js/cuenta/aplicacion/roles-casos.js?v=4080fc6"></script>
+<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=4080fc6"></script>
+<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=4080fc6"></script>
+<script src="core/js/cuenta/roles.js?v=4080fc6"></script>
+<script src="core/js/sistema/flags.js?v=4080fc6"></script>
+<script src="estilo/estilo-nuevo.js?v=4080fc6"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'games/beams/idioma/en-raiz.js', 'games/snakes/idioma/en-raiz.js', 'games/merge/idioma/en-raiz.js', 'games/swipe/idioma/en-raiz.js', 'games/pop/idioma/en-raiz.js', 'games/panic/idioma/en-raiz.js', 'games/vikings/idioma/en-raiz.js', 'games/goose/idioma/en-raiz.js', 'games/asalto/idioma/en-raiz.js', 'games/kingdom/idioma/en-raiz.js', 'games/auto/idioma/en-raiz.js', 'games/shelter/idioma/en-raiz.js', 'games/soccer/idioma/en-raiz.js', 'games/wings/idioma/en-raiz.js', 'games/spy/idioma/en-raiz.js', 'games/air/idioma/en-raiz.js', 'games/basement/idioma/en-raiz.js', 'games/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'games/rumble-3d/idioma/en-raiz.js', 'games/roguelite/idioma/en-raiz.js', 'games/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'games/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'games/recruit/idioma/en-raiz.js', 'games/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js', 'games/paperwork/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -443,16 +443,16 @@ const fail = id => () => {
 };
 
 </script>
-<script src="novedades/lo-nuevo.js?v=cefbe3b"></script>
-<script src="novedades/ventana.js?v=cefbe3b"></script>
-<script src="biblioteca/grupos.js?v=cefbe3b"></script>
-<script src="biblioteca/agrupar.js?v=cefbe3b"></script>
-<script src="biblioteca/tienda.js?v=cefbe3b"></script>
-<script src="biblioteca/cuenta-web.js?v=cefbe3b"></script>
-<script src="biblioteca/votos.js?v=cefbe3b"></script>
-<script src="biblioteca/alfa.js?v=cefbe3b"></script>
-<script src="biblioteca/portada-nueva.js?v=cefbe3b"></script>
-<script src="core/js/sistema/analitica.js?v=cefbe3b"></script>
-<script src="pie.js?v=cefbe3b" defer></script>
+<script src="novedades/lo-nuevo.js?v=4080fc6"></script>
+<script src="novedades/ventana.js?v=4080fc6"></script>
+<script src="biblioteca/grupos.js?v=4080fc6"></script>
+<script src="biblioteca/agrupar.js?v=4080fc6"></script>
+<script src="biblioteca/tienda.js?v=4080fc6"></script>
+<script src="biblioteca/cuenta-web.js?v=4080fc6"></script>
+<script src="biblioteca/votos.js?v=4080fc6"></script>
+<script src="biblioteca/alfa.js?v=4080fc6"></script>
+<script src="biblioteca/portada-nueva.js?v=4080fc6"></script>
+<script src="core/js/sistema/analitica.js?v=4080fc6"></script>
+<script src="pie.js?v=4080fc6" defer></script>
 </body>
 </html>

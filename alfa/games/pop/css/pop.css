@@ -154,10 +154,6 @@ img.pp-ico { border-radius: 0; }
 .pp-pase-premio.pp-listo { cursor: pointer; box-shadow: 0 0 0 4px #4fc964; animation: pp-late 1.4s ease-in-out infinite; }
 .pp-pase-premio.pp-cogido { opacity: 0.4; }
 .pp-pase-premio s { position: absolute; inset: 0; border-radius: 12px; background: repeating-linear-gradient(135deg, rgba(255, 190, 40, 0.34) 0 10px, rgba(255, 226, 120, 0.22) 10px 20px); }   /* premium sin comprar: rayas doradas, nada de gris (Daniel) */
-.pp-semana { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
-.pp-dia { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px; border-radius: 14px; border: 3px solid #ffd1ec; background: #fff; font-size: 15px; }
-.pp-dia.pp-hoy { border-color: #ff8a2a; box-shadow: 0 0 0 3px #ffd64a; }
-.pp-dia.pp-gordo { grid-column: span 2; background: #fff8dc; }
 /* duelos contra gente y ranking mundial */
 .pp-codigo { margin: 0; font-size: 56px; font-weight: 700; letter-spacing: 10px; color: #ff6eb5; -webkit-text-stroke: 6px #fff; paint-order: stroke; }
 #pp-ui .pp-entrada { width: 220px; font: 700 44px 'Fredoka', sans-serif; text-align: center; letter-spacing: 8px; text-transform: uppercase; color: #c43a84; border: 4px solid #ff9ccf; border-radius: 18px; padding: 6px; background: #fff; pointer-events: auto; }

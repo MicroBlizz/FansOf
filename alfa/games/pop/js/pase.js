@@ -142,29 +142,6 @@ function ppPaseCuentas(antes, n) {
   ppVicCuenta($pp('#pp-modal .pp-vic-per'), antes.perlas, SAVE.perlas || 0, seg, 0);
   document.querySelectorAll('#pp-modal .pp-vic-caja').forEach(c => { c.classList.remove('pp-brilla'); void c.offsetWidth; c.classList.add('pp-brilla'); });
 }
-/* ---------- regalo diario ---------- */
-// el día de la semana (lunes = 0) decide el regalo; el domingo, el más gordo
-const PP_REGALOS = [{ monedas: 30 }, { ayudas: { martillo: 1 } }, { monedas: 50 }, { ayudas: { toques3: 1 } }, { perlas: 2 }, { ayudas: { bomba: 1 } },
-  { perlas: 5, ayudas: { martillo: 1, bomba: 1 }, infinitas: 30 }];
-const ppDiaSemana = () => (new Date().getDay() + 6) % 7;
-function ppVentanaRegalo() {
-  ppTutorial('regalo');
-  const hoy = ppDiaSemana(), cogido = SAVE.regaloDia === ppHoy();
-  const dias = [tr('Lun'), tr('Mar'), tr('Mié'), tr('Jue'), tr('Vie'), tr('Sáb'), tr('Dom')];
-  const t = ppAbre(`<h2>${tr('Regalo diario')}</h2><p class="pp-sub">${cogido ? tr('Ya has abierto el de hoy. ¡Vuelve mañana!') : tr('¡Uno cada día! El del domingo es el más gordo.')}</p>`, true);
-  const sem = document.createElement('div'); sem.className = 'pp-semana';
-  PP_REGALOS.forEach((p, k) => {
-    const d = document.createElement('div'); d.className = 'pp-dia' + (k === hoy ? ' pp-hoy' : '') + (k === 6 ? ' pp-gordo' : '');
-    d.innerHTML = `<b>${dias[k]}</b>${ppPremioCandyHtml(p, 22)}`; sem.appendChild(d);
-  });
-  t.appendChild(sem);
-  if (!cogido) t.appendChild(ppBoton(tr('¡ABRIR!'), 'pp-btn', () => {
-    ppDaPremio(PP_REGALOS[hoy], { motivo: 'regalo', clave: 'regalo:' + ppHoy() }); SAVE.regaloDia = ppHoy(); ppGuarda(); play('ppVictoria'); ppVibra([20, 30, 20]);
-    const t2 = ppAbre(`<h2>${tr('¡Toma!')}</h2><div class="pp-cofre">${ppIcono('i-regalo', 100, '#9cf0a0')}</div>${ppPremioCandyHtml(PP_REGALOS[hoy], 40)}`);
-    t2.appendChild(ppBoton(tr('¡GENIAL!'), 'pp-btn', ppCierra)); ppPintaLateral();
-  }));
-  else t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
-}
 // al llegar al camino: el regalo del día si no se ha abierto (una vez por sesión) o el pack de bienvenida cuando toca
 function ppAlLlegarAlCamino() {
   if (PP_PANT.actual !== 'mapa' || !$pp('#pp-modal').hidden) return;   // solo si sigues en el camino (no al entrar en un nivel)

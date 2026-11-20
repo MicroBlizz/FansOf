@@ -1,8 +1,8 @@
 {
- "build": 1360,
- "hash": "07c5f55",
- "fecha": "2026-11-20T16:46:19Z",
- "mensaje": "Pop: fuera la palabra «pop-it» (marca de FoxMind) de textos, novedades, biblioteca y ficha, con su inglés (tarea #260, Pepins)",
+ "build": 1361,
+ "hash": "45275da",
+ "fecha": "2026-11-20T16:47:58Z",
+ "mensaje": "Pinball 0.2.2: zorro y suricata de Yoshi dentro de la cápsula; preparar.py centra los ovillos y quita motas (#114)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -23,7 +23,7 @@
   "panic": "0.1.2",
   "paperwork": "0.11.2",
   "pets": "0.2.15",
-  "pinball": "0.2.1",
+  "pinball": "0.2.2",
   "pop": "0.6.0",
   "ratkov": "0.2.45",
   "rouflage": "0.2.81",

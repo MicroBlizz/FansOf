@@ -154,11 +154,14 @@ function ppCortFila(c, p, y, a) {
   lineas.forEach((l, i) => ppTexto(c, l, 228, y + (i - (lineas.length - 1) / 2) * 27, 30, '#2a1a3a', 'left', '#fff8fc'));
   c.restore();
 }
+// dónde empieza la tarjeta «Así se gana» (alto lógico H) y lo que mide; ¡A JUGAR! va justo debajo (js/principal.js, tarea #269)
+const PP_CORT_TARJETA_ALTO = 340;
+const ppCortTarjetaY = H => Math.max(470, Math.round(H * 0.49));
 // la tarjeta «Así se gana» con las tres filas, que van entrando una a una
 function ppCortTarjeta(c, y, f) {
   if (f.figuras <= 0.01) return;
   c.save(); c.globalAlpha = f.figuras; c.translate(0, (1 - f.figuras) * 80);
-  ppCortCaja(c, 34, y, 472, 340, 30, '#fff8fc', '#ff9ccf', 'rgba(196,58,132,0.3)');
+  ppCortCaja(c, 34, y, 472, PP_CORT_TARJETA_ALTO, 30, '#fff8fc', '#ff9ccf', 'rgba(196,58,132,0.3)');
   ppTexto(c, tr('Así se gana'), 270, y + 48, 38, '#e0468f', 'center', '#fff');
   c.restore();
   PP_CORT_PASOS.forEach((p, i) => ppCortFila(c, p, y + 118 + i * 86, f.pasos[i] * f.figuras));
@@ -177,5 +180,5 @@ function ppPintaCortinilla(c, t) {
     ppCortFigura(c, PP_CORT.rival, tr(PP_SLIMES[PP_CORT.rival].nombre), 415, 1, f.figuras, t);
     ppCortVs(c, f.vs);
   }
-  ppCortTarjeta(c, Math.max(470, Math.round(H * 0.49)), f);
+  ppCortTarjeta(c, ppCortTarjetaY(H), f);
 }

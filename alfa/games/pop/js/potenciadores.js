@@ -19,14 +19,19 @@ function ppGastaAyuda(k, vuelta = null) {
   return false;
 }
 /* ---------- la barra ---------- */
+// ¿este nivel tiene barra de ayudas? No en el tutorial del primer mundo, ni en una partida nueva antes del nivel 4 (tarea #140).
+// No mira la cortinilla: así «Tu equipo» sabe desde el principio si va debajo de las ayudas (js/marcador.js, tarea #269)
+const ppAyudasEnNivel = T => !(T.d && T.d.tutorial && T.d.mundo === 0) && ppPrimerosAyudas(T);
+// ¿van las ayudas pequeñas justo bajo el tablero, con «Tu equipo» debajo? (en los duelos van grandes, en el sitio del equipo)
+const ppAyudasBajoTablero = T => !!T && !T.nim && ppAyudasEnNivel(T);
 function ppBarraAyudas() {
   const b = $pp('#pp-ayudas'), T = PP_P && PP_P.T;
   if (!b) return;
   // con la cortinilla del duelo puesta no salen: taparían su tarjeta «Así se gana» (tarea #129); vuelven al pulsar ¡A JUGAR!
-  const ver = PP_PANT.actual === 'sala' && T && !T.hecho && !(T.d && T.d.tutorial && T.d.mundo === 0) && !ppCortActiva() && ppPrimerosAyudas(T);   // partida nueva: desde el nivel 4 (tarea #140)
+  const ver = PP_PANT.actual === 'sala' && T && !T.hecho && ppAyudasEnNivel(T) && !ppCortActiva();
   b.hidden = !ver; if (!ver) return;
   const duelo = !!T.nim, lista = duelo ? ['deshacer', 'pista'] : ['martillo', 'bomba', 'toques3'];
-  const ico = duelo ? 88 : 52, perla = duelo ? 28 : 18;
+  const ico = duelo ? 88 : 62, perla = duelo ? 28 : 18;
   b.classList.toggle('pp-duelo', duelo);
   ppTutorial(duelo ? 'ayudasDuelo' : 'ayudas');
   b.innerHTML = '';
@@ -34,7 +39,8 @@ function ppBarraAyudas() {
     const n = ppTengo(k), bt = document.createElement('button');
     bt.type = 'button'; bt.className = 'pp-ayuda' + (PP_AYUDA.modo === k ? ' pp-activa' : '');
     const gratis = duelo && ppAyudaGratis(k, T.nim);   // la lupa de Lola o los compañeros de duelo
-    bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasPrecioHtml(PP_CFG.ayudas[k].perlas, perla)}</b>`;
+    const nombre = duelo ? '' : `<i>${tr(PP_CFG.ayudas[k].nombre)}</i>`;   // en los niveles, con su nombre debajo (tarea #269)
+    bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasPrecioHtml(PP_CFG.ayudas[k].perlas, perla)}</b>${nombre}`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
     bt.onclick = () => { play('select'); ppPulsaAyuda(k); };
     b.appendChild(bt);

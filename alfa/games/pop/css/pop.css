@@ -105,26 +105,9 @@ img.pp-ico { border-radius: 0; }
 /* el botón ¡LISTO! del duelo, debajo del tablero */
 #pp-listo { position: absolute; left: 50%; bottom: 13%; transform: translateX(-50%); z-index: 30; min-width: 240px; }
 #pp-listo[hidden] { display: none; }
-/* el botón de la cortinilla de duelo (ADR 100): verde de Pop, abajo, por encima de todo lo del nivel */
-#pp-cort-jugar { position: absolute; left: 50%; bottom: 3%; width: 340px; margin-left: -170px; padding-left: 0; padding-right: 0; white-space: nowrap; font-size: 40px; z-index: 45; --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }   /* sin translate: el latido (pp-enorme) ya usa transform */
-#pp-cort-jugar[hidden] { display: none; }
 .pp-pack .pp-precio { color: #c43a84; font-size: 30px; font-weight: 700; }
-/* «copiarnos de Candy Crush»: la barra de ayudas del nivel, los botones del lado del camino, la tienda con pestañas y el pase */
-#pp-ayudas { position: absolute; left: 50%; bottom: 0.5%; transform: translateX(-50%); display: flex; gap: 14px; z-index: 25; }
-#pp-ayudas[hidden], #pp-lateral[hidden] { display: none; }
-.pp-ayuda { position: relative; width: 70px; height: 70px; border-radius: 50%; border: 4px solid #ff9ccf; background: radial-gradient(circle at 35% 30%, #fff, #ffe6f4); box-shadow: 0 5px 0 #e07ab5; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
-.pp-ayuda .pp-ico { width: 52px; height: 52px; }
-.pp-ayuda em { position: absolute; top: 6px; left: 8px; font-style: normal; font-weight: 700; font-size: 20px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; }
-.pp-ayuda b { position: absolute; right: -8px; bottom: -6px; min-width: 26px; padding: 2px 7px; border-radius: 999px; background: #4fc964; color: #fff; font-size: 18px; box-shadow: inset 0 -3px 0 #26924a; display: flex; align-items: center; gap: 2px; }
-.pp-ayuda b .pp-precio { color: #fff; font-size: 16px; }
-.pp-ayuda.pp-activa { transform: scale(1.12); box-shadow: 0 0 0 6px #ffd64a, 0 5px 0 #e07ab5; }
-.pp-ayuda:active { transform: translateY(4px); box-shadow: 0 1px 0 #e07ab5; }
-/* en los duelos del camino (tarea #129): sin «Tu equipo», DESHACER y PISTA grandes en su sitio, justo bajo el tablero, y ¡LISTO! debajo */
-#pp-ayudas.pp-duelo { top: calc(var(--pp-bajo-tablero, 640px) + 40px); bottom: auto; gap: 48px; }
-#pp-ayudas.pp-duelo .pp-ayuda { width: 118px; height: 118px; border-width: 6px; box-shadow: 0 7px 0 #e07ab5; }
-#pp-ayudas.pp-duelo .pp-ayuda b { right: -12px; bottom: -8px; min-width: 40px; padding: 4px 13px; font-size: 30px; justify-content: center; box-shadow: inset 0 -4px 0 #26924a, 0 0 0 3px #fff; }
-#pp-ayudas.pp-duelo .pp-ayuda b .pp-precio { font-size: 26px; }
-#pp-ui:has(#pp-ayudas.pp-duelo:not([hidden])) #pp-listo { top: calc(var(--pp-bajo-tablero, 640px) + 184px); bottom: auto; }
+/* «copiarnos de Candy Crush»: los botones del lado del camino, la tienda con pestañas y el pase (la barra de ayudas del nivel y ¡A JUGAR!, en css/ayudas.css) */
+#pp-lateral[hidden] { display: none; }
 #pp-lateral { position: absolute; right: 8px; top: 21%; display: flex; flex-direction: column; gap: 10px; z-index: 20; }
 .pp-lado { position: relative; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 0; border: 0; background: none; padding: 0; cursor: pointer; font: inherit; }
 .pp-lado .pp-ico { width: 58px; height: 58px; filter: drop-shadow(0 3px 0 rgba(196, 58, 132, 0.35)); }

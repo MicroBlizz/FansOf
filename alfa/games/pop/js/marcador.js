@@ -1,6 +1,7 @@
 // Fans of Pop · MARCADOR: la cabecera de la partida (corazones, monedero, toques, estrellas y título) y el panel «Tu equipo» de abajo
 // con los huecos de los amigos. Sale de pintar.js (tarea #110) para dejarlo por debajo de 25 KB. En los duelos «Tu equipo» no sale:
-// los amigos no juegan y en su sitio van, grandes, las ayudas de duelo (tarea #129, css/pop.css).
+// los amigos no juegan y en su sitio van, grandes, las ayudas de duelo (tarea #129, css/ayudas.css). En los demás niveles, las ayudas
+// van justo bajo el tablero y «Tu equipo» debajo de ellas (tarea #269).
 'use strict';
 
 /* ---------- los toques como burbujitas (tarea #110; solo con el estilo del mundo) ---------- */
@@ -97,8 +98,8 @@ function ppPintaMarcador(c, t) {
   }
   if (!P.equipo.length && !ppPrimerosVe('equipo')) return;   // partida nueva: el panel sale con el primer amigo (tarea #140)
   // el equipo, abajo: cada hueco con su slime, su pasiva y una barra de lo que le falta para actuar
-  const n = P.T ? P.T.n : 3, g = ppGeom(n), y0 = g.y + g.lado + 60;
-  ppPanelDelMundo(c, 20, y0 - 22, 500, 178, panel);
+  const n = P.T ? P.T.n : 3, y0 = ppEquipoY(n);
+  ppPanelDelMundo(c, 20, y0 - 22, 500, ppAyudasBajoTablero(P.T) ? 160 : 178, panel);   // bajo las ayudas, algo más bajito: cabe en un móvil corto
   ppTexto(c, tr('Tu equipo'), 270, y0 - 2, 24, tinta.rotulo, 'center', tinta.borde);
   const esc = ppEscalaEquipo(), eq = ppEquipoNivel(P.T && P.T.d);   // el equipo del modo del nivel (flag `companeros`; cerrado, el del camino)
   for (let k = 0; k < ppHuecosNivel(); k++) {
@@ -135,4 +136,6 @@ function ppSelloDespedido(c, x, y, ancho) {
 // el centro del hueco k del equipo (para pintarlo y para que el slime salga volando desde ahí)
 // con huecos comprados (5 o 6) se juntan y encogen un poco para caber
 const ppEscalaEquipo = () => Math.min(1, 470 / ppHuecosNivel() / 110);
-function ppHuecoEquipo(k, n) { const g = ppGeom(n), y0 = g.y + g.lado + 60, nh = ppHuecosNivel(); return [270 + (k - (nh - 1) / 2) * 110 * ppEscalaEquipo(), y0 + 62]; }
+function ppHuecoEquipo(k, n) { const y0 = ppEquipoY(n), nh = ppHuecosNivel(); return [270 + (k - (nh - 1) / 2) * 110 * ppEscalaEquipo(), y0 + 62]; }
+// la altura del rótulo «Tu equipo»: bajo el tablero o, si el nivel tiene ayudas, bajo ellas (tarea #269, css/ayudas.css)
+function ppEquipoY(n) { const g = ppGeom(n); return g.y + g.lado + (ppAyudasBajoTablero(PP_P && PP_P.T) ? 160 : 60); }

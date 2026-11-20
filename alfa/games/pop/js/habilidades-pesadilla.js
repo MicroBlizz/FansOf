@@ -44,8 +44,9 @@ function ppHabBotones(barra, T) {
     const bt = document.createElement('button');
     bt.type = 'button'; bt.className = 'pp-ayuda' + (T.habModo === id ? ' pp-activa' : '');
     bt.appendChild(ppMiniatura('sl-' + id, 52));
-    bt.insertAdjacentHTML('beforeend', `<b>${tr('GRATIS')}</b>`);
-    bt.setAttribute('aria-label', tr(PP_COMP.HAB[PP_COMP.INFO[id].hab].nombre));
+    const nombre = tr(PP_COMP.HAB[PP_COMP.INFO[id].hab].nombre);
+    bt.insertAdjacentHTML('beforeend', `<b>${tr('GRATIS')}</b><i>${nombre}</i>`);   // con su nombre debajo, como las ayudas (tarea #269)
+    bt.setAttribute('aria-label', nombre);
     bt.onclick = () => { play('select'); PP_HAB_BOTON[k](id); };
     barra.appendChild(bt);
   }

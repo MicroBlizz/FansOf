@@ -54,7 +54,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-30',
     fecha: '30 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF POP', tarjeta: 'g-pop', enlace: 'games/pop/', texto: 'Demo nueva y muy kawaii: haz pop en las burbujas de un pop-it gigante y rescata a los amigos atrapados. Próximamente.' },
+      { nombre: 'FANS OF POP', tarjeta: 'g-pop', enlace: 'games/pop/', texto: 'Demo nueva y muy kawaii: haz pop en las burbujas de un tablero gigante y rescata a los amigos atrapados. Próximamente.' },
     ],
     otros: [],
   },

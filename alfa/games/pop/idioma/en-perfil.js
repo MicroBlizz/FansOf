@@ -43,7 +43,7 @@ IDIOMA.add({
   // títulos
   "Aprendiz de pop": "Pop apprentice",
   "Maestría en burbujas": "Bubble expert",
-  "Mandamás del pop-it": "Pop-it boss",
+  "Mandamás de las burbujas": "Bubble boss",
   "Cabeza en las nubes": "Head in the clouds",
   "Pura chuche": "Pure candy",
   "Imparable": "Unstoppable",

@@ -53,7 +53,7 @@ function ppPvpCrear() {
     const t = ppAbre(`<h2>${tr('Reta a un amigo')}</h2><p class="pp-sub">${tr('Pásale este código o el enlace:')}</p><p class="pp-codigo">${s.codigo}</p>
       <p class="pp-sub" id="pp-pvp-estado">${tr('Esperando a tu amigo…')}</p>`);
     t.appendChild(ppBoton(tr('COMPARTIR ENLACE'), 'pp-btn', () => {
-      const txt = tr('¡Te reto a un duelo de pop-it en Fans of Pop! Código: {c}', { c: s.codigo });
+      const txt = tr('¡Te reto a un duelo de burbujas en Fans of Pop! Código: {c}', { c: s.codigo });
       if (navigator.share) navigator.share({ title: 'Fans of Pop', text: txt, url: enlace }).catch(() => {});
       else if (navigator.clipboard) navigator.clipboard.writeText(txt + ' ' + enlace).then(() => ppFlota(tr('¡Enlace copiado!'), 270, 300, '#4fc964'));
     }));

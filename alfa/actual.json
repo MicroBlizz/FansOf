@@ -1,8 +1,8 @@
 {
- "build": 1358,
- "hash": "02316a8",
- "fecha": "2026-11-20T16:45:12Z",
- "mensaje": "Fans of Toys 0.1.0: prototipo jugable del roguelike de año fiscal (tarea #259)",
+ "build": 1359,
+ "hash": "07c5f55",
+ "fecha": "2026-11-20T16:45:47Z",
+ "mensaje": "Pop: fuera la palabra «pop-it» (marca de FoxMind) de textos, novedades, biblioteca y ficha, con su inglés (tarea #260, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

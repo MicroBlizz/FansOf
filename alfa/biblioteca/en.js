@@ -152,7 +152,7 @@ IDIOMA.add({
   "Terror": "Horror",
   "Cámaras fijas": "Fixed cameras",
   "Puzle": "Puzzle",
-  "Pop-it": "Pop-it",
+  "Burbujas": "Bubbles",
   "Kawaii": "Kawaii",
   "Saltos": "Jumping",
   "Tres en raya": "Match-3",

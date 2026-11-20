@@ -28,7 +28,7 @@ const PP_PERFIL_CAT = Object.freeze({
   titulo: [
     { id: 'aprendiz', texto: 'Aprendiz de pop', serie: true },
     { id: 'burbujas', texto: 'Maestría en burbujas' },
-    { id: 'jefa', texto: 'Mandamás del pop-it' },
+    { id: 'jefa', texto: 'Mandamás de las burbujas' },
     { id: 'nube', texto: 'Cabeza en las nubes' },
     { id: 'dulce', texto: 'Pura chuche' },
     { id: 'imparable', texto: 'Imparable' },

@@ -1,8 +1,8 @@
 {
- "build": 1412,
- "hash": "e6e681a",
- "fecha": "2026-11-21T14:00:45Z",
- "mensaje": "Island #304 N2a: objeto global IS y el nivel y su física como dominio puro, con 24 tests",
+ "build": 1413,
+ "hash": "c877c7e",
+ "fecha": "2026-11-21T14:16:07Z",
+ "mensaje": "Pop: tablas de ataques de los compañeros, forma por habilidad y cositas por compañero (tarea #160, nodo n1, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

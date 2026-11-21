@@ -1,8 +1,8 @@
 {
- "build": 1411,
- "hash": "5d6f76b",
- "fecha": "2026-11-21T13:45:49Z",
- "mensaje": "Island 0.4.2: CrazyBunny al alto de su golpe, menos agua delante con oleaje en lonchas y el barco delante de las islas (tarea #304, ADR 196)",
+ "build": 1412,
+ "hash": "e6e681a",
+ "fecha": "2026-11-21T14:00:45Z",
+ "mensaje": "Island #304 N2a: objeto global IS y el nivel y su física como dominio puro, con 24 tests",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -13,11 +13,6 @@ function dist2Seg(px, py, pz, a, b) {
   const qx = a[0] + vx * t - px, qy = a[1] + vy * t - py, qz = a[2] + vz * t - pz;
   return qx * qx + qy * qy + qz * qz;
 }
-function ruido(a, b, c) {   // número entre 0 y 1 siempre igual para los mismos a, b, c (detalles del escenario)
-  let n = (Math.imul(a | 0, 73856093) ^ Math.imul(b | 0, 19349663) ^ Math.imul(c | 0, 83492791)) >>> 0;
-  n = Math.imul(n ^ (n >>> 13), 1274126177); n ^= n >>> 16;
-  return (n >>> 0) / 4294967296;
-}
 const RGB = new Map();
 function rgb(h) {
   let v = RGB.get(h);

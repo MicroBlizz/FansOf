@@ -2,7 +2,6 @@
 // las palmeras, los arbustos y los detalles del suelo (matas, hibiscos, estrellas, conchas y rocas en el mar). Todo va a PIEZA,
 // salvo las olas de delante (PILAS_OLA).
 'use strict';
-const T = 32, D = 56, CARRIL = 30;     // bloque de 32, suelo de 56 de fondo, los personajes van por el carril 30
 const FLORES = ['#ff6f91', '#ffd23f', '#ffffff', '#ff9a3c'];
 const PIEZA = {};
 function arena(x, z, v) {       // la cara de arena: franjas, conchas y piedrecitas

@@ -1,12 +1,12 @@
 // Fans of Asalto · DOMINIO · El progreso de fuera de la partida, lo que se guarda para siempre: las plumas, las mejoras permanentes, el
 // equipo puesto y la mochila, las zonas terminadas, los récords del modo sin fin, los contadores de los logros y cuáles se han cobrado,
-// las rarezas de héroe abiertas, las máquinas de invocar abiertas y la elegida, los Despertares abiertos (el Poder Dormido), las dificultades superadas de cada zona, el sonido y los consejos vistos. Es un objeto de datos plano (el que se guarda tal cual); cada función devuelve otro nuevo y válido,
+// el regalo diario y las misiones del día, las rarezas de héroe abiertas, las máquinas de invocar abiertas y la elegida, los Despertares abiertos (el Poder Dormido), las dificultades superadas de cada zona, el sonido y los consejos vistos. Es un objeto de datos plano (el que se guarda tal cual); cada función devuelve otro nuevo y válido,
 // o un error con nombre. deJSON arregla lo que venga del almacén: una partida antigua (v2, de cuando el juego era otro) conserva sus
 // plumas, su equipo, sus zonas y sus logros; y la mejora «Llamada rara» de la 0.3.1 (que ya no existe) se convierte en rarezas abiertas.
 'use strict';
 AS.progreso = (() => {
   const STATS = () => ({ oroTotal: 0, enemigos: 0, jefes: 0, lineas: 0, nivelMax: 0, ascensos: 0, dorados: 0, sinFinMax: 0 });
-  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, dormido: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, regalo: AS.anuncios.regaloVacio(), vol: 1, mus: 0.5 });
+  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, dormido: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, regalo: AS.anuncios.regaloVacio(), diario: AS.regalo.vacio(), vol: 1, mus: 0.5 });
   const entero = (v, min = 0) => (Number.isFinite(v) && v >= min ? Math.floor(v) : min);
   const copia = (p, cambios) => ({ ...p, ...cambios });
 
@@ -25,9 +25,13 @@ AS.progreso = (() => {
     for (const k in p.stats) p.stats[k] = entero(j.stats && j.stats[k]);
     if (j.v === 3) for (const k in (j.consejos || {})) p.consejos[k] = true;   // los consejos de la versión anterior eran de otro juego
     p.regalo = AS.anuncios.regaloDeJSON(j.regalo);
+    p.diario = AS.regalo.deJSON(datos, j.diario);   // el regalo diario: un progreso de antes no lo trae
+    if (retosValidos(j.retos)) p.retos = j.retos;     // las misiones del día (las lleva RETOSL de core): se guardan tal cual
     p.vol = volumen(j.vol, 1); p.mus = volumen(j.mus, 0.5);
     return p;
   }
+  // lo que guarda RETOSL (core/js/sistema/retos-ligero.js): si no tiene esa forma, se descarta y core empieza las misiones de nuevo
+  const retosValidos = r => !!r && typeof r === 'object' && !!r.total && typeof r.total === 'object' && (!r.dia || (typeof r.dia.clave === 'string' && Array.isArray(r.dia.lista)));
   const volumen = (v, sinDato) => (Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : sinDato);
   const lista = v => (Array.isArray(v) ? v : []);
   function leeEquipo(datos, j, p) {
@@ -176,13 +180,39 @@ AS.progreso = (() => {
     for (const o of lista) { if (mochila.length < datos.equipo.mochila) mochila.push(o); else { plumas += datos.equipo.desencantar[o.rareza]; fuera++; } }
     return { p: copia(p, { mochila, plumas }), fuera };
   }
-  // el cofre de la Tienda: cuesta plumas y da un objeto (60 % normal, 30 % raro, 10 % épico)
+  // un cofre de equipo (60 % normal, 30 % raro, 10 % épico) metido en la mochila, sin cobrar nada: { p, objeto, fuera }. Lo usan la Tienda y el regalo diario
+  function daCofre(datos, p, azar, id) {
+    const r = azar(), o = objetoNuevo(datos, azar, id, r < 0.6 ? 0 : r < 0.9 ? 1 : 2);
+    const g = guardaObjetos(datos, p, [o]);
+    return { p: g.p, objeto: o, fuera: g.fuera };
+  }
+  // el cofre de la Tienda: cuesta plumas y da un objeto
   function compraCofre(datos, p, azar, id) {
     const coste = datos.equipo.cofreTienda;
     if (p.plumas < coste) return AS.error('sin-plumas', { coste });
-    const r = azar(), o = objetoNuevo(datos, azar, id, r < 0.6 ? 0 : r < 0.9 ? 1 : 2);
-    const g = guardaObjetos(datos, copia(p, { plumas: p.plumas - coste }), [o]);
-    return AS.ok({ p: g.p, objeto: o, fuera: g.fuera });
+    return AS.ok(daCofre(datos, copia(p, { plumas: p.plumas - coste }), azar, id));
+  }
+
+  /* ---------- el regalo diario (dominio/regalo.js) ---------- */
+  // entrega un premio { plumas, cofres }: las plumas y los cofres de equipo (sin cobrar plumas por ellos). { p, objetos, fuera }
+  function entrega(datos, p, premio, azar, nuevoId) {
+    let q = copia(p, { plumas: p.plumas + premio.plumas }), fuera = 0;
+    const objetos = [];
+    for (let i = 0; i < premio.cofres; i++) { const c = daCofre(datos, q, azar, nuevoId()); q = c.p; objetos.push(c.objeto); fuera += c.fuera; }
+    return { p: q, objetos, fuera };
+  }
+  // cobrar el regalo de hoy: AS.ok({ p, n, premio, objetos, fuera }) o el error de AS.regalo.cobra
+  function cobraRegalo(datos, p, dia, azar, nuevoId) {
+    const r = AS.regalo.cobra(datos, p.diario, dia);
+    if (!r.ok) return r;
+    const e = entrega(datos, copia(p, { diario: r.valor.regalo }), r.valor.premio, azar, nuevoId);
+    return AS.ok({ ...e, n: r.valor.n, premio: r.valor.premio });
+  }
+  // doblar el regalo ya cobrado hoy (tras el anuncio): AS.ok({ p, premio, objetos, fuera }) o el error de AS.regalo.dobla
+  function doblaRegalo(datos, p, dia, azar, nuevoId) {
+    const r = AS.regalo.dobla(datos, p.diario, dia);
+    if (!r.ok) return r;
+    return AS.ok({ ...entrega(datos, copia(p, { diario: r.valor.regalo }), r.valor.premio, azar, nuevoId), premio: r.valor.premio });
   }
 
   /* ---------- los logros y los contadores ---------- */
@@ -229,6 +259,6 @@ AS.progreso = (() => {
   }
   const olvidaConsejo = (p, id) => { const consejos = { ...p.consejos }; delete consejos[id]; return copia(p, { consejos }); };
   const consejoVisto = (p, id) => (p.consejos[id] ? p : copia(p, { consejos: { ...p.consejos, [id]: true } }));
-  return { nuevo, deJSON, rarezaSiguiente, abreRareza, dormidoSiguiente, abreDormido, maquinaAbierta, abreMaquina, eligeMaquina, superadas, dificultadAbierta, costeMejora, compraMejora, objetoNuevo, statsEquipo, ponObjeto, quitaObjeto, deshaceObjeto, costeHerreria, mejoraObjeto, guardaObjetos, compraCofre,
+  return { nuevo, deJSON, rarezaSiguiente, abreRareza, dormidoSiguiente, abreDormido, maquinaAbierta, abreMaquina, eligeMaquina, superadas, dificultadAbierta, costeMejora, compraMejora, objetoNuevo, statsEquipo, ponObjeto, quitaObjeto, deshaceObjeto, costeHerreria, mejoraObjeto, guardaObjetos, daCofre, compraCofre, cobraRegalo, doblaRegalo,
     logrosPendientes, cobraLogro, apunta, regalaPlumas, empiezaPartida, terminaZona, apuntaOleada, metas, consejoVisto, olvidaConsejo };
 })();

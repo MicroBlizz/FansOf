@@ -36,4 +36,17 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Asalto: legendarios', pinta(caja) {
     while (AS.casos.dormidoSiguiente()) AS.casos.abreDormido();
     estado.textContent = 'Despertares I, II y III abiertos (valen para las partidas nuevas)';
   });
+} },
+{ titulo: 'Fans of Asalto: regalo diario', pinta(caja) {
+  // tarea #313: el día del regalo y de las misiones sale de la hora del servidor; aquí se le suman días para probarlos sin esperar
+  const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#ffe14a' });
+  const fila = document.createElement('div');
+  fila.className = 'fila';
+  caja.append(estado, fila);
+  const dice = () => { estado.textContent = 'Día de juego: ' + AS.casos.dia() + (AS.casos.hayRegalo() ? ' · regalo por cobrar' : ' · regalo cobrado'); };
+  fila.append(Object.assign(document.createElement('button'), { textContent: 'Pasar al día siguiente', onclick: () => {
+    AS.relojDev.dias++; dice();
+    if (!AS.pantalla.activa) AS.menu.abre();   // el menú se repinta y, si toca, el regalo sale solo
+  } }));
+  dice();
 } }];

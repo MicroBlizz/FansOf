@@ -1,11 +1,11 @@
 {
- "build": 1427,
- "hash": "8a13da5",
- "fecha": "2026-11-21T22:19:42Z",
- "mensaje": "Gestión: pestaña Flujo del trabajo con gráficos (columnas, semanas, atascos y esperas; por juego), como el boceto que aprobó Pepins (tarea #321)",
+ "build": 1428,
+ "hash": "d458ccd",
+ "fecha": "2026-11-21T22:26:30Z",
+ "mensaje": "Asalto 0.6.3: regalo diario de 7 días y 3 misiones del día (tareas #313 y #317, Pepins)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.6.2",
+  "asalto": "0.6.3",
   "basement": "0.13.0",
   "boom": "0.4.17",
   "chef": "0.4.0",

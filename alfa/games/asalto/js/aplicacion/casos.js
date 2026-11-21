@@ -9,6 +9,12 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día
   let partida = null, doblada = null, batalla = null, visto = null, nObjeto = 0, cifras = AS.cifras.vacio();   // cifras: las del último combate y las de la partida entera
 
   const guarda = () => { almacen.guarda(prog); };
+  // las misiones del día: las lleva el sistema común de retos de core (RETOSL). Ese guarda lo suyo en el campo `retos` del progreso (el
+  // `sobre` es su caja: se rellena con el progreso de ahora cada vez) y cobra con plumas; el día es el del servidor
+  const sobre = {};
+  const diaComoFecha = () => { const d = hoy().split('-').map(Number); return d.length === 3 ? new Date(d[0], d[1] - 1, d[2], 12) : new Date(); };
+  const retos = RETOSL.crear({ save: () => { sobre.retos = prog.retos; return sobre; }, guardar: () => { prog = { ...prog, retos: sobre.retos }; guarda(); },
+    pagar: plumas => { prog = PR.apunta(prog, { plumas }); }, diarias: datos.retosDia, semanales: [], logros: [], nDiarias: datos.retosDia.length, nSemanales: 0, hoy: diaComoFecha });
   // un caso de progreso: si sale bien, el progreso nuevo se queda y se guarda
   function conProgreso(r, saca) {
     if (!r.ok) return r;
@@ -19,12 +25,19 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día
   const idObjeto = () => 'o' + Math.floor(azar() * 1e9).toString(36) + (++nObjeto).toString(36);
 
   /* ---------- la partida: lo que va dejando en el progreso ---------- */
-  function mira() { visto = { plumas: partida.plumas, cuenta: partida.cuenta }; }
+  function mira() { visto = { plumas: partida.plumas, cuenta: partida.cuenta, unidos: partida.cuenta.absorbidos }; }
+  // lo que la partida ha hecho desde la última vez, para las misiones del día. Los unidos solo cuentan hacia arriba: deshacer una unión y repetirla no suma otra vez
+  function apuntaRetos(c) {
+    const unidos = Math.max(0, c.absorbidos - visto.unidos);
+    for (const [ev, n] of [['oleadas', c.oleadasGanadas - visto.cuenta.oleadasGanadas], ['lineas', c.lineas - visto.cuenta.lineas], ['unidos', unidos]]) if (n > 0) retos.evento(ev, n);
+    visto.unidos = Math.max(visto.unidos, c.absorbidos);
+  }
   function sincroniza() {
     const c = partida.cuenta, d = k => c[k] - visto.cuenta[k];
+    apuntaRetos(c);
     prog = PR.apunta(prog, { plumas: partida.plumas - visto.plumas, oroTotal: d('oroGanado'), enemigos: d('bajas'), jefes: d('jefes'), lineas: d('lineas'), ascensos: d('ascensos'), dorados: d('dorados') },
       { nivelMax: c.nivelMax });
-    mira();
+    visto = { plumas: partida.plumas, cuenta: c, unidos: visto.unidos };
     const j = partida.final ? null : partida.aJSON();
     if (j || partida.final) almacen.guardaPartida(j && { ...j, cifras });   // las cifras del combate viajan con la partida guardada
     guarda();
@@ -123,6 +136,16 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día
     cobraLogro: id => conProgreso(PR.cobraLogro(datos, prog, id)),
     // plumas de regalo del anuncio de la Tienda (tope por día; llamar solo DESPUÉS de verse el anuncio): AS.ok({ p, plumas }) o 'tope-diario'
     plumasDeRegalo: () => conProgreso(PR.regalaPlumas(datos, prog, hoy()), v => v.p),
+    // el regalo diario (calendario de 7 días): lo que enseña la ventana, si hay uno por cobrar y cobrarlo o doblarlo (esto último, solo DESPUÉS de verse el anuncio)
+    regalo: () => ({ ...AS.regalo.calendario(datos, prog.diario, hoy()) }),
+    dia: () => hoy(),
+    hayRegalo: () => AS.regalo.pendiente(prog.diario, hoy()),
+    cobraRegalo: () => conProgreso(PR.cobraRegalo(datos, prog, hoy(), azar, idObjeto), v => v.p),
+    doblaRegalo: () => conProgreso(PR.doblaRegalo(datos, prog, hoy(), azar, idObjeto), v => v.p),
+    // las misiones del día: [{ id, txt, goal, prog, r, listo, cobrada }], cuántas esperan cobro y cobrar una
+    misionesDia: () => retos.lista('d').sort((a, b) => datos.retosDia.findIndex(x => x.id === a.id) - datos.retosDia.findIndex(x => x.id === b.id)),   // siempre en el mismo orden
+    misionesListas: () => retos.listos('d'),
+    cobraMision: id => (retos.cobrar('d', id) ? AS.ok(true) : AS.error('mision-no-cobrable')),
     regalosQuedan: () => AS.anuncios.regaloQuedan(datos, prog.regalo, hoy()),
     // doblar las plumas de la partida acabada con anuncio (una vez por partida; llamar solo DESPUÉS de verse el anuncio): AS.ok(las plumas que suma)
     puedeDoblar: () => !!partida && AS.anuncios.dobla({ plumas: partida.plumas, final: partida.final, yaDoblada: doblada === partida }).ok,

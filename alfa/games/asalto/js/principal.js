@@ -3,8 +3,9 @@
 // pinta la partida o el fondo del menú. Es el único sitio que conoce a todas las piezas.
 'use strict';
 (() => {
-  HORA.sincroniza();   // la hora del servidor: el día del tope de plumas de regalo no se engaña cambiando el reloj del aparato
-  const hoy = () => MEDIDOR_ANUNCIOS.fechas(new Date(HORA.ahora())).dia;
+  HORA.sincroniza();   // la hora del servidor: el día del tope de plumas y del regalo diario no se engaña cambiando el reloj del aparato
+  AS.relojDev = { dias: 0 };                         // SOLO PARA PRUEBAS (panel DEV, «Pasar al día siguiente»): días que se suman a la hora del servidor
+  const hoy = () => MEDIDOR_ANUNCIOS.fechas(new Date(HORA.ahora() + (NUCLEO.desarrollo ? AS.relojDev.dias : 0) * 86400000)).dia;   // fuera del modo desarrollo no cuenta
   const casos = AS.creaCasos({ datos: ASALTO, almacen: AS.almacen, azar: AS.creaAzar((Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0), hoy });
   AS.casos = casos;                                  // a mano para el panel DEV y las pruebas en el navegador
   window.enPartida = () => AS.pantalla.activa;       // core lo pregunta (avisos y pantalla de la cuenta)

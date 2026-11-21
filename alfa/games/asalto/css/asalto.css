@@ -177,3 +177,22 @@ body { background: #0b0816; display: flex; align-items: center; justify-content:
 .as-suerte-runas span { display: flex; flex-direction: column; align-items: center; padding: calc(var(--as-u) * 4); background: rgba(124, 75, 42, 0.14); }
 .as-suerte-runas img { height: calc(var(--as-u) * 36); } .as-suerte-runas b { font-weight: 400; } .as-suerte-runas small { color: #6a4a2a; font-size: calc(var(--as-u) * 20); }
 .as-suerte .as-item span { display: block; } .as-suerte-cerrada b { color: #6a4a2a; } .as-suerte-cerrada span { color: #8a1f24 !important; }
+
+/* el regalo diario y las misiones del día (tareas #313 y #317) */
+.as-ancho { grid-column: 1 / -1; position: relative; min-height: 48px; }
+.as-punto { display: inline-block; width: calc(var(--as-u) * 14); height: calc(var(--as-u) * 14); margin-left: calc(var(--as-u) * 8); background: var(--as-rojo); box-shadow: 0 0 0 calc(var(--as-u) * 3) var(--as-tinta); vertical-align: calc(var(--as-u) * 6); animation: as-late 1.1s steps(4) infinite; }
+.as-cal { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(var(--as-u) * 6); margin: calc(var(--as-u) * 8) 0; }
+.as-dia { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--as-u) * 2); min-height: calc(var(--as-u) * 110); padding: calc(var(--as-u) * 6) calc(var(--as-u) * 2); background: rgba(124, 75, 42, 0.14); box-shadow: inset 0 0 0 calc(var(--as-u) * 2) rgba(124, 75, 42, 0.45); }
+.as-dia small { color: #7c4b2a; font-size: calc(var(--as-u) * 24); }
+.as-dia > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: calc(var(--as-u) * 2) calc(var(--as-u) * 6); color: var(--as-tinta); }
+.as-dia > div span { display: inline-flex; align-items: center; white-space: nowrap; }
+.as-dia img { height: calc(var(--as-u) * 28); margin-right: calc(var(--as-u) * 2); image-rendering: pixelated; }
+.as-dia i { color: #2f7a22; font-style: normal; font-size: calc(var(--as-u) * 22); }
+.as-dia.as-cobrado { opacity: .55; }
+.as-dia.as-hoy { background: rgba(245, 184, 28, 0.45); box-shadow: inset 0 0 0 calc(var(--as-u) * 4) var(--as-oro), 0 0 0 calc(var(--as-u) * 2) var(--as-tinta); }
+.as-dia.as-hoy small { color: #8a1f24; }
+.as-gordo { grid-column: span 2; }
+.as-cofre-mini { vertical-align: middle; }
+.as-manana { color: #6a4a2a; margin: calc(var(--as-u) * 4) 0; }
+.as-manana span { color: var(--as-tinta); }
+.as-regalo .as-btn { min-height: 48px; }

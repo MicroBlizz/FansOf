@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.6.3', real: ["<b>Regalo diario</b>: un calendario de 7 días con plumas y cofres (el día 7, 100 plumas y 2 cofres). Si un día no entras, no pierdes la racha. Puedes doblar el regalo con un anuncio.", "<b>Misiones del día</b>: tres misiones sencillas que dan plumas y se rehacen cada día."], joke: ["Microblizz da un regalo por fichar cada día. El séptimo día, el CEO descansa y tú te llevas dos cofres."] },
   { v: '0.6.2', real: ["<b>Anuncios que se notan</b>: PLUMAS DE REGALO da 60 plumas (3 al día), la esencia del anuncio da +2 y, al acabar la partida, puedes <b>doblar las plumas</b> ganadas con un anuncio. Cada premio te dice qué has ganado."], joke: ["Microblizz ha triplicado las plumas de regalo. Las ha sacado de la almohada del CEO."] },
   { v: '0.6.1', real: ["La primera partida guiada <b>ya no se atasca</b>: tocar la columna dorada del Altar también la empuja, la franja de la guía ya no tapa al héroe que hay que unir y las frases son más cortas. Los botones del menú son más grandes para el pulgar."], joke: ["Recursos Humanos ha acortado el manual. Ahora solo tiene seis palabras y ninguna es «sinergia»."] },
   { v: '0.6.0', real: ["<b>Dioses</b>: hay 16 parejas secretas de legendarios que, al unirse, no dan un ser: dan un <b>dios</b> con un poder divino. ¿Las encontrarás todas?"], joke: ["Microblizz ha creado un departamento divino. De momento, solo tiene jefes."] },

@@ -167,7 +167,7 @@ const NOVEDADES_WEB = [
     id: '2026-10-11e',
     fecha: '11 de octubre de 2026',
     nuevos: [
-      { nombre: 'FANS OF ISLAND', tarjeta: 'g-island', enlace: 'games/island/', texto: 'Plataformas cooperativo con CrazyBunny y zanahorias de poder. Prototipo en preparación: aún no se juega.' },
+      { nombre: 'FANS OF ISLAND', tarjeta: 'g-island', enlace: 'games/island/', texto: 'Plataformas en una isla tropical con CrazyBunny, todo hecho con lonchas apiladas.' },
     ],
     otros: [],
   },

@@ -1,8 +1,8 @@
 {
- "build": 1403,
- "hash": "5c460f4",
- "fecha": "2026-11-21T03:39:54Z",
- "mensaje": "Island: las rocas del mar, hundidas (solo asoma la punta, cortada en la línea del agua como los peces)",
+ "build": 1404,
+ "hash": "1bb973d",
+ "fecha": "2026-11-21T03:44:08Z",
+ "mensaje": "Biblioteca: tarjeta de Island rehecha (sale del Archivo a Prototipo, texto y 2 capturas nuevas de Island en lonchas)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -3,4 +3,5 @@
 IDIOMA.add({
   "Lo que trae vale {e}": "What's inside is worth {e}",
   "Vale {e}": "Worth {e}",
+  "Se acaba en {t}": "Ends in {t}",
 });

@@ -1,8 +1,8 @@
 {
- "build": 1397,
- "hash": "ebdb497",
- "fecha": "2026-11-21T00:31:27Z",
- "mensaje": "Rally en la lista de juegos del tablero (arregla su test) y cortador de lonchas: la textura se lee del triángulo que toca",
+ "build": 1398,
+ "hash": "e528d22",
+ "fecha": "2026-11-21T00:44:13Z",
+ "mensaje": "Arreglos de controles en rojo y deuda de lonchas",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

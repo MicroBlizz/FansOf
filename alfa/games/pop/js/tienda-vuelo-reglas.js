@@ -20,7 +20,8 @@ const PP_VUELO_R = (() => {
       const a = antes.ayudas[k] || 0, d = despues.ayudas[k];
       if (d > a) res.push({ k, tipo: 'ayuda', antes: a, despues: d });
     }
-    const min = Math.round((despues.infinitas - antes.infinitas) / 60000);
+    // sin corazones infinitos, su «fin» es la hora de la foto: se compara con la hora de ahora para que el tiempo que pasa no cuente como ganado
+    const min = Math.round((despues.infinitas - Math.max(antes.infinitas, despues.t)) / 60000);
     if (min > 0) res.push({ k: 'infinitas', tipo: 'infinitas', antes: 0, despues: min });
     return res;
   }

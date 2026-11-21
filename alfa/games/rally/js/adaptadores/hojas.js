@@ -36,54 +36,70 @@ RA.Hojas = (() => {
   const RUEDAS = [[0, 7, 3, 14], [20, 7, 23, 14], [0, 32, 3, 39], [20, 32, 23, 39]];
   const CARRO = { 3: [1, 1, 22, 44, 4], 4: [1, 1, 22, 44, 4], 5: [1, 1, 22, 44, 4], 6: [1, 1, 22, 44, 5], 7: [1, 2, 22, 44, 5], 8: [1, 3, 22, 44, 5], 9: [2, 5, 21, 43, 5] };
   const CABINA = { 10: [3, 13, 20, 33, 3], 11: [4, 14, 19, 32, 3], 12: [4, 15, 19, 31, 3], 13: [5, 16, 18, 30, 3] };
+  // ayudas para leer las formas sin ristras de comparaciones
+  const entre = (v, a, b) => v >= a && v <= b;
+  const caja = (x, y, x0, y0, x1, y1) => entre(x, x0, x1) && entre(y, y0, y1);
+  const uno = (v, ...lista) => lista.includes(v);
+  const conRaya = (x, rim, C, resto) => (RAYA(x) ? (rim ? C.rayaS : C.raya) : rim ? C.borde : resto);
+  // la cara de fuera de una rueda: llanta, y en su centro el buje
+  function llanta(z, y, y0, y1) {
+    if (!entre(z, 1, 4) || !entre(y, y0 + 2, y1 - 2)) return null;
+    return entre(z, 2, 3) && entre(y, y0 + 3, y1 - 3) ? FIJOS.buje : FIJOS.llanta;
+  }
   function ruedas(z, x, y) {
+    if (z > 5) return null;
     for (const [x0, y0, x1, y1] of RUEDAS) {
-      if (z > 5 || x < x0 || x > x1 || y < y0 || y > y1) continue;
-      const exterior = (x === x0 && x0 === 0) || (x === x1 && x1 === 23), mitad = y >= y0 + 2 && y <= y1 - 2;
-      if (exterior && z >= 1 && z <= 4 && mitad) return (z === 2 || z === 3) && y >= y0 + 3 && y <= y1 - 3 ? FIJOS.buje : FIJOS.llanta;
-      return z === 5 ? FIJOS.ruedaT : FIJOS.rueda;
+      if (!caja(x, y, x0, y0, x1, y1)) continue;
+      const cara = uno(x, 0, 23) ? llanta(z, y, y0, y1) : null;
+      return cara || (z === 5 ? FIJOS.ruedaT : FIJOS.rueda);
     }
     return null;
   }
   function luces(z, x, y, s) {
-    const [x0, y0, x1, y1] = s, frente = y <= y0 + 1, cola = y >= y1 - 1;
-    if (frente && z >= 5 && z <= 7 && (x <= x0 + 5 || x >= x1 - 5)) return x === x0 + 2 || x === x1 - 2 ? FIJOS.faroO : FIJOS.faro;
-    if (frente && z <= 5 && x >= 8 && x <= 15) return FIJOS.rejilla;
-    if (cola && z >= 6 && z <= 7 && (x <= x0 + 5 || x >= x1 - 5)) return FIJOS.piloto;
-    return null;
+    const [x0, y0, x1, y1] = s, frente = y <= y0 + 1, cola = y >= y1 - 1, esquina = x <= x0 + 5 || x >= x1 - 5;
+    if (frente && esquina && entre(z, 5, 7)) return uno(x, x0 + 2, x1 - 2) ? FIJOS.faroO : FIJOS.faro;
+    if (frente && z <= 5 && entre(x, 8, 15)) return FIJOS.rejilla;
+    return cola && esquina && entre(z, 6, 7) ? FIJOS.piloto : null;
+  }
+  const enPasoDeRueda = (x, y) => RUEDAS.some(([a, b, c, d]) => caja(x, y, a - 1, b - 1, c + 1, d + 1));
+  // tomas de aire de los lados y del capó, y la barra de faros de rally
+  function detalles(z, x, y, x0, x1) {
+    if (uno(x, x0, x1) && entre(z, 6, 7) && entre(y, 19, 25)) return FIJOS.toma;
+    if (z !== 9) return null;
+    if (entre(y, 8, 10) && uno(x, 6, 7, 16, 17)) return FIJOS.toma;
+    return entre(y, 6, 7) && entre(x, 4, 19) && !RAYA(x) ? FIJOS.barra : null;
   }
   function carro(z, x, y, C) {
     const s = CARRO[z];
     if (!s || !enRedondo(x, y, ...s)) return null;
-    if (z <= 4 && RUEDAS.some(([a, b, c, d]) => x >= a - 1 && x <= c + 1 && y >= b - 1 && y <= d + 1)) return null;   // pasos de rueda
-    const luz = luces(z, x, y, s);
-    if (luz) return luz;
-    const [x0, , x1] = s, rim = filo(x, y, s);
-    if ((x === x0 || x === x1) && z >= 6 && z <= 7 && y >= 19 && y <= 25) return FIJOS.toma;
-    if (z === 9 && y >= 8 && y <= 10 && (x === 6 || x === 7 || x === 16 || x === 17)) return FIJOS.toma;   // tomas del capó
-    if (z === 9 && y >= 6 && y <= 7 && x >= 4 && x <= 19 && !RAYA(x)) return FIJOS.barra;               // barra de faros de rally
-    if (RAYA(x)) return rim ? C.rayaS : C.raya;
-    if (rim) return C.borde;
-    return x === x0 + 1 || x === x1 - 1 ? C.medio : C.base;
+    if (z <= 4 && enPasoDeRueda(x, y)) return null;
+    const [x0, , x1] = s;
+    return luces(z, x, y, s) || detalles(z, x, y, x0, x1) || conRaya(x, filo(x, y, s), C, uno(x, x0 + 1, x1 - 1) ? C.medio : C.base);
+  }
+  // el aro de cristales de la cabina: montantes, reflejos y cristal
+  function cristales(x, y, x0, y0, x1, y1, C) {
+    const alLado = x <= x0 + 1 || x >= x1 - 1, alFrente = y <= y0 + 1 || y >= y1 - 1;
+    if ((alLado && alFrente) || entre(y, y0 + 8, y0 + 9)) return C.medio;   // montantes
+    const reflejo = (y <= y0 + 1 && entre(x, x0 + 3, x0 + 6)) || (x <= x0 + 1 && entre(y, y0 + 3, y0 + 5));
+    return reflejo ? FIJOS.reflejo : FIJOS.cristal;
   }
   function cabina(z, x, y, C) {
     const s = CABINA[z];
     if (!s || !enRedondo(x, y, ...s)) return null;
-    const [x0, y0, x1, y1] = s, rim = filo(x, y, s);
-    if (z === 13) return RAYA(x) ? (rim ? C.rayaS : C.raya) : rim ? C.borde : C.techo;
-    if (!(x <= x0 + 1 || x >= x1 - 1 || y <= y0 + 1 || y >= y1 - 1)) return RAYA(x) ? C.raya : C.base;
-    if (((y <= y0 + 1 || y >= y1 - 1) && (x <= x0 + 1 || x >= x1 - 1)) || (y >= y0 + 8 && y <= y0 + 9)) return C.medio;   // montantes
-    return (y <= y0 + 1 && x >= x0 + 3 && x <= x0 + 6) || (x <= x0 + 1 && y >= y0 + 3 && y <= y0 + 5) ? FIJOS.reflejo : FIJOS.cristal;
+    const [x0, y0, x1, y1] = s;
+    if (z === 13) return conRaya(x, filo(x, y, s), C, C.techo);
+    if (caja(x, y, x0 + 2, y0 + 2, x1 - 2, y1 - 2)) return RAYA(x) ? C.raya : C.base;
+    return cristales(x, y, x0, y0, x1, y1, C);
+  }
+  function aleron(z, x, y, C) {
+    if (entre(z, 10, 11) && entre(y, 41, 42) && uno(x, 5, 6, 17, 18)) return C.borde;   // patas del alerón
+    if (!entre(z, 12, 13) || !enRedondo(x, y, 1, 39, 22, 43, 1)) return null;
+    return conRaya(x, uno(y, 39, 43) || uno(x, 1, 22), C, C.base);
   }
   function extras(z, x, y, C) {
-    if (z >= 1 && z <= 3 && enRedondo(x, y, 3, 2, 20, 43, 3)) return FIJOS.bajos;
-    if (z === 10 && y >= 14 && y <= 15 && (x <= 2 || x >= 21)) return C.medio;                              // retrovisores
-    if (z >= 10 && z <= 11 && y >= 41 && y <= 42 && (x === 5 || x === 6 || x === 17 || x === 18)) return C.borde; // patas del alerón
-    if (z >= 12 && z <= 13 && enRedondo(x, y, 1, 39, 22, 43, 1)) {
-      const rim = y === 39 || y === 43 || x === 1 || x === 22;
-      return RAYA(x) ? (rim ? C.rayaS : C.raya) : rim ? C.borde : C.base;
-    }
-    return null;
+    if (entre(z, 1, 3) && enRedondo(x, y, 3, 2, 20, 43, 3)) return FIJOS.bajos;
+    if (z === 10 && entre(y, 14, 15) && !entre(x, 3, 20)) return C.medio;   // retrovisores
+    return aleron(z, x, y, C);
   }
   const coche = C => pila(AN, LA, ALTO, (z, x, y) => ruedas(z, x, y) || carro(z, x, y, C) || cabina(z, x, y, C) || extras(z, x, y, C));
 
@@ -133,14 +149,17 @@ RA.Hojas = (() => {
   function cactus(s) {
     const verde = ['#1f6b34', '#2f9045', '#5cc36a'];
     const brazos = [[4, 9, 13, 18], [17, 12, 15, 21]];   // [x, desde z, hasta z, ...]
+    // el brazo: un codo a la altura z0 que une con el tronco, y de ahí sube hasta z1
+    function brazo(z, x, y, [bx, z0, z1]) {
+      const codo = bx < 11 ? entre(x, bx, 11) : entre(x, 11, bx);
+      if (z === z0 && entre(y, 3, 5) && codo && bx !== 11) return verde[1];
+      const d = z > z0 && z <= z1 ? disco(x - bx + 4, y, 4, 2) : null;
+      return d ? (d.filo ? verde[0] : verde[2]) : null;
+    }
     return pila(22, 9, 26, (z, x, y) => {
       const tronco = disco(x - 7, y, 4, 3);
       if (z < 24 && tronco) return tronco.filo ? verde[0] : (x === 11 ? verde[2] : verde[1]);
-      for (const [bx, z0, z1] of brazos) {
-        if (z === z0 && y >= 3 && y <= 5 && ((bx < 11 && x >= bx && x <= 11) || (bx > 11 && x >= 11 && x <= bx))) return verde[1];
-        const d = disco(x - bx + 4, y, 4, 2);
-        if (z > z0 && z <= z1 && d) return d.filo ? verde[0] : verde[2];
-      }
+      for (const b of brazos) { const c = brazo(z, x, y, b); if (c) return c; }
       return z === 24 && disco(x - 7, y, 4, 2) ? '#ff6fb1' : null;   // una flor arriba
     });
   }

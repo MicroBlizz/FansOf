@@ -50,7 +50,7 @@ TABLERO.vistaDetalle = (() => {
     <details class="tb-mas"><summary>Qué se hizo, enlaces e historial</summary>${cuerpo(t, esc, fecha)}</details>${TABLERO.vistaRevisar.barra(t, yo)}`;
   // yo: quién mira (para revisar); cambios: true si se está escribiendo qué cambiar (la hoja de «Pedir cambios» ocupa el panel)
   const detalle = (t, esc, fecha = String, yo = null, cambios = false) => (cambios && TABLERO.puedoRevisar(t, yo) ? TABLERO.vistaRevisar.hoja(t, esc)
-    : `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b><button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
+    : `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b>${TABLERO.vistaCompartir.boton(t)}<button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
     <div class="meta">${etiquetas(t, esc)}</div>
     ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
     ${TABLERO.puedoRevisar(t, yo) ? revisando(t, esc, fecha, yo) : (t.estado === 'en_revision' ? TABLERO.vistaRevisar.probar(t, esc, true) : '') + cuerpo(t, esc, fecha)}`);

@@ -2,15 +2,16 @@
 // el detalle de una tarea (o el formulario) en el panel de la derecha, filtra mientras se busca, avisa de las tareas parecidas al escribir un título,
 // lee lo escrito, pone las reacciones (con control-reacciones.js), arrastra las tarjetas y le pide cada cosa a los casos de uso
 // (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js los casos, los ids de sus huecos, `esc`, `fecha` y `textoError`
-// de /gestion; no sabe nada del servidor.
+// de /gestion, y `comparte(t)` y `tareaInicial` (el número del enlace directo ?tarea=N, o null; tarea #302); no sabe nada del servidor.
 'use strict';
-TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
+TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaInicial = null }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
   // (el formulario corto de «Apuntar idea o fallo»); vista: la columna elegida con los botones de arriba (null = todas; ADR 147)
   // desplegadas: las columnas con «Ver las N más» abierto (tarea #301); se recuerda mientras la página está abierta
   const desplegadas = new Set();
+  let deEnlace = tareaInicial;   // la tarea del enlace directo: se abre una vez, en la primera carga, si está en el tablero
   let yo = null, reac = null, vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
@@ -44,9 +45,15 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     if (r.valor.sinReacciones) aviso('No se han podido leer las reacciones: el tablero sale sin ellas.');
     if (r.valor.sinMirados) aviso('No se han podido leer los pasos ya mirados: las casillas de «Qué mirar» salen vacías.');
     el(hueco.filtros).innerHTML = TABLERO.vista.filtros(r.valor.juegos, filtro, esc);
+    abreDelEnlace();
     pintaPanel(false);
     pintaTablero();
     el(hueco.juegos).innerHTML = r.valor.juegos.map(j => `<option value="${esc(j)}">`).join('');
+  }
+  // El enlace directo /gestion/?seccion=tablero&tarea=N abre el detalle de esa tarea; si no está en el tablero, se ve el tablero sin más
+  function abreDelEnlace() {
+    if (deEnlace !== null && tareaDe(deEnlace)) panel = { id: deEnlace };
+    deEnlace = null;
   }
   // Una acción a la vez (un doble clic no crea la tarea dos veces). Si no sale, el tablero se vuelve a pintar como estaba y se dice por qué
   async function aplica(promesa, alTerminar) {
@@ -218,6 +225,8 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       const inf = ev.target.closest('[data-informe]');
       if (inf && panel && panel.id) { aviso(''); aplica(casos.informe(tareaDe(panel.id), inf.dataset.informe, (caja.querySelector('[data-nota-informe]') || {}).value)); }
       clicRevisar(ev, caja);
+      const compartir = ev.target.closest('[data-compartir]');
+      if (compartir) comparte(tareaDe(compartir.dataset.compartir));
     };
     caja.oninput = ev => { if (ev.target.name === 'titulo') buscaParecidas(ev.target.value, ev.target.form); };
     caja.onchange = ev => { const s = ev.target.closest('[data-mover]'), p = ev.target.closest('[data-paso]'); if (s) mueve(s.dataset.mover, s.value); if (p) marcaPaso(p); };

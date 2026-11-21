@@ -1,8 +1,8 @@
 {
- "build": 1404,
- "hash": "1bb973d",
- "fecha": "2026-11-21T03:44:08Z",
- "mensaje": "Biblioteca: tarjeta de Island rehecha (sale del Archivo a Prototipo, texto y 2 capturas nuevas de Island en lonchas)",
+ "build": 1405,
+ "hash": "d64e08f",
+ "fecha": "2026-11-21T03:45:48Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/alfa-portada-buscador-etiquetas-0g47k4",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

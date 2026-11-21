@@ -1,8 +1,8 @@
 {
- "build": 1398,
- "hash": "e528d22",
- "fecha": "2026-11-21T00:44:13Z",
- "mensaje": "Arreglos de controles en rojo y deuda de lonchas",
+ "build": 1399,
+ "hash": "2fd228a",
+ "fecha": "2026-11-21T02:03:29Z",
+ "mensaje": "Gestión de un toque (#300): el smoke-test siembra el token de gestión como lo guarda ahora entrada-web.js (localStorage con caducidad, ADR 190)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

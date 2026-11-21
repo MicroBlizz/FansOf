@@ -4,14 +4,17 @@
 // Pinta, de forma síncrona (lo que venga después ya lo encuentra):
 //   · el <nav class="menu"> de arriba, con «Entrar» / «Mi cuenta» (con tu foto de Google) y los idiomas. En la portada la cuenta la llevan
 //     biblioteca/cuenta-web.js y votos.js; en las demás se lee la sesión guardada ('fansof-cuenta') solo para pintar el botón, y al pulsarlo se va a la portada (#cuenta);
-//   · las piezas del estilo nuevo (clase «pn»: solo se ven con html.portada-nueva, ADR 128 y 135): el logo del menú, el enlace «Apóyanos» (tarea #291) y la barra de abajo del móvil.
+//   · las piezas del estilo nuevo (clase «pn»: solo se ven con html.portada-nueva, ADR 128 y 135): el logo del menú, el enlace «Apóyanos» (tarea #291) y la barra de abajo del móvil;
+//   · «Tablero» (tarea #300): el atajo a gestion/?seccion=tablero, SOLO con el rol admin (CUENTA.roles, que en la portada se carga después de este archivo:
+//     se mira al terminar de leer la página y cada vez que cambian los roles). Va en el menú de arriba y en la barra de abajo del móvil. Sin la cuenta de core
+//     (las páginas que no la cargan), sin sesión, sin rol o sin red no sale nada.
 // El aspecto, todo en estilo/web.css. Novedades abre su ventana en la portada (#novedades).
 // Idioma: con core lo cambia él (NUCLEO.elegirIdioma, lo engancha la página); sin core se avisa a window.pagIdioma(v) y los nombres salen de la lista de abajo.
 'use strict';
 (() => {
   const s = document.currentScript, b = s.dataset.base || '', pagina = s.dataset.pagina || '', conCore = s.dataset.core === '1';
   const EN = { Inicio: 'Home', Novedades: 'News', Biblioteca: 'Library', Lore: 'Lore', Privacidad: 'Privacy', Condiciones: 'Terms', Entrar: 'Log in', 'Mi cuenta': 'My account',
-    Juegos: 'Games', Votar: 'Vote', Accesos: 'Shortcuts', 'Apóyanos': 'Support us' };
+    Juegos: 'Games', Votar: 'Vote', Accesos: 'Shortcuts', 'Apóyanos': 'Support us', Tablero: 'Board' };
   const en = IDIOMA_WEB.elegido() === 'en';
   const t = x => (en && !conCore && EN[x]) || x;   // con core lo traduce la propia página
   const ICONOS = {   // trazos sencillos con el contorno de Fans Of: nada de emojis
@@ -20,6 +23,7 @@
     votar: '<path d="M12 20V4M5 11l7-7 7 7"/>',
     novedades: '<path d="M4 5h16M4 12h16M4 19h10"/>',
     lore: '<path d="M4 4h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-7a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h7z"/>',
+    tablero: '<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/>',
   };
   const icono = n => `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;
   const a = (href, txt, extra = '', id = '') => `<a href="${href}"${id ? ` id="${id}"` : ''}${extra}>${t(txt)}</a>`;
@@ -50,6 +54,23 @@
   const con = !!(ses && ses.invitado === false && ses.email);
   window.pintaMenuCuenta(con, con ? ses.foto : '', t(con ? 'Mi cuenta' : 'Entrar'));
   cta.addEventListener('click', e => { if (window.abrirCuenta) return; e.preventDefault(); location.href = b + '#cuenta'; });   // en la portada lo gestiona cuenta-web.js
+  // «Tablero», solo para admins: se pone o se quita según CUENTA.roles.tiene('admin')
+  const TABLERO = b + 'gestion/?seccion=tablero';
+  function ponTablero(si) {
+    const hay = [...document.querySelectorAll('[data-tablero]')];
+    if (si === (hay.length > 0)) return;
+    if (!si) { hay.forEach(x => x.remove()); return; }
+    cta.insertAdjacentHTML('beforebegin', `<a class="m-tablero" href="${TABLERO}" data-tablero>${t('Tablero')}</a>`);
+    const barra = document.querySelector('nav.pn-barra');
+    if (barra) barra.insertAdjacentHTML('beforeend', `<a href="${TABLERO}" data-pn="tablero" data-tablero>${icono('tablero')}<span>${t('Tablero')}</span></a>`);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof CUENTA === 'undefined' || !CUENTA.roles) return;   // página sin la cuenta de core: sin atajo
+    const mira = () => ponTablero(CUENTA.roles.tiene('admin'));   // lo recordado (vale sin red); un invitado o sin sesión no tiene roles
+    mira();
+    if (typeof hook === 'function') hook('roles', mira);          // otro que pregunte (Mi cuenta) también lo pone al día
+    if (!CUENTA.invitado) CUENTA.roles.refrescar(['admin']).then(mira, () => { /* sin red: vale lo recordado */ });
+  });
   for (const x of document.querySelectorAll('nav.menu [data-idioma]')) x.addEventListener('click', e => {
     e.preventDefault(); if (conCore) return;   // la portada y lore lo hacen con core (NUCLEO.elegirIdioma)
     const idioma = IDIOMA_WEB.elegir(x.dataset.idioma);

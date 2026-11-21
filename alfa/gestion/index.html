@@ -7,6 +7,9 @@
 <title>Gestión · Fans Of</title>
 <link rel="stylesheet" href="gestion.css">
 <link rel="stylesheet" href="../estilo/pie.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f3f4f6">
+<link rel="apple-touch-icon" href="../core/img/fog-192.png">
 </head>
 <body>
 <main class="pagina">
@@ -131,17 +134,18 @@
 </main>
 <script src="catalogo.js"></script>
 <script src="nav.js"></script>
+<script src="../core/js/cuenta/sesion-renovar.js"></script>
 <script src="entrada-web.js"></script>
 <script>
 'use strict';
 const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co';
 const CLAVE = 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn';   // pública: lo que protege es la contraseña, que se comprueba en el servidor
-const TOKEN = 'gestion-acceso';
 const $ = id => document.getElementById(id);
 let datos = null;
 
-const leerToken = () => { try { return sessionStorage.getItem(TOKEN) || ''; } catch (e) { return ''; } };
-const guardarToken = t => { try { if (t) sessionStorage.setItem(TOKEN, t); else sessionStorage.removeItem(TOKEN); } catch (e) { /* sin almacenamiento */ } };
+// El token de gestión vive en localStorage con su caducidad (ADR 190, entrada-web.js); LOCAL es null si el navegador bloquea el almacenamiento
+const LOCAL = (() => { try { return localStorage; } catch (e) { return null; } })();
+const leerToken = () => GESTION_ENTRADA.tokenGuardado(LOCAL, Date.now());
 async function rpc(nombre, cuerpo) {
   const r = await fetch(SERVIDOR + '/rest/v1/rpc/' + nombre, { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
   const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : null; } catch (e) { /* no era JSON */ }
@@ -160,15 +164,17 @@ function vista(panel) {
   $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel;
   $('sub').textContent = panel ? '' : 'Acceso restringido.';
 }
-$('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } guardarToken(''); GESTION_ENTRADA.alSalir(sessionStorage); datos = null; vista(false); };
+$('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } GESTION_ENTRADA.alSalir(LOCAL); datos = null; vista(false); };
 
+// Abre el panel con el token guardado: 'dentro', 'rechazado' (el servidor no lo acepta: sin_acceso) o 'error' (lo demás, ya dicho en pantalla)
 async function abrir() {
   try { datos = await rpc('gestion_datos', { p_token: leerToken() }); }
-  catch (e) { guardarToken(''); vista(false); $('g-aviso').style.color = ''; $('g-aviso').textContent = textoError(e); return; }
-  vista(true); pinta();
+  catch (e) { vista(false); $('g-aviso').style.color = ''; $('g-aviso').textContent = textoError(e); return /sin_acceso/.test(String((e && e.message) || e)) ? 'rechazado' : 'error'; }
+  $('g-aviso').textContent = ''; vista(true); pinta();
   document.dispatchEvent(new Event('gestion-abierta'));   // las secciones que enseñan un contador en su pestaña lo piden aquí
+  return 'dentro';
 }
-$('recargar').onclick = abrir;
+$('recargar').onclick = () => entrarSola();
 $('f-ver').onchange = $('f-min').onchange = () => pinta();
 
 function pinta() {
@@ -209,7 +215,7 @@ $('lista').onclick = async ev => {
   b.disabled = true; $('p-aviso').textContent = '';
   try {
     await rpc('gestion_marcar', { p_token: leerToken(), p_cuenta: b.dataset.id, p_marcado: b.dataset.marcar === 'si', p_nota: ($('n-' + b.dataset.id) || {}).value || '' });
-    await abrir();
+    await entrarSola();
   } catch (e) { $('p-aviso').textContent = textoError(e); b.disabled = false; }
 };
 
@@ -232,17 +238,18 @@ async function volverDeGoogle() {
   try {
     const j = await tokenConGoogle(t);
     if (!j) { $('g-aviso').textContent = 'Esta cuenta de Google no tiene el rol de administración.'; return false; }
-    guardarToken(j); GESTION_ENTRADA.alEntrar(sessionStorage); await abrir(); return true;
+    GESTION_ENTRADA.guardaToken(LOCAL, j, Date.now()); GESTION_ENTRADA.alEntrar(LOCAL); await abrir(); return true;
   } catch (e) { $('g-aviso').textContent = /comprobar/.test(e.message) ? e.message : textoError(e); return false; }
 }
-// Entrar sola con la sesión que ya tiene la web (tarea #146): si no hay, no es admin o falla, se queda la pantalla de entrar sin aviso
-async function entrarConLaWeb() {
-  const t = GESTION_ENTRADA.tokenParaEntrar({ local: localStorage, sesion: sessionStorage, ahora: Date.now() });
-  if (!t) return false;
-  try { const j = await tokenConGoogle(t); if (!j) return false; guardarToken(j); await abrir(); return true; } catch (e) { return false; }
+// Entrar sola (tareas #146 y #300): con el token guardado o, si no vale, con la sesión que ya tiene la web (renovándola si caducó).
+// Si no hay, no es admin o se pulsó «Salir», se queda la pantalla de entrar sin aviso.
+const SESION_WEB = CUENTA_RENOVAR.enNavegador({ servidor: SERVIDOR, clave: CLAVE, local: LOCAL, red: (u, o) => fetch(u, o), locks: navigator.locks });
+async function entrarSola() {
+  const r = await GESTION_ENTRADA.arranca({ local: LOCAL, ahora: () => Date.now(), accesoWeb: () => SESION_WEB.acceso(), pedirToken: tokenConGoogle, abrir });
+  if (r === 'fuera') vista(false);
 }
 
-volverDeGoogle().then(async hecho => { if (hecho) return; if (leerToken()) abrir(); else if (!(await entrarConLaWeb())) vista(false); });
+volverDeGoogle().then(hecho => { if (!hecho) entrarSola(); });
 </script>
 <script>GESTION_NAV.seccion({ id: 'cuentas', pan: 'pan-cuentas', etiqueta: 'Cuentas', orden: 1 });</script>
 <script src="votos.js"></script>

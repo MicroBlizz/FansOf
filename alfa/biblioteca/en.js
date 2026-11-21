@@ -47,6 +47,7 @@ IDIOMA.add({
   "Condiciones": "Terms",
   "ENTRAR": "LOG IN",
   "Mi cuenta": "My account",
+  "Tablero": "Board",
   "TU CUENTA": "YOUR ACCOUNT",
   "TU NOMBRE": "YOUR NAME",
   "CAOS PRIMORDIAL ILIMITADO": "UNLIMITED PRIMORDIAL CHAOS",

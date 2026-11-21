@@ -45,7 +45,8 @@ html.portada-nueva nav.menu .pn-logo { font-family: var(--font-display); font-si
 html.portada-nueva .pn-barra { display: none; }
 @media (max-width: 700px) {
   html.portada-nueva body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
-  html.portada-nueva .pn-barra { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+  html.portada-nueva .pn-barra { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;   /* cinco botones; seis con «Tablero» (solo admins) */
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
     background: var(--tray); border-top: 3px solid var(--outline); padding-bottom: env(safe-area-inset-bottom); }
   html.portada-nueva .pn-barra a { min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
     color: var(--ink); text-decoration: none; font-weight: 800; font-size: 12px; }

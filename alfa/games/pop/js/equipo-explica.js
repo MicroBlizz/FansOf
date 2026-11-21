@@ -5,10 +5,12 @@
 // Solo con el flag `companeros` abierto. PP_EXPLICA (la frase de «cuándo actúa») es pura; lo demás, la pantalla.
 'use strict';
 const PP_EXPLICA = Object.freeze({
-  // `fx`: lo que hace (ppFxDe); `c`: { lo (pesadilla), usado (ya ayudó en esta pesadilla), carga (pops acumulados) }.
+  // `fx`: lo que hace (ppFxDe); `c`: { lo (pesadilla), usado (ya no le quedan ayudas en esta pesadilla), veces (las que ayuda en cada
+  // nivel: 2 con Linterna, Marcha atrás o Volteo a 5 estrellas), carga (pops acumulados) }.
   // Devuelve { texto (clave de tr), datos (para tr), barra: 'rosa' | 'azul' | null }
   cuando(fx, c) {
-    if (c.lo) return { texto: c.usado ? 'Ya te ha ayudado en este nivel.' : 'Te ayuda una vez en cada nivel de Pesadilla.', datos: {}, barra: null };
+    if (c.lo && c.usado) return { texto: 'Ya te ha ayudado en este nivel.', datos: {}, barra: null };
+    if (c.lo) return { texto: c.veces > 1 ? 'Te ayuda {n} veces en cada nivel de Pesadilla.' : 'Te ayuda una vez en cada nivel de Pesadilla.', datos: { n: c.veces }, barra: null };
     if (fx.salta) return { texto: 'La barra rosa se llena con cada pop. Faltan {n} para saltar.', datos: { n: Math.max(1, fx.salta - (c.carga || 0)) }, barra: 'rosa' };
     if (fx.combo) return { texto: 'La barra azul sube con toques de 3 o más pops. Actúa con COMBO x{n}.', datos: { n: fx.combo }, barra: 'azul' };
     return { texto: 'Sin barra: actúa solo cuando le toca.', datos: {}, barra: null };
@@ -43,7 +45,7 @@ function ppExplicaAbre(k) {
   ppExplicaCierra();
   const T = PP_P.T, id = ppEquipoNivel(T.d)[k], d = ppSlimeDe(id), [x, y] = ppHuecoEquipo(k, T.n);
   const est = (ppCole().tiene[id] || { est: 1 }).est;
-  const c = PP_EXPLICA.cuando(ppFxDe(id), { lo: T.lo, usado: !!(T.habP && T.habP.usados[id]), carga: PP_P.carga[id] });
+  const c = PP_EXPLICA.cuando(ppFxDe(id), { lo: T.lo, usado: !!T.habP && !ppHabLeQueda(T, id), veces: PP_HAB.usosDe(ppFxDe(id), PP_HAB_USOS_LO), carga: PP_P.carga[id] });
   const b = document.createElement('div');
   b.id = 'pp-explica'; b.style.top = Math.round(y - 50 * ppEscalaEquipo()) + 'px'; b.style.setProperty('--pp-flecha', Math.round(x) + 'px');
   b.innerHTML = `<h3>${tr(d.pasiva)} <span class="pp-explica-modo">${tr(T.lo ? 'Pesadilla' : 'Niveles')}</span></h3>

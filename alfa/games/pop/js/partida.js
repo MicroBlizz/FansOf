@@ -52,6 +52,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   // en PESADILLA los amigos descansan (Daniel, 31-10-2026: «con los ayudantes es muy fácil»): ni pista de Lola, ni saltos, ni toques extra
   const T = PP_P.T = ppNuevoTablero(d, d.lo ? { pista: 0, equipo: PP_P.equipo } : ppFx(d));
   T.titulo = ppTituloNivel(d, g, dif);
+  ppEscEntra(T, d);   // flag `companeros`: a veces una burbuja brilla y trae un compañero escondido (js/escondidos-juego.js)
   if (d.nim) ppNimEmpieza(T);   // nivel difícil o jefe: duelo por turnos contra el rival del mundo (js/nimnivel.js)
   else ppMargenAlEmpezar(T, d);
   ppHabEntraNivel(T, d);   // lo que hacen al empezar los compañeros de Niveles y de Pesadilla (flag `companeros`, js/habilidades-*.js)
@@ -123,7 +124,7 @@ function ppToque(i) {
   if (T.hecho) return;
   if (T.combo > 0 && bueno && !T.lo) ppCombosEquipo(T);
   ppPremioGordo(T, r);   // antes de mirar si te has quedado sin toques: un +1 te puede salvar
-  ppHabPrimerToque(T);   // Buen comienzo (js/habilidades-niveles.js)
+  ppHabTrasToque(T);   // Buen comienzo y las marcas de más de Lola y la Linterna (js/habilidades-niveles.js)
   ppMiraSinToques(T);
 }
 // sin toques: ya no se puede tocar, pero se espera a los amigos que estén saltando (pueden acabarlo ellos); luego se ofrece
@@ -141,14 +142,17 @@ function ppCombosEquipo(T) {
   if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); play('ppPista'); } }
 }
 // el premio gordo de la Caja de botín: un toque de 4 da +1 toque; uno de 5, +1 corazón (si falta alguno y hoy no ha dado ya 3: tarea #236)
+// (con estrellas, el corazón desde 4 pops y uno más al día: js/coleccion.js, tarea #294)
 function ppPremioGordo(T, r) {
-  if (!ppEnEquipo('cofre') || r.pops.length < 4 || T.lo) return;
+  const fx = ppFxDe('cofre'), da = PP_HAB.premio(r.pops.length, PP_CFG.cofrePops, fx.premioAntes);
+  if (!ppEnEquipo('cofre') || !da || T.lo) return;
   ppFxHabilidad('cofre'); play('ppPremio');
-  if (r.pops.length >= 5 && ppCofreDaVida()) { SAVE.cofreHoy++; ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
+  if (da === 'vida' && ppCofreDaVida(PP_HAB.extra(fx.premio))) { SAVE.cofreHoy++; ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
   else { T.limite++; ppFlota(ppTextoMasToque(PP_SLIMES.cofre.nombre), 270, 275, '#ff8a2a'); }   // con su motivo (tarea #182)
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel
 function ppTrasToque(T, i, r) {
+  ppEscTrasToque(T, r);   // flag `companeros`: reventar la burbuja brillante da su compañero, aunque luego se pierda (js/escondidos-juego.js)
   if (r.castigo) {
     for (let k = 0; k < r.castigo; k++) ppPierdeVida();
     play('ppDano'); ppVibra([30, 40, 30]); ppFxDano();

@@ -144,6 +144,7 @@ function ppPintaTablero(c, T, t) {
     if (estilo && estilo.burbuja) ppCaritaEnBurbuja(c, cx, cy, r, i, T, t, estilo.caritas);   // js/caritas.js
     if (T.up[i] && (T.up[i] === 3 || (T.esp && T.esp[i]))) ppEspecial(c, cx, cy, r, i, T, t);
   }
+  ppEscPinta(c, T, g, r, t);   // la burbuja brillante: sin T.esc (flag `companeros` cerrado) no pinta nada (js/escondidos-juego.js)
   if (T.mano && T.pista !== null) { const [mx, my] = ppCentro(g, T.pista); ppMano(c, mx, my, t); }
   c.restore();
 }

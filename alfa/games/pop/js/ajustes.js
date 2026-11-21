@@ -19,6 +19,7 @@ const PP_CFG = {
   vida: 5,                   // corazones; se pierde uno al quedarte sin toques con burbujas sin reventar (o al salir a medias)
   recarga: 30 * 60 * 1000,   // cada cuánto vuelve un corazón (ms), también con el juego cerrado
   cofreVidasDia: 3,          // corazones al día que puede dar el Cofre del tesoro con un toque de 5 (tarea #236, Pepins 20-11-2026); después da +1 toque
+  cofrePops: { toque: 4, vida: 5 },   // el Premio doble del Cofre: un toque de 4 pops da +1 toque; uno de 5, +1 corazón (js/habilidades.js, premio)
   precioVidas: 150,          // monedas por llenar los corazones de golpe
   equipo: 3,                 // huecos del equipo de serie (Daniel, 02-11-2026: con 4 era muy fácil; antes 4)
   huecosMax: 6,              // con los comprados (Daniel, 30-10-2026: comprar huecos con monedas, hasta 6, cada uno más caro)

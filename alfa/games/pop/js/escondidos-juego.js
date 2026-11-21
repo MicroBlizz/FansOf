@@ -1,0 +1,122 @@
+// Fans of Pop · LA BURBUJA BRILLANTE EN LA PARTIDA (aplicación; tarea #294, ADR 199, nodo n4). Solo con el flag `companeros` abierto y
+// solo en los niveles del camino (de día) y del Difícil (de noche), nunca en duelos, Pesadilla ni Memoria: al entrar en un nivel se
+// tira si sale la burbuja brillante (PP_ESC.sale) y qué compañero trae (PP_ESC.elige); si sale, una burbuja normal del tablero brilla
+// tornasolada. Reventarla (la primera vez, aunque luego pierdas el nivel) da el compañero con su aviso (ppViaGana, js/companeros-vias.js).
+// Las reglas son puras (js/escondidos.js); aquí van el azar (Math.random), la partida guardada y el dibujo.
+//
+// Lo guardado vive en SAVE.brillo = { sin, pend }, fuera de SAVE.cole (PP_COLE.lee solo conserva sus campos y ppColeGuarda pone un
+// estado nuevo): `sin`, niveles seguidos sin burbuja (el contador de la garantía); `pend`, la tirada del nivel en el que se ha entrado
+// y aún no se ha jugado ({ sale, az }). La tirada se guarda al entrar y se gasta con el primer toque: salir sin tocar y volver a entrar
+// (en ese nivel o en otro) usa la misma tirada y los mismos números para elegir, así que entrar y salir no da más burbujas ni otra rareza.
+// Con el flag cerrado no se llama nada de esto: ni azar, ni guardado, ni dibujo.
+'use strict';
+/* ---------- la tirada al entrar en un nivel ---------- */
+// lo guardado (lo crea la primera vez)
+function ppEscGuardado() {
+  const b = SAVE.brillo;
+  if (b && typeof b === 'object') return b;
+  SAVE.brillo = { sin: 0, pend: null };
+  return SAVE.brillo;
+}
+// ¿puede salir en este nivel? Camino y Difícil; nunca un duelo (d.nim), la Pesadilla (d.lo, dif 2) ni un tablero sin nivel
+const ppEscEnNivel = d => !!d && !d.nim && !d.lo && d.dif !== 2;
+// de noche = el modo Difícil del mundo (se pinta de noche: ppPintaFondo con `dif`); de día, el camino
+const ppEscMomento = d => (d.dif ? 'noche' : 'dia');
+// un azar repetible: da los números guardados en orden (para que volver a entrar elija lo mismo)
+function ppEscAzarDe(lista) { let k = 0; return () => lista[k++ % lista.length]; }
+// la tirada de ahora: la pendiente si la hay; si no, una nueva, que sube o reinicia el contador y se guarda ya
+function ppEscTirada(b) {
+  if (b.pend) return b.pend;
+  const r = PP_ESC.sale(b.sin, Math.random);
+  b.sin = r.sinBrillo;
+  b.pend = { sale: r.sale, az: [Math.random(), Math.random(), Math.random()] };
+  ppGuarda();
+  return b.pend;
+}
+// la burbuja que brilla: una normal levantada (sin nata ni cereza, ni hielo ni concha) que no sea la del amigo atrapado; si no queda
+// ninguna normal, cualquiera levantada sin atrapado. -1 si no hay sitio
+function ppEscSitio(T, azar) {
+  const libres = [...T.up.keys()].filter(i => T.up[i] && !(i in T.slimes));
+  const normales = libres.filter(i => T.up[i] === 1 && !(T.esp && T.esp[i]));
+  const lista = normales.length ? normales : libres;
+  return lista.length ? lista[Math.min(lista.length - 1, Math.floor(azar() * lista.length))] : -1;
+}
+// al entrar en un nivel (ppEntra, js/partida.js): T.esc = { gastada, brillo } con brillo = { i, id, nuevo, ganado } o null
+function ppEscEntra(T, d) {
+  if (!ppCompanerosActivo() || !ppEscEnNivel(d)) return;
+  const pend = ppEscTirada(ppEscGuardado()), az = ppEscAzarDe(pend.az);
+  T.esc = { gastada: false, brillo: null };
+  if (!pend.sale) return;
+  const comp = PP_ESC.elige(ppCole().tiene, d.mundo, ppEscMomento(d), az);
+  const i = comp ? ppEscSitio(T, az) : -1;
+  if (i >= 0) T.esc.brillo = { i, id: comp.id, nuevo: comp.nuevo, ganado: false, salto: null };
+}
+
+/* ---------- al reventar ---------- */
+// tras cada toque (ppTrasToque, js/partida.js; también los de los amigos y las ayudas): el primero gasta la tirada; si revienta la
+// burbuja brillante, el compañero es tuyo ya
+function ppEscTrasToque(T, r) {
+  const e = T.esc; if (!e) return;
+  if (!e.gastada) { e.gastada = true; ppEscGuardado().pend = null; ppGuarda(); }
+  const b = e.brillo;
+  if (b && !b.ganado && r.pops.includes(b.i)) ppEscRevienta(T, b);
+}
+// el compañero sale de un salto con chispas pastel y se gana con su aviso («¡Nuevo compañero: X!» o «+1 X repetido»)
+function ppEscRevienta(T, b) {
+  b.ganado = true;
+  const [x, y] = ppCentro(ppGeom(T.n), b.i);
+  b.salto = { x, y, t0: null };
+  PP_FX.parts = PP_CHISPAS.recorta(PP_FX.parts.concat(PP_CHISPAS.chispas(x, y, Math.random), PP_CHISPAS.chispas(x, y, Math.random)));
+  ppViaGana(b.id);
+}
+
+/* ---------- el dibujo (ppPintaTablero, js/pintar.js) ---------- */
+// arcoíris pastel, sin contorno: rosa, melocotón, limón, menta, cielo y otra vez rosa para cerrar la vuelta
+const PP_ESC_TORNASOL = Object.freeze(['#ffb3d9', '#ffd6a5', '#fff3a0', '#a8f0c6', '#9fdcff', '#ffb3d9']);
+// lo de la burbuja brillante de este tablero: el brillo mientras sigue arriba y el salto del compañero al reventarla
+function ppEscPinta(c, T, g, r, t) {
+  const b = T.esc && T.esc.brillo; if (!b) return;
+  const [cx, cy] = ppCentro(g, b.i);
+  if (!b.ganado && T.up[b.i]) ppEscBrillo(c, cx, cy - 4, r, t);
+  if (b.salto) ppEscSalto(c, b, r, t);
+}
+// un degradado que da la vuelta con los colores del arcoíris (girando con `a`); sin degradado cónico, el color de ese momento
+function ppEscTornasol(c, a) {
+  if (typeof c.createConicGradient !== 'function') return PP_ESC_TORNASOL[Math.floor(Math.abs(a) * 2) % (PP_ESC_TORNASOL.length - 1)];
+  const gr = c.createConicGradient(a, 0, 0);
+  PP_ESC_TORNASOL.forEach((col, k) => gr.addColorStop(k / (PP_ESC_TORNASOL.length - 1), col));
+  return gr;
+}
+// el brillo: un halo suave que late, un aro tornasolado que gira, un velo de arcoíris sobre la burbuja y 3 destellos que dan vueltas
+function ppEscBrillo(c, x, y, r, t) {
+  const late = 0.5 + 0.5 * Math.sin(t * 3.2);
+  c.save(); c.translate(x, y);
+  const halo = c.createRadialGradient(0, 0, r * 0.9, 0, 0, r * (1.6 + 0.2 * late));
+  halo.addColorStop(0, `rgba(255,214,240,${0.7 + 0.3 * late})`); halo.addColorStop(0.5, `rgba(255,236,170,${0.35 + 0.2 * late})`); halo.addColorStop(1, 'rgba(255,236,170,0)');
+  c.beginPath(); c.arc(0, 0, r * 1.85, 0, Math.PI * 2); c.fillStyle = halo; c.fill();
+  c.globalAlpha = 0.2 + 0.1 * late;
+  c.beginPath(); c.arc(0, 0, r * 0.98, 0, Math.PI * 2); c.fillStyle = ppEscTornasol(c, -t * 0.8); c.fill();
+  c.globalAlpha = 1; c.shadowColor = '#ffffff'; c.shadowBlur = r * (0.3 + 0.3 * late);
+  c.beginPath(); c.arc(0, 0, r * (1.12 + 0.05 * late), 0, Math.PI * 2); c.lineWidth = r * 0.24; c.strokeStyle = ppEscTornasol(c, t * 1.3); c.stroke();
+  c.shadowBlur = 0;
+  for (let k = 0; k < 3; k++) {
+    const a = t * 1.1 + k * Math.PI * 2 / 3, d = r * (1.32 + 0.06 * Math.sin(t * 2 + k));
+    ppEscDestello(c, Math.cos(a) * d, Math.sin(a) * d, r * (0.24 + 0.08 * Math.sin(t * 4 + k * 2)), PP_ESC_TORNASOL[k * 2]);
+  }
+  c.restore();
+}
+// un destello de cuatro puntas, blanco con un aura de su color (sin contorno)
+function ppEscDestello(c, x, y, s, col) {
+  c.save(); c.translate(x, y); c.shadowColor = col; c.shadowBlur = s * 1.6; c.fillStyle = '#ffffff';
+  c.beginPath(); c.moveTo(0, -s); c.quadraticCurveTo(0, 0, s, 0); c.quadraticCurveTo(0, 0, 0, s); c.quadraticCurveTo(0, 0, -s, 0); c.quadraticCurveTo(0, 0, 0, -s);
+  c.fill(); c.restore();
+}
+// el compañero salta fuera de la burbuja y se va desvaneciendo (1,2 s)
+function ppEscSalto(c, b, r, t) {
+  const s = b.salto;
+  if (s.t0 === null) s.t0 = t;
+  const k = (t - s.t0) / 1.2;
+  if (k >= 1) { b.salto = null; return; }
+  const y = s.y - Math.sin(Math.min(1, k * 1.4) * Math.PI / 2) * 120;
+  ppSlimeRepuestoOImagen(c, b.id, s.x, y, r * (0.7 + 0.4 * Math.min(1, k * 2)), t, 1 - Math.max(0, (k - 0.6) / 0.4));
+}

@@ -5,7 +5,8 @@
 'use strict';
 const PP_COMP = (() => {
   const f = o => Object.freeze(o);
-  // modo: N = Niveles, P = Pesadilla, D = Duelos contra la máquina. Las 11 primeras son las de hoy.
+  // modo: N = Niveles, P = Pesadilla, D = Duelos contra la máquina. Las 11 primeras son las de hoy. `estrellas`: lo que ganan con
+  // estrellas las de «una vez» (sale en su ficha del álbum; las cifras, en MEJORA de js/coleccion.js, tarea #294)
   const HAB = f({
     saltito: f({ modo: 'N', nombre: 'Saltito', texto: 'Cada pocos pops salta y hace pop en una burbuja buena.' }),
     lluvia: f({ modo: 'N', nombre: 'Lluvia', texto: 'Cada muchos pops hace pop en varias burbujas buenas.' }),
@@ -14,26 +15,26 @@ const PP_COMP = (() => {
     cohete: f({ modo: 'N', nombre: 'Mecha corta', texto: 'Salta antes a los cohetes y los hace estallar.' }),
     burbuja: f({ modo: 'N', nombre: 'Ola', texto: 'Salta antes a las burbujeantes.' }),
     horas: f({ modo: 'N', nombre: 'Horas extra', texto: 'Con un COMBO x3, el siguiente toque no cuenta.' }),
-    chivato: f({ modo: 'N', nombre: 'Chivatazo', texto: 'Con un COMBO x2 te marca una burbuja buena.' }),
-    gordo: f({ modo: 'N', nombre: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).' }),
+    chivato: f({ modo: 'N', nombre: 'Chivatazo', texto: 'Con un COMBO x2 te marca una burbuja buena.', estrellas: 'Con 4 estrellas, con cada COMBO; con 5, al reventar la primera marca te da otra.' }),
+    gordo: f({ modo: 'N', nombre: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).', estrellas: 'Con 3 estrellas, el corazón ya con 4 pops; con 5, hasta 4 corazones al día.' }),
     cielo: f({ modo: 'N', nombre: 'Cielo despejado', texto: '+1 toque extra al empezar el nivel.' }),
     fortuna: f({ modo: 'N', nombre: 'Fortuna', texto: 'Al ganar un nivel nuevo, la mitad de monedas más.' }),
     estrella: f({ modo: 'N', nombre: 'Imán de estrellas', texto: 'La 3.ª estrella pide un toque menos.' }),
     ticket: f({ modo: 'N', nombre: 'Feriante', texto: 'Con 3 estrellas, +1 ticket de la Feria del finde.' }),
     primero: f({ modo: 'N', nombre: 'Buen comienzo', texto: 'Con tu primer toque, hace pop en una burbuja buena.' }),
     rescate: f({ modo: 'N', nombre: 'Al rescate', texto: 'Una vez por nivel, al quedarte sin toques te da 2 más.' }),
-    racha: f({ modo: 'N', nombre: 'Victorias a salvo', texto: 'Una vez al día, perder no corta tus victorias seguidas.' }),
+    racha: f({ modo: 'N', nombre: 'Victorias a salvo', texto: 'Una vez al día, perder no corta tus victorias seguidas.', estrellas: 'Con 5 estrellas, dos veces al día.' }),
     limpia: f({ modo: 'N', nombre: 'Limpieza', texto: 'Al ganar, +5 monedas por cada toque extra.' }),
-    linterna: f({ modo: 'P', nombre: 'Linterna', texto: 'Te marca una burbuja buena.' }),
-    rebobina: f({ modo: 'P', nombre: 'Marcha atrás', texto: 'Deshace tu último toque.' }),
+    linterna: f({ modo: 'P', nombre: 'Linterna', texto: 'Te marca una burbuja buena.', estrellas: 'Con 5 estrellas, al reventarla te marca otra.' }),
+    rebobina: f({ modo: 'P', nombre: 'Marcha atrás', texto: 'Deshace tu último toque.', estrellas: 'Con 5 estrellas, dos veces por nivel.' }),
     fantasma: f({ modo: 'P', nombre: 'Toque fantasma', texto: 'Tu primer toque no cuenta.' }),
     calma: f({ modo: 'P', nombre: 'Calma', texto: '+1 toque extra al empezar.' }),
-    volteo: f({ modo: 'P', nombre: 'Volteo', texto: 'Da la vuelta a una sola burbuja, sin tocar sus vecinas.' }),
-    lupa: f({ modo: 'D', nombre: 'Lupa', texto: 'Una pista gratis por duelo (marca la jugada que gana).' }),
-    deshaz: f({ modo: 'D', nombre: 'Otra vez', texto: 'Un deshacer gratis por duelo.' }),
+    volteo: f({ modo: 'P', nombre: 'Volteo', texto: 'Da la vuelta a una sola burbuja, sin tocar sus vecinas.', estrellas: 'Con 5 estrellas, dos veces por nivel.' }),
+    lupa: f({ modo: 'D', nombre: 'Lupa', texto: 'Una pista gratis por duelo (marca la jugada que gana).', estrellas: 'Con 5 estrellas, dos pistas por duelo.' }),
+    deshaz: f({ modo: 'D', nombre: 'Otra vez', texto: 'Un deshacer gratis por duelo.', estrellas: 'Con 5 estrellas, dos deshacer por duelo.' }),
     despiste: f({ modo: 'D', nombre: 'Despiste', texto: 'El rival se equivoca un poco más.' }),
-    salida: f({ modo: 'D', nombre: 'Saque', texto: 'Eliges quién empieza el duelo.' }),
-    quita: f({ modo: 'D', nombre: 'Pellizco', texto: 'Antes de empezar quitas una burbuja del tablero.' }),
+    salida: f({ modo: 'D', nombre: 'Saque', texto: 'Eliges quién empieza el duelo.', estrellas: 'Con 5 estrellas, además te chiva con quién empiezas ganando.' }),
+    quita: f({ modo: 'D', nombre: 'Pellizco', texto: 'Antes de empezar quitas una burbuja del tablero.', estrellas: 'Con 5 estrellas, quitas dos.' }),
     bolsa: f({ modo: 'D', nombre: 'Hucha', texto: 'Ganar un duelo da 5 monedas más.' }),
   });
   // los 20 Animales: dibujo por código (color, color2 y pinta, como PP_SLIMES) hasta que los pinte Yoshi, y su fx
@@ -63,6 +64,7 @@ const PP_COMP = (() => {
   // la ficha de cada uno: rareza (c, r, e, l), página, habilidad y cómo se consigue (`via`)
   const i = (rar, pag, hab, via) => f({ rar, pag, hab, via: f(via) });
   const RESC = { t: 'rescate' };
+  const ESC = { t: 'escondido' };   // salen en la burbuja brillante de su mundo y momento (js/escondidos.js, ADR 199, tarea #294)
   const INFO = f({
     lola: i('c', 'siempre', 'chivato', { t: 'serie' }),
     becario: i('c', 'siempre', 'horas', RESC),
@@ -77,21 +79,21 @@ const PP_COMP = (() => {
     sirena: i('r', 'siempre', 'burbuja', RESC),
     maneki: i('e', 'siempre', 'fortuna', RESC),
     astro: i('l', 'siempre', 'lluvia', RESC),
-    ardilla: i('c', 'animales', 'primero', { t: 'cofre' }),
-    castor: i('c', 'animales', 'limpia', { t: 'cofre' }),
-    capibara: i('c', 'animales', 'calma', { t: 'cofre' }),
-    pinguino: i('c', 'animales', 'hielo', RESC),
+    ardilla: i('c', 'animales', 'primero', ESC),
+    castor: i('c', 'animales', 'limpia', ESC),
+    capibara: i('c', 'animales', 'calma', ESC),
+    pinguino: i('c', 'animales', 'hielo', ESC),
     pato: i('c', 'animales', 'bolsa', { t: 'duelos', n: 10 }),
-    cangrejo: i('c', 'animales', 'concha', RESC),
-    osito: i('c', 'animales', 'fantasma', { t: 'cofre' }),
+    cangrejo: i('c', 'animales', 'concha', ESC),
+    osito: i('c', 'animales', 'fantasma', ESC),
     mariquita: i('c', 'animales', 'ticket', { t: 'feria' }),
     zorro: i('r', 'animales', 'despiste', { t: 'duelos', n: 25 }),
     suricata: i('r', 'animales', 'linterna', { t: 'pase' }),
-    mapache: i('r', 'animales', 'rebobina', RESC),
+    mapache: i('r', 'animales', 'rebobina', ESC),
     pulpito: i('r', 'animales', 'burbuja', { t: 'tienda', perlas: 40 }),
     mariposa: i('r', 'animales', 'estrella', { t: 'feria' }),
     luciernaga: i('r', 'animales', 'lupa', { t: 'paseP' }),
-    erizo: i('r', 'animales', 'deshaz', { t: 'cofre' }),
+    erizo: i('r', 'animales', 'deshaz', ESC),
     huron: i('e', 'animales', 'quita', { t: 'jefes', n: 3 }),
     pezglobo: i('e', 'animales', 'volteo', { t: 'tienda', perlas: 60 }),
     caballito: i('e', 'animales', 'rescate', { t: 'paseP' }),
@@ -113,7 +115,8 @@ const PP_COMP = (() => {
       P: f({ serie: 1, tope: 3, monedas: f([300, 600]), perlas: null }),
       D: f({ serie: 1, tope: 3, monedas: f([300, 600]), perlas: null }),
     }),
-    estrellas: f([100, 250, 500, 1000]),   // monedas para pasar de 1 a 2, de 2 a 3, de 3 a 4 y de 4 a 5 (más 1 repetido cada vez)
+    estrellas: f([100, 250, 500, 1000]),   // monedas para pasar de 1 a 2, de 2 a 3, de 3 a 4 y de 4 a 5
+    repetidos: f([2, 3, 5, 8]),            // repetidos de cada una de esas subidas, al estilo Fibonacci (18 en total; ADR 199)
     sobra: 25,                             // monedas por un repetido que ya no hace falta (compañero a 5 estrellas)
   });
   // qué escalón del pase (de 30) y qué tramo de la Feria del finde (desde 0) dan un compañero, además de su premio de siempre

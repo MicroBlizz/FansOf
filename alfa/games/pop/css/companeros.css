@@ -78,3 +78,28 @@
 .pp-explica-barra.pp-azul { box-shadow: inset 22px 0 0 #5be7ff; }
 @keyframes pp-explica { from { opacity: 0; transform: translateY(-100%) scale(0.9); } to { opacity: 1; transform: translateY(-100%) scale(1); } }
 @media (prefers-reduced-motion: reduce) { #pp-explica { animation: none; } }
+/* los escondidos que faltan (ADR 199): su silueta de verdad, de un solo color suave y sin detalles, con una «?» pequeña y la pista corta */
+.pp-cm-sombra { position: relative; }
+.pp-cm-sombra svg * { fill: #d9b3a0 !important; stroke: #d9b3a0 !important; }   /* el mismo tono que PP_COMP_SOMBRA (js/pintar-companero.js) */
+.pp-cm-sombra-q { position: absolute; right: 6%; bottom: 4%; width: 34%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: #fffaf5; border: 3px solid #d9b3a0; color: #b98a74; font-size: calc(1em + 2px); font-weight: 700; line-height: 1; }
+.pp-cm-ficha .pp-cm-sombra-q { font-size: 30px; border-width: 4px; }
+#pp-ui .pp-cm-carta.pp-cm-escondido { border-color: #f1c6b0; background: #fff3e8; }
+#pp-ui .pp-cm-pista { display: block; font-size: 13px; color: #9a6e5a; padding-top: 2px; }
+.pp-cm-pista .pp-cm-momento { margin: -2px 2px 0 0; }
+.pp-cm-momento { flex: none; vertical-align: middle; }
+.pp-cm-pista-f { margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 20px; font-weight: 700; padding: 8px 14px; border-radius: 16px; background: #fff3e8; border: 3px solid #f1c6b0; }
+/* dorado a 5 estrellas (ADR 199): marco de oro que brilla, con un destello suave que lo cruza de vez en cuando; sin contorno oscuro */
+#pp-ui .pp-cm-carta.pp-cm-dorado, #pp-ui .pp-cm-casilla.pp-cm-dorado { border-color: #ffcf3f; background: linear-gradient(160deg, #fffbe6 0%, #ffeaa0 55%, #ffd86a 100%); overflow: hidden;
+  box-shadow: 0 0 0 3px #fff1b8, 0 0 12px 3px rgba(255, 196, 40, 0.75); animation: pp-oro-late 2.4s ease-in-out infinite; }
+#pp-ui .pp-cm-carta.pp-cm-dorado::after, #pp-ui .pp-cm-casilla.pp-cm-dorado::after, .pp-cm-aro-oro::after { content: ''; position: absolute; inset: -20%; pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.85) 50%, transparent 62%); transform: translateX(-120%); animation: pp-oro-destello 3.2s ease-in-out infinite; }
+#pp-ui .pp-cm-casilla.pp-cm-dorado { position: relative; }
+#pp-ui .pp-cm-carta.pp-cm-dorado .pp-cm-estrellas { color: #ff8a3d; }
+.pp-cm-aro-oro { position: relative; overflow: hidden; border-radius: 50%; border: 6px solid #ffcf3f; box-sizing: border-box; padding: 8px;
+  background: radial-gradient(circle at 50% 40%, #fffbe6 0%, #ffeaa0 60%, #ffd86a 100%); box-shadow: 0 0 0 4px #fff1b8, 0 0 18px 6px rgba(255, 196, 40, 0.7); animation: pp-oro-late 2.4s ease-in-out infinite; }
+.pp-cm-aro-oro canvas { width: 100% !important; height: 100% !important; }
+.pp-cm-rar.pp-cm-oro { background: linear-gradient(180deg, #ffe680, #ffc21f); box-shadow: 0 0 8px 1px rgba(255, 196, 40, 0.8); }
+@keyframes pp-oro-late { 0%, 100% { box-shadow: 0 0 0 3px #fff1b8, 0 0 10px 2px rgba(255, 196, 40, 0.6); } 50% { box-shadow: 0 0 0 3px #fff1b8, 0 0 18px 6px rgba(255, 196, 40, 0.95); } }
+@keyframes pp-oro-destello { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) { #pp-ui .pp-cm-carta.pp-cm-dorado, #pp-ui .pp-cm-casilla.pp-cm-dorado, .pp-cm-aro-oro { animation: none; } #pp-ui .pp-cm-dorado::after, .pp-cm-aro-oro::after { animation: none; opacity: 0; } }

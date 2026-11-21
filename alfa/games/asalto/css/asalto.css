@@ -111,6 +111,9 @@ body { background: #0b0816; display: flex; align-items: center; justify-content:
 .as-ad-barra { height: calc(var(--as-u) * 14); background: var(--as-tinta); margin: calc(var(--as-u) * 14) 0; padding: calc(var(--as-u) * 3); }
 .as-ad-barra i { display: block; height: 100%; width: 0; background: var(--as-oro); transition: width 0.9s steps(6); }
 .as-enlace { background: none; text-decoration: underline; margin-top: calc(var(--as-u) * 10); }
+/* para el pulgar (tarea #317): los botones del menú y de las zonas, y el «Cerrar sin premio» del anuncio, de 48 px o más y con el texto centrado */
+.as-rejilla .as-btn, .as-zb .as-btn, #as-ad-no { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+#as-ad-no { padding: 0 calc(var(--as-u) * 18); font-size: 1.15em; }
 #as-ui .as-enlace { color: #6a4a2a; }
 .as-anuncio small { display: block; margin-top: calc(var(--as-u) * 8); color: #6a4a2a; }
 

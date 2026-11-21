@@ -1,6 +1,7 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  "<b>GASHAPÓN NUEVO</b>: la máquina se mueve de verdad y, al tirar, la cápsula sale, vuela hacia ti, tiembla más cuanto mejor es lo que lleva y se abre. Toca la pantalla para saltarte la animación.": "<b>NEW GACHA</b>: the machine really moves and, when you pull, the capsule pops out, flies towards you, shakes harder the better its prize and bursts open. Tap the screen to skip the animation.",
   "<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos.": "<b>UNDER THE HOOD</b>: the prototypes move to their final home on the site (the old addresses still take you there) and tweaks to the internal systems.",
   "Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora.": "Microblizz moved all its games to a new folder. The boxes are still in the hallway and nobody knows whose stapler it is.",
   // 0.1.86

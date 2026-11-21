@@ -1,8 +1,8 @@
 {
- "build": 1407,
- "hash": "f5a3472",
- "fecha": "2026-11-21T04:02:24Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/alfa-portada-buscador-etiquetas-0g47k4",
+ "build": 1408,
+ "hash": "3b49ed5",
+ "fecha": "2026-11-21T04:11:36Z",
+ "mensaje": "Novedades: el gashapón nuevo en TD 0.13.103 y Survivors 0.1.87 (aún sin publicar), con su inglés (tarea #123)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -1,8 +1,8 @@
 {
- "build": 1417,
- "hash": "ae9b371",
- "fecha": "2026-11-21T15:05:16Z",
- "mensaje": "Mapas al día tras los nodos n3, n5 y n6 de la tarea #160 de Pop",
+ "build": 1418,
+ "hash": "85825fc",
+ "fecha": "2026-11-21T15:09:35Z",
+ "mensaje": "Island #304 N2c: los bichos como dominio puro con eventos, con tests",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

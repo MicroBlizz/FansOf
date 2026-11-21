@@ -7,12 +7,11 @@ const cam = { x: 0, z: 0 };
 function nueva() {
   const x = (INICIO + 0.5) * T;
   J = IS.Jugador.crea(x, arribaCol(INICIO));
-  enemigos = ENEM0.map(c => ({ x: (c + 0.5) * T, y: CARRIL, z: arribaCol(c), vx: 0, vz: 0, mira: -1, giro: GIRO_IZQ,
-    t: Math.random(), estado: 'quieto', muerto: 0 }));
+  enemigos = IS.creaBrotitos(mundo());
   zanas = ZANAS0.map(z => ({ x: z.x, z: z.z, cogida: false }));
-  peces = PECES0.map((p, i) => ({ x: p.c * T, y: p.y, z: Z_OCULTO, estado: 'oculto', t: 0.4 + i * 0.5, mira: -1, giro: GIRO_IZQ }));
+  peces = IS.creaPeces(mundo());
   gotas = []; gaviotas = []; cocos = []; parts = []; tGav = 4;
-  cangrejos = CANG0.map(c => ({ x: (c + 0.5) * T, z: arribaCol(c), dir: c % 2 ? 1 : -1, t: Math.random(), muerto: 0 }));
+  cangrejos = IS.creaCangrejos(mundo());
   meta = { x: (META + 0.5) * T, z: arribaCol(META) };
   total = zanas.length;
   cam.x = J.x - VW * 0.4; cam.z = 0;

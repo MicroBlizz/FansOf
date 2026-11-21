@@ -85,6 +85,14 @@ function pintaPez(f) {   // recortado en la línea del agua, con su espuma
   const w = 13 + Math.round(Math.sin(reloj * 5 + f.x) * 2);
   ctx.fillRect(sx - w, wl, 2 * w, 1); ctx.fillRect(sx - w - 4, wl + 1, 5, 1); ctx.fillRect(sx + w - 1, wl + 1, 5, 1);
 }
+function pintaRocaMar(r) {   // hundida: se corta en su línea del agua (como los peces) y lleva espuma alrededor
+  const wl = sy(r.y, MAR), sx = Math.round(r.x - VISTA.cx), w = 14 + Math.round(Math.sin(reloj * 3 + r.x) * 2);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, VW, wl); ctx.clip();
+  ente(PIEZA.rocaMar, 0.3, r.x, r.y, MAR - 12, 0);
+  ctx.restore();
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(sx - w, wl, 2 * w, 1);
+  ctx.fillStyle = '#bfeaff'; ctx.fillRect(sx - w - 4, wl + 1, 5, 1); ctx.fillRect(sx + w - 1, wl + 1, 5, 1);
+}
 function columna(c) {
   const n = NIV[c]; if (n.s < 0) return;
   const x = c * T - VISTA.cx, top = n.s * T;
@@ -136,11 +144,7 @@ function pintaDelante() {   // detalles del suelo, peces de delante, gotas, salp
   for (const g of gotas) ente(PILA_GOTA, 0, g.x, g.y, g.z, 4);
   for (const p of parts) { ctx.fillStyle = p.c; ctx.fillRect(Math.round(p.x - VISTA.cx), sy(p.y, p.z), 2, 2); }
   for (const a of DELANTE) if (NIV[a.c].s >= 0) ente(PIEZA.arbusto, a.giro, (a.c + 0.5) * T, D - 7, arribaSuelo(a.c), 0);
-  for (const r of ROCAS_MAR) if (cerca(r.x, 30)) {
-    ente(PIEZA.rocaMar, 0.3, r.x, r.y, MAR - 8, 0);
-    const w = 15 + Math.round(Math.sin(reloj * 3 + r.x) * 2);
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(Math.round(r.x - VISTA.cx) - w, sy(r.y, MAR), 2 * w, 1);
-  }
+  for (const r of ROCAS_MAR) if (cerca(r.x, 30)) pintaRocaMar(r);
   const wy = sy(D, MAR);
   if (wy >= VH) return;
   ctx.fillStyle = 'rgba(47,143,208,0.9)'; ctx.fillRect(0, wy, VW, VH - wy);

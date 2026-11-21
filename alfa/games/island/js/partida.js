@@ -1,43 +1,41 @@
-// Fans of Island · PARTIDA: el nivel en marcha. Quién juega (una persona con aliado de IA, o dos), el orden de cada fotograma,
-// la burbuja de rescate cuando uno se cae, el reinicio si caen los dos y la meta.
+// Fans of Island · LA PARTIDA: el estado de una vuelta al nivel (CrazyBunny, enemigos, zanahorias, peces, cangrejos, gaviotas…),
+// el marcador de vidas y zanahorias, perder una vida y el final (meta o sin vidas).
 'use strict';
-const IS_P = { mundo: null, jugadores: [], humanos: 1, estado: 'titulo', tiempo: 0, aviso: 0, avisoTexto: '', regadoAvisado: false, cosecha: 0, cosechaTotal: 0 };
-const IS_PERSONAJES = [{ id: 'bunny', nombre: 'CrazyBunny' }, { id: 'fox', nombre: 'SlyFox' }];
-function isNuevaPartida(humanos, nivel = 'pradera') {
-  IS_P.humanos = humanos; IS_ENTRADA.humanos = humanos;
-  IS_P.mundo = isCargaNivel(nivel);
-  const ini = IS_P.mundo.def.inicio;
-  IS_P.jugadores = [isPersonaje(IS_PERSONAJES[0], ini.x, ini.y), isPersonaje(IS_PERSONAJES[1], ini.x - 40, ini.y)];
-  IS_P.jugadores[0].companero = IS_P.jugadores[1]; IS_P.jugadores[1].companero = IS_P.jugadores[0];
-  IS_P.estado = 'juego'; IS_P.tiempo = 0; IS_P.aviso = 3; IS_P.avisoTexto = ''; IS_P.cosecha = 0; IS_P.cosechaTotal = IS_P.mundo.pequenas.length;
-  isEntradaSuelta(); isCamaraColoca(IS_P.mundo, IS_P.jugadores[0], IS_P.jugadores[1], IS_V.W); isMusica('animales');
+let J, enemigos, zanas, total, jugando = false, meta, reloj = 0;
+let cangrejos = [], peces = [], gotas = [], gaviotas = [], cocos = [], parts = [], tGav = 3;
+const cam = { x: 0, z: 0 };
+const GIRO_DER = -Math.PI / 2 + 0.5, GIRO_IZQ = Math.PI / 2 - 0.5;   // de perfil, un poco girado hacia nosotros
+function nueva() {
+  const x = (INICIO + 0.5) * T;
+  J = { x, y: CARRIL, z: arribaCol(INICIO), vx: 0, vz: 0, giro: GIRO_DER, mira: 1, vidas: 3, inv: 0, aterriza: 0, anda: 0,
+    flota: 0, coyote: 0, cortado: true, empuje: 0, salvo: { x, z: arribaCol(INICIO) } };
+  enemigos = ENEM0.map(c => ({ x: (c + 0.5) * T, y: CARRIL, z: arribaCol(c), vx: 0, vz: 0, mira: -1, giro: GIRO_IZQ,
+    t: Math.random(), estado: 'quieto', muerto: 0 }));
+  zanas = ZANAS0.map(z => ({ x: z.x, z: z.z, cogida: false }));
+  peces = PECES0.map((p, i) => ({ x: p.c * T, y: p.y, z: Z_OCULTO, estado: 'oculto', t: 0.4 + i * 0.5, mira: -1, giro: GIRO_IZQ }));
+  gotas = []; gaviotas = []; cocos = []; parts = []; tGav = 4;
+  cangrejos = CANG0.map(c => ({ x: (c + 0.5) * T, z: arribaCol(c), dir: c % 2 ? 1 : -1, t: Math.random(), muerto: 0 }));
+  meta = { x: (META + 0.5) * T, z: arribaCol(META) };
+  total = zanas.length;
+  cam.x = J.x - VW * 0.4; cam.z = 0;
+  actualizaHud();
 }
-function isPartidaActualiza(dt) {
-  if (IS_P.estado !== 'juego') return;
-  const m = IS_P.mundo, [a, b] = IS_P.jugadores;
-  IS_P.tiempo += dt; IS_P.aviso -= dt;
-  isNivelActualiza(m, dt); isBrotesActualiza(m, dt);
-  const inB = IS_P.humanos === 2 ? IS_IN[1] : isAliadoEntrada(b, a, m, dt);
-  isPersonajeActualiza(a, IS_IN[0], dt, m, b);
-  isPersonajeActualiza(b, inB, dt, m, a);
-  isZanahoriasActualiza(m, IS_P.jugadores, dt); isPequenasActualiza(m, IS_P.jugadores, dt); isInterruptoresActualiza(m, IS_P.jugadores, dt); isEnemigosActualiza(m, IS_P.jugadores, dt);
-  isRescate(a, b); isRescate(b, a);
-  isTironDeCuerda(a, b);
-  isCamaraSigue(m, a, b, IS_V.W, dt);
-  if ((a.estado === 'normal' && isSolapa(a, m.meta)) || (b.estado === 'normal' && isSolapa(b, m.meta))) isMetaAlcanzada();
+const cogidas = () => zanas.filter(z => z.cogida).length;
+const CORAZON = '<svg viewBox="0 0 7 6" shape-rendering="crispEdges"><path fill="#2a1830" d="M1 0h2v1h1V0h2v1h1v3H6v1H5v1H2V5H1V4H0V1h1z"/><path fill="COLOR" d="M1 1h2v1h1V1h2v2H5v1H4v1H3V4H2V3H1z"/><path fill="#fff6e0" d="M1 1h1v1H1z"/></svg>';
+function actualizaHud() {
+  document.getElementById('vidas').innerHTML = [0, 1, 2].map(i => CORAZON.replace('COLOR', i < J.vidas ? '#f04b53' : '#56101e')).join('');
+  document.getElementById('cuenta').textContent = cogidas() + '/' + total;
 }
-function isRescate(p, otro) {
-  if (p.estado === 'normal' && p.y > IS_C.abismo) {
-    if (otro.estado === 'normal' && otro.y <= IS_C.abismo) isABurbuja(p, otro);
-    else { isNuevaPartida(IS_P.humanos, IS_P.mundo.def.id); if (typeof toast === 'function') toast(tr('Os habéis caído los dos: otra vez desde el principio.')); }
-    return;
-  }
-  if (p.estado === 'burbuja' && otro.estado === 'normal') {
-    const toca = otro.x < p.x + p.w + 10 && otro.x + otro.w > p.x - 10 && otro.y < p.y + p.h + 10 && otro.y + otro.h > p.y - 10;
-    if (toca || p.burbujaT > IS_C.burbuja.tiempo) isRevienta(p, otro);
-  }
+function daño() {   // true si de verdad quita una vida (no está parpadeando)
+  if (J.inv > 0) return false;
+  J.vidas--; J.inv = 1.5; actualizaHud(); play('womp');
+  try { if (navigator.vibrate) navigator.vibrate(30); } catch (e) { /* sin vibración: se juega igual */ }
+  if (J.vidas <= 0) acaba(false);
+  return true;
 }
-function isMetaAlcanzada() {
-  IS_P.estado = 'fin'; isNivelSuperado(IS_P.mundo.def.id, IS_P.tiempo, IS_P.cosecha); isMusica('win'); isEntradaSuelta();
-  isAbreFin(IS_P.tiempo);
+function acaba(gana) {
+  jugando = false; musicSet(gana ? 'win' : 'lose');
+  document.getElementById('finTitulo').textContent = gana ? tr('Meta') : tr('Otra vez será');
+  document.getElementById('finTexto').textContent = tr('Zanahorias: {n} de {t}', { n: cogidas(), t: total });
+  document.getElementById('fin').classList.remove('oculto');
 }

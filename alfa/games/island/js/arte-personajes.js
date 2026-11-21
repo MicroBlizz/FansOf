@@ -1,216 +1,301 @@
-// Fans of Island · ARTE DE LOS PERSONAJES: CrazyBunny (con su cuerpo de conejo), SlyFox y los becarios, en píxel art con el pincel de la
-// serie (pixel.js) y contorno negro gordo (lona.js). Cada pose se dibuja una vez y se guarda; la animación va a tirones (IS_C.fps), como
-// plastelina movida a mano. Aquí están también la burbuja de rescate, la marca del poder sobre la cabeza y sus efectos.
+// Fans of Island · ARTE DE LOS PERSONAJES en lonchas: CrazyBunny (corona, ojo en espiral y capa), Brotito, el pez gordito que escupe,
+// la gota, la zanahoria y la bandera. Cada uno es una función (z, x, y) → color; las pilas se fabrican en TAREAS al cargar.
 'use strict';
-const IS_SPR = {};
-const ESPIRAL5 = ['.###.', '#...#', '#.##.', '#..#.', '.##..'];
-const IS_POSE = { f: 0, aire: false, flota: 0, br: false, oreja: -0.25, by: 0 };
+// ================= CrazyBunny =================
+const PC = { oscuro: '#8580b4', sombra: '#b7b3da', base: '#e9e7f7', luz: '#ffffff', rosa: '#f595be', rosaO: '#dc6a9e',
+  crema: '#f6e8cc', capa: '#f47c20', capaO: '#d2501a', capaL: '#ffa63d', ojo: '#2a1830', nariz: '#dc6a9e',
+  lila: '#9a3cff', blancoOjo: '#ffffff', oro: '#f9c531', oroO: '#dc9418', oroL: '#ffe56e', gema: '#f04b53',
+  boca: '#5a1530', colorete: '#ffb3cf' };
+const ESPIRAL = ['.###.', '#...#', '#.##.', '#..#.', '.##..'];
+const EC = 1.5;   // tamaño de CrazyBunny (unos dos bloques de alto)
+const pelo = z => z > 2 ? PC.luz : (z > -2 ? PC.base : (z > -5 ? PC.sombra : PC.oscuro));
+const C_W = Math.round(26 * EC), C_D = Math.round(26 * EC), C_H = Math.round(44 * EC), ccx = 13, ccy = 13;
+const POSE_C = {
+  reposo:   { paso: 0,  a: 0,    oreja: 0,   sx: 1,    sz: 1 },
+  paso1:    { paso: 1,  a: 0.15, oreja: 0.1, sx: 1,    sz: 0.97 },
+  paso2:    { paso: -1, a: 0.15, oreja: 0.1, sx: 1,    sz: 0.97 },
+  salto:    { paso: 0,  a: 1,    oreja: 1,   sx: 0.94, sz: 1.06 },
+  cae:      { paso: 0,  a: 0.55, oreja: 0.4, sx: 1,    sz: 1.02 },
+  flota:    { paso: 0,  a: 0.8,  oreja: -1,  sx: 1,    sz: 1 },
+  aterriza: { paso: 0,  a: 0.1,  oreja: 0.6, sx: 1.12, sz: 0.84 },
+  herido:   { paso: 0,  a: 1,    oreja: 1.3, sx: 1,    sz: 0.95 },
+};
+function conejoOrejas(pose) {
+  return (z, x, y) => {
+    for (const l of [-1, 1]) {
+      const base = [ccx + l * 2.2, ccy, 23];
+      const punta = pose.oreja < 0
+        ? [ccx + l * 9.5, ccy - 1, 25]                         // flotando: orejas abiertas como hélice
+        : [ccx + l * 3, ccy - 1 - pose.oreja * 4.5, 35 - pose.oreja * 1.5];
+      if (dist2Seg(x, y, z, base, punta) <= 2.6) return (y > ccy - 0.4 && pose.oreja >= 0) ? PC.rosa : pelo(z - 28);
+    }
+    return null;
+  };
+}
+function conejoCorona(z, x, y) {
+  const tz = z - 23.2; if (tz < 0 || tz > 6.5) return null;
+  const dx = x - (ccx + 0.6 + 0.22 * tz), dy = y - (ccy + 0.2), r = Math.hypot(dx, dy);   // torcida
+  if (tz <= 2) {
+    if (r > 4.3 || r < 2.6) return null;
+    if (dy > 3 && Math.abs(dx) < 1.2 && tz > 0.4 && tz < 1.8) return PC.gema;
+    return tz > 1.3 ? PC.oroL : PC.oro;
+  }
+  for (const a of [Math.PI / 2, Math.PI / 2 + 2.1, Math.PI / 2 - 2.1]) {
+    const w = 1.7 * (1 - (tz - 2) / 4.5);
+    if (w > 0 && (dx - Math.cos(a) * 3.5) ** 2 + (dy - Math.sin(a) * 3.5) ** 2 <= w * w + 0.3) return tz > 5 ? PC.oroL : PC.oro;
+  }
+  return null;
+}
+function conejoOjoLoco(dx, dz) {
+  const sx = dx - 2.5, sz = dz - 0.8, r2 = sx * sx + sz * sz;
+  if (r2 > 2.9 * 2.9) return null;
+  if (r2 > 2.3 * 2.3) return PC.ojo;
+  const i = Math.round(sx / 0.95 + 2), j = Math.round(-sz / 0.95 + 2);
+  return (ESPIRAL[j] && ESPIRAL[j][i] === '#') ? PC.lila : PC.blancoOjo;
+}
+function conejoCara(dx, dy, dz) {
+  if (dy <= 2.8) return null;
+  const loco = conejoOjoLoco(dx, dz); if (loco) return loco;
+  const ox = dx + 2.6, oz = dz - 0.2;
+  if (ox * ox + oz * oz <= 1.6) return (ox < -0.3 && oz > 0.3) ? PC.luz : PC.ojo;
+  if (Math.abs(dx) <= 0.7 && dz < -1.1 && dz > -2.4) return PC.nariz;
+  if (dz <= -2.6 && dz > -3.9 && Math.abs(dx) <= 1.7) return (Math.abs(dx) < 0.9 && dz > -3.2) ? PC.luz : PC.boca;
+  if (dz <= -1 && dz > -2.3 && Math.abs(Math.abs(dx) - 3.7) < 0.8) return PC.colorete;
+  if (dz <= -1 && dy > 4 && Math.abs(dx) <= 2.4) return PC.crema;
+  return null;
+}
+function conejoCabeza(z, x, y) {
+  const dx = x - ccx, dy = y - (ccy + 0.5), dz = z - 19;
+  if (!dentro(dx, dy, dz, 5.8, 5.4, 5)) return null;
+  return conejoCara(dx, dy, dz) || pelo(dz);
+}
+function conejoBrazos(pose) {
+  return (z, x, y) => {
+    for (const l of [-1, 1]) {
+      const hombro = [ccx + l * 4.8, ccy + 1, 12.5];
+      const mano = [ccx + l * mezcla(6.5, 6, pose.a), ccy + mezcla(2.5, 1, pose.a), mezcla(7, 21, pose.a)];
+      if (dist2Seg(x, y, z, hombro, mano) <= 3.2) return pelo(z - 12);
+    }
+    return null;
+  };
+}
+function conejoCapa(z, x, y) {
+  const dx = x - ccx, dy = y - ccy, dz = z - 8.5;
+  if (dy > -1 || z < 1.2 || z > 15.5) return null;
+  const abre = 1 + (15.5 - z) * 0.03;               // se abre hacia abajo
+  if (!dentro(dx, dy + 0.4, dz, 7.6 * abre, 7.2 * abre, 8.2) || dentro(dx, dy, dz, 6.4, 5.6, 6.6)) return null;
+  return z > 12 ? PC.capaL : (z < 5 ? PC.capaO : PC.capa);
+}
+function conejoCuerpo(z, x, y) {
+  const dx = x - ccx, dy = y - ccy, dz = z - 9;
+  if (!dentro(dx, dy, dz, 6.4, 5.6, 6.6)) return null;
+  if (dy > 2.5 && (dx / 3.8) ** 2 + ((dz + 0.5) / 4.5) ** 2 <= 1) return PC.crema;
+  return pelo(dz);
+}
+const conejoCola = (z, x, y) => dentro(x - ccx, y - (ccy - 6.8), z - 6, 2.4, 2.2, 2.2) ? PC.luz : null;
+function conejoPies(pose) {
+  return (z, x, y) => {
+    for (const l of [-1, 1]) {
+      const off = pose.paso * l * 2.5;
+      if (dentro(x - (ccx + l * 3.2), y - (ccy + 2 + off), z - 1.6, 2.6, 4, 1.9)) return z >= 2 ? PC.sombra : PC.oscuro;
+    }
+    return null;
+  };
+}
+function conejo(pose) {
+  const piezas = [conejoCorona, conejoOrejas(pose), conejoCabeza, conejoBrazos(pose), conejoCapa, conejoCuerpo, conejoCola, conejoPies(pose)];
+  return (z, x, y) => {
+    const zz = (z + 0.5) / EC / pose.sz, xx = ccx + ((x + 0.5) / EC - ccx) / pose.sx, yy = ccy + ((y + 0.5) / EC - ccy) / pose.sx;
+    for (const f of piezas) { const c = f(zz, xx, yy); if (c) return c; }
+    return null;
+  };
+}
+const PILAS_C = {};
+for (const n in POSE_C) TAREAS.push(() => { PILAS_C[n] = pila(C_W, C_D, C_H, conejo(POSE_C[n])); });
 
-/* ---------- CRAZYBUNNY (34 de alto hasta la coronilla; las orejas, por encima). Origen en los pies, mira a la derecha ----------
-   o: f = fase de la carrera (0 a 1), aire = en el aire (patas recogidas), flota = 1 o 2 (orejas aleteando), br = brazos arriba (lleva al
-   compañero), oreja = ángulo de la oreja de delante, by = cuerpo un píxel más abajo (respira) */
-function conejoIsla(p, o) {
-  const P = MAT, f = o.f, s = Math.sin(f * Math.PI * 2), c = Math.cos(f * Math.PI * 2), by = o.by || 0;
-  const pa = o.aire ? [-2, -5] : [3 * s, -2 - Math.max(0, -c) * 2], pb = o.aire ? [4, -3] : [-3 * s, -2 - Math.max(0, c) * 2];   // los pies
-  // oreja de atrás (doblada; al flotar, estirada) y cola, detrás de todo
-  if (o.flota) p.parte(F.ov(7 + (o.flota === 2 ? 3 : 0), -40, 2.6, 8, o.flota === 2 ? 1.2 : 0.9), P.peloF, { r: 2.4, sombra: 0 });
-  else p.parte(F.fun(1.5, F.tr(5, -34 + by, 8.5, -41 + by, 2.4, 2.2), F.tr(8.5, -41 + by, 13, -38 + by, 2.2, 1.6)), P.peloF, { r: 2.2, sombra: 0 });
-  p.parte(F.un(F.ov(-7.6, -11 + by, 2.9, 2.7), F.ov(-8.6, -12.6 + by, 1.9, 1.9)), P.pelo, { r: 2.8, sombra: 1 });
-  // pata y brazo de atrás
-  p.parte(F.ov(pb[0] - 3, pb[1], 4.6, 2.3), P.peloF, { r: 2.2, sombra: 1 });
-  p.parte(F.ov(-2.5, -6.5 + by, 3.2, 3.4), P.peloF, { r: 3, sombra: 1 });
-  p.parte(F.tr(-3, -18 + by, -6.5, (o.br ? -24 : -12) + by, 2), P.peloF, { r: 1.8, sombra: 0 });
-  // el cuerpo y la barriga
-  p.parte(F.ov(0, -14 + by, 7.2, 8), P.pelo, { r: 6, sombra: 2 });
-  p.parte(F.ov(1.6, -13 + by, 4.2, 5.2), P.crema, { r: 4, linea: false, sombra: 0 });
-  // pata de delante
-  p.parte(F.ov(2, -6 + by, 3.4, 3.6), P.pelo, { r: 3, sombra: 1 });
-  p.parte(F.ov(pa[0] + 3, pa[1], 5, 2.4), P.pelo, { r: 2.3, sombra: 1 });
-  p.tonoPx(pa[0] + 6, pa[1] + 0.5, -1); p.tonoPx(pa[0] + 4, pa[1] + 1, -1);
-  // la cabeza con el hocico
-  const hy = -27 + by, craneo = F.ov(2, hy, 8, 7.4), cabeza = F.fun(2.5, craneo, F.ov(8.8, hy + 2.4, 3.8, 3.2));
-  p.parte(cabeza, P.pelo, { r: 6.5, sombra: 2 });
-  // la oreja de delante, larga, con el rosa de dentro
-  const a = o.oreja, ex = -1 + Math.sin(a) * 9, ey = hy - 7 - Math.cos(a) * 9;
-  p.parte(F.ov(ex, ey, 2.9, 8.6, a), P.pelo, { r: 2.8, sombra: 2 });
-  p.parte(F.ov(ex + Math.cos(a) * 0.5, ey + Math.sin(a) * 0.5 + 0.8, 1.2, 6, a), P.rosa, { r: 1.2, linea: false, sombra: 0 });
-  // la corona torcida: tres puntas, su banda y la piedra roja
-  const cx = 3.5, cy = hy - 6.4, ac = -0.25, K = g => F.gira(F.mueve(g, cx, cy), ac, cx, cy), kp = (x, y) => giraP(cx + x, cy + y, ac, cx, cy);
-  p.parte(K(F.pol(-4.5, 1, 4.5, 1, 5, -4.6, 2.2, -2.2, 0, -6, -2.2, -2.2, -5, -4.6)), P.oro, { r: 2, sombra: 1 });
-  for (const [x, y] of [[-4.5, -4], [0, -5], [4.5, -4]]) { const [u, v] = kp(x, y); p.pxm(u, v, P.oro, 5); }
-  { const [x, y] = kp(0, -1.6); p.pxm(x, y, P.rojo, 4); p.pxm(x + 1, y + 0.4, P.rojo, 2); }
-  // la cara: el ojo loco en espiral, el otro ojo junto al hocico, nariz, boca con dientes y colorete
-  const T = P.pelo.c[0];
-  p.plano(F.ov(1.5, hy - 0.6, 3.4, 3.6), T); p.plano(F.ov(1.5, hy - 0.6, 2.6, 2.8), '#ffffff');
-  ESPIRAL5.forEach((fila, j) => { for (let i = 0; i < 5; i++) if (fila[i] === '#') p.px(1.5 + i - 2, hy - 0.6 + j - 2, '#8a2bff'); });
-  p.plano(F.ov(8.4, hy - 1.6, 1.4, 2), T); p.px(8.4, hy - 2.2, '#ffffff');
-  p.px(12.2, hy + 1.4, '#ff6f9f'); p.px(11.4, hy + 1.2, '#ffa9c6');
-  p.plano(F.menos(F.ov(8.6, hy + 5.4, 3, 2.4), F.rr(-30, -60, 60, 60 + hy + 5.4, 0)), '#5a1530');
-  p.px(8, hy + 5.8, '#ffffff'); p.px(9, hy + 5.8, '#ffffff'); p.px(7.4, hy + 6.8, '#ff7aa8');
-  p.px(1.5, hy + 4, '#ffb3cf'); p.px(2.5, hy + 4, '#ffd3e2');
-  // el brazo de delante (arriba si lleva al compañero) con la zanahoria de la casa
-  const mx = o.br ? 7 : 8.6, my = (o.br ? -23 : -13) + by;
-  p.parte(F.tr(3, -17.4 + by, mx, my, 2.1, 1.9), P.pelo, { r: 1.9, sombra: 1 });
-  if (!o.br) {
-    p.parte(F.tr(mx + 0.5, my - 0.6, mx + 4.5, my - 7, 2, 1), P.capa, { r: 1.8, sombra: 1 });
-    p.parte(F.tr(mx + 4.4, my - 7.2, mx + 3, my - 11, 1, 0.6), P.hoja, { r: 1, sombra: 0 });
-    p.parte(F.tr(mx + 4.8, my - 7.2, mx + 7, my - 10.6, 1, 0.6), P.hoja, { r: 1, sombra: 0 });
+// ================= Brotito (enemigo): bola turquesa con cuernitos coral y un brote =================
+const BROTO = (() => {
+  const W = 40, D = 40, H = 38, cx = 19.5, cy = 19.5, SUELO_CUERPO = 4;
+  const P = { cuerpoClaro: '#7fe6d4', cuerpo: '#35b3a3', cuerpoOscuro: '#1f7a74', tripa: '#fff1cf', tripaOscura: '#e8cf9c',
+    ojo: '#1b1626', brillo: '#ffffff', boca: '#5a2233', cuerno: '#ff8f6b', cuernoPunta: '#c9503a',
+    hoja: '#8fdc4a', hojaOscura: '#4f9e2a', tallo: '#5aa832', pie: '#245c7a', pieClaro: '#3a7fa3' };
+  const tono = (dz, claro, medio, oscuro) => dz > 5 ? claro : (dz < -5 ? oscuro : medio);
+  const POSTURAS = {
+    reposo:   { sx: 1.00, sz: 1.00, a: 0.0 }, agachado: { sx: 1.12, sz: 0.82, a: 0.0 }, despegue: { sx: 0.92, sz: 1.12, a: 0.6 },
+    arriba:   { sx: 1.00, sz: 1.04, a: 1.0 }, cayendo:  { sx: 0.97, sz: 1.06, a: 0.5 }, aterriza: { sx: 1.15, sz: 0.80, a: 0.1 },
+  };
+  function cuernos(pose, zc) {
+    return (z, x, y) => {
+      const base = zc + 8 * pose.sz, alto = 7;
+      if (z < base || z > base + alto) return null;
+      const r = 3.2 * (1 - (z - base) / alto) + 0.8;
+      for (const lado of [-1, 1]) {
+        const dx = x - (cx + lado * 6.5 * pose.sx), dy = y - (cy - 1);
+        if (dx * dx + dy * dy <= r * r) return z > base + alto - 3 ? P.cuernoPunta : P.cuerno;
+      }
+      return null;
+    };
   }
-  p.parte(F.ov(mx, my, 2.3, 2.3), P.pelo, { r: 2.2, sombra: 1 });
+  function brote(pose, zc) {
+    return (z, x, y) => {
+      const arranque = Math.round(zc + 10 * pose.sz), copa = arranque + 4;
+      const dxT = x - cx, dyT = y - (cy + 1);
+      if (z >= arranque && z <= copa && dxT * dxT + dyT * dyT <= 1.3) return P.tallo;
+      if (z >= copa - 0.5 && z < copa + 1.5) {
+        for (const lado of [-1, 1]) {
+          const dx = x - (cx + lado * 3.6), dy = y - (cy + 1);
+          if ((dx / 4) ** 2 + (dy / 2.2) ** 2 <= 1) return z >= copa + 0.5 ? P.hoja : P.hojaOscura;
+        }
+      }
+      return null;
+    };
+  }
+  function pies(pose) {
+    return (z, x, y) => {
+      for (const lado of [-1, 1]) if (dentro(x - (cx + lado * 6.5 * pose.sx), y - (cy + 5), z - 2, 4.2, 5.2, 2.8)) return z >= 3 ? P.pieClaro : P.pie;
+      return null;
+    };
+  }
+  function brazos(pose, rx, rz, zc) {
+    return (z, x, y) => {
+      for (const lado of [-1, 1]) {
+        const hombro = [cx + lado * (rx - 3), cy + 3, zc + 1];
+        const mano = [cx + lado * mezcla(rx + 1.5, rx + 0.5, pose.a), cy + mezcla(3, 4, pose.a), mezcla(zc - 5, zc + rz + 2, pose.a)];
+        if (dist2Seg(x, y, z, hombro, mano) <= 2.6 * 2.6) return tono(z - zc + 4, P.cuerpoClaro, P.cuerpo, P.cuerpoOscuro);
+      }
+      return null;
+    };
+  }
+  function cara(pose, dx, dy, dz) {
+    if (dy < 7 * pose.sx) return null;
+    const ez0 = Math.round(dz / pose.sz);
+    for (const lado of [-1, 1]) {
+      const ex = dx - lado * 5.5 * pose.sx, ez = ez0 - 3;
+      if (ex * ex + ez * ez <= 7.5) return (ez === 1 && Math.abs(ex + 1.5) < 0.6) ? P.brillo : P.ojo;
+    }
+    if (ez0 === -1 && Math.abs(dx) <= 1.5) return P.boca;
+    return null;
+  }
+  function cuerpo(pose, rx, ry, rz, zc) {
+    return (z, x, y) => {
+      const dx = x - cx, dy = y - cy, dz = z - zc;
+      if (!dentro(dx, dy, dz, rx, ry, rz)) return null;
+      const c = cara(pose, dx, dy, dz);
+      if (c) return c;
+      if (dy > 5 && (dx / (8.5 * pose.sx)) ** 2 + ((dz / pose.sz + 3) / 6.5) ** 2 <= 1) return dz < -5 ? P.tripaOscura : P.tripa;
+      return tono(dz / pose.sz, P.cuerpoClaro, P.cuerpo, P.cuerpoOscuro);
+    };
+  }
+  function modelo(pose) {
+    const rx = 15.5 * pose.sx, ry = 14.5 * pose.sx, rz = 11 * pose.sz, zc = SUELO_CUERPO + rz;
+    const cola = (z, x, y) => dentro(x - cx, y - (cy - ry - 0.5), z - (zc - 4 * pose.sz), 3.6, 3.6, 3.2)
+      ? (z > zc - 4 * pose.sz ? P.cuerpoClaro : P.cuerpo) : null;
+    const PIEZAS = [cuernos(pose, zc), brote(pose, zc), brazos(pose, rx, rz, zc), cuerpo(pose, rx, ry, rz, zc), cola, pies(pose)];
+    return (z, x, y) => {
+      for (const f of PIEZAS) { const c = f(z, x + 0.5, y + 0.5); if (c) return c; }
+      return null;
+    };
+  }
+  return { modelo, POSTURAS, W, D, H };
+})();
+const EB = 0.85, B_W = Math.round(BROTO.W * EB), B_D = Math.round(BROTO.D * EB), B_H = Math.round(BROTO.H * EB);
+const PILAS_B = {};
+for (const n in BROTO.POSTURAS) {
+  const m = BROTO.modelo(BROTO.POSTURAS[n]);
+  TAREAS.push(() => { PILAS_B[n] = pila(B_W, B_D, B_H, (z, x, y) => m((z + 0.5) / EB - 0.5, (x + 0.5) / EB - 0.5, (y + 0.5) / EB - 0.5)); });
 }
 
-/* ---------- SLYFOX: naranja, barriga crema, cola gorda con la punta blanca, orejas de pico y la capa morada de la serie ---------- */
-function zorroIsla(p, o) {
-  const P = MAT, f = o.f, s = Math.sin(f * Math.PI * 2), c = Math.cos(f * Math.PI * 2), by = o.by || 0;
-  const pa = o.aire ? [-2, -5] : [3 * s, -2 - Math.max(0, -c) * 2], pb = o.aire ? [4, -3] : [-3 * s, -2 - Math.max(0, c) * 2];
-  // la cola, detrás: gorda, hacia arriba (al correr, bailando)
-  const tx = -11 - c * 1.5, ty = -14 + by - (o.aire ? 6 : 0);
-  p.parte(F.fun(2.5, F.ov(-7, -11 + by, 4, 3.6), F.ov(tx - 4, ty - 2, 5.4, 4.4, -0.5), F.ov(tx - 9, ty - 6, 4, 3.6, -0.6)), P.zorro, { r: 4, sombra: 1 });
-  p.parte(F.ov(tx - 10, ty - 7, 2.6, 2.4), P.crema, { r: 2.4, linea: false, sombra: 0 });
-  // la capa: una cinta morada que cae por la espalda (al aire, vuela)
-  const vuela = o.aire ? 1 : 0;
-  p.parte(F.cinta([[-2, -22 + by], [-7 - vuela * 4, -17 + by + vuela * 2], [-10 - vuela * 7, -10 + by + vuela * 4]], [2, 3.4, 4.2], 2, 1.6), P.morado, { r: 2.4, sombra: 0 });
-  // pata y brazo de atrás
-  p.parte(F.ov(pb[0] - 2.5, pb[1], 3.8, 2.2), P.zorroF, { r: 2, sombra: 1 });
-  p.parte(F.ov(-2.5, -6.5 + by, 3, 3.2), P.zorroF, { r: 2.8, sombra: 1 });
-  p.parte(F.tr(-3, -18 + by, -6.5, (o.br ? -24 : -12) + by, 1.9), P.zorroF, { r: 1.8, sombra: 0 });
-  // cuerpo, barriga crema y el nudo de la capa
-  p.parte(F.ov(0, -14 + by, 6.8, 8), P.zorro, { r: 6, sombra: 2 });
-  p.parte(F.ov(1.6, -13 + by, 4, 5.2), P.crema, { r: 4, linea: false, sombra: 0 });
-  p.parte(F.ov(1, -21.4 + by, 4.4, 1.8), P.morado, { r: 1.6, sombra: 1 });
-  // pata de delante (la pata de zorro es más corta que la de conejo)
-  p.parte(F.ov(2, -6 + by, 3.2, 3.4), P.zorro, { r: 2.8, sombra: 1 });
-  p.parte(F.ov(pa[0] + 2.5, pa[1], 4, 2.2), P.zorro, { r: 2, sombra: 1 });
-  // cabeza con el hocico largo y la punta blanca
-  const hy = -27 + by, craneo = F.ov(2, hy, 8, 7), cabeza = F.fun(2.5, craneo, F.ov(9.4, hy + 2.6, 4.4, 2.8));
-  p.parte(cabeza, P.zorro, { r: 6.5, sombra: 2 });
-  p.parte(F.ov(10.2, hy + 2.8, 2.6, 2), P.crema, { r: 2, linea: false, sombra: 0 });
-  p.px(12.6, hy + 2, P.zorro.c[0]); p.px(12.6, hy + 3, P.zorro.c[0]);
-  // la pelusa de la mejilla y las orejas de pico con la punta oscura (al flotar, de punta)
-  p.parte(F.pol(-6, hy + 1, -9.5, hy + 4, -5, hy + 5), P.crema, { r: 1.5, linea: false, sombra: 0 });
-  const ea = o.flota ? (o.flota === 2 ? 2 : -2) : 0;
-  for (const [bx, px, tipo] of [[-3, -6 + ea, P.zorroF], [5, 10 - ea, P.zorro]]) {
-    p.parte(F.pol(bx - 3, hy - 5, px, hy - 15, bx + 4, hy - 5.5), tipo, { r: 2, sombra: 1 });
-    p.parte(F.pol(bx - 0.5, hy - 9, px, hy - 14.5, bx + 2, hy - 9.5), P.zorroF, { r: 1, linea: false, sombra: 0 });
+// ================= Zanahoria y bandera =================
+const PILA_ZANA = pila(16, 16, 24, (z, x, y) => {
+  const dx = x + 0.5 - 8, dy = y + 0.5 - 8;
+  if (z < 16) {
+    const r = 1 + z * 0.42; if (dx * dx + dy * dy > r * r) return null;
+    if (z > 12) return '#ffa63d';
+    if (z % 4 === 1) return '#d2501a';
+    return (dx < -r * 0.4) ? '#ffa63d' : '#f47c20';
   }
-  // la cara: ojos de listillo (párpados a medias), con el brillo, y la sonrisa de lado
-  const T = P.zorro.c[0];
-  for (const ex of [1.5, 7.5]) { p.plano(F.ov(ex, hy - 0.8, 2.6, 2.6), T); p.plano(F.ov(ex, hy - 0.8, 1.8, 1.8), '#ffffff'); p.px(ex + 0.6, hy - 0.4, T); p.raya(ex - 2.6, hy - 2.6, ex + 2.6, hy - 2.6, T); p.raya(ex - 2.6, hy - 2.6, ex - 2.6, hy - 1.6, T); }
-  p.raya(7, hy + 5.2, 10.6, hy + 4.4, T); p.px(10.6, hy + 3.4, T);
-  // el brazo de delante
-  const mx = o.br ? 7 : 8.6, my = (o.br ? -23 : -13) + by;
-  p.parte(F.tr(3, -17.4 + by, mx, my, 2, 1.8), P.zorro, { r: 1.8, sombra: 1 });
-  p.parte(F.ov(mx, my, 2.1, 2.1), P.zorro, { r: 2, sombra: 1 });
-}
+  for (const a of [0, 2.1, 4.2]) {
+    const lx = Math.cos(a) * (z - 15) * 0.7, ly = Math.sin(a) * (z - 15) * 0.7;
+    if ((dx - lx) ** 2 + (dy - ly) ** 2 <= 2.4) return z > 20 ? '#8cdc64' : '#52b846';
+  }
+  return null;
+});
+const PILA_BANDERA = pila(28, 12, 70, (z, x, y) => {
+  const px = x + 0.5 - 5, py = y + 0.5 - 6;
+  if (px * px + py * py <= 2.6) return z > 66 ? '#f9c531' : (px < 0 ? '#a0683a' : '#d8a070');
+  if (z >= 45 && z <= 63 && x >= 7 && x <= 26) {
+    const ola = Math.sin(x * 0.45) * 1.6;
+    if (Math.abs(py - ola) <= 0.9) return ((x >> 2) + (z >> 2)) % 2 ? '#f04b53' : '#fff6e0';
+  }
+  return null;
+});
 
-/* ---------- el becario de Microblizz (el de Fans of Recruit, a escala): caja con pantalla, tarjeta, antena y café ---------- */
-function becarioIsla(p, o) {
-  const P = MAT, d = o.dy || 0, U = f => F.mueve(f, 0, d);
-  for (const [x, l] of [[4, o.la], [-3.4, o.lb]]) {
-    p.parte(F.tr(x, -8 + d, x + l, -2.4, 1.7), P.robotO, { r: 1.5, sombra: 0 });
-    p.parte(F.fun(1, F.ov(x + l + 1.2, -1.9, 3.3, 2.1), F.ov(x + l - 0.6, -2.6, 2, 1.6)), P.robot, { r: 2, sombra: 1 });
-  }
-  p.parte(U(F.rr(-12, -31, 20, 24, 4.5)), P.robotO, { r: 3, sombra: 0 });
-  const idF = p.parte(U(F.rr(-8.5, -31, 20, 24, 4.5)), P.robot, { r: 3.5, sombra: 2 });
-  p.tono(U(F.rr(-6.5, -29.4, 16, 1.6, 0.6)), 1, idF);
-  p.parte(U(F.rr(-5.6, -27, 14.4, 10, 2.4)), P.pantalla, { r: 2.5, sombra: 0 });
-  const E = '#e8f1ff', ey = -22.4 + d;
-  if (o.cara === 'x') for (const cx of [-2.2, 5]) for (let k = -1; k <= 1; k++) { p.px(cx + k, ey + k, E); p.px(cx + k, ey - k, E); }
-  else for (const cx of [-2.2, 5]) p.plano(U(F.ov(cx + 0.5, -22.4, 1.8, 2.2)), E);
-  p.raya(0.5, -19 + d, 3.5, -19 + d, E);
-  p.raya(-4.5, -14.6 + d, 0.8, -10.6 + d, P.rojo.c[3]); p.raya(7.6, -14.6 + d, 2.4, -10.6 + d, P.rojo.c[2]);
-  p.parte(U(F.rr(-1.4, -11.4, 6, 5.6, 0.8)), P.blanco, { r: 1, sombra: 1 });
-  p.raya(-0.4, -10.2 + d, 3.2, -10.2 + d, P.pantalla.c[3]);
-  p.raya(1, -31 + d, 1 + o.ant, -36 + d, P.robotO.c[0]);
-  p.parte(F.ov(1.4 + o.ant, -37.6 + d, 2.3, 2.3), P.rojo, { r: 2.3, sombra: 0 });
-  const tx = -13.5, ty = -12 + d;
-  p.parte(F.tr(-10.6, -19 + d, tx, ty - 0.4, 1.8), P.robotO, { r: 1.5, sombra: 1 });
-  p.parte(F.menos(F.ov(tx - 5.4, ty - 2.2, 2.4, 2.4), F.ov(tx - 5.4, ty - 2.2, 1, 1)), P.blanco, { r: 1, sombra: 0 });
-  p.parte(F.rr(tx - 5.6, ty - 5.4, 6.6, 6.8, 1.2), P.blanco, { r: 2, sombra: 1 });
-  p.raya(tx - 4.4, ty - 4.8, tx - 0.4, ty - 4.8, '#6b3a1c');
-  p.parte(F.ov(tx - 0.4, ty - 0.6, 2.4, 2.4), P.robot, { r: 2, sombra: 1 });
-  p.parte(F.tr(9.5, -18.6 + d, 14, -12 + d, 1.8), P.robotO, { r: 1.5, sombra: 0 });
-  p.parte(F.ov(14.4, -11.6 + d, 2.5, 2.5), P.robot, { r: 2, sombra: 1 });
+// ================= Pez gordito: se asoma del agua y escupe =================
+const PEZ_P = { claro: '#ffb38a', base: '#ff7a59', oscuro: '#c84a3a', tripa: '#fff1cf', tripaO: '#f2d6a0',
+  aleta: '#ffd23f', aletaO: '#e09a1a', ojo: '#1b1626', brillo: '#ffffff', boca: '#5a1530', labio: '#ff9fb0', labioO: '#e8788f', mancha: '#ffd6c2' };
+const POSE_PEZ = { cerrada: { boca: 0, s: 1, aleta: 0 }, abierta: { boca: 1, s: 1.1, aleta: 1 }, golpe: { boca: 0.4, s: 0.9, aleta: -1 } };
+const PEZ_C = { cx: 18, cy: 21, zc: 14 };
+function pezOjos(s) {
+  const { cx, cy, zc } = PEZ_C;
+  return (z, x, y) => {
+    for (const l of [-1, 1]) {
+      const dx = x - (cx + l * 7 * s), dy = y - (cy + 8), dz = z - (zc + 5);
+      if (dx * dx + dy * dy + dz * dz > 3.7 * 3.7) continue;
+      if (dy > 1.6 && Math.abs(dz) < 1.9 && Math.abs(dx) < 2.2) return (dz > 0.7 && dx * l > 0.3) ? PEZ_P.brillo : PEZ_P.ojo;
+      return PEZ_P.brillo;
+    }
+    return null;
+  };
 }
-
-/* ---------- las poses de cada uno, dibujadas una vez ---------- */
-function isFoto(dibuja, o, t) { const p = new Pincel(48, 56, 22, 54, t); dibuja(p, Object.assign({}, IS_POSE, o)); return contornoNegro(p.lienzo()); }
-function isPosesDe(dibuja) {
-  const S = {};
-  const juego = (br) => ({
-    quieto: [isFoto(dibuja, { br }), isFoto(dibuja, { br, by: 1 })],
-    corre: [0, 0.25, 0.5, 0.75].map(f => isFoto(dibuja, { f, br })),
-    aire: [isFoto(dibuja, { aire: true, br, oreja: -0.6 })],
-    flota: [isFoto(dibuja, { aire: true, br, oreja: -1.25, flota: 1 }), isFoto(dibuja, { aire: true, br, oreja: -0.95, flota: 2 })],
-  });
-  S.normal = juego(false); S.lleva = juego(true);
-  return S;
+function pezLabios(pose) {
+  const { cx, cy, zc } = PEZ_C;
+  return (z, x, y) => {
+    if (!dentro(x - cx, y - (cy + 13.5), z - (zc - 1), 4.6 * pose.s, 3, 3.6)) return null;
+    if (pose.boca > 0 && dentro(x - cx, y - (cy + 15), z - (zc - 1), 2.8 * pose.boca, 3, 2.2 * pose.boca)) return PEZ_P.boca;
+    return z > zc - 1 ? PEZ_P.labio : PEZ_P.labioO;
+  };
 }
-function isSprites() {
-  if (IS_SPR.bunny) return IS_SPR;
-  IS_SPR.bunny = isPosesDe(conejoIsla); IS_SPR.fox = isPosesDe(zorroIsla);
-  const bec = (o) => { const p = new Pincel(34, 32, 16, 30, { sx: 0.62, sy: 0.62 }); becarioIsla(p, Object.assign({ la: 0, lb: 0, ant: 0, cara: '' }, o)); return contornoNegro(p.lienzo()); };
-  IS_SPR.becario = { anda: [bec({ la: 2, lb: -2, ant: -1 }), bec({ la: -2, lb: 2, ant: 1 })], x: bec({ cara: 'x', dy: 2 }) };
-  return IS_SPR;
+function pezAletas(pose) {
+  const { cx, cy, zc } = PEZ_C;
+  return (z, x, y) => {
+    for (const l of [-1, 1]) if (dentro(x - (cx + l * 13 * pose.s), y - (cy + 1), z - (zc - 4 + pose.aleta * 2), 3.2, 4.5, 1.7)) return z > zc - 4 + pose.aleta * 2 ? PEZ_P.aleta : PEZ_P.aletaO;
+    return null;
+  };
 }
-// qué fotograma le toca al personaje ahora mismo (a IS_C.fps, a tirones)
-function isFotogramaDe(p, t) {
-  const S = isSprites()[p.def.id], J = p.lleva ? S.lleva : S.normal, k = Math.floor(t * IS_C.fps);
-  if (p.estado === 'burbuja') return J.quieto[0];
-  if (p.flotando) return J.flota[k % 2];
-  if (!p.suelo) return J.aire[0];
-  if (Math.abs(p.vx) > 20) return J.corre[Math.floor(p.anim.t * IS_C.fps) % 4];
-  return J.quieto[Math.floor(t * 1.6) % 2];
+function pezDorsal(s) {
+  const { cx, cy, zc } = PEZ_C;
+  return (z, x, y) => {
+    const dy = y - cy; if (Math.abs(x - cx) > 1.5 || dy < -7 || dy > 5) return null;
+    const b = zc + 9 * s, h = 6 - (dy + 7) * 0.35;
+    if (z < b || z > b + h) return null;
+    return z > b + h - 1.2 ? PEZ_P.aletaO : PEZ_P.aleta;
+  };
 }
-
-/* ---------- pintar ---------- */
-function isPintaPersonaje(c, p, camX, t, etiqueta) {
-  const s = isFotogramaDe(p, t), cx = Math.round(p.x + p.w / 2 - camX), py = Math.round(p.y + p.h);
-  const sq = p.anim.squash, parpadea = p.invulnerable > 0 && Math.floor(t * 14) % 2;
-  if (parpadea) c.globalAlpha = 0.45;
-  if (p.estado === 'burbuja') c.globalAlpha = 0.9;
-  if (Math.abs(sq) > 0.06) {   // squash al saltar y aterrizar: se estira o se aplasta desde los pies
-    c.save(); c.translate(cx, py); c.scale(1 - sq * 0.5, 1 + sq); pintaSpr(c, s, 0, 0, p.mira < 0); c.restore();
-  } else pintaSpr(c, s, cx, py, p.mira < 0);
-  c.globalAlpha = 1;
-  if (p.estado === 'burbuja') isPintaBurbuja(c, cx, Math.round(p.y + p.h / 2), t);
-  if (p.poder && p.estado === 'normal') isPintaPoder(c, p, camX, t);
-  if (etiqueta) escribe(c, etiqueta, cx, p.y - 14, { fuente: 'mini', alin: 'centro', c: '#ffffff' });
+function pezCola(z, x, y) {
+  const { cx, cy, zc } = PEZ_C;
+  const dy = y - cy; if (dy > -11 || dy < -20 || Math.abs(x - cx) > 1.7) return null;
+  const u = -dy - 11, med = 2 + u * 0.95, dz = Math.abs(z - zc);
+  if (dz > med || (u > 6 && dz < u * 0.35 - 1.5)) return null;
+  return dz > med - 1.5 ? PEZ_P.aletaO : PEZ_P.aleta;
 }
-function isPintaEnemigo(c, e, camX, t) {
-  if (!e.vivo) return;
-  const S = isSprites().becario, s = e.suelo ? S.anda[Math.floor(e.anim * IS_C.fps * 0.8) % 2] : S.anda[0];
-  pintaSpr(c, s, Math.round(e.x + e.w / 2 - camX), Math.round(e.y + e.h), e.mira < 0);
+function pezCuerpo(s) {
+  const { cx, cy, zc } = PEZ_C;
+  return (z, x, y) => {
+    const dx = x - cx, dy = y - cy, dz = z - zc;
+    if (!dentro(dx, dy, dz, 12 * s, 13.5, 11 * s)) return null;
+    if (dy > -3 && dz < -3) return dz < -7 ? PEZ_P.tripaO : PEZ_P.tripa;
+    if (dz > 2 && ruido(Math.floor(x / 3), Math.floor(y / 3), Math.floor(z / 3)) < 0.13) return PEZ_P.mancha;
+    return dz > 5 ? PEZ_P.claro : (dz < -4 ? PEZ_P.oscuro : PEZ_P.base);
+  };
 }
-function isPintaBurbuja(c, x, y, t) {
-  const r = 23 + Math.round(Math.sin(t * 3));
-  c.globalAlpha = 0.35; circuloPx(c, x, y, r, '#dff3ff'); c.globalAlpha = 1;
-  anilloPx(c, x, y, r, 1, MAT.hilo.c[3]);
-  c.fillStyle = '#ffffff'; for (let k = 0; k < 5; k++) c.fillRect(x - r + 6 + k, y - r + 9 - Math.round(k * 0.9), 1, 1);   // el brillo
+function pez(pose) {
+  const piezas = [pezOjos(pose.s), pezLabios(pose), pezAletas(pose), pezDorsal(pose.s), pezCola, pezCuerpo(pose.s)];
+  return (z, x, y) => { for (const f of piezas) { const c = f(z + 0.5, x + 0.5, y + 0.5); if (c) return c; } return null; };
 }
-// la zanahoria pequeña del color del poder, sobre la cabeza, con la barra del tiempo que queda; y los efectos de cada poder
-const IS_ICONO_PODER = {};
-function isIconoPoder(z) {
-  if (IS_ICONO_PODER[z]) return IS_ICONO_PODER[z];
-  const M = MAT['z' + z[0].toUpperCase() + z.slice(1)] || MAT.capa, p = new Pincel(10, 12, 5, 11);
-  p.parte(F.tr(0, -2, 0, -7, 2, 1), M, { r: 1.5, sombra: 0 });
-  p.parte(F.tr(-0.4, -7.4, -2, -10, 1, 0.5), MAT.hoja, { r: 1, sombra: 0 }); p.parte(F.tr(0.6, -7.4, 2.2, -10, 1, 0.5), MAT.hoja, { r: 1, sombra: 0 });
-  return (IS_ICONO_PODER[z] = contornoNegro(p.lienzo()));
-}
-function isPintaPoder(c, p, camX, t) {
-  const Z = IS_ZANAHORIAS[p.poder.zanahoria], x = Math.round(p.x + p.w / 2 - camX), y = Math.round(p.y) - 18, k = p.poder.resto / p.poder.total;
-  pintaSpr(c, isIconoPoder(p.poder.zanahoria), x, y);
-  c.fillStyle = '#1a1410'; c.fillRect(x - 7, y + 2, 14, 3); c.fillStyle = Z.color; c.fillRect(x - 6, y + 3, Math.round(12 * k), 1);
-  if (p.poder.tipo === 'iman' && p.anim.iman > 0.05 && p.companero) {   // chispas de imán hacia el compañero
-    const cx2 = isCentro(p.companero).x - camX, cy2 = isCentro(p.companero).y, n = 7;
-    for (let i = 0; i < n; i++) { const u = ((t * 1.5 + i / n) % 1); c.fillStyle = i % 2 ? Z.color : '#ffffff'; c.fillRect(Math.round(x + (cx2 - x) * u), Math.round(y + 18 + (cy2 - y - 18) * u), 2, 2); }
-  }
-  if (p.poder.tipo === 'escudo') { const g = Math.floor(t * 6) % 2; anilloPx(c, x, Math.round(p.y + p.h / 2) - 4, 22 + g, 1, g ? Z.color : '#fff1b5'); }
-  if (p.poder.tipo === 'agua' && p.anim.agua > 0.05) {   // el chorro: gotas en arco por delante
-    for (let i = 0; i < 9; i++) { const u = ((t * 2.2 + i * 0.11) % 1), gx = x + p.mira * (6 + u * IS_PODER_C.agua.alcance), gy = p.y + 11 - Math.sin(u * Math.PI) * 16 + u * u * 18; c.fillStyle = i % 3 ? '#9fd4ff' : '#ffffff'; c.fillRect(Math.round(gx), Math.round(gy), 2, 2); }
-  }
-  if (p.poder.tipo === 'fuego') for (let i = 0; i < 3; i++) {   // chispas en las orejas
-    const fx = x + p.mira * (i - 1) * 5, fy = p.y - 20 - ((t * 60 + i * 11) % 14);
-    c.fillStyle = i % 2 ? '#ffb13b' : '#ff6a2a'; c.fillRect(Math.round(fx), Math.round(fy), 2, 2);
-  }
-}
+const PILAS_PEZ = {};
+for (const n in POSE_PEZ) TAREAS.push(() => { PILAS_PEZ[n] = pila(36, 40, 31, pez(POSE_PEZ[n])); });
+const PILA_GOTA = pila(10, 10, 8, (z, x, y) => {
+  const dx = x + 0.5 - 5, dy = y + 0.5 - 5, dz = z + 0.5 - 4;
+  if (!dentro(dx, dy, dz, 4.6, 4.6, 3.6)) return null;
+  return (dz > 1.2 && dx < -0.5) ? '#ffffff' : (dz > -0.5 ? '#9fdcf5' : '#3f9fdc');
+});

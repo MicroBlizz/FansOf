@@ -1,77 +1,73 @@
-// Fans of Island · NIVEL: los datos de cada nivel y cómo se carga y se mueve. Las coordenadas son píxeles de la lona (270 de alto; el
-// suelo normal está en y = 220); el ancho lo dice cada nivel. Tipos de plataforma: 'suelo' (tierra con hierba) y 'bloque' (plastelina,
-// color: rosa '#f0a8a0', amarillo '#f0d8a0' o azul '#a8c8f0') son sólidos; 'hilo' es ganchillo (solo sostiene por arriba); 'barrera' es un
-// muro de hilo que solo quema el poder de fuego; 'puerta' es otro muro de hilo que abre un interruptor (interruptores.js: {x, y, abre};
-// la puerta lleva puerta: <mismo nombre>); 'mancha' es pintura que solo disuelve el agua. mov: vaivén {dx, dy, per}.
-// zanahorias: las de poder {t: 'roja'|'verde'|'azul'|'morada'|'dorada', x, y} (zanahorias.js); pequenas: las de coleccionar, en filas {x, y, n, dx, dy}.
-// enemigos: {x, y, dir} becarios que patrullan la plataforma donde caen (enemigos.js). decor: árboles, setas y flores (arte-escena.js).
+// Fans of Island · EL NIVEL y su física: 78 columnas de isla con huecos de agua, puentes, islas flotantes, enemigos, zanahorias y
+// la bandera; y lo que dice dónde está el suelo (sueloDe), las paredes (mueveX) y la caída (cae).
 'use strict';
-const IS_NIVELES = [
-  { id: 'pradera', nombre: 'La Pradera de Hilo', paleta: 'manana', ancho: 2600, inicio: { x: 60, y: 186 }, meta: { x: 2500, y: 154 },
-    plataformas: [
-      // A · la salida: una carrera, un bloque para probar el salto y el primer becario
-      { t: 'suelo', x: 0, y: 220, w: 420, h: 60 },
-      { t: 'bloque', x: 290, y: 190, w: 40, h: 30, color: '#f0a8a0' },
-      // B · el primer hueco (con atajo de hilo por arriba) y la zanahoria verde: el brote sube a la repisa de los premios
-      { t: 'hilo', x: 436, y: 176, w: 52, h: 12 },
-      { t: 'suelo', x: 480, y: 220, w: 280, h: 60 },
-      { t: 'bloque', x: 600, y: 134, w: 64, h: 14, color: '#f0d8a0' },
-      // C · plataforma que sube y baja; la mancha de pintura solo la quita el agua
-      { t: 'hilo', x: 764, y: 200, w: 46, h: 12, mov: { dx: 0, dy: -44, per: 3 } },
-      { t: 'suelo', x: 820, y: 220, w: 360, h: 60 },
-      { t: 'mancha', x: 930, y: 130, w: 30, h: 90 },
-      { t: 'bloque', x: 1090, y: 176, w: 44, h: 44, color: '#a8c8f0' },
-      // D · la puerta de hilo: el botón está en una repisa a la que solo se llega lanzando al compañero
-      { t: 'hilo', x: 1192, y: 184, w: 46, h: 12 },
-      { t: 'suelo', x: 1240, y: 220, w: 460, h: 60 },
-      { t: 'bloque', x: 1380, y: 110, w: 60, h: 12, color: '#f0a8a0' },
-      { t: 'puerta', x: 1460, y: 130, w: 22, h: 90, puerta: 'pradera-1' },
-      { t: 'bloque', x: 1560, y: 190, w: 40, h: 30, color: '#f0d8a0' },
-      // E · la plataforma que va y viene, la zanahoria roja y la barrera de hilo que arde
-      { t: 'hilo', x: 1708, y: 192, w: 46, h: 12, mov: { dx: 30, dy: 0, per: 3.4 } },
-      { t: 'suelo', x: 1780, y: 220, w: 420, h: 60 },
-      { t: 'barrera', x: 1950, y: 130, w: 22, h: 90 },
-      // F · la cuesta final de bloques y la bandera
-      { t: 'suelo', x: 2200, y: 220, w: 400, h: 60 },
-      { t: 'bloque', x: 2290, y: 190, w: 40, h: 30, color: '#f0a8a0' },
-      { t: 'bloque', x: 2330, y: 160, w: 40, h: 60, color: '#f0d8a0' },
-      { t: 'bloque', x: 2370, y: 130, w: 40, h: 90, color: '#a8c8f0' },
-    ],
-    zanahorias: [{ t: 'verde', x: 530, y: 200 }, { t: 'dorada', x: 625, y: 110 }, { t: 'azul', x: 860, y: 200 }, { t: 'morada', x: 1300, y: 200 }, { t: 'roja', x: 1890, y: 200 }],
-    pequenas: [
-      { x: 140, y: 200, n: 5 }, { x: 296, y: 166, n: 3 },                       // A
-      { x: 440, y: 150, n: 4 }, { x: 606, y: 112, n: 5 },                       // B: sobre el atajo y en la repisa del brote
-      { x: 770, y: 150, n: 3 }, { x: 1000, y: 200, n: 3 }, { x: 1096, y: 150, n: 3 },   // C
-      { x: 1386, y: 86, n: 4 }, { x: 1500, y: 200, n: 4 }, { x: 1566, y: 166, n: 3 },   // D: la repisa del botón y tras la puerta
-      { x: 1716, y: 160, n: 4 }, { x: 2000, y: 200, n: 4 }, { x: 2100, y: 180, n: 3, dy: -12 },   // E
-      { x: 2296, y: 166, n: 3 }, { x: 2336, y: 136, n: 3 }, { x: 2376, y: 106, n: 3 }, { x: 2440, y: 200, n: 3 },   // F
-    ],
-    enemigos: [{ x: 370, y: 190, dir: -1 }, { x: 1050, y: 190, dir: -1 }, { x: 1620, y: 190, dir: -1 }, { x: 2040, y: 190, dir: 1 }, { x: 2130, y: 190, dir: -1 }],
-    interruptores: [{ x: 1396, y: 100, abre: 'pradera-1', pista: 'Esa repisa está muy alta: lanza a tu compañero (L) para que pise el botón.' }],
-    decor: [
-      { t: 'arbol', x: 40, y: 220, s: 1 }, { t: 'seta', x: 120, y: 220 }, { t: 'flor', x: 220, y: 220 }, { t: 'flor', x: 350, y: 220, color: 'rosa' }, { t: 'arbol', x: 400, y: 220, s: 0.8 },
-      { t: 'seta', x: 560, y: 220 }, { t: 'arbol', x: 700, y: 220, s: 1.1 }, { t: 'flor', x: 740, y: 220 },
-      { t: 'arbol', x: 870, y: 220, s: 0.9 }, { t: 'flor', x: 990, y: 220, color: 'rosa' }, { t: 'seta', x: 1150, y: 220 },
-      { t: 'arbol', x: 1280, y: 220, s: 1 }, { t: 'flor', x: 1340, y: 220 }, { t: 'seta', x: 1530, y: 220 }, { t: 'arbol', x: 1660, y: 220, s: 0.85 },
-      { t: 'flor', x: 1830, y: 220, color: 'rosa' }, { t: 'arbol', x: 1900, y: 220, s: 1.1 }, { t: 'seta', x: 2170, y: 220 },
-      { t: 'arbol', x: 2240, y: 220, s: 0.9 }, { t: 'flor', x: 2460, y: 220 }, { t: 'arbol', x: 2560, y: 220, s: 1 },
-    ],
-  },
-];
-function isNivelPorId(id) { return IS_NIVELES.find(n => n.id === id) || IS_NIVELES[0]; }
-function isNivelSiguiente(id) { const i = IS_NIVELES.findIndex(n => n.id === id); return i >= 0 && i + 1 < IS_NIVELES.length ? IS_NIVELES[i + 1] : null; }
-function isNivelAbierto(id) { const i = IS_NIVELES.findIndex(n => n.id === id); return i <= 0 || !!SAVE.niveles[IS_NIVELES[i - 1].id]; }
-function isCargaNivel(id) {
-  const N = isNivelPorId(id);
-  const plataformas = N.plataformas.map((p, i) => ({ ...p, id: i, x0: p.x, y0: p.y, solida: p.t !== 'hilo', dx: 0, dy: 0, fase: i * 0.7, quemando: 0 }));
-  return { def: N, ancho: N.ancho, alto: 270, plataformas, decor: N.decor, meta: { x: N.meta.x, y: 0, w: 24, h: N.meta.y + 66, bandera: N.meta.y },   /* la meta cuenta a cualquier altura: basta con cruzar la bandera */ zanahorias: isCargaZanahorias(N), pequenas: isCargaPequenas(N), interruptores: isCargaInterruptores(N), enemigos: isCargaEnemigos(N), t: 0 };
-}
-function isNivelActualiza(m, dt) {
-  m.t += dt;
-  for (const p of m.plataformas) {
-    if (!p.mov || !p.mov.per) continue;   // los brotes (poderes.js) se mueven por su cuenta
-    const k = (Math.sin((m.t / p.mov.per) * Math.PI * 2 + p.fase) + 1) / 2;
-    const nx = p.x0 + p.mov.dx * k, ny = p.y0 + p.mov.dy * k;
-    p.dx = nx - p.x; p.dy = ny - p.y; p.x = nx; p.y = ny;
+// Cada columna: s = altura del suelo en bloques (-1 = agua), pila = bloques encima (r roca, c caja), v = variante del dibujo
+const COLS = 78, INICIO = 2, META = 72;
+const NIV = Array.from({ length: COLS }, (_, i) => ({ s: 0, pila: [], v: Math.floor(ruido(i, 1, 2) * 3) }));
+const PLAT = [], ZANAS0 = [], ENEM0 = [], ATRAS = [], DELANTE = [], DECO = [], ROCAS_MAR = [];
+const CANG0 = [9, 33, 50, 67];
+const R_J = 10, R_E = 12, MAR = -40, Z_OCULTO = MAR - 40, Z_ASOMA = MAR - 7;
+const PECES0 = [{ c: 19, y: CARRIL }, { c: 42.5, y: CARRIL }, { c: 57, y: CARRIL }, { c: 30, y: D - 4 }, { c: 61, y: D - 4 }];   // en los huecos y delante de los puentes
+(() => {
+  const tierra = (a, b, s) => { for (let c = a; c <= b; c++) NIV[c].s = s; };
+  const apila = (c, ...t) => { NIV[c].pila = t; };
+  const plat = (a, b, z, tipo) => PLAT.push({ a, b, z, tipo, x0: a * T + (tipo === 'isleta' ? 5 : 0), x1: (b + 1) * T - (tipo === 'isleta' ? 5 : 0) });
+  const zana = (c, z) => ZANAS0.push({ x: (c + 0.5) * T, z });
+  const enemigo = c => ENEM0.push(c);
+  apila(12, 'c'); zana(5, 12); zana(6, 12); zana(12, 46);
+  tierra(18, 19, -1);
+  tierra(20, 25, 1); zana(22, 100); enemigo(24);
+  apila(26, 'r'); apila(27, 'r', 'r');
+  tierra(28, 31, -1); plat(28, 31, 0, 'tabla'); zana(30, 12);
+  enemigo(35); zana(33, 12); plat(37, 39, 64, 'isleta'); zana(38, 76);
+  tierra(41, 43, -1); zana(42, 60);
+  tierra(44, 51, 1); enemigo(47); enemigo(50);
+  tierra(52, 53, 1); apila(53, 'c');
+  plat(55, 56, 64, 'isleta'); plat(58, 59, 104, 'isleta'); zana(59, 116);
+  tierra(56, 57, -1);
+  tierra(60, 61, -1); plat(60, 61, 0, 'tabla');
+  enemigo(65); zana(67, 12); zana(68, 12);
+  for (const c of [1, 5, 8, 14, 23, 25, 34, 39, 46, 50, 57, 63, 66, 71, 75]) ATRAS.push({ c, giro: ruido(c, 2, 3) * 6.28, tipo: ruido(c, 3, 4) < 0.5 ? 0 : 1, y: 4 + Math.floor(ruido(c, 5, 6) * 10) });
+  for (const c of [4, 15, 21, 36, 49, 64, 70]) DELANTE.push({ c, giro: ruido(c, 4, 5) * 6.28 });
+  for (const c of [6, 20, 47, 64]) ROCAS_MAR.push({ x: (c + 0.5) * T, y: D + 12 });
+})();
+// detalles del suelo (siempre los mismos)
+function decoraColumna(c) {
+  if (NIV[c].s < 0) { if (ruido(c, 9, 9) < 0.5) ROCAS_MAR.push({ x: (c + ruido(c, 9, 8)) * T, y: D + 10 }); return; }
+  for (let k = 0; k < 3; k++) {
+    const n = ruido(c, k, 13), x = (c + ruido(c, k, 14)) * T;
+    if (n < 0.35) DECO.push({ t: 'mata', x, y: 38 + Math.floor(ruido(c, k, 15) * 12), giro: 0 });
+    else if (n < 0.45) DECO.push({ t: 'flor', x, y: 14 + Math.floor(ruido(c, k, 16) * 8), giro: ruido(c, k, 17) * 6 });
+    else if (n < 0.52) DECO.push({ t: 'estrella', x, y: D - 3, giro: ruido(c, k, 18) * 6 });
+    else if (n < 0.6) DECO.push({ t: 'concha', x, y: D - 2, giro: ruido(c, k, 19) * 6 });
   }
+}
+for (let c = 0; c < COLS; c++) decoraColumna(c);
+
+// ---- física ----
+const G = 1350, V_SALTO = 520, V_MAX = 135;
+const arribaSuelo = c => (c < 0 || c >= COLS || NIV[c].s < 0) ? -Infinity : NIV[c].s * T;
+const arribaCol = c => (c < 0 || c >= COLS || NIV[c].s < 0) ? -Infinity : (NIV[c].s + NIV[c].pila.length) * T;
+function sueloDe(o, R) {
+  let s = -Infinity;
+  const c0 = Math.floor((o.x - R + 1) / T), c1 = Math.floor((o.x + R - 1) / T);
+  for (let c = c0; c <= c1; c++) s = Math.max(s, arribaCol(c));
+  for (const p of PLAT) if (o.x + R > p.x0 && o.x - R < p.x1 && p.z <= o.z + 0.5) s = Math.max(s, p.z);
+  return s;
+}
+function mueveX(o, dx, R) {           // devuelve true si choca con una pared
+  if (!dx) return false;
+  let nx = Math.max(R, Math.min(COLS * T - R, o.x + dx)), choca = nx !== o.x + dx;
+  const c = Math.floor((dx > 0 ? nx + R - 0.01 : nx - R) / T);
+  if (arribaCol(c) > o.z + 3) { nx = dx > 0 ? c * T - R : (c + 1) * T + R; choca = true; }
+  o.x = nx; return choca;
+}
+function cae(o, dt, factor, R) {       // 'aire', 'aterriza' o 'suelo'
+  const s = sueloDe(o, R);
+  if (o.z > s || o.vz > 0) {
+    o.vz -= G * factor * dt; o.z += o.vz * dt;
+    if (o.vz <= 0 && o.z <= s) { o.z = s; o.vz = 0; return 'aterriza'; }
+    return 'aire';
+  }
+  o.z = s; return 'suelo';
 }

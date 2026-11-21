@@ -1,8 +1,8 @@
 {
- "build": 1401,
- "hash": "d8234ed",
- "fecha": "2026-11-21T03:33:40Z",
- "mensaje": "Tablero: cada columna enseña 10 tarjetas y «Ver las N más»; Hecho, la última terminada primero; con filtro se ven todas (tarea #301, Pepins)",
+ "build": 1402,
+ "hash": "03e8e38",
+ "fecha": "2026-11-21T03:36:52Z",
+ "mensaje": "Island 0.4.0: Island en lonchas sustituye al Island viejo (ADR 192), para probar en la alfa",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -14,7 +14,7 @@
   "dark": "0.2.7",
   "decks": "0.2.37",
   "goose": "0.11.0",
-  "island": "0.3.5",
+  "island": "0.4.0",
   "jump": "0.3.32",
   "karts": "0.7.31",
   "kingdom": "0.1.0",

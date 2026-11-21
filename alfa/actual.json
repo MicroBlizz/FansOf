@@ -1,8 +1,8 @@
 {
- "build": 1409,
- "hash": "aadd234",
- "fecha": "2026-11-21T06:15:50Z",
- "mensaje": "Island en la lista de nuestro anuncio y fuera del Archivo en los tests: la marca «tests» de main estaba en rojo desde que salió del Archivo (ADR 192)",
+ "build": 1410,
+ "hash": "a40c8d5",
+ "fecha": "2026-11-21T11:38:00Z",
+ "mensaje": "Island 0.4.1: CrazyBunny en lonchas hechas por Yoshi (tarea #306, ADR 194)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -14,7 +14,7 @@
   "dark": "0.2.7",
   "decks": "0.2.37",
   "goose": "0.11.0",
-  "island": "0.4.0",
+  "island": "0.4.1",
   "jump": "0.3.32",
   "karts": "0.7.31",
   "kingdom": "0.1.0",

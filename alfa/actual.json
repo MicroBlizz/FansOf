@@ -1,8 +1,8 @@
 {
- "build": 1422,
- "hash": "a431c93",
- "fecha": "2026-11-21T20:11:50Z",
- "mensaje": "Mapas al día tras la tarea #294 de Pop",
+ "build": 1423,
+ "hash": "856433e",
+ "fecha": "2026-11-21T20:25:07Z",
+ "mensaje": "Pop: las casillas de Mi equipo, mucho más caras en monedas (1.000 y 2.500; Pesadilla y Duelos 1.500 y 3.750), las perlas igual (Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

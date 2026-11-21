@@ -108,12 +108,13 @@ const PP_COMP = (() => {
     f({ id: 'animales', nombre: 'Animales', premio: f({ marco: 'huellas', monedas: 300, perlas: 1, companero: 'panda' }) }),
   ]);
   const RAREZAS = f({ c: 'Común', r: 'Raro', e: 'Épico', l: 'Legendario' });
-  // Pepins, 19-11-2026: casillas de cada equipo (de serie, tope y lo que cuesta cada una de las siguientes), estrellas y repetidos
+  // Pepins, 19-11-2026: casillas de cada equipo (en monedas, mucho más caras desde el 21-11-2026: «con las monedas gratuitas es un
+  // regalo»; unos 50 niveles la primera y 100 más la segunda, para que no se abran de un día para otro) (de serie, tope y lo que cuesta cada una de las siguientes), estrellas y repetidos
   const PRECIOS = f({
     casillas: f({
-      N: f({ serie: 3, tope: 5, monedas: f([200, 400]), perlas: f([20, 40]) }),
-      P: f({ serie: 1, tope: 3, monedas: f([300, 600]), perlas: null }),
-      D: f({ serie: 1, tope: 3, monedas: f([300, 600]), perlas: null }),
+      N: f({ serie: 3, tope: 5, monedas: f([1000, 2500]), perlas: f([20, 40]) }),
+      P: f({ serie: 1, tope: 3, monedas: f([1500, 3750]), perlas: null }),
+      D: f({ serie: 1, tope: 3, monedas: f([1500, 3750]), perlas: null }),
     }),
     estrellas: f([100, 250, 500, 1000]),   // monedas para pasar de 1 a 2, de 2 a 3, de 3 a 4 y de 4 a 5
     repetidos: f([2, 3, 5, 8]),            // repetidos de cada una de esas subidas, al estilo Fibonacci (18 en total; ADR 199)

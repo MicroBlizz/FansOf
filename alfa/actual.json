@@ -1,8 +1,8 @@
 {
- "build": 1425,
- "hash": "7ed2b1a",
- "fecha": "2026-11-21T21:45:56Z",
- "mensaje": "Asalto 0.6.2: anuncios por la capa de core, plumas de regalo 60 con tope de 3 al día, esencia +2 y doblar plumas al acabar (tarea #317, Pepins)",
+ "build": 1426,
+ "hash": "b369940",
+ "fecha": "2026-11-21T22:07:20Z",
+ "mensaje": "Pop: la descripción del flag tienda-gemas dice todo lo que tapa (perfil, monedero y tienda de perlas) y por qué se llama como el de Rumble (tarea #123)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.2",

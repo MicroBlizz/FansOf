@@ -8,7 +8,7 @@
 //   'probador-reseteo' (vaciar lo de este móvil tras resetear la cuenta; las reglas, en js/reseteo.js).
 // · PP_MI: el catálogo entero (con los personajes), lo que tengo, lo que llevo puesto y los casos de uso de la pantalla: poner y comprar.
 'use strict';
-const ppPerfilActivo = () => NUCLEO.flag('tienda-gemas', 'Pop: perfil de jugador y perlas en el servidor (tarea #41, ADR 130)', false);
+const ppPerfilActivo = () => NUCLEO.flag('tienda-gemas', 'Pop: perfil de jugador, monedero de perlas en el servidor y su tienda (comprar_fijo); el mismo nombre que la tienda de gemas de Rumble, pero con su propia fila por juego (tarea #41, ADR 130)', false);
 const PP_SRV = PP_PERLAS.crea({
   cuenta: typeof CUENTA !== 'undefined' ? CUENTA : null, save: () => SAVE, guarda: ppGuarda, cola: COLA, activo: ppPerfilActivo,
   enLinea: () => navigator.onLine !== false, pruebas: () => ppCompraDePrueba(),

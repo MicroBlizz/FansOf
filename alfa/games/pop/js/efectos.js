@@ -7,6 +7,7 @@
 const PP_FX = { celdas: {}, pulsada: -1, parts: [], temblor: 0, dano: 0, saltos: [], textos: [], entrada: 0, pista: 0, vuelos: [], brilla: {}, combo: null, ondas: [], bote: Infinity };
 function ppFxEntraSala(T) {
   PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_FX.vuelos = []; PP_FX.ondas = []; PP_FX.combo = null; PP_FX.pulsada = -1; PP_FX.entrada = 1; PP_FX.temblor = 0; PP_FX.bote = Infinity;
+  PP_ATAQUE_FX.limpia();   // la estela y los golpes de los ataques de los compañeros (js/ataques-fx.js)
   for (let i = 0; i < T.up.length; i++) PP_FX.celdas[i] = { t: 9, dir: T.up[i] ? 'sube' : 'pop', demora: (i % T.n + Math.floor(i / T.n)) * 0.045 };
   if (T.pista !== null) { PP_FX.pista = 0.6; play('ppPista'); }
 }
@@ -69,7 +70,11 @@ function ppFxHabilidad(id) { PP_FX.brilla[id] = 1; }
 // el letrero de COMBO: crece con cada toque bueno seguido
 function ppFxCombo(n) { PP_FX.combo = { n, t: 0 }; ppVibra(8 + n * 4); play('ppCombo', n); }
 // un slime vuela desde su hueco del equipo hasta la burbuja i (llega en `dur` segundos)
-function ppFxVuelo(id, k, i, n, dur) { const [x0, y0] = ppHuecoEquipo(k, n), [x1, y1] = ppCentro(ppGeom(n), i); PP_FX.vuelos.push({ id, x0, y0, x1, y1, t: 0, dur }); }
+// (con el flag 'ataques-companeros' abierto, el vuelo lleva el ataque de su habilidad: js/ataques-fx.js)
+function ppFxVuelo(id, k, i, n, dur) {
+  const [x0, y0] = ppHuecoEquipo(k, n), [x1, y1] = ppCentro(ppGeom(n), i), v = { id, x0, y0, x1, y1, t: 0, dur };
+  PP_ATAQUE_FX.prepara(v); PP_FX.vuelos.push(v);
+}
 // el golpe del slime al llegar: onda, gotitas de colores y temblor (más grande con el CEO)
 function ppFxImpacto(T, i, grande) {
   const [cx, cy] = ppCentro(ppGeom(T.n), i);
@@ -93,6 +98,7 @@ function ppFxAvanza(dt) {
   ppFxAvanzaParts(dt);
   for (const s of PP_FX.saltos) s.t += dt;
   for (const v of PP_FX.vuelos) v.t += dt;
+  PP_ATAQUE_FX.avanza(dt, PP_FX.vuelos);
   PP_FX.vuelos = PP_FX.vuelos.filter(v => v.t < v.dur);
   for (const o of PP_FX.ondas) o.t += dt;
   PP_FX.ondas = PP_FX.ondas.filter(o => o.t < 0.45);

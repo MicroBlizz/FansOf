@@ -1,8 +1,8 @@
 {
- "build": 1415,
- "hash": "9e0b2c4",
- "fecha": "2026-11-21T14:54:45Z",
- "mensaje": "Island #304 N2b: el jugador como dominio puro, con tests",
+ "build": 1416,
+ "hash": "2e56597",
+ "fecha": "2026-11-21T15:04:34Z",
+ "mensaje": "Pop: ataques de los compañeros con estela y golpe en Fiesta, tras el flag ataques-companeros (tarea #160, nodo n5, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -170,7 +170,7 @@ function ppSaltaSlime(id, k, golpes) {
   const suyas = pref && T.esp ? [...T.up.keys()].filter(i => T.up[i] && T.esp[i] === pref) : [];
   const objetivos = (suyas.length ? suyas : [...T.sol]).sort(() => Math.random() - 0.5).slice(0, golpes);
   if (!objetivos.length) return;
-  ppFxHabilidad(id); play('ppSalto');
+  ppFxHabilidad(id); PP_ATAQUE_FX.suena(id);   // el sonido de su ataque (js/ataques-fx.js; con el flag cerrado, ppSalto)
   objetivos.forEach((i, g) => {
     const dur = 0.5 + g * 0.18;
     ppFxVuelo(id, k, i, T.n, dur);
@@ -178,7 +178,7 @@ function ppSaltaSlime(id, k, golpes) {
       if (!PP_P || PP_P.T !== T || T.hecho) return;
       let j = i; if (!T.up[j] || (!suyas.includes(j) && !T.sol.has(j))) { const s = [...T.sol]; if (!s.length) return; j = s[0]; }   // si ya no hace falta esa, otra de la solución
       const r = ppToca(T, j, true); if (!r) return;
-      ppFxToque(T, j, r); ppFxImpacto(T, j, id === 'ceo');
+      ppFxToque(T, j, r); PP_ATAQUE_FX.golpe(T, j, id);
       ppManitaSigue(T);
       ppTrasToque(T, j, r);
     }, dur * 1000);

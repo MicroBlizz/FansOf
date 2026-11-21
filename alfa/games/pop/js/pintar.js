@@ -174,8 +174,10 @@ function ppPintaEfectos(c, t) {
   for (const p of PP_FX.parts) { c.beginPath(); c.arc(p.x, p.y, p.r * (1 - p.t / p.vida), 0, Math.PI * 2); c.fillStyle = p.col; c.fill(); }
   for (const s of PP_FX.saltos) { const k = Math.min(1, s.t / 0.8), y = s.y - Math.sin(k * Math.PI) * 160 - k * 40; ppSlimeRepuestoOImagen(c, s.id, s.x, y, 34 + k * 16, t, 1); }
   for (const o of PP_FX.ondas) { const k = o.t / 0.45; c.beginPath(); c.arc(o.x, o.y, o.r * k, 0, Math.PI * 2); c.lineWidth = 10 * (1 - k); c.strokeStyle = `rgba(255,255,255,${1 - k})`; c.stroke(); }
+  PP_ATAQUE_FX.pinta(c);   // estela, cositas y golpes de los ataques de los compañeros (flag 'ataques-companeros')
   // el slime volando del equipo al tablero: en arco, girando y estirado en el aire
   for (const v of PP_FX.vuelos) {
+    if (v.ataque) { PP_ATAQUE_FX.pintaVuelo(c, v, t); continue; }
     const k = Math.min(1, v.t / v.dur), x = v.x0 + (v.x1 - v.x0) * k, y = v.y0 + (v.y1 - v.y0) * k - Math.sin(k * Math.PI) * 220;
     c.save(); c.translate(x, y); c.rotate(k * Math.PI * 2); ppSlimeRepuestoOImagen(c, v.id, 0, 0, 34 + Math.sin(k * Math.PI) * 14, t, 1); c.restore();
     for (let e = 1; e <= 4; e++) { const kk = Math.max(0, k - e * 0.05), xx = v.x0 + (v.x1 - v.x0) * kk, yy = v.y0 + (v.y1 - v.y0) * kk - Math.sin(kk * Math.PI) * 220; c.beginPath(); c.arc(xx, yy, 8 - e * 1.5, 0, Math.PI * 2); c.fillStyle = `rgba(255,255,255,${0.5 - e * 0.1})`; c.fill(); }

@@ -1,6 +1,9 @@
-// Fans of Island · ARTE DE LOS PERSONAJES en lonchas por código: Brotito, el pez gordito que escupe,
+// Fans of Island · adaptadores/arte-personajes: ARTE DE LOS PERSONAJES en lonchas por código: Brotito, el pez gordito que escupe,
 // la gota, la zanahoria y la bandera (CrazyBunny viene de Yoshi: arte-crazybunny.js). Cada uno es una función (z, x, y) → color; las pilas se fabrican en TAREAS al cargar.
 'use strict';
+{
+const { TAREAS, ruido } = IS;
+const { dentro, mezcla, dist2Seg, pila } = IS.Lonchas;
 // ================= Brotito (enemigo): bola turquesa con cuernitos coral y un brote =================
 const BROTO = (() => {
   const W = 40, D = 40, H = 38, cx = 19.5, cy = 19.5, SUELO_CUERPO = 4;
@@ -187,3 +190,5 @@ const PILA_GOTA = pila(10, 10, 8, (z, x, y) => {
   if (!dentro(dx, dy, dz, 4.6, 4.6, 3.6)) return null;
   return (dz > 1.2 && dx < -0.5) ? '#ffffff' : (dz > -0.5 ? '#9fdcf5' : '#3f9fdc');
 });
+Object.assign(IS.arte, { B_H, PILAS_B, PILA_ZANA, PILA_BANDERA, PILAS_PEZ, PILA_GOTA });
+}

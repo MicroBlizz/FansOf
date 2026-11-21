@@ -1,9 +1,15 @@
-// Fans of Island · ARTE DE LOS BICHOS en lonchas: la gaviota que tira cocos, el coco, el cangrejo que anda de lado y la MechaVaca
-// (una vaca en un mecha rosa con botas cohete) que vuela al fondo de vez en cuando.
+// Fans of Island · adaptadores/arte-bichos: ARTE DE LOS BICHOS en lonchas: la gaviota que tira cocos, el coco, el cangrejo que anda de lado y la MechaVaca
+// (una vaca en un mecha rosa con botas cohete) que vuela al fondo de vez en cuando. Cuelgan de IS.arte.
 'use strict';
+{
+const { TAREAS, ruido } = IS;
+const { dentro, dist2Seg, pila } = IS.Lonchas;
 // ================= Gaviota y coco =================
 const POSE_GAV = { arriba: { a: 1 }, medio: { a: 0.2 }, abajo: { a: -0.8 } };
 const GAV_C = { cx: 29, cy: 15 };
+function puntaAla(t, y, yb) {   // la punta negra del ala, con su rayita blanca
+  return (t > 0.86 && y > yb + 1.5 && y < yb + 3) ? '#ffffff' : '#2a2f3a';
+}
 function gaviotaAlas(pose) {
   const { cx, cy } = GAV_C;
   return (z, x, y) => {
@@ -12,7 +18,7 @@ function gaviotaAlas(pose) {
     if (Math.abs(z - zw) > 1.3) return null;
     const yf = cy + 5 - t * 5, yb = cy - 6 + t * 3;
     if (y < yb || y > yf) return null;
-    if (t > 0.78) return (t > 0.86 && y > yb + 1.5 && y < yb + 3) ? '#ffffff' : '#2a2f3a';
+    if (t > 0.78) return puntaAla(t, y, yb);
     if (y > yf - 1.6) return '#ffffff';
     return z > zw ? '#aab6c4' : '#7d8a9c';
   };
@@ -72,12 +78,15 @@ function cangrejoPinzas(pose) {
     return null;
   };
 }
+function cangrejoVientre(dx, dy, dz) {   // la boca y la tripa clara de abajo
+  if (dy > 7.2 && Math.abs(dx) < 2 && Math.abs(dz + 1) < 0.7) return '#5a1530';
+  return (dy > 5 && dz < -0.5) ? '#ffd0a8' : null;
+}
 function cangrejoCuerpo(z, x, y) {
   const { cx, cy } = CANG_C;
   const dx = x - cx, dy = y - cy, dz = z - 8.5;
   if (!dentro(dx, dy, dz, 11, 8, 5.6)) return null;
-  if (dy > 7.2 && Math.abs(dx) < 2 && Math.abs(dz + 1) < 0.7) return '#5a1530';
-  if (dy > 5 && dz < -0.5) return '#ffd0a8';
+  const vientre = cangrejoVientre(dx, dy, dz); if (vientre) return vientre;
   if (dz > 2.6 && ruido(x >> 1, y >> 1, 91) < 0.15) return '#ffb3a0';
   return dz > 2 ? '#ff8a6a' : (dz < -2.5 ? '#c83a2a' : '#ff5a4a');
 }
@@ -157,3 +166,5 @@ function mechavaca(llama) {
 const PILAS_MV = [];
 TAREAS.push(() => { PILAS_MV[0] = pila(42, 34, 49, mechavaca(0)); });
 TAREAS.push(() => { PILAS_MV[1] = pila(42, 34, 49, mechavaca(1)); });
+Object.assign(IS.arte, { PILAS_GAV, PILA_COCO, PILAS_CANG, PILAS_MV });
+}

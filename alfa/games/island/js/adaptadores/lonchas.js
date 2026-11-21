@@ -1,9 +1,9 @@
-// Fans of Island · LONCHAS: las piezas comunes de la técnica de lonchas apiladas (skill /lonchear, camino A: todo pintado por código).
-// pila() hace una imagen por altura; girada() las apila giradas (personajes) y quieta() sin girar (escenario). TAREAS es la lista de
-// piezas que se fabrican de una en una al cargar, para no congelar el móvil.
+// Fans of Island · adaptadores/lonchas: las piezas comunes de la técnica de lonchas apiladas (skill /lonchear, camino A: todo pintado
+// por código). IS.Lonchas: pila() hace una imagen por altura; girada() las apila giradas (personajes) y quieta() sin girar (escenario).
+// IS.TAREAS es la lista de piezas que se fabrican de una en una al cargar (cada tarea recibe el nivel), para no congelar el móvil.
 'use strict';
+{
 const K = 0.34, ANG = 64, BORDE = '#2a1830';   // K = cuánto se ve el suelo desde arriba (bajo = cámara casi de lado); ANG = ángulos guardados
-const TAREAS = [];
 const dentro = (dx, dy, dz, rx, ry, rz) => (dx / rx) ** 2 + (dy / ry) ** 2 + (dz / rz) ** 2 <= 1;
 const mezcla = (a, b, t) => a + (b - a) * t;
 function dist2Seg(px, py, pz, a, b) {
@@ -36,16 +36,22 @@ function pila(an, fo, al, fn) {
   for (let z = 0; z < al; z++) hojas.push(pinta(an, fo, (x, y) => fn(z, x, y)));
   return { hojas, an, fo, al, cache: new Map() };
 }
-const dibujo = pinta;   // dibujo plano (fondos): fn(x, y)
+function silueta(d, n) {   // 1 donde hay algo pintado (alfa > 0), 0 donde no
+  const a = new Uint8Array(n);
+  for (let i = 0; i < n; i++) a[i] = d[i * 4 + 3] > 0 ? 1 : 0;
+  return a;
+}
+function tocaBorde(a, x, y, w, h) {   // un píxel vacío con un vecino (arriba, abajo, izquierda o derecha) pintado
+  const i = y * w + x;
+  return !a[i] && ((x > 0 && a[i - 1]) || (x < w - 1 && a[i + 1]) || (y > 0 && a[i - w]) || (y < h - 1 && a[i + w]));
+}
 function contorno(c) {   // raya oscura de un píxel alrededor de lo pintado
   const g = c.getContext('2d'), im = g.getImageData(0, 0, c.width, c.height), d = im.data, w = c.width, h = c.height;
-  const a = new Uint8Array(w * h);
-  for (let i = 0; i < w * h; i++) a[i] = d[i * 4 + 3] > 0 ? 1 : 0;
+  const a = silueta(d, w * h);
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-    const i = y * w + x; if (a[i]) continue;
-    if ((x > 0 && a[i - 1]) || (x < w - 1 && a[i + 1]) || (y > 0 && a[i - w]) || (y < h - 1 && a[i + w])) {
-      d[i * 4] = 0x2a; d[i * 4 + 1] = 0x18; d[i * 4 + 2] = 0x30; d[i * 4 + 3] = 255;
-    }
+    if (!tocaBorde(a, x, y, w, h)) continue;
+    const i = y * w + x;
+    d[i * 4] = 0x2a; d[i * 4 + 1] = 0x18; d[i * 4 + 2] = 0x30; d[i * 4 + 3] = 255;
   }
   g.putImageData(im, 0, 0);
 }
@@ -74,4 +80,7 @@ function quieta(p, borde) {
   p.hojas.forEach((h, i) => g.drawImage(h, 0, 0, p.an, p.fo, m, m + p.al - 1 - i, p.an, dk));
   if (borde) contorno(c);
   return { c, m, al: p.al, fo: p.fo };
+}
+IS.TAREAS = [];
+IS.Lonchas = Object.freeze({ K, ANG, BORDE, dentro, mezcla, dist2Seg, plano: pinta, pila, girada, quieta });   // plano(w, h, fn): dibujo plano (fondos), fn(x, y)
 }

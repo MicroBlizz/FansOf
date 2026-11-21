@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#2f8fd0">
 <title>Fans of Island</title>
 <meta name="description" content="Fans of Island: plataformas en una isla tropical con CrazyBunny, todo hecho con lonchas apiladas. Prototipo.">
-<script src="../../core/js/nucleo.js?v=0.4.2-a1419.9cf4ad3"></script>
+<script src="../../core/js/nucleo.js?v=0.4.3-a1420.27b1a3a"></script>
 <script>NUCLEO.estilos('css/island.css')</script>
 </head>
 <body>
@@ -39,11 +39,15 @@ NUCLEO.juego({
   ligero: true,   // solo la cuenta y el idioma de core: Island lleva su propia partida y sus pantallas
   antes: ['js/ajustes.js', 'js/is.js', 'js/dominio/medidas.js', 'js/dominio/nivel.js', 'js/dominio/fisica.js', 'js/dominio/jugador.js',
     'js/dominio/bichos-comun.js', 'js/dominio/brotitos.js', 'js/dominio/cangrejos.js', 'js/dominio/peces.js', 'js/dominio/gaviotas.js', 'js/dominio/choques.js',
-    'js/transicion.js'],
+    'js/aplicacion/sesion.js'],
   idioma: { en: ['idioma/en.js'] },
   despues: ['../../core/js/serie/canciones.js',   // la música de la serie: Island toca la de los Animales Locos
-    'js/guardado.js', 'js/lonchas.js', 'js/arte-crazybunny.js', 'js/arte-personajes.js', 'js/arte-bichos.js', 'js/arte-isla.js', 'js/arte-fondo.js',
-    'js/lienzo.js', 'js/partida.js', 'js/entrada.js', 'js/jugador.js', 'js/bichos.js', 'js/dibujo.js', 'js/principal.js'],
+    'js/adaptadores/fuera.js', 'js/adaptadores/guardado.js', 'js/adaptadores/lonchas.js',
+    'js/adaptadores/arte-crazybunny.js', 'js/adaptadores/arte-personajes.js', 'js/adaptadores/arte-bichos.js',
+    'js/adaptadores/arte-isla.js', 'js/adaptadores/arte-vegetacion.js', 'js/adaptadores/arte-olas.js', 'js/adaptadores/arte-fondo.js',
+    'js/adaptadores/lienzo.js', 'js/adaptadores/entrada.js', 'js/adaptadores/pantallas.js',
+    'js/adaptadores/dibujo-base.js', 'js/adaptadores/dibujo-fondo.js', 'js/adaptadores/dibujo-terreno.js', 'js/adaptadores/dibujo-escena.js',
+    'js/adaptadores/dibujo.js', 'js/adaptadores/partida.js', 'js/adaptadores/principal.js'],
 });
 </script>
 </body>

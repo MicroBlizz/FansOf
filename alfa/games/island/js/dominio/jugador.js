@@ -1,12 +1,13 @@
 // Fans of Island · dominio/jugador: CRAZYBUNNY como regla pura. Andar con inercia, saltar (más alto cuanto más se mantiene), el margen al
 // borde (coyote) y el salto pulsado antes de tocar el suelo (buffer), flotar con las orejas, caer, rebotar al pisar, el golpe con su
-// invulnerabilidad y volver a tierra firme si cae al mar. Sin pantalla, reloj ni azar: dt y los mandos ({dir, salto, buffer}) entran como
+// invulnerabilidad, pisar un pez, el golpe de una gota y volver a tierra firme si cae al mar. Sin pantalla, reloj ni azar: dt y los mandos ({dir, salto, buffer}) entran como
 // argumentos, la física (IS.creaFisica) también, y los sonidos o el marcador los hace quien llama con los eventos que devuelve paso().
 'use strict';
 {
   const { V_SALTO, V_MAX, R_J, MAR } = IS.FISICA;
   const GIRO_DER = -Math.PI / 2 + 0.5, GIRO_IZQ = Math.PI / 2 - 0.5;   // de perfil, un poco girado hacia nosotros
   const VIDAS = 3, INVULNERABLE = 1.5;
+  const SALTO_PISAR = { con: 500, sin: 400 };   // el rebote tras pisar a un pez, según se mantenga el salto
   const giraHacia = (o, dt) => { o.giro += ((o.mira > 0 ? GIRO_DER : GIRO_IZQ) - o.giro) * Math.min(1, dt * 14); };
 
   function crea(x, z) {   // x, z: dónde sale (z, la altura del suelo de la salida)
@@ -82,7 +83,15 @@
     j.vz = 260; j.vx = (Math.sign(dx) || 1) * 180; j.empuje = 0.3; j.cortado = true;
     return quita;
   }
+  function pisaPez(j, arriba, salto) {   // un pez pisado: queda encima de él (arriba, su altura) y rebota
+    j.z = arriba; j.vz = salto ? SALTO_PISAR.con : SALTO_PISAR.sin; j.flota = 0; j.cortado = !salto;
+  }
+  function golpeaGota(j, dir) {   // el golpe de una gota de agua (dir, hacia dónde va): quita vida y empuja; false si parpadea y no hace nada
+    if (!daña(j)) return false;
+    j.vx = dir * 150; j.vz = Math.max(j.vz, 170); j.empuje = 0.2; j.cortado = true;
+    return true;
+  }
   IS.GIRO = Object.freeze({ DER: GIRO_DER, IZQ: GIRO_IZQ });
   IS.giraHacia = giraHacia;
-  IS.Jugador = Object.freeze({ crea, paso, pose, daña, rebota, golpeado });
+  IS.Jugador = Object.freeze({ crea, paso, pose, daña, rebota, golpeado, pisaPez, golpeaGota });
 }

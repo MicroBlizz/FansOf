@@ -1,7 +1,9 @@
-// Fans of Island · CRAZYBUNNY en lonchas hechas por Yoshi (tarea #306): la tira img/crazybunny-lonchas.png (modelo 3D de Trellis2
+// Fans of Island · adaptadores/arte-crazybunny: CRAZYBUNNY en lonchas hechas por Yoshi (tarea #306): la tira img/crazybunny-lonchas.png (modelo 3D de Trellis2
 // cortado en 96 lonchas con lonchas_cortar y retocado con herramientas/lonchas/retocar.py). Las posturas no son dibujos aparte:
 // se estira al saltar y se aplasta al aterrizar escalando las lonchas. Desde la 0.4.2 (Pepins, ADR 196) el dibujo mide lo mismo que el golpe: C_H.
 'use strict';
+{
+const { TAREAS } = IS;
 const C_H = 66;   // alto con el que chocan enemigos, cocos y zanahorias (el de la 0.4.0) y alto del dibujo en reposo
 const PILAS_C = {};
 (() => {
@@ -33,3 +35,5 @@ const PILAS_C = {};
   }
   TAREAS.push(fabrica);
 })();
+IS.arte.C_H = C_H; IS.arte.PILAS_C = PILAS_C;
+}

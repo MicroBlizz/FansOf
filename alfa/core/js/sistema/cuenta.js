@@ -219,9 +219,11 @@ const CUENTA = (() => {
   }
   // en otro aparato: entrar con la cuenta de Google que ya tienes
   function entrarConGoogle() { location.href = SERVIDOR + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(volver()); }
-  async function cerrarSesion() {
-    const s = leer(SESION, null);
-    try { if (s) await pedir('/auth/v1/logout', { method: 'POST' }, s.access); } catch (e) { /* da igual: se olvida aquí */ }
+  // alcance: 'local' cierra solo la sesión de este navegador; 'global', todas las de la cuenta (en todos los aparatos: si el servidor no contesta, falla y
+  // no se olvida nada, para no decir que se cerró lo que sigue abierto); sin alcance, lo de siempre (lo que haga Supabase por defecto, que hoy es 'global')
+  async function cerrarSesion(alcance) {
+    const s = leer(SESION, null), scope = ['local', 'global'].includes(alcance) ? '?scope=' + alcance : '';
+    try { if (s) await pedir('/auth/v1/logout' + scope, { method: 'POST' }, s.access); } catch (e) { if (alcance === 'global') throw e; /* si no, da igual: se olvida aquí */ }
     try { localStorage.removeItem(SESION); } catch (e) { /* sin almacenamiento */ }
     CUENTA_ROLES.sesion.olvidar();   // los roles eran de esa cuenta (ADR 097)
     meta = { version: 0, pendiente: true }; guardarMeta();   // la partida de este aparato sigue aquí; irá a una cuenta de invitado nueva

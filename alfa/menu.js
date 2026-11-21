@@ -2,7 +2,7 @@
 // Se pone en cada página justo donde va el menú, detrás de idioma-web.js:  <script src="menu.js" data-base="" data-core="1" data-pagina="lore"></script>
 //   data-base: '' en la portada y '../' en las demás · data-pagina: la que resalta · data-core="1": la página traduce con core (portada y lore).
 // Pinta, de forma síncrona (lo que venga después ya lo encuentra):
-//   · el <nav class="menu"> de arriba, con «Entrar» / «Mi cuenta» (con tu foto de Google) y los idiomas. En la portada la cuenta la llevan
+//   · el <nav class="menu"> de arriba, con «Entrar» / «Mi cuenta» (con tu cara de la cuenta o tu foto de Google) y los idiomas. En la portada la cuenta la llevan
 //     biblioteca/cuenta-web.js y votos.js; en las demás se lee la sesión guardada ('fansof-cuenta') solo para pintar el botón, y al pulsarlo se va a la portada (#cuenta);
 //   · las piezas del estilo nuevo (clase «pn»: solo se ven con html.portada-nueva, ADR 128 y 135): el logo del menú, el enlace «Apóyanos» (tarea #291) y la barra de abajo del móvil;
 //   · «Tablero» (tarea #300): el atajo a gestion/?seccion=tablero, SOLO con el rol admin (CUENTA.roles, que en la portada se carga después de este archivo:
@@ -44,15 +44,20 @@
   s.insertAdjacentHTML('beforebegin', arriba + '\n' + abajo);
 
   const cta = document.getElementById('m-cuenta');
-  // con: ¿hay cuenta con email?; foto: la de Google (https) o ''; texto: ya traducido. La foto va sin referrer (Google no sabe de qué página viene) y se quita sola si no carga.
+  // con: ¿hay cuenta con email?; foto: la cara elegida (biblioteca/caras/…, con la base de la página delante; tarea #299), la de Google (https) o '';
+  // texto: ya traducido. La foto va sin referrer (Google no sabe de qué página viene) y la imagen se quita sola si no carga.
+  const CARA = /^(\.\.\/)*biblioteca\/caras\/[a-z0-9_-]+\/[a-z0-9_-]+\.png$/;
   window.pintaMenuCuenta = (con, foto, texto) => {
     cta.textContent = ''; cta.classList.toggle('dentro', !!con);
-    if (con && /^https:\/\//.test(foto || '')) { const im = document.createElement('img'); im.className = 'm-foto'; im.alt = ''; im.referrerPolicy = 'no-referrer'; im.src = foto; im.onerror = () => im.remove(); cta.append(im); }
+    const https = /^https:\/\//.test(foto || '');
+    if (con && (https || CARA.test(foto || ''))) { const im = document.createElement('img'); im.className = 'm-foto'; im.alt = ''; if (https) im.referrerPolicy = 'no-referrer'; im.src = foto; im.onerror = () => im.remove(); cta.append(im); }
     cta.append(document.createTextNode(texto));
   };
-  let ses = null; try { ses = JSON.parse(localStorage.getItem('fansof-cuenta') || 'null'); } catch (e) { /* sin sesión */ }
-  const con = !!(ses && ses.invitado === false && ses.email);
-  window.pintaMenuCuenta(con, con ? ses.foto : '', t(con ? 'Mi cuenta' : 'Entrar'));
+  const lee = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+  const ses = lee('fansof-cuenta'), con = !!(ses && ses.invitado === false && ses.email);
+  // la cara que eligió esta cuenta en Mi cuenta (la recuerda biblioteca/cuenta-web.js; la ruta va desde la raíz de la web)
+  const caraRecordada = () => { const c = lee('fansof-cuenta-cara'); return c && c.usuario && c.usuario === ses.usuario && CARA.test(c.src || '') ? b + c.src : ''; };
+  window.pintaMenuCuenta(con, con ? (caraRecordada() || ses.foto) : '', t(con ? 'Mi cuenta' : 'Entrar'));
   cta.addEventListener('click', e => { if (window.abrirCuenta) return; e.preventDefault(); location.href = b + '#cuenta'; });   // en la portada lo gestiona cuenta-web.js
   // «Tablero», solo para admins: se pone o se quita según CUENTA.roles.tiene('admin')
   const TABLERO = b + 'gestion/?seccion=tablero';

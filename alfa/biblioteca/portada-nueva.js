@@ -3,6 +3,7 @@
 //   · el titular «Microblizz lo ha comprado todo» en la cabecera (sin CrazyBunny: Pepins lo quitó el 21-11-2026),
 //   · el bloque «Tú decides cuál terminamos» alrededor de LOS MÁS PEDIDOS (agrupar.js lo crea cuando contesta el servidor), con su botón IR A VOTAR,
 //   · la franja «Apóyanos» bajo la biblioteca, que lleva a la página de donaciones apoyanos/ (tarea #291),
+//   · la franja «Seguir con <tu juego favorito>» antes del DESTACADO, con cuenta y favorito (tarea #299),
 //   · y lo que la barra de abajo hace distinto en la portada («Votar» y «Novedades»).
 // Las piezas llevan la clase «pn»: sin el flag no se ven (estilo/web.css), así que cerrarlo devuelve la portada de siempre sin recargar.
 // Usa lo que ya hay en la página: t(), esc(), ESTILO_NUEVO, NUCLEO.alCambiarFlags y abrirNovedades() (novedades/ventana.js).
@@ -50,12 +51,23 @@
       <span class="pn-apoyanos-p">${esc(t('Ayúdanos a pararle los pies a Microblizz.'))}</span><span class="pn-apoyanos-b">${esc(t('VER CÓMO'))}</span></a>`);
   }
 
+  // SEGUIR CON …: con cuenta y juego favorito (Mi cuenta → PERFIL, tarea #299), una franja antes del DESTACADO que lleva a ese juego.
+  // El favorito lo da CUENTA_WEB.juegoFavorito() (cuenta-web.js), que avisa con 'cuenta-perfil' cuando llega o cambia; sin cuenta o sin favorito no sale.
+  function franjaSeguir() {
+    const vieja = document.querySelector('.pn-seguir'); if (vieja) vieja.remove();
+    const j = montada && typeof CUENTA_WEB !== 'undefined' ? CUENTA_WEB.juegoFavorito() : null, dest = document.getElementById('destacado');
+    if (!j || !dest) return;
+    dest.insertAdjacentHTML('beforebegin', `<a class="pn pn-seguir" href="${esc(j.jugar)}"><span class="pn-seguir-t">${esc(t('Seguir con {j}', { j: j.nombre }))}</span>
+      <span class="pn-seguir-b">${esc(t('JUGAR'))}</span></a>`);
+  }
+
   let montada = false;
   function aplicar() {
     if (!ESTILO_NUEVO.activo() || montada) return;
     montada = true;
-    titular(); barra(); esperarVotar(); franjaApoyo();
+    titular(); barra(); esperarVotar(); franjaApoyo(); franjaSeguir();
   }
+  document.addEventListener('cuenta-perfil', franjaSeguir);
   aplicar();
   NUCLEO.alCambiarFlags(aplicar);   // los flags de la base llegan de fondo (y cada 5 minutos): abrir o cerrar se nota sin recargar
 })();

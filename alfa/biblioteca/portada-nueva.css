@@ -62,3 +62,12 @@ html.portada-nueva .pn-apoyanos:focus-visible { outline: 3px solid var(--gold); 
 @media (prefers-reduced-motion: reduce) {
   html.portada-nueva .pn-ir-votar, html.portada-nueva .dest .botones a.boton { animation: none; }
 }
+
+/* ---------- SEGUIR CON …: la franja de tu juego favorito antes del DESTACADO (portada-nueva.js, tarea #299) ---------- */
+html.portada-nueva .pn-seguir { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 16px 0; padding: 12px 14px 12px 18px; text-decoration: none;
+  background: linear-gradient(175deg, var(--tray-hi), var(--tray)); border: 4px solid var(--outline); border-radius: 20px; box-shadow: 0 5px 0 var(--outline); }
+html.portada-nueva .pn-seguir-t { min-width: 0; text-align: left; font-weight: 800; font-size: 17px; line-height: 1.25; color: var(--ink); overflow-wrap: anywhere; }
+html.portada-nueva .pn-seguir-b { flex: none; min-height: 44px; box-sizing: border-box; padding: 12px 22px 8px; font-family: var(--font-display); font-size: 20px; color: var(--outline);
+  background: var(--gold); border: 3px solid var(--outline); border-radius: 14px; box-shadow: 0 4px 0 var(--outline); }
+html.portada-nueva .pn-seguir:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+@media (min-width: 701px) { html.portada-nueva .pn-seguir { max-width: 620px; margin-left: auto; margin-right: auto; } }

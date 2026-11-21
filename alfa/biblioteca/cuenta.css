@@ -1,0 +1,48 @@
+/* Fans Of · MI CUENTA de la web (biblioteca/cuenta-web.js, cuenta-pestanas.js y cuenta-ajustes.js; tarea #299): cabecera con tu cara, pestañas,
+   la rejilla de caras, el juego favorito, tus juegos y los ajustes. Solo con variables de la paleta (core/css/base.css y, con el flag «portada-nueva»,
+   estilo/web.css), así que vale con la web de siempre y con la nueva. Lo de entrar y el marco de la ventana siguen en biblioteca/votos.css. */
+.cuenta-caja.cuenta-dentro { max-width: 560px; max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+.cuenta-dentro .cuenta-botones .boton { min-height: 44px; box-sizing: border-box; }
+
+/* ---------- la cabecera: tu cara (88 px), tu nombre y tu email ---------- */
+.cu-cab { display: flex; align-items: center; gap: 14px; margin-right: 40px; }
+.cu-cara { flex: none; width: 88px; height: 88px; border-radius: 50%; border: 4px solid var(--outline); background: var(--tray-hi); object-fit: cover; box-sizing: border-box; }
+.cu-quien { min-width: 0; }
+.cuenta-caja .cu-quien h3 { margin: 0; overflow-wrap: anywhere; }
+.cuenta-caja .cu-email { margin: 2px 0 0; font-size: 13px; color: var(--ink-dim); overflow-wrap: anywhere; }
+
+/* ---------- las pestañas ---------- */
+.cu-pestanas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 14px 0 4px; }
+.cu-pestanas button { min-height: 44px; padding: 8px 4px 4px; font-family: var(--font-display); font-size: 15px; color: var(--ink); background: var(--panel);
+  border: 3px solid var(--outline); border-radius: 12px; cursor: pointer; }
+.cu-pestanas button.on { background: var(--gold); color: var(--outline); }
+.cu-pestanas button:focus-visible, .cu-grupo:focus-visible, .cu-cara-op:focus-visible, .cu-lista a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- TU CARA: una pestaña pequeña por juego y la rejilla (6 por fila en el móvil); la elegida, con borde dorado ---------- */
+.cu-grupos { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.cu-grupo { min-height: 44px; padding: 6px 14px; font: 800 13px var(--font-ui); color: var(--ink); background: var(--panel); border: 2px solid var(--outline); border-radius: 999px; cursor: pointer; }
+.cu-grupo.on { background: var(--gold); color: var(--outline); }
+.cu-caras { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.cu-caras[aria-busy="true"] { opacity: .6; pointer-events: none; }
+.cu-cara-op { aspect-ratio: 1; min-width: 44px; padding: 0; border: 3px solid transparent; border-radius: 50%; background: none; cursor: pointer; }
+.cu-cara-op img { display: block; width: 100%; height: 100%; border-radius: 50%; }
+.cu-cara-op.on { border-color: var(--gold); box-shadow: 0 0 0 2px var(--outline); }
+@media (min-width: 560px) { .cu-caras { grid-template-columns: repeat(8, 1fr); } }
+
+/* ---------- TU JUEGO FAVORITO ---------- */
+.cuenta-caja select { width: 100%; min-height: 48px; box-sizing: border-box; margin-top: 8px; font: 700 17px var(--font-ui); padding: 8px 10px; border-radius: 10px;
+  border: 3px solid var(--outline); background: var(--ink); color: var(--outline); }
+.cuenta-caja .cu-jugar { display: block; margin-top: 12px; text-align: center; font-size: 22px; padding: 13px 16px 9px; }
+.cuenta-caja .cu-jugar[hidden] { display: none; }
+
+/* ---------- MIS JUEGOS ---------- */
+.cu-lista { list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.cu-lista li { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; background: var(--panel); border: 2px solid var(--outline); border-radius: 12px; }
+.cu-lista a { flex: 1; padding: 10px 0; color: var(--ink); font-weight: 800; text-decoration: none; }
+.cu-voto { font-size: 12px; font-weight: 800; color: var(--danger); text-align: right; }
+.cu-voto.si { color: #7be08a; }
+.cuenta-caja .cu-vacio { color: var(--ink-dim); }
+
+/* ---------- AJUSTES: borrar la cuenta, en rojo ---------- */
+.cuenta-caja .cu-borrar-sub { color: var(--danger, #ff4b5c); margin-top: 22px; }
+.cuenta-botones .boton.cu-rojo { background: #c62828; color: #fff; }

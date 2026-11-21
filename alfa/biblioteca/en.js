@@ -241,4 +241,6 @@ IDIOMA.add({
   "Lo que más pide la gente": "What people ask for most",
   "Los que elegimos nosotros y luego el resto": "Our picks first, then the rest",
   "Se acuerda de lo que eliges en este navegador.": "Your choice is remembered in this browser.",
+  // la franja de tu juego favorito en la portada nueva (biblioteca/portada-nueva.js, tarea #299)
+  "Seguir con {j}": "Continue with {j}",
 });

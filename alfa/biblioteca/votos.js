@@ -6,6 +6,7 @@
 //   · En la ficha, SÍ / NO con una nota opcional y la barra de «% lo recomienda»: un voto por juego y día (el día cambia a las 00:00 de España) y otro al momento si el juego saca versión nueva.
 //     Hace falta cuenta (no vale invitado). La nota la leemos solo nosotros: no se enseña a nadie.
 // Usa lo que ya hay en la página: t(), esc(), TARJETAS, ENTRADAS, CUENTA, y de biblioteca/cuenta-web.js conCuenta(), abrirCuenta() y avisar().
+// Expone VOTOS_WEB (tus guardados y tus votos de hoy) para MI CUENTA → MIS JUEGOS.
 'use strict';
 (() => {
   const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co', CLAVE = 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn';   // públicos: las reglas las pone la base de datos
@@ -196,6 +197,11 @@
   fetch(SERVIDOR + '/rest/v1/rpc/recomendaciones_totales', { method: 'POST', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: '{}' })
     .then(r => (r.ok ? r.json() : Promise.reject())).then(d => { recomiendan = d && typeof d === 'object' ? d : {}; if (!ficha.caja.hidden && ficha.id && voto.estado !== 'cargando') pintarVoto(); })
     .catch(() => {});
+  // lo que enseña MI CUENTA → MIS JUEGOS (biblioteca/cuenta-pestanas.js): tus guardados (ids de tarjeta, 'g-pop') y lo que votaste hoy desde este navegador
+  window.VOTOS_WEB = Object.freeze({
+    guardados: () => favs.slice(),
+    votosDeHoy: () => { const v = new Map(); for (const [k, voto] of Object.entries(leerCache().v)) v.set(k.split('|')[0], voto); return [...v].map(([tarjeta, voto]) => ({ tarjeta, voto })); },
+  });
   ordenar(); pintarCorazones();
   setInterval(pintarMinis, 3000);   // las versiones de cada juego llegan por separado: se repinta hasta que estén
 })();

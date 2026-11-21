@@ -1,8 +1,8 @@
 {
- "build": 1400,
- "hash": "bec3b89",
- "fecha": "2026-11-21T02:49:56Z",
- "mensaje": "Mi cuenta (#299, a medias, sin subir a main): pantalla con pestañas en curso",
+ "build": 1401,
+ "hash": "d8234ed",
+ "fecha": "2026-11-21T03:33:40Z",
+ "mensaje": "Tablero: cada columna enseña 10 tarjetas y «Ver las N más»; Hecho, la última terminada primero; con filtro se ven todas (tarea #301, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

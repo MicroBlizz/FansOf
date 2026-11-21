@@ -9,6 +9,8 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
   // (el formulario corto de «Apuntar idea o fallo»); vista: la columna elegida con los botones de arriba (null = todas; ADR 147)
+  // desplegadas: las columnas con «Ver las N más» abierto (tarea #301); se recuerda mientras la página está abierta
+  const desplegadas = new Set();
   let yo = null, reac = null, vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
@@ -17,7 +19,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
 
   const pintaTablero = () => {
     el(hueco.bandeja).innerHTML = TABLERO.vistaRevisar.bandeja(TABLERO.bandeja(tareas, yo), yo, filtro.bandeja, esc);   // «Te toca», lo primero (tarea #161)
-    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, vista, fecha, yo) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
+    el(hueco.lista).innerHTML = TABLERO.vista.html(TABLERO.recorta(columnas, filtro, desplegadas), esc, panel && panel.id, vista, fecha, yo) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
   };
   // El panel se pinta según `panel`; si la tarea abierta ya no está (filtro o borrada), se cierra. El formulario no se repinta al recargar, para no perder lo escrito
   function pintaPanel(conFormulario) {
@@ -160,11 +162,20 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     el(hueco.lista).onclick = ev => {
       const b = ev.target.closest('[data-ver]'), t = ev.target.closest('[data-id]'), buena = ev.target.closest('[data-buena]');
       if (reac.clic(ev) || ev.target.closest('[data-probar]')) return;   // «Probar» es un enlace: se abre sin abrir el detalle
-      if (buena) daPorBuena(buena);
+      const mas = ev.target.closest('[data-despliega]');
+      if (mas) despliega(mas.dataset.despliega);
+      else if (buena) daPorBuena(buena);
       else if (b) cambiaVista(b);
       else if (t) elige(t);
     };
     el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter' && !ev.target.closest('[data-barrita]')) { ev.preventDefault(); elige(t); } };
+  }
+  // «Ver las N más» / «Ver menos» (tarea #301): abre o cierra esa columna y deja el foco en su botón (al plegar, la página vuelve a él)
+  function despliega(id) {
+    if (!desplegadas.delete(id)) desplegadas.add(id);
+    pintaTablero();
+    const boton = [...el(hueco.lista).querySelectorAll('[data-despliega]')].find(x => x.dataset.despliega === id && x.offsetParent);
+    if (boton) boton.focus();
   }
   // Una caja de «Te toca» (tarea #161): enseña solo esas tareas, en su columna; tocar la misma (o «Ver todo») lo quita
   function eligeBandeja(id) {

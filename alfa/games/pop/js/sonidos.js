@@ -11,9 +11,9 @@ const ppPuedeVibrar = nav => !!(nav && nav.vibrate) && (!nav.userActivation || n
 function ppVibra(ms) { if (SAVE.sinVibrar || !ppPuedeVibrar(navigator)) return; try { navigator.vibrate(ms); } catch (e) { /* sin vibración */ } }
 // EL PLOP (hecho a mano, no con Yoshi: la IA no sabe hacer sonidos tan cortos). Una gotita kawaii: un tono que SUBE muy rápido
 // y se apaga en menos de una décima (como una burbuja de agua), un clic suave delante (la «p») y un brillito agudo encima.
-function ppPlop(nota = 1) {
+function ppPlop(nota = 1, cuando = 0) {
   if (!AC || sonidoApagado()) return;
-  const t = AC.currentTime + 0.005, f = 520 * nota, out = AC.createGain(); out.gain.value = 0.9; out.connect(master);
+  const t = AC.currentTime + 0.005 + cuando, f = 520 * nota, out = AC.createGain(); out.gain.value = 0.9; out.connect(master);
   const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine';
   o.frequency.setValueAtTime(f * 0.55, t); o.frequency.exponentialRampToValueAtTime(f * 1.7, t + 0.05);
   g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.42, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
@@ -87,6 +87,34 @@ Object.assign(SFX, {
   select: () => ppPlop(1.5),
 });
 Object.assign(THROTTLE, { ppPop: 25, ppUnpop: 25, ppCombo: 60 });
+
+// LOS ATAQUES DE LOS COMPAÑEROS (tarea #160, ADR 197): un sonido por FORMA de ataque (su id es el `sonido` de PP_ATAQUES.formas,
+// js/ataques-datos.js). Intensidad «Fiesta»: cortos (0,15 a 0,45 s), agudos y con brillo o rebote, hechos con las mismas piezas
+// kawaii de arriba (campanitas, silbatos y gotitas). Varios compañeros pueden atacar a la vez: cada uno se frena 60 ms.
+const PP_SON_ATAQUE = Object.freeze({
+  // salto: un muelle que sube, el pop al caer y un ding
+  'ataque-salto': () => { ppSilbato(523, 1568, 0.12, 0, 0.11); ppPlop(2, 0.13); ppCampana(2637, 0.2, 0.06, 0.22); },
+  // especial: va derecho (silbato rápido) y da un zarpazo de dos rasguños agudos con un brillito
+  'ataque-especial': () => { ppSilbato(1318, 2093, 0.07, 0, 0.15); ppSilbato(2349, 1568, 0.04, 0.09, 0.14); ppSilbato(2637, 1760, 0.04, 0.15, 0.14); ppCampana(2637, 0.21, 0.1, 0.2); },
+  // lluvia: cuatro gotitas que caen seguidas, cada una en otra nota
+  'ataque-lluvia': () => { [2, 1.5, 1.67, 1.25].forEach((n, k) => ppPlop(n, k * 0.065)); ppCampana(2093, 0.28, 0.05, 0.18); },
+  // marca: un arco que sube despacito y dos chispitas que brillan al llegar
+  'ataque-marca': () => { ppSilbato(784, 1568, 0.14, 0, 0.15); ppCampana(2637, 0.15, 0.12, 0.25); ppCampana(2349, 0.22, 0.1, 0.22); },
+  // toque: sube al contador (tres notas rápidas) y hace una onda con vibrato
+  'ataque-toque': () => { ppArpegio(3, 3, 0.04, 0.12); ppSilbato(1318, 1568, 0.12, 0.13, 0.13, 40); },
+  // premio: un arco y un destello de cuatro campanitas brillantes
+  'ataque-premio': () => { ppSilbato(659, 1318, 0.09, 0, 0.13); [7, 9, 10, 12].forEach((n, k) => ppCampana(PP_NOTAS[n], 0.09 + k * 0.05, 0.11, 0.3)); },
+  // monedas: la fuente de monedas, un tintineo de cuatro dings que suben y bajan
+  'ataque-monedas': () => [8, 10, 12, 10].forEach((n, k) => ppCampana(PP_NOTAS[n], k * 0.06, 0.13, 0.2)),
+  // tiempo: un remolino (silbato con vibrato ancho que baja y vuelve a subir) y un ding al terminar
+  'ataque-tiempo': () => { ppSilbato(1568, 1046, 0.14, 0, 0.15, 60); ppSilbato(1046, 1760, 0.14, 0.15, 0.15, 60); ppCampana(2093, 0.3, 0.1, 0.15); },
+  // pellizco: un «pik» chiquito, una gotita aguda y un tilín
+  'ataque-pellizco': () => { ppSilbato(1760, 2637, 0.035, 0, 0.15); ppPlop(2.5, 0.06); ppCampana(3136, 0.1, 0.06, 0.12); },
+  // rival: un rayo en zigzag (cuatro silbatos cortos que suben y bajan) que acaba arriba con una campanita
+  'ataque-rival': () => { [[1046, 1568], [1568, 1175], [1175, 1760], [1760, 2349]].forEach(([a, b], k) => ppSilbato(a, b, 0.04, k * 0.05, 0.14)); ppCampana(2637, 0.22, 0.1, 0.2); },
+});
+Object.assign(SFX, PP_SON_ATAQUE);
+Object.keys(PP_SON_ATAQUE).forEach(id => { THROTTLE[id] = 60; });
 
 // la música que debe sonar: el bucle la pone en cuanto el audio arranca (el navegador espera al primer toque) y no corta las sintonías
 const PP_MUS = { quiere: 'menu' };

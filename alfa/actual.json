@@ -1,8 +1,8 @@
 {
- "build": 1413,
- "hash": "c877c7e",
- "fecha": "2026-11-21T14:16:07Z",
- "mensaje": "Pop: tablas de ataques de los compañeros, forma por habilidad y cositas por compañero (tarea #160, nodo n1, Pepins)",
+ "build": 1414,
+ "hash": "23c128a",
+ "fecha": "2026-11-21T14:51:41Z",
+ "mensaje": "Pop: sonidos de los ataques de los compañeros por código y prueba de 3 en Yoshi (tarea #160, nodo n6, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

@@ -1,0 +1,79 @@
+/* Fans Of · /gestion · FLUJO (tarea #321): la hoja de la pestaña «Flujo», como el boceto aprobado por Pepins: redondeada, alegre y clara, con tema oscuro.
+   TODAS las reglas van bajo #pan-flujo y las clases llevan fl- delante, para no cambiar nada del resto de /gestion (que es sobrio a propósito, ADR 135).
+   Letras: Baloo 2 la sirve la web (core/fuentes/baloo-2.css, ADR 092, sin pedir nada a Google); Nunito no está servida, así que el texto cae en la pila de sistema. */
+#pan-flujo {
+  --fl-bg: #fff6fb; --fl-panel: #ffffff; --fl-linea: #f1d9e6; --fl-fg: #2a1f33; --fl-suave: #6d5f78;
+  --fl-rosa: #e2458f; --fl-curso: #2f6fe4; --fl-curso-f: #e4edff; --fl-rev: #e98a00; --fl-rev-f: #fff1d9;
+  --fl-hecho: #1f9d55; --fl-hecho-f: #dcf7e7; --fl-idea: #a796b4; --fl-idea-f: #f1ebf6; --fl-rojo: #d93a3a; --fl-rojo-f: #ffe3e3;
+  --fl-sombra: 0 6px 18px rgba(120, 40, 90, .08);
+  --fl-titulo: "Baloo 2", "Nunito", system-ui, sans-serif; --fl-letra: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--fl-bg); color: var(--fl-fg); font-family: var(--fl-letra); font-size: 15px; line-height: 1.4; border-radius: 24px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #pan-flujo {
+  --fl-bg: #1b1420; --fl-panel: #261d2d; --fl-linea: #3c2f46; --fl-fg: #f6eefa; --fl-suave: #c3b4cf;
+  --fl-rosa: #ff7ab8; --fl-curso: #7fa8ff; --fl-curso-f: #22304d; --fl-rev: #ffb547; --fl-rev-f: #3d2c12;
+  --fl-hecho: #5bd98f; --fl-hecho-f: #173826; --fl-idea: #b9a8c8; --fl-idea-f: #30263a; --fl-rojo: #ff8080; --fl-rojo-f: #4a1f24;
+  --fl-sombra: 0 6px 18px rgba(0, 0, 0, .35); } }
+:root[data-theme="dark"] #pan-flujo {
+  --fl-bg: #1b1420; --fl-panel: #261d2d; --fl-linea: #3c2f46; --fl-fg: #f6eefa; --fl-suave: #c3b4cf;
+  --fl-rosa: #ff7ab8; --fl-curso: #7fa8ff; --fl-curso-f: #22304d; --fl-rev: #ffb547; --fl-rev-f: #3d2c12;
+  --fl-hecho: #5bd98f; --fl-hecho-f: #173826; --fl-idea: #b9a8c8; --fl-idea-f: #30263a; --fl-rojo: #ff8080; --fl-rojo-f: #4a1f24;
+  --fl-sombra: 0 6px 18px rgba(0, 0, 0, .35); }
+#pan-flujo .fl-pagina { padding: 24px 20px 32px; display: flex; flex-direction: column; gap: 18px; max-width: 1100px; margin: 0 auto; }
+#pan-flujo h1, #pan-flujo h2 { font-family: var(--fl-titulo); margin: 0; text-wrap: balance; color: var(--fl-fg); letter-spacing: 0; }
+#pan-flujo h1 { font-size: 34px; line-height: 1.1; font-weight: 800; }
+#pan-flujo h2 { font-size: 21px; line-height: 1.2; font-weight: 800; }
+#pan-flujo .fl-migas { font-size: 13px; color: var(--fl-suave); font-weight: 600; }
+#pan-flujo .fl-cab { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; }
+#pan-flujo .fl-filtro { display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; max-width: 100%; }
+#pan-flujo .fl-filtro button { min-height: 44px; padding: 0 18px; border-radius: 99px; border: 2px solid var(--fl-linea); background: var(--fl-panel); color: var(--fl-fg); font: 800 15px var(--fl-letra); cursor: pointer; }
+#pan-flujo .fl-filtro button[aria-pressed="true"] { background: var(--fl-rosa); border-color: var(--fl-rosa); color: #fff; }
+#pan-flujo .fl-elige { display: block; min-width: 0; max-width: 100%; color: inherit; font-size: inherit; }
+#pan-flujo .fl-elige select { width: auto; max-width: 100%; min-height: 44px; padding: 0 40px 0 18px; border-radius: 99px; border: 2px solid var(--fl-linea); background-color: var(--fl-panel); color: var(--fl-fg); font: 800 15px var(--fl-letra); cursor: pointer; appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--fl-suave) 50%), linear-gradient(135deg, var(--fl-suave) 50%, transparent 50%); background-position: calc(100% - 20px) 19px, calc(100% - 14px) 19px; background-size: 6px 6px; background-repeat: no-repeat; }
+#pan-flujo .fl-elige select.activo { border-color: var(--fl-rosa); background-color: var(--fl-rosa); color: #fff; }
+#pan-flujo .fl-filtro button:focus-visible, #pan-flujo .fl-elige select:focus-visible, #pan-flujo a:focus-visible { outline: 3px solid var(--fl-curso); outline-offset: 2px; }
+#pan-flujo .fl-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+#pan-flujo .fl-aviso { background: var(--fl-rev-f); border: 2px solid var(--fl-rev); border-radius: 18px; padding: 14px 18px; display: flex; gap: 14px; align-items: center; font-weight: 700; }
+#pan-flujo .fl-aviso svg { flex: none; }
+#pan-flujo .fl-semaforos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+#pan-flujo .fl-sem { background: var(--fl-panel); border-radius: 20px; padding: 16px 18px; box-shadow: var(--fl-sombra); display: flex; align-items: center; gap: 14px; }
+#pan-flujo .fl-bola { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+#pan-flujo .fl-sem b { font-family: var(--fl-titulo); font-size: 40px; font-weight: 800; line-height: 1; display: block; font-variant-numeric: tabular-nums; }
+#pan-flujo .fl-sem span { color: var(--fl-suave); font-weight: 700; font-size: 14px; }
+#pan-flujo .fl-fila { display: flex; flex-wrap: wrap; gap: 16px; }
+#pan-flujo .fl-tarjeta { background: var(--fl-panel); border-radius: 20px; padding: 20px; box-shadow: var(--fl-sombra); display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+#pan-flujo .fl-ancha { flex: 999 1 520px; }
+#pan-flujo .fl-estrecha { flex: 1 1 320px; }
+#pan-flujo .fl-dona { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: center; }
+#pan-flujo .fl-leyenda { display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
+#pan-flujo .fl-leyenda div { display: grid; grid-template-columns: 16px 1fr auto; gap: 10px; align-items: center; font-weight: 700; }
+#pan-flujo .fl-leyenda i { width: 16px; height: 16px; border-radius: 5px; display: block; }
+#pan-flujo .fl-leyenda b { font-variant-numeric: tabular-nums; }
+#pan-flujo .fl-leyenda.fl-en-fila { flex-direction: row; flex-wrap: wrap; gap: 14px; min-width: 0; }
+#pan-flujo .fl-leyenda.fl-en-fila div { grid-template-columns: 16px auto; }
+#pan-flujo .fl-nota { margin: 0; color: var(--fl-suave); font-size: 13px; }
+#pan-flujo .fl-lista { display: flex; flex-direction: column; gap: 6px; }
+#pan-flujo .fl-lista.fl-esperas { gap: 10px; }
+#pan-flujo a.fl-atasco, #pan-flujo a.fl-espera { color: inherit; text-decoration: none; border-radius: 12px; }
+#pan-flujo a.fl-atasco:hover .fl-tit, #pan-flujo a.fl-espera:hover strong { text-decoration: underline; }
+#pan-flujo .fl-atasco { display: grid; grid-template-columns: 50px minmax(0, 1fr) minmax(90px, 160px) 58px; gap: 10px; align-items: center; min-height: 34px; }
+#pan-flujo .fl-id { font-weight: 800; color: var(--fl-suave); font-size: 13px; }
+#pan-flujo .fl-tit { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+#pan-flujo .fl-termo { height: 12px; border-radius: 99px; background: var(--fl-idea-f); overflow: hidden; }
+#pan-flujo .fl-termo div { height: 100%; border-radius: 99px; }
+#pan-flujo .fl-dias { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+#pan-flujo .fl-espera { display: flex; gap: 12px; align-items: flex-start; border: 2px solid var(--fl-linea); border-radius: 16px; padding: 10px 12px; min-height: 44px; }
+#pan-flujo .fl-cara { width: 44px; height: 44px; border-radius: 50%; flex: none; display: grid; place-items: center; font: 800 18px var(--fl-titulo); color: #fff; }
+#pan-flujo .fl-espera strong { display: block; }
+#pan-flujo .fl-espera small { color: var(--fl-suave); font-size: 13px; }
+#pan-flujo svg text { font-family: var(--fl-letra); }
+@media (max-width: 560px) {
+  #pan-flujo { margin-inline: -16px; border-radius: 0; }
+  #pan-flujo .fl-pagina { padding: 20px 16px 28px; }
+  #pan-flujo h1 { font-size: 30px; }
+  #pan-flujo .fl-tarjeta { padding: 16px; }
+  #pan-flujo .fl-atasco { grid-template-columns: 44px minmax(0, 1fr) 52px; row-gap: 4px; }
+  #pan-flujo .fl-tit { grid-column: 2 / 4; white-space: normal; }
+  #pan-flujo .fl-termo { grid-column: 1 / 3; }
+}

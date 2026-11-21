@@ -1,5 +1,5 @@
 // Fans Of · /gestion: la NAVEGACIÓN (tarea #162, ADR 161). Una barra con cuatro botones (abajo y fija en el móvil, arriba en el ordenador): Tablero, Juegos,
-// Jugadores y Ajustes. Cada uno tiene sus pestañas debajo (Tablero: Tablero, Cola y SQL; Jugadores: Cuentas, Métricas, Comentarios, Roles y Rendimiento;
+// Jugadores y Ajustes. Cada uno tiene sus pestañas debajo (Tablero: Tablero, Flujo, Cola y SQL; Jugadores: Cuentas, Métricas, Comentarios, Roles y Rendimiento;
 // Ajustes: Flags, Config y lo que no diga su grupo). «Juegos» enseña la lista de todos los juegos de la biblioteca con buscador (catalogo.js); al elegir uno
 // salen sus pestañas y «Todos los juegos» para volver.
 // Cada archivo de sección se apunta con GESTION_NAV.seccion({ id, pan, etiqueta, orden, juego?, grupo?, cargar? }): sin `juego` es una pestaña común (su grupo,

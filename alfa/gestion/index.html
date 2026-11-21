@@ -7,6 +7,8 @@
 <title>Gestión · Fans Of</title>
 <link rel="stylesheet" href="gestion.css">
 <link rel="stylesheet" href="../estilo/pie.css">
+<link rel="stylesheet" href="../core/fuentes/baloo-2.css">
+<link rel="stylesheet" href="flujo/flujo.css">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f3f4f6">
 <link rel="apple-touch-icon" href="../core/img/fog-192.png">
@@ -88,6 +90,7 @@
       <datalist id="tb-juegos"></datalist>
       <div class="tb-vista" id="tb-vista"><div id="tb-lista"></div><aside class="caja tb-panel" id="tb-detalle" hidden></aside></div>
     </div>
+    <div id="pan-flujo" hidden></div>
     <div id="pan-flags" hidden>
       <div class="caja ayuda"><b>Flags.</b> Interruptores para probar funciones nuevas, uno por plataforma: <b>Alfa</b> (la copia de pruebas), <b>Web</b> (la release) y <b>Android</b>. Pulsa el botón de una plataforma para abrirla o cerrarla sin tocar las otras. Los juegos los leen al arrancar y cada 5 minutos. Crearlos y borrarlos es cosa de desarrollo, y al borrar uno desaparece de esta lista. Los valores que siempre se aplican (monedas…) no son flags: están en <b>Config</b>.</div>
       <div class="aviso" id="fl-aviso" role="alert"></div>
@@ -302,6 +305,9 @@ volverDeGoogle().then(hecho => { if (!hecho) entrarSola(); });
 <script src="tablero/adaptadores/control-reacciones.js"></script>
 <script src="tablero/adaptadores/controlador.js"></script>
 <script src="tablero/principal.js"></script>
+<script src="flujo/dominio/flujo.js"></script>
+<script src="flujo/adaptadores/vista-flujo.js"></script>
+<script src="flujo/principal.js"></script>
 <script>GESTION_NAV.arranca();</script>
 </body>
 </html>

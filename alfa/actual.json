@@ -1,8 +1,8 @@
 {
- "build": 1408,
- "hash": "3b49ed5",
- "fecha": "2026-11-21T04:11:36Z",
- "mensaje": "Novedades: el gashapón nuevo en TD 0.13.103 y Survivors 0.1.87 (aún sin publicar), con su inglés (tarea #123)",
+ "build": 1409,
+ "hash": "aadd234",
+ "fecha": "2026-11-21T06:15:50Z",
+ "mensaje": "Island en la lista de nuestro anuncio y fuera del Archivo en los tests: la marca «tests» de main estaba en rojo desde que salió del Archivo (ADR 192)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

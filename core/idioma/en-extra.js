@@ -209,6 +209,7 @@ IDIOMA.add({
   "Microblizz se compromete a abrir el acceso con Google a todo el mundo en menos de un año. Tiene la firma de un becario.": "Microblizz promises to open Google sign-in to everyone in under a year. It has the intern's signature.",
   "NECESITAS UNA CUENTA": "YOU NEED AN ACCOUNT",
   "AHORA NO": "NOT NOW",
+  "PRIMERO, TU CUENTA": "FIRST, YOUR ACCOUNT",
   "Sin contraseña: entras con Google o con un enlace al email. Tu progreso se queda en tu cuenta.": "No password: sign in with Google or with a link sent to your email. Your progress stays in your account.",
   "Iniciar sesión / crear cuenta": "Sign in / create account",
   "Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el PvP.": "With an account you keep your progress, play on other devices and can enter PvP.",
@@ -242,4 +243,9 @@ IDIOMA.add({
   "Sin anuncios": "No ads",
   "PARA SIEMPRE": "FOREVER",
   "Los premios de los anuncios te llegan al momento, sin verlos, y tu nivel de anuncios es siempre el máximo. El tope de cada día sigue igual.": "Ad rewards arrive instantly, without watching, and your ad level is always the highest. The daily limit stays the same.",
+  // HORIZONTAL (core/js/sistema/horizontal.js, ADR 133)
+  "Toca para jugar en horizontal": "Tap to play in landscape",
+  "o gira el móvil": "or turn your phone",
+  "Gira el móvil para jugar": "Turn your phone to play",
+  "Si no cambia, quita el bloqueo de giro": "If nothing changes, turn off rotation lock",
 });

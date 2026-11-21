@@ -1,10 +1,15 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "18 de noviembre de 2026": "18 November 2026",
+  "FANS OF KINGDOM": "FANS OF KINGDOM",
+  "Prototipo recuperado: el primer Fans of Asalto vuelve con nombre propio. Compra a los Animales Locos, combina sus 7 clases y baja por la mazmorra de Microblizz en batallas automáticas.": "Recovered prototype: the first Fans of Asalto is back under its own name. Buy the Crazy Animals, combine their 7 classes and go down the Microblizz dungeon in automatic battles.",
+  "FANS OF SPY": "FANS OF SPY",
+  "Prototipo nuevo: sigilo por turnos con cartas, en 3D. Cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios.": "New prototype: turn-based stealth with cards, in 3D. Sneak CrazyBunny into the Microblizz tower without the Interns seeing you.",
   "5 de noviembre de 2026": "5 November 2026",
   "FANS OF BASEMENT": "FANS OF BASEMENT",
   "Prototipo nuevo: baja por el hueco del ascensor de Microblizz con la grapadora disparando sola, sin quedarte sin café, y sube con la caja llena de botín.": "New prototype: dive down the Microblizz elevator shaft with your stapler firing on its own, without running out of coffee, and go up with your box full of loot.",
-  "Demo nueva y muy kawaii: haz pop en las burbujas de un pop-it gigante y rescata a los amigos atrapados. Próximamente.": "A brand-new, super kawaii demo: pop the bubbles of a giant pop-it and rescue the trapped friends. Coming soon.",
+  "Demo nueva y muy kawaii: haz pop en las burbujas de un tablero gigante y rescata a los amigos atrapados. Próximamente.": "A brand-new, super kawaii demo: pop the bubbles of a giant board and rescue the trapped friends. Coming soon.",
   "Prototipo nuevo en 3D: lleva pasajeros contra el reloj, corre carreras y dale esquinazo a la policía. Próximamente.": "New 3D prototype: carry passengers against the clock, race through the streets and shake off the police. Coming soon.",
   "FANS OF TAXI": "FANS OF TAXI",
   "29 de octubre de 2026": "29 October 2026",

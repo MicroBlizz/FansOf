@@ -1,0 +1,15 @@
+/* Fans Of · páginas de TEXTO de la web (privacidad, condiciones, borrar la cuenta, energía y android): un texto largo cómodo de leer, con las letras y colores de core/css/base.css.
+   Cada bloque de idioma lleva lang="es" o lang="en"; solo se ve el que tiene la clase «on» (la pone idioma-pagina.js). El menú y la paleta, en estilo/web.css. */
+body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; user-select: text; -webkit-user-select: text; background-repeat: no-repeat; background-attachment: fixed; }
+main { max-width: 760px; margin: 0 auto; padding: 18px 16px 56px; box-sizing: border-box; font-size: 16px; font-weight: 600; line-height: 1.6; }
+main > [lang] { background: var(--panel); border: 4px solid var(--outline); border-radius: 18px; box-shadow: 0 5px 0 var(--outline); padding: 8px 20px 22px; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1; margin: .5em 0 .1em; color: var(--player); }
+h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.1; margin: 1.5em 0 .3em; color: var(--gold); }
+small { color: var(--ink-dim); font-weight: 700; }
+a { color: #8fd3ff; }
+li { margin: .3em 0; }
+ul { padding-left: 1.2em; }
+b { font-weight: 800; }
+[lang] { display: none; }
+[lang].on { display: block; }
+@media (max-width: 480px) { h1 { font-size: 32px; } main > [lang] { padding: 4px 14px 18px; border-width: 3px; } }

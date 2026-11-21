@@ -30,7 +30,7 @@ const GESTION_JUEGOS = {};
     if (GESTION_JUEGOS[id]) { const cont = $('j-propio'); cont.innerHTML = '<div class="caja ayuda">Cargando…</div>'; try { await GESTION_JUEGOS[id](cont); } catch (e) { cont.innerHTML = `<div class="caja aviso">${esc(textoError(e))}</div>`; } }
   }
   GESTION_NAV.seccion({ id: 'rend', pan: 'pan-rend', etiqueta: 'Rendimiento', orden: 4, cargar: pintaRend });
-  for (const [id, nombre] of GESTION_NAV.JUEGOS) GESTION_NAV.seccion({ id: 'resumen', pan: 'pan-juego', juego: id, etiqueta: 'Resumen', orden: 0, cargar: () => pintaJuego(id, nombre) });
+  GESTION_NAV.seccion({ id: 'resumen', pan: 'pan-juego', juego: '*', etiqueta: 'Resumen', orden: 0, cargar: (id, nombre) => pintaJuego(id, nombre) });   // en todos los juegos (nav.js)
   $('salir').addEventListener('click', () => { R = null; });
   $('recargar').addEventListener('click', () => { R = null; });
 })();

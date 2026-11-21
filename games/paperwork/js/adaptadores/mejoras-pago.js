@@ -15,5 +15,6 @@ PW.creaMejorasPago = ({ comprar, ...puertos }) => {
     if (!m) return;
     comprar(titulo, html, r => { derechos.llega(r, m.clave); alComprar(r); }, m.producto);
   }
-  return { claves: derechos.claves, tiene: derechos.tiene, llega: derechos.llega, refresca: derechos.refresca, compra, olvidaPruebas: derechos.olvidaPruebas };
+  return { claves: derechos.claves, tiene: derechos.tiene, llega: derechos.llega, refresca: derechos.refresca, compra, olvidaPruebas: derechos.olvidaPruebas,
+    olvida: derechos.olvida };   // toda la copia, la de la cuenta y las de prueba: el reseteo de una cuenta de probador (adaptadores/probador.js)
 };

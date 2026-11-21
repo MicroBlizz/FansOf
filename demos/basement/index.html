@@ -1,39 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#120a1c">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fans of Basement</title>
-<meta name="description" content="Fans of Basement: el servidor de Microblizz se ha caído. Baja por el hueco del ascensor planta a planta, la grapadora dispara sola, no te quedes sin café y sube con la caja llena de botín.">
-<script src="../../core/js/nucleo.js?v=0.13.0"></script>
-<script>NUCLEO.fuentes('../../core/fuentes/jersey-10.css')</script>
-<!-- ?v= es la versión de la demo: súbela al publicar -->
-<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
-<style>
-/* Fans of Basement: un solo canvas vertical (540 de ancho lógico, como Fans of Swipe) centrado en la pantalla. */
-html, body { height: 100%; margin: 0; background: #120a1c; overflow: hidden; overscroll-behavior: none; }
-body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
-#juego { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: block; touch-action: none; image-rendering: pixelated; }
-#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffd23a; font: 28px/1 'Jersey 10', monospace; }
-[hidden] { display: none !important; }
-</style>
+<!-- Fans of Basement vive ahora en games/basement (ADR 142). Esta página manda allí a quien llega por la dirección vieja, conservando ?idioma y #, y se borra el 18-2-2027. -->
+<link rel="canonical" href="../../games/basement/">
+<link rel="stylesheet" href="../../core/css/mudanza.css">
+<noscript><meta http-equiv="refresh" content="0; url=../../games/basement/"></noscript>
+<script src="../../core/js/sistema/idioma-regla.js"></script>
+<script src="../../idioma-web.js"></script>
+<script src="../../core/js/mudanza/reglas.js"></script>
+<script src="../../core/js/mudanza/pagina.js"></script>
 </head>
-<body>
-<canvas id="juego" aria-label="Fans of Basement"></canvas>
-<div id="carga">…</div>
-<div id="toast"></div>
-<script>
-NUCLEO.juego({
-  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Basement guarda en el navegador sus monedas, mejoras y récord
-  antes: ['js/ajustes-formacion.js', 'js/ajustes.js'],
-  idioma: { en: ['idioma/en.js', 'idioma/en-companeros.js'] },
-  despues: [
-    '../../core/js/serie/canciones.js',
-    'js/progreso.js', 'js/inventario.js', 'js/bajada.js', 'js/campana.js', 'js/enemigos.js', 'js/jefes.js', 'js/becarios.js', 'js/arma.js', 'js/muebles.js', 'js/taller.js', 'js/habilidad.js', 'js/captura.js', 'js/despacho.js', 'js/presion.js', 'js/modos.js', 'js/pase.js', 'js/companeros.js',
-    'js/guardado.js', '../../core/js/sistema/retos-ligero.js', 'js/retos.js', 'js/ranking.js', 'js/sonido.js', 'js/estilo.js', 'js/sprites.js', 'js/aspecto-capas.js', 'js/aspecto.js', 'js/efectos.js', 'js/sensacion.js', 'js/vista.js', 'js/vista-jefes.js', 'js/pantallas.js',
-    'js/bajada-ui.js', 'js/mesa.js', 'js/mesa-equipo.js', 'js/mesa-campana.js', 'js/mesa-modos.js', 'js/mesa-armeria.js', 'js/mesa-taller.js', 'js/mesa-companeros.js', 'js/retos-ui.js', 'js/despacho-ui.js', 'js/resultado.js', 'js/tutorial.js', 'js/dev.js', 'js/principal.js'],
-});
-</script>
-</body>
+<body><p><a href="../../games/basement/">Fans of Basement</a></p></body>
 </html>

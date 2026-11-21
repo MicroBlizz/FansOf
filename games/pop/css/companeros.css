@@ -1,0 +1,80 @@
+/* Fans of Pop · compañeros (tarea #142, ADR 156): el botón COMPAÑEROS del menú y la ventana con el álbum (js/pantalla-album.js) y
+   Mi equipo (js/pantalla-equipo.js), como el boceto que aprobó Pepins. Todo en la capa #pp-ui de 540 px de ancho (se escala al móvil).
+   Colores de Pop: menta (Niveles), coral (Pesadilla), cielo (Duelos); rarezas: verde, cielo, naranja y oro. Nada de lila ni de gris. */
+.pp-btn2.pp-menta { min-width: 260px; }   /* color: secundario (pop.css, tarea #143) */
+.pp-comp { gap: 10px; }
+.pp-comp h3 { margin: 0; font-size: 22px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: 8px; text-align: left; }
+.pp-cm-saldo { display: flex; gap: 14px; justify-content: center; font-size: 22px; }
+#pp-ui .pp-cm-tabs .pp-tab { font-size: 20px; }
+#pp-ui .pp-cm-tabs .pp-tab.pp-on { background: linear-gradient(180deg, #7fe0b4, #3fc28f); border-color: #1f8a62; }
+.pp-cm-pagina { width: 100%; box-sizing: border-box; background: #fff; border-radius: 18px; padding: 10px; box-shadow: 0 3px 0 rgba(196, 58, 132, 0.18); display: flex; flex-direction: column; gap: 6px; }
+.pp-cm-cuenta { font-size: 16px; font-weight: 700; background: #fff0c2; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+.pp-cm-barra { height: 10px; background: #fbe8da; border-radius: 999px; overflow: hidden; }
+.pp-cm-barra i { display: block; height: 100%; background: linear-gradient(90deg, #3fc28f, #8fe3b5); }
+.pp-cm-premio, .pp-cm-via, .pp-cm-explica { margin: 0; font-size: 17px; line-height: 1.3; text-align: left; width: 100%; }
+.pp-cm-premio .pp-precio, .pp-cm-via .pp-precio { vertical-align: middle; }
+.pp-btn2.pp-cm-recoger { font-size: 20px; padding: 8px 16px 9px; min-width: 0; align-self: center; }
+.pp-cm-rejilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+/* una carta: borde de su rareza; el brillo de fuera crece con las estrellas */
+#pp-ui .pp-cm-carta { font: inherit; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 2px; padding: 16px 2px 4px;
+  border: 4px solid #7fcf8a; border-radius: 14px; background: #fffaf5; color: var(--pp-cafe); cursor: pointer; pointer-events: auto; min-width: 0; }
+#pp-ui .pp-cm-carta:active { transform: scale(0.95); }
+#pp-ui .pp-cm-carta.pp-cm-r { border-color: #5fbff0; }
+#pp-ui .pp-cm-carta.pp-cm-e { border-color: #ff8a3d; }
+#pp-ui .pp-cm-carta.pp-cm-l { border-color: #ffcf3f; background: #fff8dc; }
+#pp-ui .pp-cm-carta.pp-cm-falta { border: 4px dashed #e9cfc0; background: #fbe8da; }
+#pp-ui .pp-cm-carta.pp-cm-s2 { box-shadow: 0 0 0 2px #ffe9a8; }
+#pp-ui .pp-cm-carta.pp-cm-s3 { box-shadow: 0 0 0 3px #ffd23a; }
+#pp-ui .pp-cm-carta.pp-cm-s4 { box-shadow: 0 0 0 3px #ff9ccf; }
+#pp-ui .pp-cm-carta.pp-cm-s5 { box-shadow: 0 0 0 3px #ffcf3f, 0 0 10px 2px #ff9ccf; }
+#pp-ui .pp-cm-carta.pp-cm-puesto { outline: 4px solid #3fc28f; outline-offset: 2px; }
+.pp-cm-estrellas { position: absolute; top: 1px; left: 4px; font-size: 12px; color: #e0a800; letter-spacing: -1px; font-weight: 700; }
+.pp-cm-modo { position: absolute; top: 2px; right: 3px; width: 18px; height: 18px; border-radius: 50%; font-size: 12px; font-weight: 700; color: #fff; display: grid; place-items: center; }
+.pp-cm-mN { background: #3fc28f; }
+.pp-cm-mP { background: #e8524a; }
+.pp-cm-mD { background: #4aa8f0; }
+.pp-cm-nom { font-size: 14px; font-weight: 700; line-height: 1.05; min-height: 2.1em; display: flex; align-items: center; text-align: center; overflow-wrap: anywhere; }
+.pp-cm-dibujo { display: inline-flex; align-items: center; justify-content: center; }
+.pp-cm-dibujo svg { width: 100%; height: 100%; }
+.pp-cm-proximo { width: 100%; box-sizing: border-box; border: 3px dashed #ff9ccf; border-radius: 18px; padding: 12px; font-size: 19px; font-weight: 700; color: #c43a84; }
+/* la ficha */
+.pp-cm-fila { margin: 0; display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.pp-cm-rar { border-radius: 999px; padding: 2px 12px; font-size: 17px; font-weight: 700; color: var(--pp-cafe); background: #7fcf8a; }
+.pp-cm-rar.pp-cm-r { background: #5fbff0; }
+.pp-cm-rar.pp-cm-e { background: #ff8a3d; }
+.pp-cm-rar.pp-cm-l { background: #ffcf3f; }
+.pp-cm-estrellas-f { display: inline-flex; gap: 1px; }
+.pp-cm-hab { width: 100%; box-sizing: border-box; background: #eafbf2; border-radius: 14px; padding: 10px; font-size: 18px; line-height: 1.3; text-align: left; }
+.pp-cm-modo-t { color: #fff; border-radius: 999px; padding: 0 8px; font-size: 15px; font-weight: 700; }
+.pp-btn.pp-cm-comprar { --c1: var(--pp-pago1); --c2: var(--pp-pago2); --borde: var(--pp-pago-b); }
+/* Mi equipo */
+.pp-cm-modos { display: flex; gap: 6px; width: 100%; }
+#pp-ui .pp-cm-modo-b { font: inherit; flex: 1; border: 0; border-radius: 14px; padding: 9px 2px; font-size: 18px; font-weight: 700; color: #fff; cursor: pointer; pointer-events: auto; opacity: 0.5; box-shadow: 0 3px 0 rgba(26, 16, 48, 0.2); }
+#pp-ui .pp-cm-modo-b.pp-on { opacity: 1; box-shadow: 0 3px 0 rgba(26, 16, 48, 0.3), inset 0 0 0 3px #fff; }
+.pp-cm-casillas { display: grid; gap: 8px; width: 100%; }
+#pp-ui .pp-cm-casilla { font: inherit; aspect-ratio: 1; border-radius: 16px; background: #fff; border: 4px solid #ffd1ec; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0; box-sizing: border-box; min-width: 0; color: var(--pp-cafe); }
+#pp-ui button.pp-cm-casilla { cursor: pointer; pointer-events: auto; }
+#pp-ui .pp-cm-casilla.pp-cm-vacia { font-size: 15px; font-weight: 700; color: #c9a48f; }
+#pp-ui .pp-cm-casilla.pp-cm-cerrada { background: #fbe8da; border-style: dashed; border-color: #f1c6b0; font-size: 15px; }
+.pp-cm-compra .pp-btn2 { font-size: 20px; padding: 8px 16px 9px; }
+/* el aviso flotante de un compañero conseguido (js/companeros-vias.js): arriba, encima de las ventanas, y se va solo */
+#pp-via-avisos { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 60; pointer-events: none; }
+.pp-via-aviso { display: flex; align-items: center; gap: 10px; padding: 6px 18px 6px 8px; border-radius: 999px; background: #fffaf5; border: 4px solid #3fc28f; font-size: 22px; white-space: nowrap; box-shadow: 0 4px 0 rgba(31, 138, 98, 0.35); animation: pp-via-entra 3.4s ease both; }
+.pp-via-aviso.pp-via-nuevo { border-color: #ffcf3f; background: #fff8dc; }
+.pp-via-svg { border-radius: 0; }
+.pp-via-svg svg { width: 100%; height: 100%; display: block; }
+@keyframes pp-via-entra { 0% { opacity: 0; transform: translateY(-20px) scale(0.8); } 10%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-10px); } }
+/* el bocadillo de «Tu equipo» en un nivel (js/equipo-explica.js): encima del panel, con la flecha apuntando al compañero tocado */
+#pp-explica { position: absolute; left: 22px; right: 22px; transform: translateY(-100%); z-index: 35; padding: 12px 16px 10px; border-radius: 22px; background: #fffaf5; border: 4px solid #3fc28f; box-shadow: 0 5px 0 rgba(31, 138, 98, 0.35); font-size: 19px; line-height: 1.25; pointer-events: none; animation: pp-explica 0.22s cubic-bezier(.3, 1.6, .5, 1) both; }
+#pp-explica::after { content: ''; position: absolute; bottom: -15px; left: calc(var(--pp-flecha, 270px) - 22px - 13px); width: 22px; height: 22px; background: #fffaf5; border-right: 4px solid #3fc28f; border-bottom: 4px solid #3fc28f; transform: rotate(45deg); }
+#pp-explica h3 { margin: 0 0 4px; font-size: 24px; color: #c43a84; display: flex; align-items: center; gap: 8px; }
+#pp-explica p { margin: 2px 0; }
+#pp-explica small { display: block; margin-top: 4px; font-size: 15px; color: #a07a6a; }
+.pp-explica-modo { font-size: 14px; padding: 2px 10px; border-radius: 999px; background: #e6f8ee; color: #1f8a5c; }
+.pp-explica-est { color: #e0a800; letter-spacing: -1px; }
+.pp-explica-est i { font-style: normal; color: #e9cfc0; }
+.pp-explica-cuando { margin-top: 6px !important; padding: 6px 10px; border-radius: 12px; background: #fff3c9; display: flex; align-items: center; gap: 8px; }
+.pp-explica-barra { flex: none; width: 40px; height: 10px; border-radius: 5px; background: #1a1030; box-shadow: inset 22px 0 0 #ff6ec7; }
+.pp-explica-barra.pp-azul { box-shadow: inset 22px 0 0 #5be7ff; }
+@keyframes pp-explica { from { opacity: 0; transform: translateY(-100%) scale(0.9); } to { opacity: 1; transform: translateY(-100%) scale(1); } }
+@media (prefers-reduced-motion: reduce) { #pp-explica { animation: none; } }

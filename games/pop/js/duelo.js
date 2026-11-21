@@ -1,0 +1,153 @@
+// Fans of Pop · DUELO contra el CEO (fase 3 de la propuesta, 30-10-2026): el juego de verdad del pop-it, por turnos (es el «Nim»
+// de los matemáticos, versión «pierde quien coge la última»). En tu turno revientas las burbujas que quieras, pero todas de la MISMA
+// fila, y pulsas ¡LISTO!; luego le toca al CEO. Quien haga pop en la última, pierde burbuja.
+// El CEO sabe la jugada perfecta, pero se equivoca a veces: empieza fallando mucho y, cada vez que le ganas, falla menos
+// (SAVE.duelo.fallo, entre PP_CFG.duelo.fallo[0] y [1]). Cada victoria da monedas, las 5 primeras del día. No gasta corazones.
+// Más adelante (fase 7) será PvP contra otra gente, con el CEO de reserva si no hay nadie en línea.
+'use strict';
+let PP_DUELO = null;   // { T, turno: 'yo' | 'ceo', fila, esta: [], fin: null | 'gana' | 'pierde', ultimo }
+// un tablero de 6 filas de largos al azar (de 1 a 6), centradas: el arcoíris del pop-it
+function ppNuevoDuelo() {
+  const n = 6, mask = new Uint8Array(n * n), need = new Array(n * n).fill(0);
+  for (let y = 0; y < n; y++) {
+    const largo = 1 + Math.floor(Math.random() * n), x0 = Math.floor((n - largo) / 2);
+    for (let x = x0; x < x0 + largo; x++) { mask[y * n + x] = 1; need[y * n + x] = 1; }
+  }
+  const T = ppNuevoTablero({ g: 0, lado: n, mask, need, opt: [], limite: 99, amigos: 0, jefe: true }, { equipo: [] });
+  PP_DUELO = { T, turno: Math.random() < 0.5 ? 'yo' : 'ceo', fila: null, esta: [], fin: null };
+  ppAdnEmpieza();
+  ppCortEmpieza({ nim: { rival: 'ceo' } }, ppDueloEmpieza);   // la cortinilla de duelo (ADR 098); al acabar o saltarla, Lola y el turno del CEO
+  ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton();
+}
+// lo que pasa al empezar de verdad el duelo contra el CEO de la portada (tras su cortinilla)
+function ppDueloEmpieza() {
+  if (!PP_DUELO || PP_PANT.actual !== 'duelo') return;
+  ppTutorial('duelo'); ppTutorial('trucoNim');
+  if (!PP_LOLA.actual && PP_LOLA.cola.length) ppLolaSiguiente();
+  if (ppHabDPrevia()) ppHabCeoPrevia(PP_DUELO);   // Pellizco y Saque del equipo de Duelos (js/habilidades-duelo.js)
+  else if (PP_DUELO.turno === 'ceo') setTimeout(ppTurnoCeo, 1100);
+}
+// cuántas burbujas levantadas quedan en cada fila
+const ppFilasDuelo = T => { const f = new Array(T.n).fill(0); for (let i = 0; i < T.up.length; i++) if (T.mask[i] && T.up[i]) f[Math.floor(i / T.n)]++; return f; };
+// revienta UNA burbuja del duelo (de quien sea); devuelve true si era la última (y quien la revienta pierde)
+// `quien`: 'yo', 'rival' (persona) o 'ceo', para su efecto de pop (js/duelo-adornos.js, tarea #41)
+function ppDueloRevienta(i, quien = 'ceo') {
+  const T = PP_DUELO.T; T.up[i] = 0; T.pops++;
+  ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false });
+  ppAdnPop(T, i, quien);
+  return ppFilasDuelo(T).every(v => v === 0);
+}
+// toque de quien juega
+function ppDueloToque(i) {
+  const D = PP_DUELO; if (ppHabDQuitaToque(D, i)) return;   // el Pellizco antes del primer turno (js/habilidades-duelo.js)
+  if (!D || D.fin || D.turno !== 'yo' || i < 0 || !D.T.mask[i] || !D.T.up[i]) return;
+  const fila = Math.floor(i / D.T.n);
+  if (D.fila !== null && fila !== D.fila) { ppFlota(tr('¡Solo en la misma fila!'), 270, 240, '#ff6ec7'); play('ppDano'); return; }
+  D.fila = fila; D.esta.push(i); ppLolaToque();
+  if (ppDueloRevienta(i, 'yo')) { if (D.pvp) ppPvpManda(D.esta.slice()); ppDueloFin('pierde'); return; }   // contra gente, el rival tiene que verla
+  ppDueloBoton();
+}
+function ppDueloListo() {
+  const D = PP_DUELO; if (!D || D.fin || D.turno !== 'yo' || !D.esta.length) return;
+  if (D.pvp) { ppPvpManda(D.esta.slice()); D.turno = 'rival'; D.fila = null; D.esta = []; ppDueloBoton(); return; }   // contra gente (js/pvp.js)
+  D.turno = 'ceo'; D.fila = null; D.esta = []; ppDueloBoton();
+  setTimeout(ppTurnoCeo, 700);
+}
+// la jugada perfecta del Nim «pierde quien coge la última» (o una al azar, si el CEO se despista): [fila, cuántas]
+function ppNimJugada(filas, fallo) {
+  const vivas = filas.map((h, k) => [h, k]).filter(([h]) => h > 0);
+  if (Math.random() < fallo) { const [h, k] = vivas[Math.floor(Math.random() * vivas.length)]; return [k, 1 + Math.floor(Math.random() * Math.min(h, 3))]; }
+  const grandes = vivas.filter(([h]) => h > 1), unos = vivas.filter(([h]) => h === 1).length;
+  if (grandes.length === 0) return [vivas[0][1], 1];                         // solo quedan filas de una: se coge una
+  if (grandes.length === 1) { const [h, k] = grandes[0]; return [k, unos % 2 ? h : h - 1]; }   // deja un número impar de filas de una
+  const x = vivas.reduce((a, [h]) => a ^ h, 0);
+  if (x) for (const [h, k] of vivas) if ((h ^ x) < h) return [k, h - (h ^ x)];
+  const [h, k] = vivas.reduce((a, b) => (b[0] > a[0] ? b : a)); return [k, 1];   // va perdiendo: coge una y espera un fallo
+}
+function ppTurnoCeo() {
+  const D = PP_DUELO; if (!D || D.fin || PP_PANT.actual !== 'duelo') return;
+  if (ppCortActiva()) { setTimeout(ppTurnoCeo, 120); return; }
+  if (PP_PANT.pausa) { setTimeout(ppTurnoCeo, 500); return; }
+  const T = D.T, [fila, cuantas] = ppNimJugada(ppFilasDuelo(T), ppHabDFallo(SAVE.duelo.fallo));   // con el Despiste del equipo, falla más
+  const sitios = []; for (let x = 0; x < T.n; x++) { const i = fila * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
+  sitios.sort(() => Math.random() - 0.5);
+  D.fila = fila; ppFxHabilidad('ceo');
+  sitios.slice(0, cuantas).forEach((i, k) => setTimeout(() => {
+    if (PP_DUELO !== D || D.fin) return;
+    if (ppDueloRevienta(i)) { ppDueloFin('gana'); return; }
+    if (k === cuantas - 1) setTimeout(() => { if (PP_DUELO === D && !D.fin) { D.turno = 'yo'; D.fila = null; ppDueloBoton(); } }, 500);
+  }, 380 * (k + 1)));
+}
+function ppDueloFin(res) {
+  const D = PP_DUELO; if (D.fin) return; D.fin = res; ppDueloBoton();
+  if (res === 'gana') ppPaseDuelo();   // flag 'pase-nuevo': puntos y misión, una vez por duelo (js/pase-nuevo.js)
+  const S = SAVE.duelo, [mucho, poco] = PP_CFG.duelo.fallo;
+  if (S.dia !== ppHoy()) { S.dia = ppHoy(); S.hoy = 0; }
+  let monedas = 0;
+  if (D.pvp) {   // contra gente: sus propias victorias; las monedas, de la misma bolsa del día que contra el CEO
+    SAVE.pvp = SAVE.pvp || { gan: 0, per: 0 };
+    if (res === 'gana') { SAVE.pvp.gan++; if (S.hoy < PP_CFG.duelo.premiosDia) { S.hoy++; monedas = PP_CFG.duelo.premio; SAVE.monedas += monedas; } } else SAVE.pvp.per++;
+    ppGuarda(); ppSubeMarcas(); play(res === 'gana' ? 'ppVictoria' : 'ppDerrota');
+    setTimeout(() => {
+      const n = ppEsc(D.pvp.nombre);
+      const t = ppAbre(`<h2>${res === 'gana' ? tr('¡Has ganado a {n}!', { n }) : tr('{n} te ha ganado', { n })}</h2>
+        ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : ''}
+        <p class="pp-sub">${tr('Contra gente: {g} victorias · {p} derrotas', { g: SAVE.pvp.gan, p: SAVE.pvp.per })}</p>`);
+      t.appendChild(ppBoton(tr('OTRO RIVAL'), 'pp-btn', () => { ppSalDuelo(); ppPvpBuscar(); }));
+      t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); ppSalDuelo(); }));
+    }, 900);
+    return;
+  }
+  if (res === 'gana') { S.gan++; S.fallo = Math.max(poco, S.fallo - PP_CFG.duelo.paso); if (S.hoy < PP_CFG.duelo.premiosDia) { S.hoy++; monedas = PP_CFG.duelo.premio; SAVE.monedas += monedas; } monedas += ppHabDMonedas(); }   // la Hucha del equipo de Duelos
+  else { S.per++; S.fallo = Math.min(mucho, S.fallo + PP_CFG.duelo.paso / 2); }
+  if (res === 'gana') ppViaDuelo(false);   // flag `companeros`: cuenta para Patito y Zorrito (el CEO del menú no cuenta como jefe)
+  ppGuarda(); ppSubeMarcas();
+  play(res === 'gana' ? 'ppVictoria' : 'ppDerrota');
+  setTimeout(() => {
+    const t = ppAbre(`<h2>${res === 'gana' ? tr('¡Has ganado al CEO!') : tr('El CEO gana esta vez')}</h2>
+      <p class="pp-sub">${res === 'gana' ? tr('Le has dejado la última burbuja. Dice que el tablero estaba amañado.') : tr('Te ha tocado hacer pop en la última burbuja. Se ríe como un villano de oficina.')}</p>
+      ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : res === 'gana' ? `<p class="pp-sub">${tr('Hoy ya tienes todas las monedas del duelo. ¡Vuelve mañana!')}</p>` : ''}
+      <p class="pp-sub">${tr('Victorias: {g} · Derrotas: {p}', { g: S.gan, p: S.per })}</p>`);
+    t.appendChild(ppBoton(tr('¡OTRO DUELO!'), 'pp-btn', () => { ppCierra(); ppNuevoDuelo(); }));
+    t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); ppSalDuelo(); }));
+  }, 900);
+}
+function ppSalDuelo() { if (PP_DUELO && PP_DUELO.pvp) ppPvpLimpia(); PP_DUELO = null; ppDueloBoton(); ppIrA('titulo'); }
+// el botón ¡LISTO! (HTML, debajo del tablero): solo en tu turno y con algo reventado
+function ppDueloBoton() { const b = $pp('#pp-listo'); if (b) b.hidden = !(PP_DUELO && !PP_DUELO.fin && PP_DUELO.turno === 'yo' && PP_DUELO.esta.length); }
+/* ---------- dibujo ---------- */
+// las caras de arriba: con el perfil abierto (tarea #41), los personajes elegidos; si no, Lola contra el CEO o un amigo de gelatina
+function ppDueloCaras(D) {
+  const yo = ppPerfilActivo() ? PP_MI.perfil().personaje : 'lola';
+  if (!D.pvp) return [yo, 'ceo'];
+  return [yo, D.pvp.perfil ? D.pvp.perfil.personaje : 'nubecita'];
+}
+function ppPintaDuelo(c, t) {
+  const D = PP_DUELO, T = D.T, g = ppGeom(T.n);
+  c.save(); if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 5, rand(-1, 1) * PP_FX.temblor * 5);
+  ppPintaFondo(c, 'fondo-jefe', t);
+  // arriba: tú contra el CEO, y de quién es el turno
+  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, PP_CABECERA_DUELO, 24); c.fill();
+  const br = PP_FX.brilla.ceo || 0;
+  const rival = D.pvp ? D.pvp.nombre.slice(0, 14) : tr('El CEO');   // contra gente, su apodo y un amigo de gelatina
+  const [yo, suyo] = ppDueloCaras(D);
+  // todo más grande (tarea #129): las caras, los nombres y el turno; lo que no cabe en su sitio encoge
+  ppSlimeRepuestoOImagen(c, suyo, 400, 100 - br * 12, 48, t, 1);   // a la izquierda del botón de pausa
+  ppSlimeRepuestoOImagen(c, yo, 130, 100, 46, t, 1);
+  ppTextoCabe(c, tr('Tú'), 130, 164, 30, 150, '#fff', '#c43a84');
+  ppTextoCabe(c, rival, 400, 164, 30, 150, '#fff', '#3a3a6a');
+  ppTitulo(c, tr('DUELO'), 265, 62, 44);
+  ppPintaMonedero(c, 28, 32);   // arriba a la izquierda: a la derecha va el botón de pausa
+  const txt = D.fin ? (D.fin === 'gana' ? tr('¡Ganas!') : D.pvp ? tr('¡Gana {n}!', { n: rival }) : tr('¡Gana el CEO!')) : D.turno === 'yo' ? tr('Tu turno') : D.pvp ? tr('Piensa {n}…', { n: rival }) : tr('Piensa el CEO…');
+  ppTextoCabe(c, txt, 265, 126, 40, 165, D.turno === 'yo' ? '#ffd64a' : '#fff', '#7a4a8a');
+  ppPintaTablero(c, T, t);
+  // la fila en la que estás jugando, marcada
+  if (D.fila !== null && !D.fin) {
+    c.save(); c.lineWidth = 6; c.strokeStyle = D.turno === 'yo' ? '#ffd64a' : '#8a8aa8'; c.globalAlpha = 0.6 + Math.sin(t * 6) * 0.3;
+    c.beginPath(); c.roundRect(g.x - 6, g.y + D.fila * g.celda + 2, g.lado + 12, g.celda - 4, g.celda / 2); c.stroke(); c.restore();
+  }
+  ppReglaDuelo(c, g.y + g.lado + 44, 30, '#fff', '#c43a84');   // en dos líneas y grande (tarea #129; js/nimnivel.js)
+  ppPintaEfectos(c, t);
+  ppAdnPinta(c);   // tu efecto de pop, el del rival y las pegatinas que vuelan (js/duelo-adornos.js)
+  c.restore();
+}

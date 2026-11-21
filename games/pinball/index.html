@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#05182d">
+<title>Fans of Pinball</title>
+<meta name="description" content="Fans of Pinball: la bola es la criatura. Prototipo en desarrollo.">
+<meta name="robots" content="noindex">
+<script src="../../core/js/nucleo.js?v=0.2.5"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/pixelify-sans.css', '../../core/fuentes/jersey-10.css', '../../core/fuentes/fredoka.css')</script>
+<!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
+<script>NUCLEO.estilos('../../core/css/base.css', 'css/pinball.css')</script>
+</head>
+<body>
+<div id="pb-escenario">
+  <canvas id="pb-lienzo" aria-label="Fans of Pinball"></canvas>
+  <div id="pb-capa"></div>
+</div>
+<div id="pb-carga">FANS OF PINBALL</div>
+<script>
+NUCLEO.juego({
+  esperaListo: true,   // la splash de core espera a NUCLEO.listo(), que js/principal.js llama al quitar la pantalla de carga (ADR 091)
+  ligero: true,        // solo la cuenta, el idioma y el sonido de core: Pinball lleva su partida y sus pantallas (prototipo solo para la alfa)
+  antes: ['js/pb.js', 'js/ajustes.js', 'js/ajustes/fisica.js', 'js/ajustes/mesa.js', 'js/ajustes/reloj.js', 'js/ajustes/puntos.js',
+    'js/ajustes/plantas.js', 'js/ajustes/mejoras.js', 'js/ajustes/tienda.js', 'js/ajustes/criaturas.js', 'js/ajustes/enemigos.js',
+    'js/ajustes/arte.js', 'js/ajustes/jugo.js', 'js/ajustes/vida.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    // por capas (docs/calidad/ARQUITECTURA.md): dominio (puro), aplicación y adaptadores. El orden importa: cada archivo solo ve lo de antes
+    'js/dominio/eventos.js', 'js/dominio/azar.js', 'js/dominio/geometria.js', 'js/dominio/mesa.js', 'js/dominio/palas.js',
+    'js/dominio/progreso.js', 'js/dominio/mejoras.js', 'js/dominio/salas.js', 'js/dominio/marcador.js', 'js/dominio/caos.js',
+    'js/dominio/golpes.js', 'js/dominio/tienda.js', 'js/dominio/poderes.js', 'js/dominio/proyectiles.js', 'js/dominio/enemigos.js', 'js/dominio/jefe.js',
+    'js/dominio/bolas.js', 'js/dominio/fisica.js', 'js/dominio/foto.js', 'js/dominio/partida.js',
+    'js/aplicacion/bucle.js',
+    '../../core/js/serie/canciones.js',   // las canciones de la serie: la música del prototipo
+    '../../core/js/sistema/retos-ligero.js',   // el sistema común de misiones (RETOSL): los datos son de Pinball (AJUSTES.vida.misiones)
+    'js/aplicacion/guardado.js', 'js/aplicacion/sesion.js', 'js/aplicacion/diario.js', 'js/aplicacion/casos.js',
+    'js/adaptadores/dom.js', 'js/adaptadores/almacen-local.js', 'js/adaptadores/reloj.js', 'js/adaptadores/clasificacion.js',
+    'js/adaptadores/imagenes.js', 'js/adaptadores/sprites.js', 'js/adaptadores/lienzo.js', 'js/adaptadores/camara.js',
+    'js/adaptadores/fondo.js', 'js/adaptadores/particulas.js', 'js/adaptadores/posturas.js', 'js/adaptadores/pintor.js',
+    'js/adaptadores/entrada.js', 'js/adaptadores/sonido.js', 'js/adaptadores/cifras.js', 'js/adaptadores/hud.js',
+    'js/adaptadores/ventanas.js', 'js/adaptadores/guia.js', 'js/adaptadores/efectos.js', 'js/adaptadores/pantallas.js',
+    'js/adaptadores/ventana-mejoras.js', 'js/adaptadores/ventana-tienda.js', 'js/adaptadores/ventana-resultado.js', 'js/adaptadores/ventana-pausa.js',
+    'js/adaptadores/pantalla-menu.js', 'js/adaptadores/pantalla-equipo.js', 'js/adaptadores/pantalla-partida.js',
+    'js/adaptadores/dev.js', 'js/adaptadores/dev-panel.js',
+    'js/principal.js'],
+});
+</script>
+</body>
+</html>

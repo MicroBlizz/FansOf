@@ -78,11 +78,7 @@ function acabarTirada(n, c, kind, X, res) {
   saveGame(); updateWallets(); buildGachaText();
   fire('gacha.tirada', n);
   const ensenar = () => { gachaAnim = null; if (X) X.ensenar(res); else if (n === 1) showPull(res[0].it, res[0].tag); else showMulti(res); };
-  if (GACHA_FX.on()) { gachaAnim = { nuevo: true }; GACHA_FX.tirada(res.map(rarOfPull), X, ensenar); return; }   // la animación nueva (gachapon-anim.js)
-  const cv = $('#gacha-cv'); cv.classList.remove('shake'); void cv.offsetWidth; cv.classList.add('shake'); play('roll');
-  const top = res.reduce((a, r) => (RAR_ORDER[rarOfPull(r)] < RAR_ORDER[rarOfPull(a)] ? r : a));
-  gachaAnim = { t: 0, col: (X ? X.colores : RARITY)[rarOfPull(top)][1] };
-  setTimeout(ensenar, 1100);
+  gachaAnim = { nuevo: true }; GACHA_FX.tirada(res.map(rarOfPull), X, ensenar);   // la animación (gachapon-anim.js)
 }
 const RAR_PL = { basic: ['común', 'comunes'], common: ['poco común', 'poco comunes'], rare: ['rara', 'raras'], epic: ['épica', 'épicas'], legendary: ['legendaria', 'legendarias'] };
 function showMulti(res) {
@@ -140,33 +136,7 @@ function buildGachaText() {
 }
 function drawGacha() {
   const cv = $('#gacha-cv'); if (!cv || $('#scr-gacha').hidden) { gachaRAF = 0; return; }
-  if (GACHA_FX.on()) { GACHA_FX.maquina(cv, MAQUINAS[gachaTab], gachaTab); gachaRAF = requestAnimationFrame(drawGacha); return; }   // la máquina nueva
-  cv.classList.remove('nueva');
-  const LW = 270, LH = 300, R2 = 2; if (cv.width !== LW * R2) { cv.width = LW * R2; cv.height = LH * R2; }
-  const c = cv.getContext('2d'); c.setTransform(R2, 0, 0, R2, 0, 0); c.clearRect(0, 0, LW, LH); c.lineJoin = 'round'; c.lineCap = 'round';
-  const t = performance.now() / 1000, an = gachaAnim; if (an) an.t += 1 / 60;
-  const X = MAQUINAS[gachaTab], MC = X ? X.maquina : ['#2e6fd8', '#1d3f8a', '#173d8f'];
-  shape(c, el(135, 288, 100, 9), 'rgba(0,0,0,.3)', 0);
-  shape(c, rr(48, 176, 174, 108, 14), MC[0], 2.6);
-  shape(c, rr(56, 184, 158, 26, 8), MC[1], 2);
-  txt(c, X ? X.nombre : gachaTab === 'ab' ? 'HABILIDADES' : 'EQUIPO', 135, 198, 15, '#e8f1ff');
-  shape(c, rr(74, 222, 44, 44, 8), MC[2], 2.2); shape(c, rr(84, 236, 24, 22, 4), '#0b1a3f', 1.6);
-  const rot = an ? an.t * 9 : 0; c.save(); c.translate(172, 244); c.rotate(rot);
-  shape(c, el(0, 0, 19, 19), '#ffcb3d', 2.4); shape(c, rr(-15, -4, 30, 8, 3), '#e0a92a', 1.8); c.restore();
-  shape(c, rr(150, 214, 44, 10, 3), '#0b1a3f', 1.4);
-  txt(c, 'MICROBLIZZ', 135, 276, 10, '#bfe0ff');
-  if (an) { const k = Math.min(1, an.t / 0.8), y = 160 + k * 88; shape(c, el(96, y, 10, 10), an.col, 2); shape(c, c2 => c2.arc(96, y, 10, Math.PI, 0), '#fff', 1.6); }
-  shape(c, rr(108, 160, 54, 20, 6), MC[0], 2.2);
-  c.save(); c.beginPath(); c.arc(135, 92, 82, 0, Math.PI * 2); c.clip();
-  c.fillStyle = 'rgba(190,230,255,.35)'; c.fillRect(40, 0, 200, 200);
-  const cols = ['#ff5fa8', '#ffe14d', '#7be04a', '#63cfe0', '#d08cff', '#ffb04f'];
-  for (let i = 0; i < 22; i++) { const a = i * 2.39, rr2 = 18 + (i % 6) * 10, x = 135 + Math.cos(a) * rr2 + (an ? Math.sin(t * 30 + i) * 3 : 0), y = 120 + Math.sin(a) * rr2 * 0.55 + (i % 3) * 10 - 10 + (an ? Math.cos(t * 28 + i) * 3 : 0);
-    shape(c, el(x, y, 12, 12), cols[i % 6], 1.8); shape(c, c2 => c2.arc(x, y, 12, Math.PI, 0), 'rgba(255,255,255,.85)', 1.6); }
-  c.restore();
-  c.beginPath(); c.arc(135, 92, 82, 0, Math.PI * 2); c.lineWidth = 4; c.strokeStyle = OL; c.stroke();
-  c.beginPath(); c.arc(112, 62, 30, Math.PI * 1.1, Math.PI * 1.45); c.lineWidth = 6; c.strokeStyle = 'rgba(255,255,255,.6)'; c.stroke();
-  shape(c, rr(100, 2, 70, 18, 7), MC[0], 2.4);
-  gachaRAF = requestAnimationFrame(drawGacha);
+  GACHA_FX.maquina(cv, MAQUINAS[gachaTab], gachaTab); gachaRAF = requestAnimationFrame(drawGacha);   // la máquina animada (gachapon-anim.js)
 }
 function openGacha() { buildGachaText(); show('scr-gacha'); fire('gacha.abierto'); $('#gacha-result').hidden = true; if (!gachaRAF) gachaRAF = requestAnimationFrame(drawGacha); }
 for (const b of document.querySelectorAll('[data-gt]')) b.addEventListener('click', () => { gachaTab = b.dataset.gt; play('select'); buildGachaText(); });

@@ -68,7 +68,8 @@ const PAGOS_WEB = (() => {
   const errorTexto = e => {
     const m = String((e && e.message) || e);
     return /cancelad/i.test(m) ? '' : /ya_comprado/.test(m) ? tr('Ya lo tienes') : /pendiente/.test(m) ? tr('El pago todavía no está confirmado: lo recibirás en cuanto lo esté')
-      : /compras_cerradas|sin_pasarela|sin_config/.test(m) ? tr('Las compras con euros solo están en la app de Android') : /cuenta/.test(m) ? tr('Esa compra se hizo con otra cuenta')
+      : /compras_cerradas|sin_pasarela|sin_config/.test(m) ? tr('Las compras con euros solo están en la app de Android')
+      : /cuenta_alfa/.test(m) ? tr('Las cuentas de probador no pueden pagar con dinero real; prueba la compra en la alfa.') : /cuenta/.test(m) ? tr('Esa compra se hizo con otra cuenta')
       : /sin_sesion|sin_conexion|Failed to fetch|NetworkError|HTTP 401/i.test(m) ? tr('Necesitas conexión para comprar') : tr('No se ha podido completar la compra. Si te han cobrado, lo recibirás en unos minutos.');
   };
   return { disponible, comprar, errorTexto, minimo };

@@ -16,7 +16,7 @@ const DATOS = (() => {
     const pinta = () => {
       span.innerHTML = '<b></b><br><small></small>';
       span.firstChild.textContent = tr('Datos de partida anónimos');
-      span.lastChild.innerHTML = tr('Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.') + ' <a href="' + location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '') + 'privacidad/?lang=' + (typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es') + '" target="_blank" rel="noopener">' + tr('Privacidad') + '</a>';
+      span.lastChild.innerHTML = tr('Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.') + ' <a href="' + location.pathname.replace(/games\/[^/]*\/.*$/, '') + 'privacidad/?idioma=' + (typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es') + '" target="_blank" rel="noopener">' + tr('Privacidad') + '</a>';
       boton.textContent = on ? tr('ENCENDIDO') : tr('APAGADO');
     };
     boton.onclick = () => { poner(!on); if (typeof play === 'function') play('select'); pinta(); };

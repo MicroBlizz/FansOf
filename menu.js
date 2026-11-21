@@ -1,47 +1,84 @@
-// Fans Of · MENÚ de las páginas de la web (portada, lore, privacidad, condiciones, energía, android): UNA sola fuente, para que sea el mismo en todas y no aparezcan ni desaparezcan secciones.
-// Se pone en cada página justo donde va el menú:  <script src="menu.js" data-base="" data-core="1" data-pagina="lore"></script>  (data-base: '' en la portada y '../' en las demás; data-pagina: la que resalta).
-// «Entrar» / «Mi cuenta» (con tu foto de Google, si entraste con Google) sale SIEMPRE, en todas las páginas, para que la cabecera sea la misma. En la portada la llevan biblioteca/cuenta-web.js y votos.js (el modal de la cuenta);
-// en las demás páginas se lee la sesión guardada (localStorage 'fansof-cuenta') solo para pintar el botón, y al pulsarlo se va a la portada (#cuenta), que abre el modal.
-// Pinta el <nav class="menu"> en el sitio del script, de forma síncrona (lo que venga después, como los botones de idioma o «Novedades», ya lo encuentra). El estilo de la barra lo trae cada página
-// (portada y lore en su <style>; las demás, core/css/legal.css). data-core="1" si la página carga core (portada y lore). Novedades abre su ventana en la portada (#novedades).
-// Idioma: si la página trae core (NUCLEO), él lo cambia; si no, la página define window.pagIdioma(v) y aquí se avisa. Sin core, los nombres del menú se traducen con la pequeña lista de abajo.
+// Fans Of · MENÚ de las páginas de la web (portada, lore, privacidad, condiciones, borrar la cuenta, energía, android y apóyanos): UNA sola fuente, para que sea el mismo en todas.
+// Se pone en cada página justo donde va el menú, detrás de idioma-web.js:  <script src="menu.js" data-base="" data-core="1" data-pagina="lore"></script>
+//   data-base: '' en la portada y '../' en las demás · data-pagina: la que resalta · data-core="1": la página traduce con core (portada y lore).
+// Pinta, de forma síncrona (lo que venga después ya lo encuentra):
+//   · el <nav class="menu"> de arriba, con «Entrar» / «Mi cuenta» (con tu cara de la cuenta o tu foto de Google) y los idiomas. En la portada la cuenta la llevan
+//     biblioteca/cuenta-web.js y votos.js; en las demás se lee la sesión guardada ('fansof-cuenta') solo para pintar el botón, y al pulsarlo se va a la portada (#cuenta);
+//   · las piezas del estilo nuevo (clase «pn»: solo se ven con html.portada-nueva, ADR 128 y 135): el logo del menú, el enlace «Apóyanos» (tarea #291) y la barra de abajo del móvil;
+//   · «Tablero» (tarea #300): el atajo a gestion/?seccion=tablero, SOLO con el rol admin (CUENTA.roles, que en la portada se carga después de este archivo:
+//     se mira al terminar de leer la página y cada vez que cambian los roles). Va en el menú de arriba y en la barra de abajo del móvil. Sin la cuenta de core
+//     (las páginas que no la cargan), sin sesión, sin rol o sin red no sale nada.
+// El aspecto, todo en estilo/web.css. Novedades abre su ventana en la portada (#novedades).
+// Idioma: con core lo cambia él (NUCLEO.elegirIdioma, lo engancha la página); sin core se avisa a window.pagIdioma(v) y los nombres salen de la lista de abajo.
 'use strict';
 (() => {
-  const s = document.currentScript, b = s.dataset.base || '', pagina = s.dataset.pagina || '', conCore = s.dataset.core === '1';   // conCore: la página carga core (portada y lore), que traduce y cambia el idioma
-  let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
-  const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
-  const EN = { Inicio: 'Home', Novedades: 'News', Biblioteca: 'Library', Lore: 'Lore', Privacidad: 'Privacy', Condiciones: 'Terms', Entrar: 'Sign in', 'Mi cuenta': 'My account' };
+  const s = document.currentScript, b = s.dataset.base || '', pagina = s.dataset.pagina || '', conCore = s.dataset.core === '1';
+  const EN = { Inicio: 'Home', Novedades: 'News', Biblioteca: 'Library', Lore: 'Lore', Privacidad: 'Privacy', Condiciones: 'Terms', Entrar: 'Log in', 'Mi cuenta': 'My account',
+    Juegos: 'Games', Votar: 'Vote', Accesos: 'Shortcuts', 'Apóyanos': 'Support us', Tablero: 'Board' };
+  const en = IDIOMA_WEB.elegido() === 'en';
   const t = x => (en && !conCore && EN[x]) || x;   // con core lo traduce la propia página
+  const ICONOS = {   // trazos sencillos con el contorno de Fans Of: nada de emojis
+    inicio: '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+    juegos: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+    votar: '<path d="M12 20V4M5 11l7-7 7 7"/>',
+    novedades: '<path d="M4 5h16M4 12h16M4 19h10"/>',
+    lore: '<path d="M4 4h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-7a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h7z"/>',
+    tablero: '<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/>',
+  };
+  const icono = n => `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n]}</svg>`;
   const a = (href, txt, extra = '', id = '') => `<a href="${href}"${id ? ` id="${id}"` : ''}${extra}>${t(txt)}</a>`;
   const on = p => (pagina === p ? ' class="on" aria-current="page"' : '');
-  s.insertAdjacentHTML('beforebegin', '<nav class="menu" aria-label="Menú">\n  '
+  const deBarra = (href, n, txt) => `<a href="${href}" data-pn="${n}">${icono(n)}<span>${t(txt)}</span></a>`;
+
+  const arriba = '<nav class="menu" aria-label="Menú">\n  '
+    + `<a class="pn pn-logo ol" href="${b}#inicio" translate="no">FANS OF</a>`
     + a(b + '#inicio', 'Inicio') + a(b + '#novedades', 'Novedades', '', 'abrir-novedades') + a(b + '#biblioteca', 'Biblioteca')
     + a(b + 'lore/', 'Lore', on('lore')) + a(b + 'privacidad/', 'Privacidad', on('privacidad')) + a(b + 'condiciones/', 'Condiciones', on('condiciones'))
+    + `<a class="pn pn-apoya${pagina === 'apoyanos' ? ' on" aria-current="page' : ''}" href="${b}apoyanos/">${t('Apóyanos')}</a>`
     + '\n  <a href="' + b + '#cuenta" id="m-cuenta" class="m-cuenta">' + t('Entrar') + '</a>'
-    + '\n  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>\n</nav>');
-  // el botón de la cuenta: su estilo vive aquí (una sola vez para todas las páginas); la foto y el texto los pone pintaMenuCuenta
-  const css = document.createElement('style');
-  css.textContent = 'nav.menu a.m-cuenta { color: var(--gold); display: inline-flex; align-items: center; gap: 7px; }\n'
-    + 'nav.menu a.m-cuenta.dentro { color: var(--player-lite, #9fd8ff); }\n'
-    + 'nav.menu a.m-cuenta::before, nav.menu a.m-cuenta::after { content: ""; width: 3px; height: 22px; background: rgba(255, 255, 255, .6); border-radius: 2px; flex: none; }\n'
-    + 'nav.menu a.m-cuenta::before { order: -2; margin-right: 8px; }\n'
-    + 'nav.menu a.m-cuenta::after { margin-left: 8px; }\n'
-    + 'nav.menu a.m-cuenta .m-foto { order: -1; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--outline); object-fit: cover; }';
-  document.head.append(css);
+    + '\n  <span class="idiomas"><a href="#" data-idioma="es" translate="no">ES</a> · <a href="#" data-idioma="en" translate="no">EN</a> · <a href="#" data-idioma="">Auto</a></span>\n</nav>';
+  // la barra de abajo del móvil: en la portada, «Votar» y «Novedades» las afina biblioteca/portada-nueva.js (el bloque de votar, la ventana)
+  const abajo = `<nav class="pn pn-barra" aria-label="${t('Accesos')}">`
+    + deBarra(b + '#inicio', 'inicio', 'Inicio') + deBarra(b + '#biblioteca', 'juegos', 'Juegos') + deBarra(b + '#catalogo', 'votar', 'Votar')
+    + deBarra(b + '#novedades', 'novedades', 'Novedades') + deBarra(b + 'lore/', 'lore', 'Lore') + '</nav>';
+  s.insertAdjacentHTML('beforebegin', arriba + '\n' + abajo);
+
   const cta = document.getElementById('m-cuenta');
-  // con: ¿hay cuenta con email?; foto: la de Google (https) o ''; texto: ya traducido. La foto va sin referrer (Google no sabe de qué página viene) y se quita sola si no carga.
+  // con: ¿hay cuenta con email?; foto: la cara elegida (biblioteca/caras/…, con la base de la página delante; tarea #299), la de Google (https) o '';
+  // texto: ya traducido. La foto va sin referrer (Google no sabe de qué página viene) y la imagen se quita sola si no carga.
+  const CARA = /^(\.\.\/)*biblioteca\/caras\/[a-z0-9_-]+\/[a-z0-9_-]+\.png$/;
   window.pintaMenuCuenta = (con, foto, texto) => {
     cta.textContent = ''; cta.classList.toggle('dentro', !!con);
-    if (con && /^https:\/\//.test(foto || '')) { const im = document.createElement('img'); im.className = 'm-foto'; im.alt = ''; im.referrerPolicy = 'no-referrer'; im.src = foto; im.onerror = () => im.remove(); cta.append(im); }
+    const https = /^https:\/\//.test(foto || '');
+    if (con && (https || CARA.test(foto || ''))) { const im = document.createElement('img'); im.className = 'm-foto'; im.alt = ''; if (https) im.referrerPolicy = 'no-referrer'; im.src = foto; im.onerror = () => im.remove(); cta.append(im); }
     cta.append(document.createTextNode(texto));
   };
-  let ses = null; try { ses = JSON.parse(localStorage.getItem('fansof-cuenta') || 'null'); } catch (e) { /* sin sesión */ }
-  const con = !!(ses && ses.invitado === false && ses.email);
-  window.pintaMenuCuenta(con, con ? ses.foto : '', t(con ? 'Mi cuenta' : 'Entrar'));
+  const lee = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+  const ses = lee('fansof-cuenta'), con = !!(ses && ses.invitado === false && ses.email);
+  // la cara que eligió esta cuenta en Mi cuenta (la recuerda biblioteca/cuenta-web.js; la ruta va desde la raíz de la web)
+  const caraRecordada = () => { const c = lee('fansof-cuenta-cara'); return c && c.usuario && c.usuario === ses.usuario && CARA.test(c.src || '') ? b + c.src : ''; };
+  window.pintaMenuCuenta(con, con ? (caraRecordada() || ses.foto) : '', t(con ? 'Mi cuenta' : 'Entrar'));
   cta.addEventListener('click', e => { if (window.abrirCuenta) return; e.preventDefault(); location.href = b + '#cuenta'; });   // en la portada lo gestiona cuenta-web.js
+  // «Tablero», solo para admins: se pone o se quita según CUENTA.roles.tiene('admin')
+  const TABLERO = b + 'gestion/?seccion=tablero';
+  function ponTablero(si) {
+    const hay = [...document.querySelectorAll('[data-tablero]')];
+    if (si === (hay.length > 0)) return;
+    if (!si) { hay.forEach(x => x.remove()); return; }
+    cta.insertAdjacentHTML('beforebegin', `<a class="m-tablero" href="${TABLERO}" data-tablero>${t('Tablero')}</a>`);
+    const barra = document.querySelector('nav.pn-barra');
+    if (barra) barra.insertAdjacentHTML('beforeend', `<a href="${TABLERO}" data-pn="tablero" data-tablero>${icono('tablero')}<span>${t('Tablero')}</span></a>`);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof CUENTA === 'undefined' || !CUENTA.roles) return;   // página sin la cuenta de core: sin atajo
+    const mira = () => ponTablero(CUENTA.roles.tiene('admin'));   // lo recordado (vale sin red); un invitado o sin sesión no tiene roles
+    mira();
+    if (typeof hook === 'function') hook('roles', mira);          // otro que pregunte (Mi cuenta) también lo pone al día
+    if (!CUENTA.invitado) CUENTA.roles.refrescar(['admin']).then(mira, () => { /* sin red: vale lo recordado */ });
+  });
   for (const x of document.querySelectorAll('nav.menu [data-idioma]')) x.addEventListener('click', e => {
     e.preventDefault(); if (conCore) return;   // la portada y lore lo hacen con core (NUCLEO.elegirIdioma)
-    const v = x.dataset.idioma; try { if (v) localStorage.setItem('fansof-idioma', v); else localStorage.removeItem('fansof-idioma'); } catch (err) { /* sin guardar */ }
-    if (window.pagIdioma) window.pagIdioma(v || (/^en/i.test(navigator.language || '') ? 'en' : 'es')); else location.reload();
+    const idioma = IDIOMA_WEB.elegir(x.dataset.idioma);
+    if (window.pagIdioma) window.pagIdioma(idioma); else location.reload();
   });
 })();

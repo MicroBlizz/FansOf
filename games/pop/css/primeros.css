@@ -1,0 +1,22 @@
+/* Fans of Pop · PRIMEROS PASOS (tarea #140, js/primeros-pasos-juego.js): lo que aún no toca, apagado (mismo color, nunca gris) con candado y «Nivel N»; lo recién estrenado, con la manita */
+/* los botones de la portada: un velo blanco encima de su color (el candado, que va dentro, sigue nítido) */
+.pp-btn2.pp-cerrado { background: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)), linear-gradient(180deg, var(--c1) 0%, var(--c2) 100%);
+  box-shadow: inset 0 0 0 4px var(--borde), 0 3px 0 0 var(--borde); color: rgba(255, 255, 255, 0.9); }
+/* los iconos del lado del camino: el dibujo y su rótulo, a media luz pero OPACOS (reporte 29, 20-11-2026: con opacity se veía el camino
+   a través del regalo); el velo blanco sale de bajar el contraste y subir el brillo, que deja el mismo color, aclarado */
+.pp-lado.pp-cerrado > :not(.pp-candado) { filter: contrast(0.55) brightness(1.4); }
+.pp-lado.pp-cerrado > .pp-ico { filter: contrast(0.55) brightness(1.4) drop-shadow(0 3px 0 rgba(196, 58, 132, 0.2)); }
+.pp-candado { position: absolute; top: -12px; right: -8px; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px 2px 6px; border-radius: 99px;
+  background: #fff; border: 2px solid #c43a84; color: #c43a84; font-size: 13px; line-height: 1.1; white-space: nowrap; text-shadow: none; -webkit-text-stroke: 0; pointer-events: none; z-index: 3; }
+.pp-candado i { position: relative; width: 10px; height: 8px; margin-top: 4px; border-radius: 2px; background: currentColor; }
+.pp-candado i::before { content: ''; position: absolute; left: 1px; top: -6px; width: 4px; height: 5px; border: 2px solid currentColor; border-bottom: 0; border-radius: 4px 4px 0 0; }
+.pp-lado .pp-candado { top: auto; bottom: -4px; right: 50%; transform: translateX(50%); font-size: 11px; }
+/* la manita de Yoshi (img/i-mano.png) señala lo recién estrenado hasta que se toca */
+.pp-nuevo::before { content: ''; position: absolute; left: 50%; right: auto; top: -60px; width: 48px; height: 58px; margin-left: -18px; border-radius: 0;
+  background: url(../img-liso/i-mano.png) center / contain no-repeat; animation: pp-bota 0.7s ease-in-out infinite; pointer-events: none; z-index: 2; }
+.pp-lado.pp-nuevo::before { left: -22px; top: -6px; width: 34px; height: 42px; margin-left: 0; }
+@media (prefers-reduced-motion: reduce) { .pp-nuevo::before { animation: none; } }
+/* el «+1» de la ayuda regalada en un estreno: sale donde cae y sube despacio mientras se va */
+.pp-regalo-mas { position: fixed; z-index: 1000; display: flex; align-items: center; gap: 4px; pointer-events: none; font-family: 'Fredoka', sans-serif; font-size: 30px; color: #fff;
+  -webkit-text-stroke: 5px #c43a84; paint-order: stroke; animation: pp-regalo-sube 1.5s ease-out both; }
+@keyframes pp-regalo-sube { from { transform: translateY(0) scale(0.6); opacity: 0; } 20% { transform: translateY(-10px) scale(1.15); opacity: 1; } to { transform: translateY(-70px) scale(1); opacity: 0; } }

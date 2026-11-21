@@ -1,0 +1,16 @@
+/* Fans of Pop · tienda que vende (tarea #187, js/tienda-venta.js): la pestaña Perlas en dorado, las cintas de los packs, el pack de
+   «Sin toques» y la ventana de «te faltan perlas». Colores de compra (oro, naranja, rosa): nada lila ni gris. */
+#pp-ui .pp-tab.pp-tab-perlas { display: inline-flex; align-items: center; justify-content: center; gap: 3px; background: linear-gradient(180deg, #fff3a8, #ffd64a); border-color: #e0a000; color: #8a4a00; box-shadow: 0 0 0 2px #fff6c8, 0 3px 8px rgba(255, 176, 0, 0.55); }
+#pp-ui .pp-tab.pp-tab-perlas.pp-on { background: linear-gradient(180deg, #ffb057, #ff7a1a); border-color: #c2510a; color: #fff; }
+.pp-pack.pp-pack-destaca { border-color: #ffb000; background: linear-gradient(180deg, #fffbe0, #ffe9f5); box-shadow: 0 5px 0 #c27a00, 0 0 14px rgba(255, 196, 0, 0.6); }
+.pp-cinta { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-style: normal; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; white-space: nowrap; color: #fff; background: #ff6eb5; border: 2px solid #fff; border-radius: 999px; padding: 2px 10px; box-shadow: 0 2px 0 #c43a84; }
+.pp-cinta.pp-cinta-oro { background: linear-gradient(180deg, #ffd64a, #ff9a1a); color: #6a3500; box-shadow: 0 2px 0 #c27a00; }
+.pp-pack.pp-pack-destaca i { top: 18px; }
+.pp-btn2.pp-pack-sin { display: flex; flex-direction: column; align-items: center; gap: 2px; animation: pp-late 1.6s ease-in-out infinite; }
+.pp-pack-sin-trae { display: inline-flex; align-items: center; gap: 4px; }
+.pp-pack-sin-trae small { font-size: 15px; margin-left: 6px; color: #6a3500; }
+@media (prefers-reduced-motion: reduce) { .pp-btn2.pp-pack-sin { animation: none; } }
+/* «Sin corazones» (tarea #246): «Más opciones» despliega una caja con llenar con monedas, los infinitos y pedir a amigos */
+.pp-plegado { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; padding: 4px 0 6px; border-radius: 22px; background: rgba(34, 184, 176, 0.1); }
+.pp-plegado[hidden] { display: none; }
+.pp-btn2.pp-mas.pp-abierto { transform: translateY(3px); }

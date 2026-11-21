@@ -64,7 +64,7 @@ PW.paneles = (() => {
 
   // los útiles del líder: su icono y lo que hacen ahora
   const UTIL = {
-    gafas: ['zanahoria', B => tr('{n} hojas por vistazo', { n: n(B.dano) })],
+    gafas: ['zanahoria', B => PW.txt.hojasVistazo(B.dano)],
     cafe: ['cafe', B => tr('{n} vistazos por segundo', { n: fmtV(Math.round(B.vistazosSeg * 100) / 100) })],
     guantes: ['guantes', B => tr('Quitan un {p} de la dureza del papel y de las tragaderas de la Trituradora', { p: pct(1 - B.guantes) })],
     carrito: ['carrito', B => tr('{p} de llevarte también lo del archivador de al lado', { p: pct(B.carrito) })],

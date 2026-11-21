@@ -1,10 +1,15 @@
-// Fans Of · la CUENTA en la web de la librería (index.html de la raíz): entrar con Google o con un enlace al email, ver con qué cuenta estás y salir.
+// Fans Of · la CUENTA en la web de la librería (index.html de la raíz): entrar con Google o con un enlace al email y, dentro, la ventana MI CUENTA (tarea #299).
 // Es la misma cuenta que usan los juegos (core/js/sistema/cuenta.js: el mismo navegador comparte la sesión), así que entrar aquí es entrar en todos.
 // Sin contraseña. Un invitado (sin email) puede mirarlo todo; la cuenta hace falta para guardar favoritos en la nube y para votar (biblioteca/votos.js).
-// Expone window.abrirCuenta(motivo) y window.conCuenta(); avisa con el evento 'cuenta-cambio' cuando se entra o se sale.
-// Usa lo que define index.html y novedades/ventana.js: t(), esc(), CUENTA.
+// MI CUENTA: arriba tu cara (88 px), tu nombre y tu email; debajo tres pestañas, PERFIL y MIS JUEGOS (biblioteca/cuenta-pestanas.js) y AJUSTES
+// (biblioteca/cuenta-ajustes.js). Las reglas son CUENTA_PERFIL (cuenta-perfil.js) y los casos de uso CUENTA_WEB_CASOS (cuenta-casos.js); aquí se juntan
+// con CUENTA de core (los puertos) y se pinta el marco. Tu cara también sale en el menú (menu.js, pintaMenuCuenta) y se recuerda en este navegador
+// ('fansof-cuenta-cara') para que el menú de las demás páginas la pinte sin preguntar al servidor.
+// Expone window.abrirCuenta(motivo), window.conCuenta(), window.avisar() y CUENTA_WEB.juegoFavorito() (la franja «Seguir con…» de portada-nueva.js);
+// avisa con 'cuenta-cambio' cuando se entra o se sale y con 'cuenta-perfil' cuando llega o cambia el perfil.
+// Usa lo que define index.html, novedades/ventana.js y tienda.js: t(), esc(), CUENTA, TARJETAS y datosDe().
 'use strict';
-(() => {
+const CUENTA_WEB = (() => {
   const base = location.pathname.replace(/[^/]*$/, '');
   const conCuenta = () => !!(CUENTA.activa && !CUENTA.invitado && CUENTA.email);
   window.conCuenta = conCuenta;
@@ -18,73 +23,101 @@
   };
   window.toast = (m, bien) => window.avisar(m, bien);   // cuenta.js avisa con toast() al volver del enlace del email
 
+  // los casos de uso con CUENTA de core como puertos
+  const casos = CUENTA_WEB_CASOS.crear({ caras: CARAS_CUENTA, reglas: CUENTA_PERFIL, servidor: {
+    leer: () => CUENTA.rpc('perfil_leer', {}),
+    ponerCara: id => CUENTA.rpc('perfil_poner_cara', { p_cara: id }),
+    ponerJuego: id => CUENTA.rpc('perfil_poner_juego', { p_juego: id }),
+    ponerNombre: n => CUENTA.ponNombre(n),
+    misDatos: () => CUENTA.rpc('mis_datos', {}),
+    cambiarEmail: e => CUENTA.guardarConEmail(e),   // PUT /auth/v1/user con el email: Supabase manda el enlace de confirmación al nuevo
+    cerrar: alcance => CUENTA.cerrarSesion(alcance),
+    borrar: () => CUENTA.borrarCuenta(),
+  } });
+  let lista = null;   // los juegos que se pueden elegir como favorito: las tarjetas de la biblioteca (tienda.js)
+  const juegos = () => lista || (lista = CUENTA_PERFIL.juegosDeBiblioteca(TARJETAS.map(s => { const d = datosDe(s); return { tarjeta: s.id, nombre: d.nombre, jugar: d.jugar }; })));
+  const aviso = r => t(CUENTA_PERFIL.aviso(r.motivo), { m: r.mensaje || '?' });
+
+  // ---------- la cara del menú, recordada en este navegador para las demás páginas ----------
+  const CARA_GUARDADA = 'fansof-cuenta-cara';
+  let perfilListo = false;
+  function caraGuardada() {
+    try { const c = JSON.parse(localStorage.getItem(CARA_GUARDADA) || 'null'); return c && c.usuario === CUENTA.usuario ? c.src : ''; } catch (e) { return ''; }
+  }
+  function recordarCara(vista) {
+    try {
+      if (vista.tipo === 'cara') localStorage.setItem(CARA_GUARDADA, JSON.stringify({ usuario: CUENTA.usuario, src: CARAS_CUENTA.ruta(vista.id) }));
+      else localStorage.removeItem(CARA_GUARDADA);
+    } catch (e) { /* sin almacenamiento: el menú de las demás páginas enseña la foto de Google, como antes */ }
+  }
+  const caraVisible = () => CUENTA_PERFIL.caraVisible({ cara: casos.perfil().cara, foto: CUENTA.foto }, CARAS_CUENTA, '');
+  function pintarMenu() {
+    const con = conCuenta(), vista = caraVisible();
+    const imagen = !con ? '' : (perfilListo ? (vista.tipo === 'defecto' ? '' : vista.src) : (caraGuardada() || CUENTA.foto));
+    window.pintaMenuCuenta(con, imagen, con ? t('Mi cuenta') : t('Entrar'));
+  }
+  // el perfil ha llegado o ha cambiado: el menú, lo recordado y quien escuche (la franja de la portada)
+  function alCambiarPerfil() {
+    perfilListo = true; recordarCara(caraVisible()); pintarMenu(); pintarCabecera();
+    document.dispatchEvent(new CustomEvent('cuenta-perfil'));
+  }
+  async function cargarPerfil() {
+    if (!conCuenta()) { casos.olvidar(); perfilListo = false; pintarMenu(); document.dispatchEvent(new CustomEvent('cuenta-perfil')); return; }
+    const r = await casos.cargar();
+    if (r.ok) alCambiarPerfil();   // sin red se queda lo de antes (el menú con la cara recordada)
+  }
+
+  // ---------- la ventana ----------
   const menu = document.getElementById('m-cuenta');
-  // el botón del menú es de menu.js (el mismo en todas las páginas); aquí solo se le dice si hay cuenta y cuál es su foto de Google (si entraste con Google)
-  function pintarMenu() { window.pintaMenuCuenta(conCuenta(), conCuenta() ? CUENTA.foto : '', conCuenta() ? t('Mi cuenta') : t('Entrar')); }
   const modal = document.createElement('div');
   modal.className = 'cuenta-fondo'; modal.hidden = true;
   modal.innerHTML = '<div class="cuenta-caja" role="dialog" aria-modal="true" aria-labelledby="cuenta-titulo"><button type="button" class="nov-x ol" aria-label="Cerrar" data-x>✕</button><div id="cuenta-cuerpo"></div></div>';
   document.body.appendChild(modal);
-  const cuerpo = modal.querySelector('#cuenta-cuerpo');
+  const caja = modal.querySelector('.cuenta-caja'), cuerpo = modal.querySelector('#cuenta-cuerpo');
   const cerrar = () => { modal.hidden = true; if (!document.getElementById('ficha') || document.getElementById('ficha').hidden) document.body.style.overflow = ''; };
   modal.addEventListener('click', e => { if (e.target === modal || e.target.closest('[data-x]')) cerrar(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) { cerrar(); e.stopImmediatePropagation(); } }, true);
 
   const fallo = e => window.avisar(t('No ha salido bien: {m}', { m: (e && e.message) || '?' }));
-  const leyes = () => `<small class="cuenta-leyes"><a href="${base}privacidad/?lang=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Privacidad'))}</a> · <a href="${base}condiciones/?lang=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Condiciones de uso'))}</a></small>`;
+  const leyes = () => `<small class="cuenta-leyes"><a href="${base}privacidad/?idioma=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Privacidad'))}</a> · <a href="${base}condiciones/?idioma=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Condiciones de uso'))}</a></small>`;
   const boton = (texto, clase, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = fn; return b; };
-  let google = false;
+  let google = false, pestana = 'perfil';
 
-  // cambia el nombre de la cuenta, el mismo en todos los juegos (perfil global, servidor/36-perfil.sql); sin esa función en la base de datos avisa sin romper nada
-  async function cambiarNombre() {
-    const v = (document.getElementById('cuenta-nombre-web').value || '').replace(/[^\p{L}\p{N} _.\-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 14);
-    if (v.length < 3) { window.avisar(t('Tiene que tener al menos 3 letras o números.')); return; }
-    try {
-      const r = await CUENTA.ponNombre(v);
-      window.avisar(t('Ahora te llamas {n}', { n: (r && r.nombre) || v }), true);
-    } catch (err) {
-      const m = String((err && err.message) || '');
-      window.avisar(/nombre_no_vale/.test(m) ? t('Ese nombre no está permitido. Prueba con otro.') : /nombre_corto/.test(m) ? t('Tiene que tener al menos 3 letras o números.') : /perfil_nombre|404|PGRST/.test(m) ? t('Esto todavía no está disponible. Vuelve a probar en un rato.') : t('No ha salido bien: {m}', { m: m || '?' }));
-    }
+  // tras salir o borrar la cuenta: todo vuelve a «Entrar»
+  function salir(texto) {
+    window.avisar(texto, true); casos.olvidar(); perfilListo = false; recordarCara({ tipo: 'defecto' });
+    pintarMenu(); document.dispatchEvent(new CustomEvent('cuenta-cambio')); document.dispatchEvent(new CustomEvent('cuenta-perfil')); cerrar();
   }
-  // enlaces directos para quien tiene el rol: «alfa» → la copia de pruebas, «admin» → el panel /gestion, «alfa», «beta» o «admin» → la beta de Android en Play (sin rol, sin función o sin red no se enseña nada)
-  async function rolEnlaces(donde) {
-    await CUENTA.roles.refrescar(['alfa', 'admin', 'beta']);   // una sola pregunta al servidor; sin red vale lo recordado
-    const [alfa, admin, beta] = [!NUCLEO.alfa && CUENTA.roles.tiene('alfa'), CUENTA.roles.tiene('admin'), CUENTA.roles.tiene('beta')];
-    if (!donde.isConnected || donde.querySelector('.cuenta-roles') || !(alfa || admin || beta)) return;
-    const fila = document.createElement('div'); fila.className = 'cuenta-botones cuenta-roles';
-    const enlace = (txt, href) => { const a = document.createElement('a'); a.className = 'boton sec'; a.href = href; a.textContent = txt; fila.append(a); };
-    if (alfa) enlace(t('IR A LA ALFA'), base + 'alfa/');
-    if (admin) enlace(t('IR A GESTIÓN'), base + 'gestion/');
-    if (alfa || beta || admin) { enlace(t('BETA EN ANDROID'), 'https://play.google.com/apps/internaltest/4699431656758562735'); fila.lastChild.target = '_blank'; fila.lastChild.rel = 'noopener'; }   // Prueba interna de Play: solo la ven los de la lista de testers
-    const leyesEl = donde.querySelector('.cuenta-leyes'); leyesEl ? leyesEl.before(fila) : donde.append(fila);
+  // lo que reciben las pestañas
+  const ctx = { casos, juegos, base, aviso, fallo, boton, leyes, alCambiarPerfil, salir };
+
+  function pintarCabecera() {
+    const cab = cuerpo.querySelector('.cu-cab'); if (!cab) return;
+    const p = casos.perfil(), vista = caraVisible();
+    const img = cab.querySelector('.cu-cara');
+    img.src = vista.src; img.referrerPolicy = vista.tipo === 'foto' ? 'no-referrer' : '';
+    img.alt = vista.tipo === 'cara' ? CUENTA_PERFIL.nombrePersonaje(vista.id, CARAS_CUENTA) : '';
+    cab.querySelector('h3').textContent = p.nombre || t('Aún sin nombre');
+  }
+  function pintarPestana(cual) {
+    pestana = CUENTA_PERFIL.pestana(cual);
+    cuerpo.querySelectorAll('.cu-pestanas button').forEach(b => { const on = b.dataset.pestana === pestana; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    const panel = cuerpo.querySelector('.cu-panel'); panel.innerHTML = '';
+    ({ perfil: CUENTA_PESTANAS.perfil, juegos: CUENTA_PESTANAS.juegos, ajustes: CUENTA_AJUSTES.pintar })[pestana](panel, ctx);
+  }
+  const NOMBRES = { perfil: 'PERFIL', juegos: 'MIS JUEGOS', ajustes: 'AJUSTES' };
+  function pintarDentro() {
+    caja.classList.add('cuenta-dentro');
+    cuerpo.innerHTML = `<div class="cu-cab"><img class="cu-cara" width="88" height="88" alt=""><div class="cu-quien"><h3 class="ol" id="cuenta-titulo"></h3><p class="cu-email">${esc(CUENTA.email)}</p></div></div>
+      <div class="cu-pestanas" role="tablist">${CUENTA_PERFIL.PESTANAS.map(p => `<button type="button" role="tab" data-pestana="${p}">${esc(t(NOMBRES[p]))}</button>`).join('')}</div>
+      <div class="cu-panel" role="tabpanel"></div>`;
+    cuerpo.querySelector('.cu-cara').onerror = e => { const d = CARAS_CUENTA.ruta(CUENTA_PERFIL.CARA_POR_DEFECTO); if (!e.target.src.endsWith(d)) e.target.src = d; };   // la foto de Google que no carga
+    cuerpo.querySelector('.cu-pestanas').onclick = e => { const b = e.target.closest('[data-pestana]'); if (b) pintarPestana(b.dataset.pestana); };
+    pintarCabecera(); pintarPestana(pestana);
   }
 
-  function pintar(motivo) {
-    cuerpo.innerHTML = '';
-    if (conCuenta()) {
-      cuerpo.innerHTML = `<h3 class="ol" id="cuenta-titulo">${esc(t('TU CUENTA'))}</h3><p>${t('Has entrado con {e}. Es la misma cuenta en todos los juegos.', { e: '<b>' + esc(CUENTA.email) + '</b>' })}</p>`;
-      const fila = document.createElement('div'); fila.className = 'cuenta-botones';
-      fila.append(boton(t('CERRAR SESIÓN'), 'boton sec', () => CUENTA.cerrarSesion().then(() => { window.avisar(t('Sesión cerrada'), true); pintarMenu(); document.dispatchEvent(new CustomEvent('cuenta-cambio')); cerrar(); }, fallo)));
-      cuerpo.append(fila);
-      cuerpo.insertAdjacentHTML('beforeend', `<h4 class="cuenta-sub ol">${esc(t('TU NOMBRE'))}</h4><p>${esc(t('Es el que ven los demás en las clasificaciones y las partidas. Se cambia en todos tus juegos.'))}</p><input id="cuenta-nombre-web" type="text" maxlength="14" autocomplete="nickname" placeholder="${esc(t('Tu nombre'))}" aria-label="${esc(t('Tu nombre'))}">`);
-      const fn = document.createElement('div'); fn.className = 'cuenta-botones';
-      fn.append(boton(t('CAMBIAR NOMBRE'), 'boton ol', cambiarNombre));
-      cuerpo.append(fn);
-      // estado del caos primordial ilimitado: es de la cuenta y vale en todos los juegos (la función pide un juego, pero el pase no depende de él)
-      const pase = document.createElement('p'); pase.className = 'cuenta-pase'; cuerpo.append(pase);
-      CUENTA.rpc('pvp_energia', { p_juego: 'rumble' }).then(e => {
-        if (!e || !pase.isConnected) return;
-        const vivo = e.pase_hasta && new Date(e.pase_hasta) > new Date();
-        if (!vivo && !e.activa) return;
-        const f = vivo ? new Date(e.pase_hasta).toLocaleDateString(IDIOMA.actual === 'en' ? 'en-GB' : 'es-ES') : '';
-        pase.innerHTML = '<b>' + esc(t('CAOS PRIMORDIAL ILIMITADO')) + '</b>: ' + esc(vivo ? t('activo hasta el {f}. Vale en todos los juegos.', { f }) : t('sin activar. Se usa la energía de cada juego.'));
-      }).catch(() => { /* sin red o sin la función: no se enseña nada */ });
-      CUENTA.perfil().then(p => { const i = document.getElementById('cuenta-nombre-web'); if (p && p.nombre && i && !i.value) i.value = p.nombre; });
-      rolEnlaces(cuerpo);
-      cuerpo.insertAdjacentHTML('beforeend', leyes());
-      return;
-    }
+  function pintarFuera(motivo) {
+    caja.classList.remove('cuenta-dentro');
     cuerpo.innerHTML = `<h3 class="ol" id="cuenta-titulo">${esc(t('ENTRAR'))}</h3>`
       + `<p>${esc(motivo || t('Entra con tu cuenta para marcar tus juegos favoritos y votar. Sin contraseña.'))}</p>`
       + (CUENTA.emailPendiente ? `<p class="cuenta-pendiente">${t('Te hemos enviado un enlace a {e}. Ábrelo en este aparato para terminar.', { e: '<b>' + esc(CUENTA.emailPendiente) + '</b>' })}</p>` : '')
@@ -99,21 +132,29 @@
           if (!/signups? not allowed|not found/i.test(err.message)) throw err;
           await CUENTA.guardarConEmail(v);
         }
-        window.avisar(t('Mira tu correo y abre el enlace'), true); pintar(motivo);
+        window.avisar(t('Mira tu correo y abre el enlace'), true); pintarFuera(motivo);
       } catch (err) { fallo(err); }
     }));
     if (google) fila.append(boton(t('ENTRAR CON GOOGLE'), 'boton sec', () => CUENTA.entrarConGoogle()));
     cuerpo.append(fila);
     cuerpo.insertAdjacentHTML('beforeend', `<small class="cuenta-edad">${esc(t('Para guardar tu cuenta tienes que tener 14 años o más. Si eres menor, pide a tu padre, madre o tutor que lo haga contigo.'))}</small>` + leyes());
   }
+
   window.abrirCuenta = motivo => {
-    pintar(motivo); modal.hidden = false; document.body.style.overflow = 'hidden';
+    if (conCuenta()) { pestana = 'perfil'; pintarDentro(); cargarPerfil(); } else pintarFuera(motivo);
+    modal.hidden = false; document.body.style.overflow = 'hidden';
     const i = document.getElementById('cuenta-email-web'); if (i) setTimeout(() => i.focus(), 50);
   };
   menu.onclick = e => { e.preventDefault(); window.abrirCuenta(); };
   pintarMenu();
   if (location.hash === '#cuenta') { history.replaceState(null, '', location.pathname + location.search); setTimeout(() => window.abrirCuenta(), 300); }   // venías de otra página de la web con «Entrar»
   if (CUENTA.activa) CUENTA.googleListo().then(v => { google = v; });
+  cargarPerfil();
+  document.addEventListener('cuenta-cambio', () => { if (conCuenta() !== perfilListo) cargarPerfil(); });
   // al volver del enlace del email la sesión llega en la dirección: cuenta.js la lee al cargar la página, un momento después
   window.addEventListener('load', () => setTimeout(() => { pintarMenu(); document.dispatchEvent(new CustomEvent('cuenta-cambio')); }, 1500));
+
+  // el juego favorito de la cuenta si hay cuenta, perfil y el juego sigue en la biblioteca; si no, null
+  const juegoFavorito = () => (conCuenta() && perfilListo ? CUENTA_PERFIL.juegoElegido(casos.perfil(), juegos()) : null);
+  return Object.freeze({ juegoFavorito });
 })();

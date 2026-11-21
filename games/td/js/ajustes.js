@@ -19,6 +19,8 @@ const AJUSTES = {
   // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro).
   // Mismo ratio que Rumble (1 gema «vale» 10 de oro: la tirada pasa de 50 gemas a 500 de oro); la fila `monedas` de flags (juego 'td') lo ajusta sin publicar.
   monedas: { ratio: 15, cambio: 40, pasePct: { pase: 49 } },   // la tirada cuesta 750 de oro; cambiar oro por gemas, 40 de oro por gema; pasePct: qué % de lo convertido (oro y tiradas de la pista de pago) se da en gemas, para que la pista devuelva justo el precio del pase (493 de 500). La fila `monedas` de flags lo afina sin publicar
+  // qué es de este juego en la partida al resetear una cuenta de probador (ADR 146); lo de core lo clasifica core/js/sistema/probador-partida.js
+  probador: { recursos: [], progreso: ['stars', 'tut'] },   // la campaña y la partida guiada
   campRegla: 'todos',   // un mundo se abre cuando se han pasado todos los niveles del anterior (en Rumble, el último)
   guardado: 'fortd-save',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario
   // lo que cambia respecto a la economía común (core/js/meta.js: ECON). Lo que no salga aquí vale lo mismo que en el Rumble.

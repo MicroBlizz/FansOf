@@ -1,0 +1,57 @@
+/* Fans Of · LO COMÚN de las páginas de la web (portada, lore, privacidad, condiciones, borrar la cuenta, energía y android): UNA sola hoja (ADR 135).
+   Aquí viven el menú de arriba y la barra de abajo del móvil (los monta menu.js) y la paleta del estilo nuevo («Arcade nocturno», ADR 128),
+   que cuelga de html.portada-nueva: esa clase solo la pone estilo/estilo-nuevo.js con el flag «portada-nueva» abierto; sin ella, los colores son los de core/css/base.css
+   y las piezas nuevas (clase .pn: el logo y la barra de abajo) no se ven.
+   El pie va en su hoja, estilo/pie.css (la carga también /gestion). Cada página añade encima su propia hoja (biblioteca/portada.css, lore/lore.css, estilo/texto.css…). */
+
+/* ---------- las tintas de los velos: fondos oscuros medio transparentes (chapas sobre una captura, barras, el zoom); cada regla pone su transparencia ---------- */
+:root { --tinta-fondo: 20, 10, 34; --tinta-panel: 38, 20, 60; --tinta-negra: 8, 4, 14; }
+
+/* ---------- el estilo nuevo: los colores de core pasan a la noche ---------- */
+html:not(.portada-nueva) .pn { display: none !important; }
+html.portada-nueva {
+  --bg: #0b1730; --bg-2: #13285a; --tray: #14254a; --tray-hi: #2e4a85; --ink: #f4f7ff; --ink-dim: #c9d6f2;
+  --outline: #07101f; --panel: rgba(20, 37, 74, 0.96); --panel-2: rgba(11, 23, 48, 0.85); --off: #2e4a85; --scrim: rgba(7, 16, 31, 0.9);
+  --gold: #ffd23f; --player: #ff8a1f; --player-lite: #ffb04d;
+  --pn-votar: #15803d; --pn-votar-sombra: #0e5a2b;
+  --tinta-fondo: 7, 16, 31; --tinta-panel: 20, 37, 74; --tinta-negra: 4, 9, 18;
+}
+html.portada-nueva nav.menu { background: #0b1730; }
+
+/* ---------- el menú de arriba ---------- */
+nav.menu { position: sticky; top: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
+nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
+nav.menu a:hover, nav.menu a:focus-visible, nav.menu a.on { color: var(--gold); outline: none; }
+nav.menu .idiomas { font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+nav.menu .idiomas a { font-family: var(--font-ui); font-size: 13px; }
+/* el botón de la cuenta: la foto y el texto los pone menu.js (pintaMenuCuenta) */
+nav.menu a.m-cuenta { color: var(--gold); display: inline-flex; align-items: center; gap: 7px; }
+nav.menu a.m-cuenta.dentro { color: var(--player-lite, #9fd8ff); }
+nav.menu a.m-cuenta::before, nav.menu a.m-cuenta::after { content: ""; width: 3px; height: 22px; background: rgba(255, 255, 255, .6); border-radius: 2px; flex: none; }
+nav.menu a.m-cuenta::before { order: -2; margin-right: 8px; }
+nav.menu a.m-cuenta::after { margin-left: 8px; }
+nav.menu a.m-cuenta .m-foto { order: -1; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--outline); object-fit: cover; }
+
+/* ---------- el menú del estilo nuevo: el logo a la izquierda; en el móvil solo logo, cuenta e idioma (lo demás va en la barra de abajo) ---------- */
+html.portada-nueva nav.menu .pn-apoya { color: var(--gold); }   /* «Apóyanos» destaca en el menú (tarea #291) */
+html.portada-nueva nav.menu .pn-logo { font-family: var(--font-display); font-size: 24px; color: var(--player); margin-right: auto; letter-spacing: 1px; }
+@media (max-width: 700px) {
+  html.portada-nueva nav.menu { flex-wrap: nowrap; justify-content: flex-end; gap: 12px; padding-left: 14px; padding-right: 14px; }
+  html.portada-nueva nav.menu > a:not(.pn-logo):not(.m-cuenta) { display: none; }
+  html.portada-nueva nav.menu a.m-cuenta::before, html.portada-nueva nav.menu a.m-cuenta::after { display: none; }
+}
+
+/* ---------- la barra de abajo (solo en el móvil) ---------- */
+html.portada-nueva .pn-barra { display: none; }
+@media (max-width: 700px) {
+  html.portada-nueva body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  html.portada-nueva .pn-barra { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;   /* cinco botones; seis con «Tablero» (solo admins) */
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+    background: var(--tray); border-top: 3px solid var(--outline); padding-bottom: env(safe-area-inset-bottom); }
+  html.portada-nueva .pn-barra a { min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    color: var(--ink); text-decoration: none; font-weight: 800; font-size: 12px; }
+  html.portada-nueva .pn-barra a[data-pn="votar"] { color: var(--gold); }
+  html.portada-nueva .pn-barra svg { width: 24px; height: 24px; }
+  html.portada-nueva .pn-barra a:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+  html.portada-nueva #dev-boton { bottom: calc(76px + env(safe-area-inset-bottom)); }   /* el botón DEV (alfa y desarrollo) no tapa la barra */
+}

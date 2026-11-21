@@ -1,0 +1,9 @@
+/* Fans Of · APÓYANOS (apoyanos/index.html, tarea #291): el botón DONAR, encima de estilo/texto.css. Está apagado (disabled) hasta que se conecte el pago:
+   se ve con su color de oro, no gris, y con el cartel «Muy pronto» encima. Al activarlo se quitan «disabled», el cartel y la nota. */
+.donar { position: relative; margin: 22px 0 8px; text-align: center; }
+.donar-boton { display: block; width: 100%; max-width: 420px; margin: 0 auto; padding: 18px 20px 13px; font-family: var(--font-display); font-size: 34px; letter-spacing: 1px;
+  color: var(--outline); background: var(--gold); border: 4px solid var(--outline); border-radius: 18px; box-shadow: 0 6px 0 var(--outline); }
+.donar-boton:disabled { cursor: not-allowed; opacity: 1; background: repeating-linear-gradient(-45deg, var(--gold) 0 18px, var(--player-lite) 18px 36px); }
+.donar-pronto { display: inline-block; position: relative; top: -14px; padding: 4px 14px 1px; font-family: var(--font-display); font-size: 16px; color: #fff; background: var(--player);
+  border: 3px solid var(--outline); border-radius: 12px; transform: rotate(-3deg); }
+.donar-nota { margin: 0; }

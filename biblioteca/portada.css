@@ -1,0 +1,40 @@
+/* Fans Of · LA PORTADA (index.html): la entrada de la web, una tarjeta por juego, con los colores y las letras de core.
+   El menú y la paleta comunes, en estilo/web.css; la tienda, en biblioteca/tienda.css; el estilo nuevo de la portada, en biblioteca/portada-nueva.css. */
+body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
+html { scroll-behavior: smooth; }
+main { width: 100%; max-width: 640px; box-sizing: border-box; padding: 0 20px 0; display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; }
+/* Bandas a todo el ancho, de lila oscuro y lila claro, una por sección (y el pie del color del menú). La sombra y el recorte las sacan a los lados sin tocar la maquetación. */
+/* Las bandas alternan solas (impar: lila claro, par: lila oscuro) sin importar cuántas secciones haya ni cuál es la última. El pie lleva su propio color, casi negro, más oscuro que los dos lilas. */
+main > section.hero, main > section.sec { background: var(--banda); box-shadow: 0 0 0 100vmax var(--banda); clip-path: inset(0 -100vmax); box-sizing: border-box; }
+main > section:nth-of-type(odd) { --banda: #251538; --sub-a: #1f112f; --sub-b: #2d1a44; }
+main > section:nth-of-type(even) { --banda: #170b26; --sub-a: #120920; --sub-b: #200f35; }
+main > section.sec { padding: 28px 0 34px; }
+/* La Biblioteca es UNA sección con subsecciones (Nuestros favoritos, Prototipos y Archivo): cada lista con su fondo, alternando dos subtonos del color de la propia Biblioteca */
+#biblioteca { padding-bottom: 0; gap: 0; }
+#biblioteca > p.note { margin: 6px 0 20px; }
+.subsec { width: 100%; box-sizing: border-box; padding: 24px 0 30px; background: var(--sub-a); box-shadow: 0 0 0 100vmax var(--sub-a); clip-path: inset(0 -100vmax); }
+.subsec:nth-of-type(even) { background: var(--sub-b); box-shadow: 0 0 0 100vmax var(--sub-b); }
+/* el menú (estilo/web.css) va fijo arriba en la portada */
+nav.menu { position: fixed; left: 0; right: 0; }
+section.hero { padding: 96px 0 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+section.hero a.play { text-decoration: none; font-family: var(--font-display); font-size: 22px; padding: 10px 26px 6px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); margin-top: 6px; }
+/* COMUNIDAD: botones de redes (X y Discord) al final de la portada: contorno grueso de Fans Of, el color de cada marca y su logo */
+.redes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 4px 0 6px; width: 100%; }
+.redes a.red { flex: 0 1 220px; min-width: 150px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; box-sizing: border-box; text-decoration: none; font-family: var(--font-display); font-size: 17px; letter-spacing: 0.5px; color: #fff; padding: 9px 14px 6px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); transition: transform .1s, box-shadow .1s; }
+.redes a.red svg { width: 20px; height: 20px; fill: currentColor; flex: none; margin-top: -3px; }
+.redes a.red:hover, .redes a.red:focus-visible { transform: translateY(-2px); box-shadow: 0 6px 0 var(--outline); outline: none; }
+.redes a.red:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.redes a.red-x { background: linear-gradient(to bottom, #2b2b2b, #000); }
+.redes a.red-discord { background: linear-gradient(to bottom, #6f7cf5, #4752c4); }
+section.hero a.play:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 34px; margin: 18px 0 0; scroll-margin-top: 80px; }
+section.sec { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; scroll-margin-top: 80px; }
+.partes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+.partes a { flex: 1 1 220px; box-sizing: border-box; color: var(--ink); text-decoration: none; text-align: left; border: 3px solid var(--outline); border-radius: 14px; padding: 12px 14px; background: var(--panel); }
+.partes a b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--gold); }
+.partes a span { font-size: 14px; font-weight: 600; color: var(--ink-dim); }
+h1 { font-family: var(--font-display); font-weight: 400; line-height: 0.9; margin: 0; }
+h1 .l1 { display: block; font-size: 42px; letter-spacing: 2px; }
+h1 .l2 { display: block; font-size: 96px; color: var(--player); transform: rotate(-4deg); margin: 10px 0 6px; }
+p.sub { font-weight: 800; font-size: 18px; color: var(--ink-dim); margin: 0 0 6px; }
+p.note { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin: 0; max-width: 460px; }

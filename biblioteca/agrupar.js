@@ -1,6 +1,7 @@
 // Fans Of · LA PORTADA · reparte las tarjetas de la biblioteca en sus grupos (ADR 102, 103 y 104): Nuestros favoritos, Los más pedidos, Prototipos y Archivo.
 // Prototipos y Archivo van plegados (y se acuerdan de si los abriste en este navegador). Usa GRUPOS (biblioteca/grupos.js), esc() y t() de la página.
 // Lo que un enlace señala (#prototipos, #archivo…) despliega su grupo.
+// Los puntos que llegan del servidor se guardan para quien los pida: alVotos(fn) llama a fn con ellos (ya, si ya llegaron), lo usa el orden «Más votados» del catálogo.
 'use strict';
 const AGRUPAR = (() => {
   const GUARDADO = 'fansof-portada-abiertos', PLEGABLES = ['lista-prototipos', 'lista-archivo'];
@@ -14,7 +15,10 @@ const AGRUPAR = (() => {
     (document.getElementById('lista-favoritos') || document.querySelector('#biblioteca .note')).after(sec);
     return sec;
   }
+  let votos = null; const oyentes = [];
+  const alVotos = fn => { if (votos) fn(votos); else oyentes.push(fn); };
   function destacar(datos) {
+    votos = datos; oyentes.splice(0).forEach(fn => fn(datos));
     const ids = [...document.querySelectorAll('#lista-prototipos section.game')].map(s => s.id.replace(/^g-/, ''));
     const top = GRUPOS.masPedidos(datos, ids);
     if (!top.length || document.getElementById('mas-pedidos')) return;
@@ -50,5 +54,5 @@ const AGRUPAR = (() => {
     addEventListener('hashchange', () => abrirElDe(location.hash));
     abrirElDe(location.hash);
   }
-  return { colocar, destacar };
+  return { colocar, destacar, alVotos };
 })();

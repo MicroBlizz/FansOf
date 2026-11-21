@@ -96,6 +96,8 @@ async function pintarDestacado() {
   if (!dest.deslizado) dest.deslizado = deslizar(caja, paso => { if (dest.lista.length > 1) verDestacado(dest.i + paso, true); });
   caja.onclick = e => { if (!dest.deslizado() && !e.target.closest('a')) abrirFicha(dest.lista[dest.i].tarjeta); };
   verDestacado(0);
+  // aviso para el catálogo de la portada nueva (portada-catalogo.js): ya están las marcas NUEVO y las fechas de cada juego
+  document.dispatchEvent(new CustomEvent('portada:destacado', { detail: { fechas } }));
 }
 function verDestacado(i, aMano) {
   dest.i = (i + dest.lista.length) % dest.lista.length;

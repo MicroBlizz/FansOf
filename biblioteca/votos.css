@@ -4,7 +4,7 @@
   background: linear-gradient(170deg, var(--tray-hi) 0%, var(--tray) 40%, var(--bg) 100%); box-shadow: 0 6px 0 var(--outline); }
 .cuenta-caja h3 { font-family: var(--font-display); font-weight: 400; font-size: 28px; color: var(--gold); margin: 0 40px 6px 0; }
 .cuenta-caja p { margin: 6px 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
-.cuenta-caja input { width: 100%; box-sizing: border-box; margin-top: 8px; font: 700 18px var(--font-ui); padding: 9px 10px; border-radius: 10px; border: 3px solid var(--outline); background: var(--ink); color: #20102c; }
+.cuenta-caja input { width: 100%; box-sizing: border-box; margin-top: 8px; font: 700 18px var(--font-ui); padding: 9px 10px; border-radius: 10px; border: 3px solid var(--outline); background: var(--ink); color: var(--outline); }
 .cuenta-sub { font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--gold); margin: 16px 0 0; }
 .cuenta-botones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .cuenta-botones .boton { cursor: pointer; font-size: 18px; padding: 9px 16px 5px; }
@@ -18,7 +18,7 @@
 #aviso-web.bien { border-color: #3ea34a; }
 /* GUARDAR (el marcapáginas) en cada tarjeta y en la ficha */
 .game .corazon { position: absolute; top: 8px; left: 8px; z-index: 2; display: flex; align-items: center; gap: 3px; min-width: 36px; height: 36px; padding: 0 8px 0 4px; box-sizing: border-box; cursor: pointer;
-  border-radius: 12px; border: 2px solid var(--outline); background: rgba(20, 10, 34, .85); color: var(--ink); font: 800 13px var(--font-ui); }
+  border-radius: 12px; border: 2px solid var(--outline); background: rgba(var(--tinta-fondo), .85); color: var(--ink); font: 800 13px var(--font-ui); }
 .game .corazon svg { width: 26px; height: 26px; flex: none; }
 .game .corazon:hover svg path:last-child { stroke: var(--gold); }
 #fi-fav { cursor: pointer; display: flex !important; align-items: center; gap: 6px; font-size: 15px !important; padding: 6px 14px 6px 8px !important; width: auto !important; white-space: nowrap; }
@@ -35,7 +35,7 @@
 .reco-barra { display: flex; height: 14px; margin-top: 12px; border-radius: 10px; overflow: hidden; border: 3px solid var(--outline); background: #e0454f; }
 .reco-barra i { background: #3fbf4f; }
 .reco-datos { display: flex; justify-content: space-between; margin-top: 4px; font-size: 12px; font-weight: 800; color: var(--ink-dim); }
-#fi-voto textarea { width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 70px; resize: vertical; font: 600 14px var(--font-ui); padding: 8px 10px; border-radius: 10px; border: 3px solid var(--outline); background: var(--ink); color: #20102c; }
+#fi-voto textarea { width: 100%; box-sizing: border-box; margin-top: 8px; min-height: 70px; resize: vertical; font: 600 14px var(--font-ui); padding: 8px 10px; border-radius: 10px; border: 3px solid var(--outline); background: var(--ink); color: var(--outline); }
 #fi-voto .voto-enviar { margin-top: 8px; cursor: pointer; font-size: 18px; padding: 8px 20px 4px; }
 #fi-voto small { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--ink-dim); line-height: 1.35; }
 #fi-voto .voto-gracias { margin-top: 6px; }
@@ -44,7 +44,7 @@
 /* SÍ / NO pequeños en la tarjeta */
 .game .cap-img { position: relative; }
 .game .votos-tarjeta { position: absolute; right: 6px; bottom: 6px; z-index: 2; display: flex; gap: 5px; }
-.game .votos-tarjeta button { width: 34px; height: 32px; cursor: pointer; padding: 2px 0 0; border-radius: 10px; border: 2px solid var(--outline); background: rgba(20, 10, 34, .85); }
+.game .votos-tarjeta button { width: 34px; height: 32px; cursor: pointer; padding: 2px 0 0; border-radius: 10px; border: 2px solid var(--outline); background: rgba(var(--tinta-fondo), .85); }
 .game .votos-tarjeta button svg { width: 22px; height: 22px; }
 .game .votos-tarjeta button[data-v="1"][aria-pressed="true"] { background: linear-gradient(to bottom, #7be07b, #2f9a3a); }
 .game .votos-tarjeta button[data-v="-1"][aria-pressed="true"] { background: linear-gradient(to bottom, #ff7a86, #c22a3a); }

@@ -35,7 +35,7 @@ const CATALOGO = {
     dlc:        { name: 'DLC gratis', rar: 'epic', ic: 'DL' },
     gigante:    { name: 'Modo gigante', rar: 'legendary', ic: 'MG' },
     iman:       { name: 'Imán de CAOS', rar: 'epic', ic: 'IC' },
-    // octubre de 2026: habilidades locas (en Rumble, tras el flag 'habilidades-nuevas')
+    // octubre de 2026: habilidades locas
     ceo:        { name: 'Llamada del CEO', rar: 'legendary', ic: 'LC' },
     super:      { name: 'Modo Súper', rar: 'epic', ic: 'MS' },
     wallhack:   { name: 'Wallhack', rar: 'rare', ic: 'WH' },
@@ -87,7 +87,7 @@ const CATALOGO = {
     cartucho_dorado: { name: 'Cartucho dorado', slot: 'acc', rar: 'legendary', fac: 'olvidados' },
     claqueta_oro:    { name: 'Claqueta de oro', slot: 'weapon', rar: 'legendary', fac: 'pop' },
     boton_pausa:  { name: 'Botón de pausa', slot: 'acc', rar: 'epic' },
-    // octubre de 2026: tanda grande para el gashapón (en Rumble salen tras el flag 'objetos-nuevos' hasta que se abran)
+    // octubre de 2026: tanda grande para el gashapón
     palo_selfie:      { name: 'Palo selfie', slot: 'weapon', rar: 'basic' },
     cable_hdmi:       { name: 'Cable HDMI enrollado', slot: 'weapon', rar: 'common' },
     pincho_kebab:     { name: 'Pincho de kebab', slot: 'weapon', rar: 'rare' },

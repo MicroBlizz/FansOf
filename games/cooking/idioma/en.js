@@ -1,6 +1,8 @@
 // Fans of Cooking · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos.": "<b>UNDER THE HOOD</b>: the prototypes move to their final home on the site (the old addresses still take you there) and tweaks to the internal systems.",
+  "Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora.": "Microblizz moved all its games to a new folder. The boxes are still in the hallway and nobody knows whose stapler it is.",
   // 0.2.17
   "<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: a «PROTOTYPE» tag on the edge that takes you to the game's page to vote for it, improvements to the feedback tab and tweaks to the internal systems.",
   "Microblizz ha puesto la etiqueta de PROTOTIPO en el delantal y Phony la ha confundido con la receta.": "Microblizz put the PROTOTYPE label on the apron and Phony mistook it for the recipe.",

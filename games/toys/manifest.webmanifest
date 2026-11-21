@@ -1,0 +1,13 @@
+{
+  "name": "Fans of Toys",
+  "short_name": "Fans of Toys",
+  "description": "La fábrica de juguetes de Microblizz: un año fiscal, cuatro metas (prototipo).",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#124a44",
+  "theme_color": "#124a44",
+  "icons": []
+}

@@ -1,0 +1,8 @@
+/* Fans of Pop · precios honestos (tarea #177): los euros debajo de cada precio en perlas (ppPerlasPrecioHtml, js/tienda.js) y lo que
+   vale lo que trae una oferta (ppValorHtml, js/ofertas.js) */
+.pp-precio-e { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1; }
+.pp-euros { font-size: 17px; font-weight: 700; opacity: 0.85; margin-top: 1px; white-space: nowrap; }
+.pp-pack .pp-euros { color: #a05a9a; font-size: 17px; }
+.pp-ayuda b .pp-euros { color: #fff; font-size: 13px; }
+#pp-ayudas.pp-duelo .pp-ayuda b .pp-euros { font-size: 17px; }
+.pp-valor { margin: 6px 0 0; font-weight: 700; color: #26924a; font-size: 22px; }

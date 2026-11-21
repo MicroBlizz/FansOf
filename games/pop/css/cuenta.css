@@ -1,0 +1,2 @@
+/* Fans of Pop · ventana de cuenta de core (tarea #155): sus botones (Google, email, ya tengo cuenta) en turquesa, el secundario de Pop; nada de lila (Pepins) */
+#cuenta-modal button { background: linear-gradient(180deg, var(--pp-sec1) 0%, var(--pp-sec2) 100%); border: 0; border-radius: 999px; color: #fff; min-height: 52px; box-shadow: inset 0 0 0 3px var(--pp-sec-b), 0 5px 0 0 var(--pp-sec-b); text-shadow: 0 2px 0 var(--pp-sec-b); }

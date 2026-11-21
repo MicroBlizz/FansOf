@@ -7,7 +7,7 @@
 // última vez) y sube lo que ha cambiado aquí; así Pepins y Arkioner ven lo mismo y lo que GitHub borra a los 90 días se queda. Guía: docs/guia/herramientas/cola-actions.md.
 'use strict';
 const COLA_DATOS = (() => {
-  const { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, mediaFiable, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
+  const { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, mediaFiable, carrilDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
   const P = 'fansof.gestion.cola.';
   // las claves que «Borrar lo guardado» quita (el token y el límite semanal son ajustes y se quedan)
   const K = { runs: P + 'runs', hist: P + 'historial', activos: P + 'activos', carriles: P + 'carriles', durs: P + 'duraciones-2', recs: P + 'recursos', plan: P + 'plan', foto: P + 'foto', sync: P + 'sync' };
@@ -20,7 +20,6 @@ const COLA_DATOS = (() => {
   const MAX_JOBS = 40;      // jobs de trabajos activos por refresco
   const DIA = 864e5;        // GitHub borra los artefactos al día: más viejos no se piden
   const ms = s => s ? Date.parse(s) : NaN;
-  const carrilDe = L => L.includes('self-hosted') ? (L.find(l => l !== 'self-hosted') || 'self-hosted') : 'github';
   async function enLotes(lista, n, f) { for (let i = 0; i < lista.length; i += n) await Promise.all(lista.slice(i, i + n).map(f)); }
   // de cada run se guarda solo lo que se usa
   const CAMPOS = ['id', 'run_attempt', 'path', 'workflow_id', 'name', 'display_title', 'conclusion', 'created_at', 'run_started_at', 'updated_at'];

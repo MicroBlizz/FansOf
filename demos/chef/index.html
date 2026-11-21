@@ -1,40 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#1a1008">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fans of Chef</title>
-<meta name="description" content="Fans of Chef: los cocineros de la cantina de Microblizz bajan al sótano a cazar comida viva con el cuchillo y la sartén, y suben a cocinarla para toda la empresa.">
-<script src="../../core/js/nucleo.js?v=0.4.0"></script>
-<script>NUCLEO.fuentes('../../core/fuentes/press-start-2p.css')</script>
-<!-- ?v= es la versión de la demo: súbela al publicar -->
-<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
-<style>
-/* Fans of Chef: un solo canvas en píxel art. Cada píxel del juego son k píxeles de pantalla (entero), sin suavizar. */
-html, body { height: 100%; margin: 0; background: #1a1008; overflow: hidden; overscroll-behavior: none; }
-body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
-#caja { position: fixed; inset: 0; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
-#juego { display: block; touch-action: none; image-rendering: pixelated; image-rendering: crisp-edges; }
-#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffb347; font: 12px/1 'Press Start 2P', monospace; }
-[hidden] { display: none !important; }
-</style>
+<!-- Fans of Chef vive ahora en games/chef (ADR 142). Esta página manda allí a quien llega por la dirección vieja, conservando ?idioma y #, y se borra el 18-2-2027. -->
+<link rel="canonical" href="../../games/chef/">
+<link rel="stylesheet" href="../../core/css/mudanza.css">
+<noscript><meta http-equiv="refresh" content="0; url=../../games/chef/"></noscript>
+<script src="../../core/js/sistema/idioma-regla.js"></script>
+<script src="../../idioma-web.js"></script>
+<script src="../../core/js/mudanza/reglas.js"></script>
+<script src="../../core/js/mudanza/pagina.js"></script>
 </head>
-<body>
-<div id="caja"><canvas id="juego" aria-label="Fans of Chef"></canvas></div>
-<div id="carga">…</div>
-<div id="toast"></div>
-<script>
-NUCLEO.juego({
-  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Chef lleva su propia partida y sus pantallas
-  antes: ['js/ajustes.js'],
-  idioma: { en: ['idioma/en.js'] },
-  despues: [
-    '../../core/js/serie/canciones.js',
-    'js/guardado.js', 'js/datos.js', 'js/sprites.js', 'js/efectos.js', 'js/entrada.js', 'js/salas.js', 'js/mapa.js', 'js/escenario.js',
-    'js/jugador.js', 'js/enemigos.js', 'js/jornada.js', 'js/cantina-escena.js', 'js/cantina.js', 'js/guia.js', 'js/arena.js', 'js/sonido.js',
-    'js/pantalla.js', 'js/pantalla-2.js', 'js/pantalla-cantina.js', 'js/principal.js'],
-});
-</script>
-</body>
+<body><p><a href="../../games/chef/">Fans of Chef</a></p></body>
 </html>

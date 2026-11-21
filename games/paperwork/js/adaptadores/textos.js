@@ -26,5 +26,7 @@ PW.txt = (() => {
     return (h ? h + ':' + dd(m) : m) + ':' + dd(s % 60);
   }
   const pct = p => fmtV(Math.round(p * 1000) / 10) + ' %';
-  return { num, tiempo, reloj, pct };
+  // lo que lee cada vistazo, en singular si sale una hoja (tarea #135): la cifra se redondea hacia abajo como en num()
+  const hojasVistazo = v => (Math.floor(v || 0) === 1 ? tr('1 hoja por vistazo') : tr('{n} hojas por vistazo', { n: num(v) }));
+  return { num, tiempo, reloj, pct, hojasVistazo };
 })();

@@ -1,0 +1,97 @@
+/* Fans of Pop · PANTALLA DE VICTORIA, 2.ª vuelta (tarea #157, boceto aprobado por Pepins el 19-11-2026): la barra de arriba propia,
+   el compañero celebrando o triste, el desglose de monedas, la racha y la hucha, las monedas que vuelan y la fiesta de toques
+   sobrantes en el tablero. El código, en js/victoria-panel.js y js/victoria-fiesta.js. */
+
+/* la barra de arriba: blanca y nítida, por encima del velo (solo con una ventana de victoria abierta) */
+.pp-vic-arriba { position: absolute; left: 14px; right: 14px; top: 14px; height: 66px; z-index: 6; display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 0 16px; border-radius: 33px; background: #fff; box-shadow: inset 0 0 0 4px #ffd1ec, 0 5px 0 rgba(0, 0, 0, 0.12); pointer-events: none;
+  animation: pp-vic-baja 0.35s ease-out both; }
+#pp-modal:not(:has(.pp-gana, .pp-pase-ventana)) .pp-vic-arriba { display: none; }   /* victoria y pase (RECOGER TODO, tarea #166) */
+@keyframes pp-vic-baja { from { transform: translateY(-90px); } to { transform: none; } }
+.pp-vic-vidas { display: flex; }
+.pp-vic-vida { display: inline-flex; margin-right: -4px; }
+.pp-vic-vida.pp-vacia { opacity: 0.35; filter: saturate(0.3) brightness(1.3); }
+.pp-vic-caja { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 28px; color: #7a3a7a; }
+.pp-vic-caja b { min-width: 2ch; }
+.pp-vic-caja.pp-brilla .pp-ico { animation: pp-vic-recibe 0.25s ease-out; }
+.pp-vic-caja.pp-brilla .pp-vic-mon { color: #e89a00; }
+@keyframes pp-vic-recibe { 50% { transform: scale(1.3); filter: drop-shadow(0 0 10px #ffe36e); } }
+/* las monedas que vuelan (van en el body, encima de todo) */
+.pp-vic-vuela { position: fixed; z-index: 1000; pointer-events: none; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.25)); }
+
+/* el compañero: dando saltos con destellos al ganar, triste y con una lagrimita al perder (por código, sin dibujos nuevos) */
+.pp-vic-slime { position: relative; flex: none; width: 96px; height: 96px; }
+.pp-vic-slime > .pp-ico, .pp-vic-slime img { width: 96px !important; height: 96px !important; }
+.pp-vic-slime.pp-feliz { animation: pp-vic-brinca 0.9s 1.4s ease-in-out infinite; }
+.pp-vic-slime.pp-feliz::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: -8px; height: 10px; border-radius: 50%; background: rgba(0, 0, 0, 0.18);
+  animation: pp-vic-sombra 0.9s 1.4s ease-in-out infinite; }
+@keyframes pp-vic-brinca { 0%, 100% { transform: translateY(0) rotate(-6deg); } 40% { transform: translateY(-18px) rotate(6deg); } 60% { transform: translateY(-18px) rotate(6deg); } }
+@keyframes pp-vic-sombra { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(0.7); opacity: 0.6; } }
+.pp-vic-slime.pp-feliz i { position: absolute; width: 18px; height: 18px; background: #fff; filter: drop-shadow(0 0 5px #ffe36e);
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); animation: pp-vic-brilla 1.4s ease-in-out infinite; }
+.pp-vic-slime.pp-feliz i:nth-of-type(1) { left: -8px; top: 4px; }
+.pp-vic-slime.pp-feliz i:nth-of-type(2) { right: -6px; top: -10px; width: 14px; height: 14px; animation-delay: 0.5s; }
+.pp-vic-slime.pp-feliz i:nth-of-type(3) { right: -12px; top: 40px; width: 11px; height: 11px; animation-delay: 0.9s; }
+.pp-vic-slime.pp-triste { transform: rotate(8deg); filter: saturate(0.75); }
+.pp-vic-slime.pp-triste > :first-child { transform: scaleY(0.9); transform-origin: bottom; }
+.pp-vic-slime.pp-triste b { position: absolute; left: 30px; top: 44px; width: 12px; height: 17px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: #7cc8ff; box-shadow: inset -2px -2px 0 rgba(255, 255, 255, 0.6); animation: pp-vic-lagrima 1.8s 0.8s ease-in infinite; }
+@keyframes pp-vic-lagrima { 0% { transform: translateY(0); opacity: 1; } 80% { transform: translateY(18px); opacity: 1; } 100% { transform: translateY(22px); opacity: 0; } }
+
+/* de dónde salen las monedas */
+.pp-vic-fila-baja { gap: 10px; margin-top: 4px; }
+.pp-vic-desglose { font-weight: 700; font-size: 17px; color: #8a4f00; background: rgba(255, 255, 255, 0.92); border-radius: 14px; padding: 5px 12px; }
+
+/* la racha y la hucha: dos cajitas blancas */
+.pp-vic-extras { display: flex; gap: 10px; align-self: stretch; }
+.pp-vic-extra, .pp-vic-aviso { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 20px; background: #fff;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1); color: #7a3a7a; text-align: left; }
+.pp-vic-extra > div, .pp-vic-aviso > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pp-vic-extra b, .pp-vic-aviso b { font-size: 19px; line-height: 1.1; }
+.pp-vic-extra em { font-style: normal; color: #26924a; }
+.pp-vic-extra small, .pp-vic-aviso small { font-size: 14px; font-weight: 600; color: #b46aa0; line-height: 1.15; }
+.pp-vic-pips { display: flex; gap: 5px; }
+.pp-vic-pips i { width: 20px; height: 20px; border-radius: 50%; background: #ffe0ef; box-shadow: inset 0 0 0 3px #ffb8d8; }
+.pp-vic-pips i.pp-on { background: linear-gradient(180deg, #ff9a4a, #ff5a5a); box-shadow: inset 0 0 0 3px #e0453a; }
+.pp-vic-pips i.pp-vic-nueva { box-shadow: inset 0 0 0 3px #e0453a, 0 0 0 3px #ffe36e; animation: pp-vic-late 1s 1.6s ease-in-out 3; }
+.pp-vic-mini { display: block; height: 12px; border-radius: 999px; background: #ffe0ef; overflow: hidden; }
+.pp-vic-mini span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ff9ccf, #ff5fa8); }
+/* el aviso de la racha: al rendirse (ventana de «¡Sin toques!») o en «¡Casi!» si se ha perdido */
+.pp-vic-aviso { align-self: stretch; flex: none; box-shadow: 0 0 0 3px #ffb3b3, 0 4px 0 rgba(0, 0, 0, 0.1); }
+.pp-vic-aviso b { color: #c43a3a; }
+.pp-vic-panel .pp-vic-premio-fila .pp-sub { margin: 0; text-align: left; }
+
+/* la fiesta de toques sobrantes, encima del tablero: el cartel, cuántas monedas y «Toca para saltar» */
+.pp-fiesta-toques { position: absolute; inset: 0; z-index: 25; pointer-events: auto; font-family: 'Fredoka', 'Arial Rounded MT Bold', sans-serif; font-weight: 700; }
+.pp-fiesta-cartel { position: absolute; left: 0; right: 0; top: 16%; margin: 0; text-align: center; font-size: 50px; color: #ffb21e; -webkit-text-stroke: 3px #fff; paint-order: stroke fill;
+  text-shadow: 0 5px 0 #c27a00, 0 0 22px rgba(255, 255, 255, 0.9); transform: rotate(-3deg); animation: pp-salta 0.45s ease-out both; }
+.pp-fiesta-sub { position: absolute; left: 50%; top: calc(16% + 70px); margin: 0; transform: translateX(-50%); white-space: nowrap; font-size: 24px; color: #fff;
+  background: #ff6eb5; padding: 5px 18px; border-radius: 999px; box-shadow: 0 4px 0 #c43a84; animation: pp-salta 0.45s 0.15s ease-out both; }
+.pp-fiesta-saltar { position: absolute; left: 50%; bottom: 7%; margin: 0; transform: translateX(-50%); white-space: nowrap; font-size: 26px; color: #c43a84;
+  background: rgba(255, 255, 255, 0.95); padding: 10px 26px; border-radius: 999px; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12); animation: pp-vic-late 1.2s ease-in-out infinite; }
+.pp-fiesta-toques.pp-rapido .pp-fiesta-saltar { opacity: 0; transition: opacity 0.2s; }
+
+/* que quepa sin desplazar (Pepins, 19-11-2026): nunca la barra gris; si no cabe, se aprieta y se encoge (ppVicEncaja) */
+.pp-tarjeta.pp-gana { zoom: var(--vic-zoom, 1); scrollbar-width: none; }
+.pp-tarjeta.pp-gana::-webkit-scrollbar { display: none; }
+.pp-vic-fila-baja { flex-wrap: nowrap; }
+.pp-vic-fila-baja .pp-vic-desglose { font-size: 15px; white-space: nowrap; }
+.pp-tarjeta.pp-vic-justa { gap: 7px; padding-top: 0; }
+/* la fila tiene el alto de la estrella del medio con su arco (116 + 12) y arriba queda sitio para su saltito: la ventana recorta lo que
+   sale por encima (reporte 34, tarea #268: con 112 px la del medio se cortaba) */
+.pp-vic-justa .pp-vic { padding-top: 12px; }
+.pp-vic-justa .pp-vic .pp-estrellas { height: 128px; }
+.pp-vic-justa .pp-vic .pp-est, .pp-vic-justa .pp-vic .pp-est img { width: 88px; height: 88px; }
+.pp-vic-justa .pp-vic .pp-est:nth-child(2), .pp-vic-justa .pp-vic .pp-est:nth-child(2) img { width: 116px; height: 116px; }
+.pp-vic-justa .pp-vic .pp-est:nth-child(2) { margin-bottom: 12px; }
+.pp-tarjeta.pp-vic-justa .pp-vic h2 { font-size: 50px; }
+.pp-vic-justa .pp-vic-panel { gap: 6px; padding: 10px 10px; }
+.pp-vic-justa .pp-vic-dato { padding: 5px 4px 6px; }
+.pp-vic-justa .pp-vic-dato b { font-size: 26px; }
+.pp-vic-justa .pp-vic-slime, .pp-vic-justa .pp-vic-slime > .pp-ico, .pp-vic-justa .pp-vic-slime img { width: 78px !important; height: 78px !important; }
+.pp-vic-justa .pp-vic-extra, .pp-vic-justa .pp-vic-aviso { padding: 6px 8px; }
+.pp-gana.pp-vic-justa > .pp-btn { font-size: 30px; padding-top: 11px; padding-bottom: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-vic-slime, .pp-vic-slime *, .pp-fiesta-toques * { animation: none !important; }
+}

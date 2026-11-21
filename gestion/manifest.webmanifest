@@ -1,0 +1,17 @@
+{
+  "name": "Fans Of Gestión",
+  "short_name": "Gestión",
+  "description": "El panel de administración de Fans Of: abre en el tablero de tareas.",
+  "lang": "es",
+  "id": "./",
+  "start_url": "./?seccion=tablero",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#f3f4f6",
+  "icons": [
+    { "src": "../core/img/fog-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../core/img/fog-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../core/img/fog-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

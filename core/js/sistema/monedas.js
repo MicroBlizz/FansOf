@@ -100,8 +100,52 @@ const MONEDAS = (() => {
   //   y NO debe dar nada por su cuenta (el saldo ya viene del servidor).
   // · En desarrollo: compra de prueba, alComprar({ prueba: true }) da lo suyo en local como siempre.
   // · En la web: todavía no está a la venta.
+  // · Con una cuenta de probador (rol alfa, ADR 146; core/js/sistema/probador.js) y ese id: en la alfa y en localhost no se cobra, lo entrega el
+  //   servidor y alComprar recibe lo mismo que en una compra real (más probador: true); en la release y en la app no puede pagar. Va antes que Play y Paddle.
+  //   Si el servidor aún no tiene ese producto, en modo desarrollo se ofrece la compra de prueba local; en la alfa, el aviso.
+  const enDesarrollo = () => typeof NUCLEO !== 'undefined' && !!NUCLEO.desarrollo;
+  // la compra de prueba del modo desarrollo: no pasa por el servidor, alComprar({ prueba: true }) da lo suyo en local
+  const compraDePrueba = (titulo, html, alComprar) => confirmBox(titulo, `${html}<small>${tr('Compra de prueba (solo en desarrollo): no se cobra nada.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(() => alComprar({ prueba: true })));
+  function compraProbador(titulo, html, alComprar, producto) {
+    if (typeof PROBADOR === 'undefined' || !PROBADOR.puede || !PROBADOR.puede()) return false;
+    if (!PROBADOR.enPruebas()) { confirmBox(tr('CUENTA DE PROBADOR'), `${html}<small>${tr('Las cuentas de probador no pueden pagar con dinero real; prueba la compra en la alfa.')}</small>`, null); return true; }
+    confirmBox(titulo, `${html}<small>${tr('Compra de probador: no se cobra nada. La entrega el servidor, como una compra de verdad.')}</small>`, tr('COMPRAR'), () => {
+      if (typeof toast === 'function') toast(tr('Comprando…'), true);
+      PROBADOR.compra(producto).then(r => {
+        if (r.ok) { if (alComprar) alComprar(r.valor); return; }
+        if (r.error === 'producto' && enDesarrollo()) { compraDePrueba(titulo, html, alComprar); return; }   // aún no está en el servidor: en desarrollo, la compra de prueba local de siempre
+        if (typeof play === 'function') play('deny'); if (typeof toast === 'function') toast(PROBADOR.texto(r.error));
+      }).catch(e => {   // el servidor ya lo ha entregado y lo que falla es aplicarlo aquí (el alComprar del juego): se avisa, no se calla
+        console.error('Compra de probador: ha fallado al aplicarla en el juego', e);
+        if (typeof play === 'function') play('deny'); if (typeof toast === 'function') toast(PROBADOR.texto('entrega'));
+      });
+    });
+    return true;
+  }
+  // Puerta de adultos (tarea #178, ADR 166; core/js/sistema/puerta-adultos.js): con el flag común 'puerta-adultos', antes de toda compra que puede
+  // acabar en un pago (o en su prueba) sale una pregunta para adultos; si se falla, no se abre nada más. Donde no se puede pagar, no sale.
+  const conPuerta = () => typeof NUCLEO !== 'undefined' && typeof NUCLEO.flag === 'function' && typeof PUERTA_ADULTOS !== 'undefined'
+    && NUCLEO.flag('puerta-adultos', 'Pregunta para adultos antes de cada compra con dinero real (tarea #178, ADR 166)');
+  function vaAPagar(producto) {
+    if (!producto) return enDesarrollo();
+    if (typeof PROBADOR !== 'undefined' && PROBADOR.puede && PROBADOR.puede()) return PROBADOR.enPruebas();
+    return (typeof PAGOS !== 'undefined' && PAGOS.disponible()) || (typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible()) || enDesarrollo();
+  }
+  // Un juego puede exigir cuenta antes de comprar (tarea #155): responde al hook 'compra-exige-cuenta' con el motivo (texto en español; vacío = no exige).
+  // Si el jugador es invitado sale la ventana de cuenta (cuenta-pantalla.js) y no se abre nada más; al volver con la cuenta, el juego retoma ('cuenta-vuelta' 'compra').
+  function exigeCuenta() {
+    if (typeof fire !== 'function' || typeof window.pedirCuenta !== 'function') return false;
+    const motivo = fire('compra-exige-cuenta');
+    return !!motivo && window.pedirCuenta(motivo, 'compra', { titulo: 'PRIMERO, TU CUENTA', cancelar: 'VOLVER' });
+  }
   function compraReal(titulo, html, alComprar, producto) {
     if (typeof confirmBox !== 'function') return;
+    if (exigeCuenta()) return;
+    if (conPuerta() && vaAPagar(producto)) PUERTA_ADULTOS.pide(() => compraSinPuerta(titulo, html, alComprar, producto));
+    else compraSinPuerta(titulo, html, alComprar, producto);
+  }
+  function compraSinPuerta(titulo, html, alComprar, producto) {
+    if (producto && compraProbador(titulo, html, alComprar, producto)) return;
     if (producto && typeof PAGOS !== 'undefined' && PAGOS.disponible()) {
       confirmBox(titulo, `${html}<small>${tr('Pago seguro con Google Play. Lo comprado queda en tu cuenta.')}</small>${casillaRenuncia()}`, tr('COMPRAR'), () => recomiendaCuenta(() => {
         if (typeof toast === 'function') toast(tr('Abriendo Google Play…'), true);
@@ -118,7 +162,7 @@ const MONEDAS = (() => {
       }));
       exigeRenuncia();
     }
-    else if (typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo) confirmBox(titulo, `${html}<small>${tr('Compra de prueba (solo en desarrollo): no se cobra nada.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(() => alComprar({ prueba: true })));
+    else if (enDesarrollo()) compraDePrueba(titulo, html, alComprar);
     else confirmBox(tr('SOLO CON DINERO REAL'), `${html}<small>${tr('Esto se paga con dinero de verdad y todavía no está a la venta: llegará con la app de Android.')}</small>`, null);
   }
   // Lo que devuelve la pista de pago de un pase, en %: pasePct = { pase: 26, pasepvp: 70 } en la fila `monedas` de flags (dato). Sirve para que lo que da

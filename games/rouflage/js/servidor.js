@@ -126,5 +126,8 @@ const RFS = (() => {
     try { aplica(await CUENTA.rpc('rf_estado', {})); relojes(); if (typeof refrescaHud === 'function') refrescaHud(true); } catch (_) { /* sin red */ }
   }
   return { arranca, llama, error, errorTexto, aplica, alGuardar, ponerYa, partida, vaciaCola, refresca, activo: () => activo, desfase: () => desfase, relojes,
-    reinicia: async () => { if (activo) await CUENTA.rpc('rf_reiniciar', {}); try { localStorage.removeItem(CACHE); } catch (_) { /* nada */ } } };
+    reinicia: async () => { if (activo) await CUENTA.rpc('rf_reiniciar', {}); try { localStorage.removeItem(CACHE); } catch (_) { /* nada */ } },
+    // tras resetear la cuenta de un probador (servidor-economia.js): desde aquí no se manda ni se guarda nada más hasta recargar, y se tira la
+    // última respuesta guardada. Devuelve su clave para que core la borre otra vez al arrancar
+    olvida: () => { activo = false; clearTimeout(temporizador); try { localStorage.removeItem(CACHE); } catch (_) { /* sin almacén: nada que tirar */ } return CACHE; } };
 })();

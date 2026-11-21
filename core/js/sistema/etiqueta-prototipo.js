@@ -5,7 +5,12 @@
 const ETIQUETA_PROTOTIPO = (() => {
   // la ficha vive en la biblioteca, dos carpetas por encima del juego (también en /alfa/); en la app de Android, en la web de verdad
   const enlace = (id, nativa) => (nativa ? 'https://fansof.games/' : '../../') + '#juego-' + encodeURIComponent(String(id || ''));
-  if (typeof document === 'undefined') return { enlace };
+  // dónde va (en px desde la izquierda) junto al escenario que empieza en `x`: si a su izquierda hay sitio, fuera, pegada a su marco
+  // (los juegos lo dibujan con hasta 16 px de borde), para no tapar nada del juego; si no (en el móvil), en el borde de la pantalla.
+  // La usa también la pestaña de comentarios (feedback.js), para ir las dos juntas (tarea #185)
+  const FUERA = 30 + 20;   // el ancho de la pestaña de comentarios, la más ancha, y el marco con un poco de aire
+  const borde = x => (x >= FUERA ? Math.round(x - FUERA) : 0);
+  if (typeof document === 'undefined') return { enlace, borde };
   const css = document.createElement('style');
   css.textContent = `
   #fo-prototipo { position: fixed; left: 0; bottom: calc(30% + 54px); z-index: 39; width: 22px; padding: 7px 0; box-sizing: border-box; display: flex; justify-content: center; text-decoration: none;
@@ -18,7 +23,7 @@ const ETIQUETA_PROTOTIPO = (() => {
   const pinta = () => {
     a.hidden = !!(typeof enPartida === 'function' && enPartida());
     a.firstChild.textContent = tr('PROTOTIPO'); a.title = tr('Esto es un prototipo: toca para votarlo en su ficha'); a.setAttribute('aria-label', a.title);
-    const st = document.getElementById('stage'); a.style.left = (st ? Math.max(0, st.getBoundingClientRect().left) : 0) + 'px';
+    const st = document.getElementById('stage'); a.style.left = borde(st ? st.getBoundingClientRect().left : 0) + 'px';
   };
   const iniciar = () => {
     a.href = enlace(typeof AJUSTES !== 'undefined' ? AJUSTES.id : '', typeof NUCLEO !== 'undefined' && NUCLEO.nativa);
@@ -26,6 +31,6 @@ const ETIQUETA_PROTOTIPO = (() => {
     window.addEventListener('resize', pinta); setInterval(pinta, 1500);
   };
   if (document.body) iniciar(); else window.addEventListener('DOMContentLoaded', iniciar);
-  return { enlace };
+  return { enlace, borde };
 })();
 if (typeof module !== 'undefined') module.exports = ETIQUETA_PROTOTIPO;

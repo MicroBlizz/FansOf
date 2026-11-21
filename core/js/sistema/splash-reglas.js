@@ -7,8 +7,8 @@ const SPLASH_REGLAS = (() => {
   const SUAVE_S = 0.25, ARRASTRE_S = 0.35, HUECO = 0.03;   // lo dibujado alcanza lo real en ~0,25 s; entre señales se arrastra hacia el tope (la mitad del hueco cada ~2 s) sin llegar
   const entre = (x, a, b) => Math.min(b, Math.max(a, x));
 
-  // ¿la página es un juego o una demo? (games/<id>/ o demos/<id>/, también dentro de la alfa). La portada y el resto de la web no llevan splash.
-  function enJuego(pathname) { return /\/(?:games|demos)\/[^/]+/.test(String(pathname || '')); }
+  // ¿la página es un juego? (games/<id>/, también dentro de la alfa; las demos viven ahí desde el ADR 142). La portada y el resto de la web no llevan splash.
+  function enJuego(pathname) { return /\/games\/[^/]+/.test(String(pathname || '')); }
 
   // ¿sale? En los juegos, siempre; un navegador automatizado (comparador, pruebas) no la ve salvo forzada (?splash=1)
   function sale({ automatizado, forzada }) { return !!forzada || !automatizado; }

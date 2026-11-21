@@ -173,7 +173,7 @@
 .pf-av.on { border-color: #ffcb3d; box-shadow: 0 0 0 2px var(--outline), 0 0 10px rgba(255, 203, 61, .6); }
 .pf-av canvas { width: 46px; height: 46px; display: block; }
 .profile-card .btn-big { font-size: 26px; padding: 12px 40px 8px; flex: none; }
-/* gashapón nuevo (flag 'gashapon-nuevo', core/js/sistema/gachapon-anim.js): la máquina más alta, la capa de efectos y la carta que entra de golpe */
+/* gashapón animado (core/js/sistema/gachapon-anim.js): la máquina más alta, la capa de efectos y la carta que entra de golpe */
 #gacha-cv.nueva { width: 300px; height: 350px; }
 #gacha-fx { position: absolute; left: 0; width: 100%; z-index: 4; touch-action: none; cursor: pointer; }
 .gacha-result.fx { background: transparent; }
@@ -184,7 +184,6 @@
 @keyframes gr-tile { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes gr-fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .gacha-result.fx .gr-card, .gacha-result.fx .gr-card .gt, .gacha-result.fx > button { animation: none; } }
-@keyframes gshake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-1deg); } 75% { transform: translateX(5px) rotate(1deg); } }
 @keyframes reveal { from { transform: scale(0.2) rotate(-12deg); opacity: 0; } }
 @keyframes prpulse { 50% { box-shadow: 0 0 0 4px var(--gold); } }
 @keyframes logoBob { 50% { transform: translateY(-3px); } }
@@ -231,6 +230,7 @@
 .en-ad-bar { width: 100%; height: 10px; border-radius: 99px; background: rgba(255,255,255,.15); overflow: hidden; --p: 0%; }
 .en-ad-bar i { display: block; width: var(--p); height: 100%; background: #7df3ff; transition: width 1s linear; }
 .en-ad-card small { opacity: .7; font-size: 11px; }
+.en-ad-card .btn-link { min-height: 48px; padding: 10px 20px; font-size: 20px; color: #fff; text-decoration-thickness: 2px; }   /* «Cerrar sin premio»: grande y legible (tarea #185) */
 /* caos primordial de premio al ganar */
 .en-premio { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 45%, rgba(255, 214, 90, .35), rgba(12, 6, 24, .88) 70%); animation: en-pr-in .35s ease-out both; cursor: pointer; overflow: hidden; }
 .en-premio.sale { animation: en-pr-out .4s ease-in both; }

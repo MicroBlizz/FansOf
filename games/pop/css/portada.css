@@ -1,0 +1,23 @@
+/* Fans of Pop · LA PORTADA (tarea #143, ADR 176): JUGAR grande, una fila con MEMORIA y RANKING y, abajo y fija, la barra de iconos
+   (TIENDA en dorado, el resto en turquesa; COMPAÑEROS y PERFIL solo con su flag). Todo en la capa #pp-ui de 540 de ancho:
+   70 aquí son 48 px de verdad en un móvil de 375 (pop.css). Nada de lila ni de gris. */
+#pp-titulo { padding: 0 14px 28px; }
+#pp-titulo > .pp-fila { width: 100%; }
+#pp-titulo > .pp-fila > .pp-btn2 { flex: 1 1 0; max-width: 230px; }
+.pp-barra { display: flex; gap: 6px; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 6px; border-radius: 28px;
+  background: rgba(255, 255, 255, 0.88); box-shadow: inset 0 0 0 4px #ff9ccf, 0 6px 0 rgba(196, 58, 132, 0.25); }
+#pp-ui .pp-barra-b { --c1: var(--pp-sec1); --c2: var(--pp-sec2); --borde: var(--pp-sec-b); position: relative; flex: 1 1 0; min-width: 0; min-height: 104px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 2px 9px; border: 0; border-radius: 20px;
+  background: linear-gradient(180deg, var(--c1), var(--c2)); color: var(--borde);
+  box-shadow: inset 0 0 0 4px var(--borde), inset 0 -6px 0 rgba(0, 0, 0, 0.12), 0 5px 0 var(--borde); transition: transform 0.08s; }
+#pp-ui .pp-barra-b.pp-pago { --c1: var(--pp-pago1); --c2: var(--pp-pago2); --borde: var(--pp-pago-b); }
+#pp-ui .pp-barra-b:active { transform: translateY(4px); box-shadow: inset 0 0 0 4px var(--borde), 0 1px 0 var(--borde); }
+.pp-barra-b b { font-size: 14px; letter-spacing: -0.2px; line-height: 1; color: #fff; white-space: nowrap; text-shadow: 0 2px 0 var(--borde), 2px 0 0 var(--borde), -2px 0 0 var(--borde), 0 -2px 0 var(--borde); }
+.pp-barra-ico { width: 52px; height: 52px; flex: none; }
+svg.pp-barra-ico { fill: #fff; stroke: currentColor; stroke-width: 4; stroke-linejoin: round; }
+svg.pp-barra-ico .pp-ojo { fill: currentColor; stroke: none; }
+svg.pp-barra-ico .pp-dientes { stroke: #fff; }
+/* cerrado por nivel (primeros pasos): su mismo color, aclarado, con el candado; nunca gris */
+#pp-ui .pp-barra-b.pp-cerrado > :not(.pp-candado) { filter: contrast(0.55) brightness(1.35); }
+#pp-ui .pp-barra-b.pp-cerrado { box-shadow: inset 0 0 0 4px var(--borde), 0 3px 0 var(--borde); }
+.pp-barra-b .pp-candado { top: -10px; right: 50%; transform: translateX(50%); }

@@ -22,7 +22,7 @@
   }
   const edad = () => tr('Para guardar tu cuenta tienes que tener 14 años o más. Si eres menor, pide a tu padre, madre o tutor que lo haga contigo.');
 
-  const ponen = (...b) => b.filter(Boolean), base = location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '');
+  const ponen = (...b) => b.filter(Boolean), base = location.pathname.replace(/games\/[^/]*\/.*$/, '');
   // los botones para guardar o entrar; los usan Opciones y la ventana «necesitas una cuenta» (con la misma lógica)
   function botonesInvitado() {
     return ponen(
@@ -34,10 +34,11 @@
   }
   // Ventana «necesitas una cuenta» para lo que solo va con cuenta (p. ej. PvP). `destino` es el nombre con el que el juego,
   // al volver con la cuenta ya vinculada, retoma lo que iba a hacer (hook 'cuenta-vuelta'). Devuelve false si no hace falta.
-  window.pedirCuenta = (motivo, destino) => {
+  // `textos` (opcional, ya en español; se traducen aquí): { titulo, cancelar } para cambiar el título y el botón de salir (tarea #155).
+  window.pedirCuenta = (motivo, destino, textos = {}) => {
     if (!CUENTA.activa || !CUENTA.invitado) return false;
-    try { if (destino) localStorage.setItem('fansof-tras-cuenta', destino); } catch (e) { /* sin memoria: no se retoma solo */ }
-    confirmBox(tr('NECESITAS UNA CUENTA'), esc(tr(motivo)) + '<small>' + tr('Sin contraseña: entras con Google o con un enlace al email. Tu progreso se queda en tu cuenta.') + ' ' + edad() + '</small><div id="cuenta-modal" class="row" style="flex-direction:column;gap:8px;margin-top:10px"></div>', null, null, tr('AHORA NO'));
+    try { if (destino) localStorage.setItem('fansof-tras-cuenta', destino + '|' + Date.now()); } catch (e) { /* sin memoria: no se retoma solo */ }
+    confirmBox(tr(textos.titulo || 'NECESITAS UNA CUENTA'), esc(tr(motivo)) + '<small>' + tr('Sin contraseña: entras con Google o con un enlace al email. Tu progreso se queda en tu cuenta.') + ' ' + edad() + '</small><div id="cuenta-modal" class="row" style="flex-direction:column;gap:8px;margin-top:10px"></div>', null, null, tr(textos.cancelar || 'AHORA NO'));
     document.getElementById('cuenta-modal').append(...botonesInvitado());
     return true;
   };
@@ -60,12 +61,12 @@
         boton(tr('CERRAR SESIÓN'), () => confirmBox(tr('¿CERRAR SESIÓN?'), tr('Tu progreso sigue en tu cuenta y en este aparato. Para recuperarlo en otro, usa «Ya tengo cuenta».'), tr('CERRAR SESIÓN'), () => CUENTA.cerrarSesion().then(() => { toast(tr('Sesión cerrada'), true); pintar(); }))),
         boton(tr('BORRAR CUENTA'), () => confirmBox(tr('¿BORRAR TU CUENTA?'), tr('Se borran tu cuenta y tus partidas en la nube, de todos los juegos. Lo que hay en este aparato se queda.') + '<small>' + tr('No se puede deshacer.') + '</small>', tr('BORRAR'), () => CUENTA.borrarCuenta().then(() => { toast(tr('Cuenta borrada'), true); pintar(); }, fallo)), true));
     }
-    const leyes = document.createElement('small'); leyes.innerHTML = '<a href="' + base + 'privacidad/?lang=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Privacidad') + '</a> · <a href="' + base + 'condiciones/?lang=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Condiciones de uso') + '</a>';
+    const leyes = document.createElement('small'); leyes.innerHTML = '<a href="' + base + 'privacidad/?idioma=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Privacidad') + '</a> · <a href="' + base + 'condiciones/?idioma=' + IDIOMA.actual + '" target="_blank" rel="noopener">' + tr('Condiciones de uso') + '</a>';
     fila.append(span, fila2, leyes);
   }
   pintar();
   CUENTA.googleListo().then(v => { if (v) { google = true; pintar(); } });
   hook('cuenta', pintar);
   // al volver del enlace del email o de Google con la cuenta ya vinculada, el juego retoma lo que iba a hacer
-  hook('cuenta', () => { if (CUENTA.invitado) return; let d = ''; try { d = localStorage.getItem('fansof-tras-cuenta') || ''; localStorage.removeItem('fansof-tras-cuenta'); } catch (e) { /* nada */ } if (d) setTimeout(() => fire('cuenta-vuelta', d), 300); });
+  hook('cuenta', () => { if (CUENTA.invitado) return; let d = ''; try { const g = (localStorage.getItem('fansof-tras-cuenta') || '').split('|'); d = Date.now() - (+g[1] || 0) < 3600000 ? g[0] : '';   /* un destino de hace más de una hora (se cerró la ventana sin crear cuenta) ya no vale */ localStorage.removeItem('fansof-tras-cuenta'); } catch (e) { /* nada */ } if (d) setTimeout(() => fire('cuenta-vuelta', d), 300); });
 })();

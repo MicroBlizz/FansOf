@@ -3,7 +3,7 @@
 // La lee también herramientas/idioma_claves.py (LIGERO).
 'use strict';
 (() => {
-  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js', 'idioma/en-tienda-gemas.js'],
+  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js', 'idioma/en-tienda-gemas.js', 'idioma/en-amigos.js'],
     pt: ['idioma/pt-ligero.js'], fr: ['idioma/fr-ligero.js'], de: ['idioma/de-ligero.js'], it: ['idioma/it-ligero.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...], pt: [...] } }). De momento solo el inglés cubre todo lo común: los demás idiomas llevan lo que usan los juegos ligeros (*-ligero.js) y un juego solo los ofrece si tiene su diccionario
 
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
@@ -26,7 +26,10 @@
     'js/serie/miniaturas.js', 'js/serie/miniaturas-armas.js', 'js/serie/miniaturas-cabeza-y-accesorios.js',   // los dibujos de sus miniaturas
     'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
+    'js/sistema/puerta-adultos.js',   // la pregunta para adultos antes de pagar con dinero real (tarea #178, ADR 166); antes de monedas.js
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
+    'js/sistema/probador.js',     // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
+    'js/sistema/probador-partida.js',   // qué queda de la partida de core al resetear una cuenta de probador (PROBADOR_PARTIDA) y su gancho
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097): dominio, casos de uso y adaptadores
     'js/cuenta/roles.js',         //           su composición (CUENTA.roles), ya con CUENTA cargada
@@ -42,7 +45,7 @@
     'js/sistema/inventario.js',    // inventario: las copias de habilidades y objetos
     'js/sistema/gachapon.js',      // gashapón
     'js/sistema/gachapon-gratis.js', // gashapón: la tirada gratis cada 2 horas, con cuenta atrás
-    'js/sistema/gachapon-anim.js', // gashapón: la animación nueva al tirar y el marco de las máquinas animadas (flag 'gashapon-nuevo')
+    'js/sistema/gachapon-anim.js', // gashapón: la animación al tirar y el marco de las máquinas animadas
     'js/sistema/gachapon-clasica.js', // gashapón: la máquina clásica animada (bolas, manivela, trampilla)
     'js/sistema/gachapon-garra.js', // gashapón: la máquina de gancho (Cartas de Rumble, CASA de Rouflage)
     'js/sistema/probabilidades.js', // tablas de probabilidades del gashapón (las enseña la tienda)
@@ -51,6 +54,7 @@
     'js/sistema/idioma-banderas.js', // el selector de idioma de Opciones
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
     'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()
+    'js/sistema/horizontal.js',     // los juegos con el móvil tumbado: ¿está de pie?, y pantalla completa fijada en horizontal con un toque (ADR 133)
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
@@ -61,6 +65,7 @@
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
     'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
+    'js/sistema/captura-pantalla.js', // la foto de lo que ve el jugador (la página entera, con core/js/vendor/modern-screenshot.js pedida al usarse) para el reporte de prueba
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
@@ -77,7 +82,9 @@
   const LIGERO = [
     'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js', 'js/sistema/sonido-archivos.js',
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
+    'js/sistema/puerta-adultos.js',   // la pregunta para adultos antes de pagar con dinero real (tarea #178, ADR 166); antes de monedas.js
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
+    'js/sistema/probador.js',      // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097)
     'js/cuenta/roles.js',          //           su composición (CUENTA.roles)
@@ -89,6 +96,7 @@
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
     'js/sistema/volumen.js',        // el volumen de efectos y música por separado (VOLUMEN.crear): lo que piden volGeneral() y volMusica()
+    'js/sistema/horizontal.js',     // los juegos con el móvil tumbado: ¿está de pie?, y pantalla completa fijada en horizontal con un toque (ADR 133)
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
@@ -99,6 +107,7 @@
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
     'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
+    'js/sistema/captura-pantalla.js', // la foto de lo que ve el jugador (la página entera, con core/js/vendor/modern-screenshot.js pedida al usarse) para el reporte de prueba
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después

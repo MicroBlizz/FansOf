@@ -126,6 +126,6 @@
   });
   $('rp-recargar').onclick = () => cargar();
   $('rp-estado').onchange = () => cargar();
-  // una pestaña en cada juego (todas usan el mismo panel)
-  for (const [id] of GESTION_NAV.JUEGOS) GESTION_NAV.seccion({ id: 'pruebas', pan: 'pan-pruebas', juego: id, etiqueta: 'Reportes de prueba', orden: 1, cargar });
+  // una pestaña en cada juego (juego '*': todas usan el mismo panel; nav.js le pasa a cargar el id del juego)
+  GESTION_NAV.seccion({ id: 'pruebas', pan: 'pan-pruebas', juego: '*', etiqueta: 'Reportes de prueba', orden: 1, cargar });
 })();

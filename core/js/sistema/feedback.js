@@ -85,7 +85,7 @@
   fondo.innerHTML = '<div id="fb-caja" role="dialog" aria-modal="true" aria-labelledby="fb-titulo"><button type="button" id="fb-x" aria-label="X">✕</button><div id="fb-cuerpo"></div></div>';
   const mostrar = () => { pestana.hidden = !!(typeof enPartida === 'function' && enPartida()); ver.hidden = pestana.hidden; };
   const ponerEtiqueta = () => { const t = tr('Enviar comentarios'); pestana.title = t + ' · ' + verLarga(); pestana.setAttribute('aria-label', t); };
-  const colocar = () => { const st = document.getElementById('stage'); const x = st ? Math.max(0, st.getBoundingClientRect().left) + 'px' : '0'; pestana.style.left = ver.style.left = x; ver.style.bottom = 'calc(30% - ' + (verCorta.length * 6 + 6) + 'px)'; };
+  const colocar = () => { const st = document.getElementById('stage'); const x = ETIQUETA_PROTOTIPO.borde(st ? st.getBoundingClientRect().left : 0) + 'px'; pestana.style.left = ver.style.left = x; ver.style.bottom = 'calc(30% - ' + (verCorta.length * 6 + 6) + 'px)'; };
   function iniciar() {
     document.body.append(pestana, ver, fondo); ponerEtiqueta(); colocar(); mostrar();
     window.addEventListener('resize', colocar); setInterval(() => { mostrar(); colocar(); }, 1500);
@@ -110,7 +110,7 @@
   function pintar(aviso) {
     leerEscritas();
     const c = document.getElementById('fb-cuerpo'), texto = (document.getElementById('fb-texto') || {}).value || '', marcado = !!(document.getElementById('fb-check') || {}).checked;
-    const base = location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '').replace(/[^/]*$/, '');
+    const base = location.pathname.replace(/games\/[^/]*\/.*$/, '').replace(/[^/]*$/, '');
     c.innerHTML = `<h3 id="fb-titulo">${esc(tr('TU OPINIÓN'))}</h3><p>${esc(tr('Cuéntanos una idea, un fallo o lo que te parezca. Lo leemos nosotros.'))}</p>`
       + `<div id="fb-tipos">${TIPOS.map(([k, n]) => `<button type="button" data-t="${k}" aria-pressed="${k === tipo}">${esc(tr(n))}</button>`).join('')}</div>`
       + preguntasHtml()
@@ -120,7 +120,7 @@
         : `<small style="margin-top:2px">${esc(tr('Para eso necesitamos tu email: entra con tu cuenta.'))}</small>${typeof pedirCuenta === 'function' ? `<button type="button" id="fb-entrar">${esc(tr('ENTRAR CON MI CUENTA'))}</button>` : ''}`)
       + `</div></div><div id="fb-beta">${betaHtml()}</div><button type="button" id="fb-enviar">${esc(tr('ENVIAR'))}</button><div id="fb-aviso" role="status">${esc(aviso || '')}</div>`
       + `<small style="opacity:.7">${esc(verLarga())}</small>`
-      + `<small>${esc(tr('Tu email solo lo usamos si marcas la casilla.'))} <a href="${base}privacidad/?lang=${typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es'}" target="_blank" rel="noopener">${esc(tr('Privacidad'))}</a></small>`;
+      + `<small>${esc(tr('Tu email solo lo usamos si marcas la casilla.'))} <a href="${base}privacidad/?idioma=${typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es'}" target="_blank" rel="noopener">${esc(tr('Privacidad'))}</a></small>`;
     for (const q of preguntas()) { const i = document.getElementById('fb-q-' + q.id); if (i && resp[q.id]) i.value = resp[q.id]; }
     document.getElementById('fb-texto').value = texto.slice(0, R.topes(esBeta()).texto); if (marcado && conEmail()) document.getElementById('fb-check').checked = true;
     cuenta();

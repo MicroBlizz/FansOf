@@ -1,22 +1,26 @@
 // Fans Of · /gestion · TABLERO · adaptador · CONTROLADOR: lo que pasa cuando se usa la pestaña. Pone el HTML de vista.js y vista-detalle.js en la página, abre
 // el detalle de una tarea (o el formulario) en el panel de la derecha, filtra mientras se busca, avisa de las tareas parecidas al escribir un título,
-// lee lo escrito, arrastra las tarjetas y le pide cada cosa a los casos de uso
+// lee lo escrito, pone las reacciones (con control-reacciones.js), arrastra las tarjetas y le pide cada cosa a los casos de uso
 // (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js los casos, los ids de sus huecos, `esc`, `fecha` y `textoError`
-// de /gestion; no sabe nada del servidor.
+// de /gestion, y `comparte(t)` y `tareaInicial` (el número del enlace directo ?tarea=N, o null; tarea #302); no sabe nada del servidor.
 'use strict';
-TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
+TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaInicial = null }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
-  // (el formulario corto de «Apuntar idea o fallo»); grupo: el de los tres botones del móvil que se ve
-  let grupo = 'ideas', juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null;
+  // (el formulario corto de «Apuntar idea o fallo»); vista: la columna elegida con los botones de arriba (null = todas; ADR 147)
+  // desplegadas: las columnas con «Ver las N más» abierto (tarea #301); se recuerda mientras la página está abierta
+  const desplegadas = new Set();
+  let deEnlace = tareaInicial;   // la tarea del enlace directo: se abre una vez, en la primera carga, si está en el tablero
+  let yo = null, reac = null, vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
   const tareaDe = id => tareas.find(t => t.id === Number(id));
 
   const pintaTablero = () => {
-    el(hueco.lista).innerHTML = TABLERO.vista.html(columnas, esc, panel && panel.id, grupo) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
+    el(hueco.bandeja).innerHTML = TABLERO.vistaRevisar.bandeja(TABLERO.bandeja(tareas, yo), yo, filtro.bandeja, esc);   // «Te toca», lo primero (tarea #161)
+    el(hueco.lista).innerHTML = TABLERO.vista.html(TABLERO.recorta(columnas, filtro, desplegadas), esc, panel && panel.id, vista, fecha, yo) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
   };
   // El panel se pinta según `panel`; si la tarea abierta ya no está (filtro o borrada), se cierra. El formulario no se repinta al recargar, para no perder lo escrito
   function pintaPanel(conFormulario) {
@@ -24,7 +28,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     if (panel && panel.id && !t) panel = null;
     el(hueco.vista).classList.toggle('abierto', !!panel);
     caja.hidden = !panel;
-    if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha);
+    if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha, yo, !!panel.cambios);
     else if (panel && conFormulario) { caja.innerHTML = panel.rapida ? TABLERO.vista.formularioRapido(juegos, esc) : TABLERO.vista.formulario(panel.formulario, esc); caja.querySelector('input[name=titulo]').focus(); }
     else if (!panel) caja.innerHTML = '';
   }
@@ -36,11 +40,20 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     const este = ++pedido, r = await casos.cargar(filtro);
     if (este !== pedido) return;   // llegó otra carga después: esta ya es vieja
     if (!r.ok) { aviso(/does not exist|PGRST202|404/.test(String(r.datos.causa && r.datos.causa.message)) ? 'Faltan los SQL del tablero en Supabase (servidor/117 a 120).' : textoError(r.datos.causa)); return; }
-    ({ tareas, columnas, descartadas, juegos } = r.valor);
+    ({ tareas, columnas, descartadas, juegos, yo } = r.valor);
+    filtro.yo = yo;   // la bandeja «Te toca» filtra por quien mira (tarea #161)
+    if (r.valor.sinReacciones) aviso('No se han podido leer las reacciones: el tablero sale sin ellas.');
+    if (r.valor.sinMirados) aviso('No se han podido leer los pasos ya mirados: las casillas de «Qué mirar» salen vacías.');
     el(hueco.filtros).innerHTML = TABLERO.vista.filtros(r.valor.juegos, filtro, esc);
+    abreDelEnlace();
     pintaPanel(false);
     pintaTablero();
     el(hueco.juegos).innerHTML = r.valor.juegos.map(j => `<option value="${esc(j)}">`).join('');
+  }
+  // El enlace directo /gestion/?seccion=tablero&tarea=N abre el detalle de esa tarea; si no está en el tablero, se ve el tablero sin más
+  function abreDelEnlace() {
+    if (deEnlace !== null && tareaDe(deEnlace)) panel = { id: deEnlace };
+    deEnlace = null;
   }
   // Una acción a la vez (un doble clic no crea la tarea dos veces). Si no sale, el tablero se vuelve a pintar como estaba y se dice por qué
   async function aplica(promesa, alTerminar) {
@@ -53,7 +66,27 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       if (!r.ok) avisaError(r);
     } finally { ocupado = false; }
   }
-  const mueve = (id, estado) => (tareaDe(id).estado === estado ? Promise.resolve() : aplica(casos.mover(tareaDe(id), estado)));
+  const mueve = (id, estado, nota) => (tareaDe(id).estado === estado ? Promise.resolve() : aplica(casos.mover(tareaDe(id), estado, nota)));
+  // «Dar por buena» (tarea #161): el primer toque pide confirmar («Toca otra vez») durante 3 s; el segundo la pasa a Hecho con su nota
+  function daPorBuena(boton) {
+    if (!boton.classList.contains('listo')) {
+      boton.classList.add('listo');
+      boton.textContent = 'Toca otra vez';
+      setTimeout(() => { if (boton.isConnected) { boton.classList.remove('listo'); boton.textContent = 'Dar por buena'; } }, 3000);
+      return;
+    }
+    aviso('');
+    mueve(boton.dataset.buena, 'hecho', 'Dada por buena desde el tablero');
+  }
+  // «Pedir cambios»: la frase es obligatoria; la tarea vuelve a En curso con ella en la nota y el panel enseña su detalle
+  function pideCambios(f) {
+    const nota = String(new FormData(f).get('nota') || '').trim();
+    if (!nota) { aviso('Escribe qué hay que cambiar'); return; }
+    aviso('');
+    const id = Number(f.dataset.cambios);
+    panel = { id };
+    mueve(id, 'en_curso', 'Cambios pedidos: ' + nota);
+  }
   // al guardar, el panel enseña el detalle de la tarea guardada
   const guarda = f => {
     const id = Number(f.dataset.id), form = leeFormulario(f);
@@ -78,6 +111,14 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     filtro[clave] = valor;
     columnas = casos.repartir(tareas, filtro);
     pintaTablero();
+    avisaNumero();
+  }
+  // Buscando un número que no está cargado (no existe, o se hizo hace más de 14 días), lo dice; al cambiar la búsqueda, el aviso se va
+  function avisaNumero() {
+    const id = TABLERO.idBuscado(filtro.texto), falta = id !== null && !tareaDe(id);
+    if (falta) aviso('La #' + id + ' no está en el tablero: no existe o se hizo hace más de 14 días.');
+    else if (avisoNumero) aviso('');
+    avisoNumero = falta;
   }
   // Al escribir el título en el formulario, tras una pausa, salen las tareas parecidas (también las hechas antiguas) para no duplicar
   // `form` es el formulario donde se escribe: si al volver la respuesta ya no está en la página (se cerró o se abrió otro), no se pinta
@@ -95,12 +136,59 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
     if (tareaDe(id)) abre({ id: Number(id) });
     else aviso('La #' + id + ' no está en el tablero: se hizo hace más de 14 días.');
   }
+  // Una reacción puesta o quitada: solo cambia esa tarea, sin volver a cargar el tablero entero
+  async function reacciona(t, reaccion) {
+    aviso('');
+    const r = await casos.reaccionar(t, reaccion, yo);
+    if (!r.ok) { avisaError(r); return; }
+    tareas = tareas.map(x => (x.id === r.valor.id ? r.valor : x));
+    columnas = casos.repartir(tareas, filtro);
+    pintaTablero();
+  }
+  // Una casilla de «Qué mirar» marcada o desmarcada (ADR 182): se guarda en el servidor sin repintar el detalle (no se cierra lo desplegado) y se ponen al
+  // día la cuenta de arriba y la tarjeta. Si no se guarda, la casilla vuelve a como estaba y se dice por qué
+  async function marcaPaso(casilla) {
+    const t = panel && panel.id ? tareaDe(panel.id) : null, paso = casilla.dataset.paso, mirado = casilla.checked;   // lo de este toque, por si llega otro antes de la respuesta
+    if (!t) { casilla.checked = !mirado; return; }
+    aviso('');
+    const r = await casos.mirar(t, paso, mirado);
+    if (!r.ok) { casilla.checked = !mirado; avisaError(r); return; }
+    tareas = tareas.map(x => (x.id === t.id ? TABLERO.conPasoMirado(x, paso, mirado) : x));
+    columnas = casos.repartir(tareas, filtro);
+    casilla.closest('.tb-paso').classList.toggle('mirado', mirado);
+    const c = casilla.closest('.tb-que-mirar').querySelector('[data-cuenta-mirados]');   // la de su panel, aunque ya se haya abierto otro
+    if (c) c.textContent = TABLERO.vistaRevisar.cuenta(tareaDe(t.id));
+    pintaTablero();
+  }
   // pulsar una tarjeta (o Intro sobre ella) abre su detalle; pulsar la que ya está abierta lo cierra
   function conectaTarjetas() {
     const elige = t => abre(panel && panel.id === Number(t.dataset.id) ? null : { id: Number(t.dataset.id) });
-    const cambiaGrupo = b => { grupo = b.dataset.grupo; pintaTablero(); };   // los tres botones del móvil
-    el(hueco.lista).onclick = ev => { const b = ev.target.closest('[data-grupo]'), t = ev.target.closest('[data-id]'); if (b) cambiaGrupo(b); else if (t) elige(t); };
-    el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter') { ev.preventDefault(); elige(t); } };
+    const cambiaVista = b => { vista = b.dataset.ver || null; pintaTablero(); };   // los botones de arriba: «Todas» o una columna
+    el(hueco.bandeja).onclick = ev => { const caja = ev.target.closest('[data-bandeja]'); if (caja) eligeBandeja(caja.dataset.bandeja); };
+    reac = TABLERO.controlReacciones({ lista: el(hueco.lista), tareaDe, alElegir: reacciona });   // dejar apretada una tarjeta (ADR 149)
+    el(hueco.lista).onclick = ev => {
+      const b = ev.target.closest('[data-ver]'), t = ev.target.closest('[data-id]'), buena = ev.target.closest('[data-buena]');
+      if (reac.clic(ev) || ev.target.closest('[data-probar]')) return;   // «Probar» es un enlace: se abre sin abrir el detalle
+      const mas = ev.target.closest('[data-despliega]');
+      if (mas) despliega(mas.dataset.despliega);
+      else if (buena) daPorBuena(buena);
+      else if (b) cambiaVista(b);
+      else if (t) elige(t);
+    };
+    el(hueco.lista).onkeydown = ev => { const t = ev.target.closest('[data-id]'); if (t && ev.key === 'Enter' && !ev.target.closest('[data-barrita]')) { ev.preventDefault(); elige(t); } };
+  }
+  // «Ver las N más» / «Ver menos» (tarea #301): abre o cierra esa columna y deja el foco en su botón (al plegar, la página vuelve a él)
+  function despliega(id) {
+    if (!desplegadas.delete(id)) desplegadas.add(id);
+    pintaTablero();
+    const boton = [...el(hueco.lista).querySelectorAll('[data-despliega]')].find(x => x.dataset.despliega === id && x.offsetParent);
+    if (boton) boton.focus();
+  }
+  // Una caja de «Te toca» (tarea #161): enseña solo esas tareas, en su columna; tocar la misma (o «Ver todo») lo quita
+  function eligeBandeja(id) {
+    const b = id && id !== filtro.bandeja ? TABLERO.bandejaDe(id) : null;
+    vista = b ? b.columna : null;
+    refiltra('bandeja', b ? b.id : '');
   }
   // Pulsar una caja del grafo marca esa caja y enseña debajo su check y su evidencia; «Ver grande» abre el dibujo a pantalla completa (y vuelve a cerrarlo)
   function eligeNodo(caja) {
@@ -134,11 +222,24 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError }) => {
       if (ev.target.closest('[data-cancelar]')) abre(panel.formulario && panel.formulario.id ? { id: panel.formulario.id } : null);
       const p = ev.target.closest('[data-abrir]');
       if (p) abreParecida(p.dataset.abrir);
+      const inf = ev.target.closest('[data-informe]');
+      if (inf && panel && panel.id) { aviso(''); aplica(casos.informe(tareaDe(panel.id), inf.dataset.informe, (caja.querySelector('[data-nota-informe]') || {}).value)); }
+      clicRevisar(ev, caja);
+      const compartir = ev.target.closest('[data-compartir]');
+      if (compartir) comparte(tareaDe(compartir.dataset.compartir));
     };
     caja.oninput = ev => { if (ev.target.name === 'titulo') buscaParecidas(ev.target.value, ev.target.form); };
-    caja.onchange = ev => { const s = ev.target.closest('[data-mover]'); if (s) mueve(s.dataset.mover, s.value); };
-    caja.onsubmit = ev => { ev.preventDefault(); aviso(''); guarda(ev.target); };
+    caja.onchange = ev => { const s = ev.target.closest('[data-mover]'), p = ev.target.closest('[data-paso]'); if (s) mueve(s.dataset.mover, s.value); if (p) marcaPaso(p); };
+    caja.onsubmit = ev => { ev.preventDefault(); aviso(''); if ('cambios' in ev.target.dataset) pideCambios(ev.target); else guarda(ev.target); };
     el(hueco.vista).onkeydown = ev => { if (ev.key === 'Escape' && !cierraGrande() && panel && panel.id) cierra(); };
+  }
+  // Los botones de revisar del detalle (tarea #161): dar por buena, abrir o cerrar la hoja de «Pedir cambios» y sus atajos (empiezan la frase)
+  function clicRevisar(ev, caja) {
+    const buena = ev.target.closest('[data-buena]'), pedir = ev.target.closest('[data-pedir-cambios]'), atajo = ev.target.closest('[data-atajo]');
+    if (buena) daPorBuena(buena);
+    if (pedir) abre({ id: Number(pedir.dataset.pedirCambios), cambios: true });
+    if (ev.target.closest('[data-no-cambios]') && panel) abre({ id: panel.id });
+    if (atajo) { const nota = caja.querySelector('textarea[name=nota]'); nota.value = atajo.dataset.atajo + (nota.value ? '. ' + nota.value : ': '); nota.focus(); }
   }
   // arrastrar una tarjeta a otra columna es lo mismo que elegirla en el desplegable del detalle
   function conectaArrastre() {

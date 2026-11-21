@@ -1,0 +1,12 @@
+/* Fans Of · EL PIE de las páginas de la web (lo monta pie.js): redes, © y la etiqueta de build, en una banda a todo el ancho más oscura que la página.
+   Hoja aparte de estilo/web.css porque /gestion lleva el pie pero no el menú ni la paleta de la web. */
+/* La banda sale por los lados con la sombra y el recorte, sin tocar la maquetación; el hueco de abajo deja libre lo que va fijo en la esquina (la franja ALFA, el botón DEV). */
+#pie-fansof, #pie-redes { --pie-fondo: #0b0613; background: var(--pie-fondo); box-shadow: 0 0 0 100vmax var(--pie-fondo); clip-path: inset(0 -100vmax); max-width: none; }
+#pie-fansof { padding: 22px 16px 56px; margin-bottom: 0; }
+#pie-fansof.pie-creado { text-align: center; margin: 40px 0 0; font: 600 13px/1.5 var(--font-ui, "Baloo 2", system-ui, sans-serif); color: var(--ink-dim, #cdb9ea); }
+#pie-fansof.con-redes { margin-top: 0; padding-top: 8px; }
+#pie-redes { text-align: center; margin: 28px 0 0; padding: 0 16px; font: 700 14px/1.5 var(--font-ui, "Baloo 2", system-ui, sans-serif); color: var(--ink-dim, #cdb9ea); }
+#pie-redes a { color: var(--gold, #ffcf3f); text-decoration: none; }
+main.con-pie { padding-bottom: 0; margin-bottom: 0; }
+/* con el estilo nuevo, la banda es el azul casi negro del contorno */
+html.portada-nueva #pie-fansof, html.portada-nueva #pie-redes { --pie-fondo: #07101f; }

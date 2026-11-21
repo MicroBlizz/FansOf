@@ -6,8 +6,9 @@ PW.panelesPago = (() => {
   const P = PW.paneles;
   // las cifras de los textos, sacadas de PW.AJ.mejoras para que no se queden atrás al calibrar
   const cifras = () => ({ p: PW.txt.pct(1 - PW.AJ.mejoras.turno.factor), n: PW.txt.num(PW.AJ.mejoras.taquilla.huecos) });
-  // solo donde de verdad se puede comprar: la app (Google Play), la web con Paddle abierto o el modo desarrollo (compra de prueba)
-  const sePuede = () => !!NUCLEO.desarrollo || (typeof PAGOS !== 'undefined' && PAGOS.disponible()) || (typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible());
+  // solo donde de verdad se puede comprar: la app (Google Play), la web con Paddle abierto, el modo desarrollo (compra de prueba) o, con una
+  // cuenta de probador, la alfa (adaptadores/probador.js)
+  const sePuede = () => PW.probador.sePuedeComprar();
   const euros = v => (NUCLEO.idioma === 'en' ? '€' + v.toFixed(2) : v.toFixed(2).replace('.', ',') + ' €');
   // el precio de un botón; el pack enseña tachado lo que costarían las dos sueltas (Arkioner, 17-11-2026: «vale 10, con descuento a 8»)
   const sueltas = () => PW.AJ.mejoras.turno.eur + PW.AJ.mejoras.taquilla.eur;

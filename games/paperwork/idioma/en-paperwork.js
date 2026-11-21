@@ -151,6 +151,7 @@ IDIOMA.add({
   "Lo que se queda cuando te despiden": "What you keep when you get fired",
   "nv. {n}": "lv. {n}",
   "{n} hojas por vistazo": "{n} pages per look",
+  "1 hoja por vistazo": "1 page per look",
   "{n} vistazos por segundo": "{n} looks per second",
   "Quitan un {p} de la dureza del papel y de las tragaderas de la Trituradora": "They remove {p} of paper toughness and of the Shredder's gullet",
   "{p} de llevarte también lo del archivador de al lado": "{p} to also take what is in the next cabinet",

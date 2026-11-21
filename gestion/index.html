@@ -5,114 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Gestión · Fans Of</title>
-<style>
-/* Gestión de Fans Of: acceso con usuario y contraseña propios y una lista de trabajo para revisar cuentas. Todo lo que enseña lo manda el servidor. */
-:root {
-  --bg: #f3f4f6; --panel: #ffffff; --linea: #d9dce3; --texto: #1c2230; --suave: #5b6578;
-  --acento: #b45309; --acento-texto: #ffffff; --clara: #b91c1c; --clara-fondo: #fee2e2; --debil: #92400e; --debil-fondo: #fef3c7;
-  --ok: #166534; --ok-fondo: #dcfce7; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; color-scheme: light;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #12151c; --panel: #1a1f29; --linea: #2c3342; --texto: #e6e9f0; --suave: #98a2b6;
-  --acento: #f5b14c; --acento-texto: #1c1204; --clara: #fca5a5; --clara-fondo: #4a1d1d; --debil: #fcd34d; --debil-fondo: #3a2c10;
-  --ok: #86efac; --ok-fondo: #12301d; color-scheme: dark; } }
-* { box-sizing: border-box; }
-[hidden] { display: none !important; }   /* sin esto, lo que tiene display propio (.filtros) ignora hidden */
-body { margin: 0; background: var(--bg); color: var(--texto); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-.pagina { max-width: min(1500px, 100%); margin: 0 auto; padding-inline: 16px; padding-block: 20px 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
-#vista-panel { display: grid; gap: 12px; min-width: 0; }
-#vista-panel > * { min-width: 0; }
-h1 { margin: 0; font-size: 20px; letter-spacing: -0.01em; text-wrap: balance; }
-.sub { color: var(--suave); margin: 2px 0 0; }
-.barra { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
-.caja { background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 14px; }
-form.entrada { display: grid; gap: 10px; max-width: 360px; margin-inline: auto; }
-label { display: grid; gap: 3px; color: var(--suave); font-size: 13px; }
-input, select, button { font: inherit; }
-input[type=text], input[type=password], select { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; width: 100%; }
-button { color: var(--texto); background: var(--panel); border: 1px solid var(--linea); border-radius: 5px; padding: 6px 12px; cursor: pointer; }
-button.fuerte { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); font-weight: 600; }
-button.peligro { color: var(--clara); border-color: var(--clara); }
-button:disabled { opacity: .55; cursor: default; }
-input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
-.aviso { color: var(--clara); min-height: 1.4em; font-size: 13px; }
-.enlace { background: none; border: 0; color: var(--suave); text-decoration: underline; padding: 0; justify-self: start; }
-.cifras { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-.cifras div { display: grid; }
-.cifras b { font-size: 18px; font-variant-numeric: tabular-nums; }
-.cifras span { color: var(--suave); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
-.ayuda { color: var(--suave); }
-.ayuda b { color: var(--texto); }
-.filtros { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
-.filtros select { width: auto; }
-.filtros button.activa { background: var(--ok-fondo); color: var(--ok); font-weight: 700; }
-.lista { display: grid; gap: 12px; }
-.cuenta { background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 12px 14px; display: grid; gap: 10px; min-width: 0; }
-.cuenta.marcada { border-color: var(--clara); }
-.cab { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
-.codigo { font-family: var(--mono); font-size: 15px; font-weight: 600; }
-.meta { color: var(--suave); font-size: 13px; overflow-wrap: anywhere; }
-.puntos { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 700; padding: 1px 9px; border-radius: 99px; background: var(--debil-fondo); color: var(--debil); }
-.puntos.alta { background: var(--clara-fondo); color: var(--clara); }
-.estado { font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 4px; background: var(--ok-fondo); color: var(--ok); }
-.estado.si { background: var(--clara-fondo); color: var(--clara); }
-.motivos { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.motivos li { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
-.etq { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; padding: 2px 7px; border-radius: 4px; align-self: start; white-space: nowrap; }
-.etq.clara { background: var(--clara-fondo); color: var(--clara); }
-.etq.debil { background: var(--debil-fondo); color: var(--debil); }
-.saldos { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
-.accion button.plat { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border: 3px solid var(--outline, #000); border-radius: 12px; cursor: pointer; font-weight: 700; }
-.cod-filas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-.cod-form { display: grid; gap: 10px; }
-.cod-form input[type=number], .cod-form input[type=date] { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; width: 100%; box-sizing: border-box; }
-#cd-codigo { font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; }
-.cod-pieza-fila { display: flex; gap: 8px; }
-.cod-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.cod-chips button { font-family: var(--mono); font-size: 12px; padding: 2px 8px; border-radius: 99px; }
-.cod-premio { display: flex; flex-wrap: wrap; gap: 4px 14px; font-variant-numeric: tabular-nums; }
-.cuenta.apagado { opacity: .6; }
-.accion button.plat svg { width: 26px; height: 26px; flex: none; }
-.accion button.plat span { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; font-size: 13px; }
-.accion button.plat b { font-size: 11px; letter-spacing: .04em; }
-.accion button.plat.abierto { background: #2e7d4b; color: #fff; }
-.accion button.plat.cerrado { background: #3a2d4d; color: var(--ink-dim, #b9a9d4); }
-.accion { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; border-top: 1px solid var(--linea); padding-top: 10px; }
-.accion input[type=text] { flex: 1 1 200px; width: auto; }
-details { min-width: 0; }
-summary { cursor: pointer; color: var(--suave); }
-pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; overflow-x: auto; font: 12px/1.45 var(--mono); }
-.vacio { background: var(--panel); border: 1px dashed var(--linea); border-radius: 6px; padding: 28px 16px; text-align: center; color: var(--suave); }
-.menu { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 2px solid var(--linea); padding-bottom: 10px; }
-.menu button.activa { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); font-weight: 700; }
-.menu .sep { width: 1px; background: var(--linea); margin-inline: 4px; }
-table.tabla { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13px; }
-table.tabla th, table.tabla td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--linea); white-space: nowrap; }
-table.tabla th:first-child, table.tabla td:first-child { text-align: left; }
-table.tabla th { color: var(--suave); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
-.tabla-caja { overflow-x: auto; }
-canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; border-radius: 6px; border: 1px solid var(--linea); image-rendering: pixelated; }
-.vacio b { display: block; color: var(--texto); font-size: 16px; margin-bottom: 4px; }
-/* Paperwork → Calibrado (paperwork/calibrado.js): series 1 y 2 de la paleta validada, en claro y en oscuro */
-:root { --pwc-1: #2a78d6; --pwc-2: #eb6834; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pwc-1: #3987e5; --pwc-2: #d95926; } }
-.pwc-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
-.pwc-form input { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; width: 100%; box-sizing: border-box; }
-.pwc-cambio { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto auto; gap: 8px; align-items: center; margin-top: 6px; }
-.pwc-cambio input { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; min-width: 0; }
-@media (max-width: 560px) { .pwc-cambio { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-.pwc-graficas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 8px; }
-.pwc-g { margin: 0; } .pwc-g figcaption { font-weight: 600; font-size: 13px; }
-.pwc-g svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
-.pwc-rej { stroke: var(--linea); stroke-width: 1; } .pwc-eje { fill: var(--suave); font-size: 11px; font-variant-numeric: tabular-nums; }
-.pwc-l { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; } .pwc-l1 { stroke: var(--pwc-1); } .pwc-l2 { stroke: var(--pwc-2); stroke-dasharray: 6 3; }
-.pwc-cruz { stroke: var(--suave); stroke-width: 1; }
-.pwc-leyenda { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 13px; }
-.pwc-leyenda i, .pwc-tip i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
-.pwc-m1 { background: var(--pwc-1); } .pwc-m2 { background: var(--pwc-2); }
-.pwc-tip { position: fixed; z-index: 20; pointer-events: none; display: grid; gap: 2px; background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 6px; padding: 6px 9px; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
-.pwc-texto { white-space: pre-wrap; font-family: var(--mono); font-size: 12px; margin: 8px 0 0; }
-</style>
+<link rel="stylesheet" href="gestion.css">
+<link rel="stylesheet" href="../estilo/pie.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f3f4f6">
+<link rel="apple-touch-icon" href="../core/img/fog-192.png">
 </head>
 <body>
 <main class="pagina">
@@ -122,22 +19,24 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
   </header>
 
   <section id="vista-entrar" class="caja">
-    <div class="entrada" style="display:grid;gap:10px;max-width:360px;margin-inline:auto">
+    <div class="entrada">
       <button class="fuerte" type="button" id="g-boton">Entrar con Google</button>
       <div class="aviso" id="g-aviso" role="alert"></div>
     </div>
   </section>
 
   <section id="vista-panel" hidden>
-    <nav class="menu" id="menu" aria-label="Paneles"></nav>
+    <nav class="menu" id="menu" aria-label="Secciones"></nav>
+    <style id="estilo-nav"></style>
     <div class="filtros" id="tabs"></div>
+    <div id="pan-juegos" hidden></div>
     <div id="pan-cuentas">
     <div class="caja cifras" id="cifras"></div>
     <div class="caja ayuda" id="ayuda"></div>
     <div class="filtros">
-      <label for="f-ver" style="display:block">Ver</label>
+      <label for="f-ver" class="en-linea">Ver</label>
       <select id="f-ver"><option value="todas">todas</option><option value="pendientes">sin marcar</option><option value="marcadas">marcadas</option></select>
-      <label for="f-min" style="display:block">Desde</label>
+      <label for="f-min" class="en-linea">Desde</label>
       <select id="f-min"><option value="0">0 puntos</option><option value="1">1 punto</option><option value="10">10 puntos</option><option value="30">30 puntos</option></select>
       <button id="recargar" type="button">Actualizar</button>
     </div>
@@ -182,7 +81,8 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     </div>
     <div id="pan-tablero" hidden>
       <style id="tb-estilo"></style>
-      <div class="caja ayuda"><b>Tablero.</b> Lo comprometido, en seis columnas: <b>ideas</b> (lluvia de ideas), <b>en refinamiento</b> (se acuerda qué hacer, sus criterios, dudas y choques), <b>pendiente</b> (refinada y lista, por prioridad), en curso, en revisión y hecho. <b>Nueva tarea</b> nace en ideas y, al escribir el título, avisa de las parecidas. Pulsa una tarjeta para ver su detalle a la derecha, donde se mueve y se <b>edita</b>; también se mueve arrastrándola. <b>Buscar</b> filtra mientras escribes y <b>Refrescar</b> trae lo último. Claude saca una tarea de ideas o refinamiento solo con vuestra aprobación, la deja en revisión al subirla y solo una persona la pasa a hecho. Una tarea con <b>requisitos</b> («Espera a #N») no entra en curso hasta que estén en revisión o hechos. Detalle: docs/gestion/TABLERO.md.</div>
+      <div id="tb-te-toca"></div>
+      <details class="caja ayuda tb-como"><summary><b>Cómo funciona el tablero</b></summary>Lo comprometido, en seis columnas: <b>ideas</b> (lluvia de ideas), <b>en refinamiento</b> (se acuerda qué hacer, sus criterios, dudas y choques), <b>pendiente</b> (refinada y lista, por prioridad), en curso, en revisión y hecho. <b>Nueva tarea</b> nace en ideas y, al escribir el título, avisa de las parecidas. Pulsa una tarjeta para ver su detalle a la derecha, donde se mueve y se <b>edita</b>; también se mueve arrastrándola. <b>Buscar</b> filtra mientras escribes y <b>Refrescar</b> trae lo último. Claude saca una tarea de ideas o refinamiento solo con vuestra aprobación, la deja en revisión al subirla y solo una persona la pasa a hecho. Una tarea con <b>requisitos</b> («Espera a #N») no entra en curso hasta que estén en revisión o hechos. Detalle: docs/gestion/TABLERO.md.</details>
       <div class="aviso" id="tb-aviso" role="alert"></div>
       <div id="tb-filtros"></div>
       <datalist id="tb-juegos"></datalist>
@@ -222,7 +122,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     <div id="pan-roles" hidden>
       <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>beta</b>: persona de confianza, manda feedback sin topes (las solicitudes que llegan desde los juegos salen aquí abajo). <b>admin</b>: puede entrar en esta página. Se dan por correo: si esa persona aún no ha entrado con Google queda como invitación y el rol se activa solo en su primer inicio de sesión con ese correo (Google o enlace por correo).</div>
       <form class="filtros" id="r-form">
-        <input type="text" id="r-correo" placeholder="correo@gmail.com" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Correo" required style="flex:1 1 220px;width:auto">
+        <input type="text" id="r-correo" placeholder="correo@gmail.com" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Correo" required class="ancho-libre">
         <select id="r-rol" aria-label="Rol"><option value="alfa">alfa</option><option value="beta">beta</option><option value="admin">admin</option></select>
         <button class="fuerte" type="submit">Dar rol</button>
       </form>
@@ -232,17 +132,20 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     </div>
   </section>
 </main>
+<script src="catalogo.js"></script>
 <script src="nav.js"></script>
+<script src="../core/js/cuenta/sesion-renovar.js"></script>
+<script src="entrada-web.js"></script>
 <script>
 'use strict';
 const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co';
 const CLAVE = 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn';   // pública: lo que protege es la contraseña, que se comprueba en el servidor
-const TOKEN = 'gestion-acceso';
 const $ = id => document.getElementById(id);
 let datos = null;
 
-const leerToken = () => { try { return sessionStorage.getItem(TOKEN) || ''; } catch (e) { return ''; } };
-const guardarToken = t => { try { if (t) sessionStorage.setItem(TOKEN, t); else sessionStorage.removeItem(TOKEN); } catch (e) { /* sin almacenamiento */ } };
+// El token de gestión vive en localStorage con su caducidad (ADR 190, entrada-web.js); LOCAL es null si el navegador bloquea el almacenamiento
+const LOCAL = (() => { try { return localStorage; } catch (e) { return null; } })();
+const leerToken = () => GESTION_ENTRADA.tokenGuardado(LOCAL, Date.now());
 async function rpc(nombre, cuerpo) {
   const r = await fetch(SERVIDOR + '/rest/v1/rpc/' + nombre, { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
   const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : null; } catch (e) { /* no era JSON */ }
@@ -261,15 +164,17 @@ function vista(panel) {
   $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel;
   $('sub').textContent = panel ? '' : 'Acceso restringido.';
 }
-$('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } guardarToken(''); datos = null; vista(false); };
+$('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } GESTION_ENTRADA.alSalir(LOCAL); datos = null; vista(false); };
 
+// Abre el panel con el token guardado: 'dentro', 'rechazado' (el servidor no lo acepta: sin_acceso) o 'error' (lo demás, ya dicho en pantalla)
 async function abrir() {
   try { datos = await rpc('gestion_datos', { p_token: leerToken() }); }
-  catch (e) { guardarToken(''); vista(false); $('g-aviso').style.color = ''; $('g-aviso').textContent = textoError(e); return; }
-  vista(true); pinta();
+  catch (e) { vista(false); $('g-aviso').style.color = ''; $('g-aviso').textContent = textoError(e); return /sin_acceso/.test(String((e && e.message) || e)) ? 'rechazado' : 'error'; }
+  $('g-aviso').textContent = ''; vista(true); pinta();
   document.dispatchEvent(new Event('gestion-abierta'));   // las secciones que enseñan un contador en su pestaña lo piden aquí
+  return 'dentro';
 }
-$('recargar').onclick = abrir;
+$('recargar').onclick = () => entrarSola();
 $('f-ver').onchange = $('f-min').onchange = () => pinta();
 
 function pinta() {
@@ -310,29 +215,41 @@ $('lista').onclick = async ev => {
   b.disabled = true; $('p-aviso').textContent = '';
   try {
     await rpc('gestion_marcar', { p_token: leerToken(), p_cuenta: b.dataset.id, p_marcado: b.dataset.marcar === 'si', p_nota: ($('n-' + b.dataset.id) || {}).value || '' });
-    await abrir();
+    await entrarSola();
   } catch (e) { $('p-aviso').textContent = textoError(e); b.disabled = false; }
 };
 
 // Entrada con Google: la sesión de Google solo se usa en esta carga para pedir el token de gestión; no se guarda.
-const volver = () => location.origin + location.pathname;
+const volver = () => location.origin + location.pathname + location.search;
 $('g-boton').onclick = () => { location.href = SERVIDOR + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(volver()); };
+// Pide el token de gestión con una sesión de Google (la que vuelve de Google o la que ya tiene la web). Devuelve el token, '' si la cuenta no es admin, o lanza
+async function tokenConGoogle(t) {
+  const r = await fetch(SERVIDOR + '/rest/v1/rpc/gestion_entrar_google', { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
+  const x = await r.text(); let j = null; try { j = x ? JSON.parse(x) : null; } catch (e) { /* no era JSON */ }
+  if (!r.ok) throw new Error('No se ha podido comprobar el acceso (' + ((j && j.message) || r.status) + ').');
+  return j || '';
+}
 async function volverDeGoogle() {
   const h = new URLSearchParams(location.hash.replace(/^#/, ''));
   const t = h.get('access_token');
   if (!t && !h.get('error_description')) return false;
-  history.replaceState(null, '', location.pathname);
+  history.replaceState(null, '', location.pathname + location.search);
   if (!t) { $('g-aviso').textContent = 'Google no ha dejado entrar: ' + h.get('error_description'); return false; }
   try {
-    const r = await fetch(SERVIDOR + '/rest/v1/rpc/gestion_entrar_google', { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
-    const x = await r.text(); let j = null; try { j = x ? JSON.parse(x) : null; } catch (e) { /* no era JSON */ }
-    if (!r.ok) { $('g-aviso').textContent = 'No se ha podido comprobar el acceso (' + ((j && j.message) || r.status) + ').'; return false; }
+    const j = await tokenConGoogle(t);
     if (!j) { $('g-aviso').textContent = 'Esta cuenta de Google no tiene el rol de administración.'; return false; }
-    guardarToken(j); await abrir(); return true;
-  } catch (e) { $('g-aviso').textContent = textoError(e); return false; }
+    GESTION_ENTRADA.guardaToken(LOCAL, j, Date.now()); GESTION_ENTRADA.alEntrar(LOCAL); await abrir(); return true;
+  } catch (e) { $('g-aviso').textContent = /comprobar/.test(e.message) ? e.message : textoError(e); return false; }
+}
+// Entrar sola (tareas #146 y #300): con el token guardado o, si no vale, con la sesión que ya tiene la web (renovándola si caducó).
+// Si no hay, no es admin o se pulsó «Salir», se queda la pantalla de entrar sin aviso.
+const SESION_WEB = CUENTA_RENOVAR.enNavegador({ servidor: SERVIDOR, clave: CLAVE, local: LOCAL, red: (u, o) => fetch(u, o), locks: navigator.locks });
+async function entrarSola() {
+  const r = await GESTION_ENTRADA.arranca({ local: LOCAL, ahora: () => Date.now(), accesoWeb: () => SESION_WEB.acceso(), pedirToken: tokenConGoogle, abrir });
+  if (r === 'fuera') vista(false);
 }
 
-volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vista(false); } });
+volverDeGoogle().then(hecho => { if (!hecho) entrarSola(); });
 </script>
 <script>GESTION_NAV.seccion({ id: 'cuentas', pan: 'pan-cuentas', etiqueta: 'Cuentas', orden: 1 });</script>
 <script src="votos.js"></script>
@@ -351,6 +268,8 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="sql.js"></script>
 <script src="juegos.js"></script>
 <script src="decks.js"></script>
+<script src="../core/js/sistema/idioma-regla.js"></script>
+<script src="../idioma-web.js"></script>
 <script src="../pie.js" defer></script>
 <script src="reportes.js"></script>
 <script src="reportes-prueba.js"></script>
@@ -367,11 +286,20 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="tablero/dominio/disposicion.js"></script>
 <script src="tablero/dominio/buscar.js"></script>
 <script src="tablero/dominio/vista-tablero.js"></script>
+<script src="tablero/dominio/reacciones.js"></script>
+<script src="tablero/dominio/revisar.js"></script>
+<script src="tablero/dominio/que-mirar.js"></script>
+<script src="tablero/dominio/compartir.js"></script>
 <script src="tablero/aplicacion/casos.js"></script>
 <script src="tablero/adaptadores/repositorio-servidor.js"></script>
+<script src="tablero/adaptadores/vista-reacciones.js"></script>
+<script src="tablero/adaptadores/vista-mapa.js"></script>
+<script src="tablero/adaptadores/vista-revisar.js"></script>
 <script src="tablero/adaptadores/vista.js"></script>
 <script src="tablero/adaptadores/vista-grafo.js"></script>
+<script src="tablero/adaptadores/compartir.js"></script>
 <script src="tablero/adaptadores/vista-detalle.js"></script>
+<script src="tablero/adaptadores/control-reacciones.js"></script>
 <script src="tablero/adaptadores/controlador.js"></script>
 <script src="tablero/principal.js"></script>
 <script>GESTION_NAV.arranca();</script>

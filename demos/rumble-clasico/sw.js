@@ -1,3 +1,4 @@
-// Fans of Rumble Clásico · Jugar sin conexión. Es el común de core/js/sw.js; este archivo tiene que estar aquí para que valga solo para este juego.
-self.COPIAS_VIEJAS = /^forclasico-v/;   // las copias que guardaban las versiones anteriores: se borran al activarse
-importScripts('../../core/js/sw.js?v=' + (new URL(self.location).searchParams.get('v') || '0'));
+// Fans of Rumble Clásico vive ahora en games/rumble-clasico (ADR 142): este service worker solo borra la copia sin conexión que dejó aquí y se da de baja. Se borra el 18-2-2027.
+'use strict';
+self.COPIAS_VIEJAS = /^forclasico-v/;   // las copias de sus versiones anteriores, que también borraba
+importScripts('../../core/js/mudanza/reglas.js', '../../core/js/mudanza/sw.js');

@@ -1,0 +1,54 @@
+/* Fans Of · LORE: la historia de la serie para quien llega nuevo. Textos en español en lore/index.html; su inglés en lore/en.js.
+   Una facción, un villano o un personaje nuevo de la serie se añade en la página (y su inglés). El menú y la paleta comunes, en estilo/web.css. */
+body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; background-repeat: no-repeat; background-attachment: fixed; }
+html { scroll-behavior: smooth; }
+main { max-width: 980px; margin: 0 auto; padding: 0 16px 48px; box-sizing: border-box; }
+.hero { text-align: center; padding: 34px 0 6px; }
+.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: 72px; line-height: .9; margin: 0; color: var(--player); transform: rotate(-3deg); }
+.hero p { margin: 14px auto 0; max-width: 560px; font-size: 18px; font-weight: 800; color: var(--ink-dim); }
+.indice { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 18px 0 4px; }
+.indice a { text-decoration: none; color: var(--ink); font-weight: 800; font-size: 14px; padding: 5px 12px; border-radius: 99px; border: 2px solid var(--outline); background: var(--panel); }
+.indice a:hover, .indice a:focus-visible { color: var(--gold); outline: none; }
+h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 34px; text-align: center; margin: 40px 0 6px; scroll-margin-top: 70px; }
+p.intro { text-align: center; max-width: 640px; margin: 0 auto 16px; font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+/* la historia: tres viñetas */
+.vinetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.vineta { border: 4px solid var(--outline); border-radius: 18px; overflow: hidden; background: var(--panel); box-shadow: 0 5px 0 var(--outline); }
+.vineta .img { aspect-ratio: 4 / 3; background: center 35% / cover; border-bottom: 3px solid var(--outline); }
+.vineta .num { font-family: var(--font-display); font-size: 15px; color: var(--gold); margin: 10px 14px 0; }
+.vineta h3 { font-family: var(--font-display); font-weight: 400; font-size: 21px; line-height: 1.05; margin: 2px 14px 0; }
+.vineta p { margin: 6px 14px 14px; font-size: 14px; font-weight: 700; line-height: 1.4; }
+/* fichas de personajes, villanos y facciones */
+.rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.ficha { position: relative; border: 4px solid var(--outline); border-radius: 18px; padding: 14px 16px 16px; box-shadow: 0 5px 0 var(--outline);
+  background: linear-gradient(160deg, var(--c, var(--tray-hi)) 0%, var(--tray) 62%); }
+.ficha h3 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1; margin: 0; }
+.ficha .alias { display: block; margin-top: 4px; font-size: 13px; font-weight: 800; color: var(--gold); }
+.ficha p { margin: 8px 0 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.datos { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; }
+.dato small { display: block; font-size: 11px; font-weight: 800; color: var(--ink-dim); }
+.dato b { font-family: var(--font-display); font-weight: 400; font-size: 16px; }
+.ficha .poder { margin-top: 8px; padding: 7px 10px; border-radius: 10px; background: rgba(var(--tinta-fondo), .55); border: 2px solid var(--outline); font-size: 13px; font-weight: 700; line-height: 1.35; }
+.villano { --c: #1d3f8a; }
+.villano .lema { display: block; margin-top: 8px; font-style: italic; font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+/* el caos */
+.caos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.caos .ficha { --c: #7b22ff; }
+.caos .ficha.prim { --c: #d43cff; }
+/* las tres campañas */
+.campanas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.campana { border: 4px solid var(--outline); border-radius: 18px; padding: 14px 16px; background: var(--panel); box-shadow: 0 5px 0 var(--outline); }
+.campana .num { font-family: var(--font-display); font-size: 15px; color: var(--gold); }
+.campana h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; margin: 2px 0 6px; }
+.campana p { margin: 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.fin { text-align: center; margin-top: 40px; }
+.fin p { font-size: 18px; font-weight: 800; color: var(--ink-dim); margin: 0 0 14px; }
+.boton { display: inline-block; text-decoration: none; font-family: var(--font-display); font-size: 22px; padding: 10px 28px 6px; border-radius: 14px; border: 3px solid var(--outline);
+  background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 4px 0 var(--outline); }
+.boton:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+footer { text-align: center; margin-top: 30px; font-size: 13px; font-weight: 600; color: var(--ink-dim); }
+@media (max-width: 720px) {
+  .hero h1 { font-size: 56px; }
+  .vinetas, .campanas, .caos { grid-template-columns: 1fr; }
+  h2.sec { font-size: 28px; }
+}

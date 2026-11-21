@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#070d1c">
+<title>Fans of Spy: Operación Torre</title>
+<meta name="description" content="Fans of Spy: Operación Torre. Sigilo por turnos con cartas, en 3D con aire de cómic: cuela a CrazyBunny en la torre de Microblizz sin que te vean los Becarios, con Lola guiándote por radio.">
+<script src="../../core/js/nucleo.js?v=0.3.0"></script>
+<script>NUCLEO.fuentes('../../core/fuentes/baloo-2.css', '../../core/fuentes/luckiest-guy.css')</script>
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/spy.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="spy-lienzo" aria-label="Fans of Spy"></canvas>
+  <div id="spy-destello"></div>
+  <header id="spy-cabecera" hidden>
+    <div class="spy-fila">
+      <button id="spy-pausa" class="spy-btn spy-azul" type="button" aria-label="Pausa"><i></i><i></i></button>
+      <div id="spy-orden"></div>
+    </div>
+    <div class="spy-fila spy-estado">
+      <span id="spy-planta"></span>
+      <span id="spy-alerta"></span>
+      <span id="spy-vida"></span>
+    </div>
+  </header>
+  <div id="spy-vista" hidden>
+    <div id="spy-cartel"></div>
+    <div id="spy-camara">
+      <button id="spy-girar" class="spy-btn spy-azul" type="button">GIRAR</button>
+      <button id="spy-centrar" class="spy-btn spy-amarillo" type="button" hidden>CENTRAR</button>
+    </div>
+  </div>
+  <footer id="spy-pie" hidden>
+    <div id="spy-lola" hidden>
+      <canvas id="spy-lola-cara" width="64" height="64"></canvas>
+      <div class="spy-lola-dice"><b>LOLA</b><p id="spy-lola-texto"></p></div>
+      <button id="spy-seguir" class="spy-btn spy-naranja" type="button" hidden>SEGUIR</button>
+    </div>
+    <div id="spy-accion" hidden></div>
+    <div id="spy-mano"></div>
+    <div class="spy-fila spy-turno">
+      <div id="spy-cuenta"></div>
+      <button id="spy-acabar" class="spy-btn spy-verde" type="button">ACABAR TURNO</button>
+    </div>
+  </footer>
+  <section id="spy-ventana" hidden><div id="spy-ventana-cuerpo" class="spy-tarjeta"></div></section>
+  <div id="spy-carga">…</div>
+</div>
+<div id="spy-gira">Pon el móvil de pie para jugar.</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Spy lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    // las reglas (sin pantalla): se prueban con node en tests/spy/
+    'js/dominio/rejilla.js', 'js/dominio/planta.js', 'js/dominio/vision.js', 'js/dominio/baraja.js', 'js/dominio/guardias.js', 'js/dominio/cartas.js',
+    'js/dominio/turnos.js', 'js/dominio/partida.js', 'js/dominio/prevision.js', 'js/plantas.js',
+    // lo que puede hacer el jugador
+    'js/aplicacion/guia.js', 'js/aplicacion/casos.js',
+    // la pantalla: el motor 3D, los dibujos, el HUD, el sonido y el guardado
+    'js/adaptadores/gl/motor.js', 'js/adaptadores/gl/glb.js', 'js/adaptadores/gl/texturas.js', 'js/adaptadores/gl/formas.js', 'js/adaptadores/camara.js', 'js/adaptadores/modelos.js', 'js/adaptadores/cargamodelos.js', 'js/adaptadores/juguete.js', 'js/adaptadores/escenario-texturas.js', 'js/adaptadores/escenario.js',
+    'js/adaptadores/animacion.js', 'js/adaptadores/senales.js', 'js/adaptadores/escena.js', 'js/adaptadores/iconos.js', 'js/adaptadores/hud.js', 'js/adaptadores/almacen.js',
+    'js/adaptadores/sonido.js', 'js/adaptadores/pantalla.js', 'js/adaptadores/ventanas.js', 'js/adaptadores/toques.js',
+    'js/novedades.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

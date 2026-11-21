@@ -22,13 +22,16 @@ PW.mejorasPago = PW.creaMejorasPago({
   alCambiar: claves => { PW.casos.ponMejoras(PW.mejoras.de(claves)); PW.ui.sucio = true; },
 });
 PW.casos.ponMejoras(PW.mejoras.de(PW.mejorasPago.claves()));
+// la cuenta de probador (ADR 146): dónde se enseña la tienda de euros y qué se limpia aquí tras resetear la cuenta desde el panel DEV
+PW.probador = PW.creaProbador({ mejorasPago: PW.mejorasPago, probador: typeof PROBADOR !== 'undefined' ? PROBADOR : null, pagos: MEDIDOR_ANUNCIOS.sePuedeComprar });
+hook('probador-reseteo', (que, lugar) => { PW.probador.alResetear(que, lugar); });
 // el medidor de anuncios de core (ADR 123) con las cifras de Paperwork: lo guardado va en la carrera, y «Sin anuncios» es de la cuenta
 PW.medidorAnuncios = MEDIDOR_ANUNCIOS.crea({
   config: PW.AJ.anuncios, anuncios: ANUNCIOS, guardado: PW.casos.anuncios, hoy: () => MEDIDOR_ANUNCIOS.fechas(new Date(PW.reloj.ahora())),
   sinAnuncios: () => PW.mejorasPago.tiene(MEDIDOR_ANUNCIOS.DERECHO), alCambiar: () => { PW.ui.sucio = true; },
 }).valor;
 PW.tiendaAnuncios = MEDIDOR_ANUNCIOS.creaTienda({
-  oferta: PW.AJ.anuncios.sinAnuncios, derechos: PW.mejorasPago, sePuede: MEDIDOR_ANUNCIOS.sePuedeComprar, idioma: () => NUCLEO.idioma,
+  oferta: PW.AJ.anuncios.sinAnuncios, derechos: PW.mejorasPago, sePuede: PW.probador.sePuedeComprar, idioma: () => NUCLEO.idioma,
   comprar: (titulo, html, alComprar, producto) => MONEDAS.compraReal(titulo, html, alComprar, producto),
 });
 PW.anuncioCorreo = PW.creaAnuncioCorreo({

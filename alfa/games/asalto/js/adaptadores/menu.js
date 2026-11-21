@@ -156,17 +156,25 @@ AS.menu = (() => {
     for (const b of el.querySelectorAll('[data-l]')) b.onclick = () => { if (casos.cobraLogro(b.dataset.l).ok) AS.suena('cofre'); logros(); };
   }
   function tienda() {
-    const g = casos.progreso, E = ASALTO.equipo;
+    const g = casos.progreso, E = ASALTO.equipo, A = ASALTO.anuncios.plumas, quedan = casos.regalosQuedan();
     ventana(`<h2>${tr('TIENDA')}</h2><p class="as-plumas">${pluma(g.plumas)}</p>
       <div class="as-oferta"><i class="as-cofre as-pix" style="${AS.dibujos.cssRetrato('cofre', 1)}"></i><div><b>${tr('COFRE DE EQUIPO')}</b><span>${tr('Un objeto al azar: normal, raro o épico.')}</span></div>${V.btn('as-t-cofre', pluma(E.cofreTienda), 'as-oro')}</div>
-      <div class="as-oferta">${V.ico('pluma', 'as-ico2')}<div><b>${tr('PLUMAS DE REGALO')}</b><span>${tr('Mira un anuncio y llévate {n} plumas.', { n: E.plumasAnuncio })}</span></div>${V.btn('as-t-anuncio', tr('ANUNCIO'), 'as-verde')}</div>`);
+      <div class="as-oferta">${V.ico('pluma', 'as-ico2')}<div><b>${tr('PLUMAS DE REGALO')}</b><span>${tr('Mira un anuncio y llévate {n} plumas.', { n: A.cantidad })} ${quedan ? tr('Hoy te quedan {n} de {de}.', { n: quedan, de: A.diarias }) : tr('Hoy ya no quedan: vuelve mañana.')}</span></div>${V.btn('as-t-anuncio', tr('ANUNCIO'), 'as-verde')}</div>`);
     V.alPulsar('as-t-cofre', () => {
       const r = casos.compraCofre();
       if (!sinPlumas(r)) return;
       const o = r.valor.objeto;
       AS.suena('cofre'); toast(tr(E.rarezas[o.rareza].nombre) + ': ' + tr(E.nombres[o.hueco]) + ' +' + o.valor + ' % ' + tr(E.stats[o.stat]), true); tienda();
     });
-    V.alPulsar('as-t-anuncio', () => V.anuncio(() => { casos.regalaPlumas(E.plumasAnuncio); AS.suena('cofre'); tienda(); }));
+    V.alPulsar('as-t-anuncio', () => {
+      if (!casos.regalosQuedan()) { AS.suena('noVale'); toast(tr('Hoy ya no quedan plumas de regalo. Vuelve mañana.')); return; }
+      V.anuncio('plumas', () => {
+        const r = casos.plumasDeRegalo();
+        if (r.ok) V.premio(tr('+{n} plumas', { n: r.valor.plumas }));
+        else toast(r.error === 'sin-dia' ? tr('No sabemos qué día es: inténtalo en un momento.') : tr('Hoy ya no quedan plumas de regalo. Vuelve mañana.'));
+        tienda();
+      });
+    });
   }
   function ajustes() {
     const el = V.abre(`<h2>${tr('AJUSTES')}</h2><div id="as-opc"></div>${V.btn('as-borra', tr('BORRAR TODO EL PROGRESO'), 'as-rojo as-chico')}`, 'as-alta');

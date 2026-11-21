@@ -1,11 +1,11 @@
 {
- "build": 1424,
- "hash": "c48a79f",
- "fecha": "2026-11-21T21:10:13Z",
- "mensaje": "Asalto 0.6.1: la guía ya no se atasca en el móvil (tarea #317, Pepins)",
+ "build": 1425,
+ "hash": "7ed2b1a",
+ "fecha": "2026-11-21T21:45:56Z",
+ "mensaje": "Asalto 0.6.2: anuncios por la capa de core, plumas de regalo 60 con tope de 3 al día, esencia +2 y doblar plumas al acabar (tarea #317, Pepins)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.6.1",
+  "asalto": "0.6.2",
   "basement": "0.13.0",
   "boom": "0.4.17",
   "chef": "0.4.0",

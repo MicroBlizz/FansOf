@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.6.2', real: ["<b>Anuncios que se notan</b>: PLUMAS DE REGALO da 60 plumas (3 al día), la esencia del anuncio da +2 y, al acabar la partida, puedes <b>doblar las plumas</b> ganadas con un anuncio. Cada premio te dice qué has ganado."], joke: ["Microblizz ha triplicado las plumas de regalo. Las ha sacado de la almohada del CEO."] },
   { v: '0.6.1', real: ["La primera partida guiada <b>ya no se atasca</b>: tocar la columna dorada del Altar también la empuja, la franja de la guía ya no tapa al héroe que hay que unir y las frases son más cortas. Los botones del menú son más grandes para el pulgar."], joke: ["Recursos Humanos ha acortado el manual. Ahora solo tiene seis palabras y ninguna es «sinergia»."] },
   { v: '0.6.0', real: ["<b>Dioses</b>: hay 16 parejas secretas de legendarios que, al unirse, no dan un ser: dan un <b>dios</b> con un poder divino. ¿Las encontrarás todas?"], joke: ["Microblizz ha creado un departamento divino. De momento, solo tiene jefes."] },
   { v: '0.5.2', real: ["En el móvil, Asalto <b>llena la pantalla de lado a lado</b>: la arena es más grande y los héroes ya no van apretados. Se ve igual en la app y en Chrome."], joke: ["Microblizz ha ampliado la mazmorra. El alquiler, también."] },

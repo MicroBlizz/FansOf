@@ -6,7 +6,7 @@
 'use strict';
 AS.progreso = (() => {
   const STATS = () => ({ oroTotal: 0, enemigos: 0, jefes: 0, lineas: 0, nivelMax: 0, ascensos: 0, dorados: 0, sinFinMax: 0 });
-  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, dormido: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, vol: 1, mus: 0.5 });
+  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, dormido: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, regalo: AS.anuncios.regaloVacio(), vol: 1, mus: 0.5 });
   const entero = (v, min = 0) => (Number.isFinite(v) && v >= min ? Math.floor(v) : min);
   const copia = (p, cambios) => ({ ...p, ...cambios });
 
@@ -24,6 +24,7 @@ AS.progreso = (() => {
     for (const k in (j.logros || {})) if (j.logros[k]) p.logros[k] = true;
     for (const k in p.stats) p.stats[k] = entero(j.stats && j.stats[k]);
     if (j.v === 3) for (const k in (j.consejos || {})) p.consejos[k] = true;   // los consejos de la versión anterior eran de otro juego
+    p.regalo = AS.anuncios.regaloDeJSON(j.regalo);
     p.vol = volumen(j.vol, 1); p.mus = volumen(j.mus, 0.5);
     return p;
   }
@@ -200,6 +201,11 @@ AS.progreso = (() => {
     for (const k in (maximos || {})) if (k in stats) stats[k] = Math.max(stats[k], entero(maximos[k]));
     return copia(p, { plumas, stats });
   }
+  // las plumas de regalo del anuncio de la Tienda (tope por día): AS.ok({ p, plumas }) o el error de AS.anuncios.regaloUsa
+  function regalaPlumas(datos, p, dia) {
+    const r = AS.anuncios.regaloUsa(datos, p.regalo, dia);
+    return r.ok ? AS.ok({ p: copia(p, { regalo: r.valor.regalo, plumas: p.plumas + r.valor.plumas }), plumas: r.valor.plumas }) : r;
+  }
   const empiezaPartida = p => copia(p, { partidas: p.partidas + 1 });
   // una zona superada en la dificultad dif (0 si no se dice): cuenta la zona y hasta qué dificultad se ha llegado en ella
   function terminaZona(p, zona, dif) {
@@ -224,5 +230,5 @@ AS.progreso = (() => {
   const olvidaConsejo = (p, id) => { const consejos = { ...p.consejos }; delete consejos[id]; return copia(p, { consejos }); };
   const consejoVisto = (p, id) => (p.consejos[id] ? p : copia(p, { consejos: { ...p.consejos, [id]: true } }));
   return { nuevo, deJSON, rarezaSiguiente, abreRareza, dormidoSiguiente, abreDormido, maquinaAbierta, abreMaquina, eligeMaquina, superadas, dificultadAbierta, costeMejora, compraMejora, objetoNuevo, statsEquipo, ponObjeto, quitaObjeto, deshaceObjeto, costeHerreria, mejoraObjeto, guardaObjetos, compraCofre,
-    logrosPendientes, cobraLogro, apunta, empiezaPartida, terminaZona, apuntaOleada, metas, consejoVisto, olvidaConsejo };
+    logrosPendientes, cobraLogro, apunta, regalaPlumas, empiezaPartida, terminaZona, apuntaOleada, metas, consejoVisto, olvidaConsejo };
 })();

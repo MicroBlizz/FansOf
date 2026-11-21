@@ -1,9 +1,11 @@
-// Fans of Asalto · La composición: monta los casos de uso con sus puertos (el almacén de este navegador y un azar con semilla de reloj),
+// Fans of Asalto · La composición: monta los casos de uso con sus puertos (el almacén de este navegador, un azar con semilla de reloj y el día de hoy con la hora del servidor),
 // prepara el lienzo, la pantalla de la partida y el menú, espera a las letras y a los dibujos, y arranca el bucle: en cada fotograma
 // pinta la partida o el fondo del menú. Es el único sitio que conoce a todas las piezas.
 'use strict';
 (() => {
-  const casos = AS.creaCasos({ datos: ASALTO, almacen: AS.almacen, azar: AS.creaAzar((Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0) });
+  HORA.sincroniza();   // la hora del servidor: el día del tope de plumas de regalo no se engaña cambiando el reloj del aparato
+  const hoy = () => MEDIDOR_ANUNCIOS.fechas(new Date(HORA.ahora())).dia;
+  const casos = AS.creaCasos({ datos: ASALTO, almacen: AS.almacen, azar: AS.creaAzar((Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0), hoy });
   AS.casos = casos;                                  // a mano para el panel DEV y las pruebas en el navegador
   window.enPartida = () => AS.pantalla.activa;       // core lo pregunta (avisos y pantalla de la cuenta)
   let ultimo = 0;

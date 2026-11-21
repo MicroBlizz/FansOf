@@ -35,8 +35,8 @@ AS.ventanas.tienda = (() => {
     V.alPulsar('as-cerrar', V.cierra);
     V.alPulsar('as-otra-oferta', () => { if (avisa(E.casos.cambiaOferta())) abre(E); });
     // los anuncios: el premio llega solo al acabar de verse (V.anuncio llama después); cerrarlo antes no da nada
-    V.alPulsar('as-anu-oferta', () => V.anuncio(() => { if (avisa(E.casos.anuncio('oferta'))) abre(E); }));
-    V.alPulsar('as-anu-esencia', () => V.anuncio(() => { if (avisa(E.casos.anuncio('esencia'))) { AS.suena('cofre'); abre(E); } }));
+    V.alPulsar('as-anu-oferta', () => V.anuncio('oferta', () => { if (avisa(E.casos.anuncio('oferta'))) { V.premio(tr('Otra oferta gratis')); abre(E); } }));
+    V.alPulsar('as-anu-esencia', () => V.anuncio('esencia', () => { if (avisa(E.casos.anuncio('esencia'))) { V.premio(tr('+{n} esencia', { n: ASALTO.anuncios.esencia.cantidad })); abre(E); } }));
     for (const b of caja.querySelectorAll('[data-compra]')) b.onclick = () => { if (avisa(E.casos.compraObjeto(+b.dataset.compra))) { AS.suena('cofre'); abre(E); } };
     for (const b of caja.querySelectorAll('[data-vende]')) b.onclick = () => {
       const d = ASALTO.objetos[b.dataset.vende];

@@ -3,10 +3,10 @@
 // logros) y la partida en curso con su batalla. Se montan en principal.js con sus puertos: el almacén (carga/guarda el progreso y la
 // partida) y el azar. No tocan la pantalla: la pantalla los llama y pinta lo que devuelven.
 'use strict';
-AS.creaCasos = ({ datos, almacen, azar }) => {
+AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día como 'AAAA-MM-DD', con la hora del servidor (principal.js)
   const PR = AS.progreso;
   let prog = PR.deJSON(datos, almacen.carga());
-  let partida = null, batalla = null, visto = null, nObjeto = 0, cifras = AS.cifras.vacio();   // cifras: las del último combate y las de la partida entera
+  let partida = null, doblada = null, batalla = null, visto = null, nObjeto = 0, cifras = AS.cifras.vacio();   // cifras: las del último combate y las de la partida entera
 
   const guarda = () => { almacen.guarda(prog); };
   // un caso de progreso: si sale bien, el progreso nuevo se queda y se guarda
@@ -121,7 +121,19 @@ AS.creaCasos = ({ datos, almacen, azar }) => {
     mejoraObjeto: hueco => conProgreso(PR.mejoraObjeto(datos, prog, hueco)),
     compraCofre: () => conProgreso(PR.compraCofre(datos, prog, azar, idObjeto()), v => v.p),
     cobraLogro: id => conProgreso(PR.cobraLogro(datos, prog, id)),
-    // plumas de regalo (el anuncio de la Tienda)
+    // plumas de regalo del anuncio de la Tienda (tope por día; llamar solo DESPUÉS de verse el anuncio): AS.ok({ p, plumas }) o 'tope-diario'
+    plumasDeRegalo: () => conProgreso(PR.regalaPlumas(datos, prog, hoy()), v => v.p),
+    regalosQuedan: () => AS.anuncios.regaloQuedan(datos, prog.regalo, hoy()),
+    // doblar las plumas de la partida acabada con anuncio (una vez por partida; llamar solo DESPUÉS de verse el anuncio): AS.ok(las plumas que suma)
+    puedeDoblar: () => !!partida && AS.anuncios.dobla({ plumas: partida.plumas, final: partida.final, yaDoblada: doblada === partida }).ok,
+    doblaPlumas() {
+      if (!partida) return AS.error('sin-partida');
+      const r = AS.anuncios.dobla({ plumas: partida.plumas, final: partida.final, yaDoblada: doblada === partida });
+      if (!r.ok) return r;
+      doblada = partida; prog = PR.apunta(prog, { plumas: r.valor }); guarda();
+      return r;
+    },
+    // plumas sin anuncio (solo el panel DEV)
     regalaPlumas(n) { prog = PR.apunta(prog, { plumas: n }); guarda(); return AS.ok(prog.plumas); },
     consejoVisto(id) { prog = PR.consejoVisto(prog, id); guarda(); },
     // volver a ver la partida guiada: la próxima partida nueva de la primera zona la trae

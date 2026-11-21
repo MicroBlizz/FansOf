@@ -91,7 +91,7 @@ AS.ventanas.leyendas = (() => {
       ${o.puedeCambiar ? btn('as-ley-otras', tr('OTRAS 3 CARTAS · ANUNCIO'), 'as-oro') : ''}<br>${btn('as-ley-luego', tr('LUEGO'), 'as-azul as-chico')}
       <p class="as-nota">${tr('Hasta que elijas, no se puede luchar.')}</p>`, 'as-leyenda');
     for (const b of t.querySelectorAll('[data-carta]')) b.onclick = () => { AS.suena('clic'); confirma(E, o, o.cartas.find(c => c.id === b.dataset.carta)); };
-    V.alPulsar('as-ley-otras', () => V.anuncio(() => { E.casos.cambiaCartas(); despertar(E); }));
+    V.alPulsar('as-ley-otras', () => V.anuncio('cartas', () => { if (E.casos.cambiaCartas().ok) V.premio(tr('Otras 3 cartas')); despertar(E); }));
     V.alPulsar('as-ley-luego', V.cierra);
   }
   // como al UNIR: la carta elegida, en grande, y se confirma o se vuelve a las 3

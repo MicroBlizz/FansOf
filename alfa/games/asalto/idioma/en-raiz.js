@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "<b>Anuncios que se notan</b>: PLUMAS DE REGALO da 60 plumas (3 al día), la esencia del anuncio da +2 y, al acabar la partida, puedes <b>doblar las plumas</b> ganadas con un anuncio. Cada premio te dice qué has ganado.": "<b>Ads that matter</b>: GIFT FEATHERS gives 60 feathers (3 a day), the essence ad gives +2 and, at the end of a run, you can <b>double the feathers</b> you earned with an ad. Every reward tells you what you got.",
+  "Microblizz ha triplicado las plumas de regalo. Las ha sacado de la almohada del CEO.": "Microblizz has tripled the gift feathers. They took them out of the CEO's pillow.",
   "La primera partida guiada <b>ya no se atasca</b>: tocar la columna dorada del Altar también la empuja, la franja de la guía ya no tapa al héroe que hay que unir y las frases son más cortas. Los botones del menú son más grandes para el pulgar.": "The first guided game <b>no longer gets stuck</b>: tapping the golden Altar column also pushes it, the guide banner no longer covers the hero you need to merge and the lines are shorter. The menu buttons are bigger for your thumb.",
   "Recursos Humanos ha acortado el manual. Ahora solo tiene seis palabras y ninguna es «sinergia».": "HR has shortened the manual. It now has six words and none of them is «synergy».",
   "<b>Dioses</b>: hay 16 parejas secretas de legendarios que, al unirse, no dan un ser: dan un <b>dios</b> con un poder divino. ¿Las encontrarás todas?": "<b>Gods</b>: there are 16 secret pairs of legendaries that, when merged, do not make a being: they make a <b>god</b> with a divine power. Can you find them all?",

@@ -11,9 +11,9 @@ AS.ventanas.perdida = (() => {
       <p class="as-nota">${tr('Mira un anuncio y recupera la vida antes de repetir la oleada.')} ${veces === 1 ? tr('Solo una vez por partida.') : tr('{n} veces por partida.', { n: veces })}</p>`
       + btn('as-anu-vida', tr('RECUPERAR LA VIDA · ANUNCIO'), 'as-verde') + btn('as-seguir', tr('SEGUIR'), 'as-azul'));
     V.alPulsar('as-seguir', V.cierra);
-    V.alPulsar('as-anu-vida', () => V.anuncio(() => {
+    V.alPulsar('as-anu-vida', () => V.anuncio('vida', () => {
       V.cierra();
-      if (E.casos.anuncio('vida').ok) { AS.suena('cofre'); E.vidasRojo = 0; AS.pantalla.cartel(tr('¡VIDA RECUPERADA!'), '', AS.tema.C.verde, 1.2); }
+      if (E.casos.anuncio('vida').ok) { V.premio(tr('+1 vida')); E.vidasRojo = 0; AS.pantalla.cartel(tr('¡VIDA RECUPERADA!'), '', AS.tema.C.verde, 1.2); }
     }));
   }
   return abre;

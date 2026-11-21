@@ -1,8 +1,8 @@
 {
- "build": 1416,
- "hash": "2e56597",
- "fecha": "2026-11-21T15:04:34Z",
- "mensaje": "Pop: ataques de los compañeros con estela y golpe en Fiesta, tras el flag ataques-companeros (tarea #160, nodo n5, Pepins)",
+ "build": 1417,
+ "hash": "ae9b371",
+ "fecha": "2026-11-21T15:05:16Z",
+ "mensaje": "Mapas al día tras los nodos n3, n5 y n6 de la tarea #160 de Pop",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

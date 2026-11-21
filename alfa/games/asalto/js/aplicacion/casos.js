@@ -136,7 +136,7 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '', compras: puertosCompras 
     deshaceObjeto: id => conProgreso(PR.deshaceObjeto(datos, prog, id)),
     mejoraObjeto: hueco => conProgreso(PR.mejoraObjeto(datos, prog, hueco)),
     compraCofre: () => conProgreso(PR.compraCofre(datos, prog, azar, idObjeto()), v => v.p),
-    cobraLogro: id => conProgreso(PR.cobraLogro(datos, prog, id), p => (compras.comprasActivas() ? AS.coronas.porLogro(datos, p, id) : p)),   // los logros grandes dan Coronas (ADR 200)
+    cobraLogro: id => conProgreso(PR.cobraLogro(datos, prog, id)),
     // plumas de regalo del anuncio de la Tienda (tope por día; llamar solo DESPUÉS de verse el anuncio): AS.ok({ p, plumas }) o 'tope-diario'
     plumasDeRegalo: () => conProgreso(PR.regalaPlumas(datos, prog, hoy()), v => v.p),
     // el regalo diario (calendario de 7 días): lo que enseña la ventana, si hay uno por cobrar y cobrarlo o doblarlo (esto último, solo DESPUÉS de verse el anuncio)

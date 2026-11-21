@@ -2,7 +2,8 @@
 // desarrollo (ADR 200, tarea #317), las ofertas con euros (Sin anuncios, el Pack de inicio) en su propio panel destacado, el escaparate de
 // aspectos de héroe (con Coronas) y las bolsas de Coronas. Todo lo de pago pasa por MONEDAS.compraReal (puerta de adultos, compra de prueba,
 // cuenta de probador, Google Play o Paddle); aquí no se decide ninguna regla: las llevan los casos de uso. Una compra real la entrega el
-// servidor y aquí se adopta lo que diga; solo la compra de prueba del modo desarrollo se entrega en local.
+// servidor (monedero 'asalto') y aquí se pide su estado y se adopta lo que diga; un aspecto lo cobra el servidor (comprar_fijo); solo la compra de
+// prueba del modo desarrollo, sin monedero de la cuenta, se entrega en local.
 // Puertos: casos, ventana(html) (la ventana del menú), pluma(n), sinPlumas(resultado).
 'use strict';
 AS.creaTiendaMenu = ({ casos, ventana, pluma, sinPlumas }) => {
@@ -43,7 +44,7 @@ AS.creaTiendaMenu = ({ casos, ventana, pluma, sinPlumas }) => {
   }
   function html() {
     const g = casos.progreso, quedan = casos.regalosQuedan();
-    const saldo = nuevo() ? ` ${MONEDAS.icono('comprada')}${miles(g.coronas)}` : '';
+    const saldo = nuevo() ? ` ${MONEDAS.icono('comprada')}${miles(casos.coronas())}` : '';
     return `<h2>${tr('TIENDA')}</h2><p class="as-plumas">${pluma(g.plumas)}${saldo}</p>${nuevo() ? htmlEuros() + htmlCoronas() : ''}
       <div class="as-oferta"><i class="as-cofre as-pix" style="${AS.dibujos.cssRetrato('cofre', 1)}"></i><div><b>${tr('COFRE DE EQUIPO')}</b><span>${tr('Un objeto al azar: normal, raro o épico.')}</span></div>${V.btn('as-t-cofre', pluma(E.cofreTienda), 'as-oro')}</div>
       <div class="as-oferta">${V.ico('pluma', 'as-ico2')}<div><b>${tr('PLUMAS DE REGALO')}</b><span>${tr('Mira un anuncio y llévate {n} plumas.', { n: A.cantidad })} ${quedan ? tr('Hoy te quedan {n} de {de}.', { n: quedan, de: A.diarias }) : tr('Hoy ya no quedan: vuelve mañana.')}</span></div>${V.btn('as-t-anuncio', tr('ANUNCIO'), 'as-verde')}</div>`;
@@ -92,11 +93,13 @@ AS.creaTiendaMenu = ({ casos, ventana, pluma, sinPlumas }) => {
       abre();
     });
   }
-  // lo que llega de un producto con Coronas: la prueba (solo en desarrollo) se entrega aquí; una compra real la dio el servidor y se adopta lo que dice
-  function llega(r, producto, nombre, vuelve) {
+  // lo que llega de un producto con Coronas: la prueba (solo en desarrollo y sin monedero de la cuenta) se entrega aquí; una compra real la dio el
+  // servidor: se le pide su estado y se adopta lo que diga
+  async function llega(r, producto, nombre, vuelve) {
     if (r.prueba) {
-      if (!casos.entregaDeProducto(producto).ok) { AS.suena('noVale'); toast(tr('Ya lo tienes')); return; }
-    } else casos.adoptaDelServidor(r);
+      const e = casos.entregaDeProducto(producto);
+      if (!e.ok) { AS.suena('noVale'); toast(e.error === 'ya-lo-tienes' ? tr('Ya lo tienes') : e.error === 'prueba-con-servidor' ? tr('La compra de prueba no vale con el monedero de tu cuenta: usa una cuenta de probador') : tr('No se puede')); return; }
+    } else if (!(await casos.adoptaDelServidor()).ok) toast(tr('Comprado. Tu saldo se pondrá al día cuando haya conexión.'));
     V.premio(tr('¡Comprado! {c}', { c: nombre })); vuelve();
   }
   function compraInicio() {
@@ -132,14 +135,19 @@ AS.creaTiendaMenu = ({ casos, ventana, pluma, sinPlumas }) => {
     for (const b of el.querySelectorAll('[data-pon]')) b.onclick = () => { casos.ponAspecto(b.dataset.pon); AS.suena('clic'); aspectos(); };
     for (const b of el.querySelectorAll('[data-quita]')) b.onclick = () => { casos.quitaAspecto(b.dataset.quita); AS.suena('clic'); aspectos(); };
   }
+  // lo que se le dice a quien no ha podido comprar un aspecto (cada fallo tiene nombre en dominio/monedero.js y aspectos-tienda.js)
+  const NO_SE_PUDO = { 'ya-lo-tienes': () => tr('Ya lo tienes'), 'tienda-cerrada': () => tr('La tienda de aspectos está cerrada por ahora'), 'sin-red': () => tr('Necesitas conexión para comprar'),
+    'sin-cuenta': () => tr('Entra con tu cuenta para comprar aspectos'), 'servidor': () => tr('No se ha podido comprar. Inténtalo otra vez') };
+  const textoNoSePudo = r => (r.error === 'sin-coronas' ? tr('Te faltan {n} Coronas', { n: Math.max(0, r.datos.coste - casos.coronas()) }) : (NO_SE_PUDO[r.error] || (() => tr('No se puede')))());
   function preguntaCompra(id) {
     const a = ASALTO.aspectos[id];
-    confirmBox(tr('¿COMPRAR?'), `${tr(a.nombre)} · ${corona(a.coronas)}`, tr('SÍ'), () => {
-      const r = casos.compraAspecto(id);
-      if (r.ok) { AS.suena('cofre'); toast(tr('¡Es tuyo! {c}', { c: tr(a.nombre) }), true); } else { AS.suena('noVale'); toast(r.error === 'sin-coronas' ? tr('Te faltan {n} Coronas', { n: r.datos.coste - casos.coronas() }) : tr('No se puede')); }
+    confirmBox(tr('¿COMPRAR?'), `${tr(a.nombre)} · ${corona(a.coronas)}`, tr('SÍ'), async () => {
+      const r = await casos.compraAspecto(id);
+      if (r.ok) { AS.suena('cofre'); toast(tr('¡Es tuyo! {c}', { c: tr(a.nombre) }), true); } else { AS.suena('noVale'); toast(textoNoSePudo(r)); }
       aspectos();
     });
   }
   AS.derechos.alCambiar(() => { if (enTienda()) abre(); });
+  casos.alCambiarSaldo(() => { if (enTienda()) abre(); });   // el saldo o lo comprado cambia (llegó el estado del servidor)
   return { abre };
 };

@@ -80,7 +80,7 @@ AS.menu = (() => {
   function pinta() {
     const g = casos.progreso, pend = casos.logrosPendientes().length, s = casos.guardada();
     reparto = s && s.heroes.length ? s.heroes : REPARTO;
-    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}${casos.comprasActivas() ? ' ' + MONEDAS.icono('comprada') + g.coronas : ''}</p>${htmlMeta()}
+    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}${casos.comprasActivas() ? ' ' + MONEDAS.icono('comprada') + casos.coronas() : ''}</p>${htmlMeta()}
       <div class="as-escena" id="as-escena"></div>${htmlSeguir()}
       ${htmlMaquina()}<div class="as-zonas">${ASALTO.zonas.map(htmlZona).join('')}</div>
       <div class="as-rejilla">${htmlRegalo()}${V.btn('as-m-mejoras', tr('MEJORAS'), 'as-oro')}${V.btn('as-m-equipo', tr('EQUIPO'), 'as-azul')}${V.btn('as-m-herreria', tr('HERRERÍA'), 'as-azul')}
@@ -162,14 +162,12 @@ AS.menu = (() => {
     const el = ventana(`<h2>${tr('HERRERÍA')}</h2><p class="as-plumas">${pluma(g.plumas)}</p><p class="as-nota">${tr('Cada golpe de martillo le da +1 % al objeto puesto.')}</p><ul class="as-lista">${filas || `<li class="as-nota">${tr('Ponte algo en el EQUIPO primero.')}</li>`}</ul>`);
     for (const b of el.querySelectorAll('[data-h]')) b.onclick = () => { if (sinPlumas(casos.mejoraObjeto(b.dataset.h))) AS.suena('para', 2); herreria(); };
   }
-  // lo que da un logro: sus plumas y, si es de los grandes y lo nuevo está abierto, unas Coronas (ADR 200)
-  const premioLogro = l => pluma(l.premio) + (casos.comprasActivas() && ASALTO.coronasLogros[l.id] ? ' ' + MONEDAS.icono('comprada') + ASALTO.coronasLogros[l.id] : '');
   function logros() {
     const g = casos.progreso, pend = casos.logrosPendientes().map(l => l.id);
     const filas = ASALTO.logros.map(l => {
       const hecho = g.logros[l.id], va = l.zona !== undefined ? (g.zonas.includes(l.zona) ? 1 : 0) + '/1' : Math.min(g.stats[l.stat] || 0, l.meta) + '/' + l.meta;
-      const der = hecho ? `<span class="as-hecho">${tr('COBRADO')}</span>` : pend.includes(l.id) ? `<button class="as-btn as-verde as-chico" data-l="${l.id}" type="button">${premioLogro(l)}</button>` : `<span class="as-va">${va}</span>`;
-      return `<li class="as-item">${V.ico('trofeo')}<div><b>${tr(l.txt)}</b><span>${premioLogro(l)}</span></div>${der}</li>`;
+      const der = hecho ? `<span class="as-hecho">${tr('COBRADO')}</span>` : pend.includes(l.id) ? `<button class="as-btn as-verde as-chico" data-l="${l.id}" type="button">${pluma(l.premio)}</button>` : `<span class="as-va">${va}</span>`;
+      return `<li class="as-item">${V.ico('trofeo')}<div><b>${tr(l.txt)}</b><span>${pluma(l.premio)}</span></div>${der}</li>`;
     }).join('');
     const el = ventana(`<h2>${tr('LOGROS')}</h2><ul class="as-lista">${filas}</ul>`);
     for (const b of el.querySelectorAll('[data-l]')) b.onclick = () => { if (casos.cobraLogro(b.dataset.l).ok) AS.suena('cofre'); logros(); };

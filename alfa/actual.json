@@ -1,8 +1,8 @@
 {
- "build": 1396,
- "hash": "a72ad35",
- "fecha": "2026-11-20T23:58:14Z",
- "mensaje": "Web: página Apóyanos de donaciones con el botón DONAR apagado («Muy pronto») hasta conectar el pago; enlace en el menú y franja en la portada, solo con el estilo nuevo (tarea #291, Pepins)",
+ "build": 1397,
+ "hash": "ebdb497",
+ "fecha": "2026-11-21T00:31:27Z",
+ "mensaje": "Rally en la lista de juegos del tablero (arregla su test) y cortador de lonchas: la textura se lee del triángulo que toca",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

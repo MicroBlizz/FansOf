@@ -1,8 +1,8 @@
 {
- "build": 1414,
- "hash": "23c128a",
- "fecha": "2026-11-21T14:51:41Z",
- "mensaje": "Pop: sonidos de los ataques de los compañeros por código y prueba de 3 en Yoshi (tarea #160, nodo n6, Pepins)",
+ "build": 1415,
+ "hash": "9e0b2c4",
+ "fecha": "2026-11-21T14:54:45Z",
+ "mensaje": "Island #304 N2b: el jugador como dominio puro, con tests",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

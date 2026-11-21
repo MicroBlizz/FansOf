@@ -9,3 +9,5 @@ IS.nivel = IS.creaNivel();
 const { COLS, INICIO, META, NIV, PLAT, ZANAS0, ENEM0, ATRAS, DELANTE, DECO, ROCAS_MAR, CANG0, PECES0 } = IS.nivel;
 IS.fisica = IS.creaFisica(IS.nivel);
 const { arribaSuelo, arribaCol, sueloDe, mueveX, cae } = IS.fisica;
+const { giraHacia } = IS;
+const { DER: GIRO_DER, IZQ: GIRO_IZQ } = IS.GIRO;

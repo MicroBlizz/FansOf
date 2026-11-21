@@ -3,8 +3,10 @@
 // lee lo escrito, pone las reacciones (con control-reacciones.js), arrastra las tarjetas y le pide cada cosa a los casos de uso
 // (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js los casos, los ids de sus huecos, `esc`, `fecha` y `textoError`
 // de /gestion, y `comparte(t)` y `tareaInicial` (el número del enlace directo ?tarea=N, o null; tarea #302); no sabe nada del servidor.
+// Atrás (tarea #322, ADR 201): `alCambiarPanel(abierto)` avisa cuando el panel se abre o se cierra (lo que abre el enlace directo al cargar no se avisa:
+// no es un toque y no deja entrada en el historial), y `cierraCapa()` lo cierra al volver atrás.
 'use strict';
-TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaInicial = null }) => {
+TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaInicial = null, alCambiarPanel = () => {} }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
@@ -17,6 +19,8 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
   const tareaDe = id => tareas.find(t => t.id === Number(id));
+  let avisado = false, delEnlace = false;   // si el último aviso de alCambiarPanel fue «abierto», y si lo abierto vino del enlace (sin aviso)
+  const avisaPanel = () => { if (!!panel !== avisado) { avisado = !!panel; alCambiarPanel(avisado); } };
 
   const pintaTablero = () => {
     el(hueco.bandeja).innerHTML = TABLERO.vistaRevisar.bandeja(TABLERO.bandeja(tareas, yo), yo, filtro.bandeja, esc);   // «Te toca», lo primero (tarea #161)
@@ -31,9 +35,16 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
     if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha, yo, !!panel.cambios);
     else if (panel && conFormulario) { caja.innerHTML = panel.rapida ? TABLERO.vista.formularioRapido(juegos, esc) : TABLERO.vista.formulario(panel.formulario, esc); caja.querySelector('input[name=titulo]').focus(); }
     else if (!panel) caja.innerHTML = '';
+    avisaPanel();
   }
-  const abre = nuevo => { clearTimeout(esperaParecidas); panel = nuevo; pintaTablero(); pintaPanel(true); };
+  // un toque: si lo abierto venía del enlace (sin capa), lo que se abra ahora sí se avisa (y deja su capa)
+  const abre = nuevo => { clearTimeout(esperaParecidas); if (delEnlace) { delEnlace = false; avisado = false; } panel = nuevo; pintaTablero(); pintaPanel(true); };
   const cierra = () => abre(null);
+  // Atrás del navegador (tarea #322): cierra lo abierto (tarea o formulario) como su botón, y la tarea del enlace que aún no se ha abierto ya no se abre
+  function cierraCapa() {
+    deEnlace = null;
+    if (panel) cierra();
+  }
 
   async function cargar() {
     aviso('');
@@ -52,7 +63,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
   }
   // El enlace directo /gestion/?seccion=tablero&tarea=N abre el detalle de esa tarea; si no está en el tablero, se ve el tablero sin más
   function abreDelEnlace() {
-    if (deEnlace !== null && tareaDe(deEnlace)) panel = { id: deEnlace };
+    if (deEnlace !== null && tareaDe(deEnlace)) { panel = { id: deEnlace }; avisado = true; delEnlace = true; }   // sin aviso: no es un toque (tarea #322)
     deEnlace = null;
   }
   // Una acción a la vez (un doble clic no crea la tarea dos veces). Si no sale, el tablero se vuelve a pintar como estaba y se dice por qué
@@ -249,5 +260,5 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
     lista.ondragleave = ev => { const c = col(ev); if (c && !c.contains(ev.relatedTarget)) c.classList.remove('encima'); };
     lista.ondrop = ev => { const c = col(ev); if (!c) return; ev.preventDefault(); c.classList.remove('encima'); mueve(ev.dataTransfer.getData('text/plain'), c.dataset.columna); };
   }
-  return { cargar, conecta };
+  return { cargar, conecta, cierraCapa };
 };

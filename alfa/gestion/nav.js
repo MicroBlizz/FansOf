@@ -5,6 +5,9 @@
 // Cada archivo de sección se apunta con GESTION_NAV.seccion({ id, pan, etiqueta, orden, juego?, grupo?, cargar? }): sin `juego` es una pestaña común (su grupo,
 // de GRUPO_DE o de `grupo`); con `juego: '<id>'` es solo de ese juego, y con `juego: '*'` sale en todos (cargar recibe el id del juego).
 // Quien cambia la etiqueta de una pestaña (por ejemplo, con un contador) usa GESTION_NAV.etiqueta(id, texto, juego?). Esto solo muestra y oculta: no sabe de datos.
+// Atrás (tarea #322, ADR 201): cada cambio de grupo, pestaña o juego hecho con un toque se anota en el historial del navegador (historial.js e
+// historial-navegador.js), y GESTION_NAV.capa(abierta) anota lo que se abre o cierra encima (el Tablero). Al volver a una entrada se cierra lo abierto
+// (`cierraCapa` de cada sección) y se enseña esa pestaña; sin sesión (pantalla de entrar), atrás no hace nada. Al recargar manda la pestaña guardada.
 'use strict';
 const GESTION_NAV = (() => {
   // Los juegos de antes de la tarea #162 (los que tenían botón): los usan los tests de las secciones; la lista de verdad es el catálogo
@@ -20,6 +23,7 @@ const GESTION_NAV = (() => {
   const S = [], el = id => document.getElementById(id);
   const recuerda = {};   // la pestaña abierta en cada grupo o juego
   let grupo = 'tablero', juego = null, catalogo = [], abiertas = {}, filtroJuegos = '', textoJuegos = '';
+  let mostrada = null, historial = null, pedidoCatalogo = 0;   // la pestaña que se ve, el adaptador del historial y la última petición del catálogo
   const seccion = s => { S.push(s); };
   const grupoDe = s => s.grupo || GRUPO_DE[s.id] || 'ajustes';
   const ambito = () => (juego ? juego : grupo);
@@ -37,30 +41,67 @@ const GESTION_NAV = (() => {
     el('menu').innerHTML = GRUPOS.map(boton).join('');
     S.forEach(s => { el(s.pan).hidden = true; });
     el('pan-juegos').hidden = !(grupo === 'juegos' && !juego);
-    if (grupo === 'juegos' && !juego) { el('tabs').hidden = true; pintaJuegos(); return; }
+    mostrada = null;
+    if (grupo === 'juegos' && !juego) { el('tabs').hidden = true; pintaJuegos(); if (!catalogo.length) cargaCatalogo(); return; }   // la lista, aunque se llegue sin el menú
     const L = de(), a = ambito(), id = recuerda[a] && L.some(s => s.id === recuerda[a]) ? recuerda[a] : (L[0] || {}).id;
     const volver = juego ? `<button type="button" class="nav-volver" data-volver>Todos los juegos</button><b class="nav-juego">${esc(nombreDe(juego))}</b>` : '';
     el('tabs').innerHTML = volver + L.map(s => pestana(s, id)).join('');
     el('tabs').hidden = !juego && L.length < 2;
     const s = L.find(x => x.id === id); if (!s) return;
-    el(s.pan).hidden = false; recuerda[a] = id;
+    el(s.pan).hidden = false; recuerda[a] = id; mostrada = id;
     if (s.cargar) s.cargar(juego, nombreDe(juego));
   }
-  // ir('global', id) abre una pestaña común (en su grupo); ir('<juego>', id?) abre ese juego dentro de «Juegos»
-  function ir(donde, id) {
+  // ve('global', id) abre una pestaña común (en su grupo); ve('<juego>', id?) abre ese juego dentro de «Juegos». ir() hace lo mismo y lo anota en el historial
+  function ve(donde, id) {
     if (!donde || donde === 'global') { const s = id && buscar(id); juego = null; if (s) { grupo = grupoDe(s); recuerda[grupo] = id; } }
     else { grupo = 'juegos'; juego = donde; if (id) recuerda[donde] = id; }
     pinta();
+  }
+  const hist = () => historial || (historial = GESTION_HISTORIAL_NAVEGADOR.crea({ historia: history, ventana: window }));
+  const sitio = () => ({ grupo, juego, seccion: mostrada });
+  const anota = () => { hist().anota(sitio()); };
+  const ir = (donde, id) => { ve(donde, id); anota(); };
+  const enSesion = () => { const p = el('vista-panel'); return !p || !p.hidden; };
+  const cierraCapas = () => S.forEach(s => { if (s.cierraCapa) s.cierraCapa(); });
+  // Dónde se estaba, como lo guarda una entrada del historial; la pestaña solo si sigue existiendo (pinta() lo comprueba)
+  function ponSitio(v) {
+    grupo = GRUPOS.some(([g]) => g === v.grupo) ? v.grupo : 'tablero';
+    juego = grupo === 'juegos' ? v.juego : null;
+    if (v.seccion) recuerda[ambito()] = v.seccion;
+    pinta();
+  }
+  // Atrás o adelante: se enseña esa pestaña (si es otra: si no, no se vuelve a cargar) y se cierra lo abierto si se viene de una capa o se vuelve a la
+  // sección que la tiene (el Tablero); entre otras pestañas, lo abierto detrás se queda como está. Sin sesión no hace nada (false)
+  function vuelve(destino, desde) {
+    if (!enSesion()) return false;
+    const conCapa = buscar(destino.seccion, destino.juego);
+    if ((desde && desde.capa) || (conCapa && conCapa.cierraCapa)) cierraCapas();
+    if (!GESTION_HISTORIAL.mismoSitio(sitio(), destino)) ponSitio(destino);
+    return true;
+  }
+  // Algo se ha abierto (con un toque) o cerrado encima de la pestaña: el Tablero lo dice aquí
+  const capa = abierta => { hist().capa(abierta); };
+  // «Salir»: se cierra lo abierto y se vuelve al Tablero sin añadir entradas (la de arriba pasa a decirlo)
+  function sal() {
+    hist().sinAnotar(cierraCapas);
+    Object.keys(recuerda).forEach(k => { delete recuerda[k]; });
+    grupo = 'tablero'; juego = null; pinta();
+    hist().corrige(sitio());
   }
   function etiqueta(id, texto, j) {
     const s = buscar(id, j); if (!s) return;
     s.etiqueta = texto; const b = el('tabs').querySelector(`button[data-s="${id}"]`); if (b && (!j || j === juego)) b.textContent = texto;
   }
   // La lista de juegos sale de la biblioteca y el número de tareas, del tablero; si algo falla, se ven los juegos de siempre sin cifras
+  // Si se pide otra vez antes de acabar (al abrirse la sesión), solo cuentan las cifras de la última petición: las de antes pueden ser de sin sesión
   async function cargaCatalogo() {
+    const esta = ++pedidoCatalogo;
     try { const r = await fetch('../index.html', { cache: 'no-store' }); catalogo = GESTION_CATALOGO.leer(await r.text()); }
     catch (e) { catalogo = JUEGOS.map(([id, nombre]) => ({ id, nombre, tipo: 'Prototipo', color: '#56ccf2' })); }
-    try { abiertas = GESTION_CATALOGO.abiertasPorJuego((await rpc('gestion_tareas', { p_token: leerToken() })).tareas); } catch (e) { abiertas = {}; }
+    let cifras = {};
+    try { cifras = GESTION_CATALOGO.abiertasPorJuego((await rpc('gestion_tareas', { p_token: leerToken() })).tareas); } catch (e) { cifras = {}; }
+    if (esta !== pedidoCatalogo) return;
+    abiertas = cifras;
     if (grupo === 'juegos' && !juego) pintaJuegos();
   }
   function conectaJuegos() {
@@ -77,16 +118,26 @@ const GESTION_NAV = (() => {
     };
   }
   function arranca() {
-    el('menu').onclick = ev => { const b = ev.target.closest('button[data-g]'); if (b) { grupo = b.dataset.g; juego = null; pinta(); if (grupo === 'juegos') cargaCatalogo(); } };
+    el('menu').onclick = ev => {
+      const b = ev.target.closest('button[data-g]'); if (!b) return;
+      const refresca = b.dataset.g === 'juegos' && catalogo.length > 0;   // sin catálogo lo pide pinta(); con él, se refrescan las cifras
+      grupo = b.dataset.g; juego = null; pinta(); anota();
+      if (refresca) cargaCatalogo();
+    };
     el('tabs').onclick = ev => {
-      if (ev.target.closest('[data-volver]')) { juego = null; pinta(); return; }
-      const b = ev.target.closest('button[data-s]'); if (b) { recuerda[ambito()] = b.dataset.s; pinta(); }
+      if (ev.target.closest('[data-volver]')) { juego = null; pinta(); anota(); return; }
+      const b = ev.target.closest('button[data-s]'); if (b) { recuerda[ambito()] = b.dataset.s; pinta(); anota(); }
     };
     conectaJuegos();
     $('estilo-nav').textContent = GESTION_CATALOGO.ESTILO;
-    el('salir').addEventListener('click', () => { Object.keys(recuerda).forEach(k => { delete recuerda[k]; }); grupo = 'tablero'; juego = null; pinta(); });
-    const dir = new URLSearchParams(location.search).get('seccion');   // enlace directo: /gestion/?seccion=cola abre esa pestaña (con la sesión abierta)
-    if (dir && buscar(dir)) ir('global', dir); else pinta();
+    el('salir').addEventListener('click', sal);
+    // al abrir la sesión, la lista de Juegos (si se ve) pide otra vez sus cifras: las pedidas antes de entrar fallan sin sesión
+    document.addEventListener('gestion-abierta', () => { if (grupo === 'juegos' && !juego) cargaCatalogo(); });
+    const guardado = hist().inicial(), dir = new URLSearchParams(location.search).get('seccion');   // enlace directo: /gestion/?seccion=cola abre esa pestaña (con la sesión abierta)
+    if (guardado) ponSitio(guardado);   // al recargar o volver de otra página, manda la pestaña que guardaba la entrada del historial
+    else if (dir && buscar(dir)) ve('global', dir); else pinta();
+    hist().empieza(sitio());
+    hist().escucha(vuelve);
   }
-  return { JUEGOS, seccion, etiqueta, ir, arranca, nombreDe, actual: () => juego || 'global' };
+  return { JUEGOS, seccion, etiqueta, ir, arranca, nombreDe, capa, actual: () => juego || 'global' };
 })();

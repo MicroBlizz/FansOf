@@ -1,8 +1,8 @@
 {
- "build": 1429,
- "hash": "467bdfe",
- "fecha": "2026-11-21T22:56:25Z",
- "mensaje": "Asalto: compras en modo de prueba tras el modo desarrollo (Coronas, aspectos, Sin anuncios, Pack de inicio y bolsas; ADR 200, tarea #317, Pepins)",
+ "build": 1430,
+ "hash": "9cd461a",
+ "fecha": "2026-11-21T23:25:38Z",
+ "mensaje": "Gestión: en el móvil, atrás cierra la tarea o el formulario abierto y vuelve a la pestaña anterior antes de salir (tarea #322, ADR 201, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

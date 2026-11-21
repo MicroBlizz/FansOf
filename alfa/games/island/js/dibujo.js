@@ -1,5 +1,5 @@
 // Fans of Island · EL DIBUJO de cada fotograma: la cámara que sigue a CrazyBunny, el fondo vivo (sol, nubes, barco, pájaros, islas
-// lejanas, un pez que salta y la MechaVaca de vez en cuando), el terreno en lonchas, todo lo que se mueve y el agua de delante.
+// lejanas, un pez que salta y la MechaVaca de vez en cuando), el terreno en lonchas, todo lo que se mueve y el agua de delante con su oleaje.
 'use strict';
 const VISTA = { cx: 0, cz: 0 };
 const FONDO = { humo: [], mv: { x: -999, t: 0, espera: 4 }, saltarin: null, tSalto: 2 };
@@ -51,8 +51,8 @@ function fondo() {
   for (let i = 0; i < 6; i++) ctx.drawImage(NUBE, Math.round(vuelta(i * 211 - cx * 0.12 - reloj * 4, VW + 120, 60)), hy - 46 - (i % 3) * 20 - Math.round(VISTA.cz * 0.1));
   ctx.fillStyle = '#2f8fd0'; ctx.fillRect(0, hy, VW, VH - hy);
   ctx.fillStyle = '#57aee0'; ctx.fillRect(0, hy, VW, 3);
-  ctx.drawImage(BARCO, Math.round(vuelta(900 - cx * 0.18 + reloj * 3, VW + 400, 60)), hy - 18 + Math.round(Math.sin(reloj * 1.6)));
   for (let i = 0; i < 4; i++) ctx.drawImage(LEJOS, Math.round(vuelta(i * 300 + 40 - cx * 0.3, 600, 160)), hy - LEJOS.height + 3);
+  ctx.drawImage(BARCO, Math.round(vuelta(900 - cx * 0.18 + reloj * 3, VW + 400, 60)), hy - 18 + Math.round(Math.sin(reloj * 1.6)));   // el barco, por delante de las islas lejanas
   mechavacaFondo(hy);
   pezSaltarin(hy);
   ctx.fillStyle = '#7cc6ee';
@@ -147,9 +147,23 @@ function pintaDelante() {   // detalles del suelo, peces de delante, gotas, salp
   for (const r of ROCAS_MAR) if (cerca(r.x, 30)) pintaRocaMar(r);
   const wy = sy(D, MAR);
   if (wy >= VH) return;
-  ctx.fillStyle = 'rgba(47,143,208,0.9)'; ctx.fillRect(0, wy, VW, VH - wy);
-  ctx.fillStyle = '#9fdcf5';
-  for (let x = 0; x < VW; x += 2) if (Math.sin((x + VISTA.cx) * 0.11 + reloj * 2.5) > 0.35) ctx.fillRect(x, wy, 2, 1);
+  ctx.fillStyle = 'rgba(47,143,208,0.92)'; ctx.fillRect(0, wy, VW, VH - wy);
+  olas(wy);
+}
+// el oleaje de delante: dos filas de olas en lonchas (PILAS_OLA, arte-isla.js) que suben, bajan y van y vienen, y espuma en la orilla
+const FILAS_OLA = [{ y: D + 1, sep: 62, vel: 7, sube: 3, lado: 1 }, { y: D + 9, sep: 78, vel: 10, sube: 4, lado: -1 }];
+function filaOlas(f, n) {
+  for (let i = 0; i < Math.ceil(VW / f.sep) + 2; i++) {
+    const q = PILAS_OLA[(i + n) % PILAS_OLA.length], fase = reloj * 1.8 + i * 1.7 + n;
+    const x = vuelta(i * f.sep - VISTA.cx + Math.floor(reloj * f.vel) * f.lado * 0.3 + n * 31, VW + f.sep * 2, f.sep);
+    const z = MAR - q.al + 3 + Math.round((Math.sin(fase) * 0.5 + 0.5) * f.sube);
+    ctx.drawImage(q.c, Math.round(x) - q.m, sy(f.y, z) - (q.al - 1) - q.m);
+  }
+}
+function olas(wy) {
+  if (PILAS_OLA.length) FILAS_OLA.forEach(filaOlas);
+  ctx.fillStyle = '#ffffff';
+  for (let x = 0; x < VW; x += 2) if (Math.sin((x + VISTA.cx) * 0.11 + reloj * 2.5) > 0.1) ctx.fillRect(x, wy, 2, 1);
 }
 function dibuja() {
   mueveCamara(); fondo(); terreno(); pintaAtras(); pintaCarril(); pintaDelante();

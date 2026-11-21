@@ -1,8 +1,8 @@
 // Fans of Island · CRAZYBUNNY en lonchas hechas por Yoshi (tarea #306): la tira img/crazybunny-lonchas.png (modelo 3D de Trellis2
 // cortado en 96 lonchas con lonchas_cortar y retocado con herramientas/lonchas/retocar.py). Las posturas no son dibujos aparte:
-// se estira al saltar y se aplasta al aterrizar escalando las lonchas. C_H es el alto del GOLPE (no el del dibujo): se queda en 66.
+// se estira al saltar y se aplasta al aterrizar escalando las lonchas. Desde la 0.4.2 (Pepins, ADR 196) el dibujo mide lo mismo que el golpe: C_H.
 'use strict';
-const C_H = 66;   // alto con el que chocan enemigos, cocos y zanahorias (el de la 0.4.0): el muñeco se ve más grande, pero se juega igual
+const C_H = 66;   // alto con el que chocan enemigos, cocos y zanahorias (el de la 0.4.0) y alto del dibujo en reposo
 const PILAS_C = {};
 (() => {
   const TIRA = { src: 'img/crazybunny-lonchas.png?v=1', ancho: 44, fondo: 47, alto: 96 };
@@ -21,8 +21,9 @@ const PILAS_C = {};
     return c;
   }
   function postura(p) {   // la pila de una postura: cada loncha nueva toma la del modelo a su altura
-    const an = Math.round(TIRA.ancho * p.sx), fo = Math.round(TIRA.fondo * p.sx), al = Math.round(TIRA.alto * p.sz), hojas = [];
-    for (let z = 0; z < al; z++) hojas.push(hoja(Math.min(TIRA.alto - 1, Math.floor((z + 0.5) / p.sz)), an, fo, TIRA.ancho));
+    const e = C_H / TIRA.alto;   // la tira de 96 lonchas, encogida al alto del golpe
+    const an = Math.round(TIRA.ancho * p.sx * e), fo = Math.round(TIRA.fondo * p.sx * e), al = Math.round(TIRA.alto * p.sz * e), hojas = [];
+    for (let z = 0; z < al; z++) hojas.push(hoja(Math.min(TIRA.alto - 1, Math.floor((z + 0.5) / (p.sz * e))), an, fo, TIRA.ancho));
     return { hojas, an, fo, al, cache: new Map() };
   }
   function fabrica() {   // tarea de carga: si la imagen aún no ha llegado, vuelve a la cola

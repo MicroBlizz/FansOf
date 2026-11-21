@@ -1,8 +1,8 @@
 {
- "build": 1410,
- "hash": "a40c8d5",
- "fecha": "2026-11-21T11:38:00Z",
- "mensaje": "Island 0.4.1: CrazyBunny en lonchas hechas por Yoshi (tarea #306, ADR 194)",
+ "build": 1411,
+ "hash": "5d6f76b",
+ "fecha": "2026-11-21T13:45:49Z",
+ "mensaje": "Island 0.4.2: CrazyBunny al alto de su golpe, menos agua delante con oleaje en lonchas y el barco delante de las islas (tarea #304, ADR 196)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",
@@ -14,7 +14,7 @@
   "dark": "0.2.7",
   "decks": "0.2.37",
   "goose": "0.11.0",
-  "island": "0.4.1",
+  "island": "0.4.2",
   "jump": "0.3.32",
   "karts": "0.7.31",
   "kingdom": "0.1.0",

@@ -13,7 +13,7 @@ function ajusta() {
   PANTALLA.esc = Math.max(2, Math.round(Math.min(bw, bh) / 240));
   VW = Math.ceil(bw / PANTALLA.esc); VH = Math.ceil(bh / PANTALLA.esc);
   buf.width = VW; buf.height = VH;
-  BASE = Math.round(VH * 0.66);
+  BASE = Math.round(VH * 0.72);   // la línea del suelo: más abajo, para que se vea menos agua delante (Pepins, 21-11-2026)
   ctx.imageSmoothingEnabled = false; vctx.imageSmoothingEnabled = false;
   document.getElementById('girar').classList.toggle('oculto', innerWidth >= innerHeight);
 }

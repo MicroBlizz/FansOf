@@ -1,5 +1,6 @@
 // Fans of Island · ARTE DE LA ISLA en lonchas: los bloques (hierba, arena, base mojada, roca, caja), los puentes, las islas flotantes,
-// las palmeras, los arbustos y los detalles del suelo (matas, hibiscos, estrellas, conchas y rocas en el mar). Todo va a PIEZA.
+// las palmeras, los arbustos y los detalles del suelo (matas, hibiscos, estrellas, conchas y rocas en el mar). Todo va a PIEZA,
+// salvo las olas de delante (PILAS_OLA).
 'use strict';
 const T = 32, D = 56, CARRIL = 30;     // bloque de 32, suelo de 56 de fondo, los personajes van por el carril 30
 const FLORES = ['#ff6f91', '#ffd23f', '#ffffff', '#ff9a3c'];
@@ -193,3 +194,19 @@ TAREAS.push(() => { PIEZA.palmeras[1] = pilaPalmera(1); PIEZA.arbusto = pilaArbu
 TAREAS.push(() => {
   PIEZA.mata = pilaMata(); PIEZA.flor = pilaFlor(); PIEZA.estrella = pilaEstrella(); PIEZA.concha = pilaConcha(); PIEZA.rocaMar = pilaRocaMar();
 });
+// las olas de delante (camino A, por código): una cresta alargada con espuma blanca arriba, sin contorno (Pepins, 21-11-2026); 3 variantes
+const OLA = { an: 44, fo: 12, al: 10 }, PILAS_OLA = [];
+function colorOla(z, h, y, x, v) {
+  if (z >= h - 1.2) return ruido(x, y, v + 7) < 0.8 ? '#ffffff' : '#dff4ff';
+  if (z >= h - 2.4) return ruido(x, y, v + 3) < 0.55 ? '#bfeaff' : '#ffffff';
+  if (y < OLA.fo / 2) return '#7cc6ee';
+  return z < 3 ? '#2a7fc0' : '#3f9ad8';
+}
+function pilaOla(v) {
+  return pila(OLA.an, OLA.fo, OLA.al, (z, x, y) => {
+    const fin = Math.sin(Math.PI * (x + 0.5) / OLA.an) ** 0.6, cuerpo = Math.sin(Math.PI * (y + 0.5) / OLA.fo);
+    const h = OLA.al * fin * cuerpo * (0.75 + 0.25 * Math.sin(x * 0.45 + v * 2));
+    return z < h ? colorOla(z, h, y, x, v) : null;
+  });
+}
+TAREAS.push(() => { for (let v = 0; v < 3; v++) PILAS_OLA.push(quieta(pilaOla(v), false)); });

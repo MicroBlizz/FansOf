@@ -1,10 +1,12 @@
 // Fans of Pop · ATAQUES DE LOS COMPAÑEROS, lo que se ve y se oye (tarea #160, ADR 197), tras el flag 'ataques-companeros'.
-// Con el flag abierto, el compañero que salta vuela por la ruta de su habilidad, se estira al despegar (con su cara de siempre),
-// deja una estela de su color llena de sus cositas, golpea con doble aro de luz y una ráfaga de cositas y confeti y el tablero se
-// mece un poco (intensidad Fiesta), todo cozy y sin contorno, en el estilo fijo del compañero (hada o acuarela). Las cuentas
-// están en js/ataques.js (PP_ATAQUE) y el dibujo de cada estilo en js/ataques-estilos.js (PP_ATAQUE_ESTILO, con los dibujos
-// img-liso/fx-<pieza>.png de Yoshi si ya llegaron). Con el flag cerrado todo hace exactamente lo de siempre
-// (ppFxImpacto y el sonido ppSalto). Lo engancha js/efectos.js (vuelo y avance), js/pintar.js (dibujo) y js/partida.js (golpe y sonido).
+// Con el flag abierto, el compañero que salta vuela por su ruta PROPIA (revisión del 21-11-2026: un ataque por compañero), se
+// estira al despegar (con su cara de siempre), deja una estela de su color llena de sus cositas, golpea con doble aro de luz,
+// su golpe propio y una ráfaga de cositas y confeti, y el tablero se mece un poco (intensidad Fiesta), todo cozy y sin
+// contorno, en el estilo fijo del compañero (hada o acuarela). Las cuentas están en js/ataques.js (PP_ATAQUE), el dibujo de
+// cada estilo en js/ataques-estilos.js (PP_ATAQUE_ESTILO, con las piezas de js/ataques-piezas.js o los dibujos
+// img-liso/fx-<pieza>.png de Yoshi si ya llegaron) y los golpes en js/ataques-golpes.js. Con el flag cerrado todo hace
+// exactamente lo de siempre (ppFxImpacto y el sonido ppSalto). Lo engancha js/efectos.js (vuelo y avance), js/pintar.js
+// (dibujo) y js/partida.js (golpe y sonido).
 'use strict';
 const PP_ATAQUE_FX = (() => {
   const estado = { parts: [], puntos: [], golpes: [] };
@@ -37,7 +39,7 @@ const PP_ATAQUE_FX = (() => {
   function golpe(T, i, id) {
     if (!activo()) return ppFxImpacto(T, i, id === 'ceo');
     const a = ataqueDe(id), g = PP_ATAQUE.golpe(a.golpe, id === 'ceo'), [x, y] = ppCentro(ppGeom(T.n), i);
-    estado.golpes.push(...PP_ATAQUE_ESTILO.golpes(x, y, g, a, Math.random));
+    estado.golpes.push(...PP_ATAQUE_GOLPES.golpes(x, y, g, a, Math.random));
     estado.parts.push(...PP_ATAQUE.rafaga(x, y, g, a, Math.random));
     PP_FX.temblor = Math.max(PP_FX.temblor, g.temblor);
     ppVibra(id === 'ceo' ? [40, 30, 60] : 30);
@@ -49,13 +51,13 @@ const PP_ATAQUE_FX = (() => {
   }
 
   /* ---------- dibujo (en el estilo de cada compañero: js/ataques-estilos.js) ---------- */
-  // detrás el manchón de aguada; luego la estela, las cositas y delante los aros, flores, escarchas y chispas
+  // detrás el manchón de aguada; luego la estela, las cositas y delante los aros y el dibujo propio de cada golpe
   function pinta(c) {
-    const E = PP_ATAQUE_ESTILO;
-    for (const g of estado.golpes) if (g.fondo) E.pintaGolpe(c, g);
+    const E = PP_ATAQUE_ESTILO, G = PP_ATAQUE_GOLPES;
+    for (const g of estado.golpes) if (g.fondo) G.pinta(c, g);
     for (const q of estado.puntos) E.pintaPunto(c, q);
     for (const p of estado.parts) E.pintaCosita(c, p);
-    for (const g of estado.golpes) if (!g.fondo) E.pintaGolpe(c, g);
+    for (const g of estado.golpes) if (!g.fondo) G.pinta(c, g);
   }
   // el compañero en el aire: por su ruta, girando lo que diga y estirado al despegar, con su cara de siempre
   function pintaVuelo(c, v, t) {

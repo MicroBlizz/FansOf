@@ -1,6 +1,6 @@
 // Fans of Pop · ATAQUES DE LOS COMPAÑEROS, las cuentas (tarea #160, ADR 197). Dominio puro: sin reloj, azar, SAVE ni dibujo
 // (el tiempo `u` y el azar `rnd` entran como parámetros). Dice por dónde vuela un compañero de su hueco a la burbuja según la
-// forma de su habilidad (PP_ATAQUES.formas), cuánto se estira al despegar, cuántas cositas suelta la estela por segundo y en la
+// vuelo propio del compañero (o la forma de su habilidad, de respaldo), cuánto se estira al despegar, cuántas cositas suelta la estela por segundo y en la
 // ráfaga del golpe (intensidad FIESTA, la que eligió Pepins en el boceto) y qué forma, cositas y estilo ('hada' o 'acuarela',
 // revisión cozy del 21-11-2026) tiene cada compañero. Un compañero sin fila en PP_ATAQUES.cositas usa la forma de su
 // habilidad, una gotita de su color y el estilo que le toca por su id. Lo pinta js/ataques-fx.js con js/ataques-estilos.js.
@@ -41,6 +41,32 @@ const PP_ATAQUE = (() => {
     zigzag: (a, b, u) => { const p = recta(a, b, u), d = Math.hypot(b.x - a.x, b.y - a.y) || 1, n = { x: -(b.y - a.y) / d, y: (b.x - a.x) / d };
       const tri = 2 * Math.abs(2 * ((u * 3) % 1) - 1) - 1, o = 70 * tri * Math.sin(u * Math.PI);
       return con({ x: p.x + n.x * o, y: p.y + n.y * o }, tri * 0.3); },
+    // tres botes que van menguando (revisión del 21-11-2026: un ataque propio por compañero)
+    rebote: (a, b, u) => { const k = u * 3, i = Math.min(2, Math.floor(k)), e = k - i, p = recta(a, b, u);
+      return con({ x: p.x, y: p.y - [150, 105, 70][i] * 4 * e * (1 - e) }, (e - 0.5) * 0.3); },
+    // ondulando como una ola a lo largo de la recta
+    ola: (a, b, u) => { const p = recta(a, b, u), d = Math.hypot(b.x - a.x, b.y - a.y) || 1, o = 60 * Math.sin(u * Math.PI * 3) * Math.sin(u * Math.PI);
+      return con({ x: p.x - (b.y - a.y) / d * o, y: p.y + (b.x - a.x) / d * o }, Math.cos(u * Math.PI * 3) * 0.35); },
+    // estrella fugaz: sube a un lado de la burbuja y baja en diagonal, deprisa
+    fugaz: (a, b, u) => {
+      const lado = b.x >= a.x ? 1 : -1, alto = { x: b.x + 220 * lado, y: Math.min(a.y, b.y) - 340 };
+      if (u < 0.4) return con(curva(a, { x: a.x, y: alto.y }, alto, sube(u / 0.4)), 0);
+      return con(recta(alto, b, acelera((u - 0.4) / 0.6)), -lado * 0.6);
+    },
+    // como una hoja: sube y baja meciéndose de lado a lado
+    planeo: (a, b, u) => {
+      const alto = { x: lerp(a.x, b.x, 0.5), y: Math.min(a.y, b.y) - 260 };
+      if (u < 0.35) return con(curva(a, { x: a.x, y: alto.y }, alto, sube(u / 0.35)), 0);
+      const e = (u - 0.35) / 0.65, vaiven = Math.sin(e * Math.PI * 3);
+      return con({ x: lerp(alto.x, b.x, e) + vaiven * 70 * (1 - e), y: lerp(alto.y, b.y, e) }, vaiven * 0.5);
+    },
+    // cohete: sube rápido en zigzag por encima del tablero y cae en picado
+    cohete: (a, b, u) => {
+      const alto = { x: lerp(a.x, b.x, 0.5), y: Math.min(a.y, b.y) - 320 };
+      if (u >= 0.7) return con(recta(alto, b, acelera((u - 0.7) / 0.3)), Math.atan2(b.y - alto.y, b.x - alto.x) - Math.PI / 2);
+      const k = u / 0.7, p = recta(a, alto, sube(k)), tri = 2 * Math.abs(2 * ((k * 4) % 1) - 1) - 1;
+      return con({ x: p.x + 45 * tri * Math.sin(k * Math.PI), y: p.y }, tri * 0.4);
+    },
   });
   // dónde está el compañero en el vuelo `vuelo` (una de RUTAS; si no existe, el salto) en u ∈ [0, 1]
   const ruta = (vuelo, a, b, u) => (RUTAS[vuelo] || RUTAS.salto)(a, b, acota(u));
@@ -63,9 +89,11 @@ const PP_ATAQUE = (() => {
   const FIESTA = INTENSIDAD.fiesta;
   // cuántas cositas suelta la estela en un paso de dt segundos: `acc` es lo que sobró del paso anterior (fracción)
   function emite(acc, dt, porSegundo = FIESTA.porSegundo) { const total = acc + porSegundo * dt, n = Math.floor(total); return f({ n, acc: total - n }); }
-  // lo que añade cada golpe a sus ondas (los cozy de Pepins): una flor de burbujitas, un destello de escarcha que se abre
-  // como una flor, un brillo con estrellitas o una onda más
-  const EXTRA = f({ estallido: 'flor', zarpazo: 'escarcha', pellizco: 'escarcha', rayo: 'escarcha', chispa: 'chispa', destello: 'chispa', tintineo: 'chispa', onda: 'anillo', remolino: 'anillo' });
+  // lo que añade cada golpe a sus ondas (los cozy de Pepins), siempre con las cositas del compañero: una flor de burbujitas,
+  // un destello de escarcha, un brillo, una onda más y, desde la revisión del 21-11-2026, una ola de agua con perlita, fuegos
+  // artificiales pastel, pompas de jabón, una mancha de tinta pastel, un chaparrón de cositas y un corro de cositas que gira
+  const EXTRA = f({ estallido: 'flor', zarpazo: 'escarcha', pellizco: 'escarcha', rayo: 'escarcha', chispa: 'chispa', destello: 'chispa', tintineo: 'chispa', onda: 'anillo', remolino: 'anillo',
+    ola: 'ola', fuegos: 'fuegos', pompas: 'pompas', tinta: 'tinta', chaparron: 'chaparron', carrusel: 'carrusel' });
   // el golpe al llegar: sus ondas, su dibujo extra, cuántas cositas y gotitas salen y cuánto tiembla (`grande`: el del CEO)
   function golpe(golpeId, grande = false, I = FIESTA) {
     const m = grande ? 1.4 : 1, k = I.golpe * m;
@@ -80,12 +108,12 @@ const PP_ATAQUE = (() => {
     for (const letra of String(id)) suma += letra.codePointAt(0);
     return estilos[suma % estilos.length];
   }
-  // qué ataque tiene un compañero: `hab` es su habilidad (PP_COMP.INFO[id].hab) y `color` el suyo, para quien no tenga fila
+  // qué ataque tiene un compañero: el suyo propio (su fila de PP_ATAQUES.cositas: vuelo, golpe, cositas, color y estilo); la
+  // habilidad `hab` (PP_COMP.INFO[id].hab) pone el sonido y, a quien no tenga fila, la forma de respaldo con una gotita de `color`
   function de(id, hab, color, datos = PP_ATAQUES) {
-    const formaId = datos.porHabilidad[hab] || 'salto', forma = datos.formas[formaId];
-    const co = datos.cositas[id];
-    return f({ id, formaId, vuelo: forma.vuelo, golpe: forma.golpe, sonido: forma.sonido, color: co ? co.color : color, piezas: co ? co.piezas : f(['gotita']),
-      estilo: co ? co.estilo : estiloPorId(id, datos.estilos) });
+    const formaId = datos.porHabilidad[hab] || 'salto', forma = datos.formas[formaId], co = datos.cositas[id];
+    if (!co) return f({ id, formaId, vuelo: forma.vuelo, golpe: forma.golpe, sonido: forma.sonido, color, piezas: f(['gotita']), estilo: estiloPorId(id, datos.estilos) });
+    return f({ id, formaId, vuelo: co.vuelo, golpe: co.golpe, sonido: forma.sonido, color: co.color, piezas: co.piezas, estilo: co.estilo });
   }
   const elige = (lista, rnd) => lista[Math.min(lista.length - 1, Math.floor(rnd() * lista.length))];
   const entre = (a, b, rnd) => a + rnd() * (b - a);

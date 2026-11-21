@@ -1,8 +1,8 @@
 {
- "build": 1420,
- "hash": "27b1a3a",
- "fecha": "2026-11-21T16:22:35Z",
- "mensaje": "Island 0.4.3 #304 N7: cierre (versión, novedades en español e inglés, ficha y enlaces de los ADR 194 y 196 a los archivos nuevos)",
+ "build": 1421,
+ "hash": "76f0b0d",
+ "fecha": "2026-11-21T18:58:56Z",
+ "mensaje": "Pop: cada compañero que salta ataca con su forma propia y sus cositas (arreglo de la tarea #160, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.0",

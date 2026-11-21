@@ -6,7 +6,7 @@
 'use strict';
 AS.progreso = (() => {
   const STATS = () => ({ oroTotal: 0, enemigos: 0, jefes: 0, lineas: 0, nivelMax: 0, ascensos: 0, dorados: 0, sinFinMax: 0 });
-  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, dormido: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, regalo: AS.anuncios.regaloVacio(), diario: AS.regalo.vacio(), vol: 1, mus: 0.5 });
+  const nuevo = () => ({ v: 3, plumas: 0, mejor: 0, partidas: 0, equipo: {}, mochila: [], zonas: [], logros: {}, mejoras: {}, rarezas: 0, dormido: 0, maquinas: [], maquina: 'altar', dif: {}, sinFin: {}, stats: STATS(), consejos: {}, coronas: 0, inicio: false, aspectos: [], pieles: {}, regalo: AS.anuncios.regaloVacio(), diario: AS.regalo.vacio(), vol: 1, mus: 0.5 });
   const entero = (v, min = 0) => (Number.isFinite(v) && v >= min ? Math.floor(v) : min);
   const copia = (p, cambios) => ({ ...p, ...cambios });
 
@@ -21,6 +21,7 @@ AS.progreso = (() => {
     if (!j || typeof j !== 'object') return p;
     p.plumas = entero(j.plumas || j.gemas); p.mejor = entero(j.mejor); p.partidas = entero(j.partidas);
     leeEquipo(datos, j, p); leeZonas(datos, j, p); leeCompras(datos, j, p);
+    Object.assign(p, AS.coronas.lee(j), AS.aspectosTienda.lee(datos, j));   // las Coronas y los aspectos (ADR 200): un progreso de antes no los trae
     for (const k in (j.logros || {})) if (j.logros[k]) p.logros[k] = true;
     for (const k in p.stats) p.stats[k] = entero(j.stats && j.stats[k]);
     if (j.v === 3) for (const k in (j.consejos || {})) p.consejos[k] = true;   // los consejos de la versión anterior eran de otro juego

@@ -1,0 +1,103 @@
+{
+ "_": "Productos integrados de Google Play de Fans of Asalto (ADR 200): los mismos ids y precios que public.productos (servidor/, nodo p4-sql de la tarea #317). Los crea o actualiza herramientas/android/productos_play.py asalto (workflow «Productos de Play»). El tipo (consumible o no) no se declara aquí: lo decide el servidor al confirmar la compra (consume los repetibles, reconoce los únicos).",
+ "productos": [
+  {
+   "id": "asalto_sin_anuncios",
+   "eur": 6.99,
+   "textos": {
+    "es-ES": {
+     "title": "Sin anuncios",
+     "description": "Los premios de los anuncios de Fans of Asalto te llegan al tocar su botón, sin ver el anuncio. Para siempre; el tope de cada día sigue igual."
+    },
+    "en-US": {
+     "title": "No ads",
+     "description": "Fans of Asalto ad rewards reach you as soon as you tap their button, without watching the ad. Forever; the daily limit stays the same."
+    }
+   }
+  },
+  {
+   "id": "asalto_inicio",
+   "eur": 2.99,
+   "textos": {
+    "es-ES": {
+     "title": "Pack de inicio",
+     "description": "300 Coronas y el aspecto exclusivo CrazyBunny de Gala para Fans of Asalto. Se compra una sola vez."
+    },
+    "en-US": {
+     "title": "Starter pack",
+     "description": "300 Crowns and the exclusive Gala CrazyBunny skin for Fans of Asalto. One time only."
+    }
+   }
+  },
+  {
+   "id": "asalto_coronas_100",
+   "eur": 0.99,
+   "textos": {
+    "es-ES": {
+     "title": "100 Coronas",
+     "description": "100 Coronas para comprar aspectos de héroe en Fans of Asalto. No dan fuerza ni se usan en nada con azar."
+    },
+    "en-US": {
+     "title": "100 Crowns",
+     "description": "100 Crowns to buy hero skins in Fans of Asalto. They give no strength and are never used for anything with luck."
+    }
+   }
+  },
+  {
+   "id": "asalto_coronas_550",
+   "eur": 4.99,
+   "textos": {
+    "es-ES": {
+     "title": "550 Coronas",
+     "description": "550 Coronas para comprar aspectos de héroe en Fans of Asalto. No dan fuerza ni se usan en nada con azar."
+    },
+    "en-US": {
+     "title": "550 Crowns",
+     "description": "550 Crowns to buy hero skins in Fans of Asalto. They give no strength and are never used for anything with luck."
+    }
+   }
+  },
+  {
+   "id": "asalto_coronas_1200",
+   "eur": 9.99,
+   "textos": {
+    "es-ES": {
+     "title": "1.200 Coronas",
+     "description": "1.200 Coronas para comprar aspectos de héroe en Fans of Asalto. No dan fuerza ni se usan en nada con azar."
+    },
+    "en-US": {
+     "title": "1,200 Crowns",
+     "description": "1,200 Crowns to buy hero skins in Fans of Asalto. They give no strength and are never used for anything with luck."
+    }
+   }
+  },
+  {
+   "id": "asalto_coronas_2600",
+   "eur": 19.99,
+   "textos": {
+    "es-ES": {
+     "title": "2.600 Coronas",
+     "description": "2.600 Coronas para comprar aspectos de héroe en Fans of Asalto. No dan fuerza ni se usan en nada con azar."
+    },
+    "en-US": {
+     "title": "2,600 Crowns",
+     "description": "2,600 Crowns to buy hero skins in Fans of Asalto. They give no strength and are never used for anything with luck."
+    }
+   }
+  },
+  {
+   "id": "asalto_coronas_7000",
+   "eur": 49.99,
+   "textos": {
+    "es-ES": {
+     "title": "7.000 Coronas",
+     "description": "7.000 Coronas para comprar aspectos de héroe en Fans of Asalto. No dan fuerza ni se usan en nada con azar."
+    },
+    "en-US": {
+     "title": "7,000 Crowns",
+     "description": "7,000 Crowns to buy hero skins in Fans of Asalto. They give no strength and are never used for anything with luck."
+    }
+   }
+  }
+ ]
+}

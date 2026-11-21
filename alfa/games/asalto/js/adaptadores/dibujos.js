@@ -28,11 +28,13 @@ AS.dibujos = (() => {
     }
   }
   const hay = tipo => !!(IMG[tipo] && tiras()[tipo]);
+  // la imagen de una tira: la suya o, con un aspecto de la tienda (AS.pieles, ADR 200), su recoloreado
+  const fuente = (tipo, piel) => (piel ? AS.pieles.imagen(tipo, IMG[tipo], piel) : IMG[tipo]);
   // la misma tira teñida entera de un color (blanco para el destello del golpe, oro para el Animal Dorado)
-  function tenida(tipo, color, fuerza) {
-    const clave = tipo + color;
+  function tenida(tipo, color, fuerza, piel) {
+    const clave = tipo + color + (piel ? '|' + piel.id : '');
     if (TINTE[clave]) return TINTE[clave];
-    const im = IMG[tipo], cv = document.createElement('canvas'), c = cv.getContext('2d');
+    const im = fuente(tipo, piel), cv = document.createElement('canvas'), c = cv.getContext('2d');
     cv.width = im.width; cv.height = im.height;
     c.drawImage(im, 0, 0); c.globalCompositeOperation = 'source-atop'; c.globalAlpha = fuerza; c.fillStyle = color; c.fillRect(0, 0, cv.width, cv.height);
     return (TINTE[clave] = cv);
@@ -134,7 +136,8 @@ AS.dibujos = (() => {
     if (!hay(u.tipo)) return;
     const { tipo, esc } = tiraYEscala(u), d = tiras()[tipo], w = Math.round(d.w * esc), h = Math.round(d.h * esc);
     const f = cuadro(tipo, u.anim, u.tAnim || 0, u.dura), m = f.propio ? propio(u, esc) : suplido(u, u.lado === 'heroe' ? 1 : -1);
-    const img = u.dorado ? tenida(tipo, '#ffc21a', 0.42) : IMG[tipo], px = Math.round(x + m.dx), py = Math.round(y + m.dy), dy = Math.round(-h + 2 * esc);
+    const piel = u.lado === 'heroe' ? AS.pieles.de(u.tipo) : null;   // el aspecto de la tienda que lleva este héroe (solo con lo nuevo abierto)
+    const img = u.dorado ? tenida(tipo, '#ffc21a', 0.42, piel) : fuente(tipo, piel), px = Math.round(x + m.dx), py = Math.round(y + m.dy), dy = Math.round(-h + 2 * esc);
     g.save();
     g.globalAlpha = alfaDe(u);
     g.translate(px, py);
@@ -143,6 +146,7 @@ AS.dibujos = (() => {
     if (m.giro) g.rotate(m.giro);
     g.imageSmoothingEnabled = false;
     g.drawImage(img, f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), dy, w, h);
+    if (piel && vivo(u)) AS.pieles.adorno(g, piel, caja(tipo), d, esc, dy);
     if (u.destello > 0) { g.globalAlpha *= Math.min(1, u.destello); g.drawImage(tenida(tipo, '#ffffff', 1), f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), dy, w, h); }
     g.restore();
     conEmblemas(g, u, px, py, w, h);

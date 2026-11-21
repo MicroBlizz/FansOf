@@ -3,7 +3,7 @@
 // logros) y la partida en curso con su batalla. Se montan en principal.js con sus puertos: el almacén (carga/guarda el progreso y la
 // partida) y el azar. No tocan la pantalla: la pantalla los llama y pinta lo que devuelven.
 'use strict';
-AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día como 'AAAA-MM-DD', con la hora del servidor (principal.js)
+AS.creaCasos = ({ datos, almacen, azar, hoy = () => '', compras: puertosCompras = {} }) => {   // hoy: el día como 'AAAA-MM-DD', con la hora del servidor (principal.js)
   const PR = AS.progreso;
   let prog = PR.deJSON(datos, almacen.carga());
   let partida = null, doblada = null, batalla = null, visto = null, nObjeto = 0, cifras = AS.cifras.vacio();   // cifras: las del último combate y las de la partida entera
@@ -22,6 +22,8 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día
     guarda();
     return r;
   }
+  // las compras (Coronas, aspectos, Sin anuncios; ADR 200): sus casos de uso se mezclan con los de aquí
+  const compras = AS.creaCompras({ datos, leer: () => prog, escribe: p => { prog = p; guarda(); }, ...puertosCompras });
   const idObjeto = () => 'o' + Math.floor(azar() * 1e9).toString(36) + (++nObjeto).toString(36);
 
   /* ---------- la partida: lo que va dejando en el progreso ---------- */
@@ -103,6 +105,7 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día
   }
 
   return {
+    ...compras,
     get progreso() { return prog; },
     get partida() { return partida; },
     get batalla() { return batalla; },
@@ -133,7 +136,7 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día
     deshaceObjeto: id => conProgreso(PR.deshaceObjeto(datos, prog, id)),
     mejoraObjeto: hueco => conProgreso(PR.mejoraObjeto(datos, prog, hueco)),
     compraCofre: () => conProgreso(PR.compraCofre(datos, prog, azar, idObjeto()), v => v.p),
-    cobraLogro: id => conProgreso(PR.cobraLogro(datos, prog, id)),
+    cobraLogro: id => conProgreso(PR.cobraLogro(datos, prog, id), p => (compras.comprasActivas() ? AS.coronas.porLogro(datos, p, id) : p)),   // los logros grandes dan Coronas (ADR 200)
     // plumas de regalo del anuncio de la Tienda (tope por día; llamar solo DESPUÉS de verse el anuncio): AS.ok({ p, plumas }) o 'tope-diario'
     plumasDeRegalo: () => conProgreso(PR.regalaPlumas(datos, prog, hoy()), v => v.p),
     // el regalo diario (calendario de 7 días): lo que enseña la ventana, si hay uno por cobrar y cobrarlo o doblarlo (esto último, solo DESPUÉS de verse el anuncio)
@@ -163,7 +166,8 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '' }) => {   // hoy: el día
     // ver la guía otra vez: vuelve la partida guiada y también los consejos de la primera vez (los que empiezan por «c-»)
     repiteGuia() { for (const id of ['guia', ...Object.keys(prog.consejos).filter(k => k.startsWith('c-'))]) prog = PR.olvidaConsejo(prog, id); guarda(); },
     sonido(vol, mus) { prog = { ...prog, vol, mus }; guarda(); },
-    borraTodo() { prog = PR.nuevo(); partida = null; batalla = null; almacen.guardaPartida(null); guarda(); },
+    // «Borrar todo»: lo comprado con euros (Coronas, aspectos, Pack de inicio) se queda
+    borraTodo() { prog = { ...PR.nuevo(), ...AS.coronas.pagado(prog) }; partida = null; batalla = null; almacen.guardaPartida(null); guarda(); },
     // para la partida en la nube: cambiar el progreso entero por el que llega
     cambiaProgreso(j) { prog = PR.deJSON(datos, j); guarda(); },
 

@@ -27,7 +27,8 @@ AS.ventanas = (() => {
     if (viendo) return;
     viendo = true;
     let r = null;
-    try { r = await ANUNCIOS.ver(sitio); } catch (e) { console.error('anuncio', sitio, e); toast(tr('El anuncio no se ha podido ver')); } finally { viendo = false; }
+    // con «Sin anuncios» (ADR 200) el clic que pondría el anuncio da el premio directo, con los mismos topes: lo decide AS.casos.verAnuncio
+    try { r = await AS.casos.verAnuncio(sitio, s => ANUNCIOS.ver(s)); } catch (e) { console.error('anuncio', sitio, e); toast(tr('El anuncio no se ha podido ver')); } finally { viendo = false; }
     if (r && r.visto) alAcabar();
   }
   // el aviso del premio: qué ganas y cuánto (con el sonido del cofre)

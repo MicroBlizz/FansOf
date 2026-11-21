@@ -1,0 +1,28 @@
+// Fans of Asalto · Inglés: las compras (Coronas, aspectos, Sin anuncios, Pack de inicio; ADR 200). Una frase por línea.
+'use strict';
+IDIOMA.add({
+ "ASPECTOS": "SKINS",
+ "CON CORONAS": "WITH CROWNS",
+ "CON DINERO REAL": "WITH REAL MONEY",
+ "CON PLUMAS": "WITH FEATHERS",
+ "CORONAS": "CROWNS",
+ "MÁS CORONAS": "MORE CROWNS",
+ "Pack de inicio": "Starter pack",
+ "UNA SOLA VEZ": "ONE TIME ONLY",
+ "Puesto": "Equipped",
+ "{n} Coronas": "{n} Crowns",
+ "{n} Coronas y el aspecto CrazyBunny de Gala, que no se vende de otra forma.": "{n} Crowns and the Gala CrazyBunny skin, which is not sold any other way.",
+ "Las Coronas solo compran aspectos de héroe: no dan fuerza ni se usan en nada con azar. Las plumas no se venden.": "Crowns only buy hero skins: they give no strength and are never used for anything with luck. Feathers are never sold.",
+ "Solo cambian cómo se ve el héroe: no dan fuerza ni se usan en nada con azar. Cuestan siempre lo mismo.": "They only change how the hero looks: they give no strength and are never used for anything with luck. They always cost the same.",
+ "Los premios de los anuncios te llegan al tocar su botón, sin ver el anuncio. El tope de cada día sigue igual.": "Ad rewards reach you as soon as you tap their button, without watching the ad. The daily limit stays the same.",
+ "¡Sin anuncios! Los premios te llegan al tocar": "No ads! Rewards reach you as soon as you tap",
+ "Te faltan {n} Coronas": "You are {n} Crowns short",
+ "Solo en el Pack de inicio": "Only in the Starter pack",
+ "¡Comprado! {c}": "Bought! {c}",
+ "¡Es tuyo! {c}": "It's yours! {c}",
+ "MadSquirrel de Primavera": "Spring MadSquirrel",
+ "CrazyBunny Glacial": "Glacial CrazyBunny",
+ "SlyFox de Medianoche": "Midnight SlyFox",
+ "MechaVaca Cromada": "Chrome MechaVaca",
+ "CrazyBunny de Gala": "Gala CrazyBunny",
+});

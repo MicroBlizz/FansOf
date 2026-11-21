@@ -1,8 +1,8 @@
 {
- "build": 1428,
- "hash": "d458ccd",
- "fecha": "2026-11-21T22:26:30Z",
- "mensaje": "Asalto 0.6.3: regalo diario de 7 días y 3 misiones del día (tareas #313 y #317, Pepins)",
+ "build": 1429,
+ "hash": "467bdfe",
+ "fecha": "2026-11-21T22:56:25Z",
+ "mensaje": "Asalto: compras en modo de prueba tras el modo desarrollo (Coronas, aspectos, Sin anuncios, Pack de inicio y bolsas; ADR 200, tarea #317, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

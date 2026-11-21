@@ -7,7 +7,7 @@ AS.menu = (() => {
   const V = AS.ventanas, PR = AS.progreso;
   // quién sale en la escena del menú si no hay partida a medias (si la hay, sale su equipo)
   const REPARTO = ['heroe-mechavaca', 'heroe-zorro', 'heroe-bunny', 'heroe-mapache', 'heroe-ardilla'].map(tipo => ({ tipo, nivel: 1, dorado: false }));
-  let casos = null, t = 0, reparto = REPARTO;
+  let casos = null, tiendaMenu = null, t = 0, reparto = REPARTO;
   let avisadoDia = '';   // el día en que la ventana del regalo ya salió sola (una vez al día mientras la página siga abierta)
   const elegida = {};   // la dificultad marcada en cada zona (mientras el menú esté abierto): { zona: 0, 1 o 2 }
   const caja = () => $('#as-menu');
@@ -80,7 +80,7 @@ AS.menu = (() => {
   function pinta() {
     const g = casos.progreso, pend = casos.logrosPendientes().length, s = casos.guardada();
     reparto = s && s.heroes.length ? s.heroes : REPARTO;
-    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}</p>${htmlMeta()}
+    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}${casos.comprasActivas() ? ' ' + MONEDAS.icono('comprada') + g.coronas : ''}</p>${htmlMeta()}
       <div class="as-escena" id="as-escena"></div>${htmlSeguir()}
       ${htmlMaquina()}<div class="as-zonas">${ASALTO.zonas.map(htmlZona).join('')}</div>
       <div class="as-rejilla">${htmlRegalo()}${V.btn('as-m-mejoras', tr('MEJORAS'), 'as-oro')}${V.btn('as-m-equipo', tr('EQUIPO'), 'as-azul')}${V.btn('as-m-herreria', tr('HERRERÍA'), 'as-azul')}
@@ -162,37 +162,19 @@ AS.menu = (() => {
     const el = ventana(`<h2>${tr('HERRERÍA')}</h2><p class="as-plumas">${pluma(g.plumas)}</p><p class="as-nota">${tr('Cada golpe de martillo le da +1 % al objeto puesto.')}</p><ul class="as-lista">${filas || `<li class="as-nota">${tr('Ponte algo en el EQUIPO primero.')}</li>`}</ul>`);
     for (const b of el.querySelectorAll('[data-h]')) b.onclick = () => { if (sinPlumas(casos.mejoraObjeto(b.dataset.h))) AS.suena('para', 2); herreria(); };
   }
+  // lo que da un logro: sus plumas y, si es de los grandes y lo nuevo está abierto, unas Coronas (ADR 200)
+  const premioLogro = l => pluma(l.premio) + (casos.comprasActivas() && ASALTO.coronasLogros[l.id] ? ' ' + MONEDAS.icono('comprada') + ASALTO.coronasLogros[l.id] : '');
   function logros() {
     const g = casos.progreso, pend = casos.logrosPendientes().map(l => l.id);
     const filas = ASALTO.logros.map(l => {
       const hecho = g.logros[l.id], va = l.zona !== undefined ? (g.zonas.includes(l.zona) ? 1 : 0) + '/1' : Math.min(g.stats[l.stat] || 0, l.meta) + '/' + l.meta;
-      const der = hecho ? `<span class="as-hecho">${tr('COBRADO')}</span>` : pend.includes(l.id) ? `<button class="as-btn as-verde as-chico" data-l="${l.id}" type="button">${pluma(l.premio)}</button>` : `<span class="as-va">${va}</span>`;
-      return `<li class="as-item">${V.ico('trofeo')}<div><b>${tr(l.txt)}</b><span>${pluma(l.premio)}</span></div>${der}</li>`;
+      const der = hecho ? `<span class="as-hecho">${tr('COBRADO')}</span>` : pend.includes(l.id) ? `<button class="as-btn as-verde as-chico" data-l="${l.id}" type="button">${premioLogro(l)}</button>` : `<span class="as-va">${va}</span>`;
+      return `<li class="as-item">${V.ico('trofeo')}<div><b>${tr(l.txt)}</b><span>${premioLogro(l)}</span></div>${der}</li>`;
     }).join('');
     const el = ventana(`<h2>${tr('LOGROS')}</h2><ul class="as-lista">${filas}</ul>`);
     for (const b of el.querySelectorAll('[data-l]')) b.onclick = () => { if (casos.cobraLogro(b.dataset.l).ok) AS.suena('cofre'); logros(); };
   }
-  function tienda() {
-    const g = casos.progreso, E = ASALTO.equipo, A = ASALTO.anuncios.plumas, quedan = casos.regalosQuedan();
-    ventana(`<h2>${tr('TIENDA')}</h2><p class="as-plumas">${pluma(g.plumas)}</p>
-      <div class="as-oferta"><i class="as-cofre as-pix" style="${AS.dibujos.cssRetrato('cofre', 1)}"></i><div><b>${tr('COFRE DE EQUIPO')}</b><span>${tr('Un objeto al azar: normal, raro o épico.')}</span></div>${V.btn('as-t-cofre', pluma(E.cofreTienda), 'as-oro')}</div>
-      <div class="as-oferta">${V.ico('pluma', 'as-ico2')}<div><b>${tr('PLUMAS DE REGALO')}</b><span>${tr('Mira un anuncio y llévate {n} plumas.', { n: A.cantidad })} ${quedan ? tr('Hoy te quedan {n} de {de}.', { n: quedan, de: A.diarias }) : tr('Hoy ya no quedan: vuelve mañana.')}</span></div>${V.btn('as-t-anuncio', tr('ANUNCIO'), 'as-verde')}</div>`);
-    V.alPulsar('as-t-cofre', () => {
-      const r = casos.compraCofre();
-      if (!sinPlumas(r)) return;
-      const o = r.valor.objeto;
-      AS.suena('cofre'); toast(tr(E.rarezas[o.rareza].nombre) + ': ' + tr(E.nombres[o.hueco]) + ' +' + o.valor + ' % ' + tr(E.stats[o.stat]), true); tienda();
-    });
-    V.alPulsar('as-t-anuncio', () => {
-      if (!casos.regalosQuedan()) { AS.suena('noVale'); toast(tr('Hoy ya no quedan plumas de regalo. Vuelve mañana.')); return; }
-      V.anuncio('plumas', () => {
-        const r = casos.plumasDeRegalo();
-        if (r.ok) V.premio(tr('+{n} plumas', { n: r.valor.plumas }));
-        else toast(r.error === 'sin-dia' ? tr('No sabemos qué día es: inténtalo en un momento.') : tr('Hoy ya no quedan plumas de regalo. Vuelve mañana.'));
-        tienda();
-      });
-    });
-  }
+  const tienda = () => tiendaMenu.abre();   // la tienda: adaptadores/tienda-menu.js
   function ajustes() {
     const el = V.abre(`<h2>${tr('AJUSTES')}</h2><div id="as-opc"></div>${V.btn('as-borra', tr('BORRAR TODO EL PROGRESO'), 'as-rojo as-chico')}`, 'as-alta');
     V.ajustes(el.querySelector('#as-opc'), { casos }, () => { V.cierra(); pinta(); });
@@ -227,5 +209,5 @@ AS.menu = (() => {
     luces.push({ x: L.W / 2, y: 80, r: 300 + Math.sin(t * 2) * 16, col: [255, 170, 70], a: 0.28 });   // un resplandor detrás del título
     AS.lienzo.presenta(luces, r ? { y0: r.y, y1: L.H, a: 0.6 } : null);
   }
-  return { monta: c => { casos = c; }, abre, entra, fotograma, get abierto() { return !caja().hidden; } };
+  return { monta: c => { casos = c; tiendaMenu = AS.creaTiendaMenu({ casos: c, ventana, pluma, sinPlumas }); }, abre, entra, fotograma, get abierto() { return !caja().hidden; } };
 })();

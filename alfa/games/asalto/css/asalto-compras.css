@@ -1,0 +1,16 @@
+/* Fans of Asalto · estilos de las compras (ADR 200): las ofertas con euros de la tienda, el escaparate de aspectos y las bolsas de Coronas.
+   Las ofertas de pago van en su propio panel oscuro con borde de oro, aparte de los botones de plumas. Botones de 48 px o más. */
+.as-sep { margin: calc(var(--as-u) * 14) 0 calc(var(--as-u) * 4); text-align: left; color: #6a4a2a; }
+.as-corona-ico { vertical-align: calc(var(--as-u) * -4); margin-right: calc(var(--as-u) * 3); width: calc(var(--as-u) * 28); height: calc(var(--as-u) * 28); }
+.as-euros { margin: calc(var(--as-u) * 10) 0 calc(var(--as-u) * 18); padding: calc(var(--as-u) * 10); background: #241838; border: calc(var(--as-u) * 4) solid var(--as-oro); box-shadow: 0 0 0 calc(var(--as-u) * 3) var(--as-tinta); display: flex; flex-direction: column; gap: calc(var(--as-u) * 10); }
+.as-euros .med-an-oferta { --med-boton: #57b947; --med-texto: var(--as-crema); text-align: left; }
+.as-euros .med-an-oferta b { display: inline; font-weight: 400; color: var(--as-oro); font-size: calc(var(--as-u) * 34); }
+.as-euros .med-an-oferta p { font-size: calc(var(--as-u) * 26); line-height: 1.1; opacity: 1; }
+.as-euros .med-an-oferta + .med-an-oferta { padding-top: calc(var(--as-u) * 10); border-top: calc(var(--as-u) * 3) dashed #5b4586; }
+.as-euros .med-an-compra { min-height: 48px; min-width: 76px; font-family: inherit; font-size: calc(var(--as-u) * 32); line-height: 1; }
+.as-euros .med-an-siempre { font-family: inherit; font-size: calc(var(--as-u) * 22); }
+.as-euros .med-an-oferta em { font-size: calc(var(--as-u) * 26); color: var(--as-oro); }
+.as-lista .as-item .as-btn.as-chico, .as-nav .as-btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: calc(var(--as-u) * 4); }
+.as-nav { display: flex; gap: calc(var(--as-u) * 10); margin: calc(var(--as-u) * 6) 0; } .as-nav .as-btn { flex: 1; min-width: 0; padding-left: calc(var(--as-u) * 6); padding-right: calc(var(--as-u) * 6); }
+.as-euro { --c: #2e8b3d; }
+.as-aspecto .as-solo { color: #8a1f24; text-align: right; max-width: 38%; }

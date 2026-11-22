@@ -84,7 +84,7 @@
   function vistaA(F, ahora) {
     if (!F.length) return '<div class="vacio"><b>La cola está vacía</b>No hay trabajos en curso ni esperando.</div>';
     return F.map(f => { const [txt, cls] = estado(f);
-      return `<article class="cuenta"><div class="cab"><span class="estado ${cls}">${txt}</span><span class="codigo">${esc(f.t.nombre)}</span><span class="meta">${esc(f.t.flujo)} · ${esc(f.t.carril)} · ${esc(f.t.ref)}</span></div>
+      return `<article class="cuenta"><div class="cab"><span class="estado ${cls}">${txt}</span><span class="codigo">${esc(f.t.nombre)}</span><span class="meta">${esc(COLA_LOTES.etiqueta(f.t) || f.t.flujo)} · ${esc(f.t.carril)} · ${esc(f.t.ref)}</span></div>
         <div class="meta">media ${f.t.media === null ? '—' : fmt(f.t.media)} · <b>${esc(eta(f, ahora))}</b> ${COLA_CONTROL.botonCancelar(f.t, ahora, ocupado, sinMandos)}</div></article>`; }).join('')
       + (snap.extra ? `<div class="meta">Y ${snap.extra} trabajos más en cola que no se calculan aquí.</div>` : '');
   }
@@ -105,8 +105,8 @@
     const grupo = (wf, media) => gs[wf] || (gs[wf] = { ...nuevo(wf, media), tipos: {} });
     const tipo = (g, k, media) => g.tipos[k] || (g.tipos[k] = nuevo(NOMBRE_TIPO[k] || k, media));
     const suma = (x, f) => { x.n++; x.seg += f.resta || 0; x.off = x.off || f.apagado; };
-    F.forEach(f => { const [wf, t] = f.t.flujo.split(' · '), g = grupo(wf, f.t.media); suma(g, f); if (t) suma(tipo(g, t, f.t.media), f); });
-    recursos.forEach(r => { const g = grupo('Generar recurso', null), x = tipo(g, TIPO_DE_ETIQUETA[r.tipo] || 'imagen', null); g.hechos++; x.hechos++; g.usd += r.usd; x.usd += r.usd; });
+    F.forEach(f => { const [wf, t] = f.t.flujo.split(' · '), g = grupo(wf, f.t.media), unidad = f.t.media !== null && f.t.variantes > 1 ? f.t.media / f.t.variantes : f.t.media; suma(g, f); if (t) suma(tipo(g, t, unidad), f); });   // «Cada uno» de un lote: por pieza
+    recursos.forEach(r => { const g = grupo('Generar recurso', null), x = tipo(g, TIPO_DE_ETIQUETA[r.tipo] || 'imagen', null); g.hechos += r.n || 1; x.hechos += r.n || 1; g.usd += r.usd; x.usd += r.usd; });
     const orden = (a, b) => b.seg - a.seg || b.usd - a.usd;
     return Object.values(gs).map(g => ({ ...g, tipos: Object.values(g.tipos).sort(orden) })).sort(orden);
   }
@@ -123,7 +123,7 @@
       + grupos.map(g => g.tipos.length ? fila(g, 'cl-tot', false) + g.tipos.map(x => fila(x, 'cl-sub', true)).join('') : fila(g, '', true)).join('') + '</tbody></table>';
     return `<div class="caja"><div class="cl-gran">${fin ? 'La cola activa termina en ~' + fmt(fin) : 'Nada en marcha'}</div><div class="meta">${fin ? 'sobre las ' + hora(ahora + fin * 1000) + ' · sin contar espera' : 'los runners están apagados o la cola está vacía'}</div>`
       + (ret.length ? `<p class="aviso">${ret.length} trabajos retenidos (${fmt(segRet)} de ejecución). La estimación empieza a contar cuando el runner arranque.</p>` : '')
-      + tabla
+      + tabla + COLA_LOTES.linea(snap.lotes, fmt)
       + (hayHechos ? `<div class="meta">Coste: lo que habría costado con una API de pago (aprox.).${conSem ? '' : ' Para ver el % semanal, pon arriba el «Límite semanal de referencia (tokens)»: esta pestaña no puede leer tu límite de Claude.'}</div>` : '') + '</div>';
   }
   const tok = usd => Math.round(usd * 1e6 / PRECIO_CLAUDE);
@@ -132,8 +132,8 @@
     if (!snap.recursos.length) return '';
     const total = snap.recursos.reduce((a, r) => a + r.usd, 0);
     return `<div class="caja"><b>Recursos terminados · lo que habría costado generarlos con una API de pago (aprox.)</b>`
-      + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}</span><span class="meta">${esc(r.tipo)} · ${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">~${ktok(tok(r.usd))} tokens · ~${eur(r.usd)}${sem(r.usd)}</span></div>`).join('')
-      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(tok(total))} tokens · ~${eur(total)}${sem(total)}. Los tokens son los de salida de Claude que costarían lo mismo (${PRECIO_CLAUDE} $ el millón). Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). El tipo sale del título de cada pedido. Los pedidos antiguos, sin tipo en el título, cuentan como imagen. No distingue texto de edición de imagen ni los tres vídeos. Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;
+      + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}${r.n > 1 ? ' ×' + r.n : ''}</span><span class="meta">${esc(r.tipo)} · ${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">~${ktok(tok(r.usd))} tokens · ~${eur(r.usd)}${sem(r.usd)}</span></div>`).join('')
+      + `<div class="meta">Total de ${COLA_LOTES.cuenta(snap.recursos)} recursos: ~${ktok(tok(total))} tokens · ~${eur(total)}${sem(total)}. Los tokens son los de salida de Claude que costarían lo mismo (${PRECIO_CLAUDE} $ el millón). Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). El tipo sale del título de cada pedido. Los pedidos antiguos, sin tipo en el título, cuentan como imagen. No distingue texto de edición de imagen ni los tres vídeos. Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;
   }
 
   // ----- pantalla -----

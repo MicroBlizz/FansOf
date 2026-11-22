@@ -1,8 +1,8 @@
 {
- "build": 1434,
- "hash": "3aeeddb",
- "fecha": "2026-11-22T05:22:37Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/project-thread-oqjpx2",
+ "build": 1435,
+ "hash": "a459c5b",
+ "fecha": "2026-11-22T06:26:01Z",
+ "mensaje": "cola-actions 0.14.0: las medidas de cada run pasan de datos.ts a medida.ts, con sus primeros tests (#2, nodo n3)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

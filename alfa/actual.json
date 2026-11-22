@@ -1,8 +1,8 @@
 {
- "build": 1433,
- "hash": "3234fea",
- "fecha": "2026-11-22T04:58:12Z",
- "mensaje": "Auto 0.3.2 y Dungeons 0.2.7: su T global pasa a llamarse CASILLA, porque tapaba el T del comparador (T.tic is not a function, 0 comprobaciones); sin cambio al jugar, y la guía del comparador lo avisa",
+ "build": 1434,
+ "hash": "3aeeddb",
+ "fecha": "2026-11-22T05:22:37Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/project-thread-oqjpx2",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

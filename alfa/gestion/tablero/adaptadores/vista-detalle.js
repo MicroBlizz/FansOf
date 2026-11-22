@@ -46,13 +46,13 @@ TABLERO.vistaDetalle = (() => {
     <div class="accion"><select data-mover="${t.id}" aria-label="Mover a">${TABLERO.vista.opciones(TABLERO.vista.COLUMNAS, t.estado, esc)}</select><button type="button" data-editar="${t.id}">Editar</button></div>
     ${grafoHtml(t, esc, fecha)}${historial(t, esc, fecha)}`;
   // Si te toca revisarla (tarea #161): arriba «Probar» y «Qué mirar», lo demás plegado, y abajo «Pedir cambios» y «Dar por buena»
-  const revisando = (t, esc, fecha, yo) => `${TABLERO.vistaRevisar.probar(t, esc, true)}${TABLERO.vistaRevisar.queMirar(t, esc)}
+  const revisando = (t, esc, fecha, yo, alfa) => `${TABLERO.vistaRevisar.probar(t, esc, true, alfa)}${TABLERO.vistaRevisar.queMirar(t, esc)}
     <details class="tb-mas"><summary>Qué se hizo, enlaces e historial</summary>${cuerpo(t, esc, fecha)}</details>${TABLERO.vistaRevisar.barra(t, yo)}`;
-  // yo: quién mira (para revisar); cambios: true si se está escribiendo qué cambiar (la hoja de «Pedir cambios» ocupa el panel)
-  const detalle = (t, esc, fecha = String, yo = null, cambios = false) => (cambios && TABLERO.puedoRevisar(t, yo) ? TABLERO.vistaRevisar.hoja(t, esc)
+  // yo: quién mira (para revisar); cambios: true si se está escribiendo qué cambiar (la hoja de «Pedir cambios» ocupa el panel); alfa: los ids del catálogo para el botón Probar
+  const detalle = (t, esc, fecha = String, yo = null, cambios = false, alfa = []) => (cambios && TABLERO.puedoRevisar(t, yo) ? TABLERO.vistaRevisar.hoja(t, esc)
     : `<div class="cab"><span class="codigo">#${t.id}</span><b>${esc(t.corto || t.titulo)}</b>${TABLERO.vistaCompartir.boton(t)}<button type="button" data-cerrar aria-label="Cerrar el detalle">Cerrar</button></div>${t.corto ? `<div class="tb-largo">${esc(t.titulo)}</div>` : ''}
     <div class="meta">${etiquetas(t, esc)}</div>
     ${t.esperando ? `<div class="tb-espera"><b>Esperando:</b> ${esc(t.esperando)}</div>` : ''}
-    ${TABLERO.puedoRevisar(t, yo) ? revisando(t, esc, fecha, yo) : (t.estado === 'en_revision' ? TABLERO.vistaRevisar.probar(t, esc, true) : '') + cuerpo(t, esc, fecha)}`);
+    ${TABLERO.puedoRevisar(t, yo) ? revisando(t, esc, fecha, yo, alfa) : (t.estado === 'en_revision' ? TABLERO.vistaRevisar.probar(t, esc, true, alfa) : '') + cuerpo(t, esc, fecha)}`);
   return { detalle, nodoInfo: nodoHtml };
 })();

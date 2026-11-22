@@ -4,7 +4,7 @@
 // ---------- la ventana NOVEDADES ----------
 // Nunca se abre sola (ADR 101): si hay algo nuevo desde la última visita en este navegador (un boletín nuevo o la versión nueva de algún juego)
 // sale una tira discreta («Novedades · N nuevas») que la abre al pulsar. Desde la pestaña Novedades del menú se abre siempre, con todo.
-// JUEGOS NUEVOS sale de novedades/lista.js (escrito a mano) y ACTUALIZACIONES, del js/novedades.js de cada juego: la nota entera de su
+// JUEGOS NUEVOS sale de novedades/lista.js (escrito a mano) y ACTUALIZACIONES, del js/novedades.js de cada juego de la portada: la nota entera de su
 // última versión. Si ya habías venido, solo los juegos que han cambiado (y un botón para ver los demás).
 // tr() llega con el idioma, que se carga aparte: hasta entonces el texto va tal cual (y la página lo traduce sola al pintarlo)
 const t = (s, datos) => (typeof tr === 'function' ? tr(s, datos) : s);
@@ -74,26 +74,46 @@ nov.fondo.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarNovedades(); });
 
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
-// (las demos sin nucleo.js, como Fans of Roguelite, toman la versión de su primer informe)
-const JUEGOS = [['g-rumble', 'games/rumble/', 'FANS OF RUMBLE'], ['g-td', 'games/td/', 'FANS OF TD'], ['g-jump', 'games/jump/', 'FANS OF JUMP'], ['g-crush', 'games/crush/', 'FANS OF CRUSH'], ['g-survivors', 'games/survivors/', 'FANS OF SURVIVORS'],
-  ['g-tacticas', 'games/tacticas/', 'FANS OF RUMBLE: TÁCTICAS'], ['g-skate', 'games/skate/', 'FANS OF SKATE'], ['g-dark', 'games/dark/', 'FANS OF DARK'], ['g-island', 'games/island/', 'FANS OF ISLAND'], ['g-rouflage', 'games/rouflage/', 'FANS OF ROUFLAGE'], ['g-roguelite', 'games/roguelite/', 'FANS OF ROGUELITE'],
-  ['g-rumble-3d', 'games/rumble-3d/', 'FANS OF RUMBLE 3D'], ['g-tactics-advance', 'games/tactics-advance/', 'FANS OF TACTICS ADVANCE'], 
-  ['g-dungeons', 'games/dungeons/', 'FANS OF DUNGEONS'], ['g-karts', 'games/karts/', 'FANS OF KARTS'], ['g-boom', 'games/boom/', 'FANS OF BOOM'], ['g-cooking', 'games/cooking/', 'FANS OF COOKING'], ['g-taxi', 'games/taxi/', 'FANS OF TAXI'], ['g-recruit', 'games/recruit/', 'FANS OF RECRUIT'], ['g-terminal-shock', 'games/terminal-shock/', 'TERMINAL SHOCK'], ['g-ratkov', 'games/ratkov/', 'FANS OF RATKOV'], ['g-nova', 'games/nova/', 'FANS OF NOVA'], ['g-beams', 'games/beams/', 'FANS OF BEAMS'], ['g-snakes', 'games/snakes/', 'FANS OF SNAKES'], ['g-merge', 'games/merge/', 'FANS OF MERGE'], ['g-swipe', 'games/swipe/', 'FANS OF SWIPE'], ['g-pop', 'games/pop/', 'FANS OF POP'], ['g-vikings', 'games/vikings/', 'FANS OF VIKINGS'], ['g-goose', 'games/goose/', 'FANS OF GOOSE'], ['g-asalto', 'games/asalto/', 'FANS OF ASALTO'], ['g-kingdom', 'games/kingdom/', 'FANS OF KINGDOM'], ['g-auto', 'games/auto/', 'FANS OF AUTO'], ['g-shelter', 'games/shelter/', 'FANS OF SHELTER'], ['g-soccer', 'games/soccer/', 'FANS OF SOCCER'], ['g-wings', 'games/wings/', 'FANS OF WINGS'], ['g-spy', 'games/spy/', 'FANS OF SPY'], ['g-air', 'games/air/', 'FANS OF AIR'], ['g-basement', 'games/basement/', 'FANS OF BASEMENT'], ['g-zombies', 'games/zombies/', 'FANS OF ZOMBIES'], ['g-decks', 'games/decks/', 'FANS OF DECKS'], ['g-paperwork', 'games/paperwork/', 'FANS OF PAPERWORK', 'alfa'], ['g-tiny', 'games/tiny/', 'TINY FANS', 'alfa'], ['g-toys', 'games/toys/', 'FANS OF TOYS', 'alfa'], ['g-pinball', 'games/pinball/', 'FANS OF PINBALL', 'alfa']];
-// un cuarto valor 'alfa' = juego cuya tarjeta solo existe en la copia de pruebas (data-alfa): fuera de la alfa no sale aquí
-for (let i = JUEGOS.length - 1; i >= 0; i--) if (JUEGOS[i][3] === 'alfa' && !NUCLEO.alfa) JUEGOS.splice(i, 1);
+// (las demos sin nucleo.js, como Fans of Roguelite, toman la versión de su primer informe). Los juegos que se leen son las tarjetas de la
+// portada que ya están en la página (ADR 198): ninguna lista escrita aquí y ninguna petición más. Un juego nuevo solo pone su tarjeta.
+// Cada uno es [id de tarjeta, carpeta, nombre]; la carpeta sale del botón JUGAR (games/<juego>/) y el nombre, del título de la tarjeta.
+// Las tarjetas data-alfa solo existen en la copia de pruebas: fuera de la alfa no cuentan (biblioteca/tienda.js las quita después).
+function juegosDeLaPortada(raiz, alfa) {
+  const juegos = [];
+  for (const tarjeta of raiz.querySelectorAll('section.game')) {
+    const jugar = tarjeta.querySelector('a.play'), titulo = tarjeta.querySelector('h2');
+    if (!jugar || !titulo || (tarjeta.hasAttribute('data-alfa') && !alfa)) continue;
+    juegos.push([tarjeta.id, jugar.getAttribute('href'), titulo.textContent.trim()]);
+  }
+  return juegos;
+}
+const JUEGOS = juegosDeLaPortada(document, NUCLEO.alfa);
+// Los informes de un juego están en su js/novedades.js, salvo que su index.html cargue los de otro juego (Rumble V2 y Clásico usan los de Rumble):
+// entonces su tarjeta enseña esos, los mismos que ve quien lo juega, pero no repite fila en ACTUALIZACIONES ni cuenta en el aviso (ya los cuenta
+// el juego de donde salen). Se piden una vez por juego y los usan su tarjeta, ACTUALIZACIONES y el aviso.
+const NOVEDADES_DE_OTRO = /['"]\.\.\/\.\.\/games\/([a-z0-9-]+)\/js\/novedades\.js(?:\?v=[\d.]+)?['"]/;
+const fuenteNovedades = (dir, page) => { const otro = NOVEDADES_DE_OTRO.exec(page); return otro ? `games/${otro[1]}/js/novedades.js` : dir + 'js/novedades.js'; };
+const informe = dir => text(dir + 'index.html').then(page => {
+  const fuente = fuenteNovedades(dir, page);
+  return text(fuente).then(news => ({ page, news, propias: fuente === dir + 'js/novedades.js' }));
+});
+const quitaFila = id => { const f = document.getElementById('act-' + id); if (f) f.remove(); };
+const INFORMES = new Map(JUEGOS.map(([id, dir]) => [id, informe(dir)]));
 // se pinta con la página ya cargada: así el diccionario del idioma ya está y los textos salen traducidos
 const cargada = new Promise(r => (document.readyState === 'complete' ? r() : window.addEventListener('load', r)));
 for (const [id, , nombre] of JUEGOS) fila(id, nombre, '', t('Cargando…'));
-for (const [id, dir, nombre] of JUEGOS) {
-  Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js'), cargada]).then(([page, news]) => {
+for (const [id, , nombre] of JUEGOS) {
+  Promise.all([INFORMES.get(id), cargada]).then(([{ page, news, propias }]) => {
     const entries = grab(news, 'NEWS', '];') || [];
     const ver = (/nucleo\.js\?v=([\d.]+)/.exec(page) || [])[1] || (entries[0] && entries[0].v);
-    ENTRADAS[id] = { ver, entries };
-    show(id, ver, entries); parche(id, ver, entries, nombre); tiendaAlDia(id);
+    ENTRADAS[id] = { ver, entries, propias };
+    show(id, ver, entries); if (propias) parche(id, ver, entries, nombre); else quitaFila(id);
+    tiendaAlDia(id);
   }).catch(fail(id));
 }
-// el boletín se pide sin caché, como los informes de los juegos, para que salga al día en cuanto se publica
-Promise.all([text('novedades/lista.js'), cargada]).then(([src]) => { NOV_BOLETINES = grab(src, 'NOVEDADES_WEB', '];') || []; NOV_BOLETIN = NOV_BOLETINES[0] || null; for (const id of nuevos()) fila(id); pintarNuevos(NOV_BOLETIN); pintarDestacado(); })
+// el boletín se pide sin caché, como los informes de los juegos, para que salga al día en cuanto se publica (una vez: lo usa también el aviso)
+const BOLETIN = text('novedades/lista.js');
+Promise.all([BOLETIN, cargada]).then(([src]) => { NOV_BOLETINES = grab(src, 'NOVEDADES_WEB', '];') || []; NOV_BOLETIN = NOV_BOLETINES[0] || null; for (const id of nuevos()) fila(id); pintarNuevos(NOV_BOLETIN); pintarDestacado(); })
   .catch(() => { pintarNuevos(null); pintarDestacado(); });
 
 // ---------- ¿hay algo nuevo desde la última visita? ----------
@@ -117,11 +137,11 @@ function mostrarAviso(cambios, guardar) {
   document.getElementById('nov-aviso-x').onclick = visto;
   aviso.hidden = false;
 }
-Promise.allSettled([...JUEGOS.map(([id, dir]) => Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js')])), text('novedades/lista.js'), cargada])
+Promise.allSettled([...INFORMES.values(), BOLETIN, cargada])
   .then(() => new Promise(r => setTimeout(r, 50)))   // que se pinten las filas
   .then(() => {
     const antes = leerVisto(), ahora = { b: NOV_BOLETIN ? NOV_BOLETIN.id : '', v: {} };
-    for (const [id] of JUEGOS) if (ENTRADAS[id] && ENTRADAS[id].ver) ahora.v[id] = ENTRADAS[id].ver;
+    for (const [id] of JUEGOS) if (ENTRADAS[id] && ENTRADAS[id].propias && ENTRADAS[id].ver) ahora.v[id] = ENTRADAS[id].ver;
     const guardar = () => { try { localStorage.setItem(VISTO, JSON.stringify(ahora)); } catch (e) { /* sin almacenamiento: el aviso sale siempre */ } };
     const cambios = LO_NUEVO.cambios(antes, ahora);
     if (location.hash === '#novedades') { guardar(); abrirNovedades(); return; }   // desde el menú de otra página (…/#novedades): todas

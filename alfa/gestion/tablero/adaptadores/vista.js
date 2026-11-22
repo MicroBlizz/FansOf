@@ -27,6 +27,8 @@ TABLERO.vista = (() => {
     'accion': 'Esa acción no existe',
     'fuera-de-refinamiento': 'El informe solo se aprueba mientras la tarea está en ideas o en refinamiento',
     'reaccion': 'Esa reacción no existe',
+    'sin-catalogo': 'No se ha podido leer la lista de juegos: las tareas salen sin el botón Probar',
+    'catalogo-roto': 'La lista de juegos no vale: las tareas salen sin el botón Probar',
     'informe-cambiado': 'El informe ha cambiado desde que lo abriste: refresca y vuelve a leerlo',
   };
   const numeros = datos => (datos && Array.isArray(datos.requisitos) && datos.requisitos.length ? ': ' + datos.requisitos.map(n => '#' + n).join(', ') : '');
@@ -48,22 +50,22 @@ TABLERO.vista = (() => {
   const informe = (t, esc) => (TABLERO.sinRefinar(t.estado) && TABLERO.informeTexto(t)
     ? ` <span class="estado${t.informe === 'falta' || t.informe === 'cambios' ? ' tb-bloqueo' : ''}">${esc(TABLERO.informeTexto(t))}</span>` : '');
   const tonoDe = id => (TABLERO.columna(id) || { tono: 'transparent' }).tono;
-  const tarjeta = (t, esc, elegida, clase = '', extra = '', yo = null) => `<article class="cuenta tb-tarea${clase}${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
+  const tarjeta = (t, esc, elegida, clase = '', extra = '', yo = null, alfa = []) => `<article class="cuenta tb-tarea${clase}${t.id === elegida ? ' elegida' : ''}" draggable="true" data-id="${t.id}" tabindex="0" style="border-left:4px solid ${tonoDe(t.estado)}" aria-label="Tarea #${t.id}: ${esc(t.titulo)}">
     ${cabeza(t, esc)}
     <div class="meta"><span class="estado">${esc(t.juego)}</span> <span class="estado">${esc(TABLERO.responsableTexto(t))}</span>${pidio(t, esc)}${TABLERO.vistaRevisar.urgente(t)}${informe(t, esc)}${avanceGrafo(t)}${bloqueo(t)}</div>
-    ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}${TABLERO.vistaReacciones.fila(t, esc)}${extra}${TABLERO.vistaRevisar.tarjeta(t, yo, esc)}</article>`;
+    ${t.esperando ? `<div class="tb-espera">Esperando: ${esc(t.esperando)}</div>` : ''}${TABLERO.vistaReacciones.fila(t, esc)}${extra}${TABLERO.vistaRevisar.tarjeta(t, yo, esc, alfa)}</article>`;
   // Con una sola columna a la vista (ADR 147; Pepins, 18-11-2026: «muy vacío»), cada tarea es una fila ancha en tres partes: número, título y etiquetas;
   // «Qué hay que hacer»; y «Está hecho cuando…» con su último cambio. Los textos largos se cortan con «…» (el detalle los enseña enteros)
   const trozo = (clase, titulo, texto, esc) => `<div class="tb-trozo ${clase}"><b>${titulo}</b><div class="tb-texto">${texto ? esc(texto) : '<span class="meta">Sin escribir</span>'}</div></div>`;
-  const fila = (t, esc, elegida, fecha, yo) => tarjeta(t, esc, elegida, ' tb-fila', trozo('tb-que', 'Qué hay que hacer', t.descripcion, esc) + trozo('tb-cuando', 'Está hecho cuando…', t.criterio, esc)
-    + (t.actualizado && fecha ? `<div class="meta tb-cambio">Último cambio: ${esc(fecha(t.actualizado))}</div>` : ''), yo);
+  const fila = (t, esc, elegida, fecha, yo, alfa) => tarjeta(t, esc, elegida, ' tb-fila', trozo('tb-que', 'Qué hay que hacer', t.descripcion, esc) + trozo('tb-cuando', 'Está hecho cuando…', t.criterio, esc)
+    + (t.actualizado && fecha ? `<div class="meta tb-cambio">Último cambio: ${esc(fecha(t.actualizado))}</div>` : ''), yo, alfa);
   // Cabecera de la columna con su color y, debajo, su frase de ayuda (qué significa estar ahí). Es un botón (Pepins, 19-11-2026: en el PC sin la fila de botones
   // repetida): pulsarla deja solo esa columna y, si ya es la elegida (`activa`), vuelve a todas
   const cabecera = (c, esc, activa) => `<h3 class="tb-cab" style="background:${c.tono}"><button type="button" class="tb-cab-boton" data-ver="${activa ? '' : c.id}" aria-pressed="${activa}" title="${activa ? 'Ver todas las columnas' : 'Ver solo esta columna'}">${esc(c.titulo)} <span>${c.tareas.length}</span></button></h3>${c.ayuda ? `<div class="tb-ayuda">${esc(c.ayuda)}</div>` : ''}`;
   // Debajo de las tarjetas, «Ver las N más» o «Ver menos» si la columna pasa del tope (TABLERO.recorta; tarea #301). Sin recortar (c.vistas no viene), todas
   const despliega = c => (c.mas ? `<button type="button" class="tb-vermas" data-despliega="${c.id}" aria-expanded="false">${c.mas === 1 ? 'Ver 1 más' : `Ver las ${c.mas} más`}</button>`
     : c.menos ? `<button type="button" class="tb-vermas" data-despliega="${c.id}" aria-expanded="true">Ver menos</button>` : '');
-  const columna = (c, esc, elegida, fecha, enFilas, yo, activa = false) => `<section class="tb-col" data-columna="${c.id}">${cabecera(c, esc, activa)}${(c.vistas || c.tareas).map(t => (enFilas ? fila(t, esc, elegida, fecha, yo) : tarjeta(t, esc, elegida, '', '', yo))).join('') || '<div class="meta">Vacía</div>'}${despliega(c)}</section>`;
+  const columna = (c, esc, elegida, fecha, enFilas, yo, activa = false, alfa = []) => `<section class="tb-col" data-columna="${c.id}">${cabecera(c, esc, activa)}${(c.vistas || c.tareas).map(t => (enFilas ? fila(t, esc, elegida, fecha, yo, alfa) : tarjeta(t, esc, elegida, '', '', yo, alfa))).join('') || '<div class="meta">Vacía</div>'}${despliega(c)}</section>`;
   // Los botones de arriba (ADR 147): «Todas» y uno por columna, con su recuento. Al pulsar uno solo se ve esa columna, con una tarea por fila a lo ancho.
   // Solo se ven en el móvil: en pantalla ancha hacen lo mismo las cabeceras de las columnas (Pepins, 19-11-2026). En el móvil (menos de 700 px) «Todas» ocupa una fila arriba y enseña el mapa pequeño de las seis columnas (tarea #147)
   const boton = (id, titulo, tono, cuantas, activo, esc) => `<button type="button" class="tb-ver${activo ? ' activo' : ''}" data-ver="${id}" style="--tono:${tono}" aria-pressed="${activo}"><b>${cuantas}</b>${esc(titulo)}</button>`;
@@ -72,12 +74,12 @@ TABLERO.vista = (() => {
     return `<div class="tb-botones">${todas}${columnas.map(c => boton(c.id, c.titulo, c.tono, c.tareas.length, c.id === vista, esc)).join('')}</div>`;
   };
   // En el móvil: sin columna elegida («Todas»), el mapa pequeño de las seis (tarea #147); con una, esa columna con sus tarjetas
-  const movil = (columnas, esc, elegida, vista, yo) => `<div class="tb-movil">${vista ? columna(TABLERO.columnasVisibles(columnas, vista)[0], esc, elegida, null, false, yo, true) : TABLERO.vistaMapa.html(columnas, esc, elegida)}</div>`;
+  const movil = (columnas, esc, elegida, vista, yo, alfa) => `<div class="tb-movil">${vista ? columna(TABLERO.columnasVisibles(columnas, vista)[0], esc, elegida, null, false, yo, true, alfa) : TABLERO.vistaMapa.html(columnas, esc, elegida)}</div>`;
   // elegida: el id de la tarea abierta en el panel (su tarjeta se marca); vista: la columna elegida con los botones (null = todas); fecha: cómo se escribe una fecha;
-  // yo: quién mira ('pepins', 'arkioner' o null), para los botones de revisar de las tarjetas (tarea #161)
-  const html = (columnas, esc, elegida = null, vista = null, fecha = null, yo = null) => {
+  // yo: quién mira ('pepins', 'arkioner' o null), para los botones de revisar de las tarjetas (tarea #161); alfa: los ids del catálogo, para el botón Probar
+  const html = (columnas, esc, elegida = null, vista = null, fecha = null, yo = null, alfa = []) => {
     const visibles = TABLERO.columnasVisibles(columnas, vista), una = visibles.length === 1;
-    return `${botones(columnas, vista, esc)}<div class="tb-tablero${una ? ' tb-una' : ''}">${visibles.map(c => columna(c, esc, elegida, fecha, una, yo, una && !!vista)).join('')}</div>${movil(columnas, esc, elegida, vista, yo)}`;
+    return `${botones(columnas, vista, esc)}<div class="tb-tablero${una ? ' tb-una' : ''}">${visibles.map(c => columna(c, esc, elegida, fecha, una, yo, una && !!vista, alfa)).join('')}</div>${movil(columnas, esc, elegida, vista, yo, alfa)}`;
   };
 
   // Los filtros de arriba: tarea nueva, refrescar, la búsqueda (filtra mientras se escribe), juego, responsable, persona (con «todos»; ADR 136: siempre empieza en Todos)

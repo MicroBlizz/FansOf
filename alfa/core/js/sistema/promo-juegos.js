@@ -1,30 +1,27 @@
 // Fans Of · PROMO de nuestros juegos: mientras no haya anuncios pagados, el anuncio de prueba enseña la miniatura de OTRO juego activo
 // (al azar, nunca el actual) y al pulsarla se abre su ficha en la biblioteca de la web. Cada juego solo llama a PROMO.html() y PROMO.enlaza(raiz).
-// Salen todos los juegos vivos con tarjeta en la biblioteca (sin el Archivo), y más a menudo los más votados: la regla está en promo-reglas.js (ADR 109).
+// Los juegos salen del catálogo biblioteca/juegos.json (ADR 198), que se pide una vez al cargar: salen los vivos (sin alfa ni Archivo) y más a menudo los más
+// votados; la regla y la validación del catálogo están en promo-reglas.js (ADR 109). Sin catálogo, html() devuelve '' y sale el anuncio de prueba.
 'use strict';
 const PROMO = (() => {
-  // [id, nombre, capturas de la ficha, ¿de «Nuestros favoritos»?, nombre de las capturas si no es el id]: todo lo vivo con tarjeta en la portada, en su orden (sin el Archivo). Al añadir,
-  // archivar o cambiar las capturas de una tarjeta se toca aquí: tests/core/promo.test.mjs falla si no coincide con web/index.html (ADR 109).
-  const JUEGOS = [
-    ['rumble', 'Fans Of Rumble', 2], ['td', 'Fans Of TD', 2], ['rouflage', 'Fans Of Rouflage', 2, true], ['karts', 'Fans Of Karts', 3, true],
-    ['ratkov', 'Fans Of Ratkov', 2], ['jump', 'Fans Of Jump', 2], ['crush', 'Fans Of Crush', 2], ['survivors', 'Fans Of Survivors', 2],
-    ['tacticas', 'Fans Of Rumble: Tácticas', 2], ['roguelite', 'Fans Of Roguelite', 2], ['dungeons', 'Fans Of Dungeons', 2],
-    ['recruit', 'Fans Of Recruit', 3], ['nova', 'Fans Of Nova', 5], ['shelter', 'Fans Of Shelter', 2], ['soccer', 'Fans Of Soccer', 2],
-    ['basement', 'Fans Of Basement', 2], ['zombies', 'Fans Of Zombies', 2], ['wings', 'Fans Of Wings', 2], ['spy', 'Fans Of Spy', 2], ['auto', 'Fans Of Auto', 2],
-    ['asalto', 'Fans Of Asalto', 2], ['kingdom', 'Fans Of Kingdom', 2], ['goose', 'Fans Of Goose', 2], ['vikings', 'Fans Of Vikings', 2], ['merge', 'Fans Of Merge', 2],
-    ['swipe', 'Fans Of Swipe', 2], ['panic', 'Fans Of Panic', 2], ['pop', 'Fans Of Pop', 2], ['snakes', 'Fans Of Snakes', 3],
-    ['beams', 'Fans Of Beams', 3], ['decks', 'Fans Of Decks', 2], ['boom', 'Fans Of Boom', 2], ['cooking', 'Fans Of Cooking', 2],
-    ['taxi', 'Fans Of Taxi', 2], ['pets', 'Fans Of Pets', 2], ['chef', 'Fans Of Chef', 2], ['rumble-v2', 'Fans Of Rumble V2', 2],
-    ['rumble-3d', 'Fans Of Rumble 3D', 2], ['tactics-advance', 'Fans Of Tactics Advance', 2], ['terminal-shock', 'Terminal Shock', 2],
-    ['island', 'Fans Of Island', 2, false, 'island-lonchas2'],   // capturas con nombre nuevo para que el móvil no enseñe las viejas guardadas (ADR 192; otra vez con el conejo y el mar de la 0.4.2)
-  ].map(([id, nombre, caps, favorito, foto]) => ({ id, nombre, caps, foto: foto || id, tipo: favorito ? '' : 'PROTOTIPO' }));
-  // los que tienen cartel propio en biblioteca/anuncios/<id>.jpg (el anuncio empieza por él); uno sin cartel empieza por su primera captura (hoy les falta a wings, a spy y a kingdom)
-  const CARTEL = new Set(['asalto', 'auto', 'basement', 'beams', 'boom', 'chef', 'cooking', 'crush', 'decks', 'dungeons', 'goose', 'island', 'jump', 'karts', 'merge',
-    'nova', 'panic', 'pets', 'pop', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble', 'rumble-3d', 'rumble-v2', 'shelter', 'snakes', 'soccer', 'survivors', 'swipe',
-    'tacticas', 'tactics-advance', 'taxi', 'td', 'terminal-shock', 'vikings', 'zombies']);
   const nativa = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
   // la biblioteca está dos carpetas por encima del juego (también en /alfa/); en la app de Android, la web de verdad
   const base = () => nativa() ? 'https://fansof.games/' : '../../';
+  // el catálogo de juegos: se pide una sola vez, al cargar el script y sin esperar a la cuenta.
+  // estado: 'cargando' → 'listo' | 'sin-catalogo' (sin fetch, sin red, 404, JSON que no vale o ningún juego vivo bueno)
+  let juegos = [], estado = 'cargando';
+  const sinCatalogo = () => { juegos = []; estado = 'sin-catalogo'; };
+  const recibe = datos => { juegos = PROMO_REGLAS.catalogo(datos); estado = juegos.length ? 'listo' : 'sin-catalogo'; };
+  const pideCatalogo = () => {
+    if (typeof fetch !== 'function') { sinCatalogo(); return; }
+    estado = 'cargando';
+    fetch(base() + 'biblioteca/juegos.json').then(r => { if (!r.ok) throw new Error('catálogo ' + r.status); return r.json(); })
+      .then(recibe, sinCatalogo);   // solo la red, el 404 o un JSON roto dejan sin catálogo; un fallo de programación en recibe sale a la caja negra
+  };
+  pideCatalogo();
+  // paso aparte: los candidatos del anuncio, o sea los vivos válidos del catálogo (PROMO_REGLAS.catalogo); sus ids van luego a PROMO_REGLAS.elige.
+  // Si algún día un juego pide quedarse fuera del anuncio (#327, ADR 203), este es el sitio donde se filtra.
+  const candidatos = () => juegos;
   // los votos públicos de la portada (solo números): se piden una vez por sesión, la primera vez que hace falta; sin ellos todos pesan igual
   let votos = null, pedidos = false;
   const pideVotos = () => {
@@ -33,7 +30,7 @@ const PROMO = (() => {
     // sin red o con una respuesta que no es el mapa { id: { puntos, ultimo } }: al azar sin pesos, y se reintenta en el siguiente anuncio
     CUENTA.rpc('votos_destacados', {}).then(d => { if (d && typeof d === 'object' && !Array.isArray(d)) votos = d; else pedidos = false; }).catch(() => { pedidos = false; });
   };
-  const elige = () => { pideVotos(); const id = PROMO_REGLAS.elige(JUEGOS.map(j => j.id), votos, AJUSTES.id, Math.random()); return JUEGOS.find(j => j.id === id) || null; };
+  const elige = () => { pideVotos(); const id = PROMO_REGLAS.elige(candidatos().map(j => j.id), votos, AJUSTES.id, Math.random()); return candidatos().find(j => j.id === id) || null; };
   const estilo = () => {
     if (document.getElementById('promo-css')) return;
     const s = document.createElement('style'); s.id = 'promo-css';
@@ -55,15 +52,17 @@ const PROMO = (() => {
       + V + ' .anuncio-et, ' + V + ' .ad-bar, ' + V + ' .en-ad-bar { z-index: 1; }';
     document.head.appendChild(s);
   };
-  // el anuncio (vacío si no hay otro juego): un pase de imágenes con el banner del juego primero y sus capturas después; uno nuevo cada vez que sale
+  const escapa = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  // el anuncio (vacío si no hay catálogo o no hay otro juego): un pase de imágenes con el banner del juego primero y sus capturas después; uno nuevo cada vez que sale
+  // sin catálogo (por ejemplo, sin red al abrir el juego) se vuelve a pedir en el siguiente anuncio, como los votos; este sale sin juego
   const html = () => {
+    if (estado === 'sin-catalogo') pideCatalogo();
     const j = elige(); if (!j) return '';
     estilo();
-    const r = `${base()}biblioteca/`, fotos = CARTEL.has(j.id) ? [`${r}anuncios/${j.id}.jpg`] : [];
-    for (let i = 1; i <= j.caps; i++) fotos.push(`${r}capturas/${j.foto}-${i}.jpg`);
+    const r = `${base()}biblioteca/`, fotos = (j.cartel ? [`${r}anuncios/${j.id}.jpg`] : []).concat(j.capturas.map(c => `${r}capturas/${c}`));
     const sl = fotos.map((f, i) => `<div class="promo-sl${i ? '' : ' on'}" style="background-image:url('${f}')"><img src="${f}" alt="" onerror="this.parentNode.remove()"></div>`).join('');
     return `<a class="promo-ad" data-promo="${j.id}" href="${base()}#juego-${j.id}" target="_blank" rel="noopener"><div class="promo-pase">${sl}</div>`
-      + `${j.tipo ? `<i class="promo-marca">${tr(j.tipo)}</i>` : ''}<div class="promo-pie"><b>${j.nombre}</b><span>${tr('Pulsa para conocerlo')}</span></div></a>`;
+      + `${j.favorito ? '' : `<i class="promo-marca">${tr('PROTOTIPO')}</i>`}<div class="promo-pie"><b>${escapa(j.nombre)}</b><span>${tr('Pulsa para conocerlo')}</span></div></a>`;
   };
   // las imágenes pasan solas cada pocos segundos; el pase se para al desaparecer el anuncio
   const pase = a => {
@@ -87,5 +86,5 @@ const PROMO = (() => {
     };
   };
   if (typeof hook === 'function') hook('cuenta', pideVotos);   // con la sesión lista, para que ya el primer anuncio salga con sus pesos
-  return { JUEGOS, CARTEL, elige, html, enlaza };
+  return { elige, html, enlaza, estado: () => estado };
 })();

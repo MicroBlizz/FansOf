@@ -2,11 +2,11 @@
 // el detalle de una tarea (o el formulario) en el panel de la derecha, filtra mientras se busca, avisa de las tareas parecidas al escribir un título,
 // lee lo escrito, pone las reacciones (con control-reacciones.js), arrastra las tarjetas y le pide cada cosa a los casos de uso
 // (aplicación). Es el único archivo del tablero que toca el DOM. Recibe de principal.js los casos, los ids de sus huecos, `esc`, `fecha` y `textoError`
-// de /gestion, y `comparte(t)` y `tareaInicial` (el número del enlace directo ?tarea=N, o null; tarea #302); no sabe nada del servidor.
+// de /gestion, `juegosAlfa()` (los ids de los juegos con página en la alfa, del catálogo: un resultado; sin ellos no hay botón Probar), y `comparte(t)` y `tareaInicial` (el número del enlace directo ?tarea=N, o null; tarea #302); no sabe nada del servidor.
 // Atrás (tarea #322, ADR 201): `alCambiarPanel(abierto)` avisa cuando el panel se abre o se cierra (lo que abre el enlace directo al cargar no se avisa:
 // no es un toque y no deja entrada en el historial), y `cierraCapa()` lo cierra al volver atrás.
 'use strict';
-TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaInicial = null, alCambiarPanel = () => {} }) => {
+TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, juegosAlfa = async () => TABLERO.ok([]), tareaInicial = null, alCambiarPanel = () => {} }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
@@ -14,7 +14,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
   // desplegadas: las columnas con «Ver las N más» abierto (tarea #301); se recuerda mientras la página está abierta
   const desplegadas = new Set();
   let deEnlace = tareaInicial;   // la tarea del enlace directo: se abre una vez, en la primera carga, si está en el tablero
-  let yo = null, reac = null, vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
+  let alfa = [], falloCatalogo = null, yo = null, reac = null, vista = null, juegos = [], tareas = [], columnas = [], descartadas = 0, pedido = 0, ocupado = false, panel = null, pidoParecidas = 0, esperaParecidas = null, avisoNumero = false;
   const aviso = texto => { el(hueco.aviso).textContent = texto; };
   const avisaError = r => aviso(r.error === 'sin-servidor' ? TABLERO.vista.mensaje(r.error) + ' (' + textoError(r.datos.causa) + ')' : TABLERO.vista.mensaje(r.error, r.datos));
   const leeFormulario = f => Object.fromEntries([...new FormData(f).entries()]);
@@ -24,7 +24,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
 
   const pintaTablero = () => {
     el(hueco.bandeja).innerHTML = TABLERO.vistaRevisar.bandeja(TABLERO.bandeja(tareas, yo), yo, filtro.bandeja, esc);   // «Te toca», lo primero (tarea #161)
-    el(hueco.lista).innerHTML = TABLERO.vista.html(TABLERO.recorta(columnas, filtro, desplegadas), esc, panel && panel.id, vista, fecha, yo) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
+    el(hueco.lista).innerHTML = TABLERO.vista.html(TABLERO.recorta(columnas, filtro, desplegadas), esc, panel && panel.id, vista, fecha, yo, alfa) + (descartadas ? `<div class="meta">${descartadas} tareas con datos raros no se han enseñado.</div>` : '');
   };
   // El panel se pinta según `panel`; si la tarea abierta ya no está (filtro o borrada), se cierra. El formulario no se repinta al recargar, para no perder lo escrito
   function pintaPanel(conFormulario) {
@@ -32,7 +32,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
     if (panel && panel.id && !t) panel = null;
     el(hueco.vista).classList.toggle('abierto', !!panel);
     caja.hidden = !panel;
-    if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha, yo, !!panel.cambios);
+    if (t) caja.innerHTML = TABLERO.vistaDetalle.detalle(t, esc, fecha, yo, !!panel.cambios, alfa);
     else if (panel && conFormulario) { caja.innerHTML = panel.rapida ? TABLERO.vista.formularioRapido(juegos, esc) : TABLERO.vista.formulario(panel.formulario, esc); caja.querySelector('input[name=titulo]').focus(); }
     else if (!panel) caja.innerHTML = '';
     avisaPanel();
@@ -46,8 +46,19 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
     if (panel) cierra();
   }
 
+  // El catálogo se pide una vez, al conectar. Si llega después de pintar, se repinta para que salgan los botones Probar (el panel, solo si no se está
+  // escribiendo un cambio, para no perder lo escrito). Si falla, no hay botón y se dice, sin tapar otro aviso que ya esté puesto (el del servidor manda)
+  async function cargaJuegos() {
+    const r = await juegosAlfa();
+    if (r.ok) alfa = r.valor; else falloCatalogo = r.error;
+    if (!r.ok && !el(hueco.aviso).textContent) aviso(TABLERO.vista.mensaje(r.error, r.datos));
+    if (!tareas.length) return;
+    pintaTablero();
+    if (!(panel && panel.cambios)) pintaPanel(false);
+  }
+
   async function cargar() {
-    aviso('');
+    aviso(falloCatalogo ? TABLERO.vista.mensaje(falloCatalogo) : '');
     const este = ++pedido, r = await casos.cargar(filtro);
     if (este !== pedido) return;   // llegó otra carga después: esta ya es vieja
     if (!r.ok) { aviso(/does not exist|PGRST202|404/.test(String(r.datos.causa && r.datos.causa.message)) ? 'Faltan los SQL del tablero en Supabase (servidor/117 a 120).' : textoError(r.datos.causa)); return; }
@@ -116,6 +127,7 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, tareaIn
     conectaTarjetas();
     conectaPanel();
     conectaArrastre();
+    cargaJuegos();
   }
   // filtrar (juego, responsable o lo buscado) reparte otra vez lo ya cargado, sin ir al servidor
   function refiltra(clave, valor) {

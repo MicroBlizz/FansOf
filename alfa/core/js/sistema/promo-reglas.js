@@ -2,6 +2,7 @@
 // Salen todos los juegos vivos menos aquel en el que se está, y más a menudo los más votados, por escalones: los 4 con más puntos pesan 3,
 // los demás con algún punto pesan 2 y los que no tienen ninguno pesan 1 (así un prototipo recién llegado sigue saliendo).
 // Los puntos son los de «Los más pedidos» de la portada (votos_destacados, ADR 103): { idDelJuego: { puntos, ultimo } }. Sin votos, todos pesan igual.
+// También valida el catálogo de juegos (biblioteca/juegos.json, ADR 198): solo pasan los «vivo» bien formados; un registro malo se ignora y no tira el resto.
 'use strict';
 const PROMO_REGLAS = (() => {
   const PESOS = Object.freeze({ cabeza: 3, votado: 2, resto: 1 }), CABEZA = 4;
@@ -26,6 +27,20 @@ const PROMO_REGLAS = (() => {
     for (const x of l) { if (r < x.peso) return x.id; r -= x.peso; }
     return l[l.length - 1].id;
   };
-  return { PESOS, cabeza, pesos, elige };
+  // ---- el catálogo de juegos (ADR 198): son datos de fuera, así que se mira cada campo ----
+  const ID = /^[a-z0-9-]+$/, CAPTURA = /^[a-z0-9-]+\.jpg$/;
+  const esTexto = t => typeof t === 'string' && t.trim() !== '';
+  const capturasBuenas = c => Array.isArray(c) && c.length > 0 && c.every(x => typeof x === 'string' && CAPTURA.test(x));
+  const identidadBuena = j => esTexto(j.nombre) && typeof j.id === 'string' && ID.test(j.id);
+  const marcasBuenas = j => typeof j.cartel === 'boolean' && typeof j.favorito === 'boolean';
+  const vivoBueno = j => !!j && typeof j === 'object' && j.estado === 'vivo' && identidadBuena(j) && capturasBuenas(j.capturas) && marcasBuenas(j);
+  const congela = j => Object.freeze({ id: j.id, nombre: j.nombre, capturas: Object.freeze([...j.capturas]), cartel: j.cartel, favorito: j.favorito });
+  // los juegos vivos y bien formados, congelados y en el orden del catálogo (un id repetido cuenta una vez); si no es el catálogo, una lista vacía
+  const catalogo = datos => {
+    const lista = datos && typeof datos === 'object' && Array.isArray(datos.juegos) ? datos.juegos : [], vistos = new Set(), buenos = [];
+    for (const j of lista) if (vivoBueno(j) && !vistos.has(j.id)) { vistos.add(j.id); buenos.push(congela(j)); }
+    return Object.freeze(buenos);
+  };
+  return { PESOS, cabeza, pesos, elige, catalogo };
 })();
 if (typeof module !== 'undefined') module.exports = PROMO_REGLAS;

@@ -1,6 +1,6 @@
 // Fans of Pop · EL DIBUJO DE UN COMPAÑERO EN EL ÁLBUM (tarea #142, ADR 157): la miniatura de las cartas, la ficha y Mi equipo. Los 13 de
 // siempre usan su dibujo de Yoshi (o su repuesto, ppMiniatura de js/sprites.js); los Animales con dibujo de Yoshi (PP_ANIMALES_CON_DIBUJO, js/sprites.js),
-// el suyo; los 4 que se están repitiendo van dibujados por código en SVG: cuerpo de gelatina con su color, coloretes y el adorno de cada uno (orejas, pico, pinzas…), como el boceto que
+// el suyo; los que no lo tienen (el caballito, que se está repitiendo) van dibujados por código en SVG: cuerpo de gelatina con su color, coloretes y el adorno de cada uno (orejas, pico, pinzas…), como el boceto que
 // aprobó Pepins. La silueta «?» es la de los que aún no tienes; la de los escondidos (ADR 199) es su propio dibujo de un solo color
 // (ppCompSombra), con su momento dibujado (lunita o solecito, ppCompMomento).
 'use strict';

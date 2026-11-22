@@ -1,8 +1,8 @@
 {
- "build": 1437,
- "hash": "83b05a6",
- "fecha": "2026-11-22T06:57:54Z",
- "mensaje": "Cola de Yoshi: una imagen en lote cuenta 0,3 min, medido en Yoshi (#2, nodo n5)",
+ "build": 1438,
+ "hash": "880efb2",
+ "fecha": "2026-11-22T07:47:22Z",
+ "mensaje": "Tiny: hoja de estilo y tanda de prueba pedida a Yoshi (tarea #219, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

@@ -1,8 +1,8 @@
 {
- "build": 1447,
- "hash": "d6a2041",
- "fecha": "2026-11-22T17:11:41Z",
- "mensaje": "#323: lo de la revisión de código: pytest con -rfEs (no pierde las líneas FAILED), un todo con motivo cuenta como saltado, el catálogo falla con un juego del Archivo sin id, Island espera por estado tras «Otra vez» y complejidad.mjs usa la misma lista de pausa",
+ "build": 1448,
+ "hash": "5185c03",
+ "fecha": "2026-11-22T17:22:50Z",
+ "mensaje": "#327 n3-n6: /gestion → Juegos → Portada cambia sección, portada y anuncio de cada juego (alfa primero, Pasar a la web); la portada y nuestro anuncio lo aplican sin saltos (ADR 203)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

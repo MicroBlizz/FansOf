@@ -23,6 +23,8 @@ function datosDe(s) {
     capturas: (s.dataset.capturas || '').split(/\s+/).filter(Boolean).map(f => CAPTURAS + f),
   };
 }
+// ¿se ve en la portada? (/gestion → Juegos puede esconder una tarjeta, ADR 203; entonces no sale en el DESTACADO)
+const tarjetaVisible = id => { const s = document.getElementById(id); return !!s && !s.hidden; };
 const etiquetasHtml = l => `<div class="etiq">${l.map(x => `<span>${esc(t(x))}</span>`).join('')}</div>`;
 const fondo = url => (url ? `background-image:url('${url}')` : '');
 
@@ -61,7 +63,7 @@ function juegosRecientes() {
   for (const b of lista) {
     if (hoy && dia(b) && hoy - dia(b) > DIAS_NUEVO * 864e5) break;
     for (const j of b.nuevos || []) {
-      if (vistos.has(j.tarjeta) || !document.getElementById(j.tarjeta)) continue;
+      if (vistos.has(j.tarjeta) || !tarjetaVisible(j.tarjeta)) continue;
       vistos.add(j.tarjeta); out.push(j);
     }
   }
@@ -76,7 +78,7 @@ async function pintarDestacado() {
   const caja = document.getElementById('dest');
   const nuevosB = juegosRecientes(), fechas = await fechasJuegos();
   const pos = id => [...document.querySelectorAll('section.game')].findIndex(x => x.id === id), anunciado = new Map(nuevosB.map(j => [j.tarjeta, j]));
-  const porFecha = Object.keys(fechas).map(j => 'g-' + j).filter(id => document.getElementById(id))
+  const porFecha = Object.keys(fechas).map(j => 'g-' + j).filter(tarjetaVisible)
     .sort((a, b) => String(fechas[b.slice(2)]).localeCompare(String(fechas[a.slice(2)])) || (anunciado.has(b) - anunciado.has(a)) || pos(a) - pos(b))
     .slice(0, MAX_DESTACADO).map(id => anunciado.get(id) || { tarjeta: id });
   for (const j of nuevosB) {
@@ -99,6 +101,8 @@ async function pintarDestacado() {
   // aviso para el catálogo de la portada nueva (portada-catalogo.js): ya están las marcas NUEVO y las fechas de cada juego
   document.dispatchEvent(new CustomEvent('portada:destacado', { detail: { fechas } }));
 }
+// /gestion → Juegos cambió tarjetas con la portada ya pintada (portada-juegos.js): si el DESTACADO ya estaba, se vuelve a pintar sin las escondidas
+document.addEventListener('portada:recolocada', () => { if (dest.lista.length) pintarDestacado(); });
 function verDestacado(i, aMano) {
   dest.i = (i + dest.lista.length) % dest.lista.length;
   const j = dest.lista[dest.i], d = datosDe(document.getElementById(j.tarjeta));

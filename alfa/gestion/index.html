@@ -64,6 +64,8 @@
       <div id="rend-tabla"></div>
     </div>
     <div id="pan-juego" hidden></div>
+    <div id="pan-portada" hidden></div>
+    <style id="estilo-portada"></style>
     <div id="pan-reportes" hidden>
       <div class="caja cifras" id="rf-resumen"></div>
       <div class="caja ayuda"><b>Reportes de Rouflage.</b> Escenarios pintados a mano que alguien ha reportado en una sala con amigos (el dibujo es la copia exacta de lo que vio quien reporta) y mensajes del chat de la sala (con lo que escribió de verdad y la conversación de alrededor). Con reportes pendientes de 3 personas distintas el escenario ya está oculto hasta que se resuelva. <b>Descartar</b> no hace nada al jugador; <b>Borrar escenario</b> retira ese dibujo; <b>Banear</b> impide enseñar su escenario, crear salas con amigos y escribir en el chat.</div>
@@ -273,6 +275,9 @@ volverDeGoogle().then(hecho => { if (!hecho) entrarSola(); });
 <script src="cola.js"></script>
 <script src="sql.js"></script>
 <script src="juegos.js"></script>
+<script src="../core/js/sistema/juegos-portada.js"></script>
+<script src="portada-juegos.js"></script>
+<script src="portada.js"></script>
 <script src="decks.js"></script>
 <script src="../core/js/sistema/idioma-regla.js"></script>
 <script src="../idioma-web.js"></script>

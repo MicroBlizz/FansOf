@@ -82,7 +82,7 @@ function juegosDeLaPortada(raiz, alfa) {
   const juegos = [];
   for (const tarjeta of raiz.querySelectorAll('section.game')) {
     const jugar = tarjeta.querySelector('a.play'), titulo = tarjeta.querySelector('h2');
-    if (!jugar || !titulo || (tarjeta.hasAttribute('data-alfa') && !alfa)) continue;
+    if (!jugar || !titulo || tarjeta.hidden || (tarjeta.hasAttribute('data-alfa') && !alfa)) continue;   // hidden: /gestion → Juegos la quitó de la portada (ADR 203)
     juegos.push([tarjeta.id, jugar.getAttribute('href'), titulo.textContent.trim()]);
   }
   return juegos;

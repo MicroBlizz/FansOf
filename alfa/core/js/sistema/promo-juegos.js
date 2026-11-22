@@ -1,7 +1,8 @@
 // Fans Of · PROMO de nuestros juegos: mientras no haya anuncios pagados, el anuncio de prueba enseña la miniatura de OTRO juego activo
 // (al azar, nunca el actual) y al pulsarla se abre su ficha en la biblioteca de la web. Cada juego solo llama a PROMO.html() y PROMO.enlaza(raiz).
 // Los juegos salen del catálogo biblioteca/juegos.json (ADR 198), que se pide una vez al cargar: salen los vivos (sin alfa ni Archivo) y más a menudo los más
-// votados; la regla y la validación del catálogo están en promo-reglas.js (ADR 109). Sin catálogo, html() devuelve '' y sale el anuncio de prueba.
+// votados; la regla y la validación del catálogo están en promo-reglas.js (ADR 109). Un juego que /gestion → Juegos quita del anuncio no sale (ADR 203).
+// Sin catálogo, html() devuelve '' y sale el anuncio de prueba.
 'use strict';
 const PROMO = (() => {
   const nativa = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
@@ -19,9 +20,13 @@ const PROMO = (() => {
       .then(recibe, sinCatalogo);   // solo la red, el 404 o un JSON roto dejan sin catálogo; un fallo de programación en recibe sale a la caja negra
   };
   pideCatalogo();
-  // paso aparte: los candidatos del anuncio, o sea los vivos válidos del catálogo (PROMO_REGLAS.catalogo); sus ids van luego a PROMO_REGLAS.elige.
-  // Si algún día un juego pide quedarse fuera del anuncio (#327, ADR 203), este es el sitio donde se filtra.
-  const candidatos = () => juegos;
+  // paso aparte: los candidatos del anuncio, o sea los vivos válidos del catálogo (PROMO_REGLAS.catalogo) que los cambios de /gestion → Juegos dejan anunciar
+  // en esta plataforma (JUEGOS_PORTADA.anunciables con las filas de JUEGOS_PORTADA_DATOS, ADR 203); sus ids van luego a PROMO_REGLAS.elige.
+  const candidatos = () => {
+    const vivos = juegos.map(j => ({ id: j.id, estado: 'vivo', favorito: j.favorito }));
+    const si = new Set(JUEGOS_PORTADA.anunciables(vivos, JUEGOS_PORTADA_DATOS.filas(), JUEGOS_PORTADA_DATOS.plataforma()));
+    return juegos.filter(j => si.has(j.id));
+  };
   // los votos públicos de la portada (solo números): se piden una vez por sesión, la primera vez que hace falta; sin ellos todos pesan igual
   let votos = null, pedidos = false;
   const pideVotos = () => {

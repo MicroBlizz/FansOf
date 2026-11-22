@@ -5,6 +5,8 @@
 // Cada archivo de sección se apunta con GESTION_NAV.seccion({ id, pan, etiqueta, orden, juego?, grupo?, cargar? }): sin `juego` es una pestaña común (su grupo,
 // de GRUPO_DE o de `grupo`); con `juego: '<id>'` es solo de ese juego, y con `juego: '*'` sale en todos (cargar recibe el id del juego).
 // Quien cambia la etiqueta de una pestaña (por ejemplo, con un contador) usa GESTION_NAV.etiqueta(id, texto, juego?). Esto solo muestra y oculta: no sabe de datos.
+// Las marcas de cada juego en la lista (portada.js: «alfa cambiada»…) las da quien se apunte con GESTION_NAV.marcador(async () => ({ id: [{ texto, clase }] })):
+// se piden cada vez que se enseña la lista (también al volver con atrás); si lanza, la lista dice en una línea que no se han podido traer.
 // Atrás (tarea #322, ADR 201): cada cambio de grupo, pestaña o juego hecho con un toque se anota en el historial del navegador (historial.js e
 // historial-navegador.js), y GESTION_NAV.capa(abierta) anota lo que se abre o cierra encima (el Tablero). Al volver a una entrada se cierra lo abierto
 // (`cierraCapa` de cada sección) y se enseña esa pestaña; sin sesión (pantalla de entrar), atrás no hace nada. Al recargar manda la pestaña guardada.
@@ -22,8 +24,8 @@ const GESTION_NAV = (() => {
   const GRUPO_DE = { tablero: 'tablero', cola: 'tablero', sql: 'tablero', cuentas: 'jugadores', metricas: 'jugadores', votos: 'jugadores', roles: 'jugadores', rend: 'jugadores' };
   const S = [], el = id => document.getElementById(id);
   const recuerda = {};   // la pestaña abierta en cada grupo o juego
-  let grupo = 'tablero', juego = null, catalogo = [], abiertas = {}, filtroJuegos = '', textoJuegos = '';
-  let mostrada = null, historial = null, pedidoCatalogo = 0;   // la pestaña que se ve, el adaptador del historial y la última petición del catálogo
+  let grupo = 'tablero', juego = null, catalogo = [], abiertas = {}, marcas = {}, avisoMarcas = '', filtroJuegos = '', textoJuegos = '';
+  let mostrada = null, historial = null, pedidoCatalogo = 0, marcador = null, pedidoMarcas = 0;   // la pestaña que se ve, el adaptador del historial, la última petición del catálogo, quien da las marcas y su última petición
   const seccion = s => { S.push(s); };
   const grupoDe = s => s.grupo || GRUPO_DE[s.id] || 'ajustes';
   const ambito = () => (juego ? juego : grupo);
@@ -34,15 +36,16 @@ const GESTION_NAV = (() => {
   const propias = () => [...new Set([...S.filter(s => s.juego && s.juego !== '*').map(s => s.juego), ...Object.keys(typeof GESTION_JUEGOS === 'object' ? GESTION_JUEGOS : {})])];
   const boton = ([id, t]) => `<button type="button" data-g="${id}"${id === grupo ? ' class="activa" aria-current="page"' : ''}><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${ICONO[id]}</svg>${t}</button>`;
   const pestana = (s, id) => `<button type="button" data-s="${s.id}"${s.id === id ? ' class="activa"' : ''}>${s.etiqueta}</button>`;
+  const opcionesJuegos = () => ({ texto: textoJuegos, filtro: filtroJuegos, propias: propias(), abiertas, marcas, avisoMarcas });
   function pintaJuegos() {
-    el('pan-juegos').innerHTML = GESTION_CATALOGO.html(catalogo, { texto: textoJuegos, filtro: filtroJuegos, propias: propias(), abiertas }, esc);
+    el('pan-juegos').innerHTML = GESTION_CATALOGO.html(catalogo, opcionesJuegos(), esc);
   }
   function pinta() {
     el('menu').innerHTML = GRUPOS.map(boton).join('');
     S.forEach(s => { el(s.pan).hidden = true; });
     el('pan-juegos').hidden = !(grupo === 'juegos' && !juego);
     mostrada = null;
-    if (grupo === 'juegos' && !juego) { el('tabs').hidden = true; pintaJuegos(); if (!catalogo.length) cargaCatalogo(); return; }   // la lista, aunque se llegue sin el menú
+    if (grupo === 'juegos' && !juego) { el('tabs').hidden = true; pintaJuegos(); if (!catalogo.length) cargaCatalogo(); refrescaMarcas(); return; }   // la lista, aunque se llegue sin el menú o con atrás
     const L = de(), a = ambito(), id = recuerda[a] && L.some(s => s.id === recuerda[a]) ? recuerda[a] : (L[0] || {}).id;
     const volver = juego ? `<button type="button" class="nav-volver" data-volver>Todos los juegos</button><b class="nav-juego">${esc(nombreDe(juego))}</b>` : '';
     el('tabs').innerHTML = volver + L.map(s => pestana(s, id)).join('');
@@ -104,6 +107,16 @@ const GESTION_NAV = (() => {
     abiertas = cifras;
     if (grupo === 'juegos' && !juego) pintaJuegos();
   }
+  // Las marcas de la lista, de nuevo cada vez que se enseña; solo cuenta la última petición y se repinta si la lista sigue a la vista
+  async function refrescaMarcas() {
+    if (!marcador) return;
+    const esta = ++pedidoMarcas;
+    let nuevas = {}, aviso = '';
+    try { nuevas = (await marcador()) || {}; } catch (e) { aviso = 'No se han podido traer los cambios de la portada (alfa y web).'; }
+    if (esta !== pedidoMarcas) return;
+    marcas = nuevas; avisoMarcas = aviso;
+    if (grupo === 'juegos' && !juego) pintaJuegos();
+  }
   function conectaJuegos() {
     el('pan-juegos').onclick = ev => {
       const j = ev.target.closest('[data-juego]'), f = ev.target.closest('[data-filtro-juegos]');
@@ -113,7 +126,7 @@ const GESTION_NAV = (() => {
     el('pan-juegos').oninput = ev => {   // solo se repinta la lista, para no perder el foco del buscador
       if (!ev.target.closest('[data-buscar-juego]')) return;
       textoJuegos = ev.target.value;
-      const caja = document.createElement('div'); caja.innerHTML = GESTION_CATALOGO.html(catalogo, { texto: textoJuegos, filtro: filtroJuegos, propias: propias(), abiertas }, esc);
+      const caja = document.createElement('div'); caja.innerHTML = GESTION_CATALOGO.html(catalogo, opcionesJuegos(), esc);
       el('pan-juegos').querySelector('[data-lista-juegos]').replaceWith(caja.querySelector('[data-lista-juegos]'));
     };
   }
@@ -132,12 +145,13 @@ const GESTION_NAV = (() => {
     $('estilo-nav').textContent = GESTION_CATALOGO.ESTILO;
     el('salir').addEventListener('click', sal);
     // al abrir la sesión, la lista de Juegos (si se ve) pide otra vez sus cifras: las pedidas antes de entrar fallan sin sesión
-    document.addEventListener('gestion-abierta', () => { if (grupo === 'juegos' && !juego) cargaCatalogo(); });
+    document.addEventListener('gestion-abierta', () => { if (grupo === 'juegos' && !juego) { cargaCatalogo(); refrescaMarcas(); } });
     const guardado = hist().inicial(), dir = new URLSearchParams(location.search).get('seccion');   // enlace directo: /gestion/?seccion=cola abre esa pestaña (con la sesión abierta)
     if (guardado) ponSitio(guardado);   // al recargar o volver de otra página, manda la pestaña que guardaba la entrada del historial
     else if (dir && buscar(dir)) ve('global', dir); else pinta();
     hist().empieza(sitio());
     hist().escucha(vuelve);
   }
-  return { JUEGOS, seccion, etiqueta, ir, arranca, nombreDe, capa, actual: () => juego || 'global' };
+  const ponMarcador = f => { marcador = f; };
+  return { JUEGOS, seccion, etiqueta, ir, arranca, nombreDe, capa, marcador: ponMarcador, actual: () => juego || 'global' };
 })();

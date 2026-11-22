@@ -15,9 +15,9 @@
   const estado = { texto: '', etiqueta: '', modo: leerModo(), fechas: {}, votos: {} };
   let juegos = [], montado = false;
 
-  // los juegos vivos (sin el Archivo), con lo que necesitan la regla y la tarjeta
+  // los juegos vivos (sin el Archivo ni los que /gestion → Juegos quita de la portada, ADR 203), con lo que necesitan la regla y la tarjeta
   function leerJuegos() {
-    return TARJETAS.filter(s => s.dataset.tipo !== 'Archivo').map((s, orden) => {
+    return TARJETAS.filter(s => s.dataset.tipo !== 'Archivo' && !s.hidden && s.isConnected).map((s, orden) => {
       const d = datosDe(s);
       return { id: s.id.replace(/^g-/, ''), tarjeta: s.id, nombre: d.nombre, etiquetas: d.etiquetas,
         favorito: 'favorito' in s.dataset, orden, color: d.color, captura: d.capturas[0] || '', jugar: d.jugar };
@@ -133,6 +133,8 @@
   // las fechas (y las marcas NUEVO) llegan cuando tienda.js pinta el DESTACADO; los puntos, cuando contesta el servidor (votos.js)
   document.addEventListener('portada:destacado', e => { estado.fechas = (e.detail && e.detail.fechas) || {}; if (montado) pintar(); });
   AGRUPAR.alVotos(v => { estado.votos = v || {}; if (montado) pintarRejilla(); });
+  // /gestion → Juegos cambió alguna tarjeta con la portada ya pintada (portada-juegos.js): se vuelven a leer
+  document.addEventListener('portada:recolocada', () => { if (montado) { juegos = leerJuegos(); pintar(); } });
   aplicar();
   NUCLEO.alCambiarFlags(aplicar);
 })();

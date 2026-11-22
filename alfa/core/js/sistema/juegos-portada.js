@@ -5,7 +5,7 @@
 //   enPortada  → la fila (o sí); en la web, un juego solo de alfa nunca sale.
 //   enAnuncio  → la fila (o sí), pero solo si puedeAnuncio: el anuncio solo se enciende para un juego que se ve (Arkioner, 22-11-2026).
 //   motivo     → por qué no puede anunciarse, el primero que aplique en este orden: 'sin_publicar' (estado alfa, en cualquier plataforma),
-//                'fuera_de_portada' y 'archivo'. null si puede.
+//                'fuera_de_portada' y 'archivo' (en el Archivo del panel o archivado en el repo: el anuncio solo elige los vivos del repo). null si puede.
 // Una fila con valores que no valen (sección o plataforma desconocida, algo que no es booleano) cuenta como null; la de un juego que no está en el catálogo se ignora.
 'use strict';
 const JUEGOS_PORTADA = (() => {
@@ -40,7 +40,7 @@ const JUEGOS_PORTADA = (() => {
   const motivoDe = (juego, seccion, enPortada) => {
     if (juego.estado === 'alfa') return 'sin_publicar';
     if (!enPortada) return 'fuera_de_portada';
-    if (seccion === 'archivo') return 'archivo';
+    if (seccion === 'archivo' || juego.estado === 'archivo') return 'archivo';   // el anuncio solo elige entre los vivos del repo (promo-juegos.js)
     return null;
   };
 

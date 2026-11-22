@@ -1,7 +1,7 @@
 {
- "build": 1445,
+ "build": 1446,
  "hash": "dd374af",
- "fecha": "2026-11-22T15:14:18Z",
+ "fecha": "2026-11-22T15:14:47Z",
  "mensaje": "#327 n2: la regla pasa a core (JUEGOS_PORTADA en core/js/sistema/juegos-portada.js) porque la usan la portada y el anuncio de los juegos; aún no la carga nadie",
  "juegos": {
   "air": "0.3.0",

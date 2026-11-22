@@ -1,8 +1,8 @@
 {
- "build": 1431,
- "hash": "9717489",
- "fecha": "2026-11-21T23:31:50Z",
- "mensaje": "Asalto: las Coronas y los aspectos salen del servidor (monedero y comprar_fijo de core), siempre tras el modo desarrollo (ADR 200, tarea #317, Pepins)",
+ "build": 1432,
+ "hash": "0100258",
+ "fecha": "2026-11-22T04:49:44Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/project-thread-oqjpx2",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

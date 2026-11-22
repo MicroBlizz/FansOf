@@ -8,8 +8,8 @@ const COLA_VARIABLES = (() => {
       texto: 'Dónde corre alfa.yml en cada subida a main. En GitHub gasta cerca de 1 minuto de la cuota por subida; en Yoshi no gasta, pero si Yoshi está apagado la alfa espera (hasta 24 h).',
       opciones: [['ubuntu-latest', 'GitHub (gasta minutos)'], ['yoshi-alfa', 'Yoshi']] },
     // Los runners de Yoshi que también pueden ir a GitHub mientras Yoshi está caído (ADR 172). Sin fijar, Yoshi: no gastan minutos.
-    ...[['SMOKE_TEST_RUNNER', 'yoshi-smoke-test', 'Runner del smoke-test', 'smoke-test.yml en cada subida a main (la marca que pide la release). En GitHub gasta unos 20-30 minutos por subida.'],
-      ['LANGUAGE_CHECK_RUNNER', 'yoshi-language-check', 'Runner de idioma y tests', 'language-check.yml y tests-herramientas.yml en cada subida a main. En GitHub gastan unos 8 minutos por subida entre los dos.'],
+    ...[['SMOKE_TEST_RUNNER', 'yoshi-smoke-test', 'Runner del smoke-test', 'smoke-test.yml en cada subida a main: el árbol de pruebas (unitarios, integración y smoke; las marcas «smoke-test» y «tests» de la release). En GitHub gasta unos 20-30 minutos por subida.'],
+      ['LANGUAGE_CHECK_RUNNER', 'yoshi-language-check', 'Runner del idioma', 'language-check.yml en cada subida a main. En GitHub gasta unos 3 minutos por subida.'],
       ['BALANCE_RUNNER', 'yoshi-balance', 'Runner del balance', 'balance.yml, a mano. En GitHub gasta lo que dure la tanda (hasta 2 h).'],
       ['ANDROID_RUNNER', 'yoshi-android', 'Runner de las APK', 'android.yml, miércoles y viernes. En GitHub gasta unos 5-10 minutos por juego que haya que compilar.'],
       ['PLAY_STORE_RUNNER', 'yoshi-play-store', 'Runner de Google Play', 'android-play.yml (AAB, miércoles y viernes) y los manuales de la ficha, los productos y los avisos. En GitHub, unos 5 minutos por AAB.'],

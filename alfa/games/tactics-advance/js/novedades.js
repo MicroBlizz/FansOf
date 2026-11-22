@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.4.1', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.4.0', real: ["<b>SONIDO Y MÚSICA</b>: los efectos y las canciones de la serie, también en las batallas."], joke: ["Phony ha pedido que la música suene más bajito. Microblizz la ha subido."] },
   { v: '0.3.0', real: ["<b>PRESENTACIÓN Y TUTORIAL</b>: una intro, pantalla de título y un tutorial con Lola para aprender a mover y atacar."], joke: [] },
   { v: '0.2.0', real: ["<b>PANTALLA COMPLETA</b>: interfaz de videojuego que ocupa toda la pantalla, con menús y zoom."], joke: [] },

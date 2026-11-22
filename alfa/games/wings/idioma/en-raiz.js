@@ -2,6 +2,9 @@
 // para no tocar core). Los textos del juego en sí están en idioma/en.js.
 'use strict';
 IDIOMA.add({
+  // 0.1.9
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "FANS OF WINGS": "FANS OF WINGS",
   "El prototipo (prueba). Combate aéreo arcade en pixel art con volumen: el mar, las islas, las nubes y los aviones están hechos de lonchas apiladas, y cambias de cámara en pleno vuelo (desde arriba, de persecución o desde la cabina). Despeja el cielo de becarios voladores y bombarderos de cajas sorpresa, esquiva sus disparos, fija blancos y lanza misiles guiados hasta derribar a SurvivalBot. Tres cazas de los Animales Locos con su piloto y su truco: Zanahoria Uno, Zorra Invisible y Castor Bombardero.": "The prototype (test build). Arcade air combat in chunky pixel art: the sea, the islands, the clouds and the planes are built from stacked slices, and you switch camera mid-flight (from above, chase or cockpit). Clear the skies of flying interns and loot-box bombers, dodge their shots, lock on and launch guided missiles until SurvivalBot goes down. Three Crazy Animals fighters, each with its pilot and its trick: Carrot One, Invisible Fox and Beaver Bomber.",
   // sus novedades (js/novedades.js)

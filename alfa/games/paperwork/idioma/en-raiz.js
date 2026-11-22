@@ -1,6 +1,9 @@
 // Fans Of Paperwork · Inglés de lo que la portada de la web lee del juego (sus novedades).
 'use strict';
 IDIOMA.add({
+  // 0.11.3
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "El botón amarillo de las ventanas de confirmar (COMPRAR, BORRAR…) se lee bien: ya no tiene la letra emborronada. Tu partida se conserva.": "The yellow button in confirm windows (BUY, DELETE…) is easy to read now: no more smudged letters. Your game is kept.",
   "Imprenta ha cambiado el tóner. Por fin se ve dónde firmar.": "The print shop changed the toner. You can finally see where to sign.",
   "El pack de las dos mejoras para siempre enseña su descuento: 10,00 € tachado y 8,00 €. La partida empieza de cero.": "The pack of both upgrades for good shows its discount: €10.00 crossed out and €8.00. Your game starts from scratch.",

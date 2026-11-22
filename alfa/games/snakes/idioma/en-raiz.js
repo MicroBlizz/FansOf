@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Snakes en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.2.2
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "<b>CONTROL CRUZ</b>, nuevo en Opciones: la pantalla partida en cuatro cuadrados. Yendo en horizontal toca arriba o abajo; yendo en vertical, izquierda o derecha. Ningún toque se confunde con «izquierda» mientras ya vas de lado.": "<b>CROSS CONTROL</b>, new in Options: the screen split into four squares. Moving sideways, tap above or below; moving up or down, tap left or right. No tap gets mistaken for “left” while you are already going sideways.",
   "Con los efectos de sonido apagados los botones del menú volvían a quedarse mudos y quietos: arreglado. Opciones más compactas para que quepan los cuatro controles.": "With sound effects off, the menu buttons went silent and still: fixed. A more compact Options panel so all four controls fit.",
   "Phony ha propuesto un quinto control: gritarle a la serpiente. Microblizz lo ha rechazado porque los gritos no se pueden monetizar… todavía.": "Phony proposed a fifth control: yelling at the snake. Microblizz turned it down because yelling can't be monetised… yet.",

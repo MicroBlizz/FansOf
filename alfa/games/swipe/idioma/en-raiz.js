@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Swipe en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.2.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "<b>ACTO 2, La Era Digital</b>: gana al CEO y la subida sigue hasta el piso 30, contra <b>Phony</b> y su Presidente.": "<b>ACT 2, The Digital Era</b>: beat the CEO and the climb goes on to floor 30, against <b>Phony</b> and its President.",
   "Enemigos nuevos con <b>suscripciones</b>, <b>licencias caducadas</b>, <b>peajes</b> y facturas que caen del cielo; élites corruptas y 6 eventos nuevos.": "New enemies with <b>subscriptions</b>, <b>expired licenses</b>, <b>tolls</b> and bills falling from the sky; corrupted elites and 6 new events.",
   "Libera a <b>ProGamer</b> y a <b>LaDirectora</b> y sus facciones se unen a ti con su reliquia. Y si te quedan pocas fuerzas: empieza directamente en el Acto 2 desde la portada.": "Free <b>ProGamer</b> and <b>TheDirector</b> and their factions join you with their relic. And if you're short on time: start straight in Act 2 from the title screen.",

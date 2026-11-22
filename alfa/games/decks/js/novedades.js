@@ -1,6 +1,7 @@
 // Fans Of Decks · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.2.38', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.2.37', real: ["<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos."], joke: ["Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora."] },
   { v: '0.2.36', real: ["<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos."], joke: ["Microblizz ha metido una carta de PROTOTIPO en el mazo y Phony la ha jugado como si fuera legendaria."] },
   { v: '0.2.35', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio."], joke: ["Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse."] },

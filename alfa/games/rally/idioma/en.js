@@ -1,6 +1,9 @@
 // Fans of Rally · Inglés: los textos de las pantallas, el marcador, el copiloto, los pilotos y los tramos.
 'use strict';
 IDIOMA.add({
+  // 0.1.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   // marcador y mandos (index.html, adaptadores/hud.js)
   "TIEMPO": "TIME", "CRONO": "CLOCK", "VUELTA": "LAP", "PUESTO": "POS", "ESTA VUELTA": "THIS LAP", "FRENO": "BRAKE", "KM/H": "KM/H",
   "Pausa": "Pause", "Izquierda": "Left", "Derecha": "Right",

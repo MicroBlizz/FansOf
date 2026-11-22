@@ -2,6 +2,9 @@
 // para no tocar core). Los textos del juego en sí están en idioma/en.js.
 'use strict';
 IDIOMA.add({
+  // 0.1.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "FANS OF SHELTER": "FANS OF SHELTER",
   "El prototipo (prueba). «Ecos del refugio»: de día CrazyBunny explora en pixel art tipo Zelda, resuelve el puzle del bloque, tala y pica recursos y craftea en la mesa su zanahoria gigante, trampas y torretas; de noche la horda de goblins, esqueletos y murciélagos invade el refugio y las zanahorias giran solas, como en Vampire Survivors: esquiva, sube de nivel y aguanta hasta el Murciélago Gigante. Sin botones: todo con el dedo.": "The prototype (test). “Echoes of the Shelter”: by day CrazyBunny explores in Zelda-style pixel art, solves the block puzzle, chops and mines resources and crafts his giant carrot, traps and turrets at the workbench; by night the horde of goblins, skeletons and bats invades the shelter and the carrots spin on their own, Vampire Survivors style: dodge, level up and hold out until the Giant Bat. No buttons: everything with your finger.",
   // sus novedades (js/novedades.js)

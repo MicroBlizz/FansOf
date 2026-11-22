@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Roguelite en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.6.8
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "FANS OF ROGUELITE": "FANS OF ROGUELITE",
   "Roguelite en pixel art dibujado a mano, emitido «en directo» con su chat. CrazyBunny cruza 3 mundos de 40 días (Oficinas, Cementerio de juegos y Torre de Microblizz): habilidades, objetos, tienda de Lola, ruleta, gashapón, jefes y mejoras para siempre en La Madriguera.": "A hand-drawn pixel art roguelite, streamed «live» with its own chat. CrazyBunny crosses 3 worlds of 40 days (Offices, Game Graveyard and Microblizz Tower): skills, items, Lola's shop, roulette, gashapon, bosses and permanent upgrades in The Burrow.",
   // sus novedades (js/novedades.js)

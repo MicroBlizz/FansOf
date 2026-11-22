@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.32
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos.": "<b>UNDER THE HOOD</b>: the prototypes move to their final home on the site (the old addresses still take you there) and tweaks to the internal systems.",
   "Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora.": "Microblizz moved all its games to a new folder. The boxes are still in the hallway and nobody knows whose stapler it is.",
   // 0.7.30

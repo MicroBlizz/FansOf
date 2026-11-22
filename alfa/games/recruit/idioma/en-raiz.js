@@ -2,6 +2,9 @@
 // El inglés del juego en sí está en js/textos.js.
 'use strict';
 IDIOMA.add({
+  // 0.1.6
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "FANS OF RECRUIT": "FANS OF RECRUIT",
   "El prototipo (prueba). Corre y dispara como en las recreativas de los 90: CrazyBunny asalta las Oficinas de Microblizz con pistola, metralleta y zanahorias bomba, rescata a los fans, se sube a la MechaVaca y cancela a SurvivalBot. Todo el pixel art está dibujado con código.": "The prototype (test). Run and gun like a 90s arcade game: CrazyBunny storms the Microblizz Offices with a pistol, a machine gun and carrot bombs, rescues the fans, hops on the MechaVaca and cancels SurvivalBot. All the pixel art is drawn with code.",
   // sus novedades (js/novedades.js)

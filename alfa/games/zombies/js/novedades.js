@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.14.3', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.14.2', real: ["<b>SE JUEGA CON EL GIRO BLOQUEADO</b>: con el móvil de pie, toca la pantalla y Zombies se pone en pantalla completa y en horizontal él solo, aunque el móvil tenga bloqueado el giro automático (también desde el menú, antes de empezar). En el iPhone, que no lo permite, el aviso te recuerda quitar el bloqueo de giro."], joke: ["Los zombis también caminan torcidos, pero ellos tienen excusa."] },
   { v: '0.14.1', real: ['<b>EN EL MÓVIL</b>: los menús (la tele, la ficha de evacuación, la pausa, los carteles y el mapa) se encogen para caber enteros en el móvil tumbado, y ya se puede empezar partida. El cuadro del arma sube junto al reloj para no tapar CORRER, y el tutorial nombra los botones de la pantalla en vez del teclado y el ratón.'],
     joke: ['Microblizz confirma que el juego ya cabe en el móvil. Los fans también: caben en cualquier sitio.'] },

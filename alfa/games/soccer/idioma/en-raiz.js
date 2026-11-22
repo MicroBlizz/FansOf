@@ -2,6 +2,9 @@
 // para no tocar core). Los textos del juego en sí están en idioma/en.js.
 'use strict';
 IDIOMA.add({
+  // 0.1.2
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "FANS OF SOCCER": "FANS OF SOCCER",
   "El prototipo (prueba). Fútbol arcade en falso 3D, sin faltas ni árbitro, con las ideas del clásico de NES puestas al día: cinco equipos de la serie, 6 contra 6 en un campo grande, barridas, empujones y KO, órdenes a tus compañeros y súper tiros con retrato a pantalla completa (por barra o por carrerilla). Juega la Copa Microblizz o un amistoso en tres campos con truco: el Ático con viento, el Parking VIP con charcos de aceite y la Sala de Servidores con apagones.": "The prototype (test). Arcade football in fake 3D with no fouls and no referee, taking the ideas of the NES classic and bringing them up to date: five teams from the series, 6 vs 6 on a big pitch, tackles, shoves and KOs, orders to your teammates and super shots with a full-screen portrait (charged by the bar or by a run-up). Play the Microblizz Cup or a friendly on three pitches with a twist: the windy Penthouse, the VIP Car Park with oil puddles and the Server Room with blackouts.",
   // sus novedades (js/novedades.js)

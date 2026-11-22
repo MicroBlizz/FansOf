@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.32', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.7.31', real: ["<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos."], joke: ["Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora."] },
   { v: '0.7.30', real: ["<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos."], joke: ["Microblizz ha pegado la etiqueta de PROTOTIPO en el capó y Phony jura que ahora el kart corre más."] },
   { v: '0.7.29', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio."], joke: ["Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse."] },

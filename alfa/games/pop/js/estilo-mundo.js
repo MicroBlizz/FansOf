@@ -4,7 +4,8 @@
 'use strict';
 // Por índice del mundo en PP_MUNDOS (niveles.js): 0 = Jardín, 1 = Pastelería. Un mundo sin entrada se pinta como siempre.
 // `caritas`: dónde va la cara ('tapa' del macaron, visto de lado; 'centro' del botón, visto desde arriba) y si cada burbuja lleva
-// una cara distinta (js/caritas-variadas.js) o todas la misma; `tintaPulsada`, el color claro de la cara sobre el botón pulsado.
+// una cara distinta (js/caritas-variadas.js) o todas la misma; `tintaPulsada`, el color claro de la cara sobre el botón pulsado;
+// `propia`, que el dibujo de la burbuja ya trae su cara y el juego no pinta ninguna encima.
 const PP_ESTILO_MUNDO = Object.freeze({
   // la muestra del botón de silicona con carita (Daniel, 19-11-2026): cambia la burbuja y la bandeja gana relieve de molde
   // (`relieve`, js/bandeja-relieve.js); los colores de la bandeja y los paneles, los de siempre
@@ -16,7 +17,8 @@ const PP_ESTILO_MUNDO = Object.freeze({
     material: Object.freeze({ relleno: '#e8b46a', borde: '#a8672c', sombra: '#7a4518', adorno: '#fbe3b0' }),
     // los paneles del mundo: crema y marrón (nunca lila ni gris)
     panel: Object.freeze({ fondo: '#fff3d9', borde: '#8a4f22', texto: '#5a2f10' }),
-    caritas: Object.freeze({ sitio: 'tapa', variadas: false }), relieve: false,
+    // el macaron que eligió Pepins (22-11-2026) ya trae su carita dibujada por Yoshi: el juego no le pinta otra (`propia`)
+    caritas: Object.freeze({ propia: true }), relieve: false,
   }),
 });
 const PP_ESTILO_DEFECTO = Object.freeze({ burbuja: null, bandeja: null, material: null, panel: null, caritas: null, relieve: false });

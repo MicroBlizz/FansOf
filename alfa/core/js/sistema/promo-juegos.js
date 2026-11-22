@@ -19,7 +19,7 @@ const PROMO = (() => {
     ['island', 'Fans Of Island', 2, false, 'island-lonchas2'],   // capturas con nombre nuevo para que el móvil no enseñe las viejas guardadas (ADR 192; otra vez con el conejo y el mar de la 0.4.2)
   ].map(([id, nombre, caps, favorito, foto]) => ({ id, nombre, caps, foto: foto || id, tipo: favorito ? '' : 'PROTOTIPO' }));
   // los que tienen cartel propio en biblioteca/anuncios/<id>.jpg (el anuncio empieza por él); uno sin cartel empieza por su primera captura (hoy les falta a wings, a spy y a kingdom)
-  const CARTEL = new Set(['asalto', 'auto', 'basement', 'beams', 'boom', 'chef', 'cooking', 'crush', 'decks', 'dungeons', 'goose', 'jump', 'karts', 'merge',
+  const CARTEL = new Set(['asalto', 'auto', 'basement', 'beams', 'boom', 'chef', 'cooking', 'crush', 'decks', 'dungeons', 'goose', 'island', 'jump', 'karts', 'merge',
     'nova', 'panic', 'pets', 'pop', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble', 'rumble-3d', 'rumble-v2', 'shelter', 'snakes', 'soccer', 'survivors', 'swipe',
     'tacticas', 'tactics-advance', 'taxi', 'td', 'terminal-shock', 'vikings', 'zombies']);
   const nativa = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());

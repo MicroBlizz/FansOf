@@ -1,8 +1,8 @@
 {
- "build": 1440,
- "hash": "c1f6515",
- "fecha": "2026-11-22T08:06:12Z",
- "mensaje": "Pop: 16 Animales y el macaron elegido, con el arte de Yoshi (tareas #142 y #110, Pepins)",
+ "build": 1441,
+ "hash": "97742fc",
+ "fecha": "2026-11-22T09:04:46Z",
+ "mensaje": "Island: cartel propio en el anuncio, pintado por Yoshi (promo.py), aprobado por Pepins",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

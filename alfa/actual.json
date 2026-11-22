@@ -1,8 +1,8 @@
 {
- "build": 1444,
- "hash": "d0f911a",
- "fecha": "2026-11-22T13:16:58Z",
- "mensaje": "#311 n2: el anuncio propio lee los juegos del catálogo biblioteca/juegos.json (ADR 198)",
+ "build": 1445,
+ "hash": "dd374af",
+ "fecha": "2026-11-22T15:14:18Z",
+ "mensaje": "#327 n2: la regla pasa a core (JUEGOS_PORTADA en core/js/sistema/juegos-portada.js) porque la usan la portada y el anuncio de los juegos; aún no la carga nadie",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

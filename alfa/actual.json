@@ -1,8 +1,8 @@
 {
- "build": 1442,
- "hash": "27a535b",
- "fecha": "2026-11-22T09:35:06Z",
- "mensaje": "Pop: cositas de las estelas y 3 Animales con el arte de Yoshi; elección de Rumble apuntada (tareas #160, #142 y #294, Pepins)",
+ "build": 1443,
+ "hash": "ff8c08e",
+ "fecha": "2026-11-22T12:50:03Z",
+ "mensaje": "#311 n1: el catálogo de juegos web/biblioteca/juegos.json, generado de las tarjetas de la portada y de los carteles con herramientas/juegos_catalogo.py (ADR 198)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

@@ -10,7 +10,7 @@ const COLA_MEDIDA = (() => {
   const ETIQUETA = { imagen: 'imagen', cancion: 'canción', efecto: 'efecto de sonido', video: 'vídeo', modelo3d: 'modelo 3D' };
   const EFECTO_MAX_BYTES = 400 * 1024;   // un MP3 V0 de ~4 s pesa ~120 KB y una canción de 30 s ~900 KB
   // Un lote de Yoshi (N imágenes del mismo workflow en un run) lleva «×N» y, si ya hay megapíxeles, «~7 min» (estimación del run entero) dentro de los corchetes.
-  const MINUTOS_IMAGEN_LOTE = 0.4;   // estimación por unidades de una imagen en lote, en minutos (gemelo de MINUTOS_IMAGEN_LOTE en herramientas/comfyui/encolado/tope_cola.py)
+  const MINUTOS_IMAGEN_LOTE = 0.3;   // estimación por unidades de una imagen en lote, en minutos (gemelo de MINUTOS_IMAGEN_LOTE en herramientas/comfyui/encolado/tope_cola.py)
   const LOTES_COMPARADOS = 5;        // últimos lotes terminados con los que se compara el tiempo real con las estimaciones
   function leerTitulo(t) {   // «Generar [imagen]: Logo» (o «Generar [imagen ×20 · ~7 min]: x», o el antiguo «Generar: Logo») -> tipo, variantes, estimado (min) y título
     const m = /^Generar(?:\s*\[([^\]]*)\])?:\s*/.exec(t);
@@ -103,7 +103,7 @@ const COLA_MEDIDA = (() => {
     return l;
   }
   const suma = (l, f) => l.reduce((a, x) => a + f(x), 0);
-  /** Con los últimos lotes de imagen terminados bien y con duración (sin los raros, como mediaCadencia): el tiempo real por imagen frente a las dos estimaciones por imagen, por unidades (0,4 min) y por megapíxeles
+  /** Con los últimos lotes de imagen terminados bien y con duración (sin los raros, como mediaCadencia): el tiempo real por imagen frente a las dos estimaciones por imagen, por unidades (MINUTOS_IMAGEN_LOTE) y por megapíxeles
    *  (ponderada: Σ estimado × 60 / Σ variantes, de los lotes que traen «~M min»; ese minuto va redondeado hacia arriba; null si ninguno). { n, real, unidades, megapixeles } en segundos, o null sin lotes medidos. */
   function compararLotes(hechos, cache) {
     const l0 = lotesImagen(hechos, cache); if (!l0.length) return null;

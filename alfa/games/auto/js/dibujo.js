@@ -61,11 +61,11 @@ function pintaAgua(g) {
   g.save(); g.translate(sx(0), sy(0)); g.scale(z, z); g.fillStyle = AGUA; g.fillRect(-sx(0) / z, -sy(0) / z, J.W / z + 1, J.H / z + 1); g.restore();
   // el muelle: una franja oscura en el borde del barrio
   g.fillStyle = '#1e2a38';
-  const x0 = Math.round(sx(0)), y0 = Math.round(sy(0)), x1 = Math.round(sx(MAPA.W * T)), y1 = Math.round(sy(MAPA.H * T)), m = Math.max(2, Math.round(3 * z));
+  const x0 = Math.round(sx(0)), y0 = Math.round(sy(0)), x1 = Math.round(sx(MAPA.W * CASILLA)), y1 = Math.round(sy(MAPA.H * CASILLA)), m = Math.max(2, Math.round(3 * z));
   g.fillRect(x0 - m, y0 - m, x1 - x0 + 2 * m, m); g.fillRect(x0 - m, y1, x1 - x0 + 2 * m, m); g.fillRect(x0 - m, y0, m, y1 - y0); g.fillRect(x1, y0, m, y1 - y0);
 }
 function pintaSuelo(g) {
-  const z = J.cam.z, tam = TROZO * T;
+  const z = J.cam.z, tam = TROZO * CASILLA;
   const x0 = Math.max(0, Math.floor((J.cam.x - J.W / 2 / z) / tam)), x1 = Math.min(SUELO.nx - 1, Math.floor((J.cam.x + J.W / 2 / z) / tam));
   const y0 = Math.max(0, Math.floor((J.cam.y - J.H / 2 / z) / tam)), y1 = Math.min(SUELO.ny - 1, Math.floor((J.cam.y + J.H / 2 / z) / tam));
   for (let j = y0; j <= y1; j++) for (let i = x0; i <= x1; i++) {
@@ -145,7 +145,7 @@ function pintaArboles(g) {
 function pintaEdificios(g) {
   const z = J.cam.z, cx = J.W / 2, cy = J.H / 2, lista = [];
   for (const e of MAPA.edificios) {
-    const x0 = sx(e.x * T), y0 = sy(e.y * T), x1 = sx((e.x + e.w) * T), y1 = sy((e.y + e.h) * T), f = 1 + e.alt * PERSPECTIVA;
+    const x0 = sx(e.x * CASILLA), y0 = sy(e.y * CASILLA), x1 = sx((e.x + e.w) * CASILLA), y1 = sy((e.y + e.h) * CASILLA), f = 1 + e.alt * PERSPECTIVA;
     const rx0 = cx + (x0 - cx) * f, ry0 = cy + (y0 - cy) * f, rx1 = cx + (x1 - cx) * f, ry1 = cy + (y1 - cy) * f;
     if (Math.max(x1, rx1) < -4 || Math.min(x0, rx0) > J.W + 4 || Math.max(y1, ry1) < -4 || Math.min(y0, ry0) > J.H + 4) continue;
     const mx = (x0 + x1) / 2 - cx, my = (y0 + y1) / 2 - cy;
@@ -203,11 +203,11 @@ function pintaMundo(g) {
 /* ---------- las marcas de rueda: una capa del tamaño del barrio que se va ensuciando ---------- */
 let RODADAS = null, RODADAS_G = null;
 function pintaMarcas(g) {
-  if (!RODADAS) { [RODADAS, RODADAS_G] = lienzoNuevo(MAPA.W * T, MAPA.H * T); }
+  if (!RODADAS) { [RODADAS, RODADAS_G] = lienzoNuevo(MAPA.W * CASILLA, MAPA.H * CASILLA); }
   for (const m of S.marcas) { RODADAS_G.globalAlpha = 0.18 + 0.3 * m.f; RODADAS_G.fillStyle = '#15171c'; RODADAS_G.fillRect(Math.round(m.x) - 1, Math.round(m.y) - 1, 2, 2); }
   S.marcas.length = 0;
   const z = J.cam.z;
-  g.drawImage(RODADAS, Math.round(sx(0)), Math.round(sy(0)), Math.round(MAPA.W * T * z), Math.round(MAPA.H * T * z));
+  g.drawImage(RODADAS, Math.round(sx(0)), Math.round(sy(0)), Math.round(MAPA.W * CASILLA * z), Math.round(MAPA.H * CASILLA * z));
 }
 
 /* ---------- las farolas: en las esquinas de cada manzana ---------- */
@@ -217,7 +217,7 @@ function farolas() {
   FAROLAS = [];
   for (let by = 0; by < 4; by++) for (let bx = 0; bx < 5; bx++) for (const [i, j] of [[2, 2], [9, 2], [2, 9], [9, 9]]) {
     const tx = COLS[bx] + i, ty = FILAS[by] + j;
-    if (tipoEn(tx, ty) === TIPO.ACERA || tipoEn(tx, ty) === TIPO.HIERBA) FAROLAS.push({ x: tx * T + T / 2, y: ty * T + T / 2 });
+    if (tipoEn(tx, ty) === TIPO.ACERA || tipoEn(tx, ty) === TIPO.HIERBA) FAROLAS.push({ x: tx * CASILLA + CASILLA / 2, y: ty * CASILLA + CASILLA / 2 });
   }
   return FAROLAS;
 }

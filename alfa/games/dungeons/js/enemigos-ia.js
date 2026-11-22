@@ -27,8 +27,8 @@ function pasoHacia(e, tx, ty) {
     const c = caminoM(m, e.x, e.y, tx, ty, (x, y) => !!quienHay(x, y) && !(x === tx && y === ty), 60);
     if (c.length && !quienHay(c[0][0], c[0][1])) mejor = c[0];
   }
-  if (!mejor || !(pasableM(m, mejor[0], mejor[1]) || enM(m, mejor[0], mejor[1]) === T.PUERTA)) return false;   // nunca dentro de un muro
-  if (enM(m, mejor[0], mejor[1]) === T.PUERTA) ponM(m, mejor[0], mejor[1], T.PUERTA_ABIERTA);
+  if (!mejor || !(pasableM(m, mejor[0], mejor[1]) || enM(m, mejor[0], mejor[1]) === CASILLA.PUERTA)) return false;   // nunca dentro de un muro
+  if (enM(m, mejor[0], mejor[1]) === CASILLA.PUERTA) ponM(m, mejor[0], mejor[1], CASILLA.PUERTA_ABIERTA);
   mueveA(e, mejor[0], mejor[1]);
   return true;
 }

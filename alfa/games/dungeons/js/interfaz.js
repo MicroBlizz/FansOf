@@ -62,30 +62,30 @@ function pintaJuego(ctx) {
     if (!vis) continue;
     const t = m.t[k], px = tx * TS, py = ty * TS;
     let img, detalle = null;
-    if (t === T.MURO) {
-      const abajo = ty + 1 < m.h ? m.t[k + m.w] : T.MURO, cara = abajo !== T.MURO && m.vis[k + m.w];
+    if (t === CASILLA.MURO) {
+      const abajo = ty + 1 < m.h ? m.t[k + m.w] : CASILLA.MURO, cara = abajo !== CASILLA.MURO && m.vis[k + m.w];
       img = cara ? casilla(z, 'muro') : casilla(z, 'muro_top');
       if (cara && (tx * 7 + ty * 13) % 6 === 0) antorchas.push([tx, ty]);
     }
-    else if (t === T.SUELO) { img = casilla(z, 'suelo', (tx + ty) & 1); if (m.v[k] >= 2) detalle = casilla(z, 'detalle', m.v[k]); }
-    else if (t === T.PUERTA || t === T.PUERTA_CERRADA) img = casilla(z, 'puerta');
-    else if (t === T.PUERTA_ABIERTA) img = casilla(z, 'puerta_abierta');
-    else if (t === T.LLEGADA) img = casilla(z, 'llegada');
-    else if (t === T.SUBIDA) img = casilla(z, 'subida');
-    else if (t === T.MUEBLE) img = casilla(z, 'mueble', m.v[k]);
-    else if (t === T.ALFOMBRA) img = casilla(z, 'alfombra');
-    else img = casilla(z, t === T.ALFOMBRA2 ? 'alfombra2' : 'suelo', 0);
+    else if (t === CASILLA.SUELO) { img = casilla(z, 'suelo', (tx + ty) & 1); if (m.v[k] >= 2) detalle = casilla(z, 'detalle', m.v[k]); }
+    else if (t === CASILLA.PUERTA || t === CASILLA.PUERTA_CERRADA) img = casilla(z, 'puerta');
+    else if (t === CASILLA.PUERTA_ABIERTA) img = casilla(z, 'puerta_abierta');
+    else if (t === CASILLA.LLEGADA) img = casilla(z, 'llegada');
+    else if (t === CASILLA.SUBIDA) img = casilla(z, 'subida');
+    else if (t === CASILLA.MUEBLE) img = casilla(z, 'mueble', m.v[k]);
+    else if (t === CASILLA.ALFOMBRA) img = casilla(z, 'alfombra');
+    else img = casilla(z, t === CASILLA.ALFOMBRA2 ? 'alfombra2' : 'suelo', 0);
     ctx.drawImage(img, px, py);
     if (detalle) ctx.drawImage(detalle, px, py);
-    if (t === T.PUERTA_CERRADA) { ctx.fillStyle = '#ffd040'; ctx.fillRect(px + 12, py + 13, 8, 6); ctx.fillStyle = '#20102c'; ctx.fillRect(px + 15, py + 15, 2, 3); }
-    if (t === T.PUESTO) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'puesto', px + TS / 2, py + TS + 2) });
-    else if (t === T.MAQUINA) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'maquina', px + TS / 2, py + TS) });
-    else if (t === T.JAULA) altos.push({ y: py + TS, f: () => { pintaFigura(ctx, 'ardilla', px + TS / 2, py + TS - 3, { anim: 'quieto', f: Math.floor(J.tiempo * 3) % 4 }); pintaIcono(ctx, 'jaula', px + TS / 2, py + TS); } });
-    else if (t === T.ATRIL) altos.push({ y: py + TS, f: () => pintaIcono(ctx, m.usado[clave(tx, ty)] ? 'atril_leido' : 'atril', px + TS / 2, py + TS) });
-    else if (t === T.REJA) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'reja', px + TS / 2, py + TS) });
-    else if (t === T.ROMPIBLE) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'rompible_' + rompibleDe(m, tx, ty), px + TS / 2, py + TS - 1) });
-    else if (t === T.ALTAR) altos.push({ y: py + TS, f: () => pintaIcono(ctx, m.usado[clave(tx, ty)] ? 'altar_apagado' : 'altar', px + TS / 2, py + TS) });
-    else if (t === T.CAFETERA) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'cafetera', px + TS / 2, py + TS) });
+    if (t === CASILLA.PUERTA_CERRADA) { ctx.fillStyle = '#ffd040'; ctx.fillRect(px + 12, py + 13, 8, 6); ctx.fillStyle = '#20102c'; ctx.fillRect(px + 15, py + 15, 2, 3); }
+    if (t === CASILLA.PUESTO) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'puesto', px + TS / 2, py + TS + 2) });
+    else if (t === CASILLA.MAQUINA) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'maquina', px + TS / 2, py + TS) });
+    else if (t === CASILLA.JAULA) altos.push({ y: py + TS, f: () => { pintaFigura(ctx, 'ardilla', px + TS / 2, py + TS - 3, { anim: 'quieto', f: Math.floor(J.tiempo * 3) % 4 }); pintaIcono(ctx, 'jaula', px + TS / 2, py + TS); } });
+    else if (t === CASILLA.ATRIL) altos.push({ y: py + TS, f: () => pintaIcono(ctx, m.usado[clave(tx, ty)] ? 'atril_leido' : 'atril', px + TS / 2, py + TS) });
+    else if (t === CASILLA.REJA) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'reja', px + TS / 2, py + TS) });
+    else if (t === CASILLA.ROMPIBLE) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'rompible_' + rompibleDe(m, tx, ty), px + TS / 2, py + TS - 1) });
+    else if (t === CASILLA.ALTAR) altos.push({ y: py + TS, f: () => pintaIcono(ctx, m.usado[clave(tx, ty)] ? 'altar_apagado' : 'altar', px + TS / 2, py + TS) });
+    else if (t === CASILLA.CAFETERA) altos.push({ y: py + TS, f: () => pintaIcono(ctx, 'cafetera', px + TS / 2, py + TS) });
     const tp = m.trampas.get(clave(tx, ty)); if (tp && tp.vista) pintaIcono(ctx, 'trampa', px + TS / 2, py + TS - 2);
     if (vis === 1) { ctx.fillStyle = 'rgba(5,3,12,0.78)'; ctx.fillRect(px, py, TS, TS); }
   }
@@ -227,7 +227,7 @@ function pintaMinimapa(ctx) {
   for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) {
     const k = y * m.w + x, v = m.vis[k]; if (!v) continue;
     const t = m.t[k];
-    ctx.fillStyle = t === T.MURO ? (v === 2 ? '#5a4c46' : '#30282a') : t === T.SUBIDA ? '#ffd040' : t === T.PUERTA || t === T.PUERTA_CERRADA ? '#b07040' : t === T.PUESTO || t === T.MAQUINA || t === T.ALTAR || t === T.ATRIL || t === T.JAULA ? '#c8a040' : t === T.REJA ? '#a8323a' : (v === 2 ? '#2a2228' : '#161014');
+    ctx.fillStyle = t === CASILLA.MURO ? (v === 2 ? '#5a4c46' : '#30282a') : t === CASILLA.SUBIDA ? '#ffd040' : t === CASILLA.PUERTA || t === CASILLA.PUERTA_CERRADA ? '#b07040' : t === CASILLA.PUESTO || t === CASILLA.MAQUINA || t === CASILLA.ALTAR || t === CASILLA.ATRIL || t === CASILLA.JAULA ? '#c8a040' : t === CASILLA.REJA ? '#a8323a' : (v === 2 ? '#2a2228' : '#161014');
     ctx.fillRect(x0 + x * esc, y0 + y * esc, esc, esc);
   }
   for (const e of J.enemigos) if (m.vis[e.y * m.w + e.x] === 2) { ctx.fillStyle = e.jefe ? '#ff8a2a' : '#c02a30'; ctx.fillRect(x0 + e.x * esc, y0 + e.y * esc, esc, esc); }

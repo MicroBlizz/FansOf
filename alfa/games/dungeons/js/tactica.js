@@ -42,7 +42,7 @@ function empuja(a, b) {
   if (!b || b.vida <= 0 || b.jefe || b.mini) return;
   const dx = Math.sign(b.x - a.x), dy = Math.sign(b.y - a.y), nx = b.x + dx, ny = b.y + dy, m = J.mapa;
   const otro = quienHay(nx, ny);
-  const caja = enM(m, nx, ny) === T.ROMPIBLE;
+  const caja = enM(m, nx, ny) === CASILLA.ROMPIBLE;
   if (!pasableM(m, nx, ny) || otro) {   // choca: estampado
     if (caja) rompe(nx, ny, a);
     const n = Math.max(1, Math.ceil(a.atq * 0.5));

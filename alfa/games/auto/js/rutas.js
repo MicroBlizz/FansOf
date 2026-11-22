@@ -104,9 +104,9 @@ function bajaCampo(campo, tx, ty) {
 }
 // el punto (en píxeles) al que apuntar para seguir el campo: «n» casillas más allá, para que el giro salga suave
 function puntoCampo(campo, x, y, n = 2) {
-  let tx = Math.floor(x / T), ty = Math.floor(y / T), dio = 0;
+  let tx = Math.floor(x / CASILLA), ty = Math.floor(y / CASILLA), dio = 0;
   for (let i = 0; i < n; i++) { const s = bajaCampo(campo, tx, ty); if (!s) break; [tx, ty] = s; dio++; }
-  return dio ? { x: tx * T + T / 2, y: ty * T + T / 2 } : null;
+  return dio ? { x: tx * CASILLA + CASILLA / 2, y: ty * CASILLA + CASILLA / 2 } : null;
 }
 
 // una cola de prioridad mínima (montículo binario), para el Dijkstra

@@ -12,31 +12,31 @@ function intentaMover(dx, dy) {
   if (q && q.bando === 'enemigo') { ataca(h, q); accion(); return true; }
   if (q && q.bando === 'aliado') { const ax = q.x, ay = q.y; q.x = h.x; q.y = h.y; mueveA(h, ax, ay); accion(); return true; }   // cambian el sitio
   const t = enM(m, x, y);
-  if (t === T.PUERTA) { ponM(m, x, y, T.PUERTA_ABIERTA); sonido('puerta'); accion(); return true; }
-  if (t === T.PUERTA_CERRADA) {
-    if (h.clase === 'slyfox') { ponM(m, x, y, T.PUERTA_ABIERTA); sonido('puerta'); fxChispas(x, y, '#ffd040', 6); log(tr('SlyFox abre la cerradura con su ganzúa. Ni la has visto moverse.'), '#b070f0'); hito('tesoro'); accion(); return true; }
-    if (h.llaves > 0) { h.llaves--; ponM(m, x, y, T.PUERTA_ABIERTA); sonido('puerta'); log(tr('Abres la sala de tesoro con la llave.'), '#ffd040'); hito('tesoro'); accion(); return true; }
+  if (t === CASILLA.PUERTA) { ponM(m, x, y, CASILLA.PUERTA_ABIERTA); sonido('puerta'); accion(); return true; }
+  if (t === CASILLA.PUERTA_CERRADA) {
+    if (h.clase === 'slyfox') { ponM(m, x, y, CASILLA.PUERTA_ABIERTA); sonido('puerta'); fxChispas(x, y, '#ffd040', 6); log(tr('SlyFox abre la cerradura con su ganzúa. Ni la has visto moverse.'), '#b070f0'); hito('tesoro'); accion(); return true; }
+    if (h.llaves > 0) { h.llaves--; ponM(m, x, y, CASILLA.PUERTA_ABIERTA); sonido('puerta'); log(tr('Abres la sala de tesoro con la llave.'), '#ffd040'); hito('tesoro'); accion(); return true; }
     log(tr('Cerrada con llave. La llave la tiene alguien de esta planta, o está en un cofre.'), '#ff9aa4'); sonido('error'); return false;
   }
-  if (t === T.PUESTO || t === T.MAQUINA) { abreTienda(); return false; }
-  if (t === T.ALTAR) { abreAltar(x, y); return false; }
-  if (t === T.JAULA) { abreJaula(x, y); return true; }
-  if (t === T.ATRIL) { leeAtril(x, y); return true; }
-  if (t === T.REJA) { log(tr('Las rejas no se abren hasta que no quede nadie de la emboscada.'), '#ff9aa4'); sonido('error'); return false; }
-  if (t === T.ROMPIBLE) { anima(h, 'golpe', 0.3); h.dx += dx * 5; h.dy += dy * 5; rompe(x, y, h); accion(); return true; }
-  if (t === T.CAFETERA) {
+  if (t === CASILLA.PUESTO || t === CASILLA.MAQUINA) { abreTienda(); return false; }
+  if (t === CASILLA.ALTAR) { abreAltar(x, y); return false; }
+  if (t === CASILLA.JAULA) { abreJaula(x, y); return true; }
+  if (t === CASILLA.ATRIL) { leeAtril(x, y); return true; }
+  if (t === CASILLA.REJA) { log(tr('Las rejas no se abren hasta que no quede nadie de la emboscada.'), '#ff9aa4'); sonido('error'); return false; }
+  if (t === CASILLA.ROMPIBLE) { anima(h, 'golpe', 0.3); h.dx += dx * 5; h.dy += dy * 5; rompe(x, y, h); accion(); return true; }
+  if (t === CASILLA.CAFETERA) {
     const k = clave(x, y);
     if (m.usado[k]) { log(tr('La cafetera está vacía. Como el presupuesto de Microblizz.'), '#ff9aa4'); return false; }
     m.usado[k] = true; h.vida = h.vidaMax; h.cafe = h.cafeMax; fxExplosion(h.x, h.y, 0.7, '#ffe88a'); sonido('cofre');
     log(tr('Café de la sala de descanso: Vida y Café al máximo. Solo una vez.'), '#5fd36a'); accion(); return true;
   }
-  if (t === T.MUEBLE) { log(tr('Un mueble te corta el paso. Sirve de parapeto.'), '#8c879a'); return false; }
+  if (t === CASILLA.MUEBLE) { log(tr('Un mueble te corta el paso. Sirve de parapeto.'), '#8c879a'); return false; }
   if (!pasableM(m, x, y)) return false;
   mueveA(h, x, y); sonido('paso');
   const tp = m.trampas.get(clave(x, y));
   if (tp) pisaTrampa(tp, x, y);
   if (h.vida > 0) cogeDelSuelo(h);
-  if (h.vida > 0 && enM(m, x, y) === T.SUBIDA && !h.camino.length) log(tr('La escalera de subida. Toca el botón de subir (o pulsa Intro).'), '#ffd040');
+  if (h.vida > 0 && enM(m, x, y) === CASILLA.SUBIDA && !h.camino.length) log(tr('La escalera de subida. Toca el botón de subir (o pulsa Intro).'), '#ffd040');
   accion();
   return true;
 }
@@ -44,7 +44,7 @@ function esperar() { if (J.modo !== 'juego') return; anima(J.heroe, 'quieto'); a
 function subir() {
   const h = J.heroe, m = J.mapa;
   if (J.modo !== 'juego') return;
-  if (enM(m, h.x, h.y) !== T.SUBIDA) { const c = caminoM(m, h.x, h.y, m.salida.x, m.salida.y, (x, y) => visM(m, x, y) === 0 || !!quienHay(x, y), 400); if (visM(m, m.salida.x, m.salida.y) && c.length) { h.camino = c; h.explorando = false; } else log(tr('Aún no has visto la escalera de subida.'), '#8c879a'); return; }
+  if (enM(m, h.x, h.y) !== CASILLA.SUBIDA) { const c = caminoM(m, h.x, h.y, m.salida.x, m.salida.y, (x, y) => visM(m, x, y) === 0 || !!quienHay(x, y), 400); if (visM(m, m.salida.x, m.salida.y) && c.length) { h.camino = c; h.explorando = false; } else log(tr('Aún no has visto la escalera de subida.'), '#8c879a'); return; }
   const jefe = J.enemigos.find(e => e.jefe);
   if (jefe) { log(fmt(tr('{j} vigila la escalera. Primero hay que despedirlo.'), { j: tr(jefe.nombre) }), '#ff9aa4'); sonido('error'); return; }
   if (!J.enemigos.length) { hito('limpia'); log(tr('Planta limpia: +monedas de bonificación.'), '#ffd040'); h.monedas += 10 + J.planta * 5; }
@@ -129,7 +129,7 @@ function usaHabilidad() {
 function caminoHasta(tx, ty) {
   const h = J.heroe, m = J.mapa;
   if (J.modo !== 'juego') return;
-  if (tx === h.x && ty === h.y) { if (enM(m, h.x, h.y) === T.SUBIDA) subir(); else esperar(); return; }
+  if (tx === h.x && ty === h.y) { if (enM(m, h.x, h.y) === CASILLA.SUBIDA) subir(); else esperar(); return; }
   const q = quienHay(tx, ty);
   if (q && q.bando === 'enemigo' && visM(m, tx, ty) === 2) {
     if (rey(h.x, h.y, tx, ty) <= 1) { h.camino = []; intentaMover(Math.sign(tx - h.x), Math.sign(ty - h.y)); return; }
@@ -171,9 +171,9 @@ function explorar() {
   let mejor = null, md = 9999;
   for (let y = 1; y < m.h - 1; y++) for (let x = 1; x < m.w - 1; x++) {
     const k = campo[y * m.w + x];
-    if (k < 0 || k >= md || !visM(m, x, y) || !(pasableM(m, x, y) || enM(m, x, y) === T.PUERTA)) continue;
+    if (k < 0 || k >= md || !visM(m, x, y) || !(pasableM(m, x, y) || enM(m, x, y) === CASILLA.PUERTA)) continue;
     let frontera = false;
-    for (const [dx, dy] of DIRS) if (visM(m, x + dx, y + dy) === 0 && enM(m, x + dx, y + dy) !== T.MURO) frontera = true;
+    for (const [dx, dy] of DIRS) if (visM(m, x + dx, y + dy) === 0 && enM(m, x + dx, y + dy) !== CASILLA.MURO) frontera = true;
     if (frontera) { md = k; mejor = [x, y]; }
   }
   if (!mejor) {

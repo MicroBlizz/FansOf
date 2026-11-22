@@ -90,11 +90,11 @@ function pintaMapaGrande(ctx) {
   const esc = Math.max(1, Math.floor(Math.min((c.w - 10) / m.w, (c.h - 70) / m.h)));
   const x0 = c.x + Math.round((c.w - m.w * esc) / 2), y0 = c.y + 22;
   ctx.fillStyle = '#060408'; ctx.fillRect(x0 - 1, y0 - 1, m.w * esc + 2, m.h * esc + 2);
-  const COLC = { [T.SUBIDA]: '#ffd040', [T.LLEGADA]: '#8c879a', [T.PUESTO]: '#ff8ad0', [T.MAQUINA]: '#4aa3ff', [T.CAFETERA]: '#5fd36a', [T.ALTAR]: '#c8a040', [T.ATRIL]: '#c8a040', [T.JAULA]: '#e0804a', [T.REJA]: '#a8323a', [T.ROMPIBLE]: '#7a5a34', [T.PUERTA_CERRADA]: '#ffd040' };
+  const COLC = { [CASILLA.SUBIDA]: '#ffd040', [CASILLA.LLEGADA]: '#8c879a', [CASILLA.PUESTO]: '#ff8ad0', [CASILLA.MAQUINA]: '#4aa3ff', [CASILLA.CAFETERA]: '#5fd36a', [CASILLA.ALTAR]: '#c8a040', [CASILLA.ATRIL]: '#c8a040', [CASILLA.JAULA]: '#e0804a', [CASILLA.REJA]: '#a8323a', [CASILLA.ROMPIBLE]: '#7a5a34', [CASILLA.PUERTA_CERRADA]: '#ffd040' };
   for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) {
     const k = y * m.w + x, v = m.vis[k]; if (!v) continue;
     const t = m.t[k];
-    ctx.fillStyle = COLC[t] || (t === T.MURO ? (v === 2 ? '#5a4c46' : '#3a3234') : t === T.PUERTA || t === T.PUERTA_ABIERTA ? '#b07040' : t === T.MUEBLE ? '#2a2026' : (v === 2 ? '#2a2228' : '#1a1418'));
+    ctx.fillStyle = COLC[t] || (t === CASILLA.MURO ? (v === 2 ? '#5a4c46' : '#3a3234') : t === CASILLA.PUERTA || t === CASILLA.PUERTA_ABIERTA ? '#b07040' : t === CASILLA.MUEBLE ? '#2a2026' : (v === 2 ? '#2a2228' : '#1a1418'));
     ctx.fillRect(x0 + x * esc, y0 + y * esc, esc, esc);
   }
   for (const o of J.objetos) if (m.vis[o.y * m.w + o.x]) { ctx.fillStyle = o.obj.id === 'monedas' ? '#ffd040' : o.obj.id === 'cofre' ? '#ffb02e' : '#d9d2e0'; ctx.fillRect(x0 + o.x * esc + (esc > 2 ? 1 : 0), y0 + o.y * esc + (esc > 2 ? 1 : 0), Math.max(1, esc - (esc > 2 ? 2 : 0)), Math.max(1, esc - (esc > 2 ? 2 : 0))); }

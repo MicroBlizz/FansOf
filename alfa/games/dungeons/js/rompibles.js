@@ -35,20 +35,20 @@ function ponRompibles(m, d, planta, out) {
   const tipos = ROMPIBLES_ZONA[m.zona] || [0, 1];
   for (const s of m.salas) {
     if (s.tipo === 'llegada' || s.tipo === 'jefe' || s.tipo === 'tienda' || s.tipo === 'altar' || s.tipo === 'maldita' || s.tipo === 'prision' || s.tipo === 'biblioteca') continue;
-    const cas = d.baraja(casillasDe(m, s, T.SUELO).filter(([x, y]) => {
+    const cas = d.baraja(casillasDe(m, s, CASILLA.SUELO).filter(([x, y]) => {
       if (ocupadas.has(clave(x, y)) || m.trampas.has(clave(x, y))) return false;
       let pared = false, estorba = false;
-      for (const [dx, dy] of DIRS8) { const t = enM(m, x + dx, y + dy); if (t === T.MURO) pared = true; if (t === T.PUERTA || t === T.PUERTA_CERRADA || t === T.PUERTA_ABIERTA || t === T.SUBIDA || t === T.LLEGADA || t === T.ROMPIBLE) estorba = true; }
+      for (const [dx, dy] of DIRS8) { const t = enM(m, x + dx, y + dy); if (t === CASILLA.MURO) pared = true; if (t === CASILLA.PUERTA || t === CASILLA.PUERTA_CERRADA || t === CASILLA.PUERTA_ABIERTA || t === CASILLA.SUBIDA || t === CASILLA.LLEGADA || t === CASILLA.ROMPIBLE) estorba = true; }
       return pared && !estorba;
     }));
     if (s.tipo !== 'tesoro' && !d.prob(0.55)) continue;   // no todas las salas tienen trastos
     const n = Math.min(cas.length, d.entre(1, s.w * s.h > 40 ? 3 : 2));
     for (let i = 0; i < n; i++) {
       const [x, y] = cas[i];
-      if (enM(m, x, y) !== T.SUELO) continue;
-      ponM(m, x, y, T.ROMPIBLE); m.v[y * m.w + x] = d.prob(0.65) ? tipos[0] : tipos[1];
+      if (enM(m, x, y) !== CASILLA.SUELO) continue;
+      ponM(m, x, y, CASILLA.ROMPIBLE); m.v[y * m.w + x] = d.prob(0.65) ? tipos[0] : tipos[1];
       const ahora = cuenta();
-      if (ahora < total - 1 || !todoComunicado(m)) { ponM(m, x, y, T.SUELO); continue; }   // cortaba el paso: fuera
+      if (ahora < total - 1 || !todoComunicado(m)) { ponM(m, x, y, CASILLA.SUELO); continue; }   // cortaba el paso: fuera
       total = ahora; ocupadas.add(clave(x, y));
     }
   }
@@ -56,7 +56,7 @@ function ponRompibles(m, d, planta, out) {
 // romper: explosión de cartón, papeles o cerámica y lo que hubiera dentro
 function rompe(x, y, quien) {
   const m = J.mapa, tipo = rompibleDe(m, x, y);
-  ponM(m, x, y, T.SUELO); m.v[y * m.w + x] = 0; cuenta('rotos');
+  ponM(m, x, y, CASILLA.SUELO); m.v[y * m.w + x] = 0; cuenta('rotos');
   fxEscombros(x, y, 10, 'rompible_' + tipo); fxExplosion(x, y, 0.45, '#c8a070'); sonido('golpe');
   TEMBLOR.t = Math.max(TEMBLOR.t, 0.08); TEMBLOR.f = 2;
   const h = J.heroe, r = D.f();

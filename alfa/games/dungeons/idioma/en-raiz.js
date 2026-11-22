@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha de Fans of Dungeons en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS INTERNAS</b>: arreglos por dentro para que las pruebas automáticas puedan revisar Dungeons antes de cada versión. No cambia nada al jugar.": "<b>BEHIND THE SCENES</b>: fixes under the hood so the automated tests can check Dungeons before every version. Nothing changes when you play.",
+  "Microblizz mandó a un inspector a revisar la mazmorra. Sigue en la planta 3, buscando la salida.": "Microblizz sent an inspector to check the dungeon. The inspector is still on floor 3, looking for the exit.",
   "<b>BARRA PARA DIESTROS Y ZURDOS</b>: en Opciones eliges la mano, y Explorar, Poder y Esperar quedan bajo tu pulgar.": "<b>BAR FOR RIGHT- AND LEFT-HANDERS</b>: choose your hand in Options, and Explore, Power and Wait sit under your thumb.",
   "<b>VUELVE MIRAR</b>: un botón en la barra para ver la ficha de cualquier cosa del mapa. El menú pasa a un botón junto a los mensajes.": "<b>LOOK IS BACK</b>: a button on the bar to see the card of anything on the map. The menu moves to a button next to the messages.",
   "<b>OPCIONES EN LA PORTADA Y MENÚS ARREGLADOS</b>: sonido, música, idioma, mano, velocidad e instalar, también antes de jugar. La ayuda va por páginas, y ninguna ficha, registro o botón tapa ni corta los textos.": "<b>OPTIONS ON THE TITLE SCREEN AND FIXED MENUS</b>: sound, music, language, hand, speed and install, also before playing. Help comes in pages, and no card, log or button covers or cuts off text any more.",

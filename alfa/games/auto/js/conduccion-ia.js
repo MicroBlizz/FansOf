@@ -88,7 +88,7 @@ function esquiva(c, obj) {
 function objetivoRuta(c) {
   const ia = c.ia;
   while (ia.ruta && ia.i < ia.ruta.length) {
-    const [tx, ty] = ia.ruta[ia.i], p = { x: tx * T + T / 2, y: ty * T + T / 2 }, d = dist(c, p);
+    const [tx, ty] = ia.ruta[ia.i], p = { x: tx * CASILLA + CASILLA / 2, y: ty * CASILLA + CASILLA / 2 }, d = dist(c, p);
     if (d > 44) { ia.ruta = null; return null; }   // se ha salido del camino: se rehace en el siguiente paso
     if (d >= 9) return p;
     ia.i++;
@@ -110,7 +110,7 @@ function rutaPorCarril(c, tx, ty) {
     const nx = x + dx, ny = y + dy;
     if (esCruce(nx, ny)) {
       // la línea de parada está una casilla antes del cruce (el paso de cebra queda libre); se respeta hasta haber entrado
-      ia.parada = ruta.length; ia.linea = { x: (x + nx + 1) * T / 2 - dx * T, y: (y + ny + 1) * T / 2 - dy * T };   // antes del paso de cebra
+      ia.parada = ruta.length; ia.linea = { x: (x + nx + 1) * CASILLA / 2 - dx * CASILLA, y: (y + ny + 1) * CASILLA / 2 - dy * CASILLA };   // antes del paso de cebra
       ia.cruce = RUTAS.cruceDe[idx(nx, ny)]; ia.eje = ejeDe(dx, dy);
       return ruta.concat(pasoPorCruce(nx, ny, [dx, dy], eligeSalida(c, MAPA.cruces[ia.cruce], [dx, dy])));
     }

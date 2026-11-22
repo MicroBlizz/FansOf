@@ -6,8 +6,8 @@
 
 // cuántos coches y vecinos viven a la vez (menos con el detalle bajo, para móviles flojos)
 const TRAFICO_N = () => (AJUSTES.detalle === 'bajo' ? 8 : 14), VECINOS_N = () => (AJUSTES.detalle === 'bajo' ? 18 : 34);
-const casillaDe = (x, y) => [Math.floor(x / T), Math.floor(y / T)];
-const centroCasilla = (tx, ty) => ({ x: tx * T + T / 2, y: ty * T + T / 2 });
+const casillaDe = (x, y) => [Math.floor(x / CASILLA), Math.floor(y / CASILLA)];
+const centroCasilla = (tx, ty) => ({ x: tx * CASILLA + CASILLA / 2, y: ty * CASILLA + CASILLA / 2 });
 
 // una casilla de carril (no cruce) a cierta distancia del jugador
 function calleLejos(j, dmin, dmax, intentos = 40) {

@@ -30,7 +30,7 @@ function pintaBotones(ctx) {
   const rapido = h.mochila.findIndex(o => OBJETOS[o.id].tipo === 'consumible' && o.id !== 'rinonera');
   const B = (icono, t, etq, o, f) => [Object.assign({ icono, txt: conTxt ? t : '', etq: conTxt ? '' : etq }, o), f];
   const lista = [
-    enM(J.mapa, h.x, h.y) === T.SUBIDA
+    enM(J.mapa, h.x, h.y) === CASILLA.SUBIDA
       ? B('ui_escalera', tr('Subir'), tr('Subir'), { activo: true }, () => subir())
       : B('ui_reloj', tr('Esperar'), tr('Esperar'), {}, () => { h.camino = []; h.explorando = false; esperar(); }),
     B('ui_ojo', tr('Explorar'), tr('Explorar'), { activo: h.explorando }, () => { if (h.camino.length) { h.camino = []; h.explorando = false; } else explorar(); }),

@@ -1,8 +1,9 @@
 // Fans of Pop · EL MARCO DEL PANEL DE VICTORIA DE CADA MUNDO (tarea #168, Pepins, 19-11-2026: «este marquito blanco lo quiero
 // personalizado por mundo, así es muy soso»). De momento va por código, como el boceto que vio (sin la costura de puntos, que le
 // parecía muy fea): el borde, las casillas y las cajitas del color del mundo, un remate en el borde (hojitas, glaseado, olas…)
-// y tres de las cositas que flotan en ese mundo en las esquinas. Está a la espera de los marcos que pinte Yoshi (se empieza por el
-// Jardín). El dibujo, en css/victoria-marco.css; el panel, en js/pantalla-victoria.js.
+// y tres de las cositas que flotan en ese mundo en las esquinas. Con el flag 'marcos-victoria', encima va el marco que pintó Yoshi para
+// ese mundo (img-liso/vm-<mundo>.png, Pepins los dio por buenos el 22-11-2026), montado por trozos (border-image): si la imagen no
+// carga, se queda el de código. El dibujo, en css/victoria-marco.css; el panel, en js/pantalla-victoria.js.
 'use strict';
 const pvMarco = (c1, c2, remate, adornos) => Object.freeze({ c1, c2, remate, adornos: Object.freeze(adornos) });
 // por el fondo del mundo (PP_MUNDOS[m].fondo); los adornos son flotantes de ese mundo (PP_FLOTA_MUNDO, js/sprites.js)
@@ -23,10 +24,32 @@ function ppVicMarcoDe(T) {
   const M = T && T.d && PP_MUNDOS[T.d.mundo];
   return (M && PP_VIC_MARCOS[M.fondo]) || null;
 }
-// lo que se le pone al panel: la clase, los colores y los tres adornos
+// flag 'marcos-victoria' (tarea #168): el marco pintado por Yoshi. Se pregunta en el momento, para que abrirlo llegue sin recargar
+const ppVicMarcosPintados = () => NUCLEO.flag('marcos-victoria', 'Pop: marcos de victoria pintados por mundo (tarea #168)', false);
+// la imagen del marco pintado del nivel `T` (null si no es de un mundo): el del Jardín es img-liso/vm-jardin.png
+function ppVicMarcoImg(T) {
+  const M = T && T.d && PP_MUNDOS[T.d.mundo];
+  return M && PP_VIC_MARCOS[M.fondo] ? 'img-liso/' + M.fondo.replace(/^fondo-/, 'vm-') + '.png' : null;
+}
+// el marco pintado sobre el panel, cuando la imagen ya ha cargado (si falla, se queda el de código, que ya está puesto)
+function ppVicMarcoPinta(panel, T) {
+  const src = ppVicMarcosPintados() ? ppVicMarcoImg(T) : null;
+  if (!src) return;
+  const im = new Image();
+  im.onload = () => {
+    if (!panel.isConnected) return;
+    const s = document.createElement('span');
+    s.className = 'pp-vic-marco-img'; s.style.borderImageSource = `url("${src}")`;
+    panel.appendChild(s); panel.classList.add('pp-vic-pintado');
+    ppVicEncaja(panel.parentElement);   // el panel deja sitio a la banda: que la ventana siga cabiendo (js/victoria-panel.js)
+  };
+  im.src = src;
+}
+// lo que se le pone al panel: la clase, los colores y los tres adornos (y, con el flag, el marco pintado encima)
 function ppVicMarcoPon(panel, T) {
   const k = ppVicMarcoDe(T);
   if (!panel || !k) return;
+  ppVicMarcoPinta(panel, T);
   panel.classList.add('pp-vic-marco', 'pp-vic-remate-' + k.remate);
   panel.style.setProperty('--marco1', k.c1); panel.style.setProperty('--marco2', k.c2);
   k.adornos.forEach((f, i) => {

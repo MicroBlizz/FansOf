@@ -30,3 +30,13 @@
   background: radial-gradient(ellipse 7px 5px at 10px 7px, #fff 40%, var(--marco1) 45%, var(--marco1) 90%, transparent) 0 0 / 24px 14px repeat-x; }
 .pp-vic-remate-estrellas::after { inset: 0; border-radius: 26px; opacity: 0.55;
   background: radial-gradient(circle, #fff 1.5px, transparent 2.5px) 0 0 / 34px 30px, radial-gradient(circle, #ffe36e 1.5px, transparent 2.5px) 17px 15px / 34px 30px; }
+
+/* el marco que pintó Yoshi para el mundo (flag 'marcos-victoria', js/victoria-marco.js): img-liso/vm-<mundo>.png por 9 trozos, las
+   esquinas (164 px de la imagen de 512, con sus muñequitos) sin deformar y los bordes estirados; el centro no se pinta. Sale un poco por fuera
+   del panel, por debajo de lo que hay dentro (z-index -1 en el panel, que hace capa), y el panel deja sitio para la banda y los
+   muñequitos de las esquinas. Con él, fuera el marco de código (borde, remate y adornos) */
+.pp-vic-marco-img { position: absolute; inset: -14px; z-index: -1; pointer-events: none; border: 84px solid transparent;
+  border-image-slice: 164; border-image-width: 84px; border-image-repeat: stretch; }
+.pp-vic-panel.pp-vic-pintado { padding: 46px 30px 42px; box-shadow: none; }
+.pp-vic-justa .pp-vic-panel.pp-vic-pintado { padding: 42px 28px 38px; }
+.pp-vic-pintado::after, .pp-vic-pintado .pp-vic-adorno { display: none; }

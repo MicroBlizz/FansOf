@@ -1,8 +1,8 @@
 {
- "build": 1438,
- "hash": "880efb2",
- "fecha": "2026-11-22T07:47:22Z",
- "mensaje": "Tiny: hoja de estilo y tanda de prueba pedida a Yoshi (tarea #219, Pepins)",
+ "build": 1439,
+ "hash": "ae96458",
+ "fecha": "2026-11-22T08:00:43Z",
+ "mensaje": "Pop: marcos de victoria pintados por Yoshi en cada mundo (tarea #168, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

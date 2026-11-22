@@ -1,8 +1,8 @@
 {
- "build": 1446,
- "hash": "dd374af",
- "fecha": "2026-11-22T15:14:47Z",
- "mensaje": "#327 n2: la regla pasa a core (JUEGOS_PORTADA en core/js/sistema/juegos-portada.js) porque la usan la portada y el anuncio de los juegos; aún no la carga nadie",
+ "build": 1447,
+ "hash": "d6a2041",
+ "fecha": "2026-11-22T17:11:41Z",
+ "mensaje": "#323: lo de la revisión de código: pytest con -rfEs (no pierde las líneas FAILED), un todo con motivo cuenta como saltado, el catálogo falla con un juego del Archivo sin id, Island espera por estado tras «Otra vez» y complejidad.mjs usa la misma lista de pausa",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

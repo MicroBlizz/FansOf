@@ -2,6 +2,9 @@
 // para no tocar core). El inglés del juego en sí está en js/textos.js.
 'use strict';
 IDIOMA.add({
+  // 0.3.3
+  "<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the site retries reading the server notices and settings when the connection hiccups.",
+  "Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café.": "Microblizz told the connection to keep trying and Phony took the chance to ask the same of the coffee machine.",
   "FANS OF AUTO": "FANS OF AUTO",
   "La demo (prueba). El Distrito Beta Abierta visto desde arriba, como en los clásicos de la primera PlayStation, con ciclo de día y noche y nieve: roba coches, derrapa, siembra el caos, huye de los Moderadores (los martillos de baneo son tu nivel de buscado) y haz los recados de tres bandas: Los Animales Locos, Granizo Corp. y Los Extractores. Solo se guarda en el Templo del Autoguardado, pagando. Pixel art dibujado con código.": "The demo (test). The Open Beta District seen from above, like the classics on the first PlayStation, with a day-night cycle and snow: steal cars, drift, sow chaos, run from the Moderators (ban hammers are your wanted level) and do the errands of three gangs: the Crazy Animals, Granizo Corp. and the Extractors. You can only save at the Temple of Autosave, and it costs. Pixel art drawn with code.",
   // sus novedades (js/novedades.js)

@@ -1,6 +1,7 @@
 // Fans Of Paperwork · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.11.4', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.11.3', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.11.2', real: ["El botón amarillo de las ventanas de confirmar (COMPRAR, BORRAR…) se lee bien: ya no tiene la letra emborronada. Tu partida se conserva."], joke: ["Imprenta ha cambiado el tóner. Por fin se ve dónde firmar."] },
   { v: '0.11.1', real: ["El pack de las dos mejoras para siempre enseña su descuento: 10,00 € tachado y 8,00 €. La partida empieza de cero."], joke: ["Contabilidad ha descubierto el rotulador rojo. Ya no hay precio que se le resista."] },

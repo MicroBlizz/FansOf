@@ -178,5 +178,11 @@
     "fr-FR": "améliorations internes des systèmes du site et de la page d'accueil",
     "de-DE": "interne Verbesserungen an den Systemen der Website und der Startseite",
     "it-IT": "miglioramenti interni ai sistemi del sito e della pagina iniziale"
+  },
+  "0.2.83": {
+    "pt-BR": "melhorias internas: o site tenta de novo ler os avisos e ajustes do servidor quando a conexão falha",
+    "fr-FR": "améliorations internes : le site réessaie de lire les avis et réglages du serveur quand la connexion flanche",
+    "de-DE": "interne Verbesserungen: Die Website versucht erneut, Hinweise und Einstellungen vom Server zu lesen, wenn die Verbindung kurz aussetzt",
+    "it-IT": "miglioramenti interni: il sito riprova a leggere avvisi e impostazioni dal server quando la connessione vacilla"
   }
 }

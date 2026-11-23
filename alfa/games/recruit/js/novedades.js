@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.7', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.1.6', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.1.5', real: ["<b>EN INGLÉS</b>: Recruit ya se juega en inglés. Sale solo si tu navegador va en inglés, y se cambia en Opciones desde la portada."], joke: ["Recursos Humanos ya recluta en dos idiomas. Sigue sin pagar en ninguno."] },
   { v: '0.1.4', real: ["<b>SE JUEGA CON EL GIRO BLOQUEADO</b>: con el móvil de pie, toca la pantalla y Recruit se pone en pantalla completa y en horizontal él solo, aunque el móvil tenga bloqueado el giro automático. En el iPhone, que no lo permite, el aviso te recuerda quitar el bloqueo de giro."], joke: ["CrazyBunny pidió trabajar tumbado. Recursos Humanos dijo que no, pero el móvil sí puede."] },

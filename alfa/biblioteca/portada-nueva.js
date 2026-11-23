@@ -3,6 +3,7 @@
 //   · el titular «Microblizz lo ha comprado todo» en la cabecera (sin CrazyBunny: Pepins lo quitó el 21-11-2026),
 //   · el bloque «Tú decides cuál terminamos» alrededor de LOS MÁS PEDIDOS (agrupar.js lo crea cuando contesta el servidor), con su botón IR A VOTAR,
 //   · la franja «Apóyanos» bajo la biblioteca, que lleva a la página de donaciones apoyanos/ (tarea #291),
+//   · el número de novedades sin ver en «Novedades» del menú y de la barra, en vez de la tira amarilla del titular,
 //   · y lo que la barra de abajo hace distinto en la portada («Votar» y «Novedades»).
 // Las piezas llevan la clase «pn»: sin el flag no se ven (estilo/web.css), así que cerrarlo devuelve la portada de siempre sin recargar.
 // Usa lo que ya hay en la página: t(), esc(), ESTILO_NUEVO, NUCLEO.alCambiarFlags y abrirNovedades() (novedades/ventana.js).
@@ -50,11 +51,23 @@
       <span class="pn-apoyanos-p">${esc(t('Ayúdanos a pararle los pies a Microblizz.'))}</span><span class="pn-apoyanos-b">${esc(t('VER CÓMO'))}</span></a>`);
   }
 
+  // NOVEDADES: con algo sin ver, un número en «Novedades» del menú de arriba y de la barra del móvil, en vez de la tira del titular (Arkioner, 23-11-2026).
+  // Lo cuenta novedades/ventana.js (data-novedades-nuevas en <html> y el aviso 'novedades:nuevas'); abrir la ventana lo pone a cero.
+  function insignias() {
+    document.querySelectorAll('.pn-insignia').forEach(x => x.remove());
+    const n = Number(document.documentElement.dataset.novedadesNuevas) || 0;
+    if (!montada || !n) return;
+    const txt = esc(n === 1 ? t('1 nueva') : t('{n} nuevas', { n }));
+    document.querySelectorAll('#abrir-novedades, .pn-barra a[data-pn="novedades"]')
+      .forEach(a => a.insertAdjacentHTML('beforeend', `<span class="pn pn-insignia" role="status" aria-label="${txt}">${n}</span>`));
+  }
+  document.addEventListener('novedades:nuevas', insignias);
+
   let montada = false;
   function aplicar() {
     if (!ESTILO_NUEVO.activo() || montada) return;
     montada = true;
-    titular(); barra(); esperarVotar(); franjaApoyo();
+    titular(); barra(); esperarVotar(); franjaApoyo(); insignias();
   }
   aplicar();
   NUCLEO.alCambiarFlags(aplicar);   // los flags de la base llegan de fondo (y cada 5 minutos): abrir o cerrar se nota sin recargar

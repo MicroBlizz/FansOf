@@ -9,7 +9,7 @@
 // tr() llega con el idioma, que se carga aparte: hasta entonces el texto va tal cual (y la página lo traduce sola al pintarlo)
 const t = (s, datos) => (typeof tr === 'function' ? tr(s, datos) : s);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const nov = { fondo: document.getElementById('novedades'), volver: null };
+const nov = { fondo: document.getElementById('novedades'), volver: null, pendiente: null };   // pendiente: dar por visto lo nuevo (mostrarAviso)
 const ENTRADAS = {};   // id de tarjeta → { ver, entries }: los informes de cada juego, para su ficha (biblioteca/tienda.js)
 // el botón de jugar: todo se puede jugar (ADR 106)
 function botonJugar(enlace) { return `<a class="ol" href="${esc(enlace)}">${esc(t('JUGAR'))}</a>`; }
@@ -52,6 +52,7 @@ function parche(id, ver, entries, nombre) {
   fila(id, nombre, ver, '', newsLista(n.real) + newsLista(n.joke, 'joke'));
 }
 function abrirNovedades(desde, soloCambios) {
+  if (nov.pendiente) nov.pendiente();   // abrirla por donde sea (la tira, el menú, la barra) da lo nuevo por visto
   filtrar(soloCambios || null);
   nov.volver = desde || null; nov.fondo.hidden = false; document.body.style.overflow = 'hidden';
   document.getElementById('nov-cuerpo').scrollTop = 0; document.getElementById('nov-ok').focus({ preventScroll: true });
@@ -132,7 +133,10 @@ function filtrar(cambios) {
 function mostrarAviso(cambios, guardar) {
   const aviso = document.getElementById('nov-aviso'), boton = document.getElementById('nov-aviso-abrir');
   boton.textContent = cambios.length === 1 ? t('Novedades · 1 nueva') : t('Novedades · {n} nuevas', { n: cambios.length });
-  const visto = () => { aviso.hidden = true; guardar(); };
+  // con el estilo nuevo la tira no se ve (portada-nueva.css): el número lo pone portada-nueva.js en «Novedades» del menú y de la barra, con este aviso
+  const nuevas = n => { document.documentElement.dataset.novedadesNuevas = String(n); document.dispatchEvent(new CustomEvent('novedades:nuevas', { detail: { n } })); };
+  const visto = () => { aviso.hidden = true; nov.pendiente = null; guardar(); nuevas(0); };
+  nov.pendiente = visto; nuevas(cambios.length);
   boton.onclick = () => { visto(); abrirNovedades(boton, cambios); };
   document.getElementById('nov-aviso-x').onclick = visto;
   aviso.hidden = false;

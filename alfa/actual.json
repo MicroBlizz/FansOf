@@ -1,8 +1,8 @@
 {
- "build": 1458,
- "hash": "d1acd70",
- "fecha": "2026-11-23T16:54:40Z",
- "mensaje": "Portada nueva: JUGADOS ÚLTIMAMENTE (hasta 4 juegos abiertos desde la web) en lugar de «Seguir con tu favorito»; en las filas que se deslizan, solo GUARDAR (Arkioner)",
+ "build": 1459,
+ "hash": "5dbf550",
+ "fecha": "2026-11-23T17:04:48Z",
+ "mensaje": "Portada nueva: sin la tira de novedades; lo nuevo es un número en «Novedades» del menú y de la barra del móvil hasta abrir la ventana (Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

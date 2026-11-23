@@ -246,4 +246,6 @@ IDIOMA.add({
   "Se acuerda de lo que eliges en este navegador.": "Your choice is remembered in this browser.",
   // la franja de tu juego favorito en la portada nueva (biblioteca/portada-nueva.js, tarea #299)
   "JUGADOS ÚLTIMAMENTE": "RECENTLY PLAYED",
+  "1 nueva": "1 new",
+  "{n} nuevas": "{n} new",
 });

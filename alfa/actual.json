@@ -1,8 +1,8 @@
 {
- "build": 1449,
- "hash": "fe77537",
- "fecha": "2026-11-22T22:50:58Z",
- "mensaje": "Versiones y novedades para la publicación diaria (portada y sistemas internos de core)",
+ "build": 1450,
+ "hash": "bd52de9",
+ "fecha": "2026-11-23T01:31:01Z",
+ "mensaje": "#327: la lista de /gestion → Juegos se agrupa y filtra por sección de la portada (Nuestros favoritos) y «Con herramientas propias»; el contador de tareas lleva al Tablero filtrado por el juego; Decks gana su pestaña Telemetría (Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

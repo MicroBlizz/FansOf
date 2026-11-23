@@ -1,7 +1,7 @@
 // Fans Of · /gestion → Juegos → pestaña «PORTADA» de cada juego (tarea #327, ADR 203): sección, «En la portada» y «En el anuncio» en la alfa, alfa y web
 // lado a lado, «Pasar a la web» (con un paso de confirmar en la página) y «Deshacer». Pantalla fina: lo que decide está en portada-juegos.js
 // (GESTION_PORTADA). Lo del repo sale de ../biblioteca/juegos.json y las filas, de gestion_juego_portada (servidor/188-juego-portada.sql).
-// También da a la lista de juegos sus marcas («alfa cambiada», «pasar a la web») con GESTION_NAV.marcador.
+// También da a la lista de juegos sus marcas («alfa cambiada», «pasar a la web») y la sección de cada uno en la alfa con GESTION_NAV.marcador.
 // Usa lo de gestion/index.html: rpc(), leerToken(), esc(), textoError() y $().
 'use strict';
 (() => {
@@ -41,10 +41,10 @@
     else if ('confirmar' in d) cambia('gestion_juego_portada_a_web', {});
     else if ('deshacer' in d) cambia('gestion_juego_portada_deshacer', {});
   }
-  // Las marcas de la lista de juegos; si falla el repo o el servidor, lanza y la lista lo avisa (nav.js)
+  // Las marcas de la lista de juegos y su sección en la alfa; si falla el repo o el servidor, lanza y la lista lo avisa (nav.js)
   async function marcas() {
     await cargaRepo(); await cargaFilas();
-    return GESTION_PORTADA.marcas(repo, filas);
+    return { marcas: GESTION_PORTADA.marcas(repo, filas), secciones: GESTION_PORTADA.secciones(repo, filas) };
   }
 
   $('pan-portada').onclick = alTocar;

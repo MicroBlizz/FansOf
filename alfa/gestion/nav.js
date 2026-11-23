@@ -2,10 +2,12 @@
 // Jugadores y Ajustes. Cada uno tiene sus pestañas debajo (Tablero: Tablero, Flujo, Cola y SQL; Jugadores: Cuentas, Métricas, Comentarios, Roles y Rendimiento;
 // Ajustes: Flags, Config y lo que no diga su grupo). «Juegos» enseña la lista de todos los juegos de la biblioteca con buscador (catalogo.js); al elegir uno
 // salen sus pestañas y «Todos los juegos» para volver.
-// Cada archivo de sección se apunta con GESTION_NAV.seccion({ id, pan, etiqueta, orden, juego?, grupo?, cargar? }): sin `juego` es una pestaña común (su grupo,
+// Cada archivo de sección se apunta con GESTION_NAV.seccion({ id, pan, etiqueta, orden, juego?, grupo?, cargar?, filtra? }) (filtra(juego): la deja filtrada por
+// ese juego antes de enseñarla; el Tablero la usa para el contador de tareas de la lista de juegos): sin `juego` es una pestaña común (su grupo,
 // de GRUPO_DE o de `grupo`); con `juego: '<id>'` es solo de ese juego, y con `juego: '*'` sale en todos (cargar recibe el id del juego).
 // Quien cambia la etiqueta de una pestaña (por ejemplo, con un contador) usa GESTION_NAV.etiqueta(id, texto, juego?). Esto solo muestra y oculta: no sabe de datos.
-// Las marcas de cada juego en la lista (portada.js: «alfa cambiada»…) las da quien se apunte con GESTION_NAV.marcador(async () => ({ id: [{ texto, clase }] })):
+// Las marcas de cada juego en la lista (portada.js: «alfa cambiada»…) y su sección en la alfa las da quien se apunte con
+// GESTION_NAV.marcador(async () => ({ marcas: { id: [{ texto, clase }] }, secciones: { id: 'favoritos' | 'prototipos' | 'archivo' } })):
 // se piden cada vez que se enseña la lista (también al volver con atrás); si lanza, la lista dice en una línea que no se han podido traer.
 // Atrás (tarea #322, ADR 201): cada cambio de grupo, pestaña o juego hecho con un toque se anota en el historial del navegador (historial.js e
 // historial-navegador.js), y GESTION_NAV.capa(abierta) anota lo que se abre o cierra encima (el Tablero). Al volver a una entrada se cierra lo abierto
@@ -24,19 +26,19 @@ const GESTION_NAV = (() => {
   const GRUPO_DE = { tablero: 'tablero', cola: 'tablero', sql: 'tablero', cuentas: 'jugadores', metricas: 'jugadores', votos: 'jugadores', roles: 'jugadores', rend: 'jugadores' };
   const S = [], el = id => document.getElementById(id);
   const recuerda = {};   // la pestaña abierta en cada grupo o juego
-  let grupo = 'tablero', juego = null, catalogo = [], abiertas = {}, marcas = {}, avisoMarcas = '', filtroJuegos = '', textoJuegos = '';
+  let grupo = 'tablero', juego = null, catalogo = [], abiertas = {}, marcas = {}, secciones = {}, avisoMarcas = '', filtroJuegos = '', textoJuegos = '';
   let mostrada = null, historial = null, pedidoCatalogo = 0, marcador = null, pedidoMarcas = 0;   // la pestaña que se ve, el adaptador del historial, la última petición del catálogo, quien da las marcas y su última petición
   const seccion = s => { S.push(s); };
   const grupoDe = s => s.grupo || GRUPO_DE[s.id] || 'ajustes';
   const ambito = () => (juego ? juego : grupo);
+  // Los juegos con herramientas propias en /gestion: los que tienen alguna pestaña solo suya (no las de todos, `juego: '*'`)
+  const propias = () => [...new Set(S.filter(s => s.juego && s.juego !== '*').map(s => s.juego))];
   const de = () => S.filter(s => (juego ? s.juego === juego || s.juego === '*' : !s.juego && grupoDe(s) === grupo)).sort((x, y) => (x.orden || 0) - (y.orden || 0));
   const buscar = (id, j) => S.find(s => s.id === id && (j ? s.juego === j || s.juego === '*' : !s.juego));
   const nombreDe = id => ((catalogo.find(j => j.id === id) || {}).nombre || (JUEGOS.find(([j]) => j === id) || [])[1] || id);
-  // Los juegos con pestañas propias en /gestion (más allá de Resumen y Reportes de prueba): una sección solo suya o su sección en el Resumen (GESTION_JUEGOS)
-  const propias = () => [...new Set([...S.filter(s => s.juego && s.juego !== '*').map(s => s.juego), ...Object.keys(typeof GESTION_JUEGOS === 'object' ? GESTION_JUEGOS : {})])];
   const boton = ([id, t]) => `<button type="button" data-g="${id}"${id === grupo ? ' class="activa" aria-current="page"' : ''}><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${ICONO[id]}</svg>${t}</button>`;
   const pestana = (s, id) => `<button type="button" data-s="${s.id}"${s.id === id ? ' class="activa"' : ''}>${s.etiqueta}</button>`;
-  const opcionesJuegos = () => ({ texto: textoJuegos, filtro: filtroJuegos, propias: propias(), abiertas, marcas, avisoMarcas });
+  const opcionesJuegos = () => ({ texto: textoJuegos, filtro: filtroJuegos, secciones, propias: propias(), abiertas, marcas, avisoMarcas });
   function pintaJuegos() {
     el('pan-juegos').innerHTML = GESTION_CATALOGO.html(catalogo, opcionesJuegos(), esc);
   }
@@ -64,6 +66,12 @@ const GESTION_NAV = (() => {
   const sitio = () => ({ grupo, juego, seccion: mostrada });
   const anota = () => { hist().anota(sitio()); };
   const ir = (donde, id) => { ve(donde, id); anota(); };
+  // Abre una pestaña común ya filtrada por un juego (el contador de tareas de la lista → el Tablero de ese juego): la sección lo hace con su `filtra(juego)`
+  function abreFiltrada(id, juegoDelFiltro) {
+    const s = buscar(id);
+    if (s && s.filtra) s.filtra(juegoDelFiltro);
+    ir('global', id);
+  }
   const enSesion = () => { const p = el('vista-panel'); return !p || !p.hidden; };
   const cierraCapas = () => S.forEach(s => { if (s.cierraCapa) s.cierraCapa(); });
   // Dónde se estaba, como lo guarda una entrada del historial; la pestaña solo si sigue existiendo (pinta() lo comprueba)
@@ -114,13 +122,14 @@ const GESTION_NAV = (() => {
     let nuevas = {}, aviso = '';
     try { nuevas = (await marcador()) || {}; } catch (e) { aviso = 'No se han podido traer los cambios de la portada (alfa y web).'; }
     if (esta !== pedidoMarcas) return;
-    marcas = nuevas; avisoMarcas = aviso;
+    marcas = nuevas.marcas || {}; secciones = nuevas.secciones || {}; avisoMarcas = aviso;
     if (grupo === 'juegos' && !juego) pintaJuegos();
   }
   function conectaJuegos() {
     el('pan-juegos').onclick = ev => {
-      const j = ev.target.closest('[data-juego]'), f = ev.target.closest('[data-filtro-juegos]');
-      if (j) ir(j.dataset.juego);
+      const j = ev.target.closest('[data-juego]'), f = ev.target.closest('[data-filtro-juegos]'), t = ev.target.closest('[data-tablero-juego]');
+      if (t) abreFiltrada('tablero', t.dataset.tableroJuego);
+      else if (j) ir(j.dataset.juego);
       else if (f) { filtroJuegos = f.dataset.filtroJuegos; pintaJuegos(); }
     };
     el('pan-juegos').oninput = ev => {   // solo se repinta la lista, para no perder el foco del buscador

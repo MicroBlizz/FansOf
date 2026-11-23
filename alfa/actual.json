@@ -1,8 +1,8 @@
 {
- "build": 1452,
- "hash": "f4ffac7",
- "fecha": "2026-11-23T08:47:57Z",
- "mensaje": "Portada nueva: la caja «Tú decides cuál terminamos» pasa de amarilla a panel oscuro con borde dorado (de noche deslumbraba; elección de Arkioner)",
+ "build": 1453,
+ "hash": "ed41cec",
+ "fecha": "2026-11-23T09:38:54Z",
+ "mensaje": "Island: prototipo Brotito 3D (modelo de Yoshi con esqueleto) al lado del de lonchas, con las mismas reglas y posturas (Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

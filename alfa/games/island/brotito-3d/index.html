@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- Fans of Island · prototipo Brotito 3D: el Brotito en lonchas del juego y su modelo 3D de Yoshi con esqueleto, uno encima del otro,
+     movidos por el mismo estado (las reglas de dominio/brotitos.js). Ficha: docs/guia/juegos/island/brotito-3d.md -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Brotito 3D · prototipo · Fans of Island</title>
+<link rel="stylesheet" href="brotito-3d.css">
+</head>
+<body>
+<header>
+  <a class="volver" href="../">← Island</a>
+  <h1>Brotito 3D <small>prototipo</small></h1>
+</header>
+<main>
+  <section class="panel">
+    <h2>Lonchas (el juego de ahora)</h2>
+    <canvas id="lonchas" aria-label="Brotito en lonchas"></canvas>
+  </section>
+  <section class="panel">
+    <h2>3D de Yoshi con esqueleto</h2>
+    <canvas id="tres" aria-label="Brotito en 3D"></canvas>
+    <p id="aviso" class="aviso"></p>
+  </section>
+  <p class="ayuda">Postura: <b id="estado">reposo</b>. Toca la isla de arriba para poner una zanahoria (brinca hacia ella si la tiene cerca). Arrastra el 3D para girar la cámara.</p>
+  <div class="botones">
+    <button id="libre" data-postura="" data-grupo="postura" class="activo">En marcha</button>
+    <button data-postura="reposo" data-grupo="postura">Reposo</button>
+    <button data-postura="agachado" data-grupo="postura">Agachado</button>
+    <button data-postura="despegue" data-grupo="postura">Despegue</button>
+    <button data-postura="arriba" data-grupo="postura">Arriba</button>
+    <button data-postura="cayendo" data-grupo="postura">Cayendo</button>
+    <button data-postura="aterriza" data-grupo="postura">Aterriza</button>
+  </div>
+  <div class="botones">
+    <button id="pisar">Pisar</button>
+    <button id="lento">Cámara lenta</button>
+    <button id="suave">Suavizar posturas</button>
+    <button id="borde">Contorno</button>
+    <button id="juego">Vista del juego</button>
+    <button id="cerca">De cerca</button>
+    <button id="zana">Quitar zanahoria</button>
+  </div>
+</main>
+<script src="../js/is.js"></script>
+<script src="../js/dominio/medidas.js"></script>
+<script src="../js/dominio/fisica.js"></script>
+<script src="../js/dominio/bichos-comun.js"></script>
+<script src="../js/dominio/brotitos.js"></script>
+<script src="../js/adaptadores/lonchas.js"></script>
+<script src="../js/adaptadores/arte-personajes.js"></script>
+<script src="huesos.js"></script>
+<script src="mundo.js"></script>
+<script type="module" src="principal.js"></script>
+</body>
+</html>

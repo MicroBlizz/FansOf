@@ -1,8 +1,8 @@
 {
- "build": 1459,
- "hash": "5dbf550",
- "fecha": "2026-11-23T17:04:48Z",
- "mensaje": "Portada nueva: sin la tira de novedades; lo nuevo es un número en «Novedades» del menú y de la barra del móvil hasta abrir la ventana (Arkioner)",
+ "build": 1460,
+ "hash": "5623a77",
+ "fecha": "2026-11-23T18:16:31Z",
+ "mensaje": "Portada nueva: JUGADOS ÚLTIMAMENTE enseña hasta 6 juegos, centrados en PC (Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

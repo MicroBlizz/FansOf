@@ -53,7 +53,9 @@ html.portada-nueva #mas-pedidos .rejilla > .game { flex: none; width: 250px; scr
 @media (min-width: 701px) {
   html.portada-nueva #mas-pedidos .rejilla { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 14px; overflow: visible; }
   html.portada-nueva #mas-pedidos .rejilla > .game { width: auto; }
-  html.portada-nueva .pn-fila-favoritos .pn-carril { justify-content: center; }
+  html.portada-nueva .pn-fila-favoritos .pn-carril, html.portada-nueva .pn-fila-jugados .pn-carril { justify-content: center; }
+  html.portada-nueva .pn-fila-jugados > h3.grupo { text-align: center; }
+  html.portada-nueva .pn-fila-jugados .pn-carril > .pn-mini { width: 150px; }   /* 6 caben en el ancho de la portada con su borde */
   html.portada-nueva .pn-fila-favoritos .pn-carril > .pn-mini { width: 200px; }
 }
 

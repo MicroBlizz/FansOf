@@ -1,5 +1,5 @@
 // Fans Of · LA PORTADA NUEVA · el catálogo con buscador y orden y la fila de NOVEDADES (tarea #277, ADR 188), tras el flag «portada-nueva» (solo en la alfa).
-//   · JUGADOS ÚLTIMAMENTE: arriba del DESTACADO, hasta 4 juegos que abriste desde la web, para volver rápido (la regla, biblioteca/jugados.js). Cada enlace a un
+//   · JUGADOS ÚLTIMAMENTE: arriba del DESTACADO, hasta 6 juegos que abriste desde la web, para volver rápido (la regla, biblioteca/jugados.js). Cada enlace a un
 //     juego que se toca en la portada se apunta en este navegador (fansof-jugados), con el flag o sin él, para que la fila ya tenga algo al abrirlo.
 //   · NUESTROS FAVORITOS: arriba de la biblioteca, una fila con los favoritos (los que marca /gestion → Juegos, ADR 203) y su JUGAR.
 //   · NOVEDADES: bajo el carrusel DESTACADO, una fila que se desliza de lado con los juegos de versión más reciente (novedades/fechas.json).
@@ -10,7 +10,7 @@
 // (tienda.js), AGRUPAR.alVotos() (agrupar.js), ESTILO_NUEVO, NUCLEO.alCambiarFlags, esc() y t(). Las fechas llegan con el aviso «portada:destacado» de tienda.js.
 'use strict';
 (() => {
-  const GUARDADO = 'fansof-portada-orden', MAX_NOVEDADES = 8, GUARDADO_JUGADOS = 'fansof-jugados';
+  const GUARDADO = 'fansof-portada-orden', MAX_NOVEDADES = 8, MAX_JUGADOS = 6, GUARDADO_JUGADOS = 'fansof-jugados';
   const leerJugados = () => { try { return JSON.parse(localStorage.getItem(GUARDADO_JUGADOS) || '[]'); } catch (e) { return []; } };
   const guardarJugados = l => { try { localStorage.setItem(GUARDADO_JUGADOS, JSON.stringify(l)); } catch (e) { /* sin almacenamiento: la fila no sale */ } };
   // tocar cualquier enlace a un juego (JUGAR, la ficha, el DESTACADO…) lo apunta como jugado
@@ -87,10 +87,10 @@
     caja.innerHTML = lista.map(j => mini(j)).join('');
     caja.closest('.pn-fila').hidden = !lista.length;
   }
-  // JUGADOS ÚLTIMAMENTE: los 4 más recientes que siguen en la portada, con JUGAR (sustituye a «Seguir con tu favorito»: el favorito ya está en el perfil)
+  // JUGADOS ÚLTIMAMENTE: los 6 más recientes (en PC caben en una fila, centrados; Arkioner, 23-11-2026) que siguen en la portada, con JUGAR (sustituye a «Seguir con tu favorito»: el favorito ya está en el perfil)
   function pintarJugados() {
     const caja = document.getElementById('pn-jugados'); if (!caja) return;
-    const lista = JUGADOS.ultimos(leerJugados(), juegos.map(j => j.id)).map(id => juegos.find(j => j.id === id));
+    const lista = JUGADOS.ultimos(leerJugados(), juegos.map(j => j.id), MAX_JUGADOS).map(id => juegos.find(j => j.id === id));
     caja.innerHTML = lista.map(j => mini(j)).join('');
     caja.closest('.pn-fila').hidden = !lista.length;
   }

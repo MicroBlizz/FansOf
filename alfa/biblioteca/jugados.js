@@ -11,7 +11,7 @@ const JUGADOS = (() => {
   const idDeEnlace = href => (String(href || '').match(/(?:^|\/)games\/([a-z0-9-]+)\/?(?:[?#]|$)/) || [])[1] || '';
   // apunta que se ha abierto el juego id: sube el primero (sin repetirse) y la lista no pasa de GUARDA
   const anotar = (lista, id, cuando) => [{ id, cuando }, ...limpia(lista).filter(e => e.id !== id)].slice(0, GUARDA);
-  // los n más recientes de los que se ven en la portada (vivos: los ids que hay)
-  const ultimos = (lista, vivos, n = 4) => limpia(lista).map(e => e.id).filter(id => vivos.includes(id)).slice(0, n);
+  // los n más recientes (6 si no se dice) de los que se ven en la portada (vivos: los ids que hay)
+  const ultimos = (lista, vivos, n = 6) => limpia(lista).map(e => e.id).filter(id => vivos.includes(id)).slice(0, n);
   return Object.freeze({ GUARDA, idDeEnlace, anotar, ultimos });
 })();

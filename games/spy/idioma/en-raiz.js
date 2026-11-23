@@ -2,6 +2,9 @@
 // para no tocar core). Los textos del juego en sí están en idioma/en.js.
 'use strict';
 IDIOMA.add({
+  // 0.3.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "FANS OF SPY": "FANS OF SPY",
   "El prototipo (prueba). Sigilo por turnos con cartas, en 3D con aire de cómic. Cuela a CrazyBunny en la torre de Microblizz: cada carta tiene un coste y, cuanto más gastas, más se mueven los Becarios antes de que te vuelva a tocar. Mira en el suelo lo que ve cada guardia, escóndete en la caja de mudanza, distráelos con un golpe en la pared o con un café y llega a la puerta sin que salte la alerta. Con el tutorial del parking, guiado por Lola por radio, y una misión de prueba con nota de la C a la S.": "The prototype (test build). Turn-based stealth with cards, in comic-style 3D. Sneak CrazyBunny into the Microblizz tower: every card has a cost and the more you spend, the more the Interns move before it's your turn again. Check on the floor what each guard can see, hide in the moving box, distract them with a knock on the wall or a coffee, and reach the door without setting off the alert. Includes the car park tutorial, guided by Lola over the radio, and a test mission graded from C to S.",
   // sus novedades (js/novedades.js)

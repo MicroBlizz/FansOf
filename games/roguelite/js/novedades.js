@@ -2,6 +2,7 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
+  { v: '0.6.8', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.6.7', real: ['<b>EN INGLÉS</b>: Roguelite ya se juega en inglés, con el chat del directo incluido. Sale solo si tu navegador va en inglés, y se cambia en Opciones.'],
     joke: ['El chat del directo ya insulta en dos idiomas. Microblizz lo llama «expansión internacional».'] },
   { v: '0.6.6', real: ['<b>ELIGE MUNDO, MÁS CLARO</b>: cada mundo dice en qué nivel de despido lo vas a jugar y si ya lo has superado en ese nivel. La corona solo sale si lo has ganado en ese despido, y ya no tapa el nombre.'],

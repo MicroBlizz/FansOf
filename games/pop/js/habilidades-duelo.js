@@ -2,15 +2,18 @@
 // (los niveles con duelo de js/nimnivel.js y el duelo contra el CEO de js/duelo.js; js/pvp.js no llama a nada de aquí: contra gente el
 // duelo es limpio). Lupa (dPista, una pista gratis por duelo), Otra vez (dDeshaz, un deshacer gratis por duelo, en tu turno), Despiste
 // (dFallo, el rival se equivoca más), Saque (dSaque, eliges quién empieza), Pellizco (dQuita, quitas una burbuja antes de empezar) y
-// Hucha (dMonedas, monedas de más al ganar). Solo con el flag `companeros` abierto. Las cuentas, en js/habilidades.js.
+// Hucha (dMonedas, monedas de más al ganar). A 5 estrellas (tarea #294): dos lupas, dos deshacer, dos burbujas quitadas y el Saque te
+// chiva con quién empiezas ganando. Solo con el flag `companeros` abierto. Las cuentas, en js/habilidades.js.
 'use strict';
 // el equipo de Duelos ([] con el flag cerrado: nada de esto actúa)
 const ppHabDEquipo = () => (ppCompanerosActivo() ? ppEquipoDe('D') : []);
 const ppHabDQuien = k => PP_HAB.conHab(ppHabDEquipo(), ppFxDe, k)[0] || null;
 const ppHabDTiene = k => ppHabDQuien(k) !== null;
 const ppHabDSuma = k => PP_HAB.suma(ppHabDEquipo(), ppFxDe, k);
-// Otra vez: ¿queda el deshacer gratis de este duelo? (N: el estado del duelo del nivel, T.nim)
-const ppHabDDeshazGratis = N => ppHabDTiene('dDeshaz') && !N.deshazGratis;
+// las veces por duelo de una de «una vez» (1; 2 a las 5 estrellas)
+const ppHabDUsos = k => PP_HAB.usos(ppHabDEquipo(), ppFxDe, k);
+// Otra vez: ¿queda algún deshacer gratis en este duelo? (N: el estado del duelo del nivel, T.nim; N.deshacesGratis, los gastados)
+const ppHabDDeshazGratis = N => PP_HAB.queda(ppHabDUsos('dDeshaz'), N.deshacesGratis);
 // Despiste: la probabilidad de fallo del rival con lo que suma el equipo
 const ppHabDFallo = base => PP_HAB.fallo(base, ppHabDSuma('dFallo'));
 // Hucha: las monedas de más al ganar al CEO (los niveles con duelo las suman a su premio: ppHabAlGanar). Devuelve cuántas
@@ -22,9 +25,11 @@ function ppHabDMonedas() {
 /* ---------- antes del primer turno: Pellizco y Saque ---------- */
 // ¿hay algo que hacer antes del primer turno?
 const ppHabDPrevia = () => ppHabDTiene('dQuita') || ppHabDTiene('dSaque');
-// los pasos de antes del primer turno. `p`: { T, natural() → 'yo' | 'rival' (quién empezaría sin Saque), empieza(quien) }
+// los pasos de antes del primer turno. `p`: { T, natural() → 'yo' | 'rival' (quién empezaría sin Saque), empieza(quien) };
+// p.quitadas: las burbujas que ya ha quitado el Pellizco; p.sinQuitar: se ha saltado
+const ppHabDQuitaMas = p => !p.sinQuitar && PP_HAB.queda(ppHabDUsos('dQuita'), p.quitadas) && PP_HAB.puedeQuitar(p.T.up, p.T.mask);
 function ppHabDPreviaSigue(p) {
-  if (ppHabDTiene('dQuita') && !p.quitaHecha) { ppHabDVentanaQuita(p); return; }
+  if (ppHabDQuitaMas(p)) { ppHabDVentanaQuita(p); return; }
   if (ppHabDTiene('dSaque')) { ppHabDVentanaSaque(p); return; }
   p.empieza(p.natural());
 }
@@ -32,14 +37,19 @@ function ppHabDVentanaQuita(p) {
   const id = ppHabDQuien('dQuita');
   const t = ppAbre(`<h2>${tr(PP_COMP.HAB.quita.nombre)}</h2><p class="pp-sub">${tr('{n} puede quitar una burbuja del tablero antes de empezar.', { n: tr(ppSlimeDe(id).nombre) })}</p>`);
   t.appendChild(ppBoton(tr('ELEGIR BURBUJA'), 'pp-btn', () => { ppCierra(); p.eligiendo = id; ppFlota(tr('Toca la burbuja que quieras quitar'), 270, 240, '#ff8a2a'); }));
-  t.appendChild(ppBoton(tr('Saltar'), 'pp-btn2 pp-azul', () => { ppCierra(); p.quitaHecha = true; ppHabDPreviaSigue(p); }));
+  t.appendChild(ppBoton(tr('Saltar'), 'pp-btn2 pp-azul', () => { ppCierra(); p.sinQuitar = true; ppHabDPreviaSigue(p); }));
 }
 function ppHabDVentanaSaque(p) {
   const id = ppHabDQuien('dSaque');
-  const t = ppAbre(`<h2>${tr(PP_COMP.HAB.salida.nombre)}</h2><p class="pp-sub">${tr('{n} te deja elegir quién empieza el duelo.', { n: tr(ppSlimeDe(id).nombre) })}</p>`);
+  const t = ppAbre(`<h2>${tr(PP_COMP.HAB.salida.nombre)}</h2><p class="pp-sub">${tr('{n} te deja elegir quién empieza el duelo.', { n: tr(ppSlimeDe(id).nombre) })}</p>${ppHabDChivaSaque(p)}`);
   const elige = quien => () => { ppCierra(); ppFxHabilidad(id); p.empieza(quien); };
   t.appendChild(ppBoton(tr('EMPIEZO YO'), 'pp-btn', elige('yo')));
   t.appendChild(ppBoton(tr('EMPIEZA EL RIVAL'), 'pp-btn2 pp-azul', elige('rival')));
+}
+// el Saque a 5 estrellas: con quién empiezas ganando (Nim: gana quien mueve si ppNimGana); sin estrellas de más, nada
+function ppHabDChivaSaque(p) {
+  if (!PP_HAB.extra(ppHabDUsos('dSaque'))) return '';
+  return `<p class="pp-sub">${ppNimGana(ppFilasDuelo(p.T)) ? tr('Truco: si empiezas tú, vas ganando.') : tr('Truco: si empieza el rival, vas ganando.')}</p>`;
 }
 // el toque que quita la burbuja del Pellizco (`estado`: T.nim o PP_DUELO). true si el toque era para eso
 function ppHabDQuitaToque(estado, i) {
@@ -48,7 +58,7 @@ function ppHabDQuitaToque(estado, i) {
   if (!r.ok) return true;
   T.up = r.up;
   ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false }); ppFxHabilidad(p.eligiendo); play('ppSalto');
-  p.eligiendo = null; p.quitaHecha = true;
+  p.eligiendo = null; p.quitadas = (p.quitadas || 0) + 1;
   ppHabDPreviaSigue(p);
   return true;
 }

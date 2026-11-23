@@ -1,0 +1,562 @@
+{
+ "que_es": "Catálogo de juegos (ADR 198): lo genera herramientas/juegos_catalogo.py a partir de las tarjetas de index.html y de biblioteca/anuncios/. No se edita a mano.",
+ "juegos": [
+  {
+   "id": "rumble",
+   "nombre": "FANS OF RUMBLE",
+   "capturas": [
+    "rumble-1.jpg",
+    "rumble-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "td",
+   "nombre": "FANS OF TD",
+   "capturas": [
+    "td-1.jpg",
+    "td-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "rouflage",
+   "nombre": "FANS OF ROUFLAGE",
+   "capturas": [
+    "rouflage-1.jpg",
+    "rouflage-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": true
+  },
+  {
+   "id": "karts",
+   "nombre": "FANS OF KARTS",
+   "capturas": [
+    "karts-1.jpg",
+    "karts-2.jpg",
+    "karts-3.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": true
+  },
+  {
+   "id": "ratkov",
+   "nombre": "FANS OF RATKOV",
+   "capturas": [
+    "ratkov-1.jpg",
+    "ratkov-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "jump",
+   "nombre": "FANS OF JUMP",
+   "capturas": [
+    "jump-1.jpg",
+    "jump-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "crush",
+   "nombre": "FANS OF CRUSH",
+   "capturas": [
+    "crush-1.jpg",
+    "crush-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "survivors",
+   "nombre": "FANS OF SURVIVORS",
+   "capturas": [
+    "survivors-1.jpg",
+    "survivors-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "tacticas",
+   "nombre": "FANS OF RUMBLE: TÁCTICAS",
+   "capturas": [
+    "tacticas-1.jpg",
+    "tacticas-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "roguelite",
+   "nombre": "FANS OF ROGUELITE",
+   "capturas": [
+    "roguelite-1.jpg",
+    "roguelite-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "dungeons",
+   "nombre": "FANS OF DUNGEONS",
+   "capturas": [
+    "dungeons-1.jpg",
+    "dungeons-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "recruit",
+   "nombre": "FANS OF RECRUIT",
+   "capturas": [
+    "recruit-1.jpg",
+    "recruit-2.jpg",
+    "recruit-3.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "nova",
+   "nombre": "FANS OF NOVA",
+   "capturas": [
+    "nova-1.jpg",
+    "nova-2.jpg",
+    "nova-3.jpg",
+    "nova-4.jpg",
+    "nova-5.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "shelter",
+   "nombre": "FANS OF SHELTER",
+   "capturas": [
+    "shelter-1.jpg",
+    "shelter-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "soccer",
+   "nombre": "FANS OF SOCCER",
+   "capturas": [
+    "soccer-1.jpg",
+    "soccer-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "basement",
+   "nombre": "FANS OF BASEMENT",
+   "capturas": [
+    "basement-1.jpg",
+    "basement-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "zombies",
+   "nombre": "FANS OF ZOMBIES",
+   "capturas": [
+    "zombies-1.jpg",
+    "zombies-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "wings",
+   "nombre": "FANS OF WINGS",
+   "capturas": [
+    "wings-1.jpg",
+    "wings-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "spy",
+   "nombre": "FANS OF SPY",
+   "capturas": [
+    "spy-1.jpg",
+    "spy-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "auto",
+   "nombre": "FANS OF AUTO",
+   "capturas": [
+    "auto-1.jpg",
+    "auto-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "asalto",
+   "nombre": "FANS OF ASALTO",
+   "capturas": [
+    "asalto-1.jpg",
+    "asalto-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "kingdom",
+   "nombre": "FANS OF KINGDOM",
+   "capturas": [
+    "kingdom-1.jpg",
+    "kingdom-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "goose",
+   "nombre": "FANS OF GOOSE",
+   "capturas": [
+    "goose-1.jpg",
+    "goose-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "vikings",
+   "nombre": "FANS OF VIKINGS",
+   "capturas": [
+    "vikings-1.jpg",
+    "vikings-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "merge",
+   "nombre": "FANS OF MERGE",
+   "capturas": [
+    "merge-1.jpg",
+    "merge-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "swipe",
+   "nombre": "FANS OF SWIPE",
+   "capturas": [
+    "swipe-1.jpg",
+    "swipe-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "panic",
+   "nombre": "FANS OF PANIC",
+   "capturas": [
+    "panic-1.jpg",
+    "panic-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "pop",
+   "nombre": "FANS OF POP",
+   "capturas": [
+    "pop-1.jpg",
+    "pop-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "snakes",
+   "nombre": "FANS OF SNAKES",
+   "capturas": [
+    "snakes-1.jpg",
+    "snakes-2.jpg",
+    "snakes-3.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "beams",
+   "nombre": "FANS OF BEAMS",
+   "capturas": [
+    "beams-1.jpg",
+    "beams-2.jpg",
+    "beams-3.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "decks",
+   "nombre": "FANS OF DECKS",
+   "capturas": [
+    "decks-1.jpg",
+    "decks-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "boom",
+   "nombre": "FANS OF BOOM",
+   "capturas": [
+    "boom-1.jpg",
+    "boom-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "cooking",
+   "nombre": "FANS OF COOKING",
+   "capturas": [
+    "cooking-1.jpg",
+    "cooking-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "taxi",
+   "nombre": "FANS OF TAXI",
+   "capturas": [
+    "taxi-1.jpg",
+    "taxi-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "pets",
+   "nombre": "FANS OF PETS",
+   "capturas": [
+    "pets-1.jpg",
+    "pets-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "paperwork",
+   "nombre": "FANS OF PAPERWORK",
+   "capturas": [
+    "paperwork-1.jpg",
+    "paperwork-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "alfa",
+   "favorito": false
+  },
+  {
+   "id": "tiny",
+   "nombre": "TINY FANS",
+   "capturas": [
+    "tiny-1.jpg",
+    "tiny-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "alfa",
+   "favorito": false
+  },
+  {
+   "id": "toys",
+   "nombre": "FANS OF TOYS",
+   "capturas": [
+    "toys-1.jpg",
+    "toys-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "alfa",
+   "favorito": false
+  },
+  {
+   "id": "rally",
+   "nombre": "FANS OF RALLY",
+   "capturas": [
+    "rally-1.jpg",
+    "rally-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "alfa",
+   "favorito": false
+  },
+  {
+   "id": "pinball",
+   "nombre": "FANS OF PINBALL",
+   "capturas": [
+    "pinball-1.jpg",
+    "pinball-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "alfa",
+   "favorito": false
+  },
+  {
+   "id": "chef",
+   "nombre": "FANS OF CHEF",
+   "capturas": [
+    "chef-1.jpg",
+    "chef-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "rumble-v2",
+   "nombre": "FANS OF RUMBLE V2",
+   "capturas": [
+    "rumble-v2-1.jpg",
+    "rumble-v2-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "rumble-3d",
+   "nombre": "FANS OF RUMBLE 3D",
+   "capturas": [
+    "rumble-3d-1.jpg",
+    "rumble-3d-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "tactics-advance",
+   "nombre": "FANS OF TACTICS ADVANCE",
+   "capturas": [
+    "tactics-advance-1.jpg",
+    "tactics-advance-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "terminal-shock",
+   "nombre": "TERMINAL SHOCK",
+   "capturas": [
+    "terminal-shock-1.jpg",
+    "terminal-shock-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "dark",
+   "nombre": "FANS OF DARK",
+   "capturas": [
+    "dark-1.jpg",
+    "dark-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "archivo",
+   "favorito": false
+  },
+  {
+   "id": "island",
+   "nombre": "FANS OF ISLAND",
+   "capturas": [
+    "island-lonchas2-1.jpg",
+    "island-lonchas2-2.jpg"
+   ],
+   "cartel": true,
+   "estado": "vivo",
+   "favorito": false
+  },
+  {
+   "id": "skate",
+   "nombre": "FANS OF SKATE",
+   "capturas": [
+    "skate-1.jpg",
+    "skate-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "archivo",
+   "favorito": false
+  },
+  {
+   "id": "air",
+   "nombre": "FANS OF AIR",
+   "capturas": [
+    "air-1.jpg",
+    "air-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "archivo",
+   "favorito": false
+  },
+  {
+   "id": "rumble-clasico",
+   "nombre": "FANS OF RUMBLE CLÁSICO",
+   "capturas": [
+    "rumble-clasico-1.jpg",
+    "rumble-clasico-2.jpg"
+   ],
+   "cartel": false,
+   "estado": "archivo",
+   "favorito": false
+  }
+ ]
+}

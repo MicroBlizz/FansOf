@@ -1,6 +1,7 @@
 // Fans of Island · Novedades: el informe de cada versión, la más nueva primero. La versión que se publica se escribe en index.html (…?v=…).
 'use strict';
 const NEWS = [
+  { v: '0.4.3', real: ['<b>MEJORAS POR DENTRO</b>: el código de Island está ordenado por capas, con sus pruebas, para poder añadir niveles sin romper nada. Se juega exactamente igual. Y la tienda enseña capturas nuevas, con el conejo y el mar de ahora.'], joke: ['Microblizz ha ordenado la isla por dentro. Phony pregunta si también ha ordenado sus calcetines.'] },
   { v: '0.4.2', real: ['<b>OLEAJE EN LA ORILLA</b>: CrazyBunny vuelve a su tamaño, a juego con la isla. El agua de delante ocupa menos pantalla y ahora tiene olas en lonchas con espuma blanca que suben, bajan y van y vienen. Y el barco del fondo ya no se esconde detrás de las islas lejanas: pasa por delante.'], joke: ['Microblizz ha encargado olas nuevas para la isla. Phony pregunta si la espuma viene de su champú.'] },
   { v: '0.4.1', real: ['<b>CRAZYBUNNY MÁS GRANDE Y CON MÁS DETALLE</b>: el protagonista se ve más grande y con mucho más detalle: su cara, su barriga, la corona con su gema, el ojo en espiral y la capa naranja. Se estira al saltar y se aplasta al caer. Los enemigos le dan en el mismo sitio que antes, así que se juega igual.'], joke: ['Microblizz ha encargado a Yoshi un CrazyBunny en alta definición. Phony pregunta si el conejo cobra ahora por píxel.'] },
   { v: '0.4.0', real: ['<b>ISLAND EN LONCHAS</b>: Fans of Island se rehace entero en una isla tropical, con todo dibujado en lonchas apiladas: CrazyBunny con su corona, su ojo en espiral y su capa, Brotitos, peces gorditos que escupen agua, gaviotas que tiran cocos, cangrejos que andan de lado y la MechaVaca volando al fondo. Controles nuevos para el móvil: flechas a la izquierda y salto a la derecha, y si mantienes el salto al caer, flotas con las orejas.'], joke: ['Microblizz ha cortado la isla en lonchas para que quepa en el móvil. Phony pregunta si las gaviotas vienen incluidas en el precio.'] },
@@ -51,4 +52,3 @@ const NEWS = [
   { v: '0.1.0', real: ['<b>PROTOTIPO EN PREPARACIÓN</b>: aún no se juega. De momento solo hay un diseño: plataformas cooperativo con CrazyBunny, zanahorias que dan poderes y un mundo de acuarela, plastelina y ganchillo.'],
     joke: ['Los fondos se han pintado solos. Las zanahorias están en negociaciones.'] },
 ];
-const IS_VERSION = NEWS[0].v;

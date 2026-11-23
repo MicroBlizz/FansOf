@@ -14,10 +14,12 @@ const PALETA = {
 };
 
 const IMG = {};
-const IMG_LISTA = ['chef_abajo', 'chef_arriba', 'chef_lado', 'tomate', 'cebollon', 'gelatina',
+// Solo lo que tiene archivo en img/ (lo demás —chef_arriba, chef_lado, ing_*, ico_*— se dibuja por código con DIBUJO y no se pide: un 404 por nombre).
+// Cuando Yoshi entregue uno de esos, se añade aquí.
+const IMG_LISTA = ['chef_abajo', 'tomate', 'cebollon', 'gelatina',
   'chef_abajo_0', 'chef_abajo_1', 'chef_abajo_2', 'chef_arriba_0', 'chef_arriba_1', 'chef_arriba_2', 'chef_lado_0', 'chef_lado_1', 'chef_lado_2', 'chef_ataque', 'chef_bloqueo',
-  'tomate_1', 'tomate_2', 'cebollon_1', 'cebollon_2', 'gelatina_1', 'gelatina_2', 'ing_tomate', 'ing_cebolla', 'ing_gelatina',
-  'ico_cuchillo', 'ico_sarten', 'ico_corazon', 'cofre', 'antorcha', 'columna', 'barril', 'huesos', 'charco', 'escombros', 'verja',
+  'tomate_1', 'tomate_2', 'cebollon_1', 'cebollon_2', 'gelatina_1', 'gelatina_2',
+  'cofre', 'antorcha', 'columna', 'barril', 'huesos', 'charco', 'escombros', 'verja',
   'sala_1', 'sala_2', 'sala_3', 'sala_4', 'sala_5', 'sala_6', 'sala_7', 'cantina', 'arena'];
 function cargaImagenes() {
   return Promise.all(IMG_LISTA.map(n => new Promise(res => {

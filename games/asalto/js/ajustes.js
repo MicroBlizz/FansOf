@@ -200,7 +200,6 @@ const ASALTO = {
     desencantar: [8, 20, 50],        // plumas que da deshacer un objeto, por rareza
     herreria: 15,                    // subir un objeto un nivel cuesta 15 x (nivel + 1) plumas y le da +1 %
     cofreTienda: 60,                 // plumas que cuesta un cofre de equipo en la Tienda
-    plumasAnuncio: 20,
   },
 
   // Los logros: premio en plumas. stat y meta: el contador de la partida guardada y cuánto hace falta (zona: haber terminado esa zona).

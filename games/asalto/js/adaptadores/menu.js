@@ -7,7 +7,8 @@ AS.menu = (() => {
   const V = AS.ventanas, PR = AS.progreso;
   // quién sale en la escena del menú si no hay partida a medias (si la hay, sale su equipo)
   const REPARTO = ['heroe-mechavaca', 'heroe-zorro', 'heroe-bunny', 'heroe-mapache', 'heroe-ardilla'].map(tipo => ({ tipo, nivel: 1, dorado: false }));
-  let casos = null, t = 0, reparto = REPARTO;
+  let casos = null, tiendaMenu = null, t = 0, reparto = REPARTO;
+  let avisadoDia = '';   // el día en que la ventana del regalo ya salió sola (una vez al día mientras la página siga abierta)
   const elegida = {};   // la dificultad marcada en cada zona (mientras el menú esté abierto): { zona: 0, 1 o 2 }
   const caja = () => $('#as-menu');
   const pluma = n => `${V.ico('pluma')}${n}`;
@@ -60,19 +61,35 @@ AS.menu = (() => {
     if (!m) return '';
     return `<p class="as-meta-menu">${tr(m.nombre)}: ${m.plumas >= m.coste ? tr('¡Ya te llegan las plumas!') : tr('Te faltan {n} plumas', { n: m.coste - m.plumas })}</p>`;
   }
+  // el regalo diario y las misiones: el botón (con su punto de aviso si hay algo por cobrar) solo sale cuando la guía ya se ha hecho o saltado,
+  // para que no se ponga delante de la primera partida de un jugador nuevo
+  const regaloVisible = () => !!casos.progreso.consejos.guia;
+  const avisoRegalo = () => regaloVisible() && (casos.hayRegalo() || casos.misionesListas() > 0);
+  function htmlRegalo() {
+    if (!regaloVisible()) return '';
+    const hay = avisoRegalo();
+    return V.btn('as-m-regalo', tr('REGALO Y MISIONES') + (hay ? '<i class="as-punto"></i>' : ''), (hay ? 'as-verde' : 'as-azul') + ' as-ancho');
+  }
+  const regalo = () => V.regalo(casos, pinta);
+  // al abrir el menú, la primera vez del día que hay regalo por cobrar, sale sola la ventana del regalo
+  function regaloSolo() {
+    const dia = casos.hayRegalo() && regaloVisible() ? casos.dia() : '';
+    if (!dia || dia === avisadoDia) return;
+    avisadoDia = dia; regalo();
+  }
   function pinta() {
     const g = casos.progreso, pend = casos.logrosPendientes().length, s = casos.guardada();
     reparto = s && s.heroes.length ? s.heroes : REPARTO;
-    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}</p>${htmlMeta()}
+    caja().innerHTML = `<h1 class="as-logo"><small>FANS OF</small>ASALTO</h1><p class="as-plumas">${pluma(g.plumas)}${casos.comprasActivas() ? ' ' + MONEDAS.icono('comprada') + casos.coronas() : ''}</p>${htmlMeta()}
       <div class="as-escena" id="as-escena"></div>${htmlSeguir()}
       ${htmlMaquina()}<div class="as-zonas">${ASALTO.zonas.map(htmlZona).join('')}</div>
-      <div class="as-rejilla">${V.btn('as-m-mejoras', tr('MEJORAS'), 'as-oro')}${V.btn('as-m-equipo', tr('EQUIPO'), 'as-azul')}${V.btn('as-m-herreria', tr('HERRERÍA'), 'as-azul')}
+      <div class="as-rejilla">${htmlRegalo()}${V.btn('as-m-mejoras', tr('MEJORAS'), 'as-oro')}${V.btn('as-m-equipo', tr('EQUIPO'), 'as-azul')}${V.btn('as-m-herreria', tr('HERRERÍA'), 'as-azul')}
         ${V.btn('as-m-logros', tr('LOGROS') + (pend ? ' · ' + pend : ''), pend ? 'as-verde' : 'as-azul')}${V.btn('as-m-tienda', tr('TIENDA'), 'as-oro')}${V.btn('as-m-ajustes', tr('AJUSTES'), 'as-azul')}</div>`;
     V.alPulsar('as-seguir-partida', continua); V.alPulsar('as-m-maquina', maquinas);
     for (const b of caja().querySelectorAll('.as-dif')) b.onclick = () => alPulsarDificultad(b);
     ASALTO.zonas.forEach((z, i) => { V.alPulsar('as-z' + i, () => entra(i, false)); V.alPulsar('as-sf' + i, () => entra(i, true)); V.alPulsar('as-zc' + i, () => toast(tr('Termina antes la zona anterior'))); });
     V.alPulsar('as-m-mejoras', mejoras); V.alPulsar('as-m-equipo', equipo); V.alPulsar('as-m-herreria', herreria);
-    V.alPulsar('as-m-logros', logros); V.alPulsar('as-m-tienda', tienda); V.alPulsar('as-m-ajustes', ajustes);
+    V.alPulsar('as-m-regalo', regalo); V.alPulsar('as-m-logros', logros); V.alPulsar('as-m-tienda', tienda); V.alPulsar('as-m-ajustes', ajustes);
   }
   // ventana: 'mejoras' para abrirlo ya en esa ventana (desde el final de la partida)
   function abre(ventana) {
@@ -80,7 +97,7 @@ AS.menu = (() => {
     caja().hidden = false;
     pinta();
     AS.suena.musica('menu');
-    if (ventana === 'mejoras') mejoras();
+    if (ventana === 'mejoras') mejoras(); else regaloSolo();
   }
   // una ventana del menú: su contenido, el botón de volver y repintar el menú al cerrarla
   function ventana(html) {
@@ -155,19 +172,7 @@ AS.menu = (() => {
     const el = ventana(`<h2>${tr('LOGROS')}</h2><ul class="as-lista">${filas}</ul>`);
     for (const b of el.querySelectorAll('[data-l]')) b.onclick = () => { if (casos.cobraLogro(b.dataset.l).ok) AS.suena('cofre'); logros(); };
   }
-  function tienda() {
-    const g = casos.progreso, E = ASALTO.equipo;
-    ventana(`<h2>${tr('TIENDA')}</h2><p class="as-plumas">${pluma(g.plumas)}</p>
-      <div class="as-oferta"><i class="as-cofre as-pix" style="${AS.dibujos.cssRetrato('cofre', 1)}"></i><div><b>${tr('COFRE DE EQUIPO')}</b><span>${tr('Un objeto al azar: normal, raro o épico.')}</span></div>${V.btn('as-t-cofre', pluma(E.cofreTienda), 'as-oro')}</div>
-      <div class="as-oferta">${V.ico('pluma', 'as-ico2')}<div><b>${tr('PLUMAS DE REGALO')}</b><span>${tr('Mira un anuncio y llévate {n} plumas.', { n: E.plumasAnuncio })}</span></div>${V.btn('as-t-anuncio', tr('ANUNCIO'), 'as-verde')}</div>`);
-    V.alPulsar('as-t-cofre', () => {
-      const r = casos.compraCofre();
-      if (!sinPlumas(r)) return;
-      const o = r.valor.objeto;
-      AS.suena('cofre'); toast(tr(E.rarezas[o.rareza].nombre) + ': ' + tr(E.nombres[o.hueco]) + ' +' + o.valor + ' % ' + tr(E.stats[o.stat]), true); tienda();
-    });
-    V.alPulsar('as-t-anuncio', () => V.anuncio(() => { casos.regalaPlumas(E.plumasAnuncio); AS.suena('cofre'); tienda(); }));
-  }
+  const tienda = () => tiendaMenu.abre();   // la tienda: adaptadores/tienda-menu.js
   function ajustes() {
     const el = V.abre(`<h2>${tr('AJUSTES')}</h2><div id="as-opc"></div>${V.btn('as-borra', tr('BORRAR TODO EL PROGRESO'), 'as-rojo as-chico')}`, 'as-alta');
     V.ajustes(el.querySelector('#as-opc'), { casos }, () => { V.cierra(); pinta(); });
@@ -202,5 +207,5 @@ AS.menu = (() => {
     luces.push({ x: L.W / 2, y: 80, r: 300 + Math.sin(t * 2) * 16, col: [255, 170, 70], a: 0.28 });   // un resplandor detrás del título
     AS.lienzo.presenta(luces, r ? { y0: r.y, y1: L.H, a: 0.6 } : null);
   }
-  return { monta: c => { casos = c; }, abre, entra, fotograma, get abierto() { return !caja().hidden; } };
+  return { monta: c => { casos = c; tiendaMenu = AS.creaTiendaMenu({ casos: c, ventana, pluma, sinPlumas }); }, abre, entra, fotograma, get abierto() { return !caja().hidden; } };
 })();

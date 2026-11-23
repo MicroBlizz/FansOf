@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Goose en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.11.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "<b>LA OCA PARCA TE ENSEÑA A JUGAR</b>: la primera vez que pasa cada cosa (moverte, tirar el dado, caminar a tu casilla, el derrumbe, las tiendas, el pozo, los guardianes) la Parca te lo cuenta en un cartel. Una flecha te señala el dado y, si no se puede tirar, debajo dice por qué.": "<b>THE REAPER GOOSE TEACHES YOU TO PLAY</b>: the first time each thing happens (moving, rolling the die, walking to your square, the collapse, the shops, the well, the guardians) the Reaper tells you on a sign. An arrow points at the die and, if you can't roll, it says why underneath.",
   "<b>BOTÓN IRSE</b> en el Mercader y la Posada: el tablón de la tienda tapaba el dado y no se sabía cómo salir.": "<b>LEAVE BUTTON</b> at the Merchant and the Inn: the shop board covered the die and nobody knew how to get out.",
   "<b>EL TRATO DE LA PARCA PARA LA PARTIDA</b>: ya da tiempo a leerlo. Si lo rechazas empieza <b>LA IRA DE LA PARCA</b>: recupera vida, va más rápida, lanza más hoces y siega más a menudo; si la tumbas, su guadaña y el doble de monedas.": "<b>THE REAPER'S DEAL PAUSES THE GAME</b>: now there's time to read it. Refuse it and <b>THE REAPER'S WRATH</b> begins: she heals, moves faster, throws more sickles and reaps more often; beat her and you get her scythe and double coins.",

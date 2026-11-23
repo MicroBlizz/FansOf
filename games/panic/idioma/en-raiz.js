@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Panic en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.1.3
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "FANS OF PANIC": "FANS OF PANIC",
   "<b>ARTE PINTADO</b>: las cinco portadas de Coral en la Playa, los seis Inspectores, el cúter, Lola, los poderes, la portada, los mapas de los seis mundos, botones, números y palabras. La zona de juego es una página de revista de papel con su marco.": "<b>PAINTED ART</b>: Coral's five Beach covers, the six Inspectors, the cutter, Lola, the powers, the title screen, the maps of all six worlds, buttons, numbers and words. The play area is a paper magazine page with its frame.",
   "Microblizz ha pedido que las portadas lleven marca de agua. Yoshi ha dicho que no y ha seguido pintando.": "Microblizz asked for a watermark on the covers. Yoshi said no and kept painting.",

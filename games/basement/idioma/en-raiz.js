@@ -2,6 +2,9 @@
 // para no tocar core). Los textos del juego en sí están en idioma/en.js.
 'use strict';
 IDIOMA.add({
+  // 0.13.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   'FANS OF BASEMENT': 'FANS OF BASEMENT',
   'El prototipo (prueba). El servidor de Microblizz se ha caído y alguien tiene que bajar a arreglarlo: tú, el becario. Baja por el hueco del ascensor planta a planta, de Marketing a la Sala de Servidores, mientras tu grapadora dispara sola a bugs, correos «RE: RE: URGENTE» y reuniones que te frenan. El café es tu oxígeno: llama al ascensor de emergencia antes de que se acabe, sube con la caja del despedido llena de botín y mejora tu mesa para bajar más hondo.': 'The prototype (test). The Microblizz server is down and someone has to go down and fix it: you, the intern. Dive down the elevator shaft floor by floor, from Marketing to the Server Room, while your stapler fires on its own at bugs, “RE: RE: URGENT” emails and meetings that slow you down. Coffee is your oxygen: call the emergency elevator before it runs out, go up with your box of belongings full of loot and upgrade your desk to dive deeper.',
   // sus novedades (js/novedades.js)

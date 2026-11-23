@@ -1,6 +1,9 @@
 // Fans of Toys · Inglés: los textos de las pantallas, los juguetes, las franquicias y las mejoras.
 'use strict';
 IDIOMA.add({
+  // 0.2.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   // meses y botones (js/datos/textos.js)
   "Enero": "January", "Febrero": "February", "Marzo": "March", "Abril": "April", "Mayo": "May", "Junio": "June", "Julio": "July", "Agosto": "August",
   "Septiembre": "September", "Octubre": "October", "Noviembre": "November", "Diciembre": "December",

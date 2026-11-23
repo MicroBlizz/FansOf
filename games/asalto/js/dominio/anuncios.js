@@ -3,6 +3,8 @@
 // antes de volver a lucharla). Solo dice si se puede y qué da: lo aplica partida.js DESPUÉS de verse el anuncio. El estado es un valor
 // congelado: { oferta: la oleada con la que empezó la oferta en la que ya se usó, esencia: la oleada en la que ya se usó, vidas: las
 // devueltas en la partida, perdida: la oleada perdida que aún se puede reintentar sin perder la vida (0 si ninguna) }.
+// Fuera de la partida: el regalo de plumas de la Tienda del menú (tope por día; estado { dia: 'AAAA-MM-DD', n: los vistos ese día }) y doblar
+// las plumas de una partida acabada (una vez por partida). El día lo da quien llama (con la hora del servidor): aquí no hay reloj.
 'use strict';
 AS.anuncios = (() => {
   const TIPOS = ['oferta', 'esencia', 'vida', 'cartas'];
@@ -36,5 +38,23 @@ AS.anuncios = (() => {
   const lucha = a => (a.perdida ? congela({ ...a, perdida: 0 }) : a);
   const ent = v => Math.max(0, Math.floor(v) || 0);
   const deJSON = j => (j ? congela({ oferta: ent(j.oferta), esencia: ent(j.esencia), vidas: ent(j.vidas), perdida: ent(j.perdida) }) : vacio());
-  return { TIPOS, vacio, oferta, puede, usa, pierde, lucha, deJSON };
+
+  /* ---------- fuera de la partida ---------- */
+  const regaloVacio = () => Object.freeze({ dia: '', n: 0 });
+  // los regalos de plumas que quedan hoy
+  const regaloQuedan = (datos, r, dia) => (r.dia === dia ? Math.max(0, datos.anuncios.plumas.diarias - r.n) : datos.anuncios.plumas.diarias);
+  // otro regalo de plumas, ya visto el anuncio: AS.ok({ regalo: el estado nuevo, plumas }), o el error 'sin-dia' o 'tope-diario'
+  function regaloUsa(datos, r, dia) {
+    if (!dia) return AS.error('sin-dia');
+    if (!regaloQuedan(datos, r, dia)) return AS.error('tope-diario');
+    return AS.ok({ regalo: Object.freeze({ dia, n: (r.dia === dia ? r.n : 0) + 1 }), plumas: datos.anuncios.plumas.cantidad });
+  }
+  const regaloDeJSON = j => (j && typeof j.dia === 'string' ? Object.freeze({ dia: j.dia, n: ent(j.n) }) : regaloVacio());
+  // doblar las plumas ganadas en una partida acabada: AS.ok(las plumas que suma), o 'partida-sin-acabar', 'ya-doblada' o 'sin-plumas'
+  function dobla({ plumas, final, yaDoblada }) {
+    if (!final) return AS.error('partida-sin-acabar');
+    if (yaDoblada) return AS.error('ya-doblada');
+    return plumas > 0 ? AS.ok(plumas) : AS.error('sin-plumas');
+  }
+  return { TIPOS, vacio, oferta, puede, usa, pierde, lucha, deJSON, regaloVacio, regaloQuedan, regaloUsa, regaloDeJSON, dobla };
 })();

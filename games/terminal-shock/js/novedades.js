@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.5.1', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.5.0', real: ["<b>CÁMARAS COMO EN EL MGS1</b>: cada cámara gira un poco para seguirte y cubre mucha más sala, hay menos cortes de plano y ningún punto ciego detrás de los muebles."], joke: ["Phony pidió a Microblizz «una cámara por sala». Microblizz, por una vez, entregó menos y mejor."] },
   { v: '0.4.0', real: ["<b>MÁS NATURAL</b>: el personaje anda de forma natural, las puertas tienen más detalle, las cámaras ya no lo pierden de vista y hay música ambiental."], joke: ["Phony asegura que el Albright Memorial Hospital no ha tenido ningún incidente. Esa frase también está parcheada."] },
   { v: '0.3.0', real: ["<b>PERSONAJES ESTILO PS1</b>: protagonista y Asimilados esculpidos en polígonos, con el uniforme de enfermero gastado y un ambiente más oscuro."], joke: [] },

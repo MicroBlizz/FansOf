@@ -23,7 +23,12 @@ const PP_FLOTA_MUNDO = {
 };
 for (const k in PP_FLOTA_MUNDO) PP_FLOTA_MUNDO[k] = PP_FLOTA_MUNDO[k].map(n => 'f-' + n);
 const PP_FLOTA_NUEVOS = [...new Set(Object.values(PP_FLOTA_MUNDO).flat())].filter(k => !PP_FLOTANTES.includes(k));
-const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_FLOTA_NUEVOS, ...Object.keys(PP_SLIMES).map(k => 'sl-' + k), 'fondo-jardin', 'fondo-pasteleria', 'fondo-heladeria', 'fondo-playa', 'fondo-feria', 'fondo-nubes', 'fondo-bosque', 'fondo-mar', 'fondo-sakura', 'fondo-espacio', 'i-cohete', 'i-burbujas', 'i-petalo', 'fondo-jefe', 'tablero', 'i-copo', 'i-concha', 'i-cereza', 'i-martillo', 'i-bomba', 'i-toques3', 'i-deshacer', 'i-pista', 'i-hucha', 'i-infinito', 'i-pase', 'i-racha', 'i-regalo', 'i-vida', 'i-mano', 'i-estrella', 'i-moneda', 'i-cofre', 'i-perla', 'i-perlas', 'logo-pop',
+// los Animales del álbum que ya tienen dibujo de Yoshi (tarea #142, Pepins 22-11-2026; herramientas/comfyui/pop/pedidos_animales.py).
+// La suricata, el pez globo y la mariposa, con la versión repetida que se eligió; el caballito de mar se está repitiendo y sigue
+// pintado por código (js/pintar-companero.js).
+// Solo salen con el flag `companeros` abierto; con él cerrado se cargan pero no se ven en ningún sitio
+const PP_ANIMALES_CON_DIBUJO = Object.freeze(['ardilla', 'castor', 'capibara', 'pinguino', 'pato', 'cangrejo', 'osito', 'mariquita', 'zorro', 'suricata', 'mapache', 'pulpito', 'mariposa', 'luciernaga', 'erizo', 'huron', 'pezglobo', 'panda', 'mechavaca']);
+const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_FLOTA_NUEVOS, ...Object.keys(PP_SLIMES).map(k => 'sl-' + k), ...PP_ANIMALES_CON_DIBUJO.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-pasteleria', 'fondo-heladeria', 'fondo-playa', 'fondo-feria', 'fondo-nubes', 'fondo-bosque', 'fondo-mar', 'fondo-sakura', 'fondo-espacio', 'i-cohete', 'i-burbujas', 'i-petalo', 'fondo-jefe', 'tablero', 'i-copo', 'i-concha', 'i-cereza', 'i-martillo', 'i-bomba', 'i-toques3', 'i-deshacer', 'i-pista', 'i-hucha', 'i-infinito', 'i-pase', 'i-racha', 'i-regalo', 'i-vida', 'i-mano', 'i-estrella', 'i-moneda', 'i-cofre', 'i-perla', 'i-perlas', 'logo-pop',
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'azul'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo', 'b-' + k + '-doble']),
   // las burbujas de macaron de la Pastelería (tarea #110, tras el flag estilo-mundo; herramientas/comfyui/pop/macaron.py)
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'azul'].flatMap(k => ['bm-macaron-' + k + '-arriba', 'bm-macaron-' + k + '-abajo']),

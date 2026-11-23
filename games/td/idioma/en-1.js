@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.104
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   "<b>GASHAPÓN NUEVO</b>: la máquina se mueve de verdad y, al tirar, la cápsula sale, vuela hacia ti, tiembla más cuanto mejor es lo que lleva y se abre. Toca la pantalla para saltarte la animación.": "<b>NEW GACHA</b>: the machine really moves and, when you pull, the capsule pops out, flies towards you, shakes harder the better its prize and bursts open. Tap the screen to skip the animation.",
   "<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos.": "<b>UNDER THE HOOD</b>: the prototypes move to their final home on the site (the old addresses still take you there) and tweaks to the internal systems.",
   "Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora.": "Microblizz moved all its games to a new folder. The boxes are still in the hallway and nobody knows whose stapler it is.",

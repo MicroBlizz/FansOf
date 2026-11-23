@@ -2,14 +2,14 @@
 // visto de ella y las trampas escondidas. Las funciones de aquí las usan el generador, la visión, el camino y el pintado.
 'use strict';
 
-const T = { MURO: 0, SUELO: 1, PUERTA: 2, PUERTA_ABIERTA: 3, LLEGADA: 4, SUBIDA: 5, MUEBLE: 6, PUESTO: 7, MAQUINA: 8, CAFETERA: 9, PUERTA_CERRADA: 10, ALFOMBRA: 11, ALFOMBRA2: 12, ALTAR: 13, ROMPIBLE: 14, JAULA: 15, ATRIL: 16, REJA: 17 };
-const PASABLE = new Set([T.SUELO, T.PUERTA_ABIERTA, T.LLEGADA, T.SUBIDA, T.ALFOMBRA, T.ALFOMBRA2]);
-const OPACO = new Set([T.MURO, T.PUERTA, T.PUERTA_CERRADA, T.MUEBLE, T.MAQUINA, T.PUESTO, T.CAFETERA, T.ALTAR]);
+const CASILLA = { MURO: 0, SUELO: 1, PUERTA: 2, PUERTA_ABIERTA: 3, LLEGADA: 4, SUBIDA: 5, MUEBLE: 6, PUESTO: 7, MAQUINA: 8, CAFETERA: 9, PUERTA_CERRADA: 10, ALFOMBRA: 11, ALFOMBRA2: 12, ALTAR: 13, ROMPIBLE: 14, JAULA: 15, ATRIL: 16, REJA: 17 };
+const PASABLE = new Set([CASILLA.SUELO, CASILLA.PUERTA_ABIERTA, CASILLA.LLEGADA, CASILLA.SUBIDA, CASILLA.ALFOMBRA, CASILLA.ALFOMBRA2]);
+const OPACO = new Set([CASILLA.MURO, CASILLA.PUERTA, CASILLA.PUERTA_CERRADA, CASILLA.MUEBLE, CASILLA.MAQUINA, CASILLA.PUESTO, CASILLA.CAFETERA, CASILLA.ALTAR]);
 
 function nuevoMapa(w, h, zona, planta) {
   return {
     w, h, zona, planta,
-    t: new Uint8Array(w * h),            // la casilla (T.*)
+    t: new Uint8Array(w * h),            // la casilla (CASILLA.*)
     v: new Uint8Array(w * h),            // variante de dibujo (suelos, muebles)
     vis: new Uint8Array(w * h),          // 0 nunca vista, 1 recordada, 2 a la vista
     salas: [],                           // { x, y, w, h, cx, cy, tipo }
@@ -19,7 +19,7 @@ function nuevoMapa(w, h, zona, planta) {
   };
 }
 const dentroM = (m, x, y) => x >= 0 && y >= 0 && x < m.w && y < m.h;
-const enM = (m, x, y) => dentroM(m, x, y) ? m.t[y * m.w + x] : T.MURO;
+const enM = (m, x, y) => dentroM(m, x, y) ? m.t[y * m.w + x] : CASILLA.MURO;
 const ponM = (m, x, y, t) => { if (dentroM(m, x, y)) m.t[y * m.w + x] = t; };
 const pasableM = (m, x, y) => PASABLE.has(enM(m, x, y));
 const opacoM = (m, x, y) => OPACO.has(enM(m, x, y));
@@ -31,7 +31,7 @@ function salaEn(m, x, y) { for (const s of m.salas) if (x >= s.x && y >= s.y && 
 // casillas de suelo de una sala (las que tienen la casilla pedida), para repartir cosas
 function suelosDe(m, s, filtro) {
   const out = [];
-  for (let j = s.y; j < s.y + s.h; j++) for (let i = s.x; i < s.x + s.w; i++) if (enM(m, i, j) === T.SUELO && (!filtro || filtro(i, j))) out.push([i, j]);
+  for (let j = s.y; j < s.y + s.h; j++) for (let i = s.x; i < s.x + s.w; i++) if (enM(m, i, j) === CASILLA.SUELO && (!filtro || filtro(i, j))) out.push([i, j]);
   return out;
 }
 // cuántas casillas pasables hay alrededor (para no tapar pasillos con muebles)
@@ -48,7 +48,7 @@ function campoM(m, origenes, max = 9999, bloquea) {
       const nx = x + dx, ny = y + dy;
       if (!dentroM(m, nx, ny) || d[ny * m.w + nx] >= 0) continue;
       const t = enM(m, nx, ny);
-      if (!PASABLE.has(t) && t !== T.PUERTA) continue;   // las puertas cerradas se abren al pasar
+      if (!PASABLE.has(t) && t !== CASILLA.PUERTA) continue;   // las puertas cerradas se abren al pasar
       if (bloquea && bloquea(nx, ny)) continue;
       d[ny * m.w + nx] = k + 1; cola.push(nx, ny);
     }
@@ -71,7 +71,7 @@ function caminoM(m, x0, y0, x1, y1, bloquea, max = 400) {
 }
 // el plano en letras, para mirarlo sin el juego (# muro, . suelo, + puerta, > subida, < llegada, M mueble, T tienda)
 function planoM(m) {
-  const L = { [T.MURO]: '#', [T.SUELO]: '.', [T.PUERTA]: '+', [T.PUERTA_ABIERTA]: '/', [T.LLEGADA]: '<', [T.SUBIDA]: '>', [T.MUEBLE]: 'M', [T.PUESTO]: 'T', [T.MAQUINA]: 'P', [T.CAFETERA]: 'C', [T.PUERTA_CERRADA]: 'X', [T.ALFOMBRA]: ',', [T.ALFOMBRA2]: ';', [T.ALTAR]: 'A', [T.ROMPIBLE]: 'R', [T.JAULA]: 'J', [T.ATRIL]: 'L', [T.REJA]: '|' };
+  const L = { [CASILLA.MURO]: '#', [CASILLA.SUELO]: '.', [CASILLA.PUERTA]: '+', [CASILLA.PUERTA_ABIERTA]: '/', [CASILLA.LLEGADA]: '<', [CASILLA.SUBIDA]: '>', [CASILLA.MUEBLE]: 'M', [CASILLA.PUESTO]: 'T', [CASILLA.MAQUINA]: 'P', [CASILLA.CAFETERA]: 'C', [CASILLA.PUERTA_CERRADA]: 'X', [CASILLA.ALFOMBRA]: ',', [CASILLA.ALFOMBRA2]: ';', [CASILLA.ALTAR]: 'A', [CASILLA.ROMPIBLE]: 'R', [CASILLA.JAULA]: 'J', [CASILLA.ATRIL]: 'L', [CASILLA.REJA]: '|' };
   const filas = [];
   for (let j = 0; j < m.h; j++) { let s = ''; for (let i = 0; i < m.w; i++) s += L[m.t[j * m.w + i]] || '?'; filas.push(s); }
   return filas.join('\n');

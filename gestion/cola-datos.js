@@ -7,7 +7,7 @@
 // última vez) y sube lo que ha cambiado aquí; así Pepins y Arkioner ven lo mismo y lo que GitHub borra a los 90 días se queda. Guía: docs/guia/herramientas/cola-actions.md.
 'use strict';
 const COLA_DATOS = (() => {
-  const { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, mediaFiable, carrilDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
+  const { MUESTRAS, leerTitulo, etiquetaWf, esGenerar, flujoDe, tiempoDe, recursoDe, reintentos, entregadas, variantesDe, compararLotes, carrilDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
   const P = 'fansof.gestion.cola.';
   // las claves que «Borrar lo guardado» quita (el token y el límite semanal son ajustes y se quedan)
   const K = { runs: P + 'runs', hist: P + 'historial', activos: P + 'activos', carriles: P + 'carriles', durs: P + 'duraciones-2', recs: P + 'recursos', plan: P + 'plan', foto: P + 'foto', sync: P + 'sync' };
@@ -46,7 +46,7 @@ const COLA_DATOS = (() => {
       if (!igual) cambiados.add(String(r.id));
       return igual;
     };
-    const nota = (r, bytes) => { const lt = leerTitulo(String(r.display_title || 'recurso')); gs[r.id] = { titulo: lt.titulo, tt: lt.tipo, bytes, fin: ms(r.updated_at) }; };
+    const nota = (r, bytes, piezas) => { const lt = leerTitulo(String(r.display_title || 'recurso')); gs[r.id] = { titulo: lt.titulo, tt: lt.tipo, variantes: piezas, bytes, fin: ms(r.updated_at) }; };
     const aprende = (path, c) => { if (path && c && carriles[path] !== c) { carriles[path] = c; carrilesNuevos[path] = c; } };
 
     // 0. Historial compartido: lo que han subido los demás desde la última vez (un intento más nuevo o una hora de fin posterior manda; duración y tamaño, si aquí faltan).
@@ -59,7 +59,7 @@ const COLA_DATOS = (() => {
           const v = runs[r.id], nuevo = !v || r.run_attempt > v.run_attempt || (r.run_attempt === v.run_attempt && ms(r.updated_at) > ms(v.updated_at));
           if (nuevo) { runs[r.id] = corto(r); if (v) { delete cache[r.id]; delete gs[r.id]; } }
           if (dur != null && cache[r.id] === undefined) cache[r.id] = dur;
-          if (bytes != null && gs[r.id] === undefined && esGenerar(r) && r.conclusion === 'success') nota(r, bytes);
+          if (bytes != null && gs[r.id] === undefined && esGenerar(r) && r.conclusion === 'success') nota(r, bytes, variantesDe(r));
         });
         Object.entries(d.carriles || {}).forEach(([k, v]) => { carriles[k] = v; });
         if (!sync.desde && !habia) sync.subido = true;   // empezar de cero bajándolo todo: no hay nada propio que subir
@@ -118,14 +118,15 @@ const COLA_DATOS = (() => {
     Object.entries(muestras).forEach(([f, d]) => { if (d.length) medias[f] = mediaCadencia(d); });
 
     // 5. Recursos terminados: tamaño del artefacto (solo si tiene menos de un día; si no, ya no está) y tipo del título (sin tipo: imagen).
-    const sinVer = hechos.filter(r => esGenerar(r) && r.conclusion === 'success' && (gs[r.id] === undefined || (todo && ahora - ms(r.updated_at) < DIA)));
+    const reint = reintentos(hechos), piezas = r => entregadas(r, reint);   // un lote en failure entrega las piezas buenas (ver entregadas en cola-medida.js)
+    const sinVer = hechos.filter(r => esGenerar(r) && piezas(r) > 0 && (gs[r.id] === undefined || (todo && ahora - ms(r.updated_at) < DIA)));
     const conArtefacto = sinVer.filter(r => ahora - ms(r.updated_at) < DIA).slice(0, todo ? Infinity : 10);
     sinVer.forEach(r => cambiados.add(String(r.id)));
-    sinVer.filter(r => ahora - ms(r.updated_at) >= DIA).forEach(r => nota(r, 0));
+    sinVer.filter(r => ahora - ms(r.updated_at) >= DIA).forEach(r => nota(r, 0, piezas(r)));
     prever('artefactos', conArtefacto.length);
-    await enLotes(conArtefacto, LOTE, async r => nota(r, (await gh('/actions/runs/' + r.id + '/artifacts')).artifacts.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0)));
+    await enLotes(conArtefacto, LOTE, async r => nota(r, (await gh('/actions/runs/' + r.id + '/artifacts')).artifacts.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0), piezas(r)));
     guardar(K.recs, gs);
-    const recursos = Object.entries(gs).map(([id, v]) => { const p = leerTitulo(v.titulo), t = tipoDeTitulo(p.tipo || v.tt, v.bytes) || 'imagen'; return { id, ...v, titulo: p.titulo, tipo: ETIQUETA[t], usd: USD[t] }; }).sort((a, b) => b.fin - a.fin);
+    const recursos = Object.entries(gs).map(([id, v]) => recursoDe(id, v)).sort((a, b) => b.fin - a.fin);
 
     // 6. Trabajos: jobs solo de lo que está en curso (para saber desde cuándo corre) y de lo que va a un workflow del que no se sabe el runner; el resto, el runner guardado.
     const piden = activos.filter(r => r.status === 'in_progress' || todo || !carriles[r.path]).slice(0, MAX_JOBS), jobs = {};
@@ -152,9 +153,9 @@ const COLA_DATOS = (() => {
     activos.forEach(r => {
       const j = jobs[r.id], carril = j && j.length ? carrilDe(j.flatMap(x => x.labels || [])) : carriles[r.path];
       if (!carril) { extra++; return; }
-      const flujo = flujoDe(r), arr = (j || []).map(x => ms(x.started_at)).filter(x => !isNaN(x));
-      trabajos.push({ id: r.id, creado: ms(r.created_at), nombre: esGenerar(r) ? leerTitulo(String(r.display_title || flujo)).titulo : flujo, flujo, enCurso: r.status === 'in_progress',
-        carril, media: esGenerar(r) ? mediaFiable(medias[flujo]) : (medias[flujo] || medias[etiquetaWf(r)] || { seg: null }).seg, muestras: (medias[flujo] || { n: 0 }).n, gen: esGenerar(r), arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
+      const flujo = flujoDe(r), lt = leerTitulo(String(r.display_title || flujo)), arr = (j || []).map(x => ms(x.started_at)).filter(x => !isNaN(x));
+      trabajos.push({ id: r.id, creado: ms(r.created_at), nombre: esGenerar(r) ? lt.titulo : flujo, flujo, enCurso: r.status === 'in_progress',
+        variantes: variantesDe(r), tipo: lt.tipo || 'imagen', carril, media: esGenerar(r) ? tiempoDe(medias[flujo], variantesDe(r)) : (medias[flujo] || medias[etiquetaWf(r)] || { seg: null }).seg, muestras: (medias[flujo] || { n: 0 }).n, gen: esGenerar(r), arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
     });
     // La GPU hace un «Generar recurso» detrás de otro: solo el primero en curso está en ella, desde que acabó el último (o desde que arrancó, si es después); los demás en curso esperan su media entera.
     const finGen = Math.max(0, ...hechos.filter(esGenerar).map(r => ms(r.updated_at)));
@@ -174,7 +175,7 @@ const COLA_DATOS = (() => {
     const vivo = id => COLA_CONTROL.encendido({ enLinea: online ? online.has(id) : null, enCurso: trabajos.some(t => t.carril === id && t.enCurso), ultimoFin: ultimoFin[id] || 0 }, ahora);
     const carrilesSnap = ids.map(id => ({ id, etiqueta: id === 'github' ? 'GitHub (ubuntu)' : id, alojado: id === 'github', encendido: id === 'github' ? true : vivo(id) }))
       .sort((a, b) => Number(a.alojado) - Number(b.alojado) || a.id.localeCompare(b.id));
-    const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, fallidas: COLA_CONTROL.fallidas(hechos, ahora), caducadas: COLA_CONTROL.caducadas(hechos, ahora), actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
+    const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, lotes: compararLotes(hechos, cache), fallidas: COLA_CONTROL.fallidas(hechos, ahora), caducadas: COLA_CONTROL.caducadas(hechos, ahora), actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
       guardados: hechos.length, historialCompleto: !!hist.completo, compartido: !!servidor && !avisos.length };
     guardar(K.foto, snap);
     return snap;

@@ -50,7 +50,7 @@ function explota(x, y, dano, quien) {
   fxRotulo(tr('¡CONFETI!'), '#ff8ad0');
   for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
     const cx = x + dx, cy = y + dy;
-    if (enM(J.mapa, cx, cy) === T.ROMPIBLE) rompe(cx, cy, quien);
+    if (enM(J.mapa, cx, cy) === CASILLA.ROMPIBLE) rompe(cx, cy, quien);
     const q = quienHay(cx, cy);
     if (q && q.bando === 'enemigo') dana(q, dano, 'golpe', quien);
     else if (q && q.bando === 'heroe') dana(q, Math.ceil(dano / 3), 'golpe', quien);
@@ -73,7 +73,7 @@ function ponMiniJefe(m, d, P, Z, planta, campo, out) {
   const salas = m.salas.filter(s => s.tipo === 'normal' || s.tipo === 'cripta');
   const lejos = salas.filter(s => campo[s.cy * m.w + s.cx] >= 18);
   const s = d.elige(lejos.length ? lejos : salas); if (!s) return;
-  const cas = casillasDe(m, s, T.SUELO).filter(([x, y]) => !out.ocupadas.has(clave(x, y)) && !m.trampas.has(clave(x, y)));
+  const cas = casillasDe(m, s, CASILLA.SUELO).filter(([x, y]) => !out.ocupadas.has(clave(x, y)) && !m.trampas.has(clave(x, y)));
   if (!cas.length) return;
   const [x, y] = d.elige(cas);
   out.enemigos.push({ tipo: Z.mini, x, y, elite: false, sala: s }); out.ocupadas.add(clave(x, y));
@@ -82,15 +82,15 @@ function ponMiniJefe(m, d, P, Z, planta, campo, out) {
 /* ---------- salas especiales ---------- */
 // la prisión: una jaula con MadSquirrel dentro, pegada a una pared, y dos guardias
 function preparaPrision(m, s, d, planta, out) {
-  const cas = casillasDe(m, s, T.SUELO).filter(([x, y]) => enM(m, x, y - 1) === T.MURO && pasableM(m, x, y + 1));
+  const cas = casillasDe(m, s, CASILLA.SUELO).filter(([x, y]) => enM(m, x, y - 1) === CASILLA.MURO && pasableM(m, x, y + 1));
   const sitio = cas.length ? d.elige(cas) : [s.cx, s.cy];
-  ponM(m, sitio[0], sitio[1], T.JAULA);
-  const Z = ZONAS[zonaDe(planta)], libres = d.baraja(casillasDe(m, s, T.SUELO).filter(([x, y]) => pasos(x, y, sitio[0], sitio[1]) >= 2));
+  ponM(m, sitio[0], sitio[1], CASILLA.JAULA);
+  const Z = ZONAS[zonaDe(planta)], libres = d.baraja(casillasDe(m, s, CASILLA.SUELO).filter(([x, y]) => pasos(x, y, sitio[0], sitio[1]) >= 2));
   for (let i = 0; i < Math.min(2, libres.length); i++) out.enemigos.push({ tipo: d.elige(Z.enemigos.filter(t => t !== 'cajabotin')), x: libres[i][0], y: libres[i][1], elite: false, sala: s });
 }
 function abreJaula(x, y) {
   const m = J.mapa, h = J.heroe;
-  ponM(m, x, y, T.SUELO); fxExplosion(x, y, 0.6, '#b14d1c'); sonido('cofre');
+  ponM(m, x, y, CASILLA.SUELO); fxExplosion(x, y, 0.6, '#b14d1c'); sonido('cofre');
   const ya = J.aliados.find(a => a.fig === 'ardilla');
   if (ya) { const n = D.entre(10, 20) + J.planta * 4; h.monedas += n; fxMonedas(x, y, 8); log(fmt(tr('Una prima de MadSquirrel te da las gracias con {n} monedas y una bellota (que se queda).'), { n }), '#ffd040'); accion(); return; }
   const a = nuevoAliado('bug', x, y, 999, h);
@@ -102,11 +102,11 @@ function abreJaula(x, y) {
 }
 // la biblioteca: alfombra, un atril que identifica todo y dos pergaminos por el suelo
 function preparaBiblioteca(m, s, d, planta, out) {
-  for (let j = s.y; j < s.y + s.h; j++) for (let i = s.x; i < s.x + s.w; i++) if (enM(m, i, j) === T.SUELO) ponM(m, i, j, T.ALFOMBRA2);
-  const cas = casillasDe(m, s, T.ALFOMBRA2).filter(([x, y]) => enM(m, x, y - 1) === T.MURO && pasableM(m, x, y + 1) && pasableM(m, x - 1, y) && pasableM(m, x + 1, y));
+  for (let j = s.y; j < s.y + s.h; j++) for (let i = s.x; i < s.x + s.w; i++) if (enM(m, i, j) === CASILLA.SUELO) ponM(m, i, j, CASILLA.ALFOMBRA2);
+  const cas = casillasDe(m, s, CASILLA.ALFOMBRA2).filter(([x, y]) => enM(m, x, y - 1) === CASILLA.MURO && pasableM(m, x, y + 1) && pasableM(m, x - 1, y) && pasableM(m, x + 1, y));
   const sitio = cas.length ? d.elige(cas) : [s.cx, s.cy];
-  ponM(m, sitio[0], sitio[1], T.ATRIL);
-  const resto = d.baraja(casillasDe(m, s, T.ALFOMBRA2));
+  ponM(m, sitio[0], sitio[1], CASILLA.ATRIL);
+  const resto = d.baraja(casillasDe(m, s, CASILLA.ALFOMBRA2));
   for (let i = 0; i < Math.min(2, resto.length); i++) out.objetos.push({ x: resto[i][0], y: resto[i][1], obj: { id: d.elige(['perg_auditoria', 'perg_reestructuracion', 'perg_despido', 'perg_ascenso', 'perg_auditoria']), rar: 0 } });
 }
 function leeAtril(x, y) {
@@ -121,7 +121,7 @@ function leeAtril(x, y) {
 }
 // la sala maldita: un cofre enorme en el centro; al abrirlo, rejas y enemigos
 function preparaMaldita(m, s, d) {
-  for (let j = s.y; j < s.y + s.h; j++) for (let i = s.x; i < s.x + s.w; i++) if (enM(m, i, j) === T.SUELO) ponM(m, i, j, T.ALFOMBRA);
+  for (let j = s.y; j < s.y + s.h; j++) for (let i = s.x; i < s.x + s.w; i++) if (enM(m, i, j) === CASILLA.SUELO) ponM(m, i, j, CASILLA.ALFOMBRA);
   s.maldita = true;
 }
 function abreMaldito(h, o) {
@@ -132,9 +132,9 @@ function abreMaldito(h, o) {
   const rejas = [];
   for (let y = s.y - 1; y <= s.y + s.h; y++) for (let x = s.x - 1; x <= s.x + s.w; x++) {
     const t = enM(m, x, y), borde = x === s.x - 1 || y === s.y - 1 || x === s.x + s.w || y === s.y + s.h;
-    if (borde && (t === T.PUERTA || t === T.PUERTA_ABIERTA || PASABLE.has(t)) && !quienHay(x, y)) { rejas.push([x, y, t]); ponM(m, x, y, T.REJA); }
+    if (borde && (t === CASILLA.PUERTA || t === CASILLA.PUERTA_ABIERTA || PASABLE.has(t)) && !quienHay(x, y)) { rejas.push([x, y, t]); ponM(m, x, y, CASILLA.REJA); }
   }
-  const Z = ZONAS[m.zona], n = 3 + Math.min(3, Math.floor(J.planta / 3)), cas = D.baraja(casillasDe(m, s, T.ALFOMBRA).filter(([x, y]) => !quienHay(x, y) && pasos(x, y, h.x, h.y) >= 2));
+  const Z = ZONAS[m.zona], n = 3 + Math.min(3, Math.floor(J.planta / 3)), cas = D.baraja(casillasDe(m, s, CASILLA.ALFOMBRA).filter(([x, y]) => !quienHay(x, y) && pasos(x, y, h.x, h.y) >= 2));
   for (let k = 0; k < Math.min(n, cas.length); k++) {
     const e = nuevoEnemigo(D.elige(Z.enemigos.filter(t => t !== 'cajabotin')), cas[k][0], cas[k][1], J.planta, D.prob(0.25));
     e.despierto = true; e.maldito = true; J.enemigos.push(e); fxExplosion(e.x, e.y, 0.5, '#a8323a');
@@ -146,7 +146,7 @@ function abreMaldito(h, o) {
 // cada turno: si ya no queda nadie de la emboscada, se abren las rejas y llega el premio gordo
 function revisaMaldita() {
   const mm = J.maldita; if (!mm || J.enemigos.some(e => e.maldito)) return;
-  for (const [x, y, t] of mm.rejas) ponM(J.mapa, x, y, t === T.PUERTA ? T.PUERTA_ABIERTA : t);
+  for (const [x, y, t] of mm.rejas) ponM(J.mapa, x, y, t === CASILLA.PUERTA ? CASILLA.PUERTA_ABIERTA : t);
   const h = J.heroe, n = D.entre(30, 50) + J.planta * 10;
   h.monedas += n; J.monedasVistas += n; fxMonedas(h.x, h.y, 10);
   J.objetos.push({ x: h.x, y: h.y, obj: generaObjeto(J.planta, D, D.elige(['arma', 'armadura', 'accesorio']), 3) });
@@ -191,7 +191,7 @@ function creaIconosContenido() {
 
 // partidas guardadas con algo metido en un muro (fallo de la 0.2.0 con Esfumarse): se saca a la casilla libre más cercana
 function rescataDeMuros() {
-  const m = J.mapa, mal = (x, y) => !pasableM(m, x, y) && enM(m, x, y) !== T.PUERTA_ABIERTA;
+  const m = J.mapa, mal = (x, y) => !pasableM(m, x, y) && enM(m, x, y) !== CASILLA.PUERTA_ABIERTA;
   const cerca = (x, y, libre) => { for (let r = 1; r <= 4; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) { const nx = x + dx, ny = y + dy; if (pasableM(m, nx, ny) && libre(nx, ny)) return [nx, ny]; } return null; };
   for (const o of J.objetos) if (mal(o.x, o.y)) { const c = cerca(o.x, o.y, () => true); if (c) { o.x = c[0]; o.y = c[1]; } }
   for (const e of J.enemigos.concat(J.aliados)) if (mal(e.x, e.y)) { const c = cerca(e.x, e.y, (x, y) => !quienHay(x, y)); if (c) { e.x = c[0]; e.y = c[1]; } }

@@ -2,5 +2,6 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.1', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.1.0', real: ["<b>FANS OF MERGE</b>, demo nueva: planta brotes en la pradera de CrazyBunny y junta tres iguales para subir de zanahoria a huerto, casita, madriguera, torre, palacio y <b>palacio flotante</b>.", "<b>AVENTURA</b> de 15 niveles con tutorial guiado, turnos y hasta 3 estrellas; al pasar el nivel 3 se abre el <b>MODO LIBRE</b>, a por el récord.", "Zorros que andan y cuervos que saltan, semilla mágica, topo, cofres, <b>reserva</b>, <b>cartas de habilidad</b>, el <b>Rayo zanahoria</b>, rachas, cadenas y eventos de lluvia, tormenta, siesta y regalo."], joke: ["Microblizz ha intentado patentar «juntar tres cosas iguales». La oficina de patentes le ha contestado con tres cartas iguales: las tres decían que no."] },
 ];

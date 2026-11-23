@@ -9,9 +9,9 @@ const ESQUINAS = [[-1, -1, 'v'], [2, 2, 'v'], [2, -1, 'h'], [-1, 2, 'h']];
 function pintaSemaforos(g) {
   const z = J.cam.z, noche = oscuridad() > 0.3, s = Math.max(2, Math.round(2.5 * z));
   for (const q of MAPA.cruces) {
-    if (!q.semaforo || !enVista(q.x * T, q.y * T, 60)) continue;
+    if (!q.semaforo || !enVista(q.x * CASILLA, q.y * CASILLA, 60)) continue;
     for (const [dx, dy, eje] of ESQUINAS) {
-      const x = sx((q.x + dx) * T + T / 2 + (dx < 0 ? 4 : -4)), y = sy((q.y + dy) * T + T / 2 + (dy < 0 ? 4 : -4));
+      const x = sx((q.x + dx) * CASILLA + CASILLA / 2 + (dx < 0 ? 4 : -4)), y = sy((q.y + dy) * CASILLA + CASILLA / 2 + (dy < 0 ? 4 : -4));
       const color = COLOR_LUZ[luz(q, eje, S.tick)];
       g.fillStyle = TINTA; g.fillRect(Math.round(x - s / 2) - 1, Math.round(y - s / 2) - 1, s + 2, s + 2);
       g.fillStyle = color; g.fillRect(Math.round(x - s / 2), Math.round(y - s / 2), s, s);

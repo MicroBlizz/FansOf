@@ -1,18 +1,24 @@
 // Fans Of · /gestion · TABLERO · dominio · REVISAR (tarea #161, ADR 160): lo que hace falta para revisar en un toque, sin pantalla ni red.
-// - El enlace para probar una tarea en la alfa a partir de su juego (solo si el juego tiene página en web/games; un test compara la lista con las carpetas).
+// - El enlace para probar una tarea en la alfa a partir de su juego (solo si el juego está en el catálogo de la biblioteca, ADR 198; la lista llega de fuera).
 // - Los trozos de un texto con enlaces (texto suelto y direcciones https), para que la vista los haga pulsables.
 // Cada caja lleva el color de la columna de donde salen sus tareas (tarea #163: colores tipo semáforo).
 // - La bandeja «Te toca»: lo que espera a quien mira (por revisar, te preguntan, informes por aprobar).
 // - Si quien mira puede dar por buena una tarea o pedir cambios (está en revisión y es suya).
 'use strict';
 TABLERO.ALFA = 'https://fansof.games/alfa/games/';
-// Los juegos con página propia en web/games (tests/gestion/tablero/revisar.test.mjs avisa si alguien añade o quita una carpeta y no la apunta aquí)
-TABLERO.JUEGOS_WEB = Object.freeze(['air', 'asalto', 'auto', 'basement', 'beams', 'boom', 'chef', 'cooking', 'crush', 'dark', 'decks', 'dungeons', 'goose', 'island',
-  'jump', 'karts', 'kingdom', 'merge', 'nova', 'panic', 'paperwork', 'pets', 'pinball', 'pop', 'rally', 'ratkov', 'recruit', 'roguelite', 'rouflage', 'rumble-3d', 'rumble-clasico',
-  'rumble-v2', 'rumble', 'shelter', 'skate', 'snakes', 'soccer', 'spy', 'survivors', 'swipe', 'tacticas', 'tactics-advance', 'taxi', 'td', 'terminal-shock', 'tiny',
-  'toys', 'vikings', 'wings', 'zombies']);
-// La dirección del juego en la alfa, o null si la tarea no es de un juego con página (core, web, gestion, general, una idea sin carpeta…)
-TABLERO.enlaceAlfa = juego => (TABLERO.JUEGOS_WEB.includes(juego) ? TABLERO.ALFA + juego + '/' : null);
+// Los juegos con página en la alfa son los del catálogo de la biblioteca (web/biblioteca/juegos.json, ADR 198), todos sea cual sea su estado: la alfa publica
+// todas las carpetas de web/games. Aquí no hay red: el adaptador (repositorio-catalogo.js) pide el fichero y este dominio lo valida
+const ID_JUEGO = /^[a-z0-9-]+$/;
+// Los ids del catálogo ya leído (el JSON): ok con la lista congelada; un registro sin id válido se salta y no tira los demás (como el anuncio de core).
+// Error `catalogo-roto` si no es un catálogo: sin lista o sin ningún id válido
+TABLERO.juegosDelCatalogo = datos => {
+  const lista = datos && Array.isArray(datos.juegos) ? datos.juegos : [];
+  const ids = lista.map(j => (j && typeof j.id === 'string' ? j.id : '')).filter(id => ID_JUEGO.test(id));
+  if (!ids.length) return TABLERO.error('catalogo-roto', { registros: lista.length });
+  return TABLERO.ok(Object.freeze([...new Set(ids)]));
+};
+// La dirección del juego en la alfa, o null si no está entre los ids dados (core, web, gestion, general, una idea sin carpeta…; sin catálogo la lista va vacía)
+TABLERO.enlaceAlfa = (juego, ids = []) => (ids.includes(juego) ? TABLERO.ALFA + juego + '/' : null);
 
 // Un texto partido en trozos { texto } y { url } (solo https, sin el punto o la coma que la cierre), en orden: la vista escapa cada uno y enlaza las url
 const URL_EN_TEXTO = /https:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/g;

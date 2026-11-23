@@ -1,6 +1,7 @@
 // Fans of Cooking · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.19', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.2.18', real: ["<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos."], joke: ["Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora."] },
   { v: '0.2.17', real: ["<b>MEJORAS POR DENTRO</b>: una etiqueta «PROTOTIPO» en el borde que lleva a la ficha del juego para votarlo, mejoras en la pestaña de comentarios y retoques en los sistemas internos."], joke: ["Microblizz ha puesto la etiqueta de PROTOTIPO en el delantal y Phony la ha confundido con la receta."] },
   { v: '0.2.16', real: ["<b>MEJORAS POR DENTRO</b>: la pantalla de carga se retira siempre a tiempo y los roles de la cuenta se leen de un solo sitio."], joke: ["Microblizz ha apagado la luz de la pantalla de carga y Phony se ha quedado dentro para ver si volvía a encenderse."] },

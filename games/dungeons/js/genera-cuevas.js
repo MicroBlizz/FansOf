@@ -17,22 +17,22 @@ function generaCuevas(m, d) {
     }
     a = b;
   }
-  for (let k = 0; k < w * h; k++) m.t[k] = a[k] ? T.SUELO : T.MURO;
+  for (let k = 0; k < w * h; k++) m.t[k] = a[k] ? CASILLA.SUELO : CASILLA.MURO;
   // las zonas de suelo separadas: se quedan las grandes unidas con túneles; las minúsculas se tapan
   const zonaDeCasilla = new Int16Array(w * h).fill(-1), zonas = [];
   for (let j = 1; j < h - 1; j++) for (let i = 1; i < w - 1; i++) {
-    if (enM(m, i, j) !== T.SUELO || zonaDeCasilla[j * w + i] >= 0) continue;
+    if (enM(m, i, j) !== CASILLA.SUELO || zonaDeCasilla[j * w + i] >= 0) continue;
     const id = zonas.length, cas = [], cola = [[i, j]]; zonaDeCasilla[j * w + i] = id;
     while (cola.length) {
       const [x, y] = cola.pop(); cas.push([x, y]);
-      for (const [dx, dy] of DIRS) { const nx = x + dx, ny = y + dy; if (enM(m, nx, ny) === T.SUELO && zonaDeCasilla[ny * w + nx] < 0) { zonaDeCasilla[ny * w + nx] = id; cola.push([nx, ny]); } }
+      for (const [dx, dy] of DIRS) { const nx = x + dx, ny = y + dy; if (enM(m, nx, ny) === CASILLA.SUELO && zonaDeCasilla[ny * w + nx] < 0) { zonaDeCasilla[ny * w + nx] = id; cola.push([nx, ny]); } }
     }
     zonas.push(cas);
   }
   zonas.sort((p, q) => q.length - p.length);
   for (let z = 1; z < zonas.length; z++) {
     const cas = zonas[z];
-    if (cas.length < 12) { for (const [x, y] of cas) ponM(m, x, y, T.MURO); continue; }
+    if (cas.length < 12) { for (const [x, y] of cas) ponM(m, x, y, CASILLA.MURO); continue; }
     const [x0, y0] = d.elige(cas), [x1, y1] = d.elige(zonas[0]);
     pasillo(m, x0, y0, x1, y1, d);
   }
@@ -40,8 +40,8 @@ function generaCuevas(m, d) {
   const criptas = d.entre(2, 3);
   for (let n = 0; n < criptas; n++) {
     const cw = d.entre(6, 9), ch = d.entre(5, 7), cx = d.entre(2, w - cw - 3), cy = d.entre(2, h - ch - 3);
-    rellenaM(m, cx - 1, cy - 1, cw + 2, ch + 2, T.MURO);
-    rellenaM(m, cx, cy, cw, ch, T.SUELO);
+    rellenaM(m, cx - 1, cy - 1, cw + 2, ch + 2, CASILLA.MURO);
+    rellenaM(m, cx, cy, cw, ch, CASILLA.SUELO);
     const sala = { x: cx, y: cy, w: cw, h: ch, cx: cx + Math.floor(cw / 2), cy: cy + Math.floor(ch / 2), tipo: 'cripta' };
     m.salas.push(sala);
     const [tx, ty] = d.elige(zonas[0]);
@@ -52,7 +52,7 @@ function generaCuevas(m, d) {
   for (let j = 1; j < h - 5; j++) for (let i = 1; i < w - 5; i++) {
     if (usados[j * w + i] || m.salas.some(s => i >= s.x - 2 && j >= s.y - 2 && i < s.x + s.w + 2 && j < s.y + s.h + 2)) continue;
     let lleno = true;
-    for (let y = j; y < j + 5 && lleno; y++) for (let x = i; x < i + 5; x++) if (enM(m, x, y) !== T.SUELO) { lleno = false; break; }
+    for (let y = j; y < j + 5 && lleno; y++) for (let x = i; x < i + 5; x++) if (enM(m, x, y) !== CASILLA.SUELO) { lleno = false; break; }
     if (!lleno) continue;
     const sala = { x: i, y: j, w: 5, h: 5, cx: i + 2, cy: j + 2, tipo: 'hueco' };
     m.salas.push(sala);

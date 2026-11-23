@@ -84,7 +84,7 @@ function ponBarrera(j, pj) {
   const [dx, dy] = carrilEn(k[0], k[1]), otro = dy !== 0 ? [k[0] + (dy > 0 ? 1 : -1), k[1]] : [k[0], k[1] + (dx > 0 ? -1 : 1)];
   const sitios = [k, otro].filter(([tx, ty]) => esCalle(tx, ty) && hueco(centroCasilla(tx, ty)));
   for (const [tx, ty] of sitios) {
-    const c = nuevoCoche('moderador', tx * T + 8, ty * T + 8, dy !== 0 ? 0 : Math.PI / 2, 'ia');
+    const c = nuevoCoche('moderador', tx * CASILLA + 8, ty * CASILLA + 8, dy !== 0 ? 0 : Math.PI / 2, 'ia');
     Object.assign(c.ia, { modo: 'policia', rol: 'barrera', hasta: S.tick + 900 });
   }
   if (sitios.length) mensaje(tr('¡Barrera de Moderadores más adelante!'), 150);

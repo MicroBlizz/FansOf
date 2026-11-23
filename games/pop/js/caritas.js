@@ -82,6 +82,7 @@ function ppCaritaSegunEstilo(c, y, r, cara, i, T, t, caritas) {
 }
 // la carita de la burbuja i del tablero T, en el sitio que dice el estilo de su mundo y siguiendo su animación (ppBurbuja)
 function ppCaritaEnBurbuja(c, cx, cy, r, i, T, t, caritas = null) {
+  if (caritas && caritas.propia) return;   // el dibujo ya trae su cara (el macaron de Yoshi): sin doble cara
   const cara = ppCaraDe(T.up[i], !!T.slimes[i], !!(T.esp && T.esp[i]) || T.trampas.has(i));   // la trampa lleva su «!»: sin cara
   if (!cara) return;
   const [sx, sy, h] = ppAnim(i, T.up[i]), sitio = PP_CARITA_SITIO[caritas ? caritas.sitio : 'tapa'];

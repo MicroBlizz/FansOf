@@ -79,8 +79,8 @@ iniciaMandos();
 // el suelo se pinta por trozos durante la carga (hace falta el mapa primero, así que se añaden al arrancar)
 CARGA.pasos.push(() => { const az = Azar(99); SUELO.nx = Math.ceil(MAPA.W / TROZO); SUELO.ny = Math.ceil(MAPA.H / TROZO); SUELO.az = az; });
 for (let j = 0; j < 6; j++) for (let i = 0; i < 7; i++) CARGA.pasos.push(() => {
-  const [c, g] = lienzoNuevo(TROZO * T, TROZO * T);
-  for (let y = 0; y < TROZO; y++) for (let x = 0; x < TROZO; x++) { const tx = i * TROZO + x, ty = j * TROZO + y; if (enMapa(tx, ty)) pintaCasilla(g, tx, ty, x * T, y * T, SUELO.az); }
+  const [c, g] = lienzoNuevo(TROZO * CASILLA, TROZO * CASILLA);
+  for (let y = 0; y < TROZO; y++) for (let x = 0; x < TROZO; x++) { const tx = i * TROZO + x, ty = j * TROZO + y; if (enMapa(tx, ty)) pintaCasilla(g, tx, ty, x * CASILLA, y * CASILLA, SUELO.az); }
   SUELO.trozos[j * SUELO.nx + i] = c;
 });
 CARGA.pasos.push(() => { for (const e of MAPA.edificios) fotoTejado(e); });

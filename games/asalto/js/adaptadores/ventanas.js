@@ -1,6 +1,6 @@
 // Fans of Asalto · ADAPTADORES · Las ventanas de la partida, en pergamino (HTML sobre el lienzo): la ficha de un héroe (con el ascenso
 // a una de sus dos clases), la confirmación de unir dos héroes (qué gana el que se queda), la de una clase, los premios (elegir reliquia, abrir el cofre, el botín del jefe), las misiones con lo siguiente por conseguir, el final de la partida,
-// la pausa y el anuncio de prueba. Cada ventana llama a los casos de uso y se cierra; no decide reglas.
+// la pausa y los anuncios (con la capa común de core). Cada ventana llama a los casos de uso y se cierra; no decide reglas.
 'use strict';
 AS.ventanas = (() => {
   const D = AS.dibujos, fx = AS.fx;
@@ -16,22 +16,23 @@ AS.ventanas = (() => {
     return tarjeta();
   }
   function cierra() { modal().hidden = true; tarjeta().innerHTML = ''; }
-  const abierta = () => !modal().hidden || !$('#as-anuncio').hidden;
+  const abierta = () => !modal().hidden || viendo;
   const alPulsar = (id, hace) => { const b = $('#' + id); if (b) b.onclick = () => { AS.suena('clic'); hace(); }; };
 
-  /* ---------- el anuncio de prueba (en la app de Google Play será uno de verdad) ---------- */
-  function anuncio(alAcabar) {
-    const ov = $('#as-anuncio'), ok = $('#as-ad-ok'), barra = $('#as-ad-barra');
-    let t = NUCLEO.desarrollo ? 1 : 5;
-    ov.hidden = false;
-    const tic = () => {
-      if (t > 0) { ok.disabled = true; ok.textContent = tr('El premio llega en {t}…', { t }); barra.style.width = ((5 - t) / 5 * 100) + '%'; t--; ov._t = setTimeout(tic, 1000); return; }
-      barra.style.width = '100%'; ok.disabled = false; ok.textContent = tr('RECOGER PREMIO'); AS.suena('premio', 1);
-    };
-    clearTimeout(ov._t); tic();
-    ok.onclick = () => { if (t > 0) return; ov.hidden = true; alAcabar(); };
-    $('#as-ad-no').onclick = () => { clearTimeout(ov._t); ov.hidden = true; AS.suena('clic'); toast(tr('Anuncio cerrado: sin premio')); };
+  /* ---------- los anuncios: todos pasan por la capa común de core (ANUNCIOS.ver); aquí solo el premio y su aviso ---------- */
+  let viendo = false;
+  // pone el anuncio del sitio y, solo si se ve entero, llama a alAcabar (que da el premio). Cerrado o fallido: sin premio. Un toque
+  // mientras hay uno en marcha no abre otro
+  async function anuncio(sitio, alAcabar) {
+    if (viendo) return;
+    viendo = true;
+    let r = null;
+    // con «Sin anuncios» (ADR 200) el clic que pondría el anuncio da el premio directo, con los mismos topes: lo decide AS.casos.verAnuncio
+    try { r = await AS.casos.verAnuncio(sitio, s => ANUNCIOS.ver(s)); } catch (e) { console.error('anuncio', sitio, e); toast(tr('El anuncio no se ha podido ver')); } finally { viendo = false; }
+    if (r && r.visto) alAcabar();
   }
+  // el aviso del premio: qué ganas y cuánto (con el sonido del cofre)
+  function premio(txt) { AS.suena('cofre'); toast(txt, true); }
 
   /* ---------- la ficha de un héroe y su ascenso ---------- */
   function htmlHeroe(h, cifras) {
@@ -120,8 +121,8 @@ AS.ventanas = (() => {
     const cartas = ops.map(id => { const r = ASALTO.reliquias[id]; return `<button class="as-carta" data-rel="${id}" type="button">${ico(iconoDe(id, r), 'as-ico2')}<b>${tr(r.nombre)}</b><span>${tr(r.txt)}</span></button>`; }).join('');
     const t = abre(`<h2>${tr('ELIGE UNA RELIQUIA')}</h2>${cartas}<div class="as-fila">${btn('as-rel-otras', tr('OTRAS 3 · ANUNCIO'), 'as-oro')}${btn('as-rel-todas', tr('LAS 3 · ANUNCIO'), 'as-oro')}</div>`);
     for (const b of t.querySelectorAll('[data-rel]')) b.onclick = () => { if (E.casos.eligeReliquia(b.dataset.rel).ok) { AS.suena('cofre'); sigue(); } };
-    alPulsar('as-rel-otras', () => anuncio(() => { E.casos.refrescaReliquias(); reliquia(E, sigue); }));
-    alPulsar('as-rel-todas', () => anuncio(() => { if (E.casos.todasLasReliquias().ok) { AS.suena('cofre'); sigue(); } }));
+    alPulsar('as-rel-otras', () => anuncio('reliquias-otras', () => { E.casos.refrescaReliquias(); premio(tr('Otras 3 reliquias')); reliquia(E, sigue); }));
+    alPulsar('as-rel-todas', () => anuncio('reliquias-todas', () => { if (E.casos.todasLasReliquias().ok) { premio(tr('Te llevas las 3 reliquias')); sigue(); } }));
   }
   const htmlObjeto = o => `<li>${ico('equipo-' + o.hueco)}${tr(ASALTO.equipo.nombres[o.hueco])} · ${tr(ASALTO.equipo.rarezas[o.rareza].nombre)} · +${o.valor} % ${tr(ASALTO.equipo.stats[o.stat])}</li>`;
   function cobrado(v, sigue) {
@@ -137,7 +138,7 @@ AS.ventanas = (() => {
       <div class="as-fila">${btn('as-abrir', tr('ABRIR'), 'as-verde')}${jefe ? '' : btn('as-doble', tr('EL DOBLE · ANUNCIO'), 'as-oro')}</div>`);
     const cobra = doble => { const r = E.casos.cobraCofre(doble); if (r.ok) cobrado(r.valor, sigue); else sigue(); };
     alPulsar('as-abrir', () => cobra(false));
-    alPulsar('as-doble', () => anuncio(() => cobra(true)));
+    alPulsar('as-doble', () => anuncio('cofre-doble', () => { toast(tr('¡Cofre doble!'), true); cobra(true); }));   // el botín ya suena a cofre
   }
   // enseña uno a uno los premios que queden y, al acabar, llama a alAcabar
   function premios(E, alAcabar) {
@@ -174,8 +175,9 @@ AS.ventanas = (() => {
     const fila = (txt, v) => `<li><span>${txt}</span><b>${v}</b></li>`, M = E.casos.metas().mejora, llega = M && M.plumas >= M.coste, pend = E.casos.logrosPendientes().length;
     abre(`<h2 class="${gano ? 'as-gana' : 'as-pierde'}">${gano ? tr('¡ZONA CONQUISTADA!') : tr('DERROTA')}</h2><p class="as-nivel">${tr(zona.nombre)}${p.sinFin ? ' · ' + tr('SIN FIN') : ''}</p>
       <ul class="as-lista as-resumen">${fila(tr('Oleadas superadas'), c.oleadasGanadas)}${fila(tr('Enemigos derrotados'), c.bajas)}${fila(tr('Líneas en el Altar'), c.lineas)}${fila(tr('Nivel más alto'), c.nivelMax)}${fila(tr('Plumas ganadas'), '+' + p.plumas)}</ul>
-      ${htmlMetas(E)}${btn('as-ver-cifras', tr('CIFRAS'), 'as-naranja as-chico')}${llega ? btn('as-mejorar', tr('MEJORAR AHORA'), 'as-oro') : ''}${pend ? `<p class="as-nota">${tr('Tienes {n} logros por cobrar en el menú.', { n: pend })}</p>` : ''}
+      ${E.casos.puedeDoblar() ? btn('as-doblar', tr('DOBLAR PLUMAS · ANUNCIO'), 'as-oro') : ''}${htmlMetas(E)}${btn('as-ver-cifras', tr('CIFRAS'), 'as-naranja as-chico')}${llega ? btn('as-mejorar', tr('MEJORAR AHORA'), 'as-oro') : ''}${pend ? `<p class="as-nota">${tr('Tienes {n} logros por cobrar en el menú.', { n: pend })}</p>` : ''}
       <div class="as-fila">${btn('as-otra', gano && hay ? tr('SIGUIENTE ZONA') : tr('OTRA VEZ'), 'as-rojo')}${btn('as-menu-ir', tr('MENÚ'), 'as-azul')}</div>`, gano ? 'as-victoria' : '');
+    alPulsar('as-doblar', () => anuncio('doblar-plumas', () => { const r = E.casos.doblaPlumas(); if (r.ok) { premio(tr('+{n} plumas', { n: r.valor })); fin(E); } }));
     alPulsar('as-ver-cifras', () => AS.ventanas.cifras(E, () => fin(E)));
     alPulsar('as-mejorar', () => { cierra(); AS.menu.abre('mejoras'); });
     alPulsar('as-otra', () => { cierra(); AS.menu.entra(gano && hay && !p.sinFin ? p.zona + 1 : p.zona, p.sinFin); });
@@ -215,5 +217,5 @@ AS.ventanas = (() => {
     alPulsar('as-salir', () => { cierra(); AS.menu.abre(); });
     alPulsar('as-dejar', () => confirmBox(tr('¿ABANDONAR?'), tr('Perderás la partida de ahora.'), tr('SÍ, SALIR'), () => { E.casos.abandona(); cierra(); AS.menu.abre(); }));
   }
-  return { abre, cierra, abierta, anuncio, heroe, union, clase, premios, misiones, fin, pausa, ayuda, ajustes, ico, btn, alPulsar };
+  return { abre, cierra, abierta, anuncio, premio, heroe, union, clase, premios, misiones, fin, pausa, ayuda, ajustes, ico, btn, alPulsar };
 })();

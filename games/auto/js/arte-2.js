@@ -11,8 +11,8 @@ const SUELO = { trozos: [], tejados: new Map(), iconos: {} };
 function pintaCasilla(g, tx, ty, px, py, az) {
   const t = tipoEn(tx, ty);
   if (t === TIPO.CALLE || t === TIPO.SOLAR) {
-    rect(g, px, py, T, T, t === TIPO.CALLE ? '#4f5258' : '#5c5e64');
-    motas(g, px, py, T, T, '#56595f', 10, az); motas(g, px, py, T, T, '#45484e', 6, az);
+    rect(g, px, py, CASILLA, CASILLA, t === TIPO.CALLE ? '#4f5258' : '#5c5e64');
+    motas(g, px, py, CASILLA, CASILLA, '#56595f', 10, az); motas(g, px, py, CASILLA, CASILLA, '#45484e', 6, az);
     if (t === TIPO.CALLE) {
       const i = (ty * MAPA.W + tx) * 2, dx = MAPA.carril[i], dy = MAPA.carril[i + 1];
       // la raya discontinua entre los dos sentidos: en el borde este del carril que baja, en el borde sur del que va al oeste
@@ -21,29 +21,29 @@ function pintaCasilla(g, tx, ty, px, py, az) {
       // paso de cebra al llegar a un cruce
       // el paso de cebra (rutas.js dice dónde): rayas a lo largo de la calle, una por cada paso del peatón
       const paso = RUTAS.paso[ty * MAPA.W + tx];
-      if (paso === 1) for (let k = 2; k < T; k += 4) rect(g, px + k, py + 2, 2, 12, '#c9c7c0');
-      if (paso === 2) for (let k = 2; k < T; k += 4) rect(g, px + 2, py + k, 12, 2, '#c9c7c0');
+      if (paso === 1) for (let k = 2; k < CASILLA; k += 4) rect(g, px + k, py + 2, 2, 12, '#c9c7c0');
+      if (paso === 2) for (let k = 2; k < CASILLA; k += 4) rect(g, px + 2, py + k, 12, 2, '#c9c7c0');
     } else {
       // explanada: plazas de aparcamiento pintadas
       if (tx % 2 === 0 && ty % 3 !== 0) rect(g, px, py + 2, 1, 12, '#8a8c92');
     }
   } else if (t === TIPO.ACERA) {
-    rect(g, px, py, T, T, '#8e8a82');
-    rect(g, px, py, T, 1, '#827e76'); rect(g, px, py, 1, T, '#827e76'); rect(g, px + 8, py, 1, T, '#878379'); rect(g, px, py + 8, T, 1, '#878379');
-    motas(g, px, py, T, T, '#97938b', 5, az);
+    rect(g, px, py, CASILLA, CASILLA, '#8e8a82');
+    rect(g, px, py, CASILLA, 1, '#827e76'); rect(g, px, py, 1, CASILLA, '#827e76'); rect(g, px + 8, py, 1, CASILLA, '#878379'); rect(g, px, py + 8, CASILLA, 1, '#878379');
+    motas(g, px, py, CASILLA, CASILLA, '#97938b', 5, az);
     // bordillo hacia la calle
-    if (calleEn(tx, ty - 1)) rect(g, px, py, T, 1, '#aaa69e');
-    if (calleEn(tx, ty + 1)) rect(g, px, py + 15, T, 1, '#6f6b64');
-    if (calleEn(tx - 1, ty)) rect(g, px, py, 1, T, '#aaa69e');
-    if (calleEn(tx + 1, ty)) rect(g, px + 15, py, 1, T, '#6f6b64');
+    if (calleEn(tx, ty - 1)) rect(g, px, py, CASILLA, 1, '#aaa69e');
+    if (calleEn(tx, ty + 1)) rect(g, px, py + 15, CASILLA, 1, '#6f6b64');
+    if (calleEn(tx - 1, ty)) rect(g, px, py, 1, CASILLA, '#aaa69e');
+    if (calleEn(tx + 1, ty)) rect(g, px + 15, py, 1, CASILLA, '#6f6b64');
   } else if (t === TIPO.HIERBA || t === TIPO.ARBOL) {
-    rect(g, px, py, T, T, '#5f8f3f'); motas(g, px, py, T, T, '#6fa34a', 12, az); motas(g, px, py, T, T, '#4f7a33', 8, az);
+    rect(g, px, py, CASILLA, CASILLA, '#5f8f3f'); motas(g, px, py, CASILLA, CASILLA, '#6fa34a', 12, az); motas(g, px, py, CASILLA, CASILLA, '#4f7a33', 8, az);
     if (az() < 0.08) rect(g, px + az.entero(2, 12), py + az.entero(2, 12), 1, 1, '#f0c060');
     if (t === TIPO.ARBOL) { rect(g, px + 6, py + 6, 4, 4, '#4a3520'); }
   } else {
     // debajo de un edificio nadie mira, pero por si asoma: una base oscura
     const e = MAPA.edificios[MAPA.edif[ty * MAPA.W + tx]];
-    rect(g, px, py, T, T, e ? oscuro(ESTILOS[e.estilo].pared, 0.5) : '#333');
+    rect(g, px, py, CASILLA, CASILLA, e ? oscuro(ESTILOS[e.estilo].pared, 0.5) : '#333');
   }
 }
 
@@ -51,8 +51,8 @@ function creaSuelo() {
   const az = Azar(99), nx = Math.ceil(MAPA.W / TROZO), ny = Math.ceil(MAPA.H / TROZO);
   SUELO.nx = nx; SUELO.ny = ny;
   for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
-    const [c, g] = lienzoNuevo(TROZO * T, TROZO * T);
-    for (let y = 0; y < TROZO; y++) for (let x = 0; x < TROZO; x++) { const tx = i * TROZO + x, ty = j * TROZO + y; if (enMapa(tx, ty)) pintaCasilla(g, tx, ty, x * T, y * T, az); }
+    const [c, g] = lienzoNuevo(TROZO * CASILLA, TROZO * CASILLA);
+    for (let y = 0; y < TROZO; y++) for (let x = 0; x < TROZO; x++) { const tx = i * TROZO + x, ty = j * TROZO + y; if (enMapa(tx, ty)) pintaCasilla(g, tx, ty, x * CASILLA, y * CASILLA, az); }
     SUELO.trozos.push(c);
   }
 }
@@ -60,7 +60,7 @@ function creaSuelo() {
 // el dibujo de un tejado: borde, aparatos y rótulo
 function fotoTejado(e) {
   if (SUELO.tejados.has(e.id)) return SUELO.tejados.get(e.id);
-  const W = e.w * T, H = e.h * T, [c, g] = lienzoNuevo(W, H), az = Azar(100 + e.id), E = ESTILOS[e.estilo];
+  const W = e.w * CASILLA, H = e.h * CASILLA, [c, g] = lienzoNuevo(W, H), az = Azar(100 + e.id), E = ESTILOS[e.estilo];
   let base = E.tejado;
   if (e.tejado === 'comisaria') base = '#c9c7c0'; else if (e.tejado === 'helados') base = '#e8a0b8'; else if (e.tejado === 'templo') base = '#b89a6a';
   rect(g, 0, 0, W, H, base);

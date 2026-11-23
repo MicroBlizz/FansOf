@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.9', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.1.8', real: ['<b>CABINA PROPIA PARA FILETE ROSA</b>: la MechaVaca ya vuela con su cabina, rosa, con panel de manchas de vaca, cencerro, la foto del prado y su cartón de leche. Además, los carteles de la misión y el aviso de girar el móvil estrenan el estilo militar de los menús.'],
     joke: ['Mantenimiento recuerda que el cartón de leche de la cabina es decorativo. El de la semana pasada también lo era.'] },
   { v: '0.1.7', real: ['<b>CUARTO CAZA: FILETE ROSA</b>: la MechaVaca estrena un reactor de despegue vertical, rosa, con manchas de vaca, cuernos y cencerro. Es la más blindada y la más lenta, lleva pocos misiles y tiene un truco que nadie más tiene: con el FRENO se queda quieta en el aire.'],

@@ -70,6 +70,16 @@ AS.pinta.altar = (() => {
       asoma(g, P, p, E, col, -1); asoma(g, P, p, E, col, 3);
       for (let f = 0; f < 3; f++) losaRuna(g, P, p, E, col, f, bote, rompe);
     }
+    zonaColumna(P, p, E);
+  }
+  // tocar las runas de la columna que hace línea con un empujón también la empuja: es lo que brilla, y la losa que asoma es pequeña
+  // para el dedo (tarea #317)
+  function zonaColumna(P, p, E) {
+    if (p.fase !== 'preparar' || E.giro || !p.altar || !p.altarVivo || p.empujones <= 0) return;
+    const e = AS.altar.empujonConLinea(p.altar);
+    if (!e) return;
+    const a = P.losa(e.col, 0), b = P.losa(e.col, 2);
+    E.zona({ x: a.x, y: a.y, w: a.w, h: b.y + b.h - a.y }, 'empuja', { col: e.col, dir: e.dir });
   }
   function invocar(g, P, p, E) {
     const b = P.invocar, sitio = AS.equipo.hayHueco(p.equipo), coste = p.coste, llega = p.oro >= coste;

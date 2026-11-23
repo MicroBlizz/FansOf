@@ -42,12 +42,14 @@ const PP_COLE = (() => {
     e.eq.N = (eqN.length ? [...new Set(eqN)] : e.eq.N).slice(0, e.cas.N);
     return e;
   }
-  // conseguir un compañero: nuevo, o un repetido para subirle estrellas (si ya no le hacen falta, `sobra`: monedas)
+  // los repetidos que piden las estrellas que faltan hasta 5 (con 5 estrellas, ninguno)
+  const faltan = est => C.PRECIOS.repetidos.slice(est - 1).reduce((a, n) => a + n, 0);
+  // conseguir un compañero: nuevo, o un repetido para subirle estrellas (si los que ya guardas cubren todas las que faltan, `sobra`: monedas)
   function gana(e, id) {
     if (!existe(id)) return error('no_existe');
     const n = copia(e), x = n.tiene[id];
     if (!x) { n.tiene[id] = { est: 1, rep: 0 }; return ok({ estado: n, nuevo: true, sobra: 0 }); }
-    if (x.est + x.rep >= TOPE_EST) return ok({ estado: n, nuevo: false, sobra: C.PRECIOS.sobra });
+    if (x.rep >= faltan(x.est)) return ok({ estado: n, nuevo: false, sobra: C.PRECIOS.sobra });
     x.rep++;
     return ok({ estado: n, nuevo: false, sobra: 0 });
   }
@@ -63,15 +65,16 @@ const PP_COLE = (() => {
     const x = e.tiene[id];
     if (!x) return error('no_tiene');
     if (x.est >= TOPE_EST) return error('tope');
-    if (x.rep < 1) return error('sin_repetido');
-    return ok({ monedas: C.PRECIOS.estrellas[x.est - 1] });
+    const repetidos = C.PRECIOS.repetidos[x.est - 1];
+    if (x.rep < repetidos) return error('sin_repetido');
+    return ok({ monedas: C.PRECIOS.estrellas[x.est - 1], repetidos });
   }
   function subeEstrella(e, id, monedas) {
     const c = costeEstrella(e, id);
     if (!c.ok) return c;
     if (monedas < c.monedas) return error('monedas');
     const n = copia(e);
-    n.tiene[id].est++; n.tiene[id].rep--;
+    n.tiene[id].est++; n.tiene[id].rep -= c.repetidos;
     return ok({ estado: n, gasta: c.monedas });
   }
   // el equipo de cada modo
@@ -138,10 +141,10 @@ const PP_COLE = (() => {
   // las vías del juego. Los que pueden salir atrapados en un nivel: los de rescate que aún no tienes (da igual el equipo)
   const deVia = t => C.IDS.filter(id => C.INFO[id].via.t === t);
   const atrapables = e => deVia('rescate').filter(id => !e.tiene[id]);
-  // el compañero de un cofre de estrellas: al azar entre los de cofre que te faltan; si ya los tienes todos, un repetido al azar.
-  // `azar`: una función en [0, 1) (Math.random en el juego): es azar ganado jugando, nunca comprado (ADR 004)
+  // el compañero de un cofre de estrellas: un repetido al azar de uno que ya tienes (ADR 199: sus Animales pasaron a escondidos).
+  // `azar`: una función en [0, 1) (Math.random en el juego): es azar ganado jugando, nunca comprado (ADR 004). Lola siempre está.
   function deCofre(e, azar) {
-    const todos = deVia('cofre'), faltan = todos.filter(id => !e.tiene[id]), bolsa = faltan.length ? faltan : todos;
+    const bolsa = Object.keys(e.tiene).filter(existe);
     return bolsa[Math.min(bolsa.length - 1, Math.floor(azar() * bolsa.length))];
   }
   // el de un jefe nuevo (MechaVaca), si aún no lo tienes; si no, null
@@ -149,7 +152,13 @@ const PP_COLE = (() => {
   // el compañero que da un escalón `k` del pase (gratis o premium) o un tramo `k` de la Feria; null si no da ninguno
   const delPase = (k, premium) => C.VIAS.pase[premium ? 'premium' : 'gratis'][k] || null;
   const deFeria = k => C.VIAS.feria[k] || null;
-  // lo que hace un compañero con sus estrellas: con 1, lo mismo que hoy; cada estrella lo mejora un poco (Pepins: poca ventaja)
+  // a 5 estrellas el compañero se ve dorado (ADR 199); el dibujo lo hace la vista
+  const dorado = (e, id) => !!(e.tiene[id] && e.tiene[id].est >= TOPE_EST);
+  // lo que hace un compañero con sus estrellas: con 1, lo mismo que hoy; cada estrella lo mejora un poco (Pepins: «poca ventaja, mucho
+  // lucimiento»). Con cifras de «cada N» se baja N con un suelo; con cantidades se sube una al llegar a las 5. Las 10 de «una vez»
+  // (Pepins, 21-11-2026, «1 y 2 con equilibrio»): su cifra es cuántas veces ayudan (1) y a las 5 estrellas ayudan una vez más (`usos`);
+  // las que esperan algo para actuar lo esperan un poco menos (el COMBO de Lola en `combo`; el corazón de Premio doble en ADELANTO).
+  const usos = (v, s) => (s >= TOPE_EST ? v + 1 : v);
   const MEJORA = Object.freeze({
     salta: (v, s) => Math.max(4, v - Math.floor((s - 1) / 2)),
     golpes: (v, s) => (s >= TOPE_EST ? v + 1 : v),
@@ -157,12 +166,36 @@ const PP_COLE = (() => {
     limpia: (v, s) => v + (s - 1),
     dMonedas: (v, s) => v + 2 * (s - 1),
     dFallo: (v, s) => Math.round((v + 0.02 * (s - 1)) * 100) / 100,
+    combo: (v, s) => (s >= 4 ? Math.max(1, v - 1) : v),   // desde las 4 estrellas, un COMBO menos: Horas extra x3 → x2 y el Chivatazo de Lola x2 → x1
+    primero: (v, s) => (s >= TOPE_EST ? v + 1 : v),    // Buen comienzo: un pop más en su primer toque
+    extra: (v, s) => (s >= TOPE_EST ? v + 1 : v),      // Cielo despejado: otro toque al empezar
+    estrella: (v, s) => (s >= TOPE_EST ? v + 1 : v),   // Imán de estrellas: otro toque menos para la 3.ª
+    ticket: (v, s) => (s >= TOPE_EST ? v + 1 : v),     // Feriante: otro ticket de la Feria
+    rescate: (v, s) => (s >= TOPE_EST ? v + 1 : v),    // Al rescate: un toque más al quedarte sin toques
+    pCalma: (v, s) => (s >= TOPE_EST ? v + 1 : v),     // Calma: otro toque extra en Pesadilla
+    pGratis: (v, s) => (s >= TOPE_EST ? v + 1 : v),    // Toque fantasma: otro toque que no cuenta
+    // las de «una vez»: a las 5 estrellas, una vez más por nivel, duelo o día (nunca regalan martillos, bombas ni perlas)
+    pista: usos,     // Chivatazo: al reventar la marca del principio, Lola marca otra
+    premio: usos,    // Premio doble: un corazón más al día (4 en vez de 3)
+    racha: usos,     // Victorias a salvo: dos veces al día
+    dPista: usos,    // Lupa: dos pistas gratis por duelo
+    dDeshaz: usos,   // Otra vez: dos deshacer gratis por duelo
+    dSaque: usos,    // Saque: además te chiva con qué empiezas ganando (en un duelo solo se empieza una vez)
+    dQuita: usos,    // Pellizco: quitas dos burbujas
+    pPista: usos,    // Linterna: al reventar su marca, marca otra
+    pDeshaz: usos,   // Marcha atrás: deshace dos veces por nivel
+    pVolteo: usos,   // Volteo: voltea dos veces por nivel
+  });
+  // las cifras que salen con las estrellas (con menos, no están: el fx queda idéntico al de hoy). `premioAntes`: los pops de menos que
+  // pide el corazón de Premio doble; desde las 3 estrellas, con 4 en vez de 5 (sigue con su tope al día: poca ventaja, se ve antes)
+  const ADELANTO = Object.freeze({
+    premio: s => (s >= 3 ? { premioAntes: 1 } : null),
   });
   function fxDe(e, id) {
     if (!existe(id)) return error('no_existe');
     const base = (C.NUEVOS[id] || PP_SLIMES[id]).fx, s = e.tiene[id] ? e.tiene[id].est : 1, fx = {};
-    for (const [k, v] of Object.entries(base)) fx[k] = MEJORA[k] ? MEJORA[k](v, s) : v;
+    for (const [k, v] of Object.entries(base)) Object.assign(fx, { [k]: MEJORA[k] ? MEJORA[k](v, s) : v }, ADELANTO[k] && ADELANTO[k](s));
     return ok({ fx: Object.freeze(fx) });
   }
-  return Object.freeze({ MODOS, TOPE_EST, ERRORES, nuevo, lee, desdeViejo, gana, rescata, costeEstrella, subeEstrella, pon, quita, precioCasilla, abreCasilla, progreso, cobraPagina, cuentaDuelo, fxDe, modoDe, existe, idsDe, deVia, atrapables, deCofre, deJefe, delPase, deFeria });
+  return Object.freeze({ MODOS, TOPE_EST, ERRORES, nuevo, lee, desdeViejo, gana, rescata, costeEstrella, subeEstrella, pon, quita, precioCasilla, abreCasilla, progreso, cobraPagina, cuentaDuelo, fxDe, dorado, modoDe, existe, idsDe, deVia, atrapables, deCofre, deJefe, delPase, deFeria });
 })();

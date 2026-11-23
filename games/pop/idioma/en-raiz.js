@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Pop en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.6.1
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   // 0.6.0
   "<b>FERIA DEL FINDE</b>: de viernes a domingo, cada nivel que ganes te da tickets (más con tres estrellas o un jefe). Llévalos por el camino de feria con Lola y gana monedas, ayudas, corazones infinitos y dos cofres.": "<b>WEEKEND FAIR</b>: from Friday to Sunday, every level you win gives you tickets (more with three stars or a boss). Take them along the fair path with Lola and win coins, boosters, unlimited hearts and two chests.",
   "Microblizz ha montado una feria en la oficina. Phony lleva desde el viernes en la noria y dice que el lunes ya baja.": "Microblizz set up a fair in the office. Phony has been on the Ferris wheel since Friday and says he'll come down on Monday.",

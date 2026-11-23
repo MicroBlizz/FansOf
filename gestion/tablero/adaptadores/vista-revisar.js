@@ -8,8 +8,9 @@ TABLERO.vistaRevisar = (() => {
   const enlazado = (texto, esc) => TABLERO.trozosConEnlaces(texto)
     .map(p => (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a>` : esc(p.texto))).join('');
   // «Probar» (tarjeta) o «Probar <juego> en la alfa» (detalle): solo si la tarea es de un juego con página
-  const probar = (t, esc, grande = false) => {
-    const url = TABLERO.enlaceAlfa(t.juego);
+  // `alfa`: los ids de los juegos del catálogo (sin ellos, no hay botón)
+  const probar = (t, esc, grande = false, alfa = []) => {
+    const url = TABLERO.enlaceAlfa(t.juego, alfa);
     if (!url) return '';
     return `<a class="tb-probar${grande ? ' grande' : ''}" href="${esc(url)}" target="_blank" rel="noopener" data-probar>${triangulo}${grande ? 'Probar ' + esc(t.juego.charAt(0).toUpperCase() + t.juego.slice(1)) + ' en la alfa' : 'Probar'}</a>`;
   };
@@ -20,8 +21,8 @@ TABLERO.vistaRevisar = (() => {
   // Debajo de la tarjeta: «Probar» si hay juego y «Dar por buena» si es tuya y está en revisión. Nada si no hay ninguno
   // y, si ya has marcado algún paso de «Qué mirar» (ADR 182), cuántos llevas
   const llevas = (t, yo) => (TABLERO.puedoRevisar(t, yo) && TABLERO.cuentaMirados(t).mirados ? `<div class="meta tb-llevas">Mirado ${cuenta(t)}</div>` : '');
-  const tarjeta = (t, yo, esc) => {
-    const botones = (t.estado === 'en_revision' ? probar(t, esc) : '') + (TABLERO.puedoRevisar(t, yo) ? buena(t) : '');
+  const tarjeta = (t, yo, esc, alfa = []) => {
+    const botones = (t.estado === 'en_revision' ? probar(t, esc, false, alfa) : '') + (TABLERO.puedoRevisar(t, yo) ? buena(t) : '');
     return llevas(t, yo) + (botones ? `<div class="tb-revisar">${botones}</div>` : '');
   };
   // La bandeja «Te toca» (arriba del tablero): una caja por tipo con su cifra; la elegida sale marcada y otro toque la quita

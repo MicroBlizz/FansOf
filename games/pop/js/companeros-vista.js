@@ -5,7 +5,8 @@
 'use strict';
 const PP_COMP_VISTA = (() => {
   const C = PP_COMP, K = PP_COLE;
-  // cómo se consigue: { texto, datos }; `datos.p` es el id de una página (su nombre se traduce aparte, al pegarlo)
+  // cómo se consigue: { texto, datos }; `datos.p` es el id de una página y `datos.m`, el índice de un mundo
+  // (sus nombres se traducen aparte, al pegarlos)
   const VIAS = Object.freeze({
     serie: () => ({ texto: 'De serie' }),
     rescate: () => ({ texto: 'Rescate en un nivel (solo la primera vez)' }),
@@ -18,17 +19,26 @@ const PP_COMP_VISTA = (() => {
     tienda: v => ({ texto: 'Tienda: {n} perlas', datos: { n: v.perlas } }),
     pagina: (v, id) => ({ texto: 'Premio por completar la página {p}', datos: { p: C.INFO[id].pag } }),
     jefe: () => ({ texto: 'Rescate: jefe de un mundo' }),
+    // la pista de un escondido (ADR 199): `datos.m` es el índice de su mundo (su nombre se traduce aparte, al pegarlo)
+    escondido: (v, id) => {
+      const p = PP_ESC.pista(id);
+      return { texto: p.momento === 'noche' ? 'Escondido: {m}, de noche' : 'Escondido: {m}, de día', datos: { m: p.mundo } };
+    },
   });
   function via(id) {
     if (!K.existe(id)) return null;
     const v = C.INFO[id].via, f = VIAS[v.t];
     return f ? Object.freeze(f(v, id)) : null;
   }
-  // una carta del álbum: si lo tienes, sus estrellas y repetidos; su rareza y el modo en el que ayuda
+  // una carta del álbum: si lo tienes, sus estrellas y repetidos; su rareza y el modo en el que ayuda; si es dorado (5 estrellas) y,
+  // si es un escondido que te falta (ADR 199), que se enseña su silueta de verdad con su pista (la frase de su vía) y su momento
   function carta(e, id) {
     if (!K.existe(id)) return null;
-    const x = e.tiene[id];
-    return Object.freeze({ id, tiene: !!x, est: x ? x.est : 0, rep: x ? x.rep : 0, rar: C.INFO[id].rar, modo: K.modoDe(id) });
+    const x = e.tiene[id], esc = !x && PP_ESC.esEscondido(id);
+    return Object.freeze({
+      id, tiene: !!x, est: x ? x.est : 0, rep: x ? x.rep : 0, rar: C.INFO[id].rar, modo: K.modoDe(id), dorado: K.dorado(e, id),
+      escondido: esc, momento: esc ? PP_ESC.pista(id).momento : null, pista: esc ? via(id) : null,
+    });
   }
   // las estrellas de la ficha: llenas y vacías hasta el tope
   const estrellas = est => Object.freeze({ llenas: Math.max(0, Math.min(K.TOPE_EST, est)), vacias: K.TOPE_EST - Math.max(0, Math.min(K.TOPE_EST, est)) });
@@ -50,11 +60,12 @@ const PP_COMP_VISTA = (() => {
     const p = K.progreso(e, pid);
     return p.ok && p.completa && !p.cobrada;
   }
-  // lo que le falta para la siguiente estrella: 'tope', 'sin_repetido' o el precio en monedas
+  // lo que le falta para la siguiente estrella: 'tope', 'sin_repetido' o el precio en monedas y repetidos
   function siguienteEstrella(e, id) {
-    const c = K.costeEstrella(e, id);
-    if (c.ok) return Object.freeze({ puede: true, monedas: c.monedas });
-    return Object.freeze({ puede: false, motivo: c.error });
+    const c = K.costeEstrella(e, id), x = e.tiene[id];
+    if (c.ok) return Object.freeze({ puede: true, monedas: c.monedas, repetidos: c.repetidos });
+    // sin repetidos de sobra: cuántos pide la siguiente estrella, para decir «3/5»
+    return Object.freeze({ puede: false, motivo: c.error, repetidos: x ? C.PRECIOS.repetidos[x.est - 1] || 0 : 0 });
   }
   return Object.freeze({ via, carta, estrellas, casillas, tuyosDe, recoger, siguienteEstrella });
 })();

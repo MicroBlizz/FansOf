@@ -2,6 +2,9 @@
 // mejoras, criaturas y misiones). Una frase nueva del juego lleva aquí su inglés (lo comprueba tests/pinball/unitarios/idioma.test.mjs).
 'use strict';
 IDIOMA.add({
+  // 0.2.6
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   // menú, equipo y pantallas
   "JUGAR": "PLAY", "EQUIPO": "TEAM", "HISTORIA": "STORY", "VOLVER": "BACK", "COBRAR": "COLLECT", "Vale": "OK",
   "Este prototipo está en obras. Vuelve pronto.": "This prototype is under construction. Come back soon.",

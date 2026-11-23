@@ -4,7 +4,7 @@
 // tráfico y se colocan los sitios con nombre: el Templo del Autoguardado, la Torre de Granizo Corp., el taller, etc.
 'use strict';
 
-const T = 16;                  // píxeles por casilla
+const CASILLA = 16;                  // píxeles por casilla
 const TIPO = { CALLE: 0, ACERA: 1, EDIFICIO: 2, HIERBA: 3, ARBOL: 4, SOLAR: 5 };   // SOLAR = asfalto por el que se puede ir (aparcamientos, taller)
 const ZONA = { animales: 0, granizo: 1, extractores: 2 };
 const ZONA_NOMBRE = ['Los Animales Locos', 'Granizo Corp.', 'Los Extractores'];
@@ -29,7 +29,7 @@ function tipoEn(tx, ty) { return enMapa(tx, ty) ? MAPA.tipo[ty * MAPA.W + tx] : 
 function zonaEn(tx, ty) { return enMapa(tx, ty) ? MAPA.zona[ty * MAPA.W + tx] : 0; }
 // se puede pisar (a pie) / se puede pasar en coche
 function pisable(tx, ty) { const t = tipoEn(tx, ty); return t !== TIPO.EDIFICIO && t !== TIPO.ARBOL; }
-function solidoPx(x, y) { return !pisable(Math.floor(x / T), Math.floor(y / T)); }
+function solidoPx(x, y) { return !pisable(Math.floor(x / CASILLA), Math.floor(y / CASILLA)); }
 function calleEn(tx, ty) { const t = tipoEn(tx, ty); return t === TIPO.CALLE || t === TIPO.SOLAR; }
 function pon(tx, ty, t) { if (enMapa(tx, ty)) MAPA.tipo[ty * MAPA.W + tx] = t; }
 function rellena(x, y, w, h, t) { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) pon(i, j, t); }
@@ -43,7 +43,7 @@ function edificio(x, y, w, h, alt, estilo, extra = {}) {
   for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (enMapa(i, j)) MAPA.edif[j * MAPA.W + i] = e.id;
   return e;
 }
-function arbol(tx, ty) { pon(tx, ty, TIPO.ARBOL); MAPA.arboles.push({ x: tx * T + T / 2, y: ty * T + T / 2 }); }
+function arbol(tx, ty) { pon(tx, ty, TIPO.ARBOL); MAPA.arboles.push({ x: tx * CASILLA + CASILLA / 2, y: ty * CASILLA + CASILLA / 2 }); }
 
 function creaMapa() {
   const az = Azar(20261015);
@@ -81,23 +81,23 @@ function creaMapa() {
   // sitios con nombre
   const sitios = {};
   // (0,1) Parque Gashapón: hierba y árboles
-  { const m = manzana(0, 1); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.HIERBA); for (let i = 0; i < 9; i++) arbol(m.x + az.entero(0, 5), m.y + az.entero(0, 5)); MAPA.lugares.parque = { x: (m.x + 3) * T, y: (m.y + 3) * T, nombre: 'Parque Gashapón' }; }
+  { const m = manzana(0, 1); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.HIERBA); for (let i = 0; i < 9; i++) arbol(m.x + az.entero(0, 5), m.y + az.entero(0, 5)); MAPA.lugares.parque = { x: (m.x + 3) * CASILLA, y: (m.y + 3) * CASILLA, nombre: 'Parque Gashapón' }; }
   // (1,2) Templo del Autoguardado: edificio 4 × 4 con hierba alrededor; se guarda en la puerta de abajo
-  { const m = manzana(1, 2); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.HIERBA); edificio(m.x + 1, m.y, 4, 4, 3, 5, { nombre: 'Templo del Autoguardado', rotulo: 'TEMPLO', tejado: 'templo' }); MAPA.lugares.templo = { x: (m.x + 3) * T, y: (m.y + 5) * T, nombre: 'Templo del Autoguardado', r: 14 }; }
+  { const m = manzana(1, 2); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.HIERBA); edificio(m.x + 1, m.y, 4, 4, 3, 5, { nombre: 'Templo del Autoguardado', rotulo: 'TEMPLO', tejado: 'templo' }); MAPA.lugares.templo = { x: (m.x + 3) * CASILLA, y: (m.y + 5) * CASILLA, nombre: 'Templo del Autoguardado', r: 14 }; }
   // (2,0) Torre de Granizo Corp.: la más alta
-  { const m = manzana(2, 0); edificio(m.x, m.y, 6, 6, 7, 4, { nombre: 'Torre Granizo Corp.', rotulo: 'GRANIZO', tejado: 'granizo' }); MAPA.lugares.torre = { x: (m.x + 3) * T, y: (m.y + 6.5) * T, nombre: 'Torre Granizo Corp.', r: 16 }; }
+  { const m = manzana(2, 0); edificio(m.x, m.y, 6, 6, 7, 4, { nombre: 'Torre Granizo Corp.', rotulo: 'GRANIZO', tejado: 'granizo' }); MAPA.lugares.torre = { x: (m.x + 3) * CASILLA, y: (m.y + 6.5) * CASILLA, nombre: 'Torre Granizo Corp.', r: 16 }; }
   // (4,0) Comisaría de los Moderadores: blanca, baja; aquí vuelves si te banean
-  { const m = manzana(4, 0); edificio(m.x, m.y + 1, 6, 4, 2, 0, { nombre: 'Comisaría de Moderadores', rotulo: 'MODS', tejado: 'comisaria' }); MAPA.lugares.comisaria = { x: (m.x + 3) * T, y: (m.y + 6.5) * T, nombre: 'Comisaría' }; }
+  { const m = manzana(4, 0); edificio(m.x, m.y + 1, 6, 4, 2, 0, { nombre: 'Comisaría de Moderadores', rotulo: 'MODS', tejado: 'comisaria' }); MAPA.lugares.comisaria = { x: (m.x + 3) * CASILLA, y: (m.y + 6.5) * CASILLA, nombre: 'Comisaría' }; }
   // (2,2) Taller de Pintura Día Uno: un edificio bajo con un patio de asfalto al que se entra en coche
-  { const m = manzana(2, 2); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.SOLAR); edificio(m.x, m.y, 6, 2, 1, 3, { nombre: 'Taller Pintura Día Uno', rotulo: 'PINTURA', tejado: 'taller' }); MAPA.lugares.taller = { x: (m.x + 3) * T, y: (m.y + 4) * T, nombre: 'Taller Pintura Día Uno', r: 22 }; }
+  { const m = manzana(2, 2); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.SOLAR); edificio(m.x, m.y, 6, 2, 1, 3, { nombre: 'Taller Pintura Día Uno', rotulo: 'PINTURA', tejado: 'taller' }); MAPA.lugares.taller = { x: (m.x + 3) * CASILLA, y: (m.y + 4) * CASILLA, nombre: 'Taller Pintura Día Uno', r: 22 }; }
   // (4,3) Punto de Extracción: una explanada con una marca
-  { const m = manzana(4, 3); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.SOLAR); MAPA.lugares.extraccion = { x: (m.x + 3) * T, y: (m.y + 3) * T, nombre: 'Punto de Extracción', r: 24 }; }
+  { const m = manzana(4, 3); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.SOLAR); MAPA.lugares.extraccion = { x: (m.x + 3) * CASILLA, y: (m.y + 3) * CASILLA, nombre: 'Punto de Extracción', r: 24 }; }
   // (3,1) Centro comercial Cajas de Botín: ancho y bajo
-  { const m = manzana(3, 1); edificio(m.x, m.y, 6, 5, 2, 1, { nombre: 'Cajas de Botín', rotulo: 'CAJAS DE BOTÍN', tejado: 'cajas' }); MAPA.lugares.cajas = { x: (m.x + 3) * T, y: (m.y + 6.5) * T, nombre: 'Cajas de Botín', r: 16 }; }
+  { const m = manzana(3, 1); edificio(m.x, m.y, 6, 5, 2, 1, { nombre: 'Cajas de Botín', rotulo: 'CAJAS DE BOTÍN', tejado: 'cajas' }); MAPA.lugares.cajas = { x: (m.x + 3) * CASILLA, y: (m.y + 6.5) * CASILLA, nombre: 'Cajas de Botín', r: 16 }; }
   // (1,0) y (3,2): aparcamientos
-  for (const [bx, by] of [[1, 0], [3, 2]]) { const m = manzana(bx, by); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.SOLAR); MAPA.lugares['aparcamiento' + bx] = { x: (m.x + 3) * T, y: (m.y + 3) * T }; }
+  for (const [bx, by] of [[1, 0], [3, 2]]) { const m = manzana(bx, by); rellena(m.x - 1, m.y - 1, 8, 8, TIPO.SOLAR); MAPA.lugares['aparcamiento' + bx] = { x: (m.x + 3) * CASILLA, y: (m.y + 3) * CASILLA }; }
   // (0,3) Guarida de los Animales Locos: la heladería
-  { const m = manzana(0, 3); edificio(m.x, m.y + 1, 6, 4, 2, 2, { nombre: 'Heladería Animal', rotulo: 'HELADOS', tejado: 'helados' }); MAPA.lugares.heladeria = { x: (m.x + 3) * T, y: (m.y + 6.5) * T, nombre: 'Heladería Animal', r: 16 }; }
+  { const m = manzana(0, 3); edificio(m.x, m.y + 1, 6, 4, 2, 2, { nombre: 'Heladería Animal', rotulo: 'HELADOS', tejado: 'helados' }); MAPA.lugares.heladeria = { x: (m.x + 3) * CASILLA, y: (m.y + 6.5) * CASILLA, nombre: 'Heladería Animal', r: 16 }; }
   // el resto: edificios al azar
   const usados = new Set(['0,1', '1,2', '2,0', '4,0', '2,2', '4,3', '3,1', '1,0', '3,2', '0,3']);
   for (let by = 0; by < 4; by++) for (let bx = 0; bx < 5; bx++) {
@@ -113,16 +113,16 @@ function creaMapa() {
   for (const e of MAPA.edificios) if (!e.nombre && e.w >= 6 && az() < 0.6) e.rotulo = az.elige(bromas);
   // teléfonos de misión (en la acera, uno por banda)
   MAPA.telefonos = [
-    { banda: ZONA.animales, x: 12 * T + 8, y: 12 * T + 8 },
-    { banda: ZONA.granizo, x: 29 * T + 8, y: 12 * T + 8 },
-    { banda: ZONA.extractores, x: 39 * T + 8, y: 32 * T + 8 },
+    { banda: ZONA.animales, x: 12 * CASILLA + 8, y: 12 * CASILLA + 8 },
+    { banda: ZONA.granizo, x: 29 * CASILLA + 8, y: 12 * CASILLA + 8 },
+    { banda: ZONA.extractores, x: 39 * CASILLA + 8, y: 32 * CASILLA + 8 },
   ];
   // objetos por el suelo (vida, dinero, sobornos) en aceras
   MAPA.objetos = [];
   const tipos = ['vida', 'dinero', 'soborno', 'dinero', 'vida', 'dinero', 'soborno', 'dinero', 'vida', 'dinero'];
   let k = 0;
   for (let by = 0; by < 4; by++) for (let bx = 0; bx < 5; bx++) {
-    if (az() < 0.5) { const m = manzana(bx, by); MAPA.objetos.push({ tipo: tipos[k++ % tipos.length], x: (m.x - 1) * T + 8 + az.entero(0, 5) * T, y: (m.y - 1) * T + 8 }); }
+    if (az() < 0.5) { const m = manzana(bx, by); MAPA.objetos.push({ tipo: tipos[k++ % tipos.length], x: (m.x - 1) * CASILLA + 8 + az.entero(0, 5) * CASILLA, y: (m.y - 1) * CASILLA + 8 }); }
   }
   MAPA.semilla = az.semilla();
 }

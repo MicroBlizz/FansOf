@@ -1,7 +1,8 @@
 // Fans of Pop · EL DIBUJO DE UN COMPAÑERO EN EL ÁLBUM (tarea #142, ADR 157): la miniatura de las cartas, la ficha y Mi equipo. Los 13 de
-// siempre usan su dibujo de Yoshi (o su repuesto, ppMiniatura de js/sprites.js); los 20 Animales, hasta que Yoshi los pinte, van dibujados
-// por código en SVG: cuerpo de gelatina con su color, coloretes y el adorno de cada uno (orejas, pico, pinzas…), como el boceto que
-// aprobó Pepins. La silueta «?» es la de los que aún no tienes.
+// siempre usan su dibujo de Yoshi (o su repuesto, ppMiniatura de js/sprites.js); los Animales con dibujo de Yoshi (PP_ANIMALES_CON_DIBUJO, js/sprites.js),
+// el suyo; los que no lo tienen (el caballito, que se está repitiendo) van dibujados por código en SVG: cuerpo de gelatina con su color, coloretes y el adorno de cada uno (orejas, pico, pinzas…), como el boceto que
+// aprobó Pepins. La silueta «?» es la de los que aún no tienes; la de los escondidos (ADR 199) es su propio dibujo de un solo color
+// (ppCompSombra), con su momento dibujado (lunita o solecito, ppCompMomento).
 'use strict';
 // el adorno de cada Animal (el del boceto) y si va detrás del cuerpo
 const PP_COMP_ADORNO = Object.freeze({
@@ -40,15 +41,41 @@ function ppCompSvg(id) {
     <path d="M46 72 Q50 76 54 72" stroke="#4a2c2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>${detras ? '' : ad}</svg>`;
 }
 const PP_COMP_SILUETA = '<svg viewBox="0 0 100 110" aria-hidden="true"><path d="M18 92 Q14 44 50 38 Q86 44 82 92Z" fill="#e9cfc0"/><text x="50" y="80" text-anchor="middle" font-size="34" font-weight="700" fill="#c9a48f">?</text></svg>';
+const ppCompCaja = lado => { const caja = document.createElement('span'); caja.className = 'pp-cm-dibujo'; caja.style.width = lado + 'px'; caja.style.height = lado + 'px'; return caja; };
+// ¿va dibujado por código? (un Animal que Yoshi aún no ha pintado)
+const ppCompEsSvg = id => !!PP_COMP.NUEVOS[id] && !ppTieneImg('sl-' + id);
 // la miniatura de un compañero (elemento): su dibujo de Yoshi si ya está; si no, el repuesto (los 13) o el SVG (los Animales)
 function ppCompMini(id, lado, falta = false) {
-  const caja = document.createElement('span');
-  caja.className = 'pp-cm-dibujo'; caja.style.width = lado + 'px'; caja.style.height = lado + 'px';
+  const caja = ppCompCaja(lado);
   if (falta) caja.innerHTML = PP_COMP_SILUETA;
-  else if (PP_COMP.NUEVOS[id] && !ppTieneImg('sl-' + id)) caja.innerHTML = ppCompSvg(id);
+  else if (ppCompEsSvg(id)) caja.innerHTML = ppCompSvg(id);
   else caja.appendChild(ppMiniatura('sl-' + id, lado));
   return caja;
 }
+// el color de la silueta de un escondido que falta: un tono suave del papel del álbum
+const PP_COMP_SOMBRA = '#d9b3a0';
+// el dibujo de Yoshi (o su repuesto) relleno de un solo color: se pinta y se tiñe todo lo opaco
+function ppCompSombraLienzo(id, lado) {
+  const cv = ppMiniatura('sl-' + id, lado), c = cv.getContext('2d');
+  c.globalCompositeOperation = 'source-in'; c.fillStyle = PP_COMP_SOMBRA; c.fillRect(0, 0, cv.width, cv.height);
+  return cv;
+}
+// la silueta DE VERDAD de un escondido que te falta (ADR 199): su propio dibujo de un solo color, sin detalles, y una «?» pequeña.
+// El SVG de los Animales se tiñe con CSS (.pp-cm-sombra en css/companeros.css); el dibujo de Yoshi, en el lienzo
+function ppCompSombra(id, lado) {
+  const caja = ppCompCaja(lado);
+  caja.classList.add('pp-cm-sombra');
+  if (ppCompEsSvg(id)) caja.innerHTML = ppCompSvg(id);
+  else caja.appendChild(ppCompSombraLienzo(id, lado));
+  caja.insertAdjacentHTML('beforeend', '<b class="pp-cm-sombra-q">?</b>');
+  return caja;
+}
+// el momento de un escondido, dibujado: lunita (de noche, modo Difícil) o solecito (de día, camino normal)
+const PP_COMP_MOMENTO = Object.freeze({
+  noche: '<path d="M15.5 3.5 A9 9 0 1 0 20.5 16 A7 7 0 0 1 15.5 3.5Z" fill="#ffe68a" stroke="#4a6fc0" stroke-width="2.2" stroke-linejoin="round"/><circle cx="19" cy="6" r="1.3" fill="#4a6fc0"/>',
+  dia: '<path d="M12 1.8 V4.6 M12 19.4 V22.2 M1.8 12 H4.6 M19.4 12 H22.2 M4.8 4.8 L6.8 6.8 M17.2 17.2 L19.2 19.2 M4.8 19.2 L6.8 17.2 M17.2 6.8 L19.2 4.8" stroke="#ff8a3d" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="5.2" fill="#ffcf3f" stroke="#ff8a3d" stroke-width="2.2"/>',
+});
+const ppCompMomento = (momento, px) => PP_COMP_MOMENTO[momento] ? `<svg class="pp-cm-momento" viewBox="0 0 24 24" width="${px}" height="${px}" aria-hidden="true">${PP_COMP_MOMENTO[momento]}</svg>` : '';
 // la estrella dibujada (SVG): llena en oro o vacía en crema
 const ppCompEstrella = (llena, px) => `<svg class="pp-cm-est" viewBox="0 0 24 24" width="${px}" height="${px}" aria-hidden="true"><path d="M12 2 L14.9 8.6 L22 9.3 L16.6 14 L18.2 21 L12 17.3 L5.8 21 L7.4 14 L2 9.3 L9.1 8.6Z" fill="${llena ? '#ffcf3f' : '#f3e2d4'}" stroke="#4a2c2a" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 // el candado de una casilla cerrada (SVG)

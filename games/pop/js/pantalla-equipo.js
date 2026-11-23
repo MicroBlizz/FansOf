@@ -17,9 +17,9 @@ function ppEqModos() {
   return fila;
 }
 // una casilla: con su compañero (tocarla lo quita), vacía, la siguiente (candado y precio) o cerrada (solo candado)
-function ppEqCasilla(m, c) {
+function ppEqCasilla(e, m, c) {
   if (c.tipo === 'abierta' && c.id) {
-    const b = ppPfEl('button', 'pp-cm-casilla'); b.type = 'button';
+    const b = ppPfEl('button', 'pp-cm-casilla' + (PP_COLE.dorado(e, c.id) ? ' pp-cm-dorado' : '')); b.type = 'button';   // dorado a 5 estrellas (ADR 199)
     b.appendChild(ppCompMini(c.id, 64));
     b.onclick = () => { play('select'); ppEqToca(m, c.id); };
     return b;
@@ -52,7 +52,7 @@ function ppEquipoLlena(t) {
   t.appendChild(ppPfEl('p', 'pp-cm-explica', tr(PP_EQ_EXPLICA[m], { s: p.serie, t: p.tope })));
   const huecos = ppPfEl('div', 'pp-cm-casillas');
   huecos.style.gridTemplateColumns = `repeat(${lista.length}, 1fr)`;
-  for (const c of lista) huecos.appendChild(ppEqCasilla(m, c));
+  for (const c of lista) huecos.appendChild(ppEqCasilla(e, m, c));
   t.appendChild(huecos);
   ppEqCompra(t, m, lista.find(c => c.tipo === 'siguiente'));
   t.appendChild(ppEqLista(e, m));

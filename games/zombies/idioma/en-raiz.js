@@ -2,6 +2,9 @@
 // para no tocar core). Los textos del juego en sí están en idioma/en.js.
 'use strict';
 IDIOMA.add({
+  // 0.14.3
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
+  "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",
   'El prototipo (prueba), para PC con teclado y ratón. El parche 1.0 de Microblizz salió mal y los fans se han convertido en zombis. Con CrazyBunny y su escuadrón, sobrevive todos los días que puedas en la ciudad nevada de Ratkov: come, bebe, duerme, registra y no hagas ruido, porque cada paso, cada disparo y cada alarma de coche atrae a la horda. Streamers que avisan a su chat, speedrunners que esprintan, ballenas, bots y trolls; y cada mañana, un parche nuevo que lo empeora todo.':
     'The prototype (test), for PC with keyboard and mouse. Microblizz’s patch 1.0 went wrong and the fans have turned into zombies. With CrazyBunny and her squad, survive as many days as you can in Ratkov’s snowy city: eat, drink, sleep, search and make no noise, because every step, every shot and every car alarm draws the horde. Streamers who alert their chat, sprinting speedrunners, whales, bots and trolls; and every morning, a new patch that makes everything worse.',
   // sus novedades (js/novedades.js)

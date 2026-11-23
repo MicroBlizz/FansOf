@@ -7,11 +7,11 @@ AS.guia = (() => {
   const C = AS.tema.C;
   const G = { activa: false, paso: '', visto: '', t: 0 };
   const TEXTO = {
-    invoca: 'Pulsa INVOCAR para conseguir tu primer héroe',
-    empuja: 'Toca la runa que brilla y te llega otro héroe',
-    absorbe: 'Pulsa UNIR y junta dos héroes en uno más fuerte',
-    lucha: '¡Equipo listo! Pulsa ¡A LUCHAR!',
-    batalla: 'Ahora luchan solos. ¡Que nadie pase la valla!',
+    invoca: 'Pulsa INVOCAR y llega tu héroe',
+    empuja: 'Toca la columna dorada del Altar',
+    absorbe: 'Pulsa UNIR y toca dos héroes',
+    lucha: '¡Listo! Pulsa ¡A LUCHAR!',
+    batalla: 'Luchan solos. ¡Que nadie pase!',
   };
   // lo que se puede tocar en cada paso (la pausa y saltar la guía, siempre)
   const PERMITE = { invoca: ['invoca'], espera: ['invoca'], empuja: ['empuja'], absorbe: ['unir', 'heroe'], lucha: ['lucha', 'invoca', 'heroe', 'unir', 'tienda', 'misiones'], batalla: ['velocidad', 'misiones'] };
@@ -61,12 +61,12 @@ AS.guia = (() => {
   /* ---------- lo que se pinta (la franja y la mano son de franja.js) ---------- */
   const F = AS.franja;
   // el paso de unir: la mano señala el botón UNIR y, con el modo encendido, al héroe que toca elegir (primero uno y luego el otro)
-  function une(g, P, E, t) {
-    if (!E.unir) { F.senala(g, { r: P.unir, lado: 'arriba', fx: 0.5 }, t); return; }
+  function une(P, E) {
+    if (!E.unir) return { r: P.unir, lado: 'arriba', fx: 0.5 };
     const campo = AS.equipo.enCampo(E.casos.partida.equipo), q = E.unir.queda;
     const toca = campo.find(c => !(q && q.donde === 'campo' && q.i === c.i));
-    if (!toca || (E.arrastre && E.arrastre.movido)) return;
-    F.senala(g, { r: F.heroe(P, toca.i), lado: 'abajo', fx: 0.5 }, t);
+    if (!toca || (E.arrastre && E.arrastre.movido)) return null;
+    return { r: F.heroe(P, toca.i), lado: 'abajo', fx: 0.5 };
   }
   // dónde está lo que hay que tocar en cada paso y por qué lado entra la mano: casi siempre por encima (sobre el Altar e INVOCAR está
   // la tira de la tienda, vacía al empezar; sobre UNIR y ¡A LUCHAR!, el borde del Altar y el banquillo), porque por debajo de los
@@ -74,17 +74,24 @@ AS.guia = (() => {
   const OBJETIVO = {
     invoca: P => ({ r: P.invocar, lado: 'arriba', fx: 0.8 }),
     lucha: P => ({ r: P.luchar, lado: 'arriba', fx: 0.8 }),
-    empuja(P, E) {
+    empuja(P, E) {   // la columna entera (tocar sus runas también empuja; ver pinta-altar.js)
       const e = AS.altar.empujonConLinea(E.casos.partida.altar);
-      return e ? { r: P.losa(e.col, e.dir === 1 ? -1 : 3), lado: e.dir === 1 ? 'arriba' : 'abajo', fx: 0.5 } : null;
+      if (!e) return null;
+      const a = P.losa(e.col, 0), b = P.losa(e.col, 2);
+      return { r: { x: a.x, y: a.y, w: a.w, h: b.y + b.h - a.y }, lado: 'arriba', fx: 0.5 };
     },
+    absorbe: une,
   };
-  // la franja va arriba, de lado a lado (tapa la tira de misiones mientras dura), con SALTAR y por qué paso va
+  // la franja va de lado a lado de la arena, con SALTAR y por qué paso va: arriba (tapa la tira de misiones mientras dura), salvo
+  // si lo que hay que tocar está en la mitad de arriba de la arena (un héroe al unir): entonces abajo, para no taparlo (tarea #317)
+  function lado(P, o) {
+    const A = P.arena, c = o && o.r.y + o.r.h / 2;
+    return o && c >= A.y && c < A.y + A.h / 2 ? 'abajo' : 'arriba';
+  }
   function pinta(g, P, E) {
     if (!G.activa || !G.visto || AS.ventanas.abierta()) return;
-    F.pinta(g, P, E, { txt: tr(TEXTO[G.visto]), lado: 'arriba', boton: { txt: tr('SALTAR'), col: C.azul, que: 'salta-guia' }, pasos: { n: ORDEN.indexOf(G.visto), total: ORDEN.length } });
-    if (G.paso === 'absorbe') { une(g, P, E, G.t); return; }
     const o = OBJETIVO[G.paso] ? OBJETIVO[G.paso](P, E) : null;
+    F.pinta(g, P, E, { txt: tr(TEXTO[G.visto]), lado: lado(P, o), boton: { txt: tr('SALTAR'), col: C.azul, que: 'salta-guia' }, pasos: { n: ORDEN.indexOf(G.visto), total: ORDEN.length } });
     if (o) F.senala(g, o, G.t);
   }
   // la frase va en la franja de arriba (también en plena batalla), así que la pista del pie se queda callada

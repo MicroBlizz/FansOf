@@ -172,5 +172,11 @@
     "fr-FR": "améliorations internes : une étiquette « PROTOTYPE » sur le bord qui mène à la fiche du jeu pour voter, des améliorations de l'onglet de commentaires et des retouches aux systèmes internes",
     "de-DE": "interne Verbesserungen: ein «PROTOTYP»-Etikett am Rand, das zur Seite des Spiels führt, um abzustimmen, Verbesserungen am Feedback-Reiter und Feinschliff an den internen Systemen",
     "it-IT": "miglioramenti interni: un'etichetta «PROTOTIPO» sul bordo che porta alla scheda del gioco per votarlo, migliorie alla scheda dei commenti e ritocchi ai sistemi interni"
+  },
+  "0.2.82": {
+    "pt-BR": "melhorias internas nos sistemas do site e da página inicial",
+    "fr-FR": "améliorations internes des systèmes du site et de la page d'accueil",
+    "de-DE": "interne Verbesserungen an den Systemen der Website und der Startseite",
+    "it-IT": "miglioramenti interni ai sistemi del sito e della pagina iniziale"
   }
 }

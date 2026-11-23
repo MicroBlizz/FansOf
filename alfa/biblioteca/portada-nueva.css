@@ -33,18 +33,19 @@ html.portada-nueva .game { background: linear-gradient(175deg, var(--wc) 0%, col
 html.portada-nueva .game .etiq span, html.portada-nueva .dest .etiq span { background: rgba(7, 16, 31, 0.6); color: #fff; }
 html.portada-nueva .game .ver { color: #fff; }
 
-/* ---------- TÚ DECIDES CUÁL TERMINAMOS: LOS MÁS PEDIDOS en una caja amarilla con IR A VOTAR ---------- */
-html.portada-nueva #mas-pedidos { background: var(--gold); box-shadow: 0 6px 0 var(--outline); clip-path: none; border: 4px solid var(--outline); border-radius: 24px;
-  margin: 26px 0; padding: 20px 14px 22px; color: var(--outline); display: flex; flex-direction: column; gap: 12px; }
-html.portada-nueva #mas-pedidos > h3.grupo { color: var(--outline); font-size: 18px; margin: 0; text-align: left; text-shadow: none; }   /* sobre el amarillo, sin contorno */
+/* ---------- TÚ DECIDES CUÁL TERMINAMOS: LOS MÁS PEDIDOS en un panel oscuro con borde dorado e IR A VOTAR ----------
+   Era amarilla entera y deslumbraba de noche: Arkioner eligió el panel oscuro el 23-11-2026 (ADR 188). */
+html.portada-nueva #mas-pedidos { background: var(--tray); box-shadow: 0 6px 0 var(--outline); clip-path: none; border: 4px solid var(--gold); border-radius: 24px;
+  margin: 26px 0; padding: 20px 14px 22px; color: var(--ink); display: flex; flex-direction: column; gap: 12px; }
+html.portada-nueva #mas-pedidos > h3.grupo { color: var(--gold); font-size: 18px; margin: 0; text-align: left; text-shadow: none; }
 html.portada-nueva #mas-pedidos > p.note.grupo { display: none; }
 html.portada-nueva .pn-votar { text-align: left; display: flex; flex-direction: column; gap: 6px; }
-html.portada-nueva .pn-votar-t { font-family: var(--font-display); font-size: 32px; line-height: 1.02; margin: 0; color: var(--outline); text-wrap: balance; }
-html.portada-nueva .pn-votar-p { font-weight: 800; font-size: 16px; line-height: 1.35; margin: 0; color: var(--outline); max-width: 560px; }
+html.portada-nueva .pn-votar-t { font-family: var(--font-display); font-size: 32px; line-height: 1.02; margin: 0; color: var(--gold); text-wrap: balance; }
+html.portada-nueva .pn-votar-p { font-weight: 800; font-size: 16px; line-height: 1.35; margin: 0; color: var(--ink-dim); max-width: 560px; }
 html.portada-nueva .pn-ir-votar { align-self: stretch; text-align: center; text-decoration: none; font-family: var(--font-display); font-size: 24px; color: #fff;
   background: var(--pn-votar); border: 3px solid var(--outline); border-radius: 16px; padding: 14px 20px 10px; box-shadow: 0 5px 0 var(--pn-votar-sombra);
   animation: pn-latir 1.4s ease-in-out infinite; }
-html.portada-nueva .pn-ir-votar:focus-visible { outline: 3px solid var(--outline); outline-offset: 3px; }
+html.portada-nueva .pn-ir-votar:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 @media (min-width: 701px) { html.portada-nueva .pn-ir-votar { align-self: center; min-width: 320px; } }
 
 /* ---------- APÓYANOS: la franja que lleva a la página de donaciones (tarea #291) ---------- */

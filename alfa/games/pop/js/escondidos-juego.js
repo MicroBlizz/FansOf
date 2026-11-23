@@ -1,7 +1,10 @@
 // Fans of Pop · LA BURBUJA BRILLANTE EN LA PARTIDA (aplicación; tarea #294, ADR 199, nodo n4). Solo con el flag `companeros` abierto y
 // solo en los niveles del camino (de día) y del Difícil (de noche), nunca en duelos, Pesadilla ni Memoria: al entrar en un nivel se
 // tira si sale la burbuja brillante (PP_ESC.sale) y qué compañero trae (PP_ESC.elige); si sale, una burbuja normal del tablero brilla
-// tornasolada. Reventarla (la primera vez, aunque luego pierdas el nivel) da el compañero con su aviso (ppViaGana, js/companeros-vias.js).
+// tornasolada. Desde la tarea #329 (ADR 205) hay que tocarla LA PRIMERA: si trae un repetido, se da con su aviso (ppViaGana,
+// js/companeros-vias.js); si trae uno nuevo, se abre la ventana del duelo (js/escondidos-duelo.js); cualquier otra primera acción
+// (otra burbuja, martillo o bomba) hace que se escape con su «puf». Tampoco sale en los niveles de tutorial (la manita señala otra)
+// ni en los primeros niveles gratis.
 // Las reglas son puras (js/escondidos.js); aquí van el azar (Math.random), la partida guardada y el dibujo.
 //
 // Lo guardado vive en SAVE.brillo = { sin, pend }, fuera de SAVE.cole (PP_COLE.lee solo conserva sus campos y ppColeGuarda pone un
@@ -19,7 +22,8 @@ function ppEscGuardado() {
   return SAVE.brillo;
 }
 // ¿puede salir en este nivel? Camino y Difícil; nunca un duelo (d.nim), la Pesadilla (d.lo, dif 2) ni un tablero sin nivel
-const ppEscEnNivel = d => !!d && !d.nim && !d.lo && d.dif !== 2;
+// ni un nivel de tutorial, ni los primeros niveles gratis de una partida nueva (ahí no se pierden corazones: js/primeros-pasos-juego.js)
+const ppEscEnNivel = d => !!d && !d.nim && !d.lo && d.dif !== 2 && !d.tutorial && !ppPrimerosGratis();
 // de noche = el modo Difícil del mundo (se pinta de noche: ppPintaFondo con `dif`); de día, el camino
 const ppEscMomento = d => (d.dif ? 'noche' : 'dia');
 // un azar repetible: da los números guardados en orden (para que volver a entrar elija lo mismo)
@@ -47,19 +51,50 @@ function ppEscEntra(T, d) {
   const pend = ppEscTirada(ppEscGuardado()), az = ppEscAzarDe(pend.az);
   T.esc = { gastada: false, brillo: null };
   if (!pend.sale) return;
-  const comp = PP_ESC.elige(ppCole().tiene, d.mundo, ppEscMomento(d), az);
+  const comp = ppEscDev(pend) || PP_ESC.elige(ppCole().tiene, d.mundo, ppEscMomento(d), az);
   const i = comp ? ppEscSitio(T, az) : -1;
-  if (i >= 0) T.esc.brillo = { i, id: comp.id, nuevo: comp.nuevo, ganado: false, salto: null };
+  if (i < 0) return;
+  T.esc.brillo = { i, id: comp.id, nuevo: comp.nuevo, ganado: false, salto: null, ido: null };
+  if (!pend.vista) { pend.vista = true; ppEscCuenta('vistas', comp.id); ppGuarda(); }   // una vez por tirada, aunque se salga y se vuelva a entrar
+  ppTutorial('arcoiris');   // Lola, la primera vez: hay que tocarla la primera
 }
+// panel DEV (js/dev.js): el compañero que se ha pedido probar en la burbuja, solo en la alfa y en local
+function ppEscDev(pend) {
+  if (!pend.dev || !ppEsPruebas() || !PP_COMP.INFO[pend.dev]) return null;
+  return { id: pend.dev, nuevo: !(pend.dev in ppCole().tiene) };
+}
+// cuántas burbujas se ven, se aceptan y se ganan por rareza: se guarda en la partida, sin datos de la persona (tarea #329)
+function ppEscCuenta(que, id) {
+  const b = ppEscGuardado(), rar = PP_COMP.INFO[id].rar;
+  b.cuenta = b.cuenta && typeof b.cuenta === 'object' ? b.cuenta : {};
+  b.cuenta[que + '-' + rar] = (b.cuenta[que + '-' + rar] || 0) + 1;
+}
+// la tirada se gasta con la primera acción del nivel (o al decidir en la ventana del duelo)
+function ppEscGasta(T) { T.esc.gastada = true; ppEscGuardado().pend = null; ppGuarda(); }
 
 /* ---------- al reventar ---------- */
-// tras cada toque (ppTrasToque, js/partida.js; también los de los amigos y las ayudas): el primero gasta la tirada; si revienta la
-// burbuja brillante, el compañero es tuyo ya
+// antes de un toque tuyo (ppToque, js/partida.js; también el que coloca el martillo o la bomba): apunta dónde ha sido la primera
+// acción y, si es la burbuja de un compañero nuevo, abre la ventana del duelo y el toque no llega al tablero (devuelve true)
+function ppEscAntesDeToque(T, i) {
+  const e = T.esc; if (!e || e.gastada) return false;
+  e.toque = i;
+  if (PP_ESC.primera(e.brillo, i) !== 'duelo') return false;
+  ppEscVentanaLucha(T, e.brillo);   // js/escondidos-duelo.js
+  return true;
+}
+// tras la primera acción del nivel (ppTrasToque, js/partida.js): gasta la tirada; si era la burbuja (con un repetido), te lo da;
+// si era cualquier otra cosa, la burbuja se escapa. Lo que pase después ya no cuenta
 function ppEscTrasToque(T, r) {
-  const e = T.esc; if (!e) return;
-  if (!e.gastada) { e.gastada = true; ppEscGuardado().pend = null; ppGuarda(); }
-  const b = e.brillo;
-  if (b && !b.ganado && r.pops.includes(b.i)) ppEscRevienta(T, b);
+  const e = T.esc; if (!e || e.gastada) return;
+  ppEscGasta(T);
+  const b = e.brillo; if (!b) return;
+  if (PP_ESC.primera(b, e.toque) === 'regalo' && r.pops.includes(b.i)) ppEscRevienta(T, b);
+  else ppEscSeVa(b);
+}
+// la burbuja se escapa: deja de brillar con un «puf» y se dice (la burbuja de debajo sigue ahí, normal)
+function ppEscSeVa(b) {
+  b.ido = { t0: null };
+  ppFlota(tr('¡La burbuja arcoíris se ha escapado!'), 270, 240, '#ff6ec7'); play('ppEscapa');
 }
 // el compañero sale de un salto con chispas pastel y se gana con su aviso («¡Nuevo compañero: X!» o «+1 X repetido»)
 function ppEscRevienta(T, b) {
@@ -77,8 +112,19 @@ const PP_ESC_TORNASOL = Object.freeze(['#ffb3d9', '#ffd6a5', '#fff3a0', '#a8f0c6
 function ppEscPinta(c, T, g, r, t) {
   const b = T.esc && T.esc.brillo; if (!b) return;
   const [cx, cy] = ppCentro(g, b.i);
-  if (!b.ganado && T.up[b.i]) ppEscBrillo(c, cx, cy - 4, r, t);
+  if (b.ido) ppEscPuf(c, b, cx, cy - 4, r, t);
+  else if (!b.ganado && T.up[b.i]) ppEscBrillo(c, cx, cy - 4, r, t);
   if (b.salto) ppEscSalto(c, b, r, t);
+}
+// el «puf» al escaparse (0,6 s): un aro pastel que se abre y se apaga y 6 destellos que salen hacia fuera
+function ppEscPuf(c, b, x, y, r, t) {
+  if (b.ido.t0 === null) b.ido.t0 = t;
+  const k = (t - b.ido.t0) / 0.6;
+  if (k >= 1) return;
+  c.save(); c.translate(x, y); c.globalAlpha = 1 - k;
+  c.beginPath(); c.arc(0, 0, r * (1.1 + k * 0.9), 0, Math.PI * 2); c.lineWidth = r * 0.2 * (1 - k); c.strokeStyle = ppEscTornasol(c, t); c.stroke();
+  for (let n = 0; n < 6; n++) { const a = n * Math.PI / 3, d = r * (1.2 + k * 1.3); ppEscDestello(c, Math.cos(a) * d, Math.sin(a) * d, r * 0.22 * (1 - k), PP_ESC_TORNASOL[n % 5]); }
+  c.restore();
 }
 // un degradado que da la vuelta con los colores del arcoíris (girando con `a`); sin degradado cónico, el color de ese momento
 function ppEscTornasol(c, a) {

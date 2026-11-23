@@ -69,6 +69,7 @@ Object.assign(SFX, {
   // pantalla de victoria: una campanita por estrella, cada una más aguda, al compás de cómo caen (css/victoria.css)
   ppEstrellas: (n = 3) => { for (let k = 0; k < n; k++) ppCampana(PP_NOTAS[7 + k * 2], 0.45 + k * 0.28, 0.13, 0.45); },
   // pierdes un corazón: un «oh-oh» blandito de dos notas que bajan, con un vibrato tierno
+  ppEscapa: () => { ppSilbato(1175, 784, 0.2, 0, 0.1, 6); },   // la burbuja arcoíris que se escapa (tarea #329)
   ppDano: () => { ppSilbato(880, 784, 0.12, 0, 0.12, 8); ppSilbato(698, 587, 0.2, 0.15, 0.12, 10); },
   // ganar al CEO: melodía de caja de música
   ppVictoria: () => [5, 7, 8, 10, 8, 10, 12].forEach((n, k) => ppCampana(PP_NOTAS[n], k * 0.11, 0.12, 0.5)),

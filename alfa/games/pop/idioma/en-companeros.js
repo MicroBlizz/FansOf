@@ -161,5 +161,19 @@ IDIOMA.add({
   "¡Dorado!": "Golden!",
   "De día: en los niveles normales de ese mundo.": "By day: in that world's normal levels.",
   "De noche: en los niveles difíciles de ese mundo.": "By night: in that world's hard levels.",
-  "Sale a veces en una burbuja que brilla distinto: ¡reviéntala antes de acabar!": "Sometimes it shows up in a bubble that shines differently: pop it before the level ends!"
+  "Sale a veces en una burbuja arcoíris: ¡tócala la primera y gánale un duelo!": "Sometimes it shows up in a rainbow bubble: tap it first and beat it in a duel!",
+  // el duelo por un compañero escondido (tarea #329, js/escondidos-juego.js y js/escondidos-duelo.js)
+  "¡La burbuja arcoíris se ha escapado!": "The rainbow bubble got away!",
+  "¡Una burbuja arcoíris! Tócala la primera o se escapa.": "A rainbow bubble! Tap it first or it gets away.",
+  "¡Un compañero escondido!": "A hidden buddy!",
+  "Duelo": "Duel", "Fácil": "Easy", "Muy difícil": "Very hard",
+  "Gana a {n} en un duelo y será tuyo.": "Beat {n} in a duel and it's yours.",
+  "Si pierdes, te cuesta 1 corazón. Este nivel se deja sin gastar nada.": "If you lose, it costs 1 heart. This level is dropped at no cost.",
+  "¡A LUCHAR!": "FIGHT!", "AHORA NO": "NOT NOW",
+  "¡Duelo sorpresa!": "Surprise duel!",
+  "¡A que no me pillas!": "Bet you can't catch me!", "Compañero escondido": "Hidden buddy",
+  "¡Has ganado el duelo!": "You won the duel!",
+  "{n} sigue aquí. Si te vas al camino, se va.": "{n} is still here. If you go back to the path, it leaves.",
+  "REINTENTAR": "TRY AGAIN", "CONSEGUIR CORAZONES": "GET HEARTS", "Dejarlo ir": "Let it go", "Volver": "Back",
+  "Si sales ahora pierdes un corazón y el compañero se va.": "If you leave now you lose a heart and the buddy leaves."
 });

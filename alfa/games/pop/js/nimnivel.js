@@ -54,7 +54,7 @@ function ppNimRival(T) {
   // si abre él la partida (aún no ha reventado nada nadie), lo dice en grande y va más despacio: si no, al leer «Tu turno» ya
   // faltaban burbujas y parecía que las habías reventado tú (tarea #180)
   const abre = !T.pops, r = abre ? PP_CFG.rivalNim.abre : PP_CFG.rivalNim.normal;
-  if (abre) ppFlota(tr('¡Empieza {n}!', { n: tr(PP_SLIMES[N.rival].nombre) }), 270, 240, '#ff8a2a');
+  if (abre) ppFlota(tr('¡Empieza {n}!', { n: tr(ppSlimeDe(N.rival).nombre) }), 270, 240, '#ff8a2a');
   sitios.slice(0, cuantas).forEach((i, k) => setTimeout(() => ppNimRivalPop(T, i, k === cuantas - 1), r.espera + r.paso * k));
 }
 // una burbuja del rival; tras la última de su jugada, te toca
@@ -68,6 +68,7 @@ function ppNimRivalPop(T, i, ultima) {
 }
 function ppNimFin(T, gano, soloVentana = false) {
   const N = T.nim;
+  if (T.d.esc) { ppEscDueloFin(T, gano); return; }   // el duelo por un compañero escondido acaba a su manera (js/escondidos-duelo.js)
   if (!soloVentana) {
     N.fin = gano ? 'gana' : 'pierde'; N.pistaNim = null; ppNimBoton(); ppBarraAyudas();
     ppMarcaDentro(false);
@@ -93,7 +94,7 @@ function ppNimBoton() { const T = PP_P && PP_P.T, N = T && T.nim, b = $pp('#pp-l
 // arriba: los corazones y el monedero (los pinta el marcador), el rival con su nombre, las estrellas, el título, de quién es el turno
 // y la regla en dos líneas. Todo grande (tarea #129); lo que no cabe en su sitio encoge.
 function ppMarcadorNim(c, T, t) {
-  const N = T.nim, br = PP_FX.brilla.rival || 0, rival = tr(PP_SLIMES[N.rival].nombre);
+  const N = T.nim, br = PP_FX.brilla.rival || 0, rival = tr(ppSlimeDe(N.rival).nombre);
   ppSlimeRepuestoOImagen(c, N.rival, 400, 58 - br * 12, 36, t, 1);   // a la izquierda del botón de pausa
   ppTextoCabe(c, rival, 400, 106, 24, 130, '#fff', '#3a3a6a');
   for (let k = 0; k < 3; k++) ppEstrella(c, 262 + k * 34, 86, 30, k < ppEstrellas(T));   // entre el monedero y el rival

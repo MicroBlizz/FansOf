@@ -1,8 +1,8 @@
 {
- "build": 1454,
- "hash": "ba25e6d",
- "fecha": "2026-11-23T09:51:21Z",
- "mensaje": "Island, prototipo Brotito 3D: segundo modelo (desde la figura de vinilo de Yoshi, run 4637) con botones para cambiar de modelo, y el lienzo 3D ya no se redimensiona cada fotograma",
+ "build": 1455,
+ "hash": "848f704",
+ "fecha": "2026-11-23T12:24:18Z",
+ "mensaje": "Pop: el compañero escondido nuevo de la burbuja arcoíris se gana en un duelo contra él (tarea #329, ADR 205)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

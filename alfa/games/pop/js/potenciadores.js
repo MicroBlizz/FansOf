@@ -39,6 +39,7 @@ function ppBarraAyudas() {
     const n = ppTengo(k), bt = document.createElement('button');
     bt.type = 'button'; bt.className = 'pp-ayuda' + (PP_AYUDA.modo === k ? ' pp-activa' : '');
     const gratis = duelo && ppAyudaGratis(k, T.nim);   // la lupa de Lola o los compañeros de duelo
+    if (ppEscSoloGratis(T) && !gratis) continue;   // en el duelo por un compañero escondido no vale ninguna comprada (js/escondidos-duelo.js)
     const nombre = duelo ? '' : `<i>${tr(PP_CFG.ayudas[k].nombre)}</i>`;   // en los niveles, con su nombre debajo (tarea #269)
     bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasPrecioHtml(PP_CFG.ayudas[k].perlas, perla)}</b>${nombre}`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
@@ -117,6 +118,7 @@ function ppNimDeshacer(trasPerder) {
 // pagar el deshacer: gratis una vez por duelo (dos a 5 estrellas) con Otra vez del equipo de Duelos (en tu turno, no tras perder: js/habilidades-duelo.js)
 function ppPagaDeshacer(T, trasPerder) {
   if (!trasPerder && ppHabDDeshazGratis(T.nim)) { T.nim.deshacesGratis = (T.nim.deshacesGratis || 0) + 1; return true; }
+  if (ppEscSoloGratis(T)) return false;
   return ppGastaAyuda('deshacer', trasPerder ? () => ppNimFin(T, false, true) : null);
 }
 // tras perder: la última foto desde la que se gana (o la última, si no hubiera ninguna)
@@ -147,7 +149,7 @@ function ppNimGanadora(filas) {
 // N.pistasGratis: las gratis que ya se han gastado en este duelo
 const ppPistaGratis = N => PP_HAB.queda(Math.max(ppEnEquipo('lola') ? 1 : 0, ppHabDUsos('dPista')), N.pistasGratis);
 const ppAyudaGratis = (k, N) => (k === 'pista' ? ppPistaGratis(N) : k === 'deshacer' && ppHabDDeshazGratis(N));
-function ppPagaPista(N) { if (ppPistaGratis(N)) { N.pistasGratis = (N.pistasGratis || 0) + 1; return true; } return ppGastaAyuda('pista'); }
+function ppPagaPista(N) { if (ppPistaGratis(N)) { N.pistasGratis = (N.pistasGratis || 0) + 1; return true; } return !ppEscSoloGratis(PP_P.T) && ppGastaAyuda('pista'); }
 function ppNimPista() {
   const T = PP_P && PP_P.T, N = T && T.nim; if (!N || N.turno !== 'yo' || N.fin) return;
   // a mitad de turno (ya has reventado en una fila): cuántas MÁS de esa fila, o pulsar ¡LISTO! ya, o que con esa fila ya no se gana

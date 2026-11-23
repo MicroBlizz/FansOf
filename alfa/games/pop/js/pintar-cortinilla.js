@@ -10,7 +10,7 @@ const PP_CORT = { activa: false, t: 0, rival: 'ceo', tipo: 'jefe', golpe: false,
 const ppCortActiva = () => PP_CORT.activa && (PP_PANT.actual === 'sala' || PP_PANT.actual === 'duelo');   // si saliste del nivel a medias, ya no cuenta
 // `rival` (opcional): el panel de una persona en los duelos contra gente ({ perfil, cat, nombre }); sin él, el del jefe
 function ppCortEmpieza(d, alTerminar, rival = null) {
-  Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), tipo: PP_CORTINILLA.tipoDe(d), golpe: false, salida: null, alTerminar });
+  Object.assign(PP_CORT, { activa: true, t: 0, rival: PP_CORTINILLA.rivalDe(d), esc: !!d.esc, tipo: PP_CORTINILLA.tipoDe(d), golpe: false, salida: null, alTerminar });
   ppCortPaneles(rival);
   ppLolaAparca();   // si Lola estaba hablando, se calla y vuelve al pulsar ¡A JUGAR! (ppEmpiezaNivel)
   ppCortBoton();
@@ -26,8 +26,8 @@ function ppCortPaneles(rival) {
 }
 // el jefe: su frase y su título no están en el catálogo del jugador, así que van en un catálogo hecho para él
 function ppCortPanelJefe(id) {
-  const j = PP_CORTINILLA.perfilJefe(id), cat = { ...PP_MI.cat, frase: [{ id: 'jefe', texto: j.frase }], titulo: [{ id: 'jefe', texto: j.titulo }] };
-  return { perfil: j.perfil, cat, nombre: tr((PP_SLIMES[id] || PP_SLIMES.ceo).nombre) };
+  const j = PP_CORTINILLA.perfilJefe(id, PP_CORT.esc), cat = { ...PP_MI.cat, frase: [{ id: 'jefe', texto: j.frase }], titulo: [{ id: 'jefe', texto: j.titulo }] };
+  return { perfil: j.perfil, cat, nombre: tr((ppSlimeDe(id) || PP_SLIMES.ceo).nombre) };
 }
 // el botón es de DOM (con el estilo de los de Pop): sale cuando acaban las viñetas y se oculta al pulsarlo o al irse la cortinilla
 function ppCortBoton() { const b = $pp('#pp-cort-jugar'); if (b) b.hidden = !(PP_CORT.activa && PP_CORT.salida === null && PP_CORTINILLA.puedePulsar(PP_CORT.t)); }
@@ -177,7 +177,7 @@ function ppPintaCortinilla(c, t) {
     ppCortVs(c, f.vs, PP_CORT_PANEL.y + PP_CORT_PANEL.h / 2);
   } else {
     ppCortFigura(c, 'lola', tr('Tú'), 125, -1, f.figuras, t);
-    ppCortFigura(c, PP_CORT.rival, tr(PP_SLIMES[PP_CORT.rival].nombre), 415, 1, f.figuras, t);
+    ppCortFigura(c, PP_CORT.rival, tr(ppSlimeDe(PP_CORT.rival).nombre), 415, 1, f.figuras, t);
     ppCortVs(c, f.vs);
   }
   ppCortTarjeta(c, ppCortTarjetaY(H), f);

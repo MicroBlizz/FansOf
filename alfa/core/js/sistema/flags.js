@@ -1,7 +1,8 @@
 // Fans Of · FLAGS: abrir o cerrar cosas de los juegos desde la base de datos (tabla `flags`, servidor/22-flags.sql), sin desplegar.
 // Lo nuevo o a medias se esconde tras NUCLEO.desarrollo (sin más) o, si hace falta un flag propio, tras NUCLEO.flag('nombre', 'qué hace', valorEnWeb).
 // · En desarrollo vale true salvo que se apague en el panel DEV (así se prueba todo).
-// · En la web publicada manda la tabla: se lee al arrancar y cada 5 minutos, y se guarda el último valor por si no hay red. Sin fila ni valor guardado vale
+// · En la web publicada manda la tabla: se lee al arrancar y cada 5 minutos, y se guarda el último valor por si no hay red. Si una lectura falla, se repite
+//   a los 5, 15 y 45 segundos en vez de esperar 5 minutos (ADR 206: sin eso, una portada abierta sin red se quedaba sin lo nuevo hasta recargar). Sin fila ni valor guardado vale
 //   `valorEnWeb` (false si no se pone; true para algo ya abierto que se quiere poder cerrar de golpe).
 // · Cada fila vale para un juego o para todos ('*') y para una plataforma ('alfa', 'web', 'android') o todas ('*'); manda la más concreta. `porcentaje` abre el flag solo a ese % de jugadores.
 // · Se pregunta cada vez que se necesita (no se guarda en una constante) para que un cambio llegue sin recargar; NUCLEO.alCambiarFlags(fn) avisa de los cambios.
@@ -17,6 +18,12 @@
   const flagsDev = {};      // nombre → descripción de los flags usados en esta página
   const oyentes = [];
   let remotos = {}, config = {}, ultimaLectura = 0;   // nombre → { valor, porcentaje, mensaje, dato }
+  const REINTENTOS = [5, 15, 45];   // segundos tras cada lectura fallida seguida; agotados, queda la lectura de cada 5 minutos
+  let fallos = 0, reintento = null;
+  function reintentar() {
+    if (reintento || fallos >= REINTENTOS.length) return;
+    reintento = setTimeout(() => { reintento = null; leerFlags(); }, REINTENTOS[fallos++] * 1000);
+  }
   try { const g = JSON.parse(localStorage.getItem(GUARDADOS) || 'null'); if (g && g.r) remotos = g.r; if (g && g.c) config = g.c; } catch (e) { /* sin guardar */ }
   // el «cubo» de este navegador (0-99): fijo, para que un 10 % sean siempre los mismos jugadores
   const cubo = (() => {
@@ -64,7 +71,7 @@
     if (!/^https?:$/.test(location.protocol) || ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) return;
     try {
       const r = await fetch('https://awivkedbmumwnkqlfixm.supabase.co/rest/v1/flags?select=nombre,juego,plataforma,valor,porcentaje,mensaje,mensaje_en,dato', { cache: 'no-store', headers: { apikey: 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn' } });
-      if (!r.ok) return;
+      if (!r.ok) { reintentar(); return; }
       const v = {}, puntos = {};
       for (const f of await r.json()) {   // de las filas que valen aquí, gana la más concreta (juego pesa más que plataforma)
         if (!(f.juego === '*' || f.juego === juegoActual) || !(f.plataforma === '*' || f.plataforma === plataforma)) continue;
@@ -77,11 +84,11 @@
         if (rc.ok) { c = {}; const base = {}; for (const f of await rc.json()) { if (f.juego === '*') base[f.clave] = f.valor; else if (f.juego === juegoActual) c[f.clave] = f.valor; } for (const k in base) if (!(k in c)) c[k] = base[k]; }
       } catch (e) { /* sin red */ }
       const cambio = JSON.stringify(v) !== JSON.stringify(remotos) || JSON.stringify(c) !== JSON.stringify(config);
-      remotos = v; config = c; ultimaLectura = Date.now();
+      remotos = v; config = c; ultimaLectura = Date.now(); fallos = 0;
       try { localStorage.setItem(GUARDADOS, JSON.stringify({ r: v, c })); } catch (e) { /* sin guardar */ }
       avisos();
       if (cambio) oyentes.forEach(fn => { try { fn(); } catch (e) { console.error(e); } });
-    } catch (e) { /* sin red: se queda el último valor */ }
+    } catch (e) { reintentar(); }   // sin red: se queda el último valor y se vuelve a probar pronto
   }
 
   Object.assign(NUCLEO, { flag, flagRemoto, configRemota, flagMensaje, alCambiarFlags, flagsDev, leerFlags });

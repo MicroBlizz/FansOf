@@ -1,8 +1,8 @@
 {
- "build": 1455,
- "hash": "848f704",
- "fecha": "2026-11-23T12:24:18Z",
- "mensaje": "Pop: el compañero escondido nuevo de la burbuja arcoíris se gana en un duelo contra él (tarea #329, ADR 205)",
+ "build": 1456,
+ "hash": "9a43758",
+ "fecha": "2026-11-23T16:47:37Z",
+ "mensaje": "Portada y flags: si el servidor no contesta se vuelve a pedir a los 5, 15 y 45 s; LOS MÁS PEDIDOS enseñan «Cargando los votos…» y, sin respuesta, REINTENTAR (ADR 206, Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

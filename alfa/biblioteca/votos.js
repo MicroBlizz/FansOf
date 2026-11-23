@@ -11,6 +11,14 @@
 (() => {
   const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co', CLAVE = 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn';   // públicos: las reglas las pone la base de datos
   const GUARDADO = 'fansof-favoritos';
+  // lo público del servidor (totales, puntos, recomendaciones), sin sesión: si no contesta, se vuelve a pedir a los 5, 15 y 45 s; agotados, alRendirse()
+  const REINTENTOS = [5, 15, 45];
+  function pedirPublico(rpc, alLlegar, alRendirse = () => {}, intento = 0) {
+    const fallo = () => { if (intento < REINTENTOS.length) setTimeout(() => pedirPublico(rpc, alLlegar, alRendirse, intento + 1), REINTENTOS[intento] * 1000); else alRendirse(); };
+    fetch(SERVIDOR + '/rest/v1/rpc/' + rpc, { method: 'POST', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: '{}' })
+      .then(r => (r.ok ? r.json() : Promise.reject(new Error(rpc + ': ' + r.status))))
+      .then(alLlegar, fallo);   // un fallo dentro de alLlegar no se reintenta: es de programación y sale en la consola
+  }
   const slug = id => id.replace(/^g-/, '');
   const leer = () => { try { const l = JSON.parse(localStorage.getItem(GUARDADO) || '[]'); return Array.isArray(l) ? l.filter(x => typeof x === 'string') : []; } catch (e) { return []; } };
   let favs = leer(), totales = {}, avisado = false, listo = false;   // listo: el servidor ya tiene las funciones (si no, solo van los guardados de este navegador y no se ve ni cuenta ni voto)
@@ -76,16 +84,16 @@
     } catch (e) { /* sin conexión: se queda lo de este navegador */ }
   }
   // los totales son públicos: se piden sin sesión (así quien solo mira no crea una cuenta de invitado)
-  fetch(SERVIDOR + '/rest/v1/rpc/favoritos_totales', { method: 'POST', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: '{}' })
-    .then(r => (r.ok ? r.json() : Promise.reject())).then(d => {
+  pedirPublico('favoritos_totales', d => {
       listo = true; totales = d && typeof d === 'object' ? d : {};
       caja.hidden = false; pintarCorazones(); pintarMinis(); sincronizar();
       if (!ficha.caja.hidden && ficha.id) { voto.clave = ''; cargarVoto(ficha.id); }
-    }).catch(() => {});
+    });
 
   // LOS MÁS PEDIDOS (ADR 103): los puntos de cada juego (guardados + recomendaciones SÍ) y cuándo llegó el último; la portada destaca los 4 prototipos con más. Público y solo números.
-  fetch(SERVIDOR + '/rest/v1/rpc/votos_destacados', { method: 'POST', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: '{}' })
-    .then(r => (r.ok ? r.json() : Promise.reject())).then(d => { if (d && typeof d === 'object') AGRUPAR.destacar(d); }).catch(() => { /* sin servidor: la sección no sale y todo sigue como estaba */ });
+  // Mientras llegan, un aviso en su sitio; sin respuesta tras los reintentos, el aviso ofrece REINTENTAR.
+  const pedirDestacados = () => pedirPublico('votos_destacados', d => { if (d && typeof d === 'object') AGRUPAR.destacar(d); }, () => AGRUPAR.sinPedidos(pedirDestacados));
+  AGRUPAR.esperarPedidos(); pedirDestacados();
 
   // ---------- SÍ / NO en la tarjeta: votar sin abrir la ficha (sin nota) ----------
   // Lo votado hoy se apunta en este navegador para marcar el botón; el servidor es quien manda (si ya habías votado, contesta ya_votado).
@@ -194,9 +202,7 @@
   document.addEventListener('cuenta-cambio', () => { sincronizar(); if (!ficha.caja.hidden && ficha.id) { voto.clave = ''; cargarVoto(ficha.id); } pintarCorazones(); });
 
   // el recuento de recomendaciones es público: se pide sin sesión, como los guardados
-  fetch(SERVIDOR + '/rest/v1/rpc/recomendaciones_totales', { method: 'POST', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: '{}' })
-    .then(r => (r.ok ? r.json() : Promise.reject())).then(d => { recomiendan = d && typeof d === 'object' ? d : {}; if (!ficha.caja.hidden && ficha.id && voto.estado !== 'cargando') pintarVoto(); })
-    .catch(() => {});
+  pedirPublico('recomendaciones_totales', d => { recomiendan = d && typeof d === 'object' ? d : {}; if (!ficha.caja.hidden && ficha.id && voto.estado !== 'cargando') pintarVoto(); });
   // lo que enseña MI CUENTA → MIS JUEGOS (biblioteca/cuenta-pestanas.js): tus guardados (ids de tarjeta, 'g-pop') y lo que votaste hoy desde este navegador
   window.VOTOS_WEB = Object.freeze({
     guardados: () => favs.slice(),

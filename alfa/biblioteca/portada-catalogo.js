@@ -128,7 +128,7 @@
       <h3 class="grupo ol">${esc(t('NOVEDADES'))}</h3><div class="pn-carril" id="pn-novedades"></div></div>`);
     // antes del grupo viejo de favoritos (escondido con el flag), así LOS MÁS PEDIDOS, que agrupar.js pone después de él, quedan debajo
     const nota = document.querySelector('#biblioteca .note');
-    (nota || document.querySelector('#biblioteca > h2')).insertAdjacentHTML('afterend', `<div class="pn pn-fila pn-fila-favoritos subsec" id="pn-fila-favoritos" hidden>
+    (nota || document.querySelector('#biblioteca > h2')).insertAdjacentHTML('afterend', `<div class="pn pn-fila pn-fila-favoritos subsec" id="pn-fila-favoritos" data-sin-tarjetas hidden>
       <h3 class="grupo ol">${esc(t('NUESTROS FAVORITOS'))}</h3><div class="pn-carril" id="pn-favoritos"></div></div>`);
     const archivo = document.getElementById('lista-archivo');
     if (archivo) archivo.insertAdjacentHTML('beforebegin', catalogoHtml()); else document.getElementById('biblioteca').insertAdjacentHTML('beforeend', catalogoHtml());

@@ -41,7 +41,9 @@ lonchas.addEventListener('pointerdown', ponZanahoria);
 async function arranca() {
   let vista3d = null;
   try {
-    vista3d = await IS.Vista3D.crea($('tres'), 'brotito.glb');
+    const vinilo = new URLSearchParams(location.search).get('modelo') === 'vinilo';   // ?modelo=vinilo: el hecho desde la figura de vinilo
+    $(vinilo ? 'm-vinilo' : 'm-render').classList.add('activo');
+    vista3d = await IS.Vista3D.crea($('tres'), vinilo ? 'brotito-vinilo.glb' : 'brotito.glb');
     botones(vista3d);
   } catch (e) {
     $('aviso').textContent = 'No se pudo cargar el modelo 3D: ' + e.message;

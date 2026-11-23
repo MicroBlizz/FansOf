@@ -20,6 +20,21 @@ html.portada-nueva .pn-sello-nuevo { background: var(--gold); color: var(--outli
 html.portada-nueva .pn-sello-fav { background: var(--player); color: #fff; }
 html.portada-nueva .pn-puntos { position: absolute; top: 6px; right: 6px; z-index: 1; background: rgba(var(--tinta-fondo), .8); color: #fff; border-radius: 10px;
   padding: 1px 7px; font-weight: 800; font-size: 12px; }
+/* GUARDAR arriba a la izquierda (el sello baja debajo) y SÍ / NO arriba a la derecha, bajo los puntos: el nombre queda libre abajo */
+html.portada-nueva .pn-acciones { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+html.portada-nueva .pn-acciones button { pointer-events: auto; cursor: pointer; border: 2px solid var(--outline); background: rgba(var(--tinta-fondo), .85); color: #fff; }
+html.portada-nueva .pn-marca { position: absolute; top: 6px; left: 6px; display: flex; align-items: center; gap: 2px; height: 34px; min-width: 34px; padding: 0 6px 0 3px; border-radius: 10px;
+  font: 800 12px var(--font-ui); box-sizing: border-box; }
+html.portada-nueva .pn-marca svg { width: 22px; height: 22px; flex: none; }
+html.portada-nueva .pn-mini-img > .pn-sello { top: 46px; }
+html.portada-nueva .pn-votos { position: absolute; top: 32px; right: 6px; display: flex; gap: 4px; }
+html.portada-nueva .pn-mini-img:not(:has(.pn-puntos)) .pn-votos { top: 6px; }
+html.portada-nueva .pn-votos button { width: 32px; height: 30px; padding: 2px 0 0; border-radius: 9px; }
+html.portada-nueva .pn-votos svg { width: 20px; height: 20px; }
+html.portada-nueva .pn-votos button[data-v="1"][aria-pressed="true"] { background: linear-gradient(to bottom, #7be07b, #2f9a3a); }
+html.portada-nueva .pn-votos button[data-v="-1"][aria-pressed="true"] { background: linear-gradient(to bottom, #ff7a86, #c22a3a); }
+html.portada-nueva .pn-votos button.apagado { opacity: .45; }
+html.portada-nueva .pn-acciones button:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
 html.portada-nueva .pn-mini-jugar { display: block; text-align: center; text-decoration: none; background: var(--player); color: #fff; border-top: 3px solid var(--outline);
   padding: 9px 4px 6px; font-size: 17px; }
 

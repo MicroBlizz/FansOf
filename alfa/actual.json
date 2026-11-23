@@ -1,8 +1,8 @@
 {
- "build": 1456,
- "hash": "9a43758",
- "fecha": "2026-11-23T16:47:37Z",
- "mensaje": "Portada y flags: si el servidor no contesta se vuelve a pedir a los 5, 15 y 45 s; LOS MÁS PEDIDOS enseñan «Cargando los votos…» y, sin respuesta, REINTENTAR (ADR 206, Arkioner)",
+ "build": 1457,
+ "hash": "d4473b1",
+ "fecha": "2026-11-23T16:49:20Z",
+ "mensaje": "Portada nueva: las tarjetas pequeñas del catálogo recuperan GUARDAR y SÍ / NO sin abrir la ficha (VOTOS_WEB de votos.js; Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

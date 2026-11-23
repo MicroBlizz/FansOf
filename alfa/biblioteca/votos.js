@@ -56,6 +56,7 @@
       b.setAttribute('aria-label', es(s.id) ? t('Quitar de guardados') : t('Guardar'));
     }
     const f = document.getElementById('fi-fav');
+    document.dispatchEvent(new CustomEvent('votos:cambio'));   // las tarjetas pequeñas del catálogo nuevo repintan sus botones
     if (f && ficha.id) { f.innerHTML = `${ICONO.marca(es(ficha.id))}<span>${esc(es(ficha.id) ? t('GUARDADO') : t('GUARDAR'))}${cuantos(ficha.id) ? ' · ' + cuantos(ficha.id) : ''}</span>`; f.classList.toggle('on', es(ficha.id)); f.setAttribute('aria-pressed', es(ficha.id)); }
   }
   async function alternar(id) {
@@ -101,7 +102,7 @@
   const CACHE = 'fansof-votos-hoy';
   const leerCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE) || '{}'); return c.dia === HOY() ? c : { dia: HOY(), v: {} }; } catch (e) { return { dia: HOY(), v: {} }; } };
   const votoGuardado = (id, ver) => leerCache().v[id + '|' + ver] || 0;
-  function apuntar(id, ver, v) { const c = leerCache(); c.v[id + '|' + ver] = v; try { localStorage.setItem(CACHE, JSON.stringify(c)); } catch (e) { /* solo vale mientras la página esté abierta */ } pintarMinis(); }
+  function apuntar(id, ver, v) { const c = leerCache(); c.v[id + '|' + ver] = v; try { localStorage.setItem(CACHE, JSON.stringify(c)); } catch (e) { /* solo vale mientras la página esté abierta */ } pintarMinis(); document.dispatchEvent(new CustomEvent('votos:cambio')); }
   const verDe = id => (ENTRADAS[id] && ENTRADAS[id].ver) || '';
   function pintarMinis() {
     for (const s of original) {
@@ -110,23 +111,27 @@
       box.querySelectorAll('button').forEach(b => { b.setAttribute('aria-pressed', Number(b.dataset.v) === v); b.classList.toggle('apagado', !!v && Number(b.dataset.v) !== v); });
     }
   }
+  // SÍ (1) o NO (-1) sin abrir la ficha: desde la tarjeta de siempre o desde las pequeñas del catálogo nuevo (VOTOS_WEB.votar)
+  async function votar(id, v) {
+    const ver = verDe(id);
+    if (!conCuenta()) { abrirCuenta(t('Entra con tu cuenta para votar.')); return; }
+    if (!ENTRADAS[id]) { avisar(t('Cargando…')); return; }
+    if (votoGuardado(id, ver)) { avisar(t('Hoy ya has votado este juego. Mañana puedes volver, o antes si sale una versión nueva.')); return; }
+    try {
+      const r = await CUENTA.rpc('votar_juego', { p_juego: slug(id), p_version: ver, p_voto: v, p_nota: '' });
+      if (r && r.ok) { apuntar(id, ver, v); sumar(id, v); avisar(t('¡Voto enviado! Si quieres dejar una nota, abre la ficha del juego.'), true); }
+      else if (r && r.motivo === 'ya_votado') { apuntar(id, ver, v); avisar(t('Hoy ya has votado este juego. Mañana puedes volver, o antes si sale una versión nueva.')); }
+      else if (r && r.motivo === 'tope') avisar(t('Hoy has votado muchos juegos. Vuelve mañana.'));
+      else if (r && r.motivo === 'sin_cuenta') abrirCuenta(t('Entra con tu cuenta para votar.'));
+      else avisar(t('No se ha podido enviar el voto. Prueba otra vez.'));
+    } catch (err) { avisar(t('No se ha podido enviar el voto. Prueba otra vez.')); }
+  }
   for (const s of original) {
     const box = document.createElement('div'); box.className = 'votos-tarjeta'; box.hidden = true;
     box.innerHTML = `<button type="button" data-v="1" aria-label="${esc(t(SI_TXT(s.id)))}">${ICONO.arriba}</button><button type="button" data-v="-1" aria-label="${esc(t(NO_TXT(s.id)))}">${ICONO.abajo}</button>`;
-    box.onclick = async e => {
+    box.onclick = e => {
       e.stopPropagation(); const b = e.target.closest('button'); if (!b) return;
-      const v = Number(b.dataset.v), id = s.id, ver = verDe(id);
-      if (!conCuenta()) { abrirCuenta(t('Entra con tu cuenta para votar.')); return; }
-      if (!ENTRADAS[id]) { avisar(t('Cargando…')); return; }
-      if (votoGuardado(id, ver)) { avisar(t('Hoy ya has votado este juego. Mañana puedes volver, o antes si sale una versión nueva.')); return; }
-      try {
-        const r = await CUENTA.rpc('votar_juego', { p_juego: slug(id), p_version: ver, p_voto: v, p_nota: '' });
-        if (r && r.ok) { apuntar(id, ver, v); sumar(id, v); avisar(t('¡Voto enviado! Si quieres dejar una nota, abre la ficha del juego.'), true); }
-        else if (r && r.motivo === 'ya_votado') { apuntar(id, ver, v); avisar(t('Hoy ya has votado este juego. Mañana puedes volver, o antes si sale una versión nueva.')); }
-        else if (r && r.motivo === 'tope') avisar(t('Hoy has votado muchos juegos. Vuelve mañana.'));
-        else if (r && r.motivo === 'sin_cuenta') abrirCuenta(t('Entra con tu cuenta para votar.'));
-        else avisar(t('No se ha podido enviar el voto. Prueba otra vez.'));
-      } catch (err) { avisar(t('No se ha podido enviar el voto. Prueba otra vez.')); }
+      votar(s.id, Number(b.dataset.v));
     };
     (s.querySelector('.cap-img') || s).appendChild(box);   // sobre la captura, abajo a la derecha: así no tapa el nombre ni la versión
   }
@@ -204,7 +209,12 @@
   // el recuento de recomendaciones es público: se pide sin sesión, como los guardados
   pedirPublico('recomendaciones_totales', d => { recomiendan = d && typeof d === 'object' ? d : {}; if (!ficha.caja.hidden && ficha.id && voto.estado !== 'cargando') pintarVoto(); });
   // lo que enseña MI CUENTA → MIS JUEGOS (biblioteca/cuenta-pestanas.js): tus guardados (ids de tarjeta, 'g-pop') y lo que votaste hoy desde este navegador
+  // y lo que necesitan las tarjetas pequeñas del catálogo nuevo (biblioteca/portada-catalogo.js): su estado, los iconos y las dos acciones; avisa con 'votos:cambio'
   window.VOTOS_WEB = Object.freeze({
+    estado: id => ({ listo, guardado: es(id), cuantos: cuantos(id), voto: votoGuardado(id, verDe(id)), si: SI_TXT(id), no: NO_TXT(id) }),
+    icono: Object.freeze({ marca: on => ICONO.marca(on), arriba: ICONO.arriba, abajo: ICONO.abajo }),
+    guardar: id => alternar(id),
+    votar: (id, v) => votar(id, v),
     guardados: () => favs.slice(),
     votosDeHoy: () => { const v = new Map(); for (const [k, voto] of Object.entries(leerCache().v)) v.set(k.split('|')[0], voto); return [...v].map(([tarjeta, voto]) => ({ tarjeta, voto })); },
   });

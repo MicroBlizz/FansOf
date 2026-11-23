@@ -33,9 +33,25 @@
     if (!p) return '';
     return `<span class="pn-puntos">${esc(p === 1 ? t('1 punto') : t('{p} puntos', { p }))}</span>`;
   }
-  // una tarjeta pequeña: la captura de fondo, el sello, el nombre y su primera etiqueta; JUGAR abajo. Tocarla (fuera de JUGAR) abre la ficha.
+  // GUARDAR (el marcapáginas) y SÍ / NO sobre la captura, como en las tarjetas de siempre: estado, iconos y acciones de VOTOS_WEB (votos.js).
+  // Los votos salen cuando el servidor contesta (estado().listo); el marcapáginas, siempre (sin servidor se guarda en este navegador).
+  function acciones(tarjeta) {
+    if (typeof VOTOS_WEB === 'undefined') return '';
+    const e = VOTOS_WEB.estado(tarjeta), I = VOTOS_WEB.icono;
+    const marca = `<button type="button" class="pn-marca${e.guardado ? ' on' : ''}" data-accion="guardar" aria-pressed="${e.guardado}"
+      aria-label="${esc(t(e.guardado ? 'Quitar de guardados' : 'Guardar'))}">${I.marca(e.guardado)}${e.cuantos ? `<span>${e.cuantos}</span>` : ''}</button>`;
+    if (!e.listo) return marca;
+    const voto = v => `<button type="button" data-accion="votar" data-v="${v}" aria-pressed="${e.voto === v}"${e.voto && e.voto !== v ? ' class="apagado"' : ''}
+      aria-label="${esc(t(v > 0 ? e.si : e.no))}">${v > 0 ? I.arriba : I.abajo}</button>`;
+    return `${marca}<span class="pn-votos">${voto(1)}${voto(-1)}</span>`;
+  }
+  // tras guardar o votar (aviso 'votos:cambio'), solo se repintan los botones: así no se pierde el foco ni se mueve nada
+  function repintarAcciones() {
+    document.querySelectorAll('.pn-mini').forEach(m => { const a = m.querySelector('.pn-acciones'); if (a) a.innerHTML = acciones(m.dataset.tarjeta); });
+  }
+  // una tarjeta pequeña: la captura de fondo, el sello, el nombre y su primera etiqueta; JUGAR abajo. Tocarla (fuera de JUGAR y los botones) abre la ficha.
   const mini = (j, conJugar = true) => `<article class="pn-mini" data-tarjeta="${esc(j.tarjeta)}" tabindex="0" role="button" aria-label="${esc(j.nombre)}" style="--wc:${esc(j.color)}">
-    <div class="pn-mini-img"${j.captura ? ` style="background-image:url('${esc(j.captura)}')"` : ''}>${sello(j)}${puntos(j)}
+    <div class="pn-mini-img"${j.captura ? ` style="background-image:url('${esc(j.captura)}')"` : ''}>${sello(j)}${puntos(j)}<span class="pn-acciones">${acciones(j.tarjeta)}</span>
       <span class="pn-mini-n ol">${esc(j.nombre)}</span><span class="pn-mini-e">${esc(t(j.etiquetas[0] || ''))}</span></div>
     ${conJugar ? `<a class="pn-mini-jugar ol" href="${esc(j.jugar)}">${esc(t('JUGAR'))}</a>` : ''}</article>`;
 
@@ -95,10 +111,12 @@
   }
   function elegirModo(m) { estado.modo = CATALOGO.modoValido(m); guardarModo(estado.modo); abrirHoja(false); pintarRejilla(); }
   function elegirEtiqueta(x) { estado.etiqueta = x; pintarEtiquetas(); pintarRejilla(); }
-  // tocar una tarjeta pequeña (fuera de JUGAR) abre la ficha del juego, como las de siempre
+  // tocar una tarjeta pequeña abre la ficha del juego, como las de siempre; JUGAR lleva al juego y los botones guardan o votan
   function alTocarMini(e) {
-    const m = e.target.closest('.pn-mini');
-    if (m && !e.target.closest('a')) abrirFicha(m.dataset.tarjeta);
+    const m = e.target.closest('.pn-mini'); if (!m || e.target.closest('a')) return;
+    const b = e.target.closest('button[data-accion]');
+    if (!b) { abrirFicha(m.dataset.tarjeta); return; }
+    if (b.dataset.accion === 'guardar') VOTOS_WEB.guardar(m.dataset.tarjeta); else VOTOS_WEB.votar(m.dataset.tarjeta, Number(b.dataset.v));
   }
   function alTeclaMini(e) {
     const m = e.target.closest('.pn-mini');
@@ -146,6 +164,7 @@
   document.addEventListener('portada:destacado', e => { estado.fechas = (e.detail && e.detail.fechas) || {}; if (montado) pintar(); });
   AGRUPAR.alVotos(v => { estado.votos = v || {}; if (montado) pintarRejilla(); });
   // /gestion → Juegos cambió alguna tarjeta con la portada ya pintada (portada-juegos.js): se vuelven a leer
+  document.addEventListener('votos:cambio', () => { if (montado) repintarAcciones(); });
   document.addEventListener('portada:recolocada', () => { if (montado) { juegos = leerJuegos(); pintar(); } });
   aplicar();
   NUCLEO.alCambiarFlags(aplicar);

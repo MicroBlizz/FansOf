@@ -1,8 +1,8 @@
 {
- "build": 1450,
- "hash": "bd52de9",
- "fecha": "2026-11-23T01:31:01Z",
- "mensaje": "#327: la lista de /gestion → Juegos se agrupa y filtra por sección de la portada (Nuestros favoritos) y «Con herramientas propias»; el contador de tareas lleva al Tablero filtrado por el juego; Decks gana su pestaña Telemetría (Arkioner)",
+ "build": 1451,
+ "hash": "6638e2e",
+ "fecha": "2026-11-23T07:35:55Z",
+ "mensaje": "Portada nueva: vuelve NUESTROS FAVORITOS como grupo propio arriba de la biblioteca y LOS MÁS PEDIDOS caben enteros en PC (Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

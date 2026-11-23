@@ -1,6 +1,7 @@
 // Fans Of · LA PORTADA NUEVA · el catálogo con buscador y orden y la fila de NOVEDADES (tarea #277, ADR 188), tras el flag «portada-nueva» (solo en la alfa).
+//   · NUESTROS FAVORITOS: arriba de la biblioteca, una fila con los favoritos (los que marca /gestion → Juegos, ADR 203) y su JUGAR.
 //   · NOVEDADES: bajo el carrusel DESTACADO, una fila que se desliza de lado con los juegos de versión más reciente (novedades/fechas.json).
-//   · TODOS LOS JUEGOS: una sola rejilla con todo lo vivo (favoritos y prototipos juntos; el Archivo sigue aparte y plegado), cada juego con su captura,
+//   · TODOS LOS JUEGOS: una sola rejilla con todo lo vivo (favoritos, que repiten, y prototipos juntos; el Archivo sigue aparte y plegado), cada juego con su captura,
 //     y encima una barra fija con el buscador, el botón ORDENAR (abre una hoja desde abajo) y las etiquetas para filtrar. El orden se recuerda en el navegador.
 // No mueve las tarjetas de siempre: pinta las suyas aparte (clase «pn») y portada-nueva.css esconde los grupos viejos, así que cerrar el flag devuelve la portada
 // de siempre sin recargar. Buscar, filtrar y ordenar es la regla pura CATALOGO (biblioteca/catalogo.js). Usa de la página: TARJETAS, datosDe() y abrirFicha()
@@ -54,7 +55,14 @@
     caja.innerHTML = lista.map(j => mini(j, false)).join('');
     caja.closest('.pn-fila').hidden = !lista.length;
   }
-  const pintar = () => { pintarRejilla(); pintarNovedades(); };
+  // NUESTROS FAVORITOS: la fila de arriba de la biblioteca, con JUGAR (Arkioner, 23-11-2026: la rejilla sola los perdía de vista)
+  function pintarFavoritos() {
+    const caja = document.getElementById('pn-favoritos'); if (!caja) return;
+    const lista = CATALOGO.favoritos(juegos);
+    caja.innerHTML = lista.map(j => mini(j)).join('');
+    caja.closest('.pn-fila').hidden = !lista.length;
+  }
+  const pintar = () => { pintarFavoritos(); pintarRejilla(); pintarNovedades(); };
 
   function pintarEtiquetas() {
     const todas = [''].concat(CATALOGO.etiquetasFrecuentes(juegos));
@@ -103,7 +111,7 @@
     document.getElementById('pn-hoja').addEventListener('click', e => { const b = e.target.closest('.pn-op'); if (b) elegirModo(b.dataset.modo); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('pn-hoja').hidden) abrirHoja(false); });
     document.getElementById('pn-etiquetas').addEventListener('click', e => { const b = e.target.closest('.pn-etiqueta'); if (b) elegirEtiqueta(b.dataset.etiqueta); });
-    for (const id of ['catalogo', 'pn-fila-novedades']) {
+    for (const id of ['catalogo', 'pn-fila-novedades', 'pn-fila-favoritos']) {
       document.getElementById(id).addEventListener('click', alTocarMini);
       document.getElementById(id).addEventListener('keydown', alTeclaMini);
     }
@@ -118,6 +126,10 @@
     juegos = leerJuegos();
     document.getElementById('dest-puntos').insertAdjacentHTML('afterend', `<div class="pn pn-fila" id="pn-fila-novedades" hidden>
       <h3 class="grupo ol">${esc(t('NOVEDADES'))}</h3><div class="pn-carril" id="pn-novedades"></div></div>`);
+    // antes del grupo viejo de favoritos (escondido con el flag), así LOS MÁS PEDIDOS, que agrupar.js pone después de él, quedan debajo
+    const nota = document.querySelector('#biblioteca .note');
+    (nota || document.querySelector('#biblioteca > h2')).insertAdjacentHTML('afterend', `<div class="pn pn-fila pn-fila-favoritos subsec" id="pn-fila-favoritos" hidden>
+      <h3 class="grupo ol">${esc(t('NUESTROS FAVORITOS'))}</h3><div class="pn-carril" id="pn-favoritos"></div></div>`);
     const archivo = document.getElementById('lista-archivo');
     if (archivo) archivo.insertAdjacentHTML('beforebegin', catalogoHtml()); else document.getElementById('biblioteca').insertAdjacentHTML('beforeend', catalogoHtml());
     document.body.insertAdjacentHTML('beforeend', hojaHtml());

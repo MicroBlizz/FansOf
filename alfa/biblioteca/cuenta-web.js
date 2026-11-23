@@ -5,7 +5,7 @@
 // (biblioteca/cuenta-ajustes.js). Las reglas son CUENTA_PERFIL (cuenta-perfil.js) y los casos de uso CUENTA_WEB_CASOS (cuenta-casos.js); aquí se juntan
 // con CUENTA de core (los puertos) y se pinta el marco. Tu cara también sale en el menú (menu.js, pintaMenuCuenta) y se recuerda en este navegador
 // ('fansof-cuenta-cara') para que el menú de las demás páginas la pinte sin preguntar al servidor.
-// Expone window.abrirCuenta(motivo), window.conCuenta(), window.avisar() y CUENTA_WEB.juegoFavorito() (la franja «Seguir con…» de portada-nueva.js);
+// Expone window.abrirCuenta(motivo), window.conCuenta(), window.avisar() y CUENTA_WEB.juegoFavorito() (el juego favorito del perfil);
 // avisa con 'cuenta-cambio' cuando se entra o se sale y con 'cuenta-perfil' cuando llega o cambia el perfil.
 // Usa lo que define index.html, novedades/ventana.js y tienda.js: t(), esc(), CUENTA, TARJETAS y datosDe().
 'use strict';

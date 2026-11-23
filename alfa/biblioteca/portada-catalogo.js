@@ -1,4 +1,6 @@
 // Fans Of · LA PORTADA NUEVA · el catálogo con buscador y orden y la fila de NOVEDADES (tarea #277, ADR 188), tras el flag «portada-nueva» (solo en la alfa).
+//   · JUGADOS ÚLTIMAMENTE: arriba del DESTACADO, hasta 4 juegos que abriste desde la web, para volver rápido (la regla, biblioteca/jugados.js). Cada enlace a un
+//     juego que se toca en la portada se apunta en este navegador (fansof-jugados), con el flag o sin él, para que la fila ya tenga algo al abrirlo.
 //   · NUESTROS FAVORITOS: arriba de la biblioteca, una fila con los favoritos (los que marca /gestion → Juegos, ADR 203) y su JUGAR.
 //   · NOVEDADES: bajo el carrusel DESTACADO, una fila que se desliza de lado con los juegos de versión más reciente (novedades/fechas.json).
 //   · TODOS LOS JUEGOS: una sola rejilla con todo lo vivo (favoritos, que repiten, y prototipos juntos; el Archivo sigue aparte y plegado), cada juego con su captura,
@@ -8,7 +10,14 @@
 // (tienda.js), AGRUPAR.alVotos() (agrupar.js), ESTILO_NUEVO, NUCLEO.alCambiarFlags, esc() y t(). Las fechas llegan con el aviso «portada:destacado» de tienda.js.
 'use strict';
 (() => {
-  const GUARDADO = 'fansof-portada-orden', MAX_NOVEDADES = 8;
+  const GUARDADO = 'fansof-portada-orden', MAX_NOVEDADES = 8, GUARDADO_JUGADOS = 'fansof-jugados';
+  const leerJugados = () => { try { return JSON.parse(localStorage.getItem(GUARDADO_JUGADOS) || '[]'); } catch (e) { return []; } };
+  const guardarJugados = l => { try { localStorage.setItem(GUARDADO_JUGADOS, JSON.stringify(l)); } catch (e) { /* sin almacenamiento: la fila no sale */ } };
+  // tocar cualquier enlace a un juego (JUGAR, la ficha, el DESTACADO…) lo apunta como jugado
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]'), id = a ? JUGADOS.idDeEnlace(a.getAttribute('href')) : '';
+    if (id) guardarJugados(JUGADOS.anotar(leerJugados(), id, Date.now()));
+  }, true);
   const NOMBRES = { nuevos: 'Más nuevos', nombre: 'Nombre A-Z', votados: 'Más votados', favoritos: 'Favoritos primero' };
   const EXPLICA = { nuevos: 'La última versión publicada, arriba', nombre: 'Por orden alfabético', votados: 'Lo que más pide la gente', favoritos: 'Los que elegimos nosotros y luego el resto' };
   const leerModo = () => { try { return CATALOGO.modoValido(localStorage.getItem(GUARDADO)); } catch (e) { return 'nuevos'; } };
@@ -78,7 +87,14 @@
     caja.innerHTML = lista.map(j => mini(j)).join('');
     caja.closest('.pn-fila').hidden = !lista.length;
   }
-  const pintar = () => { pintarFavoritos(); pintarRejilla(); pintarNovedades(); };
+  // JUGADOS ÚLTIMAMENTE: los 4 más recientes que siguen en la portada, con JUGAR (sustituye a «Seguir con tu favorito»: el favorito ya está en el perfil)
+  function pintarJugados() {
+    const caja = document.getElementById('pn-jugados'); if (!caja) return;
+    const lista = JUGADOS.ultimos(leerJugados(), juegos.map(j => j.id)).map(id => juegos.find(j => j.id === id));
+    caja.innerHTML = lista.map(j => mini(j)).join('');
+    caja.closest('.pn-fila').hidden = !lista.length;
+  }
+  const pintar = () => { pintarJugados(); pintarFavoritos(); pintarRejilla(); pintarNovedades(); };
 
   function pintarEtiquetas() {
     const todas = [''].concat(CATALOGO.etiquetasFrecuentes(juegos));
@@ -129,7 +145,7 @@
     document.getElementById('pn-hoja').addEventListener('click', e => { const b = e.target.closest('.pn-op'); if (b) elegirModo(b.dataset.modo); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('pn-hoja').hidden) abrirHoja(false); });
     document.getElementById('pn-etiquetas').addEventListener('click', e => { const b = e.target.closest('.pn-etiqueta'); if (b) elegirEtiqueta(b.dataset.etiqueta); });
-    for (const id of ['catalogo', 'pn-fila-novedades', 'pn-fila-favoritos']) {
+    for (const id of ['catalogo', 'pn-fila-novedades', 'pn-fila-favoritos', 'pn-fila-jugados']) {
       document.getElementById(id).addEventListener('click', alTocarMini);
       document.getElementById(id).addEventListener('keydown', alTeclaMini);
     }
@@ -142,6 +158,8 @@
 
   function montar() {
     juegos = leerJuegos();
+    document.getElementById('destacado').insertAdjacentHTML('afterbegin', `<div class="pn pn-fila pn-fila-jugados" id="pn-fila-jugados" hidden>
+      <h3 class="grupo ol">${esc(t('JUGADOS ÚLTIMAMENTE'))}</h3><div class="pn-carril" id="pn-jugados"></div></div>`);
     document.getElementById('dest-puntos').insertAdjacentHTML('afterend', `<div class="pn pn-fila" id="pn-fila-novedades" hidden>
       <h3 class="grupo ol">${esc(t('NOVEDADES'))}</h3><div class="pn-carril" id="pn-novedades"></div></div>`);
     // antes del grupo viejo de favoritos (escondido con el flag), así LOS MÁS PEDIDOS, que agrupar.js pone después de él, quedan debajo
@@ -164,6 +182,7 @@
   document.addEventListener('portada:destacado', e => { estado.fechas = (e.detail && e.detail.fechas) || {}; if (montado) pintar(); });
   AGRUPAR.alVotos(v => { estado.votos = v || {}; if (montado) pintarRejilla(); });
   // /gestion → Juegos cambió alguna tarjeta con la portada ya pintada (portada-juegos.js): se vuelven a leer
+  addEventListener('pageshow', () => { if (montado) pintarJugados(); });   // al volver de un juego con «atrás», la página puede venir de la caché tal cual
   document.addEventListener('votos:cambio', () => { if (montado) repintarAcciones(); });
   document.addEventListener('portada:recolocada', () => { if (montado) { juegos = leerJuegos(); pintar(); } });
   aplicar();

@@ -1,8 +1,8 @@
 {
- "build": 1457,
- "hash": "d4473b1",
- "fecha": "2026-11-23T16:49:20Z",
- "mensaje": "Portada nueva: las tarjetas pequeñas del catálogo recuperan GUARDAR y SÍ / NO sin abrir la ficha (VOTOS_WEB de votos.js; Arkioner)",
+ "build": 1458,
+ "hash": "d1acd70",
+ "fecha": "2026-11-23T16:54:40Z",
+ "mensaje": "Portada nueva: JUGADOS ÚLTIMAMENTE (hasta 4 juegos abiertos desde la web) en lugar de «Seguir con tu favorito»; en las filas que se deslizan, solo GUARDAR (Arkioner)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.3",

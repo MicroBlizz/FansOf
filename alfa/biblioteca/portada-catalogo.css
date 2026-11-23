@@ -29,6 +29,7 @@ html.portada-nueva .pn-marca svg { width: 22px; height: 22px; flex: none; }
 html.portada-nueva .pn-mini-img > .pn-sello { top: 46px; }
 html.portada-nueva .pn-votos { position: absolute; top: 32px; right: 6px; display: flex; gap: 4px; }
 html.portada-nueva .pn-mini-img:not(:has(.pn-puntos)) .pn-votos { top: 6px; }
+html.portada-nueva .pn-carril .pn-votos { display: none; }   /* en las filas que se deslizan la tarjeta es estrecha: SÍ / NO solo en la rejilla y en la ficha */
 html.portada-nueva .pn-votos button { width: 32px; height: 30px; padding: 2px 0 0; border-radius: 9px; }
 html.portada-nueva .pn-votos svg { width: 20px; height: 20px; }
 html.portada-nueva .pn-votos button[data-v="1"][aria-pressed="true"] { background: linear-gradient(to bottom, #7be07b, #2f9a3a); }

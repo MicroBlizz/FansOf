@@ -121,7 +121,7 @@ function ppAlbFichaFalta(t, id, c) {
   t.append(c.escondido ? ppCompSombra(id, 130) : ppCompMini(id, 130, true), ppPfEl('h2', '', tr('¿Quién será?')));
   if (!c.escondido) return;
   t.appendChild(ppPfEl('p', 'pp-cm-pista-f', `${ppCompMomento(c.momento, 30)}<span>${ppEsc(ppAlbVia(id))}</span>`));
-  t.appendChild(ppPfEl('p', 'pp-cm-via', `${ppEsc(tr(PP_ALB_MOMENTO[c.momento]))} ${ppEsc(tr('Sale a veces en una burbuja que brilla distinto: ¡reviéntala antes de acabar!'))}`));
+  t.appendChild(ppPfEl('p', 'pp-cm-via', `${ppEsc(tr(PP_ALB_MOMENTO[c.momento]))} ${ppEsc(tr('Sale a veces en una burbuja arcoíris: ¡tócala la primera y gánale un duelo!'))}`));
 }
 function ppAlbHabilidad(id) {
   const h = PP_COMP.HAB[PP_COMP.INFO[id].hab];

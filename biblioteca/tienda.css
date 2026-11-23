@@ -44,6 +44,7 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
 .boton[hidden] { display: none; }
 .boton:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--outline); }
 .boton:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.pedidos-reintentar { display: block; margin: 0 auto; }   /* LOS MÁS PEDIDOS sin respuesta del servidor (agrupar.js) */
 .dest { touch-action: pan-y; }   /* deslizar a los lados lo coge el DESTACADO; arriba y abajo sigue moviendo la página */
 .puntos { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
 .puntos .punto { width: 14px; height: 14px; padding: 0; border-radius: 14px; background: var(--off); border: 2px solid var(--outline); cursor: pointer; }

@@ -39,5 +39,7 @@ const CATALOGO = (() => {
     [...juegos].sort(porOrden).forEach(j => (j.etiquetas || []).forEach(x => cuenta.set(x, (cuenta.get(x) || 0) + 1)));
     return [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, cuantas).map(([x]) => x);
   }
-  return { MODOS, filtrar, ordenar, modoValido, etiquetasFrecuentes };
+  // NUESTROS FAVORITOS (la fila de arriba de la biblioteca): solo los favoritos, en el orden de la página
+  const favoritos = juegos => juegos.filter(j => j.favorito).sort(porOrden);
+  return { MODOS, filtrar, ordenar, modoValido, etiquetasFrecuentes, favoritos };
 })();

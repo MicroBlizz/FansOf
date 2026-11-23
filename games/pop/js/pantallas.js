@@ -135,18 +135,20 @@ function ppVentanaMundoNuevo(dif, saltado = false) {
   t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(saltado ? d.mundo : ppMundoActual(), 0); else if (dif === 1) ppMapaVer(d.mundo, 2); ppAlCamino(); }));   // tras el difícil, directo a su pesadilla
 }
 // sin corazones: el reloj del siguiente, o llenarlos con monedas o perlas, o un anuncio (js/tienda.js)
-function ppVentanaSinCorazones() {
+// `vuelta`: adónde se va al llenarlos o al salir (el camino; en el duelo por un compañero escondido, su ventana de reintentar)
+function ppVentanaSinCorazones(vuelta = null) {
+  const sal = () => { clearInterval(tic); (vuelta || ppAlCamino)(); };
   const t = ppAbre(`<h2>${tr('¡Uy! Sin corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub" id="pp-reloj"></p><p class="pp-sub">${tr('Tienes:')} ${ppMonedasHtml(SAVE.monedas, 26)}</p>`);
   ppTutorial('sinCorazones');
   const reloj = () => { const el = $pp('#pp-reloj'); if (!el) { clearInterval(tic); return; } el.textContent = ppVidas() > 0 ? tr('¡Ya tienes corazones!') : tr('El siguiente corazón llega en {t}', { t: ppReloj(ppFaltaVida()) }); };
   const tic = setInterval(reloj, 1000); reloj();
   // tarea #246: un rosa (lo gratis), el dorado de perlas y lo demás plegado en «Más opciones»
   const mas = ppPlegado(tr('Más opciones'));
-  ppBotonesSinCorazones(t, mas.caja, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
-  ppBotonInfinitas(mas.caja, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
+  ppBotonesSinCorazones(t, mas.caja, () => { play('ppPremio'); sal(); }, () => { clearInterval(tic); ppVentanaSinCorazones(vuelta); });
+  ppBotonInfinitas(mas.caja, sal);   // corazones infinitos por tiempo (js/ofertas.js)
   ppBotonPedirCorazones(mas.caja);   // js/pantalla-corazones.js
   t.append(mas.boton, mas.caja);
-  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-volver', () => { clearInterval(tic); ppAlCamino(); }));
+  t.appendChild(ppBoton(vuelta ? tr('Volver') : tr('Al camino'), 'pp-btn2 pp-volver', sal));
 }
 function ppVentanaFin() {
   const P = PP_P;
@@ -206,7 +208,7 @@ function ppPausa() {
   if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalDuelo(); }));
   if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-pago', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
-  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Si sales ahora pierdes un corazón.')}</p>`);
+  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppEscSoloGratis(PP_P.T) ? tr('Si sales ahora pierdes un corazón y el compañero se va.') : tr('Si sales ahora pierdes un corazón.')}</p>`);
   if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   col.appendChild(ppFilasSonido());

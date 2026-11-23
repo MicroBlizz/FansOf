@@ -21,8 +21,10 @@ const PP_CORTINILLA = Object.freeze((() => {
     ceo: Object.freeze({ marco: 'estrellas', fondo: 'feria', frase: 'Aquí mando yo.', titulo: 'CEO de MicroBlizz' }),
     ceoespacial: Object.freeze({ marco: 'estrellas', fondo: 'espacio', frase: 'En el espacio nadie oye tu pop.', titulo: 'CEO en órbita' }),
   });
-  function perfilJefe(rival) {
-    const j = JEFES[rival] || JEFES.ceo;
+  // el compañero escondido al que se reta por su burbuja arcoíris (tarea #329): no es un jefe, lleva lo suyo
+  const ESCONDIDO = Object.freeze({ marco: 'sencillo', fondo: 'jardin', frase: '¡A que no me pillas!', titulo: 'Compañero escondido' });
+  function perfilJefe(rival, escondido = false) {
+    const j = escondido ? ESCONDIDO : JEFES[rival] || JEFES.ceo;
     return Object.freeze({ perfil: Object.freeze({ personaje: rival, marco: j.marco, fondo: j.fondo, frase: 'jefe', titulo: 'jefe', pegatinas: Object.freeze([]), efecto: 'normal', entrada: 'normal' }),
       frase: j.frase, titulo: j.titulo });
   }

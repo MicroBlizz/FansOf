@@ -13,5 +13,5 @@
   $('tb-estilo').textContent = TABLERO.vista.ESTILO + TABLERO.vistaGrafo.ESTILO + TABLERO.vistaRevisar.ESTILO + TABLERO.vistaCompartir.ESTILO;   // la hoja de estilos se pone una vez, no en cada carga
   document.body.insertAdjacentHTML('beforeend', TABLERO.vistaReacciones.ICONOS);   // los doce iconos de las reacciones, una sola vez (ADR 149)
   controlador.conecta();
-  GESTION_NAV.seccion({ id: 'tablero', pan: 'pan-tablero', etiqueta: 'Tablero', orden: 0, cargar: controlador.cargar, cierraCapa: controlador.cierraCapa });
+  GESTION_NAV.seccion({ id: 'tablero', pan: 'pan-tablero', etiqueta: 'Tablero', orden: 0, cargar: controlador.cargar, cierraCapa: controlador.cierraCapa, filtra: controlador.filtraJuego });
 })();

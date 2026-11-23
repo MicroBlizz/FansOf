@@ -1,5 +1,6 @@
 // Fans of Pop · COMPAÑEROS ESCONDIDOS (dominio; tarea #294, ADR 199): en qué mundo y momento (de día = camino, de noche = Difícil) se
-// esconde cada compañero, cada cuántos niveles sale la burbuja brillante (con garantía), qué rareza trae y cuál sale. Funciones puras:
+// esconde cada compañero, cada cuántos niveles sale la burbuja brillante (con garantía), qué rareza trae y cuál sale. Desde la tarea #329
+// (ADR 205): qué pasa con la burbuja en la primera acción del nivel y cómo es el duelo por un compañero nuevo. Funciones puras:
 // sin SAVE, reloj, DOM ni Math.random; el azar entra como función `azar()` que devuelve [0,1). Datos de los compañeros: js/companeros-datos.js.
 'use strict';
 const PP_ESC = (() => {
@@ -50,5 +51,25 @@ const PP_ESC = (() => {
     }
     return null;
   }
-  return Object.freeze({ DONDE, CONSTANTES, sale, rareza, elige, pista, esEscondido, ids });
+  /* ---------- el duelo por un compañero nuevo (tarea #329, ADR 205) ---------- */
+  // cuánto se despista el rival según la rareza del compañero (de noche, la mitad) y el tablero: 6 filas de 2 a 6 burbujas
+  const DUELO = Object.freeze({ fallo: Object.freeze({ c: 0.8, r: 0.55, e: 0.3, l: 0.08 }), noche: 0.5, minimo: 0.02, filas: 6, largo: Object.freeze([2, 6]) });
+  // la primera acción del nivel (toque, martillo o bomba) en la casilla `i`: 'nada' (no hay burbuja), 'duelo' (es la burbuja y trae uno
+  // nuevo), 'regalo' (es la burbuja y trae un repetido: se da sin más) o 'se-va' (cualquier otra cosa: se pierde la oportunidad)
+  function primera(brillo, i) {
+    if (!brillo) return 'nada';
+    if (i !== brillo.i) return 'se-va';
+    return brillo.nuevo ? 'duelo' : 'regalo';
+  }
+  // el despiste del rival en el duelo por el compañero `id`
+  function falloDuelo(id, momento) {
+    const base = DUELO.fallo[has(C.INFO, id) ? C.INFO[id].rar : 'c'] || DUELO.fallo.c;
+    return momento === 'noche' ? Math.max(DUELO.minimo, base * DUELO.noche) : base;
+  }
+  // el tablero del duelo: cuántas burbujas lleva cada una de las 6 filas
+  function filasDuelo(azar) {
+    const [a, b] = DUELO.largo;
+    return Object.freeze(Array.from({ length: DUELO.filas }, () => a + Math.min(b - a, Math.floor(azar() * (b - a + 1)))));
+  }
+  return Object.freeze({ DONDE, CONSTANTES, DUELO, sale, rareza, elige, pista, esEscondido, ids, primera, falloDuelo, filasDuelo });
 })();

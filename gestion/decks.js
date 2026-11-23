@@ -1,8 +1,8 @@
-// Fans Of · /gestion: la sección de DECKS dentro de su panel (menú de arriba → Decks). Telemetría anónima de las partidas de personas, para compararla con los bots
+// Fans Of · /gestion: la pestaña TELEMETRÍA de Decks (Juegos → Decks → Telemetría). Telemetría anónima de las partidas de personas, para compararla con los bots
 // (herramientas/pruebas/balance/decks/decks-equilibrio.js): partidas, victorias, turnos por reunión y dónde caen, por versión y líder. Datos: gestion_decks(token), servidor/68-decks-telemetria.sql.
-// Une las estadísticas ya consolidadas (más de 7 días) con el resumen vivo de la última semana. Usa lo de gestion/index.html y juegos.js: rpc(), leerToken(), esc(), fmt(), textoError() y $().
+// Une las estadísticas ya consolidadas (más de 7 días) con el resumen vivo de la última semana. Usa lo de gestion/index.html: rpc(), leerToken(), esc(), fmt(), textoError() y $().
 'use strict';
-GESTION_JUEGOS.decks = async cont => {
+const GESTION_DECKS = async cont => {
   let D;
   try { D = await rpc('gestion_decks', { p_token: leerToken() }); }
   catch (e) { cont.innerHTML = `<div class="caja aviso">${/Could not find the function|PGRST202/.test(String(e.message)) ? 'La telemetría de Decks aún no está aplicada en el servidor (servidor/68-decks-telemetria.sql).' : esc(textoError(e))}</div>`; return; }
@@ -35,3 +35,4 @@ GESTION_JUEGOS.decks = async cont => {
   };
   $('d-ver').onchange = pinta; pinta();
 };
+GESTION_NAV.seccion({ id: 'decks-telemetria', pan: 'pan-decks', juego: 'decks', etiqueta: 'Telemetría', orden: 2, cargar: () => { const cont = $('pan-decks'); cont.innerHTML = '<div class="caja ayuda">Cargando…</div>'; GESTION_DECKS(cont).catch(e => { cont.innerHTML = `<div class="caja aviso">${esc(textoError(e))}</div>`; }); } });

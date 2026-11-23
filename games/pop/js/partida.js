@@ -47,17 +47,22 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   if (ppVidas() <= 0) { ppVentanaSinCorazones(); return; }
   const base = ppNivel(g, dif), primera = !dif && g === PP_P.nivel;
   const d = primera || !base.amigos ? base : Object.assign({}, base, { amigos: 0 });   // repitiendo, ya no hay amigos atrapados
+  ppEntraEn(d, ppTituloNivel(d, g, dif));
+}
+// entra en el tablero del nivel `d` (el de un nivel del camino o el del duelo por un compañero escondido, js/escondidos-duelo.js)
+function ppEntraEn(d, titulo) {
+  const dif = d.dif;
   ppCortCancela();
   PP_P.tipo = d.jefe ? 'jefe' : 'sala';
   // en PESADILLA los amigos descansan (Daniel, 31-10-2026: «con los ayudantes es muy fácil»): ni pista de Lola, ni saltos, ni toques extra
   const T = PP_P.T = ppNuevoTablero(d, d.lo ? { pista: 0, equipo: PP_P.equipo } : ppFx(d));
-  T.titulo = ppTituloNivel(d, g, dif);
+  T.titulo = titulo;
   ppEscEntra(T, d);   // flag `companeros`: a veces una burbuja brilla y trae un compañero escondido (js/escondidos-juego.js)
   if (d.nim) ppNimEmpieza(T);   // nivel difícil o jefe: duelo por turnos contra el rival del mundo (js/nimnivel.js)
   else ppMargenAlEmpezar(T, d);
   ppHabEntraNivel(T, d);   // lo que hacen al empezar los compañeros de Niveles y de Pesadilla (flag `companeros`, js/habilidades-*.js)
   PP_AYUDA.modo = null;
-  const manita = !dif && d.mundo === 0 && d.l <= 2;   // en los dos primeros niveles la manita señala qué tocar
+  const manita = !dif && !d.nim && d.mundo === 0 && d.l <= 2;   // en los dos primeros niveles la manita señala qué tocar
   if (manita) { T.mano = true; T.pista = [...T.sol][0]; }
   ppCortinillaSi(T, d, dif, manita);   // antes de pintar la sala: así ni Lola ni las ayudas se adelantan a la cortinilla
   ppIrA('sala');
@@ -110,6 +115,7 @@ function ppToque(i) {
   const T = PP_P.T; if (!T || T.hecho || T.parado) return;
   T.tocado = true;   // desde aquí Lola no habla hasta que acabe el nivel (js/lola.js)
   if (T.nim) { ppNimToque(i); return; }
+  if (ppEscAntesDeToque(T, i)) return;   // la burbuja arcoíris de un compañero nuevo: se abre la ventana de su duelo (js/escondidos-juego.js)
   if (ppHabAntesDeToque(T, i)) return;   // Volteo de Pesadilla y la foto para Marcha atrás (js/habilidades-pesadilla.js)
   if (PP_AYUDA.modo) { ppAplicaAyuda(i); return; }   // martillo o bomba
   const r = ppToca(T, i); if (!r) return;
@@ -152,7 +158,7 @@ function ppPremioGordo(T, r) {
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel
 function ppTrasToque(T, i, r) {
-  ppEscTrasToque(T, r);   // flag `companeros`: reventar la burbuja brillante da su compañero, aunque luego se pierda (js/escondidos-juego.js)
+  ppEscTrasToque(T, r);   // flag `companeros`: la primera acción decide qué pasa con la burbuja arcoíris (js/escondidos-juego.js)
   if (r.castigo) {
     for (let k = 0; k < r.castigo; k++) ppPierdeVida();
     play('ppDano'); ppVibra([30, 40, 30]); ppFxDano();

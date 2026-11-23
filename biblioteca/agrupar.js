@@ -2,6 +2,8 @@
 // Prototipos y Archivo van plegados (y se acuerdan de si los abriste en este navegador). Usa GRUPOS (biblioteca/grupos.js), esc() y t() de la página.
 // Lo que un enlace señala (#prototipos, #archivo…) despliega su grupo.
 // Los puntos que llegan del servidor se guardan para quien los pida: alVotos(fn) llama a fn con ellos (ya, si ya llegaron), lo usa el orden «Más votados» del catálogo.
+// Mientras no llegan, un aviso ocupa el sitio de LOS MÁS PEDIDOS (esperarPedidos); si el servidor no contesta tras los reintentos de votos.js, el aviso
+// ofrece REINTENTAR (sinPedidos). Lleva data-sin-tarjetas: contar() no lo esconde por no tener tarjetas (igual que la fila de favoritos de portada-catalogo.js).
 // Una tarjeta escondida (hidden: /gestion → Juegos la quita de la portada, ADR 203) no cuenta en ningún grupo ni entra en «Los más pedidos»; un grupo sin
 // ninguna tarjeta que se vea se esconde. recolocar(tarjetas) vuelve a poner en su grupo las que /gestion cambió después de colocar (portada-juegos.js).
 'use strict';
@@ -13,17 +15,37 @@ const AGRUPAR = (() => {
   const VISIBLES = 'section.game:not([hidden])';
   const SITIO = { favoritos: 'lista-favoritos', prototipos: 'lista-prototipos', archivo: 'lista-archivo' };
   const sitioDe = s => SITIO[GRUPOS.de(s.dataset.tipo, 'favorito' in s.dataset)];
-  // LOS MÁS PEDIDOS: los 4 prototipos con más votos (ADR 103). Llega cuando contesta el servidor (votos.js); si no contesta, no sale.
+  // LOS MÁS PEDIDOS: los 4 prototipos con más votos (ADR 103). Llega cuando contesta el servidor (votos.js); hasta entonces, el aviso de espera.
   function crearMasPedidos() {
     const sec = document.createElement('div'); sec.className = 'subsec'; sec.id = 'mas-pedidos';
     sec.innerHTML = `<h3 class="grupo ol">${esc(t('LOS MÁS PEDIDOS'))}</h3><p class="note grupo">${esc(t('Todo lo que hay aquí son prototipos: pruebas en las que trabajamos. Lo que votáis decide en cuáles nos centramos.'))}</p><div class="rejilla"></div>`;
-    (document.getElementById('lista-favoritos') || document.querySelector('#biblioteca .note')).after(sec);
+    sitioPedidos().after(sec);
     return sec;
+  }
+  const sitioPedidos = () => document.getElementById('lista-favoritos') || document.querySelector('#biblioteca .note');
+  function avisoPedidos() {
+    let a = document.getElementById('pedidos-espera'); if (a) return a;
+    a = document.createElement('div'); a.className = 'subsec pedidos-espera'; a.id = 'pedidos-espera'; a.dataset.sinTarjetas = '';
+    a.setAttribute('role', 'status'); sitioPedidos().after(a);
+    return a;
+  }
+  function esperarPedidos() {
+    if (votos) return;
+    avisoPedidos().innerHTML = `<h3 class="grupo ol">${esc(t('LOS MÁS PEDIDOS'))}</h3><p class="note grupo">${esc(t('Cargando los votos…'))}</p>`;
+  }
+  // reintentar: lo que vuelve a pedir los puntos (votos.js); el botón pone otra vez el aviso de espera
+  function sinPedidos(reintentar) {
+    if (votos) return;
+    const a = avisoPedidos();
+    a.innerHTML = `<h3 class="grupo ol">${esc(t('LOS MÁS PEDIDOS'))}</h3><p class="note grupo">${esc(t('No hemos podido traer los votos.'))}</p>
+      <button type="button" class="boton pedidos-reintentar ol">${esc(t('REINTENTAR'))}</button>`;
+    a.querySelector('button').addEventListener('click', () => { esperarPedidos(); reintentar(); });
   }
   let votos = null; const oyentes = [];
   const alVotos = fn => { if (votos) fn(votos); else oyentes.push(fn); };
   function destacar(datos) {
     votos = datos; oyentes.splice(0).forEach(fn => fn(datos));
+    const aviso = document.getElementById('pedidos-espera'); if (aviso) aviso.remove();
     ponerPedidos();
   }
   // LOS MÁS PEDIDOS con los votos guardados, sobre los prototipos que se ven
@@ -56,7 +78,7 @@ const AGRUPAR = (() => {
   }
   // cada grupo se ve si tiene alguna tarjeta que se vea; el número del título plegable cuenta solo esas
   function contar() {
-    document.querySelectorAll('#biblioteca .subsec').forEach(g => {
+    document.querySelectorAll('#biblioteca .subsec:not([data-sin-tarjetas])').forEach(g => {
       const n = g.querySelectorAll(VISIBLES).length, c = g.querySelector('summary .cuantos');
       g.hidden = !n; if (c) c.textContent = String(n);
     });
@@ -85,5 +107,5 @@ const AGRUPAR = (() => {
     if (votos) rehacerPedidos();
     contar();
   }
-  return { colocar, destacar, alVotos, recolocar };
+  return { colocar, destacar, alVotos, recolocar, esperarPedidos, sinPedidos };
 })();

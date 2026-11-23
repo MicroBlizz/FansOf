@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.6.4
+  "<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the site retries reading the server notices and settings when the connection hiccups.",
+  "Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café.": "Microblizz told the connection to keep trying and Phony took the chance to ask the same of the coffee machine.",
   "<b>Regalo diario</b>: un calendario de 7 días con plumas y cofres (el día 7, 100 plumas y 2 cofres). Si un día no entras, no pierdes la racha. Puedes doblar el regalo con un anuncio.": "<b>Daily gift</b>: a 7-day calendar with feathers and chests (day 7: 100 feathers and 2 chests). Skip a day and you keep your streak. You can double the gift with an ad.",
   "<b>Misiones del día</b>: tres misiones sencillas que dan plumas y se rehacen cada día.": "<b>Daily quests</b>: three simple quests that give feathers and reset every day.",
   "Microblizz da un regalo por fichar cada día. El séptimo día, el CEO descansa y tú te llevas dos cofres.": "Microblizz gives you a gift for clocking in every day. On the seventh day the CEO rests and you take two chests.",

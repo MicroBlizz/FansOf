@@ -65,6 +65,9 @@ const GESTION_PORTADA = (() => {
     return r;
   }
 
+  // La sección de cada juego en la alfa (la que se edita aquí): { id: 'favoritos' | 'prototipos' | 'archivo' }, para agrupar y filtrar la lista
+  const secciones = (catalogo, filas) => Object.fromEntries(JUEGOS_PORTADA.aplica(catalogo || [], filas, 'alfa').map(a => [a.id, a.seccion]));
+
   const interruptor = (campo, texto, encendido, bloqueado) => `<button type="button" class="pj-int" role="switch" data-interruptor="${campo}" aria-checked="${encendido}"${bloqueado ? ' disabled' : ''}>`
     + `<span>${texto}</span><i aria-hidden="true"></i></button>`;
   const botonSeccion = actual => ([id, t]) => `<button type="button" class="pj-sec${id === actual ? ' activa' : ''}" data-seccion="${id}" aria-pressed="${id === actual}">${t}</button>`;
@@ -110,5 +113,5 @@ const GESTION_PORTADA = (() => {
     + '.pj-botones{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pj-botones button{min-height:48px;border-radius:12px;font-size:16px}'
     + '.pj-confirma{display:grid;gap:8px;border:2px solid var(--clara);border-radius:12px;padding:12px;background:var(--clara-fondo)}.pj-confirma ul{margin:0;padding-left:18px}.pj-confirma p{margin:0}';
 
-  return Object.freeze({ repoDe, estado, filaConCambio, cambiosAWeb, marcas, html, ESTILO });
+  return Object.freeze({ repoDe, estado, filaConCambio, cambiosAWeb, marcas, secciones, html, ESTILO });
 })();

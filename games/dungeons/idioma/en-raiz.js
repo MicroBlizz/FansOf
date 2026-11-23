@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Dungeons en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.8
+  "<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the site retries reading the server notices and settings when the connection hiccups.",
+  "Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café.": "Microblizz told the connection to keep trying and Phony took the chance to ask the same of the coffee machine.",
   "<b>MEJORAS INTERNAS</b>: arreglos por dentro para que las pruebas automáticas puedan revisar Dungeons antes de cada versión. No cambia nada al jugar.": "<b>BEHIND THE SCENES</b>: fixes under the hood so the automated tests can check Dungeons before every version. Nothing changes when you play.",
   "Microblizz mandó a un inspector a revisar la mazmorra. Sigue en la planta 3, buscando la salida.": "Microblizz sent an inspector to check the dungeon. The inspector is still on floor 3, looking for the exit.",
   "<b>BARRA PARA DIESTROS Y ZURDOS</b>: en Opciones eliges la mano, y Explorar, Poder y Esperar quedan bajo tu pulgar.": "<b>BAR FOR RIGHT- AND LEFT-HANDERS</b>: choose your hand in Options, and Explore, Power and Wait sit under your thumb.",

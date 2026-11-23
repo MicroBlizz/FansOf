@@ -1,6 +1,6 @@
 /* Fans Of · LA PORTADA NUEVA · el catálogo con buscador y orden, la fila de NOVEDADES y LOS MÁS PEDIDOS en fila (tarea #277, ADR 188).
    Todo cuelga de html.portada-nueva (flag «portada-nueva», solo en la alfa): sin él, la portada de siempre. Lo pinta biblioteca/portada-catalogo.js.
-   Con el flag, los grupos de siempre (Nuestros favoritos y Prototipos) se esconden: sus juegos salen todos en la rejilla del catálogo. El Archivo sigue igual. */
+   Con el flag, los grupos de siempre (Nuestros favoritos y Prototipos) se esconden: sus juegos salen todos en la rejilla del catálogo y los favoritos, además, en su fila. El Archivo sigue igual. */
 
 html.portada-nueva #lista-favoritos, html.portada-nueva #lista-prototipos { display: none; }
 html.portada-nueva .pn-catalogo [hidden], html.portada-nueva .pn-fila[hidden], html.portada-nueva .pn-hoja[hidden], html.portada-nueva .pn-velo[hidden] { display: none !important; }
@@ -20,17 +20,44 @@ html.portada-nueva .pn-sello-nuevo { background: var(--gold); color: var(--outli
 html.portada-nueva .pn-sello-fav { background: var(--player); color: #fff; }
 html.portada-nueva .pn-puntos { position: absolute; top: 6px; right: 6px; z-index: 1; background: rgba(var(--tinta-fondo), .8); color: #fff; border-radius: 10px;
   padding: 1px 7px; font-weight: 800; font-size: 12px; }
+/* GUARDAR arriba a la izquierda (el sello baja debajo) y SÍ / NO arriba a la derecha, bajo los puntos: el nombre queda libre abajo */
+html.portada-nueva .pn-acciones { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+html.portada-nueva .pn-acciones button { pointer-events: auto; cursor: pointer; border: 2px solid var(--outline); background: rgba(var(--tinta-fondo), .85); color: #fff; }
+html.portada-nueva .pn-marca { position: absolute; top: 6px; left: 6px; display: flex; align-items: center; gap: 2px; height: 34px; min-width: 34px; padding: 0 6px 0 3px; border-radius: 10px;
+  font: 800 12px var(--font-ui); box-sizing: border-box; }
+html.portada-nueva .pn-marca svg { width: 22px; height: 22px; flex: none; }
+html.portada-nueva .pn-mini-img > .pn-sello { top: 46px; }
+html.portada-nueva .pn-votos { position: absolute; top: 32px; right: 6px; display: flex; gap: 4px; }
+html.portada-nueva .pn-mini-img:not(:has(.pn-puntos)) .pn-votos { top: 6px; }
+html.portada-nueva .pn-carril .pn-votos { display: none; }   /* en las filas que se deslizan la tarjeta es estrecha: SÍ / NO solo en la rejilla y en la ficha */
+html.portada-nueva .pn-votos button { width: 32px; height: 30px; padding: 2px 0 0; border-radius: 9px; }
+html.portada-nueva .pn-votos svg { width: 20px; height: 20px; }
+html.portada-nueva .pn-votos button[data-v="1"][aria-pressed="true"] { background: linear-gradient(to bottom, #7be07b, #2f9a3a); }
+html.portada-nueva .pn-votos button[data-v="-1"][aria-pressed="true"] { background: linear-gradient(to bottom, #ff7a86, #c22a3a); }
+html.portada-nueva .pn-votos button.apagado { opacity: .45; }
+html.portada-nueva .pn-acciones button:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
 html.portada-nueva .pn-mini-jugar { display: block; text-align: center; text-decoration: none; background: var(--player); color: #fff; border-top: 3px solid var(--outline);
   padding: 9px 4px 6px; font-size: 17px; }
 
 /* ---------- NOVEDADES y LOS MÁS PEDIDOS: filas que se deslizan de lado ---------- */
 html.portada-nueva .pn-fila { margin-top: 18px; text-align: left; align-self: stretch; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }   /* sin esto, la fila larga estira la página en el móvil */
 html.portada-nueva .pn-fila > h3.grupo { margin: 0 0 8px; text-align: left; }
+html.portada-nueva .pn-fila-favoritos { margin-top: 0; }   /* NUESTROS FAVORITOS es un grupo de la biblioteca (subsec), con su título de siempre, no una fila más */
+html.portada-nueva .pn-fila-favoritos > h3.grupo { text-align: center; }
 html.portada-nueva .pn-carril, html.portada-nueva #mas-pedidos .rejilla { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
   padding: 2px 2px 10px; margin: 0 -2px; scrollbar-width: none; overscroll-behavior-x: contain; }
 html.portada-nueva .pn-carril::-webkit-scrollbar, html.portada-nueva #mas-pedidos .rejilla::-webkit-scrollbar { display: none; }
 html.portada-nueva .pn-carril > .pn-mini { flex: none; width: 138px; scroll-snap-align: start; }
 html.portada-nueva #mas-pedidos .rejilla > .game { flex: none; width: 250px; scroll-snap-align: start; }
+/* en PC caben todos: LOS MÁS PEDIDOS en columnas iguales, sin la cuarta cortada por el borde (Arkioner, 23-11-2026), y los favoritos más grandes */
+@media (min-width: 701px) {
+  html.portada-nueva #mas-pedidos .rejilla { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 14px; overflow: visible; }
+  html.portada-nueva #mas-pedidos .rejilla > .game { width: auto; }
+  html.portada-nueva .pn-fila-favoritos .pn-carril, html.portada-nueva .pn-fila-jugados .pn-carril { justify-content: center; }
+  html.portada-nueva .pn-fila-jugados > h3.grupo { text-align: center; }
+  html.portada-nueva .pn-fila-jugados .pn-carril > .pn-mini { width: 150px; }   /* 6 caben en el ancho de la portada con su borde */
+  html.portada-nueva .pn-fila-favoritos .pn-carril > .pn-mini { width: 200px; }
+}
 
 /* ---------- TODOS LOS JUEGOS: la barra fija y la rejilla ---------- */
 html.portada-nueva .pn-catalogo { margin-top: 26px; }

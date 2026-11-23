@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.4', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.1.3', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.1.2', real: ["<b>SE JUEGA CON EL GIRO BLOQUEADO</b>: con el móvil de pie, toca la pantalla y Beams se pone en pantalla completa y en horizontal él solo, aunque el móvil tenga bloqueado el giro automático. En el iPhone, que no lo permite, el aviso te recuerda quitar el bloqueo de giro."], joke: ["En el espacio no hay arriba ni abajo, pero en tu móvil sí. Ya lo hemos arreglado."] },
   { v: '0.1.1', real: ["<b>MÁS CÓMODO A LA VISTA</b>: los disparos, las explosiones y las naves enemigas brillan menos; la nave se inclina con suavidad; el escudo es una burbuja; mini tutorial al empezar; en móviles alargados llena toda la pantalla; el disparo automático empieza apagado (se enciende en Opciones)."], joke: ["Microblizz se quejó de que sus naves brillaban demasiado para verlas explotar. Phony les ha bajado el brillo para que se vean explotar mejor."] },

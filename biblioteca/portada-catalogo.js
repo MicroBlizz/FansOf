@@ -1,13 +1,23 @@
 // Fans Of · LA PORTADA NUEVA · el catálogo con buscador y orden y la fila de NOVEDADES (tarea #277, ADR 188), tras el flag «portada-nueva» (solo en la alfa).
+//   · JUGADOS ÚLTIMAMENTE: arriba del DESTACADO, hasta 6 juegos que abriste desde la web, para volver rápido (la regla, biblioteca/jugados.js). Cada enlace a un
+//     juego que se toca en la portada se apunta en este navegador (fansof-jugados), con el flag o sin él, para que la fila ya tenga algo al abrirlo.
+//   · NUESTROS FAVORITOS: arriba de la biblioteca, una fila con los favoritos (los que marca /gestion → Juegos, ADR 203) y su JUGAR.
 //   · NOVEDADES: bajo el carrusel DESTACADO, una fila que se desliza de lado con los juegos de versión más reciente (novedades/fechas.json).
-//   · TODOS LOS JUEGOS: una sola rejilla con todo lo vivo (favoritos y prototipos juntos; el Archivo sigue aparte y plegado), cada juego con su captura,
+//   · TODOS LOS JUEGOS: una sola rejilla con todo lo vivo (favoritos, que repiten, y prototipos juntos; el Archivo sigue aparte y plegado), cada juego con su captura,
 //     y encima una barra fija con el buscador, el botón ORDENAR (abre una hoja desde abajo) y las etiquetas para filtrar. El orden se recuerda en el navegador.
 // No mueve las tarjetas de siempre: pinta las suyas aparte (clase «pn») y portada-nueva.css esconde los grupos viejos, así que cerrar el flag devuelve la portada
 // de siempre sin recargar. Buscar, filtrar y ordenar es la regla pura CATALOGO (biblioteca/catalogo.js). Usa de la página: TARJETAS, datosDe() y abrirFicha()
 // (tienda.js), AGRUPAR.alVotos() (agrupar.js), ESTILO_NUEVO, NUCLEO.alCambiarFlags, esc() y t(). Las fechas llegan con el aviso «portada:destacado» de tienda.js.
 'use strict';
 (() => {
-  const GUARDADO = 'fansof-portada-orden', MAX_NOVEDADES = 8;
+  const GUARDADO = 'fansof-portada-orden', MAX_NOVEDADES = 8, MAX_JUGADOS = 6, GUARDADO_JUGADOS = 'fansof-jugados';
+  const leerJugados = () => { try { return JSON.parse(localStorage.getItem(GUARDADO_JUGADOS) || '[]'); } catch (e) { return []; } };
+  const guardarJugados = l => { try { localStorage.setItem(GUARDADO_JUGADOS, JSON.stringify(l)); } catch (e) { /* sin almacenamiento: la fila no sale */ } };
+  // tocar cualquier enlace a un juego (JUGAR, la ficha, el DESTACADO…) lo apunta como jugado
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]'), id = a ? JUGADOS.idDeEnlace(a.getAttribute('href')) : '';
+    if (id) guardarJugados(JUGADOS.anotar(leerJugados(), id, Date.now()));
+  }, true);
   const NOMBRES = { nuevos: 'Más nuevos', nombre: 'Nombre A-Z', votados: 'Más votados', favoritos: 'Favoritos primero' };
   const EXPLICA = { nuevos: 'La última versión publicada, arriba', nombre: 'Por orden alfabético', votados: 'Lo que más pide la gente', favoritos: 'Los que elegimos nosotros y luego el resto' };
   const leerModo = () => { try { return CATALOGO.modoValido(localStorage.getItem(GUARDADO)); } catch (e) { return 'nuevos'; } };
@@ -32,9 +42,25 @@
     if (!p) return '';
     return `<span class="pn-puntos">${esc(p === 1 ? t('1 punto') : t('{p} puntos', { p }))}</span>`;
   }
-  // una tarjeta pequeña: la captura de fondo, el sello, el nombre y su primera etiqueta; JUGAR abajo. Tocarla (fuera de JUGAR) abre la ficha.
+  // GUARDAR (el marcapáginas) y SÍ / NO sobre la captura, como en las tarjetas de siempre: estado, iconos y acciones de VOTOS_WEB (votos.js).
+  // Los votos salen cuando el servidor contesta (estado().listo); el marcapáginas, siempre (sin servidor se guarda en este navegador).
+  function acciones(tarjeta) {
+    if (typeof VOTOS_WEB === 'undefined') return '';
+    const e = VOTOS_WEB.estado(tarjeta), I = VOTOS_WEB.icono;
+    const marca = `<button type="button" class="pn-marca${e.guardado ? ' on' : ''}" data-accion="guardar" aria-pressed="${e.guardado}"
+      aria-label="${esc(t(e.guardado ? 'Quitar de guardados' : 'Guardar'))}">${I.marca(e.guardado)}${e.cuantos ? `<span>${e.cuantos}</span>` : ''}</button>`;
+    if (!e.listo) return marca;
+    const voto = v => `<button type="button" data-accion="votar" data-v="${v}" aria-pressed="${e.voto === v}"${e.voto && e.voto !== v ? ' class="apagado"' : ''}
+      aria-label="${esc(t(v > 0 ? e.si : e.no))}">${v > 0 ? I.arriba : I.abajo}</button>`;
+    return `${marca}<span class="pn-votos">${voto(1)}${voto(-1)}</span>`;
+  }
+  // tras guardar o votar (aviso 'votos:cambio'), solo se repintan los botones: así no se pierde el foco ni se mueve nada
+  function repintarAcciones() {
+    document.querySelectorAll('.pn-mini').forEach(m => { const a = m.querySelector('.pn-acciones'); if (a) a.innerHTML = acciones(m.dataset.tarjeta); });
+  }
+  // una tarjeta pequeña: la captura de fondo, el sello, el nombre y su primera etiqueta; JUGAR abajo. Tocarla (fuera de JUGAR y los botones) abre la ficha.
   const mini = (j, conJugar = true) => `<article class="pn-mini" data-tarjeta="${esc(j.tarjeta)}" tabindex="0" role="button" aria-label="${esc(j.nombre)}" style="--wc:${esc(j.color)}">
-    <div class="pn-mini-img"${j.captura ? ` style="background-image:url('${esc(j.captura)}')"` : ''}>${sello(j)}${puntos(j)}
+    <div class="pn-mini-img"${j.captura ? ` style="background-image:url('${esc(j.captura)}')"` : ''}>${sello(j)}${puntos(j)}<span class="pn-acciones">${acciones(j.tarjeta)}</span>
       <span class="pn-mini-n ol">${esc(j.nombre)}</span><span class="pn-mini-e">${esc(t(j.etiquetas[0] || ''))}</span></div>
     ${conJugar ? `<a class="pn-mini-jugar ol" href="${esc(j.jugar)}">${esc(t('JUGAR'))}</a>` : ''}</article>`;
 
@@ -54,7 +80,21 @@
     caja.innerHTML = lista.map(j => mini(j, false)).join('');
     caja.closest('.pn-fila').hidden = !lista.length;
   }
-  const pintar = () => { pintarRejilla(); pintarNovedades(); };
+  // NUESTROS FAVORITOS: la fila de arriba de la biblioteca, con JUGAR (Arkioner, 23-11-2026: la rejilla sola los perdía de vista)
+  function pintarFavoritos() {
+    const caja = document.getElementById('pn-favoritos'); if (!caja) return;
+    const lista = CATALOGO.favoritos(juegos);
+    caja.innerHTML = lista.map(j => mini(j)).join('');
+    caja.closest('.pn-fila').hidden = !lista.length;
+  }
+  // JUGADOS ÚLTIMAMENTE: los 6 más recientes (en PC caben en una fila, centrados; Arkioner, 23-11-2026) que siguen en la portada, con JUGAR (sustituye a «Seguir con tu favorito»: el favorito ya está en el perfil)
+  function pintarJugados() {
+    const caja = document.getElementById('pn-jugados'); if (!caja) return;
+    const lista = JUGADOS.ultimos(leerJugados(), juegos.map(j => j.id), MAX_JUGADOS).map(id => juegos.find(j => j.id === id));
+    caja.innerHTML = lista.map(j => mini(j)).join('');
+    caja.closest('.pn-fila').hidden = !lista.length;
+  }
+  const pintar = () => { pintarJugados(); pintarFavoritos(); pintarRejilla(); pintarNovedades(); };
 
   function pintarEtiquetas() {
     const todas = [''].concat(CATALOGO.etiquetasFrecuentes(juegos));
@@ -87,10 +127,12 @@
   }
   function elegirModo(m) { estado.modo = CATALOGO.modoValido(m); guardarModo(estado.modo); abrirHoja(false); pintarRejilla(); }
   function elegirEtiqueta(x) { estado.etiqueta = x; pintarEtiquetas(); pintarRejilla(); }
-  // tocar una tarjeta pequeña (fuera de JUGAR) abre la ficha del juego, como las de siempre
+  // tocar una tarjeta pequeña abre la ficha del juego, como las de siempre; JUGAR lleva al juego y los botones guardan o votan
   function alTocarMini(e) {
-    const m = e.target.closest('.pn-mini');
-    if (m && !e.target.closest('a')) abrirFicha(m.dataset.tarjeta);
+    const m = e.target.closest('.pn-mini'); if (!m || e.target.closest('a')) return;
+    const b = e.target.closest('button[data-accion]');
+    if (!b) { abrirFicha(m.dataset.tarjeta); return; }
+    if (b.dataset.accion === 'guardar') VOTOS_WEB.guardar(m.dataset.tarjeta); else VOTOS_WEB.votar(m.dataset.tarjeta, Number(b.dataset.v));
   }
   function alTeclaMini(e) {
     const m = e.target.closest('.pn-mini');
@@ -103,7 +145,7 @@
     document.getElementById('pn-hoja').addEventListener('click', e => { const b = e.target.closest('.pn-op'); if (b) elegirModo(b.dataset.modo); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('pn-hoja').hidden) abrirHoja(false); });
     document.getElementById('pn-etiquetas').addEventListener('click', e => { const b = e.target.closest('.pn-etiqueta'); if (b) elegirEtiqueta(b.dataset.etiqueta); });
-    for (const id of ['catalogo', 'pn-fila-novedades']) {
+    for (const id of ['catalogo', 'pn-fila-novedades', 'pn-fila-favoritos', 'pn-fila-jugados']) {
       document.getElementById(id).addEventListener('click', alTocarMini);
       document.getElementById(id).addEventListener('keydown', alTeclaMini);
     }
@@ -116,8 +158,14 @@
 
   function montar() {
     juegos = leerJuegos();
+    document.getElementById('destacado').insertAdjacentHTML('afterbegin', `<div class="pn pn-fila pn-fila-jugados" id="pn-fila-jugados" hidden>
+      <h3 class="grupo ol">${esc(t('JUGADOS ÚLTIMAMENTE'))}</h3><div class="pn-carril" id="pn-jugados"></div></div>`);
     document.getElementById('dest-puntos').insertAdjacentHTML('afterend', `<div class="pn pn-fila" id="pn-fila-novedades" hidden>
       <h3 class="grupo ol">${esc(t('NOVEDADES'))}</h3><div class="pn-carril" id="pn-novedades"></div></div>`);
+    // antes del grupo viejo de favoritos (escondido con el flag), así LOS MÁS PEDIDOS, que agrupar.js pone después de él, quedan debajo
+    const nota = document.querySelector('#biblioteca .note');
+    (nota || document.querySelector('#biblioteca > h2')).insertAdjacentHTML('afterend', `<div class="pn pn-fila pn-fila-favoritos subsec" id="pn-fila-favoritos" data-sin-tarjetas hidden>
+      <h3 class="grupo ol">${esc(t('NUESTROS FAVORITOS'))}</h3><div class="pn-carril" id="pn-favoritos"></div></div>`);
     const archivo = document.getElementById('lista-archivo');
     if (archivo) archivo.insertAdjacentHTML('beforebegin', catalogoHtml()); else document.getElementById('biblioteca').insertAdjacentHTML('beforeend', catalogoHtml());
     document.body.insertAdjacentHTML('beforeend', hojaHtml());
@@ -134,6 +182,8 @@
   document.addEventListener('portada:destacado', e => { estado.fechas = (e.detail && e.detail.fechas) || {}; if (montado) pintar(); });
   AGRUPAR.alVotos(v => { estado.votos = v || {}; if (montado) pintarRejilla(); });
   // /gestion → Juegos cambió alguna tarjeta con la portada ya pintada (portada-juegos.js): se vuelven a leer
+  addEventListener('pageshow', () => { if (montado) pintarJugados(); });   // al volver de un juego con «atrás», la página puede venir de la caché tal cual
+  document.addEventListener('votos:cambio', () => { if (montado) repintarAcciones(); });
   document.addEventListener('portada:recolocada', () => { if (montado) { juegos = leerJuegos(); pintar(); } });
   aplicar();
   NUCLEO.alCambiarFlags(aplicar);

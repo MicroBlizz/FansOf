@@ -39,6 +39,9 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   d = fila();
   boton(d, (SAVE.devCopiaCamino ? '● ' : '') + 'Ponerme en el jefe del Jardín', ppDevAlJefe);
   boton(d, 'Devolver mi partida', ppDevDevuelve);
+  d = fila();
+  boton(d, 'Burbuja arcoíris: compañero nuevo', () => ppDevBurbuja(true));   // tarea #329: para probar el duelo por un escondido
+  boton(d, 'Burbuja arcoíris: repetido', () => ppDevBurbuja(false));
 } }, { titulo: 'Fans of Pop: fecha de la Feria del finde', pinta(caja) {
   // finge el día moviendo solo la hora que lee la pantalla (ppFeriaAhora en js/feria-pantalla.js); el dominio no se toca
   const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#cdb9ea' });
@@ -53,6 +56,14 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton('Borrar la feria', () => { SAVE.feria = null; });
   caja.append(estado, d); pinta();
 } }];
+// la burbuja arcoíris sale en el próximo nivel normal con un compañero escondido que falta (o con un repetido); js/escondidos-juego.js
+function ppDevBurbuja(nuevo) {
+  if (!ppCompanerosActivo()) return 'El flag companeros está cerrado';
+  const tiene = ppCole().tiene, id = nuevo ? PP_ESC.ids().find(x => !(x in tiene)) : Object.keys(tiene)[0];
+  if (!id) return 'Ya tienes todos los escondidos';
+  ppEscGuardado().pend = { sale: true, az: [0, 0.5, 0.5], dev: id };
+  return `En el próximo nivel normal (no tutorial ni duelo) sale ${id}`;
+}
 // pone la hora de la feria en el día `dias` tras el viernes de este finde (o del siguiente, de lunes a jueves) a las `hora`:00
 function ppFeriaDevDia(dias, hora) {
   const hoy = new Date(), desdeViernes = (hoy.getDay() + 2) % 7, alViernes = desdeViernes < 3 ? -desdeViernes : 7 - desdeViernes;

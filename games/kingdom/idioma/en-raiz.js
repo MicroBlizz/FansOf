@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Kingdom en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.1.2
+  "<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the site retries reading the server notices and settings when the connection hiccups.",
+  "Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café.": "Microblizz told the connection to keep trying and Phony took the chance to ask the same of the coffee machine.",
   // 0.1.1
   "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the internal systems of the website and the front page.",
   "Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada.": "Microblizz moved the furniture around on the front page and Phony swears he touched nothing.",

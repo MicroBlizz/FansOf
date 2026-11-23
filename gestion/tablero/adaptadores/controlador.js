@@ -129,6 +129,13 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, juegosA
     conectaArrastre();
     cargaJuegos();
   }
+  // Desde fuera (el contador de tareas de /gestion → Juegos): deja el tablero filtrado por ese juego; si ya está cargado, lo reparte y pinta el filtro
+  function filtraJuego(id) {
+    filtro.juego = id || '';
+    if (!tareas.length) return;
+    el(hueco.filtros).innerHTML = TABLERO.vista.filtros(juegos, filtro, esc);
+    refiltra('juego', filtro.juego);
+  }
   // filtrar (juego, responsable o lo buscado) reparte otra vez lo ya cargado, sin ir al servidor
   function refiltra(clave, valor) {
     filtro[clave] = valor;
@@ -272,5 +279,5 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, juegosA
     lista.ondragleave = ev => { const c = col(ev); if (c && !c.contains(ev.relatedTarget)) c.classList.remove('encima'); };
     lista.ondrop = ev => { const c = col(ev); if (!c) return; ev.preventDefault(); c.classList.remove('encima'); mueve(ev.dataTransfer.getData('text/plain'), c.dataset.columna); };
   }
-  return { cargar, conecta, cierraCapa };
+  return { cargar, conecta, cierraCapa, filtraJuego };
 };

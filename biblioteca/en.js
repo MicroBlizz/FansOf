@@ -4,6 +4,9 @@ IDIOMA.add({
   "LOS MÁS PEDIDOS": "MOST WANTED",
   "Todo lo que hay aquí son prototipos: pruebas en las que trabajamos. Lo que votáis decide en cuáles nos centramos.": "Everything here is a prototype: tests we're working on. What you vote for decides which ones we focus on.",
   "Nº {n}": "No. {n}",
+  "Cargando los votos…": "Loading the votes…",
+  "No hemos podido traer los votos.": "We couldn't load the votes.",
+  "REINTENTAR": "TRY AGAIN",
   "1 punto": "1 point",
   "{p} puntos": "{p} points",
   "NUESTROS FAVORITOS": "OUR FAVOURITES",
@@ -242,5 +245,7 @@ IDIOMA.add({
   "Los que elegimos nosotros y luego el resto": "Our picks first, then the rest",
   "Se acuerda de lo que eliges en este navegador.": "Your choice is remembered in this browser.",
   // la franja de tu juego favorito en la portada nueva (biblioteca/portada-nueva.js, tarea #299)
-  "Seguir con {j}": "Continue with {j}",
+  "JUGADOS ÚLTIMAMENTE": "RECENTLY PLAYED",
+  "1 nueva": "1 new",
+  "{n} nuevas": "{n} new",
 });

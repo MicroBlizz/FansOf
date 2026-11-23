@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.3.2', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.3.1', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.3.0', real: ['<b>CARAS, SONIDOS Y PARKING DE YOSHI</b>: la barra de turnos y Lola estrenan caras ilustradas, las vidas son zanahorias, los guardias sueltan un bocadillo de cómic con «!» o «?», el suelo y las paredes del parking tienen textura de hormigón con su banda de peligro, y todos los efectos y la música de sigilo son grabaciones nuevas.'],
     joke: ['Microblizz ha cambiado los pitidos del sistema de seguridad por «sonido de ambiente». Los Becarios siguen sin saber si es una alarma o la cafetera.'] },

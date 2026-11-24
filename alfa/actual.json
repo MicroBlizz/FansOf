@@ -1,8 +1,8 @@
 {
- "build": 1470,
- "hash": "d76a168",
- "fecha": "2026-11-24T17:57:20Z",
- "mensaje": "Recursos de Yoshi con tarea, run y paso en el nombre, y filtro por tarea en /gestion (#334)",
+ "build": 1471,
+ "hash": "e6bfb0b",
+ "fecha": "2026-11-24T18:07:45Z",
+ "mensaje": "Pop: mide los fps de cada nivel, duelo y memoria con el medidor de core, con datos extra para leer las bajadas (tarea #339)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

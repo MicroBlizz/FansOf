@@ -48,7 +48,7 @@ function ppFotograma(ahora) {
   requestAnimationFrame(ppFotograma);
   const real = (ahora - PP_ULT) / 1000 || 0.016, dt = Math.min(0.05, real); PP_ULT = ahora;   // la cortinilla va por reloj (`real`, tarea #181)
   const t = ahora / 1000, c = PP_CTX;
-  ppMusicaBucle(); ppAdnMira();   // la fila de pegatinas del duelo, solo cuando toca (js/duelo-adornos.js)
+  ppMusicaBucle(); ppAdnMira(); PP_RENDIMIENTO.mira(ahora);   // la fila de pegatinas del duelo (js/duelo-adornos.js) y los fps de cada nivel, duelo o memoria (js/rendimiento-partida.js)
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppVictoriaReloj(PP_P.T, dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)

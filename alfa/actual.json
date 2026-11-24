@@ -1,8 +1,8 @@
 {
- "build": 1462,
- "hash": "4af088f",
- "fecha": "2026-11-24T09:12:16Z",
- "mensaje": "Island: visor para comparar los tres Brotitos lado a lado (lonchas, 3D desde el render y desde el vinilo)",
+ "build": 1463,
+ "hash": "ab75efd",
+ "fecha": "2026-11-24T09:42:42Z",
+ "mensaje": "Island: el visor de comparar mueve también las lonchas con todos los botones y la cámara, y explica cada Brotito (técnica, puntos fuertes y flojos, costes)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

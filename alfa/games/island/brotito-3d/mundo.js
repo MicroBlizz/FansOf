@@ -59,7 +59,5 @@
   }
   // de una x de la pantalla (0 a 1 del ancho del lienzo) a la x del mundo
   const xMundo = f => CX + f * ANCHO;
-  // dónde cae el Brotito en el lienzo de lonchas (los pies), para recortarlo de cerca
-  const enLienzo = e => ({ x: Math.round(e.x - CX), y: sy(CARRIL, e.z) });
-  IS.Prototipo3D = Object.freeze({ crea, pinta, xMundo, enLienzo, ANCHO, ALTO, CX, TIERRA, COLS });
+  IS.Prototipo3D = Object.freeze({ crea, pinta, xMundo, ANCHO, ALTO, CX, TIERRA, COLS });
 }

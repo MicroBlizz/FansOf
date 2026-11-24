@@ -90,11 +90,13 @@ const BROTO = (() => {
   return { modelo, POSTURAS, W, D, H };
 })();
 const EB = 0.85, B_W = Math.round(BROTO.W * EB), B_D = Math.round(BROTO.D * EB), B_H = Math.round(BROTO.H * EB);
-const PILAS_B = {};
-for (const n in BROTO.POSTURAS) {
-  const m = BROTO.modelo(BROTO.POSTURAS[n]);
-  TAREAS.push(() => { PILAS_B[n] = pila(B_W, B_D, B_H, (z, x, y) => m((z + 0.5) / EB - 0.5, (x + 0.5) / EB - 0.5, (y + 0.5) / EB - 0.5)); });
+// la pila de lonchas de Brotito para cualquier postura { sx, sz, a } (el juego usa solo las seis de POSTURAS)
+function pilaBrotito(pose) {
+  const m = BROTO.modelo(pose);
+  return pila(B_W, B_D, B_H, (z, x, y) => m((z + 0.5) / EB - 0.5, (x + 0.5) / EB - 0.5, (y + 0.5) / EB - 0.5));
 }
+const PILAS_B = {};
+for (const n in BROTO.POSTURAS) TAREAS.push(() => { PILAS_B[n] = pilaBrotito(BROTO.POSTURAS[n]); });
 
 // ================= Zanahoria y bandera =================
 const PILA_ZANA = pila(16, 16, 24, (z, x, y) => {
@@ -190,5 +192,5 @@ const PILA_GOTA = pila(10, 10, 8, (z, x, y) => {
   if (!dentro(dx, dy, dz, 4.6, 4.6, 3.6)) return null;
   return (dz > 1.2 && dx < -0.5) ? '#ffffff' : (dz > -0.5 ? '#9fdcf5' : '#3f9fdc');
 });
-Object.assign(IS.arte, { B_H, EB, BROTO_POSTURAS: BROTO.POSTURAS, PILAS_B, PILA_ZANA, PILA_BANDERA, PILAS_PEZ, PILA_GOTA });
+Object.assign(IS.arte, { B_H, EB, BROTO_POSTURAS: BROTO.POSTURAS, PILAS_B, pilaBrotito, PILA_ZANA, PILA_BANDERA, PILAS_PEZ, PILA_GOTA });
 }

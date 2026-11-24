@@ -16,12 +16,39 @@
 </header>
 <main>
   <div class="fila">
-    <section class="panel"><h2>Lonchas (el juego)</h2><canvas id="lonchas" aria-label="Brotito en lonchas"></canvas></section>
-    <section class="panel"><h2>3D desde el render</h2><canvas id="render" aria-label="Brotito 3D desde el render"></canvas></section>
-    <section class="panel"><h2>3D desde el vinilo</h2><canvas id="vinilo" aria-label="Brotito 3D desde la figura de vinilo"></canvas></section>
+    <section class="panel">
+    <h2>Lonchas (el juego)</h2><canvas id="lonchas" aria-label="Brotito en lonchas"></canvas>
+    <dl class="ficha">
+      <dt>Técnica</dt><dd>Sprite stacking: el Brotito se pinta por código como 32 lonchas horizontales (una función da el color de cada punto) y se apilan giradas y aplastadas en un lienzo 2D, con contorno de 1 píxel.</dd>
+      <dt>Puntos fuertes</dt><dd>Es pixel art, igual que el resto de la isla. No pesa nada en la descarga, apenas gasta por fotograma y va en cualquier móvil, sin WebGL.</dd>
+      <dt>Puntos flojos</dt><dd>Seis posturas fijas que saltan de una a otra (aquí el suavizado rehace la pila en cada paso, cosa que el juego no hace). La cámara del juego es fija: al inclinarla se notan las capas. El detalle se queda en unos 32 píxeles.</dd>
+      <dt>Coste de desarrollo</dt><dd>Horas de código por personaje (se dibuja con funciones). Una postura nueva es una fila de cifras y otra pila.</dd>
+      <dt>Coste de ejecución</dt><dd>0 KB de descarga. Al cargar, unos 10 ms por postura (son seis) y cada ángulo se guarda la primera vez que sale. Por fotograma, una imagen ya hecha.</dd>
+    </dl>
+  </section>
+    <section class="panel">
+    <h2>3D desde el render</h2><canvas id="render" aria-label="Brotito 3D desde el render"></canvas>
+    <dl class="ficha">
+      <dt>Técnica</dt><dd>El Brotito en vóxeles, pintado en 3/4, pasa por Trellis2 en Yoshi, que hace una malla con textura (30.000 caras). Un script de Blender lo endereza, le pone las medidas del dibujo y seis huesos con los pesos sacados de las piezas del dibujo. three.js lo mueve con las mismas cifras de postura que el juego.</dd>
+      <dt>Puntos fuertes</dt><dd>Es el que más se parece al juego en forma y colores. Tiene luz y sombra de verdad, cualquier ángulo y posturas suaves sin coste.</dd>
+      <dt>Puntos flojos</dt><dd>La textura lleva los escalones del render de vóxeles. Es una sola pieza: al levantar los brazos se ve la piel de debajo estirada y oscura. Island es un lienzo 2D, así que hoy no encaja tal cual.</dd>
+      <dt>Coste de desarrollo</dt><dd>14 min de GPU de Yoshi (unos 5 en caliente) y 2 s de CPU para el esqueleto. Las animaciones no cuestan nada, porque salen de las cifras del juego. 0 € en total, y otro personaje dibujado por código cuesta lo mismo.</dd>
+      <dt>Coste de ejecución</dt><dd>1,4 MB de modelo más 620 KB de three.js. Por fotograma, WebGL con huesos y sombras: va bien en PC y falta medirlo en el móvil (si va justo, se baja a unas 8.000 caras).</dd>
+    </dl>
+  </section>
+    <section class="panel">
+    <h2>3D desde el vinilo</h2><canvas id="vinilo" aria-label="Brotito 3D desde la figura de vinilo"></canvas>
+    <dl class="ficha">
+      <dt>Técnica</dt><dd>Lo mismo que el del render, pero antes Flux2 Klein redibuja el render como una figura de vinilo y Trellis2 hace el modelo a partir de esa imagen. Lleva el mismo esqueleto y las mismas posturas.</dd>
+      <dt>Puntos fuertes</dt><dd>La superficie es lisa, sin escalones, y tiene el brillo de un juguete.</dd>
+      <dt>Puntos flojos</dt><dd>Los colores son más pálidos que en el juego y los ojos cambian, porque Flux reinterpreta el dibujo y se aleja del original. Tiene el mismo problema con los brazos.</dd>
+      <dt>Coste de desarrollo</dt><dd>Lo mismo que el del render más 1 min de GPU para la figura. 0 €.</dd>
+      <dt>Coste de ejecución</dt><dd>1,3 MB de modelo más los 620 KB de three.js (compartidos). Por fotograma, lo mismo que el otro 3D.</dd>
+    </dl>
+  </section>
   </div>
   <p id="aviso" class="aviso"></p>
-  <p class="ayuda">Postura: <b id="estado">reposo</b>. Arrastra un 3D para girar la cámara: los dos giran a la vez.</p>
+  <p class="ayuda">Postura: <b id="estado">reposo</b>. Arrastra cualquiera de los tres para girar la cámara: giran los tres a la vez. Todos los botones valen para los tres.</p>
   <div class="botones">
     <button id="libre" data-postura="" data-grupo="postura" class="activo">En marcha</button>
     <button data-postura="reposo" data-grupo="postura">Reposo</button>
@@ -49,6 +76,7 @@
 <script src="../js/adaptadores/arte-personajes.js"></script>
 <script src="huesos.js"></script>
 <script src="mundo.js"></script>
+<script src="vista-lonchas.js"></script>
 <script type="module" src="comparar.js"></script>
 </body>
 </html>

@@ -82,5 +82,5 @@ function quieta(p, borde) {
   return { c, m, al: p.al, fo: p.fo };
 }
 IS.TAREAS = [];
-IS.Lonchas = Object.freeze({ K, ANG, BORDE, dentro, mezcla, dist2Seg, plano: pinta, pila, girada, quieta });   // plano(w, h, fn): dibujo plano (fondos), fn(x, y)
+IS.Lonchas = Object.freeze({ K, ANG, BORDE, dentro, mezcla, dist2Seg, plano: pinta, pila, girada, quieta, contorno });   // plano(w, h, fn): dibujo plano (fondos), fn(x, y)
 }

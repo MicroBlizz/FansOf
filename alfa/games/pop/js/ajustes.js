@@ -99,6 +99,7 @@ const PP_CFG = {
     toques3:  { perlas: 6, nombre: '+3 toques', texto: 'Tres toques más en este nivel.' },
     deshacer: { perlas: 5, nombre: 'Deshacer', texto: 'En un duelo, vuelve atrás tu última jugada (y la del rival).', nim: true },
     pista:    { perlas: 4, nombre: 'Pista de Lola', texto: 'En un duelo, Lola te marca la jugada ganadora.', nim: true },
+    red:      { perlas: 9, nombre: 'Red', texto: 'Captura al momento un compañero repetido de la burbuja arcoíris, sin duelo.', esc: true },   // tarea #329: solo en la ventana del repetido
   },
   ayudasTres: 0.8,           // el lote de 3 de la misma ayuda, al 80 %
   // CORAZONES INFINITOS por tiempo (con perlas; también vienen en las ofertas y el pase)

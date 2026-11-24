@@ -83,13 +83,15 @@ const PP_FERIA = Object.freeze((() => {
     if (estado.id === v.id) return Object.freeze({ estado: l.estado, entregar: Object.freeze(l.premios) });
     return Object.freeze({ estado: fuera.estado, entregar: Object.freeze(l.premios) });
   }
-  function abreCofre(cual, azar) {
+  // `extra`: ayudas que también pueden salir (la red, solo con los compañeros abiertos: tarea #329)
+  function abreCofre(cual, azar, extra = []) {
+    const lista = AYUDAS_COFRE.concat(extra);
     const c = Object.prototype.hasOwnProperty.call(COFRES, cual) ? COFRES[cual] : null;
     if (!c) return error('no_existe');
     const [min, max] = c.monedas;
     const premio = { monedas: min + Math.floor(azar() * (max - min + 1)), ayudas: {} };
     for (let i = 0; i < c.ayudas; i++) {
-      const a = AYUDAS_COFRE[Math.floor(azar() * AYUDAS_COFRE.length)];
+      const a = lista[Math.floor(azar() * lista.length)];
       premio.ayudas[a] = (premio.ayudas[a] || 0) + 1;
     }
     if (c.infinitas > 0) premio.infinitas = c.infinitas;

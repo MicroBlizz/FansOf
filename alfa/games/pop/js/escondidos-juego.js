@@ -54,7 +54,8 @@ function ppEscEntra(T, d) {
   const comp = ppEscDev(pend) || PP_ESC.elige(ppCole().tiene, d.mundo, ppEscMomento(d), az);
   const i = comp ? ppEscSitio(T, az) : -1;
   if (i < 0) return;
-  T.esc.brillo = { i, id: comp.id, nuevo: comp.nuevo, ganado: false, salto: null, ido: null };
+  const lleno = !comp.nuevo && PP_ESC.progreso(ppCole().tiene[comp.id]).lleno;   // ya al máximo: otro repetido solo da monedas
+  T.esc.brillo = { i, id: comp.id, nuevo: comp.nuevo, lleno, ganado: false, salto: null, ido: null };
   if (!pend.vista) { pend.vista = true; ppEscCuenta('vistas', comp.id); ppGuarda(); }   // una vez por tirada, aunque se salga y se vuelva a entrar
   ppTutorial('arcoiris');   // Lola, la primera vez: hay que tocarla la primera
 }
@@ -74,15 +75,16 @@ function ppEscGasta(T) { T.esc.gastada = true; ppEscGuardado().pend = null; ppGu
 
 /* ---------- al reventar ---------- */
 // antes de un toque tuyo (ppToque, js/partida.js; también el que coloca el martillo o la bomba): apunta dónde ha sido la primera
-// acción y, si es la burbuja de un compañero nuevo, abre la ventana del duelo y el toque no llega al tablero (devuelve true)
+// acción y, si es la burbuja de un compañero nuevo o de un repetido que aún sirve, abre su ventana y el toque no llega al tablero (true)
 function ppEscAntesDeToque(T, i) {
   const e = T.esc; if (!e || e.gastada) return false;
   e.toque = i;
-  if (PP_ESC.primera(e.brillo, i) !== 'duelo') return false;
+  const que = PP_ESC.primera(e.brillo, i);
+  if (que !== 'duelo' && que !== 'repetido') return false;
   ppEscVentanaLucha(T, e.brillo);   // js/escondidos-duelo.js
   return true;
 }
-// tras la primera acción del nivel (ppTrasToque, js/partida.js): gasta la tirada; si era la burbuja (con un repetido), te lo da;
+// tras la primera acción del nivel (ppTrasToque, js/partida.js): gasta la tirada; si era la burbuja (con uno ya al máximo), te lo da;
 // si era cualquier otra cosa, la burbuja se escapa. Lo que pase después ya no cuenta
 function ppEscTrasToque(T, r) {
   const e = T.esc; if (!e || e.gastada) return;
@@ -96,7 +98,8 @@ function ppEscSeVa(b) {
   b.ido = { t0: null };
   ppFlota(tr('¡La burbuja arcoíris se ha escapado!'), 270, 240, '#ff6ec7'); play('ppEscapa');
 }
-// el compañero sale de un salto con chispas pastel y se gana con su aviso («¡Nuevo compañero: X!» o «+1 X repetido»)
+// el compañero sale de un salto con chispas pastel y se gana con su aviso («¡Nuevo compañero: X!» o «+1 X repetido»). También lo
+// captura así la red (js/escondidos-duelo.js)
 function ppEscRevienta(T, b) {
   b.ganado = true;
   const [x, y] = ppCentro(ppGeom(T.n), b.i);

@@ -23,7 +23,7 @@ function ppFeriaAlDia() {
 }
 // da un premio de un tramo (un cofre se abre aquí, con azar: solo se gana jugando, ADR 004) y devuelve lo que se dio
 function ppFeriaDa(premio) {
-  const base = premio.cofre ? PP_FERIA.abreCofre(premio.cofre, Math.random).premio : premio, id = ppFeriaCompanero(premio);
+  const base = premio.cofre ? PP_FERIA.abreCofre(premio.cofre, Math.random, ppCompanerosActivo() ? ['red'] : []).premio : premio, id = ppFeriaCompanero(premio);
   const p = id ? { ...base, companero: id } : base;
   ppDaPremio(p);
   return p;

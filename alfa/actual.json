@@ -1,8 +1,8 @@
 {
- "build": 1463,
- "hash": "ab75efd",
- "fecha": "2026-11-24T09:42:42Z",
- "mensaje": "Island: el visor de comparar mueve también las lonchas con todos los botones y la cámara, y explica cada Brotito (técnica, puntos fuertes y flojos, costes)",
+ "build": 1464,
+ "hash": "3f78ab8",
+ "fecha": "2026-11-24T11:10:18Z",
+ "mensaje": "Pop: el repetido de la burbuja arcoíris también abre ventana (duelo por 2 copias o la red) y la red, ayuda nueva (tarea #329, ADR 205)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

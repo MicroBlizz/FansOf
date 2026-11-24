@@ -28,6 +28,7 @@ function ppTiendaInfinitas(tarjeta) {
 }
 function ppTiendaAyudas(tarjeta) {
   for (const k in PP_CFG.ayudas) {
+    if (PP_CFG.ayudas[k].esc && !ppCompanerosActivo()) continue;   // la red es de los compañeros escondidos (flag `companeros`)
     const A = PP_CFG.ayudas[k], tres = PP_PRECIOS.lote(A.perlas, 3, PP_CFG.ayudasTres);
     const compra = (n, precio) => {
       if (!ppPerlas(-precio, 'ayuda')) { ppFaltanPerlas(precio, () => compra(n, precio), () => ppTienda()); return; }

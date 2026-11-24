@@ -1,8 +1,8 @@
 {
- "build": 1467,
- "hash": "075ca7a",
- "fecha": "2026-11-24T16:54:35Z",
- "mensaje": "Revierte 1b61188 «x»: un test de balance lo creó al pasar la puerta en un worktree",
+ "build": 1468,
+ "hash": "036b10d",
+ "fecha": "2026-11-24T17:15:11Z",
+ "mensaje": "/gestion → Recursos: revisar y marcar lo que sale de Yoshi, con las marcas en Supabase (#334, ADR 209)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

@@ -1,8 +1,8 @@
 {
- "build": 1471,
- "hash": "e6bfb0b",
- "fecha": "2026-11-24T18:07:45Z",
- "mensaje": "Pop: mide los fps de cada nivel, duelo y memoria con el medidor de core, con datos extra para leer las bajadas (tarea #339)",
+ "build": 1472,
+ "hash": "68a451e",
+ "fecha": "2026-11-24T18:12:55Z",
+ "mensaje": "Pop: la red es una red de pesca con aro de corazón (tarea #329)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

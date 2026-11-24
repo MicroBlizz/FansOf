@@ -105,10 +105,9 @@ async function crea(lienzo, ruta, alMover) {
   const modelo = gltf.scene, EB = IS.arte.EB;
   modelo.scale.set(EB, EB, -EB);   // el dibujo en lonchas usa ejes de mano izquierda: el espejo en z lo deja igual que en el juego
   const brotito = new T.Group(); brotito.add(modelo); escena.add(brotito);
-  let malla = null;
-  modelo.traverse(o => { if (o.isSkinnedMesh) malla = o; if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
-  const casco = malla ? contorno(malla, 0.55) : null;
-  if (casco) malla.parent.add(casco);
+  const mallas = [];   // el cuerpo y la cola (pieza aparte que pone el script del esqueleto): cada una con su contorno
+  modelo.traverse(o => { if (o.isSkinnedMesh) mallas.push(o); if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  const cascos = mallas.map(m => { const c = contorno(m, 0.55); m.parent.add(c); return c; });
   const huesos = preparaHuesos(modelo), reposo = IS.Brotito3D.huesos({ sx: 1, sz: 1, a: 0 });
   const opciones = { suave: true, contorno: true };
   let postura = { sx: 1, sz: 1, a: 0 };
@@ -126,7 +125,7 @@ async function crea(lienzo, ruta, alMover) {
     brotito.position.set(e.x, e.z, CARRIL);
     brotito.rotation.y = -e.giro;
     vista.sigue(e.x, e.z, dt);
-    if (casco) casco.visible = opciones.contorno;
+    for (const c of cascos) c.visible = opciones.contorno;
     zana.visible = proto.estado.siguiendo;
     zana.position.set(proto.estado.J.x, 39, CARRIL + 6);
     r.render(escena, vista.cam);

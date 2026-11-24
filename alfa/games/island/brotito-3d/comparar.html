@@ -29,7 +29,7 @@
     <section class="panel">
     <h2>3D desde el render</h2><canvas id="render" aria-label="Brotito 3D desde el render"></canvas>
     <dl class="ficha">
-      <dt>Técnica</dt><dd>El Brotito en vóxeles, pintado en 3/4, pasa por Trellis2 en Yoshi, que hace una malla con textura (30.000 caras). Un script de Blender lo endereza, le pone las medidas del dibujo y seis huesos con los pesos sacados de las piezas del dibujo. three.js lo mueve con las mismas cifras de postura que el juego.</dd>
+      <dt>Técnica</dt><dd>El Brotito en vóxeles, pintado en 3/4, pasa por Trellis2 en Yoshi, que hace una malla con textura (30.000 caras). Un script de Blender lo endereza, le pone las medidas del dibujo y seis huesos con los pesos sacados de las piezas del dibujo. three.js lo mueve con las mismas cifras de postura que el juego. La cola la pone el script del esqueleto (Trellis2 no la ve, porque la imagen es de frente), con el color de la espalda.</dd>
       <dt>Puntos fuertes</dt><dd>Es el que más se parece al juego en forma y colores. Tiene luz y sombra de verdad, cualquier ángulo y posturas suaves sin coste.</dd>
       <dt>Puntos flojos</dt><dd>La textura lleva los escalones del render de vóxeles. Es una sola pieza: al levantar los brazos se ve la piel de debajo estirada y oscura. Island es un lienzo 2D, así que hoy no encaja tal cual.</dd>
       <dt>Coste de desarrollo</dt><dd>14 min de GPU de Yoshi (unos 5 en caliente) y 2 s de CPU para el esqueleto. Las animaciones no cuestan nada, porque salen de las cifras del juego. 0 € en total, y otro personaje dibujado por código cuesta lo mismo.</dd>
@@ -39,10 +39,10 @@
     <section class="panel">
     <h2>3D desde el vinilo</h2><canvas id="vinilo" aria-label="Brotito 3D desde la figura de vinilo"></canvas>
     <dl class="ficha">
-      <dt>Técnica</dt><dd>Lo mismo que el del render, pero antes Flux2 Klein redibuja el render como una figura de vinilo y Trellis2 hace el modelo a partir de esa imagen. Lleva el mismo esqueleto y las mismas posturas.</dd>
-      <dt>Puntos fuertes</dt><dd>La superficie es lisa, sin escalones, y tiene el brillo de un juguete.</dd>
-      <dt>Puntos flojos</dt><dd>Los colores son más pálidos que en el juego y los ojos cambian, porque Flux reinterpreta el dibujo y se aleja del original. Tiene el mismo problema con los brazos.</dd>
-      <dt>Coste de desarrollo</dt><dd>Lo mismo que el del render más 1 min de GPU para la figura. 0 €.</dd>
+      <dt>Técnica</dt><dd>Flux2 Klein redibuja el render fino como una figura de vinilo (la misma imagen que el vinilo en alta) y Trellis2 hace el modelo con 30.000 caras, el tamaño pensado para el móvil. Mismo esqueleto, mismas posturas y la misma cola añadida.</dd>
+      <dt>Puntos fuertes</dt><dd>Los colores y la cara del vinilo en alta, con el peso del modelo normal: superficie lisa, ojos con brillo y el brillo de un juguete.</dd>
+      <dt>Puntos flojos</dt><dd>Con 30.000 caras y textura de 1024 los ojos y la boca salen algo menos nítidos que en alta. El azul es algo más oscuro que el turquesa del juego. Tiene el mismo problema con los brazos.</dd>
+      <dt>Coste de desarrollo</dt><dd>3 min de GPU para la figura y unos 10 min para el modelo, más 2 s de esqueleto. 0 €.</dd>
       <dt>Coste de ejecución</dt><dd>1,3 MB de modelo más los 620 KB de three.js (compartidos). Por fotograma, lo mismo que el otro 3D.</dd>
     </dl>
   </section>
@@ -62,7 +62,7 @@
     <section class="panel">
     <h2>3D desde el render, en alta</h2><canvas id="render-hd" aria-label="Brotito 3D desde el render, en alta resolución"></canvas>
     <dl class="ficha">
-      <dt>Técnica</dt><dd>El mismo camino que el 3D desde el render, con dos cambios: la imagen de partida se pinta con vóxeles el doble de finos (sin escalones) y Trellis2 deja 150.000 caras y textura de 2048 en vez de 30.000 y 1024. Mismo esqueleto y mismas posturas.</dd>
+      <dt>Técnica</dt><dd>El mismo camino que el 3D desde el render, con dos cambios: la imagen de partida se pinta con vóxeles el doble de finos (sin escalones) y Trellis2 deja 150.000 caras y textura de 2048 en vez de 30.000 y 1024. Mismo esqueleto, mismas posturas y la misma cola añadida.</dd>
       <dt>Puntos fuertes</dt><dd>La silueta es más redonda y limpia, sin los escalones del modelo normal, y conserva los colores del juego.</dd>
       <dt>Puntos flojos</dt><dd>La cara sale borrosa: Trellis2 pinta el color en una rejilla propia y subir la textura a 2048 no le da más detalle. De un render plano saca peor los ojos que de una figura con brillo. Pesa 5 veces más y sigue con el problema de los brazos.</dd>
       <dt>Coste de desarrollo</dt><dd>12 min de GPU de Yoshi, casi lo mismo que el modelo normal, y 5 s de CPU para el esqueleto. 0 €.</dd>
@@ -72,7 +72,7 @@
     <section class="panel">
     <h2>3D desde el vinilo, en alta</h2><canvas id="vinilo-hd" aria-label="Brotito 3D desde la figura de vinilo, en alta resolución"></canvas>
     <dl class="ficha">
-      <dt>Técnica</dt><dd>Flux2 Klein redibuja el render fino como figura de vinilo y Trellis2 hace el modelo con 150.000 caras y textura de 2048. Mismo esqueleto y mismas posturas.</dd>
+      <dt>Técnica</dt><dd>Flux2 Klein redibuja el render fino como figura de vinilo y Trellis2 hace el modelo con 150.000 caras y textura de 2048. Mismo esqueleto, mismas posturas y la misma cola añadida.</dd>
       <dt>Puntos fuertes</dt><dd>Es el mejor de los seis en acabado: ojos nítidos con brillo, superficie lisa y esta vez los colores y la cara se parecen mucho más al Brotito del juego que en el vinilo normal.</dd>
       <dt>Puntos flojos</dt><dd>El azul es algo más oscuro que el turquesa del juego. En los costados quedan pequeñas marcas del relieve horneado. Pesa 5 veces más que el normal y tiene el mismo problema de los brazos.</dd>
       <dt>Coste de desarrollo</dt><dd>3 min de GPU para la figura (con el arranque en frío) y 10 min para el modelo, más 5 s de esqueleto. 0 €.</dd>

@@ -1,8 +1,8 @@
 {
- "build": 1468,
- "hash": "036b10d",
- "fecha": "2026-11-24T17:15:11Z",
- "mensaje": "/gestion → Recursos: revisar y marcar lo que sale de Yoshi, con las marcas en Supabase (#334, ADR 209)",
+ "build": 1469,
+ "hash": "e67e5c3",
+ "fecha": "2026-11-24T17:52:31Z",
+ "mensaje": "/gestion: la dirección dice siempre dónde estás y lo seleccionado, con botón «Enlace», y el visor de Recursos ya no corta las imágenes (tarea #338, ADR 211)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

@@ -5,7 +5,7 @@
 .rec-ficha b { font-size: 13px; overflow-wrap: anywhere; }
 .rec-ficha .meta, .rec-fallo { font-size: 12px; }
 .rec-fallo { color: var(--clara); }
-.rec-vista { position: relative; aspect-ratio: 1; background: #3b2a5e; border-radius: 4px; display: grid; place-items: center; overflow: hidden; }
+.rec-vista { position: relative; aspect-ratio: 1; background: #3b2a5e; border-radius: 4px; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; overflow: hidden; }
 .rec-vista img, .rec-vista canvas { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
 .rec-icono { color: #f6efff; font-weight: 700; letter-spacing: .05em; }
 .rec-sello { position: absolute; left: 4px; bottom: 4px; background: rgba(0, 0, 0, .6); color: #fff; font-size: 11px; padding: 1px 5px; border-radius: 3px; }
@@ -24,8 +24,9 @@
 .rec-panel { display: grid; grid-template-rows: auto 1fr auto; border: 2px solid var(--linea); border-radius: 6px; overflow: hidden; min-width: 0; }
 .rec-barra { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 4px 8px; background: var(--bg); }
 .rec-barra b { font-size: 13px; overflow-wrap: anywhere; }
-.rec-dentro { height: min(60vh, 520px); min-height: 280px; background: #3b2a5e; color: #f6efff; display: grid; place-items: center; }
-.rec-dentro.rec-audio { height: auto; min-height: 0; padding: 12px; }
+/* La fila y la columna miden lo que la caja (minmax(0, 1fr)): sin eso crecían con una imagen grande y su max-height no mandaba, y salía cortada (tarea #338) */
+.rec-dentro { height: min(60vh, 520px); min-height: 280px; background: #3b2a5e; color: #f6efff; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; }
+.rec-dentro.rec-audio { height: auto; min-height: 0; padding: 12px; grid-template: auto / minmax(0, 1fr); }
 .rec-dentro img, .rec-dentro video { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
 .rec-dentro iframe { width: 100%; height: 100%; border: 0; }
 .rec-controles { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 8px; }

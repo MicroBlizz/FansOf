@@ -5,8 +5,10 @@
 // de /gestion, `juegosAlfa()` (los ids de los juegos con página en la alfa, del catálogo: un resultado; sin ellos no hay botón Probar), y `comparte(t)` y `tareaInicial` (el número del enlace directo ?tarea=N, o null; tarea #302); no sabe nada del servidor.
 // Atrás (tarea #322, ADR 201): `alCambiarPanel(abierto)` avisa cuando el panel se abre o se cierra (lo que abre el enlace directo al cargar no se avisa:
 // no es un toque y no deja entrada en el historial), y `cierraCapa()` lo cierra al volver atrás.
+// Enlace directo (tarea #338, ADR 211): `enlace()` da lo seleccionado para la dirección ([['tarea', N]] con una tarea abierta o aún por abrir del enlace) y
+// `alCambiarEnlace()` avisa cada vez que se pinta el panel, para que la dirección lo diga.
 'use strict';
-TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, juegosAlfa = async () => TABLERO.ok([]), tareaInicial = null, alCambiarPanel = () => {} }) => {
+TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, juegosAlfa = async () => TABLERO.ok([]), tareaInicial = null, alCambiarPanel = () => {}, alCambiarEnlace = () => {} }) => {
   const el = id => document.getElementById(id);
   const filtro = {};
   // panel: lo que enseña el panel de la derecha. null (cerrado), { id } (el detalle de esa tarea), { formulario: valores } (nueva o editar) o { rapida: true }
@@ -36,6 +38,12 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, juegosA
     else if (panel && conFormulario) { caja.innerHTML = panel.rapida ? TABLERO.vista.formularioRapido(juegos, esc) : TABLERO.vista.formulario(panel.formulario, esc); caja.querySelector('input[name=titulo]').focus(); }
     else if (!panel) caja.innerHTML = '';
     avisaPanel();
+    alCambiarEnlace();
+  }
+  // Lo que la dirección dice del tablero: la tarea abierta, o la del enlace mientras llega el tablero
+  function enlace() {
+    const id = panel && panel.id ? panel.id : deEnlace;
+    return id ? [['tarea', id]] : [];
   }
   // un toque: si lo abierto venía del enlace (sin capa), lo que se abra ahora sí se avisa (y deja su capa)
   const abre = nuevo => { clearTimeout(esperaParecidas); if (delEnlace) { delEnlace = false; avisado = false; } panel = nuevo; pintaTablero(); pintaPanel(true); };
@@ -279,5 +287,5 @@ TABLERO.controlador = ({ casos, hueco, esc, fecha, textoError, comparte, juegosA
     lista.ondragleave = ev => { const c = col(ev); if (c && !c.contains(ev.relatedTarget)) c.classList.remove('encima'); };
     lista.ondrop = ev => { const c = col(ev); if (!c) return; ev.preventDefault(); c.classList.remove('encima'); mueve(ev.dataTransfer.getData('text/plain'), c.dataset.columna); };
   }
-  return { cargar, conecta, cierraCapa, filtraJuego };
+  return { cargar, conecta, cierraCapa, filtraJuego, enlace };
 };

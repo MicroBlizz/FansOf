@@ -2,7 +2,7 @@
 // Jugadores y Ajustes. Cada uno tiene sus pestañas debajo (Tablero: Tablero, Flujo, Cola, SQL y Recursos; Jugadores: Cuentas, Métricas, Comentarios, Roles y Rendimiento;
 // Ajustes: Flags, Config y lo que no diga su grupo). «Juegos» enseña la lista de todos los juegos de la biblioteca con buscador (catalogo.js); al elegir uno
 // salen sus pestañas y «Todos los juegos» para volver.
-// Cada archivo de sección se apunta con GESTION_NAV.seccion({ id, pan, etiqueta, orden, juego?, grupo?, cargar?, filtra? }) (filtra(juego): la deja filtrada por
+// Cada archivo de sección se apunta con GESTION_NAV.seccion({ id, pan, etiqueta, orden, juego?, grupo?, cargar?, filtra?, enlace? }) (filtra(juego): la deja filtrada por
 // ese juego antes de enseñarla; el Tablero la usa para el contador de tareas de la lista de juegos): sin `juego` es una pestaña común (su grupo,
 // de GRUPO_DE o de `grupo`); con `juego: '<id>'` es solo de ese juego, y con `juego: '*'` sale en todos (cargar recibe el id del juego).
 // Quien cambia la etiqueta de una pestaña (por ejemplo, con un contador) usa GESTION_NAV.etiqueta(id, texto, juego?). Esto solo muestra y oculta: no sabe de datos.
@@ -12,6 +12,8 @@
 // Atrás (tarea #322, ADR 201): cada cambio de grupo, pestaña o juego hecho con un toque se anota en el historial del navegador (historial.js e
 // historial-navegador.js), y GESTION_NAV.capa(abierta) anota lo que se abre o cierra encima (el Tablero). Al volver a una entrada se cierra lo abierto
 // (`cierraCapa` de cada sección) y se enseña esa pestaña; sin sesión (pantalla de entrar), atrás no hace nada. Al recargar manda la pestaña guardada.
+// Enlace directo (tarea #338, ADR 211): la dirección dice siempre dónde se está (enlace.js, GESTION_ENLACE) y lo seleccionado en la pestaña que se ve, que da
+// su `enlace()` (pares [clave, valor]) y avisa con GESTION_NAV.enlaceCambia() cuando cambia. Un enlace así abre ese sitio; el botón «Enlace» de arriba lo comparte.
 'use strict';
 const GESTION_NAV = (() => {
   // Los juegos de antes de la tarea #162 (los que tenían botón): los usan los tests de las secciones; la lista de verdad es el catálogo
@@ -62,8 +64,16 @@ const GESTION_NAV = (() => {
     else { grupo = 'juegos'; juego = donde; if (id) recuerda[donde] = id; }
     pinta();
   }
-  const hist = () => historial || (historial = GESTION_HISTORIAL_NAVEGADOR.crea({ historia: history, ventana: window }));
   const sitio = () => ({ grupo, juego, seccion: mostrada });
+  // La dirección de donde se está, con lo seleccionado en la pestaña que se ve
+  function direccion() {
+    const s = mostrada && buscar(mostrada, juego);
+    return GESTION_ENLACE.arma(location, sitio(), s && s.enlace ? s.enlace() : []);
+  }
+  const hist = () => historial || (historial = GESTION_HISTORIAL_NAVEGADOR.crea({ historia: history, ventana: window, direccion }));
+  let arrancada = false;
+  // Lo seleccionado en una pestaña ha cambiado: la dirección lo dice (antes de arrancar no se toca: arranca() la pone)
+  const enlaceCambia = () => { if (arrancada) hist().direccion(); };
   const anota = () => { hist().anota(sitio()); };
   const ir = (donde, id) => { ve(donde, id); anota(); };
   // Abre una pestaña común ya filtrada por un juego (el contador de tareas de la lista → el Tablero de ese juego): la sección lo hace con su `filtra(juego)`
@@ -139,6 +149,18 @@ const GESTION_NAV = (() => {
       el('pan-juegos').querySelector('[data-lista-juegos]').replaceWith(caja.querySelector('[data-lista-juegos]'));
     };
   }
+  // Enlace directo (con la sesión abierta): ?seccion=cola, ?juego=pop&seccion=resumen, ?grupo=juegos. Lo que no existe se ignora y se ve lo de siempre
+  function abreEnlace(p) {
+    if (p.juego) ve(p.juego, p.seccion && buscar(p.seccion, p.juego) ? p.seccion : undefined);
+    else if (p.seccion && buscar(p.seccion)) ve('global', p.seccion);
+    else { if (GRUPOS.some(([g]) => g === p.grupo)) grupo = p.grupo; pinta(); }
+  }
+  // El botón «Enlace» de arriba: comparte la dirección de donde se está (la hoja del móvil o, si no hay, el portapapeles)
+  function conectaEnlace() {
+    const b = el('enlace'); if (!b) return;
+    b.innerHTML = GESTION_COMPARTIR_ENLACE.ICONO + '<span>Enlace</span>';
+    b.addEventListener('click', () => GESTION_COMPARTIR_ENLACE.comparte(b, { titulo: 'Fans Of Gestión', enlace: direccion() }, { navegador: navigator }));
+  }
   function arranca() {
     el('menu').onclick = ev => {
       const b = ev.target.closest('button[data-g]'); if (!b) return;
@@ -151,16 +173,19 @@ const GESTION_NAV = (() => {
       const b = ev.target.closest('button[data-s]'); if (b) { recuerda[ambito()] = b.dataset.s; pinta(); anota(); }
     };
     conectaJuegos();
+    conectaEnlace();
     $('estilo-nav').textContent = GESTION_CATALOGO.ESTILO;
     el('salir').addEventListener('click', sal);
     // al abrir la sesión, la lista de Juegos (si se ve) pide otra vez sus cifras: las pedidas antes de entrar fallan sin sesión
     document.addEventListener('gestion-abierta', () => { if (grupo === 'juegos' && !juego) { cargaCatalogo(); refrescaMarcas(); } });
-    const guardado = hist().inicial(), dir = new URLSearchParams(location.search).get('seccion');   // enlace directo: /gestion/?seccion=cola abre esa pestaña (con la sesión abierta)
+    const guardado = hist().inicial();
     if (guardado) ponSitio(guardado);   // al recargar o volver de otra página, manda la pestaña que guardaba la entrada del historial
-    else if (dir && buscar(dir)) ve('global', dir); else pinta();
+    else abreEnlace(GESTION_ENLACE.lee(location.search));
+    arrancada = true;
     hist().empieza(sitio());
+    hist().direccion();
     hist().escucha(vuelve);
   }
   const ponMarcador = f => { marcador = f; };
-  return { JUEGOS, seccion, etiqueta, ir, arranca, nombreDe, capa, marcador: ponMarcador, actual: () => juego || 'global' };
+  return { JUEGOS, seccion, etiqueta, ir, arranca, nombreDe, capa, enlaceCambia, marcador: ponMarcador, actual: () => juego || 'global' };
 })();

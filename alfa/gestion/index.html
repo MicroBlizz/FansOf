@@ -18,7 +18,7 @@
 <main class="pagina">
   <header class="barra">
     <div><h1>Gestión</h1><p class="sub" id="sub">Acceso restringido.</p></div>
-    <button id="salir" hidden>Salir</button>
+    <div class="barra-botones"><button type="button" id="enlace" hidden aria-label="Copiar el enlace de lo que ves" title="Copiar el enlace de lo que ves">Enlace</button><button id="salir" hidden>Salir</button></div>
   </header>
 
   <section id="vista-entrar" class="caja">
@@ -142,6 +142,8 @@
 <script src="catalogo.js"></script>
 <script src="historial.js"></script>
 <script src="historial-navegador.js"></script>
+<script src="enlace.js"></script>
+<script src="compartir-enlace.js"></script>
 <script src="nav.js"></script>
 <script src="../core/js/cuenta/sesion-renovar.js"></script>
 <script src="entrada-web.js"></script>
@@ -170,7 +172,7 @@ const fmt = n => Number(n || 0).toLocaleString('es-ES');
 const fecha = s => { try { return new Date(s).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return s || '—'; } };
 
 function vista(panel) {
-  $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel;
+  $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel; $('enlace').hidden = !panel;
   $('sub').textContent = panel ? '' : 'Acceso restringido.';
 }
 $('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } GESTION_ENTRADA.alSalir(LOCAL); datos = null; vista(false); };

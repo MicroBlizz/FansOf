@@ -3,12 +3,14 @@
 // reglas de la galería local (recursos-datos.js) y abre cada encargo con sus salidas en paneles, con los mismos visores y mandos comunes que la galería
 // (recursos/: visor-lonchas.html, visor-glb.html, mandos-comunes.js, miniaturas.js). Las marcas (Sirve, En el aire, Descartar, Relanzar y nota) van a Supabase
 // con la sesión de /gestion (gestion_recurso_marcar y gestion_recurso_encargos; recursos-marcas.js). No lanza la siguiente etapa: eso irá con un workflow.
-// Usa lo de gestion/index.html: $(), esc(), rpc() y leerToken(); y GESTION_NAV (nav.js). Guía: docs/guia/herramientas/galeria.md
+// Enlace directo (tarea #338, ADR 211): la dirección lleva el juego (&rjuego=) y cada salida abierta para comparar (&ver=, una por salida); un enlace así
+// elige ese juego y abre esas salidas en cuanto se ha leído la rama.
+// Usa lo de gestion/index.html: $(), esc(), rpc() y leerToken(); GESTION_NAV (nav.js) y GESTION_ENLACE (enlace.js). Guía: docs/guia/herramientas/galeria.md
 'use strict';
 (() => {
   const D = RECURSOS_DATOS, M = RECURSOS_MARCAS, G = RECURSOS_GITHUB;
   const TOKEN = 'fansof.gestion.githubToken', PENDIENTES = 'fansof.gestion.recursos.pendientes', JUEGO = 'fansof.gestion.recursos.juego';
-  const POR_PAGINA = 24, VISORES = 'recursos/';
+  const POR_PAGINA = 24, VISORES = 'recursos/', TOPE_ENLACE = 12;   // TOPE_ENLACE: salidas que abre un enlace como mucho
   const BOTONES = ['valido', 'pendiente', 'invalido', 'relanzar'];
   const e = { raiz: null, carpetas: {}, juego: '', fichas: [], rutas: [], shas: new Map(), guardadas: {}, pendientes: {}, vistos: POR_PAGINA, abiertos: [], paneles: new Map(), urls: new Map(), leidas: new Map(), cargando: false, aviso: '' };
   const pan = document.createElement('div'); pan.id = 'pan-recursos'; pan.hidden = true;
@@ -19,6 +21,10 @@
   const token = () => { try { return localStorage.getItem(TOKEN) || ''; } catch (err) { return ''; } };
   const nodo = (tag, clase, texto) => { const n = document.createElement(tag); if (clase) n.className = clase; if (texto != null) n.textContent = texto; return n; };
   e.pendientes = lee(PENDIENTES, {});
+  // Lo que pide el enlace directo, hasta que se abre (después de leer la rama); su juego manda sobre el último elegido
+  const pedido = GESTION_ENLACE.lee(location.search);
+  let deEnlace = pedido.seccion === 'recursos' && !pedido.juego ? { juego: pedido.valores('rjuego')[0] || '', ver: pedido.valores('ver').slice(0, TOPE_ENLACE) } : null;
+  if (deEnlace && deEnlace.juego) e.juego = deEnlace.juego;
   const marcas = () => M.mezcla(e.guardadas, e.pendientes);
 
   // ---- la red: el envío y la lectura de las marcas, y los archivos de la rama como direcciones blob: (cada sha se pide una vez)
@@ -75,10 +81,27 @@
       if (l.error) avisos.push('No pude leer las marcas guardadas (' + (l.motivo || l.error) + '): se ven solo las de este navegador.');
       if (e.raiz.cortada) avisos.push('GitHub ha cortado la lista de salida/: puede faltar algo.');
       e.aviso = avisos.join(' ');
+      abreDelEnlace();
     } catch (err) { e.aviso = fallo(err); }
     e.cargando = false; pinta();
     const forzarOtra = e.forzarOtraVez; e.forzarOtraVez = false;
     return e.otraVez ? cargar(forzarOtra) : null;
+  }
+
+  // ---- el enlace directo: abre las salidas que pide (si siguen en la rama, cada una con su ficha) una sola vez, ya leído el juego que pide
+  function abreDelEnlace() {
+    if (!deEnlace || (deEnlace.juego && deEnlace.juego !== e.juego)) { deEnlace = null; return; }
+    for (const s of deEnlace.ver) {
+      const f = e.fichas.find(x => salidasDe(x).includes(s));
+      if (f && !e.abiertos.some(a => a.salida === s)) e.abiertos.push({ salida: s, ficha: f });
+    }
+    deEnlace = null;
+    pintaPaneles();
+  }
+  // Lo que dice la dirección: el juego y lo abierto (o lo que pide el enlace mientras se lee la rama)
+  function enlace() {
+    if (deEnlace) return [['rjuego', deEnlace.juego || e.juego], ...deEnlace.ver.map(s => ['ver', s])];
+    return [['rjuego', e.juego], ...e.abiertos.map(a => ['ver', a.salida])];
   }
 
   // ---- la lista
@@ -201,6 +224,7 @@
     $('rec-comparar').hidden = !e.abiertos.length;
     $('rec-cuantos').textContent = e.abiertos.length === 1 ? '1 abierto' : e.abiertos.length + ' abiertos';
     MANDOS.actualiza();
+    GESTION_NAV.enlaceCambia();
   }
 
   // ---- la pestaña
@@ -216,7 +240,7 @@
       <section class="caja rec-comparar" id="rec-comparar" hidden aria-label="Abiertos"><div class="rec-cab"><b id="rec-cuantos"></b><span class="meta" id="rec-encargo" hidden></span><button type="button" id="rec-cerrar-todo">Cerrar todo</button></div>
         <div class="rec-mandos" id="rec-mandos" hidden aria-label="Mandos comunes"></div><div class="rec-paneles" id="rec-paneles"></div></section>
       <div class="rec-lista" id="rec-lista"></div><button type="button" id="rec-mas" hidden>Ver más</button>`;
-    $('rec-juego').onchange = () => { e.juego = $('rec-juego').value; apunta(JUEGO, e.juego); e.vistos = POR_PAGINA; cargar(false); };
+    $('rec-juego').onchange = () => { e.juego = $('rec-juego').value; apunta(JUEGO, e.juego); e.vistos = POR_PAGINA; GESTION_NAV.enlaceCambia(); cargar(false); };
     $('rec-tipo').onchange = $('rec-estado').onchange = () => { e.vistos = POR_PAGINA; pintaLista(); };
     $('rec-actualizar').onclick = () => cargar(true);
     $('rec-reintentar').onclick = () => { cola = cola.then(mandaPendientes); };
@@ -232,5 +256,5 @@
     $('rec-aviso').textContent = e.aviso;
     pintaLista();
   }
-  GESTION_NAV.seccion({ id: 'recursos', pan: 'pan-recursos', etiqueta: 'Recursos', orden: 8, grupo: 'tablero', cargar: () => cargar(false) });
+  GESTION_NAV.seccion({ id: 'recursos', pan: 'pan-recursos', etiqueta: 'Recursos', orden: 8, grupo: 'tablero', cargar: () => cargar(false), enlace });
 })();

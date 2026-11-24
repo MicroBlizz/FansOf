@@ -1,8 +1,8 @@
 {
- "build": 1473,
- "hash": "d682650",
- "fecha": "2026-11-24T18:22:33Z",
- "mensaje": "/gestion → Recursos: el enlace directo en reglas puras con sus tests (tarea #338, ADR 211)",
+ "build": 1474,
+ "hash": "921066d",
+ "fecha": "2026-11-24T18:26:54Z",
+ "mensaje": "Web: página 404 propia que reenvía las /demos/ viejas, y fuera web/demos/ y la mudanza de core (tarea #45, ADR 212)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

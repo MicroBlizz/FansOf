@@ -1,0 +1,13 @@
+/* Fans Of · la página 404 (404.html, ADR 212): el logo, el número, una frase y un botón a la biblioteca, con las letras y los colores de la casa
+   (core/css/base.css y estilo/web.css). Como las demás páginas, pregunta el flag «portada-nueva» (estilo/estilo-nuevo.js) y con él toma el azul de la noche. */
+body { user-select: text; -webkit-user-select: text; touch-action: auto; }
+main { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; }
+main img { width: 120px; height: 120px; object-fit: contain; }
+.numero { font-family: var(--font-display); font-weight: 400; font-size: 96px; line-height: .9; color: var(--gold); text-shadow: 0 6px 0 var(--outline); }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.1; margin: 0; color: var(--ink); }
+p { margin: 0 0 6px; max-width: 340px; font-weight: 700; color: var(--ink-dim); }
+a.boton { display: inline-block; padding: 12px 26px 8px; border: 3px solid var(--outline); border-radius: 14px; box-shadow: 0 5px 0 var(--outline);
+  background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); font-family: var(--font-display); font-size: 20px; text-decoration: none; }
+a.boton:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+/* sin menú no hay barra de abajo: fuera el hueco que el estilo nuevo le deja en el móvil (estilo/web.css) */
+html.portada-nueva body { padding-bottom: 0; }

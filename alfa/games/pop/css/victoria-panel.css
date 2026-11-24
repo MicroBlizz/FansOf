@@ -8,7 +8,9 @@
   animation: pp-vic-baja 0.35s ease-out both; }
 #pp-modal:not(:has(.pp-gana, .pp-pase-ventana)) .pp-vic-arriba { display: none; }   /* victoria y pase (RECOGER TODO, tarea #166) */
 @keyframes pp-vic-baja { from { transform: translateY(-90px); } to { transform: none; } }
-.pp-vic-vidas .pp-ico { margin: -6px -4px -6px -6px; }   /* el dibujo del corazón trae aire alrededor: a 56 px se ve como la moneda a 44 (tarea #344) */
+.pp-vic-vidas { display: flex; }
+.pp-vic-vida { display: inline-flex; margin: -4px -7px -4px 0; }   /* el dibujo trae aire alrededor: a 46 px se ve como la moneda, sin montarse (tarea #344) */
+.pp-vic-vida.pp-vacia { opacity: 0.35; filter: saturate(0.3) brightness(1.3); }
 .pp-vic-caja { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 28px; color: #7a3a7a; }
 .pp-vic-caja b { min-width: 2ch; }
 .pp-vic-caja.pp-brilla .pp-ico { animation: pp-vic-recibe 0.25s ease-out; }

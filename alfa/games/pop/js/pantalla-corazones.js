@@ -4,7 +4,7 @@
 // · PP_CORAZON_SRV: los casos de uso ya montados con la cuenta de core.
 // · ppBotonPedirCorazones(t): añade a la ventana t el botón PEDIR A AMIGOS (solo con el flag abierto) y pide ya el enlace (PP_PEDIR), para que
 //   el toque comparta sin esperar; si no se puede compartir ni copiar, el enlace sale en la ventana.
-// · ppPedirCorazones(): la ventanita de pedir; ppBotonesPedirMapa(...) pone su zona de toque sobre el corazón del mapa.
+// · ppPedirCorazones(): la ventanita de pedir; ppBotonesPedirMapa(...) pone sus zonas de toque sobre los corazones del mapa.
 // · ppCorazonAviso(motivo): el texto amable de cada motivo. Abrir el enlace: js/pantalla-corazones-enlace.js; el buzón: js/pantalla-buzon.js.
 'use strict';
 const ppCorazonesActivo = () => NUCLEO.flag('corazones-amigos', 'Pop: pedir y regalar corazones entre amigos (tarea #96, ADR 150)', false);
@@ -74,9 +74,9 @@ function ppBotonPedirCorazones(t) {
 }
 // en el mapa, con algún corazón gastado y el flag abierto: un botón pequeño sobre cada corazón de la fila (x0, x0 + paso…, a la altura y),
 // del tamaño del corazón, para no tapar las burbujas de nivel ni las estrellas de al lado
-function ppBotonesPedirMapa(vidas, x, y) {   // una zona sobre el corazón y su «3/5» (tarea #344)
+function ppBotonesPedirMapa(vidas, x0, paso, y) {
   if (vidas >= PP_CFG.vida || !ppCorazonesActivo()) return;
-  PP_BOTONES_MAPA.push({ x, y, r: 60, f: ppPedirCorazones });
+  for (let i = 0; i < PP_CFG.vida; i++) PP_BOTONES_MAPA.push({ x: x0 + i * paso, y, r: paso / 2 + 1, f: ppPedirCorazones });
 }
 function ppPedirCorazones() {
   const t = ppAbre(`<h2>${tr('Pide corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub">${tr('Pásale tu enlace a un amigo y te regalará un corazón.')}</p>`);

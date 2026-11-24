@@ -166,13 +166,12 @@ function ppPintaMapa(c, t) {
   c.fillStyle = 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(20, yb, 500, conEquipo ? 136 : 84, 24); c.fill();
   const vidas = ppVidas();
   if (ppPrimerosVe('amigos')) ppPintaAvisoBuzon(c, 56, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)
-  // un corazón del tamaño de la moneda y «3/5» al lado, como las monedas (reporte 53, tarea #344: antes cinco pequeños)
-  ppCorazon(c, 54, yb + 32, 36, vidas > 0 || ppInfinitas());
-  ppTexto(c, ppInfinitas() ? '∞' : `${Math.min(vidas, PP_CFG.vida)}/${PP_CFG.vida}`, 84, yb + 34, 30, '#fff', 'left', '#c43a84');
-  if (ppPrimerosVe('amigos')) ppBotonesPedirMapa(vidas, 95, yb + 32);   // pedir a amigos tocando el corazón o su cuenta (js/pantalla-corazones.js)
+  // los cinco corazones, más grandes (reporte 53, tarea #344, boceto B de Pepins): las cuentas de la derecha se encogen solas si no caben
+  for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 52 + i * 42, yb + 32, 36, i < vidas || ppInfinitas());
+  if (ppPrimerosVe('amigos')) ppBotonesPedirMapa(vidas, 52, 42, yb + 32);   // pedir a amigos tocando un corazón (js/pantalla-corazones.js)
   if (vidas < PP_CFG.vida) ppTexto(c, tr('+1 en {t}', { t: ppReloj(ppFaltaVida()) }), 34, yb + 64, 22, '#fff', 'left', '#c43a84');
   // estrellas, monedas y perlas (con un «+» que abre la tienda): en fila y sin montarse por muchas que haya
-  ppPintaCuentas(c, 228, 478, yb + 32, [[(c2, x, y, s) => ppEstrella(c2, x, y, s, true), String(P.estrellas), '#7a4a8a'], [ppMoneda, String(SAVE.monedas), '#c98a12'], [ppPerla, String(SAVE.perlas || 0), '#c43a84']]);
+  ppPintaCuentas(c, 248, 478, yb + 32, [[(c2, x, y, s) => ppEstrella(c2, x, y, s, true), String(P.estrellas), '#7a4a8a'], [ppMoneda, String(SAVE.monedas), '#c98a12'], [ppPerla, String(SAVE.perlas || 0), '#c43a84']]);
   c.beginPath(); c.arc(500, yb + 20, 13, 0, Math.PI * 2); c.fillStyle = '#4fc964'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#26924a'; c.stroke();
   c.fillStyle = '#fff'; c.fillRect(494, yb + 18, 12, 4); c.fillRect(498, yb + 14, 4, 12);
   PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: () => ppTienda(null, 'perlas') });

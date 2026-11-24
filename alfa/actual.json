@@ -1,8 +1,8 @@
 {
- "build": 1477,
- "hash": "a664e57",
- "fecha": "2026-11-24T21:42:23Z",
- "mensaje": "Anuncio de core: «Cerrar sin premio» con borde claro y cuenta atrás más discreta, recuperado de un commit local que no llegó a subir (tarea #247, Pepins)",
+ "build": 1478,
+ "hash": "a4f81b8",
+ "fecha": "2026-11-24T21:53:14Z",
+ "mensaje": "Pop: precios finales para Google Play; los packs grandes traen 330 y 750 perlas y los lotes más perlas para seguir valiendo más que su precio (tarea #245, ADR 213, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

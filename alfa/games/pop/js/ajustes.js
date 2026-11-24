@@ -63,22 +63,24 @@ const PP_CFG = {
     ayudasDesde: 4,    // la barra de ayudas de los niveles normales sale desde el nivel 4
     tutos: { ayudasDuelo: 10, trucoNim: 15 },   // Lola espera a ese nivel para explicarlo (el primer duelo es el 5: solo cómo se juega)
   },
-  // los paquetes de perlas con euros (PROVISIONALES: los productos aún no existen en Play ni en el servidor; hasta entonces, la
-  // ventana de core dice que llegarán con la app). `id` = el producto en Play Console y en servidor/90 cuando se den de alta.
+  // los paquetes de perlas con euros. PRECIOS FINALES (Pepins, 24-11-2026, tarea #245, ADR 213): `id` = el producto en Play Console y
+  // en servidor/90 cuando se den de alta; cambiar uno después obliga a cambiarlo también en Play. Hasta entonces, la ventana de core dice
+  // que llegarán con la app.
   packs: [
     { id: 'pop_perlas_10', perlas: 10, precio: '0,99 €' },
-    { id: 'pop_perlas_25', perlas: 25, precio: '2,29 €' },   // tarea #266: dos tamaños más (25 y 650); el «+N %» de cada uno se calcula (js/precios.js)
+    { id: 'pop_perlas_25', perlas: 25, precio: '2,29 €' },   // tarea #266: dos tamaños más (25 y el grande, hoy 750); el «+N %» de cada uno se calcula (js/precios.js)
     { id: 'pop_perlas_50', perlas: 50, precio: '4,49 €' },
     { id: 'pop_perlas_120', perlas: 120, precio: '9,99 €', recomendado: true },   // cinta RECOMENDADO (opinión nuestra; MEJOR VALOR se calcula: js/precios.js, tarea #187)
-    { id: 'pop_perlas_300', perlas: 300, precio: '21,99 €' },
-    { id: 'pop_perlas_650', perlas: 650, precio: '44,99 €' },
+    { id: 'pop_perlas_330', perlas: 330, precio: '21,99 €' },   // ADR 213: los grandes premian más (antes 300 y 650 por el mismo precio)
+    { id: 'pop_perlas_750', perlas: 750, precio: '44,99 €' },
   ],
-  // LOTES con euros (tarea #266, PROVISIONALES como los packs): perlas, ayudas y corazones infinitos juntos, en la pestaña Perlas.
+  // LOTES con euros (tarea #266): perlas, ayudas y corazones infinitos juntos, en la pestaña Perlas. Precios finales como los packs y
+  // con más perlas desde el ADR 213, para que sigan valiendo más que su precio con el pack de 750.
   // Sin precio «antes»: su «Vale X €» lo calcula PP_PRECIOS.valorOferta. Uno de ellos es el «lote de hoy» (PP_OFERTAS_R.loteDeHoy)
   lotes: [
-    { id: 'pop_lote_pequeno', nombre: 'Lote pequeño', corto: 'Pequeño', precio: '2,99 €', perlas: 20, ayudas: { martillo: 2, bomba: 1 }, infinitas: 30 },
-    { id: 'pop_lote_mediano', nombre: 'Lote mediano', corto: 'Mediano', precio: '6,99 €', perlas: 50, ayudas: { martillo: 3, bomba: 3, toques3: 2 }, infinitas: 60 },
-    { id: 'pop_lote_grande', nombre: 'Lote grande', corto: 'Grande', precio: '14,99 €', perlas: 120, ayudas: { martillo: 5, bomba: 5, toques3: 5 }, infinitas: 180 },
+    { id: 'pop_lote_pequeno', nombre: 'Lote pequeño', corto: 'Pequeño', precio: '2,99 €', perlas: 30, ayudas: { martillo: 2, bomba: 1 }, infinitas: 30 },
+    { id: 'pop_lote_mediano', nombre: 'Lote mediano', corto: 'Mediano', precio: '6,99 €', perlas: 70, ayudas: { martillo: 3, bomba: 3, toques3: 2 }, infinitas: 60 },
+    { id: 'pop_lote_grande', nombre: 'Lote grande', corto: 'Grande', precio: '14,99 €', perlas: 160, ayudas: { martillo: 5, bomba: 5, toques3: 5 }, infinitas: 180 },
   ],
   // ver un anuncio (siempre porque tú quieres, nunca en mitad del juego sin pedirlo)
   anuncio: { toques: 3, vidasDia: 3 },   // +3 toques una vez por intento al quedarte sin toques · +1 corazón, hasta 3 veces al día
@@ -104,7 +106,7 @@ const PP_CFG = {
   ayudasTres: 0.8,           // el lote de 3 de la misma ayuda, al 80 %
   // CORAZONES INFINITOS por tiempo (con perlas; también vienen en las ofertas y el pase)
   infinitas: [{ min: 30, perlas: 10 }, { min: 60, perlas: 18 }, { min: 120, perlas: 30 }],
-  // OFERTAS con euros (PROVISIONALES, como los packs: los productos aún no existen en Play ni en el servidor). Sin precio «antes»
+  // OFERTAS con euros (precios finales como los packs, ADR 213; los productos aún no existen en Play ni en el servidor). Sin precio «antes»
   // inventado: la ventana dice lo que vale lo que trae, calculado solo (js/precios.js, tarea #177)
   ofertas: {
     bienvenida: { id: 'pop_pack_bienvenida', precio: '0,99 €', perlas: 30, ayudas: { martillo: 3, bomba: 3 }, infinitas: 60, desdeNivel: 5, horas: 48 },   // `horas`: dura eso desde que sale y luego desaparece de verdad (tarea #187)

@@ -1,8 +1,8 @@
 {
- "build": 1466,
- "hash": "911e4a9",
- "fecha": "2026-11-24T12:38:59Z",
- "mensaje": "Island: los Brotitos 3D llevan la cola del dibujo (la pone el script del esqueleto) y el vinilo normal sale de la figura nueva",
+ "build": 1467,
+ "hash": "075ca7a",
+ "fecha": "2026-11-24T16:54:35Z",
+ "mensaje": "Revierte 1b61188 «x»: un test de balance lo creó al pasar la puerta en un worktree",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

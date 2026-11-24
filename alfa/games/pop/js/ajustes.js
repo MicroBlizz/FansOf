@@ -91,7 +91,7 @@ const PP_CFG = {
   rivalNim: { normal: { espera: 380, paso: 380 }, abre: { espera: 1100, paso: 650 } },
   // el generador de niveles (js/niveles.js, ppConstruye; tarea #196): cuántas partidas simula de quien juega normal para poner el límite
   // (antes 40) y cuántas de una que no se despista, para que nunca salga un nivel que ni ella pueda pasar
-  generador: { tiradas: 200, listas: 20 },
+  generador: { tiradas: 200, listas: 20, tiradasLista: 40 },   // tiradasLista: partidas de la lista desde el mundo 2 (tarea #353, ADR 214)
   // «COPIARNOS DE CANDY CRUSH» (Daniel, 30-10-2026: «hay que sacar el máximo beneficio monetario»). Todo a precio FIJO: nada
   // de pagar por azar (ADR 004). Ver js/potenciadores.js, js/ofertas.js y js/pase.js; la tienda con pestañas en js/tienda.js.
   // AYUDAS (potenciadores): se ganan jugando (regalo diario, pase, cofres de oferta) o se compran con perlas. `nim`: solo en duelos.
@@ -124,7 +124,7 @@ const PP_CFG = {
   // premio gratis y su premio premium (el premium se compra una vez por temporada)
   pase: { id: 'pop_pase', precio: '4,99 €', escalones: 30, puntos: 3,
     plus: { id: 'pop_pase_plus', precio: '9,99 €' } },   // Dorado+ (flag 'pase-nuevo', tarea #165): el mismo pase y salta 10 escalones
-  racha: { max: 3 },         // RACHA: cada nivel nuevo seguido sin perder un corazón da +1 toque al empezar los siguientes (hasta 3)
+  racha: { max: 1 },         // RACHA: ganar un nivel nuevo sin perder un corazón da +1 toque al empezar los siguientes (hasta 1; antes 3: tarea #353, ADR 214)
   // MEMORIA (js/memoria.js, fase 4): el «Simón dice» del pop-it. Tablero de 3x3; cada burbuja de la melodía dura `paso` segundos en
   // la ronda 1 y `acelera` menos cada ronda, hasta `pasoMin`. Premio del día: `porRonda` monedas por ronda (solo lo que mejora tu
   // mejor ronda de hoy), hasta `tope` al día. Sin corazones.

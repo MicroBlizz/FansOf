@@ -1,8 +1,8 @@
 {
- "build": 1478,
- "hash": "a4f81b8",
- "fecha": "2026-11-24T21:53:14Z",
- "mensaje": "Pop: precios finales para Google Play; los packs grandes traen 330 y 750 perlas y los lotes más perlas para seguir valiendo más que su precio (tarea #245, ADR 213, Pepins)",
+ "build": 1479,
+ "hash": "437321c",
+ "fecha": "2026-11-24T22:21:09Z",
+ "mensaje": "Pop más difícil: desde el mundo 2 los toques se ponen para quien piensa (la jugadora lista, curva del 85 al 55 %) y la racha da +1 como mucho (tarea #353, ADR 214, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

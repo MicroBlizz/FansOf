@@ -74,8 +74,10 @@ function ppEntraEn(d, titulo) {
 }
 const ppTituloNivel = (d, g, dif) => (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif === 2 ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : '');
 // la racha de victorias y Nubecita dan toques de margen al empezar un nivel de pop-it (js/pase.js, PP_SLIMES); en pesadilla, no
+// la racha, nunca por encima del tope de hoy (una partida vieja puede guardar 3 de cuando el tope era 3: tarea #353)
+const ppRachaToques = () => Math.min(SAVE.racha || 0, PP_CFG.racha.max);
 function ppMargenAlEmpezar(T, d) {
-  const extra = (SAVE.racha || 0) + (ppEnEquipo('nubecita') ? ppFxDe('nubecita').extra : 0);
+  const extra = ppRachaToques() + (ppEnEquipo('nubecita') ? ppFxDe('nubecita').extra : 0);
   if (extra && !d.tutorial && !d.lo) { T.limite += extra; T.extra = extra; }
 }
 // un nivel con duelo abre con su cortinilla (ADR 098): el nivel espera a que se pulse su botón ¡A JUGAR! (ADR 100)

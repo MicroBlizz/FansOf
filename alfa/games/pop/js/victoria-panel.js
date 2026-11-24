@@ -52,7 +52,7 @@ function ppVicDesglose(p) {
   return `<span class="pp-vic-desglose">${partes.join(' · ')}</span>`;
 }
 function ppVicRacha(a) {
-  const max = PP_CFG.racha.max, n = SAVE.racha || 0;
+  const max = PP_CFG.racha.max, n = ppRachaToques();
   if (!n && !a.racha) return '';
   let pips = '';
   for (let k = 0; k < max; k++) pips += `<i class="${k < n ? 'pp-on' : ''}${a.nuevo && k === n - 1 && n > a.racha ? ' pp-vic-nueva' : ''}"></i>`;

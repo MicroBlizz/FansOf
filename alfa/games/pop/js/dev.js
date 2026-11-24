@@ -33,7 +33,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Pase: +30 puntos', () => { ppPaseAlDia().puntos += 30; });
   boton(d, 'Pase premium sí/no', () => { const P = ppPaseAlDia(); P.premium = !P.premium; });
   boton(d, 'Todas las bandejas', () => { SAVE.bandejas = {}; for (const B of PP_BANDEJAS) SAVE.bandejas[B.id] = true; });
-  boton(d, 'Racha x3', () => { SAVE.racha = PP_CFG.racha.max; });
+  boton(d, 'Racha al tope', () => { SAVE.racha = PP_CFG.racha.max; });
   d = fila();
   boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; ppGuardaCamino(); });
   d = fila();

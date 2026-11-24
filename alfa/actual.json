@@ -1,8 +1,8 @@
 {
- "build": 1476,
- "hash": "629bdeb",
- "fecha": "2026-11-24T18:37:06Z",
- "mensaje": "/gestion → Recursos: zoom y mover en lo abierto, y doble clic a pantalla completa (#334)",
+ "build": 1477,
+ "hash": "a664e57",
+ "fecha": "2026-11-24T21:42:23Z",
+ "mensaje": "Anuncio de core: «Cerrar sin premio» con borde claro y cuenta atrás más discreta, recuperado de un commit local que no llegó a subir (tarea #247, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

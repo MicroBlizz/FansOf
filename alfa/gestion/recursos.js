@@ -1,5 +1,5 @@
 // Fans Of · /gestion, pestaña RECURSOS (grupo Tablero): revisar desde el móvil lo que genera Yoshi y marcarlo por etapas (propuestas → modelo 3D → lonchas).
-// Lee `salida/` de la rama `recursos` con el token de GitHub de la pestaña Cola (Contents en solo lectura: recursos-github.js), agrupa por juego con las
+// Lee `salida/` de la rama `recursos` con el token de GitHub de la pestaña Cola (Contents en solo lectura: recursos-github.js), agrupa por juego (y filtra por la tarea del nombre de las salidas) con las
 // reglas de la galería local (recursos-datos.js) y abre cada encargo con sus salidas en paneles, con los mismos visores y mandos comunes que la galería
 // (recursos/: visor-lonchas.html, visor-glb.html, mandos-comunes.js, miniaturas.js). Las marcas (Sirve, En el aire, Descartar, Relanzar y nota) van a Supabase
 // con la sesión de /gestion (gestion_recurso_marcar y gestion_recurso_encargos; recursos-marcas.js). No lanza la siguiente etapa: eso irá con un workflow.
@@ -28,7 +28,7 @@
   const marcas = () => M.mezcla(e.guardadas, e.pendientes);
 
   // ---- la red: el envío y la lectura de las marcas, y los archivos de la rama como direcciones blob: (cada sha se pide una vez)
-  const enviar = (salida, m) => rpc('gestion_recurso_marcar', M.argumentos(leerToken(), salida, m));
+  const enviar = (salida, m) => rpc('gestion_recurso_marcar', M.argumentos(leerToken(), salida, m, D.marcas(salida).run));   // el run, del nombre de la salida
   const lector = async juego => (await rpc('gestion_recurso_encargos', { p_token: leerToken(), p_juego: juego })).filas;
   function url(ruta) {
     const sha = e.shas.get(ruta);
@@ -105,7 +105,7 @@
   }
 
   // ---- la lista
-  const pasa = (f, tipo, estado) => (!tipo || f.tipo === tipo) && (estado ? estadoFicha(f) === estado : estadoFicha(f) !== 'invalido');
+  const pasa = (f, tipo, estado, tarea) => (!tipo || f.tipo === tipo) && D.deTarea(f, tarea) && (estado ? estadoFicha(f) === estado : estadoFicha(f) !== 'invalido');
   const salidasDe = f => f.salidas || [f.ruta];
   // el estado de una ficha: el de su salida, o en un grupo el que más pesa (algo que sirve, luego relanzar, en el aire, sin mirar; descartada si todas)
   function estadoFicha(f) {
@@ -135,10 +135,11 @@
     const el = nodo('button', 'rec-ficha rec-' + estadoFicha(f)); el.type = 'button'; el.onclick = () => abre(f);
     const problema = f.tipo === 'encargo' ? D.problemas(f) : '';
     el.append(vista(f), nodo('b', '', f.nombre), nodo('span', problema ? 'rec-fallo' : 'meta', problema || resumen(f)));
+    if (D.origen(f)) el.append(nodo('span', 'meta', D.origen(f)));
     return el;
   }
   function pintaLista() {
-    const tipo = $('rec-tipo').value, estado = $('rec-estado').value, lista = e.fichas.filter(f => pasa(f, tipo, estado));
+    const tipo = $('rec-tipo').value, estado = $('rec-estado').value, tarea = $('rec-tarea').value, lista = e.fichas.filter(f => pasa(f, tipo, estado, tarea));
     $('rec-lista').replaceChildren(...lista.slice(0, e.vistos).map(ficha));
     if (!lista.length) $('rec-lista').append(nodo('div', 'vacio', e.cargando ? 'Leyendo la rama recursos…' : 'Nada con ese filtro.'));
     $('rec-mas').hidden = lista.length <= e.vistos; $('rec-mas').textContent = `Ver más (${lista.length - e.vistos})`;
@@ -193,7 +194,7 @@
   function abre(f) {
     const grupo = f.tipo === 'encargo' || f.tipo === 'propuestas';
     $('rec-encargo').hidden = !grupo;
-    $('rec-encargo').textContent = grupo ? `${f.etapa} · ${f.nombre}${D.problemas(f) ? ' · ' + D.problemas(f) : ''}` : '';
+    $('rec-encargo').textContent = grupo ? [f.etapa, f.nombre, D.origen(f), D.problemas(f)].filter(Boolean).join(' · ') : '';
     for (const s of salidasDe(f)) if (!e.abiertos.some(a => a.salida === s)) e.abiertos.push({ salida: s, ficha: f });
     pintaPaneles();
     $('rec-comparar').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -212,7 +213,7 @@
     const que = D.panel(salida, e.rutas), el = nodo('section', 'rec-panel rec-' + M.estadoDe(marcas(), salida)); el.ficha = f;
     const barra = nodo('div', 'rec-barra'), cerrar = nodo('button', '', 'Cerrar'); cerrar.type = 'button';
     cerrar.onclick = () => { e.abiertos = e.abiertos.filter(a => a.salida !== salida); pintaPaneles(); };
-    barra.append(nodo('b', '', que.nombre), cerrar); barra.title = salida;
+    barra.append(nodo('b', '', que.nombre), nodo('span', 'meta', D.origen(que)), cerrar); barra.title = salida;
     const dentro = nodo('div', 'rec-dentro rec-' + que.tipo, 'Cargando…');
     contenido(dentro, que).catch(err => { dentro.textContent = fallo(err); });
     el.append(barra, dentro, controles(f, salida));
@@ -234,6 +235,7 @@
       <div class="filtros"><select id="rec-juego" aria-label="Juego"></select>
         <select id="rec-tipo" aria-label="Qué"><option value="">Todo</option><option value="encargo">Encargos</option><option value="propuestas">Propuestas</option><option value="lonchas">Lonchas</option><option value="3d">3D</option><option value="imagen">Imágenes</option></select>
         <select id="rec-estado" aria-label="Marca"><option value="">Todo menos lo descartado</option><option value="sin-mirar">Sin mirar</option><option value="pendiente">En el aire</option><option value="valido">Sirve</option><option value="relanzar">Relanzar</option><option value="invalido">Descartado</option></select>
+        <select id="rec-tarea" aria-label="Tarea"></select>
         <button type="button" id="rec-actualizar">Actualizar</button></div>
       <div class="filtros rec-pendientes" id="rec-pendientes" hidden><span id="rec-pendientes-n"></span><button type="button" id="rec-reintentar">Reintentar</button></div>
       <div class="aviso" id="rec-aviso" role="alert"></div>
@@ -241,7 +243,7 @@
         <div class="rec-mandos" id="rec-mandos" hidden aria-label="Mandos comunes"></div><div class="rec-paneles" id="rec-paneles"></div></section>
       <div class="rec-lista" id="rec-lista"></div><button type="button" id="rec-mas" hidden>Ver más</button>`;
     $('rec-juego').onchange = () => { e.juego = $('rec-juego').value; apunta(JUEGO, e.juego); e.vistos = POR_PAGINA; GESTION_NAV.enlaceCambia(); cargar(false); };
-    $('rec-tipo').onchange = $('rec-estado').onchange = () => { e.vistos = POR_PAGINA; pintaLista(); };
+    $('rec-tipo').onchange = $('rec-estado').onchange = $('rec-tarea').onchange = () => { e.vistos = POR_PAGINA; pintaLista(); };
     $('rec-actualizar').onclick = () => cargar(true);
     $('rec-reintentar').onclick = () => { cola = cola.then(mandaPendientes); };
     $('rec-mas').onclick = () => { e.vistos += POR_PAGINA; pintaLista(); };
@@ -254,7 +256,14 @@
     const juegos = e.listaJuegos || [];
     $('rec-juego').innerHTML = juegos.map(j => `<option value="${esc(j.id)}"${j.id === e.juego ? ' selected' : ''}>${esc(j.id)} (${j.n})</option>`).join('') || '<option value="">—</option>';
     $('rec-aviso').textContent = e.aviso;
+    pintaTareas();
     pintaLista();
+  }
+  // el filtro de tarea: las tareas que salen en las fichas del juego (las del nombre de sus salidas); se guarda la elegida si sigue saliendo
+  function pintaTareas() {
+    const sel = $('rec-tarea'), quiero = sel.value, tareas = D.tareas(e.fichas);
+    sel.innerHTML = '<option value="">Toda tarea</option><option value="sin">Sin tarea</option>' + tareas.map(t => `<option value="${t}">Tarea ${t}</option>`).join('');
+    sel.value = quiero === 'sin' || tareas.some(t => String(t) === quiero) ? quiero : '';
   }
   GESTION_NAV.seccion({ id: 'recursos', pan: 'pan-recursos', etiqueta: 'Recursos', orden: 8, grupo: 'tablero', cargar: () => cargar(false), enlace });
 })();

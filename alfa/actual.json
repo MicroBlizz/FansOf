@@ -1,8 +1,8 @@
 {
- "build": 1469,
- "hash": "e67e5c3",
- "fecha": "2026-11-24T17:52:31Z",
- "mensaje": "/gestion: la dirección dice siempre dónde estás y lo seleccionado, con botón «Enlace», y el visor de Recursos ya no corta las imágenes (tarea #338, ADR 211)",
+ "build": 1470,
+ "hash": "d76a168",
+ "fecha": "2026-11-24T17:57:20Z",
+ "mensaje": "Recursos de Yoshi con tarea, run y paso en el nombre, y filtro por tarea en /gestion (#334)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

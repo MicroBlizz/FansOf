@@ -50,8 +50,9 @@ const RECURSOS_MARCAS = (() => {
     for (const s of salidas) c[estadoDe(marcas, s)]++;
     return c;
   }
-  /** Los argumentos de gestion_recurso_marcar para una salida (el run y el padre aún no se saben desde aquí: van vacíos) */
-  const argumentos = (token, salida, m) => ({ p_token: token, p_salida: salida, p_juego: m.juego, p_nombre: m.nombre, p_etapa: m.etapa, p_run: null, p_padre: null, p_estado: m.estado, p_nota: m.nota });
+  /** Los argumentos de gestion_recurso_marcar para una salida. run: el del nombre de la salida (RECURSOS_DATOS.marcas), null si no lo lleva;
+   *  el padre aún no se sabe desde aquí: va vacío. La tarea no se manda: la tabla la calcula del nombre de la salida */
+  const argumentos = (token, salida, m, run = null) => ({ p_token: token, p_salida: salida, p_juego: m.juego, p_nombre: m.nombre, p_etapa: m.etapa, p_run: run, p_padre: null, p_estado: m.estado, p_nota: m.nota });
   // una marca: lo que conteste el servidor, o { ok: false, motivo } si no contesta bien o la llamada falla
   async function una(enviar, salida, m) {
     try { const r = await enviar(salida, m); return r && r.ok ? r : { ok: false, motivo: (r && r.motivo) || 'sin-respuesta' }; }

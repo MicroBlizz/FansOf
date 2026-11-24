@@ -1,12 +1,14 @@
 // Fans Of · /gestion, pestaña RECURSOS: las reglas (dominio, sin red, reloj ni DOM). De la lista de archivos de `salida/` de la rama `recursos`, qué es de
 // cada juego, de qué tipo es cada cosa y cómo se agrupa para revisarlo por etapas: las propuestas (<nombre>-propuesta-<k>) juntas, cada encargo
 // (s-<hash>-<nombre>-cadena.json) con sus salidas, las tiras de lonchas con su json y lo demás suelto. Son las mismas reglas que la galería local
-// (herramientas/galeria/galeria.py: nombre, es_del_juego, es_tira, pareja_json, encargo); si cambian allí, cambian aquí. Guía: docs/guia/herramientas/galeria.md
+// (herramientas/galeria/galeria.py: nombre, marcas, es_del_juego, es_tira, pareja_json, encargo); si cambian allí, cambian aquí. Guía: docs/guia/herramientas/galeria.md
+// Nombres: los viejos s-<hash>-<nombre>-<n>.<ext> y, desde la tarea #334, s-<hash>-t<tarea>-r<run>-<nombre>-p<paso>-<archivo>.<ext> (cada trozo solo si lo hay).
 'use strict';
 const RECURSOS_DATOS = (() => {
   const TIPOS = { png: 'imagen', jpg: 'imagen', jpeg: 'imagen', webp: 'imagen', gif: 'imagen', mp3: 'audio', wav: 'audio', ogg: 'audio', flac: 'audio', mp4: 'video', webm: 'video', glb: '3d', gltf: '3d' };
   const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', gif: 'image/gif', mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', flac: 'audio/flac', mp4: 'video/mp4', webm: 'video/webm', glb: 'model/gltf-binary', gltf: 'model/gltf+json', json: 'application/json' };
-  const PREFIJO = /^[iavs]-[0-9a-f]{6,}-/, NUMERO = /-\d+$/, PROPUESTA = /^(.+)-propuesta-(\d+)(?:-\d+)?$/;
+  const PREFIJO = /^[iavs]-[0-9a-f]{6,}-(?:t\d+-)?(?:r\d+-)?/, NUMERO = /-\d+$/, PROPUESTA = /^(.+)-propuesta-(\d+)(?:-\d+)?$/;
+  const MARCA = /^[iavs]-[0-9a-f]{6,}-(?:t(\d+)-)?(?:r(\d+)-)?/, PASO = /-p(\d+)-(?!.*-p\d+-)/;
   const TIRA = '-lonchas', CADENA = '-cadena';
   const ETAPAS = { modelo: 'Modelo 3D', lonchas: 'Lonchas', vistas: 'Lonchas (4 vistas)' };
   // el orden de la lista: lo que se aprueba por etapas primero
@@ -26,6 +28,14 @@ const RECURSOS_DATOS = (() => {
   const sinExt = ruta => { const b = base(ruta); return b.lastIndexOf('.') > 0 ? b.slice(0, b.lastIndexOf('.')) : b; };
   // sin la extensión ni el hash de la cola, con el número de salida: s-1a2b3c-pets-propuesta-2-1.png → pets-propuesta-2-1
   const crudo = ruta => sinExt(ruta).replace(PREFIJO, '');
+  const entero = t => (t == null ? null : Number(t));
+  /** La tarea, el run y el paso que lleva en el nombre (null lo que no lleva; los nombres viejos, todo null) */
+  function marcas(ruta) {
+    const b = sinExt(ruta), m = MARCA.exec(b);
+    if (!m) return { tarea: null, run: null, paso: null };
+    const p = PASO.exec(b.slice(m[0].length - 1) + '-');
+    return { tarea: entero(m[1]), run: entero(m[2]), paso: p ? Number(p[1]) : null };
+  }
   /** Es del juego si su nombre empieza por el juego o si está en una carpeta suya (salida/pets-3d/) */
   function esDelJuego(ruta, juego) {
     const partes = ruta.split('/').slice(1, -1);
@@ -60,14 +70,17 @@ const RECURSOS_DATOS = (() => {
     return imagenes.find(r => nombre(r).endsWith('-hoja')) || imagenes[0] || null;
   }
   /** Un encargo: sus salidas (rutas de la lista, sin los json), las que no llegaron, los pasos que fallaron, su etapa y su miniatura */
+  // la tarea o el run de un encargo: lo que diga su -cadena.json (si es un entero) o lo de su nombre
+  const deCadena = (c, clave, porNombre) => (Number.isInteger(c[clave]) ? c[clave] : porNombre);
   function encargo(ruta, cadena, rutas) {
-    const f = { ruta, tipo: 'encargo', nombre: nombre(ruta).slice(0, -CADENA.length), etapa: 'Encargo', salidas: [], faltan: [], fallos: [], miniatura: null, pasos: 0 };
+    const f = { ruta, tipo: 'encargo', nombre: nombre(ruta).slice(0, -CADENA.length), etapa: 'Encargo', salidas: [], faltan: [], fallos: [], miniatura: null, pasos: 0, ...marcas(ruta) };
     const error = validaCadena(cadena);
     if (error) return { ...f, error };
     const porNombre = new Map(rutas.map(r => [base(r), r]));
     const nombres = cadena.pasos.flatMap(p => (p.salidas || []).filter(s => typeof s === 'string'));
     const salidas = nombres.filter(s => porNombre.has(s) && !s.toLowerCase().endsWith('.json')).map(s => porNombre.get(s));
     return { ...f, nombre: String(cadena.nombre || f.nombre), cadena: String(cadena.cadena || ''), etapa: ETAPAS[cadena.cadena] || 'Encargo', salidas,
+      tarea: deCadena(cadena, 'tarea', f.tarea), run: deCadena(cadena, 'run', f.run),
       pasos: cadena.pasos.length, conImagen: cadena.pasos.some(p => p.tipo === 'imagen'), faltan: nombres.filter(s => !porNombre.has(s)), miniatura: miniatura(salidas),
       fallos: cadena.pasos.map((p, n) => ({ i: p.i || n + 1, tipo: String(p.tipo || ''), ok: p.ok })).filter(p => p.ok === false).map(({ i, tipo: t }) => ({ i, tipo: t })) };
   }
@@ -86,9 +99,18 @@ const RECURSOS_DATOS = (() => {
       const m = tipo(r) === 'imagen' && PROPUESTA.exec(crudo(r));   // con el número de salida: el de la propuesta podría quitarse con él
       if (m) grupos.set(m[1], [...(grupos.get(m[1]) || []), [Number(m[2]), r]]);
     }
-    return [...grupos].map(([n, l]) => ({ ruta: 'propuestas:' + n, tipo: 'propuestas', etapa: 'Propuestas', nombre: n, salidas: l.sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : 1)).map(x => x[1]), miniatura: l[0][1] }));
+    return [...grupos].map(([n, l]) => {
+      const salidas = l.sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : 1)).map(x => x[1]);
+      return { ruta: 'propuestas:' + n, tipo: 'propuestas', etapa: 'Propuestas', nombre: n, salidas, miniatura: salidas[0], ...marcas(salidas[0]) };
+    });
   }
-  const suelta = (r, extra = {}) => ({ ruta: r, tipo: tipo(r), nombre: nombre(r), etapa: '', ...extra });
+  const suelta = (r, extra = {}) => ({ ruta: r, tipo: tipo(r), nombre: nombre(r), etapa: '', ...marcas(r), ...extra });
+  /** Las tareas que salen en las fichas, de menor a mayor, sin repetir (para el filtro) */
+  const tareas = fichas => [...new Set(fichas.map(f => f.tarea).filter(t => t != null))].sort((a, b) => a - b);
+  /** ¿Pasa la ficha el filtro de tarea? '' = todas, 'sin' = las que no llevan tarea, '334' = las de esa tarea */
+  const deTarea = (f, filtro) => !filtro || (filtro === 'sin' ? f.tarea == null : String(f.tarea) === String(filtro));
+  /** La tarea, el run y el paso en una línea para la ficha ('' si no lleva ninguno): «tarea 334 · run 4644 · paso 2» */
+  const origen = f => [f.tarea != null ? 'tarea ' + f.tarea : '', f.run != null ? 'run ' + f.run : '', f.paso != null ? 'paso ' + f.paso : ''].filter(Boolean).join(' · ');
   const orden = (a, b) => ORDEN.indexOf(a.tipo) - ORDEN.indexOf(b.tipo) || (a.nombre < b.nombre ? -1 : a.nombre > b.nombre ? 1 : 0);
 
   /** Las fichas del juego: encargos, grupos de propuestas, tiras de lonchas (con su json) y lo demás suelto que se puede ver. Lo que ya va dentro
@@ -114,8 +136,8 @@ const RECURSOS_DATOS = (() => {
   /** Cómo se abre cada salida en su panel: una tira con json en el visor de lonchas, un .glb en el visor GLB, lo demás tal cual */
   function panel(ruta, rutas) {
     const json = esTira(ruta) && parejaJson(ruta, rutas);
-    return json ? { ruta, tipo: 'lonchas', nombre: nombre(ruta), json } : { ruta, tipo: tipo(ruta), nombre: nombre(ruta) };
+    return json ? { ruta, tipo: 'lonchas', nombre: nombre(ruta), json, ...marcas(ruta) } : { ruta, tipo: tipo(ruta), nombre: nombre(ruta), ...marcas(ruta) };
   }
-  return { tipo, mime, nombre, etapa, esDelJuego, esTira, esCadena, parejaJson, juegos, validaCadena, encargo, problemas, propuestas, inventario, panel };
+  return { tipo, mime, nombre, marcas, tareas, deTarea, origen, etapa, esDelJuego, esTira, esCadena, parejaJson, juegos, validaCadena, encargo, problemas, propuestas, inventario, panel };
 })();
 if (typeof module !== 'undefined') module.exports = RECURSOS_DATOS;   // en node (tests/gestion/recursos-datos.test.mjs) solo se carga

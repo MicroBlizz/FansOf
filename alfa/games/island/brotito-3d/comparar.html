@@ -17,7 +17,7 @@
 <main>
   <div class="fila">
     <section class="panel">
-    <h2>Lonchas (el juego)</h2><canvas id="lonchas" aria-label="Brotito en lonchas"></canvas>
+    <h2>Lonchas (el juego)</h2><canvas id="lonchas" class="lonchas" aria-label="Brotito en lonchas"></canvas>
     <dl class="ficha">
       <dt>Técnica</dt><dd>Sprite stacking: el Brotito se pinta por código como 32 lonchas horizontales (una función da el color de cada punto) y se apilan giradas y aplastadas en un lienzo 2D, con contorno de 1 píxel.</dd>
       <dt>Puntos fuertes</dt><dd>Es pixel art, igual que el resto de la isla. No pesa nada en la descarga, apenas gasta por fotograma y va en cualquier móvil, sin WebGL.</dd>
@@ -47,8 +47,41 @@
     </dl>
   </section>
   </div>
+  <h2 class="tramo">En alta resolución</h2>
+  <div class="fila">
+    <section class="panel">
+    <h2>Lonchas en alta resolución</h2><canvas id="lonchas-hd" class="lonchas" aria-label="Brotito en lonchas en alta resolución"></canvas>
+    <dl class="ficha">
+      <dt>Técnica</dt><dd>El mismo dibujo por código del juego, pintado con 4 veces más píxeles por lado: 129 lonchas de 136 x 136 en vez de 32 de 34 x 34. No hay que redibujar nada, porque las fórmulas no tienen tamaño.</dd>
+      <dt>Puntos fuertes</dt><dd>Bordes y curvas limpios, se puede ampliar a pantalla grande y sigue sin pesar nada en la descarga. Sigue siendo un lienzo 2D, sin WebGL.</dd>
+      <dt>Puntos flojos</dt><dd>Deja de ser pixel art y no gana detalle: son las mismas formas lisas, sin luz ni textura. Fabricar cada postura cuesta 64 veces más, así que aquí no hay posturas intermedias (Suavizar no le hace nada). Al inclinar la cámara se siguen notando las capas.</dd>
+      <dt>Coste de desarrollo</dt><dd>Cero sobre lo que ya hay: es cambiar una cifra. Un personaje nuevo sigue siendo horas de código.</dd>
+      <dt>Coste de ejecución</dt><dd>0 KB de descarga. Al cargar, unos 0,3 s por postura (son seis) y unos 9 MB de memoria por postura. Cada ángulo nuevo apila 129 imágenes: mucho más que en el juego, pero sigue siendo 2D.</dd>
+    </dl>
+    </section>
+    <section class="panel">
+    <h2>3D desde el render, en alta</h2><canvas id="render-hd" aria-label="Brotito 3D desde el render, en alta resolución"></canvas>
+    <dl class="ficha">
+      <dt>Técnica</dt><dd>El mismo camino que el 3D desde el render, con dos cambios: la imagen de partida se pinta con vóxeles el doble de finos (sin escalones) y Trellis2 deja 150.000 caras y textura de 2048 en vez de 30.000 y 1024. Mismo esqueleto y mismas posturas.</dd>
+      <dt>Puntos fuertes</dt><dd>La silueta es más redonda y limpia, sin los escalones del modelo normal, y conserva los colores del juego.</dd>
+      <dt>Puntos flojos</dt><dd>La cara sale borrosa: Trellis2 pinta el color en una rejilla propia y subir la textura a 2048 no le da más detalle. De un render plano saca peor los ojos que de una figura con brillo. Pesa 5 veces más y sigue con el problema de los brazos.</dd>
+      <dt>Coste de desarrollo</dt><dd>12 min de GPU de Yoshi, casi lo mismo que el modelo normal, y 5 s de CPU para el esqueleto. 0 €.</dd>
+      <dt>Coste de ejecución</dt><dd>7,0 MB de modelo (más three.js). Mueve 5 veces más caras con huesos en cada fotograma: para un PC va bien, para el móvil es demasiado por un solo personaje.</dd>
+    </dl>
+    </section>
+    <section class="panel">
+    <h2>3D desde el vinilo, en alta</h2><canvas id="vinilo-hd" aria-label="Brotito 3D desde la figura de vinilo, en alta resolución"></canvas>
+    <dl class="ficha">
+      <dt>Técnica</dt><dd>Flux2 Klein redibuja el render fino como figura de vinilo y Trellis2 hace el modelo con 150.000 caras y textura de 2048. Mismo esqueleto y mismas posturas.</dd>
+      <dt>Puntos fuertes</dt><dd>Es el mejor de los seis en acabado: ojos nítidos con brillo, superficie lisa y esta vez los colores y la cara se parecen mucho más al Brotito del juego que en el vinilo normal.</dd>
+      <dt>Puntos flojos</dt><dd>El azul es algo más oscuro que el turquesa del juego. En los costados quedan pequeñas marcas del relieve horneado. Pesa 5 veces más que el normal y tiene el mismo problema de los brazos.</dd>
+      <dt>Coste de desarrollo</dt><dd>3 min de GPU para la figura (con el arranque en frío) y 10 min para el modelo, más 5 s de esqueleto. 0 €.</dd>
+      <dt>Coste de ejecución</dt><dd>6,8 MB de modelo (más three.js). En ejecución, lo mismo que el otro 3D en alta.</dd>
+    </dl>
+    </section>
+  </div>
   <p id="aviso" class="aviso"></p>
-  <p class="ayuda">Postura: <b id="estado">reposo</b>. Arrastra cualquiera de los tres para girar la cámara: giran los tres a la vez. Todos los botones valen para los tres.</p>
+  <p class="ayuda">Postura: <b id="estado">reposo</b>. Arrastra cualquiera para girar la cámara: giran todos a la vez. Todos los botones valen para los seis.</p>
   <div class="botones">
     <button id="libre" data-postura="" data-grupo="postura" class="activo">En marcha</button>
     <button data-postura="reposo" data-grupo="postura">Reposo</button>

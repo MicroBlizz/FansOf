@@ -24,7 +24,9 @@ button.activo, .boton.activo { background: var(--acento); border-color: #c9503a;
 .comparar main { max-width: 1200px; }
 .fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .comparar canvas { aspect-ratio: 1; }
-.comparar #lonchas { cursor: grab; }
+.comparar .lonchas { cursor: grab; }
+#lonchas-hd { image-rendering: auto; }
+.tramo { font-size: 16px; margin: 18px 2px 8px; color: var(--acento); }
 .ficha { margin: 8px 6px 0; font-size: 13px; line-height: 1.45; }
 .ficha dt { color: var(--acento); font-weight: 700; margin-top: 6px; }
 .ficha dd { margin: 0; opacity: 0.9; }

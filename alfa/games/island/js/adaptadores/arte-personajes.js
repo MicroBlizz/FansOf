@@ -89,11 +89,12 @@ const BROTO = (() => {
   }
   return { modelo, POSTURAS, W, D, H };
 })();
-const EB = 0.85, B_W = Math.round(BROTO.W * EB), B_D = Math.round(BROTO.D * EB), B_H = Math.round(BROTO.H * EB);
-// la pila de lonchas de Brotito para cualquier postura { sx, sz, a } (el juego usa solo las seis de POSTURAS)
-function pilaBrotito(pose) {
+const EB = 0.85, B_H = Math.round(BROTO.H * EB);
+// la pila de lonchas de Brotito para cualquier postura { sx, sz, a } (el juego usa solo las seis de POSTURAS) y a cualquier tamaño
+// (e = píxeles por unidad del dibujo; el del juego es EB)
+function pilaBrotito(pose, e = EB) {
   const m = BROTO.modelo(pose);
-  return pila(B_W, B_D, B_H, (z, x, y) => m((z + 0.5) / EB - 0.5, (x + 0.5) / EB - 0.5, (y + 0.5) / EB - 0.5));
+  return pila(Math.round(BROTO.W * e), Math.round(BROTO.D * e), Math.round(BROTO.H * e), (z, x, y) => m((z + 0.5) / e - 0.5, (x + 0.5) / e - 0.5, (y + 0.5) / e - 0.5));
 }
 const PILAS_B = {};
 for (const n in BROTO.POSTURAS) TAREAS.push(() => { PILAS_B[n] = pilaBrotito(BROTO.POSTURAS[n]); });

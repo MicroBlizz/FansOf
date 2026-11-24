@@ -1,13 +1,14 @@
-// Fans of Island · prototipo Brotito 3D, visor para comparar: un solo Brotito (mundo.js) dibujado tres veces a la vez, de cerca: en lonchas
-// (vista-lonchas.js, con la misma cámara) y con los dos modelos 3D (brotito.glb, desde el render; brotito-vinilo.glb, desde la figura de
-// vinilo). Todos los botones y la cámara (arrastrar cualquiera de los tres o «Dar vueltas») valen para los tres a la vez.
+// Fans of Island · prototipo Brotito 3D, visor para comparar: un solo Brotito (mundo.js) dibujado seis veces a la vez, de cerca. Arriba, como
+// está hoy: en lonchas (vista-lonchas.js, con la misma cámara) y con los dos modelos 3D (brotito.glb, desde el render; brotito-vinilo.glb,
+// desde la figura de vinilo). Abajo, lo mismo en alta resolución (lonchas x4 y brotito-hd.glb, brotito-vinilo-hd.glb).
+// Todos los botones y la cámara (arrastrar cualquiera o «Dar vueltas») valen para los seis a la vez.
 'use strict';
 import './brotito-3d.js';
 
 const $ = id => document.getElementById(id);
 while (IS.TAREAS.length) IS.TAREAS.shift()(null);
 const proto = IS.Prototipo3D.crea();
-const lonchas = IS.VistaLonchas.crea($('lonchas'));
+const lonchas = [IS.VistaLonchas.crea($('lonchas')), IS.VistaLonchas.crea($('lonchas-hd'), 4)];   // las del juego y las de alta resolución
 // lo que comparten los tres: la cámara (giro y altura) y las opciones de dibujo
 const estado = { vueltas: false, vistas: [], cam: { yaw: 0, elev: IS.VistaLonchas.ELEV_JUEGO }, opciones: { suave: true, contorno: true } };
 
@@ -47,14 +48,15 @@ function botones() {
     todas(x => { x.vista.deJuego(); x.vista.cerca(); });
     giraTodas(0, IS.VistaLonchas.ELEV_JUEGO);
   });
-  arrastrar($('lonchas'));
+  arrastrar($('lonchas')); arrastrar($('lonchas-hd'));
 }
 
 async function cargaVistas() {
-  for (const [id, ruta] of [['render', 'brotito.glb'], ['vinilo', 'brotito-vinilo.glb']]) {
+  const modelos = [['render', 'brotito.glb'], ['vinilo', 'brotito-vinilo.glb'], ['render-hd', 'brotito-hd.glb'], ['vinilo-hd', 'brotito-vinilo-hd.glb']];
+  for (const [id, ruta] of modelos) {
     try {
       const v = await IS.Vista3D.crea($(id), ruta, g => giraTodas(g.yaw, g.elev));
-      v.vista.cerca();
+      v.vista.cerca(); v.vista.gira(estado.cam.yaw, estado.cam.elev);   // si llega tarde, con la cámara que ya tengan los demás
       Object.assign(v.opciones, estado.opciones);
       estado.vistas.push(v);
     } catch (e) {
@@ -64,15 +66,15 @@ async function cargaVistas() {
   }
 }
 
-async function arranca() {
+function arranca() {
   botones();
-  await cargaVistas();
+  cargaVistas();   // sin esperar: cada modelo se suma al bucle cuando llega
   let antes = performance.now();
   const vuelta = ahora => {
     const dtReal = Math.min(0.05, (ahora - antes) / 1000), dt = dtReal * (proto.estado.lento ? 0.25 : 1); antes = ahora;
     proto.paso(dt);
     if (estado.vueltas) giraTodas(estado.cam.yaw + dtReal * 0.8);
-    lonchas.pinta(proto, estado.cam, estado.opciones, dt);
+    for (const l of lonchas) l.pinta(proto, estado.cam, estado.opciones, dt);
     todas(v => v.pinta(proto, dt));
     $('estado').textContent = proto.estado.e.muerto ? 'pisado' : proto.postura();
     requestAnimationFrame(vuelta);

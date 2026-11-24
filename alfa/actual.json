@@ -1,8 +1,8 @@
 {
- "build": 1464,
- "hash": "3f78ab8",
- "fecha": "2026-11-24T11:10:18Z",
- "mensaje": "Pop: el repetido de la burbuja arcoíris también abre ventana (duelo por 2 copias o la red) y la red, ayuda nueva (tarea #329, ADR 205)",
+ "build": 1465,
+ "hash": "8ba64cb",
+ "fecha": "2026-11-24T11:43:25Z",
+ "mensaje": "Island: fila en alta resolución en el visor de comparar (lonchas x4 y los dos modelos de Yoshi con 150.000 caras), con su ficha",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

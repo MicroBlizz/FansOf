@@ -1,7 +1,7 @@
 // Fans of Island · prototipo Brotito 3D, vista 3D: el modelo de Yoshi (Trellis2, con el esqueleto de
 // herramientas/blender/scripts/island_brotito_esqueleto.py) en three.js, movido por el mismo estado que el Brotito en lonchas (mundo.js):
 // posición, giro y postura. Cada postura coloca los huesos con IS.Brotito3D.huesos (huesos.js). Lleva su trozo de isla, luz con sombra,
-// contorno opcional (casco hinchado por detrás) y una cámara que se puede girar arrastrando. IS.Vista3D.crea(lienzo) → { pinta(proto, dt) }.
+// contorno opcional (casco hinchado por detrás) y una cámara que se puede girar arrastrando. IS.Vista3D.crea(lienzo, ruta, alMover) → { pinta(proto, dt), vista }.
 'use strict';
 import * as T from './three.min.js';
 
@@ -60,7 +60,7 @@ function colocaHuesos(h, reposo, ahora) {
   for (const n of ['pie_I', 'pie_D']) if (h[n]) h[n].o.position.copy(h[n].pos).add(aGltf(ahora[n]).sub(aGltf(reposo[n])));
 }
 
-function camara(lienzo) {   // arrastrar gira alrededor del Brotito; vuelve a la del juego con «Vista del juego»
+function camara(lienzo, alMover) {   // arrastrar gira alrededor del Brotito (alMover avisa del giro, para mover a la vez otras vistas); «Vista del juego» vuelve
   const cam = new T.PerspectiveCamera(18, 2.4, 20, 4000), vista = { yaw: 0, elev: ELEV_JUEGO, dist: 480, sigue: false }, mira = OBJETIVO.clone();
   const pon = () => {
     const c = Math.cos(vista.elev);
@@ -75,6 +75,7 @@ function camara(lienzo) {   // arrastrar gira alrededor del Brotito; vuelve a la
     if (Math.abs(dx) + Math.abs(dy) > 4) arrastre.movido = true;
     vista.yaw -= dx * 0.008; vista.elev = Math.min(1.35, Math.max(0.02, vista.elev + dy * 0.006));
     arrastre.x = ev.clientX; arrastre.y = ev.clientY; pon();
+    if (alMover) alMover({ yaw: vista.yaw, elev: vista.elev });
   });
   lienzo.addEventListener('pointerup', () => { arrastre = null; });
   lienzo.addEventListener('wheel', ev => { ev.preventDefault(); vista.dist = Math.min(2200, Math.max(120, vista.dist * (1 + Math.sign(ev.deltaY) * 0.1))); pon(); }, { passive: false });
@@ -86,10 +87,11 @@ function camara(lienzo) {   // arrastrar gira alrededor del Brotito; vuelve a la
   };
   const deJuego = () => { Object.assign(vista, { yaw: 0, elev: ELEV_JUEGO, dist: 480, sigue: false }); mira.copy(OBJETIVO); pon(); };
   const cerca = () => { Object.assign(vista, { dist: 170, sigue: true }); pon(); };
-  return { cam, deJuego, cerca, sigue };
+  const gira = (yaw, elev) => { vista.yaw = yaw; if (elev !== undefined) vista.elev = elev; pon(); };   // pone el giro desde fuera
+  return { cam, deJuego, cerca, sigue, gira, giro: () => vista.yaw };
 }
 
-async function crea(lienzo, ruta) {
+async function crea(lienzo, ruta, alMover) {
   const r = new T.WebGLRenderer({ canvas: lienzo, antialias: true });
   r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   r.outputColorSpace = T.SRGBColorSpace; r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
@@ -98,7 +100,7 @@ async function crea(lienzo, ruta) {
   escena.background = new T.Color(0xaee4ff);
   luces(escena);
   const zana = isla(escena, IS.Prototipo3D.TIERRA);
-  const vista = camara(lienzo);
+  const vista = camara(lienzo, alMover);
   const gltf = await new T.GLTFLoader().loadAsync(ruta);
   const modelo = gltf.scene, EB = IS.arte.EB;
   modelo.scale.set(EB, EB, -EB);   // el dibujo en lonchas usa ejes de mano izquierda: el espejo en z lo deja igual que en el juego

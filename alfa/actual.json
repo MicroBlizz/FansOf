@@ -1,8 +1,8 @@
 {
- "build": 1461,
- "hash": "dd46941",
- "fecha": "2026-11-23T18:17:57Z",
- "mensaje": "Versiones y novedades para la release (reintento al leer los flags en core)",
+ "build": 1462,
+ "hash": "4af088f",
+ "fecha": "2026-11-24T09:12:16Z",
+ "mensaje": "Island: visor para comparar los tres Brotitos lado a lado (lonchas, 3D desde el render y desde el vinilo)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- Fans of Island · prototipo Brotito 3D, visor para comparar: el Brotito en lonchas y sus dos modelos 3D de Yoshi, uno al lado del otro y
+     animados a la vez con el mismo estado (las reglas de dominio/brotitos.js). Ficha: docs/guia/juegos/island/brotito-3d.md -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Comparar Brotitos · prototipo · Fans of Island</title>
+<link rel="stylesheet" href="brotito-3d.css">
+</head>
+<body class="comparar">
+<header>
+  <a class="volver" href="./">← Brotito 3D</a>
+  <h1>Comparar Brotitos <small>prototipo</small></h1>
+</header>
+<main>
+  <div class="fila">
+    <section class="panel"><h2>Lonchas (el juego)</h2><canvas id="lonchas" aria-label="Brotito en lonchas"></canvas></section>
+    <section class="panel"><h2>3D desde el render</h2><canvas id="render" aria-label="Brotito 3D desde el render"></canvas></section>
+    <section class="panel"><h2>3D desde el vinilo</h2><canvas id="vinilo" aria-label="Brotito 3D desde la figura de vinilo"></canvas></section>
+  </div>
+  <p id="aviso" class="aviso"></p>
+  <p class="ayuda">Postura: <b id="estado">reposo</b>. Arrastra un 3D para girar la cámara: los dos giran a la vez.</p>
+  <div class="botones">
+    <button id="libre" data-postura="" data-grupo="postura" class="activo">En marcha</button>
+    <button data-postura="reposo" data-grupo="postura">Reposo</button>
+    <button data-postura="agachado" data-grupo="postura">Agachado</button>
+    <button data-postura="despegue" data-grupo="postura">Despegue</button>
+    <button data-postura="arriba" data-grupo="postura">Arriba</button>
+    <button data-postura="cayendo" data-grupo="postura">Cayendo</button>
+    <button data-postura="aterriza" data-grupo="postura">Aterriza</button>
+  </div>
+  <div class="botones">
+    <button id="pisar">Pisar</button>
+    <button id="lento">Cámara lenta</button>
+    <button id="suave">Suavizar posturas</button>
+    <button id="borde">Contorno</button>
+    <button id="vueltas">Dar vueltas</button>
+    <button id="frente">Vista del juego</button>
+  </div>
+</main>
+<script src="../js/is.js"></script>
+<script src="../js/dominio/medidas.js"></script>
+<script src="../js/dominio/fisica.js"></script>
+<script src="../js/dominio/bichos-comun.js"></script>
+<script src="../js/dominio/brotitos.js"></script>
+<script src="../js/adaptadores/lonchas.js"></script>
+<script src="../js/adaptadores/arte-personajes.js"></script>
+<script src="huesos.js"></script>
+<script src="mundo.js"></script>
+<script type="module" src="comparar.js"></script>
+</body>
+</html>

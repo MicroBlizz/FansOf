@@ -20,3 +20,8 @@ canvas { display: block; width: 100%; aspect-ratio: 360 / 150; border-radius: 8p
 button, .boton { display: inline-flex; align-items: center; text-decoration: none; min-height: 44px; padding: 8px 14px; border-radius: 10px; border: 3px solid var(--borde); background: #35b3a3; color: #1b1626;
   font: 700 14px system-ui, sans-serif; cursor: pointer; }
 button.activo, .boton.activo { background: var(--acento); border-color: #c9503a; }
+/* el visor para comparar: tres paneles cuadrados en fila (en el móvil, uno debajo de otro) */
+.comparar main { max-width: 1200px; }
+.fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.comparar canvas { aspect-ratio: 1; }
+@media (max-width: 700px) { .fila { grid-template-columns: 1fr; } .comparar canvas { max-width: 420px; margin: 0 auto; } }

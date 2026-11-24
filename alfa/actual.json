@@ -1,8 +1,8 @@
 {
- "build": 1481,
- "hash": "1121e76",
- "fecha": "2026-11-24T22:54:31Z",
- "mensaje": "Pop: los cinco corazones, más grandes y sin montarse, en el camino y en la barra de victoria y del pase (boceto B de Pepins, tarea #344)",
+ "build": 1482,
+ "hash": "23d52c6",
+ "fecha": "2026-11-24T23:13:09Z",
+ "mensaje": "Pop: rescates en lista fija (Jardín Becario, CrazyBunny y Cofre; Pastelería una copia y el CEO; cada mundo el suyo y el Astronauta en el Espacio) y la lista de los 33 compañeros en la doc (Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

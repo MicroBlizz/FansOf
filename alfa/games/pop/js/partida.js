@@ -36,7 +36,10 @@ const ppEquipoNivel = d => (ppCompanerosActivo() ? ppEquipoDe(ppModoDeNivel(d)) 
 function ppFx(d) {
   const fx = { pista: 0, equipo: PP_P ? PP_P.equipo : [] };
   for (const id of ppEquipoNivel(d)) if (ppFxDe(id).pista) fx.pista += ppFxDe(id).pista;
-  if (ppCompanerosActivo()) fx.atrapables = PP_COLE.atrapables(ppCole());   // atrapados: los de rescate que aún no tienes (tarea #142)
+  if (ppCompanerosActivo()) {   // atrapados: los de rescate que aún no tienes (tarea #142); en el hueco de copia, uno que ya tienes (PP_RESCATES)
+    fx.atrapables = PP_COLE.atrapables(ppCole());
+    fx.copia = PP_COLE.deCofre(ppCole(), ppAzar(7919 + d.g)) || null;
+  }
   return fx;
 }
 // ¿está en el equipo que ayuda en el nivel que se juega ahora?

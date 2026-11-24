@@ -8,9 +8,9 @@
 // Usa lo de gestion/index.html: $(), esc(), rpc() y leerToken(); GESTION_NAV (nav.js) y GESTION_ENLACE (enlace.js). Guía: docs/guia/herramientas/galeria.md
 'use strict';
 (() => {
-  const D = RECURSOS_DATOS, M = RECURSOS_MARCAS, G = RECURSOS_GITHUB;
+  const D = RECURSOS_DATOS, M = RECURSOS_MARCAS, G = RECURSOS_GITHUB, L = RECURSOS_ENLACE;
   const TOKEN = 'fansof.gestion.githubToken', PENDIENTES = 'fansof.gestion.recursos.pendientes', JUEGO = 'fansof.gestion.recursos.juego';
-  const POR_PAGINA = 24, VISORES = 'recursos/', TOPE_ENLACE = 12;   // TOPE_ENLACE: salidas que abre un enlace como mucho
+  const POR_PAGINA = 24, VISORES = 'recursos/';
   const BOTONES = ['valido', 'pendiente', 'invalido', 'relanzar'];
   const e = { raiz: null, carpetas: {}, juego: '', fichas: [], rutas: [], shas: new Map(), guardadas: {}, pendientes: {}, vistos: POR_PAGINA, abiertos: [], paneles: new Map(), urls: new Map(), leidas: new Map(), cargando: false, aviso: '' };
   const pan = document.createElement('div'); pan.id = 'pan-recursos'; pan.hidden = true;
@@ -22,8 +22,7 @@
   const nodo = (tag, clase, texto) => { const n = document.createElement(tag); if (clase) n.className = clase; if (texto != null) n.textContent = texto; return n; };
   e.pendientes = lee(PENDIENTES, {});
   // Lo que pide el enlace directo, hasta que se abre (después de leer la rama); su juego manda sobre el último elegido
-  const pedido = GESTION_ENLACE.lee(location.search);
-  let deEnlace = pedido.seccion === 'recursos' && !pedido.juego ? { juego: pedido.valores('rjuego')[0] || '', ver: pedido.valores('ver').slice(0, TOPE_ENLACE) } : null;
+  let deEnlace = L.pedido(GESTION_ENLACE.lee(location.search));
   if (deEnlace && deEnlace.juego) e.juego = deEnlace.juego;
   const marcas = () => M.mezcla(e.guardadas, e.pendientes);
 
@@ -88,21 +87,14 @@
     return e.otraVez ? cargar(forzarOtra) : null;
   }
 
-  // ---- el enlace directo: abre las salidas que pide (si siguen en la rama, cada una con su ficha) una sola vez, ya leído el juego que pide
+  // ---- el enlace directo (recursos-enlace.js): abre lo que pide una sola vez, ya leída la rama; la dirección dice el juego y lo abierto
   function abreDelEnlace() {
-    if (!deEnlace || (deEnlace.juego && deEnlace.juego !== e.juego)) { deEnlace = null; return; }
-    for (const s of deEnlace.ver) {
-      const f = e.fichas.find(x => salidasDe(x).includes(s));
-      if (f && !e.abiertos.some(a => a.salida === s)) e.abiertos.push({ salida: s, ficha: f });
-    }
+    if (!deEnlace) return;
+    e.abiertos = L.abre(deEnlace, e.juego, e.fichas, e.abiertos, salidasDe);
     deEnlace = null;
     pintaPaneles();
   }
-  // Lo que dice la dirección: el juego y lo abierto (o lo que pide el enlace mientras se lee la rama)
-  function enlace() {
-    if (deEnlace) return [['rjuego', deEnlace.juego || e.juego], ...deEnlace.ver.map(s => ['ver', s])];
-    return [['rjuego', e.juego], ...e.abiertos.map(a => ['ver', a.salida])];
-  }
+  const enlace = () => L.parametros(deEnlace, e.juego, e.abiertos);
 
   // ---- la lista
   const pasa = (f, tipo, estado, tarea) => (!tipo || f.tipo === tipo) && D.deTarea(f, tarea) && (estado ? estadoFicha(f) === estado : estadoFicha(f) !== 'invalido');

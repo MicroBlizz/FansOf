@@ -1,8 +1,8 @@
 {
- "build": 1472,
- "hash": "68a451e",
- "fecha": "2026-11-24T18:12:55Z",
- "mensaje": "Pop: la red es una red de pesca con aro de corazón (tarea #329)",
+ "build": 1473,
+ "hash": "d682650",
+ "fecha": "2026-11-24T18:22:33Z",
+ "mensaje": "/gestion → Recursos: el enlace directo en reglas puras con sus tests (tarea #338, ADR 211)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

@@ -1,6 +1,7 @@
 // Fans of Island · prototipo Brotito 3D, visor para comparar: un solo Brotito (mundo.js) dibujado seis veces a la vez, de cerca. Arriba, como
 // está hoy: en lonchas (vista-lonchas.js, con la misma cámara) y con los dos modelos 3D (brotito.glb, desde el render; brotito-vinilo.glb,
-// desde la figura de vinilo). Abajo, lo mismo en alta resolución (lonchas x4 y brotito-hd.glb, brotito-vinilo-hd.glb).
+// desde la figura de vinilo). Debajo, lo mismo en alta resolución (lonchas x4 y brotito-hd.glb, brotito-vinilo-hd.glb) y el modelo que
+// hace la cadena de lonchas de Yoshi por etapas (brotito-etapas.glb).
 // Todos los botones y la cámara (arrastrar cualquiera o «Dar vueltas») valen para los seis a la vez.
 'use strict';
 import './brotito-3d.js';
@@ -52,7 +53,7 @@ function botones() {
 }
 
 async function cargaVistas() {
-  const modelos = [['render', 'brotito.glb'], ['vinilo', 'brotito-vinilo.glb'], ['render-hd', 'brotito-hd.glb'], ['vinilo-hd', 'brotito-vinilo-hd.glb']];
+  const modelos = [['render', 'brotito.glb'], ['vinilo', 'brotito-vinilo.glb'], ['render-hd', 'brotito-hd.glb'], ['vinilo-hd', 'brotito-vinilo-hd.glb'], ['etapas', 'brotito-etapas.glb']];
   for (const [id, ruta] of modelos) {
     try {
       const v = await IS.Vista3D.crea($(id), ruta, g => giraTodas(g.yaw, g.elev));

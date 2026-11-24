@@ -26,6 +26,7 @@ button.activo, .boton.activo { background: var(--acento); border-color: #c9503a;
 .comparar canvas { aspect-ratio: 1; }
 .comparar .lonchas { cursor: grab; }
 #lonchas-hd { image-rendering: auto; }
+.pendiente { margin: 12px 8px; font-size: 14px; opacity: 0.85; }
 .tramo { font-size: 16px; margin: 18px 2px 8px; color: var(--acento); }
 .ficha { margin: 8px 6px 0; font-size: 13px; line-height: 1.45; }
 .ficha dt { color: var(--acento); font-weight: 700; margin-top: 6px; }

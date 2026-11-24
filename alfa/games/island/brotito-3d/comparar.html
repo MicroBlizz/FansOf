@@ -80,8 +80,24 @@
     </dl>
     </section>
   </div>
+  <h2 class="tramo">Por etapas: la cadena de Yoshi</h2>
+  <div class="fila">
+    <section class="panel">
+    <h2>3D por etapas</h2><canvas id="etapas" aria-label="Brotito 3D hecho por la cadena de Yoshi"></canvas>
+    <dl class="ficha">
+      <dt>Técnica</dt><dd>El pedido de lonchas de Yoshi, de una vez y sin Claude: desde la figura de vinilo, Trellis2 (30.000 caras), un alisado en Blender que quita bultos y el mapa de normales, y el script del esqueleto, que pone los huesos, la cola y las seis posturas como animaciones. Las lonchas se cortan después de este modelo.</dd>
+      <dt>Puntos fuertes</dt><dd>Es el proceso que se repetiría con cualquier personaje: se encarga con un pedido y se revisa en /gestion → Recursos. La superficie sale más lisa que la del vinilo normal, con los mismos colores.</dd>
+      <dt>Puntos flojos</dt><dd>Al alisar se suaviza también algo del relieve de la cara. Tiene el mismo problema de los brazos que los demás 3D.</dd>
+      <dt>Coste de desarrollo</dt><dd>Unos 10 min de GPU de Yoshi para el modelo y segundos de CPU para el alisado y el esqueleto. Ningún token: lo lanza el pedido. 0 €.</dd>
+      <dt>Coste de ejecución</dt><dd>1,3 MB de modelo (más three.js), igual que el vinilo normal. En el juego no iría así: iría en lonchas, como la columna de al lado.</dd>
+    </dl>
+    </section>
+    <section class="panel">
+    <h2>Lonchas cortadas del 3D</h2><p class="pendiente">Salen cuando des por bueno el modelo de la izquierda en /gestion → Recursos: Yoshi corta las seis posturas en lonchas del tamaño del juego, y aparecerán aquí.</p>
+    </section>
+  </div>
   <p id="aviso" class="aviso"></p>
-  <p class="ayuda">Postura: <b id="estado">reposo</b>. Arrastra cualquiera para girar la cámara: giran todos a la vez. Todos los botones valen para los seis.</p>
+  <p class="ayuda">Postura: <b id="estado">reposo</b>. Arrastra cualquiera para girar la cámara: giran todos a la vez. Todos los botones valen para todos.</p>
   <div class="botones">
     <button id="libre" data-postura="" data-grupo="postura" class="activo">En marcha</button>
     <button data-postura="reposo" data-grupo="postura">Reposo</button>

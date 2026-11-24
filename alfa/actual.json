@@ -1,8 +1,8 @@
 {
- "build": 1474,
- "hash": "921066d",
- "fecha": "2026-11-24T18:26:54Z",
- "mensaje": "Web: página 404 propia que reenvía las /demos/ viejas, y fuera web/demos/ y la mudanza de core (tarea #45, ADR 212)",
+ "build": 1475,
+ "hash": "479a225",
+ "fecha": "2026-11-24T18:30:53Z",
+ "mensaje": "Island: el visor de comparar enseña el Brotito 3D hecho por la cadena de lonchas de Yoshi (por etapas), a la espera de sus lonchas",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

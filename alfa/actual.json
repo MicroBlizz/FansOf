@@ -1,8 +1,8 @@
 {
- "build": 1479,
- "hash": "437321c",
- "fecha": "2026-11-24T22:21:09Z",
- "mensaje": "Pop más difícil: desde el mundo 2 los toques se ponen para quien piensa (la jugadora lista, curva del 85 al 55 %) y la racha da +1 como mucho (tarea #353, ADR 214, Pepins)",
+ "build": 1480,
+ "hash": "b37d88a",
+ "fecha": "2026-11-24T22:49:17Z",
+ "mensaje": "Pop: cereza con tallo verde y goma de deshacer, corazón grande con 3/5, avisos de Amigos dentro de la lista y Lola avisa del Difícil y la Pesadilla nuevos con marca NUEVO (tareas #351, #345, #344, #348 y #350, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

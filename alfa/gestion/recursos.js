@@ -1,7 +1,7 @@
 // Fans Of · /gestion, pestaña RECURSOS (grupo Tablero): revisar desde el móvil lo que genera Yoshi y marcarlo por etapas (propuestas → modelo 3D → lonchas).
 // Lee `salida/` de la rama `recursos` con el token de GitHub de la pestaña Cola (Contents en solo lectura: recursos-github.js), agrupa por juego (y filtra por la tarea del nombre de las salidas) con las
 // reglas de la galería local (recursos-datos.js) y abre cada encargo con sus salidas en paneles, con los mismos visores y mandos comunes que la galería
-// (recursos/: visor-lonchas.html, visor-glb.html, mandos-comunes.js, miniaturas.js). Las marcas (Sirve, En el aire, Descartar, Relanzar y nota) van a Supabase
+// (recursos/: visor-lonchas.html, visor-glb.html, mandos-comunes.js, miniaturas.js); zoom y pantalla completa, recursos-ampliar.js. Las marcas (Sirve, En el aire, Descartar, Relanzar y nota) van a Supabase
 // con la sesión de /gestion (gestion_recurso_marcar y gestion_recurso_encargos; recursos-marcas.js). No lanza la siguiente etapa: eso irá con un workflow.
 // Enlace directo (tarea #338, ADR 211): la dirección lleva el juego (&rjuego=) y cada salida abierta para comparar (&ver=, una por salida); un enlace así
 // elige ese juego y abre esas salidas en cuanto se ha leído la rama.
@@ -209,6 +209,7 @@
     const dentro = nodo('div', 'rec-dentro rec-' + que.tipo, 'Cargando…');
     contenido(dentro, que).catch(err => { dentro.textContent = fallo(err); });
     el.append(barra, dentro, controles(f, salida));
+    RECURSOS_AMPLIAR.panel(el);   // zoom, «Encajar» y «Ver grande» (doble clic: pantalla completa)
     return el;
   }
   function pintaPaneles() {
@@ -241,6 +242,7 @@
     $('rec-mas').onclick = () => { e.vistos += POR_PAGINA; pintaLista(); };
     $('rec-cerrar-todo').onclick = () => { e.abiertos = []; pintaPaneles(); };
     MANDOS.arranca($('rec-mandos'), () => [...pan.querySelectorAll('#rec-paneles iframe[data-mandos]')]);
+    RECURSOS_AMPLIAR.arranca($('rec-paneles'));
   }
   function pinta() {
     if (!pan.firstChild) esqueleto();

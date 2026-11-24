@@ -2,6 +2,7 @@
 <!-- Fans Of · VISOR DE LONCHAS de recursos (galería local y pestaña Recursos de /gestion): una tira de lonchas (lonchas.png + lonchas.json) para
      girarla arrastrando, darle vueltas, inclinarla, ver sus lonchas separadas, ponerle contorno y pasar por sus posturas, dentro de un
      panel de comparar (la galería y web/gestion/recursos.js lo abren con ?png=<dirección>&json=<dirección>&nombre=<nombre>).
+     Rueda o pellizco amplían (zoom.js); Mayúsculas + arrastrar, la rueda pulsada o dos dedos corren la vista; doble clic encaja o pide la pantalla completa.
      Pinta con lonchas.js (aquí al lado), nítido (ampliado un número entero de veces). Guía: docs/guia/herramientas/galeria.md -->
 <html lang="es">
 <head>
@@ -12,7 +13,7 @@
   :root { --fondo: #3b2a5e; --barra: #2b1e47; --linea: #4a3a78; --texto: #f6efff; --suave: #c9bde6; --acento: #ffd34d; }
   html, body { height: 100%; margin: 0; background: var(--fondo); overflow: hidden; font: 12px/1.3 system-ui, sans-serif; color: var(--texto); }
   body { display: flex; flex-direction: column; }
-  #marco { flex: 1; min-height: 0; position: relative; }
+  #marco { flex: 1; min-height: 0; position: relative; overflow: hidden; }
   canvas { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); image-rendering: pixelated; touch-action: none; cursor: grab; }
   #info { position: absolute; left: 8px; top: 6px; color: var(--suave); pointer-events: none; }
   #mandos { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px 6px; background: var(--barra); }
@@ -34,9 +35,12 @@
   <button id="contorno" aria-pressed="false">Contorno</button>
   <button id="postura" hidden>Postura</button>
   <button id="reproducir" aria-pressed="false" hidden>Reproducir</button>
+  <button id="encajar" hidden title="Vuelve a encajar (o doble clic)">Encajar</button>
 </div>
 <script src="lonchas.js"></script>
 <script src="mandos-panel.js"></script>
+<script src="encuadre.js"></script>
+<script src="zoom.js"></script>
 <script src="visor-lonchas.js"></script>
 </body>
 </html>

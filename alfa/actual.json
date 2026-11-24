@@ -1,8 +1,8 @@
 {
- "build": 1475,
- "hash": "479a225",
- "fecha": "2026-11-24T18:30:53Z",
- "mensaje": "Island: el visor de comparar enseña el Brotito 3D hecho por la cadena de lonchas de Yoshi (por etapas), a la espera de sus lonchas",
+ "build": 1476,
+ "hash": "629bdeb",
+ "fecha": "2026-11-24T18:37:06Z",
+ "mensaje": "/gestion → Recursos: zoom y mover en lo abierto, y doble clic a pantalla completa (#334)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

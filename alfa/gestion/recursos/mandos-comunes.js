@@ -22,6 +22,8 @@ const MANDOS = (() => {
     return [];
   }
   function recibe(ev) { for (const [v, orden, valor] of responde(ev, location.origin, ventanas(), estado)) manda(v, orden, valor); }
+  // a un visor que no es de un panel (la pantalla completa de /gestion) se le dice, cuando avisa de que está listo, cómo están los interruptores
+  function saluda(ventana) { for (const [v, orden, valor] of responde({ origin: location.origin, source: ventana, data: { tipo: TIPO, orden: 'listo' } }, location.origin, [ventana], estado)) manda(v, orden, valor); }
   function boton(texto, titulo, accion) {
     const b = document.createElement('button'); b.textContent = texto; b.title = titulo; b.onclick = accion; barra.append(b); return b;
   }
@@ -46,6 +48,6 @@ const MANDOS = (() => {
   }
   // la barra solo sale si hay algún visor abierto
   function actualiza() { if (barra) barra.hidden = !marcos().length; }
-  return { TIPO, arranca, actualiza, responde };
+  return { TIPO, arranca, actualiza, responde, saluda };
 })();
 if (typeof module !== 'undefined') module.exports = MANDOS;   // en node (tests/herramientas/galeria/ y tests/gestion/) solo se carga

@@ -1,6 +1,7 @@
 // Fans Of · RECURSOS · visor de lonchas (galería local y pestaña Recursos de /gestion): lee una tira (fila por postura; en cada fila, las lonchas de la del
 // suelo a la de arriba) y su json {ancho, fondo, alto, lonchas, cubitos, posturas}, y la pinta con LONCHAS (lonchas.js, aquí al lado).
-// Arrastrar gira; los mandos comunes de la galería llegan por mandos-panel.js. Página: visor-lonchas.html. Guía: docs/guia/herramientas/galeria.md
+// Arrastrar gira; rueda o pellizco amplían (encajada, alejar con la rueda mueve la página) y Mayúsculas + arrastrar (o la rueda pulsada, o dos dedos) corre la vista (zoom.js); doble clic la encaja o,
+// encajada, pide a la página de arriba la pantalla completa (mensaje «ampliar»). Los mandos comunes de la galería llegan por mandos-panel.js. Página: visor-lonchas.html. Guía: docs/guia/herramientas/galeria.md
 'use strict';
 const VISOR_LONCHAS = (() => {
   const $ = id => document.getElementById(id);
@@ -57,7 +58,7 @@ const VISOR_LONCHAS = (() => {
   }
 
   // ---- pantalla: ampliado un número entero de veces (con K = 1, para que inclinar no cambie el tamaño)
-  let cv, ctx, buf, b, esc = 1;   // el lienzo se coge al arrancar: así lo puro (valida, posturas, bordea) se carga y se prueba sin página
+  let cv, ctx, buf, b, esc = 1, zoom = null;   // el lienzo se coge al arrancar: así lo puro (valida, posturas, bordea) se carga y se prueba sin página
   function ajusta() {
     const p = e.pilas[0], caja = $('marco'), dpr = devicePixelRatio || 1, w = Math.floor(caja.clientWidth * dpr), h = Math.floor(caja.clientHeight * dpr);
     if (!p || !w || !h) return;
@@ -65,6 +66,7 @@ const VISOR_LONCHAS = (() => {
     esc = Math.max(1, Math.floor(Math.min(w / anchoMin, h / altoMin)));
     buf.width = Math.floor(w / esc); buf.height = Math.floor(h / esc); cv.width = buf.width * esc; cv.height = buf.height * esc;
     cv.style.width = cv.width / dpr + 'px'; cv.style.height = cv.height / dpr + 'px';
+    if (zoom) zoom.recoloca();   // el lienzo cambió de tamaño: el encuadre se vuelve a acotar con sus medidas nuevas
   }
   function dibuja() {
     b.clearRect(0, 0, buf.width, buf.height); b.imageSmoothingEnabled = false;
@@ -98,8 +100,9 @@ const VISOR_LONCHAS = (() => {
     contorno: si => { e.contorno = !!si; pulsa('contorno', e.contorno); },
     reproducir: si => { e.reproducir = !!si; pulsa('reproducir', e.reproducir); },
     postura: () => ponPostura(e.postura + 1),
-    'vista-inicial': () => { e.giro = 0; e.K = K0; e.sepObj = 1; $('inclinar').value = K0; pulsa('separar', false); },
+    'vista-inicial': () => { if (zoom) zoom.encaja(); e.giro = 0; e.K = K0; e.sepObj = 1; $('inclinar').value = K0; pulsa('separar', false); },
   };
+  const corre = ev => ev.shiftKey || ev.button === 1;   // arrastrar así corre la vista ampliada en vez de girar
   function enciende() {
     const pliega = si => { $('mandos').classList.toggle('plegado', si); $('plegar').setAttribute('aria-expanded', String(!si)); };
     pliega(innerWidth < 320 || innerHeight < 320);   // en un panel pequeño, plegados: manda la vista (los comunes siguen arriba)
@@ -111,9 +114,17 @@ const VISOR_LONCHAS = (() => {
     $('separar').onclick = () => { e.sepObj = e.sepObj > 1 ? 1 : 3; pulsa('separar', e.sepObj > 1); };
     $('inclinar').oninput = () => { e.K = Number($('inclinar').value); };
     $('inclinar').onchange = () => LONCHAS.precalienta(e.pilas[e.postura], op());
-    cv.addEventListener('pointerdown', ev => { e.dedo = ev.clientX; cv.setPointerCapture(ev.pointerId); });
+    zoom = ZOOM.crea($('marco'), {
+      elemento: () => cv, base: 'translate(-50%, -50%)', tactil: 'none', mueve: corre,
+      alDoble: () => MANDOS_PANEL.manda('ampliar'), alCambiar: enc => { $('encajar').hidden = ENCUADRE.encajada(enc); },
+    });
+    $('encajar').onclick = () => zoom.encaja();
+    cv.addEventListener('pointerdown', ev => {
+      if (e.dedo !== null) { e.dedo = null; return; }   // el segundo dedo: pellizco, ya no gira
+      if (!corre(ev)) { e.dedo = ev.clientX; cv.setPointerCapture(ev.pointerId); }
+    });
     cv.addEventListener('pointermove', ev => {
-      if (e.dedo === null) return;
+      if (e.dedo === null || zoom.dedos() > 1) return;
       const d = -(ev.clientX - e.dedo) * ARRASTRE; e.dedo = ev.clientX; e.giro += d; MANDOS_PANEL.manda('girar', d);
     });
     for (const fin of ['pointerup', 'pointercancel']) cv.addEventListener(fin, () => { e.dedo = null; });

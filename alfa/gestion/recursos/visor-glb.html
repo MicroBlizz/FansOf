@@ -2,7 +2,7 @@
 <!-- Fans Of · VISOR GLB de recursos (galería local y pestaña Recursos de /gestion): un modelo .glb o .gltf para girarlo con el ratón, dentro de un
      panel de comparar (la galería y web/gestion/recursos.js lo abren con ?src=<dirección del modelo>). Escucha los mandos comunes de la
      galería (girar, dar vueltas, vista inicial, contorno, postura = siguiente animación, reproducir) y le dice cuánto lo gira quien lo arrastra,
-     con mandos-panel.js. three.js 0.186.1 y sus añadidos GLTFLoader, OrbitControls y OutlineEffect vienen de jsDelivr con la versión fijada.
+     con mandos-panel.js, y con doble clic le pide la pantalla completa (mensaje «ampliar»). three.js 0.186.1 y sus añadidos GLTFLoader, OrbitControls y OutlineEffect vienen de jsDelivr con la versión fijada.
      Guía: docs/guia/herramientas/galeria.md -->
 <html lang="es">
 <head>
@@ -71,6 +71,8 @@ function siguientePostura() {
 // quien arrastra este panel le dice a la galería cuánto lo gira, para que giren los demás
 render.domElement.addEventListener('pointerdown', () => { e.arrastra = true; e.az = mandos.getAzimuthalAngle(); });
 for (const fin of ['pointerup', 'pointercancel']) addEventListener(fin, () => { e.arrastra = false; });
+// doble clic: la página de arriba lo abre en pantalla completa (en /gestion; la galería local no lo usa). La rueda ya acerca: es de la órbita
+render.domElement.addEventListener('dblclick', () => MANDOS_PANEL.manda('ampliar'));
 mandos.addEventListener('change', () => {
   if (!e.arrastra) return;
   const az = mandos.getAzimuthalAngle(), d = Math.atan2(Math.sin(az - e.az), Math.cos(az - e.az)); e.az = az;

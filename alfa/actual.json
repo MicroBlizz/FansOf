@@ -1,8 +1,8 @@
 {
- "build": 1491,
- "hash": "09bbb79",
- "fecha": "2026-11-25T02:04:41Z",
- "mensaje": "404: en /games/<algo que no existe> ya no se queda la pantalla de carga esperando un juego (tarea #45, ADR 212)",
+ "build": 1492,
+ "hash": "2fead09",
+ "fecha": "2026-11-25T02:08:41Z",
+ "mensaje": "/gestion → Recursos: un encargo con la cadena rota sale en la lista con su error, y un grupo de una propuesta dice su marca (tarea #338)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

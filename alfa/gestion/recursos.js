@@ -5,10 +5,11 @@
 // con la sesión de /gestion (gestion_recurso_marcar y gestion_recurso_encargos; recursos-marcas.js). No lanza la siguiente etapa: eso irá con un workflow.
 // Enlace directo (tarea #338, ADR 211): la dirección lleva el juego (&rjuego=) y cada salida abierta para comparar (&ver=, una por salida); un enlace así
 // elige ese juego y abre esas salidas en cuanto se ha leído la rama.
+// Las reglas de la lista (estado, resumen y filtros) están en recursos-lista.js.
 // Usa lo de gestion/index.html: $(), esc(), rpc() y leerToken(); GESTION_NAV (nav.js) y GESTION_ENLACE (enlace.js). Guía: docs/guia/herramientas/galeria.md
 'use strict';
 (() => {
-  const D = RECURSOS_DATOS, M = RECURSOS_MARCAS, G = RECURSOS_GITHUB, L = RECURSOS_ENLACE;
+  const D = RECURSOS_DATOS, M = RECURSOS_MARCAS, G = RECURSOS_GITHUB, L = RECURSOS_ENLACE, LISTA = RECURSOS_LISTA;
   const TOKEN = 'fansof.gestion.githubToken', PENDIENTES = 'fansof.gestion.recursos.pendientes', JUEGO = 'fansof.gestion.recursos.juego';
   const POR_PAGINA = 24, VISORES = 'recursos/';
   const BOTONES = ['valido', 'pendiente', 'invalido', 'relanzar'];
@@ -97,18 +98,10 @@
   const enlace = () => L.parametros(deEnlace, e.juego, e.abiertos);
 
   // ---- la lista
-  const pasa = (f, tipo, estado, tarea) => (!tipo || f.tipo === tipo) && D.deTarea(f, tarea) && (estado ? estadoFicha(f) === estado : estadoFicha(f) !== 'invalido');
-  const salidasDe = f => f.salidas || [f.ruta];
-  // el estado de una ficha: el de su salida, o en un grupo el que más pesa (algo que sirve, luego relanzar, en el aire, sin mirar; descartada si todas)
-  function estadoFicha(f) {
-    const c = M.cuentas(marcas(), salidasDe(f));
-    return ['valido', 'relanzar', 'pendiente', 'sin-mirar'].find(k => c[k]) || 'invalido';
-  }
-  function resumen(f) {
-    const c = M.cuentas(marcas(), salidasDe(f)), n = salidasDe(f).length;
-    if (n === 1) return M.TEXTOS[M.estadoDe(marcas(), f.ruta)];
-    return [c.valido ? c.valido + ' sirven' : '', c.relanzar ? c.relanzar + ' a relanzar' : '', c.invalido ? c.invalido + ' descartadas' : '', c['sin-mirar'] ? c['sin-mirar'] + ' sin mirar' : ''].filter(Boolean).join(' · ') || n + ' en el aire';
-  }
+  // (las reglas, en recursos-lista.js)
+  const salidasDe = LISTA.salidasDe;
+  const estadoFicha = f => LISTA.estado(f, marcas());
+  const resumen = f => LISTA.resumen(f, marcas());
   // la vista previa se pide al verse (cada archivo es una llamada a GitHub)
   const mira = 'IntersectionObserver' in window ? new IntersectionObserver(ents => ents.forEach(x => { if (x.isIntersecting) { mira.unobserve(x.target); x.target.carga(); } }), { rootMargin: '200px' }) : null;
   function vista(f) {
@@ -131,7 +124,8 @@
     return el;
   }
   function pintaLista() {
-    const tipo = $('rec-tipo').value, estado = $('rec-estado').value, tarea = $('rec-tarea').value, lista = e.fichas.filter(f => pasa(f, tipo, estado, tarea));
+    const filtro = { tipo: $('rec-tipo').value, estado: $('rec-estado').value, tarea: $('rec-tarea').value }, m = marcas();
+    const lista = e.fichas.filter(f => LISTA.pasa(f, filtro, m));
     $('rec-lista').replaceChildren(...lista.slice(0, e.vistos).map(ficha));
     if (!lista.length) $('rec-lista').append(nodo('div', 'vacio', e.cargando ? 'Leyendo la rama recursos…' : 'Nada con ese filtro.'));
     $('rec-mas').hidden = lista.length <= e.vistos; $('rec-mas').textContent = `Ver más (${lista.length - e.vistos})`;

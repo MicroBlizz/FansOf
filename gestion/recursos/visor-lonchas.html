@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- Fans Of · VISOR DE LONCHAS de recursos (galería local y pestaña Recursos de /gestion): una tira de lonchas (lonchas.png + lonchas.json) para
+     girarla arrastrando, darle vueltas, inclinarla, ver sus lonchas separadas, ponerle contorno y pasar por sus posturas, dentro de un
+     panel de comparar (la galería y web/gestion/recursos.js lo abren con ?png=<dirección>&json=<dirección>&nombre=<nombre>).
+     Rueda o pellizco amplían (zoom.js); Mayúsculas + arrastrar, la rueda pulsada o dos dedos corren la vista; doble clic encaja o pide la pantalla completa.
+     Pinta con lonchas.js (aquí al lado), nítido (ampliado un número entero de veces). Guía: docs/guia/herramientas/galeria.md -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fans Of · Visor de lonchas</title>
+<style>
+  :root { --fondo: #3b2a5e; --barra: #2b1e47; --linea: #4a3a78; --texto: #f6efff; --suave: #c9bde6; --acento: #ffd34d; }
+  html, body { height: 100%; margin: 0; background: var(--fondo); overflow: hidden; font: 12px/1.3 system-ui, sans-serif; color: var(--texto); }
+  body { display: flex; flex-direction: column; }
+  #marco { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+  canvas { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); image-rendering: pixelated; touch-action: none; cursor: grab; }
+  #info { position: absolute; left: 8px; top: 6px; color: var(--suave); pointer-events: none; }
+  #mandos { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px 6px; background: var(--barra); }
+  button, label { font: inherit; color: var(--texto); background: var(--fondo); border: 2px solid var(--linea); border-radius: 6px; padding: 3px 6px; cursor: pointer; font-weight: 700; }
+  button[aria-pressed="true"] { background: var(--acento); color: var(--barra); border-color: var(--acento); }
+  label { display: flex; gap: 4px; align-items: center; }
+  input[type=range] { width: 80px; }
+  #mandos.plegado > :not(#plegar) { display: none; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="marco"><canvas id="lienzo"></canvas><div id="info">Cargando…</div></div>
+<div id="mandos">
+  <button id="plegar" aria-expanded="true" title="Enseña u oculta los mandos de este panel">Mandos</button>
+  <button id="vueltas" aria-pressed="false">Dar vueltas</button>
+  <label title="Cuánto se mira desde arriba">Inclinar <input id="inclinar" type="range" min="0.3" max="1" step="0.02" value="0.72"></label>
+  <button id="separar" aria-pressed="false">Ver lonchas</button>
+  <button id="contorno" aria-pressed="false">Contorno</button>
+  <button id="postura" hidden>Postura</button>
+  <button id="reproducir" aria-pressed="false" hidden>Reproducir</button>
+  <button id="encajar" hidden title="Vuelve a encajar (o doble clic)">Encajar</button>
+</div>
+<script src="lonchas.js"></script>
+<script src="mandos-panel.js"></script>
+<script src="encuadre.js"></script>
+<script src="zoom.js"></script>
+<script src="visor-lonchas.js"></script>
+</body>
+</html>

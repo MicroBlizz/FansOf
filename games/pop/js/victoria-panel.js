@@ -15,17 +15,18 @@ function ppVicFondoPon(f) {
   return f;
 }
 /* ---------- la barra de arriba ---------- */
+// los cinco corazones, más grandes que antes y sin montarse (reporte 53, tarea #344: Pepins eligió el boceto B, bocetos/corazones-344.html)
 function ppVicCorazones() {
   const llenos = ppInfinitas() ? PP_CFG.vida : Math.min(PP_CFG.vida, ppVidas());
   let h = '';
-  for (let k = 0; k < PP_CFG.vida; k++) h += `<span class="pp-vic-vida${k < llenos ? '' : ' pp-vacia'}">${ppIcono('i-vida', 34, '#ff6e8a')}</span>`;
+  for (let k = 0; k < PP_CFG.vida; k++) h += `<span class="pp-vic-vida${k < llenos ? '' : ' pp-vacia'}">${ppIcono('i-vida', 46, '#ff6e8a')}</span>`;
   return h;
 }
 // `monedas`: lo que se ve al abrir (sin lo ganado: lo suben las monedas al llegar volando)
 function ppVicBarraHtml(monedas) {
   return `<div class="pp-vic-arriba"><div class="pp-vic-vidas">${ppVicCorazones()}</div>`
-    + `<div class="pp-vic-caja pp-vic-caja-mon">${ppIcono('i-moneda', 44)}<b class="pp-vic-mon">${monedas}</b></div>`
-    + `<div class="pp-vic-caja pp-vic-caja-per">${ppIcono('i-perla', 44, '#ffd1ec')}<b class="pp-vic-per">${SAVE.perlas || 0}</b></div></div>`;
+    + `<div class="pp-vic-caja pp-vic-caja-mon">${ppIcono('i-moneda', 38)}<b class="pp-vic-mon">${monedas}</b></div>`
+    + `<div class="pp-vic-caja pp-vic-caja-per">${ppIcono('i-perla', 38, '#ffd1ec')}<b class="pp-vic-per">${SAVE.perlas || 0}</b></div></div>`;
 }
 // la barra va en la ventana (#pp-modal), fuera de la tarjeta, para que no se mueva con ella; se cambia en cada victoria
 function ppVicBarra(monedas) {
@@ -52,7 +53,7 @@ function ppVicDesglose(p) {
   return `<span class="pp-vic-desglose">${partes.join(' · ')}</span>`;
 }
 function ppVicRacha(a) {
-  const max = PP_CFG.racha.max, n = SAVE.racha || 0;
+  const max = PP_CFG.racha.max, n = ppRachaToques();
   if (!n && !a.racha) return '';
   let pips = '';
   for (let k = 0; k < max; k++) pips += `<i class="${k < n ? 'pp-on' : ''}${a.nuevo && k === n - 1 && n > a.racha ? ' pp-vic-nueva' : ''}"></i>`;

@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.5.3', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.5.2', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.5.1', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.5.0', real: ["<b>CÁMARAS COMO EN EL MGS1</b>: cada cámara gira un poco para seguirte y cubre mucha más sala, hay menos cortes de plano y ningún punto ciego detrás de los muebles."], joke: ["Phony pidió a Microblizz «una cámara por sala». Microblizz, por una vez, entregó menos y mejor."] },

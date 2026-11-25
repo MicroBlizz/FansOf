@@ -191,3 +191,4 @@
 .en-ad .btn-big { border: 4px solid var(--outline); border-radius: 14px; padding: 12px 26px 8px; background: var(--gold); color: #fff; font: 24px var(--font-display); cursor: pointer; }
 .en-ad .btn-big:disabled { background: var(--off); color: var(--ink-dim); cursor: default; }
 .en-ad .btn-link { background: none; border: 0; font: 800 16px var(--font-ui); color: var(--ink-dim); text-decoration: underline; cursor: pointer; }
+.en-ad .en-ad-cierra { min-height: 48px; min-width: 200px; padding: 10px 22px; border: 3px solid #fff; border-radius: 14px; background: rgba(255,255,255,.12); color: #fff; text-decoration: none; }

@@ -41,7 +41,7 @@ const ppViaPremioHtml = (id, px) => `<span class="pp-precio">${ppViaDibujoHtml(i
 // `nuevo`: el nivel era nuevo en el camino; `presos`: los atrapados del nivel. Con el flag, los rescatados quedan en T.rescates
 function ppViasAlGanar(T, nuevo, presos) {
   if (!ppCompanerosActivo()) return;
-  if (presos.length) T.rescates = presos.map(ppViaRescata);
+  if (presos.length) T.rescates = presos.map(id => (T.rescateCopia ? ppViaCopia(id) : ppViaRescata(id)));
   for (let k = 0; k < ((T.premio && T.premio.cofresAbiertos) || 0); k++) ppViaGana(PP_COLE.deCofre(ppCole(), Math.random));
   const jefe = nuevo && T.d.jefe ? PP_COLE.deJefe(ppCole()) : null;
   if (jefe) ppViaGana(jefe);
@@ -52,6 +52,11 @@ function ppViaRescata(id) {
   const r = ppColeGana(id, true);
   if (r.ok && r.nuevo) PP_P.rescatados.push(id);   // para la ventana del final del camino
   return { id, nuevo: !!(r.ok && r.nuevo), enEquipo: ppEquipoDe(PP_COLE.modoDe(id)).includes(id) };
+}
+// la copia del hueco de copia (PP_RESCATES, js/tablero.js): un repetido para subirle estrellas, con su aviso. { id, nuevo, enEquipo }
+function ppViaCopia(id) {
+  ppViaGana(id);
+  return { id, nuevo: false, enEquipo: ppEquipoDe(PP_COLE.modoDe(id)).includes(id) };
 }
 // una victoria contra la máquina (`jefe`: un jefe del camino): cuenta para los logros y da los compañeros que ya tocan
 function ppViaDuelo(jefe) {

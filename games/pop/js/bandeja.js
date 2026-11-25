@@ -30,7 +30,7 @@ const PP_BANDEJAS = [
   { id: 'calabaza', nombre: 'Calabaza', precio: null, temporada: true, filas: [[28, 95, 62], [100, 45, 60]] },
   { id: 'nieve', nombre: 'Nieve', precio: null, temporada: true, filas: [[0, 80, 66], [140, 55, 62], [200, 30, 92]] },
   // las DE LUJO (tarea #187): con euros, a precio fijo y sin azar; solo estética. `euros` es lo que se enseña y `producto`, el
-  // producto de la tienda (PROVISIONALES, como los packs: aún no existen en Play ni en el servidor). `lujo`: el reflejo nacarado.
+  // producto de la tienda (precios finales como los packs, ADR 213; aún no existen en Play ni en el servidor). `lujo`: el reflejo nacarado.
   { id: 'nacar', nombre: 'Nácar', precio: null, euros: '1,99 €', producto: 'pop_bandeja_nacar', lujo: true, filas: [[20, 85, 90], [180, 60, 88], [340, 75, 90]] },
   { id: 'galaxia', nombre: 'Galaxia', precio: null, euros: '1,99 €', producto: 'pop_bandeja_galaxia', lujo: true, filas: [[220, 75, 42], [195, 85, 50], [230, 65, 34]] },
   { id: 'aurora', nombre: 'Aurora', precio: null, euros: '1,99 €', producto: 'pop_bandeja_aurora', lujo: true, filas: [[150, 70, 60], [175, 75, 62], [335, 80, 72]] },

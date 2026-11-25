@@ -48,7 +48,7 @@ function ppFotograma(ahora) {
   requestAnimationFrame(ppFotograma);
   const real = (ahora - PP_ULT) / 1000 || 0.016, dt = Math.min(0.05, real); PP_ULT = ahora;   // la cortinilla va por reloj (`real`, tarea #181)
   const t = ahora / 1000, c = PP_CTX;
-  ppMusicaBucle(); ppAdnMira();   // la fila de pegatinas del duelo, solo cuando toca (js/duelo-adornos.js)
+  ppMusicaBucle(); ppAdnMira(); PP_RENDIMIENTO.mira(ahora);   // la fila de pegatinas del duelo (js/duelo-adornos.js) y los fps de cada nivel, duelo o memoria (js/rendimiento-partida.js)
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppVictoriaReloj(PP_P.T, dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)
@@ -72,7 +72,7 @@ function ppArranque() {
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('duelos')) return; PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)
-  $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('memoria')) return; PP_P = null; ppNuevaMemoria(); };
+  $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('memoria')) return; PP_P = null; ppEligeMemoria(); };   // antes de jugar, el mundo y la dificultad (js/memoria-elige.js, tarea #141)
   $pp('#pp-cort-jugar').onclick = ppCortPulsa;
   $pp('#pp-listo').onclick = () => { if (ppCortActiva()) return; play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };

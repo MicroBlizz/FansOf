@@ -152,6 +152,7 @@ function ppAlLlegarAlCamino() {
   if (ppMiraBienvenida()) return;
   if (ppMiraPackMundo2()) return;   // el segundo pack, al llegar al mundo 2 (js/ofertas.js, tarea #187)
   if (ppPrimerosVe('feria') && ppFeriaAlLlegar()) return;   // premios de la feria entregados solos o su bienvenida (js/feria-pantalla.js)
+  if (ppModoNuevoAlLlegar()) return;   // Lola avisa del Difícil o la Pesadilla recién abiertos (js/modo-nuevo.js, tarea #350)
   if (SAVE.regaloDia !== ppHoy() && !PP_PASE_VISTO.regalo && ppPrimerosVe('regalo')) { PP_PASE_VISTO.regalo = true; ppVentanaRegalo(); }
 }
 const PP_PASE_VISTO = { regalo: false };

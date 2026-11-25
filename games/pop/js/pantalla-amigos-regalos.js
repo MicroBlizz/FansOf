@@ -5,6 +5,12 @@
 'use strict';
 // vuelve a la lista y pide otra vez el latido (lo que ha cambiado se ve al llegar)
 const ppAmVuelve = () => { ppAmigosAbre(); };
+// un aviso sin premio («Aún no tienes amigos», «Hoy ya no se puede mandar más»…) sale DENTRO de la lista, que sigue a la vista con su
+// desplazamiento (reporte 50, tarea #348): antes tapaba la lista con otra ventana y al volver se cargaba de nuevo
+function ppAmAvisoEnLista(texto) {
+  PP_AM.aviso = texto;
+  if (ppAmAbierta()) ppVentanaAmigos(); else ppAmigosAbre();
+}
 // lo que se gana (corazones y una ayuda), con los dibujos del juego, como el regalo diario
 function ppAmPremioHtml(corazones, ayuda) {
   const h = [];
@@ -112,15 +118,16 @@ async function ppAmRecogeAmigos() {
 }
 function ppAmResultadoTodo(lola, amigos) {
   const corazones = (lola.ok ? 1 : 0) + amigos.suma, algo = corazones > 0;
-  if (algo) { PP_AM.sube = true; ppAmFiesta(); }
-  const t = ppAbre(`<h2>${algo ? tr('¡Recogido!') : tr('Tus regalos te esperan')}</h2>`);
-  t.classList.add('pp-am');
-  if (algo) { t.appendChild(ppAmEl('div', 'pp-rg-premio')); t.lastChild.innerHTML = ppAmPremioHtml(corazones, lola.ok ? lola.ayuda : null); }
   const notas = [amigos.aviso];
   if (!lola.ok && lola.error === 'lleno') notas.push(tr('El regalo de Lola te espera: ábrelo cuando gastes un corazón.'));
   if (amigos.quedan > 0 && !amigos.aviso) notas.push(tr('Te quedan {n} en el buzón: recógelos cuando gastes corazones.', { n: amigos.quedan }));
+  if (!algo) { ppAmAvisoEnLista([tr('Tus regalos te esperan'), ...notas.filter(Boolean)].join(' ')); return; }
+  PP_AM.sube = true; ppAmFiesta();
+  const t = ppAbre(`<h2>${tr('¡Recogido!')}</h2>`);
+  t.classList.add('pp-am');
+  t.appendChild(ppAmEl('div', 'pp-rg-premio')); t.lastChild.innerHTML = ppAmPremioHtml(corazones, lola.ok ? lola.ayuda : null);
   for (const x of notas.filter(Boolean)) t.appendChild(ppAmEl('p', 'pp-sub', x));
-  t.appendChild(ppBoton(algo ? tr('¡GENIAL!') : tr('VOLVER'), algo ? 'pp-btn' : 'pp-btn2 pp-azul', ppAmVuelve));
+  t.appendChild(ppBoton(tr('¡GENIAL!'), 'pp-btn', ppAmVuelve));
 }
 async function ppAmRecogeTodo() {
   const boton = $pp('.pp-am-todo'); if (boton) boton.disabled = true;
@@ -148,13 +155,14 @@ function ppAmResumenTextos(s) {
   return [tr('Aún no tienes amigos'), tr('Invita a alguien con tu enlace y mandaos corazones.')];
 }
 function ppAmVentanaResumen(s) {
-  if (s.enviados) ppAmFiesta();
   const [titulo, sub] = ppAmResumenTextos(s);
+  if (!s.enviados) { ppAmAvisoEnLista(`${titulo}. ${sub}`); return; }
+  ppAmFiesta();
   const t = ppAbre(`<h2></h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div>`);
   t.classList.add('pp-am');
   t.firstChild.textContent = titulo;
   t.appendChild(ppAmEl('p', 'pp-sub', sub));
-  t.appendChild(ppBoton(s.enviados ? tr('¡GENIAL!') : tr('VOLVER'), s.enviados ? 'pp-btn' : 'pp-btn2 pp-azul', ppAmVuelve));
+  t.appendChild(ppBoton(tr('¡GENIAL!'), 'pp-btn', ppAmVuelve));
 }
 async function ppAmCorazonATodos() {
   const boton = $pp('.pp-am-todos'); if (boton) boton.disabled = true;
@@ -162,8 +170,7 @@ async function ppAmCorazonATodos() {
   if (r.ok) { ppAmVentanaResumen(r.resumen); return; }
   const l = ppAmLatidoBueno();
   if (r.motivo === 'sin_amigos') { ppAmVentanaResumen({ enviados: 0, llenos: 0, ya: 0, caso: l && l.amigos.length ? 'ninguno' : 'sin_amigos' }); return; }
-  PP_AM.aviso = ppAmAviso(r.motivo);
-  if (ppAmAbierta()) ppVentanaAmigos();
+  ppAmAvisoEnLista(ppAmAviso(r.motivo));
 }
 /* ---------- añadir y quitar ---------- */
 async function ppAmAnade(s, boton) {

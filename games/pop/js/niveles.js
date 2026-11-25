@@ -116,14 +116,43 @@ function ppVoraz(n, mask, need, azar, despiste = 0, esp = null) {
   }
   return { toques };
 }
-// --- la curva: con qué probabilidad debe pasar el nivel quien juega normal ---
+// cómo juega quien piensa (la «lista» del robot de dificultad; tarea #353, ADR 214): entre los toques que más revientan, el que deja
+// mejor el siguiente (empates, al azar); nunca se despista. Con ella se ponen los toques desde el mundo 2: una persona juega así
+function ppVorazLista(n, mask, need, azar, esp = null) {
+  const falta = need.slice(), toques = [], N = n * n;
+  const E = Array.from({ length: N }, (_, t) => (mask[t] ? ppEfecto(n, mask, esp, t) : []));
+  const golpes = (ef, f) => { let v = 0; for (const j of ef) if (f[j] > 0) v++; return v; };
+  for (let g = 0; g < 200; g++) {
+    const v = E.map(ef => golpes(ef, falta)), max = Math.max(...v);
+    if (!max) break;
+    let mejor = -1, cands = [];
+    for (let t = 0; t < N; t++) {
+      if (v[t] !== max) continue;
+      const despues = falta.slice(); for (const j of E[t]) if (despues[j] > 0) despues[j]--;
+      let sig = 0; for (const ef of E) sig = Math.max(sig, golpes(ef, despues));
+      if (sig > mejor) { mejor = sig; cands = [t]; } else if (sig === mejor) cands.push(t);
+    }
+    const t = cands[Math.floor(azar() * cands.length)];
+    for (const j of E[t]) if (falta[j] > 0) falta[j]--;
+    toques.push(t);
+  }
+  return { toques };
+}
+// quién marca los toques de un nivel de pop-it: el mundo 1 (de enganche), la normal; desde el mundo 2, la lista (tarea #353, ADR 214)
+const ppQuienMide = g => (ppMundoDe(g)[0] === 0 ? 'normal' : 'lista');
+// --- la curva: con qué probabilidad debe pasar el nivel quien lo mide (ppQuienMide) ---
 function ppObjetivo(g, dif = false) {
   const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m];
   if (l <= 2 && !dif) return 1;                                // tutorial
   let o;
   if (ppEsJefe(g)) o = Math.max(0.2, 0.35 - 0.03 * m);
   else if (ppEsDificil(g)) o = Math.max(0.22, 0.4 - 0.035 * m);
-  else {
+  else if (ppQuienMide(g) === 'lista') {
+    // la lista: del 85 % al empezar el mundo 2 al 55 % al acabar el último (Pepins, 24-11-2026: «el juego es muy fácil»)
+    const p = (m - 1 + l / M.niveles) / (PP_MUNDOS.length - 1), base = 0.85 - 0.3 * p;
+    o = ((l - 1) % 5 === 0) ? Math.min(0.95, base + 0.1) : base;   // el de después de un difícil, de respiro
+    return dif ? Math.max(0.35, o * 0.7) : o;
+  } else {
     const base = Math.max(0.3, 0.88 - 0.3 * (l / M.niveles) - 0.08 * m);   // baja a lo largo del mundo y de un mundo a otro
     o = ((l - 1) % 5 === 0) ? Math.min(0.95, base + 0.15) : base;   // el de después de un difícil, de respiro
   }
@@ -179,8 +208,10 @@ function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: 
   const opt = ppOptimo(n, mk, need, 80000, espArg);
   // el límite: el que deja pasar a quien juega normal con la probabilidad más cercana a la curva (PP_CFG.generador.tiradas partidas
   // simuladas; tarea #196: antes 40 y el primero que llegaba a la curva, y regalaba niveles)…
-  const G = PP_CFG.generador, tiradas = [];
-  for (let k2 = 0; k2 < G.tiradas; k2++) tiradas.push(ppVoraz(n, mk, need, az, 0.25, espArg).toques.length);
+  // Desde el mundo 2 mide la lista (ppQuienMide, tarea #353): sus partidas, `G.tiradasLista`
+  const G = PP_CFG.generador, tiradas = [], lista = ppQuienMide(g) === 'lista';
+  if (lista) for (let k2 = 0; k2 < G.tiradasLista; k2++) tiradas.push(ppVorazLista(n, mk, need, az, espArg).toques.length);
+  else for (let k2 = 0; k2 < G.tiradas; k2++) tiradas.push(ppVoraz(n, mk, need, az, 0.25, espArg).toques.length);
   const obj = ppObjetivo(g, dif), pasaCon = lim => tiradas.filter(t => t <= lim).length / tiradas.length;
   let limite = ppLimiteCercano(tiradas, obj, pasaCon);
   // …y nunca con más margen sobre el mínimo del que marca ppMargen, salvo en los dos de entrada de cada mundo, que son de bienvenida
@@ -189,7 +220,7 @@ function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: 
   if (!tuto) limite = Math.min(limite, opt.length + ppMargen(g, dif));
   limite = Math.max(limite, opt.length + (tuto ? 2 : 0));
   // pero sin muros: si casi nadie lo pasaría, un toque más hasta llegar al suelo (más bajo en los difíciles y los jefes)…
-  const suelo = ppEsDificil(g) || ppEsJefe(g) || dif ? 0.15 : 0.25;
+  const suelo = lista ? 0.35 : ppEsDificil(g) || ppEsJefe(g) || dif ? 0.15 : 0.25;   // la lista, sin muros por debajo del 35 %
   while (pasaCon(limite) < suelo && limite < opt.length + 4) limite++;
   // …y quien no se despista nunca tiene que poder: tantos toques como su mejor partida (tarea #196: el Difícil 1-04 y el 7-02 no
   // los pasaba ni el perfil listo del robot de dificultad)

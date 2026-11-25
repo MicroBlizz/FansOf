@@ -50,7 +50,8 @@ const CAPTURA_PANTALLA = (() => {
     const ancho = window.innerWidth, alto = window.innerHeight, fondo = getComputedStyle(document.body).backgroundColor;
     for (let l = lado; l >= 480; l = Math.round(l * 0.75)) {
       const foto = await ms.domToJpeg(document.documentElement, { width: ancho, height: alto, scale: escala(ancho, alto, l), quality: CALIDAD,
-        backgroundColor: fondo, filter: entra(excluir), timeout: 8000 });
+        backgroundColor: fondo, filter: entra(excluir), timeout: 8000,
+        features: { restoreScrollPosition: true } });   // cada ventana con su desplazamiento, no arriba del todo (tarea #347; viene apagado)
       if (foto && foto.length <= MAXIMO) return foto;
     }
     return null;

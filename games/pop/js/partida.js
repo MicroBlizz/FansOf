@@ -36,7 +36,10 @@ const ppEquipoNivel = d => (ppCompanerosActivo() ? ppEquipoDe(ppModoDeNivel(d)) 
 function ppFx(d) {
   const fx = { pista: 0, equipo: PP_P ? PP_P.equipo : [] };
   for (const id of ppEquipoNivel(d)) if (ppFxDe(id).pista) fx.pista += ppFxDe(id).pista;
-  if (ppCompanerosActivo()) fx.atrapables = PP_COLE.atrapables(ppCole());   // atrapados: los de rescate que aún no tienes (tarea #142)
+  if (ppCompanerosActivo()) {   // atrapados: los de rescate que aún no tienes (tarea #142); en el hueco de copia, uno que ya tienes (PP_RESCATES)
+    fx.atrapables = PP_COLE.atrapables(ppCole());
+    fx.copia = PP_COLE.deCofre(ppCole(), ppAzar(7919 + d.g)) || null;
+  }
   return fx;
 }
 // ¿está en el equipo que ayuda en el nivel que se juega ahora?
@@ -74,8 +77,10 @@ function ppEntraEn(d, titulo) {
 }
 const ppTituloNivel = (d, g, dif) => (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif === 2 ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : '');
 // la racha de victorias y Nubecita dan toques de margen al empezar un nivel de pop-it (js/pase.js, PP_SLIMES); en pesadilla, no
+// la racha, nunca por encima del tope de hoy (una partida vieja puede guardar 3 de cuando el tope era 3: tarea #353)
+const ppRachaToques = () => Math.min(SAVE.racha || 0, PP_CFG.racha.max);
 function ppMargenAlEmpezar(T, d) {
-  const extra = (SAVE.racha || 0) + (ppEnEquipo('nubecita') ? ppFxDe('nubecita').extra : 0);
+  const extra = ppRachaToques() + (ppEnEquipo('nubecita') ? ppFxDe('nubecita').extra : 0);
   if (extra && !d.tutorial && !d.lo) { T.limite += extra; T.extra = extra; }
 }
 // un nivel con duelo abre con su cortinilla (ADR 098): el nivel espera a que se pulse su botón ¡A JUGAR! (ADR 100)

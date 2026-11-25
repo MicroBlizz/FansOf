@@ -7,7 +7,7 @@ const PP_MAPA = { cam: null, obj: 0, m: null, dif: false, toque: null };
 const PP_PASO = 128;   // distancia entre niveles
 let PP_NODOS_MAPA = [], PP_BOTONES_MAPA = [];
 function ppNivelPos(i) { return [270 + Math.sin(i * 1.15) * 140, PP_V.H * 0.64 - (i - PP_MAPA.cam) * PP_PASO]; }
-function ppMapaVer(m, dif) { PP_MAPA.m = m; PP_MAPA.dif = dif === 2 ? 2 : dif ? 1 : 0; PP_MAPA.cam = null; }   // 0 fácil, 1 difícil, 2 pesadilla
+function ppMapaVer(m, dif) { PP_MAPA.m = m; PP_MAPA.dif = dif === 2 ? 2 : dif ? 1 : 0; PP_MAPA.cam = null; ppModoMarcaVisto(m, PP_MAPA.dif); }   // 0 fácil, 1 difícil, 2 pesadilla (verlo le quita el NUEVO: js/modo-nuevo.js)
 // la manita que señala: dibujo de Yoshi (img/i-mano.png, Daniel eligió la semilla 11): manita kawaii con el ÍNDICE hacia
 // abajo, el pulgar al lado y el puño rosa. La punta del índice está en la columna 16 de 22 de la fila de abajo: se coloca
 // para que caiga justo en el centro del objetivo y pulsa arriba y abajo. Si aún no está, una flechita.
@@ -78,8 +78,8 @@ function ppAvisoFlechas(c, m, t) {
     ppTexto(c, '!', 0, 1, 22, '#fff', 'center', '#c2510a');
     c.restore();
   };
-  if (m > 0 && lista.some(k => k < m)) pinta(148);
-  if (lista.some(k => k > m)) pinta(436);
+  if (m > 0 && (lista.some(k => k < m) || ppModoNuevoHacia(m, -1))) pinta(148);   // o un modo recién abierto sin ver (tarea #350)
+  if (lista.some(k => k > m) || ppModoNuevoHacia(m, 1)) pinta(436);
 }
 // un botón redondo de caramelo con una flecha (dibujada, sin emojis)
 function ppFlecha(c, x, y, dir) {
@@ -155,6 +155,7 @@ function ppPintaMapa(c, t) {
       const x = x0 + k * (w + 4) + w / 2, abierto = k < 2 || ppPesAbierta(m), on = dif === k;
       if (on) { c.fillStyle = col; c.beginPath(); c.roundRect(x - w / 2, y - 22, w, 44, 22); c.fill(); }
       ppTexto(c, txt, x, y + 1, 22, on ? '#fff' : abierto ? col : '#b8a8c0', 'center', on ? borde : '#fff');
+      if (k && ppModoNuevo(m, k)) { c.fillStyle = '#ff8a2a'; c.beginPath(); c.roundRect(x - 38, y + 18, 76, 24, 12); c.fill(); ppTexto(c, tr('NUEVO'), x, y + 31, 16, '#fff', 'center', '#c2510a'); }   // tarea #350
       if (abierto) PP_BOTONES_MAPA.push({ x, y, r: 56, f: () => { if (dif !== k) ppMapaVer(m, k); } });
     });
   }
@@ -165,11 +166,12 @@ function ppPintaMapa(c, t) {
   c.fillStyle = 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(20, yb, 500, conEquipo ? 136 : 84, 24); c.fill();
   const vidas = ppVidas();
   if (ppPrimerosVe('amigos')) ppPintaAvisoBuzon(c, 56, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)
-  for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 50 + i * 38, yb + 32, 32, i < vidas);
-  if (ppPrimerosVe('amigos')) ppBotonesPedirMapa(vidas, 50, 38, yb + 32);   // pedir a amigos tocando un corazón (js/pantalla-corazones.js)
+  // los cinco corazones, más grandes (reporte 53, tarea #344, boceto B de Pepins): las cuentas de la derecha se encogen solas si no caben
+  for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 52 + i * 42, yb + 32, 36, i < vidas || ppInfinitas());
+  if (ppPrimerosVe('amigos')) ppBotonesPedirMapa(vidas, 52, 42, yb + 32);   // pedir a amigos tocando un corazón (js/pantalla-corazones.js)
   if (vidas < PP_CFG.vida) ppTexto(c, tr('+1 en {t}', { t: ppReloj(ppFaltaVida()) }), 34, yb + 64, 22, '#fff', 'left', '#c43a84');
   // estrellas, monedas y perlas (con un «+» que abre la tienda): en fila y sin montarse por muchas que haya
-  ppPintaCuentas(c, 228, 478, yb + 32, [[(c2, x, y, s) => ppEstrella(c2, x, y, s, true), String(P.estrellas), '#7a4a8a'], [ppMoneda, String(SAVE.monedas), '#c98a12'], [ppPerla, String(SAVE.perlas || 0), '#c43a84']]);
+  ppPintaCuentas(c, 248, 478, yb + 32, [[(c2, x, y, s) => ppEstrella(c2, x, y, s, true), String(P.estrellas), '#7a4a8a'], [ppMoneda, String(SAVE.monedas), '#c98a12'], [ppPerla, String(SAVE.perlas || 0), '#c43a84']]);
   c.beginPath(); c.arc(500, yb + 20, 13, 0, Math.PI * 2); c.fillStyle = '#4fc964'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#26924a'; c.stroke();
   c.fillStyle = '#fff'; c.fillRect(494, yb + 18, 12, 4); c.fillRect(498, yb + 14, 4, 12);
   PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: () => ppTienda(null, 'perlas') });

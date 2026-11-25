@@ -91,7 +91,7 @@ const ANUNCIOS = (() => {
   // nuestro anuncio: 5 s con la miniatura de otro juego nuestro (PROMO); `motivo` vacío = anuncio de prueba con el flag cerrado
   const propio = motivo => new Promise(fin => {
     const nota = motivo ? tr('Este anuncio es nuestro: el de verdad no ha podido cargar.') : tr('Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.');
-    const ov = capa(`<div class="en-ad-card"><span class="en-ad-flag">${tr('ANUNCIO')}</span><p>${tr('Un mensaje de nuestros patrocinadores… que somos nosotros.')}</p><div data-promo></div><div class="en-ad-bar"><i></i></div><button class="btn-big ol" data-ok disabled>…</button><button class="btn-link" data-no>${tr('Cerrar sin premio')}</button><small>${nota}</small></div>`);
+    const ov = capa(`<div class="en-ad-card"><span class="en-ad-flag">${tr('ANUNCIO')}</span><p>${tr('Un mensaje de nuestros patrocinadores… que somos nosotros.')}</p><div data-promo></div><div class="en-ad-bar"><i></i></div><button class="btn-big ol en-ad-ok" data-ok disabled>…</button><button class="btn-link en-ad-cierra" data-no>${tr('Cerrar sin premio')}</button><small>${nota}</small></div>`);
     const pr = ov.querySelector('[data-promo]'); pr.innerHTML = PROMO.html(); PROMO.enlaza(pr);
     const ok = ov.querySelector('[data-ok]'), barra = ov.querySelector('.en-ad-bar'); let t = SEG, corre = 0;
     if (typeof play === 'function') play('select');

@@ -4,6 +4,20 @@
 // Las de HIELO solo revientan si las tocas a ellas y las CONCHAS, al tocarlas, solo revientan ellas (mundos 3 a 6). El nivel se pasa reventándolas
 // todas antes de gastar los toques; el mínimo posible (las 3 estrellas) y el límite vienen del generador (js/niveles.js).
 'use strict';
+// QUIÉN SALE ATRAPADO en cada nivel con rescate (Pepins, 25-11-2026: lista fija, de común a legendario). Va en el orden de
+// PP_MUNDOS[m].amigos (js/niveles.js): el Jardín da Becario, CrazyBunny y Cofre; la Pastelería, una COPIA al azar de uno que ya
+// tienes (`copia`, como el cofre de estrellas) y el CEO; del mundo 3 al 10, el compañero de su tema, con el Astronauta al final.
+// Antes el Jardín y la Pastelería sacaban al azar entre los que faltaban y se llevaban los de otros mundos (el Astronauta salía en el 2).
+const PP_RESCATES = Object.freeze([['becario', 'bunny', 'cofre'], ['copia', 'ceo'], ['copito'], ['medusa'], ['algodon'], ['nubecita'], ['hada'], ['sirena'], ['maneki'], ['astro']]);
+const ppRescateFijo = d => { const k = PP_MUNDOS[d.mundo].amigos.indexOf(d.l); return k < 0 ? null : (PP_RESCATES[d.mundo] || [])[k] || null; };
+// el atrapado del nivel: el fijo si aún no lo tienes (si ya lo tienes, nadie); en el hueco `copia`, `fx.copia` (uno que ya tienes, con
+// el flag `companeros`) o, sin colección, uno de los que no llevas. { id, copia } o null
+function ppAtrapado(d, fx, libres) {
+  const fijo = ppRescateFijo(d);
+  if (fijo === 'copia') return fx.copia ? { id: fx.copia, copia: true } : libres.length ? { id: libres[d.g % libres.length], copia: false } : null;
+  if (fijo) return libres.includes(fijo) ? { id: fijo, copia: false } : null;
+  return libres.length ? { id: libres[d.g % libres.length], copia: false } : null;
+}
 // el tablero de un nivel `d` (de ppNivel). `fx.equipo`: los amigos que ya tienes (no salen atrapados); `fx.atrapables`, si llega, manda.
 function ppNuevoTablero(d, fx) {
   const n = d.lado;
@@ -13,10 +27,8 @@ function ppNuevoTablero(d, fx) {
   if (d.amigos) {
     // con el flag `companeros` abierto, `fx.atrapables`: los de rescate que aún no tienes en la colección (js/coleccion.js)
     const libres = fx.atrapables || PP_SLIME_IDS.filter(id => !fx.equipo.includes(id));
-    const sitios = [...T.up.keys()].filter(i => T.up[i]);
-    // en los mundos 3 a 6 sale SU amigo nuevo (si aún no lo tienes); en los primeros, uno de los que te faltan
-    const suyo = [null, null, 'copito', 'medusa', 'algodon', 'nubecita', 'hada', 'sirena', 'maneki', 'astro'][d.mundo];
-    if (libres.length && sitios.length) T.slimes[sitios[(d.g * 7) % sitios.length]] = suyo && libres.includes(suyo) ? suyo : libres[d.g % libres.length];
+    const sitios = [...T.up.keys()].filter(i => T.up[i]), a = ppAtrapado(d, fx, libres);   // la lista fija (PP_RESCATES)
+    if (a && sitios.length) { T.slimes[sitios[(d.g * 7) % sitios.length]] = a.id; T.rescateCopia = a.copia; }
   }
   if (fx.pista) ppPista(T);
   return T;

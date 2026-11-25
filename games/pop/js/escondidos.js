@@ -53,13 +53,24 @@ const PP_ESC = (() => {
   }
   /* ---------- el duelo por un compañero nuevo (tarea #329, ADR 205) ---------- */
   // cuánto se despista el rival según la rareza del compañero (de noche, la mitad) y el tablero: 6 filas de 2 a 6 burbujas
-  const DUELO = Object.freeze({ fallo: Object.freeze({ c: 0.8, r: 0.55, e: 0.3, l: 0.08 }), noche: 0.5, minimo: 0.02, filas: 6, largo: Object.freeze([2, 6]) });
+  const DUELO = Object.freeze({ fallo: Object.freeze({ c: 0.8, r: 0.55, e: 0.3, l: 0.08 }), noche: 0.5, minimo: 0.02, filas: 6, largo: Object.freeze([2, 6]),
+    copias: Object.freeze({ nuevo: 1, duelo: 2, red: 1 }) });   // lo que se lleva: el nuevo; de un repetido, 2 copias ganando su duelo y 1 con la red
   // la primera acción del nivel (toque, martillo o bomba) en la casilla `i`: 'nada' (no hay burbuja), 'duelo' (es la burbuja y trae uno
-  // nuevo), 'regalo' (es la burbuja y trae un repetido: se da sin más) o 'se-va' (cualquier otra cosa: se pierde la oportunidad)
+  // nuevo: ventana y duelo), 'repetido' (trae uno que ya tienes y aún le sirve: ventana con duelo o red), 'regalo' (trae uno que ya
+  // está al máximo, `lleno`: se da sin más, son monedas) o 'se-va' (cualquier otra cosa: se pierde la oportunidad)
   function primera(brillo, i) {
     if (!brillo) return 'nada';
     if (i !== brillo.i) return 'se-va';
-    return brillo.nuevo ? 'duelo' : 'regalo';
+    if (brillo.nuevo) return 'duelo';
+    return brillo.lleno ? 'regalo' : 'repetido';
+  }
+  // cómo va un compañero que ya tienes (`x` = { est, rep }): sus estrellas, los repetidos guardados, los que pide la siguiente estrella,
+  // los que le faltan para las 5 y si ya está `lleno` (otro repetido solo daría monedas)
+  function progreso(x) {
+    const precios = C.PRECIOS.repetidos, tope = precios.length + 1;
+    const est = Math.min(tope, Math.max(1, entero(x && x.est))), rep = entero(x && x.rep);
+    const faltan = Math.max(0, precios.slice(est - 1).reduce((a, n) => a + n, 0) - rep);
+    return Object.freeze({ est, tope, rep, siguiente: precios[est - 1] || 0, faltan, lleno: faltan === 0 });
   }
   // el despiste del rival en el duelo por el compañero `id`
   function falloDuelo(id, momento) {
@@ -71,5 +82,5 @@ const PP_ESC = (() => {
     const [a, b] = DUELO.largo;
     return Object.freeze(Array.from({ length: DUELO.filas }, () => a + Math.min(b - a, Math.floor(azar() * (b - a + 1)))));
   }
-  return Object.freeze({ DONDE, CONSTANTES, DUELO, sale, rareza, elige, pista, esEscondido, ids, primera, falloDuelo, filasDuelo });
+  return Object.freeze({ DONDE, CONSTANTES, DUELO, sale, rareza, elige, pista, esEscondido, ids, primera, progreso, falloDuelo, filasDuelo });
 })();

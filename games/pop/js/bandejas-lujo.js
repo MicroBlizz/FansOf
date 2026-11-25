@@ -1,6 +1,6 @@
 // Fans of Pop · las BANDEJAS DE LUJO (tarea #187): tres bandejas con euros a precio fijo (las de PP_BANDEJAS con `euros`), sin
 // azar y solo estéticas. Aquí van su tarjeta de la tienda y su compra; la tienda (js/tienda.js) las pinta en la pestaña Bandejas.
-// Los productos (`producto`) son PROVISIONALES, como los packs: aún no existen en Play ni en el servidor.
+// Los productos (`producto`) tienen precio final, como los packs (ADR 213), y aún no existen en Play ni en el servidor.
 'use strict';
 const ppEsBandejaLujo = B => !!(B && B.euros && B.producto);
 // la tarjeta: la muestra, el nombre, la etiqueta «DE LUJO» y el precio en euros

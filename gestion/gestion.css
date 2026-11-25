@@ -19,6 +19,10 @@ body { margin: 0; background: var(--bg); color: var(--texto); font: 14px/1.5 sys
 h1 { margin: 0; font-size: 20px; letter-spacing: -0.01em; text-wrap: balance; }
 .sub { color: var(--suave); margin: 2px 0 0; }
 .barra { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.barra-botones { display: flex; gap: 8px; align-items: center; }
+.barra-botones button { min-height: 44px; }
+#enlace { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+#enlace[hidden] { display: none; }
 .caja { background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 14px; }
 .entrada { display: grid; gap: 10px; max-width: 360px; margin-inline: auto; }
 label { display: grid; gap: 3px; color: var(--suave); font-size: 13px; }

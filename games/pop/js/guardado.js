@@ -7,7 +7,7 @@ const PP_NUEVA = () => ({ v: 1, record: 0, victorias: 0, partidas: 0, vistos: {}
   cofreDia: '', cofreHoy: 0,   // los corazones de hoy de la Caja de botín (js/monedero.js, tarea #236)
   perlas: 0, anuncioDia: '', anunciosHoy: 0,                                                    // fase 3: la moneda de pago y los anuncios del día (js/tienda.js)
   duelo: { gan: 0, per: 0, fallo: 0.45, dia: '', hoy: 0 },                                    // el duelo contra el CEO (js/duelo.js)
-  memoria: { record: 0, partidas: 0, dia: '', hoy: 0 },
+  memoria: { record: 0, partidas: 0, dia: '', hoy: 0, records: {}, mundo: 0, dif: 'normal' },   // records: Fácil y Difícil; mundo y dif: lo último elegido (tarea #141)
   // «copiarnos de Candy Crush» (js/potenciadores.js, ofertas.js y pase.js): ayudas, fallos por nivel, racha, hucha, pase, regalo, compras y bandejas
   ayudas: {}, fallos: {}, racha: 0, hucha: 0, pase: null, regaloDia: '', infinitas: 0, atasco: 0, atascoDia: '', compras: {}, vistoBienvenida: false, bandeja: 'arcoiris', bandejas: {},
   feria: null,       // la Feria del finde (js/feria-pantalla.js): { estado (de PP_FERIA), bienvenida: id del finde ya saludado, entregados: premios dados solos aún sin contar }

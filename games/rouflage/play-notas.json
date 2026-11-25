@@ -184,5 +184,11 @@
     "fr-FR": "améliorations internes : le site réessaie de lire les avis et réglages du serveur quand la connexion flanche",
     "de-DE": "interne Verbesserungen: Die Website versucht erneut, Hinweise und Einstellungen vom Server zu lesen, wenn die Verbindung kurz aussetzt",
     "it-IT": "miglioramenti interni: il sito riprova a leggere avvisi e impostazioni dal server quando la connessione vacilla"
+  },
+  "0.2.84": {
+    "pt-BR": "melhorias internas: o site tem uma página 404 própria que reencaminha os endereços antigos e o anúncio com prêmio é mais claro",
+    "fr-FR": "améliorations internes : le site a sa propre page 404 qui redirige les anciennes adresses et la pub avec récompense est plus claire",
+    "de-DE": "interne Verbesserungen: Die Website hat eine eigene 404-Seite, die alte Adressen weiterleitet, und die Belohnungswerbung ist klarer",
+    "it-IT": "miglioramenti interni: il sito ha una pagina 404 tutta sua che reindirizza i vecchi indirizzi e l'annuncio con premio è più chiaro"
   }
 }

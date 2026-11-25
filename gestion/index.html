@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../estilo/pie.css">
 <link rel="stylesheet" href="../core/fuentes/baloo-2.css">
 <link rel="stylesheet" href="flujo/flujo.css">
+<link rel="stylesheet" href="recursos.css">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f3f4f6">
 <link rel="apple-touch-icon" href="../core/img/fog-192.png">
@@ -17,7 +18,7 @@
 <main class="pagina">
   <header class="barra">
     <div><h1>Gestión</h1><p class="sub" id="sub">Acceso restringido.</p></div>
-    <button id="salir" hidden>Salir</button>
+    <div class="barra-botones"><button type="button" id="enlace" hidden aria-label="Copiar el enlace de lo que ves" title="Copiar el enlace de lo que ves">Enlace</button><button id="salir" hidden>Salir</button></div>
   </header>
 
   <section id="vista-entrar" class="caja">
@@ -141,6 +142,8 @@
 <script src="catalogo.js"></script>
 <script src="historial.js"></script>
 <script src="historial-navegador.js"></script>
+<script src="enlace.js"></script>
+<script src="compartir-enlace.js"></script>
 <script src="nav.js"></script>
 <script src="../core/js/cuenta/sesion-renovar.js"></script>
 <script src="entrada-web.js"></script>
@@ -169,7 +172,7 @@ const fmt = n => Number(n || 0).toLocaleString('es-ES');
 const fecha = s => { try { return new Date(s).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return s || '—'; } };
 
 function vista(panel) {
-  $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel;
+  $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel; $('enlace').hidden = !panel;
   $('sub').textContent = panel ? '' : 'Acceso restringido.';
 }
 $('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } GESTION_ENTRADA.alSalir(LOCAL); datos = null; vista(false); };
@@ -274,6 +277,17 @@ volverDeGoogle().then(hecho => { if (!hecho) entrarSola(); });
 <script src="cola-config.js"></script>
 <script src="cola-estilo.js"></script>
 <script src="cola.js"></script>
+<script src="recursos/lonchas.js"></script>
+<script src="recursos/miniaturas.js"></script>
+<script src="recursos/mandos-comunes.js"></script>
+<script src="recursos/encuadre.js"></script>
+<script src="recursos/zoom.js"></script>
+<script src="recursos-datos.js"></script>
+<script src="recursos-marcas.js"></script>
+<script src="recursos-github.js"></script>
+<script src="recursos-enlace.js"></script>
+<script src="recursos-ampliar.js"></script>
+<script src="recursos.js"></script>
 <script src="sql.js"></script>
 <script src="juegos.js"></script>
 <script src="../core/js/sistema/juegos-portada.js"></script>

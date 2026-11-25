@@ -2,6 +2,7 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
+  { v: '0.6.10', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.6.9', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.6.8', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.6.7', real: ['<b>EN INGLÉS</b>: Roguelite ya se juega en inglés, con el chat del directo incluido. Sale solo si tu navegador va en inglés, y se cambia en Opciones.'],

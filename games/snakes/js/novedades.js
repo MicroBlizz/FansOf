@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.4', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.2.3', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.2.2', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.2.1', real: ["<b>CONTROL CRUZ</b>, nuevo en Opciones: la pantalla partida en cuatro cuadrados. Yendo en horizontal toca arriba o abajo; yendo en vertical, izquierda o derecha. Ningún toque se confunde con «izquierda» mientras ya vas de lado.", "Con los efectos de sonido apagados los botones del menú volvían a quedarse mudos y quietos: arreglado. Opciones más compactas para que quepan los cuatro controles."], joke: ["Phony ha propuesto un quinto control: gritarle a la serpiente. Microblizz lo ha rechazado porque los gritos no se pueden monetizar… todavía."] },

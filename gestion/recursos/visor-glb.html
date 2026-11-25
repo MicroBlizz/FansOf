@@ -1,0 +1,100 @@
+<!doctype html>
+<!-- Fans Of · VISOR GLB de recursos (galería local y pestaña Recursos de /gestion): un modelo .glb o .gltf para girarlo con el ratón, dentro de un
+     panel de comparar (la galería y web/gestion/recursos.js lo abren con ?src=<dirección del modelo>). Escucha los mandos comunes de la
+     galería (girar, dar vueltas, vista inicial, contorno, postura = siguiente animación, reproducir) y le dice cuánto lo gira quien lo arrastra,
+     con mandos-panel.js, y con doble clic le pide la pantalla completa (mensaje «ampliar»). three.js 0.186.1 y sus añadidos GLTFLoader, OrbitControls y OutlineEffect vienen de jsDelivr con la versión fijada.
+     Guía: docs/guia/herramientas/galeria.md -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fans Of · Visor GLB</title>
+<style>
+  :root { --fondo: #3b2a5e; --suave: #c9bde6; }
+  html, body { height: 100%; margin: 0; background: var(--fondo); overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  #estado { position: absolute; left: 10px; top: 8px; color: var(--suave); font: 13px/1.4 system-ui, sans-serif; }
+</style>
+<script type="importmap">{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+} }</script>
+<script src="mandos-panel.js"></script>
+</head>
+<body>
+<div id="estado">Cargando…</div>
+<script type="module">
+'use strict';
+import * as T from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OutlineEffect } from 'three/addons/effects/OutlineEffect.js';
+
+const estado = document.getElementById('estado');
+const render = new T.WebGLRenderer({ antialias: true }); render.setPixelRatio(devicePixelRatio); render.setClearColor(0x3b2a5e);
+render.outputColorSpace = T.SRGBColorSpace; document.body.append(render.domElement);
+const escena = new T.Scene(), camara = new T.PerspectiveCamera(35, 1, 0.01, 1000), mandos = new OrbitControls(camara, render.domElement);
+escena.add(new T.HemisphereLight(0xfff6ee, 0x8a7aa8, 1.6));
+const luz = new T.DirectionalLight(0xffffff, 1.4); luz.position.set(-2, 3, 4); escena.add(luz);
+const conContorno = new OutlineEffect(render, { defaultThickness: 0.006, defaultColor: [0.06, 0.08, 0.11] });
+const VUELTA = 0.6, ARRIBA = new T.Vector3(0, 1, 0), reloj = { antes: performance.now() };
+const e = { modelo: null, mezcla: null, clips: [], clip: -1, vueltas: false, contorno: false, reproducir: false, arrastra: false, az: 0 };
+
+// la cámara de frente, a la distancia justa para que quepa el modelo entero
+function encuadra(modelo) {
+  const caja = new T.Box3().setFromObject(modelo), centro = caja.getCenter(new T.Vector3()), tam = caja.getSize(new T.Vector3());
+  const radio = Math.max(tam.x, tam.y, tam.z) / 2 || 1, lejos = radio / Math.tan((camara.fov * Math.PI) / 360) * 1.3;
+  camara.position.set(centro.x, centro.y, centro.z + lejos); camara.near = lejos / 100; camara.far = lejos * 100; camara.updateProjectionMatrix();
+  mandos.target.copy(centro); mandos.update();
+}
+function tamano() {
+  const w = innerWidth, h = innerHeight; render.setSize(w, h, false); camara.aspect = w / h; camara.updateProjectionMatrix();
+}
+// girar el modelo d radianes es llevar la cámara alrededor de él (el mismo sentido que el giro de las lonchas)
+function orbita(d) {
+  const o = camara.position.clone().sub(mandos.target).applyAxisAngle(ARRIBA, d);
+  camara.position.copy(mandos.target).add(o); mandos.update();
+}
+function fotograma() {
+  requestAnimationFrame(fotograma);
+  const ahora = performance.now(), dt = Math.min(0.05, (ahora - reloj.antes) / 1000); reloj.antes = ahora;
+  if (e.vueltas && !e.arrastra) orbita(dt * VUELTA);
+  if (e.mezcla && e.reproducir) e.mezcla.update(dt);
+  mandos.update(); (e.contorno ? conContorno : render).render(escena, camara);
+}
+// la postura de un .glb es una de sus animaciones: la siguiente, quieta en su principio salvo que se reproduzca
+function siguientePostura() {
+  if (!e.clips.length) return;
+  e.clip = (e.clip + 1) % e.clips.length; e.mezcla.stopAllAction(); e.mezcla.clipAction(e.clips[e.clip]).play(); e.mezcla.update(0);
+  estado.hidden = false; estado.textContent = `Postura ${e.clip + 1}/${e.clips.length} · ${e.clips[e.clip].name}`;
+}
+// quien arrastra este panel le dice a la galería cuánto lo gira, para que giren los demás
+render.domElement.addEventListener('pointerdown', () => { e.arrastra = true; e.az = mandos.getAzimuthalAngle(); });
+for (const fin of ['pointerup', 'pointercancel']) addEventListener(fin, () => { e.arrastra = false; });
+// doble clic: la página de arriba lo abre en pantalla completa (en /gestion; la galería local no lo usa). La rueda ya acerca: es de la órbita
+render.domElement.addEventListener('dblclick', () => MANDOS_PANEL.manda('ampliar'));
+mandos.addEventListener('change', () => {
+  if (!e.arrastra) return;
+  const az = mandos.getAzimuthalAngle(), d = Math.atan2(Math.sin(az - e.az), Math.cos(az - e.az)); e.az = az;
+  if (Math.abs(d) > 1e-6) MANDOS_PANEL.manda('girar', d);
+});
+MANDOS_PANEL.escucha({
+  girar: d => { if (Number.isFinite(d)) orbita(d); },
+  vueltas: si => { e.vueltas = !!si; },
+  contorno: si => { e.contorno = !!si; },
+  reproducir: si => { e.reproducir = !!si; if (e.reproducir && e.clip < 0) siguientePostura(); },
+  postura: () => siguientePostura(),
+  'vista-inicial': () => { if (e.modelo) encuadra(e.modelo); },
+});
+
+const src = new URLSearchParams(location.search).get('src');
+if (!src) estado.textContent = 'Falta ?src= con la dirección del modelo.';
+else new GLTFLoader().load(src, g => {
+  escena.add(g.scene); encuadra(g.scene); estado.hidden = true;
+  Object.assign(e, { modelo: g.scene, clips: g.animations, mezcla: g.animations.length ? new T.AnimationMixer(g.scene) : null });
+},
+  undefined, err => { estado.textContent = 'No se pudo abrir el modelo: ' + (err.message || err); });
+addEventListener('resize', tamano); tamano(); fotograma();
+</script>
+</body>
+</html>

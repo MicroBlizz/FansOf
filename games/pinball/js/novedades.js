@@ -1,6 +1,7 @@
 // Fans of Pinball · Novedades: el registro de versiones (publicar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.2.8', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.2.7', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.2.6', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.2.5', real: ["<b>VUELVEN EL ZORRO Y LA SURICATA DE SIEMPRE</b> dentro de la cápsula: nos gustaban más."], joke: ["SlyFox exige que se borre la versión anterior de su foto de ficha. Recursos Humanos dice que ya es tarde."] },

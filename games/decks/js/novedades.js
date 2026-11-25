@@ -1,6 +1,7 @@
 // Fans Of Decks · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.2.40', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.2.39', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.2.38', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.2.37', real: ["<b>MEJORAS POR DENTRO</b>: los prototipos se mudan a su sitio definitivo en la web (las direcciones viejas te siguen llevando) y retoques en los sistemas internos."], joke: ["Microblizz ha mudado todos sus juegos de carpeta. Las cajas siguen en el pasillo y nadie sabe de quién es la grapadora."] },

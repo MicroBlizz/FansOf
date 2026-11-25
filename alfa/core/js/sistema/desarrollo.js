@@ -129,6 +129,13 @@
       const pintaB = () => { b.textContent = fpsVisibles() ? 'Ocultar los fps' : 'Mostrar los fps'; };
       pintaB(); c.append(el('div', { className: 'fila' }, b));
     } },
+    { titulo: 'Botones flotantes', soloDesarrollo: true, pinta(c) {   // solo en la alfa y en local, como FLOTANTES (ADR 217)
+      c.append(el('p', { textContent: 'DEV, comentarios y PROTOTIPO se arrastran a cualquier borde. La versión de la alfa y los fps no reciben toques: se mueven desde aquí. Todo se recuerda en este navegador.' }));
+      const BORDES = [['izq', 'izquierda'], ['der', 'derecha'], ['arriba', 'arriba'], ['abajo', 'abajo']];
+      for (const [id, nombre] of [['alfa', 'Versión'], ['fps', 'fps']]) c.append(el('div', { className: 'fila' }, ...BORDES.map(([b, t]) => boton(nombre + ': ' + t, () => avisa(FLOTANTES.mueve(id, b), nombre + ' a ' + t)))));
+      c.append(el('div', { className: 'fila' }, boton('Devolverlos a su sitio de serie', () => avisa(FLOTANTES.reinicia(), 'Todos a su sitio de serie'))));
+      function avisa(r, txt) { aviso(txt + (r.guardado ? '' : ' (sin guardar: vale hasta recargar)')); }   // sin almacenamiento, vale hasta recargar
+    } },
     { titulo: 'Modo desarrollo', soloDesarrollo: true, pinta(c) {
       c.append(el('p', { textContent: 'Se activa solo en localhost, o con ?dev=1 en la dirección (se recuerda en este navegador).' }));
       c.append(el('div', { className: 'fila' }, boton('Apagarlo en este navegador', () => { try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ } location.reload(); })));
@@ -164,6 +171,7 @@
   const abre = el('button', { id: 'dev-boton', textContent: 'DEV', title: 'Utilidades de desarrollo', onclick: () => { panel.hidden = !panel.hidden; if (!panel.hidden) { pintaFlags(); pintaProbador(); } } });
   abre.setAttribute('translate', 'no');
   document.head.append(estilo); document.body.append(abre, panel);
+  FLOTANTES.movible(abre, { id: 'dev', borde: 'abajo', a: 0 });   // en la alfa y en local se arrastra a cualquier borde; de serie, abajo a la izquierda como siempre (ADR 217)
   pintaProbador();   // ya con su título puesto: sin cuenta de probador, el bloque no se ve
   if (new URLSearchParams(location.search).get('devabrir')) panel.hidden = false;
 })();

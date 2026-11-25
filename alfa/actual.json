@@ -1,8 +1,8 @@
 {
- "build": 1492,
- "hash": "2fead09",
- "fecha": "2026-11-25T02:08:41Z",
- "mensaje": "/gestion → Recursos: un encargo con la cadena rota sale en la lista con su error, y un grupo de una propuesta dice su marca (tarea #338)",
+ "build": 1493,
+ "hash": "07a006d",
+ "fecha": "2026-11-25T03:43:26Z",
+ "mensaje": "Core: los botones flotantes (DEV, comentarios, PROTOTIPO) se arrastran y se pegan al borde; versión y fps se mueven desde el panel DEV; solo en la alfa y en local (tarea #362, ADR 216, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

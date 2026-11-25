@@ -10,6 +10,8 @@
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
     'js/sistema/flags.js',         // flags remotos (abrir/cerrar cosas desde la base de datos), mantenimiento y versión mínima
+    'js/sistema/flotantes-reglas.js', // las reglas puras de los botones fijos que se mueven a un borde (FLOTANTES_REGLAS, ADR 217)
+    'js/sistema/flotantes.js',     // los botones fijos de core (DEV, comentarios, PROTOTIPO, versión de la alfa, fps) se mueven a cualquier borde, de momento solo en la alfa y en local (FLOTANTES, ADR 217); antes de todos ellos
     'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
     'js/sistema/sonido-archivos.js', // los efectos grabados en archivo (SONIDO_ARCHIVO), con el de código de repuesto (ADR 077)
     'js/serie/config.js',          // la serie: constantes y CFG (las cartas, unidades, tipos y roles los añade cada facción)
@@ -83,6 +85,7 @@
   // LO LIGERO: lo mínimo para un juego con su propia partida y sus pantallas (ver core/js/sistema/ligero.js). Cuenta e idioma, nada de economía.
   const LIGERO = [
     'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js', 'js/sistema/sonido-archivos.js',
+    'js/sistema/flotantes-reglas.js', 'js/sistema/flotantes.js',   // los botones fijos de core se mueven a cualquier borde, de momento solo en la alfa y en local (ADR 217); antes de todos ellos
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
     'js/sistema/puerta-adultos.js',   // la pregunta para adultos antes de pagar con dinero real (tarea #178, ADR 166); antes de monedas.js
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)

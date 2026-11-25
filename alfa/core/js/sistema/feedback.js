@@ -35,6 +35,9 @@
     background: rgba(62, 35, 99, .88); color: #fff6ea; opacity: .72; display: flex; align-items: center; justify-content: center; }
   #fb-pestana:hover, #fb-pestana:focus-visible { opacity: 1; }
   #fb-pestana svg { width: 20px; height: 20px; display: block; }
+  #fb-pestana[data-borde=der] { border-left: 3px solid #20102c; border-right: 0; border-radius: 12px 0 0 12px; }
+  #fb-pestana[data-borde=arriba], #fb-pestana[data-borde=abajo] { width: 46px; height: 30px; border: 3px solid #20102c; }
+  #fb-pestana[data-borde=arriba] { border-top: 0; border-radius: 0 0 12px 12px; } #fb-pestana[data-borde=abajo] { border-bottom: 0; border-radius: 12px 12px 0 0; }
   #fb-fondo { position: fixed; inset: 0; z-index: 90; background: rgba(12, 6, 20, .82); display: flex; align-items: center; justify-content: center; padding: 14px; box-sizing: border-box; touch-action: auto; user-select: text; -webkit-user-select: text; }
   #fb-fondo[hidden] { display: none; }
   #fb-caja { position: relative; width: 100%; max-width: 420px; max-height: 100%; overflow-y: auto; box-sizing: border-box; padding: 16px 16px 12px; text-align: left; color: #fff6ea; font-family: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
@@ -83,12 +86,16 @@
   const fondo = document.createElement('div');
   fondo.id = 'fb-fondo'; fondo.hidden = true;
   fondo.innerHTML = '<div id="fb-caja" role="dialog" aria-modal="true" aria-labelledby="fb-titulo"><button type="button" id="fb-x" aria-label="X">✕</button><div id="fb-cuerpo"></div></div>';
-  const mostrar = () => { pestana.hidden = !!(typeof enPartida === 'function' && enPartida()); ver.hidden = pestana.hidden; };
+  let verCabe = true, sitio = null;   // la versión va bajo la pestaña solo en los lados · lo que devuelve FLOTANTES.movible (null: como siempre)
+  const mostrar = () => { pestana.hidden = !!(typeof enPartida === 'function' && enPartida()); ver.hidden = pestana.hidden || !verCabe; };
   const ponerEtiqueta = () => { const t = tr('Enviar comentarios'); pestana.title = t + ' · ' + verLarga(); pestana.setAttribute('aria-label', t); };
-  const colocar = () => { const st = document.getElementById('stage'); const x = ETIQUETA_PROTOTIPO.borde(st ? st.getBoundingClientRect().left : 0) + 'px'; pestana.style.left = ver.style.left = x; ver.style.bottom = 'calc(30% - ' + (verCorta.length * 6 + 6) + 'px)'; };
+  const colocar = () => { if (sitio) { sitio.coloca(); return; } const st = document.getElementById('stage'); const x = ETIQUETA_PROTOTIPO.borde(st ? st.getBoundingClientRect().left : 0) + 'px'; pestana.style.left = ver.style.left = x; ver.style.bottom = 'calc(30% - ' + (verCorta.length * 6 + 6) + 'px)'; };
+  // en la alfa y en local la pestaña se arrastra a cualquier borde (FLOTANTES, ADR 217); de serie, donde siempre: borde izquierdo, su borde de abajo al 70 %
+  const conVersion = (borde, r) => { verCabe = borde === 'izq' || borde === 'der'; Object.assign(ver.style, { left: r.x + 'px', top: (r.y + r.alto + 2) + 'px', bottom: 'auto' }); mostrar(); };
   function iniciar() {
-    document.body.append(pestana, ver, fondo); ponerEtiqueta(); colocar(); mostrar();
-    window.addEventListener('resize', colocar); setInterval(() => { mostrar(); colocar(); }, 1500);
+    document.body.append(pestana, ver, fondo); ponerEtiqueta(); mostrar();
+    sitio = FLOTANTES.movible(pestana, { id: 'comentarios', borde: 'izq', a: 0.7, d: -23, hueco: 0, fuera: ETIQUETA_PROTOTIPO.fuera, junto: ver, alColocar: conVersion });
+    colocar(); window.addEventListener('resize', colocar); setInterval(() => { mostrar(); colocar(); }, 1500);
   }
   const cerrar = () => { fondo.hidden = true; };
   fondo.addEventListener('click', e => { if (e.target === fondo || e.target.id === 'fb-x') cerrar(); });

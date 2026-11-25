@@ -19,7 +19,10 @@ const RENDIMIENTO = (() => {
   }
   function pinta() {
     if (!mostrar) { if (el) el.style.display = 'none'; return; }
-    if (!el) { el = document.createElement('div'); el.id = 'rend-fps'; el.style.cssText = 'position:fixed;left:50%;bottom:3px;transform:translateX(-50%);z-index:99999;font:800 12px "Baloo 2",monospace;padding:1px 7px;border-radius:8px;background:rgba(10,8,28,.7);pointer-events:none'; document.body.appendChild(el); }
+    if (!el) {   // no recibe toques; en la alfa y en local, FLOTANTES lo pone en su sitio y el panel DEV lo manda a otro borde (ADR 217)
+      el = document.createElement('div'); el.id = 'rend-fps'; el.style.cssText = 'position:fixed;left:50%;bottom:3px;transform:translateX(-50%);z-index:99999;font:800 12px "Baloo 2",monospace;padding:1px 7px;border-radius:8px;background:rgba(10,8,28,.7);pointer-events:none';
+      document.body.appendChild(el); FLOTANTES.movible(el, { id: 'fps', borde: 'abajo', a: 0.5, hueco: 3, arrastre: false });
+    }
     el.style.display = ''; el.textContent = fps + ' fps'; el.style.color = fps >= 50 ? '#7dff9b' : fps >= 30 ? '#ffd93d' : '#ff6b6b';
   }
   function resumen() {

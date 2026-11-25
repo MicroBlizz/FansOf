@@ -34,3 +34,6 @@ const UTILIDADES_JUEGO = (() => {
     caja.append(Object.assign(document.createElement('p'), { textContent: 'Cambiar recarga la página. Por defecto: Rapier en el circuito, arcade en la ciudad.' }));
   } }];
 })();
+// el botón DEV de core (de serie abajo a la izquierda) caería sobre las flechas de girar: en Taxi su sitio de serie es la columna izquierda, encima
+// del «!» de reportar. En la alfa y en local lo coloca FLOTANTES (ADR 217) y se puede arrastrar; fuera, la regla de taxi.css
+FLOTANTES.deSerie('dev', { borde: 'izq', a: 0.5, d: -48 });

@@ -55,8 +55,9 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
   #busqueda { margin-right: 0; }
   #medidor { top: calc(var(--sup) + 124px); }
 }
-/* el botón DEV de core (abajo a la izquierda) caía sobre las flechas de girar: aquí va en la columna izquierda, encima del «!» de reportar */
-body #dev-boton { left: 8px; bottom: auto; top: calc(50% - 62px); }
+/* el botón DEV de core (abajo a la izquierda) caía sobre las flechas de girar: aquí va en la columna izquierda, encima del «!» de reportar.
+   En la alfa y en local lo coloca FLOTANTES (data-flotante) con ese mismo sitio de serie (js/adaptadores/panel-dev.js, ADR 217) */
+body #dev-boton:not([data-flotante]) { left: 8px; bottom: auto; top: calc(50% - 62px); }
 /* circuito de pruebas: la botonera de estaciones (arriba a la izquierda, bajo el dinero) */
 #estaciones { position: absolute; left: 12px; top: 124px; display: grid; gap: 6px; justify-items: start; pointer-events: auto; }
 #capa .est-boton { background: var(--tray, #26143c); border: 3px solid var(--outline); border-radius: 10px; box-shadow: 0 3px 0 var(--outline); padding: 4px 10px; font-family: var(--font-display); font-size: 15px; color: var(--ink); }

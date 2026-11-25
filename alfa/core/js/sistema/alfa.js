@@ -8,11 +8,12 @@
   const base = location.pathname.split('/alfa/')[0] + '/';   // la librería, un nivel por encima de alfa/
   const T = typeof tr === 'function' ? tr : x => x;
 
-  // la franja: siempre visible, no estorba (abajo a la izquierda, no recibe toques)
+  // la franja: siempre visible y no estorba: no recibe toques. FLOTANTES la pone en su sitio de serie, que no pisa el botón DEV, y desde el
+  // panel DEV se manda a otro borde (ADR 217)
   const franja = document.createElement('div');
   franja.textContent = 'ALFA b' + (build || '?') + ' · ' + (hash || '');
   franja.style.cssText = 'position:fixed;left:6px;bottom:6px;z-index:99980;pointer-events:none;background:#7a2cff;color:#fff;font:800 11px/1 system-ui,sans-serif;padding:4px 7px;border-radius:6px;border:2px solid #20102c;opacity:.9';
-  const poner = () => document.body.append(franja);
+  const poner = () => { document.body.append(franja); FLOTANTES.movible(franja, { id: 'alfa', borde: 'arriba', a: 0.5, arrastre: false }); };
   document.body ? poner() : window.addEventListener('DOMContentLoaded', poner);
 
   function puerta(motivo) {   // el juego se quita de en medio y queda esta pantalla

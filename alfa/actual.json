@@ -1,8 +1,8 @@
 {
- "build": 1510,
- "hash": "10ccd67",
- "fecha": "2026-11-25T17:00:10Z",
- "mensaje": "Pop: la franja de las ventanas es una nube con carita y la X, una burbuja que se hunde y hace pop (tarea 386, boceto 2 de Pepins)",
+ "build": 1511,
+ "hash": "dbc75c2",
+ "fecha": "2026-11-25T17:31:21Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/vigilant-moser-6b899f",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

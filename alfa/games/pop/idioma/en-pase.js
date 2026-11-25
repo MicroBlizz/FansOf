@@ -3,6 +3,17 @@
 'use strict';
 IDIOMA.add({
   "Día {n} de 7: el domingo, el más gordo": "Day {n} of 7: Sunday's is the biggest",
+  "Día {n} de 7: el día 7, el más gordo": "Day {n} of 7: day 7 is the biggest",
+  "Día {n}": "Day {n}",
+  "Llevas 1 día seguido": "1 day in a row",
+  "Llevas {n} días seguidos": "{n} days in a row",
+  "Hoy es tu primer día seguido": "Today is your first day in a row",
+  "Con el de hoy, {n} días seguidos": "With today's, {n} days in a row",
+  "Te queda un día de perdón": "You have one free miss left",
+  "Ya has gastado tu día de perdón": "You've used your free miss",
+  "¡Uf! Has gastado tu día de perdón": "Phew! You've used your free miss",
+  "Camino nuevo: vuelves al día 1": "New path: back to day 1",
+  "¡Camino completo! Recuperas tu día de perdón": "Path complete! Your free miss is back",
   "RECOGER TODO ({n})": "COLLECT ALL ({n})",
   "Nada que recoger": "Nothing to collect",
   "¡Pase completo! Sigue jugando: escalones extra": "Pass complete! Keep playing: bonus steps",

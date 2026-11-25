@@ -35,6 +35,11 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Todas las bandejas', () => { SAVE.bandejas = {}; for (const B of PP_BANDEJAS) SAVE.bandejas[B.id] = true; });
   boton(d, 'Racha al tope', () => { SAVE.racha = PP_CFG.racha.max; });
   d = fila();
+  boton(d, 'Regalo: pasa 1 día', () => { ppRegaloDevPasan(1); PP_PASE_VISTO.regalo = false; });
+  boton(d, 'Regalo: falto 1 día', () => { ppRegaloDevPasan(2); PP_PASE_VISTO.regalo = false; });
+  boton(d, 'Regalo: falto 2 días', () => { ppRegaloDevPasan(3); PP_PASE_VISTO.regalo = false; });
+  boton(d, 'Regalo: de cero', () => { SAVE.diasSeguidos = null; SAVE.regaloDia = ''; PP_PASE_VISTO.regalo = false; });
+  d = fila();
   boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; ppGuardaCamino(); });
   d = fila();
   boton(d, (SAVE.devCopiaCamino ? '● ' : '') + 'Ponerme en el jefe del Jardín', ppDevAlJefe);

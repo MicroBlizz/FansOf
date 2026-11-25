@@ -29,6 +29,7 @@ IDIOMA.add({
   "Las perlas cuestan dinero de verdad. Si eres menor, pide permiso.": "Pearls cost real money. If you are under age, ask for permission.",
   "Vuelve un corazón cada 30 minutos. ¡O llénalos aquí!": "A heart comes back every 30 minutes. Or refill them here!",
   "¡Un regalo cada día! El del domingo es el mejor.": "A gift every day! Sunday's is the best.",
+  "¡Ven cada día! El regalo del día 7 es el mejor.": "Come every day! The day 7 gift is the best.",
   "Pasa niveles nuevos y sube escalones con premio.": "Beat new levels and climb steps with prizes.",
   "La hucha se llena al pasar niveles. ¡Rómpela!": "The piggy bank fills up as you beat levels. Smash it!",
   "Gana sin fallar y empiezas con más toques.": "Win without failing and you start with more taps.",

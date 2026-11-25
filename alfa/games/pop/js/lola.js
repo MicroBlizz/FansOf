@@ -41,6 +41,7 @@ const PP_TUTO = {
   tienda: [{ t: 'Las perlas cuestan dinero de verdad. Si eres menor, pide permiso.', encima: true, bloquea: true }],   // precios honestos (tarea #177): este sí se lee antes de tocar
   sinCorazones: [{ t: 'Vuelve un corazón cada 30 minutos. ¡O llénalos aquí!', encima: true }],
   regalo: [{ t: '¡Un regalo cada día! El del domingo es el mejor.', encima: true }],
+  regaloSeguidos: [{ t: '¡Ven cada día! El regalo del día 7 es el mejor.', encima: true }],   // días seguidos (tarea #383); el de arriba se va al quitar el regalo por día de la semana
   pase: [{ t: 'Pasa niveles nuevos y sube escalones con premio.', encima: true }],
   hucha: [{ t: 'La hucha se llena al pasar niveles. ¡Rómpela!', encima: true }],
   racha: [{ t: 'Gana sin fallar y empiezas con más toques.', encima: true }],

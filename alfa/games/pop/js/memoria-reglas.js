@@ -49,6 +49,12 @@ const PP_MEM_R = (() => {
     const s = k - Math.max(0, total - 1 - MAX_ARRIBA), oct = Math.floor(s / 5), g = PENTA[((s % 5) + 5) % 5];
     return Math.round(DO5 * Math.pow(2, oct + g / 12));
   }
+  // la burbuja que se añade a la melodía: una de las del tablero que no sea la última (no se vería), elegida con `u` (de 0 a 1, el azar
+  // de quien llama: el de siempre o el del reto del día, con semilla)
+  function elige(mask, ultima, u) {
+    const libres = [...mask.keys()].filter(i => mask[i] && i !== ultima);
+    return libres[Math.min(libres.length - 1, Math.floor(u * libres.length))];
+  }
   // la melodía en el tablero nuevo: cada burbuja pasa a la del tablero nuevo más cercana a su mismo sitio (en proporción)
   function traduce(sec, nViejo, maskNuevo, nNuevo) {
     return sec.map(i => {
@@ -113,5 +119,5 @@ const PP_MEM_R = (() => {
   // monedas se suman
   const sumaCobro = (a, b) => Object.freeze(a ? { nuevo: a.nuevo || b.nuevo, monedas: a.monedas + b.monedas, lleno: b.lleno } : { ...b });
 
-  return Object.freeze({ puedeSeguir, trasSeguir, pistasQuedan, hayPista, puedePista, trasPista, sumaCobro, DIFICULTADES, dificultad, ajustesDe, paso, tocaPista, formaDe, mascara, crece, puesto, nota, traduce, instrumento, abiertos, mundoValido, recordDe, conRecord });
+  return Object.freeze({ elige, puedeSeguir, trasSeguir, pistasQuedan, hayPista, puedePista, trasPista, sumaCobro, DIFICULTADES, dificultad, ajustesDe, paso, tocaPista, formaDe, mascara, crece, puesto, nota, traduce, instrumento, abiertos, mundoValido, recordDe, conRecord });
 })();

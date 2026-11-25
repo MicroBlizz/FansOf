@@ -9,7 +9,7 @@
 'use strict';
 const PP_LIBRO = Object.freeze((() => {
   const GANAR = Object.freeze(['jefe', 'regalo', 'pase', 'pagina', 'seguidos']);
-  const GASTAR = Object.freeze(['ayuda', 'seguir', 'vidas', 'hueco', 'infinitas', 'mundo']);
+  const GASTAR = Object.freeze(['ayuda', 'seguir', 'vidas', 'hueco', 'infinitas', 'mundo', 'reto']);
   const ok = v => Object.freeze({ ok: true, ...v });
   const error = e => Object.freeze({ ok: false, error: e });
   const entero = n => (Number.isInteger(n) && n > 0 ? n : 0);

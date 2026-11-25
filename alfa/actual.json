@@ -1,8 +1,8 @@
 {
- "build": 1519,
- "hash": "b46328c",
- "fecha": "2026-11-25T20:04:00Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/recursos-todos",
+ "build": 1520,
+ "hash": "9e506a8",
+ "fecha": "2026-11-25T20:13:05Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/cranky-wescoff-2fbf24",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

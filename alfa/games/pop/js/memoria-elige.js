@@ -51,6 +51,7 @@ function ppEligeMemoria() {
     b.onclick = () => { play('select'); sel.dif = id; ppMemMarca(t, sel); };
     difs.appendChild(b);
   }
+  if (PP_RETO.activo()) t.appendChild(PP_RETO.tarjeta());   // el reto del día, arriba (js/reto-dia.js, tarea 367)
   t.append(rejilla, difs);
   t.appendChild(ppBoton(tr('JUGAR'), 'pp-btn', () => {
     Object.assign(SAVE.memoria, { mundo: sel.mundo, dif: sel.dif }); ppGuarda();

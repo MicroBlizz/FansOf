@@ -145,6 +145,11 @@ const PP_CFG = {
       dificil: { paso: 0.8, pasoMin: 0.75, pista: 0, luces: false },
     },
     instrumentos: ['cajita', 'xilofono', 'campanillas', 'tambor', 'organillo', 'arpa', 'flauta', 'marimba', 'koto', 'sinte'] },
+  // RETO DEL DÍA (tarea 367, ADR 226; js/reto-dia-reglas.js): `intentos` al día, los `gratis` primeros sin pagar y los demás por `perlas` (o un
+  // anuncio, donde los hay). Monedas: `porRonda` por ronda de tu mejor marca de hoy (solo lo que la mejora), hasta `tope` al día.
+  // `mundos`: entre cuántos mundos rota el del día (fijo: si cambia, el día de
+  // la nueva versión no juega el mismo tablero que las viejas; no se toca aunque haya más mundos).
+  reto: { intentos: 3, gratis: 1, perlas: 5, porRonda: 2, tope: 40, mundos: 10 },
   // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
   // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
   perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },

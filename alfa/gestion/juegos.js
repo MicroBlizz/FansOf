@@ -5,7 +5,7 @@
 (() => {
   let R = null;
   const tabla = (cab, filas) => `<div class="tabla-caja"><table class="tabla"><thead><tr>${cab.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${filas.map(f => `<tr>${f.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-  const filaRend = x => [esc(x.juego || ''), esc(x.version), (x.app ? 'app Android' : esc(x.plataforma)) + (x.alfa ? ' · alfa' : ''), fmt(x.partidas), x.fps_medio, x.fps_p1_medio, x.p10_fps_medio, x.fps_min_peor, fmt(Math.round((x.segundos || 0) / 60)) + ' min'];
+  const filaRend = x => [esc(x.juego || ''), esc(x.version), (x.app ? 'app Android' : esc(x.plataforma)) + (x.alfa ? ' · alfa' : '') + (x.ahorro ? ' · ahorro' : ''), fmt(x.partidas), x.fps_medio, x.fps_p1_medio, x.p10_fps_medio, x.fps_min_peor, fmt(Math.round((x.segundos || 0) / 60)) + ' min'];
   const CAB_REND = ['Juego', 'Versión', 'Plataforma', 'Partidas', 'fps medio', 'fps 1 % peor', 'fps (10 % peores)', 'fps mínimo', 'Tiempo'];
   async function cargaRend() {
     if (!R) { try { R = (await rpc('gestion_rendimiento', { p_token: leerToken() })).filas || []; } catch (e) { return { error: /Could not find the function|PGRST202/.test(String(e.message)) ? 'La función de rendimiento aún no está aplicada en el servidor.' : textoError(e) }; } }
@@ -19,7 +19,7 @@
   async function pintaJuego(id, nombre) {
     const c = $('pan-juego'); c.innerHTML = `<div class="caja"><b style="font-size:18px">${esc(nombre)}</b><div class="meta">Detalle de este juego. El resumen de toda la web está en «Global».</div></div>`
       + '<div class="caja"><b>Comentarios</b><div class="filtros" style="margin-top:8px"><button id="j-coment" type="button">Ver los comentarios de este juego</button></div></div>'
-      + '<div class="caja"><b>Rendimiento</b><div class="aviso" id="j-aviso" role="alert"></div><div id="j-rend" style="margin-top:8px"></div></div>';
+      + '<div class="caja"><b>Rendimiento</b><div class="meta">Por aparato, con y sin ahorro de batería y por cada dato del juego: pestaña «Rendimiento».</div><div class="aviso" id="j-aviso" role="alert"></div><div id="j-rend" style="margin-top:8px"></div></div>';
     $('j-coment').onclick = () => { GESTION_NAV.ir('global', 'votos'); const s = $('v-juego'); if (s) { s.value = id; s.dispatchEvent(new Event('change')); } };
     const r = await cargaRend();
     if (r.error) $('j-aviso').textContent = r.error;

@@ -1,6 +1,8 @@
 // Fans Of · Alemán de lo común que usan los juegos ligeros (cuenta, opciones, caos primordial, feedback, anuncios…). Lo carga NUCLEO (core/js/nucleo.js, DICCIONARIOS) cuando el juego tiene este idioma.
 'use strict';
 IDIOMA.add({
+  "Ahorro de batería": "Akkusparmodus",
+  "Más fluido en móviles modestos y gasta menos batería; se ve un poco menos nítido.": "Flüssiger auf einfachen Handys und braucht weniger Akku; etwas weniger scharf.",
   "Datos de partida anónimos": "Anonyme Spieldaten",
   "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Hilf uns, die Spiele mit anonymen Daten aus deinen Partien zu verbessern: ohne Namen, ohne E-Mail und ohne Konto. Du kannst es jederzeit ausschalten.",
   "ENCENDIDO": "AN",

@@ -60,6 +60,7 @@
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
+    'js/sistema/ahorro.js',        // el interruptor «Ahorro de batería» (AHORRO.activo(), AHORRO.densidad(dpr); avisa con fire('ahorro')): cada juego decide qué baja (ADR 218)
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
     'js/sistema/etiqueta-prototipo.js', // la etiqueta «PROTOTIPO» del borde izquierdo, que lleva a votar en la ficha (ADR 106)
     'js/sistema/feedback-reglas.js', // las reglas de los topes del feedback y de la oferta de beta tester (ADR 106)
@@ -105,6 +106,7 @@
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
+    'js/sistema/ahorro.js',        // el interruptor «Ahorro de batería» (AHORRO.activo(), AHORRO.densidad(dpr); avisa con fire('ahorro')): cada juego decide qué baja (ADR 218)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
     'js/sistema/etiqueta-prototipo.js', // la etiqueta «PROTOTIPO» del borde izquierdo, que lleva a votar en la ficha (ADR 106)
     'js/sistema/feedback-reglas.js', // las reglas de los topes del feedback y de la oferta de beta tester (ADR 106)

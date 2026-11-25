@@ -1,6 +1,8 @@
 // Fans Of · Inglés de lo común (extra): lo que no cabía en los otros diccionarios.
 'use strict';
 IDIOMA.add({
+  "Ahorro de batería": "Battery saver",
+  "Más fluido en móviles modestos y gasta menos batería; se ve un poco menos nítido.": "Smoother on modest phones and uses less battery; looks a little less sharp.",
   "Datos de partida anónimos": "Anonymous game data",
   "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Help us improve the games with anonymous data from your matches: no name, no email and no account. You can turn it off whenever you like.",
   "ENCENDIDO": "ON",

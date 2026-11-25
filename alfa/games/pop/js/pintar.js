@@ -44,6 +44,7 @@ function ppPintaFondo(c, k, t, noche = false) {
   if (noche === 2) ppRojo(c, t); else if (noche) ppNoche(c, t);   // difícil: de noche · pesadilla: en rojo
   // lo que flota por el fondo: unicornios, arcoíris, capibaras, animalitos y chuches (Yoshi) subiendo despacio y balanceándose,
   // y burbujitas entre medias. Cada uno con su velocidad, tamaño y vaivén; todo sale de t, sin estado.
+  if (!PP_AHORRO.flotantes()) return;   // «Ahorro de batería»: el fondo, solo con su dibujo (js/ahorro-juego.js)
   const suyas = (PP_FLOTA_MUNDO[k] || []).filter(k2 => PP_IMG[k2]);   // las del mundo (js/sprites.js); si aún no hay, la mezcla
   const hay = suyas.length >= 3 ? suyas : PP_FLOTANTES.filter(k2 => PP_IMG[k2]);
   for (let k2 = 0; k2 < 12; k2++) {
@@ -172,7 +173,7 @@ function ppPintaMonedero(c, x, y) {
 }
 /* ---------- partículas, saltos y textos flotantes ---------- */
 function ppPintaEfectos(c, t) {
-  for (const p of PP_FX.parts) { c.beginPath(); c.arc(p.x, p.y, p.r * (1 - p.t / p.vida), 0, Math.PI * 2); c.fillStyle = p.col; c.fill(); }
+  for (let i = 0, paso = PP_AHORRO.pasoParticulas(); i < PP_FX.parts.length; i += paso) { const p = PP_FX.parts[i]; c.beginPath(); c.arc(p.x, p.y, p.r * (1 - p.t / p.vida), 0, Math.PI * 2); c.fillStyle = p.col; c.fill(); }
   for (const s of PP_FX.saltos) { const k = Math.min(1, s.t / 0.8), y = s.y - Math.sin(k * Math.PI) * 160 - k * 40; ppSlimeRepuestoOImagen(c, s.id, s.x, y, 34 + k * 16, t, 1); }
   for (const o of PP_FX.ondas) { const k = o.t / 0.45; c.beginPath(); c.arc(o.x, o.y, o.r * k, 0, Math.PI * 2); c.lineWidth = 10 * (1 - k); c.strokeStyle = `rgba(255,255,255,${1 - k})`; c.stroke(); }
   PP_ATAQUE_FX.pinta(c);   // estela, cositas y golpes de los ataques de los compañeros (flag 'ataques-companeros')

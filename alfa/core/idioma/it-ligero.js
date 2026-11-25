@@ -1,6 +1,8 @@
 // Fans Of · Italiano de lo común que usan los juegos ligeros (cuenta, opciones, caos primordial, feedback, anuncios…). Lo carga NUCLEO (core/js/nucleo.js, DICCIONARIOS) cuando el juego tiene este idioma.
 'use strict';
 IDIOMA.add({
+  "Ahorro de batería": "Risparmio batteria",
+  "Más fluido en móviles modestos y gasta menos batería; se ve un poco menos nítido.": "Più fluido sui telefoni modesti e consuma meno batteria; un po' meno nitido.",
   "Datos de partida anónimos": "Dati di gioco anonimi",
   "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Aiutaci a migliorare i giochi con dati anonimi delle tue partite: senza nome, senza email e senza account. Puoi spegnerlo quando vuoi.",
   "ENCENDIDO": "ACCESO",

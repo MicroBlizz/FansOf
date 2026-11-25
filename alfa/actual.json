@@ -1,8 +1,8 @@
 {
- "build": 1494,
- "hash": "a0d5eaa",
- "fecha": "2026-11-25T04:04:33Z",
- "mensaje": "Island: el visor de Brotitos enseña las lonchas que Yoshi cortó del 3D por etapas (run 4670, tarea #334)",
+ "build": 1495,
+ "hash": "a0724f6",
+ "fecha": "2026-11-25T07:31:50Z",
+ "mensaje": "«Ahorro de batería» en core (Opciones, panel DEV y rendimiento) y en Pop (densidad, fondo y partículas, en caliente); pestaña Rendimiento de cada juego en /gestion con el SQL 191 (tareas #363 y #339, ADR 218)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

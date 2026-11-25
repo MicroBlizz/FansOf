@@ -136,6 +136,13 @@
       c.append(el('div', { className: 'fila' }, boton('Devolverlos a su sitio de serie', () => avisa(FLOTANTES.reinicia(), 'Todos a su sitio de serie'))));
       function avisa(r, txt) { aviso(txt + (r.guardado ? '' : ' (sin guardar: vale hasta recargar)')); }   // sin almacenamiento, vale hasta recargar
     } },
+    { titulo: 'Ahorro de batería', pinta(c) {
+      if (typeof AHORRO === 'undefined') { c.append(el('p', { textContent: 'Este juego no carga el ahorro de core.' })); return; }
+      c.append(el('p', { textContent: 'El mismo interruptor que en Opciones (ADR 218): se cambia en caliente, en mitad de la partida. Mira el contador de fps al cambiarlo.' }));
+      const b = boton('', () => { AHORRO.cambia(); pintaB(); });
+      const pintaB = () => { b.textContent = AHORRO.activo() ? 'Apagar el ahorro' : 'Encender el ahorro'; };
+      pintaB(); c.append(el('div', { className: 'fila' }, b));
+    } },
     { titulo: 'Modo desarrollo', soloDesarrollo: true, pinta(c) {
       c.append(el('p', { textContent: 'Se activa solo en localhost, o con ?dev=1 en la dirección (se recuerda en este navegador).' }));
       c.append(el('div', { className: 'fila' }, boton('Apagarlo en este navegador', () => { try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ } location.reload(); })));

@@ -286,6 +286,8 @@ IDIOMA.add({
   "Tu rival se ha ido": "Your rival left",
   "VIBRACIÓN: NO": "VIBRATION: OFF",
   "VIBRACIÓN: SÍ": "VIBRATION: ON",
+  "AHORRO DE BATERÍA: SÍ": "BATTERY SAVER: ON",
+  "AHORRO DE BATERÍA: NO": "BATTERY SAVER: OFF",
   "Victorias contra gente: {g} · Derrotas: {p}": "Wins against people: {g} · Losses: {p}",
   "estrellas": "stars",
   "rondas": "rounds",

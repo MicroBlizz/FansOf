@@ -11,7 +11,7 @@ function ppAjusta() {
   if (h > bh - pad * 2) { h = bh - pad * 2; w = (h * 540) / LH; }
   w = Math.max(200, Math.floor(w)); h = Math.floor((w * LH) / 540);
   PP_ESCENARIO.style.width = w + 'px'; PP_ESCENARIO.style.height = h + 'px';
-  PP_V.H = LH; PP_V.sc = w / 540; PP_V.dpr = Math.min(window.devicePixelRatio || 1, 3);
+  PP_V.H = LH; PP_V.sc = w / 540; PP_V.dpr = PP_AHORRO.densidad(Math.min(window.devicePixelRatio || 1, 3));   // con «Ahorro de batería», 1,5 como mucho (js/ahorro-juego.js)
   PP_CV.width = Math.round(w * PP_V.dpr); PP_CV.height = Math.round(h * PP_V.dpr);
   PP_UI.style.height = LH + 'px'; PP_UI.style.transform = `scale(${w / 540})`;
   const g = ppGeom(3); PP_UI.style.setProperty('--pp-bajo-tablero', g.y + g.lado + 'px');   // el borde de abajo del tablero, para las ayudas (tareas #129 y #269)
@@ -69,6 +69,7 @@ function ppArranque() {
   const imagenes = ppCargaImagenes();
   ppAjusta();
   window.addEventListener('resize', ppAjusta);
+  if (typeof hook === 'function') hook('ahorro', ppAjusta);   // «Ahorro de batería» en caliente: el lienzo se rehace con su densidad
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('duelos')) return; PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)

@@ -1,7 +1,7 @@
 // Fans of Pop · PANTALLA DEL PASE NUEVO (tarea #165, ADR 165; rehecha con el boceto C «Escaparate y carril» que eligió Pepins el
 // 20-11-2026, reporte 32). De arriba abajo: el ESCAPARATE del tema del mes (lo que solo da este mes, a lo grande, y los botones del Pase
 // dorado y del Dorado+), la barra del escalón, el CARRIL de escalones en horizontal (gratis arriba, dorado abajo, se desliza con el dedo),
-// las 3 misiones del día como tarjetas y, fijos abajo, VOLVER y RECOGER TODO. Recoger y volar a la barra lo hace js/pase.js
+// las 3 misiones del día en una caja con su reloj (tarea 375) y, fijos abajo, VOLVER y RECOGER TODO. Recoger y volar a la barra lo hace js/pase.js
 // (ppPaseRecoge); lo del juego, js/pase-nuevo.js; las reglas, js/pase-reglas.js.
 'use strict';
 const ppPaseDias = () => {
@@ -82,21 +82,37 @@ function ppPaseCentraCarril() {
   if (col) c.scrollLeft = col.offsetLeft - (et ? et.offsetWidth : 0) - 8;
 }
 /* ---------- las misiones del día ---------- */
+// una fila fina por misión: texto, barrita y «1/2 · +5», o COBRAR, o Hecha (Pepins, tarea 375: las cajas eran grandes para lo que dan)
 function ppPaseTarjetaMision(m) {
-  const t = document.createElement('div');
+  const t = document.createElement('div'), pct = Math.round(100 * Math.min(1, m.prog / m.goal));
   t.className = 'pp-pase-mision' + (m.cobrada ? ' pp-cogido' : m.listo ? ' pp-listo' : '');
-  t.innerHTML = `<span>${tr(m.txt)}</span><i>${m.prog}/${m.goal}</i>`;
+  t.innerHTML = `<span>${tr(m.txt)}</span><b class="pp-pase-mis-barra"><b style="width:${pct}%"></b></b>`;
+  if (!m.listo) t.insertAdjacentHTML('beforeend', `<i>${m.prog}/${m.goal} · +${m.r.puntos}</i>`);
   if (m.listo && !m.cobrada) t.appendChild(ppBoton(tr('COBRAR'), 'pp-btn2 pp-verde', () => { PP_PASE_MIS.cobrar('d', m.id); play('ppPremio'); ppPaseRepinta(); }));
   else if (m.cobrada) t.insertAdjacentHTML('beforeend', `<em>${tr('Hecha')}</em>`);
   return t;
 }
 function ppPaseMisiones() {
   const caja = document.createElement('div'); caja.className = 'pp-pase-mis';
-  caja.innerHTML = `<p class="pp-pase-mis-tit">${tr('Misiones de hoy')} <small>${tr('+{n} puntos cada una', { n: PP_PASE_R.CFG.puntos.mision })}</small></p>`;
+  caja.innerHTML = `<p class="pp-pase-mis-tit">${tr('Misiones de hoy')} <small class="pp-pase-mis-reloj"></small></p>`;
   const fila = document.createElement('div'); fila.className = 'pp-pase-mis-fila';
   for (const m of PP_PASE_MIS.lista('d')) fila.appendChild(ppPaseTarjetaMision(m));
   caja.appendChild(fila);
+  ppPaseMisReloj(caja.querySelector('.pp-pase-mis-reloj'));
   return caja;
+}
+// «Nuevas en 5:32:10» bajando cada segundo; al cambiar el día (aunque el móvil se bloquee y el reloj se salte la medianoche) la
+// ventana se repinta con las misiones nuevas. Se para solo si la ventana se cierra o se repinta (su texto ya no está), como el reloj
+// de las ofertas (js/ofertas.js)
+function ppPaseMisReloj(el) {
+  const modal = $pp('#pp-modal'), fin = Date.now() + PP_PASE_R.hastaMisiones(new Date());
+  const texto = () => { el.textContent = tr('Nuevas en {t}', { t: ppReloj(Math.max(1000, fin - Date.now())) }); };
+  texto();   // la primera vez la caja aún no está en la ventana
+  const tic = setInterval(() => {
+    if (!el.isConnected || (modal && modal.hidden)) { clearInterval(tic); return; }
+    if (Date.now() >= fin) { clearInterval(tic); ppPaseRepinta(); return; }
+    texto();
+  }, 1000);
 }
 /* ---------- la ventana ---------- */
 function ppPasePie() {

@@ -185,7 +185,8 @@ function ppSaltaSlime(id, k, golpes) {
   const T = PP_P.T, pref = ppFxDe(id).prefiere;
   // Copito y Medusita van antes a las de hielo o a las conchas que sigan arriba; los demás, a burbujas de la solución
   const suyas = pref && T.esp ? [...T.up.keys()].filter(i => T.up[i] && T.esp[i] === pref) : [];
-  const objetivos = (suyas.length ? suyas : [...T.sol]).sort(() => Math.random() - 0.5).slice(0, golpes);
+  // con cohetes, los de la solución en su orden (el primero no levanta nada; js/cohetes.js); si no, al azar
+  const objetivos = (suyas.length ? suyas.sort(() => Math.random() - 0.5) : ppSolEnOrden(T) ? [...T.sol] : [...T.sol].sort(() => Math.random() - 0.5)).slice(0, golpes);
   if (!objetivos.length) return;
   ppFxHabilidad(id); PP_ATAQUE_FX.suena(id);   // el sonido de su ataque (js/ataques-fx.js; con el flag cerrado, ppSalto)
   objetivos.forEach((i, g) => {

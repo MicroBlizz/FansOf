@@ -58,16 +58,16 @@ function ppPaseDuelo() {
   if (!ppPaseNuevo()) return;
   ppPaseMision('duelo'); ppPaseSumaJugando(PP_PASE_R.CFG.puntos.duelo);
 }
-// misiones diarias: 3 al día de esta lista (las mismas para todo el mundo); cada una da 5 puntos al cobrarla
+// misiones diarias: 3 al día de esta lista (las mismas para todo el mundo); cada una da 5 puntos al cobrarla. Se renuevan a medianoche
+// del móvil (RETOSL). Pepins (tarea 375, 25-11-2026): metas pequeñas para lo que dan, sin «Gana 5» ni «3 estrellas en 2 niveles»
 const PP_PASE_MIS = RETOSL.crear({
   save: () => { SAVE.paseMis = SAVE.paseMis || {}; return SAVE.paseMis; },
   guardar: () => ppGuarda(),
   pagar: r => ppPaseSuma(r.puntos),
   diarias: [
+    { id: 'gana2', txt: 'Gana 2 niveles', goal: 2, ev: 'nivel', r: { puntos: 5 } },
     { id: 'gana3', txt: 'Gana 3 niveles', goal: 3, ev: 'nivel', r: { puntos: 5 } },
-    { id: 'gana5', txt: 'Gana 5 niveles', goal: 5, ev: 'nivel', r: { puntos: 5 } },
     { id: 'tres1', txt: 'Consigue 3 estrellas en un nivel', goal: 1, ev: 'tres', r: { puntos: 5 } },
-    { id: 'tres2', txt: 'Consigue 3 estrellas en 2 niveles', goal: 2, ev: 'tres', r: { puntos: 5 } },
     { id: 'duelo1', txt: 'Gana un duelo', goal: 1, ev: 'duelo', r: { puntos: 5 } },
     { id: 'repe1', txt: 'Vuelve a ganar un nivel que ya pasaste', goal: 1, ev: 'repetido', r: { puntos: 5 } },
   ],

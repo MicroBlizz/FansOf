@@ -28,7 +28,7 @@ const PP_TUTO = {
   w4n1: [{ t: 'Si tocas una concha, solo hace pop ella.' }],
   w5n1: [{ t: 'Las de cereza necesitan tres golpes.' }],
   w6n1: [{ t: '¡Aquí está todo mezclado! Piensa cada toque.' }],
-  w7n1: [{ t: 'Un cohete hace pop en toda su fila.' }],
+  w7n1: [{ t: 'El cohete levanta su fila al reventar: quítalo pronto.' }],
   w8n1: [{ t: 'Las burbujeantes hacen pop en todo su alrededor.' }],
   w9n1: [{ t: 'Un pétalo hace pop en toda su columna.' }],
   w10n1: [{ t: '¡El Espacio! Al final te espera el CEO espacial.' }],

@@ -1,8 +1,8 @@
 {
- "build": 1514,
- "hash": "455a360",
- "fecha": "2026-11-25T18:54:57Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-x-color",
+ "build": 1515,
+ "hash": "f4cd200",
+ "fecha": "2026-11-25T19:09:38Z",
+ "mensaje": "Pop: mapas al día tras traer main (cohetes.js y el ADR 222)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

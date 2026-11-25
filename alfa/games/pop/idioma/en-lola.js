@@ -18,7 +18,7 @@ IDIOMA.add({
   "Si tocas una concha, solo hace pop ella.": "If you tap a shell, only that one pops.",
   "Las de cereza necesitan tres golpes.": "Cherry ones need three hits.",
   "¡Aquí está todo mezclado! Piensa cada toque.": "Everything's mixed up here! Think about every tap.",
-  "Un cohete hace pop en toda su fila.": "A rocket pops its whole row.",
+  "El cohete levanta su fila al reventar: quítalo pronto.": "A rocket raises its row when it pops: clear it early.",
   "Las burbujeantes hacen pop en todo su alrededor.": "Fizzy ones pop everything around them.",
   "Un pétalo hace pop en toda su columna.": "A petal pops its whole column.",
   "¡El Espacio! Al final te espera el CEO espacial.": "Space! The space CEO waits at the end.",

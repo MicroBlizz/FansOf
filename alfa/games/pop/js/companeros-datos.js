@@ -12,7 +12,7 @@ const PP_COMP = (() => {
     lluvia: f({ modo: 'N', nombre: 'Lluvia', texto: 'Cada muchos pops hace pop en varias burbujas buenas.' }),
     hielo: f({ modo: 'N', nombre: 'Rompehielos', texto: 'Salta antes a las burbujas de hielo.' }),
     concha: f({ modo: 'N', nombre: 'Abreconchas', texto: 'Salta antes a las conchas.' }),
-    cohete: f({ modo: 'N', nombre: 'Mecha corta', texto: 'Salta antes a los cohetes y los hace estallar.' }),
+    cohete: f({ modo: 'N', nombre: 'Mecha corta', texto: 'Salta antes a los cohetes y los apaga: revientan sin levantar nada.' }),
     burbuja: f({ modo: 'N', nombre: 'Ola', texto: 'Salta antes a las burbujeantes.' }),
     horas: f({ modo: 'N', nombre: 'Horas extra', texto: 'Con un COMBO x3, el siguiente toque no cuenta.' }),
     chivato: f({ modo: 'N', nombre: 'Chivatazo', texto: 'Con un COMBO x2 te marca una burbuja buena.', estrellas: 'Con 4 estrellas, con cada COMBO; con 5, al reventar la primera marca te da otra.' }),

@@ -315,7 +315,7 @@ IDIOMA.add({
   "Espacio": "Space",
   "Hadita": "Little Fairy",
   "Polvo de hada": "Fairy Dust",
-  "Cada 14 pops vuela a un cohete y lo hace estallar.": "Every 14 pops it flies to a rocket and sets it off.",
+  "Cada 14 pops vuela a un cohete y lo apaga: revienta sin levantar nada.": "Every 14 pops it flies to a rocket and defuses it: it pops without raising anything.",
   "Sirenita": "Little Mermaid",
   "Ola": "Wave",
   "Cada 12 pops salta a una burbujeante y le hace pop.": "Every 12 pops it jumps onto a fizzy bubble and pops it.",
@@ -326,7 +326,7 @@ IDIOMA.add({
   "Lluvia de estrellas": "Star Shower",
   "Cada 20 pops caen estrellas sobre cuatro burbujas buenas.": "Every 20 pops stars fall on four good bubbles.",
   "El CEO espacial": "The Space CEO",
-  "Y luego: el cohete vacía su fila. La burbujeante, un cuadrado de 3x3. El pétalo, su columna.": "And then: rockets clear their row. Fizzy bubbles, a 3x3 square. Petals, their column.",
+  "Y luego: el cohete, al reventar, levanta las hundidas de su fila (quítalo pronto). La burbujeante, un cuadrado de 3x3. El pétalo, su columna.": "And then: when a rocket pops, it raises the popped bubbles in its row (get rid of it early). Fizzy bubbles, a 3x3 square. Petals, their column.",
   // pesadilla sin amigos y lupa a mitad de turno
   "En Pesadilla tus amigos descansan": "In Nightmare your friends take a rest",
   "Lola: «¡Así está perfecto! Pulsa ¡LISTO!»": "Lola: \"That's perfect! Press READY!\"",

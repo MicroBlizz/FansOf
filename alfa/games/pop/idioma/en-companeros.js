@@ -40,6 +40,10 @@ IDIOMA.add({
   "Aún no tienes compañeros de este modo: búscalos en el álbum.": "You don't have buddies for this mode yet: find them in the album.",
   // cómo se consigue
   "De serie": "Starter",
+  // la etiqueta corta bajo una silueta y el aviso de arriba del álbum (tarea 319)
+  "Finde": "Weekend", "Cofre": "Chest", "Premio": "Reward", "Jefe": "Boss", "Rescate": "Rescue", "Pase": "Pass", "Cerrar": "Close",
+  "Las burbujas arcoíris esconden compañeros: tócalas las primeras.": "Rainbow bubbles hide buddies: tap them first.",
+  "Toca una silueta para ver cómo se consigue.": "Tap a silhouette to see how to get it.",
   "Rescate en un nivel (solo la primera vez)": "Rescued in a level (first time only)",
   "Cofre de estrellas": "Star chest",
   "Escondido: {m}, de día": "Hidden: {m}, by day",
@@ -90,7 +94,7 @@ IDIOMA.add({
   "Abreconchas": "Shell Opener",
   "Salta antes a las conchas.": "Jumps to shells first.",
   "Mecha corta": "Short Fuse",
-  "Salta antes a los cohetes y los hace estallar.": "Jumps to rockets first and sets them off.",
+  "Salta antes a los cohetes y los apaga: revientan sin levantar nada.": "Jumps to rockets first and defuses them: they pop without raising anything.",
   "Ola": "Wave",
   "Salta antes a las burbujeantes.": "Jumps to fizzy bubbles first.",
   "Horas extra": "Overtime",

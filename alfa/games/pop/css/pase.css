@@ -1,6 +1,6 @@
 /* Fans of Pop · PASE NUEVO (tarea #165, ADR 165; rehecho con el boceto C «Escaparate y carril» que eligió Pepins el 20-11-2026): el
    escaparate del tema del mes (--tema1 y --tema2 los pone js/pase-pantalla.js) con lo que solo da este mes y los botones de compra, la
-   barra del escalón, el carril horizontal (gratis en turquesa, dorado en oro), las misiones como tarjetas y VOLVER y RECOGER TODO fijos
+   barra del escalón, el carril horizontal (gratis en turquesa, dorado en oro), las misiones en una caja con su reloj (tarea 375) y VOLVER y RECOGER TODO fijos
    abajo. Nada de lila ni gris. Al final, el botón del lado del camino y el premio final del pase de siempre. */
 .pp-tarjeta.pp-pase-nuevo { --pp-rell-a: 18px; --pp-rell-l: 16px; gap: 10px; padding: 18px 16px 0; background: linear-gradient(180deg, var(--tema1, #ffd1ec), var(--pp-crema) 30%); }
 .pp-pase-tema { margin: 0; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tema2, #c43a84); }
@@ -65,13 +65,19 @@
 .pp-pase-mis { width: 100%; display: flex; flex-direction: column; gap: 6px; }
 .pp-pase-mis-tit { margin: 0; display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 19px; color: #7a3a7a; }
 .pp-pase-mis-tit small { font-size: 15px; color: var(--pp-sec-b); }
-.pp-pase-mis-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.pp-pase-mision { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 4px; min-height: 140px; padding: 8px 6px; box-sizing: border-box;
-  border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 3px var(--pp-sec1); color: #7a3a7a; font-size: 16px; font-weight: 600; line-height: 1.15; }
-.pp-pase-mision.pp-listo { box-shadow: inset 0 0 0 4px #4fc964; }
-.pp-pase-mision i { font-style: normal; font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; }
-.pp-pase-mision em { font-style: normal; font-weight: 700; color: #26924a; }
-#pp-ui .pp-pase-mision .pp-btn2 { min-width: 0; width: 100%; min-height: 52px; font-size: 18px; padding: 4px 6px; }
+/* las tres misiones en una sola caja, una línea fina cada una con su barrita (Pepins, tarea 375: las cajas eran grandes para lo que dan):
+   texto, barra y «1/2 · +5», COBRAR o Hecha. Solo la línea con COBRAR crece al alto del pulgar (70 = 48 px de verdad) */
+.pp-pase-mis-tit .pp-pase-mis-reloj { font-size: 15px; font-weight: 700; color: var(--pp-cafe); background: #fff; border-radius: 999px; padding: 2px 12px; box-shadow: inset 0 0 0 2px #ffd1ec; font-variant-numeric: tabular-nums; }
+.pp-pase-mis-fila { display: flex; flex-direction: column; padding: 2px 12px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 3px var(--pp-sec1); }
+.pp-pase-mision { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 0; box-sizing: border-box; color: #7a3a7a; font-size: 17px; font-weight: 600; line-height: 1.15; }
+.pp-pase-mision > span { flex: 1; min-width: 0; text-align: left; }
+.pp-pase-mision + .pp-pase-mision { border-top: 2px dashed #ffd1ec; }
+.pp-pase-mision.pp-listo > span { color: #26924a; }
+.pp-pase-mis-barra { flex: 0 0 70px; height: 10px; border-radius: 999px; background: #ffe0f0; overflow: hidden; }
+.pp-pase-mis-barra > b { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ff9cc8, #ff4f9a); }
+.pp-pase-mision i { flex: 0 0 82px; text-align: right; font-style: normal; font-weight: 700; font-size: 16px; font-variant-numeric: tabular-nums; color: var(--pp-sec-b); }
+.pp-pase-mision em { flex: 0 0 82px; text-align: center; font-style: normal; font-weight: 700; color: #26924a; }
+#pp-ui .pp-pase-mision .pp-btn2 { flex: 0 0 auto; min-width: 0; width: auto; min-height: var(--pp-toque); font-size: 19px; padding: 4px 18px; }
 .pp-pase-mision.pp-cogido { opacity: 0.6; }
 /* ---------- VOLVER y RECOGER TODO, fijos abajo de la ventana ---------- */
 .pp-pase-pie { position: sticky; bottom: 0; z-index: 4; width: calc(100% + 32px); box-sizing: border-box; display: flex; gap: 10px; padding: 12px 16px 18px; margin-top: auto;

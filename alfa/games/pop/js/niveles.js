@@ -17,16 +17,16 @@
 const PP_MUNDOS = ppCierraRegiones();
 // qué revienta un toque en t: ella y sus 4 vecinas, salvo las de HIELO (solo se revientan tocándolas a ellas) y salvo que t sea
 // una CONCHA (al tocarla solo se revienta ella). `esp`: 0 normal, 1 hielo, 2 concha (sin `esp`, el pop-it puro de siempre)
-// 3 cohete (su fila entera), 4 burbujeante (un cuadrado de 3x3) y 5 pétalo (su columna entera), mundos 7 a 10. Las de hielo solo las
-// revienta un toque suyo, también con estos.
+// 3 cohete (su cruz, como una normal; al reventar levanta su fila: js/cohetes.js, tarea 349), 4 burbujeante (un cuadrado de 3x3) y
+// 5 pétalo (su columna entera), mundos 7 a 10. Las de hielo solo las revienta un toque suyo, también con estos.
 const PP_ESP = { hielo: 1, concha: 2, cohete: 3, burbujas: 4, petalo: 5 };
 function ppEfecto(n, mask, esp, t) {
   if (esp && esp[t] === 2) return [t];
   let v;
-  if (esp && esp[t] >= 3) {
+  if (esp && esp[t] >= 4) {
     const x0 = t % n, y0 = (t - x0) / n, e = esp[t]; v = [];
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-      const dentro = e === 3 ? y === y0 : e === 5 ? x === x0 : Math.abs(x - x0) <= 1 && Math.abs(y - y0) <= 1;
+      const dentro = e === 5 ? x === x0 : Math.abs(x - x0) <= 1 && Math.abs(y - y0) <= 1;
       if (dentro && mask[y * n + x]) v.push(y * n + x);
     }
   } else v = ppCruz(n, mask, t);
@@ -75,7 +75,7 @@ function ppOptimo(n, mask, need, tope = 80000, esp = null) {
   }
   for (let prof = 0; prof <= N * 2; prof++) {
     const r = busca(prof);
-    if (r) return r;
+    if (r) return PP_COHETES.conCohetes(n, mask, need, esp, r);   // con cohetes, en un orden que no levante nada (js/cohetes.js)
     if (r === null) return ppVoraz(n, mask, need, () => 0.5, 0, esp).toques;   // demasiado grande: el voraz como cota (no pasa en estos tamaños)
   }
   return [];
@@ -96,29 +96,30 @@ function ppVoraz(n, mask, need, azar, despiste = 0, esp = null) {
     if (!mejor) break;
     const lista = azar() < despiste ? buenas : cands;
     const t = lista[Math.floor(azar() * lista.length)];
-    for (const j of E[t]) if (falta[j] > 0) falta[j]--;
+    PP_COHETES.aplica(n, mask, esp, falta, E[t]);   // con los cohetes, que levantan su fila (js/cohetes.js): quien juega normal no los ve venir
     toques.push(t);
   }
   return { toques };
 }
 // cómo juega quien piensa (la «lista» del robot de dificultad; tarea #353, ADR 214): entre los toques que más revientan, el que deja
-// mejor el siguiente (empates, al azar); nunca se despista. Con ella se ponen los toques desde el mundo 2: una persona juega así
+// mejor el siguiente (empates, al azar); nunca se despista. Con ella se ponen los toques desde el mundo 2: una persona juega así.
+// Ve los cohetes: un toque vale lo que revienta menos lo que levanta (PP_COHETES.valor, js/cohetes.js)
 function ppVorazLista(n, mask, need, azar, esp = null) {
   const falta = need.slice(), toques = [], N = n * n;
   const E = Array.from({ length: N }, (_, t) => (mask[t] ? ppEfecto(n, mask, esp, t) : []));
-  const golpes = (ef, f) => { let v = 0; for (const j of ef) if (f[j] > 0) v++; return v; };
+  const vale = (ef, f) => (ef.some(j => f[j] > 0) ? PP_COHETES.valor(n, mask, esp, f, ef) : -Infinity);
   for (let g = 0; g < 200; g++) {
-    const v = E.map(ef => golpes(ef, falta)), max = Math.max(...v);
-    if (!max) break;
-    let mejor = -1, cands = [];
+    const v = E.map(ef => vale(ef, falta)), max = Math.max(...v);
+    if (max === -Infinity) break;
+    let mejor = -Infinity, cands = [];
     for (let t = 0; t < N; t++) {
       if (v[t] !== max) continue;
-      const despues = falta.slice(); for (const j of E[t]) if (despues[j] > 0) despues[j]--;
-      let sig = 0; for (const ef of E) sig = Math.max(sig, golpes(ef, despues));
+      const despues = falta.slice(); PP_COHETES.aplica(n, mask, esp, despues, E[t]);
+      let sig = 0; for (const ef of E) sig = Math.max(sig, vale(ef, despues));
       if (sig > mejor) { mejor = sig; cands = [t]; } else if (sig === mejor) cands.push(t);
     }
     const t = cands[Math.floor(azar() * cands.length)];
-    for (const j of E[t]) if (falta[j] > 0) falta[j]--;
+    PP_COHETES.aplica(n, mask, esp, falta, E[t]);
     toques.push(t);
   }
   return { toques };

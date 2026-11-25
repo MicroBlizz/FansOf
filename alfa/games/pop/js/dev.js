@@ -42,6 +42,8 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   d = fila();
   boton(d, 'Burbuja arcoíris: compañero nuevo', () => ppDevBurbuja(true));   // tarea #329: para probar el duelo por un escondido
   boton(d, 'Burbuja arcoíris: repetido', () => ppDevBurbuja(false));
+  d = fila();
+  boton(d, 'Todos los compañeros al máximo', () => ppColeGuarda(PP_COLE.todosAlMaximo(ppCole())));   // 5 estrellas y casillas al tope (Pepins, 25-11-2026)
 } }, { titulo: 'Fans of Pop: fecha de la Feria del finde', pinta(caja) {
   // finge el día moviendo solo la hora que lee la pantalla (ppFeriaAhora en js/feria-pantalla.js); el dominio no se toca
   const estado = Object.assign(document.createElement('p'), { style: 'margin:4px 0;color:#cdb9ea' });

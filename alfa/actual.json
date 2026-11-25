@@ -1,8 +1,8 @@
 {
- "build": 1487,
- "hash": "e7305ae",
- "fecha": "2026-11-25T01:24:23Z",
- "mensaje": "Pop: los mundos pasan a regiones (10 de 10 mundos, 100 huecos) y el de hoy es la región 1 «Dulce Hogar», sin cambiar ningún nivel (tarea #152, nodo A2, Pepins)",
+ "build": 1488,
+ "hash": "850337c",
+ "fecha": "2026-11-25T01:27:09Z",
+ "mensaje": "Pop: botón DEV «Todos los compañeros al máximo» (5 estrellas y casillas al tope) (Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.5",

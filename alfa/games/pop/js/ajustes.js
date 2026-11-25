@@ -26,6 +26,7 @@ const PP_CFG = {
   precioHueco: [200, 400, 800],   // el 4.º, el 5.º y el 6.º hueco
   monedas: { nivel: 10, jefe: 30, estrella: 5 },   // la primera vez que pasas un nivel (o un jefe) y por cada estrella que mejora tu récord
   sobrantes: { porToque: 1, tope: 10 },   // la fiesta de toques sobrantes al ganar un nivel nuevo: 1 moneda por toque, como mucho 10 (Pepins, 19-11-2026)
+  curvaRegion: { inicio: 0.8, fin: 0.55 },   // la curva de la lista en las regiones 2 a 10: del 80 % al empezar su primer mundo al 55 % al acabar el décimo (tarea #152, Pepins); la región 1 es la del ADR 214 (js/regiones/curva.js)
   cofreCada: 15,             // un cofre cada 15 estrellas de récord…
   cofre: [40, 80],           // …con entre 40 y 80 monedas
   cofreJefe: 100,            // y uno grande, de 100, al ganar a un jefe por primera vez

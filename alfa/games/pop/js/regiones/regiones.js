@@ -52,3 +52,9 @@ function ppRegionDeMundo(m) {
   const r = PP_REGIONES[Math.floor(m / PP_MUNDOS_POR_REGION)];
   return r && r.mundos.length ? { region: r, ultimo: m % PP_MUNDOS_POR_REGION === PP_MUNDOS_POR_REGION - 1 } : null;
 }
+// El número de región de un mundo de PP_MUNDOS; si no tiene, es un fallo de programación (PP_MUNDOS y PP_REGIONES no casan): lanza.
+function ppNumeroDeRegion(m) {
+  const r = ppRegionDeMundo(m);
+  if (!r) throw new Error('ppNumeroDeRegion: el mundo ' + m + ' no está en ninguna región con datos');
+  return r.region.n;
+}

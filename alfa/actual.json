@@ -1,8 +1,8 @@
 {
- "build": 1495,
- "hash": "a0724f6",
- "fecha": "2026-11-25T07:31:50Z",
- "mensaje": "«Ahorro de batería» en core (Opciones, panel DEV y rendimiento) y en Pop (densidad, fondo y partículas, en caliente); pestaña Rendimiento de cada juego en /gestion con el SQL 191 (tareas #363 y #339, ADR 218)",
+ "build": 1496,
+ "hash": "468b1c3",
+ "fecha": "2026-11-25T07:35:59Z",
+ "mensaje": "Pop: la curva de dificultad va por región: la región 1 igual que hoy y cada región nueva del 80 % al 55 % (tarea #152, nodo A3, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

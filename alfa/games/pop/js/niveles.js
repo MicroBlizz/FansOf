@@ -133,8 +133,8 @@ function ppObjetivo(g, dif = false) {
   if (ppEsJefe(g)) o = Math.max(0.2, 0.35 - 0.03 * m);
   else if (ppEsDificil(g)) o = Math.max(0.22, 0.4 - 0.035 * m);
   else if (ppQuienMide(g) === 'lista') {
-    // la lista: del 85 % al empezar el mundo 2 al 55 % al acabar el último (Pepins, 24-11-2026: «el juego es muy fácil»)
-    const p = (m - 1 + l / M.niveles) / (PP_MUNDOS.length - 1), base = 0.85 - 0.3 * p;
+    // la lista, por región (js/regiones/curva.js): la 1, del 85 % al 55 % (Pepins, 24-11-2026: «el juego es muy fácil»); las demás, del 80 % al 55 %
+    const base = ppCurvaLista(ppNumeroDeRegion(m), m % PP_MUNDOS_POR_REGION, l, M.niveles, PP_CFG.curvaRegion);
     o = ((l - 1) % 5 === 0) ? Math.min(0.95, base + 0.1) : base;   // el de después de un difícil, de respiro
     return dif ? Math.max(0.35, o * 0.7) : o;
   } else {

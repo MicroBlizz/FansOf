@@ -66,7 +66,7 @@ function ppFxCura(n) { ppFlota('+' + n, 270, 205, '#7bff7b', false); for (let k 
 function ppFlota(s, x, y, col, grande = ppEnDuelo()) { PP_FX.textos.push({ s, x, y, col, t: 0, ...ppFlotaEstilo(s, grande) }); }
 const ppEnDuelo = () => PP_PANT.actual === 'duelo' || !!(PP_PANT.actual === 'sala' && PP_P && PP_P.T && PP_P.T.nim);
 // un slime del equipo actúa: su hueco brilla y da un saltito
-function ppFxHabilidad(id) { PP_FX.brilla[id] = 1; }
+function ppFxHabilidad(id) { PP_FX.brilla[id] = 1; fire('pp-companero', id); }   // un compañero actúa: brilla su hueco y lo cuenta el medidor de fps (js/rendimiento-partida.js)
 // el letrero de COMBO: crece con cada toque bueno seguido
 function ppFxCombo(n) { PP_FX.combo = { n, t: 0 }; ppVibra(8 + n * 4); play('ppCombo', n); }
 // un slime vuela desde su hueco del equipo hasta la burbuja i (llega en `dur` segundos)

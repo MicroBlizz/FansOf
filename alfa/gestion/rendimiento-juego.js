@@ -22,7 +22,7 @@
     const cont = $('pan-rend-juego'); cont.innerHTML = '<div class="caja ayuda">Cargando…</div>';
     try {
       const r = await rpc('gestion_rendimiento_juego', { p_token: leerToken(), p_juego: id }), aparatos = r.aparatos || [], datos = r.datos || [];
-      cont.innerHTML = `<div class="caja ayuda"><b>${esc(nombre)} · rendimiento.</b> Fotogramas por segundo de cada partida, anónimos y sin cuenta. Últimas 2 semanas. Las medias por versión están en «Resumen».</div>`
+      cont.innerHTML = `<div class="caja ayuda"><b>${esc(nombre)} · rendimiento.</b> Fotogramas por segundo de cada partida, anónimos y sin cuenta. Últimas 2 semanas. Las medias por versión están en «Resumen».${D.tamano(r.tamano) ? '<br>' + esc(D.tamano(r.tamano)) + '.' : ''}</div>`
         + (aparatos.length ? M.caja('Por aparato', tablaAparatos(aparatos), 'Los 60 aparatos con más partidas.') + cajaAhorro(datos) + cajasDatos(datos)
           : M.vacio('Sin datos de rendimiento', 'Este juego aún no ha mandado partidas, o no mide sus fps.'));
     } catch (e) {

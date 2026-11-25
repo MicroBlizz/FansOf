@@ -38,6 +38,7 @@ function ppEligeMemoria() {
   const abiertos = PP_MEM_R.abiertos(ppMemNivelCamino(), PP_MUNDOS.map(M => M.niveles));
   const sel = { mundo: PP_MEM_R.mundoValido(SAVE.memoria.mundo || 0, abiertos), dif: PP_MEM_R.dificultad(SAVE.memoria.dif) };
   const t = ppAbre(`<h2>${tr('MEMORIA')}</h2><p class="pp-sub">${tr('Elige tablero y dificultad')}</p>`, true);
+  t.classList.add('pp-mem-pantalla');   // a pantalla completa (Pepins, 25-11-2026: «sale una pantalla muy pequeña»)
   const rejilla = document.createElement('div'); rejilla.className = 'pp-mem-mundos';
   abiertos.forEach((si, m) => {
     const b = ppMemFichaMundo(m, si);

@@ -1,8 +1,8 @@
 {
- "build": 1484,
- "hash": "1b24bc8",
- "fecha": "2026-11-25T00:45:00Z",
- "mensaje": "Pop Memoria fase 1: eliges el mundo (su tablero, colores e instrumento) y la dificultad (Fácil, Normal o Difícil, cada una con su récord) y el tablero crece con las rondas (tarea #141, ADR 215, Pepins)",
+ "build": 1485,
+ "hash": "002d1f1",
+ "fecha": "2026-11-25T00:54:40Z",
+ "mensaje": "Pop Memoria: la ventana de elegir mundo y dificultad, a pantalla completa con los mundos más grandes (tarea #141, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

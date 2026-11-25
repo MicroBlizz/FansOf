@@ -83,6 +83,7 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-redondo::before { content: ''; position: absolute; left: 14px; right: 14px; top: 6px; height: 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.6); }
 .pp-redondo span { position: relative; width: 8px; height: 24px; border-radius: 4px; background: #fff; box-shadow: 0 0 0 3px #1f6fb8; }
 .pp-redondo:active { transform: translateY(4px) scale(0.95); }
+#pp-pausa.pp-pausa-baja { top: 104px; }   /* en un nivel, la barra de corazones, monedas y perlas va arriba entera y la pausa baja a la fila del título (tarea #373) */
 .pp-columna { display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%; margin-top: 6px; }
 .pp-columna .pp-btn, .pp-columna .pp-btn2 { min-width: 280px; }
 /* fase 2: monedas, cofres y botones con precio */

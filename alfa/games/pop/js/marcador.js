@@ -50,13 +50,14 @@ function ppRotuloToques(limite, toques, burbujitas) {
 const ppTextoMasToque = quien => tr('+1 toque: {quien}', { quien: tr(quien) });
 // Los toques, en todos los mundos (Pepins eligió el boceto C, 20-11-2026, tarea #182): «Quedan 6» y debajo las burbujitas, que se
 // hunden al gastarse; con más de 20 (no caben), «Quedan» y la cifra grande. Sin el panel del mundo, el contorno es el de la tinta de siempre
-function ppPintaToques(c, T, col, panel, tinta) {
+// `dy`: cuánto bajan (en un nivel normal van en la segunda fila, bajo la barra de corazones, monedas y perlas: tarea #373)
+function ppPintaToques(c, T, col, panel, tinta, dy = 0) {
   const reparto = ppToquesEnBurbujitas(T.limite, T.toques), burbujitas = reparto.modo === 'burbujitas';
-  ppTexto(c, ppRotuloToques(T.limite, T.toques, burbujitas), 432, 34, burbujitas ? 28 : 22, tinta.rotulo, 'right', tinta.borde);   // a la izquierda del botón de pausa
+  ppTexto(c, ppRotuloToques(T.limite, T.toques, burbujitas), 432, 34 + dy, burbujitas ? 28 : 22, tinta.rotulo, 'right', tinta.borde);   // a la izquierda del botón de pausa
   // con el último toque (o ninguno) el contorno avisa en el color del número de siempre, como avisaba el número
   const aviso = T.limite - T.toques <= 1;
-  if (burbujitas) ppPintaToquesBurbujitas(c, reparto.filas, 432, 60, aviso ? '#ff8a2a' : panel ? panel.borde : tinta.borde);
-  else ppTexto(c, String(ppToquesQuedan(T.limite, T.toques)), 432, 70, 52, col, 'right', tinta.borde);
+  if (burbujitas) ppPintaToquesBurbujitas(c, reparto.filas, 432, 60 + dy, aviso ? '#ff8a2a' : panel ? panel.borde : tinta.borde);
+  else ppTexto(c, String(ppToquesQuedan(T.limite, T.toques)), 432, 70 + dy, 52, col, 'right', tinta.borde);
 }
 
 /* ---------- los paneles con el color del mundo ---------- */
@@ -78,23 +79,27 @@ function ppBordeHueco(ocupado, panel) {
   return ocupado ? '#ff6ec7' : 'rgba(122,74,138,0.35)';
 }
 
+const PP_CABECERA_NIVEL = 180;   // la cabecera de un nivel normal: la barra arriba y el título y los toques debajo (con 960 de alto el tablero empieza en 220)
 function ppPintaMarcador(c, t) {
   const P = PP_P, panel = ppEstiloDeTablero(P.T).panel, tinta = ppTintaPanel(panel), duelo = !!(P.T && P.T.nim);
-  ppPanelDelMundo(c, 20, 18, 500, duelo ? PP_CABECERA_DUELO : 150, panel);
-  // corazones
+  ppPanelDelMundo(c, 20, 18, 500, duelo ? PP_CABECERA_DUELO : PP_CABECERA_NIVEL, panel);
   const dano = PP_FX.dano;
-  const vidas = ppVidas();
-  for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
-  ppPintaMonedero(c, 28, 88);   // bajo los corazones (la pausa va arriba a la derecha: Daniel, 17-11-2026)
-  // toques de la sala
-  if (duelo) { ppMarcadorNim(c, P.T, t); return; }   // nivel duelo: el rival, el turno y la regla (js/nimnivel.js); sin equipo
+  if (duelo) {   // nivel duelo: los corazones y el monedero de antes, y el rival, el turno y la regla (js/nimnivel.js); sin equipo
+    const vidas = ppVidas();
+    for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
+    ppPintaMonedero(c, 28, 88);   // bajo los corazones (la pausa va arriba a la derecha: Daniel, 17-11-2026)
+    ppMarcadorNim(c, P.T, t); return;
+  }
+  // arriba, la barra de corazones, monedas y perlas (tarea #373, js/barra-recursos.js); debajo, el título con sus estrellas a la
+  // izquierda y los toques a la derecha, junto a la pausa, que baja a esta fila (PP_BARRA_REGLAS.pausaBaja)
+  ppBarraRecursos(c, 'nivel', 270, 56, { dano });
   if (P.T) {
     const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
-    ppPintaToques(c, T, col, panel, tinta);
-    const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 116, 28, k < est);
-    ppTexto(c, T.titulo || '', 270, 118, 34, '#ffd64a', 'center', tinta.titulo);
-    if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques extra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');
-    else if (T.d && T.d.dificil) ppTexto(c, tr('¡Nivel difícil!'), 270, 150, 22, '#ff6ec7', 'center', '#fff');
+    ppPintaToques(c, T, col, panel, tinta, 82);
+    ppTextoCabe(c, T.titulo || '', 135, 126, 34, 200, '#ffd64a', tinta.titulo);
+    const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 105 + k * 30, 160, 28, k < est);
+    if (T.d && T.d.jefe) ppTextoCabe(c, tr('¡Pocos toques extra!'), 135, 186, 22, 210, '#ff8a2a', '#fff');
+    else if (T.d && T.d.dificil) ppTextoCabe(c, tr('¡Nivel difícil!'), 135, 186, 22, 210, '#ff6ec7', '#fff');
   }
   if (!P.equipo.length && !ppPrimerosVe('equipo')) return;   // partida nueva: el panel sale con el primer amigo (tarea #140)
   // el equipo, abajo: cada hueco con su slime, su pasiva y una barra de lo que le falta para actuar

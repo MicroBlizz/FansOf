@@ -2,16 +2,18 @@
    el compañero celebrando o triste, el desglose de monedas, la racha y la hucha, las monedas que vuelan y la fiesta de toques
    sobrantes en el tablero. El código, en js/victoria-panel.js y js/victoria-fiesta.js. */
 
-/* la barra de arriba: blanca y nítida, por encima del velo (solo con una ventana de victoria abierta) */
-.pp-vic-arriba { position: absolute; left: 14px; right: 14px; top: 14px; height: 66px; z-index: 6; display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; padding: 0 16px; border-radius: 33px; background: #fff; box-shadow: inset 0 0 0 4px #ffd1ec, 0 5px 0 rgba(0, 0, 0, 0.12); pointer-events: none;
+/* la barra de arriba: blanca y nítida, por encima del velo (solo con una ventana de victoria abierta). La misma pastilla centrada que en el
+   camino y el nivel (tarea #373, boceto A; js/barra-recursos.js): los tres grupos a la misma altura con separadores punteados */
+.pp-vic-arriba { position: absolute; left: 0; right: 0; top: 14px; margin: 0 auto; width: max-content; max-width: 512px; height: 64px; box-sizing: border-box; z-index: 6;
+  display: flex; align-items: center; padding: 0 16px; border-radius: 32px; background: #fff; border: 5px solid #ffb3d6; box-shadow: 0 6px 0 #f4a5cb; pointer-events: none;
   animation: pp-vic-baja 0.35s ease-out both; }
 #pp-modal:not(:has(.pp-gana, .pp-pase-ventana)) .pp-vic-arriba { display: none; }   /* victoria y pase (RECOGER TODO, tarea #166) */
 @keyframes pp-vic-baja { from { transform: translateY(-90px); } to { transform: none; } }
 .pp-vic-vidas { display: flex; }
-.pp-vic-vida { display: inline-flex; margin: -4px -7px -4px 0; }   /* el dibujo trae aire alrededor: a 46 px se ve como la moneda, sin montarse (tarea #344) */
+.pp-vic-vida { display: inline-flex; margin: -5px -10px -5px 0; }   /* el dibujo trae aire alrededor: a 46 px cada corazón ocupa 36, como en el lienzo */
 .pp-vic-vida.pp-vacia { opacity: 0.35; filter: saturate(0.3) brightness(1.3); }
-.pp-vic-caja { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 28px; color: #7a3a7a; }
+.pp-vic-sep { flex: none; width: 2px; height: 28px; margin: 0 12px; background: repeating-linear-gradient(180deg, #f3bfd9 0 4px, transparent 4px 8px); }
+.pp-vic-caja { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 26px; line-height: 1; color: #7a4a8a; font-variant-numeric: tabular-nums; }
 .pp-vic-caja b { min-width: 2ch; }
 .pp-vic-caja.pp-brilla .pp-ico { animation: pp-vic-recibe 0.25s ease-out; }
 .pp-vic-caja.pp-brilla .pp-vic-mon { color: #e89a00; }

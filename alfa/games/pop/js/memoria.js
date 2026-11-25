@@ -149,11 +149,11 @@ function ppPintaMemoria(c, t) {
   c.save(); if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 5, rand(-1, 1) * PP_FX.temblor * 5);
   ppPintaFondo(c, PP_MUNDOS[M.mundo].fondo, t);
   // arriba: la ronda, el récord de esta dificultad y qué toca hacer
-  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
-  ppTitulo(c, tr('MEMORIA'), 270, 66, 44);
-  ppPintaMonedero(c, 28, 32);   // arriba a la izquierda: a la derecha va el botón de pausa
-  ppTexto(c, tr('Ronda {n}', { n: M.sec.length }), 140, 126, 28, '#fff', 'center', '#c43a84');
-  ppTexto(c, tr('Récord: {n}', { n: PP_MEM_R.recordDe(SAVE.memoria, M.aj.id) }), 400, 126, 28, '#fff', 'center', '#3a6ab8');
+  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 170, 24); c.fill();
+  ppBarraRecursos(c, 'memoria', 270, 54);   // arriba y centrada, la barra de monedas y perlas (tarea #373, js/barra-recursos.js); la pausa, a su derecha
+  ppTitulo(c, tr('MEMORIA'), 270, 118, 44);
+  ppTexto(c, tr('Ronda {n}', { n: M.sec.length }), 140, 164, 28, '#fff', 'center', '#c43a84');
+  ppTexto(c, tr('Récord: {n}', { n: PP_MEM_R.recordDe(SAVE.memoria, M.aj.id) }), 400, 164, 28, '#fff', 'center', '#3a6ab8');
   ppMemPintaBrillos(c, M, g);
   ppPintaTablero(c, T, t);
   if (M.fase === 'fin') {

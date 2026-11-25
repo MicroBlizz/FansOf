@@ -15,19 +15,9 @@ function ppVicFondoPon(f) {
   return f;
 }
 /* ---------- la barra de arriba ---------- */
-// los cinco corazones, más grandes que antes y sin montarse (reporte 53, tarea #344: Pepins eligió el boceto B, bocetos/corazones-344.html)
-function ppVicCorazones() {
-  const llenos = ppInfinitas() ? PP_CFG.vida : Math.min(PP_CFG.vida, ppVidas());
-  let h = '';
-  for (let k = 0; k < PP_CFG.vida; k++) h += `<span class="pp-vic-vida${k < llenos ? '' : ' pp-vacia'}">${ppIcono('i-vida', 46, '#ff6e8a')}</span>`;
-  return h;
-}
-// `monedas`: lo que se ve al abrir (sin lo ganado: lo suben las monedas al llegar volando)
-function ppVicBarraHtml(monedas) {
-  return `<div class="pp-vic-arriba"><div class="pp-vic-vidas">${ppVicCorazones()}</div>`
-    + `<div class="pp-vic-caja pp-vic-caja-mon">${ppIcono('i-moneda', 38)}<b class="pp-vic-mon">${monedas}</b></div>`
-    + `<div class="pp-vic-caja pp-vic-caja-per">${ppIcono('i-perla', 38, '#ffd1ec')}<b class="pp-vic-per">${SAVE.perlas || 0}</b></div></div>`;
-}
+// `monedas`: lo que se ve al abrir (sin lo ganado: lo suben las monedas al llegar volando). La barra es la misma pastilla que en el camino
+// y el nivel (tarea #373, js/barra-recursos.js); los corazones, como los eligió Pepins en el reporte 53 (tarea #344)
+const ppVicBarraHtml = monedas => ppBarraRecursosHtml(monedas);
 // la barra va en la ventana (#pp-modal), fuera de la tarjeta, para que no se mueva con ella; se cambia en cada victoria
 function ppVicBarra(monedas) {
   const m = $pp('#pp-modal');

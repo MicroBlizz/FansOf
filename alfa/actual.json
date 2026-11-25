@@ -1,8 +1,8 @@
 {
- "build": 1490,
- "hash": "d1790ce",
- "fecha": "2026-11-25T01:46:12Z",
- "mensaje": "Pop Memoria fase 2: seguir tras fallar una vez por partida (9 perlas o un anuncio) y «Repetir melodía» por 4 perlas, dos por partida (tarea #141, ADR 216, Pepins)",
+ "build": 1491,
+ "hash": "09bbb79",
+ "fecha": "2026-11-25T02:04:41Z",
+ "mensaje": "404: en /games/<algo que no existe> ya no se queda la pantalla de carga esperando un juego (tarea #45, ADR 212)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

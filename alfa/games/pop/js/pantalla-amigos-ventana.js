@@ -18,18 +18,13 @@ const ppAmIco = (clave, clase = '') => `<svg class="pp-am-ico ${clase}" viewBox=
 const PP_AM_ICONOS = Object.freeze({
   corazon: '<path d="M24 42 7 25a10 10 0 0 1 17-13 10 10 0 0 1 17 13z" class="pp-am-rosa"/>',
   rayo: '<path d="M27 4 11 27h11l-4 17 19-25H26z"/>',
-  atras: '<path d="M30 8 12 24l18 16" fill="none" stroke-width="7" stroke-linecap="round"/>',
 });
-/* ---------- la cabeza: volver, el título y tus corazones ---------- */
+/* ---------- la cabeza: tus corazones, que van a la izquierda de la franja de arriba (ppBotonVolver, tarea 386) ---------- */
 function ppAmCabeza() {
-  const cab = ppAmEl('div', 'pp-am-cab');
-  const atras = ppBoton('', 'pp-btn2 pp-azul pp-am-atras', () => { PP_AM.hoja = null; ppCierra(); });
-  atras.innerHTML = ppAmIco('atras'); atras.setAttribute('aria-label', tr('VOLVER'));
   const vidas = ppAmEl('span', 'pp-am-vidas' + (PP_AM.sube ? ' pp-am-sube' : ''));
   vidas.innerHTML = `${ppIcono(ppInfinitas() ? 'i-infinito' : 'i-vida', 30, '#ff4a6a')}<b>${ppInfinitas() ? '' : `${ppVidas()}/${PP_CFG.vida}`}</b>`;
   PP_AM.sube = false;
-  cab.append(atras, ppAmEl('h2', '', tr('Amigos')), vidas);
-  return cab;
+  return vidas;
 }
 /* ---------- los regalos para ti ---------- */
 // cuántos han llegado hoy (los del buzón con fecha de hoy), como mucho el tope
@@ -178,12 +173,13 @@ function ppVentanaAmigos() {
   const t = ppAbre('', true);
   t.classList.add('pp-am', 'pp-am-lista');
   if (PP_AM.hoja) t.classList.add('pp-am-con-hoja');
-  t.append(ppAmCabeza());
+  const vidas = ppAmCabeza();
   const gracias = ppAmGraciasVistas(), sugeridos = ppAmSugeridos();
   if (gracias) t.appendChild(gracias);
   t.append(ppAmRegalos(), ppAmAmigos());
   if (sugeridos) t.appendChild(sugeridos);
   t.appendChild(ppAmPie());
+  ppBotonVolver(t, () => { PP_AM.hoja = null; ppCierra(); }, tr('Amigos'), vidas);
   t.scrollTop = antes;
 }
 // lo que hace el botón AMIGOS: la ventana con lo último que se sabe, y el latido y el enlace pedidos ya (la ventana se repinta al llegar)

@@ -2,7 +2,7 @@
    escaparate del tema del mes (--tema1 y --tema2 los pone js/pase-pantalla.js) con lo que solo da este mes y los botones de compra, la
    barra del escalón, el carril horizontal (gratis en turquesa, dorado en oro), las misiones como tarjetas y VOLVER y RECOGER TODO fijos
    abajo. Nada de lila ni gris. Al final, el botón del lado del camino y el premio final del pase de siempre. */
-.pp-tarjeta.pp-pase-nuevo { gap: 10px; padding: 18px 16px 0; background: linear-gradient(180deg, var(--tema1, #ffd1ec), var(--pp-crema) 30%); }
+.pp-tarjeta.pp-pase-nuevo { --pp-rell-a: 18px; --pp-rell-l: 16px; gap: 10px; padding: 18px 16px 0; background: linear-gradient(180deg, var(--tema1, #ffd1ec), var(--pp-crema) 30%); }
 .pp-pase-tema { margin: 0; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tema2, #c43a84); }
 /* ---------- el escaparate ---------- */
 .pp-pase-hero { position: relative; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; gap: 8px 10px; padding: 14px 14px 12px; border-radius: 22px;
@@ -10,8 +10,6 @@
 .pp-pase-hero::after { content: ''; position: absolute; top: -40%; left: -40%; width: 22%; height: 180%; background: rgba(255, 255, 255, 0.4); transform: rotate(20deg); animation: pp-pase-brillo 3.2s infinite; pointer-events: none; }
 @keyframes pp-pase-brillo { 0% { left: -40%; } 60%, 100% { left: 130%; } }
 .pp-pase-hero-txt { align-self: start; color: #fff; }
-/* la flecha de volver (tarea 346) va encima de la esquina del escaparate: el texto empieza debajo de ella */
-.pp-con-volver .pp-pase-hero-txt { padding-top: 58px; }
 .pp-pase-hero .pp-pase-tema { color: #fff; text-shadow: 0 2px 0 var(--tema2, #c43a84); }
 .pp-tarjeta.pp-pase-nuevo .pp-pase-hero h2 { margin: 2px 0 6px; font-size: 40px; line-height: 1.02; color: #fff; text-shadow: 0 3px 0 var(--tema2, #c43a84), 0 0 2px var(--tema2, #c43a84); }
 .pp-pase-dias { display: inline-block; padding: 2px 10px; border-radius: 999px; background: #fff; color: var(--tema2, #c43a84); font-weight: 700; font-size: 16px; }

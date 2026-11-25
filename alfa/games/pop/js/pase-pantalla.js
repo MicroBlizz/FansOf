@@ -114,7 +114,7 @@ function ppVentanaPaseNueva(repinta) {
   t.style.setProperty('--tema1', tema.color); t.style.setProperty('--tema2', tema.color2);
   ppVicBarra(SAVE.monedas);   // la barra de arriba de la victoria (js/victoria-panel.js)
   t.append(ppPaseEscaparate(P, tema), ppPaseEje(e, pts), ppPaseCarril(P, e, pts), ppPaseMisiones(), ppPasePie());
-  ppBotonVolver(t, ppCierra);
+  ppBotonVolver(t, ppCierra, tr('Pase de Pop'));
   if (!repinta) setTimeout(ppPaseCentraCarril, 0);
 }
 // el botón del lado del camino: escalón, anillo con lo que falta y cuántos premios esperan (js/ofertas.js, ppPintaLateral)

@@ -39,15 +39,23 @@ function ppVentanaSalioAMedias() {
 function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
 function ppBoton(texto, clase, f) { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = () => { play('select'); f(); }; return b; }
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
-// el botón de volver de todas las pantallas (tarea 346, Pepins eligió la flecha redonda arriba a la izquierda, como en Amigos): va el
-// primero de la ventana `t` y se queda arriba aunque la ventana baje (css/pop.css, .pp-volver-flecha). Las preguntas de sí o no
-// (NO, VOLVER) siguen con sus botones: son una respuesta, no un volver.
-function ppBotonVolver(t, f) {
-  const b = ppBoton('', 'pp-btn2 pp-azul pp-volver-flecha', f);
-  b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 8 12 24l18 16"/></svg>';
+// cerrar o volver, igual en todas las pantallas (tarea 386; antes la flecha de la 346, que flotaba y pisaba títulos, pestañas y
+// listas): una franja fija arriba de la ventana `t`, con su fondo, el título en el centro (el <h2> de la ventana, o `titulo`) y una
+// X redonda grande a la derecha. Lo demás empieza debajo y, al bajar, se esconde bajo la franja (css/pop.css, .pp-cab). En una ventana
+// que viene de otra, `f` vuelve un paso atrás. Las preguntas de sí o no (NO, VOLVER) siguen con sus botones: son una respuesta.
+// `izquierda`: algo más para la franja, a la izquierda (en Amigos, tus corazones).
+function ppBotonVolver(t, f, titulo = '', izquierda = null) {
+  const cab = document.createElement('div'); cab.className = 'pp-cab';
+  let h = t.querySelector(':scope > h2');
+  if (!h) h = document.createElement('h2');
+  if (!h.textContent) h.textContent = titulo;
+  const b = ppBoton('', 'pp-btn2 pp-azul pp-cerrar', f);
+  b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 13 35 35M35 13 13 35"/></svg>';
   b.setAttribute('aria-label', tr('VOLVER'));
-  t.classList.add('pp-con-volver');
-  t.prepend(b);
+  if (izquierda) { izquierda.classList.add('pp-cab-izq'); cab.appendChild(izquierda); }
+  cab.append(h, b);
+  t.classList.add('pp-con-cab');
+  t.prepend(cab);
   return b;
 }
 // un botón turquesa que despliega y pliega una caja con lo menos usado (tarea #246). Se mete en la caja y luego se ponen los dos

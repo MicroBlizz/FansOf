@@ -1,8 +1,8 @@
 {
- "build": 1508,
- "hash": "14cd30e",
- "fecha": "2026-11-25T14:28:18Z",
- "mensaje": "Pop: Lola y los compañeros que no saltan lucen su ataque hacia lo que tocan (tarea #160, Pepins)",
+ "build": 1509,
+ "hash": "1ecd882",
+ "fecha": "2026-11-25T16:51:44Z",
+ "mensaje": "Pop: cerrar con una franja fija arriba y una X grande a la derecha en todas las ventanas; la flecha de la 346 pisaba títulos, pestañas y listas (tarea 386, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

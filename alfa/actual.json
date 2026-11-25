@@ -1,8 +1,8 @@
 {
- "build": 1506,
- "hash": "9e11303",
- "fecha": "2026-11-25T13:57:14Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/inspiring-golick-ecfc35",
+ "build": 1507,
+ "hash": "fe8e3dd",
+ "fecha": "2026-11-25T14:02:49Z",
+ "mensaje": "Merge branch 'main' of https://github.com/MicroBlizz/FansOf-dev into claude/zen-galileo-4442f9",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

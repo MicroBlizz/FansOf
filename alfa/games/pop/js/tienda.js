@@ -66,7 +66,7 @@ function ppBotonesSinCorazones(t, mas, alLlenar, vuelta = null) {
 let PP_TIENDA_VUELTA = null, PP_TIENDA_PESTANA = 'ofertas';
 function ppTienda(vuelta, pestana) {
   if (ppEdadDecide() === 'pregunta') { const sigue = () => ppTienda(vuelta, pestana); ppEdadPide(sigue, sigue); return; }   // la primera vez, la edad (tarea #254)
-  const bajada = ppTiendaBajada(pestana);   // antes de cambiar nada: hasta dónde estaba bajada la lista (reporte 31)
+  const bajada = PP_TIENDA_BAJADA = ppTiendaBajada(vuelta, pestana, PP_TIENDA_PESTANA, ppTiendaBajadaAhora());   // antes de cambiar nada (reporte 31)
   ppTutorial('tienda');
   if (vuelta !== undefined) { PP_TIENDA_VUELTA = vuelta; ppTiendaOlvida(); }   // sin decir nada (al cambiar de pestaña o al repintar tras comprar) se mantiene
   if (pestana) PP_TIENDA_PESTANA = pestana;
@@ -80,17 +80,21 @@ function ppTienda(vuelta, pestana) {
   }
   t.appendChild(tabs); t.classList.add('pp-tienda');   // el mismo alto en todas las pestañas (css/pop.css, tarea #185)
   const caja = document.createElement('div'); caja.className = 'pp-packs'; t.appendChild(caja);
-  const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); ppTiendaToque(b); f(); }; caja.appendChild(b); return b; };
+  const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); PP_TIENDA_BAJADA = caja.scrollTop; ppTiendaToque(b); f(); }; caja.appendChild(b); return b; };
   (PP_TIENDA_PESTANAS[PP_TIENDA_PESTANA] || ppTiendaOfertas)(tarjeta, caja);   // lo de cada pestaña: js/tienda-venta.js (tarea #187) y js/tienda-perlas.js (#266)
   ppBotonVolver(t, () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppTiendaOlvida(); ppCierra(); if (v) v(); });
   caja.scrollTop = bajada;   // antes del vuelo, que sale de donde está lo comprado (tarea #268)
   ppTiendaVuela(t);   // si vienes de comprar, lo ganado vuela al «Tienes:» (tarea #270)
 }
-// hasta dónde estaba bajada la lista de la tienda abierta, para dejarla igual al repintarla tras una compra (reporte 31, tarea #268: al
-// comprar la lupa la lista saltaba arriba). 0 si la tienda no estaba abierta o se cambia a otra pestaña
-function ppTiendaBajada(pestana) {
+// hasta dónde se deja bajada la lista al pintar la tienda (reporte 31, tarea #268: al comprar la lupa la lista saltaba arriba). Al
+// repintarla tras una compra (sin `vuelta`) sigue donde estaba (`bajada`), aunque entre medias se haya abierto otra ventana: «Te
+// faltan perlas» con su pack, la compra con euros… Abierta desde fuera (con `vuelta`, aunque sea null) o en otra pestaña, arriba
+const ppTiendaBajada = (vuelta, pestana, actual, bajada) => (vuelta !== undefined || (pestana && pestana !== actual) ? 0 : bajada);
+// dónde está la lista: la de la tienda en pantalla si está abierta; si otra ventana ocupa su sitio, la que se apuntó al pulsar la tarjeta
+let PP_TIENDA_BAJADA = 0;
+function ppTiendaBajadaAhora() {
   const lista = $pp('#pp-modal').hidden ? null : $pp('#pp-tarjeta.pp-tienda .pp-packs');
-  return lista && (!pestana || pestana === PP_TIENDA_PESTANA) ? lista.scrollTop : 0;
+  return lista ? lista.scrollTop : PP_TIENDA_BAJADA;
 }
 // `alAcabar`: lo que se hace cuando llegan las perlas (por defecto, repintar la tienda; tarea #187: «comprar solo lo que falta»)
 function ppCompraPack(p, alAcabar = () => ppTienda()) {

@@ -5,15 +5,16 @@
 // con la sesión de /gestion (gestion_recurso_marcar y gestion_recurso_encargos; recursos-marcas.js). No lanza la siguiente etapa: eso irá con un workflow.
 // Enlace directo (tarea #338, ADR 211): la dirección lleva el juego (&rjuego=) y cada salida abierta para comparar (&ver=, una por salida); un enlace así
 // elige ese juego y abre esas salidas en cuanto se ha leído la rama.
-// Las reglas de la lista (estado, resumen y filtros) están en recursos-lista.js.
+// Las reglas de la lista (estado, resumen y filtros) están en recursos-lista.js; las de las fechas (orden, tramos Hoy/Ayer… y fecha en palabras), en recursos-fechas.js (tarea 388).
 // Usa lo de gestion/index.html: $(), esc(), rpc() y leerToken(); GESTION_NAV (nav.js) y GESTION_ENLACE (enlace.js). Guía: docs/guia/herramientas/galeria.md
 'use strict';
 (() => {
-  const D = RECURSOS_DATOS, M = RECURSOS_MARCAS, G = RECURSOS_GITHUB, L = RECURSOS_ENLACE, LISTA = RECURSOS_LISTA;
+  const D = RECURSOS_DATOS, M = RECURSOS_MARCAS, G = RECURSOS_GITHUB, L = RECURSOS_ENLACE, LISTA = RECURSOS_LISTA, F = RECURSOS_FECHAS;
   const TOKEN = 'fansof.gestion.githubToken', PENDIENTES = 'fansof.gestion.recursos.pendientes', JUEGO = 'fansof.gestion.recursos.juego';
+  const ORDEN = 'fansof.gestion.recursos.orden', FECHAS = 'fansof.gestion.recursos.fechas.';   // + el juego
   const POR_PAGINA = 24, VISORES = 'recursos/';
   const BOTONES = ['valido', 'pendiente', 'invalido', 'relanzar'];
-  const e = { raiz: null, carpetas: {}, juego: '', fichas: [], rutas: [], shas: new Map(), guardadas: {}, pendientes: {}, vistos: POR_PAGINA, abiertos: [], paneles: new Map(), urls: new Map(), leidas: new Map(), cargando: false, aviso: '' };
+  const e = { raiz: null, carpetas: {}, juego: '', fichas: [], rutas: [], shas: new Map(), guardadas: {}, pendientes: {}, vistos: POR_PAGINA, abiertos: [], paneles: new Map(), urls: new Map(), leidas: new Map(), cargando: false, aviso: '', fechas: {}, fechando: null, vuelta: 0, chipVisto: '' };
   const pan = document.createElement('div'); pan.id = 'pan-recursos'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
 
@@ -68,7 +69,8 @@
   async function cargar(forzar) {
     if (e.cargando) { e.otraVez = true; e.forzarOtraVez = e.forzarOtraVez || !!forzar; return null; }   // se cambió de juego mientras se leía: se vuelve a leer al acabar
     if (!token()) return pinta();
-    e.cargando = true; e.otraVez = false; e.aviso = ''; pinta();
+    e.cargando = true; e.otraVez = false; e.aviso = ''; e.vuelta++; e.fechando = null; pinta();   // una vuelta nueva deja sin efecto las fechas que aún lleguen de la anterior
+    let faltan = [];
     try {
       await cargaRaiz(forzar);
       e.listaJuegos = eligeJuego();
@@ -82,10 +84,27 @@
       if (e.raiz.cortada) avisos.push('GitHub ha cortado la lista de salida/: puede faltar algo.');
       e.aviso = avisos.join(' ');
       abreDelEnlace();
+      const r = F.deRecuerdo(lee(FECHAS + e.juego, {}), e.fichas.flatMap(F.rutasDe).filter(x => e.shas.has(x)), e.shas);
+      e.fechas = r.fechas; faltan = r.faltan;
     } catch (err) { e.aviso = fallo(err); }
-    e.cargando = false; pinta();
+    e.cargando = false;
     const forzarOtra = e.forzarOtraVez; e.forzarOtraVez = false;
-    return e.otraVez ? cargar(forzarOtra) : null;
+    if (e.otraVez) return cargar(forzarOtra);
+    if (faltan.length) e.fechando = { hechas: 0, total: faltan.length };
+    pinta();
+    return faltan.length ? ponFechas(faltan, e.vuelta) : null;
+  }
+
+  // ---- las fechas (tarea 388, recursos-fechas.js): lo recordado en este navegador (una entrada por juego) sale al momento; lo que falta se pide a GitHub
+  // por lotes después de cargar, con la lista ya a la vista y sin bloquear cambiar de juego ni Actualizar (la vuelta nueva para los lotes que faltan)
+  async function ponFechas(faltan, vuelta) {
+    const juego = e.juego, shas = e.shas, sigue = () => vuelta === e.vuelta;
+    const r = await G.fechas(fetch, token(), faltan, (hechas, total) => { if (sigue()) { e.fechando = { hechas, total }; pintaCuenta(); } }, sigue);
+    apunta(FECHAS + juego, F.recuerda(lee(FECHAS + juego, {}), r.fechas, shas));   // lo leído se recuerda aunque ya se mire otro juego
+    if (!sigue()) return;
+    Object.assign(e.fechas, r.fechas); e.fechando = null;
+    if (r.error) e.aviso = [e.aviso, 'No pude leer todas las fechas (' + r.error.message + '): lo que no la tiene va al final.'].filter(Boolean).join(' ');
+    pinta();
   }
 
   // ---- el enlace directo (recursos-enlace.js): abre lo que pide una sola vez, ya leída la rama; la dirección dice el juego y lo abierto
@@ -116,20 +135,48 @@
     if (f.etapa) v.append(nodo('span', 'rec-sello', f.etapa + (f.salidas ? ' · ' + f.salidas.length : '')));
     return v;
   }
-  function ficha(f) {
-    const el = nodo('button', 'rec-ficha rec-' + estadoFicha(f)); el.type = 'button'; el.onclick = () => abre(f);
-    const problema = f.tipo === 'encargo' ? D.problemas(f) : '';
-    el.append(vista(f), nodo('b', '', f.nombre), nodo('span', problema ? 'rec-fallo' : 'meta', problema || resumen(f)));
+  // la ficha: la vista, el nombre, su fecha («hoy 08:39»), su marca y de qué tarea es; lo de hoy sin mirar lleva el sello NUEVA
+  function ficha(f, ahora) {
+    const estado = estadoFicha(f), el = nodo('button', 'rec-ficha rec-' + estado); el.type = 'button'; el.onclick = () => abre(f);
+    const problema = f.tipo === 'encargo' ? D.problemas(f) : '', fecha = F.fechaDe(f, e.fechas), v = vista(f);
+    if (estado === 'sin-mirar' && F.tramo(fecha, ahora) === 'Hoy') v.append(nodo('span', 'rec-nueva', 'NUEVA'));
+    el.append(v, nodo('b', '', f.nombre));
+    if (fecha) el.append(nodo('span', 'rec-fecha', F.texto(fecha, ahora)));
+    el.append(nodo('span', problema ? 'rec-fallo' : 'meta', problema || resumen(f)));
     if (D.origen(f)) el.append(nodo('span', 'meta', D.origen(f)));
     return el;
   }
-  function pintaLista() {
+  // lo que pasa los filtros, en el orden elegido
+  function filtradas() {
     const filtro = { tipo: $('rec-tipo').value, estado: $('rec-estado').value, tarea: $('rec-tarea').value }, m = marcas();
-    const lista = e.fichas.filter(f => LISTA.pasa(f, filtro, m));
-    $('rec-lista').replaceChildren(...lista.slice(0, e.vistos).map(ficha));
+    return F.ordena(e.fichas.filter(f => LISTA.pasa(f, filtro, m)), e.fechas, $('rec-orden').value);
+  }
+  // las fichas que se ven; ordenadas por fecha, con el título de su tramo (Hoy, Ayer…) delante de la primera de cada uno
+  function conTramos(lista, ahora) {
+    if ($('rec-orden').value === 'nombre') return lista.map(f => ficha(f, ahora));
+    let antes = null;
+    return lista.flatMap(f => {
+      const t = F.tramo(F.fechaDe(f, e.fechas), ahora), el = ficha(f, ahora);
+      if (t === antes) return [el];
+      antes = t;
+      return [nodo('h3', 'rec-dia', t === 'Sin fecha' && e.fechando ? 'Leyendo fechas…' : t), el];   // mientras se leen, lo que aún no tiene fecha no es «Sin fecha»
+    });
+  }
+  function pintaLista() {
+    const lista = filtradas(), ahora = Date.now();
+    $('rec-lista').replaceChildren(...conTramos(lista.slice(0, e.vistos), ahora));
     if (!lista.length) $('rec-lista').append(nodo('div', 'vacio', e.cargando ? 'Leyendo la rama recursos…' : 'Nada con ese filtro.'));
     $('rec-mas').hidden = lista.length <= e.vistos; $('rec-mas').textContent = `Ver más (${lista.length - e.vistos})`;
+    pintaCuenta(lista);
     pintaPendientes();
+  }
+  // «124 cosas · 18 sin mirar» de lo que pasa los filtros y, mientras se leen, cuántas fechas van
+  function pintaCuenta(lista = filtradas()) {
+    const n = lista.length, sin = lista.filter(f => estadoFicha(f) === 'sin-mirar').length;
+    const partes = [n === 1 ? '1 cosa' : n + ' cosas'];
+    if (sin) partes.push(sin + ' sin mirar');
+    if (e.fechando) partes.push(`leyendo fechas ${e.fechando.hechas} de ${e.fechando.total}…`);
+    $('rec-cuenta').textContent = e.cargando && !e.fichas.length ? '' : partes.join(' · ');
   }
   function pintaPendientes() {
     const n = Object.keys(e.pendientes).length;
@@ -217,19 +264,22 @@
 
   // ---- la pestaña
   function esqueleto() {
-    pan.innerHTML = `<div class="caja ayuda"><b>Recursos.</b> Lo que genera Yoshi (rama <b>recursos</b>, carpeta salida/) para revisarlo por etapas: propuestas, modelo 3D y lonchas. Pulsa un encargo para abrir todas sus salidas; marca cada una con <b>Sirve</b>, <b>En el aire</b>, <b>Descartar</b> o <b>Relanzar</b> y una nota. Las marcas se guardan en el servidor. Lee GitHub con el token de la pestaña Cola, que para esto necesita <b>Contents</b> en solo lectura.</div>
+    pan.innerHTML = `<details class="caja ayuda rec-ayuda"><summary>Cómo funciona</summary> Lo que genera Yoshi (rama <b>recursos</b>, carpeta salida/) para revisarlo por etapas: propuestas, modelo 3D y lonchas. Pulsa un encargo para abrir todas sus salidas; marca cada una con <b>Sirve</b>, <b>En el aire</b>, <b>Descartar</b> o <b>Relanzar</b> y una nota. Las marcas se guardan en el servidor. Lee GitHub con el token de la pestaña Cola, que para esto necesita <b>Contents</b> en solo lectura. La fecha de cada cosa es la de cuando Yoshi la subió.</details>
       <div class="caja vacio" id="rec-sin-token" hidden><b>Falta el token de GitHub.</b> Pégalo en Tablero › Cola. Para esta pestaña necesita además el permiso Contents (solo lectura) del repo ${esc(G.REPO)}.</div>
-      <div class="filtros"><select id="rec-juego" aria-label="Juego"></select>
-        <select id="rec-tipo" aria-label="Qué"><option value="">Todo</option><option value="encargo">Encargos</option><option value="propuestas">Propuestas</option><option value="lonchas">Lonchas</option><option value="3d">3D</option><option value="imagen">Imágenes</option></select>
-        <select id="rec-estado" aria-label="Marca"><option value="">Todo menos lo descartado</option><option value="sin-mirar">Sin mirar</option><option value="pendiente">En el aire</option><option value="valido">Sirve</option><option value="relanzar">Relanzar</option><option value="invalido">Descartado</option></select>
-        <select id="rec-tarea" aria-label="Tarea"></select>
-        <button type="button" id="rec-actualizar">Actualizar</button></div>
+      <div class="rec-juegos" id="rec-juegos" role="group" aria-label="Juego"></div>
+      <div class="rec-filtros">
+        <label>Orden<select id="rec-orden"><option value="nuevas">Más nuevas primero</option><option value="viejas">Más antiguas primero</option><option value="nombre">Por nombre (A-Z)</option></select></label>
+        <label>Marca<select id="rec-estado"><option value="">Todo menos lo descartado</option><option value="sin-mirar">Sin mirar</option><option value="pendiente">En el aire</option><option value="valido">Sirve</option><option value="relanzar">Relanzar</option><option value="invalido">Descartado</option></select></label>
+        <label>Qué<select id="rec-tipo"><option value="">Todo</option><option value="encargo">Encargos</option><option value="propuestas">Propuestas</option><option value="lonchas">Lonchas</option><option value="3d">3D</option><option value="imagen">Imágenes</option></select></label>
+        <label>Tarea<select id="rec-tarea"></select></label></div>
+      <div class="rec-cuenta"><span id="rec-cuenta"></span><button type="button" id="rec-actualizar">Actualizar</button></div>
       <div class="filtros rec-pendientes" id="rec-pendientes" hidden><span id="rec-pendientes-n"></span><button type="button" id="rec-reintentar">Reintentar</button></div>
       <div class="aviso" id="rec-aviso" role="alert"></div>
       <section class="caja rec-comparar" id="rec-comparar" hidden aria-label="Abiertos"><div class="rec-cab"><b id="rec-cuantos"></b><span class="meta" id="rec-encargo" hidden></span><button type="button" id="rec-cerrar-todo">Cerrar todo</button></div>
         <div class="rec-mandos" id="rec-mandos" hidden aria-label="Mandos comunes"></div><div class="rec-paneles" id="rec-paneles"></div></section>
       <div class="rec-lista" id="rec-lista"></div><button type="button" id="rec-mas" hidden>Ver más</button>`;
-    $('rec-juego').onchange = () => { e.juego = $('rec-juego').value; apunta(JUEGO, e.juego); e.vistos = POR_PAGINA; GESTION_NAV.enlaceCambia(); cargar(false); };
+    $('rec-orden').value = F.ORDENES.includes(lee(ORDEN, '')) ? lee(ORDEN, '') : 'nuevas';
+    $('rec-orden').onchange = () => { apunta(ORDEN, $('rec-orden').value); e.vistos = POR_PAGINA; pintaLista(); };
     $('rec-tipo').onchange = $('rec-estado').onchange = $('rec-tarea').onchange = () => { e.vistos = POR_PAGINA; pintaLista(); };
     $('rec-actualizar').onclick = () => cargar(true);
     $('rec-reintentar').onclick = () => { cola = cola.then(mandaPendientes); };
@@ -237,15 +287,35 @@
     $('rec-cerrar-todo').onclick = () => { e.abiertos = []; pintaPaneles(); };
     MANDOS.arranca($('rec-mandos'), () => [...pan.querySelectorAll('#rec-paneles iframe[data-mandos]')]);
     RECURSOS_AMPLIAR.arranca($('rec-paneles'));
+    // al volver a la pestaña del navegador (quizá otro día), Hoy, Ayer y NUEVA se recalculan
+    if (document.addEventListener) document.addEventListener('visibilitychange', () => { if (!document.hidden && !pan.hidden) pintaLista(); });
   }
   function pinta() {
     if (!pan.firstChild) esqueleto();
     $('rec-sin-token').hidden = !!token();
     const juegos = e.listaJuegos || [];
-    $('rec-juego').innerHTML = juegos.map(j => `<option value="${esc(j.id)}"${j.id === e.juego ? ' selected' : ''}>${esc(j.id)} (${j.n})</option>`).join('') || '<option value="">—</option>';
+    pintaJuegos(juegos);
     $('rec-aviso').textContent = e.aviso;
     pintaTareas();
     pintaLista();
+  }
+  // los juegos, en botones de la A a la Z (en el móvil, una fila que se desliza); el elegido, pulsado y a la vista
+  function eligeOtro(id) {
+    if (id === e.juego) return;
+    e.juego = id; apunta(JUEGO, id); e.vistos = POR_PAGINA; GESTION_NAV.enlaceCambia(); cargar(false); pinta();
+  }
+  function pintaJuegos(juegos) {
+    const caja = $('rec-juegos');
+    caja.replaceChildren(...juegos.map(j => {
+      const b = nodo('button', 'rec-juego', j.id); b.type = 'button'; b.title = j.n === 1 ? '1 archivo' : j.n + ' archivos';
+      b.setAttribute('aria-pressed', String(j.id === e.juego)); b.onclick = () => eligeOtro(j.id);
+      return b;
+    }));
+    // la fila se corre al elegido solo cuando cambia (si no, deshace lo que el dedo haya deslizado)
+    const elegido = caja.querySelector('[aria-pressed="true"]');
+    if (!elegido || e.chipVisto === e.juego) return;
+    e.chipVisto = e.juego;
+    if (caja.scrollTo) caja.scrollTo({ left: elegido.offsetLeft - caja.offsetLeft - 12 });
   }
   // el filtro de tarea: las tareas que salen en las fichas del juego (las del nombre de sus salidas); se guarda la elegida si sigue saliendo
   function pintaTareas() {

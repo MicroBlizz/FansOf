@@ -1,8 +1,8 @@
 {
- "build": 1512,
- "hash": "950d9c2",
- "fecha": "2026-11-25T17:53:13Z",
- "mensaje": "Pop: el Regalo diario lleva un contador de días seguidos con metas a los 3, 7, 14 y 30 días (tarea 383, paso 2, Pepins). SQL 195 aprobado por Pepins",
+ "build": 1513,
+ "hash": "a0f2174",
+ "fecha": "2026-11-25T18:33:01Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/gracious-liskov-7ec3b2",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

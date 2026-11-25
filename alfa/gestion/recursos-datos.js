@@ -48,14 +48,14 @@ const RECURSOS_DATOS = (() => {
     const n = nombre(tira), c = carpeta(tira);
     return rutas.filter(r => ext(r) === 'json' && carpeta(r) === c && nombre(r) === n).sort()[0] || null;
   }
-  /** Los juegos que salen en la lista, con cuántos archivos tiene cada uno (la primera palabra del nombre o de su carpeta), los de más primero */
+  /** Los juegos que salen en la lista, con cuántos archivos tiene cada uno (la primera palabra del nombre o de su carpeta), de la A a la Z (tarea 388) */
   function juegos(rutas) {
     const cuenta = {};
     for (const r of rutas) {
       const p = r.split('/'), j = (p.length > 2 ? p[1] : nombre(r)).split('-')[0];
       if (/^[a-z0-9]+$/.test(j)) cuenta[j] = (cuenta[j] || 0) + 1;
     }
-    return Object.entries(cuenta).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).map(([id, n]) => ({ id, n }));
+    return Object.entries(cuenta).sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([id, n]) => ({ id, n }));
   }
 
   /** null si la ficha de una cadena se puede enseñar; si no, el nombre del error (como valida_cadena de galeria.py) */

@@ -132,7 +132,7 @@ function ppNimMarcaGanadora(T) {
   if (!j) return false;
   const [y, k] = j, sitios = [];
   for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
-  T.nim.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');
+  T.nim.pistaNim = sitios; ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola', 'pista'); play('ppPista');
   ppFlota(k === 1 ? tr('Lola: «Haz pop en 1 de esta fila»') : tr('Lola: «Haz pop en {n} de esta fila»', { n: k }), 270, 240, '#3a8ee6');
   return true;
 }
@@ -155,13 +155,13 @@ function ppNimPista() {
   // a mitad de turno (ya has reventado en una fila): cuántas MÁS de esa fila, o pulsar ¡LISTO! ya, o que con esa fila ya no se gana
   if (N.esta.length) {
     const f = ppFilasDuelo(T), y = N.fila;
-    if (f.some(v => v) && !ppNimGana(f)) { if (!ppPagaPista(N)) return; N.pistaNim = []; ppFxHabilidad('lola'); play('ppPista'); ppFlota(tr('Lola: «¡Así está perfecto! Pulsa ¡LISTO!»'), 270, 240, '#3a8ee6'); ppBarraAyudas(); return; }
+    if (f.some(v => v) && !ppNimGana(f)) { if (!ppPagaPista(N)) return; N.pistaNim = []; ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola', 'pista'); play('ppPista'); ppFlota(tr('Lola: «¡Así está perfecto! Pulsa ¡LISTO!»'), 270, 240, '#3a8ee6'); ppBarraAyudas(); return; }
     let k = 0;
     for (let c = 1; c <= f[y]; c++) { const g = f.slice(); g[y] -= c; if (g.some(v => v) && !ppNimGana(g)) { k = c; break; } }
     if (!k) { ppFlota(tr('Lola: «Con esta fila ya no se puede ganar. Prueba Deshacer.»'), 270, 240, '#ff8a2a'); return; }
     if (!ppPagaPista(N)) return;
     const sitios = []; for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
-    N.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');
+    N.pistaNim = sitios; ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola', 'pista'); play('ppPista');
     ppFlota(k === 1 ? tr('Lola: «Haz pop en 1 más de esta fila»') : tr('Lola: «Haz pop en {n} más de esta fila»', { n: k }), 270, 240, '#3a8ee6');
     ppBarraAyudas(); return;
   }

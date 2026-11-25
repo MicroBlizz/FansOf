@@ -92,7 +92,7 @@ function ppEmpiezaNivel(T, d, dif, manita) {
   if (!PP_P || PP_P.T !== T) return;   // saliste del nivel durante la cortinilla
   ppBarraAyudas();   // las ayudas esperaban a que se quitara la cortinilla
   ppAntesDeEmpezar(T);   // tras fallar este nivel, se ofrece +3 toques (js/potenciadores.js)
-  if (T.pista !== null && !manita) ppFxHabilidad('lola');
+  if (T.pista !== null && !manita) { ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola'); }   // luce: su ataque, solo se ve (js/ataques-fx.js)
   ppTutorialesCamino(d, dif);
   ppTutorialesNivel(d);
   if (T.nim && T.nim.turno === 'espera') ppHabNimPrevia(T);   // Pellizco y Saque de los compañeros de duelo (js/habilidades-duelo.js)
@@ -149,8 +149,8 @@ function ppManitaSigue(T) { if (T.mano) { const s = [...T.sol]; T.pista = s.leng
 // los combos: Horas extra (el siguiente toque gratis) y el Chivatazo de Lola (una de la solución)
 function ppCombosEquipo(T) {
   const becario = ppFxDe('becario'), lola = ppFxDe('lola');
-  if (ppEnEquipo('becario') && T.combo % becario.combo === 0) { T.gratis += becario.gratis; ppFxHabilidad('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
-  if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); play('ppPista'); } }
+  if (ppEnEquipo('becario') && T.combo % becario.combo === 0) { T.gratis += becario.gratis; ppFxHabilidad('becario'); PP_ATAQUE_FX.luce('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
+  if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola'); play('ppPista'); } }
 }
 // el premio gordo de la Caja de botín: un toque de 4 da +1 toque; uno de 5, +1 corazón (si falta alguno y hoy no ha dado ya 3: tarea #236)
 // (con estrellas, el corazón desde 4 pops y uno más al día: js/coleccion.js, tarea #294)
@@ -158,7 +158,9 @@ function ppPremioGordo(T, r) {
   const fx = ppFxDe('cofre'), da = PP_HAB.premio(r.pops.length, PP_CFG.cofrePops, fx.premioAntes);
   if (!ppEnEquipo('cofre') || !da || T.lo) return;
   ppFxHabilidad('cofre'); play('ppPremio');
-  if (da === 'vida' && ppCofreDaVida(PP_HAB.extra(fx.premio))) { SAVE.cofreHoy++; ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
+  const vida = da === 'vida' && ppCofreDaVida(PP_HAB.extra(fx.premio));
+  PP_ATAQUE_FX.luce('cofre', vida ? 'corazones' : 'toques');   // solo se ve: a los corazones o a los toques (js/ataques-fx.js)
+  if (vida) { SAVE.cofreHoy++; ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO DOBLE!'), 270, 275, '#ff8a2a'); }
   else { T.limite++; ppFlota(ppTextoMasToque(PP_SLIMES.cofre.nombre), 270, 275, '#ff8a2a'); }   // con su motivo (tarea #182)
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel

@@ -19,7 +19,7 @@ const ppHabDFallo = base => PP_HAB.fallo(base, ppHabDSuma('dFallo'));
 // Hucha: las monedas de más al ganar al CEO (los niveles con duelo las suman a su premio: ppHabAlGanar). Devuelve cuántas
 function ppHabDMonedas() {
   const n = ppHabDSuma('dMonedas');
-  if (n) { SAVE.monedas += n; ppFxHabilidad(ppHabDQuien('dMonedas')); }
+  if (n) { SAVE.monedas += n; ppFxHabilidad(ppHabDQuien('dMonedas')); PP_ATAQUE_FX.luce(ppHabDQuien('dMonedas')); }   // luce: solo se ve (js/ataques-fx.js)
   return n;
 }
 /* ---------- antes del primer turno: Pellizco y Saque ---------- */
@@ -42,7 +42,7 @@ function ppHabDVentanaQuita(p) {
 function ppHabDVentanaSaque(p) {
   const id = ppHabDQuien('dSaque');
   const t = ppAbre(`<h2>${tr(PP_COMP.HAB.salida.nombre)}</h2><p class="pp-sub">${tr('{n} te deja elegir quién empieza el duelo.', { n: tr(ppSlimeDe(id).nombre) })}</p>${ppHabDChivaSaque(p)}`);
-  const elige = quien => () => { ppCierra(); ppFxHabilidad(id); p.empieza(quien); };
+  const elige = quien => () => { ppCierra(); ppFxHabilidad(id); PP_ATAQUE_FX.luce(id); p.empieza(quien); };
   t.appendChild(ppBoton(tr('EMPIEZO YO'), 'pp-btn', elige('yo')));
   t.appendChild(ppBoton(tr('EMPIEZA EL RIVAL'), 'pp-btn2 pp-azul', elige('rival')));
 }
@@ -57,7 +57,7 @@ function ppHabDQuitaToque(estado, i) {
   const T = p.T, r = PP_HAB.quita(T.up, T.mask, i);
   if (!r.ok) return true;
   T.up = r.up;
-  ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false }); ppFxHabilidad(p.eligiendo); play('ppSalto');
+  ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false }); ppFxHabilidad(p.eligiendo); PP_ATAQUE_FX.luce(p.eligiendo, 'tablero', i); play('ppSalto');
   p.eligiendo = null; p.quitadas = (p.quitadas || 0) + 1;
   ppHabDPreviaSigue(p);
   return true;

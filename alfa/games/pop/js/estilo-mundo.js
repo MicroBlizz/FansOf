@@ -2,7 +2,7 @@
 // burbujas de macaron sobre un tablero de galleta; el Jardín prueba el botón de silicona con caritas variadas. Todo son datos congelados y funciones puras (sin reloj, azar, SAVE ni dibujo): el
 // dibujo lo hacen pintar.js y bandeja.js. Lo único de fuera del dominio es ppEstiloActivo(), que pregunta el flag 'estilo-mundo'.
 'use strict';
-// Por índice del mundo en PP_MUNDOS (niveles.js): 0 = Jardín, 1 = Pastelería. Un mundo sin entrada se pinta como siempre.
+// Por índice del mundo en PP_MUNDOS (datos en js/regiones/): 0 = Jardín, 1 = Pastelería. Un mundo sin entrada se pinta como siempre.
 // `caritas`: dónde va la cara ('tapa' del macaron, visto de lado; 'centro' del botón, visto desde arriba) y si cada burbuja lleva
 // una cara distinta (js/caritas-variadas.js) o todas la misma; `tintaPulsada`, el color claro de la cara sobre el botón pulsado;
 // `propia`, que el dibujo de la burbuja ya trae su cara y el juego no pinta ninguna encima.

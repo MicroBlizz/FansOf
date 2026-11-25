@@ -5,7 +5,7 @@
 // todas antes de gastar los toques; el mínimo posible (las 3 estrellas) y el límite vienen del generador (js/niveles.js).
 'use strict';
 // QUIÉN SALE ATRAPADO en cada nivel con rescate (Pepins, 25-11-2026: lista fija, de común a legendario). Va en el orden de
-// PP_MUNDOS[m].amigos (js/niveles.js): el Jardín da Becario, CrazyBunny y Cofre; la Pastelería, una COPIA al azar de uno que ya
+// PP_MUNDOS[m].amigos (datos en js/regiones/): el Jardín da Becario, CrazyBunny y Cofre; la Pastelería, una COPIA al azar de uno que ya
 // tienes (`copia`, como el cofre de estrellas) y el CEO; del mundo 3 al 10, el compañero de su tema, con el Astronauta al final.
 // Antes el Jardín y la Pastelería sacaban al azar entre los que faltaban y se llevaban los de otros mundos (el Astronauta salía en el 2).
 const PP_RESCATES = Object.freeze([['becario', 'bunny', 'cofre'], ['copia', 'ceo'], ['copito'], ['medusa'], ['algodon'], ['nubecita'], ['hada'], ['sirena'], ['maneki'], ['astro']]);

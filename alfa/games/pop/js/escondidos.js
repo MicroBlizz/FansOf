@@ -5,7 +5,7 @@
 'use strict';
 const PP_ESC = (() => {
   const C = PP_COMP;
-  // la pista de cada escondido: índice de su mundo en PP_MUNDOS (js/niveles.js) y momento. Un sitio (mundo + momento) solo lo ocupa uno.
+  // la pista de cada escondido: índice de su mundo en PP_MUNDOS (datos en js/regiones/) y momento. Un sitio (mundo + momento) solo lo ocupa uno.
   const DONDE = Object.freeze({
     ardilla: Object.freeze({ mundo: 0, momento: 'dia' }),
     pinguino: Object.freeze({ mundo: 2, momento: 'dia' }),

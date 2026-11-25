@@ -9,27 +9,12 @@
 // en los primeros mundos sobran 2 o 3 toques; en los últimos hay que encontrar la solución perfecta o casi (`ppMargen`).
 // AFINADO CON EL ROBOT (tarea #196, ADR 169): 200 partidas simuladas, el límite más cercano a la curva, bienvenida en los dos primeros
 // niveles de cada mundo y nunca un muro (herramientas/pruebas/balance/pop/ lo mide).
+// LOS DATOS de los mundos ya no están aquí: viven en js/regiones/ (10 regiones de 10 mundos).
 // MODO DIFÍCIL (Daniel, 30-10-2026): al ganar al jefe de un mundo se abre ese mundo en difícil: otros 20 niveles con tableros
 // más grandes desde el principio, menos toques de sobra, más nata (en los mundos que la tienen) y el fondo de noche (`dif`).
 'use strict';
-// --- los mundos: nombre (y su artículo, `art`: «la Pastelería», «el Jardín»), fondo, novedad y en qué niveles hay un amigo atrapado ---
-// `lado`: tamaño del tablero al empezar y al acabar el mundo · `esp`: qué parte de las burbujas es de cada tipo especial, al
-// empezar y al acabar el mundo (doble = con nata, 2 golpes; triple = con cereza, 3 golpes; hielo y concha, ver ppEfecto)
-const PP_MUNDOS = [
-  // icono: el dibujo de LO NUEVO en la presentación del mundo (tarea #272, js/mundo-presenta-juego.js)
-  { nombre: 'Jardín', art: 'el', fondo: 'fondo-jardin', niveles: 20, amigos: [3, 9, 15], lado: [3, 5], esp: {} },
-  { nombre: 'Pastelería', art: 'la', fondo: 'fondo-pasteleria', niveles: 20, amigos: [4, 12], lado: [4, 6], icono: 'b-rosa-doble', esp: { doble: [0.15, 0.4] } },
-  { nombre: 'Heladería', art: 'la', fondo: 'fondo-heladeria', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-copo', esp: { hielo: [0.12, 0.3], doble: [0.1, 0.15] }, nueva: 'hielo' },
-  { nombre: 'Playa', art: 'la', fondo: 'fondo-playa', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-concha', esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
-  { nombre: 'Feria', art: 'la', fondo: 'fondo-feria', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-cereza', esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
-  { nombre: 'Reino de las nubes', art: 'el', fondo: 'fondo-nubes', niveles: 20, amigos: [7], lado: [6, 6], icono: 'i-estrella', esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
-  // mundos 7 a 10 (31-10-2026): cada uno con su burbuja nueva de efecto grande (cohete = su fila, burbujeante = un 3x3, pétalo = su
-  // columna) y algo de las de antes; el Espacio, todo mezclado y con el CEO espacial de jefe
-  { nombre: 'Bosque de hadas', art: 'el', fondo: 'fondo-bosque', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-cohete', esp: { cohete: [0.06, 0.12], doble: [0.15, 0.25], hielo: [0.08, 0.14] }, nueva: 'cohete' },
-  { nombre: 'Fondo del mar', art: 'el', fondo: 'fondo-mar', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-burbujas', esp: { burbujas: [0.06, 0.12], triple: [0.08, 0.15], concha: [0.1, 0.16] }, nueva: 'burbujas' },
-  { nombre: 'Jardín de cerezos', art: 'el', fondo: 'fondo-sakura', niveles: 20, amigos: [7], lado: [6, 6], icono: 'i-petalo', esp: { petalo: [0.06, 0.12], cohete: [0.04, 0.08], doble: [0.15, 0.22], hielo: [0.1, 0.16] }, nueva: 'petalo' },
-  { nombre: 'Espacio', art: 'el', fondo: 'fondo-espacio', niveles: 20, amigos: [7], lado: [6, 6], icono: 'i-estrella', esp: { cohete: [0.04, 0.07], burbujas: [0.04, 0.07], petalo: [0.04, 0.07], triple: [0.12, 0.2], hielo: [0.12, 0.18], concha: [0.1, 0.15] } },
-];
+// --- los mundos: los datos de cada mundo están en js/regiones/ (r01-dulce-hogar.js, ...); PP_REGIONES y ppRegistraRegion, en js/regiones/regiones.js ---
+const PP_MUNDOS = ppCierraRegiones();
 // qué revienta un toque en t: ella y sus 4 vecinas, salvo las de HIELO (solo se revientan tocándolas a ellas) y salvo que t sea
 // una CONCHA (al tocarla solo se revienta ella). `esp`: 0 normal, 1 hielo, 2 concha (sin `esp`, el pop-it puro de siempre)
 // 3 cohete (su fila entera), 4 burbujeante (un cuadrado de 3x3) y 5 pétalo (su columna entera), mundos 7 a 10. Las de hielo solo las
@@ -237,6 +222,8 @@ function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: 
 // se despista (`fallo`), cada vez menos de un mundo a otro; el jefe es el CEO. Las burbujas son todas normales.
 const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo', 'bunny', 'lola', 'cofre', 'ceo'];
 const ppEsNim = g => ppEsDificil(g) || ppEsJefe(g);
+// el rival del jefe del mundo m: el jefazo de su región si m es el último mundo de ella (el CEO espacial en la región 1), si no el CEO
+function ppRivalJefe(m) { const r = ppRegionDeMundo(m); return (r && r.ultimo && r.region.jefazo) || 'ceo'; }
 function ppNivelNim(g, dif) {
   const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 * dif : 0)), jefe = ppEsJefe(g);
   const lado = Math.min(6, Math.max(4, M.lado[1] - (jefe ? 0 : 1) + (dif ? 1 : 0)));   // el difícil, un poco más pequeño que el jefe
@@ -249,7 +236,7 @@ function ppNivelNim(g, dif) {
   if (dif === 2) fallo = 0.02;   // pesadilla: el rival casi nunca se equivoca
   else if (dif) fallo = Math.max(0.02, fallo * 0.5);
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe, dificil: !jefe, tutorial: false,
-    nim: { rival: jefe ? (m === PP_MUNDOS.length - 1 ? 'ceoespacial' : 'ceo') : PP_RIVALES[m], fallo } };   // el jefe del último mundo: el CEO espacial
+    nim: { rival: jefe ? ppRivalJefe(m) : PP_RIVALES[m], fallo } };
 }
 // MODO PESADILLA (Daniel, 31-10-2026: «muy difícil, con fondo rojo, con el modo de juego del primer boceto»): se abre al ganar el
 // difícil de un mundo. Es el «Lights Out» del primer prototipo: tocar una burbuja le da la vuelta a ella y a sus cuatro vecinas (las

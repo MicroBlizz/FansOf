@@ -144,7 +144,7 @@ const PP_CFG = {
   // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
   perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },
 };
-// Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
+// Los mundos están en js/regiones/ y sus niveles y la curva de dificultad, en js/niveles.js (se generan solos).
 
 // Los slimes rescatables y su pasiva. Todas HACEN algo en el tablero (no solo protegen): saltar a reventar burbujas,
 // premios por combos o por toques gordos. COMBO = toques seguidos que revientan más burbujas de las que suben.

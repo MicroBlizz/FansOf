@@ -41,19 +41,22 @@ function ppBoton(texto, clase, f) { const b = document.createElement('button'); 
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
 // cerrar o volver, igual en todas las pantallas (tarea 386; antes la flecha de la 346, que flotaba y pisaba títulos, pestañas y
 // listas): una franja fija arriba de la ventana `t`, con su fondo, el título en el centro (el <h2> de la ventana, o `titulo`) y una
-// X redonda grande a la derecha. Lo demás empieza debajo y, al bajar, se esconde bajo la franja (css/pop.css, .pp-cab). En una ventana
-// que viene de otra, `f` vuelve un paso atrás. Las preguntas de sí o no (NO, VOLVER) siguen con sus botones: son una respuesta.
-// `izquierda`: algo más para la franja, a la izquierda (en Amigos, tus corazones).
+// burbuja con una X a la derecha, que se hunde y hace pop al pulsarla. Lo demás empieza debajo y, al bajar, se esconde bajo la franja
+// (css/pop.css, .pp-cab: una nube con su carita, boceto 2 de Pepins). En una ventana que viene de otra, `f` vuelve un paso atrás. Las
+// preguntas de sí o no (NO, VOLVER) siguen con sus botones: son una respuesta.
+// `izquierda`: algo más para la franja, a la izquierda, en vez de la carita (en Amigos, tus corazones).
 function ppBotonVolver(t, f, titulo = '', izquierda = null) {
   const cab = document.createElement('div'); cab.className = 'pp-cab';
   let h = t.querySelector(':scope > h2');
   if (!h) h = document.createElement('h2');
   if (!h.textContent) h.textContent = titulo;
-  const b = ppBoton('', 'pp-btn2 pp-azul pp-cerrar', f);
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-cerrar';
   b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 13 35 35M35 13 13 35"/></svg>';
   b.setAttribute('aria-label', tr('VOLVER'));
-  if (izquierda) { izquierda.classList.add('pp-cab-izq'); cab.appendChild(izquierda); }
-  cab.append(h, b);
+  b.onclick = () => { play('ppPop', 0); f(); };   // suena como una burbuja del tablero
+  if (izquierda) izquierda.classList.add('pp-cab-izq');
+  else { izquierda = document.createElement('span'); izquierda.className = 'pp-cab-cara'; }
+  cab.append(izquierda, h, b);
   t.classList.add('pp-con-cab');
   t.prepend(cab);
   return b;

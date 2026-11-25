@@ -54,19 +54,36 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
   animation: pp-sale 0.22s steps(5); }
 .pp-tarjeta.pp-ancha { max-width: 504px; }
 /* cerrar o volver (tarea 386): una franja fija arriba de la ventana (ppBotonVolver, js/pantallas.js) con su fondo, el título en el
-   centro y una X redonda grande a la derecha. Ocupa su sitio, así que nada queda debajo del botón, y al bajar la ventana se queda
-   pegada arriba (sticky) y lo demás se esconde por detrás. Tapa el relleno de la ventana (--pp-rell-*) y repinta su marco. */
+   centro y, a la derecha, una burbuja con una X que se hunde al pulsarla. Ocupa su sitio, así que nada queda debajo del botón, y al
+   bajar la ventana se queda pegada arriba (sticky) y lo demás se esconde por detrás. Tapa el relleno de la ventana (--pp-rell-*) y
+   repinta su marco. Estilo «nube» (boceto 2 de Pepins, 25-11-2026): blanca, con el borde de abajo en nubecitas y una carita. */
 .pp-tarjeta { --pp-rell-a: 24px; --pp-rell-l: 20px; }
 /* el `top` negativo: el navegador mide el sticky desde dentro del relleno; con 0 la franja bajaba ese relleno (medido en Chromium) */
-.pp-cab { position: sticky; top: calc(-1 * var(--pp-rell-a)); z-index: 6; flex: none; align-self: stretch; box-sizing: border-box; overflow: hidden;
-  margin: calc(-1 * var(--pp-rell-a)) calc(-1 * var(--pp-rell-l)) 0; min-height: 100px; padding: 16px 104px 10px;
-  display: flex; align-items: center; justify-content: center; background: var(--pp-crema); border-bottom: 4px solid #ffd1ec; border-radius: 28px 28px 0 0; }
-.pp-cab::before { content: ''; position: absolute; inset: 0 0 -60px 0; border-radius: 28px; pointer-events: none;
+.pp-cab { position: sticky; top: calc(-1 * var(--pp-rell-a)); z-index: 6; flex: none; align-self: stretch; box-sizing: border-box;
+  margin: calc(-1 * var(--pp-rell-a)) calc(-1 * var(--pp-rell-l)) 14px; min-height: 100px; padding: 16px 104px 10px;
+  display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 28px 28px 0 0; }
+/* el marco de la ventana, repintado encima de la franja (solo el trozo de arriba) */
+.pp-cab::before { content: ''; position: absolute; inset: 0 0 -60px 0; border-radius: 28px; pointer-events: none; clip-path: inset(0 0 60px 0);
   box-shadow: inset 0 0 0 6px #ff9ccf, inset 0 0 0 10px #fff, inset 0 0 0 13px #ffd1ec; }
+/* el borde de nube: una fila de bolitas blancas que asoman por debajo, con su sombra rosa; por detrás del título y de la burbuja */
+.pp-cab::after { content: ''; position: absolute; left: 13px; right: 13px; top: calc(100% - 30px); height: 54px; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle at 50% 22px, #fff 30px, transparent 31px) 0 0 / 68px 54px round; filter: drop-shadow(0 5px 0 #ffd9e8); }
 .pp-tarjeta .pp-cab h2 { margin: 0; font-size: 36px; text-wrap: balance; }
-#pp-ui .pp-btn2.pp-cerrar { position: absolute; right: 22px; top: 16px; width: 72px; min-width: 72px; height: 72px; min-height: 72px; padding: 0; border-radius: 50%; display: grid; place-items: center; }
-.pp-cerrar svg { width: 38px; height: 38px; fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; }
+/* la carita de la nube, a la izquierda: dos ojos y dos mofletes */
+.pp-cab-cara { position: absolute; left: 32px; top: 50%; width: 60px; height: 34px; margin-top: -17px; pointer-events: none; }
+.pp-cab-cara::before { content: ''; position: absolute; left: 8px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--pp-cafe); box-shadow: 34px 0 0 var(--pp-cafe); }
+.pp-cab-cara::after { content: ''; position: absolute; left: 0; top: 16px; width: 14px; height: 9px; border-radius: 50%; background: #ffb3d0; box-shadow: 46px 0 0 #ffb3d0; }
 .pp-cab-izq { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); }
+/* la burbuja de cerrar: turquesa como las del tablero, levantada; al pulsarla se hunde */
+#pp-ui .pp-cerrar { position: absolute; right: 22px; top: 14px; width: 72px; height: 72px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; pointer-events: auto;
+  display: grid; place-items: center; background: radial-gradient(circle at 35% 26%, #c9f2ff 0, #62cdf4 42%, #2fa3dc 100%);
+  box-shadow: inset 0 -8px 0 rgba(20, 110, 170, 0.5), 0 0 0 5px #fff, 0 6px 0 #bfe3f5; transition: transform 0.08s, box-shadow 0.08s; }
+#pp-ui .pp-cerrar::before { content: ''; position: absolute; left: 16px; top: 10px; width: 22px; height: 12px; border-radius: 50%; background: rgba(255, 255, 255, 0.75); transform: rotate(-24deg); pointer-events: none; }
+#pp-ui .pp-cerrar:active { transform: translateY(4px) scale(0.93); background: radial-gradient(circle at 50% 62%, #49b4e6 0, #1f8ccb 70%);
+  box-shadow: inset 0 8px 0 rgba(15, 80, 130, 0.55), 0 0 0 5px #fff, 0 2px 0 #bfe3f5; }
+#pp-ui .pp-cerrar:active::before { opacity: 0; }
+.pp-cerrar svg { position: relative; width: 36px; height: 36px; fill: none; stroke: #fff; stroke-width: 8; stroke-linecap: round; filter: drop-shadow(0 2px 0 rgba(20, 110, 170, 0.6)); }
+@media (prefers-reduced-motion: reduce) { #pp-ui .pp-cerrar { transition: none; } }
 @keyframes pp-sale { from { transform: scale(0.6); } to { transform: scale(1); } }
 .pp-tarjeta h2 { font-weight: 700; font-size: 40px; line-height: 1.05; margin: 6px 0 0; color: #ff6eb5; text-shadow: 0 3px 0 #fff, 0 6px 0 rgba(196, 58, 132, 0.25); }
 .pp-sub { margin: 0; font-weight: 500; font-size: 20px; line-height: 1.3; }

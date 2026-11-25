@@ -1,8 +1,8 @@
 {
- "build": 1509,
- "hash": "1ecd882",
- "fecha": "2026-11-25T16:51:44Z",
- "mensaje": "Pop: cerrar con una franja fija arriba y una X grande a la derecha en todas las ventanas; la flecha de la 346 pisaba títulos, pestañas y listas (tarea 386, Pepins)",
+ "build": 1510,
+ "hash": "10ccd67",
+ "fecha": "2026-11-25T17:00:10Z",
+ "mensaje": "Pop: la franja de las ventanas es una nube con carita y la X, una burbuja que se hunde y hace pop (tarea 386, boceto 2 de Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

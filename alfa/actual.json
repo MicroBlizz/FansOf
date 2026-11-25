@@ -1,8 +1,8 @@
 {
- "build": 1498,
- "hash": "3063471",
- "fecha": "2026-11-25T07:56:36Z",
- "mensaje": "Pop: burbujas de helado en la Heladería, con el arte de Yoshi (tarea #110, Pepins)",
+ "build": 1499,
+ "hash": "2547d62",
+ "fecha": "2026-11-25T07:57:28Z",
+ "mensaje": "Mapas al día (mapa.py): tamaños y archivos nuevos de los últimos commits",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

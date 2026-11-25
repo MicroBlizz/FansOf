@@ -62,6 +62,14 @@ const RECURSOS_FECHAS = (() => {
     for (const [ruta, iso] of Object.entries(nuevas)) if (iso && shas.has(ruta)) r[ruta] = [shas.get(ruta), iso];
     return r;
   }
-  return Object.freeze({ ORDENES, TRAMOS, rutasDe, fechaDe, ordena, tramo, texto, deRecuerdo, recuerda });
+  /** Los archivos que dan fecha, por juego (se recuerdan por juego, también con «Todos»): { juego: [rutas] }; las fichas llevan su juego (f.juego) */
+  function porJuego(fichas) {
+    const p = {};
+    for (const f of fichas) (p[f.juego] = p[f.juego] || []).push(...rutasDe(f));
+    return p;
+  }
+  /** Solo las fechas de esas rutas */
+  const soloDe = (fechas, rutas) => Object.fromEntries(rutas.filter(r => r in fechas).map(r => [r, fechas[r]]));
+  return Object.freeze({ ORDENES, TRAMOS, rutasDe, fechaDe, ordena, tramo, texto, deRecuerdo, recuerda, porJuego, soloDe });
 })();
 if (typeof module !== 'undefined') module.exports = RECURSOS_FECHAS;   // en node (tests/gestion/recursos-fechas.test.mjs) solo se carga

@@ -14,7 +14,7 @@
   const ORDEN = 'fansof.gestion.recursos.orden', FECHAS = 'fansof.gestion.recursos.fechas.';   // + el juego
   const POR_PAGINA = 24, VISORES = 'recursos/';
   const BOTONES = ['valido', 'pendiente', 'invalido', 'relanzar'];
-  const e = { raiz: null, carpetas: {}, juego: '', fichas: [], rutas: [], shas: new Map(), guardadas: {}, pendientes: {}, vistos: POR_PAGINA, abiertos: [], paneles: new Map(), urls: new Map(), leidas: new Map(), cargando: false, aviso: '', fechas: {}, fechando: null, vuelta: 0, chipVisto: '' };
+  const e = { raiz: null, carpetas: {}, juego: '', fichas: [], rutas: [], shas: new Map(), guardadas: {}, pendientes: {}, vistos: POR_PAGINA, abiertos: [], paneles: new Map(), urls: new Map(), leidas: new Map(), cargando: false, aviso: '', fechas: {}, fechando: null, vuelta: 0 };
   const pan = document.createElement('div'); pan.id = 'pan-recursos'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
 
@@ -30,7 +30,7 @@
 
   // ---- la red: el envío y la lectura de las marcas, y los archivos de la rama como direcciones blob: (cada sha se pide una vez)
   const enviar = (salida, m) => rpc('gestion_recurso_marcar', M.argumentos(leerToken(), salida, m, D.marcas(salida).run));   // el run, del nombre de la salida
-  const lector = async juego => (await rpc('gestion_recurso_encargos', { p_token: leerToken(), p_juego: juego })).filas;
+  const lector = async juego => (await rpc('gestion_recurso_encargos', { p_token: leerToken(), p_juego: juego === D.TODOS ? null : juego })).filas;   // con «Todos», las de todos los juegos
   function url(ruta) {
     const sha = e.shas.get(ruta);
     if (!sha) return Promise.reject(new Error('no está en la rama: ' + ruta));
@@ -46,15 +46,15 @@
   }
   async function archivosDelJuego() {
     const lista = [...e.raiz.archivos];
-    for (const c of G.carpetasDe(e.raiz.carpetas, e.juego)) {
-      if (!e.carpetas[c.sha]) e.carpetas[c.sha] = await G.carpeta(fetch, token(), c);
-      lista.push(...e.carpetas[c.sha].archivos);
-    }
+    // con «Todos», las subcarpetas que son de algún juego; se leen a la vez
+    const carpetas = e.juego === D.TODOS ? e.raiz.carpetas.filter(c => D.juegoDe(`salida/${c.nombre}/x`)) : G.carpetasDe(e.raiz.carpetas, e.juego);
+    await Promise.all(carpetas.filter(c => !e.carpetas[c.sha]).map(async c => { e.carpetas[c.sha] = await G.carpeta(fetch, token(), c); }));
+    for (const c of carpetas) lista.push(...e.carpetas[c.sha].archivos);
     return lista;
   }
   async function cadenas(rutas) {
     const leidas = {};
-    await Promise.all(rutas.filter(r => D.esCadena(r) && D.esDelJuego(r, e.juego)).map(async r => {
+    await Promise.all(rutas.filter(r => D.esCadena(r) && (e.juego === D.TODOS || D.esDelJuego(r, e.juego))).map(async r => {
       const sha = e.shas.get(r);   // una cadena no cambia con el mismo sha: se lee una vez
       try { if (!e.leidas.has(sha)) e.leidas.set(sha, await G.json(fetch, token(), sha)); leidas[r] = e.leidas.get(sha); } catch (err) { leidas[r] = null; }   // sale con su error en la ficha
     }));
@@ -63,7 +63,7 @@
   function eligeJuego() {
     const juegos = D.juegos(e.raiz.archivos.map(a => a.ruta).concat(e.raiz.carpetas.map(c => `salida/${c.nombre}/x`)));
     const quiero = e.juego || lee(JUEGO, '');
-    e.juego = juegos.some(j => j.id === quiero) ? quiero : (juegos[0] || {}).id || '';
+    e.juego = (quiero === D.TODOS && juegos.length) || juegos.some(j => j.id === quiero) ? quiero : (juegos[0] || {}).id || '';
     return juegos;
   }
   async function cargar(forzar) {
@@ -76,7 +76,7 @@
       e.listaJuegos = eligeJuego();
       const archivos = await archivosDelJuego();
       e.shas = new Map(archivos.map(a => [a.ruta, a.sha])); e.rutas = archivos.map(a => a.ruta);
-      e.fichas = D.inventario(e.rutas, e.juego, await cadenas(e.rutas));
+      e.fichas = D.inventarioDe(e.rutas, e.juego, await cadenas(e.rutas));
       const l = await M.leer(e.juego, lector);
       e.guardadas = l.guardadas;
       const avisos = [];
@@ -84,7 +84,8 @@
       if (e.raiz.cortada) avisos.push('GitHub ha cortado la lista de salida/: puede faltar algo.');
       e.aviso = avisos.join(' ');
       abreDelEnlace();
-      const r = F.deRecuerdo(lee(FECHAS + e.juego, {}), e.fichas.flatMap(F.rutasDe).filter(x => e.shas.has(x)), e.shas);
+      const recuerdo = Object.assign({}, ...Object.keys(F.porJuego(e.fichas)).map(j => lee(FECHAS + j, {})));   // con «Todos», lo de cada juego
+      const r = F.deRecuerdo(recuerdo, e.fichas.flatMap(F.rutasDe).filter(x => e.shas.has(x)), e.shas);
       e.fechas = r.fechas; faltan = r.faltan;
     } catch (err) { e.aviso = fallo(err); }
     e.cargando = false;
@@ -98,9 +99,10 @@
   // ---- las fechas (tarea 388, recursos-fechas.js): lo recordado en este navegador (una entrada por juego) sale al momento; lo que falta se pide a GitHub
   // por lotes después de cargar, con la lista ya a la vista y sin bloquear cambiar de juego ni Actualizar (la vuelta nueva para los lotes que faltan)
   async function ponFechas(faltan, vuelta) {
-    const juego = e.juego, shas = e.shas, sigue = () => vuelta === e.vuelta;
+    const deCada = F.porJuego(e.fichas), shas = e.shas, sigue = () => vuelta === e.vuelta;
     const r = await G.fechas(fetch, token(), faltan, (hechas, total) => { if (sigue()) { e.fechando = { hechas, total }; pintaCuenta(); } }, sigue);
-    apunta(FECHAS + juego, F.recuerda(lee(FECHAS + juego, {}), r.fechas, shas));   // lo leído se recuerda aunque ya se mire otro juego
+    // lo leído se recuerda, cada juego en lo suyo, aunque ya se mire otro
+    for (const [j, rutas] of Object.entries(deCada)) apunta(FECHAS + j, F.recuerda(lee(FECHAS + j, {}), F.soloDe(r.fechas, rutas), shas));
     if (!sigue()) return;
     Object.assign(e.fechas, r.fechas); e.fechando = null;
     if (r.error) e.aviso = [e.aviso, 'No pude leer todas las fechas (' + r.error.message + '): lo que no la tiene va al final.'].filter(Boolean).join(' ');
@@ -141,6 +143,7 @@
     const problema = f.tipo === 'encargo' ? D.problemas(f) : '', fecha = F.fechaDe(f, e.fechas), v = vista(f);
     if (estado === 'sin-mirar' && F.tramo(fecha, ahora) === 'Hoy') v.append(nodo('span', 'rec-nueva', 'NUEVA'));
     el.append(v, nodo('b', '', f.nombre));
+    if (e.juego === D.TODOS) el.append(nodo('span', 'rec-de', f.juego));   // con «Todos», de qué juego es
     if (fecha) el.append(nodo('span', 'rec-fecha', F.texto(fecha, ahora)));
     el.append(nodo('span', problema ? 'rec-fallo' : 'meta', problema || resumen(f)));
     if (D.origen(f)) el.append(nodo('span', 'meta', D.origen(f)));
@@ -187,7 +190,7 @@
   // ---- marcar: se ve al momento, queda pendiente en este navegador y se manda; lo que el servidor confirma deja de estar pendiente
   let cola = Promise.resolve();
   function marca(f, salida, estado, nota) {
-    const r = M.pon(e.pendientes, salida, { estado, nota, juego: e.juego, nombre: M.nombreValido(f.nombre), etapa: D.etapa(f) }, new Date().toISOString());
+    const r = M.pon(e.pendientes, salida, { estado, nota, juego: f.juego || e.juego, nombre: M.nombreValido(f.nombre), etapa: D.etapa(f) }, new Date().toISOString());
     if (!r.ok) { $('rec-aviso').textContent = 'No se puede marcar así (' + r.error + ').'; return; }
     e.pendientes = r.pendientes; apunta(PENDIENTES, e.pendientes); refresca(salida);
     cola = cola.then(mandaPendientes);
@@ -299,23 +302,18 @@
     pintaTareas();
     pintaLista();
   }
-  // los juegos, en botones de la A a la Z (en el móvil, una fila que se desliza); el elegido, pulsado y a la vista
+  // los juegos, en una rejilla de botones todos a la vista: «Todos» y después de la A a la Z; el elegido, pulsado (en naranja)
   function eligeOtro(id) {
     if (id === e.juego) return;
     e.juego = id; apunta(JUEGO, id); e.vistos = POR_PAGINA; GESTION_NAV.enlaceCambia(); cargar(false); pinta();
   }
   function pintaJuegos(juegos) {
-    const caja = $('rec-juegos');
-    caja.replaceChildren(...juegos.map(j => {
-      const b = nodo('button', 'rec-juego', j.id); b.type = 'button'; b.title = j.n === 1 ? '1 archivo' : j.n + ' archivos';
+    const todos = juegos.length ? [{ id: D.TODOS, texto: 'Todos', n: juegos.reduce((s, j) => s + j.n, 0) }] : [];
+    $('rec-juegos').replaceChildren(...todos.concat(juegos).map(j => {
+      const b = nodo('button', 'rec-juego', j.texto || j.id); b.type = 'button'; b.title = j.n === 1 ? '1 archivo' : j.n + ' archivos';
       b.setAttribute('aria-pressed', String(j.id === e.juego)); b.onclick = () => eligeOtro(j.id);
       return b;
     }));
-    // la fila se corre al elegido solo cuando cambia (si no, deshace lo que el dedo haya deslizado)
-    const elegido = caja.querySelector('[aria-pressed="true"]');
-    if (!elegido || e.chipVisto === e.juego) return;
-    e.chipVisto = e.juego;
-    if (caja.scrollTo) caja.scrollTo({ left: elegido.offsetLeft - caja.offsetLeft - 12 });
   }
   // el filtro de tarea: las tareas que salen en las fichas del juego (las del nombre de sus salidas); se guarda la elegida si sigue saliendo
   function pintaTareas() {

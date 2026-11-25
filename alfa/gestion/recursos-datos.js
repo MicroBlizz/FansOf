@@ -48,13 +48,17 @@ const RECURSOS_DATOS = (() => {
     const n = nombre(tira), c = carpeta(tira);
     return rutas.filter(r => ext(r) === 'json' && carpeta(r) === c && nombre(r) === n).sort()[0] || null;
   }
-  /** Los juegos que salen en la lista, con cuántos archivos tiene cada uno (la primera palabra del nombre o de su carpeta), de la A a la Z (tarea 388) */
+  /** «Todos los juegos» (tarea 388): el id que lo elige; ningún juego puede llamarse así (juegoDe no lo da) */
+  const TODOS = 'todos';
+  /** El juego de un archivo, como lo cuenta la lista de juegos: la primera palabra de su carpeta o, si está suelto, de su nombre ('' si no vale) */
+  function juegoDe(ruta) {
+    const p = ruta.split('/'), j = (p.length > 2 ? p[1] : nombre(ruta)).split('-')[0];
+    return /^[a-z0-9]+$/.test(j) && j !== TODOS ? j : '';
+  }
+  /** Los juegos que salen en la lista, con cuántos archivos tiene cada uno (juegoDe), de la A a la Z (tarea 388) */
   function juegos(rutas) {
     const cuenta = {};
-    for (const r of rutas) {
-      const p = r.split('/'), j = (p.length > 2 ? p[1] : nombre(r)).split('-')[0];
-      if (/^[a-z0-9]+$/.test(j)) cuenta[j] = (cuenta[j] || 0) + 1;
-    }
+    for (const r of rutas) { const j = juegoDe(r); if (j) cuenta[j] = (cuenta[j] || 0) + 1; }
     return Object.entries(cuenta).sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([id, n]) => ({ id, n }));
   }
 
@@ -126,6 +130,14 @@ const RECURSOS_DATOS = (() => {
     });
     return [...encargos, ...grupos, ...sueltas].sort(orden);
   }
+  /** Las fichas de lo elegido, cada una con su juego (f.juego): las del juego o, con TODOS, cada archivo en el juego que le da juegoDe (uno solo: así
+   *  nada sale dos veces y su marca y su fecha van siempre al mismo juego) */
+  function inventarioDe(rutas, juego, cadenas = {}) {
+    if (juego !== TODOS) return inventario(rutas, juego, cadenas).map(f => ({ ...f, juego }));
+    const de = new Map();
+    for (const r of rutas) { const j = juegoDe(r); if (j) (de.get(j) || de.set(j, []).get(j)).push(r); }
+    return [...de].flatMap(([j, rs]) => inventario(rs, j, cadenas).map(f => ({ ...f, juego: j })));
+  }
   /** La etapa de lo que sale en una ficha, como la guarda el servidor: propuestas, modelo (cadena «modelo» o un .glb suelto), lonchas (de un modelo
    *  ya hecho, sin paso de imagen, o una tira suelta) o todo (la cadena entera de lonchas, de la figura al corte, o lo que no es de ninguna etapa) */
   function etapa(f) {
@@ -138,6 +150,6 @@ const RECURSOS_DATOS = (() => {
     const json = esTira(ruta) && parejaJson(ruta, rutas);
     return json ? { ruta, tipo: 'lonchas', nombre: nombre(ruta), json, ...marcas(ruta) } : { ruta, tipo: tipo(ruta), nombre: nombre(ruta), ...marcas(ruta) };
   }
-  return { tipo, mime, nombre, marcas, tareas, deTarea, origen, etapa, esDelJuego, esTira, esCadena, parejaJson, juegos, validaCadena, encargo, problemas, propuestas, inventario, panel };
+  return { TODOS, tipo, mime, nombre, marcas, tareas, deTarea, origen, etapa, esDelJuego, esTira, esCadena, parejaJson, juegoDe, juegos, validaCadena, encargo, problemas, propuestas, inventario, inventarioDe, panel };
 })();
 if (typeof module !== 'undefined') module.exports = RECURSOS_DATOS;   // en node (tests/gestion/recursos-datos.test.mjs) solo se carga

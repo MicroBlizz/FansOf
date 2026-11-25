@@ -1,11 +1,11 @@
 {
- "build": 1488,
- "hash": "850337c",
- "fecha": "2026-11-25T01:27:09Z",
- "mensaje": "Pop: botón DEV «Todos los compañeros al máximo» (5 estrellas y casillas al tope) (Pepins)",
+ "build": 1489,
+ "hash": "5c44f5d",
+ "fecha": "2026-11-25T01:30:20Z",
+ "mensaje": "Asalto 0.6.6: la partida se guarda también en la ventana de premios; cerrar ahí ya no repite la oleada ni da otra vez sus plumas (tarea #314, Pepins)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.6.5",
+  "asalto": "0.6.6",
   "basement": "0.13.3",
   "boom": "0.4.20",
   "chef": "0.4.3",

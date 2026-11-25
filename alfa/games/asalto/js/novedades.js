@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.6.6', real: ["Si cierras el juego en la ventana de premios, al volver <b>sigues en esos mismos premios</b>: ya no se repite la oleada."], joke: ["Microblizz ha dejado de perder los premios entre reunión y reunión. Los ha puesto en un cajón con llave."] },
   { v: '0.6.5', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.6.4', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.6.3', real: ["<b>Regalo diario</b>: un calendario de 7 días con plumas y cofres (el día 7, 100 plumas y 2 cofres). Si un día no entras, no pierdes la racha. Puedes doblar el regalo con un anuncio.", "<b>Misiones del día</b>: tres misiones sencillas que dan plumas y se rehacen cada día."], joke: ["Microblizz da un regalo por fichar cada día. El séptimo día, el CEO descansa y tú te llevas dos cofres."] },

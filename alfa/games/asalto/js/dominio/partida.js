@@ -1,7 +1,6 @@
 // Fans of Asalto · DOMINIO · La partida: la raíz de una bajada a la mazmorra (zona, oleada, oro, vidas, Altar, equipo, reliquias, racha,
-// misiones, premios y el Despertar de los legendarios). Solo cambia por sus métodos (invocar, empujar, unir, ascender, elegir carta, luchar,
-// cerrar la oleada, cobrar), que la dejan válida y devuelven AS.ok(...) o AS.error('codigo'). Fases: 'preparar' → 'batalla' → ('premio') →
-// 'preparar'… y 'fin'. Pura: el azar se pasa. Cuentas sueltas: reglas.js; leer lo guardado: guardado.js; legendarios: despertar.js.
+// misiones, premios y Despertar). Solo cambia por sus métodos, que la dejan válida y devuelven AS.ok(...) o AS.error('codigo'). Fases:
+// 'preparar' → 'batalla' → ('premio') → 'preparar'… y 'fin'. Pura: el azar se pasa. Cuentas: reglas.js; lo guardado: guardado.js y partida-guardado.js.
 'use strict';
 AS.Partida = (() => {
   const LLAVE = Symbol('partida');   // solo las fábricas de este archivo pueden crear una partida
@@ -20,8 +19,8 @@ AS.Partida = (() => {
       this.#oro = datos.partida.oro + this.#m.oro; this.#vidas = datos.partida.vidas + this.#m.vidas;
       this.#equipo = AS.equipo.vacio(datos, this.#m.abiertos); this.#leg = AS.despertar.nuevo(datos, cfg.despertar);
     }
-    // cfg: { zona, sinFin, guiada (la primera partida, con la mano), maquina ('altar' o 'estallido'), dificultad (0, 1 o 2), mejoras: { corazon: 1… },
-    // rarezas (cuántas hay abiertas), despertar (0 a 3 abiertos), equipo: { vida: 5… } (el equipo puesto, en %) }
+    // cfg: { zona, sinFin, guiada, maquina ('altar' o 'estallido'), dificultad (0 a 2), mejoras: { corazon: 1… }, rarezas (abiertas),
+    // despertar (0 a 3 abiertos), equipo: { vida: 5… } (el equipo puesto, en %) }
     static nueva(datos, cfg, azar) {
       if (!cfg || !datos.zonas[cfg.zona]) return AS.error('zona-desconocida');
       const p = new Partida(LLAVE, datos, cfg);
@@ -53,11 +52,10 @@ AS.Partida = (() => {
     get esencia() { return this.#esencia; }
     get tienda() { return this.#tienda; }
     get despertar() { return this.#leg; }   // { abiertos, oferta: null | { id, cartas, cambiada } }
-    // las piedras de destino: la misión en marcha (o null), las de la bolsa y hasta qué rareza pueden subir (las abiertas)
+    // las piedras de destino: la misión en marcha (o null), la bolsa y la rareza tope
     get piedras() { return { mision: AS.piedras.progreso(this.#d, this.#piedras, this.#n, this.#cuenta), bolsa: this.#piedras.bolsa, abiertas: this.#m.rarezas }; }
     get altarVivo() { return this.#vivo; }   // ¿hay en el Altar una tirada de esta oleada (se puede empujar)?
     get costeCambio() { return AS.tienda.costeCambio(this.#d, this.#tienda); }
-    // lo que cuenta para las cifras de un héroe, menos las clases activas del campo
     get contexto() { return { equipo: this.#E, reliquias: this.#reliquias.slice(), objetos: this.#tienda.objetos }; }
     get reliquias() { return this.#reliquias.slice(); }
     get proxima() { return this.#proxima; }
@@ -87,7 +85,7 @@ AS.Partida = (() => {
       this.#empujones = AS.reglas.empujones(this.#d, this.#m, this.#reliquias, this.#maquina); this.#estallidos = AS.reglas.estallidos(this.#d, this.#maquina);
     }
     #apuntaNivel(h) { if (h.nivel > this.#cuenta.nivelMax) this.#cuenta.nivelMax = h.nivel; }
-    // tras cambiar el equipo: nacen legendarios y se abre la oferta del Despertar (avisos: el del ser)
+    // tras cambiar el equipo: nacen legendarios y se abre la oferta del Despertar
     #despierta(azar, avisos = []) {
       const r = AS.despertar.revisa(this.#d, this.#equipo, this.#leg, AS.despertar.larga(this.#sinFin, this.#dif), azar);
       this.#equipo = r.equipo; this.#leg = r.estado; this.#avisos.push(...avisos, ...r.avisos);
@@ -146,8 +144,7 @@ AS.Partida = (() => {
     }
     #pendiente() { return AS.misiones.porCobrar(this.#d, this.#misiones, this.#escalones, this.#cuenta); }
     // los avisos de las acciones (misiones, legendarios…): la pantalla los recoge y se vacían
-    recogeAvisos() { return this.#avisos.splice(0);
-    }
+    recogeAvisos() { return this.#avisos.splice(0); }
     invoca(azar) {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
       if (!AS.equipo.hayHueco(this.#equipo)) return AS.error('sin-sitio');
@@ -163,7 +160,7 @@ AS.Partida = (() => {
       this.#cobraMisiones();
       return AS.ok({ ...res, columnas: this.#altar, coste });
     }
-    // las runas de una invocación (primera, guiada y red contra la mala suerte: altar.js)
+    // las runas de una invocación (altar.js)
     #tirada(azar) {
       return AS.altar.invocacion(this.#d.altar, AS.reglas.pesos(this.#d, this.#m, this.#reliquias), { primera: this.#cuenta.tiradas === 0, guiada: this.#guiada, fallos: this.#fallos }, azar);
     }
@@ -388,13 +385,12 @@ AS.Partida = (() => {
       return AS.ok(p.opciones.slice());
     }
 
-    /* ---------- guardar y cargar (solo entre oleadas) ---------- */
+    /* ---------- guardar y cargar (entre oleadas y con los premios por cobrar) ---------- */
+    // en plena batalla y ya acabada (con o sin premios por cobrar) no se guarda: null
     aJSON() {
-      if (this.#fase !== 'preparar') return null;
-      return { v: 1, zona: this.#zona, sinFin: this.#sinFin, n: this.#n, oro: this.#oro, vidas: this.#vidas, plumas: this.#plumas, altar: this.#altar, tiradas: this.#tiradas,
-        gratis: this.#gratis, empujones: this.#empujones, equipo: this.#equipo, reliquias: this.#reliquias.slice(), sigId: this.#sigId, cuenta: { ...this.#cuenta }, mejoras: { ...this.#mejoras }, rarezas: this.#rarezas,
-        guiada: this.#guiada, racha: this.#racha, fallos: this.#fallos, misiones: this.#misiones.slice(), escalones: { ...this.#escalones }, esencia: this.#esencia, tienda: this.#tienda, piedras: this.#piedras, vivo: this.#vivo, anuncios: this.#anuncios,
-        maquina: this.#maquina, dificultad: this.#dif, estallidos: this.#estallidos, despertar: this.#leg.abiertos, oferta: this.#leg.oferta };
+      if (this.#final || (this.#fase !== 'preparar' && this.#fase !== 'premio')) return null;
+      return AS.partidaGuardado.aJSON(this, { gratis: this.#gratis, mejoras: { ...this.#mejoras }, rarezas: this.#rarezas, sigId: this.#sigId, misiones: this.#misiones.slice(),
+        escalones: { ...this.#escalones }, piedras: this.#piedras, anuncios: this.#anuncios, premios: this.#premios.slice() });
     }
     #carga(j, azar) {
       const d = this.#d, eq = AS.equipo.deJSON(d, { ...j.equipo, abiertos: this.#m.abiertos }), g = AS.guardado.lee(d, j);
@@ -409,12 +405,13 @@ AS.Partida = (() => {
       this.#misiones = v.misiones; this.#escalones = v.escalones; this.#esencia = v.esencia;
       this.#tienda = AS.tienda.deJSON(d, j.tienda, azar); this.#piedras = AS.piedras.deJSON(d, j.piedras); this.#anuncios = AS.anuncios.deJSON(j.anuncios);
       this.#leg = AS.despertar.deJSON(d, this.#equipo, j.oferta, this.#leg.abiertos); this.#despierta(azar);
+      if (v.premios.length) { this.#premios = v.premios; this.#fase = 'premio'; }   // se guardó con premios por cobrar: se sigue en ellos
       return AS.ok(this);
     }
     // de la partida guardada: una partida entera y válida, o un error (nunca una a medias). equipo = el equipo puesto de ahora
     static deJSON(datos, j, equipo, azar) {
       if (!j || j.v !== 1 || !datos.zonas[j.zona]) return AS.error('partida-invalida');
-      return new Partida(LLAVE, datos, { zona: j.zona, sinFin: !!j.sinFin, guiada: !!j.guiada, maquina: j.maquina, dificultad: j.dificultad, mejoras: j.mejoras, rarezas: j.rarezas, despertar: j.despertar, equipo }).#carga(j, azar);
+      return new Partida(LLAVE, datos, AS.partidaGuardado.cfgDe(j, equipo)).#carga(j, azar);
     }
   }
   return Partida;

@@ -331,7 +331,8 @@ AS.pantalla = (() => {
     E.ocultos.clear(); E.apariciones.clear(); E.celdasOro.clear(); E.destellos.clear(); E.ascensos.clear(); E.casi.clear(); E.cumplidas.length = 0; fx.limpia();
     AS.guia.empieza(E);
     AS.suena.musica(ASALTO.zonas[casos.partida.zona].musica);
-    if (!AS.guia.activa && !casos.progreso.consejos.inicio) AS.ventanas.ayuda(E, () => casos.consejoVisto('inicio'));   // sin guía, la primera vez: cómo se juega
+    if (casos.partida.fase === 'premio') AS.ventanas.premios(E);   // se cerró con premios por cobrar (tarea #314): vuelven a la vista, y al cobrarlos se sigue
+    else if (!AS.guia.activa && !casos.progreso.consejos.inicio) AS.ventanas.ayuda(E, () => casos.consejoVisto('inicio'));   // sin guía, la primera vez: cómo se juega
   }
   function sal() { E.activa = false; E.batalla = null; E.giro = null; fx.limpia(); }
   function monta(cv) {

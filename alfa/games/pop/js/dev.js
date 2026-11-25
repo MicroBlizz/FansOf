@@ -39,6 +39,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Regalo: falto 1 día', () => { ppRegaloDevPasan(2); PP_PASE_VISTO.regalo = false; });
   boton(d, 'Regalo: falto 2 días', () => { ppRegaloDevPasan(3); PP_PASE_VISTO.regalo = false; });
   boton(d, 'Regalo: de cero', () => { SAVE.diasSeguidos = null; SAVE.regaloDia = ''; PP_PASE_VISTO.regalo = false; });
+  boton(d, 'Amigos: te adelanta uno', ppAdelantoDev);
   d = fila();
   boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; ppGuardaCamino(); });
   d = fila();

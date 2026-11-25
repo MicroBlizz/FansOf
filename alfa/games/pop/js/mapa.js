@@ -163,6 +163,7 @@ function ppPintaMapa(c, t) {
     c.beginPath(); c.arc(x, y, 24, 0, Math.PI * 2); c.fillStyle = id ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ff6ec7' : 'rgba(122,74,138,0.3)'; c.stroke();
     if (id) ppSlimeRepuestoOImagen(c, id, x, y - 2, 20, t, 1);
   }
+  ppPintaAdelanto(c, t);   // encima de todo: el cartel de un amigo que te ha adelantado (tarea 384, js/amigos-adelanta-juego.js)
 }
 /* ---------- tocar y arrastrar el mapa ---------- */
 function ppMapaAbajo(lx, ly) { PP_MAPA.toque = { x: lx, y: ly, y0: ly, obj0: PP_MAPA.obj, movido: false }; }
@@ -171,9 +172,15 @@ function ppMapaMueve(lx, ly) {
   if (Math.abs(ly - q.y0) > 14) q.movido = true;
   if (q.movido && PP_MAPA.m !== null) PP_MAPA.obj = clamp(q.obj0 + (ly - q.y0) / PP_PASO, 0, PP_MUNDOS[PP_MAPA.m].niveles - 1);   // bajar el dedo enseña los de más arriba
 }
+// un botón del camino es un círculo { x, y, r } o una caja { caja: [x, y, ancho, alto] } (el cartel de un amigo que adelanta, js/amigos-adelanta-juego.js)
+function ppMapaToca(b, x, y) {
+  if (!b.caja) return Math.hypot(x - b.x, y - b.y) <= b.r;
+  const [bx, by, w, h] = b.caja;
+  return x >= bx && x <= bx + w && y >= by && y <= by + h;
+}
 function ppMapaArriba() {
   const q = PP_MAPA.toque; PP_MAPA.toque = null;
   if (!q || q.movido) return;
-  for (const b of PP_BOTONES_MAPA) if (Math.hypot(q.x - b.x, q.y - b.y) <= b.r) { play('select'); b.f(); return; }
+  for (const b of PP_BOTONES_MAPA) if (ppMapaToca(b, q.x, q.y)) { play('select'); b.f(); return; }
   for (const nd of PP_NODOS_MAPA) if (Math.hypot(q.x - nd.x, q.y - nd.y) <= nd.r) { play('ppNodo'); ppEntra(nd.g, nd.dif); return; }
 }

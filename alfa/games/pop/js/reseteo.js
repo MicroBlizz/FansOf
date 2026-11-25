@@ -12,7 +12,7 @@ const PP_RESETEO = Object.freeze((() => {
   const QUE = Object.freeze(['recursos', 'progreso', 'todo']);
   const RECURSOS = Object.freeze(['monedas', 'vidas', 'vidaT', 'huecos', 'ayudas', 'bandejas', 'bandeja', 'hucha', 'infinitas', 'compras']);
   const PROGRESO = Object.freeze(['record', 'victorias', 'partidas', 'vistos', 'estrellas', 'tuto', 'run', 'mejor', 'cofres', 'dentro', 'memoria', 'fallos', 'racha', 'pase', 'primeros', 'estrenos', 'cole', 'mundos']);
-  const QUITA_PROGRESO = Object.freeze(['marcasSubidas']);   // las marcas del ranking ya subidas: el servidor las ha puesto a cero
+  const QUITA_PROGRESO = Object.freeze(['marcasSubidas', 'amigosFoto']);   // las marcas del ranking ya subidas (el servidor las ha puesto a cero) y la foto de por dónde iban tus amigos (tarea 384)
   // `nueva`: una partida recién creada (PP_NUEVA()); `partida`: la de ahora (solo se lee). Devuelve qué campos poner y cuáles quitar
   function cambios(que, nueva, partida) {
     if (!QUE.includes(que) || !nueva || typeof nueva !== 'object') return Object.freeze({ ok: false, error: 'que' });

@@ -1,8 +1,8 @@
 {
- "build": 1520,
- "hash": "9e506a8",
- "fecha": "2026-11-25T20:13:05Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/cranky-wescoff-2fbf24",
+ "build": 1521,
+ "hash": "e5f2e0a",
+ "fecha": "2026-11-25T20:19:46Z",
+ "mensaje": "Pop: trae main a la tarea 384 (turno 3)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

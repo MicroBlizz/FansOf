@@ -75,4 +75,8 @@ IDIOMA.add({
   "¡{nombre} te reta a un duelo!": "{nombre} challenges you to a duel!",
   "Entra en su sala y empezáis el duelo.": "Join their room and start the duel.",
   "AHORA NO": "NOT NOW",
+  // el cartel del camino cuando un amigo te adelanta (tarea 384, js/amigos-adelanta-juego.js)
+  "{nombre} te ha adelantado": "{nombre} just passed you",
+  "Va por el mundo {m} · nivel {n}": "Now on world {m} · level {n}",
+  "Un amigo": "A friend",
 });

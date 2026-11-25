@@ -49,7 +49,7 @@ function ppAmigosLatido(repinta = false) {
   const p = ppAmigosPosicion();
   PP_AM.va = PP_AMIGOS_SRV.latido(p.nivel, p.mundo).then(r => {
     PP_AM.latido = r;
-    ppAmGuardaGracias(r); ppAmPasaRetos(r); ppAmigosGlobo();
+    ppAmGuardaGracias(r); ppAmPasaRetos(r); ppAmigosGlobo(); ppAdelantoRevisa(r);   // ¿te ha adelantado alguien? (js/amigos-adelanta-juego.js)
     if (repinta && ppAmAbierta()) ppVentanaAmigos();
     return r;
   }).finally(() => { PP_AM.va = null; });

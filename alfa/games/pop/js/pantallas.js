@@ -13,7 +13,7 @@ function ppIrA(p) {
   if (p !== 'duelo' && p !== 'sala') $pp('#pp-listo').hidden = true;
   if (p !== 'mapa') $pp('#pp-presenta').hidden = true;   // la presentación de un mundo es solo del camino (js/mundo-presenta-juego.js)
   $pp('#pp-pausa').hidden = p === 'titulo' || p === 'mapa';   // en el camino sobra: abajo ya están INICIO y TIENDA (tarea #272)
-  ppBarraAyudas(); ppPintaLateral(); ppPintaCamino();   // la barra de ayudas en los niveles; en el camino, los botones de los lados y la barra de abajo (js/camino-barra.js)
+  ppBarraAyudas(); ppMemPistaBoton(); ppPintaLateral(); ppPintaCamino();   // la barra de ayudas en los niveles; en el camino, los botones de los lados y la barra de abajo (js/camino-barra.js)
   if (p === 'mapa') setTimeout(ppAlLlegarAlCamino, 400);   // regalo diario y pack de bienvenida
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);

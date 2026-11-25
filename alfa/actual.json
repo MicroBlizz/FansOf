@@ -1,8 +1,8 @@
 {
- "build": 1489,
- "hash": "5c44f5d",
- "fecha": "2026-11-25T01:30:20Z",
- "mensaje": "Asalto 0.6.6: la partida se guarda también en la ventana de premios; cerrar ahí ya no repite la oleada ni da otra vez sus plumas (tarea #314, Pepins)",
+ "build": 1490,
+ "hash": "d1790ce",
+ "fecha": "2026-11-25T01:46:12Z",
+ "mensaje": "Pop Memoria fase 2: seguir tras fallar una vez por partida (9 perlas o un anuncio) y «Repetir melodía» por 4 perlas, dos por partida (tarea #141, ADR 216, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

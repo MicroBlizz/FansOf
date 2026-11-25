@@ -25,3 +25,10 @@
 .pp-mem-dif small { font-size: 14px; font-weight: 500; }
 /* la dificultad elegida: rosa, el color principal (el dorado es solo para lo de pago), con un aro amarillo */
 .pp-btn2.pp-mem-dif.pp-mem-sel { --c1: var(--pp-prin1); --c2: var(--pp-prin2); --borde: var(--pp-prin-b); outline: 4px solid #ffd64a; outline-offset: 2px; }
+/* «Repetir melodía» (fase 2, js/memoria-ayudas.js): bajo los puntitos de la melodía, al alcance del pulgar; dorado porque cuesta perlas.
+   70 px de alto aquí son unos 48 de verdad en un móvil de 375 */
+#pp-mem-pista { position: absolute; left: 50%; top: calc(var(--pp-bajo-tablero, 660px) + 124px); transform: translateX(-50%); z-index: 25; flex-direction: column; gap: 2px; min-width: 320px; min-height: 76px; padding: 9px 26px 10px; white-space: nowrap; }
+#pp-mem-pista[hidden] { display: none; }
+#pp-mem-pista:active { transform: translateX(-50%) translateY(3px); }
+#pp-mem-pista > span { display: inline-flex; align-items: center; gap: 6px; }
+#pp-mem-pista small { font-size: 16px; font-weight: 700; }

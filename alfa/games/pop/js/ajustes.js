@@ -132,7 +132,11 @@ const PP_CFG = {
   // luego la forma de `ladoForma` del mundo elegido), cada mundo suena con su `instrumentos[m]` (js/memoria-instrumentos.js) y hay tres
   // DIFICULTADES: `paso` y `pasoMin` multiplican los de arriba, `pista` = segundos de duda tras los que brilla la buena (0 = nunca) y
   // `luces` = si la melodía se ve al sonar (en Difícil solo se oye). Normal es la de siempre y su récord, el de la clasificación.
+  // Fase 2 (ADR 216; js/memoria-ayudas.js): `seguir` = tras fallar, una vez por partida, se sigue en la misma ronda por `perlas` o viendo
+  // un anuncio (se ofrece desde la ronda `desdeRonda`); `pista` = «Repetir melodía» en tu turno, por `perlas`, una vez por ronda y
+  // `porPartida` veces como mucho. Ninguna de las dos vale en una partida `limpio` (duelos contra gente, cuando los haya).
   memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60,
+    seguir: { perlas: 9, desdeRonda: 2 }, pista: { perlas: 4, porPartida: 2 },
     crece: { lado4: 6, forma: 11, ladoForma: 5 },
     dificultades: {
       facil: { paso: 1.4, pasoMin: 1.4, pista: 3, luces: true },

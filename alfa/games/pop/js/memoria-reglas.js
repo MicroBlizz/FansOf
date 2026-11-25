@@ -1,6 +1,7 @@
 // Fans of Pop · MEMORIA, LAS REGLAS (dominio, tarea #141 fase 1): qué tablero toca en cada ronda (crece de 3x3 a 4x4 y luego a la
 // forma del mundo), la nota de cada burbuja (de grave a aguda por orden), la velocidad y las ayudas de cada dificultad, el instrumento
-// de cada mundo, qué mundos se pueden elegir y el récord de cada dificultad. Todo son funciones puras sobre los datos que se les pasan
+// de cada mundo, qué mundos se pueden elegir, el récord de cada dificultad y las dos ayudas de la fase 2 (ADR 216): seguir tras fallar
+// (una vez por partida) y repetir la melodía (con perlas, contadas). Todo son funciones puras sobre los datos que se les pasan
 // (PP_CFG.memoria, PP_FORMAS, PP_FORMAS_MUNDO): sin reloj, azar, SAVE ni dibujo. Lo usan js/memoria.js y js/memoria-elige.js.
 'use strict';
 const PP_MEM_R = (() => {
@@ -85,5 +86,32 @@ const PP_MEM_R = (() => {
     return { nuevo: true, cambios: { records: Object.assign({}, S.records, { [d]: rondas }) } };
   }
 
-  return Object.freeze({ DIFICULTADES, dificultad, ajustesDe, paso, tocaPista, formaDe, mascara, crece, puesto, nota, traduce, instrumento, abiertos, mundoValido, recordDe, conRecord });
+  /* ---------- las ayudas (fase 2, ADR 216). `e` es el estado de la partida: { limpio, seguido, fase, sec, pistas, pistaRonda } ---------- */
+  // en una partida `limpio` (un duelo contra gente, cuando lo haya) no vale ninguna ayuda
+  const ok = () => Object.freeze({ ok: true });
+  const error = motivo => Object.freeze({ ok: false, error: motivo });
+  // ¿se ofrece seguir tras este fallo? Una vez por partida y solo si ya has repetido alguna melodía (`desdeRonda`)
+  const puedeSeguir = (e, cfg) => !e.limpio && !e.seguido && e.sec.length >= cfg.seguir.desdeRonda;
+  // lo que cambia al seguir: la misma ronda, con la misma melodía, se enseña otra vez desde el principio
+  const trasSeguir = () => Object.freeze({ seguido: true, fase: 'mira', paso: 0, sigue: 0 });
+  // cuántas veces queda «Repetir melodía» en esta partida
+  const pistasQuedan = (e, cfg) => (e.limpio ? 0 : Math.max(0, cfg.pista.porPartida - (e.pistas || 0)));
+  // ¿se ve el botón? En tu turno, si quedan y no la has usado ya en esta ronda
+  const hayPista = (e, cfg) => e.fase === 'toca' && pistasQuedan(e, cfg) > 0 && e.pistaRonda !== e.sec.length;
+  // ¿se puede usar ahora con esas perlas? Los fallos, con nombre: limpio, fase, agotada, ronda, perlas
+  function puedePista(e, perlas, cfg) {
+    if (e.limpio) return error('limpio');
+    if (e.fase !== 'toca') return error('fase');
+    if (pistasQuedan(e, cfg) <= 0) return error('agotada');
+    if (e.pistaRonda === e.sec.length) return error('ronda');
+    if (!(perlas >= cfg.pista.perlas)) return error('perlas');
+    return ok();
+  }
+  // lo que cambia al usarla: una menos, gastada en esta ronda, y la melodía se enseña otra vez (tu turno empieza de cero)
+  const trasPista = e => Object.freeze({ pistas: (e.pistas || 0) + 1, pistaRonda: e.sec.length, fase: 'mira', paso: 0, sigue: 0 });
+  // el cobro de la partida cuando se cobra dos veces (al fallar y al acabar tras seguir): el récord vale si lo fue alguna vez y las
+  // monedas se suman
+  const sumaCobro = (a, b) => Object.freeze(a ? { nuevo: a.nuevo || b.nuevo, monedas: a.monedas + b.monedas, lleno: b.lleno } : { ...b });
+
+  return Object.freeze({ puedeSeguir, trasSeguir, pistasQuedan, hayPista, puedePista, trasPista, sumaCobro, DIFICULTADES, dificultad, ajustesDe, paso, tocaPista, formaDe, mascara, crece, puesto, nota, traduce, instrumento, abiertos, mundoValido, recordDe, conRecord });
 })();

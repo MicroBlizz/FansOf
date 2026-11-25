@@ -7,9 +7,11 @@
 // Se juega gratis (no gasta corazones) y guarda el récord de cada dificultad (Normal en SAVE.memoria.record, el de la clasificación;
 // Fácil y Difícil en SAVE.memoria.records). Premio diario en monedas según la ronda a la que llegues (PP_CFG.memoria): cada día se
 // cobra solo lo que mejora tu mejor ronda de HOY, así repetir no da monedas sin fin.
+// Fase 2 (ADR 216, js/memoria-ayudas.js): tras fallar se puede SEGUIR una vez (perlas o anuncio) y en tu turno hay «Repetir melodía»
+// (perlas, contadas); una partida `limpio` no tiene ninguna de las dos.
 // El reloj de la melodía avanza con el bucle (ppMemAvanza), no con setTimeout: así la pausa la congela de verdad.
 'use strict';
-let PP_MEM = null;   // { T, mundo, aj (ajustes de la dificultad), sec: [], paso, fase: 'mira' | 'toca' | 'bien' | 'fin', reloj, sigue, espera, luces: {i: segundos}, brillos: {i: 0..1} }
+let PP_MEM = null;   // { T, mundo, aj (ajustes de la dificultad), limpio, seguido, pistas, pistaRonda, cobro, sec: [], paso, fase: 'mira' | 'toca' | 'bien' | 'fin', reloj, sigue, espera, luces: {i: segundos}, brillos: {i: 0..1} }
 // la nota de la burbuja i del tablero T: de grave (arriba a la izquierda) a aguda (abajo a la derecha), en la pentatónica
 const ppMemNota = (T, i) => PP_MEM_R.nota(PP_MEM_R.puesto(T.mask, i), T.mask.reduce((a, v) => a + v, 0));
 // el tablero de la ronda r en el mundo m (con su estilo: T.d.mundo)
@@ -17,9 +19,10 @@ function ppMemTablero(m, r) {
   const C = PP_CFG.memoria, { lado, mask } = PP_MEM_R.mascara(PP_MEM_R.formaDe(C, PP_FORMAS, PP_FORMAS_MUNDO, m, r));
   return ppNuevoTablero({ g: 0, mundo: m, lado, mask, need: mask.slice(), opt: [], limite: 99, amigos: 0, jefe: false }, { equipo: [] });
 }
-function ppNuevaMemoria(mundo = SAVE.memoria.mundo || 0, dif = SAVE.memoria.dif) {
+// `limpio`: sin seguir ni repetir melodía (para un duelo contra gente)
+function ppNuevaMemoria(mundo = SAVE.memoria.mundo || 0, dif = SAVE.memoria.dif, limpio = false) {
   const T = ppMemTablero(mundo, 1);
-  PP_MEM = { T, mundo, aj: PP_MEM_R.ajustesDe(PP_CFG.memoria, dif), sec: [], paso: 0, fase: 'bien', reloj: 0.9, sigue: 0, espera: 0, luces: {}, brillos: {} };
+  PP_MEM = { T, mundo, aj: PP_MEM_R.ajustesDe(PP_CFG.memoria, dif), limpio, seguido: false, pistas: 0, pistaRonda: 0, cobro: null, sec: [], paso: 0, fase: 'bien', reloj: 0.9, sigue: 0, espera: 0, luces: {}, brillos: {} };
   ppIrA('memoria'); ppFxEntraSala(T);
   ppTutorial('memoria');
   ppMemRonda();
@@ -69,6 +72,7 @@ function ppMemAvanza(dt) {
   if (M.fase === 'mira') ppMemEnsena(M, dt);
   else if (M.fase === 'toca') ppMemDuda(M, dt);
   else if (M.fase === 'bien') { M.reloj -= dt; if (M.reloj <= 0 && M.sec.length) ppMemRonda(); }
+  ppMemPistaBoton();   // «Repetir melodía» sale y se va con tu turno (js/memoria-ayudas.js)
 }
 // Lola enseña la melodía, una burbuja cada paso
 function ppMemEnsena(M, dt) {
@@ -89,17 +93,18 @@ function ppMemToque(i) {
   if (i !== M.sec[M.paso]) { ppMemFin(i); return; }
   ppMemLuz(i, 0.22); M.paso++;
   if (M.paso === M.sec.length) {
-    M.fase = 'bien'; M.reloj = 1.0;
+    M.fase = 'bien'; M.reloj = 1.0; ppMemPistaBoton();
     const [cx] = ppCentro(ppGeom(M.T.n), i);
     ppFlota(M.sec.length % 5 === 0 ? tr('¡Increíble!') : tr('¡Bien!'), cx > 270 ? 340 : 200, ppGeom(M.T.n).y - 30, '#ffd64a');
     setTimeout(() => { if (PP_MEM === M) play('ppSala'); }, 250);
   }
 }
-// el récord de la dificultad y las monedas de hoy al acabar con `rondas`
+// el récord de la dificultad y las monedas de hoy al acabar con `rondas`. Se cobra en cada fallo (si sales en la ventana de seguir no
+// pierdes nada) y M.cobro lleva la suma de la partida: la partida cuenta una vez y las monedas solo pagan lo que mejora
 function ppMemCobra(M, rondas) {
   const S = SAVE.memoria, C = PP_CFG.memoria, r = PP_MEM_R.conRecord(S, M.aj.id, rondas);
   Object.assign(S, r.cambios);
-  S.partidas++;
+  if (!M.cobro) S.partidas++;
   // el premio de hoy: solo lo que mejora tu mejor ronda del día, hasta el tope
   if (S.dia !== ppHoy()) { S.dia = ppHoy(); S.hoy = 0; }
   const cobra = n => Math.min(C.tope, n * C.porRonda);
@@ -107,16 +112,20 @@ function ppMemCobra(M, rondas) {
   if (rondas > S.hoy) S.hoy = rondas;
   SAVE.monedas += monedas;
   ppGuarda(); ppSubeMarcas();
-  return { nuevo: r.nuevo, monedas, lleno: cobra(S.hoy) >= C.tope };
+  M.cobro = PP_MEM_R.sumaCobro(M.cobro, { nuevo: r.nuevo, monedas, lleno: cobra(S.hoy) >= C.tope });
+  return M.cobro;
 }
-// un fallo: la burbuja buena parpadea para que veas cuál era, y sale el resultado
+// un fallo: la burbuja buena parpadea para que veas cuál era, y sale la ventana de seguir (una vez por partida) o el resultado
 function ppMemFin(mala) {
-  const M = PP_MEM; M.fase = 'fin';
+  const M = PP_MEM; M.fase = 'fin'; ppMemPistaBoton();
   M.brillos[M.sec[M.paso]] = 1; M.falla = mala;
   PP_FX.temblor = Math.max(PP_FX.temblor, 0.5); ppVibra([30, 40, 30]);
   play('ppDano');
   const rondas = M.sec.length - 1, cobro = ppMemCobra(M, rondas);
-  setTimeout(() => { if (PP_MEM === M) ppMemResultado(M, rondas, cobro); }, 1300);
+  setTimeout(() => {
+    if (PP_MEM !== M) return;
+    if (PP_MEM_R.puedeSeguir(M, PP_CFG.memoria)) ppMemOfreceSeguir(M, rondas); else ppMemResultado(M, rondas, cobro);
+  }, 1300);
 }
 // la ventana del resultado
 function ppMemResultado(M, rondas, { nuevo, monedas, lleno }) {

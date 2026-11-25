@@ -11,13 +11,13 @@ function ppCuenta() {
   return { activo: ppCuentaActiva() && hay && !!CUENTA.activa, invitado: hay && !!CUENTA.invitado, nivel: ppPrimeros().nivel, visto: SAVE.cuentaInv || 0 };
 }
 const PP_CUENTA_TEXTO = {
-  primera: '¡Ya llevas 5 niveles! Guarda tu progreso con una cuenta y no perderás nada si cambias de móvil.',
-  recuerdo: '¡Ya vas por el nivel 10! Con una cuenta, todo lo que has ganado está a salvo. ¿La creamos?',
+  primera: '¡Ya llevas 5 niveles! Crea una cuenta y no pierdas nada.',
+  recuerdo: '¡Ya vas por el nivel 10! Con una cuenta no pierdes nada. ¿La creamos?',
 };
 // guardar el progreso: la ventana de cuenta de core (Google o email); al volver con la cuenta lista, un aviso
 function ppCuentaGuardar() {
   ppCierra();
-  if (typeof window.pedirCuenta === 'function') window.pedirCuenta('Con una cuenta guardas tu progreso y juegas en otros aparatos.', 'pop-cuenta', { titulo: 'GUARDA TU PROGRESO', cancelar: 'MÁS TARDE' });
+  if (typeof window.pedirCuenta === 'function') window.pedirCuenta('Guarda tu partida y juega en otro móvil.', 'pop-cuenta', { titulo: 'GUARDA TU PROGRESO', cancelar: 'MÁS TARDE' });
 }
 // la invitación: Lola con su globo y dos botones. Se enseña una sola vez cada una (se apunta al abrirla)
 function ppCuentaVentana(motivo) {
@@ -48,7 +48,7 @@ function ppCuentaAlEstrenar() {
   }, 300);
 }
 // comprar con dinero real sin cuenta: core pide cuenta antes de nada (devuelve el motivo; vacío = no exige)
-hook('compra-exige-cuenta', () => (PP_CUENTA.exigeParaComprar(ppCuenta()) ? 'Para comprar necesitas una cuenta. Así lo que compres es tuyo para siempre, aunque cambies de móvil. Tardas un minuto y no pierdes tu partida.' : ''));
+hook('compra-exige-cuenta', () => (PP_CUENTA.exigeParaComprar(ppCuenta()) ? 'Para comprar necesitas una cuenta. Así tus compras son tuyas para siempre. Tardas un minuto y no pierdes nada.' : ''));
 // al volver con la cuenta lista (el enlace del email o Google recargan la página)
 hook('cuenta-vuelta', d => {
   if (d === 'pop-cuenta') toast(tr('¡Cuenta lista! Tu progreso está a salvo.'), true);

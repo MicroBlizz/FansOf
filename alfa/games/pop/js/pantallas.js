@@ -33,7 +33,7 @@ function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-
 // la pausa dura lo que su ventana: se cierre por donde se cierre, el juego sigue (reporte 28, Daniel 19-11-2026)
 // al volver tras cerrar el juego a medias: el corazón se pierde igual (si no, recargar sería un reintento gratis), pero se dice (tarea #185)
 function ppVentanaSalioAMedias() {
-  const t = ppAbre(`<h2>${tr('¡Saliste a medias!')}</h2><p class="pp-sub">${tr('Cerraste el juego en mitad de un nivel y has perdido un corazón.')}</p>`);
+  const t = ppAbre(`<h2>${tr('¡Saliste a medias!')}</h2><p class="pp-sub">${tr('Saliste a mitad de nivel: pierdes un corazón.')}</p>`);
   t.appendChild(ppBoton(tr('¡VALE!'), 'pp-btn', ppCierra));
 }
 function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
@@ -238,7 +238,7 @@ function ppPausa() {
   if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalDuelo(); }));
   if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-pago', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
-  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppEscSoloGratis(PP_P.T) ? tr('Si sales ahora pierdes un corazón y el compañero se va.') : tr('Si sales ahora pierdes un corazón.')}</p>`);
+  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppEscSoloGratis(PP_P.T) ? tr('Si sales, pierdes un corazón y al compañero.') : tr('Si sales ahora pierdes un corazón.')}</p>`);
   if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   col.appendChild(ppFilasSonido());

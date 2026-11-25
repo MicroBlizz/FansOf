@@ -25,7 +25,7 @@ function ppEdadPide(siAdulto, alNo) {
   const t = ppAbre(`<h2>${tr('Antes de seguir')}</h2><p class="pp-sub">${tr('¿En qué año naciste?')}</p>
     <input id="pp-edad-anio" class="pp-edad-campo" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="4" aria-label="${tr('Año de nacimiento')}">
     <p id="pp-edad-error" class="pp-sub pp-edad-error"></p>
-    <p class="pp-sub"><small>${tr('Así te enseñamos solo lo que toca. No guardamos tu año, solo si eres menor de edad o no.')}</small></p>`);
+    <p class="pp-sub"><small>${tr('Así te enseñamos lo que toca. No guardamos tu año, solo si eres menor.')}</small></p>`);
   const i = $pp('#pp-edad-anio');
   t.appendChild(ppBoton(tr('ACEPTAR'), 'pp-btn', () => ppEdadRespuesta(i.value, siAdulto, alNo)));
   t.appendChild(ppBoton(tr('Ahora no'), 'pp-btn2 pp-azul', () => { PP_EDAD_SALTADA = true; ppCierra(); if (alNo) alNo(); }));

@@ -101,7 +101,7 @@ function ppMiraBienvenida() {
   SAVE.vistoBienvenida = true; ppGuarda(); ppAntesDeVender(ppVentanaBienvenidaPack, ppPintaLateral); return true;
 }
 /* ---------- segundo pack, al llegar al mundo 2 ---------- */
-const ppVentanaPackMundo2 = () => ppVentanaPackReloj('mundo2', tr('¡Pack del mundo 2!'), tr('Para seguir a lo grande en el nuevo mundo, solo una vez:'), tr('Pack del mundo 2'));
+const ppVentanaPackMundo2 = () => ppVentanaPackReloj('mundo2', tr('¡Pack del mundo 2!'), tr('Oferta para el nuevo mundo, solo una vez:'), tr('Pack del mundo 2'));
 // sale sola una vez, al volver al camino cuando ya se ha llegado al mundo 2
 function ppMiraPackMundo2() {
   if (!ppPackMundo2Visible() || SAVE.vistoMundo2) return false;

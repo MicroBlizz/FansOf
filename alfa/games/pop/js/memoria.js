@@ -133,7 +133,7 @@ function ppMemResultado(M, rondas, { nuevo, monedas, lleno }) {
   if (record) play('ppVictoria');
   const premio = monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>`
     : lleno ? `<p class="pp-sub">${tr('Hoy ya tienes todas las monedas de Memoria. ¡Vuelve mañana!')}</p>`
-      : rondas ? `<p class="pp-sub">${tr('Supera tu mejor ronda de hoy ({n}) para ganar más monedas.', { n: S.hoy })}</p>` : '';
+      : rondas ? `<p class="pp-sub">${tr('Pasa de la ronda {n} y ganas más monedas.', { n: S.hoy })}</p>` : '';
   const t = ppAbre(`<h2>${record ? tr('¡Récord nuevo!') : tr('¡Uy, esa no era!')}</h2>
     <p class="pp-sub">${rondas === 1 ? tr('Has repetido 1 melodía.') : tr('Has repetido {n} melodías.', { n: rondas })}</p>
     ${premio}

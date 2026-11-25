@@ -1,5 +1,5 @@
 // Fans of Pop · FERIA DEL FINDE (pantalla; tarea #97, ADR 151): el botón del lateral con su reloj, la ventana «camino de feria» con
-// sus 10 paradas y Lola marcando por dónde vas, la bienvenida de Lola el viernes, los cofres, la línea «+N para la Feria del finde»
+// sus 10 paradas y Lola marcando por dónde vas, la bienvenida de Lola el viernes, los cofres, la línea «+N tickets de la Feria»
 // de las victorias y la entrega sola de lo no recogido. Las reglas están en el dominio (js/feria.js, PP_FERIA); aquí solo se lee la
 // hora del móvil (ppFeriaAhora, que el panel DEV puede adelantar), el azar de los cofres (Math.random) y la partida guardada (SAVE.feria).
 'use strict';
@@ -51,7 +51,7 @@ function ppFeriaGana(estrellas, jefe, extra = 0) {
 function ppFeriaLinea(T) {
   if (!T || !T.feria) return '';
   const sube = T.feria.subio > 0 ? `<p class="pp-sub"><b>${tr('¡Nuevo premio en la feria!')}</b></p>` : '';
-  return `<div class="pp-gana-tk">${ppTicketHtml()} ${tr('+{n} para la Feria del finde', { n: T.feria.n })}</div>${sube}`;
+  return `<div class="pp-gana-tk">${ppTicketHtml()} ${(T.feria.n === 1 ? tr('+1 ticket de la Feria') : tr('+{n} tickets de la Feria', { n: T.feria.n }))}</div>${sube}`;
 }
 
 /* ---------- el botón del lateral (js/ofertas.js) ---------- */

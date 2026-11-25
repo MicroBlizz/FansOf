@@ -2,7 +2,8 @@
 'use strict';
 IDIOMA.add({
   "Feria del finde": "Weekend Fair",
-  "+{n} para la Feria del finde": "+{n} for the Weekend Fair",
+  "+{n} tickets de la Feria": "+{n} Fair tickets",
+  "+1 ticket de la Feria": "+1 Fair ticket",
   "¡Nuevo premio en la feria!": "New prize at the fair!",
   "Abre en {t}": "Opens in {t}",
   "Acaba en {t}": "Ends in {t}",

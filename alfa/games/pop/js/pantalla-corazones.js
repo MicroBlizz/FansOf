@@ -79,7 +79,7 @@ function ppBotonesPedirMapa(vidas, x0, paso, y) {
   for (let i = 0; i < PP_CFG.vida; i++) PP_BOTONES_MAPA.push({ x: x0 + i * paso, y, r: paso / 2 + 1, f: ppPedirCorazones });
 }
 function ppPedirCorazones() {
-  const t = ppAbre(`<h2>${tr('Pide corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub">${tr('Pásale tu enlace a un amigo y te regalará un corazón.')}</p>`);
+  const t = ppAbre(`<h2>${tr('Pide corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub">${tr('Pasa tu enlace a un amigo: te regalará un corazón.')}</p>`);
   ppBotonPedirCorazones(t);
   ppBotonBuzon(t);   // con regalos esperando (js/pantalla-buzon.js)
   ppBotonVolver(t, ppCierra);

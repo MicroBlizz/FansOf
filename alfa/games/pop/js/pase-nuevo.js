@@ -78,7 +78,7 @@ const ppPaseMision = ev => PP_PASE_MIS.evento(ev, 1);
 // el Pase dorado (4,99 €) o el Dorado+ (9,99 €, salta 10 escalones). Compra de prueba en la alfa: el cobro de verdad es la tarea #167
 function ppPaseCompra(plus) {
   const C = PP_CFG.pase, nombre = plus ? tr('Pase dorado+') : tr('Pase dorado');
-  const html = `<p>${plus ? tr('Todos los premios dorados de este mes y 10 escalones de golpe.') : tr('Todos los premios dorados de este mes.')}</p>`;
+  const html = `<p>${plus ? tr('Todos los premios dorados y 10 escalones de golpe.') : tr('Todos los premios dorados de este mes.')}</p>`;
   ppCompraEuros(nombre, html, plus ? C.plus.id : C.id, () => {
     const P = ppPaseAlDia();
     if (P.premium && (P.plus || !plus)) return;   // ya lo tenía (dos ventanas de compra a la vez): no salta otra vez
@@ -91,5 +91,5 @@ function ppPaseLinea(T) {
   if (!T || !T.pase) return '';
   if (!T.pase.n && T.pase.tope) return `<div class="pp-gana-tk">${ppIcono('i-pase', 26, '#ffd64a')} ${tr('Pase: tope de hoy alcanzado. ¡Mañana más!')}</div>`;
   const sube = T.pase.sube > 0 ? ` · <b>${tr('¡Escalón {e}!', { e: T.pase.escalon })}</b>` : '';
-  return `<div class="pp-gana-tk">${ppIcono('i-pase', 26, '#ffd64a')} ${tr('+{n} puntos del pase', { n: T.pase.n })}${sube}</div>`;
+  return `<div class="pp-gana-tk">${ppIcono('i-pase', 26, '#ffd64a')} ${tr('+{n} para el Pase de Pop', { n: T.pase.n })}${sube}</div>`;
 }

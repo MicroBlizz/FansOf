@@ -12,7 +12,7 @@ const PP_EXPLICA = Object.freeze({
     if (c.lo && c.usado) return { texto: 'Ya te ha ayudado en este nivel.', datos: {}, barra: null };
     if (c.lo) return { texto: c.veces > 1 ? 'Te ayuda {n} veces en cada nivel de Pesadilla.' : 'Te ayuda una vez en cada nivel de Pesadilla.', datos: { n: c.veces }, barra: null };
     if (fx.salta) return { texto: 'La barra rosa se llena con cada pop. Faltan {n} para saltar.', datos: { n: Math.max(1, fx.salta - (c.carga || 0)) }, barra: 'rosa' };
-    if (fx.combo) return { texto: 'La barra azul sube con toques de 3 o más pops. Actúa con COMBO x{n}.', datos: { n: fx.combo }, barra: 'azul' };
+    if (fx.combo) return { texto: 'La barra azul sube con 3 pops o más. Actúa con COMBO x{n}.', datos: { n: fx.combo }, barra: 'azul' };
     return { texto: 'Sin barra: actúa solo cuando le toca.', datos: {}, barra: null };
   },
 });

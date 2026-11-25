@@ -8,7 +8,7 @@ const PP_COMP = (() => {
   // modo: N = Niveles, P = Pesadilla, D = Duelos contra la máquina. Las 11 primeras son las de hoy. `estrellas`: lo que ganan con
   // estrellas las de «una vez» (sale en su ficha del álbum; las cifras, en MEJORA de js/coleccion.js, tarea #294)
   const HAB = f({
-    saltito: f({ modo: 'N', nombre: 'Saltito', texto: 'Cada pocos pops salta y hace pop en una burbuja buena.' }),
+    saltito: f({ modo: 'N', nombre: 'Saltito', texto: 'Cada pocos pops, hace pop en una burbuja buena.' }),
     lluvia: f({ modo: 'N', nombre: 'Lluvia', texto: 'Cada muchos pops hace pop en varias burbujas buenas.' }),
     hielo: f({ modo: 'N', nombre: 'Rompehielos', texto: 'Salta antes a las burbujas de hielo.' }),
     concha: f({ modo: 'N', nombre: 'Abreconchas', texto: 'Salta antes a las conchas.' }),
@@ -22,14 +22,14 @@ const PP_COMP = (() => {
     estrella: f({ modo: 'N', nombre: 'Imán de estrellas', texto: 'La 3.ª estrella pide un toque menos.' }),
     ticket: f({ modo: 'N', nombre: 'Feriante', texto: 'Con 3 estrellas, +1 ticket de la Feria del finde.' }),
     primero: f({ modo: 'N', nombre: 'Buen comienzo', texto: 'Con tu primer toque, hace pop en una burbuja buena.' }),
-    rescate: f({ modo: 'N', nombre: 'Al rescate', texto: 'Una vez por nivel, al quedarte sin toques te da 2 más.' }),
+    rescate: f({ modo: 'N', nombre: 'Al rescate', texto: 'Si te quedas sin toques, te da 2. Una vez por nivel.' }),
     racha: f({ modo: 'N', nombre: 'Victorias a salvo', texto: 'Una vez al día, perder no corta tus victorias seguidas.', estrellas: 'Con 5 estrellas, dos veces al día.' }),
     limpia: f({ modo: 'N', nombre: 'Limpieza', texto: 'Al ganar, +5 monedas por cada toque extra.' }),
     linterna: f({ modo: 'P', nombre: 'Linterna', texto: 'Te marca una burbuja buena.', estrellas: 'Con 5 estrellas, al reventarla te marca otra.' }),
     rebobina: f({ modo: 'P', nombre: 'Marcha atrás', texto: 'Deshace tu último toque.', estrellas: 'Con 5 estrellas, dos veces por nivel.' }),
     fantasma: f({ modo: 'P', nombre: 'Toque fantasma', texto: 'Tu primer toque no cuenta.' }),
     calma: f({ modo: 'P', nombre: 'Calma', texto: '+1 toque extra al empezar.' }),
-    volteo: f({ modo: 'P', nombre: 'Volteo', texto: 'Da la vuelta a una sola burbuja, sin tocar sus vecinas.', estrellas: 'Con 5 estrellas, dos veces por nivel.' }),
+    volteo: f({ modo: 'P', nombre: 'Volteo', texto: 'Da la vuelta a una burbuja, no a sus vecinas.', estrellas: 'Con 5 estrellas, dos veces por nivel.' }),
     lupa: f({ modo: 'D', nombre: 'Lupa', texto: 'Una pista gratis por duelo (marca la jugada que gana).', estrellas: 'Con 5 estrellas, dos pistas por duelo.' }),
     deshaz: f({ modo: 'D', nombre: 'Otra vez', texto: 'Un deshacer gratis por duelo.', estrellas: 'Con 5 estrellas, dos deshacer por duelo.' }),
     despiste: f({ modo: 'D', nombre: 'Despiste', texto: 'El rival se equivoca un poco más.' }),

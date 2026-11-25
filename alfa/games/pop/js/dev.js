@@ -30,7 +30,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Volver a ver las ofertas', () => { SAVE.compras = {}; SAVE.vistoBienvenida = false; SAVE.atascoDia = ''; SAVE.regaloDia = ''; if (typeof PP_PASE_VISTO !== 'undefined') PP_PASE_VISTO.regalo = false; });
   d = fila();
   boton(d, 'Hucha llena', () => { SAVE.hucha = PP_CFG.hucha.max; });
-  boton(d, 'Pase: +30 puntos', () => { ppPaseAlDia().puntos += 30; });
+  boton(d, 'Pase: +30 puntos', () => { if (ppPaseNuevo()) ppPaseSuma(30); else ppPaseAlDia().puntos += 30; });   // el pase nuevo lleva sus puntos aparte (SAVE.pase.p2)
   boton(d, 'Pase premium sí/no', () => { const P = ppPaseAlDia(); P.premium = !P.premium; });
   boton(d, 'Todas las bandejas', () => { SAVE.bandejas = {}; for (const B of PP_BANDEJAS) SAVE.bandejas[B.id] = true; });
   boton(d, 'Racha al tope', () => { SAVE.racha = PP_CFG.racha.max; });

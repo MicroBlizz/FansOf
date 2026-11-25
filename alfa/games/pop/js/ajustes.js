@@ -97,10 +97,10 @@ const PP_CFG = {
   // de pagar por azar (ADR 004). Ver js/potenciadores.js, js/ofertas.js y js/pase.js; la tienda con pestañas en js/tienda.js.
   // AYUDAS (potenciadores): se ganan jugando (regalo diario, pase, cofres de oferta) o se compran con perlas. `nim`: solo en duelos.
   ayudas: {
-    martillo: { perlas: 6, nombre: 'Martillo', texto: 'Hace pop del todo en la burbuja que toques, sin gastar toque.' },
+    martillo: { perlas: 6, nombre: 'Martillo', texto: 'Hace pop del todo en una burbuja. No gasta toque.' },
     bomba:    { perlas: 9, nombre: 'Bomba', texto: 'Golpea un cuadrado de 3x3 sin gastar toque.' },
     toques3:  { perlas: 6, nombre: '+3 toques', texto: 'Tres toques más en este nivel.' },
-    deshacer: { perlas: 5, nombre: 'Deshacer', texto: 'En un duelo, vuelve atrás tu última jugada (y la del rival).', nim: true },
+    deshacer: { perlas: 5, nombre: 'Deshacer', texto: 'En un duelo, deshace tu última jugada.', nim: true },
     pista:    { perlas: 4, nombre: 'Pista de Lola', texto: 'En un duelo, Lola te marca la jugada ganadora.', nim: true },
     red:      { perlas: 9, nombre: 'Red', texto: 'Captura al momento un compañero repetido de la burbuja arcoíris, sin duelo.', esc: true },   // tarea #329: solo en la ventana del repetido
   },
@@ -158,7 +158,7 @@ const PP_CFG = {
 //   combo: con qué combo actúa · gratis: toques que no cuentan · pista: burbujas marcadas · premio: toques de 4 y 5 burbujas
 const PP_SLIMES = {
   bunny:   { nombre: 'CrazyBunny', color: '#f6f1ff', color2: '#cfc2ea', pinta: 'orejas',
-             pasiva: 'Zanahoriazo', texto: 'Cada 8 pops salta y hace pop en una burbuja buena.', fx: { salta: 8, golpes: 1 } },
+             pasiva: 'Zanahoriazo', texto: 'Cada 8 pops, hace pop en una burbuja buena.', fx: { salta: 8, golpes: 1 } },
   becario: { nombre: 'El Becario', color: '#7fc4ff', color2: '#3f86d8', pinta: 'antena',
              pasiva: 'Horas extra', texto: 'Con un COMBO x3, tu siguiente toque no cuenta.', fx: { combo: 3, gratis: 1 } },
   lola:    { nombre: 'Lola', color: '#ffb88a', color2: '#e07a3c', pinta: 'pelo',
@@ -166,12 +166,12 @@ const PP_SLIMES = {
   cofre:   { nombre: 'Cofre del tesoro', color: '#ffd64a', color2: '#c98a12', pinta: 'dientes',
              pasiva: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).', fx: { premio: 1 } },
   ceo:     { nombre: 'El CEO', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata',
-             pasiva: 'Recorte de plantilla', texto: 'Cada 15 pops explota y hace pop en dos burbujas buenas.', fx: { salta: 15, golpes: 2 } },
+             pasiva: 'Recorte de plantilla', texto: 'Cada 15 pops, hace pop en dos burbujas buenas.', fx: { salta: 15, golpes: 2 } },
   // los amigos de los mundos 3 a 6 (30-10-2026, para que los huecos 5.º y 6.º sirvan); `prefiere`: salta antes a las de ese tipo
   copito:  { nombre: 'Copito', color: '#bfe9ff', color2: '#6fb8e8', pinta: '',
-             pasiva: 'Deshielo', texto: 'Cada 10 pops salta a una burbuja de hielo y le hace pop.', fx: { salta: 10, golpes: 1, prefiere: 1 } },
+             pasiva: 'Deshielo', texto: 'Cada 10 pops, hace pop en un hielo.', fx: { salta: 10, golpes: 1, prefiere: 1 } },
   medusa:  { nombre: 'Medusita', color: '#ffc4e6', color2: '#e07ab5', pinta: '',
-             pasiva: 'Cosquillas', texto: 'Cada 12 pops salta a una concha y le hace pop.', fx: { salta: 12, golpes: 1, prefiere: 2 } },
+             pasiva: 'Cosquillas', texto: 'Cada 12 pops, hace pop en una concha.', fx: { salta: 12, golpes: 1, prefiere: 2 } },
   algodon: { nombre: 'Algodón', color: '#ffd6f0', color2: '#9fdcff', pinta: '',
              pasiva: 'Lluvia de azúcar', texto: 'Cada 18 pops llueve azúcar sobre tres burbujas buenas.', fx: { salta: 18, golpes: 3 } },
   nubecita: { nombre: 'Nubecita', color: '#f4f0ff', color2: '#c9b8f0', pinta: '',
@@ -180,7 +180,7 @@ const PP_SLIMES = {
   hada:    { nombre: 'Hadita', color: '#b8f0d0', color2: '#4fc98a', pinta: '',
              pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete y lo apaga: revienta sin levantar nada.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
   sirena:  { nombre: 'Sirenita', color: '#9fe8f0', color2: '#3ab0c8', pinta: '',
-             pasiva: 'Ola', texto: 'Cada 12 pops salta a una burbujeante y le hace pop.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
+             pasiva: 'Ola', texto: 'Cada 12 pops, hace pop en una burbujeante.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
   maneki:  { nombre: 'Gatito de la suerte', color: '#fff8f0', color2: '#e0c8b0', pinta: '',
              pasiva: 'Fortuna', texto: 'Al ganar un nivel nuevo, la mitad de monedas más.', fx: { monedas: 0.5 } },
   astro:   { nombre: 'Astronauta', color: '#e0d0ff', color2: '#9a80d8', pinta: '',

@@ -3,7 +3,10 @@
 // el giro de la cámara se suma al del Brotito y su altura cambia cuánto se aplasta cada loncha (K = seno de la altura, como en el juego).
 // Con `escala` mayor que 1 es la versión en alta resolución: las mismas fórmulas del dibujo pintadas con más píxeles (las seis posturas,
 // que se fabrican poco a poco al abrir; sin posturas intermedias, que tardarían demasiado).
-// IS.VistaLonchas.crea(lienzo, escala = 1) → { pinta(proto, camara, opciones, dt), lista() }; camara = { yaw, elev }; opciones = { suave, contorno }.
+// IS.VistaLonchas.cortadas(png, json, giro) da las lonchas que Yoshi corta de un modelo 3D (lonchas.png, una fila por postura, y su lonchas.json),
+// para pasarlas a crea como `pilas`: sin posturas intermedias, cada postura del juego usa la suya. `giro` (radianes) las pone mirando
+// hacia donde mira el Brotito del juego (+x), porque el modelo no tiene por qué mirar allí.
+// IS.VistaLonchas.crea(lienzo, escala = 1, pilas) → { pinta(proto, camara, opciones, dt), lista() }; camara = { yaw, elev }; opciones = { suave, contorno }.
 'use strict';
 {
   const { K, contorno } = IS.Lonchas;
@@ -33,6 +36,28 @@
     return de;
   }
 
+  function cortadas(png, json, giro = 0) {   // las de Yoshi: en cada fila de png, las lonchas de la del suelo a la de arriba, de ancho x fondo
+    const pilas = {};
+    const de = pose => {
+      let mejor = null, d = Infinity;
+      for (const n in IS.arte.BROTO_POSTURAS) { const x = cerca(pose, IS.arte.BROTO_POSTURAS[n]); if (pilas[n] && x < d) { d = x; mejor = pilas[n]; } }
+      return mejor;
+    };
+    de.cargadas = Promise.all([fetch(json).then(r => { if (!r.ok) throw new Error(json + ' ' + r.status); return r.json(); }),
+      new Promise((ok, mal) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => mal(new Error('no se pudo leer ' + png)); im.src = png; })])
+      .then(([meta, im]) => meta.posturas.forEach((nombre, fila) => {
+        const hojas = [];
+        for (let i = 0; i < meta.lonchas; i++) {
+          const h = document.createElement('canvas'); h.width = meta.ancho; h.height = meta.fondo;
+          h.getContext('2d').drawImage(im, i * meta.ancho, fila * meta.fondo, meta.ancho, meta.fondo, 0, 0, meta.ancho, meta.fondo);
+          hojas.push(h);
+        }
+        pilas[nombre.replace(/-\d+$/, '')] = { hojas, an: meta.ancho, fo: meta.fondo, al: meta.lonchas, giro };
+      }));
+    de.lista = () => Object.keys(pilas).length > 0;
+    return de;
+  }
+
   // como IS.Lonchas.girada, pero con la altura de la cámara (k y el alto de cada loncha) y el contorno opcional (de `borde` píxeles)
   function apila(p, ang, k, alto, borde) {
     const R = Math.ceil(Math.hypot(p.an, p.fo) / 2) + 2 + borde;
@@ -48,10 +73,10 @@
     return { c, suelo };
   }
 
-  function crea(lienzo, escala = 1) {
+  function crea(lienzo, escala = 1, pilas = null) {
     const E = escala, L = LADO * E;
     lienzo.width = L; lienzo.height = L;
-    const g = lienzo.getContext('2d'), pilaDe = E > 1 ? pilasGrandes(E) : pilasJuego();
+    const g = lienzo.getContext('2d'), pilaDe = pilas || (E > 1 ? pilasGrandes(E) : pilasJuego());
     let pose = null, camY = null, ultima = { clave: '', s: null };
     function apilada(p, ang, k, alto, borde) {   // la misma imagen mientras no cambien la pila ni la cámara
       const clave = [ang.toFixed(3), k.toFixed(3), borde].join('|');
@@ -75,10 +100,10 @@
       const r = Math.round(13 * E * Math.max(0.45, 1 - (e.z - base) / 140));
       g.fillStyle = 'rgba(30,20,50,0.28)';
       g.beginPath(); g.ellipse(L / 2, ySuelo, r, Math.max(1, r * k), 0, 0, Math.PI * 2); g.fill();
-      const s = apilada(p, e.giro + camara.yaw, k, alto, opciones.contorno ? Math.max(1, Math.round(E / 2)) : 0);
+      const s = apilada(p, e.giro + camara.yaw + (p.giro || 0), k, alto, opciones.contorno ? Math.max(1, Math.round(E / 2)) : 0);
       g.drawImage(s.c, Math.round(L / 2 - s.c.width / 2), yPies - s.suelo);
     }
     return { pinta, lista: () => !pilaDe.lista || pilaDe.lista() };
   }
-  IS.VistaLonchas = Object.freeze({ crea, ELEV_JUEGO });
+  IS.VistaLonchas = Object.freeze({ crea, cortadas, ELEV_JUEGO });
 }

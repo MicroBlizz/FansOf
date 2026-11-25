@@ -1,7 +1,7 @@
 // Fans of Island · prototipo Brotito 3D, visor para comparar: un solo Brotito (mundo.js) dibujado seis veces a la vez, de cerca. Arriba, como
 // está hoy: en lonchas (vista-lonchas.js, con la misma cámara) y con los dos modelos 3D (brotito.glb, desde el render; brotito-vinilo.glb,
 // desde la figura de vinilo). Debajo, lo mismo en alta resolución (lonchas x4 y brotito-hd.glb, brotito-vinilo-hd.glb) y el modelo que
-// hace la cadena de lonchas de Yoshi por etapas (brotito-etapas.glb).
+// hace la cadena de lonchas de Yoshi por etapas (brotito-etapas.glb), con las lonchas que Yoshi cortó de él (brotito-etapas-lonchas.png/json).
 // Todos los botones y la cámara (arrastrar cualquiera o «Dar vueltas») valen para los seis a la vez.
 'use strict';
 import './brotito-3d.js';
@@ -9,7 +9,10 @@ import './brotito-3d.js';
 const $ = id => document.getElementById(id);
 while (IS.TAREAS.length) IS.TAREAS.shift()(null);
 const proto = IS.Prototipo3D.crea();
-const lonchas = [IS.VistaLonchas.crea($('lonchas')), IS.VistaLonchas.crea($('lonchas-hd'), 4)];   // las del juego y las de alta resolución
+const cortadas = IS.VistaLonchas.cortadas('brotito-etapas-lonchas.png', 'brotito-etapas-lonchas.json', Math.PI * 1.125);   // mirado a ojo, para que mire como su modelo 3D
+cortadas.cargadas.catch(e => { $('aviso').textContent += `No se pudieron cargar las lonchas cortadas: ${e.message}. `; console.error(e); });
+// las del juego, las de alta resolución y las cortadas del 3D por etapas
+const lonchas = [IS.VistaLonchas.crea($('lonchas')), IS.VistaLonchas.crea($('lonchas-hd'), 4), IS.VistaLonchas.crea($('lonchas-etapas'), 1, cortadas)];
 // lo que comparten los tres: la cámara (giro y altura) y las opciones de dibujo
 const estado = { vueltas: false, vistas: [], cam: { yaw: 0, elev: IS.VistaLonchas.ELEV_JUEGO }, opciones: { suave: true, contorno: true } };
 
@@ -49,7 +52,7 @@ function botones() {
     todas(x => { x.vista.deJuego(); x.vista.cerca(); });
     giraTodas(0, IS.VistaLonchas.ELEV_JUEGO);
   });
-  arrastrar($('lonchas')); arrastrar($('lonchas-hd'));
+  for (const id of ['lonchas', 'lonchas-hd', 'lonchas-etapas']) arrastrar($(id));
 }
 
 async function cargaVistas() {

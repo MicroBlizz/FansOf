@@ -3,6 +3,7 @@
 // en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.3.4', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.3.3', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.3.2', real: ["<b>MEJORAS INTERNAS</b>: arreglos por dentro para que las pruebas automáticas puedan revisar Auto antes de cada versión. No cambia nada al jugar."], joke: ["Microblizz pagó una auditoría del distrito. El auditor se fue en un coche robado."] },
   { v: '0.3.1', real: ["<b>EN INGLÉS</b>: Auto ya se juega en inglés. Sale solo si tu navegador va en inglés, y se cambia en Opciones desde la portada."], joke: ["Microblizz quería traducirlo con su IA. Todos los peatones gritaban «sinergia»."] },

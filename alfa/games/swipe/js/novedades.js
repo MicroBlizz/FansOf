@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.3', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },
   { v: '0.2.2', real: ["<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento."], joke: ["Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café."] },
   { v: '0.2.1', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas internos de la web y de la portada."], joke: ["Microblizz ha cambiado los muebles de sitio en la portada y Phony jura que él no ha tocado nada."] },
   { v: '0.2.0', real: ["<b>ACTO 2, La Era Digital</b>: gana al CEO y la subida sigue hasta el piso 30, contra <b>Phony</b> y su Presidente.", "Enemigos nuevos con <b>suscripciones</b>, <b>licencias caducadas</b>, <b>peajes</b> y facturas que caen del cielo; élites corruptas y 6 eventos nuevos.", "Libera a <b>ProGamer</b> y a <b>LaDirectora</b> y sus facciones se unen a ti con su reliquia. Y si te quedan pocas fuerzas: empieza directamente en el Acto 2 desde la portada."], joke: ["Phony ha intentado cobrar el Acto 2 como DLC. Microblizz ha denunciado a Phony por copiar su idea."] },

@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.6.5
+  "<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website has its own 404 page that forwards the old addresses, and the rewarded ad is clearer.",
+  "Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina.": "Microblizz put a 'you are lost' sign on the website and Phony has already asked for a copy for the kitchen.",
   // 0.6.4
   "<b>MEJORAS POR DENTRO</b>: la web reintenta leer los avisos y ajustes del servidor cuando la conexión falla un momento.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the site retries reading the server notices and settings when the connection hiccups.",
   "Microblizz le ha dicho a la conexión que insista y Phony ha aprovechado para pedir lo mismo con el café.": "Microblizz told the connection to keep trying and Phony took the chance to ask the same of the coffee machine.",

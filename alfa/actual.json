@@ -1,8 +1,8 @@
 {
- "build": 1499,
- "hash": "2547d62",
- "fecha": "2026-11-25T07:57:28Z",
- "mensaje": "Mapas al día (mapa.py): tamaños y archivos nuevos de los últimos commits",
+ "build": 1500,
+ "hash": "ec178d6",
+ "fecha": "2026-11-25T08:37:06Z",
+ "mensaje": "Core: el «!» de reportar de las cuentas admin también se arrastra a cualquier borde (tarea #362, ADR 217, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

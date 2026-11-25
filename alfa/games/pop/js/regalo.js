@@ -2,10 +2,13 @@
 // semana decide el regalo; el domingo, el más gordo. La ventana enseña la caja y lo que toca hoy, y el calendario de los 7 días (mezcla de los bocetos A y B).
 // Se abre desde el botón lateral (js/ofertas.js) y sola al llegar al camino (ppAlLlegarAlCamino, js/pase.js). Estilo: css/regalo.css.
 // DÍAS SEGUIDOS (tarea #383, ADR 221; solo en pruebas: alfa y desarrollo): el regalo no va por día de la semana, sino por tu día del
-// camino de 7, con un día de perdón. Las reglas, en js/dias-seguidos.js; aquí solo se guarda (SAVE.diasSeguidos) y se pinta.
+// camino de 7, con un día de perdón, y debajo un contador con metas (3, 7, 14 y 30 días). Las reglas, en js/dias-seguidos.js; aquí solo
+// se guarda (SAVE.diasSeguidos), se dan los premios y se pinta.
 'use strict';
 const PP_REGALOS = [{ monedas: 30 }, { ayudas: { martillo: 1 } }, { monedas: 50 }, { ayudas: { toques3: 1 } }, { perlas: 2 }, { ayudas: { bomba: 1 } },
   { perlas: 5, ayudas: { martillo: 1, bomba: 1 }, infinitas: 30 }];
+// los premios de las metas de días seguidos, en el orden de PP_DIAS_SEGUIDOS.METAS (3, 7, 14 y 30 días; «Moderados», Pepins 25-11-2026)
+const PP_METAS_SEGUIDOS = [{ monedas: 50 }, { perlas: 3 }, { perlas: 5, ayudas: { martillo: 1, bomba: 1, toques3: 1 } }, { perlas: 10, infinitas: 30 }];
 const ppDiaSemana = () => (new Date().getDay() + 6) % 7;
 // cómo está cada día respecto a hoy: 'pasado', 'hoy' o 'futuro' (el regalo no se reinicia al faltar: un día pasado solo ya pasó)
 function ppRegaloEstados(hoy) { return PP_REGALOS.map((_, k) => (k < hoy ? 'pasado' : k === hoy ? 'hoy' : 'futuro')); }
@@ -35,6 +38,17 @@ function ppRegaloLlevas(m) {
 }
 // las frases de los días seguidos bajo el premio: cuántos llevas y cómo está tu día de perdón
 function ppRegaloSeguidosTexto(m) { return [ppRegaloLlevas(m), m.perdon ? tr('Te queda un día de perdón') : tr('Ya has gastado tu día de perdón')]; }
+// el contador bajo el camino: la barra hacia la meta siguiente y su premio. Cuenta los días ya abiertos (sin abrir el de hoy, uno menos)
+function ppRegaloMetaTexto(c, abierto) {
+  const n = c.hechos + c.faltan;
+  if (!abierto && c.faltan === 1) return tr('¡Ábrelo y llegas a los {n} días!', { n });
+  return c.faltan === 1 ? tr('A los {n} días · falta 1', { n }) : tr('A los {n} días · faltan {f}', { n, f: c.faltan });
+}
+function ppRegaloContador(m) {
+  const c = PP_DIAS_SEGUIDOS.contador(m.abierto ? m.total : m.total - 1);
+  return `<div class="pp-rg-cuenta"><div class="pp-rg-barra"><i style="width:${Math.round(c.progreso * 100)}%"></i></div>
+    <div class="pp-rg-meta"><span>${ppRegaloMetaTexto(c, m.abierto)}</span>${ppPremioCandyHtml(PP_METAS_SEGUIDOS[c.meta], 24)}</div></div>`;
+}
 function ppRegaloTira(hoy, seguidos) {
   const dias = seguidos ? PP_REGALOS.map((_, k) => tr('Día {n}', { n: k + 1 })) : [tr('Lun'), tr('Mar'), tr('Mié'), tr('Jue'), tr('Vie'), tr('Sáb'), tr('Dom')], est = ppRegaloEstados(hoy);
   return `<div class="pp-rg-tira">${PP_REGALOS.map((p, k) => `<div class="pp-rg-dia pp-rg-${est[k]}${k === 6 ? ' pp-rg-gordo' : ''}"><span>${ppRegaloIcono(p, k === 6 ? 46 : 40)}</span><em>${ppRegaloCifra(p)}</em><b>${dias[k]}</b></div>`).join('')}</div>`;
@@ -46,7 +60,7 @@ function ppVentanaRegalo() {
   const seguidos = m ? `<p class="pp-rg-seguidos"><b>${ppRegaloSeguidosTexto(m).join('</b><span>')}</span></p>` : '';
   const t = ppAbre(`<h2>${tr('Regalo diario')}</h2><p class="pp-sub">${sub}</p>
     <div class="pp-rg-halo${cogido ? ' pp-rg-quieto' : ''}">${ppIcono('i-regalo', 130, '#9cf0a0')}</div>
-    <div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 40)}</div>${seguidos}${ppRegaloTira(hoy, !!m)}`, true);
+    <div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 40)}</div>${seguidos}${ppRegaloTira(hoy, !!m)}${m ? ppRegaloContador(m) : ''}`, true);
   if (!cogido) t.appendChild(ppBoton(tr('¡ABRIR!'), 'pp-btn', () => ppRegaloAbre(hoy)));
   ppBotonVolver(t, ppCierra);
 }
@@ -61,7 +75,7 @@ function ppRegaloApunta() {
   const r = PP_DIAS_SEGUIDOS.abre(SAVE.diasSeguidos, ppRegaloDia());
   if (!r.ok) return null;
   SAVE.diasSeguidos = { ...r.estado };
-  return { paso: r.paso, clave: r.estado.ultimo, frase: ppRegaloFrase(r) };
+  return { paso: r.paso, clave: r.estado.ultimo, frase: ppRegaloFrase(r), meta: r.meta, total: r.total };
 }
 // para el panel DEV: como si hubieran pasado `n` días desde el último regalo (mueve atrás el día apuntado)
 function ppRegaloDevPasan(n) {
@@ -70,13 +84,22 @@ function ppRegaloDevPasan(n) {
   SAVE.diasSeguidos = { ...e, ultimo: new Date(Date.parse(ppRegaloDia()) - n * 86400000).toISOString().slice(0, 10) };
   SAVE.regaloDia = '';
 }
+// si hoy se llega a una meta de días seguidos, se da su premio (perlas con su motivo del servidor, 'seguidos', y una clave por día para
+// no cobrarlo dos veces) y se enseña debajo del regalo
+function ppRegaloMetaCobra(a) {
+  if (!(a.meta >= 0)) return '';
+  const p = PP_METAS_SEGUIDOS[a.meta];
+  ppDaPremio(p, { motivo: 'seguidos', clave: 'seguidos:' + a.clave });
+  return `<div class="pp-rg-cuenta pp-rg-logro"><b>${tr('¡Meta de {n} días seguidos!', { n: a.total })}</b>${ppPremioCandyHtml(p, 32)}</div>`;
+}
 // abrir el de hoy: se da el premio, se guarda el día y sale lo que ha tocado
 function ppRegaloAbre(hoy) {
-  const a = ppDiasSeguidosActivo() ? ppRegaloApunta() : { paso: hoy, clave: ppHoy(), frase: '' };
+  const a = ppDiasSeguidosActivo() ? ppRegaloApunta() : { paso: hoy, clave: ppHoy(), frase: '', meta: -1 };
   if (!a) { ppVentanaRegalo(); return; }
   hoy = a.paso;
   ppDaPremio(PP_REGALOS[hoy], { motivo: 'regalo', clave: 'regalo:' + a.clave }); SAVE.regaloDia = ppHoy(); ppGuarda(); play('ppVictoria'); ppVibra([20, 30, 20]);
   const frase = a.frase ? `<p class="pp-rg-seguidos"><b>${a.frase}</b></p>` : '';
-  const t = ppAbre(`<h2>${tr('¡Toma!')}</h2><div class="pp-rg-halo">${ppIcono('i-regalo', 130, '#9cf0a0')}</div><div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 48)}</div>${frase}`);
+  const logro = ppRegaloMetaCobra(a);   // la meta de hoy, si la hay, se cobra aquí y se enseña bajo el regalo
+  const t = ppAbre(`<h2>${tr('¡Toma!')}</h2><div class="pp-rg-halo">${ppIcono('i-regalo', 130, '#9cf0a0')}</div><div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 48)}</div>${frase}${logro}`);
   t.appendChild(ppBoton(tr('¡GENIAL!'), 'pp-btn', ppCierra)); ppPintaLateral();
 }

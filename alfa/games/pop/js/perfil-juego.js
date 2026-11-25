@@ -3,7 +3,7 @@
 // · ppPerfilActivo(): el flag 'tienda-gemas' de Pop. Cerrado, no hay botón PERFIL ni se habla con el servidor: el juego va como antes.
 // · PP_SRV: el libro de perlas ya montado con la cuenta, la partida y la cola de core.
 // · ppPerlas(n, motivo, clave): TODA perla que entra (n > 0) o sale (n < 0) del juego pasa por aquí; false si no llegan para gastar.
-//   `motivo` es el del servidor (jefe, regalo, pase; ayuda, seguir, vidas, hueco, infinitas, mundo). Sin motivo son perlas de prueba (panel DEV).
+//   `motivo` es el del servidor (jefe, regalo, pase, pagina, seguidos; ayuda, seguir, vidas, hueco, infinitas, mundo). Sin motivo son perlas de prueba (panel DEV).
 // · La cuenta de probador (rol alfa, tarea #120, ADR 146): los ganchos 'probador-regalo' (las perlas que suma el servidor) y
 //   'probador-reseteo' (vaciar lo de este móvil tras resetear la cuenta; las reglas, en js/reseteo.js).
 // · PP_MI: el catálogo entero (con los personajes), lo que tengo, lo que llevo puesto y los casos de uso de la pantalla: poner y comprar.

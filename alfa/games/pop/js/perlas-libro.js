@@ -1,6 +1,6 @@
 // Fans of Pop · LIBRO DE PERLAS (dominio; tarea #41, ADR 130): las reglas para llevar las perlas al servidor, donde son las gemas del
 // monedero de 'pop'. Funciones puras: sin reloj, azar, SAVE, red ni dibujo.
-// · Lo que se gana jugando (jefe, regalo, pase; pagina, al completar una página del álbum, tarea #142) y lo que se gasta (ayuda, seguir, vidas, hueco, infinitas; mundo, al saltar un jefe, tarea #95) viaja como un movimiento
+// · Lo que se gana jugando (jefe, regalo, pase; pagina, al completar una página del álbum, tarea #142; seguidos, las metas de días seguidos del Regalo diario, tarea #383) y lo que se gasta (ayuda, seguir, vidas, hueco, infinitas; mundo, al saltar un jefe, tarea #95) viaja como un movimiento
 //   { motivo, clave, gemas } para `anotar` (servidor/09): los motivos son los de la fila 'pop' de tablas_juego (herramientas/pop/pop_datos.js).
 // · Las perlas DE PRUEBA (panel DEV y compras de prueba, solo en la alfa y en desarrollo) no existen en el servidor: se llevan aparte y
 //   son las primeras que se gastan, así el servidor nunca recibe un gasto de perlas que no tiene.
@@ -8,7 +8,7 @@
 // Los errores son resultados con nombre: cantidad, motivo, clave.
 'use strict';
 const PP_LIBRO = Object.freeze((() => {
-  const GANAR = Object.freeze(['jefe', 'regalo', 'pase', 'pagina']);
+  const GANAR = Object.freeze(['jefe', 'regalo', 'pase', 'pagina', 'seguidos']);
   const GASTAR = Object.freeze(['ayuda', 'seguir', 'vidas', 'hueco', 'infinitas', 'mundo']);
   const ok = v => Object.freeze({ ok: true, ...v });
   const error = e => Object.freeze({ ok: false, error: e });

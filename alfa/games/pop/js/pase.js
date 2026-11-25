@@ -100,7 +100,7 @@ function ppVentanaPase(repinta = false) {
     lista.appendChild(fila);
   }
   t.appendChild(lista);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra);
   // abre por el primer premio que se puede recoger (o por donde vas)
   if (!repinta) setTimeout(() => { const l = $pp('.pp-pase'), f = l && (l.querySelector('.pp-listo') || l.children[Math.max(0, e - 1)]); if (l && f) l.scrollTop = f.offsetTop - l.offsetTop - 10; }, 0);
 }

@@ -63,15 +63,13 @@
 .pp-vic-aviso b { color: #c43a3a; }
 .pp-vic-panel .pp-vic-premio-fila .pp-sub { margin: 0; text-align: left; }
 
-/* la fiesta de toques sobrantes, encima del tablero: el cartel, cuántas monedas y «Toca para saltar» */
+/* la fiesta de toques sobrantes, encima del tablero: el cartel y cuántas monedas; un toque en cualquier sitio
+   acelera, sin letrero que lo diga (Pepins, tarea 352) */
 .pp-fiesta-toques { position: absolute; inset: 0; z-index: 25; pointer-events: auto; font-family: 'Fredoka', 'Arial Rounded MT Bold', sans-serif; font-weight: 700; }
 .pp-fiesta-cartel { position: absolute; left: 0; right: 0; top: 16%; margin: 0; text-align: center; font-size: 50px; color: #ffb21e; -webkit-text-stroke: 3px #fff; paint-order: stroke fill;
   text-shadow: 0 5px 0 #c27a00, 0 0 22px rgba(255, 255, 255, 0.9); transform: rotate(-3deg); animation: pp-salta 0.45s ease-out both; }
 .pp-fiesta-sub { position: absolute; left: 50%; top: calc(16% + 70px); margin: 0; transform: translateX(-50%); white-space: nowrap; font-size: 24px; color: #fff;
   background: #ff6eb5; padding: 5px 18px; border-radius: 999px; box-shadow: 0 4px 0 #c43a84; animation: pp-salta 0.45s 0.15s ease-out both; }
-.pp-fiesta-saltar { position: absolute; left: 50%; bottom: 7%; margin: 0; transform: translateX(-50%); white-space: nowrap; font-size: 26px; color: #c43a84;
-  background: rgba(255, 255, 255, 0.95); padding: 10px 26px; border-radius: 999px; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12); animation: pp-vic-late 1.2s ease-in-out infinite; }
-.pp-fiesta-toques.pp-rapido .pp-fiesta-saltar { opacity: 0; transition: opacity 0.2s; }
 
 /* que quepa sin desplazar (Pepins, 19-11-2026): nunca la barra gris; si no cabe, se aprieta y se encoge (ppVicEncaja) */
 .pp-tarjeta.pp-gana { zoom: var(--vic-zoom, 1); scrollbar-width: none; }

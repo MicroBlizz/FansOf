@@ -56,7 +56,7 @@ function ppEligeMemoria() {
     Object.assign(SAVE.memoria, { mundo: sel.mundo, dif: sel.dif }); ppGuarda();
     ppCierra(); ppNuevaMemoria(sel.mundo, sel.dif);
   }));
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { ppCierra(); if (PP_MEM) ppSalMemoria(); }));
+  ppBotonVolver(t, () => { ppCierra(); if (PP_MEM) ppSalMemoria(); });
   ppMemMarca(t, sel);
   const elegida = rejilla.querySelector('.pp-mem-sel'); if (elegida && elegida.scrollIntoView) elegida.scrollIntoView({ block: 'nearest' });
 }

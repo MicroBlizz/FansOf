@@ -17,8 +17,8 @@ const PP_EXPLICA = Object.freeze({
   },
 });
 const PP_EXP = { k: -1, reloj: null };
-// ¿se puede tocar el panel ahora? En un nivel de pop-it o de pesadilla, con el panel a la vista (en los duelos no sale)
-const ppExplicaVale = () => ppCompanerosActivo() && PP_PANT.actual === 'sala' && !!PP_P && !!PP_P.T && !PP_P.T.nim;
+// ¿se puede tocar el panel ahora? En un nivel, en pesadilla o en un duelo del camino (tarea 343), con el panel a la vista
+const ppExplicaVale = () => ppCompanerosActivo() && PP_PANT.actual === 'sala' && !!PP_P && !!PP_P.T;
 // el hueco del equipo que hay en (lx, ly) del lienzo lógico, o -1
 function ppExplicaHuecoEn(lx, ly) {
   const T = PP_P.T, eq = ppEquipoNivel(T.d), m = 48 * ppEscalaEquipo();
@@ -48,7 +48,7 @@ function ppExplicaAbre(k) {
   const c = PP_EXPLICA.cuando(ppFxDe(id), { lo: T.lo, usado: !!T.habP && !ppHabLeQueda(T, id), veces: PP_HAB.usosDe(ppFxDe(id), PP_HAB_USOS_LO), carga: PP_P.carga[id] });
   const b = document.createElement('div');
   b.id = 'pp-explica'; b.style.top = Math.round(y - 50 * ppEscalaEquipo()) + 'px'; b.style.setProperty('--pp-flecha', Math.round(x) + 'px');
-  b.innerHTML = `<h3>${tr(d.pasiva)} <span class="pp-explica-modo">${tr(T.lo ? 'Pesadilla' : 'Niveles')}</span></h3>
+  b.innerHTML = `<h3>${tr(d.pasiva)} <span class="pp-explica-modo">${tr(T.lo ? 'Pesadilla' : T.nim ? 'Duelos' : 'Niveles')}</span></h3>
     <p><b>${tr(d.nombre)}</b> <span class="pp-explica-est">${'★'.repeat(est)}<i>${'★'.repeat(5 - est)}</i></span></p>
     <p>${tr(d.texto)}</p>
     <p class="pp-explica-cuando">${c.barra ? `<span class="pp-explica-barra pp-${c.barra}"></span>` : ''}${tr(c.texto, c.datos)}</p>

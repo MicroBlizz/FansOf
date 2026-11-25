@@ -10,6 +10,8 @@
 .pp-pase-hero::after { content: ''; position: absolute; top: -40%; left: -40%; width: 22%; height: 180%; background: rgba(255, 255, 255, 0.4); transform: rotate(20deg); animation: pp-pase-brillo 3.2s infinite; pointer-events: none; }
 @keyframes pp-pase-brillo { 0% { left: -40%; } 60%, 100% { left: 130%; } }
 .pp-pase-hero-txt { align-self: start; color: #fff; }
+/* la flecha de volver (tarea 346) va encima de la esquina del escaparate: el texto empieza debajo de ella */
+.pp-con-volver .pp-pase-hero-txt { padding-top: 58px; }
 .pp-pase-hero .pp-pase-tema { color: #fff; text-shadow: 0 2px 0 var(--tema2, #c43a84); }
 .pp-tarjeta.pp-pase-nuevo .pp-pase-hero h2 { margin: 2px 0 6px; font-size: 40px; line-height: 1.02; color: #fff; text-shadow: 0 3px 0 var(--tema2, #c43a84), 0 0 2px var(--tema2, #c43a84); }
 .pp-pase-dias { display: inline-block; padding: 2px 10px; border-radius: 999px; background: #fff; color: var(--tema2, #c43a84); font-weight: 700; font-size: 16px; }
@@ -77,7 +79,6 @@
 .pp-pase-pie { position: sticky; bottom: 0; z-index: 4; width: calc(100% + 32px); box-sizing: border-box; display: flex; gap: 10px; padding: 12px 16px 18px; margin-top: auto;
   background: linear-gradient(rgba(255, 243, 250, 0), var(--pp-crema) 30%); }
 #pp-ui .pp-pase-pie .pp-btn2 { min-width: 0; }
-#pp-ui .pp-pase-pie .pp-azul { flex: 0 0 150px; }
 #pp-ui .pp-pase-pie .pp-pase-todo { flex: 1; font-size: 22px; }
 /* ---------- el botón del lado: anillo con lo que falta para el siguiente escalón y cuántos premios esperan ---------- */
 .pp-lado.pp-lado-pase .pp-ico { border-radius: 50%; background: conic-gradient(#4fc964 var(--av, 0%), rgba(255, 255, 255, 0.85) 0); padding: 4px; }

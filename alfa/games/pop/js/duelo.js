@@ -114,7 +114,11 @@ function ppDueloFin(res) {
 }
 function ppSalDuelo() { if (PP_DUELO && PP_DUELO.pvp) ppPvpLimpia(); PP_DUELO = null; ppDueloBoton(); ppIrA('titulo'); }
 // el botón ¡LISTO! (HTML, debajo del tablero): solo en tu turno y con algo reventado
-function ppDueloBoton() { const b = $pp('#pp-listo'); if (b) b.hidden = !(PP_DUELO && !PP_DUELO.fin && PP_DUELO.turno === 'yo' && PP_DUELO.esta.length); }
+function ppDueloBoton() {
+  const b = $pp('#pp-listo'); if (!b) return;
+  b.classList.remove('pp-en-fila');   // en el duelo de la portada va en su sitio de siempre (en el del camino, en la fila de ayudas)
+  b.hidden = !(PP_DUELO && !PP_DUELO.fin && PP_DUELO.turno === 'yo' && PP_DUELO.esta.length);
+}
 /* ---------- dibujo ---------- */
 // las caras de arriba: con el perfil abierto (tarea #41), los personajes elegidos; si no, Lola contra el CEO o un amigo de gelatina
 function ppDueloCaras(D) {

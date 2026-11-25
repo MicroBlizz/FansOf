@@ -21,7 +21,7 @@
 #pp-ui .pp-cm-carta:active { transform: scale(0.95); }
 #pp-ui .pp-cm-carta.pp-cm-r { border-color: #5fbff0; }
 #pp-ui .pp-cm-carta.pp-cm-e { border-color: #ff8a3d; }
-#pp-ui .pp-cm-carta.pp-cm-l { border-color: #ffcf3f; background: #fff8dc; }
+#pp-ui .pp-cm-carta.pp-cm-l { border-color: #ff4f8b; background: #fff0f6; }   /* legendario en rosa fuerte: el amarillo se confundía con el oro de las 5 estrellas (tarea 374) */
 #pp-ui .pp-cm-carta.pp-cm-falta { border: 4px dashed #e9cfc0; background: #fbe8da; }
 #pp-ui .pp-cm-carta.pp-cm-s2 { box-shadow: 0 0 0 2px #ffe9a8; }
 #pp-ui .pp-cm-carta.pp-cm-s3 { box-shadow: 0 0 0 3px #ffd23a; }
@@ -42,7 +42,7 @@
 .pp-cm-rar { border-radius: 999px; padding: 2px 12px; font-size: 17px; font-weight: 700; color: var(--pp-cafe); background: #7fcf8a; }
 .pp-cm-rar.pp-cm-r { background: #5fbff0; }
 .pp-cm-rar.pp-cm-e { background: #ff8a3d; }
-.pp-cm-rar.pp-cm-l { background: #ffcf3f; }
+.pp-cm-rar.pp-cm-l { background: #ff4f8b; color: #fff; }
 .pp-cm-estrellas-f { display: inline-flex; gap: 1px; }
 .pp-cm-hab { width: 100%; box-sizing: border-box; background: #eafbf2; border-radius: 14px; padding: 10px; font-size: 18px; line-height: 1.3; text-align: left; }
 .pp-cm-modo-t { color: #fff; border-radius: 999px; padding: 0 8px; font-size: 15px; font-weight: 700; }
@@ -96,6 +96,15 @@
   background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.85) 50%, transparent 62%); transform: translateX(-120%); animation: pp-oro-destello 3.2s ease-in-out infinite; }
 #pp-ui .pp-cm-casilla.pp-cm-dorado { position: relative; }
 #pp-ui .pp-cm-carta.pp-cm-dorado .pp-cm-estrellas { color: #ff8a3d; }
+/* la cinta de la rareza de un dorado (tarea 374, boceto A): arriba, con su color y su nombre; las estrellas y el modo bajan */
+#pp-ui .pp-cm-carta.pp-cm-dorado { padding-top: 30px; }
+#pp-ui .pp-cm-carta.pp-cm-dorado .pp-cm-estrellas { top: 15px; }
+#pp-ui .pp-cm-carta.pp-cm-dorado .pp-cm-modo { top: 15px; }
+.pp-cm-cinta { position: absolute; top: 0; left: 0; right: 0; z-index: 1; padding: 1px 0 2px; font-size: 11px; font-weight: 700; line-height: 1.1; text-align: center;
+  text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; color: var(--pp-cafe); background: #7fcf8a; }
+.pp-cm-cinta.pp-cm-r { background: #5fbff0; }
+.pp-cm-cinta.pp-cm-e { background: #ff8a3d; }
+.pp-cm-cinta.pp-cm-l { background: #ff4f8b; color: #fff; }
 .pp-cm-aro-oro { position: relative; overflow: hidden; border-radius: 50%; border: 6px solid #ffcf3f; box-sizing: border-box; padding: 8px;
   background: radial-gradient(circle at 50% 40%, #fffbe6 0%, #ffeaa0 60%, #ffd86a 100%); box-shadow: 0 0 0 4px #fff1b8, 0 0 18px 6px rgba(255, 196, 40, 0.7); animation: pp-oro-late 2.4s ease-in-out infinite; }
 .pp-cm-aro-oro canvas { width: 100% !important; height: 100% !important; }

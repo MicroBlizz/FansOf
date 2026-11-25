@@ -82,7 +82,7 @@ function ppTienda(vuelta, pestana) {
   const caja = document.createElement('div'); caja.className = 'pp-packs'; t.appendChild(caja);
   const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); ppTiendaToque(b); f(); }; caja.appendChild(b); return b; };
   (PP_TIENDA_PESTANAS[PP_TIENDA_PESTANA] || ppTiendaOfertas)(tarjeta, caja);   // lo de cada pestaña: js/tienda-venta.js (tarea #187) y js/tienda-perlas.js (#266)
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppTiendaOlvida(); ppCierra(); if (v) v(); }));
+  ppBotonVolver(t, () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppTiendaOlvida(); ppCierra(); if (v) v(); });
   caja.scrollTop = bajada;   // antes del vuelo, que sale de donde está lo comprado (tarea #268)
   ppTiendaVuela(t);   // si vienes de comprar, lo ganado vuela al «Tienes:» (tarea #270)
 }

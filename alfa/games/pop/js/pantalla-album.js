@@ -49,6 +49,7 @@ const ppAlbCartaDibujo = (c, id, lado) => c.escondido ? ppCompSombra(id, lado) :
 function ppAlbCarta(e, id, extra, alTocar) {
   const c = PP_COMP_VISTA.carta(e, id), b = document.createElement('button');
   b.type = 'button'; b.className = ppAlbCartaClase(c, extra);
+  if (c.dorado) b.insertAdjacentHTML('beforeend', `<span class="pp-cm-cinta pp-cm-${c.rar}">${ppEsc(tr(PP_COMP.RAREZAS[c.rar]))}</span>`);   // el oro tapa el color de la rareza: la cinta lo dice (tarea 374)
   if (c.tiene) b.insertAdjacentHTML('beforeend', `<span class="pp-cm-estrellas">${'★'.repeat(c.est)}</span><span class="pp-cm-modo pp-cm-m${c.modo}">${ppAlbInicial(c.modo)}</span>`);
   b.appendChild(ppAlbCartaDibujo(c, id, 70));
   b.insertAdjacentHTML('beforeend', ppAlbCartaNombre(c, id));
@@ -100,7 +101,7 @@ function ppVentanaCompaneros(tab) {
   t.append(ppAlbSaldo(), ppAlbTabs());
   if (PP_ALB.aviso) t.appendChild(ppPfEl('p', 'pp-pf-aviso', ppEsc(PP_ALB.aviso)));
   if (PP_ALB.tab === 'album') ppAlbumLlena(t); else ppEquipoLlena(t);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { PP_ALB.aviso = ''; ppCierra(); }));
+  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppCierra(); });
   t.scrollTop = antes;
 }
 /* ---------- la ficha de un compañero ---------- */
@@ -163,7 +164,7 @@ function ppVentanaCompanero(id) {
   if (!c.escondido) t.appendChild(ppPfEl('p', 'pp-cm-via', `<b>${tr('Cómo se consigue:')}</b> ${ppEsc(ppAlbVia(id))}`));
   if (c.tiene) ppAlbEstrellas(t, id, c);
   else ppAlbBotonCompra(t, id);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { PP_ALB.aviso = ''; ppVentanaCompaneros(); }));
+  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppVentanaCompaneros(); });
 }
 // subir una estrella: sus repetidos (2, 3, 5 u 8) y sus monedas
 function ppAlbSube(id) {

@@ -5,7 +5,7 @@
 //   Ni el martillo ni la bomba gastan toque. Tras fallar un nivel, al volver a entrar se ofrece +3 toques antes de empezar.
 // · Duelos (js/nimnivel.js): DESHACER (vuelve al principio de tu turno anterior, antes de la respuesta del rival) y la PISTA DE
 //   LOLA (marca la jugada que gana). Al perder un duelo se ofrece deshacer y recuperar el corazón.
-// La barra de ayudas es HTML (#pp-ayudas), debajo del tablero; en los duelos, grande y donde estaría «Tu equipo» (tarea #129).
+// La barra de ayudas es HTML (#pp-ayudas), debajo del tablero; en los duelos, igual, con ¡LISTO! en medio (tarea 343).
 'use strict';
 const PP_AYUDA = { modo: null };   // 'martillo' | 'bomba' mientras se elige la burbuja
 const ppTengo = k => (SAVE.ayudas && SAVE.ayudas[k]) || 0;
@@ -22,8 +22,8 @@ function ppGastaAyuda(k, vuelta = null) {
 // ¿este nivel tiene barra de ayudas? No en el tutorial del primer mundo, ni en una partida nueva antes del nivel 4 (tarea #140).
 // No mira la cortinilla: así «Tu equipo» sabe desde el principio si va debajo de las ayudas (js/marcador.js, tarea #269)
 const ppAyudasEnNivel = T => !(T.d && T.d.tutorial && T.d.mundo === 0) && ppPrimerosAyudas(T);
-// ¿van las ayudas pequeñas justo bajo el tablero, con «Tu equipo» debajo? (en los duelos van grandes, en el sitio del equipo)
-const ppAyudasBajoTablero = T => !!T && !T.nim && ppAyudasEnNivel(T);
+// ¿hay fila bajo el tablero (y «Tu equipo» va debajo de ella)? Con ayudas o en un duelo, donde ¡LISTO! va en esa fila (tarea 343)
+const ppFilaBajoTablero = T => !!T && (!!T.nim || ppAyudasEnNivel(T));
 function ppBarraAyudas() {
   const b = $pp('#pp-ayudas'), T = PP_P && PP_P.T;
   if (!b) return;
@@ -31,7 +31,7 @@ function ppBarraAyudas() {
   const ver = PP_PANT.actual === 'sala' && T && !T.hecho && ppAyudasEnNivel(T) && !ppCortActiva();
   b.hidden = !ver; if (!ver) return;
   const duelo = !!T.nim, lista = duelo ? ['deshacer', 'pista'] : ['martillo', 'bomba', 'toques3'];
-  const ico = duelo ? 88 : 62, perla = duelo ? 28 : 18;
+  const ico = 62, perla = 18;   // en los duelos, del mismo tamaño que en los niveles (tarea 343)
   b.classList.toggle('pp-duelo', duelo);
   ppTutorial(duelo ? 'ayudasDuelo' : 'ayudas');
   b.innerHTML = '';
@@ -40,7 +40,7 @@ function ppBarraAyudas() {
     bt.type = 'button'; bt.className = 'pp-ayuda' + (PP_AYUDA.modo === k ? ' pp-activa' : '');
     const gratis = duelo && ppAyudaGratis(k, T.nim);   // la lupa de Lola o los compañeros de duelo
     if (ppEscSoloGratis(T) && !gratis) continue;   // en el duelo por un compañero escondido no vale ninguna comprada (js/escondidos-duelo.js)
-    const nombre = duelo ? '' : `<i>${tr(PP_CFG.ayudas[k].nombre)}</i>`;   // en los niveles, con su nombre debajo (tarea #269)
+    const nombre = `<i>${tr(PP_CFG.ayudas[k].nombre)}</i>`;   // con su nombre debajo (tarea #269; en los duelos también, tarea 343)
     bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasPrecioHtml(PP_CFG.ayudas[k].perlas, perla)}</b>${nombre}`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
     bt.onclick = () => { play('select'); ppPulsaAyuda(k); };

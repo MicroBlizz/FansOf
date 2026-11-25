@@ -1,7 +1,7 @@
 // Fans of Pop · MARCADOR: la cabecera de la partida (corazones, monedero, toques, estrellas y título) y el panel «Tu equipo» de abajo
-// con los huecos de los amigos. Sale de pintar.js (tarea #110) para dejarlo por debajo de 25 KB. En los duelos «Tu equipo» no sale:
-// los amigos no juegan y en su sitio van, grandes, las ayudas de duelo (tarea #129, css/ayudas.css). En los demás niveles, las ayudas
-// van justo bajo el tablero y «Tu equipo» debajo de ellas (tarea #269).
+// con los huecos de los amigos. Sale de pintar.js (tarea #110) para dejarlo por debajo de 25 KB. Las ayudas van
+// justo bajo el tablero y «Tu equipo» debajo de ellas (tarea #269); en los duelos del camino, igual, con ¡LISTO! entre las dos ayudas
+// (tarea 343, Pepins 25-11-2026: «el equipo donde siempre, los objetos donde siempre»; css/ayudas.css).
 'use strict';
 
 /* ---------- los toques como burbujitas (tarea #110; solo con el estilo del mundo) ---------- */
@@ -80,31 +80,40 @@ function ppBordeHueco(ocupado, panel) {
 }
 
 const PP_CABECERA_NIVEL = 180;   // la cabecera de un nivel normal: la barra arriba y el título y los toques debajo (con 960 de alto el tablero empieza en 220)
+// ¿sale el panel «Tu equipo»? En un nivel, desde el primer amigo (tarea #140); en un duelo del camino, si llevas equipo de Duelos
+// (solo con el flag `companeros`: sin él los amigos no juegan los duelos; tarea 343)
+function ppHayPanelEquipo(P, duelo) {
+  if (duelo) return ppCompanerosActivo() && ppEquipoNivel(P.T.d).length > 0;
+  return P.equipo.length > 0 || ppPrimerosVe('equipo');
+}
+// bajo la barra de un nivel normal: los toques a la derecha y el título con sus estrellas (y si es jefe o difícil) a la izquierda
+function ppCabeceraNivel(c, T, panel, tinta) {
+  const quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
+  ppPintaToques(c, T, col, panel, tinta, 82);
+  ppTextoCabe(c, T.titulo || '', 135, 126, 34, 200, '#ffd64a', tinta.titulo);
+  const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 105 + k * 30, 160, 28, k < est);
+  if (T.d && T.d.jefe) ppTextoCabe(c, tr('¡Pocos toques extra!'), 135, 186, 22, 210, '#ff8a2a', '#fff');
+  else if (T.d && T.d.dificil) ppTextoCabe(c, tr('¡Nivel difícil!'), 135, 186, 22, 210, '#ff6ec7', '#fff');
+}
 function ppPintaMarcador(c, t) {
   const P = PP_P, panel = ppEstiloDeTablero(P.T).panel, tinta = ppTintaPanel(panel), duelo = !!(P.T && P.T.nim);
   ppPanelDelMundo(c, 20, 18, 500, duelo ? PP_CABECERA_DUELO : PP_CABECERA_NIVEL, panel);
   const dano = PP_FX.dano;
-  if (duelo) {   // nivel duelo: los corazones y el monedero de antes, y el rival, el turno y la regla (js/nimnivel.js); sin equipo
+  if (duelo) {   // nivel duelo: los corazones y el monedero de antes, y el rival, el turno y la regla (js/nimnivel.js); el equipo, abajo
     const vidas = ppVidas();
     for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
     ppPintaMonedero(c, 28, 88);   // bajo los corazones (la pausa va arriba a la derecha: Daniel, 17-11-2026)
-    ppMarcadorNim(c, P.T, t); return;
+    ppMarcadorNim(c, P.T, t);
+  } else {
+    // arriba, la barra de corazones, monedas y perlas (tarea #373, js/barra-recursos.js); debajo, el título con sus estrellas a la
+    // izquierda y los toques a la derecha, junto a la pausa, que baja a esta fila (PP_BARRA_REGLAS.pausaBaja)
+    ppBarraRecursos(c, 'nivel', 270, 56, { dano });
+    if (P.T) ppCabeceraNivel(c, P.T, panel, tinta);
   }
-  // arriba, la barra de corazones, monedas y perlas (tarea #373, js/barra-recursos.js); debajo, el título con sus estrellas a la
-  // izquierda y los toques a la derecha, junto a la pausa, que baja a esta fila (PP_BARRA_REGLAS.pausaBaja)
-  ppBarraRecursos(c, 'nivel', 270, 56, { dano });
-  if (P.T) {
-    const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
-    ppPintaToques(c, T, col, panel, tinta, 82);
-    ppTextoCabe(c, T.titulo || '', 135, 126, 34, 200, '#ffd64a', tinta.titulo);
-    const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 105 + k * 30, 160, 28, k < est);
-    if (T.d && T.d.jefe) ppTextoCabe(c, tr('¡Pocos toques extra!'), 135, 186, 22, 210, '#ff8a2a', '#fff');
-    else if (T.d && T.d.dificil) ppTextoCabe(c, tr('¡Nivel difícil!'), 135, 186, 22, 210, '#ff6ec7', '#fff');
-  }
-  if (!P.equipo.length && !ppPrimerosVe('equipo')) return;   // partida nueva: el panel sale con el primer amigo (tarea #140)
+  if (!ppHayPanelEquipo(P, duelo)) return;
   // el equipo, abajo: cada hueco con su slime, su pasiva y una barra de lo que le falta para actuar
   const n = P.T ? P.T.n : 3, y0 = ppEquipoY(n);
-  ppPanelDelMundo(c, 20, y0 - 22, 500, ppAyudasBajoTablero(P.T) ? 160 : 178, panel);   // bajo las ayudas, algo más bajito: cabe en un móvil corto
+  ppPanelDelMundo(c, 20, y0 - 22, 500, ppFilaBajoTablero(P.T) ? 160 : 178, panel);   // bajo las ayudas, algo más bajito: cabe en un móvil corto
   ppTexto(c, tr('Tu equipo'), 270, y0 - 2, 24, tinta.rotulo, 'center', tinta.borde);
   const esc = ppEscalaEquipo(), eq = ppEquipoNivel(P.T && P.T.d);   // el equipo del modo del nivel (flag `companeros`; cerrado, el del camino)
   for (let k = 0; k < ppHuecosNivel(); k++) {
@@ -143,4 +152,4 @@ function ppSelloDespedido(c, x, y, ancho) {
 const ppEscalaEquipo = () => Math.min(1, 470 / ppHuecosNivel() / 110);
 function ppHuecoEquipo(k, n) { const y0 = ppEquipoY(n), nh = ppHuecosNivel(); return [270 + (k - (nh - 1) / 2) * 110 * ppEscalaEquipo(), y0 + 62]; }
 // la altura del rótulo «Tu equipo»: bajo el tablero o, si el nivel tiene ayudas, bajo ellas (tarea #269, css/ayudas.css)
-function ppEquipoY(n) { const g = ppGeom(n); return g.y + g.lado + (ppAyudasBajoTablero(PP_P && PP_P.T) ? 160 : 60); }
+function ppEquipoY(n) { const g = ppGeom(n); return g.y + g.lado + (ppFilaBajoTablero(PP_P && PP_P.T) ? 160 : 60); }

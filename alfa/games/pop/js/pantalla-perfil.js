@@ -96,7 +96,7 @@ function ppVentanaPerfil(tab) {
   for (const d of PP_MI.cat[PP_PF.tab]) if (!d.coleccion || PP_MI.loTengo(PP_PF.tab, d.id)) lista.appendChild(ppPfCosa(PP_PF.tab, d));   // los del álbum, solo si los tienes (tarea #142)
   t.appendChild(lista);
   if (PP_PF.tab === 'pegatina') t.appendChild(ppPfEl('p', 'pp-sub', `<small>${tr('Llevas {n} de {t} pegatinas para lanzar en el duelo.', { n: PP_MI.perfil().pegatinas.length, t: PP_PERFIL.PEGATINAS })}</small>`));
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra);
   lista.scrollTop = antes;
 }
 // lo llama el libro de perlas cuando cambia algo (el saldo que llega del servidor, una compra): repinta si la ventana está a la vista
@@ -128,5 +128,5 @@ function ppPerfilConfirma(tipo, id) {
   if (!PP_SRV.puedeComprar()) t.appendChild(ppPfEl('p', 'pp-pf-nota', tr('Para comprar hace falta conexión y tu cuenta')));
   else if (tengo < precio) t.appendChild(ppBoton(tr('CONSEGUIR PERLAS'), 'pp-btn', () => ppTienda(() => ppPerfilConfirma(tipo, id), 'perlas')));
   else t.appendChild(ppBoton(tr('COMPRAR'), 'pp-btn', () => ppPerfilCompra(tipo, id)));
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { PP_PF.aviso = ''; ppVentanaPerfil(); }));
+  ppBotonVolver(t, () => { PP_PF.aviso = ''; ppVentanaPerfil(); });
 }

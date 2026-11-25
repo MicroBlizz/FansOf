@@ -33,7 +33,8 @@ function ppVentanaLola(aviso = '') {
   const invitar = ppBoton(tr('INVITAR AMIGOS'), 'pp-btn', () => ppAmInvita(invitar));
   const pie = ppAmEl('div', 'pp-am-pie pp-am-pie-suelto');
   pie.append(invitar, ppAmEl('p', 'pp-am-estado'));
-  t.append(pie, ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppAmVuelve));
+  t.append(pie);
+  ppBotonVolver(t, ppAmVuelve);
   ppAmEnlacePrepara();
 }
 function ppAmLolaToca() {
@@ -103,7 +104,7 @@ function ppVentanaRegaloAmigo(g) {
     t.appendChild(ppAmEl('p', 'pp-am-tope', tr('Dale las gracias (si quieres):')));
     t.append(...ppAmFrases(g.codigo, estado), estado);
   }
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppAmVuelve));
+  ppBotonVolver(t, ppAmVuelve);
 }
 /* ---------- RECOGER TODO ---------- */
 // primero el de Lola (es solo de hoy) y luego los de los amigos que quepan; lo que no cabe se queda esperando

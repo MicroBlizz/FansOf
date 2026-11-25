@@ -28,7 +28,7 @@ function ppVentanaRegalo() {
     <div class="pp-rg-halo${cogido ? ' pp-rg-quieto' : ''}">${ppIcono('i-regalo', 130, '#9cf0a0')}</div>
     <div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 40)}</div>${ppRegaloTira(hoy)}`, true);
   if (!cogido) t.appendChild(ppBoton(tr('¡ABRIR!'), 'pp-btn', () => ppRegaloAbre(hoy)));
-  else t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra);
 }
 // abrir el de hoy: se da el premio, se guarda el día y sale lo que ha tocado
 function ppRegaloAbre(hoy) {

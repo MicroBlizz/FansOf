@@ -39,6 +39,17 @@ function ppVentanaSalioAMedias() {
 function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
 function ppBoton(texto, clase, f) { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = () => { play('select'); f(); }; return b; }
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
+// el botón de volver de todas las pantallas (tarea 346, Pepins eligió la flecha redonda arriba a la izquierda, como en Amigos): va el
+// primero de la ventana `t` y se queda arriba aunque la ventana baje (css/pop.css, .pp-volver-flecha). Las preguntas de sí o no
+// (NO, VOLVER) siguen con sus botones: son una respuesta, no un volver.
+function ppBotonVolver(t, f) {
+  const b = ppBoton('', 'pp-btn2 pp-azul pp-volver-flecha', f);
+  b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 8 12 24l18 16"/></svg>';
+  b.setAttribute('aria-label', tr('VOLVER'));
+  t.classList.add('pp-con-volver');
+  t.prepend(b);
+  return b;
+}
 // un botón turquesa que despliega y pliega una caja con lo menos usado (tarea #246). Se mete en la caja y luego se ponen los dos
 function ppPlegado(texto) {
   const caja = document.createElement('div'); caja.className = 'pp-plegado'; caja.hidden = true;
@@ -189,7 +200,7 @@ function ppOpciones() {
   col.appendChild(ah);
   col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
   if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
-  col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-volver', ppCierra));
+  ppBotonVolver(t, ppCierra);
 }
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {

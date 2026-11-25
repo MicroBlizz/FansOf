@@ -103,7 +103,7 @@ function ppPasePie() {
   const pie = document.createElement('div'); pie.className = 'pp-pase-pie';
   const n = ppPaseListos().length, todo = ppBoton(n ? tr('RECOGER TODO ({n})', { n }) : tr('Nada que recoger'), 'pp-btn2 pp-verde pp-pase-todo', () => ppPaseRecoge(ppPaseListos()));
   todo.disabled = !n;
-  pie.append(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra), todo);
+  pie.append(todo);   // volver va arriba a la izquierda, como en todas (tarea 346)
   return pie;
 }
 function ppVentanaPaseNueva(repinta) {
@@ -114,6 +114,7 @@ function ppVentanaPaseNueva(repinta) {
   t.style.setProperty('--tema1', tema.color); t.style.setProperty('--tema2', tema.color2);
   ppVicBarra(SAVE.monedas);   // la barra de arriba de la victoria (js/victoria-panel.js)
   t.append(ppPaseEscaparate(P, tema), ppPaseEje(e, pts), ppPaseCarril(P, e, pts), ppPaseMisiones(), ppPasePie());
+  ppBotonVolver(t, ppCierra);
   if (!repinta) setTimeout(ppPaseCentraCarril, 0);
 }
 // el botón del lado del camino: escalón, anillo con lo que falta y cuántos premios esperan (js/ofertas.js, ppPintaLateral)

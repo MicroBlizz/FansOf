@@ -256,7 +256,7 @@ function ppSinCorazones() { play('ppDerrota'); ppVentanaSinCorazones(); }
 // repetir el nivel que se acaba de jugar
 function ppOtraVez() { const d = PP_P.T && PP_P.T.d; ppCierra(); if (d) ppEntra(d.g, d.dif); else ppEntra(); }
 // salir de un nivel a medias (pausa): si ya habías tocado, cuesta un corazón
-function ppSalNivel() { const T = PP_P.T; if (T) { T.hecho = true; if (SAVE.dentro) { ppMarcaDentro(false); if (!ppPrimerosGratis()) ppPierdeVida(); } } }
+function ppSalNivel() { const T = PP_P.T; if (T) { ppEscDueloSale(T); T.hecho = true; if (SAVE.dentro) { ppMarcaDentro(false); if (!ppPrimerosGratis()) ppPierdeVida(); } } }
 function ppTermina(victoria) {
   PP_P.fin = victoria ? 'victoria' : 'derrota';
   if (victoria) SAVE.victorias++;

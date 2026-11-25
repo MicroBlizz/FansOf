@@ -3,13 +3,15 @@
 // y evento(id, e) para cada cosa que pasa (una reunión, un café…); el servidor ve todo por id y los eventos repetidos se ignoran (servidor/68-decks-telemetria.sql, por ahora el de Decks).
 // Solo manda si TODO esto es cierto: el flag del juego está abierto, el jugador no ha apagado «Datos de partida anónimos» (DATOS.activo(), datos-partida.js) y hay cuenta (CUENTA.activa).
 // Si el jugador lo apaga, lo pendiente se borra sin mandarse. Los envíos van en lotes y lo que no sale (sin red) se guarda en el navegador y se reintenta; el servidor cerrado o con tope descarta.
-// Hoy lo usa Decks (games/decks/js/telemetria.js); la forma de los datos es del juego, esto solo se ocupa de cuándo y cómo se manda.
+// Lo usan Decks, Jump y Pop (games/<juego>/js/telemetria.js o escondidos-datos.js); la forma de los datos es del juego, esto solo se ocupa de cuándo y cómo se manda.
+// Lo pendiente se guarda aparte por función del servidor ('fansof-tel:<rpc>', ADR 219): todos los juegos comparten origen web y, con una sola cola,
+// un juego mandaba a su función lo pendiente de otro (y el servidor lo rechazaba y se perdía).
 'use strict';
 const TELEMETRIA = (() => {
-  const CLAVE = 'fansof-tel', LOTE = 4, TOPE_PENDIENTE = 40, ESPERA = 20000;
-  let cfg = null, pend = {}, temporizador = 0, enviando = false, callado = 0;   // pend: id → { datos, eventos: [], fin }
-  try { pend = JSON.parse(localStorage.getItem(CLAVE) || '{}') || {}; } catch (e) { pend = {}; }
-  const guarda = () => { try { if (Object.keys(pend).length) localStorage.setItem(CLAVE, JSON.stringify(pend)); else localStorage.removeItem(CLAVE); } catch (e) { /* sin almacenamiento */ } };
+  const VIEJA = 'fansof-tel', LOTE = 4, TOPE_PENDIENTE = 40, ESPERA = 20000;   // VIEJA: la cola común de antes del ADR 219
+  let cfg = null, clave = '', pend = {}, temporizador = 0, enviando = false, callado = 0;   // pend: id → { datos, eventos: [], fin }
+  const lee = () => { try { return JSON.parse(localStorage.getItem(clave) || '{}') || {}; } catch (e) { return {}; } };
+  const guarda = () => { if (!clave) return; try { if (Object.keys(pend).length) localStorage.setItem(clave, JSON.stringify(pend)); else localStorage.removeItem(clave); } catch (e) { /* sin almacenamiento */ } };
   const activa = () => !!cfg && typeof CUENTA !== 'undefined' && CUENTA.activa && (typeof DATOS === 'undefined' || DATOS.activo()) && NUCLEO.flag(cfg.flag, cfg.descripcion || 'Mandar datos anónimos de partida', false);
   const uuid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));
   const caja = id => pend[id] || (pend[id] = { datos: {}, eventos: [], fin: false });
@@ -39,7 +41,12 @@ const TELEMETRIA = (() => {
   function recorta() { const ids = Object.keys(pend); while (ids.length > TOPE_PENDIENTE) delete pend[ids.shift()]; }
   document.addEventListener('visibilitychange', () => { if (document.hidden) manda(); });
   return {
-    configurar: c => { cfg = c; if (Object.keys(pend).length) programa(false); },
+    // la cola de este juego; la común de antes se tira (no se sabe de qué juego era cada partida y mandarla a otra función la perdía igual)
+    configurar: c => {
+      cfg = c; clave = 'fansof-tel:' + c.rpc; pend = lee();
+      try { localStorage.removeItem(VIEJA); } catch (e) { /* sin almacenamiento */ }
+      if (Object.keys(pend).length) programa(false);
+    },
     nueva: () => uuid(),
     // lo último que se sabe de la partida (se manda con el siguiente lote); fin = true cuando ya no habrá más
     estado(id, datos, fin) {

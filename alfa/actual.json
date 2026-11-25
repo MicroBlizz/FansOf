@@ -1,8 +1,8 @@
 {
- "build": 1501,
- "hash": "81afc16",
- "fecha": "2026-11-25T09:28:30Z",
- "mensaje": "Island: el Brotito por etapas del visor, rehecho con el brazo rígido y el corte nuevo (run 4683, tarea #334): sin trocitos sueltos en los brazos",
+ "build": 1502,
+ "hash": "6c40ec3",
+ "fecha": "2026-11-25T09:36:53Z",
+ "mensaje": "Pop: la burbuja arcoíris manda una ficha anónima de cada encuentro al servidor (tarea #329, ADR 205) y la telemetría de core guarda una cola por juego (ADR 219)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

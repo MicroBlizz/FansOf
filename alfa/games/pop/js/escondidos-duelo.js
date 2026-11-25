@@ -22,9 +22,9 @@ function ppEscVentanaLucha(T, b) {
   fila.appendChild(ppFichaSlime(b.id, b.nuevo)); t.appendChild(fila);
   t.insertAdjacentHTML('beforeend', (b.nuevo ? `<p class="pp-sub">${tr('Gana a {n} en un duelo y será tuyo.', { n })}</p>` : ppEscProgresoHtml(b.id))
     + `<p class="pp-sub">${ppIcono('i-vida', 30, '#ff4a6a')} ${tr('Si pierdes, te cuesta 1 corazón. Este nivel se deja sin gastar nada.')}</p>`);
-  t.appendChild(ppBoton(tr('¡A LUCHAR!'), 'pp-btn', () => { ppCierra(); ppEscGasta(T); ppEscCuenta('aceptadas', b.id); ppEscDueloEntra(b.id, T.d, !b.nuevo); }));
+  t.appendChild(ppBoton(tr('¡A LUCHAR!'), 'pp-btn', () => { ppCierra(); ppEscGasta(T); PP_ESC_DATOS.estado(b.dato, 'duelo'); ppEscDueloEntra(b.id, T.d, !b.nuevo, b.dato); }));
   if (!b.nuevo) t.appendChild(ppEscBotonRed(T, b));
-  t.appendChild(ppBoton(tr('AHORA NO'), 'pp-btn2 pp-volver', () => { ppCierra(); ppEscGasta(T); ppEscSeVa(b); }));
+  t.appendChild(ppBoton(tr('AHORA NO'), 'pp-btn2 pp-volver', () => { ppCierra(); ppEscGasta(T); ppEscSeVa(b); PP_ESC_DATOS.estado(b.dato, 'ahora-no'); }));
 }
 // de un repetido: sus estrellas, los repetidos guardados para la siguiente, los que faltan para el máximo y lo que da el duelo
 function ppEscProgresoHtml(id) {
@@ -39,7 +39,7 @@ function ppEscProgresoHtml(id) {
 function ppEscBotonRed(T, b) {
   const tengo = ppTengo('red'), bt = ppBoton('', 'pp-btn2 pp-pago', () => {
     if (!ppGastaAyuda('red', () => ppEscVentanaLucha(T, b))) return;
-    ppCierra(); ppEscGasta(T); ppEscCuenta('red', b.id); play('ppPremio');
+    ppCierra(); ppEscGasta(T); PP_ESC_DATOS.estado(b.dato, 'red'); play('ppPremio');
     ppEscRevienta(T, b);   // salta de la burbuja con sus chispas y su aviso; la burbuja sigue ahí, normal
   });
   bt.innerHTML = `${ppIcono('i-red', 34, '#a8f0c6')} ${tr('TIRAR LA RED')} · ${tengo ? tr('tienes {n}', { n: tengo }) : ppPerlasPrecioHtml(PP_CFG.ayudas.red.perlas, 24)}`;
@@ -48,38 +48,40 @@ function ppEscBotonRed(T, b) {
 
 /* ---------- el duelo ---------- */
 // el nivel del duelo: 6 filas de largos al azar, centradas, sobre el mundo y el modo del nivel que se deja (`base`)
-function ppEscNivelDuelo(id, base, repetido) {
+function ppEscNivelDuelo(id, base, repetido, dato) {
   const n = PP_ESC.DUELO.filas, mask = new Uint8Array(n * n), need = new Array(n * n).fill(0);
   PP_ESC.filasDuelo(Math.random).forEach((largo, y) => {
     const x0 = Math.floor((n - largo) / 2);
     for (let x = x0; x < x0 + largo; x++) { mask[y * n + x] = 1; need[y * n + x] = 1; }
   });
   return { g: base.g, dif: base.dif, mundo: base.mundo, l: base.l, lado: n, mask, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe: false, dificil: true,
-    tutorial: false, nim: { rival: id, fallo: PP_ESC.falloDuelo(id, ppEscMomento(base)) }, esc: { id, repetido: !!repetido } };
+    tutorial: false, nim: { rival: id, fallo: PP_ESC.falloDuelo(id, ppEscMomento(base)) }, esc: { id, repetido: !!repetido, dato } };
 }
 // entra en el duelo (la primera vez y en cada reintento). Desde que entras, salir o cerrar el juego cuesta el corazón (SAVE.dentro)
-// `repetido`: el duelo es por un repetido (da 2 copias); la ventana de perder lo lleva a cada reintento
-function ppEscDueloEntra(id, base, repetido = false) {
-  if (ppVidas() <= 0) { ppVentanaSinCorazones(() => ppEscVentanaPerdido(id, base, repetido)); return; }
+// `repetido`: el duelo es por un repetido (da 2 copias); `dato`, la ficha del encuentro (PP_ESC_DATOS, js/escondidos-datos.js). La ventana de perder
+// los lleva a cada reintento
+function ppEscDueloEntra(id, base, repetido = false, dato = null) {
+  if (ppVidas() <= 0) { ppVentanaSinCorazones(() => ppEscVentanaPerdido(id, base, repetido, dato)); return; }
+  PP_ESC_DATOS.jugado(dato);
   PP_AYUDA.modo = null;
-  ppEntraEn(ppEscNivelDuelo(id, base, repetido), tr('¡Duelo sorpresa!'));
+  ppEntraEn(ppEscNivelDuelo(id, base, repetido, dato), tr('¡Duelo sorpresa!'));
   ppMarcaDentro(true);
 }
 // el final del duelo (ppNimFin, js/nimnivel.js): ganado, el compañero es tuyo y cuenta como un duelo ganado; perdido, 1 corazón
 function ppEscDueloFin(T, gano) {
-  const N = T.nim, id = T.d.esc.id;
+  const N = T.nim, id = T.d.esc.id, dato = T.d.esc.dato;
   N.fin = gano ? 'gana' : 'pierde'; N.pistaNim = null; T.hecho = true;
   ppNimBoton(); ppBarraAyudas(); ppMarcaDentro(false);
   const luego = f => setTimeout(() => { if (PP_P && PP_P.T === T) f(); }, 900);
-  if (gano) { ppEscDueloGanado(id, T.d.esc.repetido); luego(() => ppEscVentanaGanado(id, T.d.esc.repetido)); return; }
+  if (gano) { PP_ESC_DATOS.estado(dato, 'ganada'); ppEscDueloGanado(id, T.d.esc.repetido); luego(() => ppEscVentanaGanado(id, T.d.esc.repetido)); return; }
+  PP_ESC_DATOS.perdido(dato);
   ppPierdeVida(); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
-  luego(() => ppEscVentanaPerdido(id, T.d, T.d.esc.repetido));
+  luego(() => ppEscVentanaPerdido(id, T.d, T.d.esc.repetido, dato));
 }
 // lo que da ganar: el compañero nuevo o 2 copias del repetido (con su aviso), un duelo más para el ranking, los logros de duelos y
 // la misión del pase
 function ppEscDueloGanado(id, repetido) {
   SAVE.dueloNivel = (SAVE.dueloNivel || 0) + 1;
-  ppEscCuenta('ganadas', id);
   const C = PP_ESC.DUELO.copias;
   for (let k = 0; k < (repetido ? C.duelo : C.nuevo); k++) ppViaGana(id);
   ppViaDuelo(false); ppPaseDuelo();
@@ -94,11 +96,15 @@ function ppEscVentanaGanado(id, repetido) {
   t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));
 }
 // perdido: el compañero espera mientras sigas aquí. Reintentar cuesta lo mismo (1 corazón si pierdes); irse al camino es adiós
-function ppEscVentanaPerdido(id, base, repetido) {
+function ppEscVentanaPerdido(id, base, repetido, dato) {
   const n = tr(ppSlimeDe(id).nombre), quedan = ppVidas();
   const t = ppAbre(`<h2>${tr('¡{n} te ha ganado!', { n })}</h2><p class="pp-sub">${tr('Pierdes un corazón; te quedan {n}.', { n: quedan })}</p>`
     + `<p class="pp-sub">${tr('{n} sigue aquí. Si te vas al camino, se va.', { n })}</p>`);
-  const b = ppBoton(quedan > 0 ? tr('REINTENTAR') : tr('CONSEGUIR CORAZONES'), 'pp-btn', () => { ppCierra(); ppEscDueloEntra(id, base, repetido); });
+  const b = ppBoton(quedan > 0 ? tr('REINTENTAR') : tr('CONSEGUIR CORAZONES'), 'pp-btn', () => { ppCierra(); ppEscDueloEntra(id, base, repetido, dato); });
   t.appendChild(b);
-  t.appendChild(ppBoton(tr('Dejarlo ir'), 'pp-btn2 pp-volver', ppAlCamino));
+  t.appendChild(ppBoton(tr('Dejarlo ir'), 'pp-btn2 pp-volver', () => { PP_ESC_DATOS.estado(dato, 'dejada'); ppAlCamino(); }));
+}
+// salir del duelo (pausa o camino) cuesta el corazón como perderlo (ppSalNivel, js/partida.js): la ficha lo apunta como perdido y dejado
+function ppEscDueloSale(T) {
+  if (T && T.d && T.d.esc && !T.hecho) PP_ESC_DATOS.perdido(T.d.esc.dato, 'dejada');
 }

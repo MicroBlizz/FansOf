@@ -2,7 +2,8 @@
 // ir al menú principal»; eligió la mezcla B + C de los bocetos):
 // · a la izquierda, la columna de AYUDAS (#pp-camino-ayudas) con cuántas tienes de cada una o, si no te queda, su precio en perlas;
 //   tocar una abre la tienda en «Ayudas». Qué se enseña lo dice js/camino-ayudas.js.
-// · abajo y fija, la barra (#pp-camino-barra) como la de la portada: INICIO (azul, a la portada), EQUIPO (turquesa, solo con el flag
+// · abajo y fija, la barra (#pp-camino-barra) como la de la portada y con sus mismos dibujos (ppBarraIcono, js/portada-barra.js,
+//   también los de Yoshi tras el flag iconos-barra): INICIO (azul, a la portada), EQUIPO (turquesa, solo con el flag
 //   de compañeros) y TIENDA (dorada). La barra de corazones y monedas del lienzo va justo encima (ppPintaMapa).
 // La pinta ppIrA al cambiar de pantalla; la columna se repasa cada segundo con el lateral (js/principal.js) por si cambian tus ayudas.
 'use strict';

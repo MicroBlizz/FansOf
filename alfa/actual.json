@@ -1,8 +1,8 @@
 {
- "build": 1496,
- "hash": "468b1c3",
- "fecha": "2026-11-25T07:35:59Z",
- "mensaje": "Pop: la curva de dificultad va por región: la región 1 igual que hoy y cada región nueva del 80 % al 55 % (tarea #152, nodo A3, Pepins)",
+ "build": 1497,
+ "hash": "1a3a79d",
+ "fecha": "2026-11-25T07:45:18Z",
+ "mensaje": "Pop: iconos de la barra del menú y el caballito, con el arte de Yoshi (tareas #357 y #142, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

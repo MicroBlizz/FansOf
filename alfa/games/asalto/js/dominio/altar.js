@@ -69,13 +69,15 @@ AS.altar = (() => {
     }
     return lista;
   }
+  // la fila `fila` (0 a 2) entera pasa a ser de la runa dada: una línea hecha (la usan la línea segura y las piedras de la clase y del comodín)
+  const conFila = (columnas, fila, runa) => congela(columnas.map(c => c.map((r, i) => (i === VISIBLE + fila ? runa : r))));
   // una tirada con línea segura (la primera de cada partida): si no trae ninguna, una fila entera pasa a ser de una clase
   function conLinea(columnas, pesos, azar) {
     if (lineas(columnas).length) return columnas;
     const clases = { ...pesos };
     delete clases[COMODIN];
     const fila = azar.entero(3), clase = azar.pesos(clases);
-    return congela(columnas.map(c => c.map((r, i) => (i === VISIBLE + fila ? clase : r))));
+    return conFila(columnas, fila, clase);
   }
   // la red contra la mala suerte: una tirada sin línea se arregla cambiando UNA runa, la que le falta a un «casi» (si los dos que casan
   // son comodines, la runa nueva es de una clase de verdad). Si no hay ningún «casi», una fila entera, como en la línea segura.
@@ -98,9 +100,11 @@ AS.altar = (() => {
   const GUIA = [['mago', 'tanque', 'luchador', 'asesino', 'tirador'], ['brujo', 'tanque', 'luchador', 'tirador', 'mago'], ['tanque', 'asesino', 'luchador', 'mago', 'tirador']];
   const guia = () => congela(GUIA);
   // las runas de una invocación. La primera de la partida trae línea segura (y en la partida guiada, el Altar de la guía); después,
-  // con varias invocaciones seguidas sin línea, la red contra la mala suerte puede arreglar la que falle. como: { primera, guiada, fallos }
+  // con varias invocaciones seguidas sin línea, la red contra la mala suerte puede arreglar la que falle. Con `segura` (las de la Piedra
+  // de la suerte), línea segura también. como: { primera, guiada, fallos, segura }
   function invocacion(reglas, pesos, como, azar) {
     if (como.primera) return como.guiada ? guia() : conLinea(tira(pesos, azar), pesos, azar);
+    if (como.segura) return conLinea(tira(pesos, azar), pesos, azar);
     const t = tira(pesos, azar), prob = probRed(reglas.red, como.fallos);
     return prob > 0 && !lineas(t).length && azar() < prob ? rescata(t, pesos, azar) : t;
   }
@@ -143,5 +147,5 @@ AS.altar = (() => {
     if (m.gratis && tiradas === 0) return 0;
     return Math.max(1, reglas.coste + reglas.subida * tiradas - (m.rebaja || 0));
   }
-  return { COMODIN, LINEAS, tira, empuja, claseDe, lineas, lineasDeColumna, empujonConLinea, casi, conLinea, rescata, probRed, guia, pleno, coste, runa, invocacion, masRepetida, claseRepetida, estalla };
+  return { COMODIN, LINEAS, tira, empuja, claseDe, lineas, lineasDeColumna, empujonConLinea, casi, conFila, conLinea, rescata, probRed, guia, pleno, coste, runa, invocacion, masRepetida, claseRepetida, estalla };
 })();

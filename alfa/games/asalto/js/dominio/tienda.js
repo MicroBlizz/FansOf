@@ -8,6 +8,7 @@ AS.tienda = (() => {
   const congela = t => Object.freeze({ oferta: Object.freeze(t.oferta.slice()), cambios: t.cambios, objetos: Object.freeze(t.objetos.map(o => Object.freeze({ ...o }))) });
   const T = datos => datos.tienda;
   const mio = (t, id) => t.objetos.find(o => o.id === id) || null;
+  const EPICO = 2;   // la rareza de los objetos épicos (0 común, 1 raro, 2 épico)
   const alTope = (datos, t, id) => { const o = mio(t, id); return !!o && o.nivel >= T(datos).nivelMax; };
 
   // tres objetos distintos, por el peso de su rareza; los que ya están al nivel máximo no salen
@@ -21,14 +22,25 @@ AS.tienda = (() => {
   const nueva = (datos, azar) => ofertaNueva(datos, { oferta: [], cambios: 0, objetos: [] }, azar);
   // la oferta de cada dos oleadas: tres objetos nuevos y el cambio vuelve a su precio de salida
   const ofertaNueva = (datos, t, azar) => congela({ ...t, oferta: sortea(datos, t, azar), cambios: 0 });
+  // la oferta nueva con un épico seguro (Piedra del mercader): si no ha salido ninguno, el primer hueco pasa a ser un épico por sorteo
+  // (de los que no están al nivel máximo ni ya en la oferta); si no queda ninguno, la oferta se queda como salió
+  function ofertaConEpico(datos, t, azar) {
+    const nueva = ofertaNueva(datos, t, azar), epico = id => datos.objetos[id].rareza === EPICO;
+    if (nueva.oferta.some(id => id && epico(id))) return nueva;
+    const quedan = Object.keys(datos.objetos).filter(id => epico(id) && !alTope(datos, t, id) && !nueva.oferta.includes(id));
+    if (!quedan.length) return nueva;
+    const oferta = nueva.oferta.slice(); oferta[0] = azar.elige(quedan);
+    return congela({ ...nueva, oferta });
+  }
   // ¿toca oferta nueva al empezar a preparar la oleada n? (la 1, la 3, la 5…)
   const toca = (datos, n) => (n - 1) % T(datos).cada === 0;
   // cuántas oleadas faltan para la oferta siguiente, estando en la n
   const faltan = (datos, n) => T(datos).cada - (n - 1) % T(datos).cada;
-  // la esencia que da ganar la oleada n: 1, 3 en las acabadas en 5 y 5 en las acabadas en 0
-  function esenciaDeOleada(datos, n) {
+  // la esencia que da ganar la oleada n: 1, 3 en las acabadas en 5 y 5 en las acabadas en 0 (y la de la Bolsa del avaro si está entre
+  // los objetos comprados, [{ id, nivel }], con el azar que se le pasa)
+  function esenciaDeOleada(datos, n, objetos, azar) {
     const E = T(datos).esencia;
-    return n % 10 === 0 ? E.diez : n % 5 === 0 ? E.cinco : E.normal;
+    return (n % 10 === 0 ? E.diez : n % 5 === 0 ? E.cinco : E.normal) + AS.objetos.esenciaAlGanar(datos, objetos, azar);
   }
   const precio = (datos, id) => T(datos).precios[datos.objetos[id].rareza];
   const costeCambio = (datos, t) => T(datos).cambio.base + T(datos).cambio.sube * t.cambios;
@@ -71,5 +83,5 @@ AS.tienda = (() => {
     const oferta = Array.from({ length: M.oferta }, (_, i) => (datos.objetos[j.oferta[i]] ? j.oferta[i] : null));
     return congela({ oferta, cambios: Math.max(0, Math.floor(j.cambios) || 0), objetos });
   }
-  return { nueva, ofertaNueva, toca, faltan, esenciaDeOleada, precio, costeCambio, cambia, cambiaGratis, compra, vende, valorVenta, mio, deJSON };
+  return { nueva, ofertaNueva, ofertaConEpico, toca, faltan, esenciaDeOleada, precio, costeCambio, cambia, cambiaGratis, compra, vende, valorVenta, mio, deJSON };
 })();

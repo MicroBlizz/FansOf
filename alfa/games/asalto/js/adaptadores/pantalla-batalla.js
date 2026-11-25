@@ -1,12 +1,18 @@
-// Fans of Asalto · ADAPTADORES · La pantalla durante la batalla: sale a luchar (con la entrada del jefe o el aviso de la oleada de
-// élite), hace avanzar la batalla a la velocidad elegida, convierte cada cosa que pasa (B.eventos) en efectos y sonidos (golpes,
+// Fans of Asalto · ADAPTADORES · La pantalla durante la batalla: sale a luchar (la entrada del jefe y el aviso de la oleada de
+// élite son el cartel grande de cartel-oleada.js), hace avanzar la batalla a la velocidad elegida, convierte cada cosa que pasa (B.eventos) en efectos y sonidos (golpes,
 // críticos, la carga, muertes con su moneda y su cuenta de bajas seguidas, los que cruzan, curas, rayos, los golpes del jefe) y, al acabar, cierra la oleada: cartel con el
-// resultado y las ventanas de los premios o del final de la partida.
+// resultado y las ventanas de los premios o del final de la partida. El efecto propio de cada clase (golpes, curas, habilidades y
+// estelas de los proyectiles) lo pone hechizos.js.
 'use strict';
 AS.pantallaBatalla = (() => {
   const fx = AS.fx, C = AS.tema.C;
   const SON_ATAQUE = { cuerpo: 'espada', flecha: 'flecha', magia: 'magia', bomba: 'flecha', cura: 'cura', moneda: 'moneda' };
+  const SON_HABILIDAD = { tanque: 'escudo', mago: 'magia', brujo: 'magia', asesino: 'flecha' };
   const pos = (E, x, y) => E.P.aPantalla(x, y);
+  const H = AS.hechizos;
+  const unidad = (E, id) => (id == null ? null : E.batalla.u.find(u => u.id === id) || null);
+  // dónde va un proyectil en pantalla (el mismo punto en el que lo dibuja pinta-arena.js)
+  const enVuelo = E => p => { const s = pos(E, p.x, p.y + 34); return { x: s.x, y: s.y - 52 }; };
 
   function lucha(E) {
     const r = E.casos.lucha();
@@ -15,9 +21,7 @@ AS.pantallaBatalla = (() => {
     const ol = E.casos.partida.proxima;
     Object.assign(E, { batalla: r.valor, tFin: 0, cerrando: false, oroBatalla: 0, arrastre: null, intro: null, combo: 0, tCombo: 0 });
     E.celdasOro.clear(); E.casi.clear();
-    if (ol.tipo === 'jefe') { E.intro = { t: 0, dura: 3, jefe: ol.jefe, rugio: false }; AS.suena('jefe'); fx.sacude(6); AS.suena.musica(ASALTO.jefes[ol.jefe].musica); }
-    else if (ol.tipo === 'elite') { AS.pantalla.cartel(tr('AUDITORÍA'), tr('Si pierdes esta oleada, se acaba'), C.rojo, 1.8); AS.suena('lucha'); }
-    else AS.suena('lucha');
+    if (ol.tipo === 'normal') AS.suena('lucha');   // la de élite y la del jefe traen su cartel grande (el aviso 'oleada', cartel-oleada.js)
   }
 
   /* ---------- lo que pasa en la batalla, hecho efecto ---------- */
@@ -29,6 +33,7 @@ AS.pantallaBatalla = (() => {
       fx.chispas(s.x, s.y - alto / 2, e.crit ? 12 : 5, e.crit ? '#ffd23a' : '#fff3d6', e.crit ? 200 : 110, e.crit);
       if (e.crit) { fx.sacude(5); AS.suena('critico'); fx.luz(s.x, s.y - 40, 110, [255, 220, 120], 0.25); fx.onda(s.x, s.y - alto / 2, 44, '#ffd23a'); }
       else if (e.lado === 'enemigo') fx.luz(s.x, s.y - 40, 60, [255, 240, 200], 0.12);
+      H.golpe(fx, { x: s.x, y: s.y - alto / 2 }, e, unidad(E, e.de), unidad(E, e.id));
     },
     ataque(E, e) {
       AS.suena(SON_ATAQUE[e.tipo] || 'espada');
@@ -49,15 +54,19 @@ AS.pantallaBatalla = (() => {
       fx.numero(40, s.y - 60, tr('-1 vida'), '#ff7a6a', 48);
       E.vidasRojo = 1.2;
     },
-    cura(E, e) { const s = pos(E, e.x, e.y); fx.numero(s.x, s.y - 90, '+' + e.c, '#8fe07a'); fx.brasas(s.x, s.y - 30, 4, '#8fe07a', 16); },
+    cura(E, e) { const s = pos(E, e.x, e.y); fx.numero(s.x, s.y - 90, '+' + e.c, '#8fe07a'); fx.brasas(s.x, s.y - 30, 4, '#8fe07a', 16); H.cura(fx, { x: s.x, y: s.y - 40 }, unidad(E, e.de)); },
     esquiva(E, e) { const s = pos(E, e.x, e.y); fx.numero(s.x, s.y - 90, tr('ESQUIVA'), '#8fd0f8'); },
     bloqueo(E, e) { const s = pos(E, e.x, e.y); fx.numero(s.x, s.y - 90, tr('ESCUDO'), '#8fd0f8'); },
     onda(E, e) { const s = pos(E, e.x, e.y); fx.onda(s.x, s.y - 10, e.radio * 1.2, '#ffb04a'); fx.chispas(s.x, s.y - 20, 12, '#ff8a2a', 190, true); fx.luz(s.x, s.y - 20, 150, [255, 170, 70], 0.3); fx.sacude(3); AS.suena('bomba'); },
-    rayo(E, e) { const a = pos(E, e.x1, e.y1 + 40), b = pos(E, e.x2, e.y2 + 30); fx.rayo(a.x, a.y - 60, b.x, b.y - 50); AS.suena('magia'); },
+    rayo(E, e) { const a = pos(E, e.x1, e.y1 + 40), b = pos(E, e.x2, e.y2 + 30); H.rayo(fx, { x: a.x, y: a.y - 60 }, { x: b.x, y: b.y - 50 }); AS.suena('magia'); },
+    // los objetos: la Bomba de confeti, el atontado del Martillo de forja y el «salvado» del Contrato y del Amuleto
+    confeti(E, e) { const s = pos(E, e.x, e.y); H.confeti(fx, { x: s.x, y: s.y - 30 }, e.radio * 1.2); AS.suena('bomba'); },
+    atonta(E, e) { const s = pos(E, e.x, e.y); H.atonta(fx, { x: s.x, y: s.y - 78 }, ASALTO.efectosObjetos.atonta); },
+    salva(E, e) { const s = pos(E, e.x, e.y); H.salva(fx, { x: s.x, y: s.y - 40 }); fx.fogonazo(0.25, '#ffe9a0'); AS.suena('premio', 1); },
     habilidad(E, e) {
-      if (e.clase !== 'tanque') return;
-      AS.suena('escudo');
-      for (const u of E.batalla.u) if (e.ids.includes(u.id)) { const s = pos(E, u.x, u.y); fx.onda(s.x, s.y - 40, 56, '#8fd0f8'); }
+      if (SON_HABILIDAD[e.clase]) AS.suena(SON_HABILIDAD[e.clase]);
+      const puntos = E.batalla.u.filter(u => e.ids.includes(u.id)).map(u => { const s = pos(E, u.x, u.y); return { x: s.x, y: s.y - 40 }; });
+      H.habilidad(fx, e.clase, puntos);
     },
     // la carga: el grito, el suelo que tiembla y el polvo que levantan
     carga(E) {
@@ -67,6 +76,7 @@ AS.pantallaBatalla = (() => {
     },
     tanda(E) { AS.pantalla.cartel(tr('¡REFUERZOS!'), '', C.sangre, 0.9); AS.suena('aviso'); },
     aviso() { AS.suena('aviso'); },
+    oleada(E, e) { AS.cartelOleada.empieza(E, e); },
     cae(E, e) {
       fx.sacude(11); fx.fogonazo(0.25, '#ffb04a'); AS.suena('cae');
       if (e.forma === 'franja') { const s = pos(E, 270, e.y); for (let i = 0; i < 9; i++) fx.chispas(E.P.W * (i + 0.5) / 9, s.y - 20, 6, '#ff8a2a', 200, true); }
@@ -89,7 +99,7 @@ AS.pantallaBatalla = (() => {
   /* ---------- cerrar la oleada ---------- */
   function cierra(E) {
     const r = E.casos.terminaOleada();
-    E.batalla = null; E.cerrando = false; E.oroBatalla = 0;
+    E.batalla = null; E.cerrando = false; E.oroBatalla = 0; E.intro = null;
     if (!r.ok) return;
     const v = r.valor, p = E.casos.partida;
     if (v.perdidas) E.vidasRojo = 1.6;
@@ -103,32 +113,11 @@ AS.pantallaBatalla = (() => {
   }
   function avanza(E, dt) {
     if (AS.ventanas.abierta()) return;
-    if (E.intro) { entrada(E, dt); return; }
+    AS.cartelOleada.avanza(E, dt);
     const B = E.batalla, paso = dt * fx.velocidad();
     for (let i = 0; i < E.vel; i++) { E.casos.tic(paso); eventos(E); }
+    H.estelas(fx, B.proy, enVuelo(E));
     if (B.fin && !E.cerrando) { E.tFin += dt; if (E.tFin > 1.0) { E.cerrando = true; cierra(E); } }
   }
-  // la entrada del jefe: la arena se queda a oscuras con el foco en él, ruge (tiembla todo) y luego entra su nombre
-  function entrada(E, dt) {
-    const I = E.intro, j = E.batalla.jefe;
-    I.t += dt;
-    if (!I.rugio && I.t > 0.75 && j) {
-      const s = pos(E, j.x, j.y);
-      I.rugio = true;
-      fx.sacude(16); fx.fogonazo(0.4, '#d8402f'); fx.onda(s.x, s.y - 10, 190, '#ff5a3a'); fx.chispas(s.x, s.y - 60, 26, '#ff8a2a', 260, true); AS.suena('furia');
-      for (let i = 0; i < 5; i++) fx.brasas(s.x - 60 + i * 30, s.y - 20, 6, '#ffb04a', 40);
-    }
-    if (I.t >= I.dura) E.intro = null;
-  }
-  // su nombre en una cinta que entra de lado, abajo (para no taparlo), y su lema en un pergamino
-  function pintaIntro(g, P, E) {
-    const I = E.intro, d = ASALTO.jefes[I.jefe], A = P.arena, e = Math.min(1, Math.max(0, (I.t - 0.9) / 0.3)), fuera = I.t > I.dura - 0.3 ? (I.t - (I.dura - 0.3)) / 0.3 : 0;
-    if (e <= 0) return;
-    const w = P.W - 16, x = Math.round(8 - (1 - e) * (1 - e) * P.W + fuera * fuera * P.W), y = A.y + A.h - 118;
-    AS.tema.cinta(g, x, y - 44, w, 90, C.rojo);
-    AS.texto.pinta(g, tr(d.nombre), x + w / 2, y - 4, { t: 64, col: C.crema, ancla: 'c', max: w - 60 });
-    AS.tema.pergamino(g, x + 26, y + 40, w - 52, 70);
-    AS.texto.parrafo(g, tr(d.lema), x + w / 2, y + 74, { col: C.tinta, borde: false, max: w - 84 });
-  }
-  return { lucha, avanza, pintaIntro };
+  return { lucha, avanza };
 })();

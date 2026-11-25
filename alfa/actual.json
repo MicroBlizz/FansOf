@@ -1,11 +1,11 @@
 {
- "build": 1502,
- "hash": "6c40ec3",
- "fecha": "2026-11-25T09:36:53Z",
- "mensaje": "Pop: la burbuja arcoíris manda una ficha anónima de cada encuentro al servidor (tarea #329, ADR 205) y la telemetría de core guarda una cola por juego (ADR 219)",
+ "build": 1503,
+ "hash": "def528a",
+ "fecha": "2026-11-25T10:26:01Z",
+ "mensaje": "Asalto 0.7.0: novedades de la tarea #108 (60 objetos, 15 piedras, hechizos y cartel de élite y jefe) (Pepins)",
  "juegos": {
   "air": "0.3.0",
-  "asalto": "0.6.6",
+  "asalto": "0.7.0",
   "basement": "0.13.3",
   "boom": "0.4.20",
   "chef": "0.4.3",

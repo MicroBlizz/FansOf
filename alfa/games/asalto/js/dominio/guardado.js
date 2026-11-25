@@ -1,6 +1,6 @@
 // Fans of Asalto · DOMINIO · Leer una partida guardada: repasa lo que viene del almacén (números, Altar, contadores, misiones,
-// reliquias, premios por cobrar) y devuelve los valores ya limpios, o un error; la partida (partida.js) solo los coloca. También da los
-// contadores de una partida nueva y arregla la máquina y la dificultad que se le piden. Puro.
+// reliquias, premios por cobrar, equipo, piedras y anuncios) y devuelve los valores ya limpios, o un error; la partida (partida.js) solo
+// los coloca. También da los contadores de una partida nueva y arregla la máquina y la dificultad que se le piden. Puro.
 'use strict';
 AS.guardado = (() => {
   const CUENTA = () => ({ lineas: 0, invocados: 0, ascensos: 0, dorados: 0, nivelMax: 1, bajas: 0, oroGanado: 0, oleadasGanadas: 0, jefes: 0,
@@ -44,14 +44,19 @@ AS.guardado = (() => {
     }
     return Object.values(hechos);
   }
-  // los valores de una partida guardada, limpios: AS.ok({ n, oro, vidas… }) o AS.error('partida-invalida')
-  function lee(datos, j) {
+  // los valores de una partida guardada, limpios: AS.ok({ n, oro, vidas, equipo, piedras, anuncios… }) o un error ('partida-invalida' o
+  // el del equipo). abiertos: los huecos del campo abiertos con las mejoras de la partida
+  function lee(datos, j, abiertos) {
     if (!num(j.n, 1) || !num(j.oro, 0) || !num(j.vidas, 1) || !num(j.sigId, 1)) return AS.error('partida-invalida');
+    const eq = AS.equipo.deJSON(datos, { ...j.equipo, abiertos });
+    return eq.ok ? AS.ok({ ...valores(datos, j), equipo: eq.valor, piedras: AS.piedras.deJSON(datos, j.piedras), anuncios: AS.anuncios.deJSON(j.anuncios) }) : eq;
+  }
+  function valores(datos, j) {
     const misiones = AS.misiones.valida(datos, j.misiones), altar = altarValido(datos, j.altar), tiradas = ent(j.tiradas);
     const reliquias = (j.reliquias || []).filter(r => datos.reliquias[r]);
-    return AS.ok({ n: ent(j.n), oro: ent(j.oro), vidas: ent(j.vidas), plumas: ent(j.plumas), sigId: ent(j.sigId), tiradas, gratis: !!j.gratis, empujones: ent(j.empujones),
+    return { n: ent(j.n), oro: ent(j.oro), vidas: ent(j.vidas), plumas: ent(j.plumas), sigId: ent(j.sigId), tiradas, gratis: !!j.gratis, empujones: ent(j.empujones),
       estallidos: ent(j.estallidos), altar, vivo: tiradas > 0 || (!!j.vivo && !!altar), cuenta: cuentaDe(j), racha: ent(j.racha), fallos: ent(j.fallos), misiones, escalones: escalonesDe(misiones, j),
-      esencia: ent(j.esencia), reliquias, premios: j.fase === 'premio' ? premiosDe(datos, j.premios, { reliquias, dif: dificultad(datos, j.dificultad, j.sinFin) }) : [] });
+      esencia: ent(j.esencia), reliquias, premios: j.fase === 'premio' ? premiosDe(datos, j.premios, { reliquias, dif: dificultad(datos, j.dificultad, j.sinFin) }) : [] };
   }
   return { CUENTA, altarValido, maquina, dificultad, premiosDe, lee };
 })();

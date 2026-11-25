@@ -12,9 +12,11 @@ AS.ventanas.suerte = (() => {
   const barra = p => `<div class="as-barra"><i style="width:${Math.round(p * 100)}%"></i></div>`;
   const nombreRuna = r => (r === AS.altar.COMODIN ? tr('Comodín') : tr(ASALTO.clases[r].nombre));
   const icoRuna = r => V.ico(r === AS.altar.COMODIN ? 'gema' : 'clase-' + r);
+  const seguras = n => (n === 1 ? tr('Piedra de la suerte: tu próxima invocación trae línea segura.') : tr('Piedra de la suerte: tus {n} invocaciones siguientes traen línea segura.', { n }));
   function htmlLinea(s) {
     const red = tr('Si fallas {n} seguidas, la red contra la mala suerte puede arreglar la siguiente: {lista}.', { n: s.red.desde, lista: s.red.prob.map(pc).join(', ') });
-    const ahora = s.ahora > s.linea ? `<p class="as-nota"><b>${tr('Tu próxima invocación: {p} (llevas {n} sin línea)', { p: pc(s.ahora), n: s.fallos })}</b></p>` : '';
+    const ahora = s.seguras ? `<p class="as-nota"><b>${seguras(s.seguras)}</b></p>`
+      : s.ahora > s.linea ? `<p class="as-nota"><b>${tr('Tu próxima invocación: {p} (llevas {n} sin línea)', { p: pc(s.ahora), n: s.fallos })}</b></p>` : '';
     return `<h3>${tr('LÍNEA POR INVOCACIÓN')}</h3><p class="as-suerte-gorda">${pc(s.linea)}</p>${ahora}<p class="as-nota">${red}</p>`
       + (s.repite ? `<p class="as-nota">${tr('Segunda oportunidad: si la primera invocación de la oleada no da línea, se repite gratis.')}</p>` : '');
   }
@@ -23,19 +25,25 @@ AS.ventanas.suerte = (() => {
     const fila = x => `<li class="as-item${x.candado ? ' as-suerte-cerrada' : ''}"><div><b>${tr(x.nombre)} <em class="as-cifra">${x.candado ? '' : pc(x.p)}</em></b>${x.candado ? `<span>${tr('Con candado: se abre en Mejoras')}</span>` : barra(x.p)}</div></li>`;
     return `<h3>${tr('RAREZA DE CADA HÉROE')}</h3><ul class="as-lista as-cifras">${s.rarezas.map(fila).join('')}</ul>`;
   }
+  // hasta dónde sube la rareza una piedra: la que da segura (la del comodín, aunque no esté abierta), su tope o, sin rarezas abiertas, Común
+  function tope(x) {
+    if (x.minima) return tr('+{n} de rareza · {r} seguro, aunque no esté abierto', { n: x.sube, r: tr(ASALTO.rarezas[x.minima].nombre) });
+    return x.hasta > 0 ? tr('+{n} de rareza · como mucho {r}', { n: x.sube, r: tr(ASALTO.rarezas[x.hasta].nombre) }) : tr('+{n} de rareza · sin rarezas abiertas, llegan Comunes', { n: x.sube });
+  }
   function htmlPiedras(s) {
     const fila = x => `<li class="as-item">${AS.pinta.piedras.img(x.tipo)}<div><b>${tr(x.nombre)} <em class="as-cifra">${pc(x.p)}</em></b>
-      <span>${x.hasta > 0 ? tr('+{n} de rareza · como mucho {r}', { n: x.sube, r: tr(ASALTO.rarezas[x.hasta].nombre) }) : tr('+{n} de rareza · sin rarezas abiertas, llegan Comunes', { n: x.sube })}</span></div></li>`;
+      <span>${tope(x)}</span>${x.txt ? `<span>${tr(x.txt, x.extra)}</span>` : ''}</div></li>`;
     return `<h3>${tr('PIEDRAS DE DESTINO')}</h3><p class="as-nota">${tr('Lo a menudo que da cada piedra su misión, y hasta dónde sube la rareza con lo que tienes abierto.')}</p><ul class="as-lista as-cifras">${s.piedras.map(fila).join('')}</ul>`;
   }
   function htmlMaquina(s) {
     const m = s.maquina, cifras = m.estallidos ? tr('Empujones por oleada: {e} · Estallidos: {s}', { e: m.empujones, s: m.estallidos }) : tr('Empujones por oleada: {e}', { e: m.empujones });
     return `<h3>${tr('TU MÁQUINA')}</h3><ul class="as-lista"><li class="as-item"><div><b>${tr(m.nombre)}</b><span>${tr(m.txt)}</span><span>${cifras}</span></div></li></ul>`;
   }
-  // el estado del panel sale de la partida en juego (sus mejoras, reliquias, fallos seguidos y máquina)
+  // el estado del panel sale de la partida en juego (sus mejoras, reliquias, objetos de la tienda, fallos seguidos, cargas de la Piedra
+  // de la suerte y máquina): lo mismo que mira la tirada
   function abre(E) {
-    const p = E.casos.partida, s = AS.suerte.de(ASALTO, { mods: p.mods, reliquias: p.reliquias, fallos: p.fallos, maquina: p.maquina });
-    V.abre(`<h2>${tr('PROBABILIDADES')}</h2><p class="as-nota">${tr('Cuentas exactas, con tus mejoras y reliquias de ahora.')}</p>`
+    const p = E.casos.partida, s = AS.suerte.de(ASALTO, { mods: p.mods, reliquias: p.reliquias, objetos: p.tienda && p.tienda.objetos, fallos: p.fallos, seguras: p.piedras.seguras, maquina: p.maquina });
+    V.abre(`<h2>${tr('PROBABILIDADES')}</h2><p class="as-nota">${tr('Cuentas exactas, con tus mejoras, reliquias y objetos de ahora.')}</p>`
       + htmlLinea(s) + htmlRunas(s) + htmlRarezas(s) + htmlPiedras(s) + htmlMaquina(s) + btn('as-cerrar', tr('CERRAR'), 'as-azul'), 'as-suerte');
     V.alPulsar('as-cerrar', V.cierra);
   }

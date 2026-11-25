@@ -60,6 +60,17 @@ AS.heroe = (() => {
     for (const k of improntas(datos, h)) { const grado = Math.min(N.tope, Math.floor(h.marcas[k] / N.marcas)); if (grado > 0) g[k] = grado; }
     return g;
   }
+  // el mismo héroe con un nivel mínimo y marcas de más (lo que traen algunas piedras de destino): { nivel, marcas: { clase: n } }
+  function mejora(datos, h, con) {
+    const nivel = Math.max(h.nivel, Math.floor(con.nivel) || 0), marcas = { ...h.marcas };
+    for (const k in (con.marcas || {})) {
+      if (!datos.clases[k] || !(con.marcas[k] > 0)) return AS.error('marca-invalida', { clase: k });
+      marcas[k] = (marcas[k] || 0) + Math.floor(con.marcas[k]);
+    }
+    return AS.ok(congela({ ...h, cifras: { ...h.cifras }, nivel, marcas }));
+  }
+  // su gemelo (Piedra gemela): igual en todo menos en el id
+  const gemelo = (h, id) => congela({ ...h, id, cifras: { ...h.cifras }, marcas: { ...h.marcas } });
   const puedeAscender = (datos, h) => !h.rama && h.nivel >= datos.niveles.ascenso;
   function asciende(datos, h, clase) {
     if (h.rama) return AS.error('ya-ascendido');
@@ -108,5 +119,5 @@ AS.heroe = (() => {
     return AS.ok(con(r.valor, { cifras: cifrasGuardadas(datos, j), marcas: marcasGuardadas(datos, j), rama, cartas: cartasGuardadas(datos, j), ser, dios,
       legendario: legendarioGuardado(datos, j, rama, ser, dios) }));
   }
-  return { crea, con, conCifras, conCarta, tiene, clases, absorbe, huecos, improntas, herencias, puedeAscender, asciende, puntos, deJSON };
+  return { crea, con, conCifras, conCarta, tiene, mejora, gemelo, clases, absorbe, huecos, improntas, herencias, puedeAscender, asciende, puntos, deJSON };
 })();

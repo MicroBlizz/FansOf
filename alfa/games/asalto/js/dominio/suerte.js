@@ -1,7 +1,7 @@
 // Fans of Asalto · DOMINIO · Las cuentas del panel de probabilidades: qué sale en el Altar y con qué suerte, sacadas de los MISMOS
-// pesos que usa la tirada (reglas.pesos, con las mejoras y las reliquias puestas): cada runa, la línea por invocación (exacta, sin
-// simular), la red contra la mala suerte, las rarezas (las de candado, a 0), las piedras de destino y la máquina elegida. Sin estado ni
-// azar: solo cuentas. Lo enseña adaptadores/ventanas-suerte.js.
+// pesos que usa la tirada (reglas.pesos, con las mejoras, las reliquias y los objetos de la tienda puestos): cada runa, la línea por
+// invocación (exacta, sin simular), la red contra la mala suerte, las tiradas seguras de la Piedra de la suerte, las rarezas (las de
+// candado, a 0), las piedras de destino y la máquina elegida. Sin estado ni azar: solo cuentas. Lo enseña adaptadores/ventanas-suerte.js.
 'use strict';
 AS.suerte = (() => {
   // lo que pesa cada runa sobre el total: [{ runa, p }] en el orden de los datos. Suman 1
@@ -47,17 +47,22 @@ AS.suerte = (() => {
   const conRed = (base, red, fallos) => base + (1 - base) * AS.altar.probRed(red, fallos);
   // las rarezas: [{ id, nombre, p, candado }]; las de candado van a 0. Suman 1
   const rarezas = (datos, m) => AS.reglas.probRarezas(datos, m).map((p, i) => ({ id: datos.rarezas[i].id, nombre: datos.rarezas[i].nombre, p, candado: i > (m.rarezas || 0) }));
-  // las piedras de destino: lo a menudo que toca cada una, cuánto sube y hasta qué rareza llega con las abiertas
+  // las piedras de destino: lo a menudo que toca cada una, su rango, cuánto sube, hasta qué rareza llega con las abiertas, la rareza que
+  // da segura aunque no esté abierta (minima: la del comodín, Épico; 0 las demás) y lo que trae además (txt con las cifras de extra; las
+  // 3 de siempre no traen nada)
   function piedras(datos, m) {
     const T = datos.piedras.tipos, total = Object.values(T).reduce((a, t) => a + t.peso, 0);
-    return Object.keys(T).map(tipo => ({ tipo, nombre: T[tipo].nombre, sube: T[tipo].sube, p: T[tipo].peso / total, hasta: AS.piedras.rareza(datos, m.rarezas || 0, 0, tipo) }));
+    return Object.keys(T).map(tipo => ({ tipo, nombre: T[tipo].nombre, rango: T[tipo].rango, sube: T[tipo].sube, p: T[tipo].peso / total,
+      hasta: AS.piedras.rareza(datos, m.rarezas || 0, 0, tipo), minima: AS.piedras.extra(datos, tipo).rareza || 0, txt: T[tipo].txt || null, extra: T[tipo].extra || null }));
   }
-  // todo el panel. s: { mods, reliquias, fallos, maquina }
+  // la línea de la próxima invocación: segura si quedan cargas de la Piedra de la suerte; si no, la de la red
+  const proxima = (base, red, s) => (s.seguras > 0 ? 1 : conRed(base, red, s.fallos || 0));
+  // todo el panel. s: { mods, reliquias, objetos (los de la tienda), fallos, seguras (cargas de la Piedra de la suerte), maquina }
   function de(datos, s) {
-    const pesos = AS.reglas.pesos(datos, s.mods, s.reliquias), base = linea(pesos), red = datos.altar.red;
+    const pesos = AS.reglas.pesos(datos, s.mods, s.reliquias, s.objetos), base = linea(pesos), red = datos.altar.red;
     const maq = datos.maquinas[s.maquina] || datos.maquinas.altar;
     return {
-      runas: runas(pesos), linea: base, ahora: conRed(base, red, s.fallos || 0), fallos: s.fallos || 0, red: { desde: red.desde, prob: red.prob.slice() },
+      runas: runas(pesos), linea: base, ahora: proxima(base, red, s), fallos: s.fallos || 0, seguras: s.seguras || 0, red: { desde: red.desde, prob: red.prob.slice() },
       repite: s.reliquias.includes('repite'), rarezas: rarezas(datos, s.mods), piedras: piedras(datos, s.mods),
       maquina: { id: datos.maquinas[s.maquina] ? s.maquina : 'altar', nombre: maq.nombre, txt: maq.txt, empujones: AS.reglas.empujones(datos, s.mods, s.reliquias, s.maquina), estallidos: AS.reglas.estallidos(datos, s.maquina) },
     };

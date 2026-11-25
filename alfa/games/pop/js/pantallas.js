@@ -40,23 +40,27 @@ function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
 function ppBoton(texto, clase, f) { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = () => { play('select'); f(); }; return b; }
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
 // cerrar o volver, igual en todas las pantallas (tarea 386; antes la flecha de la 346, que flotaba y pisaba títulos, pestañas y
-// listas): una franja fija arriba de la ventana `t`, con su fondo, el título en el centro (el <h2> de la ventana, o `titulo`) y una
+// listas): una franja fija arriba de la ventana `t`, con su fondo, el título en el centro (el <h2> de la ventana, o `op.titulo`) y una
 // burbuja con una X a la derecha, que se hunde y hace pop al pulsarla. Lo demás empieza debajo y, al bajar, se esconde bajo la franja
 // (css/pop.css, .pp-cab: una nube con su carita, boceto 2 de Pepins). En una ventana que viene de otra, `f` vuelve un paso atrás. Las
 // preguntas de sí o no (NO, VOLVER) siguen con sus botones: son una respuesta.
-// `izquierda`: algo más para la franja, a la izquierda, en vez de la carita (en Amigos, tus corazones).
-function ppBotonVolver(t, f, titulo = '', izquierda = null) {
+// `op`: { titulo, izquierda (algo para la izquierda de la franja en vez de la carita: en Amigos, tus corazones),
+//         color: 'oro' | 'menta' | 'naranja' | 'coral' (el de lo que hay en la ventana; sin él, rosa) }
+const PP_COLORES_CERRAR = Object.freeze(['oro', 'menta', 'naranja', 'coral']);
+function ppBotonVolver(t, f, op = {}) {
   const cab = document.createElement('div'); cab.className = 'pp-cab';
   let h = t.querySelector(':scope > h2');
   if (!h) h = document.createElement('h2');
-  if (!h.textContent) h.textContent = titulo;
-  const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-cerrar';
+  if (!h.textContent) h.textContent = op.titulo || '';
+  const b = document.createElement('button'); b.type = 'button';
+  b.className = 'pp-cerrar' + (PP_COLORES_CERRAR.includes(op.color) ? ' pp-x-' + op.color : '');
   b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 13 35 35M35 13 13 35"/></svg>';
   b.setAttribute('aria-label', tr('VOLVER'));
   b.onclick = () => { play('ppPop', 0); f(); };   // suena como una burbuja del tablero
-  if (izquierda) izquierda.classList.add('pp-cab-izq');
-  else { izquierda = document.createElement('span'); izquierda.className = 'pp-cab-cara'; }
-  cab.append(izquierda, h, b);
+  let izq = op.izquierda;
+  if (izq) izq.classList.add('pp-cab-izq');
+  else { izq = document.createElement('span'); izq.className = 'pp-cab-cara'; }
+  cab.append(izq, h, b);
   t.classList.add('pp-con-cab');
   t.prepend(cab);
   return b;
@@ -211,7 +215,7 @@ function ppOpciones() {
   col.appendChild(ah);
   col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
   if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
-  ppBotonVolver(t, ppCierra);
+  ppBotonVolver(t, ppCierra, { color: 'menta' });
 }
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {

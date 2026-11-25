@@ -62,7 +62,7 @@ function ppVentanaRegalo() {
     <div class="pp-rg-halo${cogido ? ' pp-rg-quieto' : ''}">${ppIcono('i-regalo', 130, '#9cf0a0')}</div>
     <div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 40)}</div>${seguidos}${ppRegaloTira(hoy, !!m)}${m ? ppRegaloContador(m) : ''}`, true);
   if (!cogido) t.appendChild(ppBoton(tr('¡ABRIR!'), 'pp-btn', () => ppRegaloAbre(hoy)));
-  ppBotonVolver(t, ppCierra);
+  ppBotonVolver(t, ppCierra, { color: 'coral' });
 }
 // días seguidos: apunta el regalo de hoy en SAVE.diasSeguidos y dice qué día del camino toca y la frase de lo que ha pasado
 // (null si ya estaba abierto: no se da dos veces)

@@ -35,7 +35,7 @@ function ppVentanaRanking(tab) {
   }
   t.appendChild(tabs);
   const caja = document.createElement('div'); caja.className = 'pp-ranking'; t.appendChild(caja);
-  ppBotonVolver(t, ppCierra);
+  ppBotonVolver(t, ppCierra, { color: 'naranja' });
   const unidad = { estrellas: tr('estrellas'), dificil: tr('estrellas'), memoria: tr('rondas'), duelos: tr('victorias') }[PP_RANK.tab];
   const pinta = d => {
     if (!caja.isConnected) return;

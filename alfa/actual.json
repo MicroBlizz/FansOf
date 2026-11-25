@@ -1,8 +1,8 @@
 {
- "build": 1513,
- "hash": "a0f2174",
- "fecha": "2026-11-25T18:33:01Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/gracious-liskov-7ec3b2",
+ "build": 1514,
+ "hash": "455a360",
+ "fecha": "2026-11-25T18:54:57Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-x-color",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

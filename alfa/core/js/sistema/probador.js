@@ -189,7 +189,7 @@ PROBADOR.crea = ({ cuenta, entorno, juego, antes, entrega, aplica, dispara, paus
   }
   async function cuentaReseteada() {
     const c = cuenta(), quien = (c && c.usuario) || '';
-    if (!c || !c.activa || !quien || c.invitado || !juego() || !enLinea()) return false;
+    if (!c || !c.activa || !quien || c.invitadoDeVerdad || !juego() || !enLinea()) return false;
     const fecha = await fechaReseteo(c);
     if (!fecha || !faltaLimpiar(MARCA_CUENTA + ':' + juego() + ':' + quien, fecha)) return false;
     await pausa(true);   // lo que aún esté saliendo acaba antes; ya no sale nada más hasta la recarga

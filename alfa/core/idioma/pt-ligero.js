@@ -82,6 +82,7 @@ IDIOMA.add({
   "Listo: tu progreso se guarda en tu cuenta.": "Pronto: seu progresso fica salvo na sua conta.",
   "No se ha podido entrar. Prueba otra vez.": "Não foi possível entrar. Tente de novo.",
   "Tu sesión había caducado. Entra otra vez para recuperar tu cuenta.": "Sua sessão tinha expirado. Entre de novo para recuperar sua conta.",
+  "Invitado de prueba: no se envía nada": "Convidado de teste: nada é enviado",
   "No ha salido bien: {m}": "Não deu certo: {m}",
   "ENVIAR": "ENVIAR",
   "Ese email no parece bien escrito": "Esse e-mail não parece bem escrito",

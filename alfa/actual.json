@@ -1,8 +1,8 @@
 {
- "build": 1521,
- "hash": "e5f2e0a",
- "fecha": "2026-11-25T20:19:46Z",
- "mensaje": "Pop: trae main a la tarea 384 (turno 3)",
+ "build": 1522,
+ "hash": "22ebe4b",
+ "fecha": "2026-11-25T20:29:13Z",
+ "mensaje": "Core: «Ver como invitado» en el panel DEV para revisar en la alfa las ventanas de invitado sin cerrar la sesión (tarea 318, Pepins; ADR 227)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

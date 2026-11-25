@@ -32,6 +32,7 @@
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/probador.js',     // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
     'js/sistema/probador-partida.js',   // qué queda de la partida de core al resetear una cuenta de probador (PROBADOR_PARTIDA) y su gancho
+    'js/cuenta/invitado-prueba.js', // el interruptor «Ver como invitado» del panel DEV (ADR 227); antes de cuenta.js
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097): dominio, casos de uso y adaptadores
     'js/cuenta/roles.js',         //           su composición (CUENTA.roles), ya con CUENTA cargada
@@ -91,6 +92,7 @@
     'js/sistema/puerta-adultos.js',   // la pregunta para adultos antes de pagar con dinero real (tarea #178, ADR 166); antes de monedas.js
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/probador.js',      // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
+    'js/cuenta/invitado-prueba.js', // el interruptor «Ver como invitado» del panel DEV (ADR 227); antes de cuenta.js
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097)
     'js/cuenta/roles.js',          //           su composición (CUENTA.roles)

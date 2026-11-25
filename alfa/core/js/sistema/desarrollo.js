@@ -136,6 +136,12 @@
       c.append(el('div', { className: 'fila' }, boton('Devolverlos a su sitio de serie', () => avisa(FLOTANTES.reinicia(), 'Todos a su sitio de serie'))));
       function avisa(r, txt) { aviso(txt + (r.guardado ? '' : ' (sin guardar: vale hasta recargar)')); }   // sin almacenamiento, vale hasta recargar
     } },
+    { titulo: 'Ver como invitado', soloDesarrollo: true, pinta(c) {   // ADR 227: la alfa no deja entrar a un invitado de verdad
+      if (typeof CUENTA === 'undefined' || !CUENTA.activa || !CUENTA.invitadoPrueba) { c.append(el('p', { textContent: 'Aquí no hay cuenta.' })); return; }
+      const p = CUENTA.invitadoPrueba, on = p.activo();
+      c.append(el('p', { textContent: 'Los juegos te tratan como invitado (comprar pide cuenta, Opciones enseña lo de invitado) sin cerrar tu sesión. Guardar o entrar con email o Google no envía nada. Se apaga al cerrar la pestaña.' }));
+      c.append(el('div', { className: 'fila' }, boton(on ? 'Volver a mi cuenta' : 'Ver como invitado', () => { if (p.pon(!on)) location.reload(); else aviso('No se ha podido guardar en este navegador'); })));
+    } },
     { titulo: 'Ahorro de batería', pinta(c) {
       if (typeof AHORRO === 'undefined') { c.append(el('p', { textContent: 'Este juego no carga el ahorro de core.' })); return; }
       c.append(el('p', { textContent: 'El mismo interruptor que en Opciones (ADR 218): se cambia en caliente, en mitad de la partida. Mira el contador de fps al cambiarlo.' }));

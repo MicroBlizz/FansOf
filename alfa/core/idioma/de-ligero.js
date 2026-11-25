@@ -82,6 +82,7 @@ IDIOMA.add({
   "Listo: tu progreso se guarda en tu cuenta.": "Fertig: Dein Fortschritt wird in deinem Konto gespeichert.",
   "No se ha podido entrar. Prueba otra vez.": "Anmelden hat nicht geklappt. Versuch es noch mal.",
   "Tu sesión había caducado. Entra otra vez para recuperar tu cuenta.": "Deine Sitzung war abgelaufen. Melde dich noch mal an, um dein Konto zurückzubekommen.",
+  "Invitado de prueba: no se envía nada": "Testgast: Es wird nichts gesendet",
   "No ha salido bien: {m}": "Das hat nicht geklappt: {m}",
   "ENVIAR": "SENDEN",
   "Ese email no parece bien escrito": "Diese E-Mail sieht nicht richtig geschrieben aus",

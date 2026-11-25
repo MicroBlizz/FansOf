@@ -26,7 +26,7 @@
     const p = document.createElement('p'); p.textContent = T(motivo);
     const botones = document.createElement('div'); botones.style.cssText = 'display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px';
     const boton = (txt, fn) => { const b = document.createElement('button'); b.textContent = T(txt); b.onclick = fn; b.style.cssText = 'font:800 15px system-ui,sans-serif;padding:10px 16px;border-radius:10px;border:3px solid #20102c;background:#ffcb3d;color:#20102c;cursor:pointer'; return b; };
-    if (typeof CUENTA !== 'undefined' && CUENTA.invitado) botones.append(boton('ENTRAR CON GOOGLE', () => CUENTA.entrarConGoogle()));
+    if (typeof CUENTA !== 'undefined' && CUENTA.invitadoDeVerdad) botones.append(boton('ENTRAR CON GOOGLE', () => CUENTA.entrarConGoogle().catch(e => { p.textContent = e.message; })));   // con la cuenta de verdad: el «Ver como invitado» del panel DEV (ADR 227) no cuenta aquí
     botones.append(boton('VOLVER A LA LIBRERÍA', () => { location.href = base; }));
     dentro.append(h, p, botones); caja.append(dentro); document.body.append(caja);
   }
@@ -36,7 +36,7 @@
     const r = await CUENTA.roles.refrescar(['alfa']);
     if (!r.ok) {   // sin cuenta posible (archivo suelto, iframe del comparador…) no se exige nada; sin red, solo se juega con el rol recordado
       if (r.error === 'sin-respuesta' && !CUENTA.roles.tiene('alfa')) puerta('No se ha podido comprobar tu acceso a la copia de pruebas. Revisa la conexión y recarga.');
-    } else if (!r.valor.roles.tiene('alfa')) puerta(CUENTA.invitado ? 'Esta es la copia de pruebas de Fans Of. Entra con tu cuenta de probador para jugar.' : 'Esta cuenta no tiene acceso a la copia de pruebas. Pídelo a Microblizz.');
+    } else if (!r.valor.roles.tiene('alfa')) puerta(CUENTA.invitadoDeVerdad ? 'Esta es la copia de pruebas de Fans Of. Entra con tu cuenta de probador para jugar.' : 'Esta cuenta no tiene acceso a la copia de pruebas. Pídelo a Microblizz.');
   }
 
   if (typeof CUENTA !== 'undefined' && CUENTA.roles.tiene('alfa')) setTimeout(comprobar, 5000);   // recordado: juega ya y se vuelve a mirar de fondo

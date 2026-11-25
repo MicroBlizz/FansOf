@@ -4,7 +4,8 @@
 // Nadie llama ya por su cuenta a tiene_rol (ADR 097).
 'use strict';
 CUENTA_ROLES.compon = ({ cuenta, almacen, reloj = Date, publicar }) => CUENTA_ROLES.casos({
-  sesion: { activa: () => !!cuenta.activa, usuario: () => cuenta.usuario, invitado: () => cuenta.invitado },
+  sesion: { activa: () => !!cuenta.activa, usuario: () => cuenta.usuario, invitado: () => cuenta.invitadoDeVerdad },
+  // ^ los roles, de la cuenta de verdad: no del «Ver como invitado» del panel DEV (ADR 227)
   servidor: CUENTA_ROLES.servidorSupabase(cuenta.rpc),
   almacen: CUENTA_ROLES.almacenLocal(almacen),
   reloj: { ahora: () => reloj.now() },

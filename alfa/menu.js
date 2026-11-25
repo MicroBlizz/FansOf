@@ -74,7 +74,7 @@
     const mira = () => ponTablero(CUENTA.roles.tiene('admin'));   // lo recordado (vale sin red); un invitado o sin sesión no tiene roles
     mira();
     if (typeof hook === 'function') hook('roles', mira);          // otro que pregunte (Mi cuenta) también lo pone al día
-    if (!CUENTA.invitado) CUENTA.roles.refrescar(['admin']).then(mira, () => { /* sin red: vale lo recordado */ });
+    if (!CUENTA.invitadoDeVerdad) CUENTA.roles.refrescar(['admin']).then(mira, () => { /* sin red: vale lo recordado */ });
   });
   for (const x of document.querySelectorAll('nav.menu [data-idioma]')) x.addEventListener('click', e => {
     e.preventDefault(); if (conCore) return;   // la portada y lore lo hacen con core (NUCLEO.elegirIdioma)

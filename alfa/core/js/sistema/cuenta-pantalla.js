@@ -9,7 +9,7 @@
   else window.filaCuenta = fila;   // un juego ligero (core/js/sistema/ligero.js) no tiene esa lista: pone esta fila donde quiera en sus Opciones
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const boton = (texto, fn, peligro) => { const b = document.createElement('button'); b.className = 'btn-ghost ol' + (peligro ? ' danger' : ''); b.textContent = texto; b.onclick = () => { play('select'); fn(); }; return b; };
-  const fallo = e => toast(tr('No ha salido bien: {m}', { m: (e && e.message) || '?' }));
+  const fallo = e => toast(e && e.prueba ? e.message : tr('No ha salido bien: {m}', { m: (e && e.message) || '?' }));   // el invitado de prueba del panel DEV (ADR 227) lo dice tal cual
 
   // pide un email en la ventana de confirmación; ok recibe lo escrito
   function pedirEmail(titulo, texto, ok) {
@@ -26,7 +26,7 @@
   // los botones para guardar o entrar; los usan Opciones y la ventana «necesitas una cuenta» (con la misma lógica)
   function botonesInvitado() {
     return ponen(
-      google && boton(tr('CONTINUAR CON GOOGLE'), () => confirmBox(tr('ENTRAR CON GOOGLE'), tr('Entrarás con tu cuenta de Google: si es nueva se crea sola, y si ya la tenías recuperas tu progreso.') + '<small>' + edad() + '</small>', tr('CONTINUAR'), () => CUENTA.entrarConGoogle())),
+      google && boton(tr('CONTINUAR CON GOOGLE'), () => confirmBox(tr('ENTRAR CON GOOGLE'), tr('Entrarás con tu cuenta de Google: si es nueva se crea sola, y si ya la tenías recuperas tu progreso.') + '<small>' + edad() + '</small>', tr('CONTINUAR'), () => CUENTA.entrarConGoogle().catch(fallo))),
       boton(tr('GUARDAR CON EMAIL'), () => pedirEmail(tr('GUARDAR TU PROGRESO'), tr('Te mandaremos un enlace, sin contraseña. Al abrirlo, tu progreso queda guardado en tu cuenta.') + '<small>' + edad() + '</small>',
         e => CUENTA.guardarConEmail(e).then(() => { toast(tr('Mira tu correo y abre el enlace'), true); pintar(); }, fallo))),
       boton(tr('YA TENGO CUENTA'), () => pedirEmail(tr('ENTRAR EN TU CUENTA'), tr('Te mandaremos un enlace para entrar. Si aquí también has jugado, después te preguntaremos con qué partida sigues.'),
@@ -37,7 +37,7 @@
   // `textos` (opcional, ya en español; se traducen aquí): { titulo, cancelar } para cambiar el título y el botón de salir (tarea #155).
   window.pedirCuenta = (motivo, destino, textos = {}) => {
     if (!CUENTA.activa || !CUENTA.invitado) return false;
-    try { if (destino) localStorage.setItem('fansof-tras-cuenta', destino + '|' + Date.now()); } catch (e) { /* sin memoria: no se retoma solo */ }
+    try { if (destino && !CUENTA.invitadoPrueba.activo()) localStorage.setItem('fansof-tras-cuenta', destino + '|' + Date.now()); } catch (e) { /* sin memoria: no se retoma solo */ }
     confirmBox(tr(textos.titulo || 'NECESITAS UNA CUENTA'), esc(tr(motivo)) + '<small>' + tr('Sin contraseña: entras con Google o con un enlace al email. Tu progreso se queda en tu cuenta.') + ' ' + edad() + '</small><div id="cuenta-modal" class="row" style="flex-direction:column;gap:8px;margin-top:10px"></div>', null, null, tr(textos.cancelar || 'AHORA NO'));
     document.getElementById('cuenta-modal').append(...botonesInvitado());
     return true;

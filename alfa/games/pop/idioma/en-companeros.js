@@ -164,7 +164,8 @@ IDIOMA.add({
   "Sale a veces en una burbuja arcoíris: ¡tócala la primera y gánale un duelo!": "Sometimes it shows up in a rainbow bubble: tap it first and beat it in a duel!",
   // el duelo por un compañero escondido (tarea #329, js/escondidos-juego.js y js/escondidos-duelo.js)
   "¡La burbuja arcoíris se ha escapado!": "The rainbow bubble got away!",
-  "¡Una burbuja arcoíris! Tócala la primera o se escapa.": "A rainbow bubble! Tap it first or it gets away.",
+  "¡Burbuja arcoíris con compañero! Tócala la primera o se escapa.": "A rainbow bubble with a buddy! Tap it first or it gets away.",
+  "Hay más compañeros escondidos en burbujas arcoíris.": "More buddies are hiding in rainbow bubbles.",
   "¡Un compañero escondido!": "A hidden buddy!",
   "¡Un compañero repetido!": "A buddy you already have!",
   "Repetidos para la siguiente estrella: {a} de {b}": "Duplicates for the next star: {a} of {b}",

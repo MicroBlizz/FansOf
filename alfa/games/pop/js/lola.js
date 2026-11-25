@@ -34,7 +34,8 @@ const PP_TUTO = {
   w10n1: [{ t: '¡El Espacio! Al final te espera el CEO espacial.' }],
   ayudas: [{ t: 'Abajo tienes ayudas. ¡No gastan toques!' }],
   ayudasDuelo: [{ t: 'Deshacer vuelve atrás. La lupa te da la jugada buena.' }],
-  arcoiris: [{ t: '¡Una burbuja arcoíris! Tócala la primera o se escapa.' }],
+  arcoiris: [{ t: '¡Burbuja arcoíris con compañero! Tócala la primera o se escapa.' }],   // tarea #354: dice que lleva un compañero dentro
+  escondidos: [{ t: 'Hay más compañeros escondidos en burbujas arcoíris.', encima: true }],   // el primer rescate (Jardín 3), tarea #354
   trucoNim: [{ t: 'Truco: deja al rival filas iguales, por parejas.' }],
   despedidos: [{ t: 'En pesadilla tus amigos no ayudan. ¡Solo tú!' }],
   tienda: [{ t: 'Las perlas cuestan dinero de verdad. Si eres menor, pide permiso.', encima: true, bloquea: true }],   // precios honestos (tarea #177): este sí se lee antes de tocar

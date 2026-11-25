@@ -1,8 +1,8 @@
 {
- "build": 1500,
- "hash": "ec178d6",
- "fecha": "2026-11-25T08:37:06Z",
- "mensaje": "Core: el «!» de reportar de las cuentas admin también se arrastra a cualquier borde (tarea #362, ADR 217, Pepins)",
+ "build": 1501,
+ "hash": "81afc16",
+ "fecha": "2026-11-25T09:28:30Z",
+ "mensaje": "Island: el Brotito por etapas del visor, rehecho con el brazo rígido y el corte nuevo (run 4683, tarea #334): sin trocitos sueltos en los brazos",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.6",

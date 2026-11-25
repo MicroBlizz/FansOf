@@ -1,8 +1,8 @@
 {
- "build": 1483,
- "hash": "f9c7e24",
- "fecha": "2026-11-24T23:33:46Z",
- "mensaje": "Pop: cositas de las estelas sin el velo rosa de la sombra (shuriken, azúcar, nube y humo) y huella, astilla y azúcar se pedirán a Yoshi sobre verde (tarea #160, Pepins)",
+ "build": 1484,
+ "hash": "1b24bc8",
+ "fecha": "2026-11-25T00:45:00Z",
+ "mensaje": "Pop Memoria fase 1: eliges el mundo (su tablero, colores e instrumento) y la dificultad (Fácil, Normal o Difícil, cada una con su récord) y el tablero crece con las rondas (tarea #141, ADR 215, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.6.4",

@@ -72,7 +72,7 @@ function ppArranque() {
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('duelos')) return; PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)
-  $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('memoria')) return; PP_P = null; ppNuevaMemoria(); };
+  $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('memoria')) return; PP_P = null; ppEligeMemoria(); };   // antes de jugar, el mundo y la dificultad (js/memoria-elige.js, tarea #141)
   $pp('#pp-cort-jugar').onclick = ppCortPulsa;
   $pp('#pp-listo').onclick = () => { if (ppCortActiva()) return; play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };

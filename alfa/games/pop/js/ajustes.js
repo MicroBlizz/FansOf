@@ -128,7 +128,18 @@ const PP_CFG = {
   // MEMORIA (js/memoria.js, fase 4): el «Simón dice» del pop-it. Tablero de 3x3; cada burbuja de la melodía dura `paso` segundos en
   // la ronda 1 y `acelera` menos cada ronda, hasta `pasoMin`. Premio del día: `porRonda` monedas por ronda (solo lo que mejora tu
   // mejor ronda de hoy), hasta `tope` al día. Sin corazones.
-  memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60 },
+  // Tarea #141 (fase 1, ADR 215; reglas en js/memoria-reglas.js): el tablero CRECE (3x3 hasta la ronda `lado4`, 4x4 hasta `forma` y
+  // luego la forma de `ladoForma` del mundo elegido), cada mundo suena con su `instrumentos[m]` (js/memoria-instrumentos.js) y hay tres
+  // DIFICULTADES: `paso` y `pasoMin` multiplican los de arriba, `pista` = segundos de duda tras los que brilla la buena (0 = nunca) y
+  // `luces` = si la melodía se ve al sonar (en Difícil solo se oye). Normal es la de siempre y su récord, el de la clasificación.
+  memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60,
+    crece: { lado4: 6, forma: 11, ladoForma: 5 },
+    dificultades: {
+      facil: { paso: 1.4, pasoMin: 1.4, pista: 3, luces: true },
+      normal: { paso: 1, pasoMin: 1, pista: 0, luces: true },
+      dificil: { paso: 0.8, pasoMin: 0.75, pista: 0, luces: false },
+    },
+    instrumentos: ['cajita', 'xilofono', 'campanillas', 'tambor', 'organillo', 'arpa', 'flauta', 'marimba', 'koto', 'sinte'] },
   // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
   // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
   perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },

@@ -4,9 +4,9 @@
 // Con el estilo de mundos abierto (ppEstiloActivo, js/estilo-mundo.js) cada pop suelta además chispas pastel, la bandeja da un
 // botecito y al acabar el nivel llueve confeti: las cuentas están en js/chispas.js (PP_CHISPAS).
 'use strict';
-const PP_FX = { celdas: {}, pulsada: -1, parts: [], temblor: 0, dano: 0, saltos: [], textos: [], entrada: 0, pista: 0, vuelos: [], brilla: {}, combo: null, ondas: [], bote: Infinity };
+const PP_FX = { celdas: {}, pulsada: -1, parts: [], temblor: 0, dano: 0, saltos: [], textos: [], entrada: 0, pista: 0, vuelos: [], brilla: {}, combo: null, comboCola: [], ondas: [], bote: Infinity };
 function ppFxEntraSala(T) {
-  PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_FX.vuelos = []; PP_FX.ondas = []; PP_FX.combo = null; PP_FX.pulsada = -1; PP_FX.entrada = 1; PP_FX.temblor = 0; PP_FX.bote = Infinity;
+  PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_FX.vuelos = []; PP_FX.ondas = []; PP_FX.combo = null; PP_FX.comboCola = []; PP_FX.pulsada = -1; PP_FX.entrada = 1; PP_FX.temblor = 0; PP_FX.bote = Infinity;
   PP_ATAQUE_FX.limpia();   // la estela y los golpes de los ataques de los compañeros (js/ataques-fx.js)
   for (let i = 0; i < T.up.length; i++) PP_FX.celdas[i] = { t: 9, dir: T.up[i] ? 'sube' : 'pop', demora: (i % T.n + Math.floor(i / T.n)) * 0.045 };
   if (T.pista !== null) { PP_FX.pista = 0.6; play('ppPista'); }
@@ -69,7 +69,19 @@ const ppEnDuelo = () => PP_PANT.actual === 'duelo' || !!(PP_PANT.actual === 'sal
 function ppFxHabilidad(id) { PP_FX.brilla[id] = 1; fire('pp-companero', id); }   // un compañero actúa: brilla su hueco y lo cuenta el medidor de fps (js/rendimiento-partida.js)
 // el letrero de COMBO: crece con cada toque bueno seguido
 // `i`: la burbuja del toque que lo hace (con el flag `combos`, el letrero sale junto a ella: js/combo-letrero.js); -1, el sitio de siempre
-function ppFxCombo(n, i = -1) { PP_FX.combo = { n, t: 0, i }; ppVibra(8 + n * 4); play('ppCombo', n); }
+// Con el flag, si el de ahora apenas se ha visto (los compañeros suben el combo muy seguido), el nuevo espera en fila (PP_FX.comboCola):
+// así se ve cada paso, x3, x4, x5… (Pepins, 26-11-2026, tarea 399; cuánto se ve cada uno: PP_COMBO_LETRERO.cede)
+// Si el combo se rompió y empieza otra cadena (o el flag está cerrado), la fila se vacía y el nuevo sale ya.
+function ppFxCombo(n, i = -1) {
+  const L = PP_COMBO_LETRERO, cola = PP_FX.comboCola, ultimo = cola.length ? cola[cola.length - 1].n : PP_FX.combo && PP_FX.combo.n;
+  const enFila = PP_FX.combo && PP_COMBO.activo() && L.sigue(n, ultimo) && (cola.length > 0 || !L.cede(PP_FX.combo.t, 1));
+  if (enFila) { cola.push({ n, i }); return; }
+  PP_FX.comboCola = [];
+  ppFxMuestraCombo({ n, i });
+}
+// ¿se sigue jugando el nivel? Si se acaba o sales, lo que esperaba en la fila ya no sale (ni suena)
+const ppFxEnNivel = () => typeof PP_P !== 'undefined' && !!PP_P && !!PP_P.T && !PP_P.T.hecho;
+function ppFxMuestraCombo({ n, i }) { PP_FX.combo = { n, t: 0, i }; ppVibra(8 + n * 4); play('ppCombo', n); }
 // un slime vuela desde su hueco del equipo hasta la burbuja i (llega en `dur` segundos)
 // (con el flag 'ataques-companeros' abierto, el vuelo lleva el ataque de su habilidad: js/ataques-fx.js)
 function ppFxVuelo(id, k, i, n, dur) {
@@ -104,7 +116,14 @@ function ppFxAvanza(dt) {
   for (const o of PP_FX.ondas) o.t += dt;
   PP_FX.ondas = PP_FX.ondas.filter(o => o.t < 0.45);
   for (const k in PP_FX.brilla) PP_FX.brilla[k] = Math.max(0, PP_FX.brilla[k] - dt * 1.8);
-  if (PP_FX.combo) { PP_FX.combo.t += dt; if (PP_FX.combo.t > 1.1) PP_FX.combo = null; }
+  if (PP_FX.combo) {
+    PP_FX.combo.t += dt;
+    if (PP_COMBO_LETRERO.cede(PP_FX.combo.t, PP_FX.comboCola.length)) {   // se acaba (o deja paso al siguiente de la fila)
+      PP_FX.combo = null;
+      if (!ppFxEnNivel()) PP_FX.comboCola = [];
+      if (PP_FX.comboCola.length) ppFxMuestraCombo(PP_FX.comboCola.shift());
+    }
+  }
   for (const x of PP_FX.textos) x.t += dt;
   PP_FX.textos = PP_FX.textos.filter(x => x.t < x.dura);
 }

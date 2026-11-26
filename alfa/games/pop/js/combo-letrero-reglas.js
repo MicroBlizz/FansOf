@@ -16,8 +16,16 @@ const PP_COMBO_LETRERO = (() => {
     const e = t < 0.14 ? (t / 0.14) * 1.25 : t < 0.26 ? 1.25 - ((t - 0.14) / 0.12) * 0.33 : 0.92 + Math.min(0.08, (t - 0.26) * 0.4);
     return e * tamano(n);
   }
-  // se va apagando al final (el letrero dura 1,1 s: js/efectos.js)
-  const alfa = t => (t > 0.8 ? Math.max(0, 1 - (t - 0.8) / 0.3) : 1);
+  const DURA = 1.1, APAGA = 0.3;   // lo que dura el letrero (js/efectos.js) y su apagado final
+  const alfa = t => (t > DURA - APAGA ? Math.max(0, 1 - (t - (DURA - APAGA)) / APAGA) : 1);
+  // EN FILA (Pepins, 26-11-2026, tarea 399: el combo saltaba de x3 a x5 o x8 porque los compañeros lo suben muy seguido y cada letrero
+  // tapaba al anterior): ¿el letrero que lleva `t` s deja paso? Con otros esperando (`enCola`), al haberse visto un rato, más corto cuanto
+  // más larga es la fila (para no ir muy por detrás del combo de verdad); si no, al acabar
+  const VISTO = 0.4, VISTO_MIN = 0.15;
+  const visto = enCola => Math.max(VISTO_MIN, VISTO - 0.08 * (enCola - 1));
+  const cede = (t, enCola) => (enCola > 0 ? t >= visto(enCola) : t > DURA);
+  // ¿el paso `n` sigue la fila (va después del último, `ultimo`) o es de otra cadena (el combo se rompió y empieza otra vez)?
+  const sigue = (n, ultimo) => Number.isFinite(ultimo) && n > ultimo;
   // lo más arriba que puede ir el centro, desde la fila de arriba del tablero: más abajo cuanto más grande, para que la palabra COMBO
   // no tape los corazones de arriba
   const bajada = n => 30 + 7 * Math.min(6, paso(n));
@@ -31,5 +39,5 @@ const PP_COMBO_LETRERO = (() => {
     if (!Number.isFinite(cx) || !Number.isFinite(cy)) return [ancho / 2, alto];
     return [Math.min(ancho - r, Math.max(r, cx)), Math.max(alto, Math.min(abajo, cy - 70))];
   }
-  return Object.freeze({ ESTILOS, ARCOIRIS, estilo, color, escala, alfa, bajada, sitio });
+  return Object.freeze({ ESTILOS, ARCOIRIS, VISTO, VISTO_MIN, DURA, estilo, color, escala, alfa, visto, cede, sigue, bajada, sitio });
 })();

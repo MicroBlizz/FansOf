@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.42
+  "<b>MEJORAS POR DENTRO</b>: la ventana de elegir partida recuerda lo que elegiste y no deja pisar tu partida al recargar.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the choose-your-save window remembers what you picked and no longer lets a reload overwrite your save.",
+  "Microblizz ha puesto un candado a tu partida y Phony ha perdido la llave en el microondas.": "Microblizz put a padlock on your save and Phony lost the key in the microwave.",
   // 0.2.41
   "<b>MEJORAS POR DENTRO</b>: ajustes de rendimiento y de ahorro de batería en los sistemas internos de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: performance and battery-saving tweaks in the internal systems of the website.",
   "Microblizz ha puesto la web en modo ahorro y Phony ha apagado hasta la luz de la nevera de los becarios.": "Microblizz put the website in saving mode and Phony switched off even the interns' fridge light.",

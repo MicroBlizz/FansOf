@@ -219,7 +219,7 @@ function ppTextoCabe(c, s, x, y, tam, ancho, col, borde) {
 /* ---------- la sala entera ---------- */
 function ppPintaSala(c, t) {
   const P = PP_P, T = P.T, M = PP_MEDIDOR;
-  c.save(); M.empieza();
+  c.save();
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
   if (M.pinta('fondo')) ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, T.d ? T.d.dif || 0 : 0);
   M.marca('fondo'); c.save(); c.translate(0, ppFxBote()); ppPintaTablero(c, T, t); c.restore();   // el botecito de la bandeja al tocar (tarea #110)

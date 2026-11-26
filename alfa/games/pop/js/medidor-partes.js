@@ -1,5 +1,5 @@
-// Fans of Pop · el MEDIDOR POR PARTES del panel DEV: para buscar qué parte del dibujo de un nivel hace caer los fps en un aparato.
-// Encendido, apunta cuántos ms de JS se lleva cada parte de ppPintaSala (js/pintar.js) y deja quitar cualquiera de ellas para ver en
+// Fans of Pop · el MEDIDOR POR PARTES del panel DEV: para buscar qué parte del dibujo de un nivel, un duelo o una memoria hace caer los fps en un aparato.
+// Encendido, apunta cuántos ms de JS se lleva cada parte de ppPintaSala (js/pintar.js), ppPintaDuelo (js/duelo.js) y ppPintaMemoria (js/memoria.js) y deja quitar cualquiera de ellas para ver en
 // el contador de fps cuánto cuesta de verdad en la gráfica (lo que se pinta en la GPU no sale en los ms de JS). También quita el
 // desenfoque del panel de victoria (css/victoria.css), que la gráfica rehace en cada fotograma mientras el lienzo se mueve detrás.
 // Apagado no hace nada: pinta(parte) siempre dice que sí y marca() vuelve enseguida. Solo lo usa el panel DEV (js/dev.js).

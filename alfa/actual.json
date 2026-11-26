@@ -1,8 +1,8 @@
 {
- "build": 1523,
- "hash": "a353fbf",
- "fecha": "2026-11-26T01:08:15Z",
- "mensaje": "Versiones y novedades para la publicación diaria (rendimiento y ahorro de batería de core)",
+ "build": 1524,
+ "hash": "964e00b",
+ "fecha": "2026-11-26T01:16:37Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/project-thread-cxvld3",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

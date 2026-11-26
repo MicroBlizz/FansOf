@@ -51,9 +51,10 @@ function ppFotograma(ahora) {
   ppMusicaBucle(); ppAdnMira(); PP_RENDIMIENTO.mira(ahora);   // la fila de pegatinas del duelo (js/duelo-adornos.js) y los fps de cada nivel, duelo o memoria (js/rendimiento-partida.js)
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
+  PP_MEDIDOR.empieza();   // el medidor por partes del panel DEV (js/medidor-partes.js): cada fotograma empieza a contar aquí, pinte la pantalla que pinte
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppVictoriaReloj(PP_P.T, dt); } ppPintaSala(c, t); if (PP_MEDIDOR.pinta('cortinilla')) ppPintaCortinilla(c, t); PP_MEDIDOR.marca('cortinilla'); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js); el medidor DEV, js/medidor-partes.js
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
-  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppAdnAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
+  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppAdnAvanza(dt); } ppPintaDuelo(c, t); if (PP_MEDIDOR.pinta('cortinilla')) ppPintaCortinilla(c, t); PP_MEDIDOR.marca('cortinilla'); }
   else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
   else ppPintaPortada(c, t, dt);
 }

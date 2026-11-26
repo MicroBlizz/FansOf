@@ -148,26 +148,34 @@ function ppMemResultado(M, rondas, { nuevo, monedas, lleno }) {
 function ppSalMemoria() { PP_MEM = null; ppIrA('titulo'); }
 /* ---------- dibujo ---------- */
 function ppPintaMemoria(c, t) {
-  const M = PP_MEM, T = M.T, g = ppGeom(T.n);
+  const M = PP_MEM, T = M.T, g = ppGeom(T.n), MD = PP_MEDIDOR;   // el medidor por partes del panel DEV (js/medidor-partes.js)
   c.save(); if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 5, rand(-1, 1) * PP_FX.temblor * 5);
-  ppPintaFondo(c, PP_MUNDOS[M.mundo].fondo, t);
-  // arriba: la ronda, el récord de esta dificultad y qué toca hacer
+  if (MD.pinta('fondo')) ppPintaFondo(c, PP_MUNDOS[M.mundo].fondo, t);
+  MD.marca('fondo');
+  if (MD.pinta('marcador')) ppMemPintaCabecera(c, M);
+  MD.marca('marcador');
+  if (MD.pinta('efectos')) ppMemPintaBrillos(c, M, g);   // los halos de las que suenan, con los efectos
+  MD.marca('efectos');
+  ppPintaTablero(c, T, t);   // marca él la bandeja, las burbujas y la arcoíris
+  if (M.fase === 'fin') {
+    const parpa = Math.sin(t * 14) > 0;
+    const [bx, by] = ppCentro(g, M.sec[M.paso]);
+    c.save(); c.lineWidth = 7; c.strokeStyle = parpa ? '#ffd64a' : '#fff'; c.beginPath(); c.arc(bx, by, g.celda * 0.46, 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  if (MD.pinta('marcador')) ppMemPintaPie(c, M, g);
+  MD.marca('marcador');
+  if (MD.pinta('efectos')) ppPintaEfectos(c, t);
+  MD.marca('efectos');
+  c.restore();
+}
+// arriba: la ronda, el récord de esta dificultad y qué toca hacer
+function ppMemPintaCabecera(c, M) {
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 170, 24); c.fill();
   ppBarraRecursos(c, 'memoria', 270, 54);   // arriba y centrada, la barra de monedas y perlas (tarea #373, js/barra-recursos.js); la pausa, a su derecha
   ppTitulo(c, M.reto ? tr('RETO DEL DÍA') : tr('MEMORIA'), 270, 118, 44);
   ppTexto(c, tr('Ronda {n}', { n: M.sec.length }), 140, 164, 28, '#fff', 'center', '#c43a84');
   const marca = M.reto ? tr('Hoy: {n}', { n: M.reto.mejor }) : tr('Récord: {n}', { n: PP_MEM_R.recordDe(SAVE.memoria, M.aj.id) });
   ppTexto(c, marca, 400, 164, 28, '#fff', 'center', '#3a6ab8');
-  ppMemPintaBrillos(c, M, g);
-  ppPintaTablero(c, T, t);
-  if (M.fase === 'fin') {
-    const parpa = Math.sin(t * 14) > 0;
-    const [bx, by] = ppCentro(g, M.sec[M.paso]);
-    c.save(); c.lineWidth = 7; c.strokeStyle = parpa ? '#ffd64a' : '#fff'; c.beginPath(); c.arc(bx, by, g.celda * 0.46, 0, Math.PI * 2); c.stroke(); c.restore();
-  }
-  ppMemPintaPie(c, M, g);
-  ppPintaEfectos(c, t);
-  c.restore();
 }
 // el halo de cada burbuja que suena (y la buena que parpadea al fallar o como pista)
 function ppMemPintaBrillos(c, M, g) {

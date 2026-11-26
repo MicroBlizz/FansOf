@@ -62,7 +62,7 @@ function ppVentanaRegalo() {
     <div class="pp-rg-halo${cogido ? ' pp-rg-quieto' : ''}">${ppIcono('i-regalo', 130, '#9cf0a0')}</div>
     <div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 40)}</div>${seguidos}${ppRegaloTira(hoy, !!m)}${m ? ppRegaloContador(m) : ''}`, true);
   if (!cogido) t.appendChild(ppBoton(tr('¡ABRIR!'), 'pp-btn', () => ppRegaloAbre(hoy)));
-  ppBotonVolver(t, ppCierra, { color: 'coral' });
+  ppBotonVolver(t, ppCierra, { tema: 'regalo' });
 }
 // días seguidos: apunta el regalo de hoy en SAVE.diasSeguidos y dice qué día del camino toca y la frase de lo que ha pasado
 // (null si ya estaba abierto: no se da dos veces)
@@ -77,11 +77,13 @@ function ppRegaloApunta() {
   SAVE.diasSeguidos = { ...r.estado };
   return { paso: r.paso, clave: r.estado.ultimo, frase: ppRegaloFrase(r), meta: r.meta, total: r.total };
 }
-// para el panel DEV: como si hubieran pasado `n` días desde el último regalo (mueve atrás el día apuntado)
+// para el panel DEV: como si hubieran pasado `n` días desde el último regalo (mueve atrás el día apuntado). Sin ningún día apuntado
+// (una partida que aún no ha abierto ninguno de días seguidos), como si el primero se hubiera abierto hace `n` días: antes no hacía
+// nada y no avisaba (Pepins, 25-11-2026, tarea 383)
+const PP_REGALO_DEV_PRIMERO = Object.freeze({ paso: 0, total: 1, perdon: true });
 function ppRegaloDevPasan(n) {
   const e = PP_DIAS_SEGUIDOS.estado(SAVE.diasSeguidos);
-  if (!e.ultimo) return;
-  SAVE.diasSeguidos = { ...e, ultimo: new Date(Date.parse(ppRegaloDia()) - n * 86400000).toISOString().slice(0, 10) };
+  SAVE.diasSeguidos = { ...(e.ultimo ? e : PP_REGALO_DEV_PRIMERO), ultimo: new Date(Date.parse(ppRegaloDia()) - n * 86400000).toISOString().slice(0, 10) };
   SAVE.regaloDia = '';
 }
 // si hoy se llega a una meta de días seguidos, se da su premio (perlas con su motivo del servidor, 'seguidos', y una clave por día para
@@ -92,14 +94,18 @@ function ppRegaloMetaCobra(a) {
   ppDaPremio(p, { motivo: 'seguidos', clave: 'seguidos:' + a.clave });
   return `<div class="pp-rg-cuenta pp-rg-logro"><b>${tr('¡Meta de {n} días seguidos!', { n: a.total })}</b>${ppPremioCandyHtml(p, 32)}</div>`;
 }
-// abrir el de hoy: se da el premio, se guarda el día y sale lo que ha tocado
+// abrir el de hoy: se da el premio, se guarda el día y sale lo que ha tocado (con los días seguidos, con su animación: js/regalo-anima.js)
 function ppRegaloAbre(hoy) {
   const a = ppDiasSeguidosActivo() ? ppRegaloApunta() : { paso: hoy, clave: ppHoy(), frase: '', meta: -1 };
   if (!a) { ppVentanaRegalo(); return; }
   hoy = a.paso;
-  ppDaPremio(PP_REGALOS[hoy], { motivo: 'regalo', clave: 'regalo:' + a.clave }); SAVE.regaloDia = ppHoy(); ppGuarda(); play('ppVictoria'); ppVibra([20, 30, 20]);
+  const antes = { monedas: SAVE.monedas, perlas: SAVE.perlas || 0 };
+  ppDaPremio(PP_REGALOS[hoy], { motivo: 'regalo', clave: 'regalo:' + a.clave }); SAVE.regaloDia = ppHoy(); ppGuarda();
   const frase = a.frase ? `<p class="pp-rg-seguidos"><b>${a.frase}</b></p>` : '';
   const logro = ppRegaloMetaCobra(a);   // la meta de hoy, si la hay, se cobra aquí y se enseña bajo el regalo
-  const t = ppAbre(`<h2>${tr('¡Toma!')}</h2><div class="pp-rg-halo">${ppIcono('i-regalo', 130, '#9cf0a0')}</div><div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 48)}</div>${frase}${logro}`);
+  const html = `<h2>${tr('¡Toma!')}</h2><div class="pp-rg-halo">${ppIcono('i-regalo', 130, '#9cf0a0')}</div><div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 48)}</div>${frase}${logro}`;
+  if (ppDiasSeguidosActivo()) { ppRegaloAnimaAbre(html, antes); return; }
+  play('ppVictoria'); ppVibra([20, 30, 20]);
+  const t = ppAbre(html);
   t.appendChild(ppBoton(tr('¡GENIAL!'), 'pp-btn', ppCierra)); ppPintaLateral();
 }

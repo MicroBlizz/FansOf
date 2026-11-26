@@ -15,6 +15,8 @@ const PP_TUTO = {
   w1n3: [{ t: 'Arriba ves los toques que te quedan.' }],
   amigo: [{ t: '¡Tienes un amigo! Te ayuda cuando llena su barrita.' }],
   combo: [{ t: '¡Combo! Haz pop en 3 o más de un toque.' }],
+  // la explicación entera (tarea 396), al empezar un nivel desde el 4 del Jardín (antes del primer combo); antes, la corta de arriba
+  combos: [{ t: '¡Combo! Pop en 3 o más, varios toques seguidos. Desde x3, monedas.' }],
   dificil: [{ t: 'Nivel difícil: muy pocos toques. ¡Piensa bien!' }],
   jefe: [{ t: '¡Nivel jefe! El CEO casi nunca falla.' }],
   nimNivel: [{ t: 'Por turnos, pop en una fila. ¡Pierde quien haga la última!' }],
@@ -28,7 +30,7 @@ const PP_TUTO = {
   w4n1: [{ t: 'Si tocas una concha, solo hace pop ella.' }],
   w5n1: [{ t: 'Las de cereza necesitan tres golpes.' }],
   w6n1: [{ t: '¡Aquí está todo mezclado! Piensa cada toque.' }],
-  w7n1: [{ t: 'El cohete levanta su fila al reventar: quítalo pronto.' }],
+  w7n1: [{ t: 'El cohete levanta su fila al hacer pop: quítalo pronto.' }],
   w8n1: [{ t: 'Las burbujeantes hacen pop en todo su alrededor.' }],
   w9n1: [{ t: 'Un pétalo hace pop en toda su columna.' }],
   w10n1: [{ t: '¡El Espacio! Al final te espera el CEO espacial.' }],

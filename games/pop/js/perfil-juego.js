@@ -38,7 +38,7 @@ const PP_MI = (() => {
   // `coleccion`: no se venden en el perfil; se ponen solo si los tienes (están en SAVE.vistos) y así el VS sabe pintar el del rival
   const nuevos = typeof PP_COMP === 'undefined' ? [] : Object.keys(PP_COMP.NUEVOS).map(id => ({ id, coleccion: true }));
   const cat = Object.freeze({ ...PP_PERFIL_CAT, personaje: Object.freeze([{ id: 'lola', serie: true }, ...PP_SLIME_IDS.filter(id => id !== 'lola').map(id => ({ id })), ...nuevos]) });
-  const yo = () => ({ comprados: PP_SRV.comprados(), rescatados: SAVE.vistos || {}, perlas: PP_SRV.paraPerfil() });
+  const yo = () => ({ comprados: PP_SRV.comprados(), rescatados: SAVE.vistos || {}, perlas: PP_SRV.paraPerfil(), logros: PP_COMBO.titulos() });   // logros: los de combo (tarea 396)
   const perfil = () => PP_PERFIL.limpia(SAVE.perfil, cat, yo());
   const dato = (tipo, id) => (cat[tipo] || []).find(x => x.id === id) || null;
   const puesto = (tipo, id) => { const p = perfil(); return tipo === 'pegatina' ? p.pegatinas.includes(id) : p[tipo] === id; };

@@ -20,10 +20,10 @@ function ppVentanaDuelos() {
   col.appendChild(ppBoton(tr('RETAR A UN AMIGO'), 'pp-btn2 pp-verde', ppPvpCrear));
   col.appendChild(ppBoton(tr('TENGO UN CÓDIGO'), 'pp-btn2 pp-azul', ppPvpPideCodigo));
   t.insertAdjacentHTML('beforeend', `<p class="pp-sub"><small>${tr('Victorias contra gente: {g} · Derrotas: {p}', { g: (SAVE.pvp || {}).gan || 0, p: (SAVE.pvp || {}).per || 0 })}</small></p>`);
-  ppBotonVolver(t, ppCierra, { color: 'naranja' });
+  ppBotonVolver(t, ppCierra, { tema: 'duelos' });
 }
 const ppPvpPuede = () => { if (typeof SALAS !== 'undefined' && SALAS.puede()) return true; ppPvpAviso(tr(typeof SALAS !== 'undefined' ? SALAS.errorTexto('cuenta_no_vinculada') : 'Necesitas conexión para jugar con amigos.')); return false; };
-function ppPvpAviso(txt) { const t = ppAbre(`<h2>${tr('Duelos')}</h2><p class="pp-sub">${txt}</p>`); ppBotonVolver(t, ppVentanaDuelos, { color: 'naranja' }); }
+function ppPvpAviso(txt) { const t = ppAbre(`<h2>${tr('Duelos')}</h2><p class="pp-sub">${txt}</p>`); ppBotonVolver(t, ppVentanaDuelos, { tema: 'duelos' }); }
 const ppPvpError = e => ppPvpAviso(tr(SALAS.errorTexto(e)));
 /* ---------- buscar rival al azar ---------- */
 function ppPvpBuscar() {
@@ -69,7 +69,7 @@ function ppPvpPideCodigo() {
   const t = ppAbre(`<h2>${tr('Tengo un código')}</h2><p class="pp-sub">${tr('Escribe las 4 letras que te ha pasado tu amigo:')}</p>
     <input id="pp-pvp-codigo" class="pp-entrada" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false">`);
   t.appendChild(ppBoton(tr('ENTRAR'), 'pp-btn', () => { const c = ($pp('#pp-pvp-codigo').value || '').trim().toUpperCase(); if (/^[A-Z]{4}$/.test(c)) ppPvpEntraCodigo(c); }));
-  ppBotonVolver(t, ppVentanaDuelos, { color: 'naranja' });
+  ppBotonVolver(t, ppVentanaDuelos, { tema: 'duelos' });
   setTimeout(() => { const i = $pp('#pp-pvp-codigo'); if (i) i.focus(); }, 50);
 }
 function ppPvpEntraCodigo(codigo) {

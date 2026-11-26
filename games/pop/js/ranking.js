@@ -13,7 +13,9 @@ function ppMisMarcas() {
   return { memoria: (SAVE.memoria && SAVE.memoria.record) || 0, estrellas: est, dificil: dif, duelos };
 }
 function ppSubeMarcas() {
-  if (!ppHayRanking() || PP_RANK.subiendo) return;
+  if (!ppHayRanking()) return;
+  PP_COMBO.sube();   // los puntos de combo de la semana van aparte (js/combos.js, tarea 396)
+  if (PP_RANK.subiendo) return;
   const m = ppMisMarcas(), clave = JSON.stringify(m);
   if (clave === SAVE.marcasSubidas || !(m.memoria || m.estrellas || m.dificil || m.duelos)) return;
   PP_RANK.subiendo = true;
@@ -23,9 +25,10 @@ function ppSubeMarcas() {
     .finally(() => { PP_RANK.subiendo = false; });
 }
 window.addEventListener('online', () => setTimeout(ppSubeMarcas, 1500));
-// con el reto del día (js/reto-dia.js, tarea 367) va primero la pestaña «Hoy»: el ranking del reto de hoy
+// con el reto del día (js/reto-dia.js, tarea 367) va primero la pestaña «Hoy»: el ranking del reto de hoy; con los combos (js/combos.js,
+// tarea 396), la pestaña «Combos»: los puntos de combo de esta semana
 const PP_RANK_TABS = [['estrellas', 'Estrellas'], ['dificil', 'Difícil'], ['memoria', 'Memoria'], ['duelos', 'Duelos']];
-const ppRankTabs = () => (PP_RETO.activo() ? [['hoy', 'Hoy'], ...PP_RANK_TABS] : PP_RANK_TABS);
+const ppRankTabs = () => [...(PP_RETO.activo() ? [['hoy', 'Hoy']] : []), ['combos', 'Combos'], ...PP_RANK_TABS];
 function ppVentanaRanking(tab) {
   if (tab) PP_RANK.tab = tab;
   if (!ppRankTabs().some(([k]) => k === PP_RANK.tab)) PP_RANK.tab = 'estrellas';
@@ -38,17 +41,18 @@ function ppVentanaRanking(tab) {
   }
   t.appendChild(tabs);
   const caja = document.createElement('div'); caja.className = 'pp-ranking'; t.appendChild(caja);
-  ppBotonVolver(t, ppCierra, { color: 'naranja' });
-  const unidad = { estrellas: tr('estrellas'), dificil: tr('estrellas'), memoria: tr('rondas'), hoy: tr('rondas'), duelos: tr('victorias') }[PP_RANK.tab];
+  ppBotonVolver(t, ppCierra, { tema: 'ranking' });
+  const unidad = { estrellas: tr('estrellas'), dificil: tr('estrellas'), memoria: tr('rondas'), hoy: tr('rondas'), combos: tr('puntos'), duelos: tr('victorias') }[PP_RANK.tab];
   const pinta = d => {
     if (!caja.isConnected) return;
     if (!d.lista.length) { caja.innerHTML = `<p class="pp-sub">${tr('Todavía no hay nadie: ¡abre tú el ranking!')}</p>`; return; }
     const fila = f => `<div class="pp-rfila${f.yo ? ' pp-yo' : ''}"><i class="pp-p${Math.min(4, f.puesto)}">${f.puesto}</i><span>${ppEsc(f.nombre || '')}</span><b>${Number(f.puntos).toLocaleString()}</b></div>`;
     caja.innerHTML = d.lista.map(fila).join('') + (d.yo && d.yo.puesto > 50 ? `<div class="pp-rpuntos">…</div>${fila(d.yo)}` : '')
-      + `<p class="pp-sub"><small>${d.yo ? '' : tr('Juega para salir aquí.') + ' '}${tr('{n} participantes · en {u}', { n: d.total, u: unidad })}</small></p>`;
+      + `<p class="pp-sub"><small>${d.yo ? '' : tr('Juega para salir aquí.') + ' '}${tr('{n} participantes · en {u}', { n: d.total, u: unidad })}`
+      + `${PP_RANK.tab === 'combos' ? '<br>' + tr('COMBO x3 = 1 punto, x4 = 2… Se empieza de cero cada lunes.') : ''}</small></p>`;
   };
   if (!ppHayRanking()) { caja.innerHTML = `<p class="pp-sub">${tr('El ranking necesita conexión.')}</p>`; return; }
-  const k = PP_RANK.tab === 'hoy' ? 'hoy:' + PP_RETO.dia() : PP_RANK.tab;   // el de hoy, guardado con su día
+  const k = PP_RANK.tab === 'hoy' ? 'hoy:' + PP_RETO.dia() : PP_RANK.tab === 'combos' ? 'combos:' + PP_COMBO.lunes() : PP_RANK.tab;   // el de hoy y el de la semana, con su día
   if (PP_RANK.datos[k]) { pinta(PP_RANK.datos[k]); return; }
   caja.innerHTML = `<p class="pp-sub">${tr('Cargando…')}</p>`;
   ppRankPide(k)
@@ -56,8 +60,10 @@ function ppVentanaRanking(tab) {
     .catch(() => { if (caja.isConnected) caja.innerHTML = `<p class="pp-sub">${tr('No se ha podido cargar. Prueba otra vez en un rato.')}</p>`; });
 }
 const ppEsc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-// lo que se pide al servidor: el de hoy, al reto (js/reto-dia-servidor.js); los demás, a pop_ranking
+// lo que se pide al servidor: el de hoy, al reto (js/reto-dia-servidor.js); el de combos, a js/combo-servidor.js; los demás, a pop_ranking
 function ppRankPide(k) {
+  const ok = r => { if (!r.ok) throw new Error(r.error); return r; };
+  if (k.startsWith('combos:')) return PP_COMBO.ranking(k.slice(7)).then(ok);
   if (!k.startsWith('hoy:')) return CUENTA.rpc('pop_ranking', { p_tabla: k });
-  return PP_RETO.ranking(k.slice(4)).then(r => { if (!r.ok) throw new Error(r.error); return r; });
+  return PP_RETO.ranking(k.slice(4)).then(ok);
 }

@@ -3,7 +3,8 @@
 // (perlas o un anuncio); cuenta tu mejor ronda de hoy, que sube al ranking del día. Monedas por jugar: solo lo que mejora tu mejor de
 // hoy, hasta un tope. Funciones puras sobre lo que se les pasa (el día 'AAAA-MM-DD', lo guardado, PP_CFG.reto): sin reloj, azar, SAVE
 // ni dibujo. Lo usan js/reto-dia.js y js/memoria.js.
-// El estado de hoy: { dia, jugados (intentos empezados), mejor (la mejor ronda de hoy), subido (la mejor que ya tiene el servidor) }.
+// El estado de hoy: { dia, jugados (intentos empezados), mejor (la mejor ronda de hoy), subido (la mejor que ya tiene el servidor),
+// cobradas (las monedas del reto ya pagadas hoy; null en lo guardado antes del combo, tarea 395: entonces salen de `mejor`) }.
 'use strict';
 const PP_RETO_R = (() => {
   const DIA = /^\d{4}-\d{2}-\d{2}$/;
@@ -29,7 +30,8 @@ const PP_RETO_R = (() => {
   function deHoy(guardado, dia) {
     const g = guardado && typeof guardado === 'object' && guardado.dia === dia ? guardado : {};
     const mejor = entero(g.mejor);
-    return Object.freeze({ dia, jugados: entero(g.jugados), mejor, subido: Math.min(mejor, entero(g.subido)) });
+    const cobradas = Number.isFinite(g.cobradas) ? entero(g.cobradas) : null;
+    return Object.freeze({ dia, jugados: entero(g.jugados), mejor, subido: Math.min(mejor, entero(g.subido)), cobradas });
   }
   const quedan = (e, cfg) => Math.max(0, cfg.intentos - e.jugados);
   // cómo es el siguiente intento: 'gratis' o 'pago' (con sus perlas); sin ninguno, el fallo 'agotado'
@@ -46,10 +48,13 @@ const PP_RETO_R = (() => {
     if (s.como === 'pago' && pago !== 'perlas' && pago !== 'anuncio') return error('pago');
     return ok({ como: s.como, estado: Object.freeze({ ...e, jugados: e.jugados + 1 }) });
   }
-  // acabar un intento con `rondas`: la mejor de hoy y las monedas (solo lo que mejora tu mejor de hoy, hasta el tope)
-  function acaba(e, cfg, rondas) {
-    const r = entero(rondas), cobra = n => Math.min(cfg.tope, n * cfg.porRonda), mejor = Math.max(e.mejor, r);
-    return ok({ estado: Object.freeze({ ...e, mejor }), nuevo: r > e.mejor, monedas: Math.max(0, cobra(r) - cobra(e.mejor)), lleno: cobra(mejor) >= cfg.tope });
+  // acabar (o seguir) un intento con `rondas` superadas que suman `puntos` monedas (con su combo, js/reto-combo-reglas.js; sin combo, 2 por
+  // ronda): la mejor ronda de hoy y las monedas, que solo pagan lo que mejora tu mejor intento de hoy, hasta el tope
+  function acaba(e, cfg, rondas, puntos = entero(rondas) * cfg.porRonda) {
+    const r = entero(rondas), mejor = Math.max(e.mejor, r);
+    const ya = e.cobradas ?? Math.min(cfg.tope, e.mejor * cfg.porRonda), vale = Math.min(cfg.tope, entero(puntos));
+    const cobradas = Math.max(ya, vale);
+    return ok({ estado: Object.freeze({ ...e, mejor, cobradas }), nuevo: r > e.mejor, monedas: cobradas - ya, lleno: cobradas >= cfg.tope });
   }
   // ¿falta subir la mejor de hoy al servidor? Y el estado cuando ya la tiene (o cuando no la quiere: no se vuelve a intentar)
   const pendiente = e => e.mejor > e.subido;

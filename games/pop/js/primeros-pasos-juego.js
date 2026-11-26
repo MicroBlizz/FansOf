@@ -19,7 +19,7 @@ const ppPrimerosG = () => (PP_P && PP_P.T && PP_P.T.d && !PP_P.T.d.dif ? PP_P.T.
 function ppPrimerosAlGanar() {
   if (!ppPrimerosActivo() && SAVE.primeros === 'nueva') { SAVE.primeros = 'vieja'; ppGuarda(); }
 }
-// el nivel que se está jugando: ¿quedarse sin toques (o salir a medias) es gratis? (niveles 1 a 3)
+// el nivel que se está jugando: ¿quedarse sin toques (o salir a medias) es gratis? (niveles 1 a 3, aún sin ganar: tarea 406)
 const ppPrimerosGratis = () => { const d = PP_P && PP_P.T && PP_P.T.d; return !!d && PP_PRIMEROS.sinCorazon(PP_CFG.primeros, ppPrimeros(), d.g, d.dif); };
 // ¿la barra de ayudas sale en el nivel T? (los duelos, siempre)
 const ppPrimerosAyudas = T => !T.d || PP_PRIMEROS.verAyudas(PP_CFG.primeros, ppPrimeros(), T.d.dif ? null : T.d.g, !!T.nim);

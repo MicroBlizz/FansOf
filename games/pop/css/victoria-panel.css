@@ -7,7 +7,7 @@
 .pp-vic-arriba { position: absolute; left: 0; right: 0; top: 14px; margin: 0 auto; width: max-content; max-width: 512px; height: 64px; box-sizing: border-box; z-index: 6;
   display: flex; align-items: center; padding: 0 16px; border-radius: 32px; background: #fff; border: 5px solid #ffb3d6; box-shadow: 0 6px 0 #f4a5cb; pointer-events: none;
   animation: pp-vic-baja 0.35s ease-out both; }
-#pp-modal:not(:has(.pp-gana, .pp-pase-ventana)) .pp-vic-arriba { display: none; }   /* victoria y pase (RECOGER TODO, tarea #166) */
+#pp-modal:not(:has(.pp-gana, .pp-pase-ventana, .pp-rg-toma)) .pp-vic-arriba { display: none; }   /* victoria, pase (RECOGER TODO, tarea #166) y regalo diario (tarea 383) */
 @keyframes pp-vic-baja { from { transform: translateY(-90px); } to { transform: none; } }
 .pp-vic-vidas { display: flex; }
 .pp-vic-vida { display: inline-flex; margin: -5px -10px -5px 0; }   /* el dibujo trae aire alrededor: a 46 px cada corazón ocupa 36, como en el lienzo */

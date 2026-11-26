@@ -32,6 +32,9 @@ const PP_PERFIL_CAT = Object.freeze({
     { id: 'nube', texto: 'Cabeza en las nubes' },
     { id: 'dulce', texto: 'Pura chuche' },
     { id: 'imparable', texto: 'Imparable' },
+    // de logro (tarea 396): no se venden; son tuyos al conseguir su logro de combo (js/combos.js) y salen con candado hasta entonces
+    { id: 'combo8', texto: 'Combo infinito', logro: 'x8' },
+    { id: 'pesadilla5', texto: 'Pesadilla en cadena', logro: 'p5' },
   ],
   pegatina: [
     { id: 'corazon', img: 'pg-corazon', serie: true },

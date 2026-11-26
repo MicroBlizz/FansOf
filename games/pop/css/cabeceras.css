@@ -1,0 +1,74 @@
+/* Fans of Pop · el dibujo de la franja de arriba de cada ventana (tarea 386, Pepins 26-11-2026): cada una lleva el tema de lo que
+   enseña. La franja en sí (.pp-cab: sitio, sticky, marco) es de css/pop.css; qué temas hay lo dice js/cabecera-temas.js. Todo con
+   código y dibujos que Pop ya tiene (img-liso/). Sin tema, la franja es rosa clarito lisa. */
+
+/* el dibujo de la izquierda: solo en los temas que lo piden */
+.pp-cab-cara { display: none; position: absolute; left: 20px; top: 50%; width: 76px; height: 76px; margin-top: -38px; pointer-events: none;
+  background: center / contain no-repeat; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.15)); }
+/* el título en blanco con su borde del color del tema (--cab-trazo), para los fondos de color */
+.pp-tarjeta .pp-cab-claro h2 { color: #fff; text-shadow: 0 3px 0 var(--cab-trazo), 3px 0 0 var(--cab-trazo), -3px 0 0 var(--cab-trazo), 0 -3px 0 var(--cab-trazo), 0 7px 0 rgba(0, 0, 0, 0.16); }
+
+/* ---------- toldo a rayas con el borde en ondas y el título en un letrero: Tienda (rosa), Ofertas (dorado) y Feria (carpa coral) ---------- */
+.pp-cab-tienda, .pp-cab-ofertas, .pp-cab-feria { --t1: #ff9ccf; --t2: #fff; --t3: rgba(196, 58, 132, 0.25);
+  background: repeating-linear-gradient(90deg, var(--t1) 0 43px, var(--t2) 43px 86px); border-bottom: 0; margin-bottom: 30px; }
+.pp-cab-ofertas { --t1: #ffc93a; --t3: rgba(194, 122, 0, 0.3); }
+.pp-cab-feria { --t1: #ff8f7a; --t2: #fff6e0; --t3: rgba(190, 60, 50, 0.25); }
+.pp-cab-tienda::after, .pp-cab-ofertas::after, .pp-cab-feria::after { content: ''; position: absolute; left: 13px; right: 13px; top: 100%; height: 22px; pointer-events: none;
+  /* las ondas empiezan 13px más adentro (no tapan el marco); se corren -13px para caer bajo su raya (Pepins, 26-11-2026) */
+  filter: drop-shadow(0 4px 0 var(--t3));
+  background: radial-gradient(circle at 21.5px 0, var(--t1) 21px, transparent 22px) -13px 0 / 86px 22px repeat-x,
+    radial-gradient(circle at 64.5px 0, var(--t2) 21px, transparent 22px) -13px 0 / 86px 22px repeat-x; }
+.pp-tarjeta .pp-cab-tienda h2, .pp-tarjeta .pp-cab-ofertas h2, .pp-tarjeta .pp-cab-feria h2 { background: #fff; padding: 6px 22px 8px; border-radius: 26px;
+  box-shadow: 0 0 0 4px var(--t1), 0 5px 0 4px var(--t3); text-shadow: none; }
+
+/* ---------- banderines de fiesta sobre naranja: Ranking (con la estrella) y Duelos (con los guantes) ---------- */
+.pp-cab-ranking, .pp-cab-duelos { --cab-trazo: #d96a14; background: linear-gradient(#ffb869, #ff9440); border-bottom: 0; margin-bottom: 26px; padding-left: 96px; padding-right: 76px; }
+.pp-cab-ranking::after, .pp-cab-duelos::after { content: ''; position: absolute; left: 13px; right: 13px; top: 100%; height: 20px; pointer-events: none;
+  filter: drop-shadow(0 3px 0 rgba(160, 80, 20, 0.25));
+  background: linear-gradient(135deg, #ffd23a 25%, transparent 25%) 0 0 / 40px 40px, linear-gradient(225deg, #ffd23a 25%, transparent 25%) 0 0 / 40px 40px,
+    linear-gradient(135deg, #ff6eb5 25%, transparent 25%) 20px 0 / 40px 40px, linear-gradient(225deg, #ff6eb5 25%, transparent 25%) 20px 0 / 40px 40px; }
+.pp-tarjeta .pp-cab-ranking h2 { font-size: 30px; }   /* «Ranking mundial» cabe en una línea entre la estrella y la X */
+.pp-cab-ranking .pp-cab-cara { display: block; background-image: url(../img-liso/i-estrella.png); }
+.pp-cab-duelos .pp-cab-cara { display: block; width: 84px; left: 16px; background-image: url(../img-liso/bi-duelo.png); }
+
+/* ---------- Pase: dorado con destellos y su entrada ---------- */
+.pp-cab-pase { --cab-trazo: #c27a00; border-bottom-color: #e89a00; padding-left: 96px; padding-right: 76px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 3px, transparent 4px) 12px 8px / 62px 46px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.6) 5px, transparent 6px) 42px 30px / 62px 46px, linear-gradient(#ffe07a, #ffb82e); }
+.pp-cab-pase .pp-cab-cara { display: block; background-image: url(../img-liso/i-pase.png); }
+
+/* ---------- Regalo: papel de lunares con su cinta y su lazo (sin repetir el regalo de dentro) ---------- */
+.pp-cab-regalo { --cab-trazo: #d94a3e; border-bottom-color: #f0685a; padding-left: 96px; padding-right: 76px;
+  background: linear-gradient(90deg, transparent 50px, rgba(255, 255, 255, 0.75) 50px 72px, transparent 72px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.6) 5px, transparent 6px) 0 0 / 34px 34px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.6) 5px, transparent 6px) 17px 17px / 34px 34px, #ff8f7a; }
+.pp-cab-regalo .pp-cab-cara { display: block; left: 50px; width: 22px; height: 22px; margin-top: -11px; border-radius: 50%; background: #fff; filter: drop-shadow(0 3px 0 rgba(190, 60, 50, 0.45)); }
+.pp-cab-regalo .pp-cab-cara::before, .pp-cab-regalo .pp-cab-cara::after { content: ''; position: absolute; top: -8px; width: 34px; height: 38px; background: #fff; z-index: -1; }
+.pp-cab-regalo .pp-cab-cara::before { right: 14px; border-radius: 60% 20% 20% 60%; clip-path: polygon(0 0, 100% 42%, 100% 58%, 0 100%); }
+.pp-cab-regalo .pp-cab-cara::after { left: 14px; border-radius: 20% 60% 60% 20%; clip-path: polygon(100% 0, 0 42%, 0 58%, 100% 100%); }
+
+/* ---------- Compañeros: cielo con la nube ---------- */
+.pp-cab-companeros { --cab-trazo: #4aa6dc; background: linear-gradient(#aee0ff, #e4f5ff); border-bottom-color: #9fd3f2; padding-left: 108px; padding-right: 76px; }
+.pp-cab-companeros .pp-cab-cara { display: block; left: 18px; width: 88px; height: 64px; margin-top: -30px; background-image: url(../img-liso/f-nube.png); filter: drop-shadow(0 4px 0 rgba(90, 160, 210, 0.35)); }
+
+/* ---------- Amigos, buzón y corazones: rosa con corazones ---------- */
+.pp-cab-amigos { --cab-trazo: #e43d86; background: linear-gradient(#ffb3d6, #ff8cc0); border-bottom-color: #ff6eb5; }
+.pp-cab-amigos::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.3; border-radius: 28px 28px 0 0;
+  background: url(../img-liso/i-vida.png) 6px 4px / 52px 52px, url(../img-liso/i-vida.png) 32px 30px / 52px 52px; }
+
+/* ---------- Memoria: verde menta con un pentagrama y sus notas ---------- */
+.pp-cab-memoria { --cab-trazo: #179e8a; border-bottom-color: #1fb39c;
+  background: repeating-linear-gradient(transparent 0 11px, rgba(255, 255, 255, 0.4) 11px 13px) 0 22px / 100% 65px no-repeat, linear-gradient(#9ff0dc, #4fd0b8); }
+.pp-cab-memoria::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 9px 7px at 50% 50%, #fff 96%, transparent) 34px 60px / 18px 14px no-repeat, linear-gradient(#fff, #fff) 49px 30px / 3px 38px no-repeat,
+    radial-gradient(ellipse 9px 7px at 50% 50%, #fff 96%, transparent) 66px 47px / 18px 14px no-repeat, linear-gradient(#fff, #fff) 81px 17px / 3px 38px no-repeat,
+    linear-gradient(#fff, #fff) 49px 26px / 35px 6px no-repeat; opacity: 0.85; }
+
+/* ---------- Opciones: verde menta con burbujitas ---------- */
+.pp-cab-opciones { --cab-trazo: #179e8a; border-bottom-color: #1fb39c;
+  background: radial-gradient(circle at 26px 26px, transparent 12px, rgba(255, 255, 255, 0.6) 13px 15px, transparent 16px) 0 0 / 96px 74px,
+    radial-gradient(circle at 70px 56px, transparent 7px, rgba(255, 255, 255, 0.5) 8px 10px, transparent 11px) 0 0 / 96px 74px,
+    radial-gradient(circle at 22px 22px, rgba(255, 255, 255, 0.5) 3px, transparent 4px) 0 0 / 96px 74px, linear-gradient(#9ff0dc, #4fd0b8); }
+
+/* ---------- Perfil: arcoíris pastel ---------- */
+.pp-cab-perfil { --cab-trazo: #e43d86; border-bottom-color: #ffb3d6; background: linear-gradient(90deg, #ffb3d6, #ffd2b3, #fff0a8, #b9f0dc, #aee0ff); }

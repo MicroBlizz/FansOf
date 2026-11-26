@@ -1,6 +1,6 @@
 // Fans Of · /gestion: la pestaña RENDIMIENTO de cada juego (tareas #339 y #363). Las últimas 2 semanas de gestion_rendimiento_juego
 // (servidor/191-rendimiento-detalle.sql): los fps por aparato, con y sin «Ahorro de batería» (ADR 218), y por cada dato extra que manda el juego.
-// Las reglas, en rendimiento-datos.js. Usa GESTION_METRICAS (caja, tabla, vacio) y lo de gestion/index.html: rpc(), leerToken(), esc(), fmt(), textoError() y $().
+// Las reglas, en rendimiento-datos.js y las tandas, en rendimiento-tandas.js. Usa GESTION_METRICAS (caja, tabla, vacio) y lo de gestion/index.html: rpc(), leerToken(), esc(), fmt(), textoError() y $().
 'use strict';
 (() => {
   const D = RENDIMIENTO_DATOS, M = GESTION_METRICAS;
@@ -22,9 +22,10 @@
     const cont = $('pan-rend-juego'); cont.innerHTML = '<div class="caja ayuda">Cargando…</div>';
     try {
       const r = await rpc('gestion_rendimiento_juego', { p_token: leerToken(), p_juego: id }), aparatos = r.aparatos || [], datos = r.datos || [];
+      const tandas = await GESTION_TANDAS.seccion(id);
       cont.innerHTML = `<div class="caja ayuda"><b>${esc(nombre)} · rendimiento.</b> Fotogramas por segundo de cada partida, anónimos y sin cuenta. Últimas 2 semanas. Las medias por versión están en «Resumen».${D.tamano(r.tamano) ? '<br>' + esc(D.tamano(r.tamano)) + '.' : ''}</div>`
         + (aparatos.length ? M.caja('Por aparato', tablaAparatos(aparatos), 'Los 60 aparatos con más partidas.') + cajaAhorro(datos) + cajasDatos(datos)
-          : M.vacio('Sin datos de rendimiento', 'Este juego aún no ha mandado partidas, o no mide sus fps.'));
+          : M.vacio('Sin datos de rendimiento', 'Este juego aún no ha mandado partidas, o no mide sus fps.')) + tandas;
     } catch (e) {
       cont.innerHTML = `<div class="caja aviso">${M.SIN_SQL.test(String(e.message)) ? 'El detalle de rendimiento aún no está aplicado en el servidor (servidor/191-rendimiento-detalle.sql).' : esc(textoError(e))}</div>`;
     }

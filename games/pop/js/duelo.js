@@ -127,10 +127,21 @@ function ppDueloCaras(D) {
   return [yo, D.pvp.perfil ? D.pvp.perfil.personaje : 'nubecita'];
 }
 function ppPintaDuelo(c, t) {
-  const D = PP_DUELO, T = D.T, g = ppGeom(T.n);
+  const D = PP_DUELO, T = D.T, g = ppGeom(T.n), M = PP_MEDIDOR;   // el medidor por partes del panel DEV (js/medidor-partes.js)
   c.save(); if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 5, rand(-1, 1) * PP_FX.temblor * 5);
-  ppPintaFondo(c, 'fondo-jefe', t);
-  // arriba: tú contra el CEO, y de quién es el turno
+  if (M.pinta('fondo')) ppPintaFondo(c, 'fondo-jefe', t);
+  M.marca('fondo');
+  if (M.pinta('marcador')) ppPintaCabeceraDuelo(c, D, t);
+  M.marca('marcador');
+  ppPintaTablero(c, T, t);   // marca él la bandeja, las burbujas y la arcoíris
+  if (M.pinta('marcador')) ppPintaPieDuelo(c, D, g, t);
+  M.marca('marcador');
+  if (M.pinta('efectos')) { ppPintaEfectos(c, t); ppAdnPinta(c); }   // ppAdnPinta: tu efecto de pop, el del rival y las pegatinas que vuelan (js/duelo-adornos.js)
+  M.marca('efectos');
+  c.restore();
+}
+// arriba: tú contra el CEO, y de quién es el turno
+function ppPintaCabeceraDuelo(c, D, t) {
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, PP_CABECERA_DUELO, 24); c.fill();
   const br = PP_FX.brilla.ceo || 0;
   const rival = D.pvp ? D.pvp.nombre.slice(0, 14) : tr('El CEO');   // contra gente, su apodo y un amigo de gelatina
@@ -144,14 +155,12 @@ function ppPintaDuelo(c, t) {
   ppPintaMonedero(c, 28, 32);   // arriba a la izquierda: a la derecha va el botón de pausa
   const txt = D.fin ? (D.fin === 'gana' ? tr('¡Ganas!') : D.pvp ? tr('¡Gana {n}!', { n: rival }) : tr('¡Gana el CEO!')) : D.turno === 'yo' ? tr('Tu turno') : D.pvp ? tr('Piensa {n}…', { n: rival }) : tr('Piensa el CEO…');
   ppTextoCabe(c, txt, 265, 126, 40, 165, D.turno === 'yo' ? '#ffd64a' : '#fff', '#7a4a8a');
-  ppPintaTablero(c, T, t);
-  // la fila en la que estás jugando, marcada
+}
+// abajo del tablero: la fila en la que estás jugando, marcada, y la regla
+function ppPintaPieDuelo(c, D, g, t) {
   if (D.fila !== null && !D.fin) {
     c.save(); c.lineWidth = 6; c.strokeStyle = D.turno === 'yo' ? '#ffd64a' : '#8a8aa8'; c.globalAlpha = 0.6 + Math.sin(t * 6) * 0.3;
     c.beginPath(); c.roundRect(g.x - 6, g.y + D.fila * g.celda + 2, g.lado + 12, g.celda - 4, g.celda / 2); c.stroke(); c.restore();
   }
   ppReglaDuelo(c, g.y + g.lado + 44, 30, '#fff', '#c43a84');   // en dos líneas y grande (tarea #129; js/nimnivel.js)
-  ppPintaEfectos(c, t);
-  ppAdnPinta(c);   // tu efecto de pop, el del rival y las pegatinas que vuelan (js/duelo-adornos.js)
-  c.restore();
 }

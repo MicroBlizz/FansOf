@@ -35,6 +35,7 @@ IDIOMA.add({
   "Todos los premios dorados de este mes.": "All of this month's golden rewards.",
   "Todos los premios dorados y 10 escalones de golpe.": "All the golden rewards and 10 steps right away.",
   "Misiones de hoy": "Today's missions",
+  "MISIONES Y LOGROS": "MISSIONS AND ACHIEVEMENTS",   // el cajón del Pase (js/pase-cajon.js, tarea 375)
   "Nuevas en {t}": "New in {t}",
   "COBRAR": "CLAIM",
   "Hecha": "Done",

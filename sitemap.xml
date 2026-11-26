@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://fansof.games/</loc></url>
-  <url><loc>https://fansof.games/lore/</loc></url>
-  <url><loc>https://fansof.games/privacidad/</loc></url>
-  <url><loc>https://fansof.games/condiciones/</loc></url>
-  <url><loc>https://fansof.games/games/rouflage/</loc></url>
-  <url><loc>https://fansof.games/games/karts/</loc></url>
-  <url><loc>https://fansof.games/games/decks/</loc></url>
-  <url><loc>https://fansof.games/games/nova/</loc></url>
-  <url><loc>https://fansof.games/games/pop/</loc></url>
+  <url><loc>https://fansof.games/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://fansof.games/lore/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://fansof.games/privacidad/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://fansof.games/condiciones/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://fansof.games/games/rouflage/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://fansof.games/games/karts/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://fansof.games/games/decks/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://fansof.games/games/nova/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://fansof.games/games/pop/</loc><lastmod>2026-11-26</lastmod></url>
 </urlset>

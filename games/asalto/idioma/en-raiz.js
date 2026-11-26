@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Asalto en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.7.1
+  "<b>MEJORAS POR DENTRO</b>: la ventana de elegir partida recuerda lo que elegiste y no deja pisar tu partida al recargar.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the choose-your-save window remembers what you picked and no longer lets a reload overwrite your save.",
+  "Microblizz ha puesto un candado a tu partida y Phony ha perdido la llave en el microondas.": "Microblizz put a padlock on your save and Phony lost the key in the microwave.",
   // 0.6.5
   "<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website has its own 404 page that forwards the old addresses, and the rewarded ad is clearer.",
   "Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina.": "Microblizz put a 'you are lost' sign on the website and Phony has already asked for a copy for the kitchen.",

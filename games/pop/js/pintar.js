@@ -188,14 +188,9 @@ function ppPintaEfectos(c, t) {
     c.save(); c.translate(x, y); c.rotate(k * Math.PI * 2); ppSlimeRepuestoOImagen(c, v.id, 0, 0, 34 + Math.sin(k * Math.PI) * 14, t, 1); c.restore();
     for (let e = 1; e <= 4; e++) { const kk = Math.max(0, k - e * 0.05), xx = v.x0 + (v.x1 - v.x0) * kk, yy = v.y0 + (v.y1 - v.y0) * kk - Math.sin(kk * Math.PI) * 220; c.beginPath(); c.arc(xx, yy, 8 - e * 1.5, 0, Math.PI * 2); c.fillStyle = `rgba(255,255,255,${0.5 - e * 0.1})`; c.fill(); }
   }
-  // el letrero de COMBO: aparece de golpe, crece con el número y se va
-  if (PP_FX.combo) {
-    const { n, t: ct } = PP_FX.combo, e = ct < 0.12 ? ct / 0.12 * 1.3 : 1.3 - Math.min(0.3, (ct - 0.12) * 1.5), a = ct > 0.8 ? 1 - (ct - 0.8) / 0.3 : 1;
-    const g = PP_P && PP_P.T ? ppGeom(PP_P.T.n) : ppGeom(3);
-    c.save(); c.globalAlpha = Math.max(0, a); c.translate(270, g.y - 22); c.scale(e, e); c.rotate(Math.sin(ct * 20) * 0.04);
-    ppTexto(c, 'COMBO x' + n, 0, 0, 36 + Math.min(5, n) * 4, ['#5be7ff', '#9dff6e', '#ffd64a', '#ff8a2a', '#ff6ec7'][Math.min(4, n - 2)]);
-    c.restore();
-  }
+  // el letrero de COMBO: el kawaii junto al toque (js/combo-letrero.js)
+  const g = PP_FX.combo && (PP_P && PP_P.T ? ppGeom(PP_P.T.n) : ppGeom(3));
+  if (g) ppComboKawaii(c, PP_FX.combo, g);
   for (const x of PP_FX.textos) ppPintaFlota(c, x);
 }
 // un texto que flota: sube 50 y se apaga; el grande (en los duelos) se parte en líneas para caber (tarea #129)
@@ -219,7 +214,7 @@ function ppTextoCabe(c, s, x, y, tam, ancho, col, borde) {
 /* ---------- la sala entera ---------- */
 function ppPintaSala(c, t) {
   const P = PP_P, T = P.T, M = PP_MEDIDOR;
-  c.save(); M.empieza();
+  c.save();
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
   if (M.pinta('fondo')) ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, T.d ? T.d.dif || 0 : 0);
   M.marca('fondo'); c.save(); c.translate(0, ppFxBote()); ppPintaTablero(c, T, t); c.restore();   // el botecito de la bandeja al tocar (tarea #110)

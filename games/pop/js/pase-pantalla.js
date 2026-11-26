@@ -1,7 +1,8 @@
 // Fans of Pop · PANTALLA DEL PASE NUEVO (tarea #165, ADR 165; rehecha con el boceto C «Escaparate y carril» que eligió Pepins el
 // 20-11-2026, reporte 32). De arriba abajo: el ESCAPARATE del tema del mes (lo que solo da este mes, a lo grande, y los botones del Pase
 // dorado y del Dorado+), la barra del escalón, el CARRIL de escalones en horizontal (gratis arriba, dorado abajo, se desliza con el dedo),
-// las 3 misiones del día en una caja con su reloj (tarea 375) y, fijos abajo, VOLVER y RECOGER TODO. Recoger y volar a la barra lo hace js/pase.js
+// el CAJÓN «MISIONES Y LOGROS» (las 3 misiones del día con su reloj y los logros de combo; sube y baja al tocarlo: js/pase-cajon.js,
+// tarea 375) y, fijo abajo, RECOGER TODO. Recoger y volar a la barra lo hace js/pase.js
 // (ppPaseRecoge); lo del juego, js/pase-nuevo.js; las reglas, js/pase-reglas.js.
 'use strict';
 const ppPaseDias = () => {
@@ -129,8 +130,10 @@ function ppVentanaPaseNueva(repinta) {
   t.classList.add('pp-pase-ventana', 'pp-pase-nuevo');
   t.style.setProperty('--tema1', tema.color); t.style.setProperty('--tema2', tema.color2);
   ppVicBarra(SAVE.monedas);   // la barra de arriba de la victoria (js/victoria-panel.js)
-  t.append(ppPaseEscaparate(P, tema), ppPaseEje(e, pts), ppPaseCarril(P, e, pts), ppPaseMisiones(), ppPasePie());
-  ppBotonVolver(t, ppCierra, { titulo: tr('Pase de Pop'), color: 'oro' });
+  const cobrar = PP_PASE_CAJON.porCobrar([PP_PASE_MIS.lista('d'), PP_COMBO.logros()]);
+  const cajon = PP_PASE_CAJON.crea(t, repinta, [ppPaseMisiones(), ppComboLogros()], cobrar, ppPasePie());   // logros de combo: js/combos-vista.js
+  t.append(ppPaseEscaparate(P, tema), ppPaseEje(e, pts), ppPaseCarril(P, e, pts), cajon);
+  ppBotonVolver(t, ppCierra, { titulo: tr('Pase de Pop'), tema: 'pase' });
   if (!repinta) setTimeout(ppPaseCentraCarril, 0);
 }
 // el botón del lado del camino: escalón, anillo con lo que falta y cuántos premios esperan (js/ofertas.js, ppPintaLateral)

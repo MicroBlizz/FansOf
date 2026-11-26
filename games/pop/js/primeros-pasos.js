@@ -1,5 +1,5 @@
 // Fans of Pop · PRIMEROS PASOS (dominio; tarea #140): los primeros minutos de una partida NUEVA. Cada cosa (Duelos, Memoria, el Pase,
-// la hucha…) se abre al GANAR su nivel y Lola la estrena una sola vez; los niveles 1 a 3 van seguidos y sin perder corazones; la
+// la hucha…) se abre al GANAR su nivel y Lola la estrena una sola vez; los niveles 1 a 3 van seguidos y sin perder corazones (la primera vez); la
 // barra de ayudas sale desde el 4 y algunas explicaciones de Lola esperan a su nivel. Una partida VIEJA (de antes de esto) lo ve todo
 // como siempre. Funciones puras y datos congelados: sin reloj, azar, SAVE, red ni dibujo. La tabla está en PP_CFG.primeros (js/ajustes.js).
 // `p` es la situación de la partida: { nueva: si va con los primeros pasos, nivel: cuántos niveles del camino lleva ganados (PP_P.nivel) }.
@@ -32,8 +32,9 @@ const PP_PRIMEROS = Object.freeze((() => {
   const directo = p => conPasos(p) && ganados(p) === 0;
   // tras ganar el nivel g, SIGUIENTE entra directo en el siguiente (solo dentro de los `seguidos` primeros)
   const seguido = (cfg, p, g, dif) => camino(p, g, dif) && g + 1 < cfg.seguidos;
-  // quedarse sin toques en el nivel g no cuesta corazón
-  const sinCorazon = (cfg, p, g, dif) => camino(p, g, dif) && g < cfg.sinCorazon;
+  // quedarse sin toques (o salir a medias) en el nivel g no cuesta corazón. Solo la primera vez: repetir uno ya ganado es como un
+  // nivel normal, para que no se pueda sacar nada gratis de ellos (Pepins, tarea 406)
+  const sinCorazon = (cfg, p, g, dif) => camino(p, g, dif) && g < cfg.sinCorazon && g >= ganados(p);
   // la barra de ayudas en el nivel g (los duelos la tienen siempre)
   const verAyudas = (cfg, p, g, nim) => !camino(p, g, 0) || !!nim || g + 1 >= cfg.ayudasDesde;
   // ¿la explicación `k` de Lola espera a un nivel más adelante? (fuera de un nivel del camino, nunca)

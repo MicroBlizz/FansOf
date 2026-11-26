@@ -42,18 +42,18 @@ const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
 // cerrar o volver, igual en todas las pantallas (tarea 386; antes la flecha de la 346, que flotaba y pisaba títulos, pestañas y
 // listas): una franja fija arriba de la ventana `t`, con su fondo, el título en el centro (el <h2> de la ventana, o `op.titulo`) y una
 // burbuja con una X a la derecha, que se hunde y hace pop al pulsarla. Lo demás empieza debajo y, al bajar, se esconde bajo la franja
-// (css/pop.css, .pp-cab: una nube con su carita, boceto 2 de Pepins). En una ventana que viene de otra, `f` vuelve un paso atrás. Las
-// preguntas de sí o no (NO, VOLVER) siguen con sus botones: son una respuesta.
-// `op`: { titulo, izquierda (algo para la izquierda de la franja en vez de la carita: en Amigos, tus corazones),
-//         color: 'oro' | 'menta' | 'naranja' | 'coral' (el de lo que hay en la ventana; sin él, rosa) }
-const PP_COLORES_CERRAR = Object.freeze(['oro', 'menta', 'naranja', 'coral']);
+// (css/pop.css, .pp-cab). En una ventana que viene de otra, `f` vuelve un paso atrás. Las preguntas de sí o no (NO, VOLVER) siguen
+// con sus botones: son una respuesta.
+// `op`: { titulo, izquierda (algo para la izquierda de la franja en vez del dibujo del tema: en Amigos, tus corazones),
+//         tema: el de lo que enseña la ventana (PP_CABECERA.temas, js/cabecera-temas.js; su dibujo, en css/cabeceras.css) }
 function ppBotonVolver(t, f, op = {}) {
-  const cab = document.createElement('div'); cab.className = 'pp-cab';
+  const clases = PP_CABECERA.clases(op.tema);
+  const cab = document.createElement('div'); cab.className = clases.cab;
   let h = t.querySelector(':scope > h2');
   if (!h) h = document.createElement('h2');
   if (!h.textContent) h.textContent = op.titulo || '';
   const b = document.createElement('button'); b.type = 'button';
-  b.className = 'pp-cerrar' + (PP_COLORES_CERRAR.includes(op.color) ? ' pp-x-' + op.color : '');
+  b.className = clases.cerrar;
   b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 13 35 35M35 13 13 35"/></svg>';
   b.setAttribute('aria-label', tr('VOLVER'));
   b.onclick = () => { play('ppPop', 0); f(); };   // suena como una burbuja del tablero
@@ -190,7 +190,7 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Haz pop en TODAS antes de quedarte sin toques.')}</p>
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
     <p class="pp-sub">${tr('Más adelante: la cereza pide tres golpes. El hielo, solo si lo tocas. La concha hace pop sin sus vecinas.')}</p>
-    <p class="pp-sub">${tr('Y luego: el cohete, al reventar, levanta las hundidas de su fila (quítalo pronto). La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
+    <p class="pp-sub">${tr('Y luego: el cohete, al hacer pop, levanta las hundidas de su fila (quítalo pronto). La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
     <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos. Gana al jefe y se abre el difícil.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
@@ -213,9 +213,13 @@ function ppOpciones() {
   const ahorro = () => (AHORRO.activo() ? tr('AHORRO DE BATERÍA: SÍ') : tr('AHORRO DE BATERÍA: NO'));   // core/js/sistema/ahorro.js (ADR 218): se nota al momento
   const ah = ppBoton(ahorro(), 'pp-btn2 pp-sec', () => { AHORRO.cambia(); ah.textContent = ahorro(); });
   col.appendChild(ah);
+  // «Datos de partida anónimos» de core (core/js/sistema/datos-partida.js): una sola elección para toda la web; Pop no coloca la fila de Cuenta de core, así que va aquí
+  const datos = () => (DATOS.activo() ? tr('DATOS ANÓNIMOS: SÍ') : tr('DATOS ANÓNIMOS: NO'));
+  const da = ppBoton(datos(), 'pp-btn2 pp-sec', () => { DATOS.poner(!DATOS.activo()); da.textContent = datos(); });
+  col.appendChild(da);
   col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
   if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
-  ppBotonVolver(t, ppCierra, { color: 'menta' });
+  ppBotonVolver(t, ppCierra, { tema: 'opciones' });
 }
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {
@@ -225,8 +229,24 @@ function ppConfirmaDeNuevo() {
   col.appendChild(ppBoton(tr('NO, VOLVER'), 'pp-btn', ppOpciones));
 }
 /* ---------- la pausa ----------
-   En un nivel: seguir, salir del nivel (vuelves al camino sin perder nada: el nivel se repite entero) o ir al menú principal
-   (el camino queda guardado y la portada ofrece SEGUIR). En el camino: seguir o menú principal. Y el sonido. */
+   En un nivel: seguir, salir del nivel (vuelves al camino; si ya has tocado, cuesta un corazón y el nivel se repite entero) o ir
+   al menú principal (el camino queda guardado y la portada ofrece SEGUIR). En el camino: seguir o menú principal. Y el sonido. */
+// el aviso de salir a medias (ppSalNivel, js/partida.js): con corazones infinitos no se pierde ninguno, y se dice (Pepins, tarea 250)
+function ppPausaAviso(T) {
+  const companero = ppEscSoloGratis(T);
+  if (ppInfinitas()) return companero ? tr('Tienes corazones infinitos: si sales, solo pierdes al compañero.') : tr('Tienes corazones infinitos: si sales, no pierdes ninguno.');
+  return companero ? tr('Si sales, pierdes un corazón y al compañero.') : tr('Si sales ahora pierdes un corazón.');
+}
+// ¿salir del nivel T cuesta algo? Ya has tocado (SAVE.dentro: los niveles gratis no lo marcan) y pierdes un corazón o al compañero
+const ppSalirCuesta = T => !!T && !!SAVE.dentro && (!ppInfinitas() || !!ppEscSoloGratis(T));
+// doble confirmación al salir (Pepins, tarea 250): si cuesta algo, se pregunta con el aviso; si es gratis, se sale directo
+function ppConfirmaSalir(T, salir) {
+  if (!ppSalirCuesta(T)) { salir(); return; }
+  const t = ppAbre(`<h2>${tr('¿Salir del nivel?')}</h2><p class="pp-sub">${ppPausaAviso(T)}</p>`);
+  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
+  col.appendChild(ppBoton(tr('NO, SEGUIR JUGANDO'), 'pp-btn', ppQuitaPausa));
+  col.appendChild(ppBoton(tr('SÍ, SALIR'), 'pp-btn2 pp-volver', salir));
+}
 function ppPausa() {
   if (!$pp('#pp-modal').hidden) return;
   const enNivel = PP_PANT.actual === 'sala';
@@ -238,9 +258,10 @@ function ppPausa() {
   if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalDuelo(); }));
   if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-pago', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
-  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppEscSoloGratis(PP_P.T) ? tr('Si sales, pierdes un corazón y al compañero.') : tr('Si sales ahora pierdes un corazón.')}</p>`);
-  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
-  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
+  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppPausaAviso(PP_P.T)}</p>`);
+  const T = enNivel && PP_P ? PP_P.T : null;   // los dos botones de salir piden confirmación si cuesta (ppConfirmaSalir)
+  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => ppConfirmaSalir(T, () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); })));
+  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => ppConfirmaSalir(T, () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); })));
   col.appendChild(ppFilasSonido());
 }
 function ppQuitaPausa() { ppCierra(); }   // cerrar la ventana ya acaba con la pausa (ppCierra)

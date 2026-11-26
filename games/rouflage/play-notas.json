@@ -196,5 +196,11 @@
     "fr-FR": "améliorations internes : réglages de performance et d'économie de batterie dans les systèmes du site",
     "de-DE": "interne Verbesserungen: Leistungs- und Akkusparanpassungen in den Systemen der Website",
     "it-IT": "miglioramenti interni: ritocchi di prestazioni e risparmio batteria nei sistemi del sito"
+  },
+  "0.2.86": {
+    "pt-BR": "melhorias internas: a janela de escolher partida lembra o que você escolheu e não deixa sobrescrever o jogo ao recarregar",
+    "fr-FR": "améliorations internes : la fenêtre de choix de partie retient votre choix et ne laisse plus écraser la partie au rechargement",
+    "de-DE": "interne Verbesserungen: Das Fenster zur Spielstandwahl merkt sich die Auswahl und überschreibt den Spielstand beim Neuladen nicht mehr",
+    "it-IT": "miglioramenti interni: la finestra di scelta della partita ricorda la scelta e non permette più di sovrascrivere la partita ricaricando"
   }
 }

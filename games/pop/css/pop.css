@@ -56,26 +56,19 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 /* cerrar o volver (tarea 386): una franja fija arriba de la ventana (ppBotonVolver, js/pantallas.js) con su fondo, el título en el
    centro y, a la derecha, una burbuja con una X que se hunde al pulsarla. Ocupa su sitio, así que nada queda debajo del botón, y al
    bajar la ventana se queda pegada arriba (sticky) y lo demás se esconde por detrás. Tapa el relleno de la ventana (--pp-rell-*) y
-   repinta su marco. Estilo «nube» (boceto 2 de Pepins, 25-11-2026): blanca, con el borde de abajo en nubecitas y una carita. */
+   repinta su marco. El dibujo de cada ventana (toldo, banderines, cielo...) va en css/cabeceras.css (Pepins, 26-11-2026). */
 .pp-tarjeta { --pp-rell-a: 24px; --pp-rell-l: 20px; }
 /* el `top` negativo: el navegador mide el sticky desde dentro del relleno; con 0 la franja bajaba ese relleno (medido en Chromium) */
 .pp-cab { position: sticky; top: calc(-1 * var(--pp-rell-a)); z-index: 6; flex: none; align-self: stretch; box-sizing: border-box;
   margin: calc(-1 * var(--pp-rell-a)) calc(-1 * var(--pp-rell-l)) 14px; min-height: 100px; padding: 16px 88px 10px;
-  display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 28px 28px 0 0; }
+  display: flex; align-items: center; justify-content: center; background: #ffd6ea; border-bottom: 4px solid #ffb3d6; border-radius: 28px 28px 0 0; }
 /* el marco de la ventana, repintado encima de la franja (solo el trozo de arriba) */
 .pp-cab::before { content: ''; position: absolute; inset: 0 0 -60px 0; border-radius: 28px; pointer-events: none; clip-path: inset(0 0 60px 0);
   box-shadow: inset 0 0 0 6px #ff9ccf, inset 0 0 0 10px #fff, inset 0 0 0 13px #ffd1ec; }
-/* el borde de nube: una fila de bolitas blancas que asoman por debajo, con su sombra rosa; por detrás del título y de la burbuja */
-.pp-cab::after { content: ''; position: absolute; left: 13px; right: 13px; top: calc(100% - 30px); height: 54px; z-index: -1; pointer-events: none;
-  background: radial-gradient(circle at 50% 22px, #fff 30px, transparent 31px) 0 0 / 68px 54px round; filter: drop-shadow(0 5px 0 #ffd9e8); }
 .pp-tarjeta .pp-cab h2 { margin: 0; font-size: 36px; text-wrap: balance; }
-/* la carita de la nube, a la izquierda: dos ojos y dos mofletes */
-.pp-cab-cara { position: absolute; left: 32px; top: 50%; width: 60px; height: 34px; margin-top: -17px; pointer-events: none; }
-.pp-cab-cara::before { content: ''; position: absolute; left: 8px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--pp-cafe); box-shadow: 34px 0 0 var(--pp-cafe); }
-.pp-cab-cara::after { content: ''; position: absolute; left: 0; top: 16px; width: 14px; height: 9px; border-radius: 50%; background: #ffb3d0; box-shadow: 46px 0 0 #ffb3d0; }
 .pp-cab-izq { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); }
 /* la burbuja de cerrar: levantada, se hunde al pulsarla. 48 de lado (Pepins, 25-11-2026: «muy grande, muy exagerado»; lo mínimo cómodo
-   para el dedo) y del color de lo que hay en la ventana (ppBotonVolver, opción `color`): rosa por defecto, dorado lo de pago, turquesa
+   para el dedo) y del color de lo que hay en la ventana (el tema de la ventana: opción `tema` de ppBotonVolver, js/cabecera-temas.js): rosa por defecto, dorado lo de pago, turquesa
    Opciones y Memoria, naranja Ranking y Duelos, coral Regalo y Feria */
 #pp-ui .pp-cerrar { --x0: #ffd3e8; --x1: #ff8cc0; --x2: #ff4f9a; --x3: rgba(184, 35, 106, 0.45); --x4: #ffc2dc; --x5: #e43d86; --x6: #b8236a;
   position: absolute; right: 24px; top: 50%; width: 48px; height: 48px; margin-top: -24px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; pointer-events: auto;

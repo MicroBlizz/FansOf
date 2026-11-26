@@ -35,13 +35,14 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Todas las bandejas', () => { SAVE.bandejas = {}; for (const B of PP_BANDEJAS) SAVE.bandejas[B.id] = true; });
   boton(d, 'Racha al tope', () => { SAVE.racha = PP_CFG.racha.max; });
   d = fila();
-  boton(d, 'Regalo: pasa 1 día', () => { ppRegaloDevPasan(1); PP_PASE_VISTO.regalo = false; });
-  boton(d, 'Regalo: falto 1 día', () => { ppRegaloDevPasan(2); PP_PASE_VISTO.regalo = false; });
-  boton(d, 'Regalo: falto 2 días', () => { ppRegaloDevPasan(3); PP_PASE_VISTO.regalo = false; });
+  boton(d, 'Regalo: pasa 1 día', () => ppDevRegalo(1));
+  boton(d, 'Regalo: falto 1 día', () => ppDevRegalo(2));
+  boton(d, 'Regalo: falto 2 días', () => ppDevRegalo(3));
   boton(d, 'Regalo: de cero', () => { SAVE.diasSeguidos = null; SAVE.regaloDia = ''; PP_PASE_VISTO.regalo = false; });
   boton(d, 'Amigos: te adelanta uno', ppAdelantoDev);
   d = fila();
   boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; ppGuardaCamino(); });
+  boton(d, 'Abrir todas las pesadillas', ppDevPesadillas);   // Pepins, 26-11-2026
   d = fila();
   boton(d, (SAVE.devCopiaCamino ? '● ' : '') + 'Ponerme en el jefe del Jardín', ppDevAlJefe);
   boton(d, 'Devolver mi partida', ppDevDevuelve);
@@ -79,6 +80,14 @@ function ppFeriaDevDia(dias, hora) {
 }
 // lo que dice el panel tras pedir perlas: de dónde han salido, o por qué no han llegado
 const ppDevPerlas = (r, n) => (!r.ok ? PROBADOR.texto(r.error) : `+${n} perlas ${r.prueba ? 'de prueba (solo en este navegador)' : 'de verdad (servidor)'}`);
+// los botones «Regalo: …» del panel: mueven el día apuntado, cierran el panel y abren ya el regalo de hoy, para ver al momento qué toca
+// (Pepins, 25-11-2026, tarea 383: antes había que volver al camino o tocar el botón Regalo, y parecía que no hacía nada)
+function ppDevRegalo(n) {
+  ppRegaloDevPasan(n); PP_PASE_VISTO.regalo = true;   // ya se enseña aquí: al volver al camino no sale otra vez
+  const panel = document.getElementById('dev-panel');   // el panel de core (como en Pets): se cierra para que se vea la ventana
+  if (panel) panel.hidden = true;
+  ppVentanaRegalo();
+}
 const ppDevEstado = () => `Perlas ${SAVE.perlas || 0} · Monedas ${SAVE.monedas} · Corazones ${ppVidas()} · Compras de prueba: ${SAVE.devCompras ? 'SÍ' : 'NO'}`;
 // probar «ABRIR MUNDO 2» (tarea #95) sin perder el camino: guarda una copia (solo la primera vez) y deja el camino en el jefe del Jardín, sin fallos
 function ppDevAlJefe() {
@@ -90,6 +99,17 @@ function ppDevAlJefe() {
   if (SAVE.fallos) delete SAVE.fallos[ppPrefijo(0) + g];
   ppGuardaCamino();
   return 'Camino en el jefe del Jardín (copia guardada)';
+}
+// todos los niveles de pesadilla de todos los mundos, para jugar el que quieras (Pepins, 26-11-2026): la pesadilla se abre al ganar el
+// difícil entero (ppPesAbierta en js/partida.js), así que se dan por pasados el camino, los difíciles y las pesadillas. Lo ya avanzado
+// no baja
+function ppDevPesadillas() {
+  if (PP_P && PP_P.T) return 'Sal antes del nivel';
+  if (!PP_P && !ppSigueCamino()) ppNuevaRuta();
+  PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; PP_P.pes = PP_P.pes || {};
+  PP_MUNDOS.forEach((M, m) => { PP_P.dif[m] = Math.max(PP_P.dif[m] || 0, M.niveles); PP_P.pes[m] = Math.max(PP_P.pes[m] || 0, M.niveles); });
+  ppGuardaCamino();
+  return 'Todas las pesadillas abiertas';
 }
 // vuelve el camino de la copia; las perlas y lo demás no se tocan
 function ppDevDevuelve() {

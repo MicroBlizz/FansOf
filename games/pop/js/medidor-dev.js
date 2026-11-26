@@ -6,7 +6,7 @@ const PP_MEDIDOR_NOMBRES = Object.freeze({ fondo: 'Fondo y flotantes', bandeja: 
 const PP_SIN_DESENFOQUE = 'pp-sin-desenfoque';   // css/victoria.css: el panel de victoria sin su backdrop-filter
 UTILIDADES_JUEGO.push({ titulo: 'Fans of Pop: medidor por partes', pinta(caja) {
   const el = (tag, props = {}) => Object.assign(document.createElement(tag), props), M = PP_MEDIDOR;
-  caja.append(el('p', { textContent: 'Juega el tablero que va mal con el medidor encendido. Los ms son lo que tarda el JS de cada parte; lo que cuesta en la gráfica no sale ahí: quita partes y mira cuánto suben los fps en el contador.', style: 'margin:4px 0;color:#cdb9ea' }));
+  caja.append(el('p', { textContent: 'Juega el nivel, el duelo o la memoria que va mal con el medidor encendido. Los ms son lo que tarda el JS de cada parte; lo que cuesta en la gráfica no sale ahí: quita partes y mira cuánto suben los fps en el contador.', style: 'margin:4px 0;color:#cdb9ea' }));
   const fila = el('div', { className: 'fila' }), tabla = el('div', { style: 'font:12px/1.5 monospace' });
   const enciende = el('button', { onclick: () => { M.poner(!M.activo); if (!M.activo) { M.PARTES.forEach(p => M.quita(p, false)); document.body.classList.remove(PP_SIN_DESENFOQUE); } pinta(); } });
   const desenfoque = el('button', { onclick: () => { document.body.classList.toggle(PP_SIN_DESENFOQUE); pinta(); } });

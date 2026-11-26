@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.1', real: ["<b>MEJORAS POR DENTRO</b>: la ventana de elegir partida recuerda lo que elegiste y no deja pisar tu partida al recargar."], joke: ["Microblizz ha puesto un candado a tu partida y Phony ha perdido la llave en el microondas."] },
   { v: '0.7.0', real: ["<b>60 objetos</b> en la tienda de la partida (44 nuevos): bombas de confeti, espejos, contratos indefinidos, termos de café… y <b>15 piedras de destino</b> (12 nuevas), con la Brújula y la Piedra del comodín.", "<b>Hechizos que se ven</b>: cada una de las 7 clases tiene su efecto en la batalla, y las oleadas de élite y del jefe llegan con un <b>cartel grande</b>."], joke: ["Microblizz ha ampliado el inventario. El de la tienda: el de la oficina sigue siendo una grapadora."] },
   { v: '0.6.6', real: ["Si cierras el juego en la ventana de premios, al volver <b>sigues en esos mismos premios</b>: ya no se repite la oleada."], joke: ["Microblizz ha dejado de perder los premios entre reunión y reunión. Los ha puesto en un cajón con llave."] },
   { v: '0.6.5', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },

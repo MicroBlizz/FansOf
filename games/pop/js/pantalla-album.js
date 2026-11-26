@@ -115,7 +115,7 @@ function ppVentanaCompaneros(tab) {
   t.append(ppAlbSaldo(), ppAlbTabs());
   if (PP_ALB.aviso) t.appendChild(ppPfEl('p', 'pp-pf-aviso', ppEsc(PP_ALB.aviso)));
   if (PP_ALB.tab === 'album') ppAlbumLlena(t); else ppEquipoLlena(t);
-  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppCierra(); });
+  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppCierra(); }, { tema: 'companeros' });
   t.scrollTop = antes;
 }
 /* ---------- la ficha de un compañero ---------- */
@@ -178,7 +178,7 @@ function ppVentanaCompanero(id) {
   if (!c.escondido) t.appendChild(ppPfEl('p', 'pp-cm-via', `<b>${tr('Cómo se consigue:')}</b> ${ppEsc(ppAlbVia(id))}`));
   if (c.tiene) ppAlbEstrellas(t, id, c);
   else ppAlbBotonCompra(t, id);
-  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppVentanaCompaneros(); });
+  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppVentanaCompaneros(); }, { tema: 'companeros' });
 }
 // subir una estrella: sus repetidos (2, 3, 5 u 8) y sus monedas
 function ppAlbSube(id) {

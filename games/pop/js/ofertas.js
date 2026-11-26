@@ -164,7 +164,7 @@ function ppVentanaHucha() {
     ppPerlas(dentro); SAVE.hucha = 0; ppGuarda();
     ppHuchaRompe(t, dentro, antes, () => { ppCierra(); ppPintaLateral(); });   // el martillazo y las perlas volando (js/tienda-vuelo.js, tarea #270)
   })));
-  ppBotonVolver(t, ppCierra, { color: 'oro' });
+  ppBotonVolver(t, ppCierra, { tema: 'ofertas' });
 }
 /* ---------- los botones del lado del camino ---------- */
 // el botón de un pack con reloj: salir en el lado ya es salir, así que aquí empieza a contar

@@ -4,7 +4,7 @@
 'use strict';
 const AJUSTES = {
   id: 'pop',                 // para core: la partida en la nube lleva este nombre
-  guardado: 'fansof-pop',    // la clave de la partida en este navegador
+  guardado: 'fansof-pop',    // la clave de la partida en este navegador (en la prueba de rendimiento, ?banco=1&nube=0, js/banco-partida.js la cambia por la de usar y tirar)
   // Las dos monedas de la serie (core/js/sistema/monedas.js, ADR 004): Monedas = la ganada (solo jugando, nunca se vende) y
   // PERLAS = la comprada (con euros, como los lingotes de oro de Candy Crush; solo compra cosas a precio fijo, nunca azar). Sin puente.
   monedas: {
@@ -60,7 +60,7 @@ const PP_CFG = {
       amigos:  { nivel: 12, lugar: 'juego', regalo: { monedas: 30 }, texto: '¡Pide corazones a tus amigos! Toma 30 monedas.' },
     },
     seguidos: 3,       // niveles 1 a 3: SIGUIENTE entra directo en el siguiente, sin pasar por el camino
-    sinCorazon: 3,     // niveles 1 a 3: quedarte sin toques no cuesta corazón
+    sinCorazon: 3,     // niveles 1 a 3, la primera vez: quedarte sin toques o salir no cuesta corazón (repetirlos ya ganados sí, tarea 406)
     ayudasDesde: 4,    // la barra de ayudas de los niveles normales sale desde el nivel 4
     tutos: { ayudasDuelo: 10, trucoNim: 15 },   // Lola espera a ese nivel para explicarlo (el primer duelo es el 5: solo cómo se juega)
   },
@@ -149,7 +149,12 @@ const PP_CFG = {
   // anuncio, donde los hay). Monedas: `porRonda` por ronda de tu mejor marca de hoy (solo lo que la mejora), hasta `tope` al día.
   // `mundos`: entre cuántos mundos rota el del día (fijo: si cambia, el día de
   // la nueva versión no juega el mismo tablero que las viejas; no se toca aunque haya más mundos).
-  reto: { intentos: 3, gratis: 1, perlas: 5, porRonda: 2, tope: 40, mundos: 10 },
+  // COMBO Y FASES (tarea 395, ADR 231; js/reto-combo-reglas.js): cada ronda paga `porRonda` por su combo (x1 hasta `combo.max`), que sube si
+  // repites sin pararte más de `combo.duda` segundos entre nota y nota; las fases son bloques de `fase` rondas (Pepins, 26-11-2026).
+  reto: { intentos: 3, gratis: 1, perlas: 5, porRonda: 2, tope: 40, mundos: 10, combo: { max: 3, duda: 1.5 }, fase: 5 },
+  // COMBOS (tarea 396, ADR 234; js/combo-reglas.js): desde COMBO x3, x3 = 1 moneda y punto, x4 = 2… (en Pesadilla, el doble). Como mucho
+  // `topeDia` monedas al día por combos, para que repetir un nivel no sea una mina. Los puntos de la semana, sin tope: van al ranking.
+  combos: { topeDia: 30 },
   // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
   // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
   perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },
@@ -183,7 +188,7 @@ const PP_SLIMES = {
              pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque extra.', fx: { extra: 1 } },
   // mundos 7 a 10 (31-10-2026)
   hada:    { nombre: 'Hadita', color: '#b8f0d0', color2: '#4fc98a', pinta: '',
-             pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete y lo apaga: revienta sin levantar nada.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
+             pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete y lo apaga: hace pop sin levantar nada.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
   sirena:  { nombre: 'Sirenita', color: '#9fe8f0', color2: '#3ab0c8', pinta: '',
              pasiva: 'Ola', texto: 'Cada 12 pops, hace pop en una burbujeante.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
   maneki:  { nombre: 'Gatito de la suerte', color: '#fff8f0', color2: '#e0c8b0', pinta: '',

@@ -22,8 +22,9 @@ function ppEscGuardado() {
   return SAVE.brillo;
 }
 // ¿puede salir en este nivel? Camino y Difícil; nunca un duelo (d.nim), la Pesadilla (d.lo, dif 2) ni un tablero sin nivel
-// ni un nivel de tutorial, ni los primeros niveles gratis de una partida nueva (ahí no se pierden corazones: js/primeros-pasos-juego.js)
-const ppEscEnNivel = d => !!d && !d.nim && !d.lo && d.dif !== 2 && !d.tutorial && !ppPrimerosGratis();
+// ni un nivel de tutorial, ni los primeros niveles gratis de una partida nueva (ahí no se pierden corazones: js/primeros-pasos-juego.js),
+// ni antes de abrir el equipo (repetir el 1 o el 2 ya ganados ya no es gratis, tarea 406)
+const ppEscEnNivel = d => !!d && !d.nim && !d.lo && d.dif !== 2 && !d.tutorial && !ppPrimerosGratis() && ppPrimerosVe('equipo');
 // de noche = el modo Difícil del mundo (se pinta de noche: ppPintaFondo con `dif`); de día, el camino
 const ppEscMomento = d => (d.dif ? 'noche' : 'dia');
 // un azar repetible: da los números guardados en orden (para que volver a entrar elija lo mismo)

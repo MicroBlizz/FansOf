@@ -60,7 +60,7 @@ const PP_CFG = {
       amigos:  { nivel: 12, lugar: 'juego', regalo: { monedas: 30 }, texto: '¡Pide corazones a tus amigos! Toma 30 monedas.' },
     },
     seguidos: 3,       // niveles 1 a 3: SIGUIENTE entra directo en el siguiente, sin pasar por el camino
-    sinCorazon: 3,     // niveles 1 a 3: quedarte sin toques no cuesta corazón
+    sinCorazon: 3,     // niveles 1 a 3, la primera vez: quedarte sin toques o salir no cuesta corazón (repetirlos ya ganados sí, tarea 406)
     ayudasDesde: 4,    // la barra de ayudas de los niveles normales sale desde el nivel 4
     tutos: { ayudasDuelo: 10, trucoNim: 15 },   // Lola espera a ese nivel para explicarlo (el primer duelo es el 5: solo cómo se juega)
   },

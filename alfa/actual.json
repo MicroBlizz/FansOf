@@ -1,8 +1,8 @@
 {
- "build": 1542,
- "hash": "ec267ce",
- "fecha": "2026-11-26T20:28:20Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-408-aviso-nube",
+ "build": 1543,
+ "hash": "8729a2e",
+ "fecha": "2026-11-26T21:15:16Z",
+ "mensaje": "Pop: el Regalo diario se abre con animación, la caja tiembla y estalla y los premios vuelan a la barra (Pepins, tarea 383, boceto A)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

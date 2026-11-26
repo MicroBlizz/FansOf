@@ -94,14 +94,18 @@ function ppRegaloMetaCobra(a) {
   ppDaPremio(p, { motivo: 'seguidos', clave: 'seguidos:' + a.clave });
   return `<div class="pp-rg-cuenta pp-rg-logro"><b>${tr('¡Meta de {n} días seguidos!', { n: a.total })}</b>${ppPremioCandyHtml(p, 32)}</div>`;
 }
-// abrir el de hoy: se da el premio, se guarda el día y sale lo que ha tocado
+// abrir el de hoy: se da el premio, se guarda el día y sale lo que ha tocado (con los días seguidos, con su animación: js/regalo-anima.js)
 function ppRegaloAbre(hoy) {
   const a = ppDiasSeguidosActivo() ? ppRegaloApunta() : { paso: hoy, clave: ppHoy(), frase: '', meta: -1 };
   if (!a) { ppVentanaRegalo(); return; }
   hoy = a.paso;
-  ppDaPremio(PP_REGALOS[hoy], { motivo: 'regalo', clave: 'regalo:' + a.clave }); SAVE.regaloDia = ppHoy(); ppGuarda(); play('ppVictoria'); ppVibra([20, 30, 20]);
+  const antes = { monedas: SAVE.monedas, perlas: SAVE.perlas || 0 };
+  ppDaPremio(PP_REGALOS[hoy], { motivo: 'regalo', clave: 'regalo:' + a.clave }); SAVE.regaloDia = ppHoy(); ppGuarda();
   const frase = a.frase ? `<p class="pp-rg-seguidos"><b>${a.frase}</b></p>` : '';
   const logro = ppRegaloMetaCobra(a);   // la meta de hoy, si la hay, se cobra aquí y se enseña bajo el regalo
-  const t = ppAbre(`<h2>${tr('¡Toma!')}</h2><div class="pp-rg-halo">${ppIcono('i-regalo', 130, '#9cf0a0')}</div><div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 48)}</div>${frase}${logro}`);
+  const html = `<h2>${tr('¡Toma!')}</h2><div class="pp-rg-halo">${ppIcono('i-regalo', 130, '#9cf0a0')}</div><div class="pp-rg-premio">${ppPremioCandyHtml(PP_REGALOS[hoy], 48)}</div>${frase}${logro}`;
+  if (ppDiasSeguidosActivo()) { ppRegaloAnimaAbre(html, antes); return; }
+  play('ppVictoria'); ppVibra([20, 30, 20]);
+  const t = ppAbre(html);
   t.appendChild(ppBoton(tr('¡GENIAL!'), 'pp-btn', ppCierra)); ppPintaLateral();
 }

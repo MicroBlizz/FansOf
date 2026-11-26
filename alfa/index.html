@@ -9,23 +9,23 @@
 <link rel="icon" type="image/png" href="core/img/fog-192.png">
 <link rel="apple-touch-icon" href="core/img/fog-192.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=d1baaf5">
-<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=d1baaf5">
-<link rel="stylesheet" href="core/css/base.css?v=d1baaf5">
-<link rel="stylesheet" href="estilo/web.css?v=d1baaf5">
-<link rel="stylesheet" href="estilo/pie.css?v=d1baaf5">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=d1baaf5">
-<link rel="stylesheet" href="novedades/ventana.css?v=d1baaf5">
-<link rel="stylesheet" href="biblioteca/votos.css?v=d1baaf5">
-<link rel="stylesheet" href="biblioteca/cuenta.css?v=d1baaf5">
-<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=d1baaf5">
-<link rel="stylesheet" href="biblioteca/portada-catalogo.css?v=d1baaf5">
-<link rel="stylesheet" href="biblioteca/portada.css?v=d1baaf5">
+<link rel="stylesheet" href="core/fuentes/baloo-2.css?v=69703db">
+<link rel="stylesheet" href="core/fuentes/luckiest-guy.css?v=69703db">
+<link rel="stylesheet" href="core/css/base.css?v=69703db">
+<link rel="stylesheet" href="estilo/web.css?v=69703db">
+<link rel="stylesheet" href="estilo/pie.css?v=69703db">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=69703db">
+<link rel="stylesheet" href="novedades/ventana.css?v=69703db">
+<link rel="stylesheet" href="biblioteca/votos.css?v=69703db">
+<link rel="stylesheet" href="biblioteca/cuenta.css?v=69703db">
+<link rel="stylesheet" href="biblioteca/portada-nueva.css?v=69703db">
+<link rel="stylesheet" href="biblioteca/portada-catalogo.css?v=69703db">
+<link rel="stylesheet" href="biblioteca/portada.css?v=69703db">
 </head>
 <body>
-<script src="core/js/sistema/idioma-regla.js?v=d1baaf5"></script>
-<script src="idioma-web.js?v=d1baaf5"></script>
-<script src="menu.js?v=d1baaf5" data-base="" data-core="1" data-pagina=""></script>
+<script src="core/js/sistema/idioma-regla.js?v=69703db"></script>
+<script src="idioma-web.js?v=69703db"></script>
+<script src="menu.js?v=69703db" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -408,8 +408,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a1537.d639594"></script>
-<script src="core/js/novedades.js?v=d1baaf5"></script>
+<script src="core/js/nucleo.js?v=0-a1538.cdc06b7"></script>
+<script src="core/js/novedades.js?v=69703db"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -418,17 +418,17 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/cuenta/invitado-prueba.js?v=d1baaf5"></script>
-<script src="core/js/sistema/cuenta.js?v=d1baaf5"></script>
-<script src="core/js/cuenta/dominio/roles.js?v=d1baaf5"></script>
-<script src="core/js/cuenta/aplicacion/roles-casos.js?v=d1baaf5"></script>
-<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=d1baaf5"></script>
-<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=d1baaf5"></script>
-<script src="core/js/cuenta/roles.js?v=d1baaf5"></script>
-<script src="core/js/sistema/flags.js?v=d1baaf5"></script>
-<script src="core/js/sistema/juegos-portada.js?v=d1baaf5"></script>
-<script src="core/js/sistema/juegos-portada-datos.js?v=d1baaf5"></script>
-<script src="estilo/estilo-nuevo.js?v=d1baaf5"></script>
+<script src="core/js/cuenta/invitado-prueba.js?v=69703db"></script>
+<script src="core/js/sistema/cuenta.js?v=69703db"></script>
+<script src="core/js/cuenta/dominio/roles.js?v=69703db"></script>
+<script src="core/js/cuenta/aplicacion/roles-casos.js?v=69703db"></script>
+<script src="core/js/cuenta/adaptadores/roles-servidor.js?v=69703db"></script>
+<script src="core/js/cuenta/adaptadores/roles-almacen.js?v=69703db"></script>
+<script src="core/js/cuenta/roles.js?v=69703db"></script>
+<script src="core/js/sistema/flags.js?v=69703db"></script>
+<script src="core/js/sistema/juegos-portada.js?v=69703db"></script>
+<script src="core/js/sistema/juegos-portada-datos.js?v=69703db"></script>
+<script src="estilo/estilo-nuevo.js?v=69703db"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js', 'biblioteca/en-cuenta.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/nova/idioma/en-raiz-2.js', 'games/beams/idioma/en-raiz.js', 'games/snakes/idioma/en-raiz.js', 'games/merge/idioma/en-raiz.js', 'games/swipe/idioma/en-raiz.js', 'games/pop/idioma/en-raiz.js', 'games/panic/idioma/en-raiz.js', 'games/vikings/idioma/en-raiz.js', 'games/goose/idioma/en-raiz.js', 'games/asalto/idioma/en-raiz.js', 'games/kingdom/idioma/en-raiz.js', 'games/auto/idioma/en-raiz.js', 'games/shelter/idioma/en-raiz.js', 'games/soccer/idioma/en-raiz.js', 'games/wings/idioma/en-raiz.js', 'games/spy/idioma/en-raiz.js', 'games/air/idioma/en-raiz.js', 'games/basement/idioma/en-raiz.js', 'games/zombies/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'games/rumble-3d/idioma/en-raiz.js', 'games/roguelite/idioma/en-raiz.js', 'games/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'games/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'games/recruit/idioma/en-raiz.js', 'games/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js', 'games/paperwork/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -454,26 +454,26 @@ const fail = id => () => {
 };
 
 </script>
-<script src="biblioteca/portada-juegos-regla.js?v=d1baaf5"></script>
-<script src="biblioteca/portada-juegos.js?v=d1baaf5"></script>
-<script src="novedades/lo-nuevo.js?v=d1baaf5"></script>
-<script src="novedades/ventana.js?v=d1baaf5"></script>
-<script src="biblioteca/grupos.js?v=d1baaf5"></script>
-<script src="biblioteca/agrupar.js?v=d1baaf5"></script>
-<script src="biblioteca/tienda.js?v=d1baaf5"></script>
-<script src="biblioteca/caras-cuenta.js?v=d1baaf5"></script>
-<script src="biblioteca/cuenta-perfil.js?v=d1baaf5"></script>
-<script src="biblioteca/cuenta-casos.js?v=d1baaf5"></script>
-<script src="biblioteca/cuenta-pestanas.js?v=d1baaf5"></script>
-<script src="biblioteca/cuenta-ajustes.js?v=d1baaf5"></script>
-<script src="biblioteca/cuenta-web.js?v=d1baaf5"></script>
-<script src="biblioteca/votos.js?v=d1baaf5"></script>
-<script src="biblioteca/alfa.js?v=d1baaf5"></script>
-<script src="biblioteca/portada-nueva.js?v=d1baaf5"></script>
-<script src="biblioteca/catalogo.js?v=d1baaf5"></script>
-<script src="biblioteca/jugados.js?v=d1baaf5"></script>
-<script src="biblioteca/portada-catalogo.js?v=d1baaf5"></script>
-<script src="core/js/sistema/analitica.js?v=d1baaf5"></script>
-<script src="pie.js?v=d1baaf5" defer></script>
+<script src="biblioteca/portada-juegos-regla.js?v=69703db"></script>
+<script src="biblioteca/portada-juegos.js?v=69703db"></script>
+<script src="novedades/lo-nuevo.js?v=69703db"></script>
+<script src="novedades/ventana.js?v=69703db"></script>
+<script src="biblioteca/grupos.js?v=69703db"></script>
+<script src="biblioteca/agrupar.js?v=69703db"></script>
+<script src="biblioteca/tienda.js?v=69703db"></script>
+<script src="biblioteca/caras-cuenta.js?v=69703db"></script>
+<script src="biblioteca/cuenta-perfil.js?v=69703db"></script>
+<script src="biblioteca/cuenta-casos.js?v=69703db"></script>
+<script src="biblioteca/cuenta-pestanas.js?v=69703db"></script>
+<script src="biblioteca/cuenta-ajustes.js?v=69703db"></script>
+<script src="biblioteca/cuenta-web.js?v=69703db"></script>
+<script src="biblioteca/votos.js?v=69703db"></script>
+<script src="biblioteca/alfa.js?v=69703db"></script>
+<script src="biblioteca/portada-nueva.js?v=69703db"></script>
+<script src="biblioteca/catalogo.js?v=69703db"></script>
+<script src="biblioteca/jugados.js?v=69703db"></script>
+<script src="biblioteca/portada-catalogo.js?v=69703db"></script>
+<script src="core/js/sistema/analitica.js?v=69703db"></script>
+<script src="pie.js?v=69703db" defer></script>
 </body>
 </html>

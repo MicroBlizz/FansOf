@@ -12,11 +12,15 @@ const PP_BANCO_REGLAS = (() => {
     duelo: Object.freeze(['fondo', 'marcador', 'efectos']),
     memoria: Object.freeze(['fondo', 'marcador', 'efectos']),
   });
-  // qué se juega: tres tableros de nivel (por lado), las dos pantallas del final, el duelo y la memoria. `toca`: el bot va tocando mientras se mide
+  // los equipos que se ponen en un escenario (modo Niveles, todos a 5 estrellas): el «explosivo» junta a los que más pops hacen solos
+  // (Lluvia: astro, ceo y algodón; Saltito: bunny; Buen comienzo: ardilla), para medir el nivel con muchas explosiones y combos
+  const EQUIPOS = Object.freeze({ explosivo: Object.freeze(['astro', 'ceo', 'algodon', 'bunny', 'ardilla']) });
+  // qué se juega: tres tableros de nivel (por lado), el de lado 5 con el equipo explosivo, las dos pantallas del final, el duelo y la memoria. `toca`: el bot va tocando mientras se mide
   const ESCENARIOS = Object.freeze([
     Object.freeze({ id: 'lado4', tipo: 'nivel', lado: 4, toca: true }),
     Object.freeze({ id: 'lado5', tipo: 'nivel', lado: 5, toca: true }),
     Object.freeze({ id: 'lado6', tipo: 'nivel', lado: 6, toca: true }),
+    Object.freeze({ id: 'equipo', tipo: 'nivel', lado: 5, toca: true, equipo: 'explosivo' }),
     Object.freeze({ id: 'victoria', tipo: 'victoria', lado: 5, toca: false }),
     Object.freeze({ id: 'derrota', tipo: 'derrota', lado: 5, toca: false }),
     Object.freeze({ id: 'duelo', tipo: 'duelo', lado: 0, toca: true }),
@@ -35,7 +39,7 @@ const PP_BANCO_REGLAS = (() => {
     const pasos = [];
     for (const esc of ESCENARIOS) {
       if (solo && !solo.includes(esc.id)) continue;
-      for (const v of variantes(esc, corta)) pasos.push({ escenario: esc.id, tipo: esc.tipo, lado: esc.lado, toca: esc.toca, variante: v.id, quita: v.quita, ahorro: v.ahorro, calienta: TIEMPOS.calienta, mide: TIEMPOS.mide });
+      for (const v of variantes(esc, corta)) pasos.push({ escenario: esc.id, tipo: esc.tipo, lado: esc.lado, toca: esc.toca, equipo: esc.equipo || null, variante: v.id, quita: v.quita, ahorro: v.ahorro, calienta: TIEMPOS.calienta, mide: TIEMPOS.mide });
     }
     return pasos;
   }
@@ -75,6 +79,6 @@ const PP_BANCO_REGLAS = (() => {
     }
     return peores.sort((x, y) => y.baja - x.baja);
   }
-  return Object.freeze({ PARTES, ESCENARIOS, TIEMPOS, UMBRAL, variantes, plan, duracion, resumen, tanda, lectura, empeora });
+  return Object.freeze({ PARTES, EQUIPOS, ESCENARIOS, TIEMPOS, UMBRAL, variantes, plan, duracion, resumen, tanda, lectura, empeora });
 })();
 if (typeof module !== 'undefined') module.exports = PP_BANCO_REGLAS;

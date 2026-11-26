@@ -1,8 +1,8 @@
 {
- "build": 1537,
- "hash": "d639594",
- "fecha": "2026-11-26T19:13:51Z",
- "mensaje": "Pop: los niveles 1 a 3 solo son gratis la primera vez; repetirlos ya ganados cuesta corazón (Pepins, tarea 406)",
+ "build": 1538,
+ "hash": "cdc06b7",
+ "fecha": "2026-11-26T19:37:34Z",
+ "mensaje": "Pop, prueba de rendimiento: sin burbuja arcoíris y con un escenario de equipo explosivo (Arkioner, tarea 404)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

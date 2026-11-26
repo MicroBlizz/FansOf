@@ -12,7 +12,7 @@ const PP_BANCO = (() => {
   const ESPERA_MAX = 20000;   // lo más que se espera a que salga el panel de victoria o la ventana de derrota
   const espera = ms => new Promise(r => setTimeout(r, ms));
   const SIN_PARTE = 'pp-sin-desenfoque';
-  let bot = null, ahorroInicial = false, rotulo = null;
+  let bot = null, ahorroInicial = false, rotulo = null, coleAntes = null;
 
   // el rótulo pequeño de arriba: no tapa el juego y no recibe toques
   function pintaRotulo(n, total) {
@@ -26,6 +26,7 @@ const PP_BANCO = (() => {
   // todo como si nada: partes pintadas, desenfoque puesto, sin ventanas, sin ahorro y sin bot
   function limpia() {
     paraBot();
+    quitaEquipo();
     PP_MEDIDOR.PARTES.forEach(p => PP_MEDIDOR.quita(p, false));
     document.body.classList.remove(SIN_PARTE);
     AHORRO.poner(false);
@@ -41,6 +42,16 @@ const PP_BANCO = (() => {
     const fin = performance.now() + ESPERA_MAX;
     while (!cond()) { if (performance.now() > fin) throw new Error(motivo); await espera(100); }
   }
+
+  // el equipo de un escenario (PP_BANCO_REGLAS.EQUIPOS): todos al máximo y ese equipo en Niveles; al acabar el paso, la colección de antes
+  function ponEquipo(nombre) {
+    if (!nombre) return;
+    coleAntes = ppCole();
+    const e = PP_COLE.todosAlMaximo(coleAntes);
+    e.eq.N = [...PP_BANCO_REGLAS.EQUIPOS[nombre]];
+    ppColeGuarda(e);
+  }
+  function quitaEquipo() { if (coleAntes) { ppColeGuarda(coleAntes); coleAntes = null; } }
 
   // --- entrar en cada escenario y tocar ---
   const tablero = () => PP_P && PP_P.T;
@@ -96,7 +107,7 @@ const PP_BANCO = (() => {
     paraBot();
   }
   async function entra(paso) {
-    if (paso.tipo === 'nivel') { const g = entraNivel(paso.lado); arrancaBot(() => tocaNivel(g), 400); }
+    if (paso.tipo === 'nivel') { ponEquipo(paso.equipo); const g = entraNivel(paso.lado); arrancaBot(() => tocaNivel(g), 400); }
     else if (paso.tipo === 'victoria') await entraVictoria(paso.lado);
     else if (paso.tipo === 'derrota') await entraDerrota(paso.lado);
     else if (paso.tipo === 'duelo') { PP_P = null; ppNuevoDuelo(); arrancaBot(tocaDuelo, 400); }

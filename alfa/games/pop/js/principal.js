@@ -109,3 +109,4 @@ function ppArranque() {
   setInterval(ppAmigosVigila, 5000);   // la pestaña Amigos: en la portada o el camino, al llegar y cada 45 s (js/pantalla-amigos.js)
 }
 ppArranque();
+PP_BANCO.arranca();   // la prueba de rendimiento (?banco=1&nube=0) o su resultado pendiente (js/banco-juego.js, tarea 404)

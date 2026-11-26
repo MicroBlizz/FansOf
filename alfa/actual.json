@@ -1,8 +1,8 @@
 {
- "build": 1535,
- "hash": "f68e7ea",
- "fecha": "2026-11-26T18:29:02Z",
- "mensaje": "Pop: salir del nivel pide confirmación si cuesta un corazón (Pepins, tarea 250)",
+ "build": 1536,
+ "hash": "b78de2a",
+ "fecha": "2026-11-26T18:40:28Z",
+ "mensaje": "Trae main a la rama de la tarea 404; el ADR de la prueba de rendimiento pasa a ser el 237 (el 236 ya es del Pase de Pop)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

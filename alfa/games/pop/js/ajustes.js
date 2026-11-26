@@ -4,7 +4,7 @@
 'use strict';
 const AJUSTES = {
   id: 'pop',                 // para core: la partida en la nube lleva este nombre
-  guardado: 'fansof-pop',    // la clave de la partida en este navegador
+  guardado: 'fansof-pop',    // la clave de la partida en este navegador (en la prueba de rendimiento, ?banco=1&nube=0, js/banco-partida.js la cambia por la de usar y tirar)
   // Las dos monedas de la serie (core/js/sistema/monedas.js, ADR 004): Monedas = la ganada (solo jugando, nunca se vende) y
   // PERLAS = la comprada (con euros, como los lingotes de oro de Candy Crush; solo compra cosas a precio fijo, nunca azar). Sin puente.
   monedas: {

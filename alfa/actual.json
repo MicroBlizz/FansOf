@@ -1,8 +1,8 @@
 {
- "build": 1525,
- "hash": "5378e4f",
- "fecha": "2026-11-26T01:36:07Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-395-combo",
+ "build": 1526,
+ "hash": "37479eb",
+ "fecha": "2026-11-26T07:48:09Z",
+ "mensaje": "Pop combos: reglas como PP_COMBOS_R (PP_COMBO_R ya es del reto, tarea 395) y el 201 en la prueba de cuenta_tablas",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

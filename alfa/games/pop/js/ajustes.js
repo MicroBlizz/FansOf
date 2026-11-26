@@ -152,6 +152,9 @@ const PP_CFG = {
   // COMBO Y FASES (tarea 395, ADR 231; js/reto-combo-reglas.js): cada ronda paga `porRonda` por su combo (x1 hasta `combo.max`), que sube si
   // repites sin pararte más de `combo.duda` segundos entre nota y nota; las fases son bloques de `fase` rondas (Pepins, 26-11-2026).
   reto: { intentos: 3, gratis: 1, perlas: 5, porRonda: 2, tope: 40, mundos: 10, combo: { max: 3, duda: 1.5 }, fase: 5 },
+  // COMBOS (tarea 396, ADR 234; js/combo-reglas.js): desde COMBO x3, x3 = 1 moneda y punto, x4 = 2… (en Pesadilla, el doble). Como mucho
+  // `topeDia` monedas al día por combos, para que repetir un nivel no sea una mina. Los puntos de la semana, sin tope: van al ranking.
+  combos: { topeDia: 30 },
   // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
   // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
   perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },

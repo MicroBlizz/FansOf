@@ -60,17 +60,31 @@ function ppPaseDuelo() {
 }
 // misiones diarias: 3 al día de esta lista (las mismas para todo el mundo); cada una da 5 puntos al cobrarla. Se renuevan a medianoche
 // del móvil (RETOSL). Pepins (tarea 375, 25-11-2026): metas pequeñas para lo que dan, sin «Gana 5» ni «3 estrellas en 2 niveles»
+const PP_PASE_MIS_BASE = Object.freeze([
+  { id: 'gana2', txt: 'Gana 2 niveles', goal: 2, ev: 'nivel', r: { puntos: 5 } },
+  { id: 'gana3', txt: 'Gana 3 niveles', goal: 3, ev: 'nivel', r: { puntos: 5 } },
+  { id: 'tres1', txt: 'Consigue 3 estrellas en un nivel', goal: 1, ev: 'tres', r: { puntos: 5 } },
+  { id: 'duelo1', txt: 'Gana un duelo', goal: 1, ev: 'duelo', r: { puntos: 5 } },
+  { id: 'repe1', txt: 'Vuelve a ganar un nivel que ya pasaste', goal: 1, ev: 'repetido', r: { puntos: 5 } },
+]);
+const PP_PASE_MIS_COMBO = Object.freeze([
+  { id: 'combo4', txt: 'Haz un COMBO x4', goal: 1, ev: 'combo4', r: { puntos: 5 } },
+  { id: 'combo3x3', txt: 'Haz 3 combos x3', goal: 3, ev: 'combo3', r: { puntos: 5 } },
+]);
+// la lista de la que salen las de hoy. Con el flag cerrado se quedan las de combos que ya salieron hoy (el día del móvil, como RETOSL):
+// si no, RETOSL volvería a sortear las de hoy y lo ya cobrado se podría cobrar otra vez
+function ppPaseDiarias() {
+  if (PP_COMBO.activo()) return [...PP_PASE_MIS_BASE, ...PP_PASE_MIS_COMBO];
+  const d = new Date(), hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const r = SAVE.paseMis && SAVE.paseMis.retos, ids = r && r.dia && r.dia.clave === hoy ? r.dia.lista.map(m => m.id) : [];
+  return [...PP_PASE_MIS_BASE, ...PP_PASE_MIS_COMBO.filter(m => ids.includes(m.id))];
+}
 const PP_PASE_MIS = RETOSL.crear({
   save: () => { SAVE.paseMis = SAVE.paseMis || {}; return SAVE.paseMis; },
   guardar: () => ppGuarda(),
   pagar: r => ppPaseSuma(r.puntos),
-  diarias: [
-    { id: 'gana2', txt: 'Gana 2 niveles', goal: 2, ev: 'nivel', r: { puntos: 5 } },
-    { id: 'gana3', txt: 'Gana 3 niveles', goal: 3, ev: 'nivel', r: { puntos: 5 } },
-    { id: 'tres1', txt: 'Consigue 3 estrellas en un nivel', goal: 1, ev: 'tres', r: { puntos: 5 } },
-    { id: 'duelo1', txt: 'Gana un duelo', goal: 1, ev: 'duelo', r: { puntos: 5 } },
-    { id: 'repe1', txt: 'Vuelve a ganar un nivel que ya pasaste', goal: 1, ev: 'repetido', r: { puntos: 5 } },
-  ],
+  // con el flag 'combos' entran dos de combos (js/combos.js, tarea 396): pueden salir desde el día siguiente a abrirlo
+  get diarias() { return ppPaseDiarias(); },
   semanales: [], logros: [], nDiarias: 3, nSemanales: 0,
 });
 const ppPaseMision = ev => PP_PASE_MIS.evento(ev, 1);

@@ -1,7 +1,7 @@
 // Fans of Pop · PERFIL DE JUGADOR (dominio; tarea #41, ADR 130): qué se tiene, qué se puede poner, cuánto cuesta y qué viaja al rival.
 // Funciones puras: sin reloj, azar, SAVE, red ni dibujo. Reciben el catálogo (PP_PERFIL_CAT más los personajes), los precios por tipo
 // (PP_CFG.perfil) y lo que tiene el jugador: { comprados: [reclamos 'fijo:perfil:<tipo>:<id>'], rescatados: { id: true } }.
-// Los errores son resultados con nombre: no_existe, no_lo_tienes, ya_lo_tienes, gratis, faltan_perlas, pegatinas_llenas.
+// Los errores son resultados con nombre: no_existe, no_lo_tienes, ya_lo_tienes, gratis, de_logro (no se vende), faltan_perlas, pegatinas_llenas.
 // Lo que viaja al rival (publico/deRival) son solo ids del catálogo, nunca la foto ni nada libre: lo que no existe se cambia por lo de serie.
 'use strict';
 const PP_PERFIL = Object.freeze((() => {
@@ -14,7 +14,9 @@ const PP_PERFIL = Object.freeze((() => {
   const articulo = (tipo, id) => `perfil:${tipo}:${id}`;
   const reclamo = (tipo, id) => `fijo:${articulo(tipo, id)}`;
   const deSerie = (cat, tipo) => (cat[tipo] || []).filter(x => x.serie).map(x => x.id);
-  const gratis = (cat, tipo, id, yo) => !!(busca(cat, tipo, id) && (busca(cat, tipo, id).serie || (tipo === 'personaje' && yo.rescatados && yo.rescatados[id])));
+  // gratis: lo de serie, el amigo ya rescatado y lo de logro ya conseguido (`logro` en el catálogo; yo.logros = { id del logro: true }, tarea 396)
+  const deLogro = (x, yo) => !!(x.logro && yo.logros && yo.logros[x.logro]);
+  const gratis = (cat, tipo, id, yo) => { const x = busca(cat, tipo, id); return !!(x && (x.serie || (tipo === 'personaje' && yo.rescatados && yo.rescatados[id]) || deLogro(x, yo))); };
   const loTiene = (cat, tipo, id, yo) => !!busca(cat, tipo, id) && (gratis(cat, tipo, id, yo) || (yo.comprados || []).includes(reclamo(tipo, id)));
   function precio(cat, precios, tipo, id, yo) {
     if (!busca(cat, tipo, id)) return error('no_existe');
@@ -24,6 +26,7 @@ const PP_PERFIL = Object.freeze((() => {
   function comprar(cat, precios, tipo, id, yo) {
     if (!busca(cat, tipo, id)) return error('no_existe');
     if (gratis(cat, tipo, id, yo)) return error('gratis');
+    if (busca(cat, tipo, id).logro) return error('de_logro');   // no se vende: se gana con su logro
     if (loTiene(cat, tipo, id, yo)) return error('ya_lo_tienes');
     if ((yo.perlas || 0) < precios[tipo]) return error('faltan_perlas');
     return ok({ perlas: precios[tipo], articulo: articulo(tipo, id) });

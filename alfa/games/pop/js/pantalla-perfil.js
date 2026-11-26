@@ -54,6 +54,7 @@ function ppPfResumen() {
 function ppPfEstado(tipo, id) {
   if (PP_MI.puesto(tipo, id)) return `<b class="pp-pf-puesto">${tr('Puesto')}</b>`;
   if (PP_MI.loTengo(tipo, id)) return `<b class="pp-pf-tuyo">${tr(tipo === 'pegatina' ? 'Añadir' : 'Ponerlo')}</b>`;
+  if (PP_MI.dato(tipo, id).logro) return `<b class="pp-pf-tuyo">${tr('Con un logro')}</b>`;   // no se vende (tarea 396)
   return ppPerlasPrecioHtml(PP_MI.precio(tipo, id), 22);
 }
 function ppPfCosa(tipo, d) {
@@ -68,6 +69,7 @@ function ppPfCosa(tipo, d) {
 function ppPerfilToca(tipo, id) {
   if (PP_PF.ocupado) return;
   PP_PF.aviso = '';
+  if (!PP_MI.loTengo(tipo, id) && PP_MI.dato(tipo, id).logro) { PP_PF.aviso = tr('Se consigue con un logro de combo: míralos en el Pase.'); ppVentanaPerfil(); return; }
   if (!PP_MI.loTengo(tipo, id)) { ppPerfilConfirma(tipo, id); return; }
   if (tipo !== 'pegatina' && PP_MI.puesto(tipo, id)) return;
   PP_PF.ocupado = true;
@@ -93,7 +95,9 @@ function ppVentanaPerfil(tab) {
   }
   t.appendChild(tabs);
   const lista = ppPfEl('div', 'pp-pf-lista' + (PP_PF.tab === 'frase' || PP_PF.tab === 'titulo' ? ' pp-pf-ancha' : ''));
-  for (const d of PP_MI.cat[PP_PF.tab]) if (!d.coleccion || PP_MI.loTengo(PP_PF.tab, d.id)) lista.appendChild(ppPfCosa(PP_PF.tab, d));   // los del álbum, solo si los tienes (tarea #142)
+  // los del álbum, solo si los tienes (tarea #142); los de logro de combo, con el flag 'combos' o si ya son tuyos (tarea 396)
+  const sale = d => (!d.coleccion && (!d.logro || PP_COMBO.activo())) || PP_MI.loTengo(PP_PF.tab, d.id);
+  for (const d of PP_MI.cat[PP_PF.tab]) if (sale(d)) lista.appendChild(ppPfCosa(PP_PF.tab, d));
   t.appendChild(lista);
   if (PP_PF.tab === 'pegatina') t.appendChild(ppPfEl('p', 'pp-sub', `<small>${tr('Llevas {n} de {t} pegatinas para lanzar en el duelo.', { n: PP_MI.perfil().pegatinas.length, t: PP_PERFIL.PEGATINAS })}</small>`));
   ppBotonVolver(t, ppCierra);

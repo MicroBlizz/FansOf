@@ -131,6 +131,7 @@ function ppToque(i) {
   if (r.libre) ppFlota(tr('¡Gratis!'), 270, 240, '#3a8ee6');
   const bueno = r.golpes >= 3;   // un toque que revienta (o resquebraja) 3 o más
   if (T.combo >= 2 && bueno) { ppFxCombo(T.combo); if (!SAVE.tuto.combo) ppTutorial('combo'); }
+  PP_COMBO.toque(T, bueno);   // monedas, ranking de la semana, misiones y logros de combo (js/combos.js, tarea 396)
   ppTrasToque(T, i, r);
   if (T.hecho) return;
   if (T.combo > 0 && bueno && !T.lo) ppCombosEquipo(T);

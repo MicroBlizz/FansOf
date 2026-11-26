@@ -129,7 +129,7 @@ function ppVentanaPaseNueva(repinta) {
   t.classList.add('pp-pase-ventana', 'pp-pase-nuevo');
   t.style.setProperty('--tema1', tema.color); t.style.setProperty('--tema2', tema.color2);
   ppVicBarra(SAVE.monedas);   // la barra de arriba de la victoria (js/victoria-panel.js)
-  t.append(ppPaseEscaparate(P, tema), ppPaseEje(e, pts), ppPaseCarril(P, e, pts), ppPaseMisiones(), ppPasePie());
+  t.append(ppPaseEscaparate(P, tema), ppPaseEje(e, pts), ppPaseCarril(P, e, pts), ppPaseMisiones(), ...(PP_COMBO.activo() ? [ppComboLogros()] : []), ppPasePie());   // logros de combo: js/combos-vista.js
   ppBotonVolver(t, ppCierra, { titulo: tr('Pase de Pop'), color: 'oro' });
   if (!repinta) setTimeout(ppPaseCentraCarril, 0);
 }

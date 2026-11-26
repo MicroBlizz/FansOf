@@ -15,6 +15,7 @@ IDIOMA.add({
   "Logros de combo": "Combo achievements",
   "Hecho": "Done",
   "Combos": "Combos",
+  "COMBO": "COMBO",
   "puntos": "points",
   "COMBO x3 = 1 punto, x4 = 2… Se empieza de cero cada lunes.": "COMBO x3 = 1 point, x4 = 2… It starts from zero every Monday.",
   "Con un logro": "Achievement",

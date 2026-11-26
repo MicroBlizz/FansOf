@@ -1,8 +1,8 @@
 {
- "build": 1527,
- "hash": "57f23e9",
- "fecha": "2026-11-26T09:56:51Z",
- "mensaje": "Pop DEV: botón «Abrir todas las pesadillas» (Pepins)",
+ "build": 1528,
+ "hash": "2fb01f1",
+ "fecha": "2026-11-26T10:21:12Z",
+ "mensaje": "Pop combos: el letrero kawaii sale junto al toque (Pepins) y sus cuentas en su propio dominio",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

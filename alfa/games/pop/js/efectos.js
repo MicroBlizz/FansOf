@@ -68,7 +68,8 @@ const ppEnDuelo = () => PP_PANT.actual === 'duelo' || !!(PP_PANT.actual === 'sal
 // un slime del equipo actúa: su hueco brilla y da un saltito
 function ppFxHabilidad(id) { PP_FX.brilla[id] = 1; fire('pp-companero', id); }   // un compañero actúa: brilla su hueco y lo cuenta el medidor de fps (js/rendimiento-partida.js)
 // el letrero de COMBO: crece con cada toque bueno seguido
-function ppFxCombo(n) { PP_FX.combo = { n, t: 0 }; ppVibra(8 + n * 4); play('ppCombo', n); }
+// `i`: la burbuja del toque que lo hace (con el flag `combos`, el letrero sale junto a ella: js/combo-letrero.js); -1, el sitio de siempre
+function ppFxCombo(n, i = -1) { PP_FX.combo = { n, t: 0, i }; ppVibra(8 + n * 4); play('ppCombo', n); }
 // un slime vuela desde su hueco del equipo hasta la burbuja i (llega en `dur` segundos)
 // (con el flag 'ataques-companeros' abierto, el vuelo lleva el ataque de su habilidad: js/ataques-fx.js)
 function ppFxVuelo(id, k, i, n, dur) {

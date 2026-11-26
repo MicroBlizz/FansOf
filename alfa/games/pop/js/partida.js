@@ -131,7 +131,7 @@ function ppToque(i) {
   ppManitaSigue(T);
   if (r.libre) ppFlota(tr('¡Gratis!'), 270, 240, '#3a8ee6');
   const bueno = r.golpes >= 3;   // un toque que revienta (o resquebraja) 3 o más
-  if (T.combo >= 2 && bueno) { ppFxCombo(T.combo); ppTutoCombo(T); }
+  if (T.combo >= 2 && bueno) { ppFxCombo(T.combo, i); ppTutoCombo(T); }
   PP_COMBO.toque(T, bueno);   // monedas, ranking de la semana, misiones y logros de combo (js/combos.js, tarea 396)
   ppTrasToque(T, i, r);
   if (T.hecho) return;
@@ -156,10 +156,10 @@ function ppCombosEquipo(T) {
   if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola'); play('ppPista'); } }
 }
 // flag `combos` (tarea 396): el salto de un amigo que revienta 3 o más sube tu combo, con su letrero y lo que da (js/combos.js)
-// (devuelve si lo ha subido)
-function ppComboAmigo(T, r) {
+// (devuelve si lo ha subido; `i`, la burbuja donde ha caído, para poner allí el letrero)
+function ppComboAmigo(T, r, i = -1) {
   if (!PP_COMBO.amigo(T, r.golpes)) return false;
-  if (T.combo >= 2) ppFxCombo(T.combo);
+  if (T.combo >= 2) ppFxCombo(T.combo, i);
   if (!T.hecho) ppCombosEquipo(T);
   return true;
 }
@@ -214,7 +214,7 @@ function ppSaltaSlime(id, k, golpes) {
       const r = ppToca(T, j, true); if (!r) return;
       ppFxToque(T, j, r); PP_ATAQUE_FX.golpe(T, j, id);
       ppManitaSigue(T);
-      if (!comboSubido) comboSubido = ppComboAmigo(T, r);
+      if (!comboSubido) comboSubido = ppComboAmigo(T, r, j);
       ppTrasToque(T, j, r);
     }, dur * 1000);
   });

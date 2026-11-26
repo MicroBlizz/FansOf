@@ -190,5 +190,11 @@
     "fr-FR": "améliorations internes : le site a sa propre page 404 qui redirige les anciennes adresses et la pub avec récompense est plus claire",
     "de-DE": "interne Verbesserungen: Die Website hat eine eigene 404-Seite, die alte Adressen weiterleitet, und die Belohnungswerbung ist klarer",
     "it-IT": "miglioramenti interni: il sito ha una pagina 404 tutta sua che reindirizza i vecchi indirizzi e l'annuncio con premio è più chiaro"
+  },
+  "0.2.85": {
+    "pt-BR": "melhorias internas: ajustes de desempenho e de economia de bateria nos sistemas do site",
+    "fr-FR": "améliorations internes : réglages de performance et d'économie de batterie dans les systèmes du site",
+    "de-DE": "interne Verbesserungen: Leistungs- und Akkusparanpassungen in den Systemen der Website",
+    "it-IT": "miglioramenti interni: ritocchi di prestazioni e risparmio batteria nei sistemi del sito"
   }
 }

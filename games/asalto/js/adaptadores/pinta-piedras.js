@@ -1,6 +1,7 @@
 // Fans of Asalto · ADAPTADORES · Las piedras de destino a la vista: su losa al final de la tira de misiones (por dónde va la misión de
 // piedra, las oleadas que le quedan y, si hay piedras en la bolsa, el aviso de que se pueden usar; al tocarla se abre su ventana,
-// ventanas-piedras.js) lo que dice la cinta cuando sale una misión de piedra, se gana la piedra o caduca, y el dibujo de cada piedra (por código, con el color de su tipo). No decide nada.
+// ventanas-piedras.js) lo que dice la cinta cuando sale una misión de piedra, se gana la piedra o caduca, el dibujo de cada piedra (por
+// código, con el color de su tipo) y lo que trae además cada una. No decide nada.
 'use strict';
 AS.pinta = AS.pinta || {};
 AS.pinta.piedras = (() => {
@@ -24,6 +25,8 @@ AS.pinta.piedras = (() => {
     return `<img class="as-pix as-ico2" src="${URLS[piedra]}" alt="">`;
   }
   const nombre = piedra => tr(ASALTO.piedras.tipos[piedra].nombre);
+  // lo que trae además (las 12 nuevas), con sus cifras; las 3 de siempre, nada
+  const que = piedra => { const t = ASALTO.piedras.tipos[piedra]; return t.txt ? tr(t.txt, t.extra) : ''; };
   const pide = m => tr(ASALTO.piedras.misiones[m.id].txt, { n: m.meta });
   const plazo = n => (n === 1 ? tr('Solo te queda esta oleada') : tr('Te quedan {n} oleadas', { n }));
   // un cuadradito por cada oleada que le queda a la misión, arriba a la derecha
@@ -52,9 +55,9 @@ AS.pinta.piedras = (() => {
   // lo que dice la cinta de cada aviso de piedra: { titulo, texto, texto2 (segunda línea), col }
   const CINTA = {
     'piedra-mision': a => ({ titulo: tr('MISIÓN DE PIEDRA'), texto: pide(a), texto2: plazo(a.quedan), col: C.azul }),
-    piedra: a => ({ titulo: tr('¡PIEDRA DE DESTINO!'), texto: nombre(a.piedra), texto2: tr('Tócala arriba para usarla'), col: C.verde }),
+    piedra: a => ({ titulo: tr('¡PIEDRA DE DESTINO!'), texto: nombre(a.piedra), texto2: que(a.piedra) || tr('Tócala arriba para usarla'), col: C.verde }),
     'piedra-caducada': () => ({ titulo: tr('MISIÓN DE PIEDRA CADUCADA'), texto: tr('Se acabó el plazo'), texto2: tr('Pronto saldrá otra'), col: C.sangre }),
   };
   const cinta = a => (CINTA[a.tipo] ? CINTA[a.tipo](a) : null);
-  return { losa, cinta, nombre, pide, plazo, dibuja, img };
+  return { losa, cinta, nombre, que, pide, plazo, dibuja, img };
 })();

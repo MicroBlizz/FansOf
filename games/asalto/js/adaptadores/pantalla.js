@@ -17,7 +17,7 @@ AS.pantalla = (() => {
   E.hunde = (que, apagado) => (apagado ? true : E.pulsado(que) ? 'apretado' : false);
   const p = () => E.casos.partida;
   const COLOR = { tanque: [90, 160, 255], luchador: [255, 130, 80], asesino: [80, 230, 220], tirador: [140, 240, 110], mago: [255, 200, 90], sanador: [255, 150, 200], brujo: [255, 100, 150], comodin: [255, 240, 200] };
-  const ERRORES = { 'sin-oro': 'No te llega el oro', 'sin-sitio': 'Sin sitio: une a dos héroes', 'faltan-heroes': 'Hacen falta dos héroes', 'sin-empujones': 'No te quedan empujones', 'sin-estallido': 'Ya has usado el Estallido de esta oleada', 'sin-repetidas': 'No hay runas repetidas que romper', 'sin-tirada': 'Invoca primero', 'sin-piedra': 'No tienes esa piedra', 'sin-heroes': 'Pon un héroe en el campo',
+  const ERRORES = { 'sin-oro': 'No te llega el oro', 'sin-sitio': 'Sin sitio: une a dos héroes', 'faltan-heroes': 'Hacen falta dos héroes', 'sin-empujones': 'No te quedan empujones', 'sin-estallido': 'Ya has usado el Estallido de esta oleada', 'sin-repetidas': 'No hay runas repetidas que romper', 'sin-tirada': 'Invoca primero', 'sin-piedra': 'No tienes esa piedra', 'elige-clase': 'Elige antes la clase', 'sin-heroes': 'Pon un héroe en el campo',
     'hueco-cerrado': 'Ese hueco se abre con mejoras', 'banquillo-lleno': 'El banquillo está lleno' };
 
   function cartel(txt, sub, col, vida) { E.cartel = { txt, sub: sub || '', col: col || C.oro2, t: 0, vida: vida || 1.5 }; }
@@ -34,6 +34,7 @@ AS.pantalla = (() => {
     E.celdasOro.clear(); E.casi.clear();
     for (const l of res.llegados) if (!l.fundido) E.ocultos.add(l.heroe.id);
     if (res.dorado && !res.dorado.fundido) E.ocultos.add(res.dorado.heroe.id);
+    if (res.gemela && !res.gemela.fundido) E.ocultos.add(res.gemela.heroe.id);
     E.giro = { tipo, t: 0, res, para: tipo === 'tira' ? [0.45, 0.7, 0.95] : [0, 0, 0], parada: [false, false, false], hechas: 0, t0: tipo === 'tira' ? 1.1 : 0.18 };
     AS.suena(tipo === 'tira' ? 'gira' : 'empuja');
     if (tipo === 'empuja') fx.sacude(3);
@@ -44,10 +45,10 @@ AS.pantalla = (() => {
     if (!r.ok) { noVale(r.error); return; }
     lanzaGiro('tira', r.valor);
   }
-  // la tirada de una piedra de destino (la i de la bolsa): gira como una invocación, pero gratis
-  function tiraPiedra(i) {
+  // la tirada de una piedra de destino (la i de la bolsa): gira como una invocación, pero gratis. eleccion: { clase } (Piedra de la clase)
+  function tiraPiedra(i, eleccion) {
     if (E.giro || !AS.guia.libre()) return;
-    const r = E.casos.tiraPiedra(i);
+    const r = E.casos.tiraPiedra(i, eleccion);
     if (!r.ok) { noVale(r.error); return; }
     E.unir = null;
     lanzaGiro('tira', r.valor);
@@ -97,10 +98,11 @@ AS.pantalla = (() => {
   const NOMBRE_LINEAS = ['', '', '¡DOBLE!', '¡TRIPLE!', '¡CUÁDRUPLE!', '¡LLUVIA DE LÍNEAS!'];
   function remata(G) {
     const res = G.res, n = res.lineas.length, a = E.P.altar;
-    const oro = res.oroExtra + res.oroRacha;
+    const oro = res.oroExtra + res.oroRacha + (res.premio ? res.premio.oro : 0);
+    revela(res.gemela);   // la Piedra gemela: el segundo llega a la vez que el último de las líneas
     if (res.dorado) premioGordo(res);
     else if (n >= 2) { cartel(tr(NOMBRE_LINEAS[Math.min(n, 5)]), tr('+{n} de oro', { n: oro }), C.oro2); AS.suena('premio', n); fx.sacude(4 + n); }
-    else if (res.piedra) cartel(AS.pinta.piedras.nombre(res.piedra), res.llegados.some(l => l.heroe.rareza > 0) ? tr('¡Llega con más rareza!') : '', C.celeste, 1.4);
+    else if (res.piedra) cartel(AS.pinta.piedras.nombre(res.piedra), AS.pinta.piedras.que(res.piedra) || (res.llegados.some(l => l.heroe.rareza > 0) ? tr('¡Llega con más rareza!') : ''), C.celeste, 1.6);
     else if (res.repite) cartel(tr('¡OTRA GRATIS!'), '', C.verde, 1.1);
     else if (n && res.racha >= 2) rachaSube(res, oro);
     else if (n) fx.sacude(3);
@@ -279,7 +281,7 @@ AS.pantalla = (() => {
   }
   function pintaCartel(g, P) {
     const c = E.cartel;
-    if (!c) return;
+    if (!c || E.intro) return;   // con el cartel grande de la oleada en pantalla, los pequeños (¡A LA CARGA!) no se pintan encima
     const k = Math.min(1, c.t / 0.15), w = Math.min(P.W - 20, Math.max(AS.texto.ancho(c.txt, 64), AS.texto.ancho(c.sub, 32)) + 80), y = P.arena.y + Math.round(P.arena.h * 0.42) - Math.round((1 - k) * 30);
     const oro = c.col === C.oro2;   // los carteles de premio: cinta granate con letras de oro
     g.globalAlpha = c.t > c.vida - 0.25 ? Math.max(0, (c.vida - c.t) / 0.25) : k;
@@ -288,17 +290,17 @@ AS.pantalla = (() => {
     if (c.sub) { AS.tema.pergamino(g, P.W / 2 - w / 2 + 30, y + 44, w - 60, 44); AS.texto.pinta(g, c.sub, P.W / 2, y + 66, { col: C.tinta, borde: false, ancla: 'c', max: w - 80 }); }
     g.globalAlpha = 1;
   }
-  // la luz que lleva encima cada uno en la batalla; en la entrada del jefe, todo el foco es para él
+  // la luz que lleva encima cada uno en la batalla; mientras está el cartel del jefe, todo el foco es para él
   function luzDe(P, u, I) {
     const s = P.aPantalla(u.x, u.y);
     if (u.jefe) return { x: s.x, y: s.y - 80, r: I ? 250 : 200, col: I || u.enFuria ? [255, 70, 50] : null, a: I ? 1 : 0.55 };
     return { x: s.x, y: s.y - 40, r: 90, col: u.dorado ? [255, 215, 90] : null, a: (u.lado === 'heroe' ? 0.75 : 0.5) * (I ? 0.3 : 1) };
   }
   function luces(P, q) {
-    const A = P.arena, a = P.altar, lista = AS.mazmorra.luces(ASALTO.zonas[q.zona].tema, A.x, A.y, A.w, A.h, E.t), I = E.intro;
+    const A = P.arena, a = P.altar, lista = AS.mazmorra.luces(ASALTO.zonas[q.zona].tema, A.x, A.y, A.w, A.h, E.t), I = AS.cartelOleada.foco(E);
     if (!E.batalla) for (const { h, i } of AS.equipo.enCampo(q.equipo)) { const s = P.hueco(i); lista.push({ x: s.x, y: s.y - 40, r: h.dorado ? 130 : 96, col: h.dorado ? [255, 215, 90] : null, a: 0.75 }); }
     else for (const u of E.batalla.u) if (!u.muerta) lista.push(luzDe(P, u, I));
-    if (I && I.t > 0.9) for (const k of [0.12, 0.38, 0.62, 0.88]) lista.push({ x: P.W * k, y: A.y + A.h - 96, r: 200, col: null, a: 1 });   // la cinta con su nombre, a plena luz
+    lista.push(...AS.cartelOleada.luces(P, E));   // el cartel de la oleada, a plena luz
     lista.push({ x: a.x + a.w / 2, y: a.y + a.h / 2, r: 240, col: [255, 170, 80], a: 0.16 + Math.sin(E.t * 2) * 0.03 });
     return lista.concat(fx.luces());
   }
@@ -319,19 +321,20 @@ AS.pantalla = (() => {
     g.translate(tb.x, tb.y);
     AS.pinta.arena(g, P, q, E); AS.pinta.marcador(g, P, q, E); AS.pinta.altar(g, P, q, E); AS.pinta.misiones(g, P, q, E, dt);
     pintaUnir(g); AS.guia.pinta(g, P, E); AS.consejos.pinta(g, P, E, dt); pintaArrastre(g); fx.pinta(g);
-    if (E.intro) AS.pantallaBatalla.pintaIntro(g, P, E);
+    AS.cartelOleada.pinta(g, P, E);
     pintaCartel(g, P);
     g.setTransform(1, 0, 0, 1, 0, 0);
     fx.pintaFogonazo(g, P.W, P.H);
     const jefe = E.batalla && E.batalla.jefe && !E.batalla.jefe.muerta;
-    AS.lienzo.presenta(luces(P, q), { y0: P.arena.y, y1: P.arena.y + P.arena.h, a: E.intro ? 0.88 : jefe ? 0.62 : 0.5 });
+    AS.lienzo.presenta(luces(P, q), { y0: P.arena.y, y1: P.arena.y + P.arena.h, a: AS.cartelOleada.sombra(E, jefe ? 0.62 : 0.5) });
   }
   function empieza(casos) {
     Object.assign(E, { casos, activa: true, giro: null, arrastre: null, toque: null, batalla: null, cartel: null, intro: null, cerrando: false, unir: null, oroBatalla: 0, pistaFija: null, oroVisto: casos.partida.oro, misionHecha: null, combo: 0, tCombo: 0 });
     E.ocultos.clear(); E.apariciones.clear(); E.celdasOro.clear(); E.destellos.clear(); E.ascensos.clear(); E.casi.clear(); E.cumplidas.length = 0; fx.limpia();
     AS.guia.empieza(E);
     AS.suena.musica(ASALTO.zonas[casos.partida.zona].musica);
-    if (!AS.guia.activa && !casos.progreso.consejos.inicio) AS.ventanas.ayuda(E, () => casos.consejoVisto('inicio'));   // sin guía, la primera vez: cómo se juega
+    if (casos.partida.fase === 'premio') AS.ventanas.premios(E);   // se cerró con premios por cobrar (tarea #314): vuelven a la vista, y al cobrarlos se sigue
+    else if (!AS.guia.activa && !casos.progreso.consejos.inicio) AS.ventanas.ayuda(E, () => casos.consejoVisto('inicio'));   // sin guía, la primera vez: cómo se juega
   }
   function sal() { E.activa = false; E.batalla = null; E.giro = null; fx.limpia(); }
   function monta(cv) {

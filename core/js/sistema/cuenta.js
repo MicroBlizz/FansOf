@@ -25,6 +25,9 @@ const CUENTA = (() => {
   let meta = leer(META, null) || { version: 0, pendiente: (() => { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } })() };
   let cambios = 0, ocupado = false, temporizador = null, estado = activa ? 'sin conectar' : 'apagada';
   const guardarMeta = () => escribir(META, meta);
+  // el invitado de prueba del panel DEV (ADR 227): hace de invitado y no envía lo que cambiaría la cuenta de verdad
+  const prueba = CUENTA_INVITADO_PRUEBA.crea({ almacen: (() => { try { return sessionStorage; } catch (e) { return null; } })(), permitido: NUCLEO.alfa || NUCLEO.desarrollo });
+  const paraSiPrueba = () => { if (prueba.activo()) throw CUENTA_INVITADO_PRUEBA.parada(typeof tr === 'function' ? tr('Invitado de prueba: no se envía nada') : 'Invitado de prueba: no se envía nada'); };
 
   // ---------- la sesión: invitado al principio; se renueva sola antes de caducar ----------
   async function pedir(ruta, opciones = {}, token) {
@@ -201,11 +204,13 @@ const CUENTA = (() => {
   }
   // invitado → cuenta con email: llega un enlace; al abrirlo, esta misma cuenta (con su partida) queda guardada con ese email
   async function guardarConEmail(email) {
+    paraSiPrueba();
     const user = await pedir('/auth/v1/user?redirect_to=' + encodeURIComponent(volver()), { method: 'PUT', body: JSON.stringify({ email }) }, await token());
     const s = leer(SESION, null); if (s) { s.emailPendiente = user.new_email || email; escribir(SESION, s); }
   }
   // en otro aparato: entrar en una cuenta que ya existe (no crea ninguna)
   async function entrarConEmail(email) {
+    paraSiPrueba();
     await pedir('/auth/v1/otp?redirect_to=' + encodeURIComponent(volver()), { method: 'POST', body: JSON.stringify({ email, create_user: false }) });
   }
   // Google: solo si el servidor lo tiene activado (así el botón no sale hasta que la credencial esté puesta)
@@ -214,11 +219,12 @@ const CUENTA = (() => {
   }
   // invitado → cuenta con Google: se enlaza a esta misma cuenta (conserva la partida); hace falta «manual linking» activado en Supabase
   async function guardarConGoogle() {
+    paraSiPrueba();
     const r = await pedir('/auth/v1/user/identities/authorize?provider=google&skip_http_redirect=true&redirect_to=' + encodeURIComponent(volver()), {}, await token());
     location.href = r.url;
   }
   // en otro aparato: entrar con la cuenta de Google que ya tienes
-  function entrarConGoogle() { location.href = SERVIDOR + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(volver()); }
+  async function entrarConGoogle() { paraSiPrueba(); location.href = SERVIDOR + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(volver()); }
   // alcance: 'local' cierra solo la sesión de este navegador; 'global', todas las de la cuenta (en todos los aparatos: si el servidor no contesta, falla y
   // no se olvida nada, para no decir que se cerró lo que sigue abierto); sin alcance, lo de siempre (lo que haga Supabase por defecto, que hoy es 'global')
   async function cerrarSesion(alcance) {
@@ -273,5 +279,5 @@ const CUENTA = (() => {
   return { activa, cambio, sincronizar, pausa, rpc, funcion, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, get roles() { return CUENTA_ROLES.sesion; },   // los roles de la cuenta (ADR 097)
     guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
     get estado() { return estado; }, get version() { return meta.version; }, get pendiente() { return meta.pendiente; },
-    get invitado() { return sesion().invitado !== false; }, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; }, get foto() { return sesion().foto || ''; } };
+    get invitado() { return prueba.activo() || sesion().invitado !== false; }, get invitadoDeVerdad() { return sesion().invitado !== false; }, invitadoPrueba: prueba, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; }, get foto() { return sesion().foto || ''; } };
 })();

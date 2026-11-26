@@ -4,7 +4,7 @@
 // cualquier sitio la cierra y el camino sigue con lo suyo (regalo diario, packs…: ppAlLlegarAlCamino, js/pase.js).
 // · ppMiraPresentacion(): al llegar al camino, la saca si toca (y entonces devuelve true).
 // · ppPresentaMundo(m, alCerrar): la saca siempre; también al tocar el título del mundo en el camino (js/mapa.js).
-// Qué toca y la fila de bolitas: js/mundo-presenta.js (dominio puro). El dibujo de LO NUEVO: `icono` de PP_MUNDOS (js/niveles.js).
+// Qué toca y la fila de bolitas: js/mundo-presenta.js (dominio puro). El dibujo de LO NUEVO: `icono` de PP_MUNDOS (datos en js/regiones/).
 // Lo guardado: SAVE.mundos (los ya presentados).
 'use strict';
 const ppPresentaVistos = () => PP_PRESENTA.vistos(SAVE.mundos, ppMundoActual());

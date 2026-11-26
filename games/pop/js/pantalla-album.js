@@ -37,18 +37,22 @@ function ppAlbCartaClase(c, extra) {
   const base = c.tiene ? `pp-cm-${c.rar} pp-cm-s${c.est}${c.dorado ? ' pp-cm-dorado' : ''}` : `pp-cm-falta${c.escondido ? ' pp-cm-escondido' : ''}`;
   return `pp-cm-carta ${base} ${extra || ''}`;
 }
-// lo de debajo del dibujo: su nombre, «???» o, en un escondido que falta, la pista corta (su momento dibujado y su mundo); la frase
-// entera va en su ficha, que no cabe en una carta de cuatro por fila
+// lo de debajo del dibujo: su nombre o, si falta, una etiqueta corta de color con de dónde sale (Pepins, tarea 319: antes «???»):
+// «Jardín 3», Tienda, Pase, Duelos...; en un escondido, su momento dibujado y su mundo sobre arcoíris. La frase entera va en su ficha
 function ppAlbCartaNombre(c, id) {
   if (c.tiene) return `<span class="pp-cm-nom">${ppEsc(tr(ppSlimeDe(id).nombre))}</span>`;
-  if (!c.escondido) return '<span class="pp-cm-nom">???</span>';
-  return `<span class="pp-cm-nom pp-cm-pista">${ppCompMomento(c.momento, 16)}${ppEsc(tr(PP_MUNDOS[c.pista.datos.m].nombre))}</span>`;
+  const et = PP_COMP_VISTA.etiqueta(id);
+  if (!et) return '<span class="pp-cm-nom">???</span>';
+  const d = et.datos || {}, mundo = 'm' in d ? tr(PP_MUNDOS[d.m].nombre) : '';
+  const texto = et.texto === '{m} {n}' ? `${mundo} ${d.n}` : et.texto === '{m}' ? mundo : tr(et.texto);
+  return `<span class="pp-cm-nom"><span class="pp-cm-et pp-cm-et-${et.tipo}">${c.escondido ? ppCompMomento(c.momento, 16) : ''}${ppEsc(texto)}</span></span>`;
 }
 const ppAlbCartaDibujo = (c, id, lado) => c.escondido ? ppCompSombra(id, lado) : ppCompMini(id, lado, !c.tiene);
 // `extra`: una clase más (en Mi equipo, 'pp-cm-puesto'); `alTocar`: qué hace al tocarla
 function ppAlbCarta(e, id, extra, alTocar) {
   const c = PP_COMP_VISTA.carta(e, id), b = document.createElement('button');
   b.type = 'button'; b.className = ppAlbCartaClase(c, extra);
+  if (c.dorado) b.insertAdjacentHTML('beforeend', `<span class="pp-cm-cinta pp-cm-${c.rar}">${ppEsc(tr(PP_COMP.RAREZAS[c.rar]))}</span>`);   // el oro tapa el color de la rareza: la cinta lo dice (tarea 374)
   if (c.tiene) b.insertAdjacentHTML('beforeend', `<span class="pp-cm-estrellas">${'★'.repeat(c.est)}</span><span class="pp-cm-modo pp-cm-m${c.modo}">${ppAlbInicial(c.modo)}</span>`);
   b.appendChild(ppAlbCartaDibujo(c, id, 70));
   b.insertAdjacentHTML('beforeend', ppAlbCartaNombre(c, id));
@@ -74,8 +78,19 @@ function ppAlbPagina(e, p) {
   caja.appendChild(rejilla);
   return caja;
 }
+// arriba del álbum, mientras no lo cierres: qué es la burbuja arcoíris y que se puede tocar una silueta (Pepins, tarea 319). Complementa
+// el globo de Lola al rescatar al Becario (tarea 354); se cierra con su X y no vuelve (SAVE.tuto.album)
+function ppAlbAvisoVias() {
+  if (SAVE.tuto.album) return null;
+  const a = ppPfEl('div', 'pp-cm-aviso', `<span class="pp-cm-arcoiris"></span><span>${ppEsc(tr('Las burbujas arcoíris esconden compañeros: tócalas las primeras.'))} ${ppEsc(tr('Toca una silueta para ver cómo se consigue.'))}</span>`);
+  const x = ppPfEl('button', 'pp-cm-aviso-x', '×'); x.type = 'button'; x.setAttribute('aria-label', tr('Cerrar'));
+  x.onclick = () => { play('select'); SAVE.tuto.album = true; ppGuarda(); a.remove(); };
+  a.appendChild(x);
+  return a;
+}
 function ppAlbumLlena(t) {
-  const e = ppCole();
+  const e = ppCole(), aviso = ppAlbAvisoVias();
+  if (aviso) t.appendChild(aviso);
   for (const p of PP_COMP.PAGINAS) t.appendChild(ppAlbPagina(e, p));
   t.appendChild(ppPfEl('div', 'pp-cm-proximo', tr('Próximamente: más facciones')));
 }
@@ -100,7 +115,7 @@ function ppVentanaCompaneros(tab) {
   t.append(ppAlbSaldo(), ppAlbTabs());
   if (PP_ALB.aviso) t.appendChild(ppPfEl('p', 'pp-pf-aviso', ppEsc(PP_ALB.aviso)));
   if (PP_ALB.tab === 'album') ppAlbumLlena(t); else ppEquipoLlena(t);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { PP_ALB.aviso = ''; ppCierra(); }));
+  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppCierra(); });
   t.scrollTop = antes;
 }
 /* ---------- la ficha de un compañero ---------- */
@@ -163,7 +178,7 @@ function ppVentanaCompanero(id) {
   if (!c.escondido) t.appendChild(ppPfEl('p', 'pp-cm-via', `<b>${tr('Cómo se consigue:')}</b> ${ppEsc(ppAlbVia(id))}`));
   if (c.tiene) ppAlbEstrellas(t, id, c);
   else ppAlbBotonCompra(t, id);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { PP_ALB.aviso = ''; ppVentanaCompaneros(); }));
+  ppBotonVolver(t, () => { PP_ALB.aviso = ''; ppVentanaCompaneros(); });
 }
 // subir una estrella: sus repetidos (2, 3, 5 u 8) y sus monedas
 function ppAlbSube(id) {

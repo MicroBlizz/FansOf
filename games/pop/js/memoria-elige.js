@@ -51,12 +51,13 @@ function ppEligeMemoria() {
     b.onclick = () => { play('select'); sel.dif = id; ppMemMarca(t, sel); };
     difs.appendChild(b);
   }
+  if (PP_RETO.activo()) t.appendChild(PP_RETO.tarjeta());   // el reto del día, arriba (js/reto-dia.js, tarea 367)
   t.append(rejilla, difs);
   t.appendChild(ppBoton(tr('JUGAR'), 'pp-btn', () => {
     Object.assign(SAVE.memoria, { mundo: sel.mundo, dif: sel.dif }); ppGuarda();
     ppCierra(); ppNuevaMemoria(sel.mundo, sel.dif);
   }));
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { ppCierra(); if (PP_MEM) ppSalMemoria(); }));
+  ppBotonVolver(t, () => { ppCierra(); if (PP_MEM) ppSalMemoria(); }, { color: 'menta' });
   ppMemMarca(t, sel);
   const elegida = rejilla.querySelector('.pp-mem-sel'); if (elegida && elegida.scrollIntoView) elegida.scrollIntoView({ block: 'nearest' });
 }

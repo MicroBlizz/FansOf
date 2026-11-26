@@ -5,7 +5,7 @@
 AS.ventanas.tienda = (() => {
   const V = AS.ventanas, ico = V.ico, btn = V.btn, TI = AS.tienda;
   const gema = n => `<em class="as-esencia">${ico('gema')}${n}</em>`;
-  const efecto = (d, nivel) => tr(d.txt, { v: d.v[nivel - 1] });
+  const efecto = (d, nivel) => tr(d.txt, { v: d.v[nivel - 1], w: d.w ? d.w[nivel - 1] : '' });
   const ERRORES = { 'sin-esencia': 'Te falta esencia', 'sin-hueco': 'Sin hueco: vende un objeto', 'nivel-maximo': 'Ya está al nivel máximo' };
   const avisa = r => { if (!r.ok) { AS.suena('noVale'); toast(tr(ERRORES[r.error] || 'Ahora no se puede')); } return r.ok; };
 

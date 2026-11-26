@@ -12,13 +12,13 @@ const PP_EXPLICA = Object.freeze({
     if (c.lo && c.usado) return { texto: 'Ya te ha ayudado en este nivel.', datos: {}, barra: null };
     if (c.lo) return { texto: c.veces > 1 ? 'Te ayuda {n} veces en cada nivel de Pesadilla.' : 'Te ayuda una vez en cada nivel de Pesadilla.', datos: { n: c.veces }, barra: null };
     if (fx.salta) return { texto: 'La barra rosa se llena con cada pop. Faltan {n} para saltar.', datos: { n: Math.max(1, fx.salta - (c.carga || 0)) }, barra: 'rosa' };
-    if (fx.combo) return { texto: 'La barra azul sube con toques de 3 o más pops. Actúa con COMBO x{n}.', datos: { n: fx.combo }, barra: 'azul' };
+    if (fx.combo) return { texto: 'La barra azul sube con 3 pops o más. Actúa con COMBO x{n}.', datos: { n: fx.combo }, barra: 'azul' };
     return { texto: 'Sin barra: actúa solo cuando le toca.', datos: {}, barra: null };
   },
 });
 const PP_EXP = { k: -1, reloj: null };
-// ¿se puede tocar el panel ahora? En un nivel de pop-it o de pesadilla, con el panel a la vista (en los duelos no sale)
-const ppExplicaVale = () => ppCompanerosActivo() && PP_PANT.actual === 'sala' && !!PP_P && !!PP_P.T && !PP_P.T.nim;
+// ¿se puede tocar el panel ahora? En un nivel, en pesadilla o en un duelo del camino (tarea 343), con el panel a la vista
+const ppExplicaVale = () => ppCompanerosActivo() && PP_PANT.actual === 'sala' && !!PP_P && !!PP_P.T;
 // el hueco del equipo que hay en (lx, ly) del lienzo lógico, o -1
 function ppExplicaHuecoEn(lx, ly) {
   const T = PP_P.T, eq = ppEquipoNivel(T.d), m = 48 * ppEscalaEquipo();
@@ -48,7 +48,7 @@ function ppExplicaAbre(k) {
   const c = PP_EXPLICA.cuando(ppFxDe(id), { lo: T.lo, usado: !!T.habP && !ppHabLeQueda(T, id), veces: PP_HAB.usosDe(ppFxDe(id), PP_HAB_USOS_LO), carga: PP_P.carga[id] });
   const b = document.createElement('div');
   b.id = 'pp-explica'; b.style.top = Math.round(y - 50 * ppEscalaEquipo()) + 'px'; b.style.setProperty('--pp-flecha', Math.round(x) + 'px');
-  b.innerHTML = `<h3>${tr(d.pasiva)} <span class="pp-explica-modo">${tr(T.lo ? 'Pesadilla' : 'Niveles')}</span></h3>
+  b.innerHTML = `<h3>${tr(d.pasiva)} <span class="pp-explica-modo">${tr(T.lo ? 'Pesadilla' : T.nim ? 'Duelos' : 'Niveles')}</span></h3>
     <p><b>${tr(d.nombre)}</b> <span class="pp-explica-est">${'★'.repeat(est)}<i>${'★'.repeat(5 - est)}</i></span></p>
     <p>${tr(d.texto)}</p>
     <p class="pp-explica-cuando">${c.barra ? `<span class="pp-explica-barra pp-${c.barra}"></span>` : ''}${tr(c.texto, c.datos)}</p>

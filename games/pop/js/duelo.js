@@ -71,7 +71,7 @@ function ppTurnoCeo() {
   const T = D.T, [fila, cuantas] = ppNimJugada(ppFilasDuelo(T), ppHabDFallo(SAVE.duelo.fallo));   // con el Despiste del equipo, falla más
   const sitios = []; for (let x = 0; x < T.n; x++) { const i = fila * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
   sitios.sort(() => Math.random() - 0.5);
-  D.fila = fila; ppFxHabilidad('ceo');
+  D.fila = fila; ppFxHabilidad('ceo'); PP_ATAQUE_FX.luce('ceo', 'tablero');   // luce: su ataque al tablero, solo se ve (js/ataques-fx.js)
   sitios.slice(0, cuantas).forEach((i, k) => setTimeout(() => {
     if (PP_DUELO !== D || D.fin) return;
     if (ppDueloRevienta(i)) { ppDueloFin('gana'); return; }
@@ -114,7 +114,11 @@ function ppDueloFin(res) {
 }
 function ppSalDuelo() { if (PP_DUELO && PP_DUELO.pvp) ppPvpLimpia(); PP_DUELO = null; ppDueloBoton(); ppIrA('titulo'); }
 // el botón ¡LISTO! (HTML, debajo del tablero): solo en tu turno y con algo reventado
-function ppDueloBoton() { const b = $pp('#pp-listo'); if (b) b.hidden = !(PP_DUELO && !PP_DUELO.fin && PP_DUELO.turno === 'yo' && PP_DUELO.esta.length); }
+function ppDueloBoton() {
+  const b = $pp('#pp-listo'); if (!b) return;
+  b.classList.remove('pp-en-fila');   // en el duelo de la portada va en su sitio de siempre (en el del camino, en la fila de ayudas)
+  b.hidden = !(PP_DUELO && !PP_DUELO.fin && PP_DUELO.turno === 'yo' && PP_DUELO.esta.length);
+}
 /* ---------- dibujo ---------- */
 // las caras de arriba: con el perfil abierto (tarea #41), los personajes elegidos; si no, Lola contra el CEO o un amigo de gelatina
 function ppDueloCaras(D) {
@@ -132,7 +136,7 @@ function ppPintaDuelo(c, t) {
   const rival = D.pvp ? D.pvp.nombre.slice(0, 14) : tr('El CEO');   // contra gente, su apodo y un amigo de gelatina
   const [yo, suyo] = ppDueloCaras(D);
   // todo más grande (tarea #129): las caras, los nombres y el turno; lo que no cabe en su sitio encoge
-  ppSlimeRepuestoOImagen(c, suyo, 400, 100 - br * 12, 48, t, 1);   // a la izquierda del botón de pausa
+  if (!PP_FX.vuelos.some(v => v.id === suyo)) ppSlimeRepuestoOImagen(c, suyo, 400, 100 - br * 12, 48, t, 1);   // a la izquierda del botón de pausa (mientras vuela con su ataque, solo en el aire)
   ppSlimeRepuestoOImagen(c, yo, 130, 100, 46, t, 1);
   ppTextoCabe(c, tr('Tú'), 130, 164, 30, 150, '#fff', '#c43a84');
   ppTextoCabe(c, rival, 400, 164, 30, 150, '#fff', '#3a3a6a');

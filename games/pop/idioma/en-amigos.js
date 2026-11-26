@@ -59,7 +59,8 @@ IDIOMA.add({
   "¡1 corazón enviado!": "1 heart sent!",
   "¡{n} corazones enviados!": "{n} hearts sent!",
   "Mañana puedes volver a mandar.": "You can send more tomorrow.",
-  "A {n} de tus amigos ya no les caben más hoy, o ya les mandaste uno.": "{n} of your friends have no room for more today, or you already sent them one.",
+  "{n} amigos ya tienen su corazón de hoy.": "{n} friends already have today's heart.",
+  "1 amigo ya tiene su corazón de hoy.": "1 friend already has today's heart.",
   "Hoy ya no se puede mandar más": "No more can be sent today",
   "Ya les mandaste uno hoy o ya tienen sus 5. ¡Mañana más!": "You already sent them one today or they have their 5. More tomorrow!",
   "Aún no tienes amigos": "You don't have friends yet",
@@ -74,4 +75,8 @@ IDIOMA.add({
   "¡{nombre} te reta a un duelo!": "{nombre} challenges you to a duel!",
   "Entra en su sala y empezáis el duelo.": "Join their room and start the duel.",
   "AHORA NO": "NOT NOW",
+  // el cartel del camino cuando un amigo te adelanta (tarea 384, js/amigos-adelanta-juego.js)
+  "{nombre} te ha adelantado": "{nombre} just passed you",
+  "Va por el mundo {m} · nivel {n}": "Now on world {m} · level {n}",
+  "Un amigo": "A friend",
 });

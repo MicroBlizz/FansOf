@@ -1,6 +1,8 @@
 // Fans Of · Inglés de lo común (extra): lo que no cabía en los otros diccionarios.
 'use strict';
 IDIOMA.add({
+  "Ahorro de batería": "Battery saver",
+  "Más fluido en móviles modestos y gasta menos batería; se ve un poco menos nítido.": "Smoother on modest phones and uses less battery; looks a little less sharp.",
   "Datos de partida anónimos": "Anonymous game data",
   "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Help us improve the games with anonymous data from your matches: no name, no email and no account. You can turn it off whenever you like.",
   "ENCENDIDO": "ON",
@@ -87,6 +89,7 @@ IDIOMA.add({
   "Listo: tu progreso se guarda en tu cuenta.": "Done: your progress is saved to your account.",
   "No se ha podido entrar. Prueba otra vez.": "Couldn't sign in. Try again.",
   "Tu sesión había caducado. Entra otra vez para recuperar tu cuenta.": "Your session had expired. Sign in again to get your account back.",
+  "Invitado de prueba: no se envía nada": "Test guest: nothing is sent",
   "No ha salido bien: {m}": "That didn't work: {m}",
   "ENVIAR": "SEND",
   "Ese email no parece bien escrito": "That email doesn't look right",

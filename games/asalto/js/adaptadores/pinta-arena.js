@@ -97,11 +97,10 @@ AS.pinta.arena = (() => {
     T.barra(g, x, y, w, 8, u.vida / u.max, u.lado === 'heroe' ? C.verde : C.rojo);
     if (u.escudo > 0) { g.fillStyle = C.celeste; g.fillRect(Math.round(x) + 2, y - 3, Math.max(2, Math.round((w - 4) * Math.min(1, u.escudo / u.max))), 3); }
   }
-  // la postura con la que se pinta: la suya, o la de la entrada del jefe (todos quietos y el jefe rugiendo)
+  // la postura con la que se pinta: la suya, o la del jefe rugiendo cuando cae su cartel (cartel-oleada.js)
   function pose(E, u) {
-    if (!E.intro) return u;
-    const ruge = u.jefe && E.intro.t > 0.55 && E.intro.t < 1.25;
-    return ruge ? { anim: 'ataque', tAnim: E.intro.t - 0.55, dura: 0.7 } : { anim: 'reposo', tAnim: E.t, dura: 0.4 };
+    const I = AS.cartelOleada.foco(E), ruge = I && u.jefe && I.t > I.cae && I.t < I.cae + 0.7;   // ruge cuando cae su cartel
+    return ruge ? { anim: 'ataque', tAnim: I.t - I.cae, dura: 0.7 } : u;
   }
   // el veneno y la maldición: dos marcas de color sobre su cabeza
   function marcas(g, u, s, alto) {

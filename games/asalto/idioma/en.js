@@ -49,6 +49,7 @@ IDIOMA.add({
  "SÍ, BORRAR": "YES, ERASE",
  "Pon un héroe en el campo": "Put a hero on the field",
  "AUDITORÍA": "AUDIT",
+ "OLEADA DE ÉLITE": "ELITE WAVE",
  "Si pierdes esta oleada, se acaba": "Lose this wave and it's over",
  "-1 vida": "-1 life",
  "ESQUIVA": "DODGE",

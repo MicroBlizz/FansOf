@@ -2,7 +2,7 @@
 // los héroes salen de su hueco (a la izquierda) y los enemigos entran por la derecha, en tandas. Cada uno busca al rival más cercano,
 // anda hasta tenerlo a tiro y ataca; los que «corren» van derechos a cruzar la línea de la izquierda, y cruzarla quita una vida.
 // Los héroes AGUANTAN en su sitio hasta que el enemigo se acerca (la línea de carga) o pasa un momento: entonces cargan.
-// La batalla no dibuja ni suena: apunta lo que pasa en B.eventos y la pantalla lo recoge. El azar se le pasa (B.azar).
+// La batalla no dibuja ni suena: apunta lo que pasa en B.eventos (también el aviso de oleada de jefe o de élite, al crearse) y la pantalla lo recoge. El azar se le pasa (B.azar).
 // Aquí: crear la batalla y sus unidades, moverlas, elegir objetivo y decidir cuándo acaba. Los golpes están en batalla-golpes.js,
 // los jefes en batalla-jefes.js, lo que hacen los legendarios (tarea #109) en batalla-legendarios.js y los dioses (tarea #156) en
 // batalla-dioses.js.
@@ -15,12 +15,14 @@ AS.batalla = (() => {
 
   // lo que lleva cada unidad si sus cifras no lo dicen (con || : un 0 o un vacío de las cifras se queda en esto)
   const BASE = () => ({ area: 0, defensa: 0, critico: 0, danoCrit: 0, reflejo: 0, esquiva: 0, salpica: 0, regenera: 0, roba: 0, torbellino: 0, dobleTiro: 0,
-    curaArea: 0, maldice: 0, clases: [], escala: 1, nivel: 0, ref: null, rama: null, improntas: [], cumbres: [], habilidades: [], cartas: [], serClave: null, dios: null });
+    curaArea: 0, maldice: 0, clases: [], escala: 1, nivel: 0, ref: null, rama: null, improntas: [], cumbres: [], habilidades: [], cartas: [], serClave: null, dios: null, ex: {} });
   const MARCAS = ['provoca', 'salto', 'corre', 'jefe', 'elite', 'dorado', 'legendario'];
   // el estado de la unidad en la batalla. Los de los legendarios (batalla-legendarios.js): aturdido, invisible, invul y muralla son
-  // segundos que quedan; extra = señuelo o minimapache (no cuenta para perder); leg = lo suyo si es legendario (si no, null)
+  // segundos que quedan; extra = señuelo o minimapache (no cuenta para perder); leg = lo suyo si es legendario (si no, null).
+  // Los de los objetos de la tienda (batalla-objetos.js): quemadura, atontado, freno y si ya ha pegado; ex = lo que traen sus cifras
   const ESTADO = () => ({ cd: 0.4, anim: 'reposo', tAnim: 0, dura: 0.4, golpeYa: false, escudo: 0, veneno: 0, tVeneno: 0, lento: 0, maldito: 0, muerta: false, cruzo: false,
-    ob: null, curaA: null, aturdido: 0, invisible: 0, invul: 0, muralla: 0, vence: 0, estandarte: 0, extra: false, leg: null });
+    ob: null, curaA: null, aturdido: 0, invisible: 0, invul: 0, muralla: 0, vence: 0, estandarte: 0, extra: false, leg: null,
+    quema: 0, tQuema: 0, atonito: 0, frena: 0, pego: false });
   function unidad(lado, tipo, c, x, y) {
     const u = { id: ++ID, lado, tipo, x, y, max: c.vida, vida: c.vida, dano: c.dano, cada: c.cada, alcance: c.alcance, vel: c.vel, ataque: c.ataque,
       radio: c.jefe ? 40 : c.elite ? 22 : 15, ...ESTADO() };
@@ -29,28 +31,38 @@ AS.batalla = (() => {
     for (const k of MARCAS) u[k] = !!c[k];
     return u;
   }
+  // e.merma: la parte de su vida que le falta al empezar (0 a 1; la del jefe con la Piedra del verdugo: se ve en su barra)
   function enemigo(B, e) {
     const jefe = e.jefe ? B.datos.jefes[e.tipo] : null, d = jefe || B.datos.enemigos[e.tipo];
     const u = unidad('enemigo', e.tipo, { vida: Math.round(d.vida * e.fuerza), dano: d.dano * Math.sqrt(e.fuerza), cada: d.cada, alcance: d.alcance, vel: d.vel, area: d.area,
       ataque: d.ataque, corre: d.corre, jefe: !!jefe, elite: e.elite, escala: e.elite ? 1.5 : 1 }, e.x, e.y);
     u.cd = 0.4 + B.azar() * 0.5;
+    if (e.merma > 0) u.vida = Math.max(1, Math.round(u.max * (1 - e.merma)));
     if (jefe) { u.golpes = jefe.golpes.map(g => ({ ...g, t: g.cada * 0.6 })); u.furia = jefe.furia; B.jefe = u; }
     return u;
   }
-  // cfg: { datos, heroes: [{ hueco, cifras, ref }] (cifras de AS.poder), oleada (AS.oleadas.genera), nivel: clases activas, reliquias, azar }
+  // la oleada del jefe o la de élite avisa al empezar, para que la pantalla saque su cartel grande; las normales, no
+  function avisaOleada(B, ol) {
+    if (ol.tipo === 'jefe' || ol.tipo === 'elite') B.eventos.push({ e: 'oleada', tipo: ol.tipo, jefe: ol.jefe, n: ol.n });
+  }
+  // cfg: { datos, heroes: [{ hueco, cifras, ref }] (cifras de AS.poder), oleada (AS.oleadas.genera), nivel: clases activas, reliquias,
+  // efectos (los de los objetos de la tienda: AS.objetos.efectos), azar }
   function crea(cfg) {
     const B = { datos: cfg.datos, azar: cfg.azar, t: 0, u: [], proy: [], avisos: [], eventos: [], cola: [], fin: null, tFin: 0, cruzados: 0, bajas: 0, oro: 0,
       nivel: cfg.nivel || {}, rel: new Set(cfg.reliquias || []), tHab: {}, jefe: null, oleada: cfg.oleada, tanda: 0, carga: false, cifras: AS.cifras.deBatalla(),
       cosecha: 0, fuegos: [], hayLeg: false, malojo: false, hayDios: false, oroDios: 0 };
+    AS.objetosBatalla.prepara(B, cfg.efectos);
     for (const h of cfg.heroes) {
       const p = HUECOS[h.hueco], u = unidad('heroe', h.cifras.tipo, { ...h.cifras, ref: h.ref }, p[0], p[1]);
       u.cd = 0.3 + B.azar() * 0.5;
+      AS.objetosBatalla.entra(B, u, h.hueco);
       if (B.rel.has('carton')) u.escudo = Math.round(u.max * 0.2);
       B.u.push(u); AS.cifras.alta(B.cifras, u);
     }
     for (const e of cfg.oleada.enemigos) { if (e.tanda === 0) B.u.push(enemigo(B, e)); else B.cola.push(e); }
     AS.dioses.empieza(B);
     AS.leyendas.empieza(B);
+    avisaOleada(B, cfg.oleada);
     return B;
   }
 
@@ -99,8 +111,17 @@ AS.batalla = (() => {
     anda(u, -10, u.y, dt, freno);
     if (u.x <= CAMPO.linea) cruza(B, u);
   }
+  // el veneno le quita vida cada segundo mientras dura: devuelve false si lo ha matado
+  function envenena(B, u, dt) {
+    if (!(u.tVeneno > 0)) return true;
+    u.tVeneno -= dt; AS.golpes.quita(B, u, u.veneno * dt, u.venenoDe);
+    if (u.vida > 0) return true;
+    AS.golpes.muere(B, u, u.venenoDe);
+    return false;
+  }
+  // los estados de cada segundo (los de los objetos: quemadura y atontado, en batalla-objetos.js): devuelve false si no puede actuar
   function estados(B, u, dt) {
-    if (u.tVeneno > 0) { u.tVeneno -= dt; AS.golpes.quita(B, u, u.veneno * dt, u.venenoDe); if (u.vida <= 0) { AS.golpes.muere(B, u, u.venenoDe); return false; } }
+    if (!AS.objetosBatalla.estados(B, u, dt) || !envenena(B, u, dt)) return false;
     if (u.lento > 0) u.lento -= dt;
     if (u.maldito > 0) u.maldito -= dt;
     const cura = u.regenera + (u.lado === 'heroe' && B.rel.has('tirita') ? 2 : 0);
@@ -125,6 +146,8 @@ AS.batalla = (() => {
     if (!u.golpeYa && u.tAnim >= u.dura * 0.6) { u.golpeYa = true; AS.golpes.impacto(B, u); }
     if (u.tAnim >= u.dura) { u.anim = 'reposo'; u.tAnim = 0; }
   }
+  // lo que frena un enemigo lento: lo de su Flecha de escarcha o, si no, lo del toque helado
+  const frenoDe = u => (u.lento > 0 ? 1 - (u.frena || 0.4) : 1);
   // si aún no lo tiene a tiro (su alcance más lo que abultan los dos: a un jefe, grande, se le pega desde más lejos), va hacia él
   // (o, si es un héroe antes de la carga, aguanta): devuelve true si no lo tenía a tiro
   function acercate(B, u, ob, dt, freno) {
@@ -134,15 +157,27 @@ AS.batalla = (() => {
   }
   function avanzaUnidad(B, u, dt) {
     u.tAnim += dt;
-    if (u.muerta || !estados(B, u, dt)) return;
+    if (u.muerta || !estados(B, u, dt) || atontado(u)) return;
     if (u.anim === 'ataque') { atacando(B, u); return; }
-    if (u.anim === 'golpe' && u.tAnim < 0.22) return;
-    const freno = (u.lento > 0 ? 0.6 : 1) * AS.dioses.freno(B, u);
-    u.cd -= dt * freno * AS.leyendas.prisa(B, u);
+    if (parado(u)) return;
+    const freno = frenoDe(u) * AS.dioses.freno(B, u);
+    u.cd -= dt * freno * AS.leyendas.prisa(B, u) * AS.objetosBatalla.prisa(B, u);
     if (u.corre) { haciaLaLinea(B, u, dt, freno); return; }
     const ob = eligeObjetivo(B, u);
     if (!ob) { if (u.lado === 'enemigo') haciaLaLinea(B, u, dt, freno); else quieto(u); return; }
-    if (acercate(B, u, ob, dt, freno)) return;
+    if (!acercate(B, u, ob, dt, freno)) aTiro(u);
+  }
+  // encogido por un golpe que acaba de recibir: ese rato ni anda ni ataca
+  const parado = u => u.anim === 'golpe' && u.tAnim < 0.22;
+  // atontado (el Martillo de forja): ese rato ni anda ni ataca, y el ataque que ya había empezado se pierde (el aturdido de los
+  // legendarios, en estados, solo lo deja en pausa)
+  function atontado(u) {
+    if (!AS.objetosBatalla.atontado(u)) return false;
+    if (u.anim === 'ataque') quieto(u);
+    return true;
+  }
+  // ya lo tiene a tiro: se planta y, si le toca, empieza a atacar
+  function aTiro(u) {
     u.salto = false;
     if (u.anim === 'andar') quieto(u);
     if (u.cd <= 0) { u.cd = u.cada; u.anim = 'ataque'; u.tAnim = 0; u.dura = Math.min(0.5, Math.max(0.3, u.cada * 0.5)); u.golpeYa = false; }

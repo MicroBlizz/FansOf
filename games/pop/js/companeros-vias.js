@@ -79,6 +79,7 @@ function ppVentanaRescateCole(rescates) {
   const fuera = rescates.find(x => !x.enEquipo);
   if (fuera) ppRescateEquipoLleno(panel, fuera);
   t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppPrimerosSiguiente));
+  ppTutorial('escondidos');   // Lola, la primera vez (en una partida nueva, el Becario del Jardín 3): hay más en las burbujas arcoíris (tarea #354)
 }
 // el aviso de «Equipo lleno» con el botón que lleva a Mi equipo (se va al camino y abre la pestaña de su modo)
 function ppRescateEquipoLleno(panel, fuera) {

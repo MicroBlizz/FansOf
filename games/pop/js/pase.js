@@ -100,7 +100,7 @@ function ppVentanaPase(repinta = false) {
     lista.appendChild(fila);
   }
   t.appendChild(lista);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra, { color: 'oro' });
   // abre por el primer premio que se puede recoger (o por donde vas)
   if (!repinta) setTimeout(() => { const l = $pp('.pp-pase'), f = l && (l.querySelector('.pp-listo') || l.children[Math.max(0, e - 1)]); if (l && f) l.scrollTop = f.offsetTop - l.offsetTop - 10; }, 0);
 }
@@ -153,6 +153,6 @@ function ppAlLlegarAlCamino() {
   if (ppMiraPackMundo2()) return;   // el segundo pack, al llegar al mundo 2 (js/ofertas.js, tarea #187)
   if (ppPrimerosVe('feria') && ppFeriaAlLlegar()) return;   // premios de la feria entregados solos o su bienvenida (js/feria-pantalla.js)
   if (ppModoNuevoAlLlegar()) return;   // Lola avisa del Difícil o la Pesadilla recién abiertos (js/modo-nuevo.js, tarea #350)
-  if (SAVE.regaloDia !== ppHoy() && !PP_PASE_VISTO.regalo && ppPrimerosVe('regalo')) { PP_PASE_VISTO.regalo = true; ppVentanaRegalo(); }
+  if (!ppRegaloCogido() && !PP_PASE_VISTO.regalo && ppPrimerosVe('regalo')) { PP_PASE_VISTO.regalo = true; ppVentanaRegalo(); }
 }
 const PP_PASE_VISTO = { regalo: false };

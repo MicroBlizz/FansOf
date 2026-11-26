@@ -78,7 +78,7 @@ const CUENTA_WEB = (() => {
   modal.addEventListener('click', e => { if (e.target === modal || e.target.closest('[data-x]')) cerrar(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) { cerrar(); e.stopImmediatePropagation(); } }, true);
 
-  const fallo = e => window.avisar(t('No ha salido bien: {m}', { m: (e && e.message) || '?' }));
+  const fallo = e => window.avisar(e && e.prueba ? e.message : t('No ha salido bien: {m}', { m: (e && e.message) || '?' }));   // el invitado de prueba del panel DEV (ADR 227) lo dice tal cual
   const leyes = () => `<small class="cuenta-leyes"><a href="${base}privacidad/?idioma=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Privacidad'))}</a> · <a href="${base}condiciones/?idioma=${IDIOMA.actual}" target="_blank" rel="noopener">${esc(t('Condiciones de uso'))}</a></small>`;
   const boton = (texto, clase, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = fn; return b; };
   let google = false, pestana = 'perfil';
@@ -135,7 +135,7 @@ const CUENTA_WEB = (() => {
         window.avisar(t('Mira tu correo y abre el enlace'), true); pintarFuera(motivo);
       } catch (err) { fallo(err); }
     }));
-    if (google) fila.append(boton(t('ENTRAR CON GOOGLE'), 'boton sec', () => CUENTA.entrarConGoogle()));
+    if (google) fila.append(boton(t('ENTRAR CON GOOGLE'), 'boton sec', () => CUENTA.entrarConGoogle().catch(fallo)));
     cuerpo.append(fila);
     cuerpo.insertAdjacentHTML('beforeend', `<small class="cuenta-edad">${esc(t('Para guardar tu cuenta tienes que tener 14 años o más. Si eres menor, pide a tu padre, madre o tutor que lo haga contigo.'))}</small>` + leyes());
   }

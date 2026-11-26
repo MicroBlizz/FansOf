@@ -1,4 +1,5 @@
-// Fans of Asalto · Inglés: las piedras de destino y sus misiones con plazo (aparte de en.js, que ya va lleno). Una frase por línea.
+// Fans of Asalto · Inglés: las piedras de destino (las 15), sus misiones con plazo y los avisos de los objetos en la batalla (aparte de
+// en.js, que ya va lleno). Una frase por línea.
 'use strict';
 IDIOMA.add({
  "Piedra menor": "Lesser stone",
@@ -21,7 +22,7 @@ IDIOMA.add({
  "sube la rareza {n} niveles": "raises rarity by {n} tiers",
  "Ahora no hay misión de piedra. Sale una cada pocas oleadas.": "No stone mission right now. One shows up every few waves.",
  "Premio": "Reward",
- "Aún no tienes rarezas abiertas: la piedra te da la invocación gratis con línea segura, pero los héroes llegan Comunes. Ábrelas en Mejoras.": "You have no rarities unlocked yet: the stone still gives a free summon with a guaranteed line, but heroes arrive Common. Unlock them in Upgrades.",
+ "Aún no tienes rarezas abiertas: la piedra te da la invocación gratis con línea segura, pero los héroes llegan Comunes, salvo con la Piedra del comodín, que da un Épico seguro. Ábrelas en Mejoras.": "You have no rarities unlocked yet: the stone still gives a free summon with a guaranteed line, but heroes arrive Common, except with the Wildcard stone, which gives a guaranteed Epic. Unlock them in Upgrades.",
  "Tu tope ahora: {rareza}. Se abren más en Mejoras.": "Your cap right now: {rareza}. Unlock more in Upgrades.",
  "No tienes piedras. Cumple la misión de piedra antes de que se acabe su plazo.": "You have no stones. Complete the stone mission before its time runs out.",
  "PIEDRAS DE DESTINO": "FATE STONES",
@@ -29,4 +30,31 @@ IDIOMA.add({
  "TUS PIEDRAS {n}/{de}": "YOUR STONES {n}/{de}",
  "No tienes esa piedra": "You don't have that stone",
  "¡Llega con más rareza!": "Arrives with higher rarity!",
+ "Piedra de oro": "Gold stone",
+ "Piedra de la vida": "Life stone",
+ "Piedra de esencia": "Essence stone",
+ "Piedra veterana": "Veteran stone",
+ "Piedra de la clase": "Class stone",
+ "Piedra de la impronta": "Imprint stone",
+ "Piedra de la suerte": "Luck stone",
+ "Piedra del mercader": "Merchant stone",
+ "Piedra del verdugo": "Executioner stone",
+ "Piedra gemela": "Twin stone",
+ "Piedra del ascenso": "Ascension stone",
+ "Piedra del comodín": "Wildcard stone",
+ "Además, {oro} de oro": "Plus {oro} gold",
+ "Además, recupera {vidas} vida": "Plus, recover {vidas} life",
+ "Además, {esencia} de esencia": "Plus {esencia} essence",
+ "El héroe llega a nivel {nivel}": "The hero arrives at level {nivel}",
+ "Eliges la clase del héroe que llega": "You choose the class of the hero who arrives",
+ "El héroe llega con {marcas} improntas de una clase al azar": "The hero arrives with {marcas} imprints of a random class",
+ "Tus {suerte} invocaciones siguientes traen línea segura": "Your next {suerte} summons guarantee a line",
+ "La próxima oferta de la tienda trae un objeto épico": "The next shop offer includes an epic item",
+ "El próximo jefe empieza con un {verdugo} % menos de vida": "The next boss starts with {verdugo}% less health",
+ "Llegan dos héroes iguales": "Two identical heroes arrive",
+ "El héroe llega a nivel {nivel}, listo para ascender": "The hero arrives at level {nivel}, ready to ascend",
+ "Una línea de comodines: héroe épico seguro": "A line of wildcards: guaranteed epic hero",
+ "Elige la clase del héroe que llega. La línea segura sale de esa clase.": "Choose the class of the hero who arrives. The guaranteed line will be that class.",
+ "Elige antes la clase": "Choose the class first",
+ "¡SALVADO!": "SAVED!",
 });

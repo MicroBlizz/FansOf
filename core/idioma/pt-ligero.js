@@ -1,6 +1,8 @@
 // Fans Of · Portugués (Brasil) de lo común que usan los juegos ligeros (cuenta, opciones, caos primordial, feedback, anuncios…). Lo carga NUCLEO (core/js/nucleo.js, DICCIONARIOS) cuando el juego tiene este idioma.
 'use strict';
 IDIOMA.add({
+  "Ahorro de batería": "Economia de bateria",
+  "Más fluido en móviles modestos y gasta menos batería; se ve un poco menos nítido.": "Mais fluido em celulares modestos e gasta menos bateria; fica um pouco menos nítido.",
   "Datos de partida anónimos": "Dados de partida anônimos",
   "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Ajude a melhorar os jogos com dados anônimos das suas partidas: sem nome, sem e-mail e sem conta. Você pode desligar quando quiser.",
   "ENCENDIDO": "LIGADO",
@@ -80,6 +82,7 @@ IDIOMA.add({
   "Listo: tu progreso se guarda en tu cuenta.": "Pronto: seu progresso fica salvo na sua conta.",
   "No se ha podido entrar. Prueba otra vez.": "Não foi possível entrar. Tente de novo.",
   "Tu sesión había caducado. Entra otra vez para recuperar tu cuenta.": "Sua sessão tinha expirado. Entre de novo para recuperar sua conta.",
+  "Invitado de prueba: no se envía nada": "Convidado de teste: nada é enviado",
   "No ha salido bien: {m}": "Não deu certo: {m}",
   "ENVIAR": "ENVIAR",
   "Ese email no parece bien escrito": "Esse e-mail não parece bem escrito",

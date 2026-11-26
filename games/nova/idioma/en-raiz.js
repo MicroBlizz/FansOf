@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.64
+  "<b>MEJORAS POR DENTRO</b>: ajustes de rendimiento y de ahorro de batería en los sistemas internos de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: performance and battery-saving tweaks in the internal systems of the website.",
+  "Microblizz ha puesto la web en modo ahorro y Phony ha apagado hasta la luz de la nevera de los becarios.": "Microblizz put the website in saving mode and Phony switched off even the interns' fridge light.",
   // 0.3.63
   "<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the website has its own 404 page that forwards the old addresses, and the rewarded ad is clearer.",
   "Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina.": "Microblizz put a 'you are lost' sign on the website and Phony has already asked for a copy for the kitchen.",

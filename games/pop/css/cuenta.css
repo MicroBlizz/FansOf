@@ -1,2 +1,20 @@
-/* Fans of Pop · ventana de cuenta de core (tarea #155): sus botones (Google, email, ya tengo cuenta) en turquesa, el secundario de Pop; nada de lila (Pepins) */
-#cuenta-modal button { background: linear-gradient(180deg, var(--pp-sec1) 0%, var(--pp-sec2) 100%); border: 0; border-radius: 999px; color: #fff; min-height: 52px; box-shadow: inset 0 0 0 3px var(--pp-sec-b), 0 5px 0 0 var(--pp-sec-b); text-shadow: 0 2px 0 var(--pp-sec-b); }
+/* Fans of Pop · ventanas de core dentro de Pop: la de cuenta («Primero, tu cuenta», Google, email) y cualquier confirmación de core (#scr-confirm,
+   tarea 318). Core no se toca (ADR 037): Pop las viste con su ropa, como hacen Crush y Paperwork. Van fuera de #pp-ui, así que las medidas
+   son de pantalla real (48 px mínimo para el pulgar). Botones con el sistema de Pop (ADR 176): aceptar rosa, salir azul, opciones turquesa. */
+#scr-confirm.screen.modal { background: rgba(255, 180, 220, 0.55); font-family: 'Fredoka', 'Arial Rounded MT Bold', sans-serif; }
+#scr-confirm .modal-card { background: var(--pp-crema); color: var(--pp-cafe); border: 0; border-radius: 28px; padding: 20px 18px; gap: 12px; max-width: 400px;
+  box-shadow: inset 0 0 0 4px #ff9ccf, inset 0 0 0 8px #fff, inset 0 0 0 11px #ffd1ec, 0 12px 30px rgba(160, 60, 120, 0.3); }
+#scr-confirm .modal-card h3 { font-family: 'Fredoka', 'Arial Rounded MT Bold', sans-serif; font-weight: 700; font-size: 26px; color: #ff6eb5; text-shadow: 0 2px 0 #fff; letter-spacing: 0.5px; }
+#scr-confirm .cf-body { font-size: 17px; line-height: 1.35; text-shadow: none; }
+#scr-confirm .cf-body small { display: block; margin-top: 8px; font-size: 13px; color: #7a5a86; }
+#scr-confirm input { box-sizing: border-box; border: 3px solid #ffb3da; border-color: #ffb3da !important; background: #fff; color: var(--pp-cafe); font-family: inherit; }   /* !important: core pone el borde oscuro en línea (email, pregunta para adultos) */
+#scr-confirm input:focus { outline: 3px solid #ff6eb5; outline-offset: 1px; }
+#scr-confirm .row { flex-direction: column; align-items: stretch; gap: 12px; width: 100%; }
+#scr-confirm .btn-ghost, #cuenta-modal button { --c1: var(--pp-sec1); --c2: var(--pp-sec2); --borde: var(--pp-sec-b);
+  font-family: 'Fredoka', 'Arial Rounded MT Bold', sans-serif; font-weight: 700; font-size: 20px; line-height: 1; min-height: 52px; padding: 12px 22px; color: #fff;
+  border: 0; border-radius: 999px; background: linear-gradient(180deg, var(--c1) 0%, var(--c2) 100%);
+  box-shadow: inset 0 0 0 3px var(--borde), 0 5px 0 0 var(--borde); text-shadow: 0 2px 0 var(--borde); }
+#scr-confirm .btn-ghost:active, #cuenta-modal button:active { transform: translateY(3px); box-shadow: inset 0 0 0 3px var(--borde), 0 2px 0 0 var(--borde); }
+#scr-confirm .btn-ghost.btn-ok { --c1: var(--pp-prin1); --c2: var(--pp-prin2); --borde: var(--pp-prin-b); }
+#scr-confirm #cf-no { --c1: var(--pp-vol1); --c2: var(--pp-vol2); --borde: var(--pp-vol-b); }
+#scr-confirm .btn-ghost:focus-visible, #cuenta-modal button:focus-visible { outline: 4px solid #ffd84a; outline-offset: 3px; }

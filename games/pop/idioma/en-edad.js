@@ -5,7 +5,7 @@ IDIOMA.add({
   "Antes de seguir": "Before we go on",
   "¿En qué año naciste?": "What year were you born?",
   "Año de nacimiento": "Year of birth",
-  "Así te enseñamos solo lo que toca. No guardamos tu año, solo si eres menor de edad o no.": "This way we only show you what fits. We don't keep your year, only whether you are under age or not.",
+  "Así te enseñamos lo que toca. No guardamos tu año, solo si eres menor.": "This way we show you what fits. We don't keep your year, only whether you're a minor.",
   "Escribe un año de cuatro cifras, por ejemplo 2012.": "Type a four-digit year, for example 2012.",
   "Las compras no están disponibles para menores": "Purchases are not available for minors",
   "No disponible para menores": "Not available for minors",

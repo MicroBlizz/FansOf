@@ -197,5 +197,13 @@ const PP_COLE = (() => {
     for (const [k, v] of Object.entries(base)) Object.assign(fx, { [k]: MEJORA[k] ? MEJORA[k](v, s) : v }, ADELANTO[k] && ADELANTO[k](s));
     return ok({ fx: Object.freeze(fx) });
   }
-  return Object.freeze({ MODOS, TOPE_EST, ERRORES, nuevo, lee, desdeViejo, gana, rescata, costeEstrella, subeEstrella, pon, quita, precioCasilla, abreCasilla, progreso, cobraPagina, cuentaDuelo, fxDe, dorado, modoDe, existe, idsDe, deVia, atrapables, deCofre, deJefe, delPase, deFeria });
+  // solo para probar (panel DEV de Pop, Pepins 25-11-2026): todos los compañeros a 5 estrellas y las casillas de cada equipo al tope;
+  // el equipo puesto se queda como estaba
+  function todosAlMaximo(e) {
+    const n = copia(e);
+    for (const id of C.IDS) n.tiene[id] = { est: TOPE_EST, rep: 0 };
+    for (const m of MODOS) n.cas[m] = Math.max(n.cas[m], C.PRECIOS.casillas[m].tope);
+    return n;
+  }
+  return Object.freeze({ MODOS, TOPE_EST, ERRORES, nuevo, lee, todosAlMaximo, desdeViejo, gana, rescata, costeEstrella, subeEstrella, pon, quita, precioCasilla, abreCasilla, progreso, cobraPagina, cuentaDuelo, fxDe, dorado, modoDe, existe, idsDe, deVia, atrapables, deCofre, deJefe, delPase, deFeria });
 })();

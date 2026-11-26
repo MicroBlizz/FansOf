@@ -55,10 +55,10 @@ function ppVicCuenta(el, desde, hasta, seg = PP_VIC_CUENTA, retraso = 500) {
   const paso = ahora => {
     if (!el.isConnected) return;
     const k = (ahora - t0) / (seg * 1000);
-    el.textContent = desde + PP_VICTORIA.cuenta(hasta - desde, k);
+    el.textContent = PP_BARRA_REGLAS.cifra(desde + PP_VICTORIA.cuenta(hasta - desde, k));   // con los puntos de los miles, como la barra (tarea #373)
     if (k < 1) requestAnimationFrame(paso);
   };
-  el.textContent = desde; requestAnimationFrame(paso);
+  el.textContent = PP_BARRA_REGLAS.cifra(desde); requestAnimationFrame(paso);
 }
 // Al volver de la Tienda (u Opciones o pausa) la ventana se dibuja otra vez: lo de entrada se salta hasta el final y lo que se repite (el
 // compañero que brinca, el botón que late, los destellos) sigue a su ritmo de siempre, sin esperar su retraso (tarea #261: acortar la

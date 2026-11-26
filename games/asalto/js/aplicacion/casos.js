@@ -211,8 +211,8 @@ AS.creaCasos = ({ datos, almacen, azar, hoy = () => '', compras: puertosCompras 
     empuja: (col, dir) => conPartida(p => p.empuja(col, dir, azar)),
     // el Estallido de la segunda máquina: uno por oleada
     estalla: () => conPartida(p => p.estalla(azar)),
-    // gasta la piedra de destino i de la bolsa: una tirada aparte, gratis y con la rareza subida
-    tiraPiedra: i => conPartida(p => p.tiraPiedra(i, azar)),
+    // gasta la piedra de destino i de la bolsa: una tirada aparte, gratis y con la rareza subida. eleccion: { clase } (Piedra de la clase)
+    tiraPiedra: (i, eleccion) => conPartida(p => p.tiraPiedra(i, azar, eleccion)),
     mueve: (desde, hasta) => conPartida(p => p.mueve(desde, hasta)),
     cambia: (a, b) => conPartida(p => p.cambia(a, b)),
     // qué ganaría el que se queda si se unen: no cambia ni guarda nada

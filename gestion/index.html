@@ -59,8 +59,9 @@
     </div>
     <div id="pan-metricas" hidden></div>
     <div id="pan-metricas-juego" hidden></div>
+    <div id="pan-rend-juego" hidden></div>
     <div id="pan-rend" hidden>
-      <div class="caja ayuda"><b>Rendimiento.</b> Fotogramas por segundo que mandan los juegos al acabar una partida (anónimo, sin cuenta). Últimas 2 semanas, por juego, versión y plataforma.</div>
+      <div class="caja ayuda"><b>Rendimiento.</b> Fotogramas por segundo que mandan los juegos al acabar una partida (anónimo, sin cuenta). Últimas 2 semanas, por juego, versión, plataforma y «Ahorro de batería». El detalle por aparato, en la pestaña «Rendimiento» de cada juego.</div>
       <div class="aviso" id="rend-aviso" role="alert"></div>
       <div id="rend-tabla"></div>
     </div>
@@ -286,6 +287,8 @@ volverDeGoogle().then(hecho => { if (!hecho) entrarSola(); });
 <script src="recursos-marcas.js"></script>
 <script src="recursos-github.js"></script>
 <script src="recursos-enlace.js"></script>
+<script src="recursos-fechas.js"></script>
+<script src="recursos-lista.js"></script>
 <script src="recursos-ampliar.js"></script>
 <script src="recursos.js"></script>
 <script src="sql.js"></script>
@@ -301,6 +304,8 @@ volverDeGoogle().then(hecho => { if (!hecho) entrarSola(); });
 <script src="reportes-prueba.js"></script>
 <script src="metricas.js"></script>
 <script src="metricas-rouflage.js"></script>
+<script src="rendimiento-datos.js"></script>
+<script src="rendimiento-juego.js"></script>
 <script src="paperwork/calibrado-dibujo.js"></script>
 <script src="paperwork/calibrado.js"></script>
 <script src="tablero/tablero.js"></script>

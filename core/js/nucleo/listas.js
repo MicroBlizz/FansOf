@@ -10,6 +10,8 @@
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
     'js/sistema/flags.js',         // flags remotos (abrir/cerrar cosas desde la base de datos), mantenimiento y versión mínima
+    'js/sistema/flotantes-reglas.js', // las reglas puras de los botones fijos que se mueven a un borde (FLOTANTES_REGLAS, ADR 217)
+    'js/sistema/flotantes.js',     // los botones fijos de core (DEV, comentarios, PROTOTIPO, versión de la alfa, fps) se mueven a cualquier borde, de momento solo en la alfa y en local (FLOTANTES, ADR 217); antes de todos ellos
     'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
     'js/sistema/sonido-archivos.js', // los efectos grabados en archivo (SONIDO_ARCHIVO), con el de código de repuesto (ADR 077)
     'js/serie/config.js',          // la serie: constantes y CFG (las cartas, unidades, tipos y roles los añade cada facción)
@@ -30,6 +32,7 @@
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/probador.js',     // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
     'js/sistema/probador-partida.js',   // qué queda de la partida de core al resetear una cuenta de probador (PROBADOR_PARTIDA) y su gancho
+    'js/cuenta/invitado-prueba.js', // el interruptor «Ver como invitado» del panel DEV (ADR 227); antes de cuenta.js
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097): dominio, casos de uso y adaptadores
     'js/cuenta/roles.js',         //           su composición (CUENTA.roles), ya con CUENTA cargada
@@ -58,6 +61,7 @@
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
+    'js/sistema/ahorro.js',        // el interruptor «Ahorro de batería» (AHORRO.activo(), AHORRO.densidad(dpr); avisa con fire('ahorro')): cada juego decide qué baja (ADR 218)
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
     'js/sistema/etiqueta-prototipo.js', // la etiqueta «PROTOTIPO» del borde izquierdo, que lleva a votar en la ficha (ADR 106)
     'js/sistema/feedback-reglas.js', // las reglas de los topes del feedback y de la oferta de beta tester (ADR 106)
@@ -83,10 +87,12 @@
   // LO LIGERO: lo mínimo para un juego con su propia partida y sus pantallas (ver core/js/sistema/ligero.js). Cuenta e idioma, nada de economía.
   const LIGERO = [
     'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js', 'js/sistema/sonido-archivos.js',
+    'js/sistema/flotantes-reglas.js', 'js/sistema/flotantes.js',   // los botones fijos de core se mueven a cualquier borde, de momento solo en la alfa y en local (ADR 217); antes de todos ellos
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
     'js/sistema/puerta-adultos.js',   // la pregunta para adultos antes de pagar con dinero real (tarea #178, ADR 166); antes de monedas.js
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/probador.js',      // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
+    'js/cuenta/invitado-prueba.js', // el interruptor «Ver como invitado» del panel DEV (ADR 227); antes de cuenta.js
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097)
     'js/cuenta/roles.js',          //           su composición (CUENTA.roles)
@@ -102,6 +108,7 @@
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
+    'js/sistema/ahorro.js',        // el interruptor «Ahorro de batería» (AHORRO.activo(), AHORRO.densidad(dpr); avisa con fire('ahorro')): cada juego decide qué baja (ADR 218)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
     'js/sistema/etiqueta-prototipo.js', // la etiqueta «PROTOTIPO» del borde izquierdo, que lleva a votar en la ficha (ADR 106)
     'js/sistema/feedback-reglas.js', // las reglas de los topes del feedback y de la oferta de beta tester (ADR 106)

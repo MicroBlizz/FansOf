@@ -148,3 +148,5 @@
   .pp-gana, .pp-gana *, .pp-vic-fiesta { animation: none !important; }
   .pp-vic-fiesta, .pp-vic-brillos { display: none; }
 }
+/* el medidor por partes del panel DEV (js/medidor-dev.js) puede quitar el desenfoque para ver cuánto cuesta en la gráfica */
+body.pp-sin-desenfoque .pp-vic-panel { -webkit-backdrop-filter: none; backdrop-filter: none; }

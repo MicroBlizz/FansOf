@@ -77,7 +77,7 @@ function ppVentanaBuzonResultado(suma, quedan) {
   const t = ppAbre(`<h2>${tr('Corazones de tus amigos')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div>`);
   t.insertAdjacentHTML('beforeend', `<p class="pp-premio">${tr('+{n}', { n: suma })}</p>`);
   if (quedan > 0) t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Te quedan {n} en el buzón: recógelos cuando gastes corazones.', { n: quedan })}</p>`);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra);
 }
 function ppBotonRecoger(estado) {
   const b = ppBoton(estado === 'lleno' ? tr('Tienes los corazones llenos') : tr('RECOGER'), 'pp-btn2 pp-verde', () => ppBuzonRecoge(b));
@@ -92,5 +92,5 @@ async function ppVentanaBuzon(aviso = '') {
   if (n) t.appendChild(ppBuzonLista(regalos));
   if (aviso) { const p = document.createElement('p'); p.className = 'pp-sub'; p.textContent = aviso; t.appendChild(p); }
   t.appendChild(ppBotonRecoger(PP_CORAZONES_VISTA.buzon(PP_CORAZONES_REGLAS, n, ppVidas(), PP_CFG.vida, ppInfinitas())));
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra);
 }

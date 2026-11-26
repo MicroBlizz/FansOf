@@ -45,30 +45,31 @@ function ppEscSitio(T, azar) {
   const lista = normales.length ? normales : libres;
   return lista.length ? lista[Math.min(lista.length - 1, Math.floor(azar() * lista.length))] : -1;
 }
-// al entrar en un nivel (ppEntra, js/partida.js): T.esc = { gastada, brillo } con brillo = { i, id, nuevo, ganado } o null
+// al entrar en un nivel (ppEntra, js/partida.js): T.esc = { gastada, brillo } con brillo = { i, id, nuevo, lleno, ganado, salto, ido, dato } o null
 function ppEscEntra(T, d) {
   if (!ppCompanerosActivo() || !ppEscEnNivel(d)) return;
   const pend = ppEscTirada(ppEscGuardado()), az = ppEscAzarDe(pend.az);
   T.esc = { gastada: false, brillo: null };
-  if (!pend.sale) return;
-  const comp = ppEscDev(pend) || PP_ESC.elige(ppCole().tiene, d.mundo, ppEscMomento(d), az);
+  const dev = pend.sale ? ppEscDev(pend) : null;
+  const comp = pend.sale ? (dev || PP_ESC.elige(ppCole().tiene, d.mundo, ppEscMomento(d), az)) : null;
   const i = comp ? ppEscSitio(T, az) : -1;
+  ppEscFicha(pend, i < 0 ? null : comp, d, dev);
   if (i < 0) return;
   const lleno = !comp.nuevo && PP_ESC.progreso(ppCole().tiene[comp.id]).lleno;   // ya al máximo: otro repetido solo da monedas
-  T.esc.brillo = { i, id: comp.id, nuevo: comp.nuevo, lleno, ganado: false, salto: null, ido: null };
-  if (!pend.vista) { pend.vista = true; ppEscCuenta('vistas', comp.id); ppGuarda(); }   // una vez por tirada, aunque se salga y se vuelva a entrar
+  T.esc.brillo = { i, id: comp.id, nuevo: comp.nuevo, lleno, ganado: false, salto: null, ido: null, dato: pend.dato || null };
+  if (!pend.dato && !dev) { pend.dato = PP_ESC_DATOS.nueva(comp, lleno, d, ppEscMomento(d)); T.esc.brillo.dato = pend.dato; ppGuarda(); }
   ppTutorial('arcoiris');   // Lola, la primera vez: hay que tocarla la primera
+}
+// la ficha de la tirada (js/escondidos-datos.js) es una por encuentro aunque se salga y se vuelva a entrar; si al volver la burbuja ya
+// no está o trae a otro (la tirada sigue en otro nivel), la de antes se cierra «sin-tocar»
+function ppEscFicha(pend, comp, d, dev) {
+  if (!pend.dato || (comp && !dev && PP_ESC_DATOS.esDe(pend.dato, comp, d, ppEscMomento(d)))) return;
+  PP_ESC_DATOS.estado(pend.dato, 'sin-tocar'); pend.dato = null; ppGuarda();
 }
 // panel DEV (js/dev.js): el compañero que se ha pedido probar en la burbuja, solo en la alfa y en local
 function ppEscDev(pend) {
   if (!pend.dev || !ppEsPruebas() || !PP_COMP.INFO[pend.dev]) return null;
   return { id: pend.dev, nuevo: !(pend.dev in ppCole().tiene) };
-}
-// cuántas burbujas se ven, se aceptan y se ganan por rareza: se guarda en la partida, sin datos de la persona (tarea #329)
-function ppEscCuenta(que, id) {
-  const b = ppEscGuardado(), rar = PP_COMP.INFO[id].rar;
-  b.cuenta = b.cuenta && typeof b.cuenta === 'object' ? b.cuenta : {};
-  b.cuenta[que + '-' + rar] = (b.cuenta[que + '-' + rar] || 0) + 1;
 }
 // la tirada se gasta con la primera acción del nivel (o al decidir en la ventana del duelo)
 function ppEscGasta(T) { T.esc.gastada = true; ppEscGuardado().pend = null; ppGuarda(); }
@@ -90,8 +91,8 @@ function ppEscTrasToque(T, r) {
   const e = T.esc; if (!e || e.gastada) return;
   ppEscGasta(T);
   const b = e.brillo; if (!b) return;
-  if (PP_ESC.primera(b, e.toque) === 'regalo' && r.pops.includes(b.i)) ppEscRevienta(T, b);
-  else ppEscSeVa(b);
+  if (PP_ESC.primera(b, e.toque) === 'regalo' && r.pops.includes(b.i)) { ppEscRevienta(T, b); PP_ESC_DATOS.estado(b.dato, 'regalo'); }
+  else { ppEscSeVa(b); PP_ESC_DATOS.estado(b.dato, 'escapada'); }
 }
 // la burbuja se escapa: deja de brillar con un «puf» y se dice (la burbuja de debajo sigue ahí, normal)
 function ppEscSeVa(b) {

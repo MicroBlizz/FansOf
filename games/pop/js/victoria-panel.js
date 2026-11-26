@@ -15,19 +15,9 @@ function ppVicFondoPon(f) {
   return f;
 }
 /* ---------- la barra de arriba ---------- */
-// los cinco corazones, más grandes que antes y sin montarse (reporte 53, tarea #344: Pepins eligió el boceto B, bocetos/corazones-344.html)
-function ppVicCorazones() {
-  const llenos = ppInfinitas() ? PP_CFG.vida : Math.min(PP_CFG.vida, ppVidas());
-  let h = '';
-  for (let k = 0; k < PP_CFG.vida; k++) h += `<span class="pp-vic-vida${k < llenos ? '' : ' pp-vacia'}">${ppIcono('i-vida', 46, '#ff6e8a')}</span>`;
-  return h;
-}
-// `monedas`: lo que se ve al abrir (sin lo ganado: lo suben las monedas al llegar volando)
-function ppVicBarraHtml(monedas) {
-  return `<div class="pp-vic-arriba"><div class="pp-vic-vidas">${ppVicCorazones()}</div>`
-    + `<div class="pp-vic-caja pp-vic-caja-mon">${ppIcono('i-moneda', 38)}<b class="pp-vic-mon">${monedas}</b></div>`
-    + `<div class="pp-vic-caja pp-vic-caja-per">${ppIcono('i-perla', 38, '#ffd1ec')}<b class="pp-vic-per">${SAVE.perlas || 0}</b></div></div>`;
-}
+// `monedas`: lo que se ve al abrir (sin lo ganado: lo suben las monedas al llegar volando). La barra es la misma pastilla que en el camino
+// y el nivel (tarea #373, js/barra-recursos.js); los corazones, como los eligió Pepins en el reporte 53 (tarea #344)
+const ppVicBarraHtml = monedas => ppBarraRecursosHtml(monedas);
 // la barra va en la ventana (#pp-modal), fuera de la tarjeta, para que no se mueva con ella; se cambia en cada victoria
 function ppVicBarra(monedas) {
   const m = $pp('#pp-modal');
@@ -88,7 +78,7 @@ const ppTextoRacha = n => (n === 1 ? tr('Ahora empiezas los niveles con +1 toque
 // sin «Ahora»: aquí no ha cambiado nada, solo se recuerda lo que da la racha (Pepins, 20-11-2026)
 function ppVicAvisoRacha() {
   const n = SAVE.racha || 0;
-  return `<p class="pp-sub">${n === 1 ? tr('Tu racha: +1 toque al empezar cada nivel') : tr('Tu racha: +{n} toques al empezar cada nivel', { n })}</p>`;
+  return `<p class="pp-sub">${n === 1 ? tr('Victorias seguidas: +1 toque por nivel') : tr('Victorias seguidas: +{n} toques por nivel', { n })}</p>`;
 }
 /* ---------- las monedas que vuelan a la barra ---------- */
 // una moneda (u otro dibujo `ico`, p. ej. el regalo de un estreno) que vuela de `a` a `b` (rectángulos de pantalla) en curva; al llegar, `llega()`

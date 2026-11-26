@@ -4,9 +4,18 @@
   background: radial-gradient(circle, #fff6b0 0, #ffe36e 38%, rgba(255, 227, 110, 0) 70%); animation: pp-bota 1.6s ease-in-out infinite; }
 .pp-rg-halo.pp-rg-quieto { animation: none; filter: saturate(0.7); }
 .pp-rg-premio { margin: -14px auto 8px; padding: 6px 22px; border-radius: 22px; border: 4px solid #ffb800; background: #fff; box-shadow: 0 5px 0 #c27a00; font-size: 34px; font-weight: 700; color: #c27a00; display: inline-flex; position: relative; }
+.pp-rg-seguidos { display: flex; flex-direction: column; gap: 2px; margin: 0 0 6px; font-size: 17px; line-height: 1.2; color: #7a3a7a; }
+.pp-rg-seguidos b { font-size: 20px; color: #c27a00; }
 .pp-rg-tira { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; margin: 4px 0 8px; }
 .pp-rg-dia { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 5px 0 4px; border-radius: 14px; border: 3px solid #ffd1ec; background: #fff; font-size: 15px; color: #7a3a7a; }
 .pp-rg-dia.pp-rg-pasado { opacity: 0.55; background: #fff3fa; }
 .pp-rg-dia.pp-rg-hoy { border-color: #ffb800; background: #fffbe0; box-shadow: 0 0 0 3px #ffe36e, 0 4px 0 #c27a00; color: #c27a00; transform: translateY(-3px); }
 .pp-rg-dia.pp-rg-gordo { grid-column: span 2; background: linear-gradient(#fff8c8, #ffe27a); border-color: #ffb800; }
 .pp-rg-dia em { font-style: normal; font-weight: 700; font-size: 15px; line-height: 1; }
+/* el contador de días seguidos bajo el camino (tarea #383, paso 2; boceto C): la barra dorada hacia la meta siguiente y su premio */
+.pp-rg-cuenta { display: flex; flex-direction: column; gap: 6px; width: 100%; margin: 0 0 8px; padding: 8px 10px; border-radius: 16px; border: 3px solid #ffb800; background: #fffbe0; color: #c27a00; font-size: 16px; font-weight: 700; box-sizing: border-box; }
+.pp-rg-barra { height: 12px; border-radius: 6px; background: #ffe3a3; overflow: hidden; }
+.pp-rg-barra i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, #ffb800, #ff7a3d); }
+.pp-rg-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; line-height: 1.15; text-align: left; }
+.pp-rg-meta .pp-premios { font-size: 18px; white-space: nowrap; }
+.pp-rg-logro { align-items: center; margin-top: 4px; border-color: #ff4a8a; background: #fff0f6; color: #d4246a; font-size: 18px; }

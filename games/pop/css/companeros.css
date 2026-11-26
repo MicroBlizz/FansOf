@@ -21,7 +21,7 @@
 #pp-ui .pp-cm-carta:active { transform: scale(0.95); }
 #pp-ui .pp-cm-carta.pp-cm-r { border-color: #5fbff0; }
 #pp-ui .pp-cm-carta.pp-cm-e { border-color: #ff8a3d; }
-#pp-ui .pp-cm-carta.pp-cm-l { border-color: #ffcf3f; background: #fff8dc; }
+#pp-ui .pp-cm-carta.pp-cm-l { border-color: #ff4f8b; background: #fff0f6; }   /* legendario en rosa fuerte: el amarillo se confundía con el oro de las 5 estrellas (tarea 374) */
 #pp-ui .pp-cm-carta.pp-cm-falta { border: 4px dashed #e9cfc0; background: #fbe8da; }
 #pp-ui .pp-cm-carta.pp-cm-s2 { box-shadow: 0 0 0 2px #ffe9a8; }
 #pp-ui .pp-cm-carta.pp-cm-s3 { box-shadow: 0 0 0 3px #ffd23a; }
@@ -42,7 +42,7 @@
 .pp-cm-rar { border-radius: 999px; padding: 2px 12px; font-size: 17px; font-weight: 700; color: var(--pp-cafe); background: #7fcf8a; }
 .pp-cm-rar.pp-cm-r { background: #5fbff0; }
 .pp-cm-rar.pp-cm-e { background: #ff8a3d; }
-.pp-cm-rar.pp-cm-l { background: #ffcf3f; }
+.pp-cm-rar.pp-cm-l { background: #ff4f8b; color: #fff; }
 .pp-cm-estrellas-f { display: inline-flex; gap: 1px; }
 .pp-cm-hab { width: 100%; box-sizing: border-box; background: #eafbf2; border-radius: 14px; padding: 10px; font-size: 18px; line-height: 1.3; text-align: left; }
 .pp-cm-modo-t { color: #fff; border-radius: 999px; padding: 0 8px; font-size: 15px; font-weight: 700; }
@@ -85,8 +85,6 @@
   background: #fffaf5; border: 3px solid #d9b3a0; color: #b98a74; font-size: calc(1em + 2px); font-weight: 700; line-height: 1; }
 .pp-cm-ficha .pp-cm-sombra-q { font-size: 30px; border-width: 4px; }
 #pp-ui .pp-cm-carta.pp-cm-escondido { border-color: #f1c6b0; background: #fff3e8; }
-#pp-ui .pp-cm-pista { display: block; font-size: 13px; color: #9a6e5a; padding-top: 2px; }
-.pp-cm-pista .pp-cm-momento { margin: -2px 2px 0 0; }
 .pp-cm-momento { flex: none; vertical-align: middle; }
 .pp-cm-pista-f { margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 20px; font-weight: 700; padding: 8px 14px; border-radius: 16px; background: #fff3e8; border: 3px solid #f1c6b0; }
 /* dorado a 5 estrellas (ADR 199): marco de oro que brilla, con un destello suave que lo cruza de vez en cuando; sin contorno oscuro */
@@ -96,6 +94,15 @@
   background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.85) 50%, transparent 62%); transform: translateX(-120%); animation: pp-oro-destello 3.2s ease-in-out infinite; }
 #pp-ui .pp-cm-casilla.pp-cm-dorado { position: relative; }
 #pp-ui .pp-cm-carta.pp-cm-dorado .pp-cm-estrellas { color: #ff8a3d; }
+/* la cinta de la rareza de un dorado (tarea 374, boceto A): arriba, con su color y su nombre; las estrellas y el modo bajan */
+#pp-ui .pp-cm-carta.pp-cm-dorado { padding-top: 30px; }
+#pp-ui .pp-cm-carta.pp-cm-dorado .pp-cm-estrellas { top: 15px; }
+#pp-ui .pp-cm-carta.pp-cm-dorado .pp-cm-modo { top: 15px; }
+.pp-cm-cinta { position: absolute; top: 0; left: 0; right: 0; z-index: 1; padding: 1px 0 2px; font-size: 11px; font-weight: 700; line-height: 1.1; text-align: center;
+  text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; color: var(--pp-cafe); background: #7fcf8a; }
+.pp-cm-cinta.pp-cm-r { background: #5fbff0; }
+.pp-cm-cinta.pp-cm-e { background: #ff8a3d; }
+.pp-cm-cinta.pp-cm-l { background: #ff4f8b; color: #fff; }
 .pp-cm-aro-oro { position: relative; overflow: hidden; border-radius: 50%; border: 6px solid #ffcf3f; box-sizing: border-box; padding: 8px;
   background: radial-gradient(circle at 50% 40%, #fffbe6 0%, #ffeaa0 60%, #ffd86a 100%); box-shadow: 0 0 0 4px #fff1b8, 0 0 18px 6px rgba(255, 196, 40, 0.7); animation: pp-oro-late 2.4s ease-in-out infinite; }
 .pp-cm-aro-oro canvas { width: 100% !important; height: 100% !important; }
@@ -103,3 +110,15 @@
 @keyframes pp-oro-late { 0%, 100% { box-shadow: 0 0 0 3px #fff1b8, 0 0 10px 2px rgba(255, 196, 40, 0.6); } 50% { box-shadow: 0 0 0 3px #fff1b8, 0 0 18px 6px rgba(255, 196, 40, 0.95); } }
 @keyframes pp-oro-destello { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
 @media (prefers-reduced-motion: reduce) { #pp-ui .pp-cm-carta.pp-cm-dorado, #pp-ui .pp-cm-casilla.pp-cm-dorado, .pp-cm-aro-oro { animation: none; } #pp-ui .pp-cm-dorado::after, .pp-cm-aro-oro::after { animation: none; opacity: 0; } }
+/* de dónde sale cada uno que falta (Pepins, tarea 319): una etiqueta corta de color bajo la silueta y, arriba del álbum, el aviso de
+   la burbuja arcoíris (con su X; no vuelve). Nivel rosa, arcoíris para los escondidos, dorado lo de pago, azul duelos, turquesa lo demás */
+.pp-cm-et { display: inline-flex; align-items: center; gap: 2px; max-width: 100%; box-sizing: border-box; padding: 4px 8px; border-radius: 14px; font-size: 15px; font-weight: 700; line-height: 1.05; color: #fff; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18); }
+.pp-cm-et .pp-cm-momento { margin: -2px 1px 0 -3px; }
+.pp-cm-et-nivel { background: linear-gradient(180deg, var(--pp-prin1), var(--pp-prin2)); }
+.pp-cm-et-arco { background: linear-gradient(90deg, #ff6eb5, #ffa53d 35%, #3fc7b0 70%, #4a9df2); }
+.pp-cm-et-pago { background: linear-gradient(180deg, var(--pp-pago1), var(--pp-pago2)); color: #7a4a00; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5); }
+.pp-cm-et-duelo { background: linear-gradient(180deg, var(--pp-vol1), var(--pp-vol2)); }
+.pp-cm-et-otro { background: linear-gradient(180deg, var(--pp-sec1), var(--pp-sec2)); }
+.pp-cm-aviso { position: relative; display: flex; align-items: center; gap: 12px; margin: 0; padding: 12px 52px 12px 14px; border-radius: 18px; background: #fff; box-shadow: inset 0 0 0 3px #ffd1ec; font-size: 18px; font-weight: 600; line-height: 1.25; text-align: left; color: var(--pp-cafe); }
+.pp-cm-arcoiris { flex: 0 0 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 14%, transparent 16%), conic-gradient(#ff6eb5, #ffa53d, #ffe14d, #3fc7b0, #4a9df2, #ff6eb5); box-shadow: 0 0 12px #ffb02e; }
+#pp-ui .pp-cm-aviso-x { position: absolute; top: 4px; right: 4px; width: 48px; height: 48px; border: 0; border-radius: 50%; background: transparent; color: var(--pp-vol2); font-size: 34px; line-height: 1; }

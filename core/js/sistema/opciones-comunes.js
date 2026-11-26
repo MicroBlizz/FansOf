@@ -7,7 +7,7 @@
 //   OPCIONES.sonido({ efectos: [leer, guardar], musica: [leer, guardar] })   las dos barras seguidas, Efectos y Música, cada una con su valor de 0 a 1 (ADR 037)
 //   OPCIONES.interruptor(titulo, texto, leer, guardar, [[si, no]])   botón ENCENDIDO / APAGADO (o los dos textos que se pasen)
 //   OPCIONES.idioma()  OPCIONES.cuenta()  OPCIONES.novedades(abre, [texto])  OPCIONES.instalar()  OPCIONES.versionTexto(texto, [clase])
-// En `filas` de lista() va cada fila ya hecha (con OPCIONES.xxx) o un texto: 'idioma', 'cuenta', 'instalar'. Las filas propias del juego se hacen con OPCIONES.fila().
+// En `filas` de lista() va cada fila ya hecha (con OPCIONES.xxx) o un texto: 'idioma', 'cuenta', 'instalar', 'ahorro'. Las filas propias del juego se hacen con OPCIONES.fila().
 // Qué trae core ya hecho y NO está aquí (porque depende de cada partida): «Datos de partida anónimos» (core/js/sistema/datos-partida.js) viaja dentro de la fila de Cuenta; la música del menú y el
 // progreso (copiar, cargar, borrar) siguen en core/js/sistema/opciones.js para los juegos con la lista de Opciones en el HTML. Pendiente: llevar también esos al componente (core/LEEME.md).
 'use strict';
@@ -46,7 +46,7 @@ const OPCIONES = (() => {
   const instalar = () => (typeof installApp === 'function' ? (() => { const b = el('button', 'btn-ghost ol', t('INSTALAR')); b.onclick = installApp; return fila(t('Instalar en el móvil'), t('Ábrelo como una app: a pantalla completa y sin la barra del navegador.'), b); })() : null);
   const versionTexto = (txt, clase) => el('p', clase || 'opt-ver', txt);   // el pie con la versión (core/css/menus.css: .opt-ver); un juego puede pasar su propia clase
   function lista(o) {
-    const l = el('div', 'opt-list'), mapa = { idioma, cuenta, instalar };
+    const l = el('div', 'opt-list'), mapa = { idioma, cuenta, instalar, ahorro: () => (typeof AHORRO !== 'undefined' ? AHORRO.fila() : null) };   // 'ahorro': core/js/sistema/ahorro.js
     for (const x of o.filas || []) { const f = typeof x === 'string' ? (mapa[x] ? mapa[x]() : null) : x; if (f) l.append(f); }
     const version = o.versionTexto ? versionTexto(o.versionTexto, o.claseVersion) : null;
     let cerrar = null; if (o.alCerrar) { cerrar = el('button', 'btn-big ol', t(o.cerrarTexto || 'CERRAR')); cerrar.onclick = () => { if (typeof play === 'function') play('select'); o.alCerrar(); }; }

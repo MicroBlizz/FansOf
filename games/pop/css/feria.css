@@ -37,7 +37,7 @@
 .pp-feria-yo { position: absolute; width: 46px; height: 46px; margin: -46px 0 0 -23px; pointer-events: none; transition: left 0.5s, top 0.5s; }
 .pp-feria-lola { width: 90px; height: 90px; }
 
-/* la línea de las victorias: «+N para la Feria del finde» */
+/* la línea de las victorias: «+N tickets de la Feria» */
 .pp-gana-tk { display: inline-flex; align-items: center; gap: 6px; background: #fff8dc; border-radius: 999px; padding: 4px 16px; font-weight: 700; font-size: 18px;
   color: #c27a00; box-shadow: inset 0 0 0 3px #ffd64a; animation: pp-sale 0.6s ease-out; }
 

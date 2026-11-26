@@ -11,7 +11,7 @@ function ppAjusta() {
   if (h > bh - pad * 2) { h = bh - pad * 2; w = (h * 540) / LH; }
   w = Math.max(200, Math.floor(w)); h = Math.floor((w * LH) / 540);
   PP_ESCENARIO.style.width = w + 'px'; PP_ESCENARIO.style.height = h + 'px';
-  PP_V.H = LH; PP_V.sc = w / 540; PP_V.dpr = Math.min(window.devicePixelRatio || 1, 3);
+  PP_V.H = LH; PP_V.sc = w / 540; PP_V.dpr = PP_AHORRO.densidad(Math.min(window.devicePixelRatio || 1, 3));   // con «Ahorro de batería», 1,5 como mucho (js/ahorro-juego.js)
   PP_CV.width = Math.round(w * PP_V.dpr); PP_CV.height = Math.round(h * PP_V.dpr);
   PP_UI.style.height = LH + 'px'; PP_UI.style.transform = `scale(${w / 540})`;
   const g = ppGeom(3); PP_UI.style.setProperty('--pp-bajo-tablero', g.y + g.lado + 'px');   // el borde de abajo del tablero, para las ayudas (tareas #129 y #269)
@@ -51,7 +51,7 @@ function ppFotograma(ahora) {
   ppMusicaBucle(); ppAdnMira(); PP_RENDIMIENTO.mira(ahora);   // la fila de pegatinas del duelo (js/duelo-adornos.js) y los fps de cada nivel, duelo o memoria (js/rendimiento-partida.js)
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
-  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppVictoriaReloj(PP_P.T, dt); } ppPintaSala(c, t); ppPintaCortinilla(c, t); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js)
+  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppVictoriaReloj(PP_P.T, dt); } ppPintaSala(c, t); if (PP_MEDIDOR.pinta('cortinilla')) ppPintaCortinilla(c, t); PP_MEDIDOR.marca('cortinilla'); }   // la cortinilla de jefe va encima (js/pintar-cortinilla.js); el medidor DEV, js/medidor-partes.js
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
   else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppAdnAvanza(dt); } ppPintaDuelo(c, t); ppPintaCortinilla(c, t); }
   else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
@@ -69,6 +69,7 @@ function ppArranque() {
   const imagenes = ppCargaImagenes();
   ppAjusta();
   window.addEventListener('resize', ppAjusta);
+  if (typeof hook === 'function') hook('ahorro', ppAjusta);   // «Ahorro de batería» en caliente: el lienzo se rehace con su densidad
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); if (!ppPrimerosToca('duelos')) return; PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)

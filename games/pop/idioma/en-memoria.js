@@ -1,4 +1,5 @@
-// Fans of Pop · Inglés: Memoria con tableros por mundo, instrumentos y dificultades (tarea #141 fase 1, js/memoria*.js).
+// Fans of Pop · Inglés: Memoria con tableros por mundo, instrumentos y dificultades (tarea #141 fase 1, js/memoria*.js) y sus ayudas
+// (fase 2: seguir tras fallar y repetir la melodía, js/memoria-ayudas.js).
 'use strict';
 IDIOMA.add({
   "Elige tablero y dificultad": "Pick a board and difficulty",
@@ -17,4 +18,29 @@ IDIOMA.add({
   "Marimba": "Marimba",
   "Koto": "Koto",
   "Sintetizador": "Synth",
+  // seguir tras fallar y repetir la melodía (js/memoria-ayudas.js)
+  "Sigue en la ronda {n}: Lola te repite la melodía.": "Carry on at round {n}: Lola plays the melody again.",
+  "Solo una vez por partida.": "Only once per game.",
+  "VER ANUNCIO: SEGUIR": "WATCH AD: CONTINUE",
+  "Terminar": "Finish",
+  "¡Sigues!": "You carry on!",
+  "Repetir melodía": "Replay melody",
+  "Te queda 1": "1 left",
+  "Te quedan {n}": "{n} left",
+  // el reto del día (tarea 367, js/reto-dia.js)
+  "RETO DEL DÍA": "DAILY CHALLENGE",
+  "Hoy: {n}": "Today: {n}",
+  "Hoy": "Today",
+  "JUGAR EL RETO": "PLAY THE CHALLENGE",
+  "OTRO INTENTO": "ANOTHER TRY",
+  "OTRO INTENTO: VER ANUNCIO": "ANOTHER TRY: WATCH AD",
+  "¡Ya has jugado los {n} de hoy! Vuelve mañana.": "You have played all {n} for today! Come back tomorrow.",
+  "Tu mejor hoy: {n}": "Your best today: {n}",
+  "La misma melodía para todos. Mundo de hoy: {m}": "The same melody for everyone. Today's world: {m}",
+  "Intentos: {n} de {t}": "Tries: {n} of {t}",
+  "RANKING DE HOY": "TODAY'S RANKING",
+  "Hoy ya tienes todas las monedas del reto.": "You already have all of today's challenge coins.",
+  "¡Tu mejor marca de hoy!": "Your best score today!",
+  "Tu mejor hoy: {n} · puesto {p} de {t}": "Your best today: {n} · place {p} of {t}",
+  "Tu marca se subirá al ranking cuando haya conexión.": "Your score will go up to the ranking when you are online.",
 });

@@ -89,7 +89,12 @@ function ppNimFin(T, gano, soloVentana = false) {
   }, soloVentana ? 0 : 900);
 }
 // el botón ¡LISTO!: solo en tu turno y con algo reventado
-function ppNimBoton() { const T = PP_P && PP_P.T, N = T && T.nim, b = $pp('#pp-listo'); if (b) b.hidden = !(N && !N.fin && N.turno === 'yo' && N.esta.length && PP_PANT.actual === 'sala'); }
+// ¡LISTO!: solo en tu turno y con algo reventado; en el duelo del camino va en la fila de las ayudas (tarea 343, css/ayudas.css)
+function ppNimBoton() {
+  const T = PP_P && PP_P.T, N = T && T.nim, b = $pp('#pp-listo'); if (!b) return;
+  b.classList.toggle('pp-en-fila', !!N);
+  b.hidden = !(N && !N.fin && N.turno === 'yo' && N.esta.length && PP_PANT.actual === 'sala');
+}
 /* ---------- dibujo ---------- */
 // arriba: los corazones y el monedero (los pinta el marcador), el rival con su nombre, las estrellas, el título, de quién es el turno
 // y la regla en dos líneas. Todo grande (tarea #129); lo que no cabe en su sitio encoge.

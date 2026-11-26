@@ -26,6 +26,7 @@ const PP_CFG = {
   precioHueco: [200, 400, 800],   // el 4.º, el 5.º y el 6.º hueco
   monedas: { nivel: 10, jefe: 30, estrella: 5 },   // la primera vez que pasas un nivel (o un jefe) y por cada estrella que mejora tu récord
   sobrantes: { porToque: 1, tope: 10 },   // la fiesta de toques sobrantes al ganar un nivel nuevo: 1 moneda por toque, como mucho 10 (Pepins, 19-11-2026)
+  curvaRegion: { inicio: 0.8, fin: 0.55 },   // la curva de la lista en las regiones 2 a 10: del 80 % al empezar su primer mundo al 55 % al acabar el décimo (tarea #152, Pepins); la región 1 es la del ADR 214 (js/regiones/curva.js)
   cofreCada: 15,             // un cofre cada 15 estrellas de récord…
   cofre: [40, 80],           // …con entre 40 y 80 monedas
   cofreJefe: 100,            // y uno grande, de 100, al ganar a un jefe por primera vez
@@ -96,10 +97,10 @@ const PP_CFG = {
   // de pagar por azar (ADR 004). Ver js/potenciadores.js, js/ofertas.js y js/pase.js; la tienda con pestañas en js/tienda.js.
   // AYUDAS (potenciadores): se ganan jugando (regalo diario, pase, cofres de oferta) o se compran con perlas. `nim`: solo en duelos.
   ayudas: {
-    martillo: { perlas: 6, nombre: 'Martillo', texto: 'Hace pop del todo en la burbuja que toques, sin gastar toque.' },
+    martillo: { perlas: 6, nombre: 'Martillo', texto: 'Hace pop del todo en una burbuja. No gasta toque.' },
     bomba:    { perlas: 9, nombre: 'Bomba', texto: 'Golpea un cuadrado de 3x3 sin gastar toque.' },
     toques3:  { perlas: 6, nombre: '+3 toques', texto: 'Tres toques más en este nivel.' },
-    deshacer: { perlas: 5, nombre: 'Deshacer', texto: 'En un duelo, vuelve atrás tu última jugada (y la del rival).', nim: true },
+    deshacer: { perlas: 5, nombre: 'Deshacer', texto: 'En un duelo, deshace tu última jugada.', nim: true },
     pista:    { perlas: 4, nombre: 'Pista de Lola', texto: 'En un duelo, Lola te marca la jugada ganadora.', nim: true },
     red:      { perlas: 9, nombre: 'Red', texto: 'Captura al momento un compañero repetido de la burbuja arcoíris, sin duelo.', esc: true },   // tarea #329: solo en la ventana del repetido
   },
@@ -132,7 +133,11 @@ const PP_CFG = {
   // luego la forma de `ladoForma` del mundo elegido), cada mundo suena con su `instrumentos[m]` (js/memoria-instrumentos.js) y hay tres
   // DIFICULTADES: `paso` y `pasoMin` multiplican los de arriba, `pista` = segundos de duda tras los que brilla la buena (0 = nunca) y
   // `luces` = si la melodía se ve al sonar (en Difícil solo se oye). Normal es la de siempre y su récord, el de la clasificación.
+  // Fase 2 (ADR 216; js/memoria-ayudas.js): `seguir` = tras fallar, una vez por partida, se sigue en la misma ronda por `perlas` o viendo
+  // un anuncio (se ofrece desde la ronda `desdeRonda`); `pista` = «Repetir melodía» en tu turno, por `perlas`, una vez por ronda y
+  // `porPartida` veces como mucho. Ninguna de las dos vale en una partida `limpio` (duelos contra gente, cuando los haya).
   memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60,
+    seguir: { perlas: 9, desdeRonda: 2 }, pista: { perlas: 4, porPartida: 2 },
     crece: { lado4: 6, forma: 11, ladoForma: 5 },
     dificultades: {
       facil: { paso: 1.4, pasoMin: 1.4, pista: 3, luces: true },
@@ -140,11 +145,16 @@ const PP_CFG = {
       dificil: { paso: 0.8, pasoMin: 0.75, pista: 0, luces: false },
     },
     instrumentos: ['cajita', 'xilofono', 'campanillas', 'tambor', 'organillo', 'arpa', 'flauta', 'marimba', 'koto', 'sinte'] },
+  // RETO DEL DÍA (tarea 367, ADR 226; js/reto-dia-reglas.js): `intentos` al día, los `gratis` primeros sin pagar y los demás por `perlas` (o un
+  // anuncio, donde los hay). Monedas: `porRonda` por ronda de tu mejor marca de hoy (solo lo que la mejora), hasta `tope` al día.
+  // `mundos`: entre cuántos mundos rota el del día (fijo: si cambia, el día de
+  // la nueva versión no juega el mismo tablero que las viejas; no se toca aunque haya más mundos).
+  reto: { intentos: 3, gratis: 1, perlas: 5, porRonda: 2, tope: 40, mundos: 10 },
   // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
   // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
   perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },
 };
-// Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
+// Los mundos están en js/regiones/ y sus niveles y la curva de dificultad, en js/niveles.js (se generan solos).
 
 // Los slimes rescatables y su pasiva. Todas HACEN algo en el tablero (no solo protegen): saltar a reventar burbujas,
 // premios por combos o por toques gordos. COMBO = toques seguidos que revientan más burbujas de las que suben.
@@ -153,7 +163,7 @@ const PP_CFG = {
 //   combo: con qué combo actúa · gratis: toques que no cuentan · pista: burbujas marcadas · premio: toques de 4 y 5 burbujas
 const PP_SLIMES = {
   bunny:   { nombre: 'CrazyBunny', color: '#f6f1ff', color2: '#cfc2ea', pinta: 'orejas',
-             pasiva: 'Zanahoriazo', texto: 'Cada 8 pops salta y hace pop en una burbuja buena.', fx: { salta: 8, golpes: 1 } },
+             pasiva: 'Zanahoriazo', texto: 'Cada 8 pops, hace pop en una burbuja buena.', fx: { salta: 8, golpes: 1 } },
   becario: { nombre: 'El Becario', color: '#7fc4ff', color2: '#3f86d8', pinta: 'antena',
              pasiva: 'Horas extra', texto: 'Con un COMBO x3, tu siguiente toque no cuenta.', fx: { combo: 3, gratis: 1 } },
   lola:    { nombre: 'Lola', color: '#ffb88a', color2: '#e07a3c', pinta: 'pelo',
@@ -161,21 +171,21 @@ const PP_SLIMES = {
   cofre:   { nombre: 'Cofre del tesoro', color: '#ffd64a', color2: '#c98a12', pinta: 'dientes',
              pasiva: 'Premio doble', texto: 'Con 4 pops en un toque, +1 toque. Con 5, +1 corazón (máximo 3 veces al día).', fx: { premio: 1 } },
   ceo:     { nombre: 'El CEO', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata',
-             pasiva: 'Recorte de plantilla', texto: 'Cada 15 pops explota y hace pop en dos burbujas buenas.', fx: { salta: 15, golpes: 2 } },
+             pasiva: 'Recorte de plantilla', texto: 'Cada 15 pops, hace pop en dos burbujas buenas.', fx: { salta: 15, golpes: 2 } },
   // los amigos de los mundos 3 a 6 (30-10-2026, para que los huecos 5.º y 6.º sirvan); `prefiere`: salta antes a las de ese tipo
   copito:  { nombre: 'Copito', color: '#bfe9ff', color2: '#6fb8e8', pinta: '',
-             pasiva: 'Deshielo', texto: 'Cada 10 pops salta a una burbuja de hielo y le hace pop.', fx: { salta: 10, golpes: 1, prefiere: 1 } },
+             pasiva: 'Deshielo', texto: 'Cada 10 pops, hace pop en un hielo.', fx: { salta: 10, golpes: 1, prefiere: 1 } },
   medusa:  { nombre: 'Medusita', color: '#ffc4e6', color2: '#e07ab5', pinta: '',
-             pasiva: 'Cosquillas', texto: 'Cada 12 pops salta a una concha y le hace pop.', fx: { salta: 12, golpes: 1, prefiere: 2 } },
+             pasiva: 'Cosquillas', texto: 'Cada 12 pops, hace pop en una concha.', fx: { salta: 12, golpes: 1, prefiere: 2 } },
   algodon: { nombre: 'Algodón', color: '#ffd6f0', color2: '#9fdcff', pinta: '',
              pasiva: 'Lluvia de azúcar', texto: 'Cada 18 pops llueve azúcar sobre tres burbujas buenas.', fx: { salta: 18, golpes: 3 } },
   nubecita: { nombre: 'Nubecita', color: '#f4f0ff', color2: '#c9b8f0', pinta: '',
              pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque extra.', fx: { extra: 1 } },
   // mundos 7 a 10 (31-10-2026)
   hada:    { nombre: 'Hadita', color: '#b8f0d0', color2: '#4fc98a', pinta: '',
-             pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete y lo hace estallar.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
+             pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete y lo apaga: revienta sin levantar nada.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
   sirena:  { nombre: 'Sirenita', color: '#9fe8f0', color2: '#3ab0c8', pinta: '',
-             pasiva: 'Ola', texto: 'Cada 12 pops salta a una burbujeante y le hace pop.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
+             pasiva: 'Ola', texto: 'Cada 12 pops, hace pop en una burbujeante.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
   maneki:  { nombre: 'Gatito de la suerte', color: '#fff8f0', color2: '#e0c8b0', pinta: '',
              pasiva: 'Fortuna', texto: 'Al ganar un nivel nuevo, la mitad de monedas más.', fx: { monedas: 0.5 } },
   astro:   { nombre: 'Astronauta', color: '#e0d0ff', color2: '#9a80d8', pinta: '',

@@ -2,16 +2,18 @@
    el compañero celebrando o triste, el desglose de monedas, la racha y la hucha, las monedas que vuelan y la fiesta de toques
    sobrantes en el tablero. El código, en js/victoria-panel.js y js/victoria-fiesta.js. */
 
-/* la barra de arriba: blanca y nítida, por encima del velo (solo con una ventana de victoria abierta) */
-.pp-vic-arriba { position: absolute; left: 14px; right: 14px; top: 14px; height: 66px; z-index: 6; display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; padding: 0 16px; border-radius: 33px; background: #fff; box-shadow: inset 0 0 0 4px #ffd1ec, 0 5px 0 rgba(0, 0, 0, 0.12); pointer-events: none;
+/* la barra de arriba: blanca y nítida, por encima del velo (solo con una ventana de victoria abierta). La misma pastilla centrada que en el
+   camino y el nivel (tarea #373, boceto A; js/barra-recursos.js): los tres grupos a la misma altura con separadores punteados */
+.pp-vic-arriba { position: absolute; left: 0; right: 0; top: 14px; margin: 0 auto; width: max-content; max-width: 512px; height: 64px; box-sizing: border-box; z-index: 6;
+  display: flex; align-items: center; padding: 0 16px; border-radius: 32px; background: #fff; border: 5px solid #ffb3d6; box-shadow: 0 6px 0 #f4a5cb; pointer-events: none;
   animation: pp-vic-baja 0.35s ease-out both; }
 #pp-modal:not(:has(.pp-gana, .pp-pase-ventana)) .pp-vic-arriba { display: none; }   /* victoria y pase (RECOGER TODO, tarea #166) */
 @keyframes pp-vic-baja { from { transform: translateY(-90px); } to { transform: none; } }
 .pp-vic-vidas { display: flex; }
-.pp-vic-vida { display: inline-flex; margin: -4px -7px -4px 0; }   /* el dibujo trae aire alrededor: a 46 px se ve como la moneda, sin montarse (tarea #344) */
+.pp-vic-vida { display: inline-flex; margin: -5px -10px -5px 0; }   /* el dibujo trae aire alrededor: a 46 px cada corazón ocupa 36, como en el lienzo */
 .pp-vic-vida.pp-vacia { opacity: 0.35; filter: saturate(0.3) brightness(1.3); }
-.pp-vic-caja { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 28px; color: #7a3a7a; }
+.pp-vic-sep { flex: none; width: 2px; height: 28px; margin: 0 12px; background: repeating-linear-gradient(180deg, #f3bfd9 0 4px, transparent 4px 8px); }
+.pp-vic-caja { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 26px; line-height: 1; color: #7a4a8a; font-variant-numeric: tabular-nums; }
 .pp-vic-caja b { min-width: 2ch; }
 .pp-vic-caja.pp-brilla .pp-ico { animation: pp-vic-recibe 0.25s ease-out; }
 .pp-vic-caja.pp-brilla .pp-vic-mon { color: #e89a00; }
@@ -61,15 +63,13 @@
 .pp-vic-aviso b { color: #c43a3a; }
 .pp-vic-panel .pp-vic-premio-fila .pp-sub { margin: 0; text-align: left; }
 
-/* la fiesta de toques sobrantes, encima del tablero: el cartel, cuántas monedas y «Toca para saltar» */
+/* la fiesta de toques sobrantes, encima del tablero: el cartel y cuántas monedas; un toque en cualquier sitio
+   acelera, sin letrero que lo diga (Pepins, tarea 352) */
 .pp-fiesta-toques { position: absolute; inset: 0; z-index: 25; pointer-events: auto; font-family: 'Fredoka', 'Arial Rounded MT Bold', sans-serif; font-weight: 700; }
 .pp-fiesta-cartel { position: absolute; left: 0; right: 0; top: 16%; margin: 0; text-align: center; font-size: 50px; color: #ffb21e; -webkit-text-stroke: 3px #fff; paint-order: stroke fill;
   text-shadow: 0 5px 0 #c27a00, 0 0 22px rgba(255, 255, 255, 0.9); transform: rotate(-3deg); animation: pp-salta 0.45s ease-out both; }
 .pp-fiesta-sub { position: absolute; left: 50%; top: calc(16% + 70px); margin: 0; transform: translateX(-50%); white-space: nowrap; font-size: 24px; color: #fff;
   background: #ff6eb5; padding: 5px 18px; border-radius: 999px; box-shadow: 0 4px 0 #c43a84; animation: pp-salta 0.45s 0.15s ease-out both; }
-.pp-fiesta-saltar { position: absolute; left: 50%; bottom: 7%; margin: 0; transform: translateX(-50%); white-space: nowrap; font-size: 26px; color: #c43a84;
-  background: rgba(255, 255, 255, 0.95); padding: 10px 26px; border-radius: 999px; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12); animation: pp-vic-late 1.2s ease-in-out infinite; }
-.pp-fiesta-toques.pp-rapido .pp-fiesta-saltar { opacity: 0; transition: opacity 0.2s; }
 
 /* que quepa sin desplazar (Pepins, 19-11-2026): nunca la barra gris; si no cabe, se aprieta y se encoge (ppVicEncaja) */
 .pp-tarjeta.pp-gana { zoom: var(--vic-zoom, 1); scrollbar-width: none; }

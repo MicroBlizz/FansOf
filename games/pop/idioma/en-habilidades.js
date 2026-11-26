@@ -4,7 +4,7 @@
 'use strict';
 IDIOMA.add({
   "¡Al rescate! +{n} toques": "To the rescue! +{n} taps",
-  "¡Victorias seguidas a salvo!": "Winning run safe!",
+  "¡Victorias seguidas a salvo!": "Wins in a row saved!",
   "+{n} toques extra": "+{n} extra taps",
   "Tu primer toque no cuenta": "Your first tap is free",
   "Te marca una burbuja buena": "Marks a good bubble",

@@ -53,6 +53,44 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
   background: var(--pp-crema); padding: 24px 20px 22px; box-sizing: border-box; border-radius: 28px; box-shadow: inset 0 0 0 6px #ff9ccf, inset 0 0 0 10px #fff, inset 0 0 0 13px #ffd1ec, 0 10px 0 rgba(196, 58, 132, 0.3);
   animation: pp-sale 0.22s steps(5); }
 .pp-tarjeta.pp-ancha { max-width: 504px; }
+/* cerrar o volver (tarea 386): una franja fija arriba de la ventana (ppBotonVolver, js/pantallas.js) con su fondo, el título en el
+   centro y, a la derecha, una burbuja con una X que se hunde al pulsarla. Ocupa su sitio, así que nada queda debajo del botón, y al
+   bajar la ventana se queda pegada arriba (sticky) y lo demás se esconde por detrás. Tapa el relleno de la ventana (--pp-rell-*) y
+   repinta su marco. Estilo «nube» (boceto 2 de Pepins, 25-11-2026): blanca, con el borde de abajo en nubecitas y una carita. */
+.pp-tarjeta { --pp-rell-a: 24px; --pp-rell-l: 20px; }
+/* el `top` negativo: el navegador mide el sticky desde dentro del relleno; con 0 la franja bajaba ese relleno (medido en Chromium) */
+.pp-cab { position: sticky; top: calc(-1 * var(--pp-rell-a)); z-index: 6; flex: none; align-self: stretch; box-sizing: border-box;
+  margin: calc(-1 * var(--pp-rell-a)) calc(-1 * var(--pp-rell-l)) 14px; min-height: 100px; padding: 16px 88px 10px;
+  display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 28px 28px 0 0; }
+/* el marco de la ventana, repintado encima de la franja (solo el trozo de arriba) */
+.pp-cab::before { content: ''; position: absolute; inset: 0 0 -60px 0; border-radius: 28px; pointer-events: none; clip-path: inset(0 0 60px 0);
+  box-shadow: inset 0 0 0 6px #ff9ccf, inset 0 0 0 10px #fff, inset 0 0 0 13px #ffd1ec; }
+/* el borde de nube: una fila de bolitas blancas que asoman por debajo, con su sombra rosa; por detrás del título y de la burbuja */
+.pp-cab::after { content: ''; position: absolute; left: 13px; right: 13px; top: calc(100% - 30px); height: 54px; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle at 50% 22px, #fff 30px, transparent 31px) 0 0 / 68px 54px round; filter: drop-shadow(0 5px 0 #ffd9e8); }
+.pp-tarjeta .pp-cab h2 { margin: 0; font-size: 36px; text-wrap: balance; }
+/* la carita de la nube, a la izquierda: dos ojos y dos mofletes */
+.pp-cab-cara { position: absolute; left: 32px; top: 50%; width: 60px; height: 34px; margin-top: -17px; pointer-events: none; }
+.pp-cab-cara::before { content: ''; position: absolute; left: 8px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--pp-cafe); box-shadow: 34px 0 0 var(--pp-cafe); }
+.pp-cab-cara::after { content: ''; position: absolute; left: 0; top: 16px; width: 14px; height: 9px; border-radius: 50%; background: #ffb3d0; box-shadow: 46px 0 0 #ffb3d0; }
+.pp-cab-izq { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); }
+/* la burbuja de cerrar: levantada, se hunde al pulsarla. 48 de lado (Pepins, 25-11-2026: «muy grande, muy exagerado»; lo mínimo cómodo
+   para el dedo) y del color de lo que hay en la ventana (ppBotonVolver, opción `color`): rosa por defecto, dorado lo de pago, turquesa
+   Opciones y Memoria, naranja Ranking y Duelos, coral Regalo y Feria */
+#pp-ui .pp-cerrar { --x0: #ffd3e8; --x1: #ff8cc0; --x2: #ff4f9a; --x3: rgba(184, 35, 106, 0.45); --x4: #ffc2dc; --x5: #e43d86; --x6: #b8236a;
+  position: absolute; right: 24px; top: 50%; width: 48px; height: 48px; margin-top: -24px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; pointer-events: auto;
+  display: grid; place-items: center; background: radial-gradient(circle at 35% 26%, var(--x0) 0, var(--x1) 42%, var(--x2) 100%);
+  box-shadow: inset 0 -5px 0 var(--x3), 0 0 0 4px #fff, 0 4px 0 var(--x4); transition: transform 0.08s, box-shadow 0.08s; }
+#pp-ui .pp-cerrar.pp-x-oro { --x0: #fff3b0; --x1: #ffd23a; --x2: #ffaa00; --x3: rgba(194, 122, 0, 0.5); --x4: #ffe3a0; --x5: #e89a00; --x6: #a86800; }
+#pp-ui .pp-cerrar.pp-x-menta { --x0: #d2fff5; --x1: #5fe0c8; --x2: #1fb39c; --x3: rgba(17, 128, 122, 0.5); --x4: #bdeee4; --x5: #179e8a; --x6: #0d6e62; }
+#pp-ui .pp-cerrar.pp-x-naranja { --x0: #ffe0c4; --x1: #ffa05c; --x2: #ff7a2e; --x3: rgba(194, 90, 26, 0.5); --x4: #ffd2b3; --x5: #e8661c; --x6: #a8460f; }
+#pp-ui .pp-cerrar.pp-x-coral { --x0: #ffd8cc; --x1: #ff8f7a; --x2: #ff5f52; --x3: rgba(190, 60, 50, 0.5); --x4: #ffc9bf; --x5: #e84a3e; --x6: #a83028; }
+#pp-ui .pp-cerrar::before { content: ''; position: absolute; left: 10px; top: 7px; width: 15px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.75); transform: rotate(-24deg); pointer-events: none; }
+#pp-ui .pp-cerrar:active { transform: translateY(3px) scale(0.93); background: radial-gradient(circle at 50% 62%, var(--x5) 0, var(--x6) 75%);
+  box-shadow: inset 0 5px 0 rgba(0, 0, 0, 0.22), 0 0 0 4px #fff, 0 1px 0 var(--x4); }
+#pp-ui .pp-cerrar:active::before { opacity: 0; }
+.pp-cerrar svg { position: relative; width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 9; stroke-linecap: round; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25)); }
+@media (prefers-reduced-motion: reduce) { #pp-ui .pp-cerrar { transition: none; } }
 @keyframes pp-sale { from { transform: scale(0.6); } to { transform: scale(1); } }
 .pp-tarjeta h2 { font-weight: 700; font-size: 40px; line-height: 1.05; margin: 6px 0 0; color: #ff6eb5; text-shadow: 0 3px 0 #fff, 0 6px 0 rgba(196, 58, 132, 0.25); }
 .pp-sub { margin: 0; font-weight: 500; font-size: 20px; line-height: 1.3; }
@@ -83,6 +121,7 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-redondo::before { content: ''; position: absolute; left: 14px; right: 14px; top: 6px; height: 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.6); }
 .pp-redondo span { position: relative; width: 8px; height: 24px; border-radius: 4px; background: #fff; box-shadow: 0 0 0 3px #1f6fb8; }
 .pp-redondo:active { transform: translateY(4px) scale(0.95); }
+#pp-pausa.pp-pausa-baja { top: 104px; }   /* en un nivel, la barra de corazones, monedas y perlas va arriba entera y la pausa baja a la fila del título (tarea #373) */
 .pp-columna { display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%; margin-top: 6px; }
 .pp-columna .pp-btn, .pp-columna .pp-btn2 { min-width: 280px; }
 /* fase 2: monedas, cofres y botones con precio */

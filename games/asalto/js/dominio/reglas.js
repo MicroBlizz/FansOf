@@ -9,10 +9,11 @@ AS.reglas = (() => {
     const abiertas = Math.max(0, Math.min(datos.rarezas.length - 1, Math.floor(rarezas) || 0));
     return Object.freeze({ vidas: n('corazon'), abiertos: datos.campo.abiertos + n('hueco'), oro: 3 * n('bolsa'), rarezas: abiertas, runa: n('runa'), empujones: n('palanca'), veterano: n('veterano') });
   }
-  // los pesos de las runas: más comodines con la mejora «Runa tallada» y el doble con la reliquia «Runa comodín»
-  function pesos(datos, m, reliquias) {
+  // los pesos de las runas: más comodines con la mejora «Runa tallada», el doble con la reliquia «Runa comodín» y un poco más con el
+  // objeto «Runa del comodín» (objetos: los de la tienda; sin ellos, como siempre)
+  function pesos(datos, m, reliquias, objetos) {
     const p = { ...datos.altar.pesos };
-    p.comodin = (p.comodin + (m.runa || 0)) * (reliquias.includes('comodin') ? 2 : 1);
+    p.comodin = (p.comodin + (m.runa || 0)) * (reliquias.includes('comodin') ? 2 : 1) * AS.objetos.comodines(datos, objetos);
     return p;
   }
   // el héroe que llega con una línea de esa clase: entre los de la clase, según lo escaso que sea. La línea de comodines trae uno de
@@ -67,11 +68,32 @@ AS.reglas = (() => {
     return lista;
   }
   const tresReliquias = (datos, reliquias, azar) => azar.baraja(Object.keys(datos.reliquias).filter(k => !reliquias.includes(k))).slice(0, 3);
-  // el oro de ganar la oleada
-  function oroDeGanar(datos, oleada, reliquias) {
+  // el oro de ganar la oleada (con el de los objetos de la tienda, [{ id, nivel }]: la Hucha rota)
+  function oroDeGanar(datos, oleada, reliquias, objetos) {
     const P = datos.partida;
-    return P.oroOleada(oleada.n) + (oleada.tipo === 'elite' ? P.oroElite : 0) + (reliquias.includes('hucha') ? 3 : 0);
+    return P.oroOleada(oleada.n) + (oleada.tipo === 'elite' ? P.oroElite : 0) + (reliquias.includes('hucha') ? 3 : 0) + AS.objetos.oroAlGanar(datos, objetos);
   }
+  // lo que cuesta invocar: con la rebaja de la reliquia y la del Bastón del Altar (objetos de la tienda), y gratis con su reliquia
+  function coste(datos, tiradas, reliquias, objetos) {
+    const rebaja = (reliquias.includes('rebaja') ? 1 : 0) + AS.objetos.rebaja(datos, objetos);
+    return AS.altar.coste(datos.altar, tiradas, { rebaja, gratis: reliquias.includes('gratis') });
+  }
+  // lo que deja ganar la oleada `ol`: { oro, plumas, esencia, premios }. s: { reliquias, objetos (los de la tienda), dif, sinFin }.
+  // El azar, en este orden: la esencia de los objetos y después los premios
+  function ganancia(datos, ol, s, azar) {
+    const oro = oroDeGanar(datos, ol, s.reliquias, s.objetos);
+    const plumas = plumasDe(datos, s.dif, s.sinFin ? datos.sinFin.plumasOleada : datos.partida.plumasOleada);
+    const esencia = AS.tienda.esenciaDeOleada(datos, ol.n, s.objetos, azar);
+    return { oro, plumas, esencia, premios: premiosDe(datos, s.dif, premios(datos, ol, s.reliquias, azar)) };
+  }
+  // ¿se acaba la partida? Sin vidas, o al perder una oleada de élite o de jefe, 'derrota'; al vencer al jefe (menos en el modo sin
+  // fin), 'victoria'; si no, null
+  function final(vidas, gano, tipo, sinFin) {
+    if (vidas <= 0 || (!gano && tipo !== 'normal')) return 'derrota';
+    return gano && tipo === 'jefe' && !sinFin ? 'victoria' : null;
+  }
+  // el oro de la racha de invocaciones seguidas con línea (la tabla se queda en su último escalón)
+  const oroRacha = (datos, racha) => { const R = datos.altar.racha; return R[Math.min(racha, R.length - 1)]; };
   const interes = (reliquias, oro) => (reliquias.includes('interes') ? Math.min(5, Math.floor(oro / 5)) : 0);
   // el héroe que llega del Altar. llegada: { clase (sin clase, el del arranque: Común), nivel, dorado, piedra (sube su rareza) };
   // primero: si es el primero de la partida (le suma la mejora «veterano»); id: lo pone la partida
@@ -84,5 +106,5 @@ AS.reglas = (() => {
     const rareza = piedra ? AS.piedras.rareza(datos, m.rarezas, base, piedra) : base;
     return AS.heroe.conCifras(datos, AS.heroe.crea(datos, id, tipo, niv, dorado, rareza).valor, cifrasDe(datos, azar)).valor;
   }
-  return { mods, pesos, heroeDe, cifrasDe, heroeNuevo, probRarezas, rarezaDe, empujones, estallidos, plumasDe, premiosDe, vidasPerdidas, premios, tresReliquias, oroDeGanar, interes };
+  return { mods, pesos, heroeDe, cifrasDe, heroeNuevo, probRarezas, rarezaDe, empujones, estallidos, plumasDe, premiosDe, vidasPerdidas, premios, tresReliquias, oroDeGanar, ganancia, final, coste, oroRacha, interes };
 })();

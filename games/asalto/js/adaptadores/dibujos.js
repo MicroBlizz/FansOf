@@ -186,8 +186,9 @@ AS.dibujos = (() => {
     g.restore();
   }
   // un icono centrado en (x, y), a k veces su tamaño (entero). Devuelve si existe.
+  // (un objeto de la tienda sin PNG todavía sale con su icono provisional: iconos-provisionales.js)
   function icono(g, nombre, x, y, k) {
-    const im = IMG['icono-' + nombre];
+    const im = IMG['icono-' + nombre] || AS.iconosProvisionales.imagen(nombre);
     if (!im) return false;
     const e = Math.max(1, Math.round(k || 1));
     g.imageSmoothingEnabled = false;
@@ -196,7 +197,7 @@ AS.dibujos = (() => {
   }
   const fondo = nombre => IMG[nombre] || null;
   // para las ventanas (HTML): la ruta del icono, y el estilo CSS que enseña el primer fotograma de un personaje
-  const rutaIcono = nombre => 'img/icono-' + nombre + '.png?v=' + NUCLEO.version;
+  const rutaIcono = nombre => (AS.DIBUJOS.iconos.includes(nombre) ? null : AS.iconosProvisionales.url(nombre)) || 'img/icono-' + nombre + '.png?v=' + NUCLEO.version;
   function cssRetrato(tipo, k, fotograma) {
     const d = tiras()[tipo];
     if (!d) return '';

@@ -40,6 +40,10 @@ IDIOMA.add({
   "Aún no tienes compañeros de este modo: búscalos en el álbum.": "You don't have buddies for this mode yet: find them in the album.",
   // cómo se consigue
   "De serie": "Starter",
+  // la etiqueta corta bajo una silueta y el aviso de arriba del álbum (tarea 319)
+  "Finde": "Weekend", "Cofre": "Chest", "Premio": "Reward", "Jefe": "Boss", "Rescate": "Rescue", "Pase": "Pass", "Cerrar": "Close",
+  "Las burbujas arcoíris esconden compañeros: tócalas las primeras.": "Rainbow bubbles hide buddies: tap them first.",
+  "Toca una silueta para ver cómo se consigue.": "Tap a silhouette to see how to get it.",
   "Rescate en un nivel (solo la primera vez)": "Rescued in a level (first time only)",
   "Cofre de estrellas": "Star chest",
   "Escondido: {m}, de día": "Hidden: {m}, by day",
@@ -82,7 +86,7 @@ IDIOMA.add({
   "MechaVaca": "MechaCow",
   // las 28 habilidades
   "Saltito": "Hop",
-  "Cada pocos pops salta y hace pop en una burbuja buena.": "Every few pops it jumps in and pops a good bubble.",
+  "Cada pocos pops, hace pop en una burbuja buena.": "Every few pops, it pops a good bubble.",
   "Lluvia": "Rain",
   "Cada muchos pops hace pop en varias burbujas buenas.": "Every many pops it pops several good bubbles.",
   "Rompehielos": "Icebreaker",
@@ -90,7 +94,7 @@ IDIOMA.add({
   "Abreconchas": "Shell Opener",
   "Salta antes a las conchas.": "Jumps to shells first.",
   "Mecha corta": "Short Fuse",
-  "Salta antes a los cohetes y los hace estallar.": "Jumps to rockets first and sets them off.",
+  "Salta antes a los cohetes y los apaga: revientan sin levantar nada.": "Jumps to rockets first and defuses them: they pop without raising anything.",
   "Ola": "Wave",
   "Salta antes a las burbujeantes.": "Jumps to fizzy bubbles first.",
   "Horas extra": "Overtime",
@@ -108,7 +112,7 @@ IDIOMA.add({
   "Buen comienzo": "Good Start",
   "Con tu primer toque, hace pop en una burbuja buena.": "On your first tap, it pops a good bubble.",
   "Al rescate": "To the Rescue",
-  "Una vez por nivel, al quedarte sin toques te da 2 más.": "Once per level, when you run out of taps it gives you 2 more.",
+  "Si te quedas sin toques, te da 2. Una vez por nivel.": "If you run out of taps, it gives you 2. Once per level.",
   "Victorias a salvo": "Safe wins",
   "Una vez al día, perder no corta tus victorias seguidas.": "Once a day, losing doesn't end your winning run.",
   "Limpieza": "Clean Sweep",
@@ -122,7 +126,7 @@ IDIOMA.add({
   "Calma": "Calm",
   "+1 toque extra al empezar.": "+1 extra tap at the start.",
   "Volteo": "Flip",
-  "Da la vuelta a una sola burbuja, sin tocar sus vecinas.": "Flips a single bubble without touching its neighbours.",
+  "Da la vuelta a una burbuja, no a sus vecinas.": "Flips one bubble, not its neighbours.",
   "Lupa": "Magnifier",
   "Una pista gratis por duelo (marca la jugada que gana).": "One free hint per duel (marks the winning move).",
   "Otra vez": "Do-over",
@@ -154,7 +158,7 @@ IDIOMA.add({
   "Truco: si empiezas tú, vas ganando.": "Tip: if you start, you're winning.",
   "Truco: si empieza el rival, vas ganando.": "Tip: if your rival starts, you're winning.",
   "La barra rosa se llena con cada pop. Faltan {n} para saltar.": "The pink bar fills with every pop. {n} more to jump.",
-  "La barra azul sube con toques de 3 o más pops. Actúa con COMBO x{n}.": "The blue bar rises with taps of 3 or more pops. Acts on a COMBO x{n}.",
+  "La barra azul sube con 3 pops o más. Actúa con COMBO x{n}.": "The blue bar rises with 3 pops or more. Acts on a COMBO x{n}.",
   "Sin barra: actúa solo cuando le toca.": "No bar: it acts on its own when its moment comes.",
   "Toca otra vez para cerrar": "Tap again to close",
   "¡Toca a tus compañeros para ver qué hacen!": "Tap your buddies to see what they do!",
@@ -164,7 +168,8 @@ IDIOMA.add({
   "Sale a veces en una burbuja arcoíris: ¡tócala la primera y gánale un duelo!": "Sometimes it shows up in a rainbow bubble: tap it first and beat it in a duel!",
   // el duelo por un compañero escondido (tarea #329, js/escondidos-juego.js y js/escondidos-duelo.js)
   "¡La burbuja arcoíris se ha escapado!": "The rainbow bubble got away!",
-  "¡Una burbuja arcoíris! Tócala la primera o se escapa.": "A rainbow bubble! Tap it first or it gets away.",
+  "¡Burbuja arcoíris con compañero! Tócala la primera o se escapa.": "A rainbow bubble with a buddy! Tap it first or it gets away.",
+  "Hay más compañeros escondidos en burbujas arcoíris.": "More buddies are hiding in rainbow bubbles.",
   "¡Un compañero escondido!": "A hidden buddy!",
   "¡Un compañero repetido!": "A buddy you already have!",
   "Repetidos para la siguiente estrella: {a} de {b}": "Duplicates for the next star: {a} of {b}",
@@ -181,5 +186,5 @@ IDIOMA.add({
   "¡Has ganado el duelo!": "You won the duel!",
   "{n} sigue aquí. Si te vas al camino, se va.": "{n} is still here. If you go back to the path, it leaves.",
   "REINTENTAR": "TRY AGAIN", "CONSEGUIR CORAZONES": "GET HEARTS", "Dejarlo ir": "Let it go", "Volver": "Back",
-  "Si sales ahora pierdes un corazón y el compañero se va.": "If you leave now you lose a heart and the buddy leaves."
+  "Si sales, pierdes un corazón y al compañero.": "If you leave, you lose a heart and the buddy."
 });

@@ -12,7 +12,7 @@ function ppHabEntraPesadilla(T, d) {
   for (const id of ppHabEquipo(d)) {
     const fx = ppFxDe(id), txt = ppHabAlEmpezarLO(T, fx);
     if (!txt) continue;
-    T.habP.usados[id] = 1; ppFxHabilidad(id);
+    T.habP.usados[id] = 1; ppFxHabilidad(id); PP_ATAQUE_FX.luce(id);   // luce: su ataque hacia lo que toca, solo se ve (js/ataques-fx.js)
     ppFlota(txt, 270, y, '#3a8ee6'); y += 35;
   }
 }
@@ -32,7 +32,7 @@ const ppHabPorUsar = (T, k) => !!T.habP && ppHabEquipo(T.d).some(id => ppFxDe(id
 function ppHabRemarcaLO(T) {
   const id = ppHabEquipo(T.d).find(c => ppFxDe(c).pPista && ppHabLeQueda(T, c)); if (!id) return;
   ppPista(T); if (T.pista === null) return;
-  T.habP.usados[id]++; PP_FX.pista = 0.6; ppFxHabilidad(id); play('ppPista');
+  T.habP.usados[id]++; PP_FX.pista = 0.6; ppFxHabilidad(id); PP_ATAQUE_FX.luce(id); play('ppPista');
 }
 // antes de cada toque del jugador: la foto para Marcha atrás y, si se está eligiendo burbuja para el Volteo, voltearla.
 // Con el martillo o la bomba no hay foto (Marcha atrás no deshace una ayuda pagada). true si el toque ya se ha usado aquí
@@ -71,7 +71,7 @@ function ppHabDeshazLO(id) {
   Object.assign(T, r.tablero, { habModo: null });
   T.habP.usados[id] = (T.habP.usados[id] || 0) + 1; T.habP.foto = null;
   PP_FX.celdas = {}; for (let i = 0; i < T.up.length; i++) if (T.mask[i]) PP_FX.celdas[i] = { t: 0, dir: T.up[i] ? 'sube' : 'pop', demora: 0 };
-  ppFxHabilidad(id); ppFlota(tr('¡Deshecho!'), 270, 240, '#4fc964'); play('ppCura');
+  ppFxHabilidad(id); PP_ATAQUE_FX.luce(id); ppFlota(tr('¡Deshecho!'), 270, 240, '#4fc964'); play('ppCura');
   ppBarraAyudas();
 }
 // Volteo: el botón pone a elegir burbuja (otra pulsación, lo cancela); el siguiente toque la voltea
@@ -89,7 +89,7 @@ function ppHabVoltea(T, i) {
   T.hecho = ppResuelto(T);
   if (T.pista !== null && !T.sol.has(T.pista)) T.pista = null;
   const res = { pops: r.sube ? [] : [i], grietas: [], subes: r.sube ? [i] : [], castigo: 0, hecho: T.hecho, golpes: r.sube ? 0 : 1 };
-  ppMarcaDentro(true); ppFxHabilidad(id); ppFxToque(T, i, res); play('ppPremio');
+  ppMarcaDentro(true); ppFxHabilidad(id); PP_ATAQUE_FX.luce(id, 'tablero', i); ppFxToque(T, i, res); play('ppPremio');
   ppTrasToque(T, i, res);
   ppBarraAyudas();
 }

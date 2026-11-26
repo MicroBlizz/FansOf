@@ -1,6 +1,8 @@
 // Fans Of · Alemán de lo común que usan los juegos ligeros (cuenta, opciones, caos primordial, feedback, anuncios…). Lo carga NUCLEO (core/js/nucleo.js, DICCIONARIOS) cuando el juego tiene este idioma.
 'use strict';
 IDIOMA.add({
+  "Ahorro de batería": "Akkusparmodus",
+  "Más fluido en móviles modestos y gasta menos batería; se ve un poco menos nítido.": "Flüssiger auf einfachen Handys und braucht weniger Akku; etwas weniger scharf.",
   "Datos de partida anónimos": "Anonyme Spieldaten",
   "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Hilf uns, die Spiele mit anonymen Daten aus deinen Partien zu verbessern: ohne Namen, ohne E-Mail und ohne Konto. Du kannst es jederzeit ausschalten.",
   "ENCENDIDO": "AN",
@@ -80,6 +82,7 @@ IDIOMA.add({
   "Listo: tu progreso se guarda en tu cuenta.": "Fertig: Dein Fortschritt wird in deinem Konto gespeichert.",
   "No se ha podido entrar. Prueba otra vez.": "Anmelden hat nicht geklappt. Versuch es noch mal.",
   "Tu sesión había caducado. Entra otra vez para recuperar tu cuenta.": "Deine Sitzung war abgelaufen. Melde dich noch mal an, um dein Konto zurückzubekommen.",
+  "Invitado de prueba: no se envía nada": "Testgast: Es wird nichts gesendet",
   "No ha salido bien: {m}": "Das hat nicht geklappt: {m}",
   "ENVIAR": "SENDEN",
   "Ese email no parece bien escrito": "Diese E-Mail sieht nicht richtig geschrieben aus",

@@ -88,19 +88,6 @@ function ppFlecha(c, x, y, dir) {
   c.beginPath(); c.moveTo(-8 * dir, -12); c.lineTo(10 * dir, 0); c.lineTo(-8 * dir, 12); c.closePath(); c.fillStyle = '#fff'; c.fill();
   c.restore();
 }
-// varias cuentas (icono y cifra) en fila entre x0 y x1, pegadas a la derecha: si no caben, se encoge la letra en vez de montarse
-function ppPintaCuentas(c, x0, x1, y, cuentas) {
-  let tam = 28, ancho = 0;
-  const mide = () => { c.font = `700 ${Math.round(tam * PP_LETRA)}px ${PP_FUENTE}`; return cuentas.reduce((a, q) => a + tam + 8 + c.measureText(q[1]).width, 0) + (cuentas.length - 1) * 12; };
-  while ((ancho = mide()) > x1 - x0 && tam > 14) tam -= 2;
-  let x = x1 - ancho;
-  PP_MAPA.cuentas = [];   // dónde queda cada contador, para que el regalo de un estreno vuele hasta él (js/primeros-pasos-juego.js)
-  for (const [pinta, txt, borde] of cuentas) {
-    PP_MAPA.cuentas.push({ x: x + tam / 2, y });
-    pinta(c, x + tam / 2, y, tam + 6); ppTexto(c, txt, x + tam + 6, y + 2, tam, '#fff', 'left', borde);
-    x += tam + 8 + c.measureText(txt).width + 12;
-  }
-}
 function ppPintaMapa(c, t) {
   const P = PP_P, actual = ppMundoActual();
   if (PP_MAPA.m === null || PP_MAPA.m > actual) ppMapaVer(actual, false);
@@ -140,7 +127,8 @@ function ppPintaMapa(c, t) {
   // arriba: el mundo, con flechas a los otros mundos abiertos, y el interruptor normal / difícil
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
   ppTitulo(c, tr('Mundo {n}', { n: m + 1 }), 270, 52, 40);
-  ppTexto(c, tr(M.nombre) + (pes ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : ''), 270, 92, 28, '#fff', 'center', pes ? '#8a1020' : dif ? '#3a3a9a' : '#c43a84');
+  // el nombre del mundo con la estrella al lado (tarea #373: sube de la barra de abajo)
+  PP_MAPA.estrella = ppBarraNombreMundo(c, tr(M.nombre) + (pes ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : ''), 94, pes ? '#8a1020' : dif ? '#3a3a9a' : '#c43a84', P.estrellas);
   PP_BOTONES_MAPA.push({ x: 270, y: 66, r: 48, f: () => ppPresentaMundo(m) });   // radio 48: solo la tarjeta del título, sin pisar el selector de dificultad. Tocar el título vuelve a enseñar la presentación del mundo (tarea #272)
   if (m > 0) { ppFlecha(c, 126, 66, -1); PP_BOTONES_MAPA.push({ x: 126, y: 66, r: 36, f: () => ppMapaVer(m - 1, false) }); }
   // las flechas, a los lados del título (la esquina derecha queda libre: el camino ya no tiene pausa, tarea #272)
@@ -159,28 +147,23 @@ function ppPintaMapa(c, t) {
       if (abierto) PP_BOTONES_MAPA.push({ x, y, r: 56, f: () => { if (dif !== k) ppMapaVer(m, k); } });
     });
   }
-  // abajo: corazones (con el reloj del siguiente), estrellas, monedas y el equipo
-  // encima de la barra fija INICIO · EQUIPO · TIENDA (js/camino-barra.js, tarea #267)
+  // abajo: la barra de corazones, monedas y perlas (tarea #373, boceto A de Pepins: una pastilla centrada, js/barra-recursos.js) y, con
+  // amigos, el equipo debajo; encima de la barra fija INICIO · EQUIPO · TIENDA (js/camino-barra.js, tarea #267). La estrella, arriba
   const conEquipo = P.equipo.length > 0, yb = PP_V.H - 126 - (conEquipo ? 136 : 84);
-  // sin amigos, la barra es más baja y sin huecos vacíos (Pepins, 19-11-2026: «¿por qué tanto hueco?»); opaca, para que no se vea el camino detrás
-  c.fillStyle = 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(20, yb, 500, conEquipo ? 136 : 84, 24); c.fill();
-  const vidas = ppVidas();
-  if (ppPrimerosVe('amigos')) ppPintaAvisoBuzon(c, 56, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)
-  // los cinco corazones, más grandes (reporte 53, tarea #344, boceto B de Pepins): las cuentas de la derecha se encogen solas si no caben
-  for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 52 + i * 42, yb + 32, 36, i < vidas || ppInfinitas());
-  if (ppPrimerosVe('amigos')) ppBotonesPedirMapa(vidas, 52, 42, yb + 32);   // pedir a amigos tocando un corazón (js/pantalla-corazones.js)
-  if (vidas < PP_CFG.vida) ppTexto(c, tr('+1 en {t}', { t: ppReloj(ppFaltaVida()) }), 34, yb + 64, 22, '#fff', 'left', '#c43a84');
-  // estrellas, monedas y perlas (con un «+» que abre la tienda): en fila y sin montarse por muchas que haya
-  ppPintaCuentas(c, 248, 478, yb + 32, [[(c2, x, y, s) => ppEstrella(c2, x, y, s, true), String(P.estrellas), '#7a4a8a'], [ppMoneda, String(SAVE.monedas), '#c98a12'], [ppPerla, String(SAVE.perlas || 0), '#c43a84']]);
-  c.beginPath(); c.arc(500, yb + 20, 13, 0, Math.PI * 2); c.fillStyle = '#4fc964'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#26924a'; c.stroke();
-  c.fillStyle = '#fff'; c.fillRect(494, yb + 18, 12, 4); c.fillRect(498, yb + 14, 4, 12);
-  PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: () => ppTienda(null, 'perlas') });
+  // con amigos, su fila opaca bajo la barra, para que no se vea el camino detrás
+  if (conEquipo) { c.fillStyle = 'rgba(255,255,255,0.92)'; c.beginPath(); c.roundRect(20, yb + 84, 500, 52, 24); c.fill(); }
+  const vidas = ppVidas(), S = ppBarraRecursos(c, 'camino', 270, yb + 32);
+  PP_MAPA.cuentas = [PP_MAPA.estrella, S.monedas, S.perlas];   // adonde vuela el regalo de un estreno (js/primeros-pasos-juego.js: la [1], las monedas)
+  if (ppPrimerosVe('amigos')) ppPintaAvisoBuzon(c, S.corazones[0].x, yb - 6);   // regalos esperando en el buzón de corazones (js/pantalla-buzon.js)
+  if (ppPrimerosVe('amigos')) ppBotonesPedirMapa(vidas, S.corazones[0].x, S.corazones[1].x - S.corazones[0].x, S.corazones[0].y);   // pedir a amigos tocando un corazón (js/pantalla-corazones.js)
+  PP_BOTONES_MAPA.push({ x: S.mas.x, y: S.mas.y, r: S.mas.r, f: () => ppTienda(null, 'perlas') });
   const nh = conEquipo ? ppHuecos() : 0;
   for (let k = 0; k < nh; k++) {
-    const x = 270 + (k - (nh - 1) / 2) * 62, y = yb + 100, id = P.equipo[k];
-    c.beginPath(); c.arc(x, y, 26, 0, Math.PI * 2); c.fillStyle = id ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ff6ec7' : 'rgba(122,74,138,0.3)'; c.stroke();
+    const x = 270 + (k - (nh - 1) / 2) * 62, y = yb + 110, id = P.equipo[k];
+    c.beginPath(); c.arc(x, y, 24, 0, Math.PI * 2); c.fillStyle = id ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ff6ec7' : 'rgba(122,74,138,0.3)'; c.stroke();
     if (id) ppSlimeRepuestoOImagen(c, id, x, y - 2, 20, t, 1);
   }
+  ppPintaAdelanto(c, t);   // encima de todo: el cartel de un amigo que te ha adelantado (tarea 384, js/amigos-adelanta-juego.js)
 }
 /* ---------- tocar y arrastrar el mapa ---------- */
 function ppMapaAbajo(lx, ly) { PP_MAPA.toque = { x: lx, y: ly, y0: ly, obj0: PP_MAPA.obj, movido: false }; }
@@ -189,9 +172,15 @@ function ppMapaMueve(lx, ly) {
   if (Math.abs(ly - q.y0) > 14) q.movido = true;
   if (q.movido && PP_MAPA.m !== null) PP_MAPA.obj = clamp(q.obj0 + (ly - q.y0) / PP_PASO, 0, PP_MUNDOS[PP_MAPA.m].niveles - 1);   // bajar el dedo enseña los de más arriba
 }
+// un botón del camino es un círculo { x, y, r } o una caja { caja: [x, y, ancho, alto] } (el cartel de un amigo que adelanta, js/amigos-adelanta-juego.js)
+function ppMapaToca(b, x, y) {
+  if (!b.caja) return Math.hypot(x - b.x, y - b.y) <= b.r;
+  const [bx, by, w, h] = b.caja;
+  return x >= bx && x <= bx + w && y >= by && y <= by + h;
+}
 function ppMapaArriba() {
   const q = PP_MAPA.toque; PP_MAPA.toque = null;
   if (!q || q.movido) return;
-  for (const b of PP_BOTONES_MAPA) if (Math.hypot(q.x - b.x, q.y - b.y) <= b.r) { play('select'); b.f(); return; }
+  for (const b of PP_BOTONES_MAPA) if (ppMapaToca(b, q.x, q.y)) { play('select'); b.f(); return; }
   for (const nd of PP_NODOS_MAPA) if (Math.hypot(q.x - nd.x, q.y - nd.y) <= nd.r) { play('ppNodo'); ppEntra(nd.g, nd.dif); return; }
 }

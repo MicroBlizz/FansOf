@@ -1,7 +1,8 @@
 /* Fans of Pop · LA BARRA DE AYUDAS DEL NIVEL (#pp-ayudas, js/potenciadores.js) y el botón ¡A JUGAR! de la cortinilla de duelo.
    Al alcance del pulgar (tarea #269, boceto A elegido por Pepins, 20-11-2026): las ayudas, justo bajo el tablero, grandes (84 aquí,
    unos 58 px de verdad en un móvil de 375) y con su nombre; «Tu equipo» va debajo (js/marcador.js). ¡A JUGAR! va pegado bajo la
-   tarjeta «Así se gana» (--pp-bajo-tarjeta, js/principal.js), lejos de la barra de gestos del móvil. Nada de lila ni de gris. */
+   tarjeta «Así se gana» (--pp-bajo-tarjeta, js/principal.js), lejos de la barra de gestos del móvil. En los duelos, igual, con ¡LISTO!
+   entre las ayudas (tarea 343). Nada de lila ni de gris. */
 #pp-ayudas { position: absolute; left: 50%; top: calc(var(--pp-bajo-tablero, 640px) + 22px); transform: translateX(-50%); display: flex; gap: 30px; z-index: 25; }
 #pp-ayudas[hidden] { display: none; }
 #pp-ayudas:has(> :nth-child(4)) { gap: 12px; }   /* en Pesadilla, con los compañeros de botón, hasta 5: 5 x 84 + 4 x 12 caben en 540 */
@@ -15,12 +16,10 @@
 .pp-ayuda i { position: absolute; left: 50%; top: calc(100% + 6px); transform: translateX(-50%); font-style: normal; font-weight: 700; font-size: 17px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; white-space: nowrap; pointer-events: none; }
 .pp-ayuda.pp-activa { transform: scale(1.12); box-shadow: 0 0 0 6px #ffd64a, 0 6px 0 #e07ab5; }
 .pp-ayuda:active { transform: translateY(4px); box-shadow: 0 1px 0 #e07ab5; }
-/* en los duelos del camino (tarea #129): sin «Tu equipo», DESHACER y PISTA grandes en su sitio, justo bajo el tablero, y ¡LISTO! debajo */
-#pp-ayudas.pp-duelo { top: calc(var(--pp-bajo-tablero, 640px) + 40px); gap: 48px; }
-#pp-ayudas.pp-duelo .pp-ayuda { width: 118px; height: 118px; border-width: 6px; box-shadow: 0 7px 0 #e07ab5; }
-#pp-ayudas.pp-duelo .pp-ayuda b { right: -12px; bottom: -8px; min-width: 40px; padding: 4px 13px; font-size: 30px; box-shadow: inset 0 -4px 0 #26924a, 0 0 0 3px #fff; }
-#pp-ayudas.pp-duelo .pp-ayuda b .pp-precio { font-size: 26px; }
-#pp-ui:has(#pp-ayudas.pp-duelo:not([hidden])) #pp-listo { top: calc(var(--pp-bajo-tablero, 640px) + 184px); bottom: auto; }
+/* en los duelos del camino (tarea 343, Pepins 25-11-2026, boceto 1): las ayudas como en los niveles, ¡LISTO! en medio de las dos (el
+   hueco se guarda aunque ¡LISTO! no salga, para que nada salte de sitio) y «Tu equipo» debajo, como siempre (js/marcador.js) */
+#pp-ayudas.pp-duelo { gap: 232px; }
+#pp-listo.pp-en-fila { top: calc(var(--pp-bajo-tablero, 640px) + 26px); bottom: auto; min-width: 0; width: 192px; padding-left: 0; padding-right: 0; font-size: 34px; }
 /* el botón de la cortinilla de duelo (ADR 100): verde de Pop, por encima de todo lo del nivel, justo bajo la tarjeta «Así se gana» */
 #pp-cort-jugar { position: absolute; left: 50%; top: var(--pp-bajo-tarjeta, 850px); width: 340px; margin-left: -170px; padding-left: 0; padding-right: 0; white-space: nowrap; font-size: 40px; z-index: 45; --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }   /* sin translate: el latido (pp-enorme) ya usa transform */
 #pp-cort-jugar[hidden] { display: none; }

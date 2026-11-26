@@ -5,7 +5,7 @@
 // todas antes de gastar los toques; el mínimo posible (las 3 estrellas) y el límite vienen del generador (js/niveles.js).
 'use strict';
 // QUIÉN SALE ATRAPADO en cada nivel con rescate (Pepins, 25-11-2026: lista fija, de común a legendario). Va en el orden de
-// PP_MUNDOS[m].amigos (js/niveles.js): el Jardín da Becario, CrazyBunny y Cofre; la Pastelería, una COPIA al azar de uno que ya
+// PP_MUNDOS[m].amigos (datos en js/regiones/): el Jardín da Becario, CrazyBunny y Cofre; la Pastelería, una COPIA al azar de uno que ya
 // tienes (`copia`, como el cofre de estrellas) y el CEO; del mundo 3 al 10, el compañero de su tema, con el Astronauta al final.
 // Antes el Jardín y la Pastelería sacaban al azar entre los que faltaban y se llevaban los de otros mundos (el Astronauta salía en el 2).
 const PP_RESCATES = Object.freeze([['becario', 'bunny', 'cofre'], ['copia', 'ceo'], ['copito'], ['medusa'], ['algodon'], ['nubecita'], ['hada'], ['sirena'], ['maneki'], ['astro']]);
@@ -40,14 +40,17 @@ function ppResuelto(T) { for (let i = 0; i < T.up.length; i++) if (T.up[i]) retu
 // (con el Imán de estrellas, T.iman, la 3.ª pide menos: js/habilidades.js); en un nivel duelo (js/nimnivel.js): 3 sin ningún error,
 // 2 con uno, 1 con más
 function ppEstrellas(T) { if (T.nim) return 3 - Math.min(2, T.nim.errores); return PP_HAB.estrellas(T.toques, T.minimo, T.limite, T.iman || 0); }
-function ppPista(T) { const s = [...T.sol]; T.pista = s.length ? s[Math.floor(Math.random() * s.length)] : null; }
+// con cohetes el orden importa (js/cohetes.js): la pista es el primer toque de la solución, el que no levanta nada; sin ellos, uno al azar
+const ppSolEnOrden = T => PP_COHETES.hay(T.esp);
+function ppPista(T) { const s = [...T.sol]; T.pista = s.length ? s[ppSolEnOrden(T) ? 0 : Math.floor(Math.random() * s.length)] : null; }
 // un toque. `slime` = lo da un amigo (no cuenta ni rompe el combo). Devuelve qué ha pasado para partida.js:
-// pops (las que han reventado), grietas (las dobles que pasan a normales), si está resuelto y si se han acabado los toques.
+// pops (las que han reventado), grietas (las dobles que pasan a normales), subes (las que levanta un cohete), si está resuelto y si se
+// han acabado los toques.
 function ppToca(T, i, slime = false) {
   if (T.hecho || !T.mask[i]) return null;
   if (T.lo) return ppTocaLO(T, i, slime);   // modo pesadilla
-  const pops = [], grietas = [];
-  for (const j of ppVecinas(T, i)) if (T.up[j] > 0) { T.up[j]--; (T.up[j] ? grietas : pops).push(j); }
+  // los toques gratis de un compañero (`slime`) apagan los cohetes: revientan sin levantar su fila (Hada, tarea 349; js/cohetes.js)
+  const { pops, grietas, subes } = PP_COHETES.aplica(T.n, T.mask, T.esp, T.up, ppVecinas(T, i), slime);
   let libre = slime;
   if (!slime) { if (T.gratis > 0) { T.gratis--; libre = true; } else T.toques++; }
   T.pops += pops.length;
@@ -56,9 +59,9 @@ function ppToca(T, i, slime = false) {
   T.hecho = ppResuelto(T);
   // lo que falta, con el mínimo de toques: para la pista de Lola, la manita y los amigos que saltan
   T.sol = new Set(T.hecho ? [] : ppOptimo(T.n, T.mask, Array.from(T.up), 80000, T.esp));
-  if (T.pista !== null && !T.sol.has(T.pista)) T.pista = null;
+  if (T.pista !== null && (!T.sol.has(T.pista) || (ppSolEnOrden(T) && T.pista !== [...T.sol][0]))) T.pista = null;
   const sinToques = !T.hecho && T.toques >= T.limite && T.gratis === 0;
-  return { pops, grietas, subes: [], castigo: 0, hecho: T.hecho, libre, slime, golpes, sinToques };
+  return { pops, grietas, subes, castigo: 0, hecho: T.hecho, libre, slime, golpes, sinToques };
 }
 // MODO PESADILLA («Lights Out», el primer boceto): tocar le da la vuelta a la burbuja y a sus vecinas; las hundidas vuelven a subir.
 // La solución que queda se lleva al día como en el prototipo: tocar una de la solución la quita; tocar otra, la añade.

@@ -93,7 +93,7 @@ const SPLASH = (() => {
   function falla(archivo) { if (ido) return; estado.error = true; if (!estado.archivo) estado.archivo = String(archivo || '').split('?')[0].split('/').slice(-2).join('/'); }
 
   function inicia() {
-    const enJuego = R.enJuego(location.pathname);
+    const enJuego = R.enJuego(location.pathname, document.documentElement.hasAttribute('data-no-es-juego'));
     const forzada = /[?&]splash=1\b/.test(location.search);
     if (!enJuego || !R.sale({ automatizado: !!navigator.webdriver, forzada })) { ido = true; return; }
     monta();

@@ -1,6 +1,8 @@
 // Fans Of · Francés de lo común que usan los juegos ligeros (cuenta, opciones, caos primordial, feedback, anuncios…). Lo carga NUCLEO (core/js/nucleo.js, DICCIONARIOS) cuando el juego tiene este idioma.
 'use strict';
 IDIOMA.add({
+  "Ahorro de batería": "Économie de batterie",
+  "Más fluido en móviles modestos y gasta menos batería; se ve un poco menos nítido.": "Plus fluide sur les téléphones modestes et consomme moins de batterie ; un peu moins net.",
   "Datos de partida anónimos": "Données de partie anonymes",
   "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Aide-nous à améliorer les jeux avec des données anonymes de tes parties : sans nom, sans e-mail et sans compte. Tu peux le désactiver quand tu veux.",
   "ENCENDIDO": "ACTIVÉ",
@@ -80,6 +82,7 @@ IDIOMA.add({
   "Listo: tu progreso se guarda en tu cuenta.": "C'est fait : ta progression est sauvegardée sur ton compte.",
   "No se ha podido entrar. Prueba otra vez.": "Connexion impossible. Réessaie.",
   "Tu sesión había caducado. Entra otra vez para recuperar tu cuenta.": "Ta session avait expiré. Reconnecte-toi pour récupérer ton compte.",
+  "Invitado de prueba: no se envía nada": "Invité de test : rien n’est envoyé",
   "No ha salido bien: {m}": "Ça n'a pas marché : {m}",
   "ENVIAR": "ENVOYER",
   "Ese email no parece bien escrito": "Cet e-mail n'a pas l'air bien écrit",

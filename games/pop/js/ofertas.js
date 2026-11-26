@@ -101,7 +101,7 @@ function ppMiraBienvenida() {
   SAVE.vistoBienvenida = true; ppGuarda(); ppAntesDeVender(ppVentanaBienvenidaPack, ppPintaLateral); return true;
 }
 /* ---------- segundo pack, al llegar al mundo 2 ---------- */
-const ppVentanaPackMundo2 = () => ppVentanaPackReloj('mundo2', tr('¡Pack del mundo 2!'), tr('Para seguir a lo grande en el nuevo mundo, solo una vez:'), tr('Pack del mundo 2'));
+const ppVentanaPackMundo2 = () => ppVentanaPackReloj('mundo2', tr('¡Pack del mundo 2!'), tr('Oferta para el nuevo mundo, solo una vez:'), tr('Pack del mundo 2'));
 // sale sola una vez, al volver al camino cuando ya se ha llegado al mundo 2
 function ppMiraPackMundo2() {
   if (!ppPackMundo2Visible() || SAVE.vistoMundo2) return false;
@@ -164,7 +164,7 @@ function ppVentanaHucha() {
     ppPerlas(dentro); SAVE.hucha = 0; ppGuarda();
     ppHuchaRompe(t, dentro, antes, () => { ppCierra(); ppPintaLateral(); });   // el martillazo y las perlas volando (js/tienda-vuelo.js, tarea #270)
   })));
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra, { color: 'oro' });
 }
 /* ---------- los botones del lado del camino ---------- */
 // el botón de un pack con reloj: salir en el lado ya es salir, así que aquí empieza a contar
@@ -183,7 +183,7 @@ function ppPintaLateral() {
     return b;
   };
   // partida nueva (tarea #140): lo que aún no toca sale apagado, con candado y su nivel (js/primeros-pasos-juego.js)
-  ppPrimerosLado(boton('i-regalo', '#9cf0a0', tr('Regalo'), ppVentanaRegalo, SAVE.regaloDia !== ppHoy() && ppPrimerosVe('regalo')), 'regalo');
+  ppPrimerosLado(boton('i-regalo', '#9cf0a0', tr('Regalo'), ppVentanaRegalo, !ppRegaloCogido() && ppPrimerosVe('regalo')), 'regalo');
   ppPrimerosLado(ppPaseLado(boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio() && ppPrimerosVe('pase'))), 'pase');   // con el flag 'pase-nuevo', anillo y escalón (js/pase-pantalla.js)
   ppFeriaBotonLateral(L);   // la Feria del finde, con su reloj (js/feria-pantalla.js)
   ppPrimerosLado(L.lastChild, 'feria');

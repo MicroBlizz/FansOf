@@ -10,7 +10,7 @@ IDIOMA.add({
   "Pack sin atascos": "Unstuck pack",
   "PACK SIN ATASCOS": "UNSTUCK PACK",
   "¡Pack del mundo 2!": "World 2 pack!",
-  "Para seguir a lo grande en el nuevo mundo, solo una vez:": "To keep going big in the new world, just once:",
+  "Oferta para el nuevo mundo, solo una vez:": "Offer for the new world, just once:",
   "Pack del mundo 2": "World 2 pack",
   "DE LUJO": "DELUXE",
   "Bandeja {b}": "{b} tray",

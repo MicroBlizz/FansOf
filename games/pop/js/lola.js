@@ -28,18 +28,20 @@ const PP_TUTO = {
   w4n1: [{ t: 'Si tocas una concha, solo hace pop ella.' }],
   w5n1: [{ t: 'Las de cereza necesitan tres golpes.' }],
   w6n1: [{ t: '¡Aquí está todo mezclado! Piensa cada toque.' }],
-  w7n1: [{ t: 'Un cohete hace pop en toda su fila.' }],
+  w7n1: [{ t: 'El cohete levanta su fila al reventar: quítalo pronto.' }],
   w8n1: [{ t: 'Las burbujeantes hacen pop en todo su alrededor.' }],
   w9n1: [{ t: 'Un pétalo hace pop en toda su columna.' }],
   w10n1: [{ t: '¡El Espacio! Al final te espera el CEO espacial.' }],
   ayudas: [{ t: 'Abajo tienes ayudas. ¡No gastan toques!' }],
   ayudasDuelo: [{ t: 'Deshacer vuelve atrás. La lupa te da la jugada buena.' }],
-  arcoiris: [{ t: '¡Una burbuja arcoíris! Tócala la primera o se escapa.' }],
+  arcoiris: [{ t: '¡Burbuja arcoíris con compañero! Tócala la primera o se escapa.' }],   // tarea #354: dice que lleva un compañero dentro
+  escondidos: [{ t: 'Hay más compañeros escondidos en burbujas arcoíris.', encima: true }],   // el primer rescate (Jardín 3), tarea #354
   trucoNim: [{ t: 'Truco: deja al rival filas iguales, por parejas.' }],
   despedidos: [{ t: 'En pesadilla tus amigos no ayudan. ¡Solo tú!' }],
   tienda: [{ t: 'Las perlas cuestan dinero de verdad. Si eres menor, pide permiso.', encima: true, bloquea: true }],   // precios honestos (tarea #177): este sí se lee antes de tocar
   sinCorazones: [{ t: 'Vuelve un corazón cada 30 minutos. ¡O llénalos aquí!', encima: true }],
   regalo: [{ t: '¡Un regalo cada día! El del domingo es el mejor.', encima: true }],
+  regaloSeguidos: [{ t: '¡Ven cada día! El regalo del día 7 es el mejor.', encima: true }],   // días seguidos (tarea #383); el de arriba se va al quitar el regalo por día de la semana
   pase: [{ t: 'Pasa niveles nuevos y sube escalones con premio.', encima: true }],
   hucha: [{ t: 'La hucha se llena al pasar niveles. ¡Rómpela!', encima: true }],
   racha: [{ t: 'Gana sin fallar y empiezas con más toques.', encima: true }],

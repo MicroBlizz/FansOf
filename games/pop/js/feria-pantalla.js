@@ -1,5 +1,5 @@
 // Fans of Pop · FERIA DEL FINDE (pantalla; tarea #97, ADR 151): el botón del lateral con su reloj, la ventana «camino de feria» con
-// sus 10 paradas y Lola marcando por dónde vas, la bienvenida de Lola el viernes, los cofres, la línea «+N para la Feria del finde»
+// sus 10 paradas y Lola marcando por dónde vas, la bienvenida de Lola el viernes, los cofres, la línea «+N tickets de la Feria»
 // de las victorias y la entrega sola de lo no recogido. Las reglas están en el dominio (js/feria.js, PP_FERIA); aquí solo se lee la
 // hora del móvil (ppFeriaAhora, que el panel DEV puede adelantar), el azar de los cofres (Math.random) y la partida guardada (SAVE.feria).
 'use strict';
@@ -51,7 +51,7 @@ function ppFeriaGana(estrellas, jefe, extra = 0) {
 function ppFeriaLinea(T) {
   if (!T || !T.feria) return '';
   const sube = T.feria.subio > 0 ? `<p class="pp-sub"><b>${tr('¡Nuevo premio en la feria!')}</b></p>` : '';
-  return `<div class="pp-gana-tk">${ppTicketHtml()} ${tr('+{n} para la Feria del finde', { n: T.feria.n })}</div>${sube}`;
+  return `<div class="pp-gana-tk">${ppTicketHtml()} ${(T.feria.n === 1 ? tr('+1 ticket de la Feria') : tr('+{n} tickets de la Feria', { n: T.feria.n }))}</div>${sube}`;
 }
 
 /* ---------- el botón del lateral (js/ofertas.js) ---------- */
@@ -81,7 +81,7 @@ function ppVentanaFeria() {
     <p class="pp-sub">${tr('Tickets {tk}: 1 por nivel, 2 con 3 estrellas, 3 por jefe.', { tk: ppTicketHtml() })}</p>`, true);
   t.appendChild(ppFeriaCamino(E));
   t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppFeriaFaltan(E)}</p>`);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { ppCierra(); ppPintaLateral(); }));
+  ppBotonVolver(t, () => { ppCierra(); ppPintaLateral(); }, { color: 'coral' });
 }
 // qué falta para el siguiente premio (y si hay paradas por recoger)
 function ppFeriaFaltan(E) {
@@ -146,7 +146,7 @@ function ppVentanaFeriaCerrada() {
   const v = PP_FERIA.ventana(ppFeriaAhora());
   const t = ppAbre(`<h2>${tr('La feria vuelve el viernes')}</h2><p class="pp-sub">${tr('La Feria abre el viernes y cierra el domingo.')}</p>
     <span class="pp-feria-reloj">${tr('Abre en {t}', { t: ppFeriaRelojCorto(v.abreEn) })}</span>`);
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppCierra));
+  ppBotonVolver(t, ppCierra, { color: 'coral' });
 }
 function ppVentanaFeriaBienvenida(v) {
   const t = ppAbre(`<div class="pp-feria-lola"></div><h2>${tr('¡Ha llegado la Feria del finde!')}</h2>

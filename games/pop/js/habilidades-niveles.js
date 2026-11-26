@@ -41,7 +41,7 @@ function ppHabTrasToque(T) {
 function ppHabRemarca(T) {
   const m = T.marcas; if (!m || !m.n) return;
   ppPista(T); if (T.pista === null) return;
-  m.n--; PP_FX.pista = 0.6; ppFxHabilidad(m.id); play('ppPista');
+  m.n--; PP_FX.pista = 0.6; ppFxHabilidad(m.id); PP_ATAQUE_FX.luce(m.id); play('ppPista');
 }
 // Buen comienzo: con tu primer toque del nivel, salta y hace pop gratis en una de la solución
 function ppHabPrimerToque(T) {
@@ -54,7 +54,7 @@ function ppHabRescata(T) {
   const n = PP_HAB.rescate(T.rescate || 0, T.rescateUsado);
   if (!n) return false;
   T.rescateUsado = true; T.limite += n;
-  const id = ppHabQuien(T.d, 'rescate'); if (id) ppFxHabilidad(id);
+  const id = ppHabQuien(T.d, 'rescate'); if (id) { ppFxHabilidad(id); PP_ATAQUE_FX.luce(id); }
   ppFlota(tr('¡Al rescate! +{n} toques', { n }), 270, 240, '#3a8ee6'); play('ppPremio');
   return true;
 }
@@ -66,7 +66,7 @@ function ppHabSalvaRacha() {
   const r = PP_HAB.racha(ppHabUsos(T.d, 'racha'), SAVE.racha, SAVE.rachaSalva, PP_HAB.diaLocal(new Date()));
   if (!r.salva) return false;
   SAVE.rachaSalva = r.usado;
-  const id = ppHabQuien(T.d, 'racha'); if (id) ppFxHabilidad(id);
+  const id = ppHabQuien(T.d, 'racha'); if (id) { ppFxHabilidad(id); PP_ATAQUE_FX.luce(id); }
   ppFlota(tr('¡Victorias seguidas a salvo!'), 270, 275, '#ff8a2a');
   return true;
 }

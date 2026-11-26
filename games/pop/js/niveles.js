@@ -9,39 +9,24 @@
 // en los primeros mundos sobran 2 o 3 toques; en los últimos hay que encontrar la solución perfecta o casi (`ppMargen`).
 // AFINADO CON EL ROBOT (tarea #196, ADR 169): 200 partidas simuladas, el límite más cercano a la curva, bienvenida en los dos primeros
 // niveles de cada mundo y nunca un muro (herramientas/pruebas/balance/pop/ lo mide).
+// LOS DATOS de los mundos ya no están aquí: viven en js/regiones/ (10 regiones de 10 mundos).
 // MODO DIFÍCIL (Daniel, 30-10-2026): al ganar al jefe de un mundo se abre ese mundo en difícil: otros 20 niveles con tableros
 // más grandes desde el principio, menos toques de sobra, más nata (en los mundos que la tienen) y el fondo de noche (`dif`).
 'use strict';
-// --- los mundos: nombre (y su artículo, `art`: «la Pastelería», «el Jardín»), fondo, novedad y en qué niveles hay un amigo atrapado ---
-// `lado`: tamaño del tablero al empezar y al acabar el mundo · `esp`: qué parte de las burbujas es de cada tipo especial, al
-// empezar y al acabar el mundo (doble = con nata, 2 golpes; triple = con cereza, 3 golpes; hielo y concha, ver ppEfecto)
-const PP_MUNDOS = [
-  // icono: el dibujo de LO NUEVO en la presentación del mundo (tarea #272, js/mundo-presenta-juego.js)
-  { nombre: 'Jardín', art: 'el', fondo: 'fondo-jardin', niveles: 20, amigos: [3, 9, 15], lado: [3, 5], esp: {} },
-  { nombre: 'Pastelería', art: 'la', fondo: 'fondo-pasteleria', niveles: 20, amigos: [4, 12], lado: [4, 6], icono: 'b-rosa-doble', esp: { doble: [0.15, 0.4] } },
-  { nombre: 'Heladería', art: 'la', fondo: 'fondo-heladeria', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-copo', esp: { hielo: [0.12, 0.3], doble: [0.1, 0.15] }, nueva: 'hielo' },
-  { nombre: 'Playa', art: 'la', fondo: 'fondo-playa', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-concha', esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
-  { nombre: 'Feria', art: 'la', fondo: 'fondo-feria', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-cereza', esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
-  { nombre: 'Reino de las nubes', art: 'el', fondo: 'fondo-nubes', niveles: 20, amigos: [7], lado: [6, 6], icono: 'i-estrella', esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
-  // mundos 7 a 10 (31-10-2026): cada uno con su burbuja nueva de efecto grande (cohete = su fila, burbujeante = un 3x3, pétalo = su
-  // columna) y algo de las de antes; el Espacio, todo mezclado y con el CEO espacial de jefe
-  { nombre: 'Bosque de hadas', art: 'el', fondo: 'fondo-bosque', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-cohete', esp: { cohete: [0.06, 0.12], doble: [0.15, 0.25], hielo: [0.08, 0.14] }, nueva: 'cohete' },
-  { nombre: 'Fondo del mar', art: 'el', fondo: 'fondo-mar', niveles: 20, amigos: [7], lado: [5, 6], icono: 'i-burbujas', esp: { burbujas: [0.06, 0.12], triple: [0.08, 0.15], concha: [0.1, 0.16] }, nueva: 'burbujas' },
-  { nombre: 'Jardín de cerezos', art: 'el', fondo: 'fondo-sakura', niveles: 20, amigos: [7], lado: [6, 6], icono: 'i-petalo', esp: { petalo: [0.06, 0.12], cohete: [0.04, 0.08], doble: [0.15, 0.22], hielo: [0.1, 0.16] }, nueva: 'petalo' },
-  { nombre: 'Espacio', art: 'el', fondo: 'fondo-espacio', niveles: 20, amigos: [7], lado: [6, 6], icono: 'i-estrella', esp: { cohete: [0.04, 0.07], burbujas: [0.04, 0.07], petalo: [0.04, 0.07], triple: [0.12, 0.2], hielo: [0.12, 0.18], concha: [0.1, 0.15] } },
-];
+// --- los mundos: los datos de cada mundo están en js/regiones/ (r01-dulce-hogar.js, ...); PP_REGIONES y ppRegistraRegion, en js/regiones/regiones.js ---
+const PP_MUNDOS = ppCierraRegiones();
 // qué revienta un toque en t: ella y sus 4 vecinas, salvo las de HIELO (solo se revientan tocándolas a ellas) y salvo que t sea
 // una CONCHA (al tocarla solo se revienta ella). `esp`: 0 normal, 1 hielo, 2 concha (sin `esp`, el pop-it puro de siempre)
-// 3 cohete (su fila entera), 4 burbujeante (un cuadrado de 3x3) y 5 pétalo (su columna entera), mundos 7 a 10. Las de hielo solo las
-// revienta un toque suyo, también con estos.
+// 3 cohete (su cruz, como una normal; al reventar levanta su fila: js/cohetes.js, tarea 349), 4 burbujeante (un cuadrado de 3x3) y
+// 5 pétalo (su columna entera), mundos 7 a 10. Las de hielo solo las revienta un toque suyo, también con estos.
 const PP_ESP = { hielo: 1, concha: 2, cohete: 3, burbujas: 4, petalo: 5 };
 function ppEfecto(n, mask, esp, t) {
   if (esp && esp[t] === 2) return [t];
   let v;
-  if (esp && esp[t] >= 3) {
+  if (esp && esp[t] >= 4) {
     const x0 = t % n, y0 = (t - x0) / n, e = esp[t]; v = [];
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-      const dentro = e === 3 ? y === y0 : e === 5 ? x === x0 : Math.abs(x - x0) <= 1 && Math.abs(y - y0) <= 1;
+      const dentro = e === 5 ? x === x0 : Math.abs(x - x0) <= 1 && Math.abs(y - y0) <= 1;
       if (dentro && mask[y * n + x]) v.push(y * n + x);
     }
   } else v = ppCruz(n, mask, t);
@@ -90,7 +75,7 @@ function ppOptimo(n, mask, need, tope = 80000, esp = null) {
   }
   for (let prof = 0; prof <= N * 2; prof++) {
     const r = busca(prof);
-    if (r) return r;
+    if (r) return PP_COHETES.conCohetes(n, mask, need, esp, r);   // con cohetes, en un orden que no levante nada (js/cohetes.js)
     if (r === null) return ppVoraz(n, mask, need, () => 0.5, 0, esp).toques;   // demasiado grande: el voraz como cota (no pasa en estos tamaños)
   }
   return [];
@@ -111,29 +96,30 @@ function ppVoraz(n, mask, need, azar, despiste = 0, esp = null) {
     if (!mejor) break;
     const lista = azar() < despiste ? buenas : cands;
     const t = lista[Math.floor(azar() * lista.length)];
-    for (const j of E[t]) if (falta[j] > 0) falta[j]--;
+    PP_COHETES.aplica(n, mask, esp, falta, E[t]);   // con los cohetes, que levantan su fila (js/cohetes.js): quien juega normal no los ve venir
     toques.push(t);
   }
   return { toques };
 }
 // cómo juega quien piensa (la «lista» del robot de dificultad; tarea #353, ADR 214): entre los toques que más revientan, el que deja
-// mejor el siguiente (empates, al azar); nunca se despista. Con ella se ponen los toques desde el mundo 2: una persona juega así
+// mejor el siguiente (empates, al azar); nunca se despista. Con ella se ponen los toques desde el mundo 2: una persona juega así.
+// Ve los cohetes: un toque vale lo que revienta menos lo que levanta (PP_COHETES.valor, js/cohetes.js)
 function ppVorazLista(n, mask, need, azar, esp = null) {
   const falta = need.slice(), toques = [], N = n * n;
   const E = Array.from({ length: N }, (_, t) => (mask[t] ? ppEfecto(n, mask, esp, t) : []));
-  const golpes = (ef, f) => { let v = 0; for (const j of ef) if (f[j] > 0) v++; return v; };
+  const vale = (ef, f) => (ef.some(j => f[j] > 0) ? PP_COHETES.valor(n, mask, esp, f, ef) : -Infinity);
   for (let g = 0; g < 200; g++) {
-    const v = E.map(ef => golpes(ef, falta)), max = Math.max(...v);
-    if (!max) break;
-    let mejor = -1, cands = [];
+    const v = E.map(ef => vale(ef, falta)), max = Math.max(...v);
+    if (max === -Infinity) break;
+    let mejor = -Infinity, cands = [];
     for (let t = 0; t < N; t++) {
       if (v[t] !== max) continue;
-      const despues = falta.slice(); for (const j of E[t]) if (despues[j] > 0) despues[j]--;
-      let sig = 0; for (const ef of E) sig = Math.max(sig, golpes(ef, despues));
+      const despues = falta.slice(); PP_COHETES.aplica(n, mask, esp, despues, E[t]);
+      let sig = 0; for (const ef of E) sig = Math.max(sig, vale(ef, despues));
       if (sig > mejor) { mejor = sig; cands = [t]; } else if (sig === mejor) cands.push(t);
     }
     const t = cands[Math.floor(azar() * cands.length)];
-    for (const j of E[t]) if (falta[j] > 0) falta[j]--;
+    PP_COHETES.aplica(n, mask, esp, falta, E[t]);
     toques.push(t);
   }
   return { toques };
@@ -148,8 +134,8 @@ function ppObjetivo(g, dif = false) {
   if (ppEsJefe(g)) o = Math.max(0.2, 0.35 - 0.03 * m);
   else if (ppEsDificil(g)) o = Math.max(0.22, 0.4 - 0.035 * m);
   else if (ppQuienMide(g) === 'lista') {
-    // la lista: del 85 % al empezar el mundo 2 al 55 % al acabar el último (Pepins, 24-11-2026: «el juego es muy fácil»)
-    const p = (m - 1 + l / M.niveles) / (PP_MUNDOS.length - 1), base = 0.85 - 0.3 * p;
+    // la lista, por región (js/regiones/curva.js): la 1, del 85 % al 55 % (Pepins, 24-11-2026: «el juego es muy fácil»); las demás, del 80 % al 55 %
+    const base = ppCurvaLista(ppNumeroDeRegion(m), m % PP_MUNDOS_POR_REGION, l, M.niveles, PP_CFG.curvaRegion);
     o = ((l - 1) % 5 === 0) ? Math.min(0.95, base + 0.1) : base;   // el de después de un difícil, de respiro
     return dif ? Math.max(0.35, o * 0.7) : o;
   } else {
@@ -237,6 +223,8 @@ function ppConstruye(g, intento, dif = false, forzada = null) {   // `forzada`: 
 // se despista (`fallo`), cada vez menos de un mundo a otro; el jefe es el CEO. Las burbujas son todas normales.
 const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo', 'bunny', 'lola', 'cofre', 'ceo'];
 const ppEsNim = g => ppEsDificil(g) || ppEsJefe(g);
+// el rival del jefe del mundo m: el jefazo de su región si m es el último mundo de ella (el CEO espacial en la región 1), si no el CEO
+function ppRivalJefe(m) { const r = ppRegionDeMundo(m); return (r && r.ultimo && r.region.jefazo) || 'ceo'; }
 function ppNivelNim(g, dif) {
   const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 * dif : 0)), jefe = ppEsJefe(g);
   const lado = Math.min(6, Math.max(4, M.lado[1] - (jefe ? 0 : 1) + (dif ? 1 : 0)));   // el difícil, un poco más pequeño que el jefe
@@ -249,7 +237,7 @@ function ppNivelNim(g, dif) {
   if (dif === 2) fallo = 0.02;   // pesadilla: el rival casi nunca se equivoca
   else if (dif) fallo = Math.max(0.02, fallo * 0.5);
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe, dificil: !jefe, tutorial: false,
-    nim: { rival: jefe ? (m === PP_MUNDOS.length - 1 ? 'ceoespacial' : 'ceo') : PP_RIVALES[m], fallo } };   // el jefe del último mundo: el CEO espacial
+    nim: { rival: jefe ? ppRivalJefe(m) : PP_RIVALES[m], fallo } };
 }
 // MODO PESADILLA (Daniel, 31-10-2026: «muy difícil, con fondo rojo, con el modo de juego del primer boceto»): se abre al ganar el
 // difícil de un mundo. Es el «Lights Out» del primer prototipo: tocar una burbuja le da la vuelta a ella y a sus cuatro vecinas (las

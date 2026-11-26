@@ -1,7 +1,7 @@
 // Fans of Pop · FIESTA DE TOQUES SOBRANTES (tarea #157, Pepins, 19-11-2026: como el «Sugar Crush» de Candy Crush). Al ganar un
 // nivel nuevo con toques de sobra, antes de la pantalla de victoria, cada toque que sobra sale del contador y hace pop en una
-// burbuja del tablero, con su «+1» de moneda (PP_CFG.sobrantes: 1 por toque, como mucho 10). «Toca para saltar» la acelera, no la
-// corta: se ven todos los pops y se cobran todas las monedas. Solo la primera vez que pasas el nivel (como el resto de monedas
+// burbuja del tablero, con su «+1» de moneda (PP_CFG.sobrantes: 1 por toque, como mucho 10). Tocar en cualquier sitio la acelera, no
+// la corta (sin letrero que lo diga: Pepins lo quitó, tarea 352): se ven todos los pops y se cobran todas las monedas. Solo la primera vez que pasas el nivel (como el resto de monedas
 // del nivel), para que repetir un nivel fácil no sea una mina. En los duelos no hay. Las cuentas, en PP_VICTORIA.sobrantes (js/victoria.js).
 'use strict';
 const PP_FIESTA = Object.freeze({ empieza: 350, paso: 300, rapido: 80, final: 500 });   // milisegundos
@@ -17,14 +17,13 @@ function ppFiestaCeldas(T) {
   for (let i = 0; i < T.up.length; i++) if (T.mask[i]) res.push(i);
   return res;
 }
-// el cartel de arriba y «Toca para saltar»: una capa encima del tablero que recoge los toques
+// el cartel de arriba: una capa encima del tablero que recoge los toques (un toque en cualquier sitio acelera)
 function ppFiestaCapa(T, s) {
   const capa = document.createElement('div');
   capa.className = 'pp-fiesta-toques';
   const sub = s.monedas ? (s.monedas === 1 ? tr('+1 moneda') : tr('+{n} monedas', { n: s.monedas })) : '';
-  capa.innerHTML = `<p class="pp-fiesta-cartel">${tr('¡Toques extra!')}</p>${sub ? `<p class="pp-fiesta-sub">${sub}</p>` : ''}`
-    + `<p class="pp-fiesta-saltar">${tr('Toca para saltar')}</p>`;
-  capa.onpointerdown = () => { if (T.fiesta) T.fiesta.rapido = true; capa.classList.add('pp-rapido'); };
+  capa.innerHTML = `<p class="pp-fiesta-cartel">${tr('¡Toques extra!')}</p>${sub ? `<p class="pp-fiesta-sub">${sub}</p>` : ''}`;
+  capa.onpointerdown = () => { if (T.fiesta) T.fiesta.rapido = true; };
   $pp('#pp-ui').appendChild(capa);
   return capa;
 }

@@ -75,7 +75,9 @@ const PP_PASE_R = (() => {
     if (k % 4 === 0) return f({ infinitas: 30 });
     return f({ perlas: 3 });
   }
+  // cuánto falta (ms) para que cambien las misiones del día: la medianoche del móvil, como RETOSL (tarea 375)
+  const hastaMisiones = ahora => new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() + 1) - ahora;
   // los dorados que solo salen ese mes (la etiqueta SOLO ESTE MES)
   const exclusivo = (k, premium) => premium && (k === BANDEJA || k === CFG.escalones);
-  return f({ CFG, listos, clave, claveExtra, escalon, extras, falta, faltaPremio, deNivel, suma, conTope, deCompra, extrasListos, premioExtra, desdeViejos, gratis, dorado, exclusivo });
+  return f({ CFG, listos, clave, claveExtra, escalon, extras, falta, faltaPremio, deNivel, suma, conTope, deCompra, extrasListos, premioExtra, desdeViejos, gratis, dorado, exclusivo, hastaMisiones });
 })();

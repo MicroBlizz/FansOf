@@ -1,7 +1,6 @@
 // Fans of Asalto · DOMINIO · La partida: la raíz de una bajada a la mazmorra (zona, oleada, oro, vidas, Altar, equipo, reliquias, racha,
-// misiones, premios y el Despertar de los legendarios). Solo cambia por sus métodos (invocar, empujar, unir, ascender, elegir carta, luchar,
-// cerrar la oleada, cobrar), que la dejan válida y devuelven AS.ok(...) o AS.error('codigo'). Fases: 'preparar' → 'batalla' → ('premio') →
-// 'preparar'… y 'fin'. Pura: el azar se pasa. Cuentas sueltas: reglas.js; leer lo guardado: guardado.js; legendarios: despertar.js.
+// misiones, premios y Despertar). Solo cambia por sus métodos, que la dejan válida y devuelven AS.ok(...) o AS.error('codigo'). Fases:
+// 'preparar' → 'batalla' → ('premio') → 'preparar'… y 'fin'. Pura: el azar se pasa. Cuentas: reglas.js; lo guardado: guardado.js y partida-guardado.js.
 'use strict';
 AS.Partida = (() => {
   const LLAVE = Symbol('partida');   // solo las fábricas de este archivo pueden crear una partida
@@ -20,8 +19,8 @@ AS.Partida = (() => {
       this.#oro = datos.partida.oro + this.#m.oro; this.#vidas = datos.partida.vidas + this.#m.vidas;
       this.#equipo = AS.equipo.vacio(datos, this.#m.abiertos); this.#leg = AS.despertar.nuevo(datos, cfg.despertar);
     }
-    // cfg: { zona, sinFin, guiada (la primera partida, con la mano), maquina ('altar' o 'estallido'), dificultad (0, 1 o 2), mejoras: { corazon: 1… },
-    // rarezas (cuántas hay abiertas), despertar (0 a 3 abiertos), equipo: { vida: 5… } (el equipo puesto, en %) }
+    // cfg: { zona, sinFin, guiada, maquina ('altar' o 'estallido'), dificultad (0 a 2), mejoras: { corazon: 1… }, rarezas (abiertas),
+    // despertar (0 a 3 abiertos), equipo: { vida: 5… } (el equipo puesto, en %) }
     static nueva(datos, cfg, azar) {
       if (!cfg || !datos.zonas[cfg.zona]) return AS.error('zona-desconocida');
       const p = new Partida(LLAVE, datos, cfg);
@@ -53,12 +52,11 @@ AS.Partida = (() => {
     get esencia() { return this.#esencia; }
     get tienda() { return this.#tienda; }
     get despertar() { return this.#leg; }   // { abiertos, oferta: null | { id, cartas, cambiada } }
-    // las piedras de destino: la misión en marcha (o null), las de la bolsa y hasta qué rareza pueden subir (las abiertas)
-    get piedras() { return { mision: AS.piedras.progreso(this.#d, this.#piedras, this.#n, this.#cuenta), bolsa: this.#piedras.bolsa, abiertas: this.#m.rarezas }; }
+    // piedras: misión (o null), bolsa, rareza tope y tiradas seguras
+    get piedras() { return { mision: AS.piedras.progreso(this.#d, this.#piedras, this.#n, this.#cuenta), bolsa: this.#piedras.bolsa, abiertas: this.#m.rarezas, seguras: this.#piedras.suerte }; }
     get altarVivo() { return this.#vivo; }   // ¿hay en el Altar una tirada de esta oleada (se puede empujar)?
     get costeCambio() { return AS.tienda.costeCambio(this.#d, this.#tienda); }
-    // lo que cuenta para las cifras de un héroe, menos las clases activas del campo
-    get contexto() { return { equipo: this.#E, reliquias: this.#reliquias.slice(), objetos: this.#tienda.objetos }; }
+    get contexto() { return { equipo: this.#E, reliquias: this.#reliquias.slice(), objetos: this.#tienda.objetos, ganadas: this.#cuenta.oleadasGanadas, distintas: Object.keys(this.sinergias.puntos).length }; }
     get reliquias() { return this.#reliquias.slice(); }
     get proxima() { return this.#proxima; }
     get premio() { return this.#premios[0] || null; }
@@ -69,11 +67,7 @@ AS.Partida = (() => {
     get misiones() { return AS.misiones.estado(this.#d, this.#misiones, this.#escalones, this.#cuenta); }
     get puedeDeshacer() { return !!this.#antes && this.#fase === 'preparar'; }
     get sinergias() { return AS.equipo.sinergias(this.#d, this.#equipo); }
-    get coste() {
-      if (this.#gratis) return 0;
-      const r = this.#reliquias;
-      return AS.altar.coste(this.#d.altar, this.#tiradas, { rebaja: r.includes('rebaja') ? 1 : 0, gratis: r.includes('gratis') });
-    }
+    get coste() { return this.#gratis ? 0 : AS.reglas.coste(this.#d, this.#tiradas, this.#reliquias, this.#tienda.objetos); }
     tipoDeOleada(n) { return AS.oleadas.tipo(this.#d, this.#zona, n, this.#sinFin); }
 
     #preparaOleada(n, azar) {
@@ -81,13 +75,14 @@ AS.Partida = (() => {
       this.#aPreparar();
       if (n > 1) this.#oro += AS.reglas.interes(this.#reliquias, this.#oro);
     }
-    // vuelta a preparar: el Altar de cero (coste de salida, empujones nuevos); también al repetir una oleada perdida (mismos enemigos)
+    // vuelta a preparar: Altar de cero (coste de salida, empujones nuevos); también al repetir una oleada perdida (mismos enemigos)
     #aPreparar() {
       this.#tiradas = 0; this.#gratis = false; this.#vivo = false; this.#antes = null; this.#fase = 'preparar';
       this.#empujones = AS.reglas.empujones(this.#d, this.#m, this.#reliquias, this.#maquina); this.#estallidos = AS.reglas.estallidos(this.#d, this.#maquina);
     }
+    #pesos() { return AS.reglas.pesos(this.#d, this.#m, this.#reliquias, this.#tienda && this.#tienda.objetos); }
     #apuntaNivel(h) { if (h.nivel > this.#cuenta.nivelMax) this.#cuenta.nivelMax = h.nivel; }
-    // tras cambiar el equipo: nacen legendarios y se abre la oferta del Despertar (avisos: el del ser)
+    // tras cambiar el equipo: nacen legendarios y se abre la oferta del Despertar
     #despierta(azar, avisos = []) {
       const r = AS.despertar.revisa(this.#d, this.#equipo, this.#leg, AS.despertar.larga(this.#sinFin, this.#dif), azar);
       this.#equipo = r.equipo; this.#leg = r.estado; this.#avisos.push(...avisos, ...r.avisos);
@@ -98,17 +93,18 @@ AS.Partida = (() => {
     // un héroe nuevo: a un hueco o al banquillo; si no cabe, lo absorbe el de su tipo (o el de más nivel)
     #llega(clase, nivel, dorado, azar, piedra) {
       const h = AS.reglas.heroeNuevo(this.#d, this.#m, this.#reliquias, this.#cuenta.invocados === 0, 'h' + (this.#sigId++), { clase, nivel, dorado, piedra }, azar);
+      return this.#coloca(piedra ? AS.piedrasEfectos.heroe(this.#d, h, piedra, azar) : h, clase);
+    }
+    // el que llega va a un hueco o al banquillo; si no cabe, se funde
+    #coloca(h, clase) {
       this.#cuenta.invocados++;
       const r = AS.equipo.recibe(this.#d, this.#equipo, h);
       if (r.ok) { this.#equipo = r.valor; this.#apuntaNivel(h); return { heroe: h, clase, sitio: AS.equipo.sitioDe(r.valor, h.id) }; }
-      return this.#funde(h, clase);
-    }
-    #funde(h, clase) {
       const f = AS.equipo.funde(this.#d, this.#equipo, h);
       this.#equipo = f.equipo; this.#apuntaNivel(f.crecido);
       return { heroe: h, clase, sitio: f.sitio, fundido: f.crecido };
     }
-    // piedra: la de la tirada de piedra (sube la rareza de los que llegan, no la del Animal Dorado)
+    // piedra: la de la tirada de piedra (rareza, nivel e improntas de los que llegan; al Animal Dorado no)
     #paga(lineas, azar, rompe, piedra) {
       const A = this.#d.altar, n = lineas.length, llegados = lineas.map(l => this.#llega(l.clase, 1, false, azar, piedra));
       let oroExtra = A.premioLineas[Math.min(n, A.premioLineas.length - 1)], dorado = null;
@@ -118,11 +114,10 @@ AS.Partida = (() => {
       this.#despierta(azar);
       return { lineas, llegados, oroExtra, dorado, ...this.#encadena(n > 0, rompe) };
     }
-    // la racha: cada invocación (o empujón) con línea la sube y da oro; una invocación sin línea la corta (rompe = false: empujón)
+    // la racha: cada invocación (o empujón) con línea la sube y da oro; una sin línea la corta (rompe = false: empujón)
     #encadena(hubo, rompe) {
-      const R = this.#d.altar.racha;
       if (hubo) this.#racha++; else if (rompe !== false) this.#racha = 0;
-      const oroRacha = hubo ? R[Math.min(this.#racha, R.length - 1)] : 0;
+      const oroRacha = hubo ? AS.reglas.oroRacha(this.#d, this.#racha) : 0;
       this.#oro += oroRacha; this.#cuenta.oroGanado += oroRacha;
       if (this.#racha > this.#cuenta.rachaMax) this.#cuenta.rachaMax = this.#racha;
       return { racha: this.#racha, oroRacha };
@@ -146,8 +141,7 @@ AS.Partida = (() => {
     }
     #pendiente() { return AS.misiones.porCobrar(this.#d, this.#misiones, this.#escalones, this.#cuenta); }
     // los avisos de las acciones (misiones, legendarios…): la pantalla los recoge y se vacían
-    recogeAvisos() { return this.#avisos.splice(0);
-    }
+    recogeAvisos() { return this.#avisos.splice(0); }
     invoca(azar) {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
       if (!AS.equipo.hayHueco(this.#equipo)) return AS.error('sin-sitio');
@@ -163,30 +157,31 @@ AS.Partida = (() => {
       this.#cobraMisiones();
       return AS.ok({ ...res, columnas: this.#altar, coste });
     }
-    // las runas de una invocación (primera, guiada y red contra la mala suerte: altar.js)
+    // las runas de una invocación (altar.js; con la línea segura de la Piedra de la suerte)
     #tirada(azar) {
-      return AS.altar.invocacion(this.#d.altar, AS.reglas.pesos(this.#d, this.#m, this.#reliquias), { primera: this.#cuenta.tiradas === 0, guiada: this.#guiada, fallos: this.#fallos }, azar);
+      const s = AS.piedras.usaSuerte(this.#piedras);
+      this.#piedras = s.estado;
+      return AS.altar.invocacion(this.#d.altar, this.#pesos(), { primera: this.#cuenta.tiradas === 0, guiada: this.#guiada, fallos: this.#fallos, segura: s.segura }, azar);
     }
-    // la tirada de piedra: gasta la piedra i de la bolsa; gratis, con línea segura y la rareza subida (sin pasar de las abiertas)
-    tiraPiedra(i, azar) {
+    // tira la piedra i de la bolsa: gratis, con línea segura, rareza subida y lo suyo (piedras-efectos.js). eleccion: { clase }
+    tiraPiedra(i, azar, eleccion) {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
       if (!AS.equipo.hayHueco(this.#equipo)) return AS.error('sin-sitio');
-      const r = AS.piedras.gasta(this.#piedras, i);
-      if (!r.ok) return r;
-      const pesos = AS.reglas.pesos(this.#d, this.#m, this.#reliquias);
-      this.#piedras = r.valor.estado; this.#vivo = true; this.#cuenta.piedras++;
-      this.#altar = AS.altar.conLinea(AS.altar.tira(pesos, azar), pesos, azar);
-      const res = this.#paga(AS.altar.lineas(this.#altar), azar, undefined, r.valor.piedra);
+      const t = AS.piedrasEfectos.tira(this.#d, this.#piedras, i, this.#pesos(), eleccion, azar), { piedra, premio } = t.valor || {};
+      if (!t.ok) return t;
+      this.#piedras = t.valor.estado; this.#vivo = true; this.#cuenta.piedras++; this.#altar = t.valor.columnas; this.#suma(premio);
+      const res = this.#paga(AS.altar.lineas(this.#altar), azar, undefined, piedra), ll = res.llegados[0];
+      if (AS.piedrasEfectos.gemela(this.#d, piedra)) res.gemela = this.#coloca(AS.heroe.gemelo(ll.heroe, 'h' + (this.#sigId++)), ll.clase);
       this.#fallos = 0;
       this.#cobraMisiones();
-      return AS.ok({ ...res, columnas: this.#altar, coste: 0, piedra: r.valor.piedra });
+      return AS.ok({ ...res, columnas: this.#altar, coste: 0, piedra, premio });
     }
     // dir 1: la columna baja (entra la runa que asoma arriba); -1: sube
     empuja(col, dir, azar) {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
       if (!this.#altar || !this.#vivo) return AS.error('sin-tirada');
       if (this.#empujones <= 0) return AS.error('sin-empujones');
-      const r = AS.altar.empuja(this.#altar, col, dir, AS.reglas.pesos(this.#d, this.#m, this.#reliquias), azar);
+      const r = AS.altar.empuja(this.#altar, col, dir, this.#pesos(), azar);
       if (!r.ok) return r;
       this.#altar = r.valor; this.#empujones--;
       const res = this.#paga(AS.altar.lineasDeColumna(this.#altar, col), azar, false);
@@ -199,7 +194,7 @@ AS.Partida = (() => {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
       if (!this.#altar || !this.#vivo) return AS.error('sin-tirada');
       if (this.#estallidos <= 0) return AS.error('sin-estallido');
-      const r = AS.altar.estalla(this.#altar, AS.reglas.pesos(this.#d, this.#m, this.#reliquias), azar);
+      const r = AS.altar.estalla(this.#altar, this.#pesos(), azar);
       if (!r.ok) return r;
       this.#altar = r.valor.columnas; this.#estallidos--; this.#cuenta.estallidos++;
       const res = this.#paga(r.valor.lineas, azar, false);
@@ -268,33 +263,33 @@ AS.Partida = (() => {
       if (!campo.length) return AS.error('sin-heroes');
       if (this.#leg.oferta) return AS.error('elige-carta');
       this.#fase = 'batalla'; this.#antes = null; this.#anuncios = AS.anuncios.lucha(this.#anuncios);
-      const nivel = this.sinergias.nivel, ctx = { ...this.contexto, nivel };
-      return AS.ok({ datos: this.#d, oleada: this.#proxima, nivel, reliquias: this.#reliquias.slice(),
+      const nivel = this.sinergias.nivel, ctx = { ...this.contexto, nivel }, sale = AS.piedrasEfectos.aLuchar(this.#piedras, this.#proxima);   // con el verdugo
+      this.#piedras = sale.estado;
+      return AS.ok({ datos: this.#d, oleada: sale.oleada, nivel, reliquias: this.#reliquias.slice(), efectos: AS.objetos.efectos(this.#d, this.#tienda.objetos),
         heroes: campo.map(({ h, i }) => ({ hueco: i, ref: h.id, cifras: AS.poder.deHeroe(this.#d, h, ctx) })) });
     }
-    #gana(ol, azar) {
-      const oro = AS.reglas.oroDeGanar(this.#d, ol, this.#reliquias);
-      this.#oro += oro; this.#cuenta.oroGanado += oro; this.#cuenta.oleadasGanadas++;
-      this.#plumas += AS.reglas.plumasDe(this.#d, this.#dif, this.#sinFin ? this.#d.sinFin.plumasOleada : this.#d.partida.plumasOleada);
-      const esencia = AS.tienda.esenciaDeOleada(this.#d, ol.n);
-      this.#esencia += esencia; this.#cuenta.esencia += esencia;
-      if (ol.tipo === 'jefe') this.#cuenta.jefes++;
-      return AS.reglas.premiosDe(this.#d, this.#dif, AS.reglas.premios(this.#d, ol, this.#reliquias, azar));
+    // suma lo ganado ({ oro, plumas, esencia, vidas }) y lo apunta en la cuenta
+    #suma(x) {
+      const oro = x.oro || 0, esencia = x.esencia || 0;
+      this.#oro += oro; this.#cuenta.oroGanado += oro; this.#plumas += x.plumas || 0; this.#esencia += esencia; this.#cuenta.esencia += esencia; this.#vidas += x.vidas || 0;
     }
-    // la oleada siguiente; cada dos, la tienda estrena oferta; cada tres, sale una misión de piedra
+    #gana(ol, azar) {
+      const g = AS.reglas.ganancia(this.#d, ol, { reliquias: this.#reliquias, objetos: this.#tienda.objetos, dif: this.#dif, sinFin: this.#sinFin }, azar);
+      this.#suma(g); this.#cuenta.oleadasGanadas++;
+      if (ol.tipo === 'jefe') this.#cuenta.jefes++;
+      return g.premios;
+    }
+    // la oleada siguiente; cada dos, oferta nueva (con el épico del mercader); cada tres, misión de piedra (con la Brújula)
     #siguiente(azar) {
       this.#preparaOleada(this.#n + 1, azar);
-      if (AS.tienda.toca(this.#d, this.#n)) this.#tienda = AS.tienda.ofertaNueva(this.#d, this.#tienda, azar);
+      if (AS.tienda.toca(this.#d, this.#n)) ({ estado: this.#piedras, tienda: this.#tienda } = AS.piedrasEfectos.oferta(this.#d, this.#piedras, this.#tienda, azar));
       this.#revisaPiedra();   // la misión de piedra que no llegó a tiempo caduca aquí
       if (!AS.piedras.toca(this.#d, this.#piedras, this.#n)) return;
-      this.#piedras = AS.piedras.propone(this.#d, this.#piedras, this.#n, this.#cuenta, azar);
+      this.#piedras = AS.piedras.propone(this.#d, this.#piedras, this.#n, this.#cuenta, azar, AS.objetos.brujula(this.#d, this.#tienda.objetos));
       this.#avisos.push({ tipo: 'piedra-mision', ...this.piedras.mision });
     }
-    // ¿acaba? Sin vidas o perdiendo élite o jefe, derrota; venciendo al jefe (no en el sin fin), victoria
-    #decideFinal(gano, tipo) {
-      if (this.#vidas <= 0 || (!gano && tipo !== 'normal')) { this.#final = 'derrota'; this.#premios = []; }
-      else if (gano && tipo === 'jefe' && !this.#sinFin) this.#final = 'victoria';
-    }
+    // ¿se acaba la partida? (reglas.final); la derrota se lleva los premios
+    #decideFinal(gano, tipo) { this.#final = AS.reglas.final(this.#vidas, gano, tipo, this.#sinFin); if (this.#final === 'derrota') this.#premios = []; }
     // res: AS.batalla.resultado(B) (más la Cosecha). Aplica oro, esencia y vidas, decide si acaba y prepara la siguiente (o repite la normal perdida)
     terminaOleada(res, azar) {
       if (this.#fase !== 'batalla') return AS.error('ahora-no');
@@ -312,27 +307,17 @@ AS.Partida = (() => {
     }
 
     /* ---------- la tienda: se paga con esencia ---------- */
-    #enTienda(hace) {
+    // hace: la operación de AS.tienda; esencia: lo que suma (o resta) a la esencia; sale: lo que devuelve
+    #enTienda(hace, esencia, sale) {
       if (this.#fase !== 'preparar') return AS.error('ahora-no');
       const r = hace(this.#d, this.#tienda);
-      if (r.ok) this.#tienda = r.valor.tienda;
-      return r;
+      if (!r.ok) return r;
+      this.#tienda = r.valor.tienda; this.#esencia += esencia(r.valor);
+      return AS.ok(sale(r.valor));
     }
-    compraObjeto(i) {
-      const r = this.#enTienda((d, t) => AS.tienda.compra(d, t, i, this.#esencia));
-      if (r.ok) this.#esencia -= r.valor.coste;
-      return r.ok ? AS.ok(r.valor.objeto) : r;
-    }
-    vendeObjeto(id) {
-      const r = this.#enTienda((d, t) => AS.tienda.vende(d, t, id));
-      if (r.ok) this.#esencia += r.valor.esencia;
-      return r.ok ? AS.ok(r.valor.esencia) : r;
-    }
-    cambiaOferta(azar) {
-      const r = this.#enTienda((d, t) => AS.tienda.cambia(d, t, this.#esencia, azar));
-      if (r.ok) this.#esencia -= r.valor.coste;
-      return r.ok ? AS.ok(r.valor.coste) : r;
-    }
+    compraObjeto(i) { return this.#enTienda((d, t) => AS.tienda.compra(d, t, i, this.#esencia), v => -v.coste, v => v.objeto); }
+    vendeObjeto(id) { return this.#enTienda((d, t) => AS.tienda.vende(d, t, id), v => v.esencia, v => v.esencia); }
+    cambiaOferta(azar) { return this.#enTienda((d, t) => AS.tienda.cambia(d, t, this.#esencia, azar), v => -v.coste, v => v.coste); }
 
     /* ---------- los anuncios opcionales (AS.anuncios): se llaman DESPUÉS de verse ---------- */
     puedeAnuncio(tipo) { return AS.anuncios.puede(this.#d, this.#anuncios, tipo, this.#fase, this.#n, this.#leg.oferta); }
@@ -346,75 +331,58 @@ AS.Partida = (() => {
       return AS.ok({ esencia: v.esencia, vidas: v.vidas, oferta: v.oferta });
     }
 
-    /* ---------- los premios ---------- */
+    /* ---------- los premios (las reglas, en premios.js) ---------- */
     #sigue() {
       this.#premios = this.#premios.slice(1);
       if (!this.#premios.length) this.#fase = this.#final ? 'fin' : 'preparar';
     }
     // el cofre de la oleada de élite o el botín del jefe. doble: con anuncio (solo el cofre)
     cobraCofre(doble) {
-      const p = this.premio;
-      if (!p || (p.tipo !== 'cofre' && p.tipo !== 'jefe')) return AS.error('sin-premio');
-      const k = doble && p.tipo === 'cofre' ? 2 : 1;
-      this.#oro += p.oro * k; this.#plumas += p.plumas * k; this.#cuenta.oroGanado += p.oro * k;
+      const r = AS.premios.cofre(this.premio, doble);
+      if (r.ok) { this.#suma(r.valor); this.#sigue(); }
+      return r;
+    }
+    // las reliquias elegidas (r: AS.ok([id…]) o un error) pasan a ser suyas; la Palanca da su empujón ya
+    #toma(r) {
+      if (!r.ok) return r;
+      for (const id of r.valor) { this.#reliquias.push(id); if (id === 'palanca' && this.#fase !== 'fin') this.#empujones++; }
       this.#sigue();
-      return AS.ok({ oro: p.oro * k, plumas: p.plumas * k, objetos: p.objetos || 0 });
+      return r;
     }
-    #toma(id) {
-      this.#reliquias.push(id);
-      if (id === 'palanca' && this.#fase !== 'fin') this.#empujones++;
-    }
-    get #deReliquia() { const p = this.premio; return p && p.tipo === 'reliquia' ? p : null; }
-    eligeReliquia(id) {
-      const p = this.#deReliquia;
-      if (!p) return AS.error('sin-premio');
-      if (!p.opciones.includes(id)) return AS.error('no-esta-en-la-oferta');
-      this.#toma(id); this.#sigue();
-      return AS.ok(id);
-    }
+    eligeReliquia(id) { const r = this.#toma(AS.premios.elige(this.premio, id)); return r.ok ? AS.ok(id) : r; }
     // con anuncio: otras tres, o llevarse las tres
     refrescaReliquias(azar) {
-      const p = this.#deReliquia;
-      if (!p) return AS.error('sin-premio');
-      const nuevas = AS.reglas.tresReliquias(this.#d, this.#reliquias, azar);
-      this.#premios = [{ ...p, opciones: nuevas }, ...this.#premios.slice(1)];
-      return AS.ok(nuevas);
+      const r = AS.premios.refresca(this.#d, this.premio, this.#reliquias, azar);
+      if (r.ok) this.#premios = [r.valor, ...this.#premios.slice(1)];
+      return r.ok ? AS.ok(r.valor.opciones) : r;
     }
-    todasLasReliquias() {
-      const p = this.#deReliquia;
-      if (!p) return AS.error('sin-premio');
-      for (const id of p.opciones) this.#toma(id);
-      this.#sigue();
-      return AS.ok(p.opciones.slice());
-    }
+    todasLasReliquias() { return this.#toma(AS.premios.todas(this.premio)); }
 
-    /* ---------- guardar y cargar (solo entre oleadas) ---------- */
+    /* ---------- guardar y cargar (entre oleadas y con los premios por cobrar) ---------- */
+    // en plena batalla y ya acabada (con o sin premios por cobrar) no se guarda: null
     aJSON() {
-      if (this.#fase !== 'preparar') return null;
-      return { v: 1, zona: this.#zona, sinFin: this.#sinFin, n: this.#n, oro: this.#oro, vidas: this.#vidas, plumas: this.#plumas, altar: this.#altar, tiradas: this.#tiradas,
-        gratis: this.#gratis, empujones: this.#empujones, equipo: this.#equipo, reliquias: this.#reliquias.slice(), sigId: this.#sigId, cuenta: { ...this.#cuenta }, mejoras: { ...this.#mejoras }, rarezas: this.#rarezas,
-        guiada: this.#guiada, racha: this.#racha, fallos: this.#fallos, misiones: this.#misiones.slice(), escalones: { ...this.#escalones }, esencia: this.#esencia, tienda: this.#tienda, piedras: this.#piedras, vivo: this.#vivo, anuncios: this.#anuncios,
-        maquina: this.#maquina, dificultad: this.#dif, estallidos: this.#estallidos, despertar: this.#leg.abiertos, oferta: this.#leg.oferta };
+      if (this.#final || (this.#fase !== 'preparar' && this.#fase !== 'premio')) return null;
+      return AS.partidaGuardado.aJSON(this, { gratis: this.#gratis, mejoras: { ...this.#mejoras }, rarezas: this.#rarezas, sigId: this.#sigId, misiones: this.#misiones.slice(),
+        escalones: { ...this.#escalones }, piedras: this.#piedras, anuncios: this.#anuncios, premios: this.#premios.slice() });
     }
     #carga(j, azar) {
-      const d = this.#d, eq = AS.equipo.deJSON(d, { ...j.equipo, abiertos: this.#m.abiertos }), g = AS.guardado.lee(d, j);
-      if (!eq.ok) return eq;
+      const d = this.#d, g = AS.guardado.lee(d, j, this.#m.abiertos), v = g.valor;
       if (!g.ok) return g;
-      const v = g.valor;
-      this.#equipo = eq.valor; this.#reliquias = v.reliquias;
+      this.#equipo = v.equipo; this.#reliquias = v.reliquias;
       this.#preparaOleada(v.n, azar);
       this.#oro = v.oro; this.#vidas = v.vidas; this.#plumas = v.plumas; this.#sigId = v.sigId; this.#tiradas = v.tiradas; this.#gratis = v.gratis;
       this.#empujones = Math.min(v.empujones, this.#empujones); this.#estallidos = Math.min(v.estallidos, this.#estallidos);
       this.#altar = v.altar; this.#vivo = v.vivo; this.#cuenta = v.cuenta; this.#racha = v.racha; this.#fallos = v.fallos;
       this.#misiones = v.misiones; this.#escalones = v.escalones; this.#esencia = v.esencia;
-      this.#tienda = AS.tienda.deJSON(d, j.tienda, azar); this.#piedras = AS.piedras.deJSON(d, j.piedras); this.#anuncios = AS.anuncios.deJSON(j.anuncios);
+      this.#tienda = AS.tienda.deJSON(d, j.tienda, azar); this.#piedras = v.piedras; this.#anuncios = v.anuncios;
       this.#leg = AS.despertar.deJSON(d, this.#equipo, j.oferta, this.#leg.abiertos); this.#despierta(azar);
+      if (v.premios.length) { this.#premios = v.premios; this.#fase = 'premio'; }   // se guardó con premios por cobrar: se sigue en ellos
       return AS.ok(this);
     }
     // de la partida guardada: una partida entera y válida, o un error (nunca una a medias). equipo = el equipo puesto de ahora
     static deJSON(datos, j, equipo, azar) {
       if (!j || j.v !== 1 || !datos.zonas[j.zona]) return AS.error('partida-invalida');
-      return new Partida(LLAVE, datos, { zona: j.zona, sinFin: !!j.sinFin, guiada: !!j.guiada, maquina: j.maquina, dificultad: j.dificultad, mejoras: j.mejoras, rarezas: j.rarezas, despertar: j.despertar, equipo }).#carga(j, azar);
+      return new Partida(LLAVE, datos, AS.partidaGuardado.cfgDe(j, equipo)).#carga(j, azar);
     }
   }
   return Partida;

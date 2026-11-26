@@ -44,6 +44,7 @@ function ppPintaFondo(c, k, t, noche = false) {
   if (noche === 2) ppRojo(c, t); else if (noche) ppNoche(c, t);   // difícil: de noche · pesadilla: en rojo
   // lo que flota por el fondo: unicornios, arcoíris, capibaras, animalitos y chuches (Yoshi) subiendo despacio y balanceándose,
   // y burbujitas entre medias. Cada uno con su velocidad, tamaño y vaivén; todo sale de t, sin estado.
+  if (!PP_AHORRO.flotantes()) return;   // «Ahorro de batería»: el fondo, solo con su dibujo (js/ahorro-juego.js)
   const suyas = (PP_FLOTA_MUNDO[k] || []).filter(k2 => PP_IMG[k2]);   // las del mundo (js/sprites.js); si aún no hay, la mezcla
   const hay = suyas.length >= 3 ? suyas : PP_FLOTANTES.filter(k2 => PP_IMG[k2]);
   for (let k2 = 0; k2 < 12; k2++) {
@@ -131,20 +132,24 @@ function ppPintaTablero(c, T, t) {
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
   // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
   const bandeja = ppBandejaParaTablero(estilo, ppBandejaActual().id);   // 'comprada', 'material' (la galleta de la Pastelería) o null
-  if ((T.mask && T.mask.some(v => !v)) || bandeja) ppBandeja(c, T, g, bandeja === 'material' ? estilo.material : null, !!(estilo && estilo.relieve));   // con forma, bonita o del mundo (js/bandeja.js)
+  const M = PP_MEDIDOR;   // el medidor por partes del panel DEV (js/medidor-partes.js): apagado, pinta todo y no mide
+  if (!M.pinta('bandeja')) { /* quitada en el medidor */ } else if ((T.mask && T.mask.some(v => !v)) || bandeja) ppBandeja(c, T, g, bandeja === 'material' ? estilo.material : null, !!(estilo && estilo.relieve));   // con forma, bonita o del mundo (js/bandeja.js)
   else if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
   else {
     c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();
     c.beginPath(); c.roundRect(g.x - 14, g.y - 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = T.tipo === 'jefe' ? '#ffe2b0' : '#e8d8ff'; c.fill(); c.lineWidth = 5; c.strokeStyle = '#7a4a8a'; c.stroke();
   }
-  for (let i = 0; i < T.up.length; i++) {
+  M.marca('bandeja');
+  for (let i = 0; i < T.up.length && M.pinta('burbujas'); i++) {
     const [cx, cy] = ppCentro(g, i);
     if (T.mask && !T.mask[i]) continue;   // los huecos de la forma (corazón, flor…) no llevan burbuja
     ppBurbuja(c, cx, cy, r, i, T.n, T.up[i], T.slimes[i] || null, T.pista === i, T.trampas.has(i), t, estilo);
     if (estilo && estilo.burbuja) ppCaritaEnBurbuja(c, cx, cy, r, i, T, t, estilo.caritas);   // js/caritas.js
     if (T.up[i] && (T.up[i] === 3 || (T.esp && T.esp[i]))) ppEspecial(c, cx, cy, r, i, T, t);
   }
-  ppEscPinta(c, T, g, r, t);   // la burbuja brillante: sin T.esc (flag `companeros` cerrado) no pinta nada (js/escondidos-juego.js)
+  M.marca('burbujas');
+  if (M.pinta('arcoiris')) ppEscPinta(c, T, g, r, t);   // la burbuja brillante: sin T.esc (flag `companeros` cerrado) no pinta nada (js/escondidos-juego.js)
+  M.marca('arcoiris');
   if (T.mano && T.pista !== null) { const [mx, my] = ppCentro(g, T.pista); ppMano(c, mx, my, t); }
   c.restore();
 }
@@ -172,7 +177,7 @@ function ppPintaMonedero(c, x, y) {
 }
 /* ---------- partículas, saltos y textos flotantes ---------- */
 function ppPintaEfectos(c, t) {
-  for (const p of PP_FX.parts) { c.beginPath(); c.arc(p.x, p.y, p.r * (1 - p.t / p.vida), 0, Math.PI * 2); c.fillStyle = p.col; c.fill(); }
+  for (let i = 0, paso = PP_AHORRO.pasoParticulas(); i < PP_FX.parts.length; i += paso) { const p = PP_FX.parts[i]; c.beginPath(); c.arc(p.x, p.y, p.r * (1 - p.t / p.vida), 0, Math.PI * 2); c.fillStyle = p.col; c.fill(); }
   for (const s of PP_FX.saltos) { const k = Math.min(1, s.t / 0.8), y = s.y - Math.sin(k * Math.PI) * 160 - k * 40; ppSlimeRepuestoOImagen(c, s.id, s.x, y, 34 + k * 16, t, 1); }
   for (const o of PP_FX.ondas) { const k = o.t / 0.45; c.beginPath(); c.arc(o.x, o.y, o.r * k, 0, Math.PI * 2); c.lineWidth = 10 * (1 - k); c.strokeStyle = `rgba(255,255,255,${1 - k})`; c.stroke(); }
   PP_ATAQUE_FX.pinta(c);   // estela, cositas y golpes de los ataques de los compañeros (flag 'ataques-companeros')
@@ -213,14 +218,16 @@ function ppTextoCabe(c, s, x, y, tam, ancho, col, borde) {
 }
 /* ---------- la sala entera ---------- */
 function ppPintaSala(c, t) {
-  const P = PP_P, T = P.T;
-  c.save();
+  const P = PP_P, T = P.T, M = PP_MEDIDOR;
+  c.save(); M.empieza();
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
-  ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, T.d ? T.d.dif || 0 : 0);
-  c.save(); c.translate(0, ppFxBote()); ppPintaTablero(c, T, t); c.restore();   // el botecito de la bandeja al tocar (tarea #110)
+  if (M.pinta('fondo')) ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, T.d ? T.d.dif || 0 : 0);
+  M.marca('fondo'); c.save(); c.translate(0, ppFxBote()); ppPintaTablero(c, T, t); c.restore();   // el botecito de la bandeja al tocar (tarea #110)
   if (T.nim) ppPintaFilaNim(c, T, t);
-  ppPintaMarcador(c, t);
-  ppPintaEfectos(c, t);
+  if (M.pinta('marcador')) ppPintaMarcador(c, t);
+  M.marca('marcador');   // con la fila del duelo del nivel
+  if (M.pinta('efectos')) ppPintaEfectos(c, t);
+  M.marca('efectos');
   c.restore();
   if (PP_FX.dano > 0) { c.fillStyle = `rgba(255,40,60,${PP_FX.dano * 0.35})`; c.fillRect(0, 0, 540, PP_V.H); }
 }

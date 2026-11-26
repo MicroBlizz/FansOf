@@ -33,7 +33,8 @@ function ppVentanaLola(aviso = '') {
   const invitar = ppBoton(tr('INVITAR AMIGOS'), 'pp-btn', () => ppAmInvita(invitar));
   const pie = ppAmEl('div', 'pp-am-pie pp-am-pie-suelto');
   pie.append(invitar, ppAmEl('p', 'pp-am-estado'));
-  t.append(pie, ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppAmVuelve));
+  t.append(pie);
+  ppBotonVolver(t, ppAmVuelve);
   ppAmEnlacePrepara();
 }
 function ppAmLolaToca() {
@@ -103,7 +104,7 @@ function ppVentanaRegaloAmigo(g) {
     t.appendChild(ppAmEl('p', 'pp-am-tope', tr('Dale las gracias (si quieres):')));
     t.append(...ppAmFrases(g.codigo, estado), estado);
   }
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', ppAmVuelve));
+  ppBotonVolver(t, ppAmVuelve);
 }
 /* ---------- RECOGER TODO ---------- */
 // primero el de Lola (es solo de hoy) y luego los de los amigos que quepan; lo que no cabe se queda esperando
@@ -150,7 +151,7 @@ async function ppAmMandaCorazon(a, boton) {
 function ppAmResumenTextos(s) {
   const titulo = s.enviados === 1 ? tr('¡1 corazón enviado!') : tr('¡{n} corazones enviados!', { n: s.enviados });
   if (s.caso === 'todos') return [titulo, tr('Mañana puedes volver a mandar.')];
-  if (s.caso === 'algunos') return [titulo, tr('A {n} de tus amigos ya no les caben más hoy, o ya les mandaste uno.', { n: s.llenos + s.ya })];
+  if (s.caso === 'algunos') { const n = s.llenos + s.ya; return [titulo, n === 1 ? tr('1 amigo ya tiene su corazón de hoy.') : tr('{n} amigos ya tienen su corazón de hoy.', { n })]; }
   if (s.caso === 'ninguno') return [tr('Hoy ya no se puede mandar más'), tr('Ya les mandaste uno hoy o ya tienen sus 5. ¡Mañana más!')];
   return [tr('Aún no tienes amigos'), tr('Invita a alguien con tu enlace y mandaos corazones.')];
 }

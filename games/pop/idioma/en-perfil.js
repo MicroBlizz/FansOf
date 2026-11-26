@@ -60,7 +60,7 @@ IDIOMA.add({
   "PEDIR A AMIGOS": "ASK FRIENDS",
   "COMPARTIR": "SHARE",
   "Pide corazones": "Ask for hearts",
-  "Pásale tu enlace a un amigo y te regalará un corazón.": "Send your link to a friend and they can gift you a heart.",
+  "Pasa tu enlace a un amigo: te regalará un corazón.": "Send your link to a friend: they'll gift you a heart.",
   "¡Me he quedado sin corazones en Fans of Pop! ¿Me regalas uno?": "I've run out of hearts in Fans of Pop! Will you gift me one?",
   "Para pedir corazones hace falta tu cuenta": "You need your account to ask for hearts",
   "Los corazones entre amigos no están disponibles ahora": "Hearts between friends aren't available right now",

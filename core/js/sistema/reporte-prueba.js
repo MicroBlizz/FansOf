@@ -154,6 +154,7 @@ const REPORTE = (() => {
     Object.assign(boton, { id: 'rp-boton', type: 'button', textContent: '!', title: tr_('Reportar una situación'), onclick: abre });
     boton.setAttribute('aria-label', tr_('Reportar una situación'));
     document.body.appendChild(boton);
+    FLOTANTES.movible(boton, { id: 'reportar', borde: 'izq', a: 0.5 });   // en la alfa y en local se arrastra a cualquier borde, como DEV (tarea #362, ADR 217)
     midiendoFps();
   }
 

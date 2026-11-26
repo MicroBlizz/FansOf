@@ -13,7 +13,8 @@ function ppIrA(p) {
   if (p !== 'duelo' && p !== 'sala') $pp('#pp-listo').hidden = true;
   if (p !== 'mapa') $pp('#pp-presenta').hidden = true;   // la presentación de un mundo es solo del camino (js/mundo-presenta-juego.js)
   $pp('#pp-pausa').hidden = p === 'titulo' || p === 'mapa';   // en el camino sobra: abajo ya están INICIO y TIENDA (tarea #272)
-  ppBarraAyudas(); ppPintaLateral(); ppPintaCamino();   // la barra de ayudas en los niveles; en el camino, los botones de los lados y la barra de abajo (js/camino-barra.js)
+  $pp('#pp-pausa').classList.toggle('pp-pausa-baja', ppBarraPausaBaja(p));   // en un nivel, bajo la barra (tarea #373, js/barra-recursos.js)
+  ppBarraAyudas(); ppMemPistaBoton(); ppPintaLateral(); ppPintaCamino();   // la barra de ayudas en los niveles; en el camino, los botones de los lados y la barra de abajo (js/camino-barra.js)
   if (p === 'mapa') setTimeout(ppAlLlegarAlCamino, 400);   // regalo diario y pack de bienvenida
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
@@ -32,12 +33,38 @@ function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-
 // la pausa dura lo que su ventana: se cierre por donde se cierre, el juego sigue (reporte 28, Daniel 19-11-2026)
 // al volver tras cerrar el juego a medias: el corazón se pierde igual (si no, recargar sería un reintento gratis), pero se dice (tarea #185)
 function ppVentanaSalioAMedias() {
-  const t = ppAbre(`<h2>${tr('¡Saliste a medias!')}</h2><p class="pp-sub">${tr('Cerraste el juego en mitad de un nivel y has perdido un corazón.')}</p>`);
+  const t = ppAbre(`<h2>${tr('¡Saliste a medias!')}</h2><p class="pp-sub">${tr('Saliste a mitad de nivel: pierdes un corazón.')}</p>`);
   t.appendChild(ppBoton(tr('¡VALE!'), 'pp-btn', ppCierra));
 }
 function ppCierra() { $pp('#pp-modal').hidden = true; PP_PANT.pausa = false; }
 function ppBoton(texto, clase, f) { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = () => { play('select'); f(); }; return b; }
 const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
+// cerrar o volver, igual en todas las pantallas (tarea 386; antes la flecha de la 346, que flotaba y pisaba títulos, pestañas y
+// listas): una franja fija arriba de la ventana `t`, con su fondo, el título en el centro (el <h2> de la ventana, o `op.titulo`) y una
+// burbuja con una X a la derecha, que se hunde y hace pop al pulsarla. Lo demás empieza debajo y, al bajar, se esconde bajo la franja
+// (css/pop.css, .pp-cab: una nube con su carita, boceto 2 de Pepins). En una ventana que viene de otra, `f` vuelve un paso atrás. Las
+// preguntas de sí o no (NO, VOLVER) siguen con sus botones: son una respuesta.
+// `op`: { titulo, izquierda (algo para la izquierda de la franja en vez de la carita: en Amigos, tus corazones),
+//         color: 'oro' | 'menta' | 'naranja' | 'coral' (el de lo que hay en la ventana; sin él, rosa) }
+const PP_COLORES_CERRAR = Object.freeze(['oro', 'menta', 'naranja', 'coral']);
+function ppBotonVolver(t, f, op = {}) {
+  const cab = document.createElement('div'); cab.className = 'pp-cab';
+  let h = t.querySelector(':scope > h2');
+  if (!h) h = document.createElement('h2');
+  if (!h.textContent) h.textContent = op.titulo || '';
+  const b = document.createElement('button'); b.type = 'button';
+  b.className = 'pp-cerrar' + (PP_COLORES_CERRAR.includes(op.color) ? ' pp-x-' + op.color : '');
+  b.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 13 35 35M35 13 13 35"/></svg>';
+  b.setAttribute('aria-label', tr('VOLVER'));
+  b.onclick = () => { play('ppPop', 0); f(); };   // suena como una burbuja del tablero
+  let izq = op.izquierda;
+  if (izq) izq.classList.add('pp-cab-izq');
+  else { izq = document.createElement('span'); izq.className = 'pp-cab-cara'; }
+  cab.append(izq, h, b);
+  t.classList.add('pp-con-cab');
+  t.prepend(cab);
+  return b;
+}
 // un botón turquesa que despliega y pliega una caja con lo menos usado (tarea #246). Se mete en la caja y luego se ponen los dos
 function ppPlegado(texto) {
   const caja = document.createElement('div'); caja.className = 'pp-plegado'; caja.hidden = true;
@@ -163,7 +190,7 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Haz pop en TODAS antes de quedarte sin toques.')}</p>
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
     <p class="pp-sub">${tr('Más adelante: la cereza pide tres golpes. El hielo, solo si lo tocas. La concha hace pop sin sus vecinas.')}</p>
-    <p class="pp-sub">${tr('Y luego: el cohete vacía su fila. La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
+    <p class="pp-sub">${tr('Y luego: el cohete, al reventar, levanta las hundidas de su fila (quítalo pronto). La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
     <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos. Gana al jefe y se abre el difícil.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
@@ -183,9 +210,12 @@ function ppOpciones() {
   col.appendChild(ppFilasSonido());
   const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-sec', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
   col.appendChild(vib);
+  const ahorro = () => (AHORRO.activo() ? tr('AHORRO DE BATERÍA: SÍ') : tr('AHORRO DE BATERÍA: NO'));   // core/js/sistema/ahorro.js (ADR 218): se nota al momento
+  const ah = ppBoton(ahorro(), 'pp-btn2 pp-sec', () => { AHORRO.cambia(); ah.textContent = ahorro(); });
+  col.appendChild(ah);
   col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
   if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
-  col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-volver', ppCierra));
+  ppBotonVolver(t, ppCierra, { color: 'menta' });
 }
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {
@@ -208,7 +238,7 @@ function ppPausa() {
   if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalDuelo(); }));
   if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-pago', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
-  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppEscSoloGratis(PP_P.T) ? tr('Si sales ahora pierdes un corazón y el compañero se va.') : tr('Si sales ahora pierdes un corazón.')}</p>`);
+  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppEscSoloGratis(PP_P.T) ? tr('Si sales, pierdes un corazón y al compañero.') : tr('Si sales ahora pierdes un corazón.')}</p>`);
   if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   col.appendChild(ppFilasSonido());

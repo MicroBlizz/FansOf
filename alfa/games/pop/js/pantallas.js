@@ -225,8 +225,14 @@ function ppConfirmaDeNuevo() {
   col.appendChild(ppBoton(tr('NO, VOLVER'), 'pp-btn', ppOpciones));
 }
 /* ---------- la pausa ----------
-   En un nivel: seguir, salir del nivel (vuelves al camino sin perder nada: el nivel se repite entero) o ir al menú principal
-   (el camino queda guardado y la portada ofrece SEGUIR). En el camino: seguir o menú principal. Y el sonido. */
+   En un nivel: seguir, salir del nivel (vuelves al camino; si ya has tocado, cuesta un corazón y el nivel se repite entero) o ir
+   al menú principal (el camino queda guardado y la portada ofrece SEGUIR). En el camino: seguir o menú principal. Y el sonido. */
+// el aviso de salir a medias (ppSalNivel, js/partida.js): con corazones infinitos no se pierde ninguno, y se dice (Pepins, tarea 250)
+function ppPausaAviso(T) {
+  const companero = ppEscSoloGratis(T);
+  if (ppInfinitas()) return companero ? tr('Tienes corazones infinitos: si sales, solo pierdes al compañero.') : tr('Tienes corazones infinitos: si sales, no pierdes ninguno.');
+  return companero ? tr('Si sales, pierdes un corazón y al compañero.') : tr('Si sales ahora pierdes un corazón.');
+}
 function ppPausa() {
   if (!$pp('#pp-modal').hidden) return;
   const enNivel = PP_PANT.actual === 'sala';
@@ -238,7 +244,7 @@ function ppPausa() {
   if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalDuelo(); }));
   if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-pago', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
-  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppEscSoloGratis(PP_P.T) ? tr('Si sales, pierdes un corazón y al compañero.') : tr('Si sales ahora pierdes un corazón.')}</p>`);
+  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppPausaAviso(PP_P.T)}</p>`);
   if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   col.appendChild(ppFilasSonido());

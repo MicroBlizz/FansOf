@@ -46,6 +46,8 @@ IDIOMA.add({
   "El siguiente corazón llega en {t}": "Next heart in {t}",
   "LLENAR": "REFILL",
   "Si sales ahora pierdes un corazón.": "If you leave now you lose a heart.",
+  "Tienes corazones infinitos: si sales, no pierdes ninguno.": "You have infinite hearts: if you leave, you lose none.",
+  "Tienes corazones infinitos: si sales, solo pierdes al compañero.": "You have infinite hearts: if you leave, you only lose the buddy.",
  "CrazyBunny": "CrazyBunny",
  "El Becario": "The Intern",
  "Lola": "Lola",

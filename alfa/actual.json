@@ -1,8 +1,8 @@
 {
- "build": 1543,
- "hash": "8729a2e",
- "fecha": "2026-11-26T21:15:16Z",
- "mensaje": "Pop: el Regalo diario se abre con animación, la caja tiembla y estalla y los premios vuelan a la barra (Pepins, tarea 383, boceto A)",
+ "build": 1544,
+ "hash": "74f980d",
+ "fecha": "2026-11-26T21:40:20Z",
+ "mensaje": "Pop: las ondas del toldo (Tienda, Ofertas y Feria) caen bajo sus rayas; estaban corridas 13px (tarea 386, Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

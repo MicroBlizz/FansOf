@@ -233,6 +233,16 @@ function ppPausaAviso(T) {
   if (ppInfinitas()) return companero ? tr('Tienes corazones infinitos: si sales, solo pierdes al compañero.') : tr('Tienes corazones infinitos: si sales, no pierdes ninguno.');
   return companero ? tr('Si sales, pierdes un corazón y al compañero.') : tr('Si sales ahora pierdes un corazón.');
 }
+// ¿salir del nivel T cuesta algo? Ya has tocado (SAVE.dentro: los niveles gratis no lo marcan) y pierdes un corazón o al compañero
+const ppSalirCuesta = T => !!T && !!SAVE.dentro && (!ppInfinitas() || !!ppEscSoloGratis(T));
+// doble confirmación al salir (Pepins, tarea 250): si cuesta algo, se pregunta con el aviso; si es gratis, se sale directo
+function ppConfirmaSalir(T, salir) {
+  if (!ppSalirCuesta(T)) { salir(); return; }
+  const t = ppAbre(`<h2>${tr('¿Salir del nivel?')}</h2><p class="pp-sub">${ppPausaAviso(T)}</p>`);
+  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
+  col.appendChild(ppBoton(tr('NO, SEGUIR JUGANDO'), 'pp-btn', ppQuitaPausa));
+  col.appendChild(ppBoton(tr('SÍ, SALIR'), 'pp-btn2 pp-volver', salir));
+}
 function ppPausa() {
   if (!$pp('#pp-modal').hidden) return;
   const enNivel = PP_PANT.actual === 'sala';
@@ -245,8 +255,9 @@ function ppPausa() {
   if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-pago', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
   if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppPausaAviso(PP_P.T)}</p>`);
-  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
-  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
+  const T = enNivel && PP_P ? PP_P.T : null;   // los dos botones de salir piden confirmación si cuesta (ppConfirmaSalir)
+  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-volver', () => ppConfirmaSalir(T, () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); })));
+  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-volver', () => ppConfirmaSalir(T, () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); })));
   col.appendChild(ppFilasSonido());
 }
 function ppQuitaPausa() { ppCierra(); }   // cerrar la ventana ya acaba con la pausa (ppCierra)

@@ -1,8 +1,8 @@
 {
- "build": 1534,
- "hash": "378ad5a",
- "fecha": "2026-11-26T17:57:52Z",
- "mensaje": "Pop: con corazones infinitos, la Pausa dice que salir no cuesta ninguno (Pepins, tarea 250)",
+ "build": 1535,
+ "hash": "f68e7ea",
+ "fecha": "2026-11-26T18:29:02Z",
+ "mensaje": "Pop: salir del nivel pide confirmación si cuesta un corazón (Pepins, tarea 250)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

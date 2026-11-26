@@ -1,8 +1,8 @@
 {
- "build": 1530,
- "hash": "04484d6",
- "fecha": "2026-11-26T11:29:21Z",
- "mensaje": "Pop combos: los letreros salen en fila, uno tras otro (Pepins, tarea 399)",
+ "build": 1531,
+ "hash": "66f8431",
+ "fecha": "2026-11-26T11:56:09Z",
+ "mensaje": "Comparador: Ctrl-C corta de verdad, la preparación de un juego va con semilla fija y avisa si falla, --a-la-vez se valida (revisión, tarea 398)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

@@ -10,7 +10,7 @@
    ],
    "cartel": true,
    "estado": "vivo",
-   "favorito": false
+   "favorito": true
   },
   {
    "id": "td",
@@ -312,7 +312,7 @@
    ],
    "cartel": true,
    "estado": "vivo",
-   "favorito": false
+   "favorito": true
   },
   {
    "id": "snakes",

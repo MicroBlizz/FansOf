@@ -4,7 +4,7 @@
 // · La partida se sigue guardando primero aquí (saveGame). Cada cambio la marca como pendiente y se sube un rato después, al ocultar la página
 //   y al volver la conexión. En la nube hay una fila por juego, con un número de versión que sube en cada subida.
 // · Al abrir el juego se mira la nube: si otro aparato subió una más nueva y aquí no hay nada pendiente, se usa esa (recargando la página);
-//   si las dos cambiaron, se pregunta cuál quedarse. Sin conexión no pasa nada: se juega igual y se sube al volver.
+//   si las dos cambiaron, se pregunta cuál quedarse (una vez por partida de la nube: cuenta/dominio/eleccion.js). Sin conexión no pasa nada: se juega igual y se sube al volver.
 // · No funciona dentro de otra página (el comparador), ni en un archivo abierto a mano, ni con ?nube=0.
 'use strict';
 const CUENTA = (() => {
@@ -89,52 +89,63 @@ const CUENTA = (() => {
     if (r && r.ok) { meta = { version: r.version, pendiente: cambios !== antes }; guardarMeta(); estado = 'al día'; return null; }
     return r;   // choque: alguien subió otra antes
   }
+  // Tras elegir en la ventana, se recuerda (CUENTA_ELECCION, tarea 408): no se vuelve a preguntar por esa misma partida de la nube.
+  // recargando: el texto de la partida de la nube ya escrita aquí; hasta que la página se recargue, un guardado del juego no la pisa (cambio()).
+  let eleccion = null, recargando = null;
   function usar(nube) {   // la de la nube pasa a ser la de aquí; la página se recarga para que el juego la lea desde el principio
     if (!nube.datos || pausada) return;
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify(nube.datos)); } catch (e) { return; }
+    const texto = JSON.stringify(nube.datos);
+    try { localStorage.setItem(SAVE_KEY, texto); } catch (e) { eleccion = CUENTA_ELECCION.elige('nube', nube.version); noSeUso(e); return; }
+    recargando = texto;
     meta = { version: nube.version, pendiente: false }; guardarMeta();
     location.reload();
+    setTimeout(sinRecargar, 5000);
   }
-  // Huella de la partida: cuenta TODO (progreso, compras, equipo, mazos, contratos, ajustes): nada se pierde sin avisar.
-  // Si la huella coincide no se pregunta nada; si no, se enseña un resumen de en qué se diferencian para elegir con datos.
-  const canon = v => (Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((o, k) => (v[k] === undefined ? o : (o[k] = canon(v[k]), o), o), {}) : v);
-  const huella = s => { try { const t = JSON.stringify(canon(s)); let h = 5381; for (let i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0; return h + ':' + t.length; } catch (e) { return String(Math.random()); } };
-  // idle.last es la hora de la última visita: cambia en cada apertura y no es progreso, así que no cuenta
-  const sinHora = s => (s && s.idle && typeof s.idle === 'object' ? Object.assign({}, s, { idle: Object.assign({}, s.idle, { last: undefined }) }) : s);
-  const iguales = (a, b) => huella(sinHora(a)) === huella(sinHora(b));
-  const suma = (o, f) => Object.keys(o || {}).reduce((a, k) => a + (f ? f(o[k]) : +o[k]) || a, 0);
-  const num = v => (typeof v === 'number' && isFinite(v) ? v : 0), cuenta = o => Object.keys(o || {}).length;
-  // lo que se enseña de cada partida: [qué, valor]; el que valga 0 en las dos no sale. Un juego con otra partida (los ligeros)
-  // define resumenPartida(s) con sus propias filas [[texto en español, número], …]; si no, valen las de los juegos completos.
-  const resumen = s => (typeof resumenPartida === 'function' ? resumenPartida(s || {}) : resumenComun(s));
-  const resumenComun = s => [
-    ['Oro', num(s.gold)], ['Gemas', num(s.gems)],
-    ['Nivel de las cartas (suma)', suma(s.units, u => num(u && u.lvl))], ['XP de las cartas', suma(s.units, u => num(u && u.xp))],
-    ['Cartas conseguidas', cuenta(s.cards)], ['Estrellas de las cartas', suma(s.cards, c => num(c && c.st))],
-    ['Habilidades y objetos', Array.isArray(s.inv) ? s.inv.length : 0], ['Con contrato indefinido', Array.isArray(s.inv) ? s.inv.filter(i => i && i.lock).length : 0],
-    ['Equipados', cuenta(s.abEquip) + suma(s.equip, e => cuenta(e))], ['Mazos', cuenta(s.decks)], ['Tickets', num(s.tickets)], ['Facciones desbloqueadas', Array.isArray(s.unlocked) ? s.unlocked.length : 0], ['Estrellas de los niveles', suma(s.stars, num)],
-    ['Niveles de campaña pasados', cuenta(s.camp)], ['XP del pase', num(s.pass && s.pass.xp)], ['Logros', Array.isArray(s.achDone) ? s.achDone.length : 0],
-  ];
-  function preguntar(nube, t) {
-    if (nube.datos && iguales(nube.datos, SAVE)) {   // son la misma partida: no se pregunta, solo se apunta que ya coinciden
-      meta = { version: nube.version, pendiente: false }; guardarMeta(); estado = 'al día'; return;
-    }
+  // el navegador no deja guardar (memoria llena, modo privado): se dice, se apunta para buscar la causa y se sigue con la de aquí, sin subirla
+  function noSeUso(e) {
+    if (typeof ERRORES !== 'undefined') ERRORES.registrar('cuenta', 'usar-nube', (e && (e.name || e.message)) || e);
+    if (typeof confirmBox === 'function') confirmBox(tr('NO SE HA PODIDO CAMBIAR'), tr('Este navegador no deja guardar la partida de la nube (puede que tenga la memoria llena). Sigues con la de este aparato y no se sube: la de la nube no se toca. Al volver a abrir el juego se te preguntará otra vez.'), '', null, tr('VALE'));
+  }
+  // la página ya debería haberse ido; si a los 5 s sigue aquí, se apunta y se pide recargar (mientras, lo que guarde el juego no pisa la de la nube: cambio())
+  function sinRecargar() {
+    if (typeof ERRORES !== 'undefined') ERRORES.registrar('cuenta', 'usar-nube', 'sin recargar');
     if (typeof confirmBox !== 'function') return;
-    const n = v => (typeof fmt === 'function' ? fmt(v) : String(v));
-    const aqui = resumen(SAVE), alla = resumen(nube.datos || {});
-    const filas = aqui.map((a, i) => [a[0], a[1], alla[i][1]]).filter(f => f[1] !== f[2]);
-    const A = sinHora(SAVE) || {}, B = sinHora(nube.datos) || {}, otras = Object.keys(Object.assign({}, A, B)).filter(k => huella(A[k]) !== huella(B[k])).length;   // campos que difieren en total
-    const mas = (x, y) => (x > y ? ' ▲' : '');
+    confirmBox(tr('VUELVE A ABRIR EL JUEGO'), tr('Para seguir con la partida de la nube hay que volver a abrir el juego. Lo que juegues antes no se guarda.'), tr('RECARGAR'), () => location.reload());
+    const no = document.getElementById('cf-no'); if (no) no.hidden = true;
+  }
+  // lo que se enseña de cada partida: [qué, valor]; el que valga 0 en las dos no sale. Un juego con otra partida (los ligeros)
+  // define resumenPartida(s) con sus propias filas [[texto en español, número], …]; si no, valen las de los juegos completos (CUENTA_ELECCION.resumenComun).
+  const resumen = s => (typeof resumenPartida === 'function' ? resumenPartida(s || {}) : CUENTA_ELECCION.resumenComun(s || {}));
+  // Si la partida coincide (CUENTA_ELECCION.iguales: cuenta TODO menos la hora de la visita) no se pregunta; si no, un resumen de en qué se diferencian
+  // Devuelve una promesa: sincronizaYa la espera, para que el reintento de «LA DE ESTE APARATO» quede dentro de la misma sincronización
+  function preguntar(nube, t) {
+    if (nube.datos && CUENTA_ELECCION.iguales(nube.datos, SAVE)) {   // son la misma partida: no se pregunta, solo se apunta que ya coinciden
+      meta = { version: nube.version, pendiente: false }; guardarMeta(); estado = 'al día'; return Promise.resolve();
+    }
+    const paso = CUENTA_ELECCION.paso(eleccion, nube.version);
+    // ya eligió la de aquí: se vuelve a subir sin preguntar; si la nube ha cambiado entretanto, eso sí se pregunta
+    if (paso === 'subir') return subir(t, nube.version).then(choque => choque && (choque.datos ? preguntar(choque, t) : subir(t, 0)), () => { /* se intenta otra vez luego */ });   // sin datos: la de la nube ya no existe
+    if (paso === 'preguntar' && typeof confirmBox === 'function') ventana(nube, t);   // 'nada': ya eligió la de la nube; no se sube la de aquí encima
+    return Promise.resolve();
+  }
+  function ventana(nube, t) {
+    const n = v => (typeof fmt === 'function' ? fmt(v) : String(v)), mas = (x, y) => (x > y ? ' ▲' : '');
+    const filas = CUENTA_ELECCION.filas(resumen(SAVE), resumen(nube.datos || {})), otras = CUENTA_ELECCION.diferencias(SAVE, nube.datos);
     const cuando = nube.cambiado ? '<br><small>' + tr('En la nube') + ': ' + new Date(nube.cambiado).toLocaleString(NUCLEO.idioma) + '</small>' : '';
     const tabla = '<table style="width:100%;margin-top:8px;font-size:.9em"><tr><th></th><th>' + tr('En este aparato') + '</th><th>' + tr('En la nube') + '</th></tr>' +
-      (filas.length ? filas.map(f => `<tr><td style="text-align:left">${tr(f[0])}</td><td>${n(f[1])}${mas(f[1], f[2])}</td><td>${n(f[2])}${mas(f[2], f[1])}</td></tr>`).join('')
-        : '') + `<tr><td colspan="3"><small>${tr('Apartados de la partida que difieren: {n}', { n: otras })}</small></td></tr></table>`;
+      filas.map(f => `<tr><td style="text-align:left">${tr(f[0])}</td><td>${n(f[1])}${mas(f[1], f[2])}</td><td>${n(f[2])}${mas(f[2], f[1])}</td></tr>`).join('') +
+      `<tr><td colspan="3"><small>${tr('Apartados de la partida que difieren: {n}', { n: otras })}</small></td></tr></table>`;
     confirmBox(tr('¿QUÉ PARTIDA QUIERES?'), tr('Has jugado en este aparato y en otro, y las dos partidas son distintas. Elige con cuál sigues; la otra se pierde. ▲ marca dónde hay más.') + tabla + cuando,
       tr('LA DE LA NUBE'), () => usar(nube));
     const no = document.getElementById('cf-no');
     if (no) {
       no.textContent = tr('LA DE ESTE APARATO');
-      no.onclick = () => { if (typeof play === 'function') play('select'); (typeof cerrarConfirmBox === 'function' ? cerrarConfirmBox : () => { document.getElementById('scr-confirm').hidden = true; })(); subir(t, nube.version).catch(() => { /* se intenta otra vez luego */ }); };
+      no.onclick = () => {
+        eleccion = CUENTA_ELECCION.elige('aqui', nube.version);
+        if (typeof play === 'function') play('select');
+        (typeof cerrarConfirmBox === 'function' ? cerrarConfirmBox : () => { document.getElementById('scr-confirm').hidden = true; })();
+        subir(t, nube.version).catch(() => { /* se intenta otra vez luego: ya no se pregunta por esta partida de la nube */ });
+      };
     }
   }
   // pausa(true): no se sube ni se baja la partida hasta pausa(false) o hasta recargar; los cambios se siguen apuntando como pendientes.
@@ -163,14 +174,14 @@ const CUENTA = (() => {
       const t = await token();
       if (alAbrir || !meta.version) {
         const nube = await deLaNube(t), vn = nube ? nube.version : 0;
-        if (vn > meta.version) { if (meta.pendiente) preguntar(nube, t); else usar(nube); return; }
+        if (vn > meta.version) { if (meta.pendiente) await preguntar(nube, t); else usar(nube); return; }
         if (vn < meta.version) meta.version = vn;   // la de la nube se borró: se vuelve a subir la de aquí
         if (!meta.pendiente && vn) { estado = 'al día'; return; }
       }
-      if (!meta.pendiente) return;
+      if (!meta.pendiente || (eleccion && eleccion.cual === 'nube')) return;   // eligió la nube y no se pudo guardar aquí: la de aquí no se sube
       let choque = await subir(t, meta.version);
       if (choque && !choque.datos) { meta.version = 0; choque = await subir(t, 0); }   // la de la nube ya no existe: se sube la de aquí
-      if (choque) preguntar(choque, t);
+      if (choque) await preguntar(choque, t);
     } catch (e) {
       estado = 'sin conexión';   // se intenta al volver la conexión, en el próximo cambio o al abrir otra vez
     } finally { ocupado = false; }
@@ -199,7 +210,7 @@ const CUENTA = (() => {
     const t = h.get('access_token'), user = await pedir('/auth/v1/user', {}, t);
     const antes = leer(SESION, null), nueva = deSesion({ access_token: t, refresh_token: h.get('refresh_token'), expires_in: +h.get('expires_in') || 3600, user });
     escribir(SESION, nueva);
-    if (!antes || antes.usuario !== nueva.usuario) { meta = { version: 0, pendiente: (() => { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } })() }; guardarMeta(); }
+    if (!antes || antes.usuario !== nueva.usuario) { meta = { version: 0, pendiente: (() => { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } })() }; guardarMeta(); eleccion = null; }
     aviso = tr('Listo: tu progreso se guarda en tu cuenta.');
   }
   // invitado → cuenta con email: llega un enlace; al abrirlo, esta misma cuenta (con su partida) queda guardada con ese email
@@ -232,18 +243,22 @@ const CUENTA = (() => {
     try { if (s) await pedir('/auth/v1/logout' + scope, { method: 'POST' }, s.access); } catch (e) { if (alcance === 'global') throw e; /* si no, da igual: se olvida aquí */ }
     try { localStorage.removeItem(SESION); } catch (e) { /* sin almacenamiento */ }
     CUENTA_ROLES.sesion.olvidar();   // los roles eran de esa cuenta (ADR 097)
-    meta = { version: 0, pendiente: true }; guardarMeta();   // la partida de este aparato sigue aquí; irá a una cuenta de invitado nueva
+    meta = { version: 0, pendiente: true }; guardarMeta(); eleccion = null;   // la partida de este aparato sigue aquí; irá a una cuenta de invitado nueva
   }
   async function borrarCuenta() {   // la cuenta y todas sus partidas en la nube; lo de este aparato no se toca
     await pedir('/rest/v1/rpc/borrar_mi_cuenta', { method: 'POST', body: '{}' }, await token());
     try { localStorage.removeItem(SESION); } catch (e) { /* sin almacenamiento */ }
     CUENTA_ROLES.sesion.olvidar();   // los roles eran de esa cuenta (ADR 097)
-    meta = { version: 0, pendiente: true }; guardarMeta();
+    meta = { version: 0, pendiente: true }; guardarMeta(); eleccion = null;
   }
 
   // ---------- lo llama saveGame: hay algo nuevo que subir ----------
   function cambio() {
     if (!activa) return;
+    if (recargando !== null) {   // se acaba de elegir la de la nube y la página se está recargando: lo que el juego acaba de guardar era la de antes
+      try { localStorage.setItem(SAVE_KEY, recargando); } catch (e) { /* ya se escribió en usar(): si ahora falla, nada que hacer */ }
+      return;
+    }
     cambios++;
     if (!meta.pendiente) { meta.pendiente = true; guardarMeta(); }
     clearTimeout(temporizador); temporizador = setTimeout(() => sincronizar(false), ESPERA);

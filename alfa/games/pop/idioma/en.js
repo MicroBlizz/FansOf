@@ -19,6 +19,7 @@ IDIOMA.add({
   "Salir del duelo": "Leave the duel",
   "Perlas": "Pearls",
   "Monedas": "Coins",
+  "Niveles pasados": "Levels beaten",
   "¡LISTO!": "DONE!",
   "¡Te quedan {n} burbujas! ¿Sigues?": "Only {n} bubbles left! Keep going?",
   "¡Te queda 1 burbuja! ¿Sigues?": "Only 1 bubble left! Keep going?",

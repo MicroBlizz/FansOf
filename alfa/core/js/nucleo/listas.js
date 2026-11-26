@@ -3,7 +3,7 @@
 // La lee también herramientas/idioma_claves.py (LIGERO).
 'use strict';
 (() => {
-  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js', 'idioma/en-tienda-gemas.js', 'idioma/en-amigos.js'],
+  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-cuenta.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js', 'idioma/en-tienda-gemas.js', 'idioma/en-amigos.js'],
     pt: ['idioma/pt-ligero.js'], fr: ['idioma/fr-ligero.js'], de: ['idioma/de-ligero.js'], it: ['idioma/it-ligero.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...], pt: [...] } }). De momento solo el inglés cubre todo lo común: los demás idiomas llevan lo que usan los juegos ligeros (*-ligero.js) y un juego solo los ofrece si tiene su diccionario
 
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
@@ -33,6 +33,7 @@
     'js/sistema/probador.js',     // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
     'js/sistema/probador-partida.js',   // qué queda de la partida de core al resetear una cuenta de probador (PROBADOR_PARTIDA) y su gancho
     'js/cuenta/invitado-prueba.js', // el interruptor «Ver como invitado» del panel DEV (ADR 227); antes de cuenta.js
+    'js/cuenta/dominio/eleccion.js', // la ventana «¿QUÉ PARTIDA QUIERES?»: comparar partidas y recordar lo elegido (tarea 408); antes de cuenta.js
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097): dominio, casos de uso y adaptadores
     'js/cuenta/roles.js',         //           su composición (CUENTA.roles), ya con CUENTA cargada
@@ -93,6 +94,7 @@
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/probador.js',      // la cuenta de probador (rol alfa, ADR 146): comprar sin pagar, sumarse moneda y resetear la cuenta (PROBADOR); antes de cuenta.js
     'js/cuenta/invitado-prueba.js', // el interruptor «Ver como invitado» del panel DEV (ADR 227); antes de cuenta.js
+    'js/cuenta/dominio/eleccion.js', // la ventana «¿QUÉ PARTIDA QUIERES?»: comparar partidas y recordar lo elegido (tarea 408); antes de cuenta.js
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/cuenta/dominio/roles.js', 'js/cuenta/aplicacion/roles-casos.js', 'js/cuenta/adaptadores/roles-servidor.js', 'js/cuenta/adaptadores/roles-almacen.js',   // los roles de la cuenta (ADR 097)
     'js/cuenta/roles.js',          //           su composición (CUENTA.roles)

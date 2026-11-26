@@ -1,8 +1,8 @@
 {
- "build": 1526,
- "hash": "37479eb",
- "fecha": "2026-11-26T07:48:09Z",
- "mensaje": "Pop combos: reglas como PP_COMBOS_R (PP_COMBO_R ya es del reto, tarea 395) y el 201 en la prueba de cuenta_tablas",
+ "build": 1527,
+ "hash": "57f23e9",
+ "fecha": "2026-11-26T09:56:51Z",
+ "mensaje": "Pop DEV: botón «Abrir todas las pesadillas» (Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

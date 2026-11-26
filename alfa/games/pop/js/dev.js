@@ -42,6 +42,7 @@ const UTILIDADES_JUEGO = [{ titulo: 'Fans of Pop: dinero de prueba', pinta(caja)
   boton(d, 'Amigos: te adelanta uno', ppAdelantoDev);
   d = fila();
   boton(d, 'Abrir todos los mundos', () => { if (!PP_P && !ppSigueCamino()) ppNuevaRuta(); PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; ppGuardaCamino(); });
+  boton(d, 'Abrir todas las pesadillas', ppDevPesadillas);   // Pepins, 26-11-2026
   d = fila();
   boton(d, (SAVE.devCopiaCamino ? '● ' : '') + 'Ponerme en el jefe del Jardín', ppDevAlJefe);
   boton(d, 'Devolver mi partida', ppDevDevuelve);
@@ -90,6 +91,17 @@ function ppDevAlJefe() {
   if (SAVE.fallos) delete SAVE.fallos[ppPrefijo(0) + g];
   ppGuardaCamino();
   return 'Camino en el jefe del Jardín (copia guardada)';
+}
+// todos los niveles de pesadilla de todos los mundos, para jugar el que quieras (Pepins, 26-11-2026): la pesadilla se abre al ganar el
+// difícil entero (ppPesAbierta en js/partida.js), así que se dan por pasados el camino, los difíciles y las pesadillas. Lo ya avanzado
+// no baja
+function ppDevPesadillas() {
+  if (PP_P && PP_P.T) return 'Sal antes del nivel';
+  if (!PP_P && !ppSigueCamino()) ppNuevaRuta();
+  PP_P.nivel = PP_TOTAL_NIVELES; PP_P.pendientes = []; PP_P.pes = PP_P.pes || {};
+  PP_MUNDOS.forEach((M, m) => { PP_P.dif[m] = Math.max(PP_P.dif[m] || 0, M.niveles); PP_P.pes[m] = Math.max(PP_P.pes[m] || 0, M.niveles); });
+  ppGuardaCamino();
+  return 'Todas las pesadillas abiertas';
 }
 // vuelve el camino de la copia; las perlas y lo demás no se tocan
 function ppDevDevuelve() {

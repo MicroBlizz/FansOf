@@ -112,6 +112,7 @@ function ppTutorialesNivel(d) {
   else if (d.dificil) ppTutorial('dificil');
   if (d.jefe) ppTutorial('jefe');
   if (PP_P.equipo.length) ppTutorial('amigo');
+  if (ppComboExplica(d)) ppTutorial('combos');   // tarea 396
   ppExplicaTutorial(d);   // flag `companeros`: tocar el equipo explica lo que hace (js/equipo-explica.js)
   if (SAVE.monedas > 0) ppTutorial('monedas');
 }
@@ -130,7 +131,7 @@ function ppToque(i) {
   ppManitaSigue(T);
   if (r.libre) ppFlota(tr('¡Gratis!'), 270, 240, '#3a8ee6');
   const bueno = r.golpes >= 3;   // un toque que revienta (o resquebraja) 3 o más
-  if (T.combo >= 2 && bueno) { ppFxCombo(T.combo); if (!SAVE.tuto.combo) ppTutorial('combo'); }
+  if (T.combo >= 2 && bueno) { ppFxCombo(T.combo); ppTutoCombo(T); }
   PP_COMBO.toque(T, bueno);   // monedas, ranking de la semana, misiones y logros de combo (js/combos.js, tarea 396)
   ppTrasToque(T, i, r);
   if (T.hecho) return;
@@ -143,7 +144,8 @@ function ppToque(i) {
 // seguir (anuncio o perlas, js/tienda.js) o rendirse y perder el corazón. Antes, Al rescate da sus toques (una vez por nivel)
 function ppMiraSinToques(T) {
   if (T.toques < T.limite || T.gratis !== 0 || ppHabRescata(T)) return;
-  T.parado = true; setTimeout(() => { if (PP_P && PP_P.T === T && !T.hecho) ppSinToquesOSeguir(T); }, 800);
+  // si mientras tanto el salto de un amigo te da un toque gratis (Horas extra con un combo, tarea 396), se sigue jugando
+  T.parado = true; setTimeout(() => { if (!PP_P || PP_P.T !== T || T.hecho) return; if (T.gratis > 0) T.parado = false; else ppSinToquesOSeguir(T); }, 800);
 }
 // la manita de los primeros niveles pasa a la siguiente de la solución
 function ppManitaSigue(T) { if (T.mano) { const s = [...T.sol]; T.pista = s.length ? s[0] : null; } }
@@ -153,6 +155,18 @@ function ppCombosEquipo(T) {
   if (ppEnEquipo('becario') && T.combo % becario.combo === 0) { T.gratis += becario.gratis; ppFxHabilidad('becario'); PP_ATAQUE_FX.luce('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
   if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola'); play('ppPista'); } }
 }
+// flag `combos` (tarea 396): el salto de un amigo que revienta 3 o más sube tu combo, con su letrero y lo que da (js/combos.js)
+// (devuelve si lo ha subido)
+function ppComboAmigo(T, r) {
+  if (!PP_COMBO.amigo(T, r.golpes)) return false;
+  if (T.combo >= 2) ppFxCombo(T.combo);
+  if (!T.hecho) ppCombosEquipo(T);
+  return true;
+}
+// lo que explica Lola de los combos: con el flag `combos`, la explicación entera, pasados los tres primeros niveles del mundo 1 (sale al
+// empezar un nivel: ppTutorialesNivel); antes, o con el flag cerrado, la frase corta tras el primer x2
+const ppComboExplica = d => PP_COMBO.activo() && !d.nim && (d.mundo > 0 || d.l > 3);
+const ppTutoCombo = T => ppTutorial(ppComboExplica(T.d) ? 'combos' : 'combo');
 // el premio gordo de la Caja de botín: un toque de 4 da +1 toque; uno de 5, +1 corazón (si falta alguno y hoy no ha dado ya 3: tarea #236)
 // (con estrellas, el corazón desde 4 pops y uno más al día: js/coleccion.js, tarea #294)
 function ppPremioGordo(T, r) {
@@ -190,6 +204,7 @@ function ppSaltaSlime(id, k, golpes) {
   const objetivos = (suyas.length ? suyas.sort(() => Math.random() - 0.5) : ppSolEnOrden(T) ? [...T.sol] : [...T.sol].sort(() => Math.random() - 0.5)).slice(0, golpes);
   if (!objetivos.length) return;
   ppFxHabilidad(id); PP_ATAQUE_FX.suena(id);   // el sonido de su ataque (js/ataques-fx.js; con el flag cerrado, ppSalto)
+  let comboSubido = false;   // un salto sube el combo una vez, como un toque tuyo, aunque golpee varias burbujas (tarea 396)
   objetivos.forEach((i, g) => {
     const dur = 0.5 + g * 0.18;
     ppFxVuelo(id, k, i, T.n, dur);
@@ -199,6 +214,7 @@ function ppSaltaSlime(id, k, golpes) {
       const r = ppToca(T, j, true); if (!r) return;
       ppFxToque(T, j, r); PP_ATAQUE_FX.golpe(T, j, id);
       ppManitaSigue(T);
+      if (!comboSubido) comboSubido = ppComboAmigo(T, r);
       ppTrasToque(T, j, r);
     }, dur * 1000);
   });

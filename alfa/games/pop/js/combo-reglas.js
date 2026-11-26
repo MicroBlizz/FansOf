@@ -14,6 +14,9 @@ const PP_COMBOS_R = (() => {
 
   // los puntos (y monedas) de un paso de combo: nada hasta x3; en Pesadilla (`lo`), el doble
   const puntos = (n, lo) => (entero(n) >= 3 ? (entero(n) - 2) * (lo ? 2 : 1) : 0);
+  // el combo tras el salto de un compañero (Pepins, 26-11-2026): si revienta 3 o más, sube uno, como un toque tuyo; si revienta menos,
+  // no lo rompe
+  const deAmigo = (combo, golpes) => entero(combo) + (entero(golpes) >= 3 ? 1 : 0);
 
   // el lunes de la semana de un día (la semana del ranking va de lunes a domingo); `atras` semanas antes
   function lunes(dia, atras = 0) {
@@ -64,5 +67,5 @@ const PP_COMBOS_R = (() => {
     return e;
   }
 
-  return Object.freeze({ TOPE_SEMANA, diaValido, puntos, lunes, deHoy, paso, pendientes, trasSubir });
+  return Object.freeze({ TOPE_SEMANA, diaValido, puntos, deAmigo, lunes, deHoy, paso, pendientes, trasSubir });
 })();

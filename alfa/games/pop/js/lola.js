@@ -15,6 +15,8 @@ const PP_TUTO = {
   w1n3: [{ t: 'Arriba ves los toques que te quedan.' }],
   amigo: [{ t: '¡Tienes un amigo! Te ayuda cuando llena su barrita.' }],
   combo: [{ t: '¡Combo! Haz pop en 3 o más de un toque.' }],
+  // con el flag `combos` (tarea 396), la explicación entera, al empezar un nivel (antes del primer combo)
+  combos: [{ t: '¡Combo! Pop en 3 o más, varios toques seguidos. Desde x3, monedas.' }],
   dificil: [{ t: 'Nivel difícil: muy pocos toques. ¡Piensa bien!' }],
   jefe: [{ t: '¡Nivel jefe! El CEO casi nunca falla.' }],
   nimNivel: [{ t: 'Por turnos, pop en una fila. ¡Pierde quien haga la última!' }],

@@ -3,6 +3,7 @@
 // · toque(T, bueno): tras cada toque tuyo (js/partida.js). Desde COMBO x3 da monedas (con tope al día) y puntos para el ranking de la
 //   semana, en Pesadilla el doble; apunta tu mejor combo del nivel (T.comboMax) y si has batido tu récord (T.comboRecord); cuenta para
 //   las misiones del Pase (js/pase-nuevo.js) y para los logros de combo de aquí (LOGROS).
+// · amigo(T, golpes): tras el salto de un compañero (js/partida.js): con 3 o más sube el combo; con menos, no lo rompe.
 // · sube(): sube tus puntos si el servidor aún no los tiene (también lo que quedó de la semana anterior): sola, 4 s tras el último combo, y
 //   desde ppSubeMarcas (js/ranking.js); sin red, quedan para luego.
 // · ranking(lunes): el de esa semana tras subir lo tuyo, para la pestaña «Combos» (js/ranking.js). lunes(): el lunes de esta semana.
@@ -51,6 +52,14 @@ const PP_COMBO = (() => {
     ppGuarda();
     clearTimeout(espera); espera = setTimeout(sube, ESPERA_SUBIR);   // los puntos suben solos al poco del último combo
   }
+  // el salto de un compañero (js/partida.js, una vez por salto): si revienta 3 o más, sube tu combo (con sus monedas, puntos, misiones y logros, como un toque
+  // tuyo); si revienta menos, no lo rompe. Devuelve si ha subido. En Pesadilla y en los duelos no saltan
+  function amigo(T, golpes) {
+    if (!activo() || T.nim || T.lo || !(golpes >= 3)) return false;
+    T.combo = PP_COMBOS_R.deAmigo(T.combo, golpes);
+    toque(T, true);
+    return true;
+  }
 
   // sube lo pendiente, de uno en uno: primero lo que quedó de la semana anterior y luego lo de esta. Sin red, se queda para luego;
   // lo que el servidor no quiere (no_vale) se da por subido para no repetirlo siempre
@@ -76,5 +85,5 @@ const PP_COMBO = (() => {
     const total = (SAVE.comboLogros && SAVE.comboLogros.retos && SAVE.comboLogros.retos.total) || {};
     return Object.fromEntries(DEF_LOGROS.filter(l => (total[l.ev] || 0) >= l.goal).map(l => [l.id, true]));
   }
-  return Object.freeze({ activo, lunes, toque, sube, ranking, logros, cobrar, titulos });
+  return Object.freeze({ activo, lunes, toque, amigo, sube, ranking, logros, cobrar, titulos });
 })();

@@ -18,5 +18,6 @@ IDIOMA.add({
   "puntos": "points",
   "COMBO x3 = 1 punto, x4 = 2… Se empieza de cero cada lunes.": "COMBO x3 = 1 point, x4 = 2… It starts from zero every Monday.",
   "Con un logro": "Achievement",
+  "¡Combo! Pop en 3 o más, varios toques seguidos. Desde x3, monedas.": "Combo! Pop 3 or more, several taps in a row. From x3, coins.",
   "Se consigue con un logro de combo: míralos en el Pase.": "You get it with a combo achievement: find them in the Pass.",
 });

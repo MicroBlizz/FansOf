@@ -1,8 +1,8 @@
 {
- "build": 1539,
- "hash": "dcd5fe9",
- "fecha": "2026-11-26T19:46:35Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-383-dev-regalo",
+ "build": 1540,
+ "hash": "ad6b261",
+ "fecha": "2026-11-26T19:58:54Z",
+ "mensaje": "Pop: el botón «Datos de partida anónimos» de core en Opciones, que no salía (Arkioner, tarea 404)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

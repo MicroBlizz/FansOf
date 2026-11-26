@@ -291,6 +291,8 @@ IDIOMA.add({
   "VIBRACIÓN: NO": "VIBRATION: OFF",
   "VIBRACIÓN: SÍ": "VIBRATION: ON",
   "AHORRO DE BATERÍA: SÍ": "BATTERY SAVER: ON",
+  "DATOS ANÓNIMOS: SÍ": "ANONYMOUS DATA: ON",
+  "DATOS ANÓNIMOS: NO": "ANONYMOUS DATA: OFF",
   "AHORRO DE BATERÍA: NO": "BATTERY SAVER: OFF",
   "Victorias contra gente: {g} · Derrotas: {p}": "Wins against people: {g} · Losses: {p}",
   "estrellas": "stars",

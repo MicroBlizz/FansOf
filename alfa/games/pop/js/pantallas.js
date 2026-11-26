@@ -213,6 +213,10 @@ function ppOpciones() {
   const ahorro = () => (AHORRO.activo() ? tr('AHORRO DE BATERÍA: SÍ') : tr('AHORRO DE BATERÍA: NO'));   // core/js/sistema/ahorro.js (ADR 218): se nota al momento
   const ah = ppBoton(ahorro(), 'pp-btn2 pp-sec', () => { AHORRO.cambia(); ah.textContent = ahorro(); });
   col.appendChild(ah);
+  // «Datos de partida anónimos» de core (core/js/sistema/datos-partida.js): una sola elección para toda la web; Pop no coloca la fila de Cuenta de core, así que va aquí
+  const datos = () => (DATOS.activo() ? tr('DATOS ANÓNIMOS: SÍ') : tr('DATOS ANÓNIMOS: NO'));
+  const da = ppBoton(datos(), 'pp-btn2 pp-sec', () => { DATOS.poner(!DATOS.activo()); da.textContent = datos(); });
+  col.appendChild(da);
   col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
   if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
   ppBotonVolver(t, ppCierra, { color: 'menta' });

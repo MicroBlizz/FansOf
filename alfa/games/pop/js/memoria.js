@@ -82,9 +82,10 @@ function ppMemEnsena(M, dt) {
   if (M.sigue < M.sec.length) { ppMemLuz(M.sec[M.sigue], p * 0.6, M.aj.luces); M.sigue++; M.reloj = p; }
   else { M.fase = 'toca'; M.paso = 0; M.espera = 0; }
 }
-// Fácil: si dudas demasiado, la buena brilla un momento
+// Fácil: si dudas demasiado, la buena brilla un momento; en el reto, cuenta para el combo
 function ppMemDuda(M, dt) {
   M.espera += dt;
+  if (M.reto) PP_RETO_COMBO.duda(M);   // en el reto, pararte corta el combo (js/reto-combo.js)
   if (PP_MEM_R.tocaPista(M.aj, M.espera)) { M.brillos[M.sec[M.paso]] = 1; M.espera = 0; }
 }
 // tu toque: la siguiente de la melodía o se acaba
@@ -176,6 +177,7 @@ function ppMemPintaCabecera(c, M) {
   ppTexto(c, tr('Ronda {n}', { n: M.sec.length }), 140, 164, 28, '#fff', 'center', '#c43a84');
   const marca = M.reto ? tr('Hoy: {n}', { n: M.reto.mejor }) : tr('Récord: {n}', { n: PP_MEM_R.recordDe(SAVE.memoria, M.aj.id) });
   ppTexto(c, marca, 400, 164, 28, '#fff', 'center', '#3a6ab8');
+  if (M.reto) PP_RETO_COMBO.pinta(c, M);   // la chapa del combo y su barrita (js/reto-combo.js)
 }
 // el halo de cada burbuja que suena (y la buena que parpadea al fallar o como pista)
 function ppMemPintaBrillos(c, M, g) {

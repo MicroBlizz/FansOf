@@ -1,8 +1,8 @@
 {
- "build": 1524,
- "hash": "964e00b",
- "fecha": "2026-11-26T01:16:37Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/project-thread-cxvld3",
+ "build": 1525,
+ "hash": "5378e4f",
+ "fecha": "2026-11-26T01:36:07Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-395-combo",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

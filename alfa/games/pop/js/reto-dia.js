@@ -2,7 +2,7 @@
 // melodía de Memoria para todos, en el mundo del día, en Normal y sin ayudas, con su ranking del día. Todo en PP_RETO:
 // · tarjeta(): la tarjeta dorada de arriba de la pantalla de elegir Memoria (js/memoria-elige.js): el mundo de hoy, los intentos y el botón
 //   del siguiente (gratis; luego perlas o, donde hay anuncios, un anuncio). Antes de cobrar se mira otra vez que el intento siga siendo ese.
-// · ronda(M): cada ronda superada guarda ya tu mejor de hoy y sus monedas (js/memoria.js): si sales a medias o se cierra el juego, no se pierde.
+// · ronda(M): cada ronda superada guarda ya tu mejor de hoy y sus monedas, con su combo (js/reto-combo.js, tarea 395; desde js/memoria.js): si sales a medias o se cierra el juego, no se pierde.
 // · fin(M, rondas): al fallar, la ventana con tus monedas, tu mejor de hoy y tu puesto (el servidor lo dice al subir).
 // · sube(): sube tu mejor marca guardada si el servidor aún no la tiene, con su propio día (una partida que pasa de medianoche cuenta
 //   para el día en que empezó); sin red, se queda para luego. ranking(dia): el del día, para la pestaña «Hoy» (js/ranking.js).
@@ -42,7 +42,7 @@ const PP_RETO = (() => {
     if (!r.ok || r.estado.dia !== d || r.como !== como) { ppEligeMemoria(); return; }
     SAVE.reto = r.estado; ppGuarda();
     ppCierra();
-    ppNuevaMemoria(PP_RETO_R.mundo(d, C().mundos), 'normal', { reto: { dia: d, azar: ppAzar(PP_RETO_R.semilla(d)), mejor: r.estado.mejor, monedas: 0, nuevo: false } });
+    ppNuevaMemoria(PP_RETO_R.mundo(d, C().mundos), 'normal', { reto: { dia: d, azar: ppAzar(PP_RETO_R.semilla(d)), mejor: r.estado.mejor, monedas: 0, nuevo: false, ...PP_RETO_COMBO.nuevo() } });
   }
   // el botón de pagar con perlas: mira antes de cobrar; si faltan, la tienda y vuelta a la tarjeta
   function botonPerlas(d, perlas) {
@@ -85,9 +85,11 @@ const PP_RETO = (() => {
     return caja;
   }
 
-  // cada ronda superada (`rondas` hechas): tu mejor de hoy y sus monedas, ya guardadas; M.reto lleva lo de esta partida
+  // cada ronda superada (`rondas` hechas): tu mejor de hoy y sus monedas con el combo (js/reto-combo.js), ya guardadas; M.reto lleva lo
+  // de esta partida
   function ronda(M, rondas) {
-    const g = PP_RETO_R.deHoy(SAVE.reto, M.reto.dia), r = PP_RETO_R.acaba(g, C(), rondas);
+    PP_RETO_COMBO.cuenta(M, rondas);
+    const g = PP_RETO_R.deHoy(SAVE.reto, M.reto.dia), r = PP_RETO_R.acaba(g, C(), rondas, M.reto.puntos);
     SAVE.reto = r.estado; SAVE.monedas += r.monedas; ppGuarda();
     Object.assign(M.reto, { mejor: r.estado.mejor, monedas: M.reto.monedas + r.monedas, nuevo: M.reto.nuevo || r.nuevo, lleno: r.lleno });
   }

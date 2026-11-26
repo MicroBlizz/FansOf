@@ -43,4 +43,8 @@ IDIOMA.add({
   "¡Tu mejor marca de hoy!": "Your best score today!",
   "Tu mejor hoy: {n} · puesto {p} de {t}": "Your best today: {n} · place {p} of {t}",
   "Tu marca se subirá al ranking cuando haya conexión.": "Your score will go up to the ranking when you are online.",
+  // el combo y las fases del reto (tarea 395, js/reto-combo.js)
+  "Combo perdido": "Combo lost",
+  "¡Fase {n}!": "Stage {n}!",
+  "Fase {n}": "Stage {n}",
 });

@@ -31,7 +31,8 @@ const ppEstDe = dif => (dif === 2 ? (PP_P.estP = PP_P.estP || {}) : dif ? PP_P.e
 const ppMundoActual = () => ppMundoDe(Math.min(PP_P.nivel, PP_TOTAL_NIVELES - 1))[0];
 // el equipo que ayuda en el nivel `d`: con el flag `companeros` cerrado, el del camino en todos los niveles (como siempre; cada
 // habilidad mira luego si actúa en pesadilla o en duelos); abierto, el de su modo (js/coleccion-juego.js, tarea #142)
-const ppEquipoNivel = d => (ppCompanerosActivo() ? ppEquipoDe(ppModoDeNivel(d)) : PP_P ? PP_P.equipo : []);
+// (en la práctica de combos, nadie: ni premios, ni habilidades, ni carga de saltos; js/combo-guia.js)
+const ppEquipoNivel = d => (d && d.practica ? [] : ppCompanerosActivo() ? ppEquipoDe(ppModoDeNivel(d)) : PP_P ? PP_P.equipo : []);
 // lo del equipo que cuenta al crear el tablero del nivel `d` (`equipo`: los del camino, que no salen atrapados)
 function ppFx(d) {
   const fx = { pista: 0, equipo: PP_P ? PP_P.equipo : [] };
@@ -50,7 +51,9 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   if (ppVidas() <= 0) { ppVentanaSinCorazones(); return; }
   const base = ppNivel(g, dif), primera = !dif && g === PP_P.nivel;
   const d = primera || !base.amigos ? base : Object.assign({}, base, { amigos: 0 });   // repitiendo, ya no hay amigos atrapados
-  ppEntraEn(d, ppTituloNivel(d, g, dif));
+  const titulo = ppTituloNivel(d, g, dif);
+  if (PP_COMBO_GUIA.antes(d, () => ppEntraEn(d, titulo))) return;   // una vez, la práctica de combos antes (flag `combos`, js/combo-guia.js)
+  ppEntraEn(d, titulo);
 }
 // entra en el tablero del nivel `d` (el de un nivel del camino o el del duelo por un compañero escondido, js/escondidos-duelo.js)
 function ppEntraEn(d, titulo) {
@@ -119,16 +122,18 @@ function ppTutorialesNivel(d) {
 // un toque del jugador en la burbuja i del nivel abierto
 function ppToque(i) {
   const T = PP_P.T; if (!T || T.hecho || T.parado) return;
+  if (PP_COMBO_GUIA.bloquea(T, i)) return;   // en la práctica de combos solo vale la burbuja de la manita
   T.tocado = true;   // desde aquí Lola no habla hasta que acabe el nivel (js/lola.js)
   if (T.nim) { ppNimToque(i); return; }
   if (ppEscAntesDeToque(T, i)) return;   // la burbuja arcoíris de un compañero nuevo: se abre la ventana de su duelo (js/escondidos-juego.js)
   if (ppHabAntesDeToque(T, i)) return;   // Volteo de Pesadilla y la foto para Marcha atrás (js/habilidades-pesadilla.js)
   if (PP_AYUDA.modo) { ppAplicaAyuda(i); return; }   // martillo o bomba
   const r = ppToca(T, i); if (!r) return;
-  ppMarcaDentro(true);   // desde el primer toque, salir a medias cuesta un corazón
+  ppMarcaDentro(!T.d.practica);   // desde el primer toque, salir a medias cuesta un corazón (en la práctica de combos, no)
   ppLolaToque();
   ppFxToque(T, i, r);
   ppManitaSigue(T);
+  PP_COMBO_GUIA.tras(T);   // en la práctica de combos, la manita va al siguiente paso guiado
   if (r.libre) ppFlota(tr('¡Gratis!'), 270, 240, '#3a8ee6');
   const bueno = r.golpes >= 3;   // un toque que revienta (o resquebraja) 3 o más
   if (T.combo >= 2 && bueno) { ppFxCombo(T.combo, i); ppTutoCombo(T); }
@@ -186,6 +191,7 @@ function ppTrasToque(T, i, r) {
     play('ppDano'); ppVibra([30, 40, 30]); ppFxDano();
     if (SAVE.vidas <= 0) { T.hecho = true; ppMarcaDentro(false); setTimeout(() => ppSinCorazones(), 500); return; }
   }
+  if (r.hecho && PP_COMBO_GUIA.resuelto(T)) return;   // la práctica de combos no se gana: pasa al nivel
   if (r.hecho) { PP_P.salas++; ppMarcaDentro(false); ppFxConfeti(T); setTimeout(() => { if (PP_P && PP_P.T === T) ppFiestaToques(T, ppSalaHecha); }, 520); return; }   // la fiesta de toques sobrantes, antes de la victoria (js/victoria-fiesta.js)
   // los que saltan se cargan con cada burbuja reventada (también las que revientan otros amigos: hay reacciones en cadena)
   if (T.lo) return;   // en pesadilla los amigos no saltan

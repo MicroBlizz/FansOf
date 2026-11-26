@@ -188,7 +188,7 @@ const PP_SLIMES = {
              pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque extra.', fx: { extra: 1 } },
   // mundos 7 a 10 (31-10-2026)
   hada:    { nombre: 'Hadita', color: '#b8f0d0', color2: '#4fc98a', pinta: '',
-             pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete y lo apaga: revienta sin levantar nada.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
+             pasiva: 'Polvo de hada', texto: 'Cada 14 pops vuela a un cohete y lo apaga: hace pop sin levantar nada.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
   sirena:  { nombre: 'Sirenita', color: '#9fe8f0', color2: '#3ab0c8', pinta: '',
              pasiva: 'Ola', texto: 'Cada 12 pops, hace pop en una burbujeante.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
   maneki:  { nombre: 'Gatito de la suerte', color: '#fff8f0', color2: '#e0c8b0', pinta: '',

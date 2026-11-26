@@ -41,7 +41,7 @@ const PP_COMBO = (() => {
     if (lo) LOGROS.maximo('comboMaxP', n);
   }
   function toque(T, bueno) {
-    if (!activo() || T.nim || !bueno) return;
+    if (!activo() || T.nim || !bueno || (T.d && T.d.practica)) return;   // en la práctica de combos (js/combo-guia.js), nada de premios
     T.comboMax = Math.max(T.comboMax || 0, T.combo);
     if (T.combo < 3) return;
     const r = PP_COMBOS_R.paso(SAVE.combo, dia(), T.combo, T.lo, PP_CFG.combos.topeDia);

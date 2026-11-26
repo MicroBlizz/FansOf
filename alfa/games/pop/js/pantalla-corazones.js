@@ -82,5 +82,5 @@ function ppPedirCorazones() {
   const t = ppAbre(`<h2>${tr('Pide corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub">${tr('Pasa tu enlace a un amigo: te regalará un corazón.')}</p>`);
   ppBotonPedirCorazones(t);
   ppBotonBuzon(t);   // con regalos esperando (js/pantalla-buzon.js)
-  ppBotonVolver(t, ppCierra);
+  ppBotonVolver(t, ppCierra, { tema: 'amigos' });
 }

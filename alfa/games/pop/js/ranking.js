@@ -41,7 +41,7 @@ function ppVentanaRanking(tab) {
   }
   t.appendChild(tabs);
   const caja = document.createElement('div'); caja.className = 'pp-ranking'; t.appendChild(caja);
-  ppBotonVolver(t, ppCierra, { color: 'naranja' });
+  ppBotonVolver(t, ppCierra, { tema: 'ranking' });
   const unidad = { estrellas: tr('estrellas'), dificil: tr('estrellas'), memoria: tr('rondas'), hoy: tr('rondas'), combos: tr('puntos'), duelos: tr('victorias') }[PP_RANK.tab];
   const pinta = d => {
     if (!caja.isConnected) return;

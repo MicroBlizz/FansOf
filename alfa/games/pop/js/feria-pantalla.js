@@ -81,7 +81,7 @@ function ppVentanaFeria() {
     <p class="pp-sub">${tr('Tickets {tk}: 1 por nivel, 2 con 3 estrellas, 3 por jefe.', { tk: ppTicketHtml() })}</p>`, true);
   t.appendChild(ppFeriaCamino(E));
   t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${ppFeriaFaltan(E)}</p>`);
-  ppBotonVolver(t, () => { ppCierra(); ppPintaLateral(); }, { color: 'coral' });
+  ppBotonVolver(t, () => { ppCierra(); ppPintaLateral(); }, { tema: 'feria' });
 }
 // qué falta para el siguiente premio (y si hay paradas por recoger)
 function ppFeriaFaltan(E) {
@@ -146,7 +146,7 @@ function ppVentanaFeriaCerrada() {
   const v = PP_FERIA.ventana(ppFeriaAhora());
   const t = ppAbre(`<h2>${tr('La feria vuelve el viernes')}</h2><p class="pp-sub">${tr('La Feria abre el viernes y cierra el domingo.')}</p>
     <span class="pp-feria-reloj">${tr('Abre en {t}', { t: ppFeriaRelojCorto(v.abreEn) })}</span>`);
-  ppBotonVolver(t, ppCierra, { color: 'coral' });
+  ppBotonVolver(t, ppCierra, { tema: 'feria' });
 }
 function ppVentanaFeriaBienvenida(v) {
   const t = ppAbre(`<div class="pp-feria-lola"></div><h2>${tr('¡Ha llegado la Feria del finde!')}</h2>

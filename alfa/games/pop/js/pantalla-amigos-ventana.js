@@ -179,7 +179,7 @@ function ppVentanaAmigos() {
   t.append(ppAmRegalos(), ppAmAmigos());
   if (sugeridos) t.appendChild(sugeridos);
   t.appendChild(ppAmPie());
-  ppBotonVolver(t, () => { PP_AM.hoja = null; ppCierra(); }, { titulo: tr('Amigos'), izquierda: vidas });
+  ppBotonVolver(t, () => { PP_AM.hoja = null; ppCierra(); }, { titulo: tr('Amigos'), izquierda: vidas, tema: 'amigos' });
   t.scrollTop = antes;
 }
 // lo que hace el botón AMIGOS: la ventana con lo último que se sabe, y el latido y el enlace pedidos ya (la ventana se repinta al llegar)

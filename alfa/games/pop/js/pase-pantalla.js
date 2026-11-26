@@ -133,7 +133,7 @@ function ppVentanaPaseNueva(repinta) {
   const cobrar = PP_PASE_CAJON.porCobrar([PP_PASE_MIS.lista('d'), PP_COMBO.logros()]);
   const cajon = PP_PASE_CAJON.crea(t, repinta, [ppPaseMisiones(), ppComboLogros()], cobrar, ppPasePie());   // logros de combo: js/combos-vista.js
   t.append(ppPaseEscaparate(P, tema), ppPaseEje(e, pts), ppPaseCarril(P, e, pts), cajon);
-  ppBotonVolver(t, ppCierra, { titulo: tr('Pase de Pop'), color: 'oro' });
+  ppBotonVolver(t, ppCierra, { titulo: tr('Pase de Pop'), tema: 'pase' });
   if (!repinta) setTimeout(ppPaseCentraCarril, 0);
 }
 // el botón del lado del camino: escalón, anillo con lo que falta y cuántos premios esperan (js/ofertas.js, ppPintaLateral)

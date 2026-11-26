@@ -68,13 +68,13 @@ const ppEnDuelo = () => PP_PANT.actual === 'duelo' || !!(PP_PANT.actual === 'sal
 // un slime del equipo actúa: su hueco brilla y da un saltito
 function ppFxHabilidad(id) { PP_FX.brilla[id] = 1; fire('pp-companero', id); }   // un compañero actúa: brilla su hueco y lo cuenta el medidor de fps (js/rendimiento-partida.js)
 // el letrero de COMBO: crece con cada toque bueno seguido
-// `i`: la burbuja del toque que lo hace (con el flag `combos`, el letrero sale junto a ella: js/combo-letrero.js); -1, el sitio de siempre
-// Con el flag, si el de ahora apenas se ha visto (los compañeros suben el combo muy seguido), el nuevo espera en fila (PP_FX.comboCola):
+// `i`: la burbuja del toque que lo hace (el letrero sale junto a ella: js/combo-letrero.js); -1, el sitio de siempre
+// Si el de ahora apenas se ha visto (los compañeros suben el combo muy seguido), el nuevo espera en fila (PP_FX.comboCola):
 // así se ve cada paso, x3, x4, x5… (Pepins, 26-11-2026, tarea 399; cuánto se ve cada uno: PP_COMBO_LETRERO.cede)
-// Si el combo se rompió y empieza otra cadena (o el flag está cerrado), la fila se vacía y el nuevo sale ya.
+// Si el combo se rompió y empieza otra cadena, la fila se vacía y el nuevo sale ya.
 function ppFxCombo(n, i = -1) {
   const L = PP_COMBO_LETRERO, cola = PP_FX.comboCola, ultimo = cola.length ? cola[cola.length - 1].n : PP_FX.combo && PP_FX.combo.n;
-  const enFila = PP_FX.combo && PP_COMBO.activo() && L.sigue(n, ultimo) && (cola.length > 0 || !L.cede(PP_FX.combo.t, 1));
+  const enFila = PP_FX.combo && L.sigue(n, ultimo) && (cola.length > 0 || !L.cede(PP_FX.combo.t, 1));
   if (enFila) { cola.push({ n, i }); return; }
   PP_FX.comboCola = [];
   ppFxMuestraCombo({ n, i });

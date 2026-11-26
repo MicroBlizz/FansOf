@@ -1,4 +1,4 @@
-// Fans of Pop · EL LETRERO KAWAII DE LOS COMBOS, EL DIBUJO (tarea 396; boceto elegido por Pepins el 26-11-2026). Con el flag 'combos',
+// Fans of Pop · EL LETRERO KAWAII DE LOS COMBOS, EL DIBUJO (tarea 396; boceto elegido por Pepins el 26-11-2026). Siempre,
 // cada paso de combo sale con uno de tres dibujos, por turnos: GOMITA (burbuja blandita que se aplasta y suelta corazones), NUBE
 // (nubecita con estrellitas alrededor y, desde x5, un arcoíris detrás) y PEGATINA (chapa festoneada que gira, con una estrellita por paso y
 // confeti). Todos con carita y mofletes, y más grandes cuanto más largo es el combo. El número lleva borde blanco y otro oscuro para que se
@@ -80,10 +80,8 @@ function ppComboPegatina(c, n, t, col, e) {
   c.rotate(-t * 1.2); ppComboNum(c, 'x' + n, 0, -8, 65, '#fff'); ppComboCara(c, 0, 36, 29); c.restore();
 }
 const PP_COMBO_DIBUJOS = Object.freeze({ gomita: ppComboGomita, nube: ppComboNube, pegatina: ppComboPegatina });
-// el letrero entero, junto a la burbuja del toque (combo.i) del tablero de geometría g (ppGeom, js/pintar.js): dice si lo ha pintado
-// (con el flag cerrado no, y ppPintaSala pinta el de siempre)
+// el letrero entero, junto a la burbuja del toque (combo.i) del tablero de geometría g (ppGeom, js/pintar.js)
 function ppComboKawaii(c, combo, g) {
-  if (!PP_COMBO.activo()) return false;
   const { n, t, i } = combo, L = PP_COMBO_LETRERO, col = L.color(n), e = L.escala(n, t);
   const [cx, cy] = i >= 0 && i < g.n * g.n ? ppCentro(g, i) : [NaN, NaN];
   const [x, y] = L.sitio(cx, cy, n, { arriba: g.y - 22, abajo: g.y + g.lado - 90 });   // abajo: sin bajar hasta el equipo
@@ -92,5 +90,4 @@ function ppComboKawaii(c, combo, g) {
   c.globalAlpha = L.alfa(t); const p = Math.min(1.25, e + 0.1);
   c.translate(0, -Math.min(105 * e, 110)); c.scale(p, p); ppComboNum(c, tr('COMBO'), 0, 0, 40, col);
   c.restore();
-  return true;
 }

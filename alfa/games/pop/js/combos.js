@@ -1,5 +1,5 @@
 // Fans of Pop · LOS COMBOS (tarea 396, ADR 234; reglas en js/combo-reglas.js, servidor en js/combo-servidor.js). Pepins, 26-11-2026: sacar
-// partido a los combos de los niveles. Todo en PP_COMBO, tras el flag 'combos':
+// partido a los combos de los niveles. Todo en PP_COMBO (sin flag desde el 26-11-2026: van siempre):
 // · toque(T, bueno): tras cada toque tuyo (js/partida.js). Desde COMBO x3 da monedas (con tope al día) y puntos para el ranking de la
 //   semana, en Pesadilla el doble; apunta tu mejor combo del nivel (T.comboMax) y si has batido tu récord (T.comboRecord); cuenta para
 //   las misiones del Pase (js/pase-nuevo.js) y para los logros de combo de aquí (LOGROS).
@@ -15,7 +15,6 @@ const PP_COMBO = (() => {
   const srv = PP_COMBO_SERVIDOR.crea({ rpc: (n, a) => CUENTA.rpc(n, a), hay: () => ppHayRanking() });
   let subida = null, espera = 0;   // la subida en marcha (una a la vez) y el reloj de la próxima
   const ESPERA_SUBIR = 4000;   // ms tras el último combo antes de subir los puntos
-  const activo = () => NUCLEO.flag('combos', 'Pop: premios, misiones, logros y ranking semanal de combos (tarea 396)', false);
   const dia = () => new Date(typeof HORA !== 'undefined' ? HORA.ahora() : Date.now()).toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
   const lunes = () => PP_COMBOS_R.lunes(dia());
   // los logros, para siempre (RETOSL de core: se miden contra el total o el máximo de toda la vida)
@@ -41,7 +40,7 @@ const PP_COMBO = (() => {
     if (lo) LOGROS.maximo('comboMaxP', n);
   }
   function toque(T, bueno) {
-    if (!activo() || T.nim || !bueno || (T.d && T.d.practica)) return;   // en la práctica de combos (js/combo-guia.js), nada de premios
+    if (T.nim || !bueno || (T.d && T.d.practica)) return;   // en la práctica de combos (js/combo-guia.js), nada de premios
     T.comboMax = Math.max(T.comboMax || 0, T.combo);
     if (T.combo < 3) return;
     const r = PP_COMBOS_R.paso(SAVE.combo, dia(), T.combo, T.lo, PP_CFG.combos.topeDia);
@@ -55,7 +54,7 @@ const PP_COMBO = (() => {
   // el salto de un compañero (js/partida.js, una vez por salto): si revienta 3 o más, sube tu combo (con sus monedas, puntos, misiones y logros, como un toque
   // tuyo); si revienta menos, no lo rompe. Devuelve si ha subido. En Pesadilla y en los duelos no saltan
   function amigo(T, golpes) {
-    if (!activo() || T.nim || T.lo || !(golpes >= 3)) return false;
+    if (T.nim || T.lo || !(golpes >= 3)) return false;
     T.combo = PP_COMBOS_R.deAmigo(T.combo, golpes);
     toque(T, true);
     return true;
@@ -64,7 +63,6 @@ const PP_COMBO = (() => {
   // sube lo pendiente, de uno en uno: primero lo que quedó de la semana anterior y luego lo de esta. Sin red, se queda para luego;
   // lo que el servidor no quiere (no_vale) se da por subido para no repetirlo siempre
   function sube() {
-    if (!activo()) return Promise.resolve(null);
     if (subida) return subida.then(() => sube());   // tras la que está en marcha, por si ya hay más puntos
     const [p] = PP_COMBOS_R.pendientes(PP_COMBOS_R.deHoy(SAVE.combo, dia()));
     if (!p) return Promise.resolve(null);
@@ -85,5 +83,5 @@ const PP_COMBO = (() => {
     const total = (SAVE.comboLogros && SAVE.comboLogros.retos && SAVE.comboLogros.retos.total) || {};
     return Object.fromEntries(DEF_LOGROS.filter(l => (total[l.ev] || 0) >= l.goal).map(l => [l.id, true]));
   }
-  return Object.freeze({ activo, lunes, toque, amigo, sube, ranking, logros, cobrar, titulos });
+  return Object.freeze({ lunes, toque, amigo, sube, ranking, logros, cobrar, titulos });
 })();

@@ -1,10 +1,10 @@
-// Fans of Pop · LOS COMBOS, LO QUE SE VE (tarea 396, ADR 234; las cuentas en js/combos.js). Tras el flag 'combos':
+// Fans of Pop · LOS COMBOS, LO QUE SE VE (tarea 396, ADR 234; las cuentas en js/combos.js):
 // · ppComboLinea(T): la línea de la victoria con tu mejor combo del nivel y, si lo has batido, «¡Récord nuevo!» (js/pantalla-victoria.js).
 // · ppComboLogros(): la caja «Logros de combo» de la ventana del Pase, debajo de las misiones (js/pase-pantalla.js): una fila por logro con
 //   su barrita, COBRAR cuando está listo y Hecho al cobrarlo. Los de título dan uno de perfil que no se compra (Perfil → Título).
 'use strict';
 function ppComboLinea(T) {
-  if (!T || !PP_COMBO.activo() || !(T.comboMax >= 3)) return '';
+  if (!T || !(T.comboMax >= 3)) return '';
   const record = T.comboRecord ? ` · <b>${tr('¡Récord nuevo!')}</b>` : '';
   return `<div class="pp-gana-tk">${tr('Mejor combo: x{n}', { n: T.comboMax })}${record}</div>`;
 }

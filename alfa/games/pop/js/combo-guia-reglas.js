@@ -15,10 +15,10 @@ const PP_COMBO_GUIA_R = (() => {
     Object.freeze({ celda: 9, t: 'Tus amigos también lo suben al saltar. ¡Una más!' }),
   ]);
   const FINAL = '¡Genial! Ahora encadena combos en el nivel.';
-  // ¿sale la práctica antes del nivel d? Solo con el flag, si aún no la viste y con los consejos de Lola encendidos (`callada`: los
+  // ¿sale la práctica antes del nivel d? Solo si aún no la viste y con los consejos de Lola encendidos (`callada`: los
   // apagaste), en un nivel normal del camino (ni difícil, ni pesadilla, ni duelo, ni jefe) desde el nivel DESDE del Jardín
-  function sale(d, abierto, vista, callada = false) {
-    if (!abierto || vista || callada || !d || d.dif || d.lo || d.nim || d.jefe || d.tutorial) return false;
+  function sale(d, vista, callada = false) {
+    if (vista || callada || !d || d.dif || d.lo || d.nim || d.jefe || d.tutorial) return false;
     return d.mundo > 0 || d.l >= DESDE;
   }
   // el nivel de la práctica: 5x5 lleno, sin amigos atrapados y con toques de sobra (no se puede perder). g 0 y mundo 0: como los

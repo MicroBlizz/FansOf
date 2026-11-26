@@ -28,7 +28,7 @@ window.addEventListener('online', () => setTimeout(ppSubeMarcas, 1500));
 // con el reto del día (js/reto-dia.js, tarea 367) va primero la pestaña «Hoy»: el ranking del reto de hoy; con los combos (js/combos.js,
 // tarea 396), la pestaña «Combos»: los puntos de combo de esta semana
 const PP_RANK_TABS = [['estrellas', 'Estrellas'], ['dificil', 'Difícil'], ['memoria', 'Memoria'], ['duelos', 'Duelos']];
-const ppRankTabs = () => [...(PP_RETO.activo() ? [['hoy', 'Hoy']] : []), ...(PP_COMBO.activo() ? [['combos', 'Combos']] : []), ...PP_RANK_TABS];
+const ppRankTabs = () => [...(PP_RETO.activo() ? [['hoy', 'Hoy']] : []), ['combos', 'Combos'], ...PP_RANK_TABS];
 function ppVentanaRanking(tab) {
   if (tab) PP_RANK.tab = tab;
   if (!ppRankTabs().some(([k]) => k === PP_RANK.tab)) PP_RANK.tab = 'estrellas';

@@ -1,8 +1,8 @@
 {
- "build": 1531,
- "hash": "66f8431",
- "fecha": "2026-11-26T11:56:09Z",
- "mensaje": "Comparador: Ctrl-C corta de verdad, la preparación de un juego va con semilla fija y avisa si falla, --a-la-vez se valida (revisión, tarea 398)",
+ "build": 1532,
+ "hash": "7275f9b",
+ "fecha": "2026-11-26T17:12:16Z",
+ "mensaje": "Pop: los combos van siempre, sin el flag 'combos' (Pepins, tras dar por buena la tarea 399)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

@@ -95,8 +95,8 @@ function ppVentanaPerfil(tab) {
   }
   t.appendChild(tabs);
   const lista = ppPfEl('div', 'pp-pf-lista' + (PP_PF.tab === 'frase' || PP_PF.tab === 'titulo' ? ' pp-pf-ancha' : ''));
-  // los del álbum, solo si los tienes (tarea #142); los de logro de combo, con el flag 'combos' o si ya son tuyos (tarea 396)
-  const sale = d => (!d.coleccion && (!d.logro || PP_COMBO.activo())) || PP_MI.loTengo(PP_PF.tab, d.id);
+  // los del álbum, solo si los tienes (tarea #142); los de logro de combo, siempre (tarea 396)
+  const sale = d => !d.coleccion || PP_MI.loTengo(PP_PF.tab, d.id);
   for (const d of PP_MI.cat[PP_PF.tab]) if (sale(d)) lista.appendChild(ppPfCosa(PP_PF.tab, d));
   t.appendChild(lista);
   if (PP_PF.tab === 'pegatina') t.appendChild(ppPfEl('p', 'pp-sub', `<small>${tr('Llevas {n} de {t} pegatinas para lanzar en el duelo.', { n: PP_MI.perfil().pegatinas.length, t: PP_PERFIL.PEGATINAS })}</small>`));

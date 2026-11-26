@@ -1,4 +1,4 @@
-// Fans of Pop · LA PRÁCTICA DE COMBOS (tarea 396; reglas en js/combo-guia-reglas.js). Con el flag 'combos', antes del nivel 6 (o del
+// Fans of Pop · LA PRÁCTICA DE COMBOS (tarea 396; reglas en js/combo-guia-reglas.js). Antes del nivel 6 (o del
 // próximo nivel normal de quien ya pasó de ahí) sale una vez un tablero de práctica: la manita de Lola marca 4 toques seguidos que hacen
 // pop en 3 o más (COMBO x2, x3, x4) y Lola lo va contando; al acabar se entra solo en el nivel de verdad. Se marca como vista al empezar
 // (SAVE.tuto.comboGuia): si sales a medias, no vuelve. Con los consejos de Lola apagados no sale. En la práctica solo vale tocar la
@@ -13,7 +13,7 @@ const PP_COMBO_GUIA = (() => {
   const R = PP_COMBO_GUIA_R, ESPERA = 1400, REINTENTO = 400;   // ms tras el último paso (para ver el letrero) y entre miradas si hay pausa
   let seguirCon = null;
   function antes(d, seguir) {
-    if (!R.sale(d, PP_COMBO.activo(), !!SAVE.tuto.comboGuia, !!SAVE.sinConsejos)) return false;
+    if (!R.sale(d, !!SAVE.tuto.comboGuia, !!SAVE.sinConsejos)) return false;
     SAVE.tuto.comboGuia = true; SAVE.tuto.combos = true; SAVE.tuto.combo = true; ppGuarda();   // la práctica ya lo explica todo
     seguirCon = seguir;
     // las frases van antes de entrar: así Lola está ocupada y los demás consejos del nivel esperan (no se pierden)

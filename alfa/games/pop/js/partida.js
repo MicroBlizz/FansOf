@@ -52,7 +52,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   const base = ppNivel(g, dif), primera = !dif && g === PP_P.nivel;
   const d = primera || !base.amigos ? base : Object.assign({}, base, { amigos: 0 });   // repitiendo, ya no hay amigos atrapados
   const titulo = ppTituloNivel(d, g, dif);
-  if (PP_COMBO_GUIA.antes(d, () => ppEntraEn(d, titulo))) return;   // una vez, la práctica de combos antes (flag `combos`, js/combo-guia.js)
+  if (PP_COMBO_GUIA.antes(d, () => ppEntraEn(d, titulo))) return;   // una vez, la práctica de combos antes (js/combo-guia.js)
   ppEntraEn(d, titulo);
 }
 // entra en el tablero del nivel `d` (el de un nivel del camino o el del duelo por un compañero escondido, js/escondidos-duelo.js)
@@ -160,7 +160,7 @@ function ppCombosEquipo(T) {
   if (ppEnEquipo('becario') && T.combo % becario.combo === 0) { T.gratis += becario.gratis; ppFxHabilidad('becario'); PP_ATAQUE_FX.luce('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
   if (ppEnEquipo('lola') && T.combo % lola.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); PP_ATAQUE_FX.luce('lola'); play('ppPista'); } }
 }
-// flag `combos` (tarea 396): el salto de un amigo que revienta 3 o más sube tu combo, con su letrero y lo que da (js/combos.js)
+// tarea 396: el salto de un amigo que revienta 3 o más sube tu combo, con su letrero y lo que da (js/combos.js)
 // (devuelve si lo ha subido; `i`, la burbuja donde ha caído, para poner allí el letrero)
 function ppComboAmigo(T, r, i = -1) {
   if (!PP_COMBO.amigo(T, r.golpes)) return false;
@@ -168,9 +168,9 @@ function ppComboAmigo(T, r, i = -1) {
   if (!T.hecho) ppCombosEquipo(T);
   return true;
 }
-// lo que explica Lola de los combos: con el flag `combos`, la explicación entera, pasados los tres primeros niveles del mundo 1 (sale al
-// empezar un nivel: ppTutorialesNivel); antes, o con el flag cerrado, la frase corta tras el primer x2
-const ppComboExplica = d => PP_COMBO.activo() && !d.nim && (d.mundo > 0 || d.l > 3);
+// lo que explica Lola de los combos: la explicación entera, pasados los tres primeros niveles del mundo 1 (sale al empezar un nivel:
+// ppTutorialesNivel); antes, o en un duelo, la frase corta tras el primer x2
+const ppComboExplica = d => !d.nim && (d.mundo > 0 || d.l > 3);
 const ppTutoCombo = T => ppTutorial(ppComboExplica(T.d) ? 'combos' : 'combo');
 // el premio gordo de la Caja de botín: un toque de 4 da +1 toque; uno de 5, +1 corazón (si falta alguno y hoy no ha dado ya 3: tarea #236)
 // (con estrellas, el corazón desde 4 pops y uno más al día: js/coleccion.js, tarea #294)

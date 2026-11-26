@@ -77,11 +77,13 @@ function ppRegaloApunta() {
   SAVE.diasSeguidos = { ...r.estado };
   return { paso: r.paso, clave: r.estado.ultimo, frase: ppRegaloFrase(r), meta: r.meta, total: r.total };
 }
-// para el panel DEV: como si hubieran pasado `n` días desde el último regalo (mueve atrás el día apuntado)
+// para el panel DEV: como si hubieran pasado `n` días desde el último regalo (mueve atrás el día apuntado). Sin ningún día apuntado
+// (una partida que aún no ha abierto ninguno de días seguidos), como si el primero se hubiera abierto hace `n` días: antes no hacía
+// nada y no avisaba (Pepins, 25-11-2026, tarea 383)
+const PP_REGALO_DEV_PRIMERO = Object.freeze({ paso: 0, total: 1, perdon: true });
 function ppRegaloDevPasan(n) {
   const e = PP_DIAS_SEGUIDOS.estado(SAVE.diasSeguidos);
-  if (!e.ultimo) return;
-  SAVE.diasSeguidos = { ...e, ultimo: new Date(Date.parse(ppRegaloDia()) - n * 86400000).toISOString().slice(0, 10) };
+  SAVE.diasSeguidos = { ...(e.ultimo ? e : PP_REGALO_DEV_PRIMERO), ultimo: new Date(Date.parse(ppRegaloDia()) - n * 86400000).toISOString().slice(0, 10) };
   SAVE.regaloDia = '';
 }
 // si hoy se llega a una meta de días seguidos, se da su premio (perlas con su motivo del servidor, 'seguidos', y una clave por día para

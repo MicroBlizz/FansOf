@@ -1,8 +1,8 @@
 {
- "build": 1538,
- "hash": "cdc06b7",
- "fecha": "2026-11-26T19:37:34Z",
- "mensaje": "Pop, prueba de rendimiento: sin burbuja arcoíris y con un escenario de equipo explosivo (Arkioner, tarea 404)",
+ "build": 1539,
+ "hash": "dcd5fe9",
+ "fecha": "2026-11-26T19:46:35Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-383-dev-regalo",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

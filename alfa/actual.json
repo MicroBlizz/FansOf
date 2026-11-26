@@ -1,8 +1,8 @@
 {
- "build": 1532,
- "hash": "7275f9b",
- "fecha": "2026-11-26T17:12:16Z",
- "mensaje": "Pop: los combos van siempre, sin el flag 'combos' (Pepins, tras dar por buena la tarea 399)",
+ "build": 1533,
+ "hash": "98c0451",
+ "fecha": "2026-11-26T17:36:18Z",
+ "mensaje": "Pop: el Pase cabe en el móvil, con las misiones y los logros en un cajón que sube y baja (Pepins, tarea 375, ADR 236)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.0",

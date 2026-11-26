@@ -99,3 +99,26 @@
 .pp-pase-final > b { display: flex; flex-direction: column; justify-content: center; font-size: 15px; line-height: 1.1; color: #c27a00; text-align: left; }
 .pp-pase-final > b small { font-size: 12px; color: #7a3a7a; }
 .pp-pase-final .pp-pase-premio { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; min-width: 0; }
+/* ---------- el cajón «MISIONES Y LOGROS» (tarea 375, boceto D de Pepins, 26-11-2026; js/pase-cajon.js) ----------
+   Nada se aplasta: si algo no cabe, la ventana se desliza con el dedo, sin barra. El cajón (asa y RECOGER TODO) va pegado abajo; abierto,
+   esconde el escaparate, la barra y el carril, y sus misiones y logros ocupan la ventana. */
+.pp-tarjeta.pp-pase-nuevo { scrollbar-width: none; }
+.pp-tarjeta.pp-pase-nuevo::-webkit-scrollbar { display: none; }
+.pp-tarjeta.pp-pase-nuevo > * { flex-shrink: 0; }
+.pp-tarjeta.pp-cajon-abierto > .pp-pase-hero, .pp-tarjeta.pp-cajon-abierto > .pp-pase-eje, .pp-tarjeta.pp-cajon-abierto > .pp-pase-carril { display: none; }
+.pp-pase-cajon { position: sticky; bottom: 0; z-index: 4; width: calc(100% + 32px); box-sizing: border-box; margin: auto -16px 0; display: flex; flex-direction: column; border-radius: 26px 26px 0 0;
+  background: var(--pp-crema); box-shadow: 0 -6px 16px rgba(184, 35, 106, 0.25); }
+.pp-pase-cajon .pp-pase-pie { position: static; width: 100%; margin: 0; background: var(--pp-crema); }   /* RECOGER TODO, pegado bajo el asa */
+#pp-ui .pp-pase-asa { position: relative; display: flex; align-items: center; gap: 10px; min-height: var(--pp-toque); padding: 10px 22px 6px; border: 0; border-radius: 26px 26px 0 0;
+  background: linear-gradient(var(--pp-prin1), var(--pp-prin2)); font-size: 22px; text-shadow: 0 2px 0 var(--pp-prin-b); }
+.pp-pase-asa::before { content: ''; position: absolute; left: 50%; top: 7px; width: 56px; height: 6px; margin-left: -28px; border-radius: 999px; background: rgba(255, 255, 255, 0.7); }
+.pp-pase-asa > span { flex: 1; text-align: left; }
+.pp-pase-globo { min-width: 32px; height: 32px; box-sizing: border-box; padding: 0 8px; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  background: var(--pp-pago1); color: var(--pp-prin-b); text-shadow: none; font-size: 19px; box-shadow: 0 0 0 3px #fff; }
+.pp-pase-flecha { flex: none; width: 24px; height: 24px; transition: transform 0.2s; }
+.pp-cajon-abierto .pp-pase-flecha { transform: rotate(180deg); }
+.pp-pase-cajon-dentro { display: none; flex-direction: column; gap: 12px; padding: 14px 16px 6px; }
+.pp-cajon-abierto .pp-pase-cajon { margin-top: 0; }
+.pp-cajon-abierto .pp-pase-cajon-dentro { display: flex; animation: pp-cajon-sube 0.25s ease-out; }
+@keyframes pp-cajon-sube { from { transform: translateY(40px); opacity: 0.3; } }
+@media (prefers-reduced-motion: reduce) { .pp-cajon-abierto .pp-pase-cajon-dentro { animation: none; } .pp-pase-flecha { transition: none; } }

@@ -184,7 +184,7 @@ function ppVentanaFin() {
   t.appendChild(ppBoton(tr('JUGAR OTRA VEZ'), 'pp-btn', () => { ppCierra(); ppNuevaRuta(); ppIrA('mapa'); }));
   t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-volver', () => { ppCierra(); PP_P = null; ppIrA('titulo'); }));
 }
-function ppAyuda(alAcabar = ppCierra) {   // alAcabar: adónde se va con ¡ENTENDIDO! (cerrar; Opciones por bloques vuelve a Opciones)
+function ppAyuda(alAcabar = ppCierra) {   // alAcabar: adónde se va con ¡ENTENDIDO! (cerrar; desde Opciones vuelve a Opciones)
   const t = ppAbre(`<h2>${tr('Cómo se juega')}</h2>
     <p class="pp-sub">${tr('Toca una burbuja: ella y sus vecinas hacen pop y se hunden.')}</p>
     <p class="pp-sub">${tr('Haz pop en TODAS antes de quedarte sin toques.')}</p>
@@ -203,27 +203,7 @@ function ppFilasSonido() {
   l.append(ppBarrasSonido());
   return l;
 }
-/* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ----------
-   Con el flag «opciones-bloques» abierto (tarea 430), la ventana por bloques de js/opciones-pantalla.js; cerrado, esta columna de siempre. */
-function ppOpciones() {
-  if (ppOpcionesBloquesActivo()) { ppOpcionesBloques(); return; }
-  const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
-  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
-  col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-sec', ppAyuda));
-  col.appendChild(ppFilasSonido());
-  const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-sec', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
-  col.appendChild(vib);
-  const ahorro = () => (AHORRO.activo() ? tr('AHORRO DE BATERÍA: SÍ') : tr('AHORRO DE BATERÍA: NO'));   // core/js/sistema/ahorro.js (ADR 218): se nota al momento
-  const ah = ppBoton(ahorro(), 'pp-btn2 pp-sec', () => { AHORRO.cambia(); ah.textContent = ahorro(); });
-  col.appendChild(ah);
-  // «Datos de partida anónimos» de core (core/js/sistema/datos-partida.js): una sola elección para toda la web; Pop no coloca la fila de Cuenta de core, así que va aquí
-  const datos = () => (DATOS.activo() ? tr('DATOS ANÓNIMOS: SÍ') : tr('DATOS ANÓNIMOS: NO'));
-  const da = ppBoton(datos(), 'pp-btn2 pp-sec', () => { DATOS.poner(!DATOS.activo()); da.textContent = datos(); });
-  col.appendChild(da);
-  col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
-  if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
-  ppBotonVolver(t, ppCierra, { tema: 'opciones' });
-}
+// OPCIONES (Daniel, 31-10-2026; por bloques desde la tarea 430, ADR 240): ppOpciones está en js/opciones-pantalla.js
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {
   const t = ppAbre(`<h2>${tr('¿Empezar de nuevo?')}</h2><p class="pp-sub">${tr('Vuelves al nivel 1, sin camino ni equipo. Guardas monedas, perlas y ayudas.')}</p>`);

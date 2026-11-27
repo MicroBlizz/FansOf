@@ -106,9 +106,3 @@ function ppLolaSalta() {
   PP_LOLA.espera = []; PP_LOLA.cola = PP_LOLA.cola.filter(f => f.ya);   // los estrenos que esperaban, sí
   ppLolaSiguiente();
 }
-// el botón de Opciones: consejos de Lola sí o no
-function ppBotonConsejos() {
-  const texto = () => (SAVE.sinConsejos ? tr('CONSEJOS DE LOLA: NO') : tr('CONSEJOS DE LOLA: SÍ'));
-  const b = ppBoton(texto(), 'pp-btn2 pp-sec', () => { SAVE.sinConsejos = !SAVE.sinConsejos; ppGuarda(); b.textContent = texto(); });
-  return b;
-}

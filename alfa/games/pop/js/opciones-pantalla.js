@@ -1,10 +1,9 @@
 // Fans of Pop · la ventana de OPCIONES por bloques (tarea 430, boceto B de Pepins): Sonido, Juego, Cuenta y «Ayuda y más», con las filas
 // comunes de core (OPCIONES de core/js/sistema/opciones-comunes.js, AHORRO y la fila de Cuenta, que trae dentro «Datos de partida anónimos»)
 // y el estilo de Pop (css/opciones.css). Qué filas y en qué orden: PP_OPC_BLOQUES (js/opciones-bloques.js).
-// Va tras el flag «opciones-bloques»: cerrado, ppOpciones (js/pantallas.js) enseña la columna de botones de siempre.
+// Es la única ventana de Opciones desde que Pepins la dio por buena (27-11-2026): la columna de botones de antes y su flag «opciones-bloques» ya no están.
 // También las dos ventanas que se abren desde aquí: NOVEDADES (la lista NEWS de js/novedades.js) y CRÉDITOS. Las dos vuelven a Opciones.
 'use strict';
-const ppOpcionesBloquesActivo = () => NUCLEO.flag('opciones-bloques', 'Pop: Opciones por bloques, como en Rumble (tarea 430)', false);
 function ppOpcBotones(...botones) { const d = document.createElement('div'); d.className = 'pp-op-botones'; d.append(...botones); return d; }
 const ppOpcBoton = (texto, f, clase = 'pp-sec') => ppBoton(texto, 'pp-btn2 ' + clase, f);
 // las páginas legales de la web (privacidad/ y condiciones/), en una pestaña aparte y en el idioma del juego, como las enlaza la fila de Cuenta de core
@@ -27,7 +26,7 @@ const PP_OPC_FILAS = {
   legal: () => ppOpcBotones(ppOpcBoton(tr('PRIVACIDAD'), () => ppOpcWeb('privacidad')), ppOpcBoton(tr('CONDICIONES'), () => ppOpcWeb('condiciones')), ppOpcBoton(tr('CRÉDITOS'), ppOpcCreditos)),
   empezar: () => ppOpcBotones(ppOpcBoton(tr('EMPEZAR DE NUEVO'), ppConfirmaDeNuevo, 'pp-op-azul')),
 };
-function ppOpcionesBloques() {
+function ppOpciones() {
   const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
   const caja = document.createElement('div'); caja.className = 'pp-op'; t.appendChild(caja);
   for (const b of PP_OPC_BLOQUES.bloques({ caminoEmpezado: !!(SAVE.run && SAVE.run.nivel > 0) })) {

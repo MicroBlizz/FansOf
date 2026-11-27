@@ -1,8 +1,8 @@
 {
- "build": 1553,
- "hash": "39404e6",
- "fecha": "2026-11-27T12:27:29Z",
- "mensaje": "Pop: Opciones por bloques para todos; fuera la columna vieja y el flag opciones-bloques (Pepins la dio por buena, tarea 430)",
+ "build": 1554,
+ "hash": "221fb46",
+ "fecha": "2026-11-27T12:56:59Z",
+ "mensaje": "Pop: sin barras de desplazamiento en ninguna ventana; la rosa cortaba el marco de Opciones (Pepins)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.1",

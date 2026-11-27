@@ -1,0 +1,33 @@
+/* Fans of Pop · OPCIONES POR BLOQUES (tarea 430, boceto B; js/opciones-pantalla.js): los títulos de cada bloque, los botones de las filas de core
+   (interruptores, Cuenta, banderas) vestidos de Pop y las filas de botones, que se reparten el ancho y bajan de línea antes que salirse de la ventana.
+   Las filas y las barras de volumen ya las viste pop.css (#pp-ui .opt-row). Sin lila ni gris (Pepins). */
+.pp-op { display: flex; flex-direction: column; gap: 6px; width: 100%; min-width: 0; }
+#pp-ui .pp-op .opt-row { flex-wrap: wrap; gap: 6px 10px; min-width: 0; font-size: 18px; line-height: 1.25; }
+#pp-ui .pp-op .opt-row > span { flex: 1 1 150px; min-width: 0; overflow-wrap: anywhere; font-size: 15px; font-weight: 500; color: #9a3d6e; }   /* la frase que explica: más pequeña y suave que el título */
+#pp-ui .pp-op .opt-row.col > span { flex: none; }   /* la fila de Cuenta va en columna: sin esto, el texto ocupaba 150 px de alto y dejaba un hueco */
+#pp-ui .pp-op .opt-row > span b { font-size: 18px; font-weight: 700; color: #c43a84; }
+#pp-ui .pp-op .opt-row small { font-size: 15px; color: #9a3d6e; }
+.pp-op .opt-row a { color: #c43a84; }
+.pp-op .opt-row .row { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.pp-op-grupo { margin: 10px 4px 0; font-size: 17px; font-weight: 700; letter-spacing: 0.06em; color: #b8236a; text-align: left; }
+.pp-op-grupo:first-child { margin-top: 0; }
+/* los botones que ponen las filas de core (interruptor, Cuenta, Datos, Ahorro): las burbujas turquesa de Pop */
+#pp-ui .pp-op .btn-ghost { --c1: var(--pp-sec1); --c2: var(--pp-sec2); --borde: var(--pp-sec-b); flex: none; max-width: 100%; box-sizing: border-box;
+  font-size: 17px; line-height: 1; min-height: 48px; padding: 10px 16px; border: 0; border-radius: 999px; white-space: normal;
+  background: linear-gradient(180deg, var(--c1) 0%, var(--c2) 100%); box-shadow: inset 0 0 0 3px var(--borde), 0 4px 0 0 var(--borde); text-shadow: 0 2px 0 var(--borde); }
+#pp-ui .pp-op .btn-ghost.danger { --c1: #ffb4a0; --c2: #ff6a4a; --borde: #b8361c; }
+#pp-ui .pp-op .btn-ghost:active { transform: translateY(3px); box-shadow: inset 0 0 0 3px var(--borde), 0 1px 0 0 var(--borde); }
+#pp-ui .pp-op .idioma-fl button { background: #fff; border-color: #ffb8dc; box-shadow: none; }
+#pp-ui .pp-op .idioma-fl button[aria-pressed="true"] { box-shadow: 0 0 0 3px #ffb800; }
+/* filas de botones (Ayuda, Legal, Empezar de nuevo): cada botón cabe entero; si no caben juntos, bajan */
+.pp-op-botones { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+#pp-ui .pp-op-botones .pp-btn2 { flex: 1 1 110px; min-width: 0; max-width: 100%; box-sizing: border-box; font-size: 16px; padding: 10px 8px 11px; min-height: 56px; white-space: normal; }
+#pp-ui .pp-op-botones .pp-btn2.pp-op-azul { --c1: var(--pp-vol1); --c2: var(--pp-vol2); --borde: var(--pp-vol-b); }
+#pp-ui .pp-op-ver { margin: 8px 0 0; font-size: 15px; color: #9a3d6e; opacity: 1; }
+/* Novedades y Créditos: texto que se lee, a la izquierda */
+.pp-op-texto { width: 100%; text-align: left; color: var(--pp-cafe); font-size: 18px; line-height: 1.35; }
+.pp-op-texto h4 { margin: 12px 0 4px; font-size: 17px; color: #b8236a; }
+.pp-op-texto ul { margin: 0; padding-left: 22px; }
+.pp-op-texto li { margin: 4px 0; }
+.pp-op-creditos { text-align: center; }
+.pp-op-creditos p { margin: 6px 0; }

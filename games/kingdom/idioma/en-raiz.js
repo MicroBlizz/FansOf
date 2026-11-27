@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Kingdom en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  // 0.1.6
+  "<b>MEJORAS POR DENTRO</b>: el botón atrás del móvil ahora lo escucha el núcleo de Fans Of, y cada juego decide qué hacer.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the phone's back button is now heard by the Fans Of core, and each game decides what to do.",
+  "Microblizz ha enseñado al botón atrás a no salir corriendo y Phony se ha quedado dentro del armario.": "Microblizz taught the back button not to run away and Phony got stuck inside the wardrobe.",
   // 0.1.5
   "<b>MEJORAS POR DENTRO</b>: la ventana de elegir partida recuerda lo que elegiste y no deja pisar tu partida al recargar.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the choose-your-save window remembers what you picked and no longer lets a reload overwrite your save.",
   "Microblizz ha puesto un candado a tu partida y Phony ha perdido la llave en el microondas.": "Microblizz put a padlock on your save and Phony lost the key in the microwave.",

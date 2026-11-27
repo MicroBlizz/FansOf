@@ -184,7 +184,7 @@ function ppVentanaFin() {
   t.appendChild(ppBoton(tr('JUGAR OTRA VEZ'), 'pp-btn', () => { ppCierra(); ppNuevaRuta(); ppIrA('mapa'); }));
   t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-volver', () => { ppCierra(); PP_P = null; ppIrA('titulo'); }));
 }
-function ppAyuda() {
+function ppAyuda(alAcabar = ppCierra) {   // alAcabar: adónde se va con ¡ENTENDIDO! (cerrar; desde Opciones vuelve a Opciones)
   const t = ppAbre(`<h2>${tr('Cómo se juega')}</h2>
     <p class="pp-sub">${tr('Toca una burbuja: ella y sus vecinas hacen pop y se hunden.')}</p>
     <p class="pp-sub">${tr('Haz pop en TODAS antes de quedarte sin toques.')}</p>
@@ -193,34 +193,17 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Y luego: el cohete, al hacer pop, levanta las hundidas de su fila (quítalo pronto). La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
     <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos. Gana al jefe y se abre el difícil.')}</p>`, true);
-  t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
+  t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { alAcabar(); SAVE.ayuda = true; ppGuarda(); }));
 }
 // las dos barras de volumen de core (OPCIONES.sonido): efectos y música por separado, en Opciones y en la pausa
+const ppParVolumen = campo => [() => SAVE[campo], v => { SAVE[campo] = v; ppGuarda(); applyVolume(); }];   // leer y guardar un volumen de SAVE (vol o mus)
+const ppBarrasSonido = () => OPCIONES.sonido({ efectos: ppParVolumen('vol'), musica: ppParVolumen('mus') });   // también en Opciones por bloques (js/opciones-pantalla.js)
 function ppFilasSonido() {
   const l = document.createElement('div'); l.className = 'opt-list';
-  const par = campo => [() => SAVE[campo], v => { SAVE[campo] = v; ppGuarda(); applyVolume(); }];
-  l.append(OPCIONES.sonido({ efectos: par('vol'), musica: par('mus') }));
+  l.append(ppBarrasSonido());
   return l;
 }
-/* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ---------- */
-function ppOpciones() {
-  const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
-  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
-  col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-sec', ppAyuda));
-  col.appendChild(ppFilasSonido());
-  const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-sec', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
-  col.appendChild(vib);
-  const ahorro = () => (AHORRO.activo() ? tr('AHORRO DE BATERÍA: SÍ') : tr('AHORRO DE BATERÍA: NO'));   // core/js/sistema/ahorro.js (ADR 218): se nota al momento
-  const ah = ppBoton(ahorro(), 'pp-btn2 pp-sec', () => { AHORRO.cambia(); ah.textContent = ahorro(); });
-  col.appendChild(ah);
-  // «Datos de partida anónimos» de core (core/js/sistema/datos-partida.js): una sola elección para toda la web; Pop no coloca la fila de Cuenta de core, así que va aquí
-  const datos = () => (DATOS.activo() ? tr('DATOS ANÓNIMOS: SÍ') : tr('DATOS ANÓNIMOS: NO'));
-  const da = ppBoton(datos(), 'pp-btn2 pp-sec', () => { DATOS.poner(!DATOS.activo()); da.textContent = datos(); });
-  col.appendChild(da);
-  col.appendChild(ppBotonConsejos());   // los consejos de Lola, sí o no (js/lola.js)
-  if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-sec', ppConfirmaDeNuevo));
-  ppBotonVolver(t, ppCierra, { tema: 'opciones' });
-}
+// OPCIONES (Daniel, 31-10-2026; por bloques desde la tarea 430, ADR 240): ppOpciones está en js/opciones-pantalla.js
 // empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
 function ppConfirmaDeNuevo() {
   const t = ppAbre(`<h2>${tr('¿Empezar de nuevo?')}</h2><p class="pp-sub">${tr('Vuelves al nivel 1, sin camino ni equipo. Guardas monedas, perlas y ayudas.')}</p>`);

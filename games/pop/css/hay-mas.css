@@ -1,0 +1,22 @@
+/* Fans of Pop · el aviso de «hay más abajo» (tarea 436, boceto A de Pepins; js/hay-mas.js lo pone y lo quita). En la ventana, un
+   difuminado del color de la ventana con una flechita rosa tenue que bota, pegado al fondo; en las listas de dentro, el difuminado
+   en la lista y la flechita suelta encima. No se puede tocar (pointer-events: none): lo de debajo sigue respondiendo. */
+/* de lado a lado y hasta el borde de abajo (tapa el relleno, como la franja .pp-cab de css/pop.css), con el marco repintado encima */
+#pp-ui .pp-hay-mas { position: sticky; z-index: 5; flex: none; align-self: stretch; height: 78px; pointer-events: none;
+  margin-left: calc(-1 * var(--pp-rell-l, 20px)); margin-right: calc(-1 * var(--pp-rell-l, 20px));
+  display: flex; align-items: flex-end; justify-content: center; padding-bottom: 19px; box-sizing: border-box;
+  background: linear-gradient(to bottom, rgba(255, 243, 250, 0), var(--pp-crema) 70%); opacity: 0; transition: opacity 0.2s; }
+#pp-ui .pp-hay-mas::before { content: ''; position: absolute; inset: -60px 0 0 0; border-radius: 28px; pointer-events: none; clip-path: inset(60px 0 0 0);
+  box-shadow: inset 0 0 0 6px #ff9ccf, inset 0 0 0 10px #fff, inset 0 0 0 13px #ffd1ec; }
+#pp-ui .pp-hay-mas.pp-hay-mas-pie::before { content: none; }   /* encima de un pie: el marco ya lo lleva el pie */
+#pp-ui .pp-hay-mas.pp-hay-mas-si { opacity: 1; }
+#pp-ui .pp-hay-mas-flecha { width: 34px; height: 34px; border-radius: 50%; background: #ff4f9a; opacity: 0.6; display: grid; place-items: center;
+  animation: pp-hay-mas-bota 1.2s ease-in-out infinite; }
+#pp-ui .pp-hay-mas-flecha svg { width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes pp-hay-mas-bota { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+/* la de las listas de dentro: suelta en #pp-modal, en el fondo de su lista (js/hay-mas.js le pone left y top) */
+#pp-ui .pp-hay-mas-suelta { position: absolute; z-index: 2; margin: -42px 0 0 -17px; pointer-events: none; }
+#pp-ui .pp-hay-mas-suelta[hidden] { display: none; }
+#pp-ui .pp-hay-mas-lista { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 48px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 48px), transparent); }
+@media (prefers-reduced-motion: reduce) { #pp-ui .pp-hay-mas-flecha { animation: none; } }

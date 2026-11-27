@@ -5,7 +5,7 @@
 // No usa el servidor: lee la API de GitHub desde el navegador con un token fino de solo lectura que cada admin pega una vez (queda en el localStorage de ese navegador). Gemelo del mod de Claude herramientas/cola-actions/ (docs/guia/herramientas/cola-actions.md).
 // Al abrir enseña la última foto guardada (con su fecha) y refresca por detrás; «Releer todo» vuelve a leer GitHub entero y «Borrar lo guardado» empieza de cero.
 // Con la sesión de /gestion comparte el historial por Supabase (gestion_cola_*, servidor/106-gestion-cola.sql) y, abajo, crea y revoca las claves del mod de Claude.
-// Usa lo de gestion/index.html: esc() y $(); GESTION_NAV (nav.js) y COLA_DATOS (cola-datos.js: qué se lee de GitHub y qué se guarda en el navegador).
+// Usa lo de gestion/index.html: esc() y $(); GESTION_NAV (nav.js), COLA_DATOS (cola-datos.js: qué se lee de GitHub y qué se guarda) y COLA_ALMACEN (cola-almacen.js: dónde, en IndexedDB).
 'use strict';
 (() => {
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO;
@@ -23,12 +23,17 @@
   const pan = document.createElement('div'); pan.id = 'pan-cola'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
 
-  const leer = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch (e) { return def; } };
-  snap = leer(COLA_DATOS.K.foto, null);   // la última foto: se enseña al abrir, con su fecha, mientras se refresca
-  if (snap) ultimo = snap.actualizado || 0;
-  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento: se recalcula */ } };
+  // Lo leído de GitHub va en IndexedDB (cola-almacen.js, ADR 241): en localStorage llenaba el sitio que comparten los juegos. Los ajustes (token, límite) siguen en localStorage.
+  const almacen = COLA_ALMACEN.crea({ claves: COLA_DATOS.K, base: COLA_ALMACEN.deIndexedDB(window.indexedDB), local: window.localStorage });
+  const { leer, guardar } = almacen;
+  const leerAjuste = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch (e) { return def; } };
+  const guardarAjuste = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { $('cl-aviso').textContent = 'Este navegador no deja guardar el ajuste.'; } };
+  const listo = almacen.abrir().then(() => {
+    snap = leer(COLA_DATOS.K.foto, null);   // la última foto: se enseña al abrir, con su fecha, mientras se refresca
+    if (snap) ultimo = snap.actualizado || 0;
+  });
   const LIM_DEFECTO = 1250000;   // límite semanal de referencia por defecto, en tokens (la web no puede leer el de Claude); vaciar el campo lo quita
-  const limite = () => Math.max(0, Number(leer(LIM, LIM_DEFECTO)) || 0);
+  const limite = () => Math.max(0, Number(leerAjuste(LIM, LIM_DEFECTO)) || 0);
   const token = () => { try { return localStorage.getItem(CLAVE) || ''; } catch (e) { return ''; } };
   const fmt = s => { s = Math.round(s); if (s < 60) return s + ' s'; const m = Math.floor(s / 60); if (m < 60) return m + ' min' + (s % 60 && m < 20 ? ' ' + (s % 60) + ' s' : ''); return Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; };
   const hora = ms => { const d = new Date(ms); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
@@ -188,6 +193,7 @@
     ocupado = false; await leerEstadoPausa(); if (fallo) falloControl = fallo; pinta();
   }
   async function cargar(fuerza, todo) {
+    await listo;   // lo guardado tiene que estar cargado antes de pintar o de refrescar sobre ello
     if (!token() || cargando) { pinta(); return; }
     if (!fuerza && snap && Date.now() - ultimo < CADA) { if (pausa === null) await leerEstadoPausa(); pinta(); return; }   // la foto guardada no trae la pausa
     cargando = true; pinta();
@@ -219,10 +225,10 @@
       rpc('gestion_cola_clave_revocar', { p_token: leerToken(), p_id: id }).then(cargarClaves, e => { $('cl-aviso').textContent = 'No pude revocar la clave: ' + e.message; });
     }
     else if (b.id === 'cl-borra' || b.id === 'cl-borra-no') { confirmaBorrar = b.id === 'cl-borra'; pinta(); }
-    else if (b.id === 'cl-borra-si') { confirmaBorrar = false; if (cargando) return; COLA_DATOS.borrar(); snap = null; ultimo = 0; cargar(true); }
+    else if (b.id === 'cl-borra-si') { confirmaBorrar = false; if (cargando) return; almacen.borrar(); snap = null; ultimo = 0; cargar(true); }
   };
   pan.onchange = ev => {
-    if (ev.target.id === 'cl-lim') { guardar(LIM, Number(ev.target.value) || 0); pinta(); }
+    if (ev.target.id === 'cl-lim') { guardarAjuste(LIM, Number(ev.target.value) || 0); pinta(); }
   };
   pan.onsubmit = ev => {
     ev.preventDefault();

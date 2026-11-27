@@ -4,6 +4,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.109', real: ["<b>MEJORAS POR DENTRO</b>: el botón atrás del móvil ahora lo escucha el núcleo de Fans Of, y cada juego decide qué hacer."], joke: ["Microblizz ha enseñado al botón atrás a no salir corriendo y Phony se ha quedado dentro del armario."] },
   { v: '0.13.108', real: ["<b>MEJORAS POR DENTRO</b>: la ventana de elegir partida recuerda lo que elegiste y no deja pisar tu partida al recargar."], joke: ["Microblizz ha puesto un candado a tu partida y Phony ha perdido la llave en el microondas."] },
   { v: '0.13.107', real: ["<b>MEJORAS POR DENTRO</b>: ajustes de rendimiento y de ahorro de batería en los sistemas internos de la web."], joke: ["Microblizz ha puesto la web en modo ahorro y Phony ha apagado hasta la luz de la nevera de los becarios."] },
   { v: '0.13.106', real: ["<b>MEJORAS POR DENTRO</b>: la web tiene una página 404 propia que reenvía las direcciones antiguas, y el anuncio con premio es más claro."], joke: ["Microblizz ha puesto un cartel de «te has perdido» en la web y Phony ya ha pedido una copia para la cocina."] },

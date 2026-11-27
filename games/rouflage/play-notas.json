@@ -202,5 +202,11 @@
     "fr-FR": "améliorations internes : la fenêtre de choix de partie retient votre choix et ne laisse plus écraser la partie au rechargement",
     "de-DE": "interne Verbesserungen: Das Fenster zur Spielstandwahl merkt sich die Auswahl und überschreibt den Spielstand beim Neuladen nicht mehr",
     "it-IT": "miglioramenti interni: la finestra di scelta della partita ricorda la scelta e non permette più di sovrascrivere la partita ricaricando"
+  },
+  "0.2.87": {
+    "pt-BR": "Novidades: melhorias internas: o botão voltar do celular agora é ouvido pelo núcleo do Fans Of.\n\nA Microblizz ensinou o botão voltar a não sair correndo e o Phony ficou preso dentro do armário.",
+    "fr-FR": "Nouveautés : améliorations internes : le bouton retour du téléphone est désormais écouté par le noyau de Fans Of.\n\nMicroblizz a appris au bouton retour à ne pas s'enfuir et Phony est resté coincé dans l'armoire.",
+    "de-DE": "Neu: Verbesserungen im Inneren: Die Zurück-Taste des Handys wird jetzt vom Fans-Of-Kern gehört.\n\nMicroblizz hat der Zurück-Taste beigebracht, nicht wegzulaufen, und Phony steckt im Kleiderschrank fest.",
+    "it-IT": "Novità: miglioramenti interni: il tasto indietro del telefono ora è ascoltato dal nucleo di Fans Of.\n\nMicroblizz ha insegnato al tasto indietro a non scappare e Phony è rimasto chiuso nell'armadio."
   }
 }

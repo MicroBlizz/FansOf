@@ -11,7 +11,6 @@
 .pp-ayuda .pp-ico { width: 62px; height: 62px; }
 .pp-ayuda em { position: absolute; top: 6px; left: 8px; font-style: normal; font-weight: 700; font-size: 22px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; }
 .pp-ayuda b { position: absolute; right: -10px; bottom: -6px; min-width: 30px; padding: 2px 8px; border-radius: 999px; background: #4fc964; color: #fff; font-size: 20px; box-shadow: inset 0 -3px 0 #26924a, 0 0 0 3px #fff; display: flex; align-items: center; justify-content: center; gap: 2px; }
-.pp-ayuda b .pp-precio { color: #fff; font-size: 17px; }
 /* el nombre, bajo la burbuja (como la columna del camino, css/camino.css) */
 .pp-ayuda i { position: absolute; left: 50%; top: calc(100% + 6px); transform: translateX(-50%); font-style: normal; font-weight: 700; font-size: 17px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; white-space: nowrap; pointer-events: none; }
 .pp-ayuda.pp-activa { transform: scale(1.12); box-shadow: 0 0 0 6px #ffd64a, 0 6px 0 #e07ab5; }
@@ -23,3 +22,10 @@
 /* el botón de la cortinilla de duelo (ADR 100): verde de Pop, por encima de todo lo del nivel, justo bajo la tarjeta «Así se gana» */
 #pp-cort-jugar { position: absolute; left: 50%; top: var(--pp-bajo-tarjeta, 850px); width: 340px; margin-left: -170px; padding-left: 0; padding-right: 0; white-space: nowrap; font-size: 40px; z-index: 45; --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }   /* sin translate: el latido (pp-enorme) ya usa transform */
 #pp-cort-jugar[hidden] { display: none; }
+/* a 0, un «+» en la pastilla en vez del precio (tarea 437) */
+.pp-ayuda b.pp-ayuda-mas { font-size: 26px; line-height: 1; padding: 0 10px 3px; }
+/* la ventanita de comprar una ayuda en la partida (js/ayuda-compra.js): 1 y x3 lado a lado; bajan de línea antes que salirse */
+.pp-compra-ayuda-op { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; justify-content: center; }
+#pp-ui .pp-compra-ayuda-op > button { flex: 1 1 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+#pp-ui .pp-compra-ayuda-op > button > span:first-child { font-size: 28px; }
+#pp-ui .pp-compra-ayuda-op small:not(.pp-euros) { font-size: 13px; opacity: 0.9; }

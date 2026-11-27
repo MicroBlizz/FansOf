@@ -69,6 +69,7 @@
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
+    'js/sistema/atras.js',         // el botón atrás del móvil le pregunta al juego (hook 'atras') en vez de sacarte de él (ADR 242)
     'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
     'js/sistema/captura-pantalla.js', // la foto de lo que ve el jugador (la página entera, con core/js/vendor/modern-screenshot.js pedida al usarse) para el reporte de prueba
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
@@ -117,6 +118,7 @@
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/presencia.js',     // el pulso anónimo cada minuto (conectados, jugadores por día, retención) tras el flag «presencia»; arranca solo
+    'js/sistema/atras.js',         // el botón atrás del móvil le pregunta al juego (hook 'atras') en vez de sacarte de él (ADR 242)
     'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
     'js/sistema/captura-pantalla.js', // la foto de lo que ve el jugador (la página entera, con core/js/vendor/modern-screenshot.js pedida al usarse) para el reporte de prueba
     'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)

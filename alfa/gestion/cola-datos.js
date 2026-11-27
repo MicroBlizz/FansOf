@@ -1,5 +1,5 @@
 // Fans Of · /gestion, pestaña COLA: lee GitHub y guarda en este navegador lo que ya no cambia, para que cada refresco pida lo mínimo. Gemelo de herramientas/cola-actions/hooks/datos.ts.
-// Lo guardado (localStorage, «fansof.gestion.cola.*»): los runs terminados por id con su intento (un run relanzado vuelve a la cola con el mismo id y otro intento: lo activo
+// Lo guardado (claves «fansof.gestion.cola.*», en IndexedDB a través de COLA_ALMACEN, cola-almacen.js; antes en localStorage): los runs terminados por id con su intento (un run relanzado vuelve a la cola con el mismo id y otro intento: lo activo
 // manda y se sobreescribe al acabar), el historial antiguo que falta por bajar, el runner de cada workflow, las duraciones, los recursos y la última foto para enseñarla al abrir.
 // Cada refresco: la cola (en curso y en cola), los terminados desde el más nuevo hasta topar con lo ya guardado, los que estaban activos y ya no (uno a uno), un trozo del
 // historial antiguo y los jobs solo de lo que está en curso. «Releer todo» lo vuelve a leer entero y sobreescribe por id sin borrar lo demás.
@@ -181,8 +181,5 @@ const COLA_DATOS = (() => {
     return snap;
   }
 
-  /** Borra todo lo guardado de la cola (no el token ni el límite semanal). */
-  const borrar = () => { try { Object.values(K).forEach(k => localStorage.removeItem(k)); } catch (e) { /* sin almacenamiento: nada que borrar */ } };
-
-  return { actualizar, borrar, K };
+  return { actualizar, K };
 })();

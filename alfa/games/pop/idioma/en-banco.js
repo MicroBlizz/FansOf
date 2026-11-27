@@ -40,5 +40,7 @@ IDIOMA.add({
   "enviando…": "sending…",
   "no, el servidor no la ha aceptado": "no, the server did not accept it",
   "enviada": "sent",
+  "Equipo explosivo": "Explosive team",
+  "La prueba de rendimiento ha fallado y no hay tanda.": "The performance test failed and there is no run.",
   "no, no se pudo conectar; se reintenta al volver a abrir el juego": "no, could not connect; it will retry next time you open the game",
 });

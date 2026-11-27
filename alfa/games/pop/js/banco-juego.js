@@ -159,11 +159,13 @@ const PP_BANCO = (() => {
     for (let i = 0; i < pasos.length; i++) { pintaRotulo(i + 1, pasos.length); medidas.push(await medida(pasos[i])); }
     limpia(); restauraAhorro();
     const tanda = Object.assign(PP_BANCO_REGLAS.tanda(pasos, medidas), { aparato: aparato(P.corta), fecha: Date.now() });
-    guarda(tanda);
+    if (!guarda(tanda)) apuntaFallo('no se pudo guardar el resultado');
     location.replace(PP_BANCO_URL.urlNormal(location.href));
   }
   // si la prueba se rompe entera: se apunta y se vuelve a la dirección normal (la partida real sigue intacta)
-  function vuelve(e) { console.error('banco: la prueba ha fallado', e); restauraAhorro(); location.replace(PP_BANCO_URL.urlNormal(location.href)); }
+  // por qué no hay tanda: lo enseña y lo apunta js/banco-vista.js al volver (aquí la cuenta está apagada y no se puede apuntar en ERRORES)
+  function apuntaFallo(motivo) { try { localStorage.setItem(K.fallo, JSON.stringify({ motivo: String(motivo).slice(0, 200), fecha: Date.now() })); } catch (e) { console.error('banco: no se pudo apuntar el fallo', e); } }
+  function vuelve(e) { console.error('banco: la prueba ha fallado', e); apuntaFallo((e && (e.stack || e.message)) || e); restauraAhorro(); location.replace(PP_BANCO_URL.urlNormal(location.href)); }
   // lo llama js/principal.js al arrancar: en modo banco, empieza cuando la portada ya se ve; si no, enseña el resultado pendiente
   function arranca() {
     if (!P.activo || !ppEsPruebas()) { PP_BANCO_VISTA.alLlegar(); return; }   // en la release, ?banco=1 no hace nada (solo alfa y desarrollo, como el resto de lo nuevo de Pop)

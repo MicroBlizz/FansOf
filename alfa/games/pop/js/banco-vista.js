@@ -12,7 +12,7 @@ const PP_BANCO_VISTA = (() => {
   const poner = (clave, v) => { try { localStorage.setItem(clave, JSON.stringify(v)); } catch (e) { console.error('banco: no se pudo guardar ' + clave, e); } };
   const valida = t => !!t && t.v === 1 && Array.isArray(t.pasos);
   // los nombres que se leen: cada frase entera, para que lleve su inglés
-  const ESCENARIOS = () => ({ lado4: tr('Nivel de 4'), lado5: tr('Nivel de 5'), lado6: tr('Nivel de 6'), victoria: tr('Victoria'), derrota: tr('Derrota'), duelo: tr('Duelo'), memoria: tr('Memoria') });
+  const ESCENARIOS = () => ({ lado4: tr('Nivel de 4'), lado5: tr('Nivel de 5'), lado6: tr('Nivel de 6'), equipo: tr('Equipo explosivo'), victoria: tr('Victoria'), derrota: tr('Derrota'), duelo: tr('Duelo'), memoria: tr('Memoria') });
   const VARIANTES = () => ({
     ahorro: tr('Ahorro de batería'), 'sin-fondo': tr('Sin fondo'), 'sin-bandeja': tr('Sin bandeja'), 'sin-burbujas': tr('Sin burbujas'),
     'sin-marcador': tr('Sin marcador'), 'sin-efectos': tr('Sin efectos'), 'sin-desenfoque': tr('Sin desenfoque'),
@@ -49,27 +49,47 @@ const PP_BANCO_VISTA = (() => {
     if (!valida(anterior)) return null;
     try { return PP_BANCO_REGLAS.empeora(anterior, tanda); } catch (e) { console.error('banco: la tanda anterior no se puede comparar', e); return null; }
   }
-  // la ventana: una capa por encima de todo, con su botón de cerrar
-  function muestra(tanda, anterior) {
+  // la ventana: una capa por encima de todo con su título, lo que se le pase y su botón de cerrar
+  function capaCon(...partes) {
     const capa = document.createElement('div'), caja = document.createElement('div'), titulo = document.createElement('h2'), cerrar = document.createElement('button');
     capa.style.cssText = 'position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;background:rgba(10,5,25,.6);padding:12px';
     caja.style.cssText = 'max-width:560px;width:100%;max-height:90vh;overflow:auto;background:#241446;color:#fff;border-radius:14px;padding:14px;box-sizing:border-box';
     titulo.textContent = tr('Prueba de rendimiento'); titulo.style.cssText = 'font:bold 16px sans-serif;margin:0 0 8px';
     cerrar.textContent = tr('Cerrar'); cerrar.style.cssText = 'margin-top:10px;padding:6px 14px;font:bold 13px sans-serif;border-radius:10px;border:0;background:#ff6ec7;color:#fff';
     cerrar.onclick = () => capa.remove();
-    const peores = comparaCon(anterior, tanda);
-    estado.textContent = tr('Envío al servidor: no se ha intentado'); estado.style.cssText = 'font:12px/1.5 sans-serif;margin:8px 0 0;opacity:.85';
-    caja.append(titulo, tabla(PP_BANCO_REGLAS.lectura(tanda)), textoEmpeora(peores), estado, cerrar);
+    caja.append(titulo, ...partes, cerrar);
     capa.append(caja); document.body.append(capa);
     return capa;
+  }
+  function muestra(tanda, anterior) {
+    const peores = comparaCon(anterior, tanda);
+    estado.textContent = tr('Envío al servidor: no se ha intentado'); estado.style.cssText = 'font:12px/1.5 sans-serif;margin:8px 0 0;opacity:.85';
+    return capaCon(tabla(PP_BANCO_REGLAS.lectura(tanda)), textoEmpeora(peores), estado);
+  }
+  // la prueba se rompió entera: el aviso con el motivo (corto) para poder contarlo
+  function muestraFallo(motivo) {
+    const p = document.createElement('p'), m = document.createElement('p');
+    p.textContent = tr('La prueba de rendimiento ha fallado y no hay tanda.'); p.style.cssText = 'font:13px/1.5 sans-serif;margin:0';
+    m.textContent = motivo.split('\n')[0].slice(0, 160); m.style.cssText = 'font:11px/1.4 monospace;margin:8px 0 0;opacity:.8;word-break:break-word';
+    return capaCon(p, m);
   }
   // el punto donde se engancha el envío de la tanda al servidor (el nodo que lo haga: hook('pop-banco', fn))
   const alVolver = tanda => { if (typeof fire === 'function') fire('pop-banco', tanda); };
   // la tanda ya tiene su final (enviada, o un no que no cambia al reintentar): pasa a ser la «anterior» y deja de estar pendiente. Lo llama quien envía;
   // hasta entonces sigue guardada, y si la página se va antes (p. ej. core recarga para traer la partida de la nube), se enseña y se envía al volver
   function termina(tanda) { poner(K.anterior, tanda); quitar(K.resultado); }
+  // la prueba se rompió entera (js/banco-juego.js apunta el motivo): se dice y se apunta en ERRORES para encontrarlo después
+  function miraFallo() {
+    const f = leer(K.fallo);
+    if (!f) return;
+    quitar(K.fallo);
+    const motivo = String(f.motivo || '?');
+    if (typeof ERRORES !== 'undefined') ERRORES.registrar('banco', 'prueba', motivo);
+    muestraFallo(motivo);
+  }
   // al llegar a la dirección normal: si hay tanda guardada, se enseña y se avisa a quien la envía
   function mira() {
+    miraFallo();
     const tanda = leer(K.resultado);
     if (!valida(tanda)) { if (tanda) quitar(K.resultado); return; }
     const anterior = leer(K.anterior);

@@ -4,7 +4,7 @@
 // recibe la dirección y una función que da el almacén (acceder a él puede fallar). Lo usan js/ajustes.js (antes de que core cargue la partida), js/banco-juego.js y js/banco-dev.js.
 'use strict';
 const PP_BANCO_URL = (() => {
-  const CLAVES = Object.freeze({ partida: 'fansof-pop-banco', resultado: 'fansof-pop-banco-resultado', anterior: 'fansof-pop-banco-anterior' });
+  const CLAVES = Object.freeze({ partida: 'fansof-pop-banco', resultado: 'fansof-pop-banco-resultado', anterior: 'fansof-pop-banco-anterior', fallo: 'fansof-pop-banco-fallo' });
   const PARAMETROS = Object.freeze(['banco', 'nube', 'corta', 'solo', 'origen', 'cpu']);   // los que se quitan para volver a la dirección normal
   // origen=guion (un guion de pruebas la lanza; si no, 'panel') y cpu=N (la CPU frenada que se ha puesto a mano, entero de 1 a 20, o null)
   const origenDe = v => (v === 'guion' ? 'guion' : 'panel');

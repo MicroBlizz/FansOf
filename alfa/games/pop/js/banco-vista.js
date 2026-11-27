@@ -1,7 +1,8 @@
 // Fans of Pop · PRUEBA DE RENDIMIENTO, lo que se ve al volver (tarea 404; adaptador): si hay una tanda guardada por js/banco-juego.js,
 // enseña una ventana cerrable con la lectura (js/banco-reglas.js): por escenario, fps medio y del 1 % peor con todo, si va bien y qué
 // variante gana más fps; y, si había una tanda anterior, qué ha empeorado. Luego guarda la tanda como «anterior» y avisa a quien quiera
-// enviarla: PP_BANCO_VISTA.alVolver(tanda) dispara hook('pop-banco', tanda) (el envío al servidor se engancha ahí, nunca aquí).
+// enviarla: PP_BANCO_VISTA.alVolver(tanda) dispara hook('pop-banco', tanda) (el envío al servidor se engancha ahí, nunca aquí) y quien envía
+// cuenta en la ventana qué pasó con PP_BANCO_VISTA.envio(texto). Si la ventana falla, la tanda se envía igual.
 'use strict';
 const PP_BANCO_VISTA = (() => {
   const K = PP_BANCO_URL.CLAVES;
@@ -39,6 +40,14 @@ const PP_BANCO_VISTA = (() => {
     p.textContent = tr('Ha empeorado respecto a la tanda anterior:') + ' ' + peores.slice(0, 5).map(x => `${nombre(esc, x.escenario)} · ${x.variante === 'todo' ? tr('Todo') : nombre(vars, x.variante)} ${x.antes} → ${x.ahora} fps`).join('; ');
     return p;
   }
+  // la línea que dice qué pasó con el envío: la rellena quien envía (js/banco-envio.js) con PP_BANCO_VISTA.envio(texto)
+  const estado = document.createElement('p');
+  const envio = texto => { estado.textContent = tr('Envío al servidor:') + ' ' + texto; };
+  // qué ha empeorado; una «anterior» que no se puede comparar (de otra versión) cuenta como que no hay anterior
+  function comparaCon(anterior, tanda) {
+    if (!valida(anterior)) return null;
+    try { return PP_BANCO_REGLAS.empeora(anterior, tanda); } catch (e) { console.error('banco: la tanda anterior no se puede comparar', e); return null; }
+  }
   // la ventana: una capa por encima de todo, con su botón de cerrar
   function muestra(tanda, anterior) {
     const capa = document.createElement('div'), caja = document.createElement('div'), titulo = document.createElement('h2'), cerrar = document.createElement('button');
@@ -47,8 +56,9 @@ const PP_BANCO_VISTA = (() => {
     titulo.textContent = tr('Prueba de rendimiento'); titulo.style.cssText = 'font:bold 16px sans-serif;margin:0 0 8px';
     cerrar.textContent = tr('Cerrar'); cerrar.style.cssText = 'margin-top:10px;padding:6px 14px;font:bold 13px sans-serif;border-radius:10px;border:0;background:#ff6ec7;color:#fff';
     cerrar.onclick = () => capa.remove();
-    const peores = valida(anterior) ? PP_BANCO_REGLAS.empeora(anterior, tanda) : null;
-    caja.append(titulo, tabla(PP_BANCO_REGLAS.lectura(tanda)), textoEmpeora(peores), cerrar);
+    const peores = comparaCon(anterior, tanda);
+    estado.textContent = tr('Envío al servidor: no se ha intentado'); estado.style.cssText = 'font:12px/1.5 sans-serif;margin:8px 0 0;opacity:.85';
+    caja.append(titulo, tabla(PP_BANCO_REGLAS.lectura(tanda)), textoEmpeora(peores), estado, cerrar);
     capa.append(caja); document.body.append(capa);
     return capa;
   }
@@ -59,11 +69,12 @@ const PP_BANCO_VISTA = (() => {
     const tanda = leer(K.resultado);
     if (!valida(tanda)) { if (tanda) quitar(K.resultado); return; }
     const anterior = leer(K.anterior);
-    muestra(tanda, anterior);
+    // si la ventana falla (p. ej. una «anterior» de otra versión), se apunta y la tanda se envía igual
+    try { muestra(tanda, anterior); } catch (e) { console.error('banco: no se pudo enseñar la tanda', e); if (typeof ERRORES !== 'undefined') ERRORES.registrar('banco', 'muestra', e && e.message); }
     alVolver(tanda);
     poner(K.anterior, tanda); quitar(K.resultado);
   }
   // la portada tarda en salir (splash de core): se espera a verla
   function alLlegar() { const m = () => { if (PP_ESCENARIO.style.visibility === '') mira(); else setTimeout(m, 300); }; m(); }
-  return Object.freeze({ alLlegar, alVolver, muestra });
+  return Object.freeze({ alLlegar, alVolver, muestra, envio });
 })();

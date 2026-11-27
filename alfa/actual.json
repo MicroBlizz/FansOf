@@ -1,8 +1,8 @@
 {
- "build": 1545,
- "hash": "6e479f6",
- "fecha": "2026-11-26T22:47:46Z",
- "mensaje": "Versiones y novedades para la publicación diaria (elegir partida de core)",
+ "build": 1546,
+ "hash": "36b2f81",
+ "fecha": "2026-11-27T09:45:48Z",
+ "mensaje": "Pop: la ventana de la prueba de rendimiento dice si la tanda se envió y por qué no; un fallo al enseñarla ya no impide el envío (tarea 404)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.1",

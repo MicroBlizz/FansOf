@@ -50,6 +50,7 @@ IDIOMA.add({
   "Tienes corazones infinitos: si sales, no pierdes ninguno.": "You have infinite hearts: if you leave, you lose none.",
   "Tienes corazones infinitos: si sales, solo pierdes al compañero.": "You have infinite hearts: if you leave, you only lose the buddy.",
   "¿Salir del nivel?": "Leave the level?",
+  "¿Salir de Fans of Pop?": "Leave Fans of Pop?",
   "NO, SEGUIR JUGANDO": "NO, KEEP PLAYING",
   "SÍ, SALIR": "YES, LEAVE",
  "CrazyBunny": "CrazyBunny",

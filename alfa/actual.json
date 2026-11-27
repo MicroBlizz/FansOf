@@ -1,8 +1,8 @@
 {
- "build": 1556,
- "hash": "875ac40",
- "fecha": "2026-11-27T19:54:40Z",
- "mensaje": "Pop: en los duelos la ventanita de compra sale donde antes se cobraba, tras sus comprobaciones; tests de que a 0 nunca se cobra de un toque (tarea 437)",
+ "build": 1557,
+ "hash": "d11b7ac",
+ "fecha": "2026-11-27T22:15:48Z",
+ "mensaje": "Pop: el botón atrás del móvil ya no te saca del juego ni cuesta un corazón; core lo escucha y cada juego decide (Pepins, tarea 446, ADR 242)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.1",

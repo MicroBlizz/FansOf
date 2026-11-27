@@ -1,8 +1,8 @@
 {
- "build": 1554,
- "hash": "221fb46",
- "fecha": "2026-11-27T12:56:59Z",
- "mensaje": "Pop: sin barras de desplazamiento en ninguna ventana; la rosa cortaba el marco de Opciones (Pepins)",
+ "build": 1555,
+ "hash": "1812ee2",
+ "fecha": "2026-11-27T18:48:21Z",
+ "mensaje": "Pop: aviso de «hay más abajo» (difuminado y flechita) en lo que se desliza; la raya del título ya no corta el marco (Pepins, tarea 436)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.1",

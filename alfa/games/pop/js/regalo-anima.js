@@ -1,5 +1,6 @@
-// Fans of Pop · ABRIR EL REGALO DIARIO, la animación (tarea 383, boceto A de Pepins, 26-11-2026): al pulsar ¡ABRIR! la caja tiembla y
-// estalla, sale lo que ha tocado (y el premio de la meta de días seguidos, si la hay) con rayos de luz y, al pulsar ¡GENIAL!, sus iconos
+// Fans of Pop · ABRIR EL REGALO DIARIO, la animación (tarea 383, boceto A de Pepins, 26-11-2026): al pulsar ¡ABRIR! la caja tiembla
+// y se abre de golpe por su bisagra (img-liso/i-regalo-abierto.png, del mismo dibujo que i-regalo); con un destello sale lo que ha
+// tocado (y el premio de la meta de días seguidos, si la hay) con rayos de luz y, al pulsar ¡GENIAL!, sus iconos
 // vuelan a la barra de arriba (corazones, monedas y perlas), cuyas cifras cuentan hacia arriba. El vuelo es el del pase (ppPaseVuela,
 // js/pase.js) y la barra, la de la victoria (ppVicBarra, js/victoria-panel.js). Solo en pruebas, junto con los días seguidos
 // (ppDiasSeguidosActivo, js/regalo.js). Con «reducir movimiento» en el móvil no tiembla ni vuela: sale el premio y se cierra. Estilo: css/regalo.css.
@@ -19,7 +20,7 @@ function ppRegaloAnimaAbre(html, antes) {
   if (abrir) abrir.disabled = true;
   if (!halo || ppRegaloQuieto()) { ppRegaloToma(html, antes); return; }
   halo.classList.add('pp-rg-tiembla');
-  setTimeout(() => halo.classList.add('pp-rg-estalla'), PP_RG_ANIMA.tiembla);
+  setTimeout(() => { halo.classList.add('pp-rg-estalla'); halo.innerHTML = ppIcono('i-regalo-abierto', 130, '#9cf0a0'); play('ppPop'); }, PP_RG_ANIMA.tiembla);   // se abre por la bisagra
   setTimeout(() => ppRegaloToma(html, antes, halo), PP_RG_ANIMA.tiembla + PP_RG_ANIMA.estalla);
 }
 // la ventana de lo que ha tocado, con la barra de arriba. Si mientras temblaba la cerraste o abriste otra (ya no está la caja que

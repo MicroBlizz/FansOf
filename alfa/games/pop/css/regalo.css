@@ -19,18 +19,18 @@
 .pp-rg-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; line-height: 1.15; text-align: left; }
 .pp-rg-meta .pp-premios { font-size: 18px; white-space: nowrap; }
 .pp-rg-logro { align-items: center; margin-top: 4px; border-color: #ff4a8a; background: #fff0f6; color: #d4246a; font-size: 18px; }
-/* abrir el regalo con su animación (tarea 383, boceto A; js/regalo-anima.js): la caja tiembla y estalla; en la ventana de lo que ha tocado
+/* abrir el regalo con su animación (tarea 383, boceto A; js/regalo-anima.js): la caja tiembla y se abre por la bisagra con un destello; en la ventana de lo que ha tocado
    (.pp-rg-toma, con la barra de arriba) giran unos rayos detrás, el premio salta hacia fuera y, al irse volando, se apaga */
 .pp-rg-halo.pp-rg-tiembla { animation: pp-rg-tiembla 0.65s ease-in-out; }
 .pp-rg-halo.pp-rg-estalla { animation: pp-rg-estalla 0.35s ease-in forwards; }
 @keyframes pp-rg-tiembla { 0%, 100% { transform: rotate(0); } 15% { transform: rotate(-8deg) scale(1.03); } 30% { transform: rotate(8deg) scale(1.05); }
   45% { transform: rotate(-6deg) scale(1.07); } 60% { transform: rotate(6deg) scale(1.09); } 75% { transform: rotate(-3deg) scale(1.1); } 90% { transform: rotate(3deg) scale(1.1); } }
-@keyframes pp-rg-estalla { 0% { transform: scale(1.1); opacity: 1; filter: brightness(1); } 60% { transform: scale(1.35); filter: brightness(1.8); } 100% { transform: scale(1.6); opacity: 0; filter: brightness(2.2); } }
+@keyframes pp-rg-estalla { 0% { transform: scale(1.1); filter: brightness(1.9); } 45% { transform: scale(1.3); filter: brightness(1.5); } 100% { transform: scale(1); filter: brightness(1); } }   /* ya abierta: brinca con un destello */
 .pp-tarjeta.pp-rg-toma { margin-top: 74px; }
 .pp-rg-toma .pp-rg-halo { position: relative; isolation: isolate; animation: none; }
 .pp-rg-toma .pp-rg-halo::before { content: ''; position: absolute; inset: -15px; z-index: -1; border-radius: 50%;
   background: repeating-conic-gradient(rgba(255, 201, 60, 0.5) 0 12deg, transparent 12deg 30deg); animation: pp-rg-rayos 6s linear infinite; }
-.pp-rg-toma .pp-rg-halo .pp-ico { opacity: 0.55; transform: scale(0.8); }
+.pp-rg-toma .pp-rg-halo .pp-ico { transform: scale(0.9); }
 .pp-rg-toma .pp-rg-premio { animation: pp-rg-sale 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
 .pp-rg-toma .pp-rg-logro { animation: pp-rg-sale 0.45s 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
 .pp-rg-toma .pp-rg-se-va { animation: none; opacity: 0; transition: opacity 0.3s; }   /* después de .pp-rg-premio: su animación ya no lo sujeta */

@@ -1,8 +1,8 @@
 {
- "build": 1551,
- "hash": "7707c5d",
- "fecha": "2026-11-27T11:02:42Z",
- "mensaje": "Pop: al abrir el Regalo diario la caja estalla y el premio sale grande de dentro; el regalo es la caja 3 de Yoshi (Pepins, tarea 383)",
+ "build": 1552,
+ "hash": "ab1ffa3",
+ "fecha": "2026-11-27T11:09:50Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-430-opciones",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.1",

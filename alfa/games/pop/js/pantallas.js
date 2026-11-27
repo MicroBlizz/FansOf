@@ -184,7 +184,7 @@ function ppVentanaFin() {
   t.appendChild(ppBoton(tr('JUGAR OTRA VEZ'), 'pp-btn', () => { ppCierra(); ppNuevaRuta(); ppIrA('mapa'); }));
   t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-volver', () => { ppCierra(); PP_P = null; ppIrA('titulo'); }));
 }
-function ppAyuda() {
+function ppAyuda(alAcabar = ppCierra) {   // alAcabar: adónde se va con ¡ENTENDIDO! (cerrar; Opciones por bloques vuelve a Opciones)
   const t = ppAbre(`<h2>${tr('Cómo se juega')}</h2>
     <p class="pp-sub">${tr('Toca una burbuja: ella y sus vecinas hacen pop y se hunden.')}</p>
     <p class="pp-sub">${tr('Haz pop en TODAS antes de quedarte sin toques.')}</p>
@@ -193,17 +193,20 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Y luego: el cohete, al hacer pop, levanta las hundidas de su fila (quítalo pronto). La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
     <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos. Gana al jefe y se abre el difícil.')}</p>`, true);
-  t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
+  t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { alAcabar(); SAVE.ayuda = true; ppGuarda(); }));
 }
 // las dos barras de volumen de core (OPCIONES.sonido): efectos y música por separado, en Opciones y en la pausa
+const ppParVolumen = campo => [() => SAVE[campo], v => { SAVE[campo] = v; ppGuarda(); applyVolume(); }];   // leer y guardar un volumen de SAVE (vol o mus)
+const ppBarrasSonido = () => OPCIONES.sonido({ efectos: ppParVolumen('vol'), musica: ppParVolumen('mus') });   // también en Opciones por bloques (js/opciones-pantalla.js)
 function ppFilasSonido() {
   const l = document.createElement('div'); l.className = 'opt-list';
-  const par = campo => [() => SAVE[campo], v => { SAVE[campo] = v; ppGuarda(); applyVolume(); }];
-  l.append(OPCIONES.sonido({ efectos: par('vol'), musica: par('mus') }));
+  l.append(ppBarrasSonido());
   return l;
 }
-/* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ---------- */
+/* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ----------
+   Con el flag «opciones-bloques» abierto (tarea 430), la ventana por bloques de js/opciones-pantalla.js; cerrado, esta columna de siempre. */
 function ppOpciones() {
+  if (ppOpcionesBloquesActivo()) { ppOpcionesBloques(); return; }
   const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
   col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-sec', ppAyuda));

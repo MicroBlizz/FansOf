@@ -40,5 +40,5 @@ IDIOMA.add({
   "enviando…": "sending…",
   "no, el servidor no la ha aceptado": "no, the server did not accept it",
   "enviada": "sent",
-  "no, no se pudo conectar": "no, could not connect",
+  "no, no se pudo conectar; se reintenta al volver a abrir el juego": "no, could not connect; it will retry next time you open the game",
 });

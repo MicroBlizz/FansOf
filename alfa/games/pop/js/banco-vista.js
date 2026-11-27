@@ -1,8 +1,9 @@
 // Fans of Pop · PRUEBA DE RENDIMIENTO, lo que se ve al volver (tarea 404; adaptador): si hay una tanda guardada por js/banco-juego.js,
 // enseña una ventana cerrable con la lectura (js/banco-reglas.js): por escenario, fps medio y del 1 % peor con todo, si va bien y qué
-// variante gana más fps; y, si había una tanda anterior, qué ha empeorado. Luego guarda la tanda como «anterior» y avisa a quien quiera
+// variante gana más fps; y, si había una tanda anterior, qué ha empeorado. Luego avisa a quien quiera
 // enviarla: PP_BANCO_VISTA.alVolver(tanda) dispara hook('pop-banco', tanda) (el envío al servidor se engancha ahí, nunca aquí) y quien envía
-// cuenta en la ventana qué pasó con PP_BANCO_VISTA.envio(texto). Si la ventana falla, la tanda se envía igual.
+// cuenta en la ventana qué pasó con PP_BANCO_VISTA.envio(texto) y, con un final, PP_BANCO_VISTA.termina(tanda) la guarda como «anterior».
+// Si la ventana falla, la tanda se envía igual.
 'use strict';
 const PP_BANCO_VISTA = (() => {
   const K = PP_BANCO_URL.CLAVES;
@@ -64,7 +65,10 @@ const PP_BANCO_VISTA = (() => {
   }
   // el punto donde se engancha el envío de la tanda al servidor (el nodo que lo haga: hook('pop-banco', fn))
   const alVolver = tanda => { if (typeof fire === 'function') fire('pop-banco', tanda); };
-  // al llegar a la dirección normal: si hay tanda guardada, se enseña, se avisa y pasa a ser la «anterior»
+  // la tanda ya tiene su final (enviada, o un no que no cambia al reintentar): pasa a ser la «anterior» y deja de estar pendiente. Lo llama quien envía;
+  // hasta entonces sigue guardada, y si la página se va antes (p. ej. core recarga para traer la partida de la nube), se enseña y se envía al volver
+  function termina(tanda) { poner(K.anterior, tanda); quitar(K.resultado); }
+  // al llegar a la dirección normal: si hay tanda guardada, se enseña y se avisa a quien la envía
   function mira() {
     const tanda = leer(K.resultado);
     if (!valida(tanda)) { if (tanda) quitar(K.resultado); return; }
@@ -72,9 +76,8 @@ const PP_BANCO_VISTA = (() => {
     // si la ventana falla (p. ej. una «anterior» de otra versión), se apunta y la tanda se envía igual
     try { muestra(tanda, anterior); } catch (e) { console.error('banco: no se pudo enseñar la tanda', e); if (typeof ERRORES !== 'undefined') ERRORES.registrar('banco', 'muestra', e && e.message); }
     alVolver(tanda);
-    poner(K.anterior, tanda); quitar(K.resultado);
   }
   // la portada tarda en salir (splash de core): se espera a verla
   function alLlegar() { const m = () => { if (PP_ESCENARIO.style.visibility === '') mira(); else setTimeout(m, 300); }; m(); }
-  return Object.freeze({ alLlegar, alVolver, muestra, envio });
+  return Object.freeze({ alLlegar, alVolver, muestra, envio, termina });
 })();

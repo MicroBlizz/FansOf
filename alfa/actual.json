@@ -1,8 +1,8 @@
 {
- "build": 1547,
- "hash": "ce8de96",
- "fecha": "2026-11-27T09:56:22Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-383-regalo-nuevo",
+ "build": 1548,
+ "hash": "791b547",
+ "fecha": "2026-11-27T10:16:01Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/project-thread-7ig6cv",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.1",

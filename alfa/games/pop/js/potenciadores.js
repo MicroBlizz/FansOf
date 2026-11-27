@@ -1,6 +1,6 @@
 // Fans of Pop · POTENCIADORES («copiarnos de Candy Crush», Daniel, 30-10-2026): las AYUDAS que se usan en un nivel. Se ganan
-// jugando (regalo diario, pase, ofertas) y se guardan en SAVE.ayudas; si no te quedan, el botón la compra con perlas a precio
-// fijo (PP_CFG.ayudas). Nunca azar (ADR 004).
+// jugando (regalo diario, pase, ofertas) y se guardan en SAVE.ayudas; si no te quedan, el botón de la barra enseña un «+» y abre
+// la ventanita de comprarla con perlas a precio fijo (PP_CFG.ayudas; js/ayuda-compra.js, tarea 437). Nunca azar (ADR 004).
 // · Niveles normales: MARTILLO (revienta del todo la burbuja que toques), BOMBA (un golpe a un cuadrado de 3x3) y +3 TOQUES.
 //   Ni el martillo ni la bomba gastan toque. Tras fallar un nivel, al volver a entrar se ofrece +3 toques antes de empezar.
 // · Duelos (js/nimnivel.js): DESHACER (vuelve al principio de tu turno anterior, antes de la respuesta del rival) y la PISTA DE
@@ -31,7 +31,7 @@ function ppBarraAyudas() {
   const ver = PP_PANT.actual === 'sala' && T && !T.hecho && ppAyudasEnNivel(T) && !ppCortActiva();
   b.hidden = !ver; if (!ver) return;
   const duelo = !!T.nim, lista = duelo ? ['deshacer', 'pista'] : ['martillo', 'bomba', 'toques3'];
-  const ico = 62, perla = 18;   // en los duelos, del mismo tamaño que en los niveles (tarea 343)
+  const ico = 62;   // en los duelos, del mismo tamaño que en los niveles (tarea 343)
   b.classList.toggle('pp-duelo', duelo);
   ppTutorial(duelo ? 'ayudasDuelo' : 'ayudas');
   b.innerHTML = '';
@@ -41,7 +41,10 @@ function ppBarraAyudas() {
     const gratis = duelo && ppAyudaGratis(k, T.nim);   // la lupa de Lola o los compañeros de duelo
     if (ppEscSoloGratis(T) && !gratis) continue;   // en el duelo por un compañero escondido no vale ninguna comprada (js/escondidos-duelo.js)
     const nombre = `<i>${tr(PP_CFG.ayudas[k].nombre)}</i>`;   // con su nombre debajo (tarea #269; en los duelos también, tarea 343)
-    bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasPrecioHtml(PP_CFG.ayudas[k].perlas, perla)}</b>${nombre}`;
+    // en la partida, nunca un precio: su número, GRATIS o, a 0, un «+» que abre la ventanita de compra (tarea 437, js/ayuda-boton.js)
+    const m = PP_AYUDA_BOTON.marca({ gratis, tengo: n });
+    const marca = m.marca === 'gratis' ? `<b>${tr('GRATIS')}</b>` : m.marca === 'numero' ? `<b>${m.n}</b>` : '<b class="pp-ayuda-mas">+</b>';
+    bt.innerHTML = `${ppIcono('i-' + k, ico, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}${marca}${nombre}`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
     bt.onclick = () => { play('select'); ppPulsaAyuda(k); };
     b.appendChild(bt);
@@ -50,6 +53,9 @@ function ppBarraAyudas() {
 }
 function ppPulsaAyuda(k) {
   const T = PP_P && PP_P.T; if (!T || T.hecho || ppCortActiva()) return;   // con la cortinilla del jefe puesta, las ayudas esperan
+  // en un nivel, a 0 se compra en la ventanita, nunca de un toque (tarea 437); parado sin toques no, que ya sale «¡Sin toques!».
+  // En los duelos la ventanita sale donde antes se cobraba (ppPagaDeshacer y ppPagaPista), tras sus comprobaciones de siempre
+  if (!T.nim && PP_AYUDA_BOTON.alPulsar({ tengo: ppTengo(k) }) === 'comprar') { if (!T.parado) ppVentanaComprarAyuda(k); return; }
   if (k === 'martillo' || k === 'bomba') {
     if (T.parado) return;
     PP_AYUDA.modo = PP_AYUDA.modo === k ? null : k; T.habModo = null;   // se elige la burbuja con el siguiente toque (otra pulsación, cancela)
@@ -119,6 +125,7 @@ function ppNimDeshacer(trasPerder) {
 function ppPagaDeshacer(T, trasPerder) {
   if (!trasPerder && ppHabDDeshazGratis(T.nim)) { T.nim.deshacesGratis = (T.nim.deshacesGratis || 0) + 1; return true; }
   if (ppEscSoloGratis(T)) return false;
+  if (!trasPerder && !ppTengo('deshacer')) { ppVentanaComprarAyuda('deshacer'); return false; }   // en el duelo, a 0: la ventanita (tarea 437)
   return ppGastaAyuda('deshacer', trasPerder ? () => ppNimFin(T, false, true) : null);
 }
 // tras perder: la última foto desde la que se gana (o la última, si no hubiera ninguna)
@@ -149,7 +156,7 @@ function ppNimGanadora(filas) {
 // N.pistasGratis: las gratis que ya se han gastado en este duelo
 const ppPistaGratis = N => PP_HAB.queda(Math.max(ppEnEquipo('lola') ? 1 : 0, ppHabDUsos('dPista')), N.pistasGratis);
 const ppAyudaGratis = (k, N) => (k === 'pista' ? ppPistaGratis(N) : k === 'deshacer' && ppHabDDeshazGratis(N));
-function ppPagaPista(N) { if (ppPistaGratis(N)) { N.pistasGratis = (N.pistasGratis || 0) + 1; return true; } return !ppEscSoloGratis(PP_P.T) && ppGastaAyuda('pista'); }
+function ppPagaPista(N) { if (ppPistaGratis(N)) { N.pistasGratis = (N.pistasGratis || 0) + 1; return true; } if (ppEscSoloGratis(PP_P.T)) return false; if (!ppTengo('pista')) { ppVentanaComprarAyuda('pista'); return false; } return ppGastaAyuda('pista'); }   // a 0: la ventanita (tarea 437)
 function ppNimPista() {
   const T = PP_P && PP_P.T, N = T && T.nim; if (!N || N.turno !== 'yo' || N.fin) return;
   // a mitad de turno (ya has reventado en una fila): cuántas MÁS de esa fila, o pulsar ¡LISTO! ya, o que con esa fila ya no se gana

@@ -1,8 +1,8 @@
 {
- "build": 1555,
- "hash": "1812ee2",
- "fecha": "2026-11-27T18:48:21Z",
- "mensaje": "Pop: aviso de «hay más abajo» (difuminado y flechita) en lo que se desliza; la raya del título ya no corta el marco (Pepins, tarea 436)",
+ "build": 1556,
+ "hash": "875ac40",
+ "fecha": "2026-11-27T19:54:40Z",
+ "mensaje": "Pop: en los duelos la ventanita de compra sale donde antes se cobraba, tras sus comprobaciones; tests de que a 0 nunca se cobra de un toque (tarea 437)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.1",

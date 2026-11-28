@@ -1,8 +1,8 @@
 {
- "build": 1558,
- "hash": "0afc97a",
- "fecha": "2026-11-27T22:50:14Z",
- "mensaje": "Release 27-11: versiones y notas de todos los juegos (core: atrás del móvil)",
+ "build": 1559,
+ "hash": "ddca372",
+ "fecha": "2026-11-28T00:02:20Z",
+ "mensaje": "Pop: la raid en la lista de lo que se borra al resetear una cuenta (SQL 206, con el sí de Pepins), enlace de la ficha arreglado y grafo de la tarea 448 al día",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

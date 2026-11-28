@@ -158,6 +158,25 @@ const PP_CFG = {
   // PERFIL DE JUGADOR (tarea #41, ADR 130; precios medios que eligió Pepins el 17-11-2026): perlas por cada cosa del perfil, según su tipo.
   // Lo de serie y los amigos ya rescatados son gratis (js/perfil-catalogo.js). Lo cobra el servidor (comprar_fijo) y se sube con herramientas/pop/pop_datos.js.
   perfil: { frase: 10, titulo: 10, pegatina: 15, marco: 25, fondo: 30, efecto: 40, personaje: 50, entrada: 60 },
+  // RAID ENTRE TODOS (tarea 448, ADR 243; js/raid/dominio/; cifras de ejemplo de Pepins, 27-11-2026, para calibrar en la alfa). Un tablero de 512x512
+  // burbujas compartido toda la semana (lunes a domingo, hora de Madrid). Las cifras entran al dominio por parámetro; el servidor copia las suyas.
+  raid: {
+    deposito: { capacidad: 30, cadaMs: 20000 },   // el depósito de toques: caben 30 y se recarga 1 cada 20 s
+    escalones: [                                  // premio por burbujas reventadas por cada jugador (de menor a mayor)
+      { desde: 1, monedas: 200, perlas: 0, marco: false },      // por participar
+      { desde: 100, monedas: 500, perlas: 0, marco: false },    // 100 burbujas
+      { desde: 1000, monedas: 1000, perlas: 10, marco: true },  // 1.000 burbujas: con el marco exclusivo de la raid
+      { desde: 5000, monedas: 2000, perlas: 30, marco: true },  // 5.000 burbujas
+    ],
+    extraVaciada: 0.5,                            // si entre todos vacían el tablero: +50 % de monedas sobre el escalón
+    cofres: { cantidad: 64, min: 20, max: 60, lado: 512 },   // burbujas de cofre escondidas (posiciones por semilla): cuántos y monedas de cada uno
+    // la raid 'prueba' del panel DEV (solo alfa; servidor/205-pop-raid.sql): solo vive el bloque 48x48 de x,y en [232, 280); sus cofres van dentro
+    prueba: { cofres: { cantidad: 8, min: 20, max: 60, lado: 512, zona: { x: 232, y: 232, lado: 48 } } },
+    faseFinal: 0.05,                             // «quedan pocas»: con el 5 % o menos de burbujas vivas sale el jefe CEO
+    // la red de la raid (js/raid/aplicacion/sincronia.js; sin Realtime en el plan gratis): el móvil pregunta cada `sondeoMs` solo por los trozos que ve;
+    // lo que toca se junta en una tanda que sale a los `tandaMs` o al juntar `tandaMax` toques y golpes (nunca más que la capacidad del depósito)
+    red: { sondeoMs: 3000, tandaMs: 700, tandaMax: 30 },
+  },
 };
 // Los mundos están en js/regiones/ y sus niveles y la curva de dificultad, en js/niveles.js (se generan solos).
 

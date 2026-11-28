@@ -5,13 +5,15 @@
 //   por casilla). Al reventarla NO desaparece: se HUNDE y se queda del color que le toca del dibujo escondido, así que entre todas las hundidas
 //   van formando el dibujo, como un mosaico. Solo se pintan las casillas que caben en la ventana; cada botón vivo se guarda ya reducido, con su
 //   cara, en un lienzo pequeño, y el relieve de la hundida también (se repiten cientos de veces por fotograma).
-// · crea({ creaLienzo, imagen, colores, caras, cara }) → { pinta(c, o), limpia() }; `imagen(k)` da el dibujo del botón de color k o null (entonces,
-//   una burbuja por código); `cara(c, cx, cy, r, v)` pinta la carita número v (de 0 a caras - 1); `colores` = lista de [r, g, b].
+// · Las BURBUJAS DOBLES (nodo n8: necesitan dos pops) se pintan con el dibujo de la burbuja doble de Pop, la de la nata encima; al primer pop
+//   pierden la nata y quedan como las demás. De lejos no cambian: la imagen de puntos sigue igual.
+// · crea({ creaLienzo, imagen, doble, colores, caras, cara }) → { pinta(c, o), limpia() }; `imagen(k)` da el dibujo del botón de color k o null (entonces,
+//   una burbuja por código); `doble(k)`, el de la burbuja doble de ese color (o null: se pinta como las demás); `cara(c, cx, cy, r, v)` pinta la carita número v (de 0 a caras - 1); `colores` = lista de [r, g, b].
 //   Depende de PP_RAID_TABLERO, PP_RAID_CAMARA y PP_RAID_LEJOS.
 'use strict';
 const PP_RAID_CERCA = (() => {
   const Z_BURBUJAS = 18;   // desde aquí se pintan burbujas de verdad y se puede reventar
-  const TOPE_CACHE = 160;
+  const TOPE_CACHE = 320;
   const HUNDIDA = -1;      // la «burbuja» de la caché que es el relieve de una hundida
   const BANDEJA = '#ffe3f1';
   // qué carita le toca a una casilla (siempre la misma)
@@ -40,26 +42,27 @@ const PP_RAID_CERCA = (() => {
     c.fillStyle = 'rgba(255, 255, 255, 0.45)';
     c.beginPath(); c.ellipse(m + rad * 0.3, m + rad * 0.48, rad * 0.26, rad * 0.12, -0.5, 0, Math.PI * 2); c.fill();
   }
-  // la burbuja viva: su sombra en la bandeja, el botón y su carita
-  function viva(c, tam, im, color, pintaCara) {
+  // la burbuja viva: su sombra en la bandeja, el botón y su carita (`baja`: la carita un poco más abajo, para dejar sitio a la nata de la doble)
+  function viva(c, tam, im, color, pintaCara, baja = false) {
     const m = tam / 2;
     c.fillStyle = 'rgba(150, 60, 110, 0.3)';
     c.beginPath(); c.ellipse(m, m + tam * 0.36, tam * 0.36, tam * 0.11, 0, 0, Math.PI * 2); c.fill();
     if (im) c.drawImage(im, tam * 0.02, 0, tam * 0.96, tam * 0.96); else burbujaCodigo(c, tam, color);
-    pintaCara(c, m, m * 0.98, tam * 0.3);
+    if (baja) pintaCara(c, m, m * 1.16, tam * 0.25); else pintaCara(c, m, m * 0.98, tam * 0.3);
   }
 
-  function crea({ creaLienzo, imagen, colores, caras = 1, cara = () => {} }) {
+  function crea({ creaLienzo, imagen, doble = () => null, colores, caras = 1, cara = () => {} }) {
     const cache = new Map();
-    // el lienzo pequeño de la burbuja de color k con la carita v (o del relieve de la hundida) a `tam` píxeles de pantalla
-    function sprite(k, v, tam) {
-      const clave = (k + 1) * 100000 + v * 1000 + tam;
+    // el lienzo pequeño de la burbuja de color k con la carita v (o del relieve de la hundida) a `tam` píxeles de pantalla; `entera` = doble sin tocar
+    function sprite(k, v, tam, entera = false) {
+      const clave = (entera ? 50000000 : 0) + (k + 1) * 100000 + v * 1000 + tam;
       let s = cache.get(clave);
       if (s) return s;
       if (cache.size >= TOPE_CACHE) cache.clear();
       s = creaLienzo(tam, tam);
       const c = s.getContext('2d');
-      if (k === HUNDIDA) hundida(c, tam); else viva(c, tam, imagen(k), colores[k], (cc, cx, cy, r) => cara(cc, cx, cy, r, v));
+      const nata = entera ? doble(k) : null;
+      if (k === HUNDIDA) hundida(c, tam); else viva(c, tam, nata || imagen(k), colores[k], (cc, cx, cy, r) => cara(cc, cx, cy, r, v), !!nata);
       cache.set(clave, s);
       return s;
     }
@@ -69,7 +72,7 @@ const PP_RAID_CERCA = (() => {
       c.imageSmoothingEnabled = cam.z < 2;   // muy de lejos, suave; al acercar, cada burbuja un cuadradito
       c.drawImage(origen, bx, by, vista.w / cam.z, vista.h / cam.z, vista.x, vista.y, vista.w, vista.h);
     }
-    function casillas(c, { cam, vista, zona, tablero, escala, dibujo }) {
+    function casillas(c, { cam, vista, zona, tablero, escala, dibujo, entera = () => false }) {
       const T = PP_RAID_TABLERO, r = PP_RAID_CAMARA.visibles(cam, vista, zona);
       const tam = Math.max(4, Math.round(cam.z * escala / 2) * 2), paso = cam.z;   // de dos en dos píxeles: menos tamaños que guardar al pellizcar
       const [ox, oy] = PP_RAID_CAMARA.aPantalla(cam, vista, r.x0, r.y0), relieve = sprite(HUNDIDA, 0, tam);
@@ -77,7 +80,7 @@ const PP_RAID_CERCA = (() => {
       for (let y = r.y0; y < r.y1; y++) {
         for (let x = r.x0; x < r.x1; x++) {
           const px = ox + (x - r.x0) * paso, py = oy + (y - r.y0) * paso;
-          if (T.viva(tablero, x, y)) { c.drawImage(sprite(PP_RAID_LEJOS.indiceColor(x, y, colores.length), caraDe(x, y, caras), tam), px, py, paso, paso); continue; }
+          if (T.viva(tablero, x, y)) { c.drawImage(sprite(PP_RAID_LEJOS.indiceColor(x, y, colores.length), caraDe(x, y, caras), tam, entera(x, y)), px, py, paso, paso); continue; }
           c.fillStyle = colorCss(dibujo.pixeles[y * 512 + x]);   // hundida: del color que le toca del dibujo
           c.beginPath(); c.arc(px + paso / 2, py + paso / 2, paso * 0.43, 0, Math.PI * 2); c.fill();
           c.drawImage(relieve, px, py, paso, paso);
@@ -85,7 +88,7 @@ const PP_RAID_CERCA = (() => {
       }
     }
     // (quien llama ya ha recortado el lienzo a la bandeja) o = { cam, vista, zona, tablero, lejos (lienzo de puntos), dibujo (el dibujo escondido,
-    // PP_RAID_DIBUJO: se usan sus `pixeles`), escala (píxeles reales por píxel de diseño) }
+    // PP_RAID_DIBUJO: se usan sus `pixeles`), escala (píxeles reales por píxel de diseño), entera(x, y) (¿es una burbuja doble sin tocar?) }
     function pinta(c, o) {
       c.save();
       c.fillStyle = BANDEJA; c.fillRect(o.vista.x, o.vista.y, o.vista.w, o.vista.h);

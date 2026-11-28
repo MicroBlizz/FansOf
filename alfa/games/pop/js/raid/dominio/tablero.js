@@ -101,7 +101,7 @@ const PP_RAID_TABLERO = (() => {
 
   return Object.freeze({
     LADO, TROZO, TROZOS_LADO, TROZOS, BYTES_TROZO, BYTES, TOTAL,
-    crear, dentro, viva, reventar, toque, aplicar, trozoDe,
+    crear, dentro, viva, reventar, toque, aplicar, trozoDe, bitDe,
     contarVivas, contarTrozo, vivasPorTrozo, faseFinal,
     bytesTrozo, ponerTrozo, aBase64, deBase64, trozoABase64, ponerTrozoBase64,
   });

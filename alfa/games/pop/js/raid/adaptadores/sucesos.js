@@ -1,7 +1,7 @@
 // Fans of Pop · RAID, lo que pasa en la pantalla (adaptador de pantalla, tarea 448, nodo n4): qué se ve, suena y se dice con cada suceso de la raid
 // abierta `r` (la crea js/raid/adaptadores/pantalla.js): un toque tuyo (reventar «con zumo»: aro, chispas, plop que sube con la racha, vibración,
 // +N y temblor), las burbujas que revientan OTROS (aro azul y plop bajito), los COFRES (bailan hasta que el servidor confirma que la burbuja fue
-// tuya; entonces lluvia de monedas y se pagan, una sola vez: SAVE.raid), los golpes al JEFE CEO, quedarse sin toques, subir de escalón de premio y
+// tuya; entonces lluvia de monedas y se pagan, una sola vez: SAVE.raid), las burbujas DOBLES (el primer pop las deja tocadas), los golpes al JEFE CEO, quedarse sin toques, subir de escalón de premio y
 // los cambios de humor del CEO. Lee de Pop: SAVE, ppGuarda, ppPlop, ppBoing, ppArpegio, ppVibra, PP_CHISPAS, tr.
 'use strict';
 const PP_RAID_SUCESOS = (() => {
@@ -50,8 +50,10 @@ const PP_RAID_SUCESOS = (() => {
     if (PP_RAID_ZUMO.esHito(n)) { r.fx.tiembla(0.55); r.voces.chat('racha'); r.voces.ceo('racha', true); }
     return n;
   }
-  function revienta(r, celdas, px, py) {
+  // lo que se ve y suena al hacer pop: `celdas` = las que ya no están; `tocadas` = las dobles que se quedan con su primer pop (nodo n8)
+  function revienta(r, celdas, px, py, tocadas = []) {
     const tablero = r.sinc.tablero();
+    for (const [x, y] of tocadas) r.fx.pop(x, y);
     for (const [x, y] of celdas) {
       r.fx.pop(x, y);
       r.lejos.celda(tablero, x, y);
@@ -60,13 +62,13 @@ const PP_RAID_SUCESOS = (() => {
     ppPlop(PP_RAID_ZUMO.nota(subeRacha(r)));
     ppVibra(celdas.length >= 5 ? 14 : 8);
     if (celdas.length >= 5) r.fx.tiembla(0.22);
-    r.fx.flota('+' + celdas.length, px, py - 26, '#fff', 26 + celdas.length * 2);
+    if (celdas.length) r.fx.flota('+' + celdas.length, px, py - 26, '#fff', Math.min(60, 26 + celdas.length * 2));
   }
   // un toque en la burbuja (x, y) (el dedo, en (px, py)); no gasta toque si ahí ya no queda nada que reventar
   function toque(r, x, y, px, py) {
     if (!hayViva(r, x, y)) { ppBoing(0.75); return; }
     const res = r.sinc.tocar(x, y);
-    if (res.ok) revienta(r, res.reventadas, px, py);
+    if (res.ok) revienta(r, res.reventadas, px, py, res.tocadas);
     else if (res.motivo === 'sin_toques') sinToques(r);
   }
   // un toque al CEO: si ha bajado a pelear, un golpe (gasta un toque); si no, se queja
@@ -148,6 +150,6 @@ const PP_RAID_SUCESOS = (() => {
   const MANEJA = Object.freeze({ estado, ajenas, propias, error });
   const recibe = (r, nombre, datos) => { if (MANEJA[nombre]) MANEJA[nombre](r, datos); };
 
-  return Object.freeze({ recibe, toque, tocaCeo });
+  return Object.freeze({ recibe, toque, tocaCeo, revienta });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_SUCESOS;

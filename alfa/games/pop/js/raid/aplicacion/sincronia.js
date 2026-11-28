@@ -1,5 +1,5 @@
 // Fans of Pop · RAID, la sincronía (aplicación, tarea 448, ADR 243): lo que une el tablero compartido del servidor con la pantalla de este móvil.
-// Guarda una COPIA LOCAL del tablero (PP_RAID_TABLERO) y la versión de cada trozo, y hace tres cosas:
+// Guarda una COPIA LOCAL del tablero (PP_RAID_TABLERO), de las burbujas dobles ya tocadas (PP_RAID_DOBLES) y la versión de cada trozo, y hace:
 //  · SONDEO: cada `cfg.red.sondeoMs` pregunta al servidor SOLO por los trozos que la pantalla tiene a la vista (mirar) y aplica los que cambiaron.
 //    Si la pantalla no se ve (visible() falso) no pregunta; si la raid acabó, se para. Sin Realtime (plan gratis). Cada arranca() abre un bucle
 //    nuevo (contador de generación): un sondeo que vuelve después de para() o de un arranca() nuevo ya no reprograma nada.
@@ -7,21 +7,30 @@
 //    en una TANDA DE TOQUES que sale a los `tandaMs` o al juntar `tandaMax` (toques y golpes JUNTOS, nunca más que la capacidad del depósito).
 //    Solo hay una petición en vuelo; el resto espera. Manda el servidor: al volver la respuesta, sus trozos y su depósito sustituyen a lo local
 //    (lo aún no enviado se vuelve a aplicar encima, descontando lo que otro ya había reventado).
-//  · SI UNA TANDA FALLA (sin_toques, sin_red, toques_no_valen, raid_acabada...) NO se reenvía a ciegas: el servidor pudo haberla aplicado y se
-//    cobraría dos veces el depósito. En su lugar se pide de nuevo el estado de los trozos que tocaba (forzado, con versión 0) y del depósito, y lo
-//    local se corrige con lo que diga el servidor.
+//  · OBJETOS (nodo n8): usar(k, x, y) con k = 'toques3' (mete toques en el depósito), 'bomba' o 'martillo' (un pop en su cuadrado o su fila, sin
+//    gastar toque; el martillo sin casilla va contra el jefe). También se ven YA en local y viajan en la misma tanda. Aquí no se sabe cuántos
+//    tiene el jugador (eso es del móvil: lo mira quien llama); solo se respeta el tope por raid. Cada estado del servidor (tanda o sondeo) avisa
+//    con 'objetos' de cuántos ha contado EN TOTAL en esta raid, y quien escucha descuenta del inventario lo que aún no había descontado: así una
+//    respuesta perdida no regala objetos. Los de una tanda que falló sin respuesta cuentan como pendientes hasta el siguiente estado.
+//  · Un objeto que el servidor no admite (tope, martillazo sin jefe) se salta solo: la respuesta lo trae en 'rechazados', se avisa con 'error'
+//    y se vuelve a pedir el estado de los trozos de los objetos de esa tanda.
+//  · SI UNA TANDA FALLA (sin_toques, sin_red, toques_no_valen, raid_acabada...) NO se reenvía a ciegas: el servidor pudo
+//    haberla aplicado y se cobraría dos veces. En su lugar se pide de nuevo el estado de los trozos que tocaba (forzado, con versión 0) y del
+//    depósito, y lo local se corrige con lo que diga el servidor.
 //  · AVISOS: escucha(fn) con fn(nombre, datos): 'estado' (resumen: vivas, jefe, depósito, acabada, 'ahora' = la hora del servidor...), 'ajenas' (lista [[x, y], ...] de burbujas que
 //    llegan reventadas en un trozo del servidor y que aquí seguían vivas: la pantalla las hace explotar), 'propias' (lista de las que el servidor
-//    confirmó de esta tanda) y 'error' (el motivo).
+//    confirmó de esta tanda), 'objetos' ({ toques3, bomba, martillo } que el servidor cuenta en total en esta raid) y 'error' (el motivo).
 // Puertos (nada de Date.now ni setTimeout aquí): red (PP_RAID_RED), reloj() en ms, programa(fn, ms) → una función que lo cancela (o un objeto con
-// cancel()), visible(). `raid` null = la de esta semana (se fija en la primera respuesta). `cfg` = PP_CFG.raid (red, deposito, faseFinal).
-// Depende de PP_RAID_TABLERO y PP_RAID_DEPOSITO (se cargan antes).
+// cancel()), visible(). `raid` null = la de esta semana (se fija en la primera respuesta). `cfg` = PP_CFG.raid (red, deposito, faseFinal, objetos, dobles).
+// Depende de PP_RAID_TABLERO, PP_RAID_DEPOSITO, PP_RAID_DOBLES y PP_RAID_OBJETOS (se cargan antes).
 'use strict';
 const PP_RAID_SINCRONIA = (() => {
   const T = PP_RAID_TABLERO;
   const D = PP_RAID_DEPOSITO;
-  const VECINAS = Object.freeze([[0, 0], [0, -1], [0, 1], [-1, 0], [1, 0]]);   // el toque en cruz (como en el tablero)
+  const DOB = PP_RAID_DOBLES;
+  const O = PP_RAID_OBJETOS;
   const cancela = h => { if (typeof h === 'function') h(); else if (h && h.cancel) h.cancel(); };
+  const repite = (o, n) => Array.from({ length: n }, () => o);
 
   // las burbujas que estaban vivas en `viejo` y no en `nuevo` (dos versiones de los 128 bytes del trozo n): [[x, y], ...]
   function muertas(viejo, nuevo, n) {
@@ -33,26 +42,36 @@ const PP_RAID_SINCRONIA = (() => {
     }
     return salen;
   }
-  // los trozos que tocan estos toques (la casilla y sus vecinas pueden caer en un trozo de al lado)
-  function trozosDe(toques) {
-    const ids = new Set();
-    for (const t of toques) for (const [dx, dy] of VECINAS) if (T.dentro(t.x + dx, t.y + dy)) ids.add(T.trozoDe(t.x + dx, t.y + dy));
-    return ids;
+  // una tanda tal y como viaja: los toques [[x, y], ...] y los objetos (los del tablero y los sueltos)
+  function aRed(t) {
+    return {
+      toques: t.acciones.filter(q => q.k === 'toque').map(q => [q.x, q.y]),
+      objetos: [...t.acciones.filter(q => q.k !== 'toque').map(q => [q.k, q.x, q.y]), ...repite(['toques3'], t.sueltos.toques3), ...repite(['martillo'], t.sueltos.martillo)],
+    };
   }
+  // cuántos objetos de cada tipo lleva una tanda
+  const objetosDe = t => O.suma(O.cuenta(t.acciones.map(q => q.k)), t.sueltos);
 
   function crea({ red, raid = null, cfg, reloj, programa, visible }) {
     const tablero = T.crear();
+    const tocadas = DOB.crear();
     const versiones = new Array(T.TROZOS).fill(0);
     const oyentes = new Set();
-    // lote: los toques aún sin enviar { x, y, celdas } (celdas = las [x, y] que reventó de verdad en local)
+    // lote: lo hecho en el tablero y aún sin enviar { k: 'toque' | 'bomba' | 'martillo', x, y, celdas } (celdas = las [x, y] que reventó de verdad
+    // en local); sueltos: los objetos sin casilla aún sin enviar (toques3 y martillazos al jefe)
     const e = {
-      id: raid, s: null, dep: null, cfgDep: cfg.deposito, desfase: 0,
+      id: raid, s: null, dep: null, cfgDep: cfg.deposito, desfase: 0, semilla: null, zonas: DOB.sinZonas(),
       vista: new Set(), forzar: new Set(),
-      lote: [], pendG: 0, enviando: null, vuelo: false, promesa: Promise.resolve(), quiereEnviar: false, sondeoPend: false, ultimoError: null,
+      lote: [], pendG: 0, sueltos: O.cero(), dudosos: O.cero(), enviando: null, vuelo: false, promesa: Promise.resolve(), quiereEnviar: false, sondeoPend: false, ultimoError: null,
       timerTanda: null, timerSondeo: null, corre: false, gen: 0, acabada: false,
     };
     const ahoraSrv = () => reloj() + e.desfase;
+    const forma = q => O.celdas(q, cfg.objetos);
     const pendB = () => e.lote.reduce((a, t) => a + t.celdas.length, 0);
+    const pendToques = () => e.lote.filter(q => q.k === 'toque').length;
+    const pendMazazos = () => e.sueltos.martillo * cfg.objetos.martilloJefe;
+    const hayPendiente = () => e.lote.length > 0 || e.pendG > 0 || O.hay(e.sueltos);
+    const sinEnviar = () => objetosDe({ acciones: e.lote, sueltos: e.sueltos });
     const maxTanda = () => Math.min(cfg.red.tandaMax, e.cfgDep.capacidad);
     const emit = (nombre, datos) => { for (const f of [...oyentes]) f(nombre, datos); };
     const jefeActivo = () => !e.acabada && !e.s.vaciada && e.s.jefe.golpes < e.s.jefe.vida && T.faseFinal(e.s.vivas, e.s.total, cfg.faseFinal);
@@ -64,61 +83,74 @@ const PP_RAID_SINCRONIA = (() => {
       const deposito = { toques: D.toquesAhora(e.dep, ahora, e.cfgDep), capacidad: e.cfgDep.capacidad, cadaMs: e.cfgDep.cadaMs, faltaMs: D.faltaMs(e.dep, ahora, e.cfgDep) };
       return {
         id: e.id, ahora, inicio: e.s.inicio, fin: e.s.fin, semilla: e.s.semilla, total: e.s.total, vivas: e.s.vivas, vaciada: e.s.vaciada, acabada: e.acabada,
-        jefe: { activo: jefeActivo(), vida: e.s.jefe.vida, golpes: e.s.jefe.golpes }, deposito, yo: { ...e.s.yo },
+        jefe: { activo: jefeActivo(), vida: e.s.jefe.vida, golpes: e.s.jefe.golpes }, deposito, yo: { ...e.s.yo, objetos: { ...e.s.yo.objetos } },
       };
     }
 
     // ---- lo que llega del servidor ----
-    // vuelve a reventar en local lo aún sin enviar; de cada toque se quitan las celdas que ya llegan muertas del servidor (las reventó otro antes:
-    // el servidor ya las descuenta de sus vivas y no serán nuestras), para que vivas y yo.burbujas no se descuenten dos veces
+    // vuelve a hacer en local lo aún sin enviar, sobre los trozos que acaban de llegar: cada acción da otra vez sus pops ahí, así que lo que otro
+    // ya había reventado (el servidor ya lo descuenta de sus vivas y no será nuestro) no se cuenta dos veces
     function reponPendiente(puestos) {
+      const aqui = ([x, y]) => puestos.has(T.trozoDe(x, y));
       for (const q of e.lote) {
-        q.celdas = q.celdas.filter(([x, y]) => !puestos.has(T.trozoDe(x, y)) || T.viva(tablero, x, y));
-        for (const [x, y] of q.celdas) T.reventar(tablero, x, y);
+        const fuera = q.celdas.filter(c => !aqui(c));
+        q.celdas = [...fuera, ...DOB.aplica(tablero, tocadas, e.zonas, forma(q).filter(aqui)).reventadas];
       }
     }
-    // pone los trozos nuevos; devuelve las burbujas que han reventado otros (solo en trozos que ya teníamos: la primera carga no cuenta)
+    // pone un trozo del servidor (vivas y tocadas); devuelve las burbujas que han reventado otros (nada en la primera carga), o null si no vale
+    function ponTrozo(t) {
+      const bytes = T.deBase64(t.bits);
+      if (!bytes || bytes.length !== T.BYTES_TROZO) return null;
+      const ajenas = versiones[t.n] > 0 ? muertas(T.bytesTrozo(tablero, t.n), bytes, t.n) : [];
+      const toc = t.tocadas ? T.deBase64(t.tocadas) : null;
+      T.ponerTrozo(tablero, t.n, bytes);
+      T.ponerTrozo(tocadas, t.n, toc && toc.length === T.BYTES_TROZO ? toc : new Uint8Array(T.BYTES_TROZO));
+      versiones[t.n] = t.v;
+      return ajenas;
+    }
     function aplicaTrozos(lista) {
       const ajenas = [];
       const puestos = new Set();
       for (const t of lista) {
-        const bytes = T.deBase64(t.bits);
-        if (!bytes || bytes.length !== T.BYTES_TROZO) continue;
-        if (versiones[t.n] > 0) ajenas.push(...muertas(T.bytesTrozo(tablero, t.n), bytes, t.n));
-        T.ponerTrozo(tablero, t.n, bytes);
-        versiones[t.n] = t.v;
+        const suyas = ponTrozo(t);
+        if (!suyas) continue;
+        ajenas.push(...suyas);
         puestos.add(t.n);
       }
       reponPendiente(puestos);
       return ajenas;
     }
-    // el depósito local desde el del servidor: lo que ya ganó, menos lo que aún no hemos enviado
+    // el depósito local desde el del servidor: lo que ya ganó, más los «+3 toques» y menos los toques y golpes que aún no hemos enviado
     function depositoDe(r) {
       const resto = r.yo.toques >= r.deposito.capacidad ? 0 : (r.ahora - r.yo.desde) % r.deposito.cadaMs;
-      const base = { toques: r.yo.toques, desde: r.ahora - resto };
-      const pend = e.lote.length + e.pendG;
-      if (!pend) return base;
-      const g = D.gastar(base, pend, r.ahora, r.deposito);
-      return g.ok ? g.estado : { toques: 0, desde: base.desde };
+      let dep = { toques: r.yo.toques, desde: r.ahora - resto };
+      const extra = e.sueltos.toques3 * cfg.objetos.toques3, pend = pendToques() + e.pendG;
+      if (extra) dep = D.meter(dep, extra, r.ahora, r.deposito).estado;
+      if (!pend) return dep;
+      const g = D.gastar(dep, pend, r.ahora, r.deposito);
+      return g.ok ? g.estado : { toques: 0, desde: dep.desde };
     }
     function estadoDe(r) {
-      const pb = pendB();
+      const pb = pendB(), golpes = e.pendG + pendMazazos();
       return {
         inicio: r.inicio, fin: r.fin, semilla: r.semilla, total: r.total, vivas: Math.max(0, r.vivas - pb), vaciada: r.vaciada,
-        jefe: { vida: r.jefe.vida, golpes: Math.min(r.jefe.vida, r.jefe.golpes + e.pendG) },
-        yo: { burbujas: r.yo.burbujas + pb, golpes: r.yo.golpes + e.pendG, cobrado: r.yo.cobrado },
+        jefe: { vida: r.jefe.vida, golpes: Math.min(r.jefe.vida, r.jefe.golpes + golpes) },
+        yo: { burbujas: r.yo.burbujas + pb, golpes: r.yo.golpes + Math.min(golpes, Math.max(0, r.jefe.vida - r.jefe.golpes)), cobrado: r.yo.cobrado, objetos: O.suma({ ...O.cero(), ...r.yo.objetos }, sinEnviar()) },
       };
     }
     function recibe(r) {
       if (Number.isFinite(r.ahora)) e.desfase = r.ahora - reloj();
       if (e.id === null) e.id = r.id;
+      if (r.semilla !== e.semilla) { e.semilla = r.semilla; e.zonas = DOB.zonas(r.semilla, cfg.dobles.cada); }   // las zonas dobles salen de la semilla
       const ajenas = aplicaTrozos(r.trozos || []);
       e.cfgDep = r.deposito;
       e.dep = depositoDe(r);
       e.s = estadoDe(r);
       if (r.acabada) { e.acabada = true; paraSondeo(); }
+      e.dudosos = O.cero();   // este estado ya cuenta lo que hiciera una tanda sin respuesta
       if (ajenas.length) emit('ajenas', ajenas);
       emit('estado', resumen());
+      if (r.yo.objetos) emit('objetos', { ...O.cero(), ...r.yo.objetos });   // lo que el servidor cuenta en total: quien escucha descuenta lo que falte
     }
 
     // ---- sondeo ----
@@ -129,7 +161,7 @@ const PP_RAID_SINCRONIA = (() => {
     function siguiente() {
       if (e.sondeoPend) { e.sondeoPend = false; return sondea(); }
       if (e.quiereEnviar) { e.quiereEnviar = false; return envia(); }
-      if (e.lote.length || e.pendG) programaTanda();
+      if (hayPendiente()) programaTanda();
       return Promise.resolve();
     }
     async function pregunta() {
@@ -166,18 +198,25 @@ const PP_RAID_SINCRONIA = (() => {
       return faltan && e.corre ? sondea() : Promise.resolve();
     }
 
-    // ---- toques y golpes ----
+    // ---- las tandas ----
     function programaTanda() {
       if (e.lote.length + e.pendG >= maxTanda()) { envia(); return; }
       if (!e.timerTanda) e.timerTanda = programa(() => { e.timerTanda = null; return envia(); }, cfg.red.tandaMs);
     }
-    // toques y golpes JUNTOS, como mucho maxTanda()
+    // los objetos sueltos que caben en esta tanda (el servidor no admite más objetos que la capacidad); el resto espera a la siguiente
+    function tomaSueltos(cupo) {
+      const toques3 = Math.min(e.sueltos.toques3, cupo), martillo = Math.min(e.sueltos.martillo, cupo - toques3);
+      e.sueltos = { ...e.sueltos, toques3: e.sueltos.toques3 - toques3, martillo: e.sueltos.martillo - martillo };
+      return { ...O.cero(), toques3, martillo };
+    }
+    // lo del tablero (toques y objetos) y los golpes JUNTOS, como mucho maxTanda(); y los objetos sueltos que quepan
     function tomaTanda() {
       const max = maxTanda();
-      const toques = e.lote.splice(0, max);
-      const golpes = Math.min(e.pendG, max - toques.length);
+      const acciones = e.lote.splice(0, max);
+      const golpes = Math.min(e.pendG, max - acciones.length);
       e.pendG -= golpes;
-      return toques.length || golpes ? { toques, golpes } : null;
+      const sueltos = tomaSueltos(max - acciones.filter(q => q.k !== 'toque').length);
+      return acciones.length || golpes || O.hay(sueltos) ? { acciones, golpes, sueltos } : null;
     }
     function envia() {
       cancela(e.timerTanda);
@@ -190,27 +229,42 @@ const PP_RAID_SINCRONIA = (() => {
       e.promesa = manda(t);
       return e.promesa;
     }
+    // sin objetos va por la función de siempre (pop_raid_tocar); con ellos, por la nueva (pop_raid_jugar)
     async function manda(t) {
       const [ids, vers] = pideTrozos();
-      const r = await red.tocar(e.id, t.toques.map(q => [q.x, q.y]), t.golpes, ids, vers);
+      const { toques, objetos } = aRed(t);
+      const r = objetos.length ? await red.jugar(e.id, toques, t.golpes, objetos, ids, vers) : await red.tocar(e.id, toques, t.golpes, ids, vers);
       e.vuelo = false;
       e.enviando = null;
       resuelve(r, t);
       await siguiente();
     }
-    // qué hacer con la respuesta de una tanda: si falla, por el motivo que sea, no se reenvía; se vuelve a pedir lo que tocaba
-    function resuelve(r, t) {
-      if (r.ok) {
-        recibe(r.datos);
-        if ((r.datos.reventadas || []).length) emit('propias', r.datos.reventadas);
-        return;
-      }
-      e.ultimoError = r.error;
-      emit('error', r.error);
-      for (const n of trozosDe(t.toques)) e.forzar.add(n);
+    // vuelve a pedir el estado de los trozos de esas acciones (forzado, con versión 0)
+    function fuerza(acciones) {
+      for (const q of acciones) for (const [x, y] of forma(q)) e.forzar.add(T.trozoDe(x, y));
       e.sondeoPend = true;
+    }
+    // qué hacer con la respuesta de una tanda: si falla, por el motivo que sea, no se reenvía; se vuelve a pedir lo que tocaba. Sus objetos
+    // quedan como dudosos (el servidor pudo haberlos contado) hasta el siguiente estado, que dirá cuántos cuenta de verdad
+    function resuelve(r, t) {
+      if (r.ok) { confirma(r.datos, t); return; }
+      e.ultimoError = r.error;
+      e.dudosos = O.suma(e.dudosos, objetosDe(t));
+      emit('error', r.error);
+      fuerza(t.acciones);
       if (r.error === 'raid_acabada') { e.acabada = true; paraSondeo(); emit('estado', resumen()); }
     }
+    // la tanda valió; si el servidor se saltó algún objeto (tope, martillazo sin jefe), se avisa y se piden de nuevo los trozos de sus objetos
+    function confirma(datos, t) {
+      recibe(datos);
+      if ((datos.reventadas || []).length) emit('propias', datos.reventadas);
+      const no = datos.rechazados || [];
+      if (!no.length) return;
+      emit('error', no[0].motivo);
+      fuerza(t.acciones.filter(q => q.k !== 'toque'));
+    }
+
+    // ---- toques, golpes y objetos ----
     const noPuede = () => (!e.s || !e.dep ? 'sin_estado' : e.acabada ? 'acabada' : null);
     // gasta un toque del depósito local; true si lo había
     function gasta() {
@@ -218,18 +272,25 @@ const PP_RAID_SINCRONIA = (() => {
       if (g.ok) e.dep = g.estado;
       return g.ok;
     }
+    // hace en local una acción del tablero y la apunta en el lote; devuelve lo que reventó y lo que dejó tocado
+    function hace(k, x, y) {
+      const q = { k, x, y, celdas: [] };
+      const res = DOB.aplica(tablero, tocadas, e.zonas, forma(q));
+      q.celdas = res.reventadas;
+      e.lote.push(q);
+      e.s.vivas = Math.max(0, e.s.vivas - res.reventadas.length);
+      e.s.yo.burbujas += res.reventadas.length;
+      return { ok: true, reventadas: res.reventadas, tocadas: res.tocadas };
+    }
     function tocar(x, y) {
       const mal = noPuede();
       if (mal) return { ok: false, motivo: mal };
       if (!T.dentro(x, y)) return { ok: false, motivo: 'fuera' };
       if (!gasta()) return { ok: false, motivo: 'sin_toques' };
-      const { reventadas } = T.toque(tablero, x, y);
-      e.lote.push({ x, y, celdas: reventadas });
-      e.s.vivas = Math.max(0, e.s.vivas - reventadas.length);
-      e.s.yo.burbujas += reventadas.length;
+      const res = hace('toque', x, y);
       programaTanda();
       emit('estado', resumen());
-      return { ok: true, reventadas };
+      return res;
     }
     function golpe() {
       const mal = noPuede();
@@ -243,11 +304,48 @@ const PP_RAID_SINCRONIA = (() => {
       emit('estado', resumen());
       return { ok: true };
     }
+    // «+3 toques»: entran ya en el depósito local
+    function usaToques3() {
+      e.sueltos.toques3++;
+      e.dep = D.meter(e.dep, cfg.objetos.toques3, ahoraSrv(), e.cfgDep).estado;
+      return { ok: true, toques: cfg.objetos.toques3 };
+    }
+    // el martillo contra el jefe: le quita su vida (sin pasar de la que le queda)
+    function mazazo() {
+      if (!jefeActivo()) return { ok: false, motivo: 'sin_jefe' };
+      const golpes = Math.min(cfg.objetos.martilloJefe, e.s.jefe.vida - e.s.jefe.golpes);
+      e.sueltos.martillo++;
+      e.s.jefe.golpes += golpes;
+      e.s.yo.golpes += golpes;
+      return { ok: true, golpes };
+    }
+    // el objeto k donde toca: los toques3 no llevan casilla; la bomba, siempre; el martillo sin casilla va contra el jefe
+    function usaDonde(k, x, y) {
+      if (k === 'toques3') return usaToques3();
+      if (k === 'martillo' && x === undefined) return mazazo();
+      return T.dentro(x, y) ? hace(k, x, y) : { ok: false, motivo: 'fuera' };
+    }
+    // usa un objeto (no mira el inventario: eso es del móvil); { ok: true, ... } o { ok: false, motivo } ('tope_objetos', 'sin_jefe', 'fuera'...)
+    function usar(k, x, y) {
+      const mal = noPuede();
+      if (mal) return { ok: false, motivo: mal };
+      if (!O.TIPOS.includes(k)) return { ok: false, motivo: 'objeto_desconocido' };
+      const cabe = O.cabe(e.s.yo.objetos, O.cuenta([k]), cfg.objetos.tope);
+      if (!cabe.ok) return cabe;
+      const res = usaDonde(k, x, y);
+      if (!res.ok) return res;
+      e.s.yo.objetos[k]++;
+      programaTanda();
+      emit('estado', resumen());
+      return res;
+    }
+    // los objetos usados que el servidor aún no ha contado (sin enviar, en vuelo y los de una tanda sin respuesta): aún no se han descontado del inventario
+    const pendientes = () => O.suma(O.suma(sinEnviar(), e.dudosos), e.enviando ? objetosDe(e.enviando) : O.cero());
     // para el sondeo y manda tandas seguidas hasta que no queda nada pendiente ni en vuelo; { ok: true } o { ok: false, error } si una falla
     async function cierra() {
       para();
       e.ultimoError = null;
-      while (e.vuelo || e.lote.length || e.pendG) {
+      while (e.vuelo || hayPendiente()) {
         if (e.vuelo) await e.promesa; else await envia();
         if (e.ultimoError) return { ok: false, error: e.ultimoError };
       }
@@ -256,8 +354,9 @@ const PP_RAID_SINCRONIA = (() => {
     function escucha(fn) { oyentes.add(fn); return () => oyentes.delete(fn); }
 
     return Object.freeze({
-      escucha, arranca, para, cierra, mirar, sondea, envia, tocar, golpe,
+      escucha, arranca, para, cierra, mirar, sondea, envia, tocar, golpe, usar, pendientes,
       estado: resumen, tablero: () => tablero, viva: (x, y) => T.viva(tablero, x, y), version: n => versiones[n],
+      aguante: (x, y) => DOB.aguante(tablero, tocadas, e.zonas, x, y),
     });
   }
   return Object.freeze({ crea, muertas });

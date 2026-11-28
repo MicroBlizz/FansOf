@@ -177,6 +177,12 @@ const PP_CFG = {
     // la red de la raid (js/raid/aplicacion/sincronia.js; sin Realtime en el plan gratis): el móvil pregunta cada `sondeoMs` solo por los trozos que ve;
     // lo que toca se junta en una tanda que sale a los `tandaMs` o al juntar `tandaMax` toques y golpes (nunca más que la capacidad del depósito)
     red: { sondeoMs: 3000, tandaMs: 700, tandaMax: 30 },
+    // OBJETOS Y DIFICULTAD (nodo n8, Pepins 28-11-2026; js/raid/dominio/objetos.js y dobles.js; las mismas cifras en servidor/208-pop-raid-objetos.sql).
+    // Los objetos salen del inventario del móvil (SAVE.ayudas) y el servidor solo pone un tope por jugador y raid, de cada tipo.
+    //   toques3: toques que mete en el depósito (aunque esté lleno) · bomba: lado del cuadrado · martillo: ancho de la fila · martilloJefe: vida que quita al CEO
+    objetos: { tope: 40, toques3: 3, bomba: 5, martillo: 9, martilloJefe: 5 },
+    dobles: { cada: 3 },                          // BURBUJAS DOBLES (2 pops): uno de cada 3 trozos de 32x32, según la semilla de la raid
+    jefe: { vida: 6000, vidaPrueba: 200 },        // la vida del jefe CEO (el doble que al principio) en la raid de la semana y en la de prueba
   },
 };
 // Los mundos están en js/regiones/ y sus niveles y la curva de dificultad, en js/niveles.js (se generan solos).

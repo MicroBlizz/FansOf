@@ -1,11 +1,14 @@
 // Fans of Pop · RAID, los rótulos de la pantalla (adaptador de pantalla, tarea 448, nodo n4): todo lo que es texto y botón, en HTML encima del
 // lienzo (css/raid.css): la cabecera (título, lo que queda de semana, cerrar y la BARRA DE VIDA del tablero o del jefe), el bocadillo del CEO, el
-// chat falso, los botones de acercar y alejar, el aviso grande (sin cuenta, sin red, raid acabada) y el pie (DEPÓSITO DE TOQUES y premio).
-// · crea({ raiz, tr, icono, alCerrar, alZoom, alPedir }) → { muestra(si), estado(s, o), di(frase), chat(m), aviso(texto), sacudeDeposito(), zoom(cerca), alto }.
+// chat falso, los botones de acercar y alejar, el aviso grande (sin cuenta, sin red, raid acabada) y el pie (la BARRA DE OBJETOS, el DEPÓSITO DE
+// TOQUES y el premio).
+// · crea({ raiz, tr, icono, alCerrar, alZoom, alPedir, objetos, alObjeto }) → { muestra(si), estado(s, o), objetos(lista), di(frase), chat(m), aviso(texto),
+//   sacudeDeposito(), zoom(cerca) }. `objetos` = [{ k, icono, nombre }] (los botones de la barra; al tocar uno, alObjeto(k)) y objetos(lista) los
+//   pone al día con [{ k, n (cuántos quedan), elegido }].
 //   `icono(k, px)` da el HTML de un dibujito de Pop (ppIcono). `tr` traduce; los números los escribe con puntos de millar. No sabe nada de la red ni del tablero: solo pinta lo que le dan.
 'use strict';
 const PP_RAID_HUD = (() => {
-  const ALTO = Object.freeze({ cabecera: 132, pie: 168 });
+  const ALTO = Object.freeze({ cabecera: 132, pie: 262 });
   const CHAT_LINEAS = 4, CHAT_MS = 6500, BOCADILLO_MS = 3800;
   const miles = n => String(Math.max(0, Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const dos = n => String(n).padStart(2, '0');
@@ -20,19 +23,21 @@ const PP_RAID_HUD = (() => {
     <div class="pp-raid-zoom"><button type="button" class="pp-raid-mas">+</button><button type="button" class="pp-raid-menos">&minus;</button></div>
     <p class="pp-raid-aviso" hidden></p>
     <div class="pp-raid-pie">
+      <div class="pp-raid-objetos"></div>
       <div class="pp-raid-fila"><span class="pp-raid-junto"><span class="pp-raid-ico" data-k="i-mano" data-px="40"></span><b class="pp-raid-toques"></b></span><span class="pp-raid-recarga"></span></div>
       <div class="pp-raid-barra pp-raid-deposito"><i></i></div>
       <div class="pp-raid-fila"><span class="pp-raid-junto"><span class="pp-raid-ico" data-k="i-moneda" data-px="28"></span><span class="pp-raid-llevas"></span></span></div>
       <div class="pp-raid-barra pp-raid-premio"><i></i></div>
     </div>`;
 
-  function crea({ raiz, tr, icono, alCerrar, alZoom, alPedir }) {
+  function crea({ raiz, tr, icono, alCerrar, alZoom, alPedir, objetos: botones = [], alObjeto = () => {} }) {
     const caja = document.createElement('div');
     caja.id = 'pp-raid'; caja.hidden = true; caja.innerHTML = HTML;
     raiz.appendChild(caja);
     const $ = s => caja.querySelector(s);
     const relojes = { bocadillo: null };
     for (const hueco of caja.querySelectorAll('.pp-raid-ico')) hueco.innerHTML = icono(hueco.dataset.k, Number(hueco.dataset.px));   // los dibujitos de Pop
+    for (const o of botones) $('.pp-raid-objetos').appendChild(botonObjeto(o));
     $('.pp-raid-x').onclick = alCerrar;
     $('.pp-raid-pedir button').textContent = tr('PEDIR AYUDA');
     $('.pp-raid-pedir button').onclick = e => alPedir(e.currentTarget);
@@ -42,6 +47,26 @@ const PP_RAID_HUD = (() => {
     $('.pp-raid-menos').setAttribute('aria-label', tr('Alejar'));
     $('.pp-raid-x').setAttribute('aria-label', tr('Cerrar'));
 
+    // un botón de la barra de objetos: su dibujo de Pop y cuántos quedan
+    function botonObjeto(o) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'pp-raid-obj'; b.dataset.k = o.k;
+      b.setAttribute('aria-label', tr(o.nombre));
+      b.innerHTML = icono(o.icono, 58) + '<b></b>';
+      b.onclick = () => alObjeto(o.k);
+      return b;
+    }
+    // lista = [{ k, n, elegido }]: cuántos quedan de cada objeto y cuál está elegido para el siguiente toque
+    function objetos(lista) {
+      for (const o of lista) {
+        const b = $('.pp-raid-obj[data-k="' + o.k + '"]');
+        if (!b) continue;
+        b.querySelector('b').textContent = 'x' + o.n;
+        b.classList.toggle('pp-raid-elegido', !!o.elegido);
+        b.classList.toggle('pp-raid-sin', o.n < 1);
+        b.setAttribute('aria-pressed', o.elegido ? 'true' : 'false');
+      }
+    }
     const ancho = (sel, parte) => { $(sel + ' i').style.width = Math.max(0, Math.min(100, parte * 100)).toFixed(1) + '%'; };
     // «Quedan 3 d 4 h», «Quedan 4 h 12 min» o «Quedan 3:05»
     function queda(p) {
@@ -103,7 +128,7 @@ const PP_RAID_HUD = (() => {
       caja.hidden = !si;
       if (!si) { $('.pp-raid-chat').innerHTML = ''; $('.pp-raid-bocadillo').hidden = true; aviso(''); clearTimeout(relojes.bocadillo); }
     }
-    return Object.freeze({ muestra, estado, di, chat, aviso, sacudeDeposito, zoom });
+    return Object.freeze({ muestra, estado, objetos, di, chat, aviso, sacudeDeposito, zoom });
   }
   return Object.freeze({ ALTO, crea, miles });
 })();

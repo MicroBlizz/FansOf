@@ -131,4 +131,10 @@ IDIOMA.add({
   "La raid aún no está abierta": "The raid isn't open yet",
   "La raid ya está abierta": "The raid is already open",
   "Abre la raid desde la portada o desde el camino": "Open the raid from the title screen or the path",
+  "Ya has usado todos los de esta raid.": "You've used all of those for this raid.",
+  "No te quedan. Consigue más en la tienda.": "You're out. Get more in the shop.",
+  "El jefe CEO aún no ha bajado.": "The CEO boss hasn't come down yet.",
+  "Toca dónde va la bomba": "Tap where the bomb goes",
+  "Toca dónde va el martillo": "Tap where the hammer goes",
+  "+{n} toques": "+{n} taps",
 });

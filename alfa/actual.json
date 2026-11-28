@@ -1,8 +1,8 @@
 {
- "build": 1563,
- "hash": "79285b4",
- "fecha": "2026-11-28T03:12:07Z",
- "mensaje": "Pop: el paso del equipo explosivo sigue midiendo, ya sin tocar, hasta que acaban las animaciones de los compañeros (tope 20 s) (tarea 404)",
+ "build": 1564,
+ "hash": "798e554",
+ "fecha": "2026-11-28T09:44:53Z",
+ "mensaje": "Merge remote-tracking branch 'origin/main' into claude/raid-pop-n8b",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

@@ -1,6 +1,6 @@
 // Fans of Pop · RAID, la pantalla (adaptador de pantalla, tarea 448, nodo n4, ADR 243): abre y cierra la raid, mueve la cámara con los dedos y
 // pinta cada fotograma. Junta las piezas: la sincronía con el servidor (PP_RAID_SINCRONIA sobre PP_RAID_RED), la imagen de puntos de LEJOS y
-// las burbujas de CERCA, los efectos, el CEO, los rótulos (PP_RAID_HUD) y lo que pasa con cada suceso (PP_RAID_SUCESOS).
+// las burbujas de CERCA, los efectos, el CEO, los rótulos (PP_RAID_HUD), lo que pasa con cada suceso (PP_RAID_SUCESOS) y los objetos (PP_RAID_USA).
 // · abre(id): `null` = la raid de la semana; 'prueba' = la raid de prueba de la alfa. Solo desde la portada o el camino.
 // · prueba(): rehace la raid de prueba en el servidor (rol alfa) y la abre. · cierra(): manda lo pendiente y vuelve a donde estaba.
 // · pinta(c, t, dt): la llama el bucle de js/principal.js cuando la pantalla es 'raid'.
@@ -14,6 +14,7 @@ const PP_RAID_PANTALLA = (() => {
   let R = null;          // la raid abierta: su estado de pantalla
   let piezas = null;     // lo que se monta una sola vez: la red, los rótulos y los gestos
   let abriendo = false;  // mientras el servidor rehace la raid de prueba (para que dos pulsaciones no la rehagan dos veces)
+  let cerrando = false;  // mientras la raid que se cierra manda lo que le quedaba (sus objetos aún no están descontados: no se abre otra)
   const creaLienzo = (w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h });
   // la ventana del tablero: entre la cabecera y el pie, con un margen para el marco de la bandeja (512 de ancho: de lejos, un píxel por burbuja)
   const vista = () => ({ x: 14, y: PP_RAID_HUD.ALTO.cabecera + 18, w: 512, h: PP_V.H - PP_RAID_HUD.ALTO.cabecera - PP_RAID_HUD.ALTO.pie - 36 });
@@ -97,12 +98,12 @@ const PP_RAID_PANTALLA = (() => {
   /* ---------- los toques ---------- */
   function toca(px, py) {
     if (!activa() || !R.resumen) return;
-    if (dentro(PP_RAID_CEO_PINTA.caja(sitioCeo()), px, py)) { PP_RAID_SUCESOS.tocaCeo(R, px, py); return; }
+    if (dentro(PP_RAID_CEO_PINTA.caja(sitioCeo()), px, py)) { if (!PP_RAID_USA.enCeo(R, px, py)) PP_RAID_SUCESOS.tocaCeo(R, px, py); return; }
     if (R.cam.z >= PP_RAID_CERCA.Z_BURBUJAS && dentro(cajaMini(vista()), px, py)) { saltaA(px, py); return; }
     const celda = CAM.celdaEn(R.cam, vista(), R.zona, px, py);
     if (!celda) return;
     if (R.cam.z < PP_RAID_CERCA.Z_BURBUJAS) { play('select'); animaA(px, py, Z_TOQUE); return; }   // de lejos, tocar acerca a ese sitio
-    PP_RAID_SUCESOS.toque(R, celda[0], celda[1], px, py);
+    if (!PP_RAID_USA.enTablero(R, celda[0], celda[1], px, py)) PP_RAID_SUCESOS.toque(R, celda[0], celda[1], px, py);   // con un objeto elegido, lo usa él
   }
   const conDedo = f => e => { if (!activa() || !$pp('#pp-modal').hidden) return; const [x, y] = ppLogico(e); f(e, x, y); };
   function escucha(gestos) {
@@ -115,7 +116,8 @@ const PP_RAID_PANTALLA = (() => {
   }
   function monta() {
     if (piezas) return piezas;
-    const hud = PP_RAID_HUD.crea({ raiz: PP_UI, tr, icono: ppIcono, alCerrar: () => { play('select'); cierra(); }, alZoom: botonZoom, alPedir: b => { play('select'); PP_RAID_CAMINO.comparte(b); } });
+    const hud = PP_RAID_HUD.crea({ raiz: PP_UI, tr, icono: ppIcono, alCerrar: () => { play('select'); cierra(); }, alZoom: botonZoom, alPedir: b => { play('select'); PP_RAID_CAMINO.comparte(b); },
+      objetos: PP_RAID_USA.BOTONES, alObjeto: k => { if (activa()) PP_RAID_USA.pulsa(R, k); } });
     const gestos = PP_RAID_GESTOS.crea({ alTocar: toca, alArrastrar: arrastra, alPellizcar: pellizca });
     escucha(gestos);
     piezas = { red: creaRed(), hud, gestos };
@@ -136,19 +138,20 @@ const PP_RAID_PANTALLA = (() => {
       cerca: PP_RAID_CERCA.crea({
         creaLienzo, colores, caras: PP_CARAS.despierta.length,
         imagen: k => imagen('bm-boton-' + PP_COLORES[k] + '-arriba') || imagen('b-' + PP_COLORES[k] + '-arriba'),
+        doble: k => imagen('b-' + PP_COLORES[k] + '-doble'),   // la burbuja doble de Pop (la de la nata): necesita dos pops
         cara: (c, cx, cy, r, v) => ppPintaCaraVariada(c, cx, cy, r, PP_CARAS.despierta[v], 1, 0, v),
       }),
       fx: PP_RAID_FX.crea({ azar: Math.random, chispas: (x, y) => PP_CHISPAS.chispas(x, y, Math.random), imagen }),
       voces: PP_RAID_VOCES.crea({ azar: Math.random, tr, di: f => hud.di(f), escribe: m => hud.chat(m) }),
       cam: CAM.entera(vista(), zona), anim: null, mirando: null, pintadas: new Array(256).fill(-1),
-      racha: PP_RAID_ZUMO.nueva(), cofres: null, firma: null, nivel: null, humor: null, golpe: 0, resumen: null, avisoRed: false, hudT: 0,
+      racha: PP_RAID_ZUMO.nueva(), elegido: null, cofres: null, firma: null, nivel: null, humor: null, golpe: 0, resumen: null, avisoRed: false, hudT: 0,
       vista, abierta: () => R === r,
     };
     return r;
   }
   // por qué no se puede abrir ahora (texto), o '' si se puede
   function pega() {
-    if (R || abriendo) return 'La raid ya está abierta';
+    if (R || abriendo || cerrando) return 'La raid ya está abierta';
     if (!PP_RAID_CAMINO.activa() && !ppEsPruebas()) return 'La raid aún no está abierta';   // el flag 'raid' (camino.js) o, para el panel DEV, alfa y localhost
     if (PP_PANT.actual !== 'titulo' && PP_PANT.actual !== 'mapa') return 'Abre la raid desde la portada o desde el camino';
     return '';
@@ -161,7 +164,7 @@ const PP_RAID_PANTALLA = (() => {
     const r = nueva(id, p);
     R = r;
     r.lejos.todo(r.sinc.tablero());
-    r.quita = r.sinc.escucha((nombre, datos) => PP_RAID_SUCESOS.recibe(r, nombre, datos));
+    r.quita = r.sinc.escucha((nombre, datos) => { PP_RAID_SUCESOS.recibe(r, nombre, datos); PP_RAID_USA.recibe(r, nombre, datos); });
     ppIrA('raid');
     p.hud.muestra(true);
     mira();
@@ -176,7 +179,8 @@ const PP_RAID_PANTALLA = (() => {
     piezas.hud.muestra(false);
     piezas.gestos.suelta();
     if (vuelve) ppIrA(r.antes);
-    await r.sinc.cierra();   // manda la tanda de toques que quedara (los cofres confirmados aún se pagan)
+    cerrando = true;
+    try { await r.sinc.cierra(); } finally { cerrando = false; }   // manda la tanda de toques que quedara (los cofres y objetos confirmados aún se cuentan)
     r.quita();
   }
   // el juego cambia de pantalla por su cuenta con la raid abierta (lo avisa ppIrA): se cierra sin volver a ningún sitio
@@ -212,6 +216,7 @@ const PP_RAID_PANTALLA = (() => {
     if (!s) return;
     const cuenta = s.yo.burbujas + s.yo.golpes;
     R.hud.estado(s, { cuenta, partes: PP_RAID_SEMANA.partes(PP_RAID_SEMANA.queda(s.fin, s.ahora)), siguiente: PP_RAID_PREMIOS.siguiente(cuenta, PP_CFG.raid) });
+    R.hud.objetos(PP_RAID_USA.lista(R));
     R.hud.zoom(R.cam.z >= Z_MAX - 0.01, R.cam.z <= CAM.zMin(v, R.zona) + 0.001);
   }
   // el marco de la bandeja, como el de las ventanas de Pop: sombra rosa, borde rosa, filo blanco
@@ -226,7 +231,7 @@ const PP_RAID_PANTALLA = (() => {
     marco(c, b);
     c.save();
     c.beginPath(); c.roundRect(b.x, b.y, b.w, b.h, 18); c.clip();
-    R.cerca.pinta(c, { cam: R.cam, vista: v, zona: R.zona, tablero: R.sinc.tablero(), lejos: R.lejos.lienzo, dibujo: R.dibujo, escala: PP_V.sc * PP_V.dpr });
+    R.cerca.pinta(c, { cam: R.cam, vista: v, zona: R.zona, tablero: R.sinc.tablero(), lejos: R.lejos.lienzo, dibujo: R.dibujo, escala: PP_V.sc * PP_V.dpr, entera: (x, y) => R.sinc.aguante(x, y) === 2 });
     R.fx.pintaPops(c, R.cam, v);
     R.fx.pintaCofres(c, R.cam, v);
     c.restore();

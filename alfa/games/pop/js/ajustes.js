@@ -58,6 +58,7 @@ const PP_CFG = {
       feria:   { nivel: 11, lugar: 'lateral', regalo: { monedas: 50 }, texto: '¡Nueva: la Feria del finde! Toma 50 monedas.' },
       perfil:  { nivel: 12, lugar: 'portada', regalo: { monedas: 30 }, texto: '¡Nuevo: tu PERFIL! Toma 30 monedas.' },
       amigos:  { nivel: 12, lugar: 'juego', regalo: { monedas: 30 }, texto: '¡Pide corazones a tus amigos! Toma 30 monedas.' },
+      raid:    { nivel: 13, lugar: 'lateral', regalo: { ayudas: { bomba: 1 } }, texto: '¡Nueva: la RAID entre todos! Toma una bomba de regalo.' },   // con el flag 'raid' (js/raid/adaptadores/camino.js, tarea 448; Pepins, 28-11-2026)
     },
     seguidos: 3,       // niveles 1 a 3: SIGUIENTE entra directo en el siguiente, sin pasar por el camino
     sinCorazon: 3,     // niveles 1 a 3, la primera vez: quedarte sin toques o salir no cuesta corazón (repetirlos ya ganados sí, tarea 406)

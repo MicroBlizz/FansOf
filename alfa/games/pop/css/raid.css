@@ -60,3 +60,17 @@
 .pp-raid-sacude { animation: pp-raid-sacude 0.35s; }
 @keyframes pp-raid-sacude { 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
 @media (prefers-reduced-motion: reduce) { .pp-raid-entra, .pp-raid-sacude, .pp-raid-chat div { animation: none; } }
+/* sin toques: PEDIR AYUDA, encima del pie (js/raid/adaptadores/camino.js) */
+.pp-raid-pedir { position: absolute; left: 0; right: 0; bottom: 186px; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.pp-raid-pedir[hidden] { display: none; }
+.pp-raid-pedir > * { pointer-events: auto; }
+.pp-raid-pedir button { animation: pp-late 1.2s ease-in-out infinite; }
+/* el botón de la raid en el lateral del camino: el CEO slime sobre un sol que gira, para que se vea el primero */
+.pp-lado.pp-lado-raid .pp-ico { position: relative; width: 70px; height: 70px; margin: -6px 0; animation: pp-raid-bota 1.6s ease-in-out infinite; }
+.pp-lado.pp-lado-raid b { position: relative; font-size: 18px; -webkit-text-stroke-color: #d9480f; }
+.pp-lado-raid-luz { position: absolute; left: 50%; top: 28px; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%;
+  background: repeating-conic-gradient(#ffd64a 0 20deg, #ff8a2a 20deg 40deg); box-shadow: 0 0 0 3px #fff, 0 4px 0 3px rgba(196, 58, 132, 0.35); animation: pp-raid-gira 9s linear infinite; }
+@keyframes pp-raid-gira { to { transform: rotate(360deg); } }
+@keyframes pp-raid-bota { 50% { transform: translateY(-5px) scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .pp-lado-raid-luz, .pp-lado.pp-lado-raid .pp-ico, .pp-raid-pedir button { animation: none; } }
+.pp-raid-pedir:not([hidden]) + .pp-raid-chat { bottom: 270px; }   /* el chat sube para dejarle sitio */

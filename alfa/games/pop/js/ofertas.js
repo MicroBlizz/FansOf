@@ -187,6 +187,7 @@ function ppPintaLateral() {
   ppPrimerosLado(ppPaseLado(boton('i-pase', '#ffd64a', tr('Pase'), ppVentanaPase, ppPaseHayPremio() && ppPrimerosVe('pase'))), 'pase');   // con el flag 'pase-nuevo', anillo y escalón (js/pase-pantalla.js)
   ppFeriaBotonLateral(L);   // la Feria del finde, con su reloj (js/feria-pantalla.js)
   ppPrimerosLado(L.lastChild, 'feria');
+  PP_RAID_CAMINO.boton(L);   // la raid entre todos, con el flag 'raid' (js/raid/adaptadores/camino.js, tarea 448)
   if (ppVentaCerrada()) { if (ppInfinitas()) boton('i-infinito', '#ff4a6a', ppReloj(SAVE.infinitas - Date.now()), () => {}, false); return; }   // menor: ni hucha ni ofertas con euros (tarea #254)
   ppPrimerosLado(boton('i-hucha', '#ffd1ec', String(SAVE.hucha || 0), ppVentanaHucha, (SAVE.hucha || 0) >= PP_CFG.hucha.minimo && ppPrimerosVe('hucha')), 'hucha');
   if (ppBienvenidaVisible() && ppPrimerosVe('oferta')) ppBotonPackReloj(boton, 'bienvenida', 'i-perlas', ppVentanaBienvenidaPack);

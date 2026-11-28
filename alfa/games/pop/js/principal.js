@@ -93,6 +93,7 @@ function ppArranque() {
   if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
   ppCorazonEnlaceArranca();   // un enlace de corazón de un amigo (?corazon=, js/pantalla-corazones-enlace.js)
   ppAmigosEnlaceArranca();   // un enlace de amigo (?amigo=, js/pantalla-amigos-regalos.js)
+  PP_RAID_CAMINO.enlaceArranca();   // un enlace de la raid (?raid=1, js/raid/adaptadores/camino.js)
   ppIrA('titulo');
   // la portada sale cuando han llegado todos los dibujos, sin tope de tiempo: hasta entonces la tapa la splash de core (esperaListo en
   // index.html, ADR 091), y así no asoman los de repuesto del primer boceto. Si alguno no llega ni al segundo intento, la splash se queda

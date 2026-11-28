@@ -44,14 +44,15 @@ function ppPedirMuestra(boton, url) {
   }
   campo.value = url; campo.focus(); campo.select();
 }
-function ppPedirCopia(boton, url) {
+function ppPedirCopia(boton, url, texto = ppPedirTexto()) {
   if (!navigator.clipboard || !navigator.clipboard.writeText) { ppPedirMuestra(boton, url); return; }
-  navigator.clipboard.writeText(ppPedirTexto() + ' ' + url).then(() => ppFlota(tr('¡Enlace copiado!'), 270, 300, '#4fc964'), () => ppPedirMuestra(boton, url));
+  navigator.clipboard.writeText(texto + ' ' + url).then(() => ppFlota(tr('¡Enlace copiado!'), 270, 300, '#4fc964'), () => ppPedirMuestra(boton, url));
 }
-// comparte en el mismo toque: el menú del móvil; si no hay o falla (salvo que se cancele), copiado; si tampoco, a la vista
-function ppPedirComparte(boton, url) {
-  if (!navigator.share) { ppPedirCopia(boton, url); return; }
-  navigator.share({ title: 'Fans of Pop', text: ppPedirTexto(), url }).catch(e => { if (!e || e.name !== 'AbortError') ppPedirCopia(boton, url); });
+// comparte en el mismo toque: el menú del móvil; si no hay o falla (salvo que se cancele), copiado; si tampoco, a la vista.
+// `texto`: lo que acompaña al enlace (el de pedir corazones si no se dice; la raid pasa el suyo, js/raid/adaptadores/camino.js)
+function ppPedirComparte(boton, url, texto = ppPedirTexto()) {
+  if (!navigator.share) { ppPedirCopia(boton, url, texto); return; }
+  navigator.share({ title: 'Fans of Pop', text: texto, url }).catch(e => { if (!e || e.name !== 'AbortError') ppPedirCopia(boton, url, texto); });
 }
 // el toque de PEDIR A AMIGOS: con el enlace ya en memoria se comparte al momento; si aún no estaba, este toque lo pide, lo enseña
 // y deja el botón en COMPARTIR para un segundo toque (ese ya va sin esperar)

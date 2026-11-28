@@ -11,7 +11,8 @@ const PP_NUEVA = () => ({ v: 1, record: 0, victorias: 0, partidas: 0, vistos: {}
   reto: null,        // el reto del día de hoy (js/reto-dia.js, tarea 367): { dia, jugados, mejor, subido, cobradas }; null = sin jugar nunca
   // «copiarnos de Candy Crush» (js/potenciadores.js, ofertas.js y pase.js): ayudas, fallos por nivel, racha, hucha, pase, regalo, compras y bandejas
   ayudas: {}, fallos: {}, racha: 0, hucha: 0, pase: null, regaloDia: '', diasSeguidos: null, infinitas: 0, atasco: 0, atascoDia: '', compras: {}, vistoBienvenida: false, bandeja: 'arcoiris', bandejas: {},
-  raid: null,        // la raid entre todos (js/raid/adaptadores/sucesos.js, tarea 448): { firma de la raid, cofres ya cobrados en ella }
+  raidVista: '',     // el lunes de la última raid que abriste: hasta abrirla, el botón del camino lleva punto rojo (js/raid/adaptadores/camino.js)
+  raid: null,      // la raid entre todos (js/raid/adaptadores/sucesos.js, tarea 448): { firma de la raid, cofres ya cobrados en ella }
   feria: null,       // la Feria del finde (js/feria-pantalla.js): { estado (de PP_FERIA), bienvenida: id del finde ya saludado, entregados: premios dados solos aún sin contar }
   primeros: 'nueva', estrenos: {},   // primeros pasos (js/primeros-pasos-juego.js, tarea #140): 'nueva' desde que existen; lo ya estrenado
   edad: '',          // 'menor' o 'adulto' (nunca el año): la pregunta de js/edad-juego.js, tarea #254; '' = aún no se sabe

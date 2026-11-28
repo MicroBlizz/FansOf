@@ -36,8 +36,8 @@ function ppPrimerosSiguiente() {
   const d = PP_P && PP_P.T && PP_P.T.d;
   if (d && PP_PRIMEROS.seguido(PP_CFG.primeros, ppPrimeros(), d.g, d.dif)) { ppCierra(); ppEntra(); } else ppAlCamino();
 }
-// lo que existe en esta copia del juego: el Perfil y los corazones entre amigos van con su propio flag
-const PP_PRIMEROS_HAY = { perfil: () => ppPerfilActivo(), amigos: () => ppCorazonesActivo() };
+// lo que existe en esta copia del juego: el Perfil, los corazones entre amigos y la raid van con su propio flag
+const PP_PRIMEROS_HAY = { perfil: () => ppPerfilActivo(), amigos: () => ppCorazonesActivo(), raid: () => PP_RAID_CAMINO.activa() };
 const ppPrimerosHay = cosa => (PP_PRIMEROS_HAY[cosa] ? PP_PRIMEROS_HAY[cosa]() : true);
 
 /* ---------- lo cerrado: apagado, con candado y «Nivel N» ---------- */

@@ -125,4 +125,10 @@ IDIOMA.add({
   "abrazo de grupo": "group hug",
   "hasta la raid que viene, os quiero": "see you next raid, love you all",
   "la mejor semana de mi vida": "best week of my life",
+  "Raid": "Raid",
+  "PEDIR AYUDA": "ASK FOR HELP",
+  "¡Me he quedado sin toques en la raid de Fans of Pop! Ven a hacer pop conmigo.": "I'm out of taps in the Fans of Pop raid! Come pop with me.",
+  "La raid aún no está abierta": "The raid isn't open yet",
+  "La raid ya está abierta": "The raid is already open",
+  "Abre la raid desde la portada o desde el camino": "Open the raid from the title screen or the path",
 });

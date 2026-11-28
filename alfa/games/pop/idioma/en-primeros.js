@@ -8,6 +8,7 @@ IDIOMA.add({
   "¡Nuevo: el Pase! Toma una bomba de regalo.": "New: the Pass! Here's a free bomb.",
   "¡Nuevo: RANKING! Toma 30 monedas.": "New: RANKING! Have 30 coins.",
   "¡Nueva: la Feria del finde! Toma 50 monedas.": "New: the Weekend Fair! Have 50 coins.",
+  "¡Nueva: la RAID entre todos! Toma una bomba de regalo.": "New: the RAID for everyone! Have a bomb as a gift.",
   "¡Nuevo: tu PERFIL! Toma 30 monedas.": "New: your PROFILE! Have 30 coins.",
   "¡Pide corazones a tus amigos! Toma 30 monedas.": "Ask your friends for hearts! Have 30 coins.",
 });

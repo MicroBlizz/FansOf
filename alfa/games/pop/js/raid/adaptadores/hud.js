@@ -1,7 +1,7 @@
 // Fans of Pop · RAID, los rótulos de la pantalla (adaptador de pantalla, tarea 448, nodo n4): todo lo que es texto y botón, en HTML encima del
 // lienzo (css/raid.css): la cabecera (título, lo que queda de semana, cerrar y la BARRA DE VIDA del tablero o del jefe), el bocadillo del CEO, el
 // chat falso, los botones de acercar y alejar, el aviso grande (sin cuenta, sin red, raid acabada) y el pie (DEPÓSITO DE TOQUES y premio).
-// · crea({ raiz, tr, icono, alCerrar, alZoom }) → { muestra(si), estado(s, o), di(frase), chat(m), aviso(texto), sacudeDeposito(), zoom(cerca), alto }.
+// · crea({ raiz, tr, icono, alCerrar, alZoom, alPedir }) → { muestra(si), estado(s, o), di(frase), chat(m), aviso(texto), sacudeDeposito(), zoom(cerca), alto }.
 //   `icono(k, px)` da el HTML de un dibujito de Pop (ppIcono). `tr` traduce; los números los escribe con puntos de millar. No sabe nada de la red ni del tablero: solo pinta lo que le dan.
 'use strict';
 const PP_RAID_HUD = (() => {
@@ -15,6 +15,7 @@ const PP_RAID_HUD = (() => {
       <div class="pp-raid-barra pp-raid-vida"><i></i><span class="pp-raid-ico" data-k="i-burbujas" data-px="34"></span><b></b></div>
     </div>
     <p class="pp-raid-bocadillo" hidden></p>
+    <div class="pp-raid-pedir" hidden><button type="button" class="pp-btn2 pp-verde"></button></div>
     <div class="pp-raid-chat"></div>
     <div class="pp-raid-zoom"><button type="button" class="pp-raid-mas">+</button><button type="button" class="pp-raid-menos">&minus;</button></div>
     <p class="pp-raid-aviso" hidden></p>
@@ -25,7 +26,7 @@ const PP_RAID_HUD = (() => {
       <div class="pp-raid-barra pp-raid-premio"><i></i></div>
     </div>`;
 
-  function crea({ raiz, tr, icono, alCerrar, alZoom }) {
+  function crea({ raiz, tr, icono, alCerrar, alZoom, alPedir }) {
     const caja = document.createElement('div');
     caja.id = 'pp-raid'; caja.hidden = true; caja.innerHTML = HTML;
     raiz.appendChild(caja);
@@ -33,6 +34,8 @@ const PP_RAID_HUD = (() => {
     const relojes = { bocadillo: null };
     for (const hueco of caja.querySelectorAll('.pp-raid-ico')) hueco.innerHTML = icono(hueco.dataset.k, Number(hueco.dataset.px));   // los dibujitos de Pop
     $('.pp-raid-x').onclick = alCerrar;
+    $('.pp-raid-pedir button').textContent = tr('PEDIR AYUDA');
+    $('.pp-raid-pedir button').onclick = e => alPedir(e.currentTarget);
     $('.pp-raid-mas').onclick = () => alZoom(1);
     $('.pp-raid-menos').onclick = () => alZoom(-1);
     $('.pp-raid-mas').setAttribute('aria-label', tr('Acercar'));
@@ -59,6 +62,7 @@ const PP_RAID_HUD = (() => {
       $('.pp-raid-recarga').textContent = d.toques >= d.capacidad ? tr('Depósito lleno') : tr('+1 en {t}', { t: Math.floor(s / 60) + ':' + dos(s % 60) });
       ancho('.pp-raid-deposito', d.toques / d.capacidad);
       $('.pp-raid-pie').classList.toggle('pp-raid-vacio', d.toques === 0);
+      $('.pp-raid-pedir').hidden = d.toques > 0 || !alPedir;   // sin toques: pasar el enlace de la raid a los amigos
     }
     // o = { partes (lo que queda, PP_RAID_SEMANA.partes), siguiente (PP_RAID_PREMIOS.siguiente o null), cuenta (burbujas + golpes) }
     function premio(o) {

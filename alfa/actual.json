@@ -1,8 +1,8 @@
 {
- "build": 1560,
- "hash": "c1019e8",
- "fecha": "2026-11-28T01:21:00Z",
- "mensaje": "Pop: la pantalla de la raid entre todos, solo desde el panel DEV (lejos como imagen de puntos con el CEO slime escondido debajo, cerca con las burbujas de Pop, depósito de toques, cofres con lluvia de monedas, lo de otros en azul, CEO con carácter, chat falso con corazones, atrás la cierra) con sus tests, ficha, glosario y ADR (tarea 448, nodo n4)",
+ "build": 1561,
+ "hash": "1c860d0",
+ "fecha": "2026-11-28T02:12:46Z",
+ "mensaje": "Pop: la raid se abre al ganar el nivel 13, con candado antes y Lola estrenándola con una bomba (Pepins, tarea 448, nodo n5)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

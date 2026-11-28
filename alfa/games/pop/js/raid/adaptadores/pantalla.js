@@ -5,7 +5,7 @@
 // · prueba(): rehace la raid de prueba en el servidor (rol alfa) y la abre. · cierra(): manda lo pendiente y vuelve a donde estaba.
 // · pinta(c, t, dt): la llama el bucle de js/principal.js cuando la pantalla es 'raid'.
 // Con `?raid=local` en la dirección no hay servidor: uno de mentira en este navegador, compartido entre pestañas (servidor-local-pestanas.js).
-// De momento solo se entra desde el panel DEV (alfa y localhost); el botón del camino es el nodo n5. Lee de Pop: PP_CV, PP_V, PP_PANT, ppIrA,
+// Se entra por el botón del camino o el enlace ?raid=1 (flag 'raid', js/raid/adaptadores/camino.js) y desde el panel DEV. Lee de Pop: PP_CV, PP_V, PP_PANT, ppIrA,
 // ppLogico, PP_IMG, PP_COLORES, PP_FILAS, ppTexto, PP_CHISPAS, CUENTA, tr.
 'use strict';
 const PP_RAID_PANTALLA = (() => {
@@ -115,7 +115,7 @@ const PP_RAID_PANTALLA = (() => {
   }
   function monta() {
     if (piezas) return piezas;
-    const hud = PP_RAID_HUD.crea({ raiz: PP_UI, tr, icono: ppIcono, alCerrar: () => { play('select'); cierra(); }, alZoom: botonZoom });
+    const hud = PP_RAID_HUD.crea({ raiz: PP_UI, tr, icono: ppIcono, alCerrar: () => { play('select'); cierra(); }, alZoom: botonZoom, alPedir: b => { play('select'); PP_RAID_CAMINO.comparte(b); } });
     const gestos = PP_RAID_GESTOS.crea({ alTocar: toca, alArrastrar: arrastra, alPellizcar: pellizca });
     escucha(gestos);
     piezas = { red: creaRed(), hud, gestos };
@@ -149,7 +149,7 @@ const PP_RAID_PANTALLA = (() => {
   // por qué no se puede abrir ahora (texto), o '' si se puede
   function pega() {
     if (R || abriendo) return 'La raid ya está abierta';
-    if (typeof ppEsPruebas !== 'function' || !ppEsPruebas()) return 'La raid aún no está abierta';
+    if (!PP_RAID_CAMINO.activa() && !ppEsPruebas()) return 'La raid aún no está abierta';   // el flag 'raid' (camino.js) o, para el panel DEV, alfa y localhost
     if (PP_PANT.actual !== 'titulo' && PP_PANT.actual !== 'mapa') return 'Abre la raid desde la portada o desde el camino';
     return '';
   }

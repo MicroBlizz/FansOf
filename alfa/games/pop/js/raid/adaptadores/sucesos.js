@@ -9,6 +9,18 @@ const PP_RAID_SUCESOS = (() => {
   const TOPE_AJENAS = 40;
   const centro = (r, x, y) => PP_RAID_CAMARA.aPantalla(r.cam, r.vista(), x + 0.5, y + 0.5);
 
+  // lo que ya se ha contado de CADA raid (por su firma; se guardan las 4 últimas): objetos descontados del inventario (js/raid/adaptadores/
+  // usa-objetos.js) y el escalón ya pagado en puntos del Pase. Por firma, para que ir y volver entre la raid de prueba y la de la semana no
+  // vuelva a descontar ni a pagar nada
+  function cuenta(r) {
+    const C = SAVE.raidCuentas || (SAVE.raidCuentas = {});
+    if (!C[r.firma]) {
+      C[r.firma] = { gastados: { toques3: 0, bomba: 0, martillo: 0 }, pase: 0 };
+      const viejas = Object.keys(C);
+      while (viejas.length > 4) delete C[viejas.shift()];
+    }
+    return C[r.firma];
+  }
   /* ---------- los cofres ---------- */
   // la libreta de cofres cobrados de ESTA raid (otra raid, o la de prueba rehecha, empieza de cero)
   function libreta(r) {
@@ -23,11 +35,13 @@ const PP_RAID_SUCESOS = (() => {
     const monedas = PP_RAID_COFRES.monedasEn(r.cofres, x, y, 512);
     libreta(r).push(claveCofre(x, y));
     SAVE.monedas += monedas;
+    const tk = ppFeriaSuma(PP_CFG.raid.juego.ticketsCofre);   // y tickets de la Feria del finde, si está abierta (js/feria-pantalla.js)
     ppGuarda();
     if (!r.abierta()) return;
     const [px, py] = centro(r, x, y);
     r.fx.lluvia(px, py, r.vista(), 46);
     r.fx.flota(tr('+{n} monedas', { n: monedas }), 270, Math.max(r.vista().y + 90, py - 50), '#ffe36e', 44);
+    if (tk) r.fx.flota(tk.n === 1 ? tr('+1 ticket de la Feria') : tr('+{n} tickets de la Feria', { n: tk.n }), 270, Math.max(r.vista().y + 140, py), '#ffd64a', 32);
     r.fx.tiembla(0.5);
     ppArpegio(0, 6, 0.07, 0.12); ppVibra(40);
     r.voces.chat('cofre'); r.voces.ceo('cofre', true);
@@ -41,25 +55,27 @@ const PP_RAID_SUCESOS = (() => {
     r.hud.sacudeDeposito();
     ppBoing(0.6);
     r.voces.ceo('sinToques', false, 0.7); r.voces.chat('sinToques', 0.6);
+    PP_RAID_CAMINO.consejo('raidSinToques');   // la primera vez, Lola dice que vuelven solos y que se puede pedir ayuda (js/lola.js)
   }
-  // la racha sube un toque: su nota, su letrero y, en los hitos, fiesta
-  function subeRacha(r) {
+  // la racha sube un toque: su nota, su letrero (el kawaii de los combos, junto al dedo en (px, py)) con el sonido del combo y, en los hitos, fiesta
+  function subeRacha(r, px, py) {
     r.racha = PP_RAID_ZUMO.toque(r.racha, Date.now());
     const n = r.racha.n;
-    r.fx.racha(n);
+    r.fx.racha(n, px, py);
+    if (n >= 2) play('ppCombo', n);
     if (PP_RAID_ZUMO.esHito(n)) { r.fx.tiembla(0.55); r.voces.chat('racha'); r.voces.ceo('racha', true); }
     return n;
   }
   // lo que se ve y suena al hacer pop: `celdas` = las que ya no están; `tocadas` = las dobles que se quedan con su primer pop (nodo n8)
   function revienta(r, celdas, px, py, tocadas = []) {
     const tablero = r.sinc.tablero();
-    for (const [x, y] of tocadas) r.fx.pop(x, y);
+    for (const [x, y] of tocadas) r.fx.pop(x, y, false, true);   // la doble sigue viva: aro, sin gotitas ni aplastado
     for (const [x, y] of celdas) {
       r.fx.pop(x, y);
       r.lejos.celda(tablero, x, y);
       if (esCofre(r, x, y) && !r.fx.hayCofre(x, y)) r.fx.cofreEspera(x, y, 0);
     }
-    ppPlop(PP_RAID_ZUMO.nota(subeRacha(r)));
+    ppPlop(PP_RAID_ZUMO.nota(subeRacha(r, px, py)));
     ppVibra(celdas.length >= 5 ? 14 : 8);
     if (celdas.length >= 5) r.fx.tiembla(0.22);
     if (celdas.length) r.fx.flota('+' + celdas.length, px, py - 26, '#fff', Math.min(60, 26 + celdas.length * 2));
@@ -79,7 +95,7 @@ const PP_RAID_SUCESOS = (() => {
     r.golpe = 1;
     r.fx.tiembla(0.4);
     r.fx.flota('-1', px, py - 40, '#ff8f8a', 40);
-    ppPlop(0.5 + PP_RAID_ZUMO.nota(subeRacha(r)) * 0.25); ppVibra(18);
+    ppPlop(0.5 + PP_RAID_ZUMO.nota(subeRacha(r, px, py)) * 0.25); ppVibra(18);
     r.voces.ceo('golpe', false, 0.5);
   }
 
@@ -105,6 +121,18 @@ const PP_RAID_SUCESOS = (() => {
     r.firma = s.id + ':' + s.inicio;
     r.voces.chat('hola');
   }
+  // cada escalón de premio alcanzado en esta raid da puntos del Pase, una sola vez, con lo que ya ha CONTADO el servidor (aviso 'yo' de la
+  // sincronía: sin lo que aún va de camino, que podría no valer); también si llega con la raid cerrada
+  function yo(r, d) {
+    if (!r.firma || !d) return;
+    const e = PP_RAID_PREMIOS.escalon(d.burbujas + d.golpes, PP_CFG.raid);
+    const nivel = e ? e.nivel : 0, c = cuenta(r);
+    if (nivel <= c.pase) return;
+    const antes = c.pase;
+    c.pase = nivel;
+    if (typeof ppPaseNuevo === 'function' && ppPaseNuevo()) ppPaseSumaJugando((nivel - antes) * PP_CFG.raid.juego.puntosEscalon);
+    ppGuarda();
+  }
   function premioNuevo(r, s) {
     const e = PP_RAID_PREMIOS.escalon(s.yo.burbujas + s.yo.golpes, PP_CFG.raid);
     const nivel = e ? e.nivel : 0;
@@ -123,8 +151,9 @@ const PP_RAID_SUCESOS = (() => {
     r.humor = h;
     if (!r.abierta()) return;
     r.voces.ceo(h, true);
-    if (h === 'pelea') { r.voces.chat('pelea'); r.fx.tiembla(0.8); }
-    if (h === 'vencido') { r.voces.chat('vencido'); if (!primero) r.fx.confeti(PP_CHISPAS.confeti(540, Math.random)); }
+    if (h === 'pelea') { r.voces.chat('pelea'); r.fx.tiembla(0.8); PP_RAID_CAMINO.consejo('raidJefe'); }
+    if (h === 'vencido' && !primero) { play('ppVictoria'); ppVibra(60); r.fx.confeti(PP_CHISPAS.confeti(540, Math.random)); r.fx.confeti(PP_CHISPAS.confeti(540, Math.random)); }   // la fiesta de ganar un nivel
+    if (h === 'vencido') r.voces.chat('vencido');
     r.hud.aviso(AVISOS[h] ? tr(AVISOS[h]) : '');
   }
   function estado(r, s) {
@@ -147,9 +176,9 @@ const PP_RAID_SUCESOS = (() => {
     r.avisoRed = motivo === 'sin_red';
     r.hud.aviso(tr(ERRORES[motivo]));
   }
-  const MANEJA = Object.freeze({ estado, ajenas, propias, error });
+  const MANEJA = Object.freeze({ estado, ajenas, propias, error, yo });
   const recibe = (r, nombre, datos) => { if (MANEJA[nombre]) MANEJA[nombre](r, datos); };
 
-  return Object.freeze({ recibe, toque, tocaCeo, revienta });
+  return Object.freeze({ recibe, toque, tocaCeo, revienta, cuenta });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_SUCESOS;

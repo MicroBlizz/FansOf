@@ -48,6 +48,11 @@ const PP_TUTO = {
   hucha: [{ t: 'La hucha se llena al pasar niveles. ¡Rómpela!', encima: true }],
   racha: [{ t: 'Gana sin fallar y empiezas con más toques.', encima: true }],
   equipoLleno: [{ t: 'Equipo lleno: elige quién descansa o compra un hueco.', encima: true }],
+  // la raid entre todos (tarea 448; Pepins 28-11-2026: «Lola tendrá que hacer un tutorial»): un globo en cada momento, la primera vez
+  raid: [{ t: '¡La RAID! Un tablero gigante que vaciamos entre todos.' }],   // al entrar (js/raid/adaptadores/pantalla.js)
+  raidCerca: [{ t: 'Haz pop aquí. Tus toques vuelven solos.' }],                 // al acercarte
+  raidSinToques: [{ t: '¡Sin toques! Espera o pide ayuda a tus amigos.' }],      // al quedarte sin toques (js/raid/adaptadores/sucesos.js)
+  raidJefe: [{ t: '¡Baja el jefe CEO! Tócale para pegarle.' }],                  // cuando el CEO baja a pelear
 };
 // ¿este globo deja la pantalla oscura y sin responder hasta pulsar ¡VALE!? (tarea #248, Pepins 20-11-2026: ¡ABRIR! del regalo no respondía)
 // Los consejos que explican una ventana (`encima`) solo informan: no bloquean, y el botón de la ventana funciona al primer toque.

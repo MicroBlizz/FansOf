@@ -2,7 +2,7 @@
 // lienzo (css/raid.css): la cabecera (título, lo que queda de semana, cerrar y la BARRA DE VIDA del tablero o del jefe), el bocadillo del CEO, el
 // chat falso, los botones de acercar y alejar, el aviso grande (sin cuenta, sin red, raid acabada) y el pie (la BARRA DE OBJETOS, el DEPÓSITO DE
 // TOQUES y el premio).
-// · crea({ raiz, tr, icono, alCerrar, alZoom, alPedir, objetos, alObjeto }) → { muestra(si), estado(s, o), objetos(lista), di(frase), chat(m), aviso(texto),
+// · crea({ raiz, tr, icono, alCerrar, alZoom, alPedir, alOpciones, objetos, alObjeto }) → { muestra(si), estado(s, o), objetos(lista), di(frase), chat(m), aviso(texto),
 //   sacudeDeposito(), zoom(cerca) }. `objetos` = [{ k, icono, nombre }] (los botones de la barra; al tocar uno, alObjeto(k)) y objetos(lista) los
 //   pone al día con [{ k, n (cuántos quedan), elegido }].
 //   `icono(k, px)` da el HTML de un dibujito de Pop (ppIcono). `tr` traduce; los números los escribe con puntos de millar. No sabe nada de la red ni del tablero: solo pinta lo que le dan.
@@ -14,7 +14,7 @@ const PP_RAID_HUD = (() => {
   const dos = n => String(n).padStart(2, '0');
   const HTML = `
     <div class="pp-raid-cab">
-      <b class="pp-raid-titulo"></b><span class="pp-raid-queda"></span><button type="button" class="pp-raid-x" aria-label="X"></button>
+      <b class="pp-raid-titulo"></b><span class="pp-raid-queda"></span><button type="button" class="pp-raid-op"></button><button type="button" class="pp-raid-x" aria-label="X"></button>
       <div class="pp-raid-barra pp-raid-vida"><i></i><span class="pp-raid-ico" data-k="i-burbujas" data-px="34"></span><b></b></div>
     </div>
     <p class="pp-raid-bocadillo" hidden></p>
@@ -30,7 +30,7 @@ const PP_RAID_HUD = (() => {
       <div class="pp-raid-barra pp-raid-premio"><i></i></div>
     </div>`;
 
-  function crea({ raiz, tr, icono, alCerrar, alZoom, alPedir, objetos: botones = [], alObjeto = () => {} }) {
+  function crea({ raiz, tr, icono, alCerrar, alZoom, alPedir, alOpciones, objetos: botones = [], alObjeto = () => {} }) {
     const caja = document.createElement('div');
     caja.id = 'pp-raid'; caja.hidden = true; caja.innerHTML = HTML;
     raiz.appendChild(caja);
@@ -39,6 +39,9 @@ const PP_RAID_HUD = (() => {
     for (const hueco of caja.querySelectorAll('.pp-raid-ico')) hueco.innerHTML = icono(hueco.dataset.k, Number(hueco.dataset.px));   // los dibujitos de Pop
     for (const o of botones) $('.pp-raid-objetos').appendChild(botonObjeto(o));
     $('.pp-raid-x').onclick = alCerrar;
+    $('.pp-raid-op').innerHTML = '<img src="img-liso/bi-opciones.png" alt="" style="width:48px;height:48px">';   // el de OPCIONES de la portada: aquí no hay pausa
+    $('.pp-raid-op').setAttribute('aria-label', tr('Opciones'));
+    $('.pp-raid-op').onclick = () => alOpciones && alOpciones();
     $('.pp-raid-pedir button').textContent = tr('PEDIR AYUDA');
     $('.pp-raid-pedir button').onclick = e => alPedir(e.currentTarget);
     $('.pp-raid-mas').onclick = () => alZoom(1);

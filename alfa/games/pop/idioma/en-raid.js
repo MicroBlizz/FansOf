@@ -131,6 +131,7 @@ IDIOMA.add({
   "La raid aún no está abierta": "The raid isn't open yet",
   "La raid ya está abierta": "The raid is already open",
   "Abre la raid desde la portada o desde el camino": "Open the raid from the title screen or the path",
+  "La RAID: un tablero enorme que vaciamos entre todos en una semana. Gasta tus toques (se recargan solos), abre cofres, usa tus ayudas y vence al jefe CEO. Cuantas más burbujas hagas pop, mejor premio.": "The RAID: a huge board we all clear together in one week. Spend your taps (they refill on their own), open chests, use your boosters and beat the CEO boss. The more bubbles you pop, the better the prize.",
   "Ya has usado todos los de esta raid.": "You've used all of those for this raid.",
   "No te quedan. Consigue más en la tienda.": "You're out. Get more in the shop.",
   "El jefe CEO aún no ha bajado.": "The CEO boss hasn't come down yet.",

@@ -120,7 +120,8 @@ Object.keys(PP_SON_ATAQUE).forEach(id => { THROTTLE[id] = 60; });
 // la música que debe sonar: el bucle la pone en cuanto el audio arranca (el navegador espera al primer toque) y no corta las sintonías
 const PP_MUS = { quiere: 'menu' };
 function ppMusica(nombre) { PP_MUS.quiere = nombre && TRACKS[nombre] ? nombre : 'menu'; }
-function ppMusicaRuta() { ppMusica(PP_P && PP_P.tipo === 'jefe' && PP_PANT.actual === 'sala' ? 'boss' : 'menu'); }
+// la de los jefes en un nivel de jefe y en la raid entre todos (el salón del CEO, tarea 448); la del menú en lo demás
+function ppMusicaRuta() { ppMusica((PP_P && PP_P.tipo === 'jefe' && PP_PANT.actual === 'sala') || PP_PANT.actual === 'raid' ? 'boss' : 'menu'); }
 function ppSintonia(nombre) { if (AC && M.bus && TRACKS[nombre]) musicSet(nombre); }
 // corta una sintonía si sigue sonando (la de la cortinilla, al pulsar su botón o al salir del nivel)
 function ppSintoniaCorta(nombre) { if (AC && M.bus && M.name === nombre) musicSet(null); }

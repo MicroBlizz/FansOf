@@ -193,7 +193,7 @@ function ppAyuda(alAcabar = ppCierra) {   // alAcabar: adónde se va con ¡ENTEN
     <p class="pp-sub">${tr('Más adelante: la cereza pide tres golpes. El hielo, solo si lo tocas. La concha hace pop sin sus vecinas.')}</p>
     <p class="pp-sub">${tr('Y luego: el cohete, al hacer pop, levanta las hundidas de su fila (quítalo pronto). La burbujeante, un cuadrado de 3x3. El pétalo, su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
-    <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos. Gana al jefe y se abre el difícil.')}</p>`, true);
+    <p class="pp-sub">${tr('Fallar cuesta un corazón; vuelve uno cada 30 minutos. Gana al jefe y se abre el difícil.')}</p>${PP_RAID_CAMINO.ayuda()}`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { alAcabar(); SAVE.ayuda = true; ppGuarda(); }));
 }
 // las dos barras de volumen de core (OPCIONES.sonido): efectos y música por separado, en Opciones y en la pausa

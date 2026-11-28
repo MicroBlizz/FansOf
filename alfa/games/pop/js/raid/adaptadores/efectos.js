@@ -2,23 +2,26 @@
 // de monedas»): lo que se mueve encima del tablero. Guarda y pinta:
 // · los POPS: cada burbuja reventada suelta un aro que crece (blanco y rosa las tuyas, AZUL las de otro jugador) y unas chispas (PP_CHISPAS);
 // · los COFRES que esperan la confirmación del servidor (bailan en su casilla hasta que llega, tarde lo que tarde) y la LLUVIA DE MONEDAS;
-// · los TEXTOS que flotan (+5, +45 monedas), el letrero de la RACHA (x7) y el TEMBLOR de la pantalla.
+// · los TEXTOS que flotan (+5, +45 monedas), el letrero de la RACHA (el kawaii de los combos) y el TEMBLOR de la pantalla.
 // Los pops y los cofres van en casillas del tablero (siguen a la cámara); lo demás, en píxeles de diseño. Sin reloj: avanza(dt) lo mueve.
-// · crea({ azar, chispas }) → objeto; `chispas(x, y)` da las partículas de un pop (PP_CHISPAS.chispas con su azar). Depende de PP_RAID_CAMARA.
+// · crea({ azar, chispas, imagen, combo, colorDe }) → objeto; `chispas(x, y)` da las partículas de un pop (PP_CHISPAS.chispas con su azar);
+//   `combo` pinta el letrero de combos (ppComboJunto); `colorDe(x, y)` = el color de la burbuja de esa casilla (gotitas y aplastado).
+//   Depende de PP_RAID_CAMARA.
 'use strict';
 const PP_RAID_FX = (() => {
   const POP_DUR = 0.34, TOPE_POPS = 140, TOPE_PARTS = 420;
   const MIA = Object.freeze({ aro: '#ffffff', relleno: 'rgba(255, 110, 199, 0.55)' });
   const AJENA = Object.freeze({ aro: '#6fb8ff', relleno: 'rgba(143, 212, 255, 0.6)' });
 
-  function crea({ azar, chispas, imagen = () => null }) {
+  function crea({ azar, chispas, imagen = () => null, combo = null, colorDe = () => '#ff9ccf' }) {
     const e = { pops: [], parts: [], textos: [], cofres: [], temblor: 0, racha: { n: 0, t: 9 } };
     const entre = (a, b) => a + azar() * (b - a);
 
     // una burbuja reventada en la casilla (x, y); `ajena` = la reventó otro jugador
-    function pop(x, y, ajena = false) {
+    // `tocada`: una burbuja doble que se queda con su primer pop (sigue viva): solo el aro, sin gotitas ni aplastado
+    function pop(x, y, ajena = false, tocada = false) {
       if (e.pops.length >= TOPE_POPS) e.pops.shift();
-      e.pops.push({ x, y, t: 0, ajena, hechas: false });
+      e.pops.push({ x, y, t: 0, ajena, tocada, hechas: false });
     }
     function flota(s, x, y, col = '#fff', tam = 30) { e.textos.push({ s, x, y, col, tam, t: 0 }); }
     function cofreEspera(x, y, monedas) { e.cofres.push({ x, y, monedas, t: 0 }); }
@@ -41,7 +44,7 @@ const PP_RAID_FX = (() => {
     function cofresSolo(sigue) { e.cofres = e.cofres.filter(k => sigue(k.x, k.y)); }
     function confeti(lista) { e.parts.push(...lista); }
     function tiembla(fuerza) { e.temblor = Math.max(e.temblor, fuerza); }
-    function racha(n) { e.racha = { n, t: 0 }; }
+    function racha(n, x, y) { e.racha = { n, t: 0, x, y }; }   // (x, y): el dedo, en píxeles de diseño: el letrero sale junto a él
 
     function avanza(dt) {
       for (const p of e.pops) p.t += dt;
@@ -55,11 +58,26 @@ const PP_RAID_FX = (() => {
       e.racha.t += dt;
     }
 
+    // las gotitas del color de la burbuja que saltan y caen, como al hacer pop en un nivel (ppFxToque, js/efectos.js)
+    function gotitas(px, py, col, n) {
+      for (let k = 0; k < n; k++) {
+        const a = entre(0, Math.PI * 2), v = entre(80, 200);
+        e.parts.push({ x: px, y: py - 6, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 150, g: 700, r: entre(3, 6), t: 0, vida: entre(0.35, 0.6), col });
+      }
+    }
+    // la burbuja se aplasta antes de hundirse: un óvalo de su color que se ensancha y baja (solo las tuyas y de cerca, la primera mitad del pop)
+    function aplasta(c, px, py, r, col, k) {
+      if (k > 0.5) return;
+      const q = k / 0.5;
+      c.globalAlpha = 1;
+      c.fillStyle = col; c.beginPath(); c.ellipse(px, py + r * 0.3 * q, r * (0.9 + 0.35 * q), r * (0.9 - 0.65 * q), 0, 0, Math.PI * 2); c.fill();
+    }
     function pintaPops(c, cam, vista) {
       for (const p of e.pops) {
         const [px, py] = PP_RAID_CAMARA.aPantalla(cam, vista, p.x + 0.5, p.y + 0.5);
         const k = p.t / POP_DUR, est = p.ajena ? AJENA : MIA, r = Math.max(5, cam.z * 0.5) * (0.5 + k * 0.9);
-        if (!p.hechas && cam.z >= 12) { p.hechas = true; e.parts.push(...chispas(px, py).slice(0, p.ajena ? 3 : 8)); }
+        if (!p.hechas && cam.z >= 12) { p.hechas = true; e.parts.push(...chispas(px, py).slice(0, p.ajena ? 3 : 8)); if (!p.ajena && !p.tocada) gotitas(px, py, colorDe(p.x, p.y), 5); }
+        if (!p.ajena && !p.tocada && cam.z >= 12) aplasta(c, px, py, cam.z * 0.42, colorDe(p.x, p.y), k);
         c.globalAlpha = 1 - k;
         c.fillStyle = est.relleno; c.beginPath(); c.arc(px, py, r * 0.8, 0, Math.PI * 2); c.fill();
         c.lineWidth = Math.max(2, cam.z * 0.09); c.strokeStyle = est.aro; c.beginPath(); c.arc(px, py, r, 0, Math.PI * 2); c.stroke();
@@ -84,8 +102,10 @@ const PP_RAID_FX = (() => {
         cofre(c, px, py - Math.abs(Math.sin(k.t * 9)) * cam.z * 0.25, Math.max(16, cam.z * 0.95), k.t);
       }
     }
-    function pintaParts(c) {
-      for (const p of e.parts) {
+    // `paso`: se pinta una de cada `paso` (el «Ahorro de batería» del juego da 2: PP_AHORRO.pasoParticulas)
+    function pintaParts(c, paso = 1) {
+      for (let i = 0; i < e.parts.length; i += paso) {
+        const p = e.parts[i];
         const k = 1 - p.t / p.vida;
         if (!p.moneda) { c.fillStyle = p.col; c.beginPath(); c.arc(p.x, p.y, p.r * k, 0, Math.PI * 2); c.fill(); continue; }
         const ancho = Math.abs(Math.cos(p.giro + p.t * 9)) * p.r + 1.5;
@@ -106,13 +126,11 @@ const PP_RAID_FX = (() => {
       }
       c.globalAlpha = 1;
     }
-    // el letrero «xN» de la racha: salta al cambiar y se apaga al acabarse (`resto` de 1 a 0, PP_RAID_ZUMO.resto)
-    function pintaRacha(c, texto, x, y, tam, resto) {
-      if (e.racha.n < 2 || resto <= 0) return;
-      const salto = 1 + Math.max(0, 0.16 - e.racha.t) * 3;
-      c.globalAlpha = Math.min(1, resto * 4);
-      texto(c, 'x' + e.racha.n, x, y, tam * salto, '#ffe36e', '#b8236a');
-      c.globalAlpha = 1;
+    // el letrero de la RACHA: el mismo letrero kawaii de los combos de los niveles (`combo` = ppComboJunto, js/combo-letrero.js), junto al
+    // último toque y dentro de `caja` = { arriba, abajo }; salta al subir y se apaga solo si no sigues
+    function pintaRacha(c, caja) {
+      if (!combo || e.racha.n < 2) return;
+      combo(c, e.racha.n, e.racha.t, e.racha.x, e.racha.y, caja);
     }
     // el desplazamiento del temblor en este fotograma
     const sacudida = () => (e.temblor > 0 ? [entre(-1, 1) * e.temblor * 9, entre(-1, 1) * e.temblor * 9] : [0, 0]);

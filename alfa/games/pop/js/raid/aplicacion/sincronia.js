@@ -19,7 +19,8 @@
 //    depósito, y lo local se corrige con lo que diga el servidor.
 //  · AVISOS: escucha(fn) con fn(nombre, datos): 'estado' (resumen: vivas, jefe, depósito, acabada, 'ahora' = la hora del servidor...), 'ajenas' (lista [[x, y], ...] de burbujas que
 //    llegan reventadas en un trozo del servidor y que aquí seguían vivas: la pantalla las hace explotar), 'propias' (lista de las que el servidor
-//    confirmó de esta tanda), 'objetos' ({ toques3, bomba, martillo } que el servidor cuenta en total en esta raid) y 'error' (el motivo).
+//    confirmó de esta tanda), 'objetos' ({ toques3, bomba, martillo } que el servidor cuenta en total en esta raid), 'yo' ({ burbujas, golpes }
+//    tuyos que el servidor ya ha contado) y 'error' (el motivo).
 // Puertos (nada de Date.now ni setTimeout aquí): red (PP_RAID_RED), reloj() en ms, programa(fn, ms) → una función que lo cancela (o un objeto con
 // cancel()), visible(). `raid` null = la de esta semana (se fija en la primera respuesta). `cfg` = PP_CFG.raid (red, deposito, faseFinal, objetos, dobles).
 // Depende de PP_RAID_TABLERO, PP_RAID_DEPOSITO, PP_RAID_DOBLES y PP_RAID_OBJETOS (se cargan antes).
@@ -151,6 +152,7 @@ const PP_RAID_SINCRONIA = (() => {
       if (ajenas.length) emit('ajenas', ajenas);
       emit('estado', resumen());
       if (r.yo.objetos) emit('objetos', { ...O.cero(), ...r.yo.objetos });   // lo que el servidor cuenta en total: quien escucha descuenta lo que falte
+      emit('yo', { burbujas: r.yo.burbujas, golpes: r.yo.golpes });   // lo tuyo que el servidor ya ha contado (sin lo que va de camino): los premios del juego
     }
 
     // ---- sondeo ----

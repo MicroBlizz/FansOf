@@ -177,6 +177,9 @@ const PP_CFG = {
     // la red de la raid (js/raid/aplicacion/sincronia.js; sin Realtime en el plan gratis): el móvil pregunta cada `sondeoMs` solo por los trozos que ve;
     // lo que toca se junta en una tanda que sale a los `tandaMs` o al juntar `tandaMax` toques y golpes (nunca más que la capacidad del depósito)
     red: { sondeoMs: 3000, tandaMs: 700, tandaMax: 30 },
+    // lo que la raid suma a lo demás del juego (Pepins, 28-11-2026, «cofres y escalones»): cada cofre abierto da tickets de la Feria (si está
+    // abierta) y cada escalón de premio alcanzado, puntos del Pase (con su tope diario: ppPaseSumaJugando). Solo en el móvil: no pasa por el servidor
+    juego: { ticketsCofre: 1, puntosEscalon: 5 },
     // OBJETOS Y DIFICULTAD (nodo n8, Pepins 28-11-2026; js/raid/dominio/objetos.js y dobles.js; las mismas cifras en servidor/208-pop-raid-objetos.sql).
     // Los objetos salen del inventario del móvil (SAVE.ayudas) y el servidor solo pone un tope por jugador y raid, de cada tipo.
     //   toques3: toques que mete en el depósito (aunque esté lleno) · bomba: lado del cuadrado · martillo: ancho de la fila · martilloJefe: vida que quita al CEO

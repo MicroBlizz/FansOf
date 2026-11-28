@@ -3,7 +3,7 @@
 // · Salen del inventario del juego (SAVE.ayudas, js/potenciadores.js): «+3 toques» actúa al tocar su botón; la BOMBA y el MARTILLO se eligen (el
 //   botón queda marcado) y los usa el siguiente toque en el tablero; el martillo, además, contra el CEO cuando ha bajado a pelear.
 // · Se DESCUENTAN del inventario solo cuando el servidor los cuenta (aviso 'objetos' de la sincronía con el total de la raid, guardado en
-//   SAVE.raid.gastados): una respuesta perdida no regala ninguno y, sin red o con un
+//   SAVE.raidCuentas por firma, PP_RAID_SUCESOS.cuenta): una respuesta perdida no regala ninguno y, sin red o con un
 //   fallo, no se pierde ninguno. Mientras van de camino no se pueden volver a usar (cuenta lo pendiente).
 // · Hay un tope por raid de cada tipo (PP_CFG.raid.objetos.tope, el mismo del servidor).
 // Lee de Pop: SAVE, ppTengo, ppGuarda, ppBoing, ppPlop, ppArpegio, ppVibra, play, tr. Depende de PP_RAID_OBJETOS y PP_RAID_SUCESOS.
@@ -82,12 +82,8 @@ const PP_RAID_USA = (() => {
     return true;
   }
 
-  // lo ya descontado del inventario en ESTA raid (se guarda con la firma de la raid, junto a sus cofres: otra raid empieza de cero)
-  function descontados(r) {
-    if (!SAVE.raid || SAVE.raid.firma !== r.firma) SAVE.raid = { firma: r.firma, cofres: [] };
-    if (!SAVE.raid.gastados) SAVE.raid.gastados = PP_RAID_OBJETOS.cero();
-    return SAVE.raid.gastados;
-  }
+  // lo ya descontado del inventario en ESTA raid (por su firma: PP_RAID_SUCESOS.cuenta)
+  const descontados = r => PP_RAID_SUCESOS.cuenta(r).gastados;
   // el servidor cuenta `total` = { toques3, bomba, martillo } usados en esta raid: sale del inventario lo que aún no se había descontado.
   // Así una respuesta que se pierde no regala objetos (el siguiente estado los cuenta) y nada se descuenta dos veces
   function confirmados(r, total) {

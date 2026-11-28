@@ -19,9 +19,19 @@ const PP_RAID_PANTALLA = (() => {
   // la ventana del tablero: entre la cabecera y el pie, con un margen para el marco de la bandeja (512 de ancho: de lejos, un píxel por burbuja)
   const vista = () => ({ x: 14, y: PP_RAID_HUD.ALTO.cabecera + 18, w: 512, h: PP_V.H - PP_RAID_HUD.ALTO.cabecera - PP_RAID_HUD.ALTO.pie - 36 });
   const imagen = k => PP_IMG[k] || null;   // un dibujo de Pop ya cargado
+  const rgb = ([r, g, b]) => `rgb(${r}, ${g}, ${b})`;
   const activa = () => !!R && PP_PANT.actual === 'raid';
-  const texto = (c, s, x, y, tam, col, borde) => ppTexto(c, s, x, y, tam, col, 'center', borde);
-  const modoLocal = () => new URLSearchParams(location.search).get('raid') === 'local';
+  // un texto que flota: partido en líneas como los del juego (ppPartirLineas) y sin salirse por los lados (el inglés suele ser más largo)
+  const ANCHO_TEXTO = 470;
+  function texto(c, s, x, y, tam, col, borde) {
+    c.font = `700 ${Math.round(tam * PP_LETRA)}px ${PP_FUENTE}`;
+    const lineas = ppPartirLineas(s, ANCHO_TEXTO, t => c.measureText(t).width), alto = tam * PP_LETRA * 1.15;
+    const medio = Math.max(...lineas.map(l => c.measureText(l).width)) / 2;
+    const cx = Math.min(540 - 14 - medio, Math.max(14 + medio, x));
+    lineas.forEach((l, j) => ppTexto(c, l, cx, y + (j - (lineas.length - 1) / 2) * alto, tam, col, 'center', borde));
+  }
+  // el servidor de mentira (?raid=local) solo en la alfa y en localhost: paga monedas, tickets y puntos que no pasan por el servidor
+  const modoLocal = () => new URLSearchParams(location.search).get('raid') === 'local' && ppEsPruebas();
 
   /* ---------- la red ---------- */
   // en local cada pestaña es un jugador distinto (su nombre se guarda mientras dure la pestaña)
@@ -73,6 +83,7 @@ const PP_RAID_PANTALLA = (() => {
   // dice a la sincronía qué trozos se ven: de lejos, todos los de la zona; de cerca, solo los de la ventana
   function mira() {
     const cerca = R.cam.z >= PP_RAID_CERCA.Z_BURBUJAS;
+    if (cerca) PP_RAID_CAMINO.consejo('raidCerca');   // la primera vez que te acercas, Lola (js/lola.js); luego no hace nada
     const ids = cerca ? CAM.trozos(CAM.visibles(R.cam, vista(), R.zona)) : R.trozosZona;
     const clave = ids.join();
     if (clave === R.mirando) return;
@@ -116,7 +127,7 @@ const PP_RAID_PANTALLA = (() => {
   }
   function monta() {
     if (piezas) return piezas;
-    const hud = PP_RAID_HUD.crea({ raiz: PP_UI, tr, icono: ppIcono, alCerrar: () => { play('select'); cierra(); }, alZoom: botonZoom, alPedir: b => { play('select'); PP_RAID_CAMINO.comparte(b); },
+    const hud = PP_RAID_HUD.crea({ raiz: PP_UI, tr, icono: ppIcono, alCerrar: () => { play('select'); cierra(); }, alZoom: botonZoom, alPedir: b => { play('select'); PP_RAID_CAMINO.comparte(b); }, alOpciones: () => { play('select'); ppOpciones(); },
       objetos: PP_RAID_USA.BOTONES, alObjeto: k => { if (activa()) PP_RAID_USA.pulsa(R, k); } });
     const gestos = PP_RAID_GESTOS.crea({ alTocar: toca, alArrastrar: arrastra, alPellizcar: pellizca });
     escucha(gestos);
@@ -141,7 +152,7 @@ const PP_RAID_PANTALLA = (() => {
         doble: k => imagen('b-' + PP_COLORES[k] + '-doble'),   // la burbuja doble de Pop (la de la nata): necesita dos pops
         cara: (c, cx, cy, r, v) => ppPintaCaraVariada(c, cx, cy, r, PP_CARAS.despierta[v], 1, 0, v),
       }),
-      fx: PP_RAID_FX.crea({ azar: Math.random, chispas: (x, y) => PP_CHISPAS.chispas(x, y, Math.random), imagen }),
+      fx: PP_RAID_FX.crea({ azar: Math.random, chispas: (x, y) => PP_CHISPAS.chispas(x, y, Math.random), imagen, combo: ppComboJunto, colorDe: (x, y) => rgb(colores[PP_RAID_LEJOS.indiceColor(x, y, colores.length)]) }),
       voces: PP_RAID_VOCES.crea({ azar: Math.random, tr, di: f => hud.di(f), escribe: m => hud.chat(m) }),
       cam: CAM.entera(vista(), zona), anim: null, mirando: null, pintadas: new Array(256).fill(-1),
       racha: PP_RAID_ZUMO.nueva(), elegido: null, cofres: null, firma: null, nivel: null, humor: null, golpe: 0, resumen: null, avisoRed: false, hudT: 0,
@@ -167,6 +178,7 @@ const PP_RAID_PANTALLA = (() => {
     r.quita = r.sinc.escucha((nombre, datos) => { PP_RAID_SUCESOS.recibe(r, nombre, datos); PP_RAID_USA.recibe(r, nombre, datos); });
     ppIrA('raid');
     p.hud.muestra(true);
+    PP_RAID_CAMINO.consejo('raid');   // la primera vez, el primero de los 4 globos de Lola (los demás, al acercarte, sin toques y con el jefe: js/lola.js)
     mira();
     r.sinc.arranca();
     return '';
@@ -219,11 +231,18 @@ const PP_RAID_PANTALLA = (() => {
     R.hud.objetos(PP_RAID_USA.lista(R));
     R.hud.zoom(R.cam.z >= Z_MAX - 0.01, R.cam.z <= CAM.zMin(v, R.zona) + 0.001);
   }
-  // el marco de la bandeja, como el de las ventanas de Pop: sombra rosa, borde rosa, filo blanco
+  // el color del marco: el de la bandeja que tengas puesta (Tienda → bandejas, js/bandeja.js); con la arcoíris, el rosa de las ventanas de Pop
+  function colorMarco() {
+    const B = ppBandejaActual();
+    if (!B.filas) return '#ff9ccf';
+    const [h, s, l] = B.filas[0];
+    return `hsl(${h} ${s}% ${Math.min(84, l)}%)`;
+  }
+  // el marco de la bandeja, como el de las ventanas de Pop: sombra rosa, borde del color de tu bandeja, filo blanco
   function marco(c, b) {
     const caja = (col, m, dy, r) => { c.fillStyle = col; c.beginPath(); c.roundRect(b.x - m, b.y - m + dy, b.w + m * 2, b.h + m * 2, r); c.fill(); };
     caja('rgba(196, 58, 132, 0.3)', 12, 9, 30);
-    caja('#ff9ccf', 12, 0, 30);
+    caja(colorMarco(), 12, 0, 30);
     caja('#fff', 6, 0, 24);
   }
   function tablero(c, v) {
@@ -252,9 +271,9 @@ const PP_RAID_PANTALLA = (() => {
     const [sx, sy] = R.fx.sacudida();
     c.save(); c.translate(sx, sy);
     tablero(c, v);
-    R.fx.pintaParts(c);
+    R.fx.pintaParts(c, PP_AHORRO.pasoParticulas());   // con «Ahorro de batería», la mitad (js/ahorro-juego.js)
     R.fx.pintaTextos(c, texto);
-    R.fx.pintaRacha(c, texto, 270, v.y + v.h - 70, PP_RAID_ZUMO.tamano(R.racha.n), PP_RAID_ZUMO.resto(R.racha, Date.now()));
+    R.fx.pintaRacha(c, { arriba: v.y + 10, abajo: v.y + v.h - 90 });   // el letrero de combos de los niveles, junto al último toque
     c.restore();
     rotulos(dt);
   }

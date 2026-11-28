@@ -1,8 +1,8 @@
 {
- "build": 1564,
- "hash": "798e554",
- "fecha": "2026-11-28T09:44:53Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/raid-pop-n8b",
+ "build": 1565,
+ "hash": "556517e",
+ "fecha": "2026-11-28T10:28:57Z",
+ "mensaje": "Pop: el test del botón de la raid con el estilo que ahora usa (tarea 448)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

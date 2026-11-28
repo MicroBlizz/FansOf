@@ -39,9 +39,12 @@ function ppFeriaCompanero(premio) {
 // toda victoria, nueva o repetida, da tickets mientras la feria está abierta. Devuelve { n, subio } o null
 // `extra`: tickets de más (el Feriante de los compañeros, js/habilidades-niveles.js)
 function ppFeriaGana(estrellas, jefe, extra = 0) {
+  return ppFeriaSuma(PP_FERIA.tickets(estrellas, jefe) + extra);
+}
+// suma n tickets si la feria está abierta (las victorias y los cofres de la raid entre todos, js/raid/adaptadores/sucesos.js). { n, subio } o null
+function ppFeriaSuma(n) {
   const v = ppFeriaAlDia();
   if (!v.abierta) return null;
-  const n = PP_FERIA.tickets(estrellas, jefe) + extra;
   const r = PP_FERIA.suma(SAVE.feria.estado, n);
   if (!r.ok) return null;
   SAVE.feria.estado = r.estado; ppGuarda();

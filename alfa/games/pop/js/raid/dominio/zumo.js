@@ -21,9 +21,7 @@ const PP_RAID_ZUMO = (() => {
   const nota = n => ESCALA[Math.min(ESCALA.length - 1, Math.max(0, n - 1))];
   // ¿este número de racha merece fiesta (chat, CEO, letrero grande)?
   const esHito = n => HITOS.includes(n);
-  // el tamaño del letrero «xN»: crece con la racha hasta un tope
-  const tamano = n => 34 + Math.min(30, n * 1.5);
 
-  return Object.freeze({ VENTANA_MS, nueva, toque, viva, resto, nota, esHito, tamano });
+  return Object.freeze({ VENTANA_MS, nueva, toque, viva, resto, nota, esHito });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_ZUMO;

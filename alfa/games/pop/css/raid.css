@@ -2,14 +2,14 @@
    (540 de ancho de diseño), encima del lienzo: cabecera arriba, pie abajo y, en medio, el tablero se toca a través (pointer-events: none).
    Con el estilo de las ventanas de Pop (crema, borde rosa, filo blanco, sombra rosa) y sus dibujitos; nada de lila, de gris ni de fondos oscuros. */
 #pp-raid[hidden], #pp-raid [hidden] { display: none; }
-#pp-raid { position: absolute; inset: 0; z-index: 30; pointer-events: none; color: var(--pp-cafe); }
+#pp-raid { position: absolute; inset: 0; z-index: 29; pointer-events: none; color: var(--pp-cafe); }   /* por debajo de las ventanas (#pp-modal, 30: Opciones dentro de la raid) y de Lola (40) */
 #pp-raid button { pointer-events: auto; cursor: pointer; font-family: inherit; font-weight: 700; }
 #pp-raid .pp-ico { flex: none; filter: drop-shadow(0 2px 0 rgba(196, 58, 132, 0.3)); }
 .pp-raid-ico { display: inline-flex; }
 .pp-raid-junto { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 /* la cabecera y el pie: dos tarjetas de Pop pegadas arriba y abajo */
 .pp-raid-cab, .pp-raid-pie { position: absolute; left: 0; right: 0; box-sizing: border-box; pointer-events: auto; background: var(--pp-crema); }
-.pp-raid-cab { top: 0; height: 132px; padding: 8px 96px 0 22px; border-radius: 0 0 30px 30px;
+.pp-raid-cab { top: 0; height: 132px; padding: 8px 170px 0 22px; border-radius: 0 0 30px 30px;
   box-shadow: inset 0 -6px 0 #ff9ccf, inset 0 -10px 0 #fff, inset 0 -13px 0 #ffd1ec, 0 8px 0 rgba(196, 58, 132, 0.3); }
 .pp-raid-titulo { display: block; font-size: 29px; line-height: 32px; letter-spacing: 0.5px; color: #fff; -webkit-text-stroke: 6px #ff4f9a; paint-order: stroke; white-space: nowrap; }
 .pp-raid-queda { display: block; font-size: 20px; line-height: 22px; color: #c43a84; }
@@ -17,6 +17,9 @@
   box-shadow: inset 0 0 0 4px #1d5fb0, 0 5px 0 #1d5fb0; }
 .pp-raid-x::before, .pp-raid-x::after { content: ''; position: absolute; left: 18px; right: 18px; top: 29px; height: 8px; border-radius: 4px; background: #fff; transform: rotate(45deg); }
 .pp-raid-x::after { transform: rotate(-45deg); }
+.pp-raid-op { position: absolute; right: 92px; top: 8px; width: 66px; height: 66px; padding: 0; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #ffe98a, #ffc02e); box-shadow: inset 0 0 0 4px #d98a00, 0 5px 0 #d98a00; cursor: pointer; }
+.pp-raid-op:active { transform: translateY(4px); box-shadow: inset 0 0 0 4px #d98a00, 0 1px 0 #d98a00; }
 .pp-raid-x:active { transform: translateY(4px); box-shadow: inset 0 0 0 4px #1d5fb0, 0 1px 0 #1d5fb0; }
 /* las barras: gorditas, con su filo blanco y un brillo por arriba */
 .pp-raid-barra { position: relative; height: 22px; border-radius: 999px; background: #ffe3f1; box-shadow: 0 0 0 3px #fff, 0 0 0 6px #ffb3d9; overflow: hidden; }
@@ -77,10 +80,13 @@
 .pp-raid-pedir > * { pointer-events: auto; }
 .pp-raid-pedir button { animation: pp-late 1.2s ease-in-out infinite; }
 /* el botón de la raid en el lateral del camino: el CEO slime sobre un sol que gira, para que se vea el primero */
-.pp-lado.pp-lado-raid .pp-ico { position: relative; width: 70px; height: 70px; margin: -6px 0; animation: pp-raid-bota 1.6s ease-in-out infinite; }
+.pp-lado.pp-lado-raid .pp-ico { position: relative; width: 70px; height: 70px; margin: -6px 0; animation: pp-raid-bota 1.8s ease-in-out infinite; animation-delay: var(--fase, 0s); }
+.pp-lado.pp-lado-raid.pp-aviso::after { animation-delay: var(--fase, 0s); }   /* el punto rojo late 1,2 s: también encaja en 18 s */
+/* el lateral se repinta cada segundo (js/ofertas.js): --fase (js/raid/adaptadores/camino.js) es lo que ya llevaban, en negativo, así siguen sin
+   corte; 18 s es múltiplo de las dos duraciones (9 s del sol y 1,8 s del bote), para que las dos encajen */
 .pp-lado.pp-lado-raid b { position: relative; font-size: 18px; -webkit-text-stroke-color: #d9480f; }
 .pp-lado-raid-luz { position: absolute; left: 50%; top: 28px; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%;
-  background: repeating-conic-gradient(#ffd64a 0 20deg, #ff8a2a 20deg 40deg); box-shadow: 0 0 0 3px #fff, 0 4px 0 3px rgba(196, 58, 132, 0.35); animation: pp-raid-gira 9s linear infinite; }
+  background: repeating-conic-gradient(#ffd64a 0 20deg, #ff8a2a 20deg 40deg); box-shadow: 0 0 0 3px #fff, 0 4px 0 3px rgba(196, 58, 132, 0.35); animation: pp-raid-gira 9s linear infinite; animation-delay: var(--fase, 0s); }
 @keyframes pp-raid-gira { to { transform: rotate(360deg); } }
 @keyframes pp-raid-bota { 50% { transform: translateY(-5px) scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .pp-lado-raid-luz, .pp-lado.pp-lado-raid .pp-ico, .pp-raid-pedir button { animation: none; } }

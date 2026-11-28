@@ -4,6 +4,7 @@
 // · activa(): ¿está abierta la raid para este jugador? · boton(L): pinta el botón en el lateral (lo llama ppPintaLateral, js/ofertas.js); lleva
 //   punto rojo mientras no hayas abierto la raid de esta semana; en una partida nueva se abre al ganar el nivel 13 y Lola la estrena con una bomba. · entra(): abre la raid de la semana y apunta la visita.
 // · enlaceArranca(): lo llama el arranque (js/principal.js). · comparte(boton): el toque de PEDIR AYUDA (comparte, copia o enseña el enlace).
+// · ayuda(): el párrafo de la raid para «Cómo se juega» ('' si aún no la tienes). · consejo(k): un globo de Lola de la raid, si está libre.
 // Lee de Pop: ppPrimerosLado, ppPrimerosVe, ppPrimerosToca, SAVE, ppGuarda, ppIcono, ppPintaLateral, ppPedirComparte, ppFlota, PP_PANT, $pp, play, tr.
 'use strict';
 const PP_RAID_CAMINO = (() => {
@@ -25,6 +26,7 @@ const PP_RAID_CAMINO = (() => {
     const b = document.createElement('button'); b.type = 'button';
     b.className = 'pp-lado pp-lado-raid' + (ppPrimerosVe('raid') && PP_RAID_ENLACE.nueva(SAVE.raidVista, lunes()) ? ' pp-aviso' : '');
     b.innerHTML = `<span class="pp-lado-raid-luz"></span>${ppIcono('sl-ceo', 70, '#ffd64a')}<b>${tr('Raid')}</b>`;
+    b.style.setProperty('--fase', -(Date.now() % 18000) / 1000 + 's');   // el lateral se repinta cada segundo: las animaciones siguen donde iban (css/raid.css)
     b.onclick = () => { play('select'); entra(); };
     L.appendChild(ppPrimerosLado(b, 'raid'));   // en una partida nueva, cerrada con candado hasta ganar su nivel (PP_CFG.primeros, js/primeros-pasos-juego.js)
   }
@@ -41,6 +43,11 @@ const PP_RAID_CAMINO = (() => {
     if (libre() && ppPrimerosToca('raid')) entra();   // aún con candado: Lola dice a qué nivel se abre
   }
   const comparte = b => ppPedirComparte(b, PP_RAID_ENLACE.url(location.origin + location.pathname), texto());
-  return Object.freeze({ activa, boton, entra, enlaceArranca, comparte });
+  // el párrafo de la raid en «Cómo se juega» (ppAyuda, js/pantallas.js): solo si ya la tienes abierta
+  const ayuda = () => (activa() && ppPrimerosVe('raid') ? `<p class="pp-sub">${tr('La RAID: un tablero enorme que vaciamos entre todos en una semana. Gasta tus toques (se recargan solos), abre cofres, usa tus ayudas y vence al jefe CEO. Cuantas más burbujas hagas pop, mejor premio.')}</p>` : '');
+  // un consejo de Lola de la raid (js/lola.js), solo si Lola está libre: si no, se deja para otra vez (sin apuntarlo como visto) en vez de
+  // ponerlo en su cola, que solo se vacía al empezar un nivel y lo soltaría allí, fuera de sitio
+  const consejo = k => { if (!PP_LOLA.actual && !PP_LOLA.cola.length) ppTutorial(k); };
+  return Object.freeze({ activa, boton, entra, enlaceArranca, comparte, ayuda, consejo });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_CAMINO;

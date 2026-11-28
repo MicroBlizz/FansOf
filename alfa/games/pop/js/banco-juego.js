@@ -115,16 +115,34 @@ const PP_BANCO = (() => {
   }
 
   // --- medir ---
-  // los ms de cada fotograma durante `ms`
-  function mideFotogramas(ms) {
+  // los ms de cada fotograma mientras sigue(ms desde el principio) diga que sí
+  function mideFotogramas(sigue) {
     return new Promise(listo => {
-      const medidas = []; let antes = null; const fin = performance.now() + ms;
+      const medidas = []; let antes = null; const inicio = performance.now();
       const paso = ahora => {
         if (antes !== null) medidas.push(ahora - antes);
         antes = ahora;
-        if (ahora < fin) requestAnimationFrame(paso); else listo(medidas);
+        if (sigue(ahora - inicio)) requestAnimationFrame(paso); else listo(medidas);
       };
       requestAnimationFrame(paso);
+    });
+  }
+  // ¿queda algo moviéndose? vuelos y ataques de los compañeros, chispas, ondas y letreros de combo
+  function escenaQuieta() {
+    const a = PP_ATAQUE_FX.estado;
+    return !PP_FX.vuelos.length && !PP_FX.parts.length && !PP_FX.ondas.length && !PP_FX.combo && !PP_FX.comboCola.length
+      && !a.parts.length && !a.golpes.length && !a.brillos.length;
+  }
+  const QUIETA_MS = 600;   // tan quieta durante este rato: los compañeros que actúan con retraso aún llegan
+  // un paso sin tope mide `mide` ms; con tope, al llegar a `mide` el bot para y se sigue hasta que la escena lleva QUIETA_MS quieta (o hasta el tope)
+  function mideDe(paso) {
+    if (!paso.tope) return mideFotogramas(t => t < paso.mide);
+    let quietaDesde = null;
+    return mideFotogramas(t => {
+      if (t < paso.mide) return true;
+      paraBot();
+      if (!escenaQuieta()) quietaDesde = null; else if (quietaDesde === null) quietaDesde = t;
+      return t < paso.tope && (quietaDesde === null || t - quietaDesde < QUIETA_MS);
     });
   }
   // un paso entero: entra, aplica la variante, espera y mide; si algo falla, lo apunta con su motivo y sigue
@@ -134,7 +152,7 @@ const PP_BANCO = (() => {
       await entra(paso);
       aplica(paso);
       await espera(paso.calienta);
-      const r = PP_BANCO_REGLAS.resumen(await mideFotogramas(paso.mide));
+      const r = PP_BANCO_REGLAS.resumen(await mideDe(paso));
       return r || { fallo: 'sin-fotogramas' };
     } catch (e) {
       return { fallo: String((e && e.message) || e) };

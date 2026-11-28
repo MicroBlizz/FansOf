@@ -15,12 +15,12 @@ const PP_BANCO_REGLAS = (() => {
   // los equipos que se ponen en un escenario (modo Niveles, todos a 5 estrellas): el «explosivo» junta a los que más pops hacen solos
   // (Lluvia: astro, ceo y algodón; Saltito: bunny; Buen comienzo: ardilla), para medir el nivel con muchas explosiones y combos
   const EQUIPOS = Object.freeze({ explosivo: Object.freeze(['astro', 'ceo', 'algodon', 'bunny', 'ardilla']) });
-  // qué se juega: tres tableros de nivel (por lado), el de lado 5 con el equipo explosivo, las dos pantallas del final, el duelo y la memoria. `toca`: el bot va tocando mientras se mide; `mide`: ms de medida si no son los de TIEMPOS
+  // qué se juega: tres tableros de nivel (por lado), el de lado 5 con el equipo explosivo, las dos pantallas del final, el duelo y la memoria. `toca`: el bot va tocando mientras se mide; `mide`: ms de medida si no son los de TIEMPOS; `tope`: tras `mide`, el bot para y se sigue midiendo hasta que la escena se queda quieta, como mucho hasta `tope` ms
   const ESCENARIOS = Object.freeze([
     Object.freeze({ id: 'lado4', tipo: 'nivel', lado: 4, toca: true }),
     Object.freeze({ id: 'lado5', tipo: 'nivel', lado: 5, toca: true }),
     Object.freeze({ id: 'lado6', tipo: 'nivel', lado: 6, toca: true }),
-    Object.freeze({ id: 'equipo', tipo: 'nivel', lado: 5, toca: true, equipo: 'explosivo', mide: 8000 }),   // más largo: los ataques de los compañeros llegan tarde y duran
+    Object.freeze({ id: 'equipo', tipo: 'nivel', lado: 5, toca: true, equipo: 'explosivo', mide: 8000, tope: 20000 }),   // los ataques de los compañeros llegan tarde y duran: se sigue midiendo hasta que acaban
     Object.freeze({ id: 'victoria', tipo: 'victoria', lado: 5, toca: false }),
     Object.freeze({ id: 'derrota', tipo: 'derrota', lado: 5, toca: false }),
     Object.freeze({ id: 'duelo', tipo: 'duelo', lado: 0, toca: true }),
@@ -39,7 +39,7 @@ const PP_BANCO_REGLAS = (() => {
     const pasos = [];
     for (const esc of ESCENARIOS) {
       if (solo && !solo.includes(esc.id)) continue;
-      for (const v of variantes(esc, corta)) pasos.push({ escenario: esc.id, tipo: esc.tipo, lado: esc.lado, toca: esc.toca, equipo: esc.equipo || null, variante: v.id, quita: v.quita, ahorro: v.ahorro, calienta: TIEMPOS.calienta, mide: esc.mide || TIEMPOS.mide });
+      for (const v of variantes(esc, corta)) pasos.push({ escenario: esc.id, tipo: esc.tipo, lado: esc.lado, toca: esc.toca, equipo: esc.equipo || null, variante: v.id, quita: v.quita, ahorro: v.ahorro, calienta: TIEMPOS.calienta, mide: esc.mide || TIEMPOS.mide, tope: esc.tope || null });
     }
     return pasos;
   }

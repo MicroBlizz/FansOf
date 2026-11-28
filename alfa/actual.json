@@ -1,8 +1,8 @@
 {
- "build": 1562,
- "hash": "343501f",
- "fecha": "2026-11-28T03:00:32Z",
- "mensaje": "Pop: si la tanda de rendimiento no cabe, se quita la partida de usar y tirar y se reintenta; el fallo dice qué ocupa el almacén y ya llega a ERRORES (tipo js) (tarea 404)",
+ "build": 1563,
+ "hash": "79285b4",
+ "fecha": "2026-11-28T03:12:07Z",
+ "mensaje": "Pop: el paso del equipo explosivo sigue midiendo, ya sin tocar, hasta que acaban las animaciones de los compañeros (tope 20 s) (tarea 404)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

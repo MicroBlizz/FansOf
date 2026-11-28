@@ -1,8 +1,8 @@
 {
- "build": 1559,
- "hash": "ddca372",
- "fecha": "2026-11-28T00:02:20Z",
- "mensaje": "Pop: la raid en la lista de lo que se borra al resetear una cuenta (SQL 206, con el sí de Pepins), enlace de la ficha arreglado y grafo de la tarea 448 al día",
+ "build": 1560,
+ "hash": "c1019e8",
+ "fecha": "2026-11-28T01:21:00Z",
+ "mensaje": "Pop: la pantalla de la raid entre todos, solo desde el panel DEV (lejos como imagen de puntos con el CEO slime escondido debajo, cerca con las burbujas de Pop, depósito de toques, cofres con lluvia de monedas, lo de otros en azul, CEO con carácter, chat falso con corazones, atrás la cierra) con sus tests, ficha, glosario y ADR (tarea 448, nodo n4)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

@@ -28,7 +28,8 @@ const PP_ATRAS = (() => {
     sigue: () => ppQuitaPausa(),
     x: () => tarjeta().querySelector(':scope > .pp-cab .pp-cerrar').click(),
     pausa: () => ppPausa(),
-    portada: () => { ppGuardaCamino(); PP_P = null; ppIrA('titulo'); },   // como INICIO en la barra del camino (js/camino-barra.js)
+    portada: () => { ppGuardaCamino(); PP_P = null; ppIrA('titulo'); },
+    raid: () => { PP_RAID_PANTALLA.cierra(); },   // como la X de la raid   // como INICIO en la barra del camino (js/camino-barra.js)
     pregunta,
     nada: () => {},
   };

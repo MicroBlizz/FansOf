@@ -5,6 +5,7 @@
 const PP_PANT = { actual: 'titulo', pausa: false };
 const $pp = s => document.querySelector(s);
 function ppIrA(p) {
+  if (p !== 'raid' && typeof PP_RAID_PANTALLA !== 'undefined') PP_RAID_PANTALLA.fuera();   // irse a otra pantalla con la raid abierta la cierra (js/raid/adaptadores/pantalla.js)
   PP_PANT.actual = p; PP_PANT.pausa = false;   // cambiar de pantalla acaba con la pausa (reporte 28: si no, el nivel se quedaba congelado)
   if (p !== 'sala' && p !== 'duelo') ppCortCancela();   // salir del nivel durante la cortinilla de un jefe la apaga
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
@@ -12,7 +13,7 @@ function ppIrA(p) {
   if (p !== 'sala' && p !== 'duelo' && p !== 'memoria') ppLolaCierra();
   if (p !== 'duelo' && p !== 'sala') $pp('#pp-listo').hidden = true;
   if (p !== 'mapa') $pp('#pp-presenta').hidden = true;   // la presentación de un mundo es solo del camino (js/mundo-presenta-juego.js)
-  $pp('#pp-pausa').hidden = p === 'titulo' || p === 'mapa';   // en el camino sobra: abajo ya están INICIO y TIENDA (tarea #272)
+  $pp('#pp-pausa').hidden = p === 'titulo' || p === 'mapa' || p === 'raid';   // en el camino sobra: abajo ya están INICIO y TIENDA (tarea #272)
   $pp('#pp-pausa').classList.toggle('pp-pausa-baja', ppBarraPausaBaja(p));   // en un nivel, bajo la barra (tarea #373, js/barra-recursos.js)
   ppBarraAyudas(); ppMemPistaBoton(); ppPintaLateral(); ppPintaCamino();   // la barra de ayudas en los niveles; en el camino, los botones de los lados y la barra de abajo (js/camino-barra.js)
   if (p === 'mapa') setTimeout(ppAlLlegarAlCamino, 400);   // regalo diario y pack de bienvenida

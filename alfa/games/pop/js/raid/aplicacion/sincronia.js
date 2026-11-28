@@ -10,7 +10,7 @@
 //  · SI UNA TANDA FALLA (sin_toques, sin_red, toques_no_valen, raid_acabada...) NO se reenvía a ciegas: el servidor pudo haberla aplicado y se
 //    cobraría dos veces el depósito. En su lugar se pide de nuevo el estado de los trozos que tocaba (forzado, con versión 0) y del depósito, y lo
 //    local se corrige con lo que diga el servidor.
-//  · AVISOS: escucha(fn) con fn(nombre, datos): 'estado' (resumen: vivas, jefe, depósito, acabada...), 'ajenas' (lista [[x, y], ...] de burbujas que
+//  · AVISOS: escucha(fn) con fn(nombre, datos): 'estado' (resumen: vivas, jefe, depósito, acabada, 'ahora' = la hora del servidor...), 'ajenas' (lista [[x, y], ...] de burbujas que
 //    llegan reventadas en un trozo del servidor y que aquí seguían vivas: la pantalla las hace explotar), 'propias' (lista de las que el servidor
 //    confirmó de esta tanda) y 'error' (el motivo).
 // Puertos (nada de Date.now ni setTimeout aquí): red (PP_RAID_RED), reloj() en ms, programa(fn, ms) → una función que lo cancela (o un objeto con
@@ -63,7 +63,7 @@ const PP_RAID_SINCRONIA = (() => {
       const ahora = ahoraSrv();
       const deposito = { toques: D.toquesAhora(e.dep, ahora, e.cfgDep), capacidad: e.cfgDep.capacidad, cadaMs: e.cfgDep.cadaMs, faltaMs: D.faltaMs(e.dep, ahora, e.cfgDep) };
       return {
-        id: e.id, inicio: e.s.inicio, fin: e.s.fin, semilla: e.s.semilla, total: e.s.total, vivas: e.s.vivas, vaciada: e.s.vaciada, acabada: e.acabada,
+        id: e.id, ahora, inicio: e.s.inicio, fin: e.s.fin, semilla: e.s.semilla, total: e.s.total, vivas: e.s.vivas, vaciada: e.s.vaciada, acabada: e.acabada,
         jefe: { activo: jefeActivo(), vida: e.s.jefe.vida, golpes: e.s.jefe.golpes }, deposito, yo: { ...e.s.yo },
       };
     }

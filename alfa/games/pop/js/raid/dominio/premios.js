@@ -17,6 +17,14 @@ const PP_RAID_PREMIOS = (() => {
     const extra = vaciada ? Math.floor(e.monedas * cfg.extraVaciada) : 0;
     return { nivel: e.nivel, monedasBase: e.monedas, extra, monedas: e.monedas + extra, perlas: e.perlas, marco: !!e.marco };
   }
-  return Object.freeze({ escalon, premioFinal });
+  // el siguiente escalón que aún no alcanza: { desde, monedas, perlas, marco, faltan, parte } (parte = de 0 a 1, lo andado desde el escalón
+  // anterior), o null si ya está en el más alto
+  function siguiente(cuenta, cfg) {
+    const i = cfg.escalones.findIndex(e => cuenta < e.desde);
+    if (i < 0) return null;
+    const e = cfg.escalones[i], antes = i ? cfg.escalones[i - 1].desde : 0;
+    return { ...e, faltan: e.desde - cuenta, parte: Math.max(0, Math.min(1, (cuenta - antes) / (e.desde - antes))) };
+  }
+  return Object.freeze({ escalon, premioFinal, siguiente });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_PREMIOS;

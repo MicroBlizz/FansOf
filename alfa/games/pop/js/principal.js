@@ -39,7 +39,7 @@ PP_CV.addEventListener('pointerdown', e => {
 PP_CV.addEventListener('pointermove', e => { if (PP_PANT.actual === 'mapa') { const [lx, ly] = ppLogico(e); ppMapaMueve(lx, ly); } });
 window.addEventListener('pointerup', () => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppMapaArriba(); else PP_MAPA.toque = null; });
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || PP_PANT.actual === 'titulo' || PP_PANT.actual === 'mapa') return;   // en el camino no hay pausa (tarea #272)
+  if (e.key !== 'Escape' || PP_PANT.actual === 'titulo' || PP_PANT.actual === 'mapa' || PP_PANT.actual === 'raid') return;   // en el camino no hay pausa (tarea #272)
   if (PP_PANT.pausa) ppQuitaPausa(); else ppPausa();   // Esc abre y cierra la pausa (las demás ventanas se cierran con sus botones)
 });
 /* ---------- el bucle ---------- */
@@ -56,6 +56,7 @@ function ppFotograma(ahora) {
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
   else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) { ppFxAvanza(dt); ppCortAvanza(real); ppAdnAvanza(dt); } ppPintaDuelo(c, t); if (PP_MEDIDOR.pinta('cortinilla')) ppPintaCortinilla(c, t); PP_MEDIDOR.marca('cortinilla'); }
   else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
+  else if (PP_PANT.actual === 'raid') PP_RAID_PANTALLA.pinta(c, t, dt);   // la raid entre todos (js/raid/adaptadores/pantalla.js, tarea 448)
   else ppPintaPortada(c, t, dt);
 }
 function ppEmpieza(seguir) {

@@ -20,6 +20,11 @@ const PP_RAID_SEMANA = (() => {
   const esDeLaSemana = (idRaid, dia) => idRaid !== null && lunes(dia) === idRaid;
   // ms que quedan hasta el fin (que da el servidor); nunca negativo
   const queda = (finMs, ahoraMs) => Math.max(0, finMs - ahoraMs);
-  return Object.freeze({ diaValido, lunes, id, esDeLaSemana, queda });
+  // unos ms partidos en { dias, horas, minutos, segundos } (hacia arriba al segundo), para escribir «Quedan 3 d 4 h»
+  function partes(ms) {
+    const s = Math.ceil(Math.max(0, ms) / 1000);
+    return { dias: Math.floor(s / 86400), horas: Math.floor(s / 3600) % 24, minutos: Math.floor(s / 60) % 60, segundos: s % 60 };
+  }
+  return Object.freeze({ diaValido, lunes, id, esDeLaSemana, queda, partes });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_SEMANA;

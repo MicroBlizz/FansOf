@@ -80,7 +80,8 @@ Object.assign(SFX, {
   // premio gordo: tres campanitas brillantes
   ppPremio: () => ppArpegio(8, 3, 0.06, 0.1, 2),
   // combo: un arpegio que empieza más agudo cuanto más largo es el combo
-  ppCombo: (n = 2) => ppArpegio(Math.min(6, n - 1), 3, 0.045, 0.08),
+  // con el flag de Yoshi (js/yoshi-nuevo.js), el combo suena con el archivo de su dibujo del letrero, más agudo cuanto más largo
+  ppCombo: (n = 2) => { if (!PP_YOSHI.activo() || !SONIDO_ARCHIVO.toca('combo-' + PP_COMBO_LETRERO.estilo(n), { vol: 0.8, vel: Math.pow(2, (Math.min(7, n) - 2) / 6) })) ppArpegio(Math.min(6, n - 1), 3, 0.045, 0.08); },
   ppPista: () => { ppCampana(1568, 0, 0.07, 0.25); ppCampana(2093, 0.08, 0.07, 0.3); },
   ppCura: () => ppArpegio(3, 3, 0.06, 0.08),
   ppNodo: () => ppSilbato(784, 1318, 0.08, 0, 0.1),
@@ -125,8 +126,41 @@ function ppMusicaRuta() { ppMusica((PP_P && PP_P.tipo === 'jefe' && PP_PANT.actu
 function ppSintonia(nombre) { if (AC && M.bus && TRACKS[nombre]) musicSet(nombre); }
 // corta una sintonía si sigue sonando (la de la cortinilla, al pulsar su botón o al salir del nivel)
 function ppSintoniaCorta(nombre) { if (AC && M.bus && M.name === nombre) musicSet(null); }
+// con el flag de Yoshi (js/yoshi-nuevo.js), en el mapa suena su música en vez de la del menú. Se crea al primer uso (si se pidiera al
+// cargar, la splash la esperaría) y pasa por el bus de la música (core/js/sistema/sonido.js): respeta su volumen y el silencio. Solo
+// se queda con la música cuando suena de verdad: si el archivo no llega o no se puede tocar, sigue la de siempre.
+const PP_MUS_YOSHI = { el: null, estado: 'nada' };   // nada | cargando | suena | parada | fallo
+function ppMusYoshiCrea() {
+  const el = new Audio('snd/musica-mapa.mp3?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0'));
+  Object.assign(el, { loop: true, volume: 0.6 });
+  el.addEventListener('playing', () => { PP_MUS_YOSHI.estado = 'suena'; });
+  el.addEventListener('error', () => { PP_MUS_YOSHI.estado = 'fallo'; });
+  AC.createMediaElementSource(el).connect(M.bus);
+  PP_MUS_YOSHI.el = el;
+}
+function ppMusYoshiPara() {
+  const el = PP_MUS_YOSHI.el;
+  if (el && !el.paused) el.pause();
+  if (PP_MUS_YOSHI.estado === 'suena' || PP_MUS_YOSHI.estado === 'cargando') PP_MUS_YOSHI.estado = 'parada';
+}
+// el navegador aún no deja sonar (antes del primer toque): se reintenta en la siguiente vuelta; cualquier otro fallo, la de siempre
+const ppMusYoshiNoSuena = e => { PP_MUS_YOSHI.estado = e && e.name === 'NotAllowedError' ? 'parada' : 'fallo'; };
+// con la página escondida (otra app, pantalla bloqueada) el bucle de dibujo se para: la música se para aquí
+if (typeof document !== 'undefined') document.addEventListener('visibilitychange', () => { if (document.hidden) ppMusYoshiPara(); });
+const ppMusYoshiToca = () => PP_MUS_YOSHI.estado !== 'fallo' && PP_MUS.quiere === 'menu' && PP_PANT.actual === 'mapa' && !document.hidden &&
+  !sonidoApagado() && !(M.trk && M.trk.once) && !ppCortActiva() && PP_YOSHI.activo();
+// true si la música de Yoshi se encarga (y la de siempre calla)
+function ppMusicaMp3() {
+  if (!ppMusYoshiToca()) { ppMusYoshiPara(); return false; }
+  if (!PP_MUS_YOSHI.el) ppMusYoshiCrea();
+  if (PP_MUS_YOSHI.el.paused && PP_MUS_YOSHI.estado !== 'cargando') { PP_MUS_YOSHI.estado = 'cargando'; PP_MUS_YOSHI.el.play().catch(ppMusYoshiNoSuena); }
+  if (PP_MUS_YOSHI.estado !== 'suena') return false;
+  if (M.name) musicSet(null);
+  return true;
+}
 function ppMusicaBucle() {
   if (!AC || !M.bus) return;
+  if (ppMusicaMp3()) return;
   if (M.trk && M.trk.once) return;
   if (ppCortActiva()) return;   // con la cortinilla puesta solo suena su sintonía, una vez; después, silencio hasta el botón (ADR 100)
   if (M.name !== PP_MUS.quiere) musicSet(PP_MUS.quiere);

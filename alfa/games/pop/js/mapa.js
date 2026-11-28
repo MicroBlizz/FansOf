@@ -101,8 +101,11 @@ function ppPintaMapa(c, t) {
   // la carretera: borde rosa, centro blanco y puntitos de colores
   c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
   const tramo = (ancho, color, dash) => { c.beginPath(); c.setLineDash(dash || []); for (let i = 0; i < N; i++) { const [x, y] = ppNivelPos(i); if (i) c.lineTo(x, y); else c.moveTo(x, y); } c.lineWidth = ancho; c.strokeStyle = color; c.stroke(); };
-  tramo(46, pes ? '#c8323c' : dif ? '#8a8ff0' : '#ff9ccf'); tramo(34, pes ? '#ffe6e0' : '#fffaf2'); tramo(8, pes ? '#ff8a8a' : dif ? '#c8ccff' : '#ffd1ec', [2, 22]);
+  const suelo = ppCaminoSuelo(M.fondo);   // el camino de Yoshi, si el mundo lo tiene y su flag está abierto (js/mapa-camino.js)
+  if (suelo) ppCaminoCarretera(c, tramo, suelo, pes ? '#c8323c' : dif ? '#8a8ff0' : 'rgba(255,255,255,0.9)');
+  else { tramo(46, pes ? '#c8323c' : dif ? '#8a8ff0' : '#ff9ccf'); tramo(34, pes ? '#ffe6e0' : '#fffaf2'); tramo(8, pes ? '#ff8a8a' : dif ? '#c8ccff' : '#ffd1ec', [2, 22]); }
   c.restore();
+  if (suelo) ppCaminoAdornos(c, M.fondo, N, t);
   PP_NODOS_MAPA = []; PP_BOTONES_MAPA = [];
   for (let i = N - 1; i >= 0; i--) {
     const [x, y] = ppNivelPos(i); if (y < -90 || y > PP_V.H + 90) continue;
@@ -111,7 +114,8 @@ function ppPintaMapa(c, t) {
     c.save(); if (i > va) c.globalAlpha = 0.6;
     if (aqui) { c.beginPath(); c.arc(x, y, r + 14 + Math.sin(t * 5) * 4, 0, Math.PI * 2); c.fillStyle = 'rgba(255,255,255,0.7)'; c.fill(); }
     const col = jefe ? 'amarillo' : PP_COLORES[i % PP_COLORES.length], sp = 'b-' + col + (hecho ? '-abajo' : '-arriba');
-    if (!ppDibujaEn(c, sp, x, y, r * 2.3, true)) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = ppColorBurbuja(i % 6, 1); c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a4a8a'; c.stroke(); }
+    const placa = suelo && ppCaminoPlataforma(c, M.fondo, jefe, x, y, r * 2.3);   // la plataforma de Yoshi (js/mapa-camino.js)
+    if (!placa && !ppDibujaEn(c, sp, x, y, r * 2.3, true)) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = ppColorBurbuja(i % 6, 1); c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a4a8a'; c.stroke(); }
     if (jefe) ppSlimeRepuestoOImagen(c, 'ceo', x, y - 4, 30, t, 1);
     else ppTexto(c, String(g + 1), x, y + 2, 46, '#fff', 'center', dificil || dif ? '#3a3a9a' : '#7a4a8a');
     c.restore();

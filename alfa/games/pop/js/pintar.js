@@ -35,13 +35,14 @@ function ppTitulo(c, s, x, y, tam) { c.save(); ppTexto(c, s, x + 4, y + 6, tam, 
 /* ---------- fondo ---------- */
 // `noche`: el modo difícil (el mismo fondo, oscurecido: ppNoche en mapa.js)
 function ppPintaFondo(c, k, t, noche = false) {
-  const im = PP_IMG[k];
+  const yo = PP_YOSHI.activo(), pesImg = noche === 2 && yo && PP_IMG[k + '-pesadilla'];   // la Pesadilla pintada por Yoshi (js/yoshi-nuevo.js)
+  const im = pesImg || PP_IMG[k];
   if (im) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(im, 0, 0, 540, PP_V.H); }
   else {
     const gr = c.createLinearGradient(0, 0, 0, PP_V.H); gr.addColorStop(0, k === 'fondo-jefe' ? '#ffe3a8' : '#ffd1ec'); gr.addColorStop(1, k === 'fondo-jefe' ? '#ffb8d0' : '#c8f0ff');
     c.fillStyle = gr; c.fillRect(0, 0, 540, PP_V.H);
   }
-  if (noche === 2) ppRojo(c, t); else if (noche) ppNoche(c, t);   // difícil: de noche · pesadilla: en rojo
+  if (noche === 2) { if (!pesImg) ppRojo(c, t); } else if (noche) ppNoche(c, t);   // difícil: de noche · pesadilla: en rojo
   // lo que flota por el fondo: unicornios, arcoíris, capibaras, animalitos y chuches (Yoshi) subiendo despacio y balanceándose,
   // y burbujitas entre medias. Cada uno con su velocidad, tamaño y vaivén; todo sale de t, sin estado.
   if (!PP_AHORRO.flotantes()) return;   // «Ahorro de batería»: el fondo, solo con su dibujo (js/ahorro-juego.js)
@@ -51,7 +52,7 @@ function ppPintaFondo(c, k, t, noche = false) {
     const vel = 14 + (k2 * 7) % 17, alto = PP_V.H + 160, y = alto - 80 - ((t * vel + k2 * 211) % alto);
     const x = ((k2 * 131) % 500) + 20 + Math.sin(t * 0.6 + k2 * 1.7) * 26;
     if (hay.length) {
-      const sp = hay[k2 % hay.length], tam = 64 + (k2 % 3) * 22;
+      const sp = PP_YOSHI.flotante(hay[k2 % hay.length], yo, PP_IMG), tam = 64 + (k2 % 3) * 22;
       c.save(); c.globalAlpha = 0.85; c.translate(x, y); c.rotate(Math.sin(t * 0.9 + k2) * 0.18);
       ppDibujaEn(c, sp, 0, 0, tam, true); c.restore();
     } else { c.save(); c.globalAlpha = 0.5; c.beginPath(); c.arc(x, y, 8 + (k2 % 4) * 5, 0, Math.PI * 2); c.strokeStyle = '#fff'; c.lineWidth = 3; c.stroke(); c.restore(); }

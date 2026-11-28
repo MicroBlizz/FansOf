@@ -55,21 +55,23 @@ function ppPfEstado(tipo, id) {
   if (PP_MI.puesto(tipo, id)) return `<b class="pp-pf-puesto">${tr('Puesto')}</b>`;
   if (PP_MI.loTengo(tipo, id)) return `<b class="pp-pf-tuyo">${tr(tipo === 'pegatina' ? 'Añadir' : 'Ponerlo')}</b>`;
   if (PP_MI.dato(tipo, id).logro) return `<b class="pp-pf-tuyo">${tr('Con un logro')}</b>`;   // no se vende (tarea 396)
+  if (PP_MI.dato(tipo, id).pref) return `<b class="pp-pf-tuyo">${tr('En la raid')}</b>`;   // tampoco: premio de la raid (tarea 448)
   return ppPerlasPrecioHtml(PP_MI.precio(tipo, id), 22);
 }
 function ppPfCosa(tipo, d) {
-  const b = document.createElement('button'), muestra = ppPerfilMuestra(tipo, d, 76), nombre = ppPfNombre(tipo, d);
-  b.type = 'button'; b.className = 'pp-pf-cosa' + (PP_MI.puesto(tipo, d.id) ? ' pp-on' : '') + (muestra ? '' : ' pp-pf-texto') + (PP_MI.loTengo(tipo, d.id) ? '' : ' pp-pf-venta');
+  const b = document.createElement('button'), muestra = ppPerfilMuestra(tipo, d, 76), nombre = ppPfNombre(tipo, d), id = PP_MI.idDe(tipo, d);
+  b.type = 'button'; b.className = 'pp-pf-cosa' + (PP_MI.puesto(tipo, id) ? ' pp-on' : '') + (muestra ? '' : ' pp-pf-texto') + (PP_MI.loTengo(tipo, id) ? '' : ' pp-pf-venta');
   if (muestra) b.appendChild(muestra);
   if (nombre) b.insertAdjacentHTML('beforeend', `<span>${ppEsc(nombre)}</span>`);
-  b.insertAdjacentHTML('beforeend', ppPfEstado(tipo, d.id));
-  b.onclick = () => { play('select'); ppPerfilToca(tipo, d.id); };
+  b.insertAdjacentHTML('beforeend', ppPfEstado(tipo, id));
+  b.onclick = () => { play('select'); ppPerfilToca(tipo, id); };
   return b;
 }
 function ppPerfilToca(tipo, id) {
   if (PP_PF.ocupado) return;
   PP_PF.aviso = '';
   if (!PP_MI.loTengo(tipo, id) && PP_MI.dato(tipo, id).logro) { PP_PF.aviso = tr('Se consigue con un logro de combo: míralos en el Pase.'); ppVentanaPerfil(); return; }
+  if (!PP_MI.loTengo(tipo, id) && PP_MI.dato(tipo, id).pref) { PP_PF.aviso = tr('Es el premio de la raid: haz {n} pops en una semana y es tuyo.', { n: PP_RAID_HUD.miles((PP_CFG.raid.escalones.find(e => e.marco) || { desde: 0 }).desde) }); ppVentanaPerfil(); return; }
   if (!PP_MI.loTengo(tipo, id)) { ppPerfilConfirma(tipo, id); return; }
   if (tipo !== 'pegatina' && PP_MI.puesto(tipo, id)) return;
   PP_PF.ocupado = true;

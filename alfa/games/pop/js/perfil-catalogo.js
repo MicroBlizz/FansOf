@@ -15,6 +15,9 @@ const PP_PERFIL_CAT = Object.freeze({
     { id: 'menta', nombre: 'Menta', colores: ['#d9fff0', '#3fcf98'], adorno: 'punto', img: 'pf-menta' },
     { id: 'arcoiris', nombre: 'Arcoíris', colores: ['#ff8a8a', '#ffd166', '#7be0a0', '#7ec8ff', '#ff9ad5'], adorno: 'arcoiris', img: 'pf-arcoiris' },
     { id: 'perlas', nombre: 'Perlas', colores: ['#fff8fc', '#e8c9ff'], adorno: 'perla', img: 'pf-perla' },
+    // el de la raid (tarea 448): no se vende; es tuyo al cobrar una raid con 1.000 pops o más. El servidor lo apunta como 'raid-<semana>'
+    // (`pref`: todos los que empiezan así son este) y en sus esquinas va el jefe CEO, el dibujo del juego
+    { id: 'raid', pref: 'raid-', nombre: 'Raid', colores: ['#fff3a0', '#ffc22e', '#ff8a2a'], adorno: 'estrella', img: 'sl-ceo' },
   ],
   frase: [
     { id: 'hola', texto: '¡A por todas!', serie: true },

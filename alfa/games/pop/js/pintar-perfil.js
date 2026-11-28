@@ -66,7 +66,7 @@ function ppPfPlaca(c, nombre, titulo, cx, y, ancho, tam) {
 }
 // `P`: el perfil (ids), `cat`: el catálogo, `t`: el reloj de la animación. La caja es (x, y, w, h), más alta que ancha.
 function ppPerfilPanel(c, P, cat, nombre, x, y, w, h, t = 0) {
-  const de = (tipo, id) => (cat[tipo] || []).find(v => v.id === id) || {}, r = 22, g = Math.max(6, Math.round(w * 0.04));
+  const de = (tipo, id) => PP_PERFIL.busca(cat, tipo, id) || {}, r = 22, g = Math.max(6, Math.round(w * 0.04));
   c.save();
   c.beginPath(); c.roundRect(x, y, w, h, r); c.clip();
   ppPfFondo(c, de('fondo', P.fondo).img, x, y, w, h);

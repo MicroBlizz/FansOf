@@ -2,7 +2,7 @@
 // abierta `r` (la crea js/raid/adaptadores/pantalla.js): un toque tuyo (reventar «con zumo»: aro, chispas, plop que sube con la racha, vibración,
 // +N y temblor), las burbujas que revientan OTROS (aro azul y plop bajito), los COFRES (bailan hasta que el servidor confirma que la burbuja fue
 // tuya; entonces lluvia de monedas y se pagan, una sola vez: SAVE.raid), las burbujas DOBLES (el primer pop las deja tocadas), los golpes al JEFE CEO, quedarse sin toques, subir de escalón de premio y
-// los cambios de humor del CEO. Lee de Pop: SAVE, ppGuarda, ppPlop, ppBoing, ppArpegio, ppVibra, PP_CHISPAS, tr.
+// los cambios de humor del CEO; al terminar la raid avisa a PP_RAID_PREMIO, que cobra el premio. Lee de Pop: SAVE, ppGuarda, ppPlop, ppBoing, ppArpegio, ppVibra, PP_CHISPAS, tr.
 'use strict';
 const PP_RAID_SUCESOS = (() => {
   const CRUZ = Object.freeze([[0, 0], [0, -1], [0, 1], [-1, 0], [1, 0]]);
@@ -12,15 +12,18 @@ const PP_RAID_SUCESOS = (() => {
   // lo que ya se ha contado de CADA raid (por su firma; se guardan las 4 últimas): objetos descontados del inventario (js/raid/adaptadores/
   // usa-objetos.js) y el escalón ya pagado en puntos del Pase. Por firma, para que ir y volver entre la raid de prueba y la de la semana no
   // vuelva a descontar ni a pagar nada
-  function cuenta(r) {
+  // y si su premio final ya se cobró en este móvil (`cobrado`, js/raid/adaptadores/premio.js). Al pasar de 4 se olvida primero una de prueba
+  function cuentaDe(firma) {
     const C = SAVE.raidCuentas || (SAVE.raidCuentas = {});
-    if (!C[r.firma]) {
-      C[r.firma] = { gastados: { toques3: 0, bomba: 0, martillo: 0 }, pase: 0 };
-      const viejas = Object.keys(C);
-      while (viejas.length > 4) delete C[viejas.shift()];
+    if (!C[firma]) {
+      C[firma] = { gastados: { toques3: 0, bomba: 0, martillo: 0 }, pase: 0, cobrado: false };
+      for (let v = Object.keys(C); v.length > 4; v = Object.keys(C)) delete C[v.find(f => f !== firma && f.startsWith('prueba:')) || v[0]];
     }
-    return C[r.firma];
+    return C[firma];
   }
+  const cuenta = r => cuentaDe(r.firma);
+  // ¿está ya cobrado en este móvil el premio de esa raid? (sin apuntar nada)
+  const cobrada = firma => !!(SAVE.raidCuentas && SAVE.raidCuentas[firma] && SAVE.raidCuentas[firma].cobrado);
   /* ---------- los cofres ---------- */
   // la libreta de cofres cobrados de ESTA raid (otra raid, o la de prueba rehecha, empieza de cero)
   function libreta(r) {
@@ -164,6 +167,7 @@ const PP_RAID_SUCESOS = (() => {
     repinta(r);
     premioNuevo(r, s);
     humorNuevo(r, s);
+    PP_RAID_PREMIO.alEstado(r, s);   // si ha terminado y hay premio, se cobra y sale su ventana (js/raid/adaptadores/premio.js)
     if (r.avisoRed) { r.avisoRed = false; r.hud.aviso(AVISOS[r.humor] ? tr(AVISOS[r.humor]) : ''); }
   }
   const ERRORES = Object.freeze({
@@ -179,6 +183,6 @@ const PP_RAID_SUCESOS = (() => {
   const MANEJA = Object.freeze({ estado, ajenas, propias, error, yo });
   const recibe = (r, nombre, datos) => { if (MANEJA[nombre]) MANEJA[nombre](r, datos); };
 
-  return Object.freeze({ recibe, toque, tocaCeo, revienta, cuenta });
+  return Object.freeze({ recibe, toque, tocaCeo, revienta, cuenta, cuentaDe, cobrada });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_SUCESOS;

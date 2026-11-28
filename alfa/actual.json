@@ -1,8 +1,8 @@
 {
- "build": 1566,
- "hash": "eec3c4a",
- "fecha": "2026-11-28T10:51:27Z",
- "mensaje": "Merge remote-tracking branch 'origin/main' into claude/pop-yoshi-alfa",
+ "build": 1567,
+ "hash": "65af30c",
+ "fecha": "2026-11-28T11:30:17Z",
+ "mensaje": "Pop: el cobro del premio de la raid (ventana de premio al vencer al CEO o acabar la semana, con monedas, perlas y marco; la raid pasada se cobra desde el botón del camino, que lleva punto rojo si hay premio; el marco de la raid en Mi perfil; monedas una sola vez por raid), sin SQL nuevo, con sus tests, ficha, ADR y grafo (tarea 448, nodo n6)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

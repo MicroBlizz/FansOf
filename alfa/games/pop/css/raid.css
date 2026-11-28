@@ -91,3 +91,6 @@
 @keyframes pp-raid-bota { 50% { transform: translateY(-5px) scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .pp-lado-raid-luz, .pp-lado.pp-lado-raid .pp-ico, .pp-raid-pedir button { animation: none; } }
 .pp-raid-pedir:not([hidden]) + .pp-raid-chat { bottom: 364px; }   /* el chat sube para dejarle sitio */
+/* la ventana del premio final (js/raid/adaptadores/premio.js): el marco ganado, con su muestra al lado del texto */
+.pp-raid-cobro-marco { display: flex; align-items: center; justify-content: center; gap: 14px; text-align: left; }
+.pp-raid-cobro-marco canvas { flex: none; }

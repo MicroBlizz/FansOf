@@ -1,7 +1,7 @@
 // Fans of Pop · RAID, los premios (dominio puro, tarea 448): el escalón de un jugador según su CUENTA y su premio final, con un extra si la raid se
 // vació. La CUENTA es lo que cobra el servidor: burbujas reventadas + golpes al jefe (cada golpe cuenta como una burbuja). cfg = { escalones:
 // [{ desde, monedas, perlas, marco }, ...] de menor a mayor, extraVaciada: fracción de monedas extra }. El jefe CEO y su premio son de otro nodo.
-// Cobrarlo (perlas por el monedero del servidor, idempotente) es del servidor.
+// Cobrarlo (perlas por el monedero del servidor, idempotente) es del servidor; cuándo hay algo que cobrar lo dice porCobrar.
 'use strict';
 const PP_RAID_PREMIOS = (() => {
   // el escalón más alto que alcanza con `cuenta`: { nivel (1 = el primero), desde, monedas, perlas, marco }, o null si la cuenta no llega al primero
@@ -25,6 +25,8 @@ const PP_RAID_PREMIOS = (() => {
     const e = cfg.escalones[i], antes = i ? cfg.escalones[i - 1].desde : 0;
     return { ...e, faltan: e.desde - cuenta, parte: Math.max(0, Math.min(1, (cuenta - antes) / (e.desde - antes))) };
   }
-  return Object.freeze({ escalon, premioFinal, siguiente });
+  // ¿tiene esta raid un premio que cobrar? `s` = su estado: acabada (se venció al jefe o pasó la semana) y con algo en la cuenta del jugador
+  const porCobrar = s => !!s && !!(s.acabada || s.vaciada) && !!s.yo && s.yo.burbujas + s.yo.golpes > 0;
+  return Object.freeze({ escalon, premioFinal, siguiente, porCobrar });
 })();
 if (typeof module !== 'undefined') module.exports = PP_RAID_PREMIOS;

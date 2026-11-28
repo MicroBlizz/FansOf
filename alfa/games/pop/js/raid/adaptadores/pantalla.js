@@ -3,7 +3,7 @@
 // las burbujas de CERCA, los efectos, el CEO, los rótulos (PP_RAID_HUD), lo que pasa con cada suceso (PP_RAID_SUCESOS) y los objetos (PP_RAID_USA).
 // · abre(id): `null` = la raid de la semana; 'prueba' = la raid de prueba de la alfa. Solo desde la portada o el camino.
 // · prueba(): rehace la raid de prueba en el servidor (rol alfa) y la abre. · cierra(): manda lo pendiente y vuelve a donde estaba.
-// · pinta(c, t, dt): la llama el bucle de js/principal.js cuando la pantalla es 'raid'.
+// · pinta(c, t, dt): la llama el bucle de js/principal.js cuando la pantalla es 'raid'. · red(): la red de la raid (también sin abrirla) y local(): ¿es el servidor de mentira?
 // Con `?raid=local` en la dirección no hay servidor: uno de mentira en este navegador, compartido entre pestañas (servidor-local-pestanas.js).
 // Se entra por el botón del camino o el enlace ?raid=1 (flag 'raid', js/raid/adaptadores/camino.js) y desde el panel DEV. Lee de Pop: PP_CV, PP_V, PP_PANT, ppIrA,
 // ppLogico, PP_IMG, PP_COLORES, PP_FILAS, ppTexto, PP_CHISPAS, CUENTA, tr.
@@ -40,6 +40,8 @@ const PP_RAID_PANTALLA = (() => {
     if (!u) { u = 'local-' + Math.random().toString(36).slice(2, 8); sessionStorage.setItem('pp_raid_yo', u); }
     return u;
   }
+  let laRed = null;   // la red se crea una vez: la usa la pantalla y, antes de abrirla, el cobro del premio (js/raid/adaptadores/premio.js)
+  const red = () => laRed || (laRed = creaRed());
   function creaRed() {
     if (!modoLocal()) return PP_RAID_RED.crea({ rpc: (n, a) => CUENTA.rpc(n, a), hay: () => typeof CUENTA !== 'undefined' && !!CUENTA.usuario });
     const srv = PP_RAID_SERVIDOR_LOCAL_PESTANAS.crea({ reloj: Date.now, cfg: PP_CFG.raid, semilla: 448, almacen: localStorage });
@@ -131,7 +133,7 @@ const PP_RAID_PANTALLA = (() => {
       objetos: PP_RAID_USA.BOTONES, alObjeto: k => { if (activa()) PP_RAID_USA.pulsa(R, k); } });
     const gestos = PP_RAID_GESTOS.crea({ alTocar: toca, alArrastrar: arrastra, alPellizcar: pellizca });
     escucha(gestos);
-    piezas = { red: creaRed(), hud, gestos };
+    piezas = { red: red(), hud, gestos };
     return piezas;
   }
 
@@ -191,6 +193,7 @@ const PP_RAID_PANTALLA = (() => {
     piezas.hud.muestra(false);
     piezas.gestos.suelta();
     if (vuelve) ppIrA(r.antes);
+    PP_RAID_PREMIO.repasa();   // el camino vuelve a mirar si hay premio por cobrar (js/raid/adaptadores/premio.js)
     cerrando = true;
     try { await r.sinc.cierra(); } finally { cerrando = false; }   // manda la tanda de toques que quedara (los cofres y objetos confirmados aún se cuentan)
     r.quita();
@@ -278,5 +281,5 @@ const PP_RAID_PANTALLA = (() => {
     rotulos(dt);
   }
 
-  return Object.freeze({ abre, cierra, fuera, prueba, pinta, abierta: () => !!R, estado: () => (R ? { cam: R.cam, resumen: R.sinc.estado(), fx: R.fx.cuenta(), humor: R.humor } : null) });
+  return Object.freeze({ abre, cierra, fuera, prueba, pinta, red, local: modoLocal, abierta: () => !!R, estado: () => (R ? { cam: R.cam, resumen: R.sinc.estado(), fx: R.fx.cuenta(), humor: R.humor } : null) });
 })();

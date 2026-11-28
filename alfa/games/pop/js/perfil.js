@@ -1,7 +1,7 @@
 // Fans of Pop · PERFIL DE JUGADOR (dominio; tarea #41, ADR 130): qué se tiene, qué se puede poner, cuánto cuesta y qué viaja al rival.
 // Funciones puras: sin reloj, azar, SAVE, red ni dibujo. Reciben el catálogo (PP_PERFIL_CAT más los personajes), los precios por tipo
 // (PP_CFG.perfil) y lo que tiene el jugador: { comprados: [reclamos 'fijo:perfil:<tipo>:<id>'], rescatados: { id: true } }.
-// Los errores son resultados con nombre: no_existe, no_lo_tienes, ya_lo_tienes, gratis, de_logro (no se vende), faltan_perlas, pegatinas_llenas.
+// Los errores son resultados con nombre: no_existe, no_lo_tienes, ya_lo_tienes, gratis, de_logro y de_premio (no se venden), faltan_perlas, pegatinas_llenas.
 // Lo que viaja al rival (publico/deRival) son solo ids del catálogo, nunca la foto ni nada libre: lo que no existe se cambia por lo de serie.
 'use strict';
 const PP_PERFIL = Object.freeze((() => {
@@ -10,7 +10,10 @@ const PP_PERFIL = Object.freeze((() => {
   const PEGATINAS = 4;   // cuántas pegatinas se llevan al duelo como mucho
   const ok = v => Object.freeze({ ok: true, ...v });
   const error = e => Object.freeze({ ok: false, error: e });
-  const busca = (cat, tipo, id) => (cat[tipo] || []).find(x => x.id === id) || null;
+  // una cosa del catálogo por su id. Las de premio llevan `pref`: valen para todos los ids que empiezan así (el marco de la raid es 'raid-<su
+  // semana>', uno por raid ganada y todos con el mismo dibujo: servidor/205-pop-raid.sql)
+  const esDe = (x, id) => x.id === id || (!!x.pref && typeof id === 'string' && id.startsWith(x.pref));
+  const busca = (cat, tipo, id) => (cat[tipo] || []).find(x => esDe(x, id)) || null;
   const articulo = (tipo, id) => `perfil:${tipo}:${id}`;
   const reclamo = (tipo, id) => `fijo:${articulo(tipo, id)}`;
   const deSerie = (cat, tipo) => (cat[tipo] || []).filter(x => x.serie).map(x => x.id);
@@ -27,6 +30,7 @@ const PP_PERFIL = Object.freeze((() => {
     if (!busca(cat, tipo, id)) return error('no_existe');
     if (gratis(cat, tipo, id, yo)) return error('gratis');
     if (busca(cat, tipo, id).logro) return error('de_logro');   // no se vende: se gana con su logro
+    if (busca(cat, tipo, id).pref) return error('de_premio');   // tampoco: se gana jugando (el marco de la raid)
     if (loTiene(cat, tipo, id, yo)) return error('ya_lo_tienes');
     if ((yo.perlas || 0) < precios[tipo]) return error('faltan_perlas');
     return ok({ perlas: precios[tipo], articulo: articulo(tipo, id) });
@@ -76,5 +80,5 @@ const PP_PERFIL = Object.freeze((() => {
     const e = Array.isArray(lista) ? lista.find(x => x && x.orden === orden) : null;
     return limpia(e && e.perfil, cat, null);
   }
-  return { TIPOS, PEGATINAS, articulo, reclamo, gratis, loTiene, precio, comprar, inicial, poner, limpia, publico, deRival, deSala };
+  return { TIPOS, PEGATINAS, busca, articulo, reclamo, gratis, loTiene, precio, comprar, inicial, poner, limpia, publico, deRival, deSala };
 })());

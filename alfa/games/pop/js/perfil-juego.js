@@ -40,8 +40,15 @@ const PP_MI = (() => {
   const cat = Object.freeze({ ...PP_PERFIL_CAT, personaje: Object.freeze([{ id: 'lola', serie: true }, ...PP_SLIME_IDS.filter(id => id !== 'lola').map(id => ({ id })), ...nuevos]) });
   const yo = () => ({ comprados: PP_SRV.comprados(), rescatados: SAVE.vistos || {}, perlas: PP_SRV.paraPerfil(), logros: PP_COMBO.titulos() });   // logros: los de combo (tarea 396)
   const perfil = () => PP_PERFIL.limpia(SAVE.perfil, cat, yo());
-  const dato = (tipo, id) => (cat[tipo] || []).find(x => x.id === id) || null;
-  const puesto = (tipo, id) => { const p = perfil(); return tipo === 'pegatina' ? p.pegatinas.includes(id) : p[tipo] === id; };
+  const dato = (tipo, id) => PP_PERFIL.busca(cat, tipo, id);
+  // lo puesto: en las cosas de premio (`pref`) vale cualquiera de las suyas (el marco de la raid de otra semana es el mismo marco)
+  const puesto = (tipo, id) => { const p = perfil(); return tipo === 'pegatina' ? p.pegatinas.includes(id) : p[tipo] === id || (!!dato(tipo, id) && dato(tipo, id) === dato(tipo, p[tipo])); };
+  // el id con que se pide una cosa del catálogo: el suyo, o en las de premio el que tienes (la última raid ganada); si no tienes ninguno, el suyo
+  function idDe(tipo, d) {
+    if (!d.pref) return d.id;
+    const pre = PP_PERFIL.reclamo(tipo, d.pref), mios = PP_SRV.comprados().filter(c => c.startsWith(pre)).sort();
+    return mios.length ? mios[mios.length - 1].slice(PP_PERFIL.reclamo(tipo, '').length) : d.id;
+  }
   const loTengo = (tipo, id) => PP_PERFIL.loTiene(cat, tipo, id, yo());
   const precio = (tipo, id) => { const r = PP_PERFIL.precio(cat, PP_CFG.perfil, tipo, id, yo()); return r.ok ? r.perlas : 0; };
   // ponerse algo que ya se tiene (una pegatina entra o sale de la fila)
@@ -64,5 +71,5 @@ const PP_MI = (() => {
     if (nombre || typeof CUENTA === 'undefined' || !CUENTA.activa) return;
     CUENTA.perfil().then(p => { if (p && typeof p.nombre === 'string' && p.nombre) { nombre = p.nombre; if (typeof ppPerfilRepinta === 'function') ppPerfilRepinta(); } });
   }
-  return { cat, yo, perfil, dato, puesto, loTengo, precio, pon, compra, pideNombre, get nombre() { return nombre || tr('Tú'); } };
+  return { cat, yo, perfil, dato, idDe, puesto, loTengo, precio, pon, compra, pideNombre, get nombre() { return nombre || tr('Tú'); } };
 })();

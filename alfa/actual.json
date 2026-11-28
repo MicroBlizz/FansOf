@@ -1,8 +1,8 @@
 {
- "build": 1561,
- "hash": "1c860d0",
- "fecha": "2026-11-28T02:12:46Z",
- "mensaje": "Pop: la raid se abre al ganar el nivel 13, con candado antes y Lola estrenándola con una bomba (Pepins, tarea 448, nodo n5)",
+ "build": 1562,
+ "hash": "343501f",
+ "fecha": "2026-11-28T03:00:32Z",
+ "mensaje": "Pop: si la tanda de rendimiento no cabe, se quita la partida de usar y tirar y se reintenta; el fallo dice qué ocupa el almacén y ya llega a ERRORES (tipo js) (tarea 404)",
  "juegos": {
   "air": "0.3.0",
   "asalto": "0.7.2",

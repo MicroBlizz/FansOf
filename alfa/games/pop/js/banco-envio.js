@@ -18,7 +18,7 @@ const PP_BANCO_ENVIO = (() => {
   const cuenta = texto => { if (typeof PP_BANCO_VISTA !== 'undefined') PP_BANCO_VISTA.envio(texto); };
   // un final: la tanda deja de estar pendiente. Sin conexión no es un final: se reintenta la próxima vez que se abra el juego
   const termina = tanda => { if (typeof PP_BANCO_VISTA !== 'undefined') PP_BANCO_VISTA.termina(tanda); };
-  const falla = (texto, detalle) => { console.error('banco: ' + texto, detalle); if (typeof ERRORES !== 'undefined') ERRORES.registrar('banco', 'envio', texto + ' ' + (detalle || '')); cuenta(texto); return false; };
+  const falla = (texto, detalle) => { console.error('banco: ' + texto, detalle); if (typeof ERRORES !== 'undefined') ERRORES.registrar('js', 'banco/envio', texto + ' ' + (detalle || '')); cuenta(texto); return false; };
   async function envia(tanda) {
     const no = impide(tanda);
     if (no) { cuenta(no); termina(tanda); return false; }

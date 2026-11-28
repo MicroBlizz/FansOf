@@ -84,7 +84,7 @@ const PP_BANCO_VISTA = (() => {
     if (!f) return;
     quitar(K.fallo);
     const motivo = String(f.motivo || '?');
-    if (typeof ERRORES !== 'undefined') ERRORES.registrar('banco', 'prueba', motivo);
+    if (typeof ERRORES !== 'undefined') ERRORES.registrar('js', 'banco/prueba', motivo);
     muestraFallo(motivo);
   }
   // al llegar a la dirección normal: si hay tanda guardada, se enseña y se avisa a quien la envía
@@ -94,7 +94,7 @@ const PP_BANCO_VISTA = (() => {
     if (!valida(tanda)) { if (tanda) quitar(K.resultado); return; }
     const anterior = leer(K.anterior);
     // si la ventana falla (p. ej. una «anterior» de otra versión), se apunta y la tanda se envía igual
-    try { muestra(tanda, anterior); } catch (e) { console.error('banco: no se pudo enseñar la tanda', e); if (typeof ERRORES !== 'undefined') ERRORES.registrar('banco', 'muestra', e && e.message); }
+    try { muestra(tanda, anterior); } catch (e) { console.error('banco: no se pudo enseñar la tanda', e); if (typeof ERRORES !== 'undefined') ERRORES.registrar('js', 'banco/muestra', e && e.message); }
     alVolver(tanda);
   }
   // la portada tarda en salir (splash de core): se espera a verla

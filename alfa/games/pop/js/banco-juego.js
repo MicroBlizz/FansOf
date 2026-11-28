@@ -146,8 +146,20 @@ const PP_BANCO = (() => {
     ancho: innerWidth, alto: innerHeight, dpr: window.devicePixelRatio || 1, nucleos: navigator.hardwareConcurrency || 0,
     memoria: navigator.deviceMemory || 0, version: typeof VERSION !== 'undefined' ? String(VERSION) : '0', corta: !!corta, origen: P.origen, cpu: P.cpu,
   });
+  // guarda la tanda; devuelve null si cabe o, si no, el motivo
   function guarda(tanda) {
-    try { localStorage.setItem(K.resultado, JSON.stringify(tanda)); return true; } catch (e) { console.error('banco: no se pudo guardar el resultado', e); return false; }
+    const texto = JSON.stringify(tanda);
+    try { localStorage.setItem(K.resultado, texto); return null; } catch (e) { console.error('banco: no se pudo guardar el resultado', e); }
+    // sin sitio: la partida de usar y tirar ya no hace falta, se quita y se prueba otra vez
+    try { localStorage.removeItem(K.partida); localStorage.setItem(K.resultado, texto); return null; } catch (e) { return `${(e && e.name) || 'Error'}: ${(e && e.message) || e} · ${ocupado()}`; }
+  }
+  // cuánto ocupa el almacenamiento de la web (lo comparten todos los juegos) y sus 3 claves más grandes, para saber quién lo llena
+  function ocupado() {
+    try {
+      const claves = Object.keys(localStorage).map(k => [k, (localStorage.getItem(k) || '').length]).sort((a, b) => b[1] - a[1]);
+      const kb = n => Math.round(n / 1024) + ' KB';
+      return kb(claves.reduce((s, c) => s + c[1], 0)) + ' (' + claves.slice(0, 3).map(c => c[0] + ' ' + kb(c[1])).join(', ') + ')';
+    } catch (e) { return 'sin leer el almacén'; }
   }
   const restauraAhorro = () => { try { AHORRO.poner(ahorroInicial); } catch (e) { console.error('banco: no se pudo devolver el ahorro', e); } };
 
@@ -159,7 +171,8 @@ const PP_BANCO = (() => {
     for (let i = 0; i < pasos.length; i++) { pintaRotulo(i + 1, pasos.length); medidas.push(await medida(pasos[i])); }
     limpia(); restauraAhorro();
     const tanda = Object.assign(PP_BANCO_REGLAS.tanda(pasos, medidas), { aparato: aparato(P.corta), fecha: Date.now() });
-    if (!guarda(tanda)) apuntaFallo('no se pudo guardar el resultado');
+    const noGuarda = guarda(tanda);
+    if (noGuarda) apuntaFallo('no se pudo guardar el resultado: ' + noGuarda);
     location.replace(PP_BANCO_URL.urlNormal(location.href));
   }
   // si la prueba se rompe entera: se apunta y se vuelve a la dirección normal (la partida real sigue intacta)
